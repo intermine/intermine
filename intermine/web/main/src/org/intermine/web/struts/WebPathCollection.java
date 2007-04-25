@@ -40,7 +40,7 @@ import org.intermine.web.logic.results.WebTable;
  * A wrapper for a collection that makes for easier rendering in the webapp.
  * @author kmr
  */
-public class WebCollection extends AbstractList implements WebTable
+public class WebPathCollection extends AbstractList implements WebTable
 {
     private List list;
     private Model model;
@@ -51,7 +51,7 @@ public class WebCollection extends AbstractList implements WebTable
     private Path columnPath;
 
     /**
-     * Create a new WebCollection object.
+     * Create a new WebPathCollection object.
      * @param os the ObjectStore used to create ResultElement objects
      * @param columnPath the Path to use when displaying this collection - used as the column name
      * for the single column of results
@@ -61,7 +61,7 @@ public class WebCollection extends AbstractList implements WebTable
      * @param webConfig the WebConfig object the configures the columns in the view
      * @param classKeys map of classname to set of keys
      */
-    public WebCollection(ObjectStore os, Path columnPath, Collection collection, Model model, 
+    public WebPathCollection(ObjectStore os, Path columnPath, Collection collection, Model model, 
                          WebConfig webConfig, Map classKeys) {
         this.os = os;
         this.model = model;
@@ -145,7 +145,7 @@ public class WebCollection extends AbstractList implements WebTable
     }
 
     /**
-     * Return the List of Column objects for this WebCollection, configured by the WebConfig for
+     * Return the List of Column objects for this WebPathCollection, configured by the WebConfig for
      * the class of the collection we're showing
      * @return the Column object List
      */

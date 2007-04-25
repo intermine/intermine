@@ -83,11 +83,11 @@ public class BagDetailsAction extends Action
         q.setDistinct(false);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
 
-        WebCollection webCollection = 
-            new WebCollection(os, new Path(model, bag.getType()), res, model, webConfig, classKeys);
+        WebPathCollection webPathCollection = 
+            new WebPathCollection(os, new Path(model, bag.getType()), res, model, webConfig, classKeys);
 
         if (pc == null) {
-            pc = new PagedTable(webCollection);
+            pc = new PagedTable(webPathCollection);
             SessionMethods.setResultsTable(session, identifier, pc);
         }
         

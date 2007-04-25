@@ -103,10 +103,10 @@ public class QueryForGraphAction extends InterMineAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
-        WebCollection webCollection = 
-            new WebCollection(os, new Path(model, bag.getType()), results, model, webConfig, 
+        WebPathCollection webPathCollection = 
+            new WebPathCollection(os, new Path(model, bag.getType()), results, model, webConfig, 
                               classKeys);
-        PagedTable pagedColl = new PagedTable(webCollection);
+        PagedTable pagedColl = new PagedTable(webPathCollection);
         String identifier = "qid" + index++;
 
         SessionMethods.setResultsTable(session, identifier, pagedColl);

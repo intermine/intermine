@@ -36,7 +36,7 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
-import org.intermine.web.struts.WebCollection;
+import org.intermine.web.struts.WebPathCollection;
 
 import org.flymine.model.genomic.GOAnnotation;
 import org.flymine.model.genomic.GOTerm;
@@ -147,10 +147,10 @@ public class GoStatAction extends InterMineAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
-        WebCollection webCollection =
-            new WebCollection(os, new Path(model, columnName), results, model, webConfig,
+        WebPathCollection webPathCollection =
+            new WebPathCollection(os, new Path(model, columnName), results, model, webConfig,
                               classKeys);
-        PagedTable pagedColl = new PagedTable(webCollection);
+        PagedTable pagedColl = new PagedTable(webPathCollection);
 
         String identifier = "qid" + index++;
         SessionMethods.setResultsTable(session, identifier, pagedColl);

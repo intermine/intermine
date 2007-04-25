@@ -52,7 +52,7 @@ import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
-import org.intermine.web.struts.WebCollection;
+import org.intermine.web.struts.WebPathCollection;
 
 /**
  * An implementation of TableExporter that exports sequence objects using the BioJava sequence and
@@ -178,8 +178,8 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 try {
                     if (rowList instanceof WebResults) {
                         row = ((WebResults) rowList).getResultElements(rowIndex);
-                    } else if (rowList instanceof WebCollection) {
-                        row = ((WebCollection) rowList).getResultElements(rowIndex);
+                    } else if (rowList instanceof WebPathCollection) {
+                        row = ((WebPathCollection) rowList).getResultElements(rowIndex);
                     } else {
                         row = (List) rowList.get(rowIndex);
                     }
