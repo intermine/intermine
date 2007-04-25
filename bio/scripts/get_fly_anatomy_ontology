@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+
+#download fly_anatomy.obo from http://www.berkeleybop.org/ontologies/obo-all/fly_anatomy/
+#to /shared/data/ontologies/fly_anatomy/
+#seems to be updated every week
+
+#NOTE: eventually the data might be moved to http://www.bioontology.org/ncbo/faces/index.xhtml
+
+use strict;
+use warnings;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+my $server = "http://www.berkeleybop.org/ontologies/obo-all/fly_anatomy";
+my $file = "fly_anatomy.obo";
+
+my $download_dir = "/shared/data/ontologies/fly_anatomy";
+my $file_to_get = "$server/$file";
+my $data_file = "$download_dir/$file";
+
+&checkdir_exists($download_dir);
+&http_download($file_to_get,$data_file);
