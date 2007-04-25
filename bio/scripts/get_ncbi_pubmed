@@ -72,7 +72,7 @@ my @items_to_write = ();
 
 my $outfile = "$download_dir/ncbiID_pubmedID.xml";
 if(-e $outfile){
-	warn "XML already genereated\n";
+	warn "XML already generated\n";
 }else{
 	#define organism ids to include
 	my $config_file = "/shared/data/taxonID.config";
@@ -83,7 +83,8 @@ if(-e $outfile){
 	my (%organism, %genes, %pubID, %pubgene);
 	my $gene2pubmed = "$current_link/gene2pubmed";
 	my $gene_info = "$current_link/gene_info";
-
+	
+	print "Creating objects\n";
 	#open gene2pubmed and get data
 	open(F,"<$gene2pubmed") or die "$!";
 	while(<F>){
@@ -123,6 +124,7 @@ if(-e $outfile){
 	##add the gene identifier or organismDbId used by flymine to the ncbi number gene object
 	my (%IDdata,%DBdata);
 
+	print "Creating references between objects\n";
 	#open gene_info
 	open(F,"<$gene_info") or die "$!";
 	while(<F>){
@@ -143,9 +145,9 @@ if(-e $outfile){
 				}
 				#check for duplicates
 				if(exists $genes{$ncbigeneID}{$identifier}){
-					print "$identifier already found\n"
+					#print "$identifier already found\n"
 				}elsif(exists $genes{$ncbigeneID}->{'object'}){
-					print "$identifier\t$ncbigeneID\tValid id\n";
+					#print "$identifier\t$ncbigeneID\tValid id\n";
 					$genes{$ncbigeneID}{$identifier}=$identifier;
 					my $gene_item = $genes{$ncbigeneID}->{'object'};
 					my $org_item = $organism{$current_ID}->{'object'};
@@ -153,7 +155,7 @@ if(-e $outfile){
 					$gene_item->set('organism', $org_item);
 				
 				}else{
-					print"$identifier\t$ncbigeneID\tInvalid ID\n";
+					#print"$identifier\t$ncbigeneID\tInvalid ID\n";
 					delete $genes{$ncbigeneID};	
 				}
 			#use organismDbId where available	
@@ -171,30 +173,31 @@ if(-e $outfile){
 			
 				#check for duplicates
 				if(exists $genes{$ncbigeneID}{$dbID}){
-					print "$dbID already found\n"
+					#print "$dbID already found\n"
 				}elsif(exists $genes{$ncbigeneID}->{'object'}){
-					print "$dbID\t$ncbigeneID\tValid id\n";
+					#print "$dbID\t$ncbigeneID\tValid id\n";
 					$genes{$ncbigeneID}{$dbID}=$dbID;
 					my $gene_item = $genes{$ncbigeneID}->{'object'};
 					my $org_item = $organism{$current_ID}->{'object'};
 					$gene_item->set('organismDbId', $dbID);
 					$gene_item->set('organism', $org_item);
 				}else{
-					print"$dbID\t$ncbigeneID\tInvalid ID\n";
+					#print"$dbID\t$ncbigeneID\tInvalid ID\n";
 					delete $genes{$ncbigeneID};
 				}	
 	    	}	
 		}
 	}
 	close(F) or die "$!";
-
+	
+	print "Creating publication collections\n";
 	#for each gene, find which pubmedIds reference it, retrieve objects from the hash
 	foreach my $gene (sort keys %genes){
 		my @pub_items;
-		print "Gene $gene has publications\n";
+		#print "Gene $gene has publications\n";
 		my $gene_item = $genes{$gene}->{'object'};
 		foreach my $pubID (sort keys %{$genes{$gene}->{publications}} ) {
-			print "$pubID\n";
+			#print "$pubID\n";
 			my $pub_item = $pubID{$pubID}->{'object'};
 			push @pub_items,$pub_item;
 		}
@@ -202,6 +205,7 @@ if(-e $outfile){
 	}	
 
 	#write xml file
+	print "Writing xml\n";
 	my $output = new IO::File(">$outfile");
 	my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
 	$writer->startTag('items');

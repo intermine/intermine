@@ -79,6 +79,7 @@ while ($line = <HOMOPHILA_DATA>) {
 close HOMOPHILA_DATA;
 
 #write processed data to file
+print "Writing files.\n";
 my $matches = "$download_dir/$homophila_matches_file";
 &print_hash2file($matches,%homophila_matches);
 my $diseases = "$download_dir/$homophila_diseases_file";
@@ -133,6 +134,7 @@ my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
 my $db     = "Protein";
 my $report = "gp";
 
+print "Querying NCBI Entrez and writing sequences.gp\n";
 # URL for esearch
 my $esearch = "$utils/esearch.fcgi?" .
               "db=$db&retmax=1&usehistory=y&term=";
@@ -185,6 +187,8 @@ my $prot_gene_file = "protein_gene.txt";
 my $source = "$download_dir/$sequences_file";
 my $more = 0;
 my $cds = 0;
+
+print "Writing protein_gene.txt\n";
 
 open PROT_GENES, ">$download_dir/$prot_gene_file"
    or die "can't open $download_dir/$prot_gene_file\n";
