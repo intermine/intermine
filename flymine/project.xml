@@ -30,7 +30,7 @@
        <property name="createinterpro" value="false"/>
     </source>
    <source name="uniprot-keywords" type="uniprot-keywords">
-      <property name="src.data.dir" location="/shared/data/uniprot/keywords"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
     </source>
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/rnai/wormbase/current"/>

@@ -23,6 +23,7 @@ my $uniprot_base_path = "pub/databases/uniprot/current_release";
 my $uniprot_full_path = "$uniprot_base_path/knowledgebase/complete";
 my $release_notes_file = "relnotes.txt";
 my $uniprot_main_dir = "/shared/data/uniprot";
+my $keywords_file = "keydef.xml.gz";
 
 #### Access ftp server
 my $connection = &ftp_connect($uniprot_address,$username,$password);
@@ -59,9 +60,15 @@ if(&checkdir_exists($download_dir)==1){
 	for my $file_to_get (@files_to_get) {
 	  &ftp_download($connection,$download_dir,$file_to_get);
 	}
+	
+	#download keydefs.xml
+	$connection->cwd("/$uniprot_full_path/docs")
+		or die "Cannot change working directory ", $connection->message;
+	&ftp_download($connection,$download_dir,$keywords_file);	
 	&unzip_dir($download_dir);
-	my $current_link = "/shared/data/uniprot/current";
-	&make_link($version,$current_link);
+	
+	my $uniprot_link = "/shared/data/uniprot/current";
+	&make_link($version,$uniprot_link);
 }else{ 
 	warn " current version up to date - skipping download\n";
 }

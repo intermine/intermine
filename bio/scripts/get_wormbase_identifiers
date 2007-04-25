@@ -44,7 +44,7 @@ my $old_file = "$current_link/genes2molecular_names.txt";
 
 #compare the files, create version directory if it is a new version or
 #the current data link is missing
-my $result = &compare_http_files($old_file,$tab_delim_file);
+my $result = &compare_files($old_file,$tab_delim_file);
 if($result == 1){
 	print "Keeping downloaded files.\n";
 	&update_files($wb_main_dir,$wb_id_data_file,$tab_delim_file,$current_link);

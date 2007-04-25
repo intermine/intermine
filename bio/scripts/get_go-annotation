@@ -26,13 +26,9 @@ my $goa_file_gz = "$goa_file.gz";
 
 # taxon IDs that should be grepped out of the $goa_file and the suffix to use
 # when creating the output file
-my %taxon_map = (
-   9913 => {suffix => 'bovin'},
-   9940 => {suffix => 'sheep'},
-   9925 => {suffix => 'goat'},
-   10090 => {suffix => 'mouse'},
-   10116 => {suffix => 'rat'},
-   9606 => {suffix => 'human'});
+
+my $file = "/shared/data/taxonID.config";
+my %taxon_map = &config_species($file,"go_taxon");
 
 my $godatabase_server = "ftp.geneontology.org";
 my $godatabase_dir = "pub/go/gene-associations";
@@ -43,14 +39,14 @@ my $password = "-anonymous\@";
 
 # the key is the name of the directory to put the gene association file in, the
 # suffix is used to find the file on the server
-my %gene_association_map =
-  (flybase => {suffix => 'fb'},
-   wormbase => {suffix => 'wb'},
-   mgi => {suffix => 'mgi'},
-   rgd => {suffix => 'rgd'},
-   sgd => {suffix => 'sgd'},
-   pombe => {suffix => 'GeneDB_Spombe'},
-   malaria => {suffix => 'GeneDB_Pfalciparum'});
+my %gene_association_map = &config_species($file,"go_assoc");
+#  (flybase => {suffix => 'fb'},
+#   wormbase => {suffix => 'wb'},
+#   mgi => {suffix => 'mgi'},
+#   rgd => {suffix => 'rgd'},
+#   sgd => {suffix => 'sgd'},
+#   pombe => {suffix => 'GeneDB_Spombe'},
+#   malaria => {suffix => 'GeneDB_Pfalciparum'});
 
 # Get latest version of the gene ontology - is updated every 30 mins
 my $go_connection = &ftp_connect($godatabase_server,$username,$password);
@@ -82,7 +78,7 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 		or die "can't open $uniprot_download_dir/$goa_file";
   
  	#put the lines from the taxons we are interested in into separate buffers
-	print "Filling taxon buffers...";
+	print "Filling taxon buffers...\n";
   	while (my $line = <GOA_FILE>) {
     	for my $taxon_id (keys %taxon_map) {
         	if ($line =~ /\ttaxon\:$taxon_id\t/) {
@@ -93,15 +89,16 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 	close GOA_FILE or die;
   
   #print each buffer out to a file
-  print "writing files.\n";
+  print "writing files\n";
   for my $taxon_id (keys %taxon_map) {
       my $suffix = $taxon_map{$taxon_id}{suffix};
-      open OUT_FILE, ">$uniprot_download_dir/gene_association_$suffix"
+	  open OUT_FILE, ">$uniprot_download_dir/gene_association_$suffix"
           or die "can't open $uniprot_download_dir/gene_association_$suffix for writing\n";
       
       for my $line (@{$taxon_map{$taxon_id}{lines}}) {
           print OUT_FILE $line;
       }
+
       close OUT_FILE or die;
   }
  	#make links for the current data
