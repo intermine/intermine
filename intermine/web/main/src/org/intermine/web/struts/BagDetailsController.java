@@ -24,9 +24,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -63,7 +60,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.title.TextTitle;
-import org.jfree.util.SortOrder;
 
 /**
  * @author Xavier Watkins
@@ -148,8 +144,12 @@ public class BagDetailsController extends TilesAction
         q.setDistinct(false);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
 
-        WebPathCollection webPathCollection = new WebPathCollection(os, new Path(model, imBag.getType()),
-                                                        res, model, webConfig, classKeys);
+        WebPathCollection webPathCollection = new WebPathCollection(os, 
+                                                        new Path(model, imBag.getType()),
+                                                        res, 
+                                                        model, 
+                                                        webConfig, 
+                                                        classKeys);
         PagedTable pagedColl = new PagedTable(webPathCollection);
         request.setAttribute("bag", imBag);
         request.setAttribute("bagSize", imBag.size());

@@ -43,10 +43,11 @@ import org.jfree.ui.TextAnchor;
 public class BagGraphWidget
 {
 
-    private String fileName;
-    private String imageMap;
+    private String fileName = null;
+    private String imageMap = null;
     private static final int WIDTH = 430;
     private static final int HEIGHT = 350;
+    private int index = 0;
     
     /**
      * Creates a BagGraphWidet object which handles
@@ -127,7 +128,7 @@ public class BagGraphWidget
            
             // generate the image and imagemap
             fileName = ServletUtilities.saveChartAsPNG(chart, WIDTH, HEIGHT, info, session);
-            imageMap = ImageMapUtilities.getImageMap("chart", info);
+            imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -140,7 +141,7 @@ public class BagGraphWidget
     public String getHTML() {
         StringBuffer sb = new StringBuffer("<img src=\"loadTmpImg.do?fileName=" + fileName
                                            + "\" width=\"" + WIDTH + "\" height=\"" + HEIGHT
-                                           + "\" usemap=\"#chart\">");
+                                           + "\" usemap=\"#chart" + fileName + "\">");
         sb.append(imageMap);
         return sb.toString();
     }
