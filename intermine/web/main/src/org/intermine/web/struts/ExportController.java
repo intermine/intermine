@@ -75,7 +75,13 @@ public class ExportController extends TilesAction
             TableExporter tableExporter =
                 (TableExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
 
-            if (tableExporter.canExport(pt)) {
+            boolean canExport = false;
+            try {
+                canExport = tableExporter.canExport(pt);
+            } catch (Exception e) {
+                LOG.error("Caught an error running canExport() for: " + exporterId + ". " + e);
+            }
+            if (canExport) {
                 usableExporters.put(exporterId, tableExportConfig);
             } else {
                 usableExporters.put(exporterId, null);
