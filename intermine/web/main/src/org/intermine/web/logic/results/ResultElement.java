@@ -72,7 +72,7 @@ public class ResultElement implements Serializable
     
     /**
      * Create a ResultElement that displays a single raw value.
-     * @param fieldValue
+     * @param fieldValue the value to hold in this object
      */
     public ResultElement(Object fieldValue) {
         this.field = fieldValue;

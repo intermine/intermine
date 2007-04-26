@@ -40,10 +40,9 @@ public class PathQueryCreator
     /**
      * Generate an objectstore query from a collection of paths.
      * @param paths the Path objects
-     * @param attributesOnly
      * @return the new Query
      */
-    public Query generate(Set paths, boolean attributesOnly) {
+    public Query generate(Set paths) {
         Map fldToQueryClass = new HashMap();
         ClassDescriptor cld = null;
 
@@ -64,7 +63,7 @@ public class PathQueryCreator
                 throw new IllegalArgumentException("Was given a path with a collection: " + path);
             }
 
-            if (attributesOnly && !path.endIsAttribute()) {
+            if (!path.endIsAttribute()) {
                 throw new IllegalArgumentException("Constructing a query for attributes only"
                                                    + " but was given a path without an attribute"
                                                    + " terminator: " + path);

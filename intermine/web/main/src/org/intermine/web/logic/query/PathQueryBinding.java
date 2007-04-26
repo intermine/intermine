@@ -13,6 +13,7 @@ package org.intermine.web.logic.query;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.path.Path;
 import org.intermine.util.SAXParser;
@@ -138,8 +139,9 @@ public class PathQueryBinding
      * @param classKeys class keys for model
      * @return a Map from query name to PathQuery
      */
-    public static Map unmarshal(Reader reader, Map savedBags, Map classKeys) {
-        Map queries = new LinkedHashMap();
+    public static Map<String, PathQuery> unmarshal(Reader reader, Map savedBags,
+                                                   Map<String, Set> classKeys) {
+        Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
             SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, savedBags, 
                                                                           classKeys));

@@ -113,8 +113,8 @@ public class ExportAction extends InterMineAction
                 SingletonResults res = new SingletonResults(q, os, os.getSequence());
 
                 WebPathCollection webPathCollection = 
-                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig, 
-                                      classKeys);
+                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model, 
+                                          webConfig, classKeys);
                 pt = new PagedTable(webPathCollection);
                 
             } else {

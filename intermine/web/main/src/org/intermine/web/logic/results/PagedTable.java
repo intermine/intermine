@@ -329,7 +329,6 @@ public class PagedTable
     public void updateRows() throws PageOutOfRangeException {
         List newRows = new ArrayList();
         for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
-
             try {
                 List resultsRow = getAllRows().getResultElements(i);
                 newRows.add(resultsRow);

@@ -23,7 +23,7 @@ public interface WebTable extends List
      * @param index the row of the results to fetch
      * @return the results row
      */
-    public List getResultElements(int index);
+    public List<ResultElement> getResultElements(int index);
     
     /**
      * Returns the Column objects for this table.

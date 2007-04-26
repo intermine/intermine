@@ -11,7 +11,6 @@ package org.intermine.web.logic.tagging;
  */
 
 import java.io.Reader;
-import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -19,10 +18,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.util.SAXParser;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Convert Tags from the Profile to and from XML

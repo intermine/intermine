@@ -36,7 +36,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.bag.BagElement;
 import org.intermine.web.logic.bag.IdUpgrader;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.InterMineBagBinding;
@@ -301,7 +300,8 @@ public class ProfileBinding
                 }
             };
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, idUpgrader, username, password, tags, classKeys, osw);
+                new ProfileHandler(profileManager, idUpgrader, username, password, tags, classKeys,
+                                   osw);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

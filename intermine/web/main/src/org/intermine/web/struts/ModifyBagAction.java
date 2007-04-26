@@ -10,12 +10,25 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.intermine.objectstore.query.ObjectStoreBagCombination;
+import org.intermine.objectstore.query.Query;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagHelper;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -27,21 +40,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.query.ObjectStoreBagCombination;
-import org.intermine.objectstore.query.Query;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagHelper;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
@@ -67,13 +65,13 @@ public class ModifyBagAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         if (request.getParameter("union") != null) {
-            combine(mapping, form, request, response, ObjectStoreBagCombination.UNION);
+            combine(mapping, form, request, ObjectStoreBagCombination.UNION);
         } else if (request.getParameter("intersect") != null) {
-            combine(mapping, form, request, response, ObjectStoreBagCombination.INTERSECT);
+            combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT);
         } else if (request.getParameter("subtract") != null) {
-            combine(mapping, form, request, response, ObjectStoreBagCombination.EXCEPT);
+            combine(mapping, form, request, ObjectStoreBagCombination.EXCEPT);
         } else if (request.getParameter("delete") != null) {
-            delete(mapping, form, request, response);
+            delete(mapping, form, request);
         }
         return mapping.findForward("bag");
     }
@@ -83,13 +81,13 @@ public class ModifyBagAction extends InterMineAction
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * @param op the operation to pass to the ObjectStoreBagCombination constructor
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
      */
     public ActionForward combine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response, int op) throws Exception {
+                                 int op) throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
@@ -132,6 +130,7 @@ public class ModifyBagAction extends InterMineAction
                     osw.close();
                 }
             } catch (ObjectStoreException e) {
+                // empty
             }
         }
 
@@ -196,15 +195,13 @@ public class ModifyBagAction extends InterMineAction
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
      */
     public ActionForward delete(ActionMapping mapping,
                                 ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response)
+                                HttpServletRequest request)
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);

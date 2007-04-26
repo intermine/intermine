@@ -19,7 +19,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
 import org.intermine.web.bag.PkQueryIdUpgrader;
@@ -102,6 +101,7 @@ class ProfileManagerHandler extends DefaultHandler
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
      * @param classKeys class key fields in model
+     * @param osw an ObjectStoreWriter to the production database, to write bags
      */
     public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
             Map classKeys, ObjectStoreWriter osw) {
@@ -113,7 +113,7 @@ class ProfileManagerHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#startElement
+     * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
@@ -126,8 +126,7 @@ class ProfileManagerHandler extends DefaultHandler
     }
 
     /**
-     * @throws SAXException
-     * @see DefaultHandler#endElement
+     * {@inheritDoc}
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);

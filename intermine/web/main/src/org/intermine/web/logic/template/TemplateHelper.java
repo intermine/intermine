@@ -17,11 +17,9 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -29,7 +27,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.intermine.cache.InterMineCache;
@@ -39,7 +36,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.path.Path;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
@@ -57,7 +53,6 @@ import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.InlineTemplateTable;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;

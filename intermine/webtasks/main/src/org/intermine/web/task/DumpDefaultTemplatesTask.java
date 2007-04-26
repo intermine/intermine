@@ -79,7 +79,7 @@ public class DumpDefaultTemplatesTask extends Task
     
     /**
      * Write templates and tags to a file.
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (fileName == null) {

@@ -80,8 +80,8 @@ public class SavedQueryBinding
      * @param savedBags Map from bag name to bag
      * @param classKeys class key fields for the model
      */
-    public static Map unmarshal(Reader reader, Map savedBags, Map classKeys) {
-        Map queries = new LinkedHashMap();
+    public static Map<String, SavedQuery> unmarshal(Reader reader, Map savedBags, Map classKeys) {
+        Map<String, SavedQuery> queries = new LinkedHashMap<String, SavedQuery>();
         try {
             SAXParser.parse(new InputSource(reader), new SavedQueryHandler(queries, savedBags, 
                                                                            classKeys));

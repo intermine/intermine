@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Extension of PathQueryHandler to handle parsing SavedQuerys
- * @author
+ * @author Xavier Watkins
  */
 public class SavedQueryHandler extends PathQueryHandler
 {

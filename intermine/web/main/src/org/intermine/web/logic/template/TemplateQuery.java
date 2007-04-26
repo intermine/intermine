@@ -79,7 +79,6 @@ public class TemplateQuery extends PathQuery
      * @param description the full template description for showing on the template form
      * @param comment an optional private comment for this template
      * @param query the query itself
-     * @param important true if template is important
      * @param keywords keywords for this template
      */
     public TemplateQuery(String name, String title, String description, String comment,
