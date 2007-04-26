@@ -31,9 +31,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class BagQueryHandler extends DefaultHandler
 {
-    private List queryList;
+    private List<BagQuery> queryList;
 
-    private Map bagQueries = new HashMap();
+    private Map<String, List<BagQuery>> bagQueries = new HashMap<String, List<BagQuery>>();
 
     private String type, message, queryString;
 
@@ -70,15 +70,17 @@ public class BagQueryHandler extends DefaultHandler
      *
      * @return a Map from class name to a List of BagQuery objects
      */
-    public Map getBagQueries() {
+    public Map<String, List<BagQuery>> getBagQueries() {
         return bagQueries;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void startElement(String uri, String localName, String qName, Attributes attrs)
-                    throws SAXException {
+    public void startElement(@SuppressWarnings("unused") String uri,
+                             @SuppressWarnings("unused") String localName, 
+                             String qName, Attributes attrs)
+              throws SAXException {
         if (qName.equals("extra-bag-query-class")) {
             connectField = attrs.getValue("connect-field");
             className = attrs.getValue("class-name");
@@ -92,7 +94,7 @@ public class BagQueryHandler extends DefaultHandler
             if (!model.hasClassDescriptor(pkg + "." + type)) {
                 throw new SAXException("Type was not found in model: " + type);
             }
-            queryList = new ArrayList();
+            queryList = new ArrayList<BagQuery>();
             if (bagQueries.containsKey(type)) {
                 throw new SAXException("Duplicate query lists defined for type: " + type);
             }
@@ -137,7 +139,8 @@ public class BagQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void endElement(String uri, String localName, String qName) {
+    public void endElement(@SuppressWarnings("unused") String uri,
+                           @SuppressWarnings("unused") String localName, String qName) {
         if (qName.equals("query")) {
             queryString = sb.toString();
             if (queryString != null && message != null && matchesAreIssues != null) {
@@ -153,15 +156,15 @@ public class BagQueryHandler extends DefaultHandler
         // add bag query to map for specified class and all subclasses
         if (qName.equals("bag-type")) {
             ClassDescriptor cld = model.getClassDescriptorByName(pkg + "." + type);
-            Set clds = model.getAllSubs(cld);
+            Set<ClassDescriptor> clds = model.getAllSubs(cld);
             clds.add(cld);
-            Iterator cldIter = clds.iterator();
+            Iterator<ClassDescriptor> cldIter = clds.iterator();
             while (cldIter.hasNext()) {
-                ClassDescriptor nextCld = (ClassDescriptor) cldIter.next();
+                ClassDescriptor nextCld = cldIter.next();
                 String clsName = TypeUtil.unqualifiedName(nextCld.getName());
-                List typeQueries = (List) bagQueries.get(clsName);
+                List<BagQuery> typeQueries = bagQueries.get(clsName);
                 if (typeQueries == null) {
-                    typeQueries = new ArrayList();
+                    typeQueries = new ArrayList<BagQuery>();
                     bagQueries.put(clsName, typeQueries);
                 }
                 typeQueries.addAll(queryList);

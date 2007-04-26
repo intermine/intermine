@@ -11,6 +11,7 @@ package org.intermine.web.logic.results;
  */
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.intermine.objectstore.query.Results;
@@ -20,31 +21,35 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.ObjectStoreException;
 
 /**
+ * A simple WebTable that wraps an arbitrary Results object.
  * @author Xavier Watkins
- *
  */
 public class WebResultsSimple extends AbstractList implements WebTable
 {
     private Results results;
-    private List columnNames;
+    private List<String> columnNames;
+    private List<Column> columns;
     
     /**
+     * Make a new WebResultsSimple object - a simple wrapper around an arbitrary Results object
+     * @param results the Results
+     * @param columnNames the columns names
      * 
      */
-    public WebResultsSimple(Results results, List columnNames) {
+    public WebResultsSimple(Results results, List<String> columnNames) {
         this.results = results;
         this.columnNames = columnNames;
     }
 
     /** 
-     * 
+     * {@inheritDoc} 
      */
     public Object get(int index) {
         return results.get(index);
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     public int size() {
         try {
@@ -53,12 +58,22 @@ public class WebResultsSimple extends AbstractList implements WebTable
             throw new RuntimeException("failed to get a ResultsInfo object", e);
         }
     }
+    private List<Column> getColumnsInternal() {
+        if (columns == null) {
+            columns = new ArrayList<Column>();
+            for (int i = 0; i < columnNames.size(); i++) {
+                String columnName = columnNames.get(i);
+                columns.add(new Column(columnName, i, Object.class));
+            }
+        }
+        return columns;
+    }
 
     /**
-     *
+     * {@inheritDoc}
      */
-    public List getColumns() {
-        return columnNames;
+    public List<Column> getColumns() {
+        return getColumnsInternal();
     }
 
     public List getResultElements(int index) {
@@ -70,6 +85,18 @@ public class WebResultsSimple extends AbstractList implements WebTable
 //        resRow.size()
 //        return results.get(index);
     }
+    
+    /*
+    public List<ResultElement> getResultElements(int index) {
+        ResultsRow resultsRow = (ResultsRow) results.get(index);
+        List<ResultElement> rowCells = new ArrayList<ResultElement>();
+        for (Iterator iter = resultsRow.iterator(); iter.hasNext();) {
+            ResultElement resultElement = new ResultElement(iter.next());
+            rowCells.add(resultElement);
+        }
+        return rowCells;
+    }
+    */
 
     /**
      * Returns the ObjectStore's maximum allowable offset.
@@ -79,7 +106,8 @@ public class WebResultsSimple extends AbstractList implements WebTable
     public int getMaxRetrievableIndex() {
         return results.getObjectStore().getMaxOffset();
     }
-    
+
+    /**
     /**
      * {@inheritDoc}
      */

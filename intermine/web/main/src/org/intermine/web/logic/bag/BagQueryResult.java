@@ -43,8 +43,8 @@ public class BagQueryResult
      */
     public static final String TYPE_CONVERTED = "TYPE_CONVERTED";
 
-    private Map matches = new LinkedHashMap();
-    private Map issues = new LinkedHashMap();
+    private Map<Integer, List> matches = new LinkedHashMap<Integer, List>();
+    private Map<String, Map> issues = new LinkedHashMap<String, Map>();
     private Map unresolved = new HashMap();
 
     /**
@@ -53,22 +53,29 @@ public class BagQueryResult
      * "TYPE_TRANSLATED": [issue type -> [query -> [input string -> List of ConvertedObjectPair]]
      * @return a map from issues type to queries to input to possible objects
      */
-    public Map getIssues() {
+    public Map<String, Map> getIssues() {
         return issues;
     }
 
+    /**
+     * Add an issue to this result.
+     * @param type one of the type constants from BagQueryResult
+     * @param query the name of the query that generated this issue
+     * @param input the input identifier
+     * @param objects the objects found for the input identifiers
+     */
     public void addIssue(String type, String query, String input, List objects) {
-        Map issuesOfType = (Map) issues.get(type);
+        Map<String, Map> issuesOfType = issues.get(type);
         if (issuesOfType == null) {
-            issuesOfType = new LinkedHashMap();
+            issuesOfType = new LinkedHashMap<String, Map>();
             issues.put(type, issuesOfType);
         }
-        Map queryIssues = (Map) issuesOfType.get(query);
+        Map<String, List> queryIssues = issuesOfType.get(query);
         if (queryIssues == null) {
-            queryIssues = new LinkedHashMap();
+            queryIssues = new LinkedHashMap<String, List>();
             issuesOfType.put(query, queryIssues);
         }
-        List queryObjects = (List) queryIssues.get(input);
+        List queryObjects = queryIssues.get(input);
         if (queryObjects == null) {
             queryObjects = new ArrayList();
             queryIssues.put(input, queryObjects);
@@ -82,7 +89,7 @@ public class BagQueryResult
      * appear twice in the list of inputs matching the InterMineObject id.
      * @return a map from InterMineObject id to list of input strings
      */
-    public Map getMatches() {
+    public Map<Integer, List> getMatches() {
         return matches;
     }
 
@@ -92,9 +99,9 @@ public class BagQueryResult
      * @param id the id of an InterMineObject
      */
     public void addMatch(String input, Integer id) {
-        List inputs = (List) matches.get(id);
+        List<String> inputs = matches.get(id);
         if (inputs == null) {
-            inputs = new ArrayList();
+            inputs = new ArrayList<String>();
             matches.put(id, inputs);
         }
         inputs.add(input);

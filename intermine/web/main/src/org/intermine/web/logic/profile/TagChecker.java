@@ -1,7 +1,7 @@
 package org.intermine.web.logic.profile;
 
 /* 
- * Copyright (C) 2002-2005 FlyMine
+ * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,8 +13,8 @@ package org.intermine.web.logic.profile;
 import org.intermine.model.userprofile.UserProfile;
 
 /**
- * A class for check the validity of tags.
- * @author kmr
+ * An interface for checking the validity of tags.
+ * @author Kim Rutherford
  */
 public interface TagChecker
 {

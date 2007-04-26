@@ -70,8 +70,11 @@ public class BagDetailsController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse response)
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context, 
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -79,7 +82,7 @@ public class BagDetailsController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         String bagName = request.getParameter("bagName");
-        InterMineBag imBag = (InterMineBag) profile.getSavedBags().get(bagName);
+        InterMineBag imBag = profile.getSavedBags().get(bagName);
 
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
@@ -87,7 +90,7 @@ public class BagDetailsController extends TilesAction
 
         Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
         Set graphDisplayers = type.getGraphDisplayers();
-        ArrayList graphDisplayerArray = new ArrayList();
+        ArrayList<String[]> graphDisplayerArray = new ArrayList<String[]>();
         for (Iterator iter = graphDisplayers.iterator(); iter.hasNext();) {
             GraphDisplayer graphDisplayer = (GraphDisplayer) iter.next();
             String dataSetLoader = graphDisplayer.getDataSetLoader();
@@ -120,7 +123,7 @@ public class BagDetailsController extends TilesAction
             }
         }
 
-        ArrayList tableDisplayerArray = new ArrayList();
+        ArrayList<BagTableWidgetLoader> tableDisplayerArray = new ArrayList<BagTableWidgetLoader>();
         Set bagTabledisplayers = type.getBagTableDisplayers();
         for (Iterator iter = bagTabledisplayers.iterator(); iter.hasNext();) {
             BagTableDisplayer bagTableDisplayer = (BagTableDisplayer) iter.next();
@@ -144,12 +147,10 @@ public class BagDetailsController extends TilesAction
         q.setDistinct(false);
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
 
-        WebPathCollection webPathCollection = new WebPathCollection(os, 
-                                                        new Path(model, imBag.getType()),
-                                                        res, 
-                                                        model, 
-                                                        webConfig, 
-                                                        classKeys);
+        WebPathCollection webPathCollection =
+            new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig,
+                                  classKeys);
+
         PagedTable pagedColl = new PagedTable(webPathCollection);
         request.setAttribute("bag", imBag);
         request.setAttribute("bagSize", imBag.size());
@@ -163,7 +164,7 @@ public class BagDetailsController extends TilesAction
     private void setBarGraph(HttpSession session, 
                              GraphDisplayer graphDisplayer, 
                              GraphDataSet graphDataSet,                          
-                             ArrayList graphDisplayerArray,
+                             ArrayList<String[]> graphDisplayerArray,
                              String bagName,
                              String subtitle) {
         JFreeChart chart = null;
@@ -205,8 +206,7 @@ public class BagDetailsController extends TilesAction
                          plot,
                          renderer);
 
-        graphDisplayerArray.add(new String[] 
-        {
+        graphDisplayerArray.add(new String[] {
             bagGraphWidget.getHTML(), graphDisplayer.getDescription()
         });        
     }
@@ -214,7 +214,7 @@ public class BagDetailsController extends TilesAction
     private void setStackedBarGraph(HttpSession session, 
                                     GraphDisplayer graphDisplayer, 
                                     GraphDataSet graphDataSet,                                  
-                                    ArrayList graphDisplayerArray,
+                                    ArrayList<String[]> graphDisplayerArray,
                                     String bagName) {
         
         JFreeChart chart = null;
@@ -242,8 +242,7 @@ public class BagDetailsController extends TilesAction
                          plot,
                          renderer);
         
-        graphDisplayerArray.add(new String[] 
-        {
+        graphDisplayerArray.add(new String[] {
             bagGraphWidget.getHTML(), graphDisplayer.getDescription()
         });  
     }

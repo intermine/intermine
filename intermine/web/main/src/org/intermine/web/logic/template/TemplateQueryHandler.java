@@ -1,5 +1,15 @@
 package org.intermine.web.logic.template;
 
+/*
+ * Copyright (C) 2002-2007 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,10 +17,10 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.query.PathQueryHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Extension of PathQueryHandler to handle parsing TemplateQueries
+ * @author Xavier Watkins
  */
 public class TemplateQueryHandler extends PathQueryHandler
 {

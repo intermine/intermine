@@ -14,7 +14,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
@@ -42,7 +40,6 @@ public class InterMineBagBinding
     /**
      * Convert an InterMine bag to XML
      * @param bag the InterMineIdBag
-     * @param bagName the name of the bag
      * @return the corresponding XML String
      */
     public String marshal(InterMineBag bag) {

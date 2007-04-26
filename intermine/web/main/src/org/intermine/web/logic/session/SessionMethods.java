@@ -102,7 +102,6 @@ public class SessionMethods
      * @param resources message resources
      * @param qid       the query id
      * @param pt        the paged table object for the query
-     * @param monitor   object that will receive a periodic call while the query runs
      * @return  true if query ran successfully, false if an error occured
      * @throws  Exception if getting results info from paged results fails
      */

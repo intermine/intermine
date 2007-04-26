@@ -211,8 +211,8 @@ public class WebPathCollection extends AbstractList implements WebTable
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.intermine.web.logic.results.WebTable#getMaxRetrievableIndex()
+    /**
+     * {@inheritDoc}
      */
     public int getMaxRetrievableIndex() {
         return Integer.MAX_VALUE;

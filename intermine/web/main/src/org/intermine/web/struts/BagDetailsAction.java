@@ -84,7 +84,8 @@ public class BagDetailsAction extends Action
         SingletonResults res = new SingletonResults(q, os, os.getSequence());
 
         WebPathCollection webPathCollection = 
-            new WebPathCollection(os, new Path(model, bag.getType()), res, model, webConfig, classKeys);
+            new WebPathCollection(os, new Path(model, bag.getType()), res, model, webConfig, 
+                                  classKeys);
 
         if (pc == null) {
             pc = new PagedTable(webPathCollection);

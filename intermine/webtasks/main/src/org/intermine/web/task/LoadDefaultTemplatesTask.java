@@ -86,8 +86,7 @@ public class LoadDefaultTemplatesTask extends Task
 
     /**
      * Load templates from an xml file into a userprofile account.
-     *
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         log("Loading default templates and tags into profile " + username);

@@ -22,7 +22,6 @@ import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.store.Directory;
 
-import org.intermine.InterMineException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
@@ -47,9 +46,9 @@ public class Profile
     protected String username;
     protected Integer userId;
     protected String password;
-    protected Map savedQueries = new TreeMap();
-    protected Map savedBags = new TreeMap();
-    protected Map savedTemplates = new TreeMap();
+    protected Map<String, SavedQuery> savedQueries = new TreeMap<String, SavedQuery>();
+    protected Map<String, InterMineBag> savedBags = new TreeMap<String, InterMineBag>();
+    protected Map<String, TemplateQuery> savedTemplates = new TreeMap<String, TemplateQuery>();
     //protected Map categoryTemplates;
     protected Map queryHistory = new ListOrderedMap();
     protected Directory templateIndex;
@@ -65,7 +64,8 @@ public class Profile
      * @param savedTemplates the saved templates for this profile
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
-            Map savedQueries, Map savedBags, Map savedTemplates) {
+                   Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags, 
+                   Map<String, TemplateQuery> savedTemplates) {
         this.manager = manager;
         this.username = username;
         this.userId = userId;
@@ -122,7 +122,7 @@ public class Profile
      * Get the users saved templates
      * @return saved templates
      */
-    public Map getSavedTemplates() {
+    public Map<String, TemplateQuery> getSavedTemplates() {
         return Collections.unmodifiableMap(savedTemplates);
     }
 
@@ -160,7 +160,7 @@ public class Profile
      * Get the value of savedQueries
      * @return the value of savedQueries
      */
-    public Map getSavedQueries() {
+    public Map<String, SavedQuery> getSavedQueries() {
         return Collections.unmodifiableMap(savedQueries);
     }
 
@@ -191,7 +191,7 @@ public class Profile
      * Get the session query history.
      * @return map from query name to SavedQuery
      */
-    public Map getHistory() {
+    public Map<String, SavedQuery> getHistory() {
         return Collections.unmodifiableMap(queryHistory);
     }
     
@@ -217,10 +217,10 @@ public class Profile
      * @param newName the new name
      */
     public void renameHistory(String oldName, String newName) {
-        Map newMap = new ListOrderedMap();
-        Iterator iter = queryHistory.keySet().iterator();
+        Map<String, SavedQuery> newMap = new ListOrderedMap();
+        Iterator<String> iter = queryHistory.keySet().iterator();
         while (iter.hasNext()) {
-            String name = (String) iter.next();
+            String name = iter.next();
             SavedQuery sq = (SavedQuery) queryHistory.get(name);
             if (name.equals(oldName)) {
                 sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
@@ -234,7 +234,7 @@ public class Profile
      * Get the value of savedBags
      * @return the value of savedBags
      */
-    public Map getSavedBags() {
+    public Map<String, InterMineBag> getSavedBags() {
         return Collections.unmodifiableMap(savedBags);
     }
     
@@ -257,7 +257,7 @@ public class Profile
      */
     public Map getBagsOfType(String type, Model model) {
         type = model.getPackageName() + "." + type;
-        Set classAndSubs = new HashSet();
+        Set<String> classAndSubs = new HashSet<String>();
         classAndSubs.add(type);
         Iterator subIter = model.getAllSubs(model.getClassDescriptorByName(type)).iterator();
         while (subIter.hasNext()) {

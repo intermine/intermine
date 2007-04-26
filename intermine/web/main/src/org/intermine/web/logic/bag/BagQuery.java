@@ -203,6 +203,9 @@ public class BagQuery
         return this.message;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("query=" + queryString);

@@ -45,7 +45,7 @@ public class PathQueryCreatorTest extends TestCase {
         q.addFrom(qc1);
         q.addToSelect(qf1);
 
-        assertEquals(q.toString(), creator.generate(new HashSet(Collections.singleton(path)), false).toString());
+        assertEquals(q.toString(), creator.generate(new HashSet(Collections.singleton(path))).toString());
     }
 
     public void testReference() {
@@ -64,7 +64,7 @@ public class PathQueryCreatorTest extends TestCase {
         q.addFrom(qc2);
         q.addToSelect(qf1);
 
-        assertEquals(q.toString(), creator.generate(new HashSet(Collections.singleton(path)), false).toString());
+        assertEquals(q.toString(), creator.generate(new HashSet(Collections.singleton(path))).toString());
     }
 
     public void testMultiplePaths() {
@@ -97,10 +97,10 @@ public class PathQueryCreatorTest extends TestCase {
         q.addFrom(qc3);
         q.addToSelect(qf3);
 
-        Query qq = creator.generate(paths, false);
+        Query qq = creator.generate(paths);
         System.out.println(q);
         System.out.println(qq);
 
-        assertEquals(q.toString(), creator.generate(paths, false).toString());
+        assertEquals(q.toString(), creator.generate(paths).toString());
     }
 }

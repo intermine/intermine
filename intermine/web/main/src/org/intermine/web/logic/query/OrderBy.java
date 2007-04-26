@@ -1,7 +1,5 @@
 package org.intermine.web.logic.query;
 
-import org.intermine.path.Path;
-
 /* 
  * Copyright (C) 2002-2007 FlyMine
  *
@@ -12,6 +10,7 @@ import org.intermine.path.Path;
  *
  */
 
+import org.intermine.path.Path;
 
 /**
  * A representation of a field in the order by list

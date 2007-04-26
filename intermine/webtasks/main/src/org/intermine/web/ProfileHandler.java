@@ -106,10 +106,8 @@ class ProfileHandler extends DefaultHandler
      * @return the new Profile
      */
     public Profile getProfile() {
-        System.out.println("Making new profile bags map contains " + savedBags.keySet());
-        Profile retval = new Profile(profileManager, username, null, password, savedQueries, savedBags,
-                           savedTemplates);
-        System.out.println("Made profile with hashCode " + System.identityHashCode(retval));
+        Profile retval = new Profile(profileManager, username, null, password, savedQueries, 
+                                     savedBags, savedTemplates);
         return retval;
     }
 
@@ -122,7 +120,7 @@ class ProfileHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#startElement
+     * {@inheritDoc}
      */
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
@@ -159,7 +157,7 @@ class ProfileHandler extends DefaultHandler
     }
 
     /**
-     * @see DefaultHandler#endElement
+     * {@inheritDoc}
      */
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);

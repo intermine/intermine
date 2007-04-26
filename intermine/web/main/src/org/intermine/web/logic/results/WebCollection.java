@@ -31,7 +31,6 @@ public class WebCollection extends AbstractList implements WebTable
      * for the single column of results
      * @param collection the Collection, which can be a List of objects or a List of List of
      * objects (like a Results object)
-     * @param webConfig the WebConfig object the configures the columns in the view
      */
     public WebCollection(String columnName, Collection collection) {
         this.collection = collection;
@@ -111,8 +110,8 @@ public class WebCollection extends AbstractList implements WebTable
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.intermine.web.logic.results.WebTable#getMaxRetrievableIndex()
+    /**
+     * {@inheritDoc}
      */
     public int getMaxRetrievableIndex() {
         return Integer.MAX_VALUE;

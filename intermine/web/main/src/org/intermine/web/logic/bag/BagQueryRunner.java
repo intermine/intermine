@@ -89,15 +89,15 @@ public class BagQueryRunner
      *            "Organism" and the constrainField is "name", the extraFieldValue might be
      *            "Drosophila melanogaster")
      * @return the matches, issues and unresolved input
-     * @throws ClassNotFoundException
-     * @throws ObjectStoreException
-     * @throws InterMineException
+     * @throws ClassNotFoundException if the type isn't in the model
+     * @throws ObjectStoreException if there is an object store problem
+     * @throws InterMineException if there is any other exception
      */
     public BagQueryResult searchForBag(String type, List input, String extraFieldValue)
         throws ClassNotFoundException, ObjectStoreException, InterMineException {
 
-        Map lowerCaseInput = new HashMap();
-        List cleanInput = new ArrayList();
+        Map<String, String> lowerCaseInput = new HashMap<String, String>();
+        List<String> cleanInput = new ArrayList<String>();
         Iterator inputIter = input.iterator();
         while (inputIter.hasNext()) {
             String inputString = (String) inputIter.next();
@@ -114,14 +114,14 @@ public class BagQueryRunner
         // or just leave as a list of identifiers and objects of the qrong type
         // CollectionUtil.groupByClass will sort out the strings and types
         Class typeCls = Class.forName(model.getPackageName() + "." + type);
-        List queries = getBagQueriesForType(bagQueryConfig.getBagQueries(), typeCls.getName(),
-                                            cleanInput);
-        Set unresolved = new LinkedHashSet(cleanInput);
-        Iterator qIter = queries.iterator();
+        List<BagQuery> queries = 
+            getBagQueriesForType(bagQueryConfig.getBagQueries(), typeCls.getName(), cleanInput);
+        Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
+        Iterator<BagQuery> qIter = queries.iterator();
         BagQueryResult bqr = new BagQueryResult();
         while (qIter.hasNext() && !unresolved.isEmpty()) {
-            BagQuery bq = (BagQuery) qIter.next();
-            Map resMap = new HashMap();
+            BagQuery bq = qIter.next();
+            Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
             // run the next query on identifiers not yet resolved
             Query q = bq.getQuery(unresolved, extraFieldValue);
             // TODO this is hacky as default batch size is hard coded in the os
@@ -141,9 +141,9 @@ public class BagQueryRunner
                     if (field != null) {
                         String lowerField = field.toLowerCase();
                         if (lowerCaseInput.containsKey(lowerField)) {
-                            Set ids = (Set) resMap.get(field);
+                            Set<Integer> ids = resMap.get(field);
                             if (ids == null) {
-                                ids = new HashSet();
+                                ids = new HashSet<Integer>();
                                 resMap.put(field, ids);
                             }
                             // obj is an Integer
@@ -160,8 +160,8 @@ public class BagQueryRunner
             addResults(resMap, unresolved, bqr, bq, typeCls);
         }
 
-        Map unresolvedMap = new HashMap();
-        Iterator iter = unresolved.iterator();
+        Map<String, ?> unresolvedMap = new HashMap();
+        Iterator<String> iter = unresolved.iterator();
         while (iter.hasNext()) {
             unresolvedMap.put(iter.next(), null);
         }
@@ -175,9 +175,10 @@ public class BagQueryRunner
      *
      * @throws InterMineException
      */
-    private void addResults(Map resMap, Set unresolved, BagQueryResult bqr, BagQuery bq, Class type)
+    private void addResults(Map<String, Set<Integer>> resMap, Set<String> unresolved, 
+                            BagQueryResult bqr, BagQuery bq, Class<?> type)
     throws InterMineException {
-        Map objsOfWrongType = new HashMap();
+        Map<String, Set<Object>> objsOfWrongType = new HashMap<String, Set<Object>>();
         Iterator mapIter = resMap.entrySet().iterator();
         while (mapIter.hasNext()) {
             Map.Entry entry = (Map.Entry) mapIter.next();
@@ -191,7 +192,7 @@ public class BagQueryRunner
                 if (ids.size() == 1) {
                     bqr.addMatch(input, (Integer) ids.iterator().next());
                 } else {
-                    List objs = new ArrayList();
+                    List<Object> objs = new ArrayList<Object>();
                     Iterator objIter;
                     try {
                         objIter = os.getObjectsByIds(ids).iterator();
@@ -205,8 +206,8 @@ public class BagQueryRunner
                                  (String) entry.getKey(), objs);
                 }
             } else {
-                List objs = new ArrayList();
-                Set localObjsOfWrongType = new HashSet();
+                List<Object> objs = new ArrayList<Object>();
+                Set<Object> localObjsOfWrongType = new HashSet<Object>();
                 Iterator objIter;
                 try {
                     objIter = os.getObjectsByIds(ids).iterator();
@@ -257,11 +258,13 @@ public class BagQueryRunner
      * Find any objects in the objsOfWrongType Map that can be converted to the destination type,
      * add them to bqr as TYPE_CONVERTED issues and remove them from objsOfWrongType.
      */
-    void convertObjects(BagQueryResult bqr, BagQuery bq, Class type, Map objsOfWrongType)
+    private void convertObjects(BagQueryResult bqr, BagQuery bq, Class<?> type, Map<String,
+                                Set<Object>> objsOfWrongType)
         throws InterMineException {
         if (!objsOfWrongType.isEmpty()) {
             // group objects by class
-            Map objectToInput = new HashMap();
+            Map<InterMineObject, Set<String> > objectToInput = 
+                new HashMap<InterMineObject, Set<String> >();
             Iterator iter = objsOfWrongType.entrySet().iterator();
             while (iter.hasNext()) {
                 Entry entry = (Entry) iter.next();
@@ -270,9 +273,9 @@ public class BagQueryRunner
                 Iterator objIter = set.iterator();
                 while (objIter.hasNext()) {
                     InterMineObject imo = (InterMineObject) objIter.next();
-                    Set inputSet = (Set) objectToInput.get(imo);
+                    Set<String> inputSet = objectToInput.get(imo);
                     if (inputSet == null) {
-                        inputSet = new HashSet();
+                        inputSet = new HashSet<String>();
                         objectToInput.put(imo, inputSet);
                     }
                     inputSet.add(input);
@@ -287,10 +290,10 @@ public class BagQueryRunner
                 List candidateObjs = (List) objTypes.get(fromClass);
 
                 // we may have already converted some of these types, remove any that have been.
-                List objs = new ArrayList();
+                List<Object> objs = new ArrayList<Object>();
                 Iterator candidateIter = candidateObjs.iterator();
                 while (candidateIter.hasNext()) {
-                    Object candidate = (Object) candidateIter.next();
+                    Object candidate = candidateIter.next();
                     if (objectToInput.containsKey(candidate)) {
                         objs.add(candidate);
                     }
@@ -315,8 +318,8 @@ public class BagQueryRunner
                         .next();
                         ConvertedObjectPair convertedPair = new ConvertedObjectPair(origObj,
                                                                                     convertedObj);
-                        List objPairList = new ArrayList();
-                        Set origInputStringSet = (Set) objectToInput.get(origObj);
+                        List<Object> objPairList = new ArrayList<Object>();
+                        Set origInputStringSet = objectToInput.get(origObj);
                         objPairList.add(convertedPair);
                         // remove this object so we don't try to convert it again
                         toRemove = true;
@@ -340,9 +343,9 @@ public class BagQueryRunner
     }
 
     // temporary method - will be replaced by BagQueryHelper method
-    private List getBagQueriesForType(Map bagQueries, String type, List input)
+    private List<BagQuery> getBagQueriesForType(Map bagQueries, String type, List<String> input)
     throws ClassNotFoundException {
-        List queries = new ArrayList();
+        List<BagQuery> queries = new ArrayList<BagQuery>();
         // create the default query and put it first in the list
         BagQuery defaultQuery = BagQueryHelper.createDefaultBagQuery(type, bagQueryConfig, model,
                                                                      classKeys, input);
@@ -351,7 +354,7 @@ public class BagQueryRunner
         }
 
         // add any queries that are configured for this type
-        List bqs = (List) bagQueries.get(TypeUtil.unqualifiedName(type));
+        List<BagQuery> bqs = (List<BagQuery>) bagQueries.get(TypeUtil.unqualifiedName(type));
         if (bqs != null) {
             queries.addAll(bqs);
         }

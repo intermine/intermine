@@ -73,8 +73,8 @@ public class ProfileManager
     protected ObjectStoreWriter osw;
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
     protected CacheMap profileCache = new CacheMap();
-    private Map tagCheckers = null;
-    private Map tagCache = null;
+    private Map<String, TagChecker> tagCheckers = null;
+    private Map<MultiKey, ArrayList> tagCache = null;
     private Map classKeys;
 
     /**
@@ -193,7 +193,7 @@ public class ProfileManager
             return null;
         }
 
-        Map savedBags = new HashMap();
+        Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
         Query q = new Query();
         QueryClass qc = new QueryClass(SavedBag.class);
         q.addFrom(qc);
@@ -216,7 +216,8 @@ public class ProfileManager
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-        Map savedQueries = new HashMap();
+        Map<String, org.intermine.web.logic.query.SavedQuery> savedQueries = 
+            new HashMap<String, org.intermine.web.logic.query.SavedQuery>();
         for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
             SavedQuery query = (SavedQuery) i.next();
             try {
@@ -230,7 +231,8 @@ public class ProfileManager
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
-                        savedQueries.put(name, new org.intermine.web.logic.query.SavedQuery(name, null,
+                        savedQueries.put(name,
+                                         new org.intermine.web.logic.query.SavedQuery(name, null,
                                                                   (PathQuery) entry.getValue()));
                     }
                 } else {
@@ -242,7 +244,7 @@ public class ProfileManager
                 LOG.warn("Failed to unmarshal saved query: " + query.getQuery());
             }
         }
-        Map savedTemplates = new HashMap();
+        Map<String, TemplateQuery> savedTemplates = new HashMap<String, TemplateQuery>();
         for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); i.hasNext();) {
             SavedTemplateQuery template = (SavedTemplateQuery) i.next();
             try {
@@ -278,9 +280,10 @@ public class ProfileManager
      * @param savedTemplates Map from template name to TemplateQuery
      * @param username username under which to store tags
      */
-    public void convertTemplateKeywordsToTags(Map savedTemplates, String username) {
-        for (Iterator iter = savedTemplates.values().iterator(); iter.hasNext(); ) {
-            TemplateQuery tq = (TemplateQuery) iter.next();
+    public void convertTemplateKeywordsToTags(Map<String, TemplateQuery> savedTemplates, 
+                                              String username) {
+        for (Iterator<TemplateQuery> iter = savedTemplates.values().iterator(); iter.hasNext(); ) {
+            TemplateQuery tq = iter.next();
             String keywords = tq.getKeywords();
             if (StringUtils.isNotEmpty(keywords)) {
                 String aspects[] = keywords.split(",");
@@ -395,7 +398,7 @@ public class ProfileManager
     public UserProfile getUserProfile(String username) {
         UserProfile profile = new UserProfile();
         profile.setUsername(username);
-        Set fieldNames = new HashSet();
+        Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("username");
         try {
             profile = (UserProfile) osw.getObjectByExample(profile, fieldNames);
@@ -483,11 +486,11 @@ public class ProfileManager
      */
     public synchronized List getTags(String tagName, String objectIdentifier, String type,
                         String userName) {
-        Map cache = getTagCache();
+        Map<MultiKey, ArrayList> cache = getTagCache();
         MultiKey key = makeKey(tagName, objectIdentifier, type, userName);
 
         if (cache.containsKey(key)) {
-            return (List) cache.get(key);
+            return cache.get(key);
         }
 
         Query q = new Query();
@@ -554,7 +557,7 @@ public class ProfileManager
         return new MultiKey(tagName, objectIdentifier, type, userName);
     }
 
-    private void addToCache(Map cache, MultiKey key, List results) {
+    private void addToCache(Map<MultiKey, ArrayList> cache, MultiKey key, List results) {
         LOG.error("adding to cache: " + key);
         cache.put(key, new ArrayList (results));
 
@@ -609,9 +612,9 @@ public class ProfileManager
 
     }
 
-    private Map getTagCache() {
+    private Map<MultiKey, ArrayList> getTagCache() {
         if (tagCache == null) {
-            tagCache  = new HashMap();
+            tagCache  = new HashMap<MultiKey, ArrayList>();
         }
         return tagCache;
     }
@@ -651,7 +654,7 @@ public class ProfileManager
             throw new RuntimeException("no such user " + userName);
         }
 
-        ((TagChecker) tagCheckers.get(type)).isValid(tagName, objectIdentifier, type, userProfile);
+        tagCheckers.get(type).isValid(tagName, objectIdentifier, type, userProfile);
         Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag.setTagName(tagName);
         tag.setObjectIdentifier(objectIdentifier);
@@ -665,8 +668,13 @@ public class ProfileManager
         }
     }
 
-    protected Map makeTagCheckers(final Model model) {
-        Map newTagCheckers = new HashMap();
+    /**
+     * Make TagChecker objects for this ProfileManager.
+     * @param model the Model
+     * @return a map from tag type ("template", "reference", "attribute", etc.) to TagChecker
+     */
+    protected Map<String, TagChecker> makeTagCheckers(final Model model) {
+        Map<String, TagChecker> newTagCheckers = new HashMap<String, TagChecker>();
         TagChecker fieldChecker = new TagChecker() {
             public void isValid(String tagName, String objectIdentifier, String type,
                                 UserProfile userProfile) {

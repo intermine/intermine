@@ -74,7 +74,7 @@ public class PrecomputeTemplatesTask extends Task
 
     /**
      * Set a comma separated list of template names to ignore - i.e. not precompute.
-     * @param alias the ObjectStore alias
+     * @param ignore the list to ignore
      */
     public void setIgnore(String ignore) {
         this.ignore = ignore;
@@ -106,7 +106,7 @@ public class PrecomputeTemplatesTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (alias == null) {
