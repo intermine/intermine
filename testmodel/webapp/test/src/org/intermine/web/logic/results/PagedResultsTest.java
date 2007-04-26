@@ -369,13 +369,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnLeft1() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
+        Column col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 1, "Company");
+        col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
 
         dr.moveColumnLeft(0);
@@ -385,13 +385,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnLeft2() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column(new Path(model,"Department.name"), 1, "Company");
+        Column col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 0, "Company");
+        col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
 
         dr.moveColumnLeft(1);
@@ -401,13 +401,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnLeft3() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
+        Column col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 1, "Company");
+        col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
 
         dr.moveColumnLeft(2);
@@ -418,13 +418,13 @@ public class PagedResultsTest extends TestCase
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
         
-        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
+        Column col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 1, "Company");
+        col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
 
         dr.moveColumnLeft(3);
@@ -434,13 +434,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnLeft5() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
+        Column col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 1, "Company");
+        col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
 
         dr.moveColumnLeft(4);
@@ -450,13 +450,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight1() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column(new Path(model,"Department.name"), 1, "Company");
+        Column col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 0, "Company");
+        col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
 
         dr.moveColumnRight(0);
@@ -466,13 +466,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight2() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
+        Column col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 1, "Company");
+        col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
 
         dr.moveColumnRight(1);
@@ -482,13 +482,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight3() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
+        Column col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 1, "Company");
+        col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
 
         dr.moveColumnRight(2);
@@ -498,13 +498,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight4() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
+        Column col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 1, "Company");
+        col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
 
         dr.moveColumnRight(3);
@@ -514,13 +514,13 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnRight5() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        Column col = new Column(new Path(model,"Company.name"), 0, "Company");
+        Column col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 1, "Company");
+        col = new Column(new Path(model,"Department.name"), 1, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Company.name"), 2, "Company");
+        col = new Column(new Path(model,"Company.name"), 2, Company.class);
         columns.add(col);
-        col = new Column(new Path(model,"Department.name"), 3, "Company");
+        col = new Column(new Path(model,"Department.name"), 3, Company.class);
         columns.add(col);
 
         dr.moveColumnRight(4);

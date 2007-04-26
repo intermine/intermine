@@ -111,7 +111,7 @@ public class WebPathCollection extends AbstractList implements WebTable
             Path path = new Path(model, newColumnName);
             Object fieldValue = path.resolve(o);
             if (makeResultElements) {
-                String type = TypeUtil.unqualifiedName(path.getStartClassDescriptor().getName());
+                String type = TypeUtil.unqualifiedName(path.getLastClassDescriptor().getName());
                 String fieldName = path.getEndFieldDescriptor().getName();
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type,
                                                                fieldName);
@@ -149,7 +149,7 @@ public class WebPathCollection extends AbstractList implements WebTable
      * the class of the collection we're showing
      * @return the Column object List
      */
-    public List getColumns() {
+    public List<Column> getColumns() {
         List<Column> columns = new ArrayList<Column>();
         if (columnPath == null) {
             // we are showing a random collection of objects
@@ -169,21 +169,23 @@ public class WebPathCollection extends AbstractList implements WebTable
                     String fieldExpr = fc.getFieldExpr();
                     String newColumnName = columnName + "." + fieldExpr;
                     Path colPath = new Path(model, newColumnName);
-                    String type = null;
+                    Class type = null;
                     if (colPath.getElements().size() >= 2) {
                         Object pathElement =
                             colPath.getElements().get(colPath.getElements().size() - 2);
                         if (pathElement instanceof ReferenceDescriptor) {
                             ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
-                            type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
+                            type = refdesc.getReferencedClassDescriptor().getType();
                         }
                     } else {
-                        type = columnName;
+                        type = columnPath.getStartClassDescriptor().getType();
                     }
                     Column column = new Column(colPath, i, type);
                     if (!types.contains(column.getColumnId())) {
                         String fieldName = colPath.getEndFieldDescriptor().getName();
-                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
+                        String typeStr = TypeUtil.unqualifiedName(type.getName());
+                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, typeStr, 
+                                                                       fieldName);
                         if (isKeyField) {
                             column.setSelectable(true);
                             types.add(column.getColumnId());

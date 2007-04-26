@@ -77,6 +77,7 @@ public class WebResults extends AbstractList implements WebTable
         setColumns(columnPaths);
     }
  
+    // pathToQueryNode is map from string paths to QueryNodes from ObjectStore query
     private LinkedHashMap getPathToIndex(Map pathToQueryNode) {
         LinkedHashMap returnMap =  new LinkedHashMap();
         for (Iterator iter = pathToQueryNode.keySet().iterator(); iter.hasNext();) {
@@ -115,6 +116,7 @@ public class WebResults extends AbstractList implements WebTable
                 Path columnPath = (Path) columnPathObject;
                 String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor()
                     .getName());
+                Class typeCls = columnPath.getLastClassDescriptor().getType();
                 // if (columnPath.getElements().size() >= 2) {
                 // Object pathElement = columnPath.getElements().get(columnPath.getElements()
                 // .size() - 2);
@@ -126,7 +128,7 @@ public class WebResults extends AbstractList implements WebTable
                 // type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
                 //                }
                 pathToType.put(columnPath.toStringNoConstraints(), type);
-                Column column = new Column(columnPath, i, type);
+                Column column = new Column(columnPath, i, typeCls);
                 if (!types.contains(column.getColumnId())) {
                     String fieldName = columnPath.getEndFieldDescriptor().getName();
                     boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
