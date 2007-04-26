@@ -22,17 +22,17 @@
 
 
 
-<c:if test="${sortOrderPaths[path] && (empty test || test)}">
+
   <div class="sortorderpath" id="${idPrefix}${fn:replace(path,".","")}${idPostfix}"
                         name="${idPrefix}${fn:replace(path,".","")}"
+                        title="Click here to reverse the sort order" 
     <c:if test="${empty disabled || !disabled}">
           onmouseover="enterPath('${fn:replace(path,".","")}')"
           onmouseout="exitPath('${fn:replace(path,".","")}')"
           onmousedown="exitPath('${fn:replace(path,".","")}'); disblePathHighlighting()"
     </c:if>
     >
-</c:if>
+
 <jsp:doBody/>
-<c:if test="${sortOrderPaths[path] && (empty test || test)}">
+
   </div>
-</c:if>
