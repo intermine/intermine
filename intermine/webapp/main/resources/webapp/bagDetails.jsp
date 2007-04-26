@@ -76,10 +76,14 @@
   <p>
     Only showing the first ${pagedColl.pageSize} elements of the bag.
   </p>
-  <html:submit property="showInResultsTable">
-    View whole bag
-  </html:submit>
 </c:if>
+<html:submit property="showInResultsTable">
+  <fmt:message key="bagDetails.viewBag"/>
+</html:submit>
+<br/>
+<i>
+  <fmt:message key="bagDetails.viewBagHelp"/>
+</i>
 
 </html:form>
 </td>

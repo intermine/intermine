@@ -1,20 +1,17 @@
 package org.intermine.web.logic.bag;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Department;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.bag.BagQuery;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryHelper;
 
 public class BagQueryHelperTest extends TestCase {
 	
@@ -39,7 +36,7 @@ public class BagQueryHelperTest extends TestCase {
     }
 
 	public void testCreateDefaultBagQuerySingle() throws Exception {
-		Set input = new HashSet(Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"}));
+		List input = new ArrayList(Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"}));
         
 		BagQuery bq = BagQueryHelper.createDefaultBagQuery(model.getPackageName() + ".Employee",
                                                            bagQueryConfig, model, classKeys, input);
@@ -48,7 +45,7 @@ public class BagQueryHelperTest extends TestCase {
 	}
     
     public void testCreateDefaultBagQueryWithExtra() throws Exception {
-        Set input = new HashSet(Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"}));
+        List input = new ArrayList(Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"}));
         
         BagQuery bq = BagQueryHelper.createDefaultBagQuery(model.getPackageName() + ".Employee",
                                                            bagQueryConfigWithExtraConstraint, 
@@ -58,10 +55,10 @@ public class BagQueryHelperTest extends TestCase {
     }
 
 	public void testCreateDefaultBagQueryMultiple() throws Exception {
-		Set input = new HashSet(Arrays.asList(new Object[] {"EmployeeA1", "EmployeeB1"}));
+		List input = new ArrayList(Arrays.asList(new Object[] {"EmployeeA1", "EmployeeB1"}));
 		BagQuery bq = BagQueryHelper.createDefaultBagQuery(model.getPackageName() + ".Manager",
                                                            bagQueryConfig, model, classKeys, input);
-		String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.name AS a3_, a1_.title AS a4_ FROM org.intermine.model.testmodel.Manager AS a1_ WHERE (LOWER(a1_.name) IN ? OR LOWER(a1_.title) IN ?) 1: [employeea1, employeeb1] 2: [employeea1, employeeb1]";
+		String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.title AS a3_, a1_.name AS a4_ FROM org.intermine.model.testmodel.Manager AS a1_ WHERE (LOWER(a1_.title) IN ? OR LOWER(a1_.name) IN ?) 1: [employeea1, employeeb1] 2: [employeea1, employeeb1]";
 		assertEquals(expected, bq.getQuery(input, "DepartmentB1").toString());		
 	}
 }
