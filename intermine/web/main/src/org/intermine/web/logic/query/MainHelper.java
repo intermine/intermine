@@ -10,6 +10,7 @@ package org.intermine.web.logic.query;
  *
  */
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +27,15 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -44,22 +54,12 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.InterMineObject;
 import org.intermine.path.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-
-import java.math.BigDecimal;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.PagedTable;
 
 
 /**
@@ -862,5 +862,29 @@ public class MainHelper
             throw new IllegalArgumentException("Cannot summarise this column");
         }
         return q;
+    }
+    
+    /**
+     * For a given PagedTable, return the corresponding PathQuery
+     * TODO this only works for bags at the moment but need to be extended to work with anything
+     * @param pagedTable the PagedTable
+     * @param model the Model
+     * @param bag the InterMineBag
+     * @return a PathQuery
+     */
+    public static PathQuery webTableToPathQuery(PagedTable pagedTable, Model model, 
+                                                InterMineBag bag) {
+        PathQuery pathQuery = new PathQuery(model);
+        List columns = pagedTable.getColumns();
+        List<Path> view = new ArrayList<Path>();
+        for (Iterator iter = columns.iterator(); iter.hasNext();) {
+            Column column = (Column) iter.next();
+            view.add((Path) column.getPath());
+        }
+        pathQuery.setView(view);
+        pathQuery.addNode(bag.getType()).getConstraints().add(
+                                                              new Constraint(ConstraintOp.IN, bag
+                                                                  .getName()));
+        return pathQuery;
     }
 }
