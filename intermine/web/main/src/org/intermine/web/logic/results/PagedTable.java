@@ -350,6 +350,17 @@ public class PagedTable
     }
     
     /**
+     * Return the class from the data model for the data displayed in indexed column.
+     * This may be the parent class of a field e.g. if column displays A.field where
+     * field is a String and A is a class in the model this method will return A.
+     * @param index of column to find type for
+     * @return the class or parent class for the indexed column
+     */
+    public Class getTypeForColumn(int index) {
+        return webTable.getColumns().get(index).getType();
+    }
+    
+    /**
      * Set the column names
      * @param columnNames a list of Strings
      */

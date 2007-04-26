@@ -21,7 +21,7 @@ public class Column
 {
     protected boolean visible = true;
     protected int index;
-    protected Object type;
+    protected Class type;
     protected boolean selectable = false;
     private Path path;
     protected String name;
@@ -48,7 +48,7 @@ public class Column
      * @param index the number of the column
      * @param type the type of the column (ClassDescriptor or Class)
      */
-    public Column(Path path, int index, Object type) {
+    public Column(Path path, int index, Class type) {
         this.path = path;
         this.name = path.toStringNoConstraints();
         this.index = index;
@@ -64,7 +64,7 @@ public class Column
      * @param index the number of the column
      * @param type the type of the column (ClassDescriptor or Class)
      */
-    public Column(String name, int index, Object type) {
+    public Column(String name, int index, Class type) {
         this.name = name;
         this.index = index;
         this.type = type;
@@ -128,7 +128,7 @@ public class Column
      * Return the type of this Column
      * @return a Class or a FieldDescriptor
      */
-    public Object getType() {
+    public Class getType() {
         return type;
     }
 
@@ -136,7 +136,7 @@ public class Column
      * Set the type of this Column
      * @param type a Class or a FieldDescriptor
      */
-    public void setType(Object type) {
+    public void setType(Class type) {
         this.type = type;
     }
 
