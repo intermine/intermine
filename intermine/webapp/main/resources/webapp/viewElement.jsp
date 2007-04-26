@@ -66,7 +66,7 @@
 
 		<%-- sort button --%>
 		<input type="image" id="btn_${viewIndex}" onclick="javascript:updateSortOrder('${pathString}', '${viewIndex}');"
-               width="43" height="13" alt="${pathString}" src="images/sort.gif">
+               width="39" height="11" alt="click here to sort the results by this field" src="images/sort.gif">
     
       </div>
     </im:viewableDiv>
