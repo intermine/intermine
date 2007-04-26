@@ -28,6 +28,6 @@
 	
   		</im:sortableDiv>
   </c:forEach>
-   </div>
+   
   
 <!-- sortOrderLine.jsp -->
