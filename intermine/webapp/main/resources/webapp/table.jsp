@@ -131,6 +131,17 @@
 
                     <%-- put in left, right, hide and show buttons --%>
                     <div align="right" style="margin-right:0px;margin-top:0px;white-space:nowrap;">
+                    
+                 	<%-- sort img --%>
+                     <c:if test="${QUERY.sortOrder[0].field == column.name}">
+						<fmt:message key="results.sortHelp" var="sortHelpString"/>
+                    	<span title="${sortHelpString}">
+                        	<img style="vertical-align:top;" border="0"
+                            	   width="17" height="16" src="images/${QUERY.sortOrder[0].direction}_gray.gif"
+                               	alt="${column.name}"/>
+                        </span>                       
+                      </c:if>      
+                               
                       <%-- left --%>
                       <c:if test="${not status.first}">
                         <fmt:message key="results.moveLeftHelp" var="moveLeftTitle">
