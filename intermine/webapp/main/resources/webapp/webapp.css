@@ -352,6 +352,17 @@ table.toolbox, table.toolbox td, table.toolbox th {
 }
 
 
+.sorting {
+  background: #E7F1FB;
+  border: 1px solid #bbb;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 3px;
+  margin-left: 3px;
+  margin-right: 3px;
+  line-height: 25px;
+}
+
 /* surrounds view paths */
 div.view {
   padding: 4px;
@@ -422,15 +433,6 @@ div.sortorderpath {
 	PADDING-LEFT: 4px; 
 	PADDING-BOTTOM: 14px; 
 	PADDING-TOP: 4px
-}
-div.sortorderpathDisabled {
-  background: #bbb;
-}
-div.sortorderListEdit {
-  color: #555;
-  float: left;
-  padding-right: 6px;
-  padding-top: 1.5em;
 }
 
 table.results tr.even {

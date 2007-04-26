@@ -33,9 +33,8 @@
 	    </script>
 		</c:if>
     </div>
+<br>      
 
-<br><br clear="left">
-      
   <c:choose>
     <c:when test="${empty viewStrings}">
       <div class="body">
@@ -59,7 +58,7 @@
 		<fmt:message key="sortOrder.instructions"/>
 	</div>
 
-<br clear="left"><br>
+<br>
 
 	<!-- sort by -->
     <c:if test="${!empty viewStrings}">

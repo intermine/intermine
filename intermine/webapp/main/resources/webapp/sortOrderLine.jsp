@@ -6,27 +6,28 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- sortOrderLine.jsp -->
+<html:xhtml/>
+<div id="sortOrderDivs"></div>
 
-<div id="sortOrderDivs">
-
+  
   <c:forEach var="results" items="${sortOrderMap}" varStatus="status">
 
  	<c:set var="sortField" value="${results.key}"/>
   	<c:set var="sortDirection" value="${results.value}"/>
 	
-    <im:sortableDiv path="${sortField}" sortOrderPaths="${sortOrderMap}" idPrefix="sorting" idPostfix="_${status.index}">
-      
-      <div class="sortorderpath">
+  
+      <im:sortableDiv path="${sortField}" sortOrderPaths="${sortOrderMap}" idPrefix="sorting" idPostfix="_${status.index}">
+    
       	<div id="querySortOrder">
       	    ${fn:replace(sortField, ".", " > ")}       
      	 </div>
       
       	<!-- down = asc, up = desc -->
-      	<img src="images/${sortDirection}.gif" id="sortImg" onclick="javascript:reverseSortDirection();">
-    
-	  </div>
+      	<img src="images/${sortDirection}.gif" id="sortImg" onclick="javascript:reverseSortDirection();" alt="sort">
+
 	
-    </im:sortableDiv>
+  		</im:sortableDiv>
   </c:forEach>
-</div>
+   </div>
+  
 <!-- sortOrderLine.jsp -->
