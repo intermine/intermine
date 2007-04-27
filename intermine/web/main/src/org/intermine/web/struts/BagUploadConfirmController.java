@@ -14,6 +14,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryResult;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,8 +30,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.web.logic.bag.BagQueryResult;
-
 /**
  * Controller for the bagUploadConfirm
  * @author Kim Rutherford
@@ -45,7 +49,8 @@ public class BagUploadConfirmController extends TilesAction
         Map issues = bagQueryResult.getIssues();
         request.setAttribute("issues", issues);
         request.setAttribute("unresolved", bagQueryResult.getUnresolved());
-
+        ServletContext servletContext = session.getServletContext();
+        
         // get all of the "low quality" matches ie. those found by queries other than matching 
         // class keys
         Map lowQualityMatches = new LinkedHashMap();
@@ -106,6 +111,11 @@ public class BagUploadConfirmController extends TilesAction
         } else {
             matchCount = 0;
         }
+        // TODO put field name here.
+        BagQueryConfig bagQueryConfig =
+            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        String extraClassName = bagQueryConfig.getExtraConstraintClassName();
+        bagUploadConfirmForm.setExtraFieldName(TypeUtil.unqualifiedName(extraClassName));
         request.setAttribute("matchCount", new Integer(matchCount));
         return null;
     }
