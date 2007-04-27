@@ -29,11 +29,13 @@ public class PagedTable
 
     private WebTable webTable;
     private List<String> columnNames = null;
-    private List rows = null;
+    private List<List<ResultElement>> resultElementRows = null;
     private int startRow = 0;
     private int pageSize = 10;
 
     private List<Column> columns;
+
+    private List<List<Object>> rows = null;
 
     /**
      * Construct a PagedTable with a list of column names
@@ -64,7 +66,7 @@ public class PagedTable
      * Return the column names
      * @return the column names
      */
-    public List getColumnNames() {
+    public List<String> getColumnNames() {
         if (columnNames == null) {
             columnNames = new ArrayList<String>();
             Iterator iter = getColumns().iterator();
@@ -123,7 +125,7 @@ public class PagedTable
     public void setPageSize(int pageSize) throws PageOutOfRangeException {
         this.pageSize = pageSize;
         startRow = (startRow / pageSize) * pageSize;
-        updateRows();
+        updateResultElementRows();
     }
 
     /**
@@ -167,7 +169,7 @@ public class PagedTable
         try {
             this.pageSize = size;
             this.startRow = size * page;
-            updateRows();
+            updateResultElementRows();
         } catch (PageOutOfRangeException e) {
             // reset state
             this.startRow = oldStartRow;
@@ -181,7 +183,7 @@ public class PagedTable
      * @return the index
      */
     public int getEndRow() {
-        return startRow + getRows().size() - 1;
+        return startRow + getResultElementRows().size() - 1;
     }
 
     /**
@@ -190,7 +192,7 @@ public class PagedTable
     public void firstPage() {
         startRow = 0;
         try {
-            updateRows();
+            updateResultElementRows();
         } catch (PageOutOfRangeException e) {
             throw new RuntimeException("failed to go to the first page in PagedTable", e);
         }
@@ -213,7 +215,7 @@ public class PagedTable
         int oldStartRow = startRow;
         try {
             startRow = ((getExactSize() - 1) / pageSize) * pageSize;
-            updateRows();
+            updateResultElementRows();
         } catch (PageOutOfRangeException e) {
             // go back to where we were
             startRow = oldStartRow;
@@ -237,7 +239,7 @@ public class PagedTable
             startRow -= pageSize;
         }
         try {
-            updateRows();
+            updateResultElementRows();
         } catch (PageOutOfRangeException e) {
             LOG.error("OutOfRangeException exception in PagedTable: " + e.getStackTrace());
 
@@ -257,7 +259,7 @@ public class PagedTable
         int oldStartRow = startRow;
         try {
             startRow += pageSize;
-            updateRows();
+            updateResultElementRows();
         } catch (PageOutOfRangeException e) {
             // go back to where we were
             startRow = oldStartRow;
@@ -266,41 +268,43 @@ public class PagedTable
     }
 
     /**
-     * Return the currently visible rows of the table as a List of Lists.
-     *
-     * @return the rows of the table
+     * Return the currently visible rows of the table as a List of Lists of ResultElement objects.
+     * @return the resultElementRows of the table
      */    
-    public List getRows() {
+    public List<List<Object>> getRows() {
         if (rows == null) {
-            try {
-                updateRows();
-            } catch (PageOutOfRangeException e) {
-                throw new RuntimeException("unexpected exception while getting rows", e);
-            }
+            updateRows();
         }
         return rows;
     }
 
     /**
-     * Set the currently visible rows
-     * @param rows the new rows
-     */
-    protected void setRows(List rows) {
-        this.rows = rows;
-    }    
+     * Return the currently visible rows of the table as a List of Lists of raw values/Objects.
+     * @return the ResultElement of the table as rows
+     */    
+    public List<List<ResultElement>> getResultElementRows() {
+        if (resultElementRows == null) {
+            try {
+                updateResultElementRows();
+            } catch (PageOutOfRangeException e) {
+                throw new RuntimeException("unexpected exception while getting rows", e);
+            }
+        }
+        return resultElementRows;
+    }
 
     /**
-     * Return all the rows of the table as a List of Lists.
+     * Return all the resultElementRows of the table as a List of Lists.
      *
-     * @return all the rows of the table
+     * @return all the resultElementRows of the table
      */
     public WebTable getAllRows() {
         return webTable;
     }
 
     /**
-     * Get the (possibly estimated) number of rows of this table
-     * @return the number of rows
+     * Get the (possibly estimated) number of resultElementRows of this table
+     * @return the number of resultElementRows
      */
     public int getSize() {
         return webTable.size();
@@ -315,30 +319,50 @@ public class PagedTable
     }
 
     /**
-     * Get the exact number of rows of this table
-     * @return the number of rows
+     * Get the exact number of resultElementRows of this table
+     * @return the number of resultElementRows
      */
     public int getExactSize() {
         return webTable.getExactSize();
+    }
+    
+    /**
+     * Set the rows fields to be a List of Lists of values from ResultElement objects from
+     * getResultElementRows().
+     */
+    private void updateRows() {
+        rows = new ArrayList<List<Object>>();
+        for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
+            try {
+                List<Object> newRow = (List<Object>) getAllRows().get(i);
+                rows.add(newRow);
+            } catch (IndexOutOfBoundsException e) {
+                // we're probably at the end of the results object, so stop looping
+                break;
+            }
+        }
     }
 
     /**
      * Update the internal row list
      * @throws PageOutOfRangeException if update is unable to get the page we want
      */
-    public void updateRows() throws PageOutOfRangeException {
-        List newRows = new ArrayList();
+    private void updateResultElementRows() throws PageOutOfRangeException {
+        List<List<ResultElement>> newRows = new ArrayList<List<ResultElement>>();
         for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
             try {
-                List resultsRow = getAllRows().getResultElements(i);
+                List<ResultElement> resultsRow = getAllRows().getResultElements(i);
                 newRows.add(resultsRow);
             } catch (IndexOutOfBoundsException e) {
                 // we're probably at the end of the results object, so stop looping
                 break;
             }
         }
-        setRows(newRows);
+        this.resultElementRows = newRows;
+        // clear so that getRows() recreates it
+        this.rows = null;
     }
+
     /**
      * Return the maximum retrievable index for this PagedTable.  This will only ever return less
      * than getExactSize() if the underlying data source has a restriction on the maximum index
@@ -364,7 +388,7 @@ public class PagedTable
      * Set the column names
      * @param columnNames a list of Strings
      */
-    public void setColumnNames(List columnNames) {
+    public void setColumnNames(List<String> columnNames) {
         this.columnNames = columnNames;
     }
 }

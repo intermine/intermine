@@ -31,7 +31,7 @@ ${resultsTable.size}
 function callback(results) {
     document.getElementById('resultsCountEstimate').style.display='none';
     document.getElementById('resultsCountExact').style.display='inline';
-    document.getElementById('resultsCountExactSize').innerHTML=results[0][0].field;
+    document.getElementById('resultsCountExactSize').innerHTML=results[0][0];
 }
 
 window.onload = function() {

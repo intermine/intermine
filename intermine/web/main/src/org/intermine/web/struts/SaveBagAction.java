@@ -187,7 +187,7 @@ public class SaveBagAction extends InterMineAction
                     // It's an individual object.
                     int row = Integer.parseInt(selectedObjectString.substring(indexOfFirstComma + 1,
                                 indexOfLastComma));
-                    ResultElement value = (ResultElement) ((List) pt.getRows().get(row))
+                    ResultElement value = (ResultElement) ((List) pt.getResultElementRows().get(row))
                         .get(columnIndex);
                     osw.addToBag(bag.getOsb(), value.getId());
                 }

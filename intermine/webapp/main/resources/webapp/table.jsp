@@ -225,7 +225,7 @@
 
           <%-- Row --%>
           <c:if test="${resultsTable.size > 0}">
-            <c:forEach var="row" items="${resultsTable.rows}" varStatus="status">
+            <c:forEach var="row" items="${resultsTable.resultElementRows}" varStatus="status">
 
               <c:set var="rowClass">
                 <c:choose>

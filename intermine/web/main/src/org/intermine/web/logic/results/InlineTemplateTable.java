@@ -57,7 +57,7 @@ public class InlineTemplateTable implements Serializable
 
         for (int i = 0; i < inlineSize; i++) {
             try {
-                inlineResults.add(pagedResults.getRows().get(i));
+                inlineResults.add(pagedResults.getResultElementRows().get(i));
             } catch (IndexOutOfBoundsException e) {
                 // getExactSize() will now be fast because the Results object knows the size
                 break;
