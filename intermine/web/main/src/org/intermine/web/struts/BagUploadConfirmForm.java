@@ -30,6 +30,7 @@ public class BagUploadConfirmForm extends ActionForm
     private String bagType;
     private String matchIDs;
     private String[] selectedObjects;
+    private String extraFieldValue;
     
     /**
      * Constructor
@@ -110,6 +111,22 @@ public class BagUploadConfirmForm extends ActionForm
     */
    public void setBagType(String bagType) {
        this.bagType = bagType;
+   }
+   
+   /**
+    * Set the extra field value - the optional constraint on the bag upload page
+    * @return the extra field value
+    */
+   public String getExtraFieldValue() {
+       return extraFieldValue;
+   }
+
+   /**
+    * Set the extra field value
+    * @param extraFieldValue the extra field value
+    */
+   public void setExtraFieldValue(String extraFieldValue) {
+       this.extraFieldValue = extraFieldValue;
    }
    
    /**

@@ -142,7 +142,7 @@ function toggleForm(matchCount) {
         <fmt:message key="bagUploadConfirm.unresolved">
           <fmt:param value="${fn:length(unresolved)}"/>
           <fmt:param value="${bagUploadConfirmForm.bagType}"/>
-          <fmt:param value="${bagUploadConfirmForm.extraFieldName}"/>
+          <fmt:param value="${bagUploadConfirmForm.extraFieldValue}"/>
         </fmt:message>
       </p>
       <p style="font-weight: bold">
