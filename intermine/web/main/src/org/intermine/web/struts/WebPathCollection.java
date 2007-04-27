@@ -111,10 +111,10 @@ public class WebPathCollection extends AbstractList implements WebTable
             Path path = new Path(model, newColumnName);
             Object fieldValue = path.resolve(o);
             if (makeResultElements) {
-                String type = TypeUtil.unqualifiedName(path.getLastClassDescriptor().getName());
+                Class type = path.getLastClassDescriptor().getType();
                 String fieldName = path.getEndFieldDescriptor().getName();
-                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type,
-                                                               fieldName);
+                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys,
+                    TypeUtil.unqualifiedName(type.getName()), fieldName);
                 rowCells.add(new ResultElement(os, fieldValue, o.getId(), type,
                                                path, isKeyField));
             } else {

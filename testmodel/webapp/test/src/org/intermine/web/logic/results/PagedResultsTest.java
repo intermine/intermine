@@ -156,23 +156,23 @@ public class PagedResultsTest extends TestCase
         
         ObjectStore os = new ObjectStoreDummyImpl();
         results.put("employeeName", toList(new Object[][] { { e1 } }));
-        expected.put("employeeName", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false)}));
+        expected.put("employeeName", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), Employee.class, new Path(model, "Employee.name"), false)}));
         headers.put("employeeName", toList(new Object[] {new Path(model, "Employee.name")}));
 
         results.put("employeeDepartmentName", toList(new Object[][] { { e1, d1 } }));
-        expected.put("employeeDepartmentName", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false), 
-                new ResultElement(os,e1.getDepartment().getName(),e1.getDepartment().getId(), "Department", new Path(model, "Employee.department.name"), false)}));
+        expected.put("employeeDepartmentName", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), Employee.class, new Path(model, "Employee.name"), false), 
+                new ResultElement(os,e1.getDepartment().getName(),e1.getDepartment().getId(), Department.class, new Path(model, "Employee.department.name"), false)}));
         headers.put("employeeDepartmentName", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.name")}));
 
         results.put("employeeDepartmentCompany", toList(new Object[][] { { e1, d1, c1 } }));
-        expected.put("employeeDepartmentCompany", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false),
-                new ResultElement(os, e1.getDepartment().getName(),e1.getDepartment().getId(),"Department", new Path(model, "Department.name"), false),
-                new ResultElement(os, e1.getDepartment().getCompany().getName(),e1.getDepartment().getCompany().getId(),"Company", new Path(model, "Company.name"), false)}));
+        expected.put("employeeDepartmentCompany", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), Employee.class, new Path(model, "Employee.name"), false),
+                new ResultElement(os, e1.getDepartment().getName(),e1.getDepartment().getId(), Department.class, new Path(model, "Department.name"), false),
+                new ResultElement(os, e1.getDepartment().getCompany().getName(),e1.getDepartment().getCompany().getId(), Company.class, new Path(model, "Company.name"), false)}));
         headers.put("employeeDepartmentCompany", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.name"), new Path(model, "Employee.department.company.name")}));
         
         results.put("employeeCompany", toList(new Object[][] { { e1, c1 } }));
-        expected.put("employeeCompany", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false),
-                new ResultElement(os, e1.getDepartment().getCompany().getName(),e1.getDepartment().getCompany().getId(),"Company", new Path(model, "Company.name"), false)}));
+        expected.put("employeeCompany", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), Employee.class, new Path(model, "Employee.name"), false),
+                new ResultElement(os, e1.getDepartment().getCompany().getName(),e1.getDepartment().getCompany().getId(), Company.class, new Path(model, "Company.name"), false)}));
         headers.put("employeeCompany", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.company.name")}));
         
 //        results.put("employeeDepartmentEmployees", toList(new Object[][] { { e1, d1, e2 } } ));

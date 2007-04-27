@@ -16,6 +16,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
+import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 
 /**
@@ -28,6 +29,7 @@ public class ResultElement implements Serializable
 {
     protected Object field;
     protected String type;
+    protected Class typeCls;
     protected Integer id;
     protected String otherLink;
     protected String htmlId;
@@ -45,12 +47,12 @@ public class ResultElement implements Serializable
      * @param path the Path
      * @param isKeyField should be true if this is an identifying field
      */
-    public ResultElement(ObjectStore os, Object value, Integer id, String type,
+    public ResultElement(ObjectStore os, Object value, Integer id, Class typeCls,
                          Path path, boolean isKeyField) {
         this.os = os;
         this.field = value;
         this.id = id;
-        this.type = type;
+        this.typeCls = typeCls;
         this.keyField = isKeyField;
         this.path = path;
         setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_" + type);
@@ -102,18 +104,25 @@ public class ResultElement implements Serializable
      * @return the type
      */
     public String getType() {
-        return type;
+        return TypeUtil.unqualifiedName(typeCls.getName());
     }
    
-    
+    /**
+     * Get the type
+     * @return the type
+     */
+    public Class getTypeClass() {
+        return typeCls;
+    }
+
     /**
      * Set the type
      * @param type the type
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setTypeClass(Class typeCls) {
+        this.typeCls = typeCls;
     }
-
+    
     /**
      * Get the action/page link
      * @return a String

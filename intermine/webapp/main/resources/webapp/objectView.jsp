@@ -27,7 +27,7 @@
           <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}">
             <c:out value="${object}" default="${nullFieldText}"/>
           </html:link>
-          <c:if test="${(!empty columnType) && (resultElement.type != columnType)}">
+          <c:if test="${(!empty columnType) && (resultElement.typeClass != columnType)}">
  	    [<c:out value="${resultElement.type}" />]
  	  </c:if>
         </c:when>
