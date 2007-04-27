@@ -197,7 +197,7 @@ public class PagedResultsTest extends TestCase
 //            PagedTable pr = new PagedTable(pq.getView(), r, model, pathToQueryNode, null);
             WebResults webResults = new WebResults((List) headers.get(queryName),r, model, pathToQueryNode, classKeys);
             PagedTable pr = new PagedTable(webResults);
-            assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getRows().get(0));
+            assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getResultElementRows().get(0));
          }
     }
 

@@ -41,7 +41,7 @@
     </c:forEach>
   </tr>
 
-  <c:forEach items="${pagedColl.rows}" var="row" varStatus="status">
+  <c:forEach items="${pagedColl.resultElementRows}" var="row" varStatus="status">
     <c:set var="object" value="${row[0]}" scope="request"/>
        <c:set var="rowClass">
        <c:choose>

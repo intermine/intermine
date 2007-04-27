@@ -12,6 +12,7 @@ package org.intermine.web.logic.results;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.objectstore.query.Results;
@@ -76,17 +77,6 @@ public class WebResultsSimple extends AbstractList implements WebTable
         return getColumnsInternal();
     }
 
-    public List getResultElements(int index) {
-        return (ResultsRow) results.get(index);
-//        for (Iterator iter = resRow.iterator(); iter.hasNext();) {
-//            Object element = (Object) iter.next();
-//            
-//        }
-//        resRow.size()
-//        return results.get(index);
-    }
-    
-    /*
     public List<ResultElement> getResultElements(int index) {
         ResultsRow resultsRow = (ResultsRow) results.get(index);
         List<ResultElement> rowCells = new ArrayList<ResultElement>();
@@ -96,7 +86,6 @@ public class WebResultsSimple extends AbstractList implements WebTable
         }
         return rowCells;
     }
-    */
 
     /**
      * Returns the ObjectStore's maximum allowable offset.

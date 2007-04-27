@@ -137,7 +137,7 @@ public class SessionMethods
                     // call this so that if an exception occurs we notice now rather than in the
                     // JSP code
                     try {
-                        pt.getRows();
+                        pt.getResultElementRows();
                     } catch (IndexOutOfBoundsException err) {
                         // no results - ignore
                         // we don't call size() first to avoid this exception because that could be 

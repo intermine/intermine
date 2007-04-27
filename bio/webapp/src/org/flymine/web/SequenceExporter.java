@@ -426,7 +426,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         }
 
         // search the visible rows for any validType()s
-        List rowList = pt.getRows();
+        List rowList = pt.getResultElementRows();
 
         for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
             Column thisColumn = (Column) columns.get(columnIndex);
