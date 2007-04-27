@@ -115,7 +115,7 @@ public class BagUploadConfirmController extends TilesAction
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
-        bagUploadConfirmForm.setExtraFieldName(TypeUtil.unqualifiedName(extraClassName));
+        bagUploadConfirmForm.setExtraFieldValue((String) TypeUtil.unqualifiedName(extraClassName));
         request.setAttribute("matchCount", new Integer(matchCount));
         return null;
     }
