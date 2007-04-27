@@ -347,7 +347,7 @@ public class QueryOptimiser
             Query originalQuery) {
         SortedMap result = new TreeMap();
         // Do precomputed tables is decreasing order of number of constituent tables
-        Object sorted[] = (Object[]) precomputedTables.toArray();
+        Object sorted[] = precomputedTables.toArray();
         Arrays.sort(sorted, new Comparator() {
             public int compare(Object a, Object b) {
                 return ((PrecomputedTable) b).getQuery().getFrom().size()

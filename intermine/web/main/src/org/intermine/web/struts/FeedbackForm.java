@@ -30,8 +30,6 @@ import org.intermine.web.logic.query.PathQueryBinding;
  */
 public class FeedbackForm extends ValidatorForm
 {
-    private static final Logger LOG = Logger.getLogger(FeedbackForm.class);
-    
     private String name;
     private String email;
     private String subject;

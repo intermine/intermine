@@ -10,24 +10,12 @@ package org.intermine.web.logic.bag;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.servlet.ServletContext;
-
-import servletunit.struts.MockStrutsTestCase;
-
-import org.intermine.model.testmodel.Address;
-import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -38,8 +26,18 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
+
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.ProfileManager;
+
+import javax.servlet.ServletContext;
+
+import servletunit.struts.MockStrutsTestCase;
 
 /**
  * @author Matthew Wakeling

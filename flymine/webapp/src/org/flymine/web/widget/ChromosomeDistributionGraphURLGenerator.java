@@ -45,11 +45,13 @@ public class ChromosomeDistributionGraphURLGenerator implements CategoryURLGener
     }
 
     /**
+     * {@inheritDoc}
      * @see org.jfree.chart.urls.CategoryURLGenerator#generateURL(
      *      org.jfree.data.category.CategoryDataset,
      *      int, int)
      */
-    public String generateURL(CategoryDataset dataset, int series, int category) {
+    public String generateURL(CategoryDataset dataset, @SuppressWarnings("unused") int series,
+                              int category) {
         StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
 
 

@@ -49,7 +49,7 @@ public class ModifyBagDetailsAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -80,7 +80,8 @@ public class ModifyBagDetailsAction extends InterMineAction
      *  an exception
      */
     private void removeFromBag(String bagName, Profile profile, ModifyBagDetailsForm mbdf,
-            ObjectStoreWriter uosw, ObjectStore os, HttpSession session) throws Exception {
+                               @SuppressWarnings("unused") ObjectStoreWriter uosw,
+                               ObjectStore os, HttpSession session) throws Exception {
         Map savedBags = profile.getSavedBags();
         InterMineBag interMineBag = (InterMineBag) savedBags.get(bagName);
         ObjectStoreWriter osw = null;
@@ -100,7 +101,7 @@ public class ModifyBagDetailsAction extends InterMineAction
     }
 
     private ActionForward showBagInResultsTable(String bagName, ActionMapping mapping,
-                                                HttpSession session) {
+                                                @SuppressWarnings("unused") HttpSession session) {
         return new ForwardParameters(mapping.findForward("bagResultsTable"))
             .addParameter("bagName", bagName).forward();
     }

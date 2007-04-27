@@ -410,8 +410,10 @@ public class GoConverter extends FileConverter
 
         // add item to gene go collections
         if (isProductTypeGene) {
-            placeHolder.getGeneProductWrapper().getItem().addToCollection("goAnnotation", currentGoItem);
-            placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation", currentGoItem);
+            placeHolder.getGeneProductWrapper().getItem().addToCollection("goAnnotation",
+                                                                          currentGoItem);
+            placeHolder.getGeneProductWrapper().getItem().addToCollection("allGoAnnotation",
+                                                                          currentGoItem);
         } else {
             LOG.debug("Skipping setting go & allGo annotation collection for a:"
                       + placeHolder.getGeneProductWrapper().getItem().getClassName() 
@@ -934,7 +936,7 @@ public class GoConverter extends FileConverter
         /**
          * @param qualifier   qualifier (eg NOT) or null
          * @param datasource  the datasource
-         * @param publication the publication
+         * @param publicationId the publication id
          * @param goEvidenceColl  collection of evidence objects for this go term
          * @param product     the product - typically a protein or a gene item
          * @param goTerm      the goTerm

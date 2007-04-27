@@ -14,11 +14,8 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
-
 public class DatabaseTest extends TestCase
 {
-    private static final Logger LOG = Logger.getLogger(DatabaseTest.class);
     private Properties props;
 
     public void setUp() throws Exception {

@@ -48,6 +48,7 @@ public class ObjectPipeTest extends TestCase
         progress = 0;
 
         Thread receiver = new Thread() {
+            @Override
             public void run() {
                 while (op.hasNext()) {
                     int i = ((Integer) op.next()).intValue();

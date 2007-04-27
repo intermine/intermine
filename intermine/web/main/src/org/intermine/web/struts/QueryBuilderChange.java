@@ -72,8 +72,10 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward removeNode(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse response)
+    public ActionForward removeNode(ActionMapping mapping, 
+                                    @SuppressWarnings("unused") ActionForm form,
+                                    HttpServletRequest request, 
+                                    @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
@@ -188,8 +190,10 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward addConstraint(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
+    public ActionForward addConstraint(ActionMapping mapping, 
+                                       @SuppressWarnings("unused") ActionForm form,
+                                       HttpServletRequest request, 
+                                       @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
@@ -219,8 +223,10 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward removeConstraint(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward removeConstraint(ActionMapping mapping, 
+                                          @SuppressWarnings("unused") ActionForm form,
+                                          HttpServletRequest request, 
+                                          @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
@@ -248,8 +254,10 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward editConstraint(ActionMapping mapping, ActionForm form,
-                                        HttpServletRequest request, HttpServletResponse response)
+    public ActionForward editConstraint(ActionMapping mapping, 
+                                        @SuppressWarnings("unused") ActionForm form,
+                                        HttpServletRequest request, 
+                                        @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
@@ -259,8 +267,8 @@ public class QueryBuilderChange extends DispatchAction
         session.setAttribute("editingNode", query.getNodes().get(path));
         session.setAttribute("editingConstraintIndex", new Integer(index));
 
-        PathNode pn = (PathNode) query.getNodes().get(path);
-        Constraint c = (Constraint) pn.getConstraints().get(index);
+        PathNode pn = query.getNodes().get(path);
+        Constraint c = pn.getConstraints().get(index);
         ConstraintOp op = c.getOp();
 
         if (op != ConstraintOp.IS_NOT_NULL && op != ConstraintOp.IS_NULL
@@ -290,9 +298,12 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward editTemplateConstraint(ActionMapping mapping, ActionForm form,
+    public ActionForward editTemplateConstraint(ActionMapping mapping,
+                                                @SuppressWarnings("unused") ActionForm form,
                                                 HttpServletRequest request,
-                                                HttpServletResponse response) throws Exception {
+                                                @SuppressWarnings("unused")
+                                                   HttpServletResponse response)
+        throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
@@ -320,8 +331,9 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward addPath(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse response)
+    public ActionForward addPath(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+                                 HttpServletRequest request, 
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
@@ -341,7 +353,7 @@ public class QueryBuilderChange extends DispatchAction
             }
         }
 
-        Node node = (Node) query.getNodes().get(path);
+        Node node = query.getNodes().get(path);
         if (node == null) {
             node = query.addNode(path);
         }
@@ -373,8 +385,10 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward changePath(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse response)
+    public ActionForward changePath(ActionMapping mapping,
+                                    @SuppressWarnings("unused") ActionForm form,
+                                    HttpServletRequest request, 
+                                    @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
@@ -403,9 +417,11 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward startTemplateBuild(ActionMapping mapping, ActionForm form,
+    public ActionForward startTemplateBuild(ActionMapping mapping,
+                                            @SuppressWarnings("unused") ActionForm form,
                                             HttpServletRequest request,
-                                            HttpServletResponse response)
+                                            @SuppressWarnings("unused") 
+                                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState());
@@ -428,8 +444,10 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward stopTemplateBuild(ActionMapping mapping, ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse response)
+    public ActionForward stopTemplateBuild(ActionMapping mapping, 
+                                           @SuppressWarnings("unused") ActionForm form,
+                                           HttpServletRequest request, 
+                                           @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
@@ -451,8 +469,10 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward addToView(ActionMapping mapping, ActionForm form,
-                                   HttpServletRequest request, HttpServletResponse response)
+    public ActionForward addToView(ActionMapping mapping, 
+                                   @SuppressWarnings("unused") ActionForm form,
+                                   HttpServletRequest request, 
+                                   @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -466,7 +486,6 @@ public class QueryBuilderChange extends DispatchAction
         String prefix = (String) session.getAttribute("prefix");
         String fullPathName = MainHelper.toPath(prefix, pathName);
         Path path = MainHelper.makePath(model, query, fullPathName);
-        boolean addToSortOrder = false;
         
         // If an object has been selected, select its fields instead
         if (path.getEndFieldDescriptor() == null || path.endIsReference()
@@ -619,7 +638,8 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward ajaxRenderPaths(ActionMapping mapping, ActionForm form,
+    public ActionForward ajaxRenderPaths(ActionMapping mapping, 
+                                         @SuppressWarnings("unused") ActionForm form,
                                          HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         QueryBuilderController.populateRequest(request, response);

@@ -72,9 +72,9 @@ public abstract class ModifyHistoryAction extends InterMineAction
      *  an exception
      */
     public ActionForward rename(ActionMapping mapping,
-                                ActionForm form,
+                                @SuppressWarnings("unused") ActionForm form,
                                 HttpServletRequest request,
-                                HttpServletResponse response)
+                                @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);

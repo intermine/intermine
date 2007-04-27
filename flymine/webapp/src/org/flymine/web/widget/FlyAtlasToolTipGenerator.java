@@ -34,6 +34,7 @@ public class FlyAtlasToolTipGenerator implements CategoryToolTipGenerator
     }
 
     /**
+     * {@inheritDoc}
      * @see org.jfree.chart.labels.CategoryToolTipGenerator#generateToolTip(
      *      org.jfree.data.category.CategoryDataset,
      *      int, int)

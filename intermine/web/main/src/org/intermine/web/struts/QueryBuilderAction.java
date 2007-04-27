@@ -53,7 +53,7 @@ public class QueryBuilderAction extends InterMineAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         QueryBuilderForm mf = (QueryBuilderForm) form;
 
-        PathNode node = (PathNode) query.getNodes().get(mf.getPath());
+        PathNode node = query.getNodes().get(mf.getPath());
 
         Integer cindex = (request.getParameter("cindex") != null) ? new Integer(request
                 .getParameter("cindex")) : null;
@@ -109,7 +109,7 @@ public class QueryBuilderAction extends InterMineAction
             // itself if an object or reference/collection
             PathNode parent;
             if (node.isAttribute() && (node.getPathString().indexOf('.')) >= 0) {
-                parent = (PathNode) query.getNodes().get(node.getParent().getPathString());
+                parent = query.getNodes().get(node.getParent().getPathString());
             } else {
                 parent = node;
             }

@@ -381,7 +381,7 @@ public class ProfileManager
         try {
             osw.store(userProfile);
             profile.setUserId(userProfile.getId());
-            for (InterMineBag bag : ((Iterable<InterMineBag>) profile.getSavedBags().values())) {
+            for (InterMineBag bag : profile.getSavedBags().values()) {
                 bag.setProfileId(userProfile.getId(), osw);
             }
         } catch (ObjectStoreException e) {
@@ -676,8 +676,9 @@ public class ProfileManager
     protected Map<String, TagChecker> makeTagCheckers(final Model model) {
         Map<String, TagChecker> newTagCheckers = new HashMap<String, TagChecker>();
         TagChecker fieldChecker = new TagChecker() {
-            public void isValid(String tagName, String objectIdentifier, String type,
-                                UserProfile userProfile) {
+            public void isValid(@SuppressWarnings("unused") String tagName, 
+                                String objectIdentifier, String type,
+                                @SuppressWarnings("unused") UserProfile userProfile) {
                 int dotIndex = objectIdentifier.indexOf('.');
                 if (dotIndex == -1) {
                     throw new RuntimeException("tried to tag an unknown field: "
@@ -716,16 +717,20 @@ public class ProfileManager
         newTagCheckers.put("attribute", fieldChecker);
 
         TagChecker templateChecker = new TagChecker() {
-            public void isValid(String tagName, String objectIdentifier, String type,
-                                UserProfile userProfile) {
+            public void isValid(@SuppressWarnings("unused") String tagName, 
+                                @SuppressWarnings("unused") String objectIdentifier, 
+                                @SuppressWarnings("unused") String type,          
+                                @SuppressWarnings("unused") UserProfile userProfile) {
                 // OK
             }
         };
         newTagCheckers.put("template", templateChecker);
 
         TagChecker classChecker = new TagChecker() {
-            public void isValid(String tagName, String objectIdentifier, String type,
-                                UserProfile userProfile) {
+            public void isValid(@SuppressWarnings("unused") String tagName, 
+                                String objectIdentifier, 
+                                @SuppressWarnings("unused") String type,
+                                @SuppressWarnings("unused") UserProfile userProfile) {
                 String className = objectIdentifier;
                 ClassDescriptor cd = model.getClassDescriptorByName(className);
                 if (cd == null) {

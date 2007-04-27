@@ -72,7 +72,11 @@ public interface ItemReader
     /**
      * Returns a single item found at the end of a path with no variables.
      * 
-     * {@inheritDoc}
+     * @param path the path expression
+     * @param startingPoint the item to start at
+     * @return Item found at the end of the path
+     * @throws ObjectStoreException if something goes wrong or a collection
+     * @see #getItemsByPath(ItemPath, Item, Object[])
      */
     public Item getItemByPath(ItemPath path, Item startingPoint) throws ObjectStoreException;
     
@@ -93,7 +97,11 @@ public interface ItemReader
     /**
      * Returns a set of items found at the end of a path with no variables.
      * 
-     * {@inheritDoc}
+     * @param path the path expression
+     * @param startingPoint the item to start at
+     * @return Item found at the end of the path
+     * @throws ObjectStoreException if something goes wrong or a collection
+     * @see #getItemsByPath(ItemPath, Item, Object[])
      */
     public List getItemsByPath(ItemPath path, Item startingPoint) throws ObjectStoreException;
 }

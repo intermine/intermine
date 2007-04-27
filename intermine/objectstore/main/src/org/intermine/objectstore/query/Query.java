@@ -47,6 +47,7 @@ public class Query implements FromElement
      * Empty constructor.
      */
     public Query() {
+        // rmpty
     }
 
     /**

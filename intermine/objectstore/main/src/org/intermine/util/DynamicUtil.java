@@ -28,9 +28,9 @@ import net.sf.cglib.proxy.*;
  */
 public class DynamicUtil
 {
-    private static Map classMap = new HashMap();
-    private static Map decomposeMap = new HashMap();
-    private static Map friendlyNameMap = new HashMap();
+    private static Map<Set<Class>, Class> classMap = new HashMap<Set<Class>, Class>();
+    private static HashMap<Class, Set<Class>> decomposeMap = new HashMap<Class, Set<Class>>();
+    private static Map<Class, String> friendlyNameMap = new HashMap<Class, String>();
 
     /**
      * Cannot construct
@@ -62,11 +62,11 @@ public class DynamicUtil
             }
             return retval;
         } else {
-            Iterator classIter = classes.iterator();
+            Iterator<Class> classIter = classes.iterator();
             Class clazz = null;
-            Set interfaces = new HashSet();
+            Set<Class> interfaces = new HashSet<Class>();
             while (classIter.hasNext()) {
-                Class cls = (Class) classIter.next();
+                Class cls = classIter.next();
                 if (cls.isInterface()) {
                     interfaces.add(cls);
                 } else if ((clazz == null) || clazz.isAssignableFrom(cls)) {
@@ -100,8 +100,7 @@ public class DynamicUtil
                     }
                 }
             }
-            Object retval = DynamicBean.create(clazz, (Class [])
-                    interfaces.toArray(new Class[] {}));
+            Object retval = DynamicBean.create(clazz, interfaces.toArray(new Class[] {}));
             classMap.put(classes, retval.getClass());
             return retval;
         }
@@ -117,8 +116,9 @@ public class DynamicUtil
      * @throws IllegalArgumentException if there is more than one Class, or if the fields are not
      * compatible.
      */
-    public static synchronized Class composeClass(Set classes) throws IllegalArgumentException {
-        Class retval = (Class) classMap.get(classes);
+    public static synchronized Class composeClass(Set<Class> classes)
+        throws IllegalArgumentException {
+        Class retval = classMap.get(classes);
         if (retval == null) {
             retval = createObject(classes).getClass();
         }
@@ -132,11 +132,11 @@ public class DynamicUtil
      * @return set of Class objects
      * @throws ClassNotFoundException if class cannot be found
      */
-    protected static Set convertToClasses(Set names) throws ClassNotFoundException {
-        Set classes = new HashSet();
-        Iterator iter = names.iterator();
+    protected static Set<Class> convertToClasses(Set<String> names) throws ClassNotFoundException {
+        Set<Class> classes = new HashSet<Class>();
+        Iterator<String> iter = names.iterator();
         while (iter.hasNext()) {
-            classes.add(Class.forName((String) iter.next()));
+            classes.add(Class.forName(iter.next()));
         }
 
         return classes;
@@ -148,21 +148,21 @@ public class DynamicUtil
      * @param clazz the Class to decompose
      * @return a Set of Class objects
      */
-    public static synchronized Set decomposeClass(Class clazz) {
-        Set retval = (Set) decomposeMap.get(clazz);
+    public static synchronized Set<Class> decomposeClass(Class clazz) {
+        Set<Class> retval = decomposeMap.get(clazz);
         if (retval == null) {
             if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
                 // Decompose
-                retval = new LinkedHashSet();
+                retval = new LinkedHashSet<Class>();
                 retval.add(clazz.getSuperclass());
                 Class interfs[] = clazz.getInterfaces();
                 for (int i = 0; i < interfs.length; i++) {
                     Class inter = interfs[i];
                     if (net.sf.cglib.proxy.Factory.class != inter) {
                         boolean notIn = true;
-                        Iterator inIter = retval.iterator();
+                        Iterator<Class> inIter = retval.iterator();
                         while (inIter.hasNext() && notIn) {
-                            Class in = (Class) inIter.next();
+                            Class in = inIter.next();
                             if (in.isAssignableFrom(inter)) {
                                 // That means that the one already in the return value is more
                                 // general than the one we are about to put in, so we can get rid
@@ -197,7 +197,7 @@ public class DynamicUtil
      */
     public static Object instantiateObject(String className, String implementations) {
 
-        Set classNames = new HashSet();
+        Set<String> classNames = new HashSet<String>();
 
         if (className != null && !"".equals(className) && !"".equals(className.trim())) {
             classNames.add(className.trim());
@@ -226,13 +226,13 @@ public class DynamicUtil
      * @return a String describing the class, without package names
      */
     public static synchronized String getFriendlyName(Class clazz) {
-        String retval = (String) friendlyNameMap.get(clazz);
+        String retval = friendlyNameMap.get(clazz);
         if (retval == null) {
             retval = "";
-            Iterator iter = decomposeClass(clazz).iterator();
+            Iterator<Class> iter = decomposeClass(clazz).iterator();
             boolean needComma = false;
             while (iter.hasNext()) {
-                Class constit = (Class) iter.next();
+                Class constit = iter.next();
                 retval += needComma ? "," : "";
                 needComma = true;
                 retval += constit.getName().substring(constit.getName().lastIndexOf('.') + 1);

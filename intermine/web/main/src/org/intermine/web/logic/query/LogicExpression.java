@@ -56,19 +56,19 @@ public class LogicExpression
         try {
             LogicLexer lexer = new LogicLexer(new StringReader(expression));
             LogicParser parser = new LogicParser(lexer);
-            Node root;
+            Node rootNode;
             // The root context
             parser.expr();
             ast = parser.getAST();
             //new antlr.DumpASTVisitor().visit(ast);
             if (ast.getText().equals("or")) {
-                root = new Or(ast, true);
+                rootNode = new Or(ast, true);
             } else if (ast.getText().equals("and")) {
-                root = new And(ast, true);
+                rootNode = new And(ast, true);
             } else {
-                root = new Variable(ast.getText());
+                rootNode = new Variable(ast.getText());
             }
-            return root;
+            return rootNode;
         } catch (antlr.RecognitionException e) {
             new antlr.DumpASTVisitor().visit(ast);
             IllegalArgumentException e2 = new IllegalArgumentException(e.getMessage());
@@ -89,6 +89,7 @@ public class LogicExpression
      * Get the expression as a string.
      * @return expression as string
      */
+    @Override
     public String toString() {
         return root.toString();
     }
@@ -222,10 +223,6 @@ public class LogicExpression
             this.root = root;
         }
                 
-        private Operator(AST ast) {
-            this(ast, false);
-        }
-        
         /**
          * Override to provide text symbol for this operator. Used in toString.
          * @return operator name
@@ -236,6 +233,7 @@ public class LogicExpression
          * Produce an expression for this branch of the tree.
          * @return expression representing this branch
          */
+        @Override
         public String toString() {
             String expr = "";
             Iterator iter = getChildren().iterator();
@@ -273,6 +271,7 @@ public class LogicExpression
         /** 
          * {@inheritDoc}
          */
+        @Override
         protected String getOperator() {
             return "and";
         }
@@ -294,6 +293,7 @@ public class LogicExpression
         /** 
          * {@inheritDoc}
          */
+        @Override
         protected String getOperator() {
             return "or";
         }
@@ -323,6 +323,7 @@ public class LogicExpression
          * Just returns the variable name.
          * @return string representation of this node
          */
+        @Override
         public String toString() {
             return getName();
         }

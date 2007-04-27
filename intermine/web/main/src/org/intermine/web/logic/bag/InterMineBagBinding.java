@@ -35,8 +35,6 @@ import org.xml.sax.InputSource;
  */
 public class InterMineBagBinding
 {
-    private static final Logger LOG = Logger.getLogger(InterMineBagBinding.class);
-
     /**
      * Convert an InterMine bag to XML
      * @param bag the InterMineIdBag

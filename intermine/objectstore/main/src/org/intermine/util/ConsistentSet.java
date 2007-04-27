@@ -48,6 +48,7 @@ public class ConsistentSet extends AbstractSet
      * @return true if the set was altered
      * @see Set#add
      */
+    @Override
     public boolean add(Object obj) {
         int index = list.indexOf(obj);
         if (index != -1) {
@@ -64,6 +65,7 @@ public class ConsistentSet extends AbstractSet
      * @return true if the set was altered
      * @see Set#addAll
      */
+    @Override
     public boolean addAll(Collection col) {
         boolean retval = false;
         HashSet set = new HashSet(list);
@@ -84,6 +86,7 @@ public class ConsistentSet extends AbstractSet
      *
      * @return the number of elements in the Set.
      */
+    @Override
     public int size() {
         return list.size();
     }
@@ -93,6 +96,7 @@ public class ConsistentSet extends AbstractSet
      *
      * @return an iterator
      */
+    @Override
     public Iterator iterator() {
         return list.iterator();
     }

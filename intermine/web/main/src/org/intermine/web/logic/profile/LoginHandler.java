@@ -110,13 +110,6 @@ public abstract class LoginHandler extends InterMineAction
         SessionMethods.setLoggedInCookie(session, response);
     }
 
-    /**
-     * @param name
-     *            name
-     * @param names
-     *            names
-     * @return
-     */
     private String makeUniqueQueryName(String name, Set names) {
         String original = name;
         int i = 1;

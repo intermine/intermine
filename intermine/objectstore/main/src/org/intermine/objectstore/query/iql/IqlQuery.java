@@ -168,7 +168,7 @@ public class IqlQuery
             return escapeReservedWord(nodeAlias);
         } else if (qn instanceof QueryField) {
             QueryField qf = (QueryField) qn;
-            return escapeReservedWord((String) (q.getAliases().get(qf.getFromElement()))) + "."
+            return escapeReservedWord((String) q.getAliases().get(qf.getFromElement())) + "."
                 + escapeReservedWord(qf.getFieldName()) + (qf.getSecondFieldName() == null ? ""
                         : "." + escapeReservedWord(qf.getSecondFieldName()));
         } else if (qn instanceof QueryValue) {
@@ -487,6 +487,7 @@ public class IqlQuery
      *
      * @return a String version of the query
      */
+    @Override
     public String toString() {
         StringBuffer ret = new StringBuffer();
         ret.append(queryString);

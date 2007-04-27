@@ -22,10 +22,11 @@ import org.intermine.objectstore.ObjectStoreWriterTestCase;
 
 public class ObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCase
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(ObjectStoreInterMineImpl.class);
 
     public static void oneTimeSetUp() throws Exception {
-        writer = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+        writer = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         ObjectStoreWriterTestCase.oneTimeSetUp();
     }
 

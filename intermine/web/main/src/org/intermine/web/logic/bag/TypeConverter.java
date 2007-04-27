@@ -74,7 +74,7 @@ public class TypeConverter
         Constraint c = (Constraint) tq.getEditableConstraints(node).iterator().next();
         // This is a MAJOR hack - we assume that the constraint is on an ATTRIBUTE of the node we
         // want to constrain. Just because our query builder has been crippled to only allow that.
-        PathNode parent = (PathNode) tq.getNodes().get(node.getParent().getPathString());
+        PathNode parent = tq.getNodes().get(node.getParent().getPathString());
         tq.getNodes().remove(node.getPathString());
         Constraint newC = new Constraint(ConstraintOp.IN, bag, false, "", c.getCode(), null);
         parent.getConstraints().add(newC);
@@ -139,7 +139,7 @@ public class TypeConverter
         while (iter.hasNext()) {
             Tag tag = (Tag) iter.next();
             String oid = tag.getObjectIdentifier();
-            TemplateQuery tq = (TemplateQuery) p.getSavedTemplates().get(oid);
+            TemplateQuery tq = p.getSavedTemplates().get(oid);
             if (tq != null) {
                 // Find conversion types
                 List<Path> view = tq.getView();

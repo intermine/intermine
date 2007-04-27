@@ -1,8 +1,5 @@
 package org.intermine.task.project;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /* 
  * Copyright (C) 2002-2007 FlyMine
  *
@@ -13,17 +10,20 @@ import java.util.List;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Base class for actions in a project.xml files
  * @author Kim Rutherford
  */
 public abstract class Action
 {
-    private List properties = new ArrayList();
+    private List<UserProperty> properties = new ArrayList<UserProperty>();
 
     /**
-     * Add a UserProperty to 
-     * @param userProperty
+     * Add a UserProperty to the Action
+     * @param userProperty the property
      */
     public void addUserProperty(UserProperty userProperty) {
         properties.add(userProperty);
@@ -33,7 +33,7 @@ public abstract class Action
      * Return a list of UserProperty objects.
      * @return the UserPropertys
      */
-    public List getUserProperties() {
+    public List<UserProperty> getUserProperties() {
         return properties;
     }
 }

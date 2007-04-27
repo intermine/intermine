@@ -45,6 +45,7 @@ public class FlyAtlasGraphURLGenerator implements CategoryURLGenerator
     }
 
     /**
+     * {@inheritDoc}
      * @see org.jfree.chart.urls.CategoryURLGenerator#generateURL(
      *      org.jfree.data.category.CategoryDataset,
      *      int, int)

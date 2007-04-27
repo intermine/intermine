@@ -177,13 +177,14 @@ public class MageConverter extends FileConverter
     public void setQuantitationtypes(String types) {
         StringTokenizer st = new StringTokenizer(types.toLowerCase(), ",");
         while (st.hasMoreTokens()) {
-            qTypes.add(((String) st.nextToken()).trim());
+            qTypes.add(st.nextToken().trim());
         }
     }
 
     /**
      * @see FileConverter#process
      */
+    @Override
     public void close() throws Exception {
         Iterator i = refMap.keySet().iterator();
         while (i.hasNext()) {

@@ -361,7 +361,7 @@ public class UniprotConverter extends FileConverter
 
 
         /**
-         * @see DefaultHandler#startElement
+         * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {

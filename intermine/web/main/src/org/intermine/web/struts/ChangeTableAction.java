@@ -10,7 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletException;
+import org.intermine.web.logic.results.PageOutOfRangeException;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,10 +22,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PageOutOfRangeException;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>DispatchAction</strong>. Changes the
@@ -40,11 +39,11 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception ServletException if a servlet error occurs
      */
-    public ActionForward last(ActionMapping mapping, ActionForm form,
-                              HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
+    public ActionForward last(ActionMapping mapping, 
+                              @SuppressWarnings("unused") ActionForm form,
+                              HttpServletRequest request, 
+                              @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
@@ -65,16 +64,16 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception ServletException if a servlet error occurs
      */
-    public ActionForward hideColumn(ActionMapping mapping, ActionForm form,
-                              HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
+    public ActionForward hideColumn(ActionMapping mapping, 
+                                    @SuppressWarnings("unused") ActionForm form,
+                                    HttpServletRequest request, 
+                                    @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         
         int index = Integer.parseInt(request.getParameter("index"));
-        ((Column) pt.getColumns().get(index)).setVisible(false);
+        pt.getColumns().get(index).setVisible(false);
 
         return makeResultsForward(mapping.findForward("results"), request, pt);
     }
@@ -86,16 +85,16 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception ServletException if a servlet error occurs
      */
-    public ActionForward showColumn(ActionMapping mapping, ActionForm form,
-                              HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
+    public ActionForward showColumn(ActionMapping mapping, 
+                                    @SuppressWarnings("unused") ActionForm form,
+                                    HttpServletRequest request, 
+                                    @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         int index = Integer.parseInt(request.getParameter("index"));
-        ((Column) pt.getColumns().get(index)).setVisible(true);
+        pt.getColumns().get(index).setVisible(true);
 
         return makeResultsForward(mapping.findForward("results"), request, pt);
     }
@@ -107,11 +106,11 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception ServletException if a servlet error occurs
      */
-    public ActionForward moveColumnLeft(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
+    public ActionForward moveColumnLeft(ActionMapping mapping, 
+                                        @SuppressWarnings("unused") ActionForm form,
+                                        HttpServletRequest request, 
+                                        @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
@@ -128,11 +127,11 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception ServletException if a servlet error occurs
      */
-    public ActionForward moveColumnRight(ActionMapping mapping, ActionForm form,
-                                        HttpServletRequest request, HttpServletResponse response)
-        throws ServletException {
+    public ActionForward moveColumnRight(ActionMapping mapping, 
+                                         @SuppressWarnings("unused") ActionForm form,
+                                         HttpServletRequest request,
+                                         @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 

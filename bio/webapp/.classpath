@@ -39,7 +39,6 @@
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/tclib.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/violinstrings-1.0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/wizard.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/biojava.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-dbcp-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-pool-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-regexp-1.4.jar"/>
@@ -51,5 +50,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-web"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bio-tools-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry kind="lib" path="lib/biojava-1.4cvs.jar"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>

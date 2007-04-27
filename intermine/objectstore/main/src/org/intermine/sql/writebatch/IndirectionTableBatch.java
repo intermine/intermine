@@ -22,8 +22,6 @@ import org.apache.log4j.Logger;
  */
 public class IndirectionTableBatch implements Table
 {
-    private static final Logger LOG = Logger.getLogger(IndirectionTableBatch.class);
-
     private String leftColName, rightColName;
     private Set rowsToDelete;
     private Set rowsToInsert;
