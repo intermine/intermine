@@ -280,11 +280,10 @@ public class WebResults extends AbstractList implements WebTable
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFeldCD,
                                                                fieldName);
                 Set classes = DynamicUtil.decomposeClass(o.getClass());
-                String className = TypeUtil.unqualifiedName(((Class) classes.iterator().next())
-                    .getName());
+                Class cls = (Class) classes.iterator().next();
                 ResultElement resultElement = 
                     new ResultElement(osResults.getObjectStore(), 
-                                      fieldValue, o.getId(), className, columnPath, isKeyField);
+                                      fieldValue, o.getId(), cls, columnPath, isKeyField);
                 rowCells.add(resultElement);
             } else {
                 rowCells.add(fieldValue);

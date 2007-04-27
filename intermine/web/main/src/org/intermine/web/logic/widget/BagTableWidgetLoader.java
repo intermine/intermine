@@ -154,11 +154,10 @@ public class BagTableWidgetLoader
                         String columnName = (String) iterator3.next();
                         Path path = new Path(model, columnName);
                         Object fieldValue = path.resolve(o);
-                        String thisType = TypeUtil.unqualifiedName(path.getStartClassDescriptor()
-                                .getName());
+                        Class thisType = path.getStartClassDescriptor().getType();
                         String fieldName = path.getEndFieldDescriptor().getName();
-                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, thisType,
-                                fieldName);
+                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, 
+                                TypeUtil.unqualifiedName(thisType.getName()), fieldName);
                         flattenedRow.add(new ResultElement(os, fieldValue, o.getId(), thisType,
                                     path, isKeyField));
                     }
