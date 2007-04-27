@@ -1,6 +1,8 @@
 var duplicateArray = new Array();
 var tdColorArray = new Array();
 
+
+
 function addId2Bag(id,row,parentId,issueType){
     if(document.getElementById('add_'+issueType+'_'+id).className=='fakelink'){
         document.getElementById('add_'+issueType+'_'+id).className = '';
@@ -31,7 +33,8 @@ function addId2Bag(id,row,parentId,issueType){
             idArray[idArray.length] = id;
             duplicateArray[parentId] = idArray;
         }
-    }
+        toggleForm(1);
+    }    
 }
 
 function removeIdFromBag(id,row, parentId, issueType){
@@ -66,6 +69,7 @@ function removeIdFromBag(id,row, parentId, issueType){
                 }
             }
             duplicateArray[parentId] = idArrayCopy;
-        }
+        }      
+        toggleForm(document.getElementById('matchCount').innerHTML);        
     }
 }

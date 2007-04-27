@@ -10,7 +10,23 @@
 <html:hidden property="matchIDs" styleId="matchIDs"/>
 <html:hidden property="bagType"/>
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
+<script type="text/javascript">
+ <!--
+window.onload = function() { toggleForm(${matchCount}); }
 
+function toggleForm(matchCount) {
+	if (matchCount > 0) {
+		document.bagUploadConfirmForm.bagName.disabled = false;
+		document.bagUploadConfirmForm.submit.disabled = false;
+	} else {
+		document.bagUploadConfirmForm.bagName.disabled = true;
+		document.bagUploadConfirmForm.submit.disabled = true;
+	}
+}
+
+// -->
+
+</script>
 <c:set var="totalIdCount" value="${fn:length(duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>  <div class="body" align="center">
 
     <div id="uploadConfirmMessage">
@@ -61,7 +77,7 @@
         </c:otherwise>
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
-      <html:text property="bagName" size="20"/>
+      <html:text property="bagName" size="20" />
       <html:submit property="submit">
         <fmt:message key="bagUploadConfirm.submitOK"/>
       </html:submit>
