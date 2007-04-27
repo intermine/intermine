@@ -52,7 +52,7 @@ public class UserTemplateAction extends InterMineDispatchAction
         String templateName = request.getParameter("name");
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
-        TemplateQuery template = (TemplateQuery) profile.getSavedTemplates().get(templateName);
+        TemplateQuery template = profile.getSavedTemplates().get(templateName);
         if (template != null) {
             recordMessage(new ActionMessage("templateList.deleted", templateName), request);
             profile.deleteTemplate(templateName);

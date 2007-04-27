@@ -96,6 +96,7 @@ public class IqlShell
             }
         });
         Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
             public void run() {
                 try {
                     Readline.writeHistoryFile(System.getProperty("user.home") + File.separator
@@ -138,8 +139,8 @@ public class IqlShell
                             } catch (ClassNotFoundException e) {
                                 // The following will only work when there is one package in the
                                 // model
-                                String modelPackage = TypeUtil.packageName(((ClassDescriptor) os
-                                            .getModel().getClassDescriptors().iterator().next())
+                                String modelPackage = TypeUtil.packageName(os
+                                            .getModel().getClassDescriptors().iterator().next()
                                         .getName());
                                 if (modelPackage != null) {
                                     try {
@@ -153,7 +154,7 @@ public class IqlShell
                                             + currentQuery);
                                 }
                             }
-                            ClassDescriptor cld = (ClassDescriptor) os.getModel()
+                            ClassDescriptor cld = os.getModel()
                                 .getClassDescriptorsForClass(c).iterator().next();
                             System.out .println(cld.getHumanReadableText());
                         } else {

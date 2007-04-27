@@ -10,17 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
 
 import org.apache.log4j.Logger;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -35,8 +28,6 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class ObjectViewController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(ObjectViewController.class);
-    
     /**
      * Assembles data for displaying an object.
      *
@@ -49,18 +40,19 @@ public class ObjectViewController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
+                                 @SuppressWarnings("unused") HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
+        /*  
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
+        Model model = os.getModel();
         Object o = request.getAttribute("object");
-/*        
+      
         if (o == null) {
             String objectId = (String) request.getParameter("id");
             if (objectId != null) {

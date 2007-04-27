@@ -10,12 +10,9 @@ package org.intermine.web.logic.profile;
  *
  */
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -27,6 +24,8 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.template.TemplateQuery;
+
+import junit.framework.TestCase;
 
 public class ProfileTest extends TestCase
 {

@@ -315,7 +315,7 @@ public class QueryBuilderForm extends ActionForm
                     : ConstraintOp.getOpForIndex(Integer.valueOf(getAttributeOp()));
 
         if (request.getParameter("attribute") != null) {
-            PathNode node = (PathNode) query.getNodes().get(path);
+            PathNode node = query.getNodes().get(path);
             Class fieldClass = MainHelper.getClass(node.getType());
             parsedAttributeValue =
                 parseValue(attributeValue, fieldClass, constraintOp, locale, errors);

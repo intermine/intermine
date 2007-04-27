@@ -87,7 +87,7 @@ public class ModifyTemplateAction extends InterMineAction
     public ActionForward delete(ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
-                                HttpServletResponse response)
+                                @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();

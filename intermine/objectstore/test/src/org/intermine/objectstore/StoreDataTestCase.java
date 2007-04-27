@@ -34,8 +34,7 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         SetupDataTestCase.oneTimeSetUp();
         try {
             if (storeDataWriter == null) {
-                storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
-                    .getObjectStoreWriter("osw.unittest");
+                storeDataWriter = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
             }
             storeData();
             //System.exit(1);

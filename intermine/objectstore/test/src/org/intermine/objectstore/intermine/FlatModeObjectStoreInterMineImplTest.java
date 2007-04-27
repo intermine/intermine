@@ -25,10 +25,10 @@ public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineIm
 {
     public static void oneTimeSetUp() throws Exception {
         alternateDataFile = "testmodel_data_flatmode.xml";
-        storeDataWriter = (ObjectStoreWriterInterMineImpl) ObjectStoreWriterFactory
+        storeDataWriter = ObjectStoreWriterFactory
             .getObjectStoreWriter("osw.flatmodeunittest");
         ObjectStoreInterMineImplTest.oneTimeSetUp();
-        os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.flatmodeunittest");
+        os = ObjectStoreFactory.getObjectStore("os.flatmodeunittest");
         results.put("SelectInterfaceAndSubClasses", NO_RESULT);
         results.put("SelectInterfaceAndSubClasses2", NO_RESULT);
         results.put("InterfaceField", NO_RESULT);

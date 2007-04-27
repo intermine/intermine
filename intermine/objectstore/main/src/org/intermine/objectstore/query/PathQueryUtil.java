@@ -10,15 +10,14 @@ package org.intermine.objectstore.query;
  *
  */
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.util.TypeUtil;
-
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.util.TypeUtil;
 
 import org.apache.tools.ant.BuildException;
 
@@ -90,7 +89,6 @@ public class PathQueryUtil
             }
     
             ClassDescriptor startCld = model.getClassDescriptorByName(start);
-            ReferenceDescriptor rd = startCld.getReferenceDescriptorByName(refName);
             if ((startCld.getReferenceDescriptorByName(refName, true) == null)
                 && (startCld.getCollectionDescriptorByName(refName, true) == null)) {
                 throw new IllegalArgumentException("Cannot find descriptor for " + refName

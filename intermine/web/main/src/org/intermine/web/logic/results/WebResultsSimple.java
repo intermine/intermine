@@ -45,6 +45,7 @@ public class WebResultsSimple extends AbstractList implements WebTable
     /** 
      * {@inheritDoc} 
      */
+    @Override
     public Object get(int index) {
         return results.get(index);
     }
@@ -52,6 +53,7 @@ public class WebResultsSimple extends AbstractList implements WebTable
     /**
      * {@inheritDoc}
      */
+    @Override
     public int size() {
         try {
             return results.getInfo().getRows();
@@ -59,6 +61,7 @@ public class WebResultsSimple extends AbstractList implements WebTable
             throw new RuntimeException("failed to get a ResultsInfo object", e);
         }
     }
+
     private List<Column> getColumnsInternal() {
         if (columns == null) {
             columns = new ArrayList<Column>();
@@ -77,6 +80,11 @@ public class WebResultsSimple extends AbstractList implements WebTable
         return getColumnsInternal();
     }
 
+    /**
+     * Return a List of ResultElement objects for the row given by index.
+     * @param index the row index
+     * @return the List
+     */
     public List<ResultElement> getResultElements(int index) {
         ResultsRow resultsRow = (ResultsRow) results.get(index);
         List<ResultElement> rowCells = new ArrayList<ResultElement>();

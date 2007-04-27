@@ -68,6 +68,7 @@ public class BestQueryExplainer extends BestQuery
      * @throws BestQueryException if the current best Query is the best we think we are going to get
      * @throws SQLException if error occurs in the underlying database
      */
+    @Override
     public void add(Query q) throws BestQueryException, SQLException {
 
         Candidate c = new Candidate(q);
@@ -81,6 +82,7 @@ public class BestQueryExplainer extends BestQuery
      * @throws BestQueryException if the current best Query is the best we think we are going to get
      * @throws SQLException if error occurs in the underlying database
      */
+    @Override
     public void add(String q) throws BestQueryException, SQLException {
 
         Candidate c = new Candidate(q);
@@ -160,7 +162,8 @@ public class BestQueryExplainer extends BestQuery
      *
      * @param c the Candidate
      */
-    protected void didNotExplain(Candidate c) {
+    protected void didNotExplain(@SuppressWarnings("unused") Candidate c) {
+        // empty
     }
 
     /**
@@ -169,6 +172,7 @@ public class BestQueryExplainer extends BestQuery
      * @return the best Query, or null if no Queries added to this object
      * @throws SQLException if an error occurs in the underlying database
      */
+    @Override
     public Query getBestQuery() throws SQLException {
         Candidate best = getBest();
         if (best == null) {
@@ -183,6 +187,7 @@ public class BestQueryExplainer extends BestQuery
      * @return the best Query, or null if no Queries added to this object
      * @throws SQLException if an error occurs in the underlying database
      */
+    @Override
     public String getBestQueryString() throws SQLException {
         Candidate best = getBest();
         if (best == null) {
@@ -341,6 +346,7 @@ public class BestQueryExplainer extends BestQuery
         /**
          * {@inheritDoc}
          */
+        @Override
         public String toString() {
             return "tables = " + tableCount + (query != null ? ", query = " + query
                     : ", queryString = " + queryString);

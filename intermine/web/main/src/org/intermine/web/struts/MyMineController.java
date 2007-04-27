@@ -61,11 +61,11 @@ public class MyMineController extends TilesAction
      * Set up attributes for the myMine page.
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
-                                 ActionForm form,
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();

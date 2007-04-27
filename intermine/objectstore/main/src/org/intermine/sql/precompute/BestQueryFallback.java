@@ -40,7 +40,8 @@ public class BestQueryFallback extends BestQuery
      * @param q a Query to be added to the tracker
      * @throws BestQueryException always - this BestQuery does not support updates
      */
-    public void add(Query q) throws BestQueryException {
+    @Override
+    public void add(@SuppressWarnings("unused") Query q) throws BestQueryException {
         throw new BestQueryException("Cannot add more queries to a BestQueryFallback");
     }
 
@@ -50,7 +51,8 @@ public class BestQueryFallback extends BestQuery
      * @param q a query String to be added to the tracker
      * @throws BestQueryException always - this BestQuery does not support updates
      */
-    public void add(String q) throws BestQueryException {
+    @Override
+    public void add(@SuppressWarnings("unused") String q) throws BestQueryException {
         throw new BestQueryException("Cannot add more queries to a BestQueryFallback");
     }
 
@@ -59,6 +61,7 @@ public class BestQueryFallback extends BestQuery
      *
      * @return the best Query, or null if no Queries added to this object
      */
+    @Override
     public Query getBestQuery() {
         return (queryString == null ? query : new Query(queryString));
     }
@@ -68,6 +71,7 @@ public class BestQueryFallback extends BestQuery
      *
      * @return the best Query, or null if no Queries added to this object
      */
+    @Override
     public String getBestQueryString() {
         return (query == null ? queryString : query.getSQLString());
     }

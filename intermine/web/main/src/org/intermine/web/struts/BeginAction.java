@@ -38,9 +38,9 @@ public class BeginAction extends InterMineAction
     *  an exception
     */
    public ActionForward execute(ActionMapping mapping,
-                                ActionForm form,
+                                @SuppressWarnings("unused") ActionForm form,
                                 HttpServletRequest request,
-                                HttpServletResponse response)
+                                @SuppressWarnings("unused") HttpServletResponse response)
        throws Exception {
        Boolean archived = (Boolean) request.getSession().getServletContext()
            .getAttribute(Constants.ARCHIVED);

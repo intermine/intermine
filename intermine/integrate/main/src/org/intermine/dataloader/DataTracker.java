@@ -63,9 +63,6 @@ public class DataTracker
     protected Exception broken = null;
     private CacheStorer cacheStorer;
     private int version = 0;
-    // This reference is here so that the Database doesn't get garbage collected.
-    private Database db;
-
     private int ops = 0;
     private int misses = 0;
 
@@ -79,7 +76,6 @@ public class DataTracker
     public DataTracker(Database db, int maxSize, int commitSize) {
         this.maxSize = maxSize;
         this.commitSize = commitSize;
-        this.db = db;
         cache = new LinkedHashMap(maxSize * 14 / 10, 0.75F, true);
         try {
             conn = db.getConnection();

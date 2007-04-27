@@ -179,7 +179,7 @@ public class TemplateController extends TilesAction
                 // create display name
                 PathNode parent;
                 if (displayNode.getPathString().indexOf('.') >= 0) {
-                    parent = (PathNode) displayTemplate.getNodes().get(
+                    parent = displayTemplate.getNodes().get(
                             displayNode.getPathString().substring(0,
                             displayNode.getPathString().lastIndexOf(".")));
                 } else {

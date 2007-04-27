@@ -1,7 +1,14 @@
-/**
- * 
- */
 package org.intermine.task.project;
+
+/*
+ * Copyright (C) 2002-2007 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,9 +21,9 @@ import java.util.Map;
 public class Project
 {
     String type = null;
-    Map sources = new LinkedHashMap();
-    List properties = new ArrayList();
-    Map postProcesses = new LinkedHashMap();
+    Map<String, Source> sources = new LinkedHashMap<String, Source>();
+    List<UserProperty> properties = new ArrayList<UserProperty>();
+    Map<String, PostProcess> postProcesses = new LinkedHashMap<String, PostProcess>();
     
     /**
      * Add a Source object
@@ -48,7 +55,7 @@ public class Project
      * Return a Map from source name to Source
      * @return the Sources
      */
-    public Map getSources() {
+    public Map<String, Source> getSources() {
         return sources;
     }
     
@@ -56,7 +63,7 @@ public class Project
      * Return a list of UserProperty objects for the Project.
      * @return the properties
      */
-    public List getProperties() {
+    public List<UserProperty> getProperties() {
         return properties;
     }
 
@@ -64,7 +71,7 @@ public class Project
      * Return a Map from post-process name to PostProcess objects
      * @return the PostProcess objects
      */
-    public Map getPostProcesses() {
+    public Map<String, PostProcess> getPostProcesses() {
         return postProcesses;
     }
 

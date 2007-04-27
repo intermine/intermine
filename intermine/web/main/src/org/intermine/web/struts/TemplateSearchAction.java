@@ -140,7 +140,7 @@ public class TemplateSearchAction extends InterMineAction
                 String name = doc.get("name");
                 
                 if (type.equals("user")) {
-                    template = (TemplateQuery) profile.getSavedTemplates().get(name);
+                    template = profile.getSavedTemplates().get(name);
                 } else if (type.equals("global")) {
                     template = (TemplateQuery) globalTemplates.get(name);
                 }

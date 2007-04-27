@@ -121,7 +121,7 @@ public class TemplateQuery extends PathQuery
             return Collections.EMPTY_LIST;
         } else {
             List ecs = new ArrayList();
-            Iterator cIter = ((PathNode) nodes.get(path)).getConstraints().iterator();
+            Iterator cIter = nodes.get(path).getConstraints().iterator();
             while (cIter.hasNext()) {
                 Constraint c = (Constraint) cIter.next();
                 if (c.isEditable()) {

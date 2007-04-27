@@ -72,7 +72,7 @@ public class BagDetailsAction extends Action
         InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
         
         String identifier = "bag." + bagName;
-        PagedTable pc = (PagedTable) SessionMethods.getResultsTable(session, identifier);
+        PagedTable pc = SessionMethods.getResultsTable(session, identifier);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Query q = new Query();

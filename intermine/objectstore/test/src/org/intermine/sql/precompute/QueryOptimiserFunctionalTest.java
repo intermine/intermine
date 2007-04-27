@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 
 public class QueryOptimiserFunctionalTest extends DatabaseTestCase
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(QueryOptimiserFunctionalTest.class);
     protected Map queries = new HashMap();
     protected Map precomps = new HashMap();

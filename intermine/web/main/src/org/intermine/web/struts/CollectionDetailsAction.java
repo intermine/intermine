@@ -69,7 +69,7 @@ public class CollectionDetailsAction extends Action
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
-        Integer id = new Integer((String) request.getParameter("id"));
+        Integer id = new Integer(request.getParameter("id"));
         String field = request.getParameter("field");
         String pageSize = request.getParameter("pageSize");
         String trail = request.getParameter("trail");

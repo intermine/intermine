@@ -141,6 +141,7 @@ public abstract class AbstractConstraint implements SQLStringable
      * @param obj the Object to compare to
      * @return true if obj is the same
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof AbstractConstraint) {
             AbstractConstraint objC = (AbstractConstraint) obj;
@@ -155,6 +156,7 @@ public abstract class AbstractConstraint implements SQLStringable
      *
      * @return an arbitrary integer based on the contents of the AbstractConstraint
      */
+    @Override
     public abstract int hashCode();
     
     /**

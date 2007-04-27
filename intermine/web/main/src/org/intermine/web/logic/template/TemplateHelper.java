@@ -108,7 +108,7 @@ public class TemplateHelper
                 SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
             return (TemplateQuery) templates.get(templateName);
         } else if (USER_TEMPLATE.equals(type)) {
-            return (TemplateQuery) profile.getSavedTemplates().get(templateName);
+            return profile.getSavedTemplates().get(templateName);
         } else if (SHARED_TEMPLATE.equals(type)) {
             // TODO implement shared templates
             return null;
@@ -121,7 +121,7 @@ public class TemplateHelper
                 return tq;
             }
         } else if (TEMP_TEMPLATE.equals(type)) {
-           SavedQuery savedQuery = (SavedQuery) profile.getHistory().get(templateName);
+           SavedQuery savedQuery = profile.getHistory().get(templateName);
            return (TemplateQuery) savedQuery.getPathQuery();
         } else {
             throw new IllegalArgumentException("type: " + type);
@@ -153,7 +153,7 @@ public class TemplateHelper
             for (Iterator ci = template.getEditableConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
                 String key = "" + (j + 1);
-                PathNode nodeCopy = (PathNode) queryCopy.getNodes().get(node.getPathString());
+                PathNode nodeCopy = queryCopy.getNodes().get(node.getPathString());
 
                 if (tf.getUseBagConstraint(key)) {
                     // Replace constraint with bag constraint
@@ -169,7 +169,7 @@ public class TemplateHelper
                     }
                     if (bag != null) {
                         // constrain parent object of this node to be in bag
-                        PathNode parent = (PathNode) queryCopy.getNodes()
+                        PathNode parent = queryCopy.getNodes()
                             .get(nodeCopy.getParent().getPathString());
                         Constraint bagConstraint = new Constraint(constraintOp, constraintValue,
                                 true, c.getDescription(), c.getCode(), c.getIdentifier());
@@ -278,7 +278,7 @@ public class TemplateHelper
                                                    tbs.getTitle(),
                                                    tbs.getDescription(),
                                                    tbs.getComment(),
-                                                   (PathQuery) query.clone(),
+                                                   query.clone(),
                                                    tbs.getKeywords());
         return template;
     }
@@ -386,7 +386,7 @@ public class TemplateHelper
          PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
                                                                           new HashMap());
         try {
-            Map pathToQueryNode = new HashMap();
+            Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
             Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode);
             Results results = os.execute(query);
             Model model = os.getModel();
@@ -456,6 +456,7 @@ public class TemplateHelper
             final ObjectStore os =
                 (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
+            @SuppressWarnings("unused")
             public Serializable create(String templateName, /*String viewName,*/
                                        InterMineBag interMineIdBag, String userName) {
                 if (userName.equals(NO_USERNAME_STRING)) {
@@ -481,6 +482,7 @@ public class TemplateHelper
                 return makeInlineTemplateTable(servletContext, template, /*viewName,*/ null,
                                                interMineIdBag);
             }
+            @SuppressWarnings("unused")
             public Serializable create(String templateName, /*String viewName,*/
                                        Integer id, String userName) {
                 if (userName.equals(NO_USERNAME_STRING)) {
@@ -609,7 +611,7 @@ public class TemplateHelper
 
 
         // dummy call to makeQuery() to fill in pathToQueryNode map
-        List indexPaths = new ArrayList();
+        List<String> indexPaths = new ArrayList<String>();
         // find nodes with editable constraints to index and possibly add to select list
         Iterator niter = template.getEditableNodes().iterator();
         while (niter.hasNext()) {
@@ -628,22 +630,22 @@ public class TemplateHelper
             }
         }
 
-        HashMap pathToQueryNode = new HashMap();
+        HashMap<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
         Query query = MainHelper.makeQuery(templateClone, new HashMap(),
                 pathToQueryNode);
         if (groupByNode != null) {
             query.clearOrderBy();
             query.clearSelect();
-            QueryNode qn = (QueryNode) pathToQueryNode.get(groupByNode.getPathString());
+            QueryNode qn = pathToQueryNode.get(groupByNode.getPathString());
             query.addToSelect(qn);
             query.addToGroupBy(qn);
         } else {
             // Queries only select objects, need to add editable constraints to select so they can
             // be indexed in precomputed table.  Create additional indexes for fields.
-            Iterator indexIter = indexPaths.iterator();
+            Iterator<String> indexIter = indexPaths.iterator();
             while (indexIter.hasNext()) {
-                String path = (String) indexIter.next();
-                query.addToSelect((QueryNode) pathToQueryNode.get(path));
+                String path = indexIter.next();
+                query.addToSelect(pathToQueryNode.get(path));
             }
             indexes.addAll(query.getSelect());
         }

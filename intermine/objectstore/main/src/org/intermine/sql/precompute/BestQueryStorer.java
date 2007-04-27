@@ -10,9 +10,8 @@ package org.intermine.sql.precompute;
  *
  */
 
-import org.intermine.sql.query.Query;
 import java.util.Set;
-import java.sql.SQLException;
+import org.intermine.sql.query.Query;
 import org.intermine.util.ConsistentSet;
 
 /**
@@ -36,10 +35,9 @@ public class BestQueryStorer extends BestQuery
      * Allows a Query to be added to this tracker.
      *
      * @param q a Query to be added to the tracker
-     * @throws BestQueryException if the current best Query is the best we think we are going to get
-     * @throws SQLException if there is an error in the underlying database
      */
-    public void add(Query q) throws BestQueryException, SQLException {
+    @Override
+    public void add(Query q) {
         if (q == null) {
             throw new NullPointerException("Cannot add null queries to a BestQueryStorer");
         }
@@ -50,10 +48,9 @@ public class BestQueryStorer extends BestQuery
      * Allows a Query to be added to this tracker.
      *
      * @param q a query String to be added to the tracker
-     * @throws BestQueryException if the current best Query is the best we think we are going to get
-     * @throws SQLException if there is an error in the underlying database
      */
-    public void add(String q) throws BestQueryException, SQLException {
+    @Override
+    public void add(String q) {
         if (q == null) {
             throw new NullPointerException("Cannot add null queries to a BestQueryStorer");
         }
@@ -74,6 +71,7 @@ public class BestQueryStorer extends BestQuery
      *
      * @return the best Query, or null if no Queries added to this object
      */
+    @Override
     public Query getBestQuery() {
         throw new RuntimeException("Unsupported Operation");
     }
@@ -83,6 +81,7 @@ public class BestQueryStorer extends BestQuery
      *
      * @return the best Query, or null if no Queries added to this object
      */
+    @Override
     public String getBestQueryString() {
         throw new RuntimeException("Unsupported Operation");
     }

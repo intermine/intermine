@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 public class ShutdownHook extends Thread
 {
     private static final Logger LOG = Logger.getLogger(ShutdownHook.class);
-    private static Stack objects = new Stack();
+    private static Stack<Object> objects = new Stack<Object>();
     private static ShutdownHook instance = new ShutdownHook();
 
     static {
@@ -86,6 +86,7 @@ public class ShutdownHook extends Thread
     /**
      * @see Thread#run
      */
+    @Override
     public void run() {
         shutdown();
     }

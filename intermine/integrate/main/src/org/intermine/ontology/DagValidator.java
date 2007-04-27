@@ -170,7 +170,7 @@ public class DagValidator
             while (synIter.hasNext()) {
                 DagTermSynonym synonym = (DagTermSynonym) synIter.next();
                 if (synMap.containsKey(synonym.getName())) {
-                    DagTerm term = (DagTerm) nameMap.get((String) e.getKey());
+                    DagTerm term = (DagTerm) nameMap.get(e.getKey());
                     DagTerm synTerm = (DagTerm) nameMap.get(synonym.getName());
                     output.append("synonym \'" + synonym + "\' for term: \'" + term.toString()
                                   + "\' is also term: " + synTerm.getId() + "\n");
@@ -209,38 +209,6 @@ public class DagValidator
         }
         return valid;
     }
-
-
-    private void collectSynonyms(DagTerm term) {
-        synMap.put(term.getName(), term.getSynonyms());
-        nameMap.put(term.getName(), term);
-    }
-
-    private void collectNames(DagTerm term) {
-        HashSet tmpIds = (HashSet) ids.get(term.getId());
-        if (tmpIds == null) {
-            tmpIds = new HashSet();
-            ids.put(term.getId(), tmpIds);
-        }
-        tmpIds.add(term);
-    }
-
-    private void collectIds(DagTerm term) {
-        HashSet tmpNames = (HashSet) names.get(term.getName());
-        if (tmpNames == null) {
-            tmpNames = new HashSet();
-            names.put(term.getName(), tmpNames);
-        }
-        tmpNames.add(term);
-    }
-
-    private void flattenRelations(DagTerm term) {
-        partofs.addAll(term.getComponents());
-        isas.addAll(term.getChildren());
-    }
-
-
-
 
 //     public static void main(String[] args) {
 //         String dagFilename = args[0];

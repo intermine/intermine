@@ -62,7 +62,7 @@ public class ModifyBagAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         if (request.getParameter("union") != null) {
             combine(mapping, form, request, ObjectStoreBagCombination.UNION);
@@ -94,7 +94,7 @@ public class ModifyBagAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-        Map<String, InterMineBag> savedBags = (Map<String, InterMineBag>) profile.getSavedBags();
+        Map<String, InterMineBag> savedBags = profile.getSavedBags();
         String[] selectedBags = mbf.getSelectedBags();
 
         String type = getTypesMatch(savedBags, selectedBags, os);

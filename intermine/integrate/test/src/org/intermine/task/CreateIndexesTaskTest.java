@@ -10,18 +10,15 @@ package org.intermine.task;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.intermine.metadata.Model;
+
+import junit.framework.TestCase;
 
 public class CreateIndexesTaskTest extends TestCase
 {
