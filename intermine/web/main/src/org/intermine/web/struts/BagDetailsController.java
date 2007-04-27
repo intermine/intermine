@@ -10,31 +10,21 @@ package org.intermine.web.struts;
  *
  */
 
-import java.awt.Font;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -51,6 +41,21 @@ import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
+
+import java.awt.Font;
+
+import java.lang.reflect.Constructor;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -82,12 +87,16 @@ public class BagDetailsController extends TilesAction
 
         String bagName = request.getParameter("bagName");
         InterMineBag imBag = profile.getSavedBags().get(bagName);
-
+        /* forward to bag page if this is an invalid bag */
+        if (imBag == null) {
+            return null; 
+        }
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
-
-        Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
+        Type type = (Type) webConfig.getTypes().get(model.getPackageName() 
+                                                        + "." + imBag.getType());
+               
         Set graphDisplayers = type.getGraphDisplayers();
         ArrayList<String[]> graphDisplayerArray = new ArrayList<String[]>();
         for (Iterator iter = graphDisplayers.iterator(); iter.hasNext();) {
