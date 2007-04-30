@@ -10,7 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.AbstractList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.intermine.objectstore.query.Query;
@@ -18,6 +20,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -177,7 +180,15 @@ public class SaveBagAction extends InterMineAction
                         osw.addToBagFromQuery(bag.getOsb(), q);
                         LOG.error("Created bag from query: " + q);
                     } else {
-                        throw new ClassCastException("Expected table to be a WebResults");
+                        if (allRows instanceof WebPathCollection) {
+                            List allRowsList = ((WebPathCollection) allRows).getList();
+                            if (allRowsList instanceof Results) {
+                                osw.addAllToBag(bag.getOsb(), new SingleColumnResults(allRowsList));
+                            }
+                        } else {
+                            throw new ClassCastException("Unhandled table type: "
+                                                         + allRows.getClass());
+                        }
                     }
                 } else {
                     // It's an individual object.
@@ -202,6 +213,7 @@ public class SaveBagAction extends InterMineAction
                     osw.close();
                 }
             } catch (ObjectStoreException e) {
+                // empty
             }
         }
         if (request.getParameter("saveNewBag") != null) {
@@ -209,6 +221,46 @@ public class SaveBagAction extends InterMineAction
                 bag.getName()).forward();
         } else {
             return mapping.findForward("results");
+        }
+    }
+
+    /**
+     * A class the wraps a list of lists and acts like a list that just contains the elements
+     * in the first column.
+     * @author Kim Rutherford
+     */
+    @SuppressWarnings("unchecked")
+    private static class SingleColumnResults extends AbstractList
+    {
+        private List list;
+
+        /** 
+         * Create a new SingleColumnResults object
+         * @param the list of lists to act on
+         */
+        public SingleColumnResults(List list) {
+            this.list = list;
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.AbstractList#get(int)
+         */
+        @Override
+        public Object get(int index) {
+            Object row = list.get(index);
+            if (row instanceof List) {
+                return ((List) row).get(0);
+            } else {
+                return row;
+            }
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.AbstractCollection#size()
+         */
+        @Override
+        public int size() {
+            return list.size();
         }
     }
 }
