@@ -79,25 +79,33 @@ function roundToSignificantDecimal(n) {
     } else return 100;
 }
 
-function getColumnSummary(columnName) {
+function updateCountInColumnSummary() {
+    var countString = document.resultsCountText;
+    document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
+    setTimeout("updateCountInColumnSummary()", 1000);
+}
+
+function getColumnSummary(columnName, columnDisplayName) {
     DWRUtil.removeAllRows('summary_table');
     document.getElementById('summary_loaded').style.display = "none";
     document.getElementById('summary_loading').style.display = "block";
-    Effect.Appear('summary', { duration: 0.30 });
+    Effect.Appear('summary', { duration: 0.30 });    
     AjaxServices.getColumnSummary(columnName, function(str){
         var rows = str;
         var cellFuncs = new Array();
+        document.getElementById('summary_column_name').innerHTML = columnDisplayName;
         for (var i=0;i<rows[0].length;i++){
-            cellFuncs[i] = eval('function(data) {var cell = data['+i+']; if (! isNaN(cell)) {var rf = roundToSignificantDecimal(cell+0);return Math.round(cell*rf)/rf;} else return cell; }');
+            cellFuncs[i] = eval('function(data) {var cell = data['+i+']; if (cell==null) { return "[no value]" } if (! isNaN(cell)) {var rf = roundToSignificantDecimal(cell+0);return Math.round(cell*rf)/rf;} else return cell; }');
         }
         if(cellFuncs.length == 2){
             document.getElementById('summary_head').innerHTML = '<tr><th>Value</th><th>Count</th></tr>';
         } else if (cellFuncs.length == 4){
-            document.getElementById('summary_head').innerHTML = '<tr><th>Min</th><th>Max</th><th>Average</th><th>Deviation</th></tr>';
+            document.getElementById('summary_head').innerHTML = '<tr><th>Min</th><th>Max</th><th>Sample Mean</th><th>Standard Deviation</th></tr>';
         }
         DWRUtil.addRows("summary_table", rows, cellFuncs);
         document.getElementById('summary_loading').style.display = "none";
         document.getElementById('summary_loaded').style.display = "block";
+        setTimeout("updateCountInColumnSummary()", 1000);
     });
 }
 

@@ -117,6 +117,19 @@
           <tr>
             <c:forEach var="column" items="${resultsTable.columns}" varStatus="status">
 
+              <c:set var="displayPath" value="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
+              <im:unqualify className="${column.name}" var="pathEnd"/>
+              <im:prefixSubstring str="${column.name}" outVar="columnPathPrefix" delimiter="."/>
+              <c:choose>
+                <c:when test="${!empty QUERY
+                              && !empty QUERY.pathStringDescriptions[columnPathPrefix]}">
+                  <c:set var="columnDisplayName" 
+                         value="<span class='viewPathDescription' title='${displayPath}'>${QUERY.pathStringDescriptions[columnPathPrefix]}</span> &gt; ${pathEnd}"/>
+                </c:when>
+                <c:otherwise>
+                  <c:set var="columnDisplayName" value="${displayPath}"/>
+                </c:otherwise>
+              </c:choose>
               <c:choose>
                 <c:when test="${column.visible}">
                   <c:if test="${column.selectable}">
@@ -158,9 +171,11 @@
                         </html:link>
                       </c:if>
 
+                      <%-- summary --%>
                       <c:if test="${isWebResults}">
 		        <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-                        <a href="javascript:getColumnSummary('${column.name}')" title="${summaryTitle}"><img src="images/summary_maths.png" alt="${summaryTitle}"></a>
+                        <a href="javascript:getColumnSummary('${column.name}', &quot;${columnDisplayName}&quot;)" 
+                           title="${summaryTitle}"><img src="images/summary_maths.png" alt="${summaryTitle}"></a>
                       </c:if>
 
                       <%-- right --%>
@@ -193,20 +208,7 @@
 
                     </div>
                     <div>
-                      <c:set var="displayPath" value="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
-                      <im:unqualify className="${column.name}" var="pathEnd"/>
-                      <im:prefixSubstring str="${column.name}" outVar="pathPrefix" delimiter="."/>
-                      <c:choose>
-                        <c:when test="${!empty QUERY
-                                      && !empty QUERY.pathStringDescriptions[pathPrefix]}">
-                          <span class="viewPathDescription"
-                                title="${displayPath}">${QUERY.pathStringDescriptions[pathPrefix]}</span>
-                          &gt; ${pathEnd}
-                        </c:when>
-                        <c:otherwise>
-                          <c:out value="${displayPath}" escapeXml="false"/>
-                        </c:otherwise>
-                      </c:choose>
+                      <c:out value="${columnDisplayName}" escapeXml="false"/>
                     </div>
                   </th>
                 </c:when>
@@ -273,19 +275,28 @@
         <%--  The Summary table --%>
         <div id="summary" style="display:none;" >
         <div>
-          <div align="right" ><img onclick="javascript:Effect.Fade('summary', { duration: 0.30 });" src="images/close.png" title="Close" 
-          onmouseout="this.style.cursor='normal';" onmouseover="this.style.cursor='pointer';"></div>
+          <div align="right" ><img style="padding-bottom: 4px"
+                                   onclick="javascript:Effect.Fade('summary', { duration: 0.30 });"
+                                   src="images/close.png" title="Close" 
+                                   onmouseout="this.style.cursor='normal';" 
+                                   onmouseover="this.style.cursor='pointer';"/>
+          </div>
         <div id="summary_loading">Loading...</div>
         <div id="summary_loaded" style="display:none;" >
-          <p style="margin-top:5px;"><strong><fmt:message key="columnsummary.name" /></strong></p>
-          <p><fmt:message key="columnsummary.message" /></p>
-          <table class="results" cellpadding="0" cellspacing="0">
-            <thead id="summary_head"></thead>
-            <tbody id="summary_table"></tbody>
-          </table>
+          <div class="box">
+            <div class="title">
+              <fmt:message key="columnsummary.name"/>
+            </div>
+            <p><fmt:message key="columnsummary.message" /></p>
+            <div id="summary_row_count"></div>
+            <table class="results" cellpadding="0" cellspacing="0">
+              <thead id="summary_head"></thead>
+              <tbody id="summary_table"></tbody>
+            </table>
+          </div>
         </div>
-       </div></div>
-
+        </div></div>
+        
         <c:if test="${resultsTable.size > 1}">
           <br/>
           <table cellpadding="0" cellspacing="0" >
@@ -295,12 +306,19 @@
               <td class="resBar"><tiles:insert page="/tablePageLinks.jsp"/></td>
               <td class="resBar">&nbsp;|&nbsp;</td>
               <td class="resBar">
+                <fmt:message key="results.pageinfo.estimate" var="estimateMessage"/>
+                <fmt:message key="results.pageinfo.exact" var="exactMessage"/>
                 <%-- "Displaying xxx to xxx of xxx rows" messages --%>
                 <c:choose>
                   <c:when test="${resultsTable.sizeEstimate}">
                     <tiles:insert name="tableCountEstimate.tile">
                       <tiles:put name="pagedTable" beanName="resultsTable"/>
                     </tiles:insert>
+                    <script language="JavaScript">
+                      <!--
+                          document.resultsCountText = "<img src='images/spinner.gif'/> ${estimateMessage} ${resultsTable.size}";
+                        -->
+                    </script>
                   </c:when>
                   <c:otherwise>
                     <c:choose>
@@ -316,10 +334,15 @@
                           <fmt:param value="${resultsTable.endRow+1}"/>
                         </fmt:message>
                         <span class="resBar">&nbsp;|&nbsp;</span>
-                        <fmt:message key="results.pageinfo.exact"/>
+                        ${exactMessage}
                         ${resultsTable.size}
                       </c:otherwise>
                     </c:choose>
+                    <script language="JavaScript">
+                      <!--
+                          document.resultsCountText = "${exactMessage} ${resultsTable.size}";
+                        -->
+                    </script>
                   </c:otherwise>
                 </c:choose>
               </td>
