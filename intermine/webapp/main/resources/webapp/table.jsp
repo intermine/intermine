@@ -12,8 +12,10 @@
 
 <tiles:get name="objectTrail.tile"/><im:vspacer height="3"/>
 
-<c:set var="isPagedResults"
-       value="${resultsTable.class.name == 'org.intermine.web.logic.results.PagedResults'}"/>
+<%-- PagedTable.getWebTableClass() is a bit hacky - replace with a boolean
+     method or make it unnecessary --%>
+<c:set var="isWebResults"
+       value="${resultsTable.webTableClass.name == 'org.intermine.web.logic.results.WebResults'}"/>
 
 <script type="text/javascript" src="js/table.js" ></script>
 <script type="text/javascript">
@@ -42,7 +44,7 @@
 
       <%-- show the description only if we've run a query (rather than viewing
            a bag) - see #1031 --%>
-      <c:if test="${isPagedResults
+      <c:if test="${isWebResults
                   && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
         <div class="body">
           <div class="resultsTableTemplateHeader">
@@ -97,9 +99,9 @@
                                   alt="${moveLeftString}"/>
             Move columns - <img style="vertical-align:text-bottom;" border="0"
                                 src="images/close.png" title="${hideColumnTitle}" />
-            Close column -
+            Close column <c:if test="${isWebResults}">-
             <img src="images/summary_maths.png" style="vertical-align:text-bottom;" alt="Column Summary">
-              Get summary statistics for column
+              Get summary statistics for column</img></c:if>
           </td>
         </tr>
       </table>
@@ -156,8 +158,10 @@
                         </html:link>
                       </c:if>
 
-					<fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-                    <a href="javascript:getColumnSummary('${column.name}')" title="${summaryTitle}"><img src="images/summary_maths.png" alt="${summaryTitle}"></a>
+                      <c:if test="${isWebResults}">
+		        <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+                        <a href="javascript:getColumnSummary('${column.name}')" title="${summaryTitle}"><img src="images/summary_maths.png" alt="${summaryTitle}"></a>
+                      </c:if>
 
                       <%-- right --%>
                       <c:if test="${not status.last}">
@@ -325,7 +329,7 @@
         </c:if>
 
         <%-- Return to main results link
-             <c:if test="${!isPagedResults
+             <c:if test="${!isWebResults
                          && QUERY_RESULTS != null && !fn:startsWith(param.table, 'bag')}">
                <p>
                  <html:link action="/results?table=results">

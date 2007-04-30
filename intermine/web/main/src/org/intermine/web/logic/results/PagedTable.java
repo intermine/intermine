@@ -303,6 +303,14 @@ public class PagedTable
     }
 
     /**
+     * Temporary hack to let table.jsp get the type of the WebTable.
+     * @return the Class of the WebTable for this PagedTable
+     */
+    public Class<? extends WebTable> getWebTableClass() {
+        return webTable.getClass();
+    }
+    
+    /**
      * Get the (possibly estimated) number of resultElementRows of this table
      * @return the number of resultElementRows
      */
