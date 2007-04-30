@@ -16,74 +16,84 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#homophila source directories and files
 my $homophila_server = "http://superfly.ucsd.edu/homophila";
 my $homophila_data_file = "homophila_all.txt";
 my $homophila_matches_file = "homophila_matches.txt";
 my $homophila_diseases_file = "homophila_diseases.txt";
 my $protein_ids_file = "protein_ids.txt";
 
-my ($day,$month,$year);
-
-#get text from homophila homepage
-my $homophila_page = io($homophila_server)->slurp();
-
-#get last update date and convert it to standard /shared/data/ date format
-if ($homophila_page =~ /Last update:\s([\S]+)\s([\d]+)\s([\S]+)\s([\d]+)/) {
-  $day = $2;
-  $month = &convert_month($3);
-  $year = $4;
-} else {
-  die "can't find last update in page read from $homophila_server\n";
-}
-my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
-
-#destination directories
+#flymine destination directories and files
 my $homophila_main_dir = "/shared/data/homophila";
-my $download_dir = "$homophila_main_dir/$date_string";
+my $temp_dir = "$homophila_main_dir/temp";
+my $temp_file = "$temp_dir/temp.txt";
+my $file_to_get = "$homophila_server/$homophila_data_file.gz";
+my $date = &convert_date();
+my $data_dir = "$homophila_main_dir/$date";
+my $data_file = "$data_dir/$homophila_data_file";
 
 #make sure that the necessary directories exist and download the file
 &checkdir_exists($homophila_main_dir);
-if(&checkdir_exists($download_dir)==1){
-	my $file_to_get = "$homophila_server/$homophila_data_file.gz";
-	my $destination = "$download_dir/$homophila_data_file.gz";
-	&http_download($file_to_get,$destination);
-	&unzip_dir($download_dir);
+&checkdir_exists($temp_dir);
+&http_download($file_to_get,"$temp_file.gz");
+&unzip_dir($temp_dir);
+
+#compare the files, create version directory if it is a new version or
+#the current data link is missing
+my $current_link = "/shared/data/homophila/current";
+my $old_file = "$current_link/homophila_all.txt";
+
+my $result = &compare_files($old_file,$temp_file);
+if($result == 1){
+	print "Keeping downloaded files.\n";
+	&checkdir_exists($data_dir);
+	system("mv $temp_file $data_file");
+	&make_link($date,$current_link);
+}elsif($result == 0 ){
+	unlink $temp_file;
+	print "Downloaded files deleted.\n";
+}
+
+#create the diseases and matches file and the hash needed to query Entrez
+my $matches = "$data_dir/$homophila_matches_file";
+my $diseases = "$data_dir/$homophila_diseases_file";
+my $prots = "$data_dir/$protein_ids_file";
+
+if( (-e $matches)&&(-e $diseases) &&(-e $prots)){
+	warn "Homophila dieseases and matches files already generated\n";
 }else{
-	die " current version up to date - skipping download\n";
-}
-#process the downloaded file
-open HOMOPHILA_DATA, "$download_dir/$homophila_data_file"
-  or die "can't open $download_dir/$homophila_data_file\n";
+	#process the downloaded file
+	open HOMOPHILA_DATA, "$data_file"
+	  or die "can't open $data_file\n";
 
-my $line = <HOMOPHILA_DATA>;
-if ($line !~ /CG\tOMIM_ID/) {
-  die "expected first line of $download_dir/$homophila_data_file to be a header\n";
-}
-
-my %homophila_matches = ();
-my %homophila_diseases = ();
-my %proteinID = ();
-
-while ($line = <HOMOPHILA_DATA>) {
-	chomp $line;
-	my @bits = split /\t/, $line;
-	
-	#get unique matches and diseases
-	$homophila_matches{join "\t", @bits[0..3]}++;
-	if(@bits[1,6]){
-		$homophila_diseases{join "\t", @bits[1,6]}++;
+	my $line = <HOMOPHILA_DATA>;
+	if ($line !~ /CG\tOMIM_ID/) {
+	  die "expected first line of $data_file to be a header\n";
 	}
-	#and protein Ids
-	$proteinID{$bits[2]} = $bits[2];
-}
-close HOMOPHILA_DATA;
+	my %homophila_matches = ();
+	my %homophila_diseases = ();
+	my %proteinID = ();
+	
+	while ($line = <HOMOPHILA_DATA>) {
+		chomp $line;
+		my @bits = split /\t/, $line;
+	
+		#get unique matches and diseases
+		$homophila_matches{join "\t", @bits[0..3]}++;
+		if(@bits[1,6]){
+			$homophila_diseases{join "\t", @bits[1,6]}++;
+		}
+		#and protein Ids
+		$proteinID{$bits[2]} = $bits[2];
+	}
+	close HOMOPHILA_DATA;
 
-#write processed data to file
-print "Writing files.\n";
-my $matches = "$download_dir/$homophila_matches_file";
-&print_hash2file($matches,%homophila_matches);
-my $diseases = "$download_dir/$homophila_diseases_file";
-&print_hash2file($diseases,%homophila_diseases);
+	#write processed data to file
+	print "Writing files.\n";
+	&print_hash2file($matches,%homophila_matches);
+	&print_hash2file($diseases,%homophila_diseases);
+	&print_hash2file($prots,%proteinID);
+}
 
 #print file
 sub print_hash2file{
@@ -97,27 +107,6 @@ for my $line (sort keys %hash) {
 close FH;
 }
 
-#convert text based Jan/Feb to 01/02
-sub convert_month{
-my $month = shift;
-my $digit;
-
-for($month){
-	if(/^Jan/)	{$digit = "01";}
-	if(/^Feb/)	{$digit = "02";}
-	if(/^Mar/)	{$digit = "03";}
-	if(/^Apr/)	{$digit = "04";}
-	if(/^May/)	{$digit = "05";}
-	if(/^Jun/)	{$digit = "06";}
-	if(/^Jul/)	{$digit = "07";}
-	if(/^Aug/)	{$digit = "08";}
-	if(/^Sep/)	{$digit = "09";}
-	if(/^Oct/)	{$digit = "10";}
-	if(/^Nov/)	{$digit = "11";}
-	if(/^Dec/)	{$digit = "12";}
-}
-return $digit;
-}
 #===================================================================================
 # this part replaces the manual batch upload of protein ids to ncbi entrez
 # uses eutils to access ncbi with the protein Ids and retrieve the GenPept entries.
@@ -125,7 +114,7 @@ return $digit;
 use LWP::Simple;
 
 # output file
-my $sequences_file = "sequences.gp";
+my $sequences_file = "$data_dir/sequences.gp";
 
 # eutils URL
 my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
@@ -134,48 +123,52 @@ my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
 my $db     = "Protein";
 my $report = "gp";
 
-print "Querying NCBI Entrez and writing sequences.gp\n";
-# URL for esearch
-my $esearch = "$utils/esearch.fcgi?" .
-              "db=$db&retmax=1&usehistory=y&term=";
+if(-e $sequences_file){
+	warn "sequences.gp already generated\n";
+}else{
+	print "Querying NCBI Entrez and writing sequences.gp\n";
+	# URL for esearch
+	my $esearch = "$utils/esearch.fcgi?" .
+	              "db=$db&retmax=1&usehistory=y&term=";
 
-open SEQUENCES, ">$download_dir/$sequences_file"
-   or die "can't open $download_dir/$sequences_file\n";
-
-for my $prot (sort keys %proteinID) {
-	# id to be queried by esearch and final esearch URL
-	my $queryID  = $prot;
-	my $esearch_result = get($esearch . $queryID);
+	open SEQUENCES, ">$sequences_file"
+	   or die "can't open $sequences_file\n";
 	
-	# identify parameters for efetch
-	$esearch_result =~
-	  m|<Count>(\d+)</Count>.*<QueryKey>(\d+)</QueryKey>.*<WebEnv>(\S+)</WebEnv>|s;
-
-	my $Count    = $1;
-	my $QueryKey = $2;
-	my $WebEnv   = $3;
-	#print "Count = $Count; QueryKey = $QueryKey; WebEnv = $WebEnv\n\n";
-
-	my $retstart;
-	my $retmax=3;
+	open(PROT, "<$prots") or die "$!";
+	while (my $queryID = <PROT>) {
+		chomp $queryID;
+		# id to be queried by esearch and final esearch URL
+		#print "Query ID $queryID\n";
+		my $esearch_result = get($esearch . $queryID);
 	
-	# for each record found by esearch, use efetch to retrieve it
-	for($retstart = 0; $retstart < $Count; $retstart += $retmax) {
-		my $efetch = "$utils/efetch.fcgi?" .
-	               "rettype=$report&retmode=text&retstart=$retstart&retmax=$retmax&" .
-	               "db=$db&query_key=$QueryKey&WebEnv=$WebEnv";     
-		my $efetch_result = get($efetch);
-  		print SEQUENCES "$efetch_result\n";		
-	}
-	&delay();
-}close SEQUENCES;
+		# identify parameters for efetch
+		$esearch_result =~
+		  m|<Count>(\d+)</Count>.*<QueryKey>(\d+)</QueryKey>.*<WebEnv>(\S+)</WebEnv>|s;
 
+		my $Count    = $1;
+		my $QueryKey = $2;
+		my $WebEnv   = $3;
+		#print "Count = $Count; QueryKey = $QueryKey; WebEnv = $WebEnv\n\n";
+
+		my $retstart;
+		my $retmax=3;
+	
+		# for each record found by esearch, use efetch to retrieve it
+		for($retstart = 0; $retstart < $Count; $retstart += $retmax) {
+			my $efetch = "$utils/efetch.fcgi?"."rettype=$report&retmode=text&retstart=$retstart&retmax=$retmax&" .
+		  	            "db=$db&query_key=$QueryKey&WebEnv=$WebEnv";     
+			my $efetch_result = get($efetch);
+	  		print SEQUENCES "$efetch_result\n";		
+		}
+		&delay();
+	}close SEQUENCES;
+}
 # implements the three second delay between queries as required by ncbi
 sub delay(){
 my $future = (time + 3);
 	while (1) {
     	if (time >= $future) {
-        	return;        
+   	    	return;        
    		}
 	}
 }
@@ -183,38 +176,37 @@ my $future = (time + 3);
 # this part was once create_protein_gene.pl 
 
 # output file
-my $prot_gene_file = "protein_gene.txt";
-my $source = "$download_dir/$sequences_file";
+my $prot_gene_file = "$data_dir/protein_gene.txt";
 my $more = 0;
 my $cds = 0;
 
-print "Writing protein_gene.txt\n";
+if(-e $prot_gene_file){
+	warn "protein_gene.txt already generated\n";
+}else{
+	print "Writing protein_gene.txt\n";
 
-open PROT_GENES, ">$download_dir/$prot_gene_file"
-   or die "can't open $download_dir/$prot_gene_file\n";
+	open PROT_GENES, ">$prot_gene_file"
+	   or die "can't open $prot_gene_file\n";
 
-open(FILE, "<$source") or die "$!";
-while (<FILE>) {
-	if (!$more && /LOCUS      /) {
-    	$more = 1;
-  	}
-	if( $more && (/(NP_\d+)/ || /(XP_\d+)/) ){
-    	print PROT_GENES "$1\t";
-    	$more = 0;
-    	$cds = 0;
+	open(FILE, "<$sequences_file") or die "$!";
+	while (<FILE>) {
+		if (!$more && /LOCUS      /) {
+	    	$more = 1;
+	  	}
+		if( $more && (/(NP_\d+)/ || /(XP_\d+)/) ){
+	    	print PROT_GENES "$1\t";
+	    	$more = 0;
+	    	$cds = 0;
+		}
+		if (!$cds && /CDS      /) {
+	    	$cds = 1;
+  		}
+		if ($cds && /gene="(.+)"/) {
+    		if ($more) { print "|"; }
+    		print PROT_GENES "$1\n";
+   			$more = 1;
+  		}	
 	}
-	if (!$cds && /CDS      /) {
-    	$cds = 1;
-  	}
-	if ($cds && /gene="(.+)"/) {
-    	if ($more) { print "|"; }
-    	print PROT_GENES "$1\n";
-   		$more = 1;
-  	}	
+	close (FILE) or die "$!";
+	close PROT_GENES;
 }
-close (FILE) or die "$!";
-close PROT_GENES;
-
-# create the current@ link
-my $current_link = "/shared/data/homophila/current";
-&make_link($date_string,$current_link);
