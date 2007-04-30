@@ -26,12 +26,16 @@ ${resultsTable.size}
 <span  style="display: inline" id="resultsCountExactSize"> </span>
 </span>
 
+<fmt:message key="results.pageinfo.exact" var="exactMessage"/>
+
 <script language="JavaScript">
   <!--
 function callback(results) {
     document.getElementById('resultsCountEstimate').style.display='none';
     document.getElementById('resultsCountExact').style.display='inline';
-    document.getElementById('resultsCountExactSize').innerHTML=results[0][0];
+    var size = results[0][0];
+    document.getElementById('resultsCountExactSize').innerHTML=size;
+    document.resultsCountText = "${exactMessage} " + size;
 }
 
 window.onload = function() {
