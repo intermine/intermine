@@ -11,6 +11,7 @@ package org.intermine.web.logic.results;
  */
 
 import org.intermine.path.Path;
+import org.intermine.util.TypeUtil;
 
 /**
  * Configuration information for a column in a table
@@ -54,7 +55,7 @@ public class Column
         this.index = index;
         this.type = type;
         setColumnId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
-                    + type.toString());
+                    + TypeUtil.unqualifiedName(type.getName()));
     }
 
     /**
@@ -69,7 +70,7 @@ public class Column
         this.index = index;
         this.type = type;
         this.path = null;
-        setColumnId(name + "_" + type.toString());
+        setColumnId(name + "_" + TypeUtil.unqualifiedName(type.getName()));
     }
 
     /**
@@ -130,14 +131,6 @@ public class Column
      */
     public Class getType() {
         return type;
-    }
-
-    /**
-     * Set the type of this Column
-     * @param type a Class or a FieldDescriptor
-     */
-    public void setType(Class type) {
-        this.type = type;
     }
 
     /**
