@@ -28,7 +28,6 @@ import org.intermine.util.Util;
 public class ResultElement implements Serializable
 {
     protected Object field;
-    protected String type;
     protected Class typeCls;
     protected Integer id;
     protected String otherLink;
@@ -43,7 +42,7 @@ public class ResultElement implements Serializable
      * @param os the ObjectStore to use in getInterMineObject()
      * @param value the value of the field from the results table
      * @param id the id of the InterMineObject this field belongs to
-     * @param type the Class of the InterMineObject this field belongs to
+     * @param typeCls the Class of the InterMineObject this field belongs to
      * @param path the Path
      * @param isKeyField should be true if this is an identifying field
      */
@@ -55,7 +54,8 @@ public class ResultElement implements Serializable
         this.typeCls = typeCls;
         this.keyField = isKeyField;
         this.path = path;
-        setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_" + type);
+        setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_" 
+                  + TypeUtil.unqualifiedName(typeCls.getName()));
     }
     
     /**
@@ -200,7 +200,7 @@ public class ResultElement implements Serializable
      * @return a String
      */
     public String toString() {
-        return " " + field + " " + id + " " + type;
+        return " " + field + " " + id + " " + TypeUtil.unqualifiedName(typeCls.getName());
     }
     
     /**
@@ -211,13 +211,13 @@ public class ResultElement implements Serializable
         try {
             ResultElement cell = (ResultElement) obj;
             return (Util.equals(field, cell.getField())  && id.equals(cell.getId())
-                            && type.equals(cell.getType()));
+                    && typeCls.equals(cell.getTypeClass()));
         } catch (ClassCastException e) {
             throw new ClassCastException("Comparing a ResultsElement with a "
                     + obj.getClass().getName());
         } catch (NullPointerException e) {
             throw new NullPointerException("field = " + field + ", id = " + id + ", type = "
-                    + type);
+                    + TypeUtil.unqualifiedName(typeCls.getName()));
         }
     }
     
@@ -226,7 +226,8 @@ public class ResultElement implements Serializable
      * {@inheritDoc}
      */
     public int hashCode() {
-        return (field == null ? 0 : field.hashCode()) + 3 * id.hashCode() + 7 * type.hashCode();
+        return (field == null ? 0 : field.hashCode()) + 3 * id.hashCode()
+        + 7 * typeCls.hashCode();
     }
     
 }
