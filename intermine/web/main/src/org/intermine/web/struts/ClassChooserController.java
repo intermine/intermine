@@ -67,7 +67,7 @@ public class ClassChooserController extends TilesAction
             }
         }
         // remove last comma
-        sb.deleteCharAt(sb.length() - 1);
+        sb.deleteCharAt(sb.length() - 2);
         request.setAttribute("helpMap", sb);
         return null;
     }
