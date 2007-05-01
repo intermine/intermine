@@ -40,13 +40,6 @@ my $password = "-anonymous\@";
 # the key is the name of the directory to put the gene association file in, the
 # suffix is used to find the file on the server
 my %gene_association_map = &config_species($file,"go_assoc");
-#  (flybase => {suffix => 'fb'},
-#   wormbase => {suffix => 'wb'},
-#   mgi => {suffix => 'mgi'},
-#   rgd => {suffix => 'rgd'},
-#   sgd => {suffix => 'sgd'},
-#   pombe => {suffix => 'GeneDB_Spombe'},
-#   malaria => {suffix => 'GeneDB_Pfalciparum'});
 
 # Get latest version of the gene ontology - is updated every 30 mins
 my $go_connection = &ftp_connect($godatabase_server,$username,$password);
@@ -55,6 +48,7 @@ $go_connection->cwd($go_dir)
 
 my $go_download_dir = "/shared/data/gene_ontology";
 &ftp_download($go_connection,$go_download_dir,$go_file);
+$go_connection->quit;
 
 ### Get goa files
 my $goa_connection = &ftp_connect($uniprot_go_server,$username,$password);
@@ -113,18 +107,19 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 }
 $goa_connection->quit;
 
-#### Get other gene association files
-my $gene_association_prefix = "gene_association";
-$go_connection->cwd("../../../")
-	or die "Cannot change working directory ", $go_connection->message;
-$go_connection->cwd($godatabase_dir)
+#### Get other gene association files 
+# use a new connection in case $go_connection is timed out while the uniprot
+# files are processed.
+my $assoc_connection = &ftp_connect($godatabase_server,$username,$password);
+$assoc_connection->cwd($godatabase_dir)
 	or die "Cannot change working directory ", $go_connection->message;
 
+my $gene_association_prefix = "gene_association";
 #download file for each organism in the gene association map
 for my $source_database (keys %gene_association_map) {
 	my $suffix = $gene_association_map{$source_database}{suffix};
 	my $gene_association_file_gz = "$gene_association_prefix.$suffix.gz";
-	my $date_string = &date_string_file($go_connection,$gene_association_file_gz);
+	my $date_string = &date_string_file($assoc_connection,$gene_association_file_gz);
   
 	# create directory for source if necessary
 	my $source_dir = "/shared/data/go-annotation/$source_database";
@@ -132,7 +127,7 @@ for my $source_database (keys %gene_association_map) {
 	#create download directory and download if necessary
 	my $gene_association_download_dir = "$source_dir/$date_string";
 	if(&checkdir_exists($gene_association_download_dir)==1){
-		&ftp_download($go_connection,$gene_association_download_dir,$gene_association_file_gz);
+		&ftp_download($assoc_connection,$gene_association_download_dir,$gene_association_file_gz);
 		&unzip_dir($gene_association_download_dir);
     	
 		#make links to current data
@@ -147,5 +142,5 @@ for my $source_database (keys %gene_association_map) {
 	}
 }
 system "chmod -R a+r,g+w $uniprot_download_dir";
-$go_connection->quit;
+$assoc_connection->quit;
 
