@@ -124,7 +124,12 @@ public class WebPathCollection extends AbstractList implements WebTable
         return rowCells;
     }
     
-    private List getList() {
+    /**
+     * If the collection passed to the constructor was a List, return it.  Otherwise return a List
+     * constructed from the collection
+     * @return the List that this WebPathCollection is displaying
+     */
+    public List getList() {
         return list;
     }
 
