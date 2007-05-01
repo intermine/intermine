@@ -52,6 +52,7 @@ if($result == 1){
 }elsif($result == 0 ){
 	unlink $temp_file;
 	print "Downloaded files deleted.\n";
+	$data_dir = $current_link;
 }
 
 #create the diseases and matches file and the hash needed to query Entrez
@@ -59,7 +60,7 @@ my $matches = "$data_dir/$homophila_matches_file";
 my $diseases = "$data_dir/$homophila_diseases_file";
 my $prots = "$data_dir/$protein_ids_file";
 
-if( (-e $matches)&&(-e $diseases) &&(-e $prots)){
+if( (-e $matches)&&(-e $diseases)&&(-e $prots) ){
 	warn "Homophila dieseases and matches files already generated\n";
 }else{
 	#process the downloaded file
