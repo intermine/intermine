@@ -10,6 +10,18 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.intermine.path.Path;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.OrderBy;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.results.PageOutOfRangeException;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateQuery;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,12 +34,6 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.results.PageOutOfRangeException;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Sets up PagedTable
@@ -68,7 +74,10 @@ public class TableController extends TilesAction
 //            trail = request.getParameter("table");
 //        }
             
-        
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        HashMap<String, String> sortOrderMap = setSortOrderMap(query);
+        request.setAttribute("sortOrderMap", sortOrderMap);
+                
         request.setAttribute("trail", trail);
         
         SaveBagForm bagForm = (SaveBagForm) session.getAttribute("saveBagForm");
@@ -102,5 +111,31 @@ public class TableController extends TilesAction
         }
         
         return null;
+    }
+    
+    private HashMap setSortOrderMap(PathQuery q) {
+        HashMap<String, String> mappy = new HashMap<String, String>();
+        String sortBy, direction = null;
+        List<OrderBy> sortOrderList = q.getSortOrder();
+        List<String> selectList = q.getViewStrings();
+        if (sortOrderList.isEmpty()) {
+            // do something if nothing selected
+            sortBy = selectList.get(0);
+            direction = "asc";
+        } else {
+            sortBy = sortOrderList.get(0).getField().toStringNoConstraints();
+            direction = sortOrderList.get(0).getDirection();
+        }
+        
+        // loop through query and populate map
+        for (String s:  selectList) {
+            if (s.equals(sortBy)) {
+                mappy.put(s, direction);
+            } else {
+                mappy.put(s, null);                
+            }
+        }
+            
+        return mappy;
     }
 }
