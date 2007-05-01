@@ -64,9 +64,6 @@
   <class className="org.flymine.model.genomic.Organism">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="shortName" showInInlineCollection="false" showInResults="false"/>
-      <fieldconfig fieldExpr="genus" showInInlineCollection="false" showInResults="false"/>
-      <fieldconfig fieldExpr="species" showInInlineCollection="false" showInResults="false"/>
       <fieldconfig fieldExpr="taxonId" />
     </fields>
     <longdisplayers>
