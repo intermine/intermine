@@ -181,7 +181,7 @@
       <property name="ignore.duplicates" value="true"/>
     </source> 
     <source name="inparanoid-orthologue" type="orthologue" dump="true">
-      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/2007-01-04/toload"/>
+      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
      <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
 	<property name="src.data.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>

@@ -9,7 +9,6 @@
 use strict;
 use warnings;
 
-use IO::All;
 BEGIN {
   # find the lib directory by looking at the path to this script
   push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');

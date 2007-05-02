@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+
+#downloads sql tables from http://inparanoid.sbc.su.se/download/current/sqltables
+#and compares it to the version pointed to by the current link in /shared/data/orthologues/inparanoid
+#as a current version id for sql table files are not avaiable prior to download.
+
+use strict;
+use warnings;
+use IO::All;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+# get species from config file
+my $file = "/shared/data/taxonID.config";
+my %key_codes = &config_species($file,"key_inparanoid");
+my %other_codes = &config_species($file,"other_inparanoid");
+
+# data source and destination
+my $inparanoid_server = "http://inparanoid.sbc.su.se/download/current/sqltables";
+my $InP_main_dir = "/shared/data/orthologues/inparanoid";
+my $download_dir = "$InP_main_dir/temp";
+my $temp_file = "$download_dir/temp.txt";
+
+# get a list of file names from paranoid, if they represent two species in flymine, add them 
+# to the hash of files to download 
+my %files;
+my @page = io($inparanoid_server)->slurp;
+foreach (@page){
+	#print "$_\n";
+	if ($_=~ /href="(sqltable\.\w{3}(\w{5})\.fa-\w{3}(\w{5}).fa)"/g) {
+		#print "$1\t $2\t $3\n";
+		if( (exists $key_codes{$2} && (exists $other_codes{$3} || exists $key_codes{$3}) ) ||
+			(exists $other_codes{$2} && (exists $key_codes{$3}) ) ){
+			print "$1\n";
+			$files{$1}=$1;
+		}	
+	}
+}
+
+# download each file, check to see if it is a new version. it is assumed that either 
+# all files will be upadated or all files will not
+&checkdir_exists($InP_main_dir);
+&checkdir_exists($download_dir);
+
+my $current_link = "/shared/data/orthologues/inparanoid/current";
+for my $file_to_get (sort keys %files) {
+	&http_download("$inparanoid_server/$file_to_get",$temp_file);
+	my $old_file = "$current_link/$file_to_get";
+	my $result = &compare_files($old_file,$temp_file);
+	if($result == 1){
+		print "Keeping downloaded files.\n";
+		&update_files($InP_main_dir,$file_to_get,$temp_file,$current_link);
+	}elsif($result == 0 ){
+		print "Downloaded files deleted.\n";
+		unlink $temp_file;
+	}
+}
+
+sub update_files(){
+	my ($dir,$new_name,$oldfile,$link) = @_;
+	my $date = &convert_date();
+	my $new_dir = "$dir/$date";
+	my $newfile = "$new_dir/$new_name";
+	&checkdir_exists($new_dir);
+	system("mv $oldfile $newfile");
+	&make_link($date,$link);
+}	
