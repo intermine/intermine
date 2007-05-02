@@ -61,8 +61,8 @@ function selectColumnCheckboxes(column, bagType) {
  * Ran when a user selects a keyfield in the results table
  **/
 function itemChecked(row, column, bagType, checkbox) {
-    setBagType(bagType)
-        unselectColumnCheckbox('' + column);
+    setBagType(bagType);
+    unselectColumnCheckbox('' + column);
     if (isClear()) {
         enableAll();
     }
