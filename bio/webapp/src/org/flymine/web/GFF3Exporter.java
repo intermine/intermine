@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,26 +26,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.bio.io.gff3.GFF3Record;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.intermine.bio.util.GFF3Util;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Results;
-import org.intermine.util.StringUtil;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-
+import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.bio.util.GFF3Util;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.util.TypeUtil.FieldInfo;
+import org.intermine.web.logic.export.ExportHelper;
+import org.intermine.web.logic.export.TableExporter;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.results.WebTable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.struts.ExportController;
 
 /**
  * An implementation of TableExporter that exports LocatedSequenceFeature objects in GFF3 format.
@@ -59,6 +62,8 @@ public class GFF3Exporter implements TableExporter
      */
     public static final int BIG_BATCH_SIZE = 10000;
 
+    private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
+    
     /**
      * Method called to export a PagedTable object as GFF3.  The PagedTable can only be exported if
      * there is exactly one LocatedSequenceFeature column and the other columns (if any), are simple
@@ -88,41 +93,21 @@ public class GFF3Exporter implements TableExporter
         
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
-        List columns = pt.getColumns();
-
-        Column featureColumn = null;
-
-        // find and remember the first LocatedSequenceFeature column
-        for (int i = 0; i < columns.size(); i++) {
-            Column column = (Column) columns.get(i);
-            if (column.isVisible()) {
-                Object columnType = ((Column) columns.get(i)).getType();
-                if (columnType instanceof ClassDescriptor) {
-                    if (validType(((ClassDescriptor) columnType).getType())) {
-                        featureColumn = column;
-                        break;
-                    }
-                }
-            }
-        }
-
-        int realFeatureIndex = featureColumn.getIndex();
-
+        int realFeatureIndex = ExportHelper
+        .getFirstColumnForClass(pt, LocatedSequenceFeature.class);
         int writtenFeaturesCount = 0;
 
         try {
-            List rowList = pt.getAllRows();
-
-            if (rowList instanceof Results) {
-                rowList = WebUtil.changeResultBatchSize((Results) rowList, BIG_BATCH_SIZE);
-            }
+            WebTable rowList = pt.getAllRows();
+            
+            //  TODO if a query, increase the batch size - already goFaster()?
 
             for (int rowIndex = 0;
                  rowIndex < rowList.size() && rowIndex <= pt.getMaxRetrievableIndex();
                  rowIndex++) {
-                List row;
+                List<ResultElement> row;
                 try {
-                    row = (List) rowList.get(rowIndex);
+                    row = rowList.getResultElements(rowIndex);
                 } catch (RuntimeException e) {
                     // re-throw as a more specific exception
                     if (e.getCause() instanceof ObjectStoreException) {
@@ -132,35 +117,21 @@ public class GFF3Exporter implements TableExporter
                     }
                 }
 
-                LocatedSequenceFeature lsf = (LocatedSequenceFeature) row.get(realFeatureIndex);
+                LocatedSequenceFeature lsf = (LocatedSequenceFeature) row.get(realFeatureIndex)
+                    .getInterMineObject();
 
                 Map extraAttributes = new HashMap();
 
-                for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                    Column thisColumn = (Column) columns.get(columnIndex);
-
-                    if (!thisColumn.isVisible()) {
-                        continue;
+                
+                // add some fields as extra attributes if the object has them
+                
+                List<String> extraFields = Arrays.asList(new String[] {"symbol", "organismDbId",
+                    "name"});
+                for (String fieldName : extraFields) {
+                    FieldInfo field = TypeUtil.getFieldInfo(lsf.getClass(), fieldName);
+                    if (field != null && (TypeUtil.getFieldValue(lsf, fieldName) != null)) {
+                        extraAttributes.put(fieldName, TypeUtil.getFieldValue(lsf, fieldName));
                     }
-
-                    // the column order from PagedTable.getList() isn't necessarily the order that
-                    // the user has chosen for the columns
-                    int realColumnIndex = thisColumn.getIndex();
-
-                    if (realColumnIndex == realFeatureIndex) {
-                        // skip - this is the column containing the valid type
-                        continue;
-                    }
-
-                    String fieldName = thisColumn.getName();
-
-                    int lastDotPos = fieldName.lastIndexOf(".");
-
-                    if (lastDotPos != -1) {
-                        fieldName = fieldName.substring(lastDotPos + 1);
-                    }
-
-                    extraAttributes.put(fieldName, row.get(realColumnIndex));
                 }
 
                 GFF3Record gff3Record =
@@ -203,13 +174,14 @@ public class GFF3Exporter implements TableExporter
 
                 return mapping.findForward("results");
             }
+
         } catch (ObjectStoreException e) {
             ActionErrors messages = new ActionErrors();
             ActionError error = new ActionError("errors.query.objectstoreerror");
             messages.add(ActionErrors.GLOBAL_ERROR, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
+            LOG.error(e);
         }
-
         return null;
     }
     
@@ -243,41 +215,7 @@ public class GFF3Exporter implements TableExporter
      * @see org.intermine.web.logic.export.TableExporter#canExport(PagedTable)
      */
     public boolean canExport(PagedTable pt) {
-        List columns = pt.getColumns();
-        // true when we find a LocatedSequenceFeature
-        boolean foundLSF = false;
-
-        for (int i = 0; i < columns.size(); i++) {
-            Column column = (Column) columns.get(i);
-            if (column.isVisible()) {
-                Object columnType = ((Column) columns.get(i)).getType();
-
-                if (columnType instanceof ClassDescriptor) {
-                    if (foundLSF) {
-                        // we have already found a LocatedSequenceFeature and we don't want any
-                        // other object columns, so fail
-                        return false;
-                    }
-                    ClassDescriptor cd = (ClassDescriptor) columnType;
-                    if (validType(cd.getType())) {
-                        foundLSF = true;
-                    } else {
-                        // found an object that isn't a LocatedSequenceFeature
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return foundLSF;
+        return ExportHelper.canExport(pt, LocatedSequenceFeature.class);
     }
 
-    /**
-     * Check whether the argument is one of the types we handle
-     * @param type the type
-     * @return true if we handle the type
-     */
-    protected boolean validType(Class type) {
-        return (LocatedSequenceFeature.class.isAssignableFrom(type));
-    }
 }

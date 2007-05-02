@@ -14,8 +14,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,8 +35,11 @@ import org.flymine.model.genomic.ProteinInteractor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.TableExporter;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -71,20 +76,22 @@ public class ProteinInteractionExporter implements TableExporter
         PagedTable pt = SessionMethods.getResultsTable(session, request
                 .getParameter("table"));
 
-        List columns = pt.getColumns();
 
-        int realFeatureIndex = PIUtil.getValidColumnIndex(columns);
+        int realFeatureIndex = ExportHelper.getFirstColumnForClass(pt, ProteinInteraction.class);
 
         int writtenInteractionsCount = 0; //flo
-
+        Set exported = new HashSet();
+        PrintWriter printWriter = null;
+        
         try {
-            List rowList = pt.getAllRows(); // get all the data in rows
+            WebTable rowList = pt.getAllRows(); // get all the data in rows
+            
             // loop over the rows
             for (int rowIndex = 0; rowIndex < rowList.size()
                     && rowIndex <= pt.getMaxRetrievableIndex(); rowIndex++) {
-                List row;
+                List<ResultElement> row;
                 try {
-                    row = (List) rowList.get(rowIndex); // einzelne reihe des resultset
+                    row = rowList.getResultElements(rowIndex); // einzelne reihe des resultset
                 } catch (RuntimeException e) {
                     // re-throw as a more specific exception
                     if (e.getCause() instanceof ObjectStoreException) {
@@ -95,27 +102,37 @@ public class ProteinInteractionExporter implements TableExporter
                 }
                 // das objekt aus der gueltigen spalte der aktuellen reihe holen
                 // get object of interest - ProteinInteraction
-                InterMineObject object = (InterMineObject) row.get(realFeatureIndex);
-                // cast to ProteinInteraction
-                ProteinInteraction feature = (ProteinInteraction) object;
-                // retrieve the interacting proteins from the feature
-                Collection interactors = feature.getInteractors();
+                InterMineObject object = (InterMineObject) row.get(realFeatureIndex).getInterMineObject();
+                
+                if (!exported.contains(object.getId())) {
+                    // cast to ProteinInteraction
+                    ProteinInteraction feature = (ProteinInteraction) object;
+                    // retrieve the interacting proteins from the feature
+                    Collection interactors = feature.getInteractors();
 
-                if (outputStream == null) {
-                    // try to avoid opening the OutputStream until we know that the query is
-                    // going to work - this avoids some problems that occur when
-                    // getOutputStream() is called twice (once by this method and again to
-                    // write the error)
-                    outputStream = response.getOutputStream();
+                    if (outputStream == null) {
+                        // try to avoid opening the OutputStream until we know that the query is
+                        // going to work - this avoids some problems that occur when
+                        // getOutputStream() is called twice (once by this method and again to
+                        // write the error)
+                        outputStream = response.getOutputStream();
+                        printWriter = new PrintWriter(outputStream, true);
+                    }
+
+                   
+                    printWriter.write(getSifLines(interactors)); //flo
+                    printWriter.flush(); //flo
+
+                    writtenInteractionsCount++; //flo
+                    exported.add(object.getId());
                 }
-
-                PrintWriter writer = new PrintWriter(outputStream, true); //flo
-                writer.write(getSifLines(interactors)); //flo
-                writer.flush(); //flo
-
-                writtenInteractionsCount++; //flo
             }
-
+            
+            if (printWriter != null) {
+                printWriter.flush();
+                printWriter.close();
+            }
+            
             if (outputStream != null) {
                 outputStream.close();
             }
@@ -145,7 +162,7 @@ public class ProteinInteractionExporter implements TableExporter
      * @see org.intermine.bio.web.PIUtil#canExport
      */
     public boolean canExport(PagedTable pt) {
-        return PIUtil.canExport(pt);
+        return ExportHelper.canExport(pt, ProteinInteraction.class);
     }
 
     /**
