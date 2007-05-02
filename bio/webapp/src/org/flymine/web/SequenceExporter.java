@@ -36,6 +36,7 @@ import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.Translation;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -259,32 +260,49 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     } catch (IllegalAccessException e) {
                         // ignore
                     }
-                } else {
-                    if (object instanceof Protein) {
-                        Protein protein = (Protein) object;
-                        flyMineSequence = FlyMineSequenceFactory.make(protein);
-                        header.append(protein.getIdentifier());
-                        header.append(' ');
-                        if (protein.getName() == null) {
-                            header.append("[unknown_name]");
-                        } else {
-                            header.append(protein.getName());
-                        }
-                        Iterator iter = protein.getGenes().iterator();
-                        while (iter.hasNext()) {
-                            Gene gene = (Gene) iter.next();
-                            String geneIdentifier = gene.getIdentifier();
-                            if (geneIdentifier != null) {
-                                header.append(' ');
-                                header.append("gene:");
-                                header.append(geneIdentifier);
-                            }
-
-                        }
+                } else if (object instanceof Protein) {
+                    Protein protein = (Protein) object;
+                    flyMineSequence = FlyMineSequenceFactory.make(protein);
+                    header.append(protein.getIdentifier());
+                    header.append(' ');
+                    if (protein.getName() == null) {
+                        header.append("[unknown_name]");
                     } else {
-                        // ignore other objects
-                        continue;
+                        header.append(protein.getName());
                     }
+                    Iterator iter = protein.getGenes().iterator();
+                    while (iter.hasNext()) {
+                        Gene gene = (Gene) iter.next();
+                        String geneIdentifier = gene.getIdentifier();
+                        if (geneIdentifier != null) {
+                            header.append(' ');
+                            header.append("gene:");
+                            header.append(geneIdentifier);
+                        }
+
+                    }
+                } else if (object instanceof Translation) {
+                    Translation translation = (Translation) object;
+                    flyMineSequence = FlyMineSequenceFactory.make(translation);
+                    header.append(translation.getIdentifier());
+                    header.append(' ');
+                    if (translation.getName() == null) {
+                        header.append("[unknown_name]");
+                    } else {
+                        header.append(translation.getName());
+                    }
+                    if (translation.getGene() != null) {
+                        Gene gene = translation.getGene();
+                        String geneIdentifier = gene.getIdentifier();
+                        if (geneIdentifier != null) {
+                            header.append(' ');
+                            header.append("gene:");
+                            header.append(geneIdentifier);
+                        }
+                    }
+                } else {
+                    // ignore other objects
+                    continue;
                 }
 
                 if (flyMineSequence == null) {

@@ -16,6 +16,7 @@ import org.biojava.bio.symbol.IllegalSymbolException;
 
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Translation;
 
 /**
  * A factory for creating FlyMineSequence objects.
@@ -44,14 +45,31 @@ public abstract class FlyMineSequenceFactory
     }
 
     /**
+     * Create a new FlyMineSequence from a Translation
+     * @param translation the Translation
+     * @return a new FlyMineSequence object or null if the Translation doesn't have a Sequence
+     * @throws IllegalSymbolException if any of the residues of the Translation can't be
+     * turned into amino acid symbols.
+     */
+    public static FlyMineSequence make(Translation translation)
+        throws IllegalSymbolException {
+        if (translation.getSequence() == null) {
+            return null;
+        } else {
+            String residues = translation.getSequence().getResidues();
+            return new FlyMineSequence(ProteinTools.createProtein(residues), translation);
+        }
+    }
+ 
+    /**
      * Create a new FlyMineSequence from a Protein
      * @param protein the Protein
      * @return a new FlyMineSequence object or null if the Protein doesn't have a Sequence
      * @throws IllegalSymbolException if any of the residues of the Protein can't be
-     * turned into DNA symbols.
+     * turned into amino acid symbols.
      */
     public static FlyMineSequence make(Protein protein)
-        throws IllegalSymbolException {
+    throws IllegalSymbolException {
         if (protein.getSequence() == null) {
             return null;
         } else {
@@ -59,5 +77,4 @@ public abstract class FlyMineSequenceFactory
             return new FlyMineSequence(ProteinTools.createProtein(residues), protein);
         }
     }
-
 }

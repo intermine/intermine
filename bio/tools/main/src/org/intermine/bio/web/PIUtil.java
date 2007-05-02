@@ -10,13 +10,6 @@ package org.intermine.bio.web;
  *
  */
 
-import java.util.List;
-
-import org.flymine.model.genomic.ProteinInteraction;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.path.Path;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PagedTable;
 
 /**
  * This class contains various methods used by the protein interaction exporters
@@ -108,64 +101,4 @@ public class PIUtil
         return tmp;
 
     }
-
-    /**
-     * methode to retrieve the index of the first column which contains
-     * protein intaractions
-     * @param columns list of columns to scan for protein interactions
-     * @return the index of the first valid column
-     */
-    protected static int getValidColumnIndex(List columns) {
-        int index = -1;
-
-        // find and remember the first valid ProteinInteraction-containing column
-        for (int i = 0; i < columns.size(); i++) {
-            Column column = (Column) columns.get(i);
-            if (column.isVisible()) {
-                Object columnType = column.getType();
-                if (columnType instanceof ClassDescriptor) {
-                    if (PIUtil.validType(((ClassDescriptor) columnType).getType())) {
-                        index = column.getIndex();
-                        break;
-                    }
-                }
-            }
-        }
-        return index;
-    }
-
-    /**
-     * @param pt the PagedTable containing the results 
-     * @return true if exportable results were found
-     * @see org.intermine.web.logic.export.TableExporter#canExport
-     */
-    public static boolean canExport(PagedTable pt) {
-        List columns = pt.getColumns();
-
-        for (int i = 0; i < columns.size(); i++) {
-            Column column = (Column) columns.get(i);
-            if (column.isVisible()) {
-                
-                Path columnPath = column.getPath();
-                if (columnPath != null && columnPath.endIsAttribute()) {
-                    ClassDescriptor columnCD = columnPath.getLastClassDescriptor();
-                    if (PIUtil.validType(columnCD.getType())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check whether the argument is one of the types we handle
-     * -> we are looking for ProteinInteraction
-     * @param type the type
-     * @return true if we handle the type
-     */
-    protected static boolean validType(Class type) {
-        return (ProteinInteraction.class.isAssignableFrom(type)); //flo
-    }
-
 }

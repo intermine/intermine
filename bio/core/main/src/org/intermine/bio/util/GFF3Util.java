@@ -48,6 +48,7 @@ public abstract class GFF3Util
         String sequenceID = null;
         int start = -1;
         int end = -1;
+        String strand = null;
         
         if (lsf instanceof Chromosome) {
             sequenceID = lsf.getIdentifier();
@@ -90,7 +91,8 @@ public abstract class GFF3Util
             }
 
             start = chrLocation.getStart().intValue();
-            end = lsf.getChromosomeLocation().getEnd().intValue();
+            end = chrLocation.getEnd().intValue();
+            strand = chrLocation.getStrand().intValue() > 0 ? "+" : "-";
         }
 
         Map recordAttribute = new LinkedHashMap(extraAttributes);
@@ -99,7 +101,7 @@ public abstract class GFF3Util
             recordAttribute.put("ID", lsf.getIdentifier());
         }
 
-        return new GFF3Record(sequenceID, "FlyMine", type, start, end, null, null, null,
+        return new GFF3Record(sequenceID, "FlyMine", type, start, end, null, strand, null,
                               recordAttribute);
 
     }
