@@ -85,6 +85,12 @@ function updateCountInColumnSummary() {
     setTimeout("updateCountInColumnSummary()", 1000);
 }
 
+function updateUniqueCountInColumnSummary(qid) {
+    var countString = document.resultsUniqueCountText;
+    document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
+    setTimeout("updateCountInColumnSummary()", 1000);
+}
+
 function getColumnSummary(columnName, columnDisplayName) {
     DWRUtil.removeAllRows('summary_table');
     DWRUtil.removeAllRows('summary_head');
@@ -92,7 +98,7 @@ function getColumnSummary(columnName, columnDisplayName) {
     document.getElementById('summary_loading').style.display = "block";
     Effect.Appear('summary', { duration: 0.30 });
     AjaxServices.getColumnSummary(columnName, function(str){
-        var rows = str;
+        var rows = str[0];
         var cellFuncs = new Array();
         var headerFuncs = new Array();
         var summaryColumnNameElement = document.getElementById('summary_column_name');
@@ -140,6 +146,8 @@ function getColumnSummary(columnName, columnDisplayName) {
         document.getElementById('summary_loading').style.display = "none";
         document.getElementById('summary_loaded').style.display = "block";
         setTimeout("updateCountInColumnSummary()", 10000);
+        var qid = str[1];
+        setTimeout("updateUniqueCountInColumnSummary("+qid+")", 10000);
     });
 }
 

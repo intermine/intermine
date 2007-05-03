@@ -48,6 +48,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts.Globals;
+import org.apache.struts.util.MessageResources;
 
 import uk.ltd.getahead.dwr.WebContext;
 import uk.ltd.getahead.dwr.WebContextFactory;
@@ -270,7 +272,15 @@ public class AjaxServices
         List columns = Arrays.asList(new String[] {"col1", "col2"});
         WebResultsSimple webResults = new WebResultsSimple(results, columns);
         PagedTable pagedTable = new PagedTable(webResults);
-        return pagedTable.getRows();
+        
+        // Start the count of results
+        QueryMonitorTimeout clientState
+        = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
+                                                          .getAttribute(Globals.MESSAGES_KEY);
+        String qid = SessionMethods.startCollectionCount(clientState, session, messages,
+                                                         pagedTable.getAllRows());
+        return Arrays.asList(new Object[] {pagedTable.getRows(), qid});
     }
     
     /**
