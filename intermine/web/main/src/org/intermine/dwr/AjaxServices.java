@@ -183,7 +183,7 @@ public class AjaxServices
             if (profile.getSavedQueries().get(newName) != null) {
                 return "<i>" + newName + " already exists</i>";
             }
-            sq = (SavedQuery) profile.getSavedQueries().get(name);
+            sq = profile.getSavedQueries().get(name);
             profile.deleteQuery(sq.getName());
             sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
             profile.saveQuery(sq.getName(), sq);
@@ -194,8 +194,10 @@ public class AjaxServices
             if (profile.getSavedBags().get(newName) != null) {
                 return "<i>" + newName + " already exists</i>";
             }
-            InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
+            InterMineBag bag = profile.getSavedBags().get(name);
             bag.setName(newName, uosw);
+            profile.deleteBag(name);
+            profile.saveBag(newName, bag);
         } else {
             return "Type unknown";
         }
