@@ -17,15 +17,15 @@ div.error_body {
   background-color: white;
   border: solid 1px #bbb;
 }
-
 </style>
 
 <!-- error.jsp -->
 <html:xhtml/>
 
-<tiles:insert page="/errorMessages.jsp"/></br>
-<a href="javascript:history.go(-1)" >Go back</a>
-
+<div id="generic_error">
+<tiles:insert page="/errorMessages.jsp"/>
+</div>
+<!--
 <c:if test="${!empty stacktrace}">
 	<div class="error_body">
 	<div class="body"><b><fmt:message key="error.stacktrace"/></b></div>
@@ -34,8 +34,9 @@ div.error_body {
 	<pre class="stacktrace">
 	  <c:out value="${stacktrace}"/>
 	 </pre>
+	</div> 
 	</div>
-	</div>
-</c:if>
+</c:if> 
+-->
 
 <!-- /error.jsp =-->
