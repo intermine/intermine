@@ -75,8 +75,10 @@ public class TableController extends TilesAction
 //        }
             
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        HashMap<String, String> sortOrderMap = setSortOrderMap(query);
-        request.setAttribute("sortOrderMap", sortOrderMap);
+        if (query != null) {
+            HashMap<String, String> sortOrderMap = setSortOrderMap(query);        
+            request.setAttribute("sortOrderMap", sortOrderMap);
+        }
                 
         request.setAttribute("trail", trail);
         
