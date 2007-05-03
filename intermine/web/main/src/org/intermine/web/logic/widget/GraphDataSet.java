@@ -27,7 +27,7 @@ public class GraphDataSet
     /**
      * 
      * @param dataset Dataset to be displayed on chart
-     * @param categoryArray
+     * @param categoryArray labels to be displayed on the x-axis
      */
     public GraphDataSet(CategoryDataset dataset, Object[] categoryArray) {
         this.dataset = dataset;
