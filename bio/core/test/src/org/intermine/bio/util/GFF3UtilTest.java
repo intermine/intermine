@@ -44,14 +44,16 @@ public class GFF3UtilTest extends TestCase
 
         geneLocation.setStart(new Integer(100));
         geneLocation.setEnd(new Integer(800));
-
+        geneLocation.setStrand(new Integer(1));
+        
         exon.setChromosome(chromosome);
         exon.setChromosomeLocation(exonLocation);
         exon.setIdentifier("exon1");
 
         exonLocation.setStart(new Integer(200));
         exonLocation.setEnd(new Integer(300));
-
+        exonLocation.setStrand(new Integer(-1));
+        
         chromosome.setIdentifier("4");
         chromosome.setLength(new Integer(1000));
  
@@ -87,9 +89,9 @@ public class GFF3UtilTest extends TestCase
         System.err.println (gff3Exon.toGFF3());
         System.err.println (gff3Chromosome.toGFF3());
 
-        assertEquals("4	FlyMine	gene	100	800	.	.	.	name1=value1;name2=2;name3=3,4;ID=gene1",
+        assertEquals("4	FlyMine	gene	100	800	.	+	.	name1=value1;name2=2;name3=3,4;ID=gene1",
                      gff3Gene.toGFF3());
-        assertEquals("4	FlyMine	exon	200	300	.	.	.	ID=exon1",
+        assertEquals("4	FlyMine	exon	200	300	.	-	.	ID=exon1",
                      gff3Exon.toGFF3());
         assertEquals("4	FlyMine	chromosome	1	1000	.	.	.	ID=4",
                      gff3Chromosome.toGFF3());
