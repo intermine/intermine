@@ -63,6 +63,7 @@
         <attribute name="symbol" type="java.lang.String"/>
         <attribute name="organismDbId" type="java.lang.String"/>
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+        <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence"/>
         <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"
                    reverse-reference="translations"/>
         <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="translation"/>
