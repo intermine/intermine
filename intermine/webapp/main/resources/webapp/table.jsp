@@ -289,6 +289,7 @@
             </div>
             <p><fmt:message key="columnsummary.message" /></p>
             <div id="summary_row_count"></div>
+            <div id="summary_unique_count"></div>
             <table class="results" cellpadding="0" cellspacing="0">
               <thead id="summary_head"></thead>
               <tbody id="summary_table"></tbody>
