@@ -247,6 +247,9 @@ public class Profile
      */
     public void saveBag(String name, InterMineBag bag) {
         savedBags.put(name, bag);
+        if (manager != null) {
+            manager.saveProfile(this);
+        }
     }
 
     /**
