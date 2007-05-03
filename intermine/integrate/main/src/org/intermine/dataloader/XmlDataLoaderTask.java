@@ -121,7 +121,7 @@ public class XmlDataLoaderTask extends Task
                 loader.processXml(is,
                                   iw.getMainSource(sourceName),
                                   iw.getSkeletonSource(sourceName));  
-
+                loader.close();
             } else {
 
                 if (file != null && !file.equals("")) {
@@ -147,18 +147,13 @@ public class XmlDataLoaderTask extends Task
                                       iw.getMainSource(sourceName),
                                       iw.getSkeletonSource(sourceName)); 
                 }
+                loader.close();
             }
         } catch (Exception e) {
             if (toRead == null) {
                 throw new BuildException("Exception in XmlDataLoaderTask", e);
             } else {
                 throw new BuildException("Exception while reading from: " + toRead, e);
-            }
-        } finally {
-            try {
-                loader.close();
-            } catch (Exception e) {
-                throw new BuildException("Exception while closing XmlDataLoader", e);
             }
         }
     }

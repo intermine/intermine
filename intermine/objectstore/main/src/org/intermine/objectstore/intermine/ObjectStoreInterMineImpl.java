@@ -849,7 +849,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 LOG.info("(VERBOSE) iql: " + q + "\n"
                          + "generated sql: " + generatedSql + "\n"
                          + "optimised sql: " + sql + "\n"
-                         + "bag tables: " + bagTableTime + "generate: " + genTime
+                         + "bag tables: " + bagTableTime + " ms, generate: " + genTime
                          + " ms, optimise: " + optTime + " ms, " + "replace nulls: " + nulTime
                          + " ms,  estimate: " + estTime + " ms, " + "execute: " + exeTime
                          + " ms, convert results: " + conTime + " ms, total: "
