@@ -159,10 +159,11 @@ public class BagDetailsController extends TilesAction
                                   classKeys);
 
         PagedTable pagedColl = new PagedTable(webPathCollection);
-        
-        PathQuery pathQuery = MainHelper.webTableToPathQuery(pagedColl, model, imBag);
-        session.setAttribute(Constants.QUERY, pathQuery);
-        session.setAttribute("path", imBag.getType());
+
+        // TODO This code allows to load a PathQuery for the bag and load it in the QueryBuilder
+        // PathQuery pathQuery = MainHelper.webTableToPathQuery(pagedColl, model, imBag);
+        // session.setAttribute(Constants.QUERY, pathQuery);
+        // session.setAttribute("path", imBag.getType());
         
         request.setAttribute("bag", imBag);
         request.setAttribute("bagSize", imBag.size());
