@@ -13,7 +13,9 @@ package org.intermine.web.logic.widget;
 import org.jfree.data.category.CategoryDataset;
 
 /**
- *
+ * Used instead of a CategoryDataset, so we can specify the categoryarray (the list of labels
+ * that appear on the x-axis).  Useful when we want categories to show up, even when they have
+ * no data points.
  * @author Julie Sullivan
  */
 public class GraphDataSet
@@ -24,7 +26,7 @@ public class GraphDataSet
     
     /**
      * 
-     * @param dataset
+     * @param dataset Dataset to be displayed on chart
      * @param categoryArray
      */
     public GraphDataSet(CategoryDataset dataset, Object[] categoryArray) {
@@ -32,10 +34,19 @@ public class GraphDataSet
         this.categoryArray = categoryArray;
     }
  
+    /**
+     * 
+     * @return the dataset
+     */
+    
     public CategoryDataset getDataSet() {
         return dataset;
     }
     
+    /**
+     * labels to be displayed on the x-axis
+     * @return categoryArray
+     */
     public Object[] getCategoryArray() {
         return categoryArray;
     }

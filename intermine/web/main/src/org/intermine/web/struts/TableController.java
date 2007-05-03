@@ -12,8 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.HashMap;
 import java.util.List;
-
-import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathQuery;
