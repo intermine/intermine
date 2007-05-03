@@ -31,10 +31,9 @@
 </script>
 <div class="body">
 
-  <table>
+  <table border=0>
     <tr>
       <td>
-
         <html:form action="/queryClassSelect">
           <html:select property="className" size="20" onchange="showClassSelectHelp();">
             <c:forEach items="${classes}" var="entry">
@@ -52,19 +51,15 @@
         </html:form>
 
       </td>
-      <td width="100%" valign="top">
+      <td valign="top" width="100%"align=right>
         <div id="classSelectDiv" style="display:none;">
           <div class="topBar contextHelp"> <%-- IE table width bug --%>
-            <table width="100%" cellspacing="0" border="0" cellpadding="0">
+            <table width="98%" cellspacing="0" border="0" cellpadding="0">
               <tr>
-                <td valign="top">
+                <td valign="top" width="99%">
                   <span id="queryClassSelect"></span>
                 </td>
-                <td align="right" valign="top">
-                  <a href="#" onclick="javascript:document.getElementById('classSelectDiv').style.display='none';return false">
-                    <img border="0" src="images/cross.gif" alt="x"/>
-                  </a>
-                </td>
+                <td align="right" valign="top"><a href="#" onclick="javascript:document.getElementById('classSelectDiv').style.display='none';return false"><img border="0" src="images/cross.gif" alt="x"></a></td>
               </tr>
             </table>
           </div>
