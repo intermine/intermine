@@ -87,25 +87,59 @@ function updateCountInColumnSummary() {
 
 function getColumnSummary(columnName, columnDisplayName) {
     DWRUtil.removeAllRows('summary_table');
+    DWRUtil.removeAllRows('summary_head');
     document.getElementById('summary_loaded').style.display = "none";
     document.getElementById('summary_loading').style.display = "block";
-    Effect.Appear('summary', { duration: 0.30 });    
+    Effect.Appear('summary', { duration: 0.30 });
     AjaxServices.getColumnSummary(columnName, function(str){
         var rows = str;
         var cellFuncs = new Array();
-        document.getElementById('summary_column_name').innerHTML = columnDisplayName;
+        var headerFuncs = new Array();
+        var summaryColumnNameElement = document.getElementById('summary_column_name');
+        var summaryColumnNameElement = document.getElementById('summary_column_name');
+        if (summaryColumnNameElement.innerText == null) {
+            // normal browsers
+            summaryColumnNameElement.textContent = columnDisplayName;
+        } else {
+            // IE
+            summaryColumnNameElement.innerText = columnDisplayName;
+        }
+        function makeCellFunc(index) {
+            return function(data) {
+                var cell = data[index];
+                if (cell==null) {
+                    return "[no value]" ;
+                } if (! isNaN(cell)) {
+                    var rf = roundToSignificantDecimal(cell+0);
+                    return Math.round(cell*rf)/rf;
+                } else {
+                    return cell;
+                }
+            }
+        }
+        function makeHeaderFunc(index) {
+            return function(data) {
+                return data[index];
+            }
+        }
         for (var i=0;i<rows[0].length;i++){
-            cellFuncs[i] = eval('function(data) {var cell = data['+i+']; if (cell==null) { return "[no value]" } if (! isNaN(cell)) {var rf = roundToSignificantDecimal(cell+0);return Math.round(cell*rf)/rf;} else return cell; }');
+            cellFuncs[i] = makeCellFunc(i);
+            headerFuncs[i] = makeHeaderFunc(i);
         }
+        var headerCreator = function(options) {
+            return document.createElement("th");
+        }
+        var headers;
         if(cellFuncs.length == 2){
-            document.getElementById('summary_head').innerHTML = '<tr><th>Value</th><th>Count</th></tr>';
+            headers = ['Value', 'Count'];
         } else if (cellFuncs.length == 4){
-            document.getElementById('summary_head').innerHTML = '<tr><th>Min</th><th>Max</th><th>Sample Mean</th><th>Standard Deviation</th></tr>';
+            headers = ['Min', 'Max', 'Sample Mean', 'Standard Deviation'];
         }
+        DWRUtil.addRows('summary_head', [headers], headerFuncs, {cellCreator:headerCreator});
         DWRUtil.addRows("summary_table", rows, cellFuncs);
         document.getElementById('summary_loading').style.display = "none";
         document.getElementById('summary_loaded').style.display = "block";
-        setTimeout("updateCountInColumnSummary()", 1000);
+        setTimeout("updateCountInColumnSummary()", 10000);
     });
 }
 
