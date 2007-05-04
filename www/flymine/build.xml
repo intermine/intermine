@@ -23,6 +23,7 @@
   <property name="common.src.www" location="${common}/site"/>
   <property name="src.doc" location="../../flymine/doc"/>
   <property name="src.internal" location="../../flymine-private/doc"/>
+  <property name="library.xml.basedir" location="../../imbuild"/>
   <property name="build.www" location="build"/>
   <property name="build.webapp.manual.html" location="dist/doc/manual"/>
   <property name="dist.www" location="dist"/>
