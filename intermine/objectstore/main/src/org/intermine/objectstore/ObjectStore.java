@@ -31,6 +31,9 @@ import org.intermine.objectstore.query.SingletonResults;
  */
 public interface ObjectStore
 {
+    /**
+     * Object representing no fail-fast concurrency checks required.
+     */
     public static final Map<Object, Integer> SEQUENCE_IGNORE = Collections.emptyMap();
 
     /**

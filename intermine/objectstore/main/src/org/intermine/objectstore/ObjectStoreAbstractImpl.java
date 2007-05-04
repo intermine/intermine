@@ -319,7 +319,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public synchronized void checkSequence(Map<Object, Integer> sequence, Query q, String message)
     throws DataChangedException {
-        System.out.println("checkSequence: " + sequence + ", sequenceNumber = " + sequenceNumber);
         for (Map.Entry<Object, Integer> entry : sequence.entrySet()) {
             Object key = entry.getKey();
             if (!entry.getValue().equals(sequenceNumber.get(key))) {
@@ -350,7 +349,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                 }
             }
             if (s == null) {
-                synchronized(rand) {
+                synchronized (rand) {
                     s = new Integer(rand.nextInt());
                 }
                 sequenceNumber.put(key, s);
@@ -358,7 +357,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             }
             retval.put(key, s);
         }
-        System.out.println("getSequence: " + retval + ", sequenceNumber = " + sequenceNumber);
         return retval;
     }
 
@@ -368,8 +366,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @param tables a Set of objects representing independent components of the database
      */
     public synchronized void changeSequence(Set tables) {
-        System.out.println("changeSequence: " + tables);
-        System.out.println("Before: " + sequenceNumber);
         for (Object key : tables) {
             WeakReference keyRef = sequenceKeys.get(key);
             if (keyRef != null) {
@@ -380,7 +376,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                 }
             }
         }
-        System.out.println("After: " + sequenceNumber);
     }
 
     /**

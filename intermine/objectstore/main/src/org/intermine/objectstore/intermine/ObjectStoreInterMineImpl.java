@@ -1021,7 +1021,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
         Exception e = new Exception();
         e.fillInStackTrace();
-        LOG.error("Creating temporary bag table " + tableName + " of size " + bagConstraint.getBag().size() + " for " + text, e);
         DatabaseUtil.createBagTable(db, c, tableName, bagConstraint.getBag(), type);
         bagConstraintTables.put(bagConstraint, tableName);
         BagTableToRemove bagTableToRemove = new BagTableToRemove(tableName,
@@ -1625,7 +1624,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     public Set<Object> getComponentsForQuery(Query q) {
         try {
             Set<Object> retval = SqlGenerator.findTableNames(q, getSchema(), true);
-            System.out.println("getComponentsForQuery: " + q + ", " + retval);
             return retval;
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);

@@ -45,7 +45,6 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.translating.Translator;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
