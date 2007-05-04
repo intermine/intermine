@@ -247,9 +247,6 @@ public class Profile
      */
     public void saveBag(String name, InterMineBag bag) {
         savedBags.put(name, bag);
-        if (manager != null) {
-            manager.saveProfile(this);
-        }
     }
 
     /**
@@ -301,9 +298,6 @@ public class Profile
      */
     public void deleteBag(String name) {
         savedBags.remove(name);
-        if (manager != null  && !StringUtils.isEmpty(username)) {
-            manager.saveProfile(this);
-        }
     }
     
     /**

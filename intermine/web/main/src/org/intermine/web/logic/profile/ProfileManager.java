@@ -307,13 +307,6 @@ public class ProfileManager
         try {
             UserProfile userProfile = getUserProfile(userId);
             if (userProfile != null) {
-                for (Iterator i = userProfile.getSavedBags().iterator(); i.hasNext();) {
-                    SavedBag bag = (SavedBag) i.next();
-                    if (!profile.getSavedBags().containsKey(bag.getName())) {
-                        osw.delete(bag);
-                    }
-                }
-
                 for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
                     osw.delete((InterMineObject) i.next());
                 }

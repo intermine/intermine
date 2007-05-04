@@ -205,10 +205,14 @@ public class ModifyBagAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
 
         ModifyBagForm mbf = (ModifyBagForm) form;
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
             SessionMethods.invalidateBagTable(session, mbf.getSelectedBags()[i]);
+            String bagName = mbf.getSelectedBags()[i];
+            InterMineBag bag = profile.getSavedBags().get(bagName);
+            bag.setProfileId(null, uosw); // Deletes from database
             profile.deleteBag(mbf.getSelectedBags()[i]);
         }
 
