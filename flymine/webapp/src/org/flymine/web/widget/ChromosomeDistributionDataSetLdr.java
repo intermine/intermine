@@ -99,6 +99,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             // run query 
             Query q = createQuery(organismName, "actual", bag);            
             results = os.execute(q);
+            results.setBatchSize(50000);
             boolean hasResults = false;
             if (results.size() > 0) {
                 hasResults = true;
