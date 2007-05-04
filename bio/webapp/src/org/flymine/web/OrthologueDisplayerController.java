@@ -148,7 +148,7 @@ public class OrthologueDisplayerController extends TilesAction
         // group by organism
         q.addToGroupBy(qfTaxonId);
                 
-        Results r1 = new Results(q, os, os.getSequence());
+        Results r1 = os.execute(q);
    
         // get organisms
         Query qOrganisms = new Query();
@@ -165,7 +165,7 @@ public class OrthologueDisplayerController extends TilesAction
         DisplayConstraint dispConst =  new DisplayConstraint(pathNode, os.getModel(), oss, null);
         */
         
-        Results r2 = new Results(qOrganisms, os, os.getSequence());
+        Results r2 = os.execute(qOrganisms);
         
          /*  Map to hold results in 
           taxonId = key
@@ -272,7 +272,7 @@ public class OrthologueDisplayerController extends TilesAction
         // select the id of the gene
         q.addToSelect(geneId);
         q.addToGroupBy(geneId);
-        Results r = new Results(q, os, os.getSequence());
+        Results r = os.execute(q);
         
         Iterator it = r.iterator();   
     

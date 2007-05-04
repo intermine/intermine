@@ -50,6 +50,7 @@ import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -622,7 +623,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         Constraint where = q.getConstraint();
         if (where instanceof ConstraintSet) {
             ConstraintSet where2 = (ConstraintSet) where;
@@ -718,12 +719,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @param limit maximum number of rows to return
      * @param optimise boolean
      * @param explain boolean
-     * @param sequence int
+     * @param sequence object representing database state
      * @return a List of ResultRow objects
      * @throws ObjectStoreException sometimes
      */
     protected List executeWithConnection(Connection c, Query q, int start, int limit,
-            boolean optimise, boolean explain, int sequence) throws ObjectStoreException {
+            boolean optimise, boolean explain, Map<Object, Integer> sequence)
+    throws ObjectStoreException {
 
         if (explain) {
             checkStartLimit(start, limit, q);
@@ -799,7 +801,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 deregisterStatement(s);
             }
             long postExecute = System.currentTimeMillis();
-            List objResults = ResultsConverter.convert(sqlResults, q, this, c);
+            List objResults = ResultsConverter.convert(sqlResults, q, this, c, sequence);
             long postConvert = System.currentTimeMillis();
             long permittedTime = (objResults.size() * 2) + start + (150 * q.getFrom().size())
                     + (sql.length() / 20) - (q.getFrom().size() == 0 ? 0 : 100);
@@ -1017,6 +1019,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             LOG.info("Creating temporary table " + tableName + " of size "
                     + bagConstraint.getBag().size() + " for " + text);
         }
+        Exception e = new Exception();
+        e.fillInStackTrace();
+        LOG.error("Creating temporary bag table " + tableName + " of size " + bagConstraint.getBag().size() + " for " + text, e);
         DatabaseUtil.createBagTable(db, c, tableName, bagConstraint.getBag(), type);
         bagConstraintTables.put(bagConstraint, tableName);
         BagTableToRemove bagTableToRemove = new BagTableToRemove(tableName,
@@ -1107,7 +1112,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * {@inheritDoc}
      */
-    public int count(Query q, int sequence) throws ObjectStoreException {
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
@@ -1129,7 +1134,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException sometimes
      */
     protected int countWithConnection(Connection c, Query q,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         checkSequence(sequence, q, "COUNT ");
 
         String sql =
@@ -1168,12 +1173,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public void databaseAltered(Set tablesAltered) {
         if (tablesAltered.size() > 0) {
+            changeSequence(tablesAltered);
+            for (Iterator iter = tablesAltered.iterator(); iter.hasNext();) {
+                Object o = iter.next();
+                if (o instanceof ObjectStoreBag) {
+                    iter.remove();
+                }
+            }
             if ((tablesAltered.size() > 1) || (!tablesAltered.contains(INT_BAG_TABLE_NAME))) {
                 flushObjectById();
-            } else {
-                synchronized (cache) {
-                    sequenceNumber++;
-                }
             }
             try {
                 PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
@@ -1609,5 +1617,18 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             LOG.info("Got new set of serial numbers - took " + (end - start) + " ms");
         }
         return new Integer(sequenceBase + (sequenceOffset++));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<Object> getComponentsForQuery(Query q) {
+        try {
+            Set<Object> retval = SqlGenerator.findTableNames(q, getSchema(), true);
+            System.out.println("getComponentsForQuery: " + q + ", " + retval);
+            return retval;
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

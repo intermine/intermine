@@ -95,7 +95,7 @@ public class MicroArrayHelper
 
         q.setConstraint(cs);
 
-        Results results = new Results(q, os, os.getSequence());
+        Results results = os.execute(q);
 
         return results;
     }
@@ -129,7 +129,7 @@ public class MicroArrayHelper
 
         cs.addConstraint(cc2);
 
-        Results results = new Results(q, os, os.getSequence());
+        Results results = os.execute(q);
         return results;
     }
 }

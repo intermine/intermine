@@ -47,8 +47,7 @@ public class ProteinInteractionRetrieverTest extends TestCase {
         q.addFrom(qc);
         q.addToSelect(qc);
         //ObjectStore os = osw.getObjectStore();
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), 
-        		osw.getObjectStore().getSequence());
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
         Iterator resIter = res.iterator();
         osw.beginTransaction();
         while (resIter.hasNext()) {

@@ -83,7 +83,7 @@ public class ObjectStoreSummary
             QueryClass qc = new QueryClass(Class.forName(cld.getName()));
             q.addToSelect(new QueryField(qc, "id"));
             q.addFrom(qc);
-            classCountsMap.put(cld.getName(), new Integer(os.count(q, os.getSequence())));
+            classCountsMap.put(cld.getName(), new Integer(os.count(q, ObjectStore.SEQUENCE_IGNORE)));
         }
         //fieldValues
         LOG.info("Summarising field values...");

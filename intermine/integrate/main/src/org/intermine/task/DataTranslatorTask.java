@@ -119,9 +119,9 @@ public class DataTranslatorTask extends DynamicAttributeTask
             Class cls = Class.forName(translator);
             ItemReader reader = null;
             try {
-                Method m = cls.getMethod("getPrefetchDescriptors", null);
+                Method m = cls.getMethod("getPrefetchDescriptors", (Class[]) null);
                 reader = new ObjectStoreItemReader(ObjectStoreFactory.getObjectStore(source),
-                                                   (Map) m.invoke(null, null));
+                                                   (Map) m.invoke(null, (Object[]) null));
             } catch (NoSuchMethodException e) {
                 reader = new ObjectStoreItemReader(ObjectStoreFactory.getObjectStore(source));
             }

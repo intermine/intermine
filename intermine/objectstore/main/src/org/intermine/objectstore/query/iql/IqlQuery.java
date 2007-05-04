@@ -101,10 +101,11 @@ public class IqlQuery
             needComma = true;
             String nodeAlias = (String) q.getAliases().get(qn);
             if ((qn instanceof QueryClass) || (qn instanceof ObjectStoreBag)
-                    || (qn instanceof ObjectStoreBagCombination)) {
-                retval.append(nodeToString(q, qn));
+                    || (qn instanceof ObjectStoreBagCombination)
+                    || (qn instanceof ObjectStoreBagsForObject)) {
+                retval.append(nodeToString(q, qn, parameters));
             } else {
-                retval.append(nodeToString(q, qn))
+                retval.append(nodeToString(q, qn, parameters))
                     .append(nodeAlias == null ? "" : " AS " + escapeReservedWord(nodeAlias));
             }
         }
@@ -142,7 +143,7 @@ public class IqlQuery
             QueryNode qn = (QueryNode) groupIter.next();
             retval.append(needComma ? ", " : " GROUP BY ");
             needComma = true;
-            retval.append(nodeToString(q, qn));
+            retval.append(nodeToString(q, qn, parameters));
         }
         Iterator orderIter = q.getOrderBy().iterator();
         needComma = false;
@@ -150,7 +151,7 @@ public class IqlQuery
             QueryOrderable qn = (QueryOrderable) orderIter.next();
             retval.append(needComma ? ", " : " ORDER BY ");
             needComma = true;
-            retval.append(nodeToString(q, qn));
+            retval.append(nodeToString(q, qn, parameters));
         }
         queryString = retval.toString();
     }
@@ -160,9 +161,11 @@ public class IqlQuery
      *
      * @param q a Query, to provide aliases
      * @param qn an Object to convert
+     * @param parameters a List, in which this method will place objects corresponding to the
+     * question marks in the resulting String
      * @return a String
      */
-    public static String nodeToString(Query q, Object qn) {
+    public static String nodeToString(Query q, Object qn, List parameters) {
         if (qn instanceof QueryClass) {
             String nodeAlias = (String) q.getAliases().get(qn);
             return escapeReservedWord(nodeAlias);
@@ -184,18 +187,19 @@ public class IqlQuery
         } else if (qn instanceof QueryExpression) {
             QueryExpression qe = (QueryExpression) qn;
             if (qe.getOperation() == QueryExpression.SUBSTRING) {
-                return "SUBSTR(" + nodeToString(q, qe.getArg1()) + ", "
-                    + nodeToString(q, qe.getArg2())
-                    + (qe.getArg3() == null ? "" : ", " + nodeToString(q, qe.getArg3())) + ")";
+                return "SUBSTR(" + nodeToString(q, qe.getArg1(), parameters) + ", "
+                    + nodeToString(q, qe.getArg2(), parameters)
+                    + (qe.getArg3() == null ? "" : ", " + nodeToString(q, qe.getArg3(), parameters))
+                    + ")";
             } else if (qe.getOperation() == QueryExpression.INDEX_OF) {
-                return "INDEXOF(" + nodeToString(q, qe.getArg1()) + ", "
-                    + nodeToString(q, qe.getArg2()) + ")";
+                return "INDEXOF(" + nodeToString(q, qe.getArg1(), parameters) + ", "
+                    + nodeToString(q, qe.getArg2(), parameters) + ")";
             } else if (qe.getOperation() == QueryExpression.UPPER) {
-                return "UPPER(" + nodeToString(q, qe.getArg1()) + ")";
+                return "UPPER(" + nodeToString(q, qe.getArg1(), parameters) + ")";
             } else if (qe.getOperation() == QueryExpression.LOWER) {
-                return "LOWER(" + nodeToString(q, qe.getArg1()) + ")";
+                return "LOWER(" + nodeToString(q, qe.getArg1(), parameters) + ")";
             } else {
-                String retval = nodeToString(q, qe.getArg1());
+                String retval = nodeToString(q, qe.getArg1(), parameters);
                 switch (qe.getOperation()) {
                     case QueryExpression.ADD:
                         retval += " + ";
@@ -213,7 +217,7 @@ public class IqlQuery
                         throw (new IllegalArgumentException("Invalid QueryExpression operation: "
                                     + qe.getOperation()));
                 }
-                retval += nodeToString(q, qe.getArg2());
+                retval += nodeToString(q, qe.getArg2(), parameters);
                 return retval;
             }
         } else if (qn instanceof QueryFunction) {
@@ -242,13 +246,13 @@ public class IqlQuery
                         throw (new IllegalArgumentException("Invalid QueryFunction operation: "
                                     + qf.getOperation()));
                 }
-                retval += nodeToString(q, qf.getParam()) + ")";
+                retval += nodeToString(q, qf.getParam(), parameters) + ")";
                 return retval;
             }
         } else if (qn instanceof QueryCast) {
             QueryCast qc = (QueryCast) qn;
             String type = qc.getType().getName();
-            return "(" + nodeToString(q, qc.getValue()) + ")::"
+            return "(" + nodeToString(q, qc.getValue(), parameters) + ")::"
                 + type.substring(type.lastIndexOf('.') + 1);
         } else if (qn instanceof QueryObjectReference) {
             QueryObjectReference ref = (QueryObjectReference) qn;
@@ -292,11 +296,21 @@ public class IqlQuery
                     }
                 }
                 needComma = true;
-                retval.append(nodeToString(q, osb));
+                retval.append(nodeToString(q, osb, parameters));
+            }
+            return retval.toString();
+        } else if (qn instanceof ObjectStoreBagsForObject) {
+            ObjectStoreBagsForObject osbfo = (ObjectStoreBagsForObject) qn;
+            StringBuffer retval = new StringBuffer("BAGS FOR " + osbfo.getValue());
+            Collection<ObjectStoreBag> bags = osbfo.getBags();
+            if (bags != null) {
+                retval.append(" IN BAGS ?");
+                parameters.add(bags);
             }
             return retval.toString();
         } else if (qn instanceof OrderDescending) {
-            return nodeToString(q, ((OrderDescending) qn).getQueryOrderable()) + " DESC";
+            return nodeToString(q, ((OrderDescending) qn).getQueryOrderable(), parameters)
+                + " DESC";
         } else {
             throw new IllegalArgumentException("Invalid Object for nodeToString: " + qn.toString());
         }
@@ -315,29 +329,30 @@ public class IqlQuery
         if (cc instanceof SimpleConstraint) {
             SimpleConstraint c = (SimpleConstraint) cc;
             if (c.getArg2() == null) {
-                return nodeToString(q, c.getArg1()) + " " + c.getOp().toString();
+                return nodeToString(q, c.getArg1(), parameters) + " " + c.getOp().toString();
             } else {
-                return nodeToString(q, c.getArg1()) + " " + c.getOp().toString()
-                    + " " + nodeToString(q, c.getArg2());
+                return nodeToString(q, c.getArg1(), parameters) + " " + c.getOp().toString()
+                    + " " + nodeToString(q, c.getArg2(), parameters);
             }
         } else if (cc instanceof SubqueryConstraint) {
             SubqueryConstraint c = (SubqueryConstraint) cc;
             IqlQuery subquery = new IqlQuery(c.getQuery());
             // Add the parameters of the subquery to this query
             parameters.addAll(subquery.getParameters());
-            return (c.getQueryEvaluable() == null ? nodeToString(q, c.getQueryClass())
-                    : nodeToString(q, c.getQueryEvaluable()))
+            return (c.getQueryEvaluable() == null ? nodeToString(q, c.getQueryClass(), parameters)
+                    : nodeToString(q, c.getQueryEvaluable(), parameters))
                 + " " + c.getOp().toString() + " ("
                 + subquery.getQueryString() + ")";
         } else if (cc instanceof ClassConstraint) {
             ClassConstraint c = (ClassConstraint) cc;
-            String retval = nodeToString(q, c.getArg1()) + " " + c.getOp().toString() + " ";
+            String retval = nodeToString(q, c.getArg1(), parameters) + " " + c.getOp().toString()
+                + " ";
             if (c.getArg2QueryClass() == null) {
                 // Have an example object
                 retval += "?";
                 parameters.add(c.getArg2Object());
             } else {
-                retval += nodeToString(q, c.getArg2QueryClass());
+                retval += nodeToString(q, c.getArg2QueryClass(), parameters);
             }
             return retval;
         } else if (cc instanceof ContainsConstraint) {
@@ -378,11 +393,12 @@ public class IqlQuery
             BagConstraint c = (BagConstraint) cc;
             Collection coll = c.getBag();
             if (coll == null) {
-                return nodeToString(q, c.getQueryNode()) + " " + c.getOp().toString() + " BAG("
-                    + c.getOsb().getBagId() + ")";
+                return nodeToString(q, c.getQueryNode(), parameters) + " " + c.getOp().toString()
+                    + " BAG(" + c.getOsb().getBagId() + ")";
             }
             parameters.add(coll);
-            return nodeToString(q, c.getQueryNode()) + " " + c.getOp().toString() + " ?";
+            return nodeToString(q, c.getQueryNode(), parameters) + " " + c.getOp().toString()
+                + " ?";
         } else if (cc instanceof SubqueryExistsConstraint) {
             IqlQuery subquery = new IqlQuery(((SubqueryExistsConstraint) cc).getQuery());
             parameters.addAll(subquery.getParameters());

@@ -64,7 +64,7 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         q.addFrom(qc);
         q.addToSelect(qc);
         ObjectStore os = osw.getObjectStore();
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
         Iterator resIter = res.iterator();
         osw.beginTransaction();
         while (resIter.hasNext()) {
@@ -211,8 +211,7 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         QueryClass qc = new QueryClass(relClass);
         q.addToSelect(qc);
         q.addFrom(qc);
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                                                    .getSequence());
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
         Set results = new HashSet();
         Iterator resIter = res.iterator();
         while(resIter.hasNext()) {

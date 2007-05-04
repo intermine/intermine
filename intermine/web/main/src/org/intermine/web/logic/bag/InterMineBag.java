@@ -116,7 +116,7 @@ public class InterMineBag
         Query q = new Query();
         q.addToSelect(osb);
         q.setDistinct(false);
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
         res.setNoOptimise();
         return res;
     }
@@ -134,7 +134,7 @@ public class InterMineBag
         q.addToSelect(qc);
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, osb));
         q.setDistinct(false);
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
         res.setNoOptimise();
         return res;
     }
@@ -149,7 +149,7 @@ public class InterMineBag
         Query q = new Query();
         q.addToSelect(osb);
         q.setDistinct(false);
-        return os.count(q, os.getSequence());
+        return os.count(q, ObjectStore.SEQUENCE_IGNORE);
     }
 
     /**

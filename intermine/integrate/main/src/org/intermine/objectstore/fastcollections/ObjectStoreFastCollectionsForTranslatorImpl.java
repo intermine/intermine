@@ -112,14 +112,21 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
      * {@inheritDoc}
      */
     public Results execute(Query q) {
-        return new Results(q, this, getSequence());
+        return new Results(q, this, SEQUENCE_IGNORE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q) {
+        return new SingletonResults(q, this, SEQUENCE_IGNORE);
     }
 
     /**
      * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         try {
             List retval = os.execute(q, start, limit, optimise, explain, sequence);
             synchronized (doneAlready) {
@@ -228,7 +235,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                             QueryField qf = new QueryField(qc, "id");
                             subQ.setConstraint(new BagConstraint(qf, ConstraintOp.IN, bag));
 
-                            Results l = new SingletonResults(subQ, os, os.getSequence());
+                            SingletonResults l = os.executeSingleton(subQ);
                             if (!optimise) {
                                 l.setNoOptimise();
                             }

@@ -142,8 +142,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
-            Set dataToRemove = new SingletonResults(q, writer.getObjectStore(),
-                    writer.getObjectStore().getSequence());
+            Set dataToRemove = writer.getObjectStore().executeSingleton(q);
             Iterator iter = dataToRemove.iterator();
             while (iter.hasNext()) {
                 InterMineObject toDelete = (InterMineObject) iter.next();
@@ -863,7 +862,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             a4.setId(new Integer(2));
         }
 
-        assertEquals(0, (new SingletonResults(q, iw, iw.getSequence())).size());
+        assertEquals(0, iw.executeSingleton(q).size());
 
         Source source2 = iw.getMainSource("testsource2");
         Source skelSource2 = iw.getSkeletonSource("testsource2");
@@ -874,7 +873,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.idMap.clear();
         iw.commitTransaction();
         iw.beginTransaction();
-        assertEquals(1, (new SingletonResults(q, iw, iw.getSequence())).size());
+        assertEquals(1, iw.executeSingleton(q).size());
 
         Source source3 = iw.getMainSource("testsource3");
         Source skelSource3 = iw.getSkeletonSource("testsource3");
@@ -884,7 +883,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.idMap.clear();
         iw.commitTransaction();
         iw.beginTransaction();
-        assertEquals(2, (new SingletonResults(q, iw, iw.getSequence())).size());
+        assertEquals(2, iw.executeSingleton(q).size());
 
         Source source4 = iw.getMainSource("testsource4");
         Source skelSource4 = iw.getSkeletonSource("testsource4");
@@ -895,7 +894,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.idMap.clear();
         iw.commitTransaction();
         iw.beginTransaction();
-        assertEquals(DataLoaderHelper.createPKQuery(iw.getModel(), c4, source4, iw.idMap, null, false).toString(), 1, (new SingletonResults(q, iw, iw.getSequence())).size());
+        assertEquals(DataLoaderHelper.createPKQuery(iw.getModel(), c4, source4, iw.idMap, null, false).toString(), 1, iw.executeSingleton(q).size());
     }
 
     // a bug existed whereby storing a skeleton then a real object retrieved and failed to materialise
@@ -1017,7 +1016,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("Fred")));
-        SingletonResults r = new SingletonResults(q, iw, iw.getSequence());
+        SingletonResults r = iw.executeSingleton(q);
         assertEquals("Results: " + r, 1, r.size());
 
         Manager rm = (Manager) r.get(0);
@@ -1031,7 +1030,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         q2.addFrom(qc2);
         q2.addToSelect(qc2);
         q2.setConstraint(new SimpleConstraint(new QueryField(qc2, "name"), ConstraintOp.EQUALS, new QueryValue("Bob")));
-        SingletonResults r2 = new SingletonResults(q2, iw, iw.getSequence());
+        SingletonResults r2 = iw.executeSingleton(q2);
         assertEquals("Results: " + r2, 1, r2.size());
     }
 }

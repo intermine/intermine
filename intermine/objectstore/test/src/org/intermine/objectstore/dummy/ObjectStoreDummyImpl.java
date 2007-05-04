@@ -12,10 +12,11 @@ package org.intermine.objectstore.dummy;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -42,6 +43,13 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * Construct an ObjectStoreDummyImpl
      */
     public ObjectStoreDummyImpl() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<Object> getComponentsForQuery(Query q) {
+        return Collections.emptySet();
     }
 
     /**
@@ -78,18 +86,6 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     }
 
     /**
-     * Execute a Query on this ObjectStore
-     *
-     * @param q the Query to execute
-     * @return the results of the Query
-     * @throws ObjectStoreException if an error occurs during the running of the Query
-     */
-    public Results execute(Query q) throws ObjectStoreException {
-        Results res = new Results(q, this, 0);
-        return res;
-    }
-
-    /**
      * Execute a Query on this ObjectStore, asking for a certain range of rows to be returned.
      * This will usually only be called by the Results object returned from
      * <code>execute(Query q)</code>.
@@ -104,7 +100,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         checkStartLimit(start, limit, q);
         if (executeTime > maxTime) {
             throw new ObjectStoreException("Query will take longer than " + maxTime);
@@ -258,7 +254,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @return the number of rows to be produced by query
      * @throws ObjectStoreException if an error occurs counting the query
      */
-    public int count(Query q, int sequence) throws ObjectStoreException {
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return this.resultsSize;
     }
 

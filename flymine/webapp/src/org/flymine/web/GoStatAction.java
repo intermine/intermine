@@ -141,7 +141,7 @@ public class GoStatAction extends InterMineAction
 
         q.setConstraint(cs);
 
-        Results results = new Results(q, os, os.getSequence());
+        Results results = os.execute(q);
 
         String columnName = "Gene";
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);

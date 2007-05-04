@@ -205,7 +205,7 @@ public class PagedResultsTest extends TestCase
         List rows;
 
         public DummyResults(ObjectStore os, Query query, List rows) {
-            super(query, os, os.getSequence());
+            super(query, os, ObjectStore.SEQUENCE_IGNORE);
             this.rows = rows;	
         }
 

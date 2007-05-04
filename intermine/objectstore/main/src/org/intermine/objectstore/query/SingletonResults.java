@@ -11,6 +11,7 @@ package org.intermine.objectstore.query;
  */
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.intermine.objectstore.ObjectStore;
@@ -30,11 +31,11 @@ public class SingletonResults extends Results implements Set
      *
      * @param q the Query that produces this Results
      * @param os the ObjectStore that can be used to get results rows from
-     * @param sequence a number representing the state of the ObjectStore, which should be quoted
+     * @param sequence an object representing the state of the ObjectStore, which should be quoted
      * back to the ObjectStore when requests are made
      * @throws IllegalArgumentException if q does not return a single column
      */
-     public SingletonResults(Query q, ObjectStore os, int sequence) {
+     public SingletonResults(Query q, ObjectStore os, Map<Object, Integer> sequence) {
          super(q, os, sequence);
 
          // Test that this Query returns a single column of type QueryClass

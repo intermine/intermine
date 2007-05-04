@@ -426,7 +426,7 @@ public class ProfileManager
     }
 
     /**
-     * Return a List of the username in all of the stored profiles.
+     * Return a List of the usernames in all of the stored profiles.
      * @return the usernames
      */
     public List getProfileUserNames() {
@@ -436,15 +436,14 @@ public class ProfileManager
         q.addFrom(qcUserProfile);
         q.addToSelect(qfUserName);
 
-        Results res = new Results(q, osw, osw.getSequence());
+        SingletonResults res = osw.executeSingleton(q);
 
         List usernames = new ArrayList();
 
         Iterator resIter = res.iterator();
 
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            usernames.add(rr.get(0));
+            usernames.add(resIter.next());
         }
 
         return usernames;
@@ -544,8 +543,7 @@ public class ProfileManager
 
         ObjectStore userprofileOS = osw.getObjectStore();
 
-        SingletonResults results =
-            new SingletonResults(q, userprofileOS, userprofileOS.getSequence());
+        SingletonResults results = userprofileOS.executeSingleton(q);
 
         addToCache(cache, key, results);
 

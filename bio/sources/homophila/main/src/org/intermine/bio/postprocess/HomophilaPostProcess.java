@@ -194,7 +194,7 @@ public class HomophilaPostProcess extends PostProcessor
         q.setConstraint(cs);
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
 
         return res;
     }

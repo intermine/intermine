@@ -63,7 +63,7 @@ public class StoreSequences
         q.addFrom(qc);
 
         ObjectStore os = osw.getObjectStore();
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
 
         
         Iterator resIter = res.iterator();

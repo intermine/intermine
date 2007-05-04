@@ -48,6 +48,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
+import org.intermine.objectstore.query.ObjectStoreBagsForObject;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
@@ -438,6 +439,27 @@ public class SqlGenerator
                 retval.append(" ORDER BY a1_");
                 return retval.toString();
             }
+        } else if ((selectList.size() == 1)
+                && (selectList.get(0) instanceof ObjectStoreBagsForObject)) {
+            // Another special case.
+            ObjectStoreBagsForObject osbfo = (ObjectStoreBagsForObject) selectList.get(0);
+            StringBuffer retval = new StringBuffer("SELECT " + BAGID_COLUMN + " AS a1_ FROM "
+                    + INT_BAG_TABLE_NAME + " WHERE " + BAGVAL_COLUMN + " = " + osbfo.getValue());
+            Collection<ObjectStoreBag> bags = osbfo.getBags();
+            if ((bags != null) && (!bags.isEmpty())) {
+                retval.append(" AND " + BAGID_COLUMN + " IN (");
+                boolean needComma = false;
+                for (ObjectStoreBag osb : osbfo.getBags()) {
+                    if (needComma) {
+                        retval.append(", ");
+                    }
+                    needComma = true;
+                    retval.append("" + osb.getBagId());
+                }
+                retval.append(")");
+            }
+            retval.append(" ORDER BY " + BAGID_COLUMN);
+            return retval.toString();
         }
         state.setDb(db);
         state.setBagTableNames(bagTableNames);
@@ -500,16 +522,19 @@ public class SqlGenerator
      *
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
+     * @param individualOsbs if true, adds individual ObjectStoreBags to the Set, otherwise just
+     * adds the table name instead
      * @return a Set of table names
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Set findTableNames(Query q, DatabaseSchema schema) throws ObjectStoreException {
+    public static Set findTableNames(Query q, DatabaseSchema schema, boolean individualOsbs)
+    throws ObjectStoreException {
         synchronized (q) {
             Map schemaCache = getTablenamesCacheForSchema(schema);
             Set tablenames = (Set) schemaCache.get(q);
             if (tablenames == null) {
                 tablenames = new HashSet();
-                findTableNames(tablenames, q, schema, true);
+                findTableNames(tablenames, q, schema, true, individualOsbs);
                 schemaCache.put(q, tablenames);
             }
             return tablenames;
@@ -541,11 +566,14 @@ public class SqlGenerator
      * @param schema the DatabaseSchema in which to look up metadata
      * @param addInterMineObject true if this method should normally add the InterMineObject
      * table to the Set
+     * @param individualOsbs if true, adds individual ObjectStoreBags to the Set, otherwise just
+     * adds the table name instead
      * @throws ObjectStoreException if something goes wrong
      */
     private static void findTableNames(Set tablenames, Query q,
-            DatabaseSchema schema, boolean addInterMineObject) throws ObjectStoreException {
-        findTableNamesInConstraint(tablenames, q.getConstraint(), schema);
+            DatabaseSchema schema, boolean addInterMineObject, boolean individualOsbs)
+    throws ObjectStoreException {
+        findTableNamesInConstraint(tablenames, q.getConstraint(), schema, individualOsbs);
         Set fromElements = q.getFrom();
         Iterator fromIter = fromElements.iterator();
         while (fromIter.hasNext()) {
@@ -565,7 +593,7 @@ public class SqlGenerator
                 }
             } else if (fromElement instanceof Query) {
                 Query subQ = (Query) fromElement;
-                findTableNames(tablenames, subQ, schema, false);
+                findTableNames(tablenames, subQ, schema, false, individualOsbs);
             } else if (fromElement instanceof QueryClassBag) {
                 // Do nothing
             } else {
@@ -587,8 +615,18 @@ public class SqlGenerator
                     && ("id".equals(((QueryFieldPathExpression) selectable).getFieldName()))) {
                 // Do nothing
             } else if (selectable instanceof ObjectStoreBag) {
-                tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                if (individualOsbs) {
+                    tablenames.add(selectable);
+                } else {
+                    tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                }
             } else if (selectable instanceof ObjectStoreBagCombination) {
+                if (individualOsbs) {
+                    tablenames.addAll(((ObjectStoreBagCombination) selectable).getBags());
+                } else {
+                    tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                }
+            } else if (selectable instanceof ObjectStoreBagsForObject) {
                 tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
             } else {
                 throw new ObjectStoreException("Illegal entry in SELECT list: "
@@ -603,20 +641,24 @@ public class SqlGenerator
      * @param tablenames a Set of table names - new names will be added here
      * @param c the Constraint
      * @param schema the DatabaseSchema in which to look up metadata
+     * @param individualOsbs if true, adds individual ObjectStoreBags to the Set, otherwise just
+     * adds the table name instead
      * @throws ObjectStoreException if something goes wrong
      */
     private static void findTableNamesInConstraint(Set tablenames, Constraint c,
-            DatabaseSchema schema) throws ObjectStoreException {
+            DatabaseSchema schema, boolean individualOsbs) throws ObjectStoreException {
         if (c instanceof ConstraintSet) {
             Iterator conIter = ((ConstraintSet) c).getConstraints().iterator();
             while (conIter.hasNext()) {
                 Constraint subC = (Constraint) conIter.next();
-                findTableNamesInConstraint(tablenames, subC, schema);
+                findTableNamesInConstraint(tablenames, subC, schema, individualOsbs);
             }
         } else if (c instanceof SubqueryConstraint) {
-            findTableNames(tablenames, ((SubqueryConstraint) c).getQuery(), schema, false);
+            findTableNames(tablenames, ((SubqueryConstraint) c).getQuery(), schema, false,
+                    individualOsbs);
         } else if (c instanceof SubqueryExistsConstraint) {
-            findTableNames(tablenames, ((SubqueryExistsConstraint) c).getQuery(), schema, false);
+            findTableNames(tablenames, ((SubqueryExistsConstraint) c).getQuery(), schema, false,
+                    individualOsbs);
         } else if (c instanceof ContainsConstraint) {
             ContainsConstraint cc = (ContainsConstraint) c;
             QueryReference ref = cc.getReference();
@@ -633,7 +675,11 @@ public class SqlGenerator
             }
         } else if (c instanceof BagConstraint) {
             if (((BagConstraint) c).getOsb() != null) {
-                tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                if (individualOsbs) {
+                    tablenames.add(((BagConstraint) c).getOsb());
+                } else {
+                    tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                }
             }
         } else if (!((c == null) || (c instanceof SimpleConstraint)
                     || (c instanceof ClassConstraint))) {

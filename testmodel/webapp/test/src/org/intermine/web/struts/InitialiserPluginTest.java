@@ -116,8 +116,7 @@ public class InitialiserPluginTest extends TestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "tagName"), ConstraintOp.MATCHES, new QueryValue("test%")));
-        SingletonResults res = new SingletonResults(q, userProfileOS,
-                                                    userProfileOS.getSequence());
+        SingletonResults res = userProfileOS.executeSingleton(q);
         Iterator resIter = res.iterator();
         userProfileOSW.beginTransaction();
         while (resIter.hasNext()) {
@@ -140,8 +139,7 @@ public class InitialiserPluginTest extends TestCase
         QueryField qf = new QueryField(qc, "username");
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
         q.setConstraint(sc);
-        SingletonResults res = new SingletonResults(q, userProfileOS,
-                                                    userProfileOS.getSequence());
+        SingletonResults res = userProfileOS.executeSingleton(q);
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();

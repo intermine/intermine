@@ -79,7 +79,7 @@ public class ObjectStoreItemReader extends AbstractItemReader
         QueryClass qc = new QueryClass(Item.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
         res.setBatchSize(batchSize);
         res.setNoExplain();
         res.setNoOptimise();
@@ -102,7 +102,7 @@ public class ObjectStoreItemReader extends AbstractItemReader
         SimpleConstraint sc = new SimpleConstraint(qf,
             notEquals ? ConstraintOp.NOT_EQUALS : ConstraintOp.EQUALS, new QueryValue(clsName));
         q.setConstraint(sc);
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
         res.setBatchSize(batchSize);
         res.setNoExplain();
         res.setNoOptimise();
@@ -130,7 +130,7 @@ public class ObjectStoreItemReader extends AbstractItemReader
      * @return an Iterator
      */
     public Iterator itemIterator(Query q, int batchSize) {
-        SingletonResults sr = new SingletonResults(q, os, os.getSequence());
+        SingletonResults sr = os.executeSingleton(q);
         sr.setBatchSize(batchSize);
         sr.setNoExplain();
         sr.setNoOptimise();

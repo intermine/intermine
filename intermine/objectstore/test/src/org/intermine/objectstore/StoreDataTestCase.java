@@ -114,8 +114,7 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
             QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
-            Set dataToRemove = new SingletonResults(q, storeDataWriter.getObjectStore(),
-                    storeDataWriter.getObjectStore().getSequence());
+            SingletonResults dataToRemove = storeDataWriter.getObjectStore().executeSingleton(q);
             iter = dataToRemove.iterator();
             while (iter.hasNext()) {
                 InterMineObject toDelete = (InterMineObject) iter.next();

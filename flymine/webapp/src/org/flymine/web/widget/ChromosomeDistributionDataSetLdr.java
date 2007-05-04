@@ -98,7 +98,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             
             // run query 
             Query q = createQuery(organismName, "actual", bag);            
-            results = new Results(q, os, os.getSequence());
+            results = os.execute(q);
             boolean hasResults = false;
             if (results.size() > 0) {
                 hasResults = true;
@@ -159,7 +159,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     private long getTotal(ObjectStore os, String organismName) {
 
         Query q = createQuery(organismName, "total", null);        
-        results = new Results(q, os, os.getSequence());          
+        results = os.execute(q);          
         Iterator iter = results.iterator();
         ResultsRow rr = (ResultsRow) iter.next();
         return (Long) rr.get(0);
@@ -172,7 +172,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         
         // get expected results
         Query q = createQuery(organismName, "expected", null);
-        results = new Results(q, os, os.getSequence());
+        results = os.execute(q);
         Iterator iter = results.iterator();
         int i = 0;
         

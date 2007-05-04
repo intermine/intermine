@@ -133,7 +133,7 @@ public class EntrezPublicationsRetriever
         QueryClass qc = new QueryClass(Publication.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        return new SingletonResults(q, os, os.getSequence());
+        return os.executeSingleton(q);
     }
 
     /**

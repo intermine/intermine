@@ -263,5 +263,10 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("ObjectStoreBagQueryClass", new IqlQuery("SELECT a2_.id AS a3_, a1_ FROM org.intermine.model.testmodel.Employee AS a1_, BAG(5)::org.intermine.model.testmodel.Department AS a2_ WHERE a2_.employees CONTAINS a1_", null));
         results.put("OrderDescending", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_ DESC", null));
         results.put("ObjectStoreBagCombination", new IqlQuery("SELECT BAG(5) UNION BAG(6)", null));
+        results.put("ObjectStoreBagCombination2", new IqlQuery("SELECT BAG(5) INTERSECT BAG(6)", null));
+        results.put("ObjectStoreBagsForObject", new IqlQuery("SELECT BAGS FOR 6", null));
+        fq = new IqlQuery("SELECT BAGS FOR 6 IN BAGS ?", null);
+        fq.setParameters(Collections.singletonList(new HashSet(Arrays.asList(new ObjectStoreBag[] {new ObjectStoreBag(10), new ObjectStoreBag(11), new ObjectStoreBag(12)}))));
+        results.put("ObjectStoreBagsForObject2", fq);
     }
 }

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreLimitReachedException;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
@@ -49,7 +50,7 @@ public class ResultsTest extends TestCase
 
     public void testConstructNullQuery() throws Exception {
         try {
-            Results res = new Results(null, new ObjectStoreDummyImpl(), 0);
+            Results res = new Results(null, new ObjectStoreDummyImpl(), ObjectStore.SEQUENCE_IGNORE);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -58,7 +59,7 @@ public class ResultsTest extends TestCase
 
     public void testConstructNullObjectStore() throws Exception {
         try {
-            Results res = new Results(new Query(), null, 0);
+            Results res = new Results(new Query(), null, ObjectStore.SEQUENCE_IGNORE);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {

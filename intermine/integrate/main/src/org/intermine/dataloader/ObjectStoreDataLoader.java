@@ -84,7 +84,7 @@ public class ObjectStoreDataLoader extends DataLoader
             long time = (new Date()).getTime();
             long startTime = time;
             getIntegrationWriter().beginTransaction();
-            SingletonResults res = new SingletonResults(q, os, os.getSequence());
+            SingletonResults res = os.executeSingleton(q);
             res.setNoOptimise();
             res.setNoExplain();
             res.setBatchSize(1000);

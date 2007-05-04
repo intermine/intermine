@@ -42,6 +42,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheHoldingArrayList;
 import org.intermine.util.TypeUtil;
 
@@ -112,15 +113,22 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
-    public Results execute(Query q) throws ObjectStoreException {
-        return new Results(q, this, getSequence());
+    public Results execute(Query q) {
+        return new Results(q, this, SEQUENCE_IGNORE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q) {
+        return new SingletonResults(q, this, SEQUENCE_IGNORE);
     }
 
     /**
      * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         try {
             List results = os.execute(q, start, limit, optimise, explain, sequence);
             CacheHoldingArrayList retval;
@@ -195,7 +203,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                 cs.addConstraint(new SimpleConstraint(idField,
                                             ConstraintOp.LESS_THAN_EQUALS,
                                             new QueryValue(new Integer(highestId))));
-                                Results l = new Results(subQ, os, os.getSequence());
+                                Results l = new Results(subQ, os, sequence);
                                 if (!optimise) {
                                     l.setNoOptimise();
                                 }
@@ -226,7 +234,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                                 ConstraintOp.IN,
                                                 bagList.subList(i, (i + 1000 < bagList.size()
                                                         ? i + 1000 : bagList.size()))));
-                                    Results l = new Results(subQ, os, os.getSequence());
+                                    Results l = new Results(subQ, os, sequence);
                                     if (!optimise) {
                                         l.setNoOptimise();
                                     }

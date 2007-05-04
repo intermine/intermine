@@ -84,22 +84,18 @@ public class TypeConverter
         Results r;
         Map<InterMineObject, List<InterMineObject>> retval = 
             new HashMap<InterMineObject, List<InterMineObject>>();
-        try {
-            r = os.execute(q);
-            Iterator iter = r.iterator();
-            while (iter.hasNext()) {
-                List row = (List) iter.next();
-                InterMineObject orig = (InterMineObject) row.get(0);
-                InterMineObject derived = (InterMineObject) row.get(1);
-                List<InterMineObject> ders = retval.get(orig);
-                if (ders == null) {
-                    ders = new ArrayList<InterMineObject>();
-                    retval.put(orig, ders);
-                }
-                ders.add(derived);
+        r = os.execute(q);
+        Iterator iter = r.iterator();
+        while (iter.hasNext()) {
+            List row = (List) iter.next();
+            InterMineObject orig = (InterMineObject) row.get(0);
+            InterMineObject derived = (InterMineObject) row.get(1);
+            List<InterMineObject> ders = retval.get(orig);
+            if (ders == null) {
+                ders = new ArrayList<InterMineObject>();
+                retval.put(orig, ders);
             }
-        } catch (ObjectStoreException e) {
-            throw new InterMineException("Error executing query: " + q.toString(), e);
+            ders.add(derived);
         }
         return retval;
     }

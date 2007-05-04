@@ -26,6 +26,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -37,7 +38,6 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicBean;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -226,7 +226,7 @@ public class LiteParser
                     q.setConstraint(cs);
                     q.setDistinct(false);
                 }
-                Collection lazyColl = new SingletonResults(q, os, os.getSequence());
+                Collection lazyColl = os.executeSingleton(q);
                 TypeUtil.setFieldValue(obj, coll.getName(), lazyColl);
             }
         }

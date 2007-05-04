@@ -152,7 +152,7 @@ public class BagDetailsController extends TilesAction
         q.addToSelect(qc);
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
         q.setDistinct(false);
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
 
         WebPathCollection webPathCollection =
             new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig,

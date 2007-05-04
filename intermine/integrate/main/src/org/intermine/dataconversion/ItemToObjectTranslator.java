@@ -323,16 +323,13 @@ public class ItemToObjectTranslator extends Translator
                 q.addToSelect(qc);
                 q.addFrom(qc);
                 q.setConstraint(bc);
-                os.getSequence();
-                refs.getName();
                 // TODO rules about case changes should be centralised
                 String refsName = refs.getName();
                 if (Character.isLowerCase(refsName.charAt(1))) {
                     refsName = StringUtil.decapitalise(refsName);
                 }
                 if (TypeUtil.getFieldInfo(obj.getClass(), refsName) != null) {
-                    TypeUtil.setFieldValue(obj, refsName, new SingletonResults(q, os,
-                                                                             os.getSequence()));
+                    TypeUtil.setFieldValue(obj, refsName, os.executeSingleton(q));
                 } else {
                     String message = "Collection not found in model: "
                         + DynamicUtil.decomposeClass(obj.getClass())

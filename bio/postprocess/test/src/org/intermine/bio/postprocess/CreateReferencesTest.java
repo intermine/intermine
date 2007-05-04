@@ -121,8 +121,7 @@ public class CreateReferencesTest extends TestCase {
         q.addFrom(qc);
         q.addToSelect(qc);
         //ObjectStore os = osw.getObjectStore();
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                                                    .getSequence());
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
         LOG.info("created results");
         Iterator resIter = res.iterator();
         osw.beginTransaction();
@@ -209,7 +208,7 @@ public class CreateReferencesTest extends TestCase {
             new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("gene1"));
         q.setConstraint(sc2);
 
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         ResultsRow row = (ResultsRow) res.iterator().next();
 
         Gene resGene = (Gene) row.get(0);
@@ -408,7 +407,7 @@ public class CreateReferencesTest extends TestCase {
         q.addFrom(qcChromosome);
         q.addToSelect(qcChromosome);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Chromosome resChromosome = (Chromosome) row.get(0);
@@ -421,7 +420,7 @@ public class CreateReferencesTest extends TestCase {
         q.addFrom(qcExon);
         q.addToSelect(qcExon);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Exon resExon = (Exon) row.get(0);
@@ -519,7 +518,7 @@ public class CreateReferencesTest extends TestCase {
             new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("gene1"));
         q.setConstraint(sc1);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Gene resGene1 = (Gene) row.get(0);
@@ -539,7 +538,7 @@ public class CreateReferencesTest extends TestCase {
             new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("gene2"));
         q.setConstraint(sc2);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Gene resGene2 = (Gene) row.get(0);
@@ -621,7 +620,7 @@ public class CreateReferencesTest extends TestCase {
             new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("trans0"));
         q.setConstraint(sc1);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Transcript resTranscript = (Transcript) row.get(0);
@@ -640,7 +639,7 @@ public class CreateReferencesTest extends TestCase {
             new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("gene0"));
         q.setConstraint(sc2);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Gene resGene = (Gene) row.get(0);
@@ -707,7 +706,7 @@ public class CreateReferencesTest extends TestCase {
             new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("gene0"));
         q.setConstraint(sc1);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Gene resGene = (Gene) row.get(0);
@@ -893,7 +892,7 @@ public class CreateReferencesTest extends TestCase {
             new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("trans0"));
         q.setConstraint(sc1);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Item expTranscriptItem = toItem(expectedTranscript);
@@ -914,7 +913,7 @@ public class CreateReferencesTest extends TestCase {
                                                     new QueryValue("gene0"));
         q.setConstraint(sc2);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Gene resGene = (Gene) row.get(0);
@@ -928,7 +927,7 @@ public class CreateReferencesTest extends TestCase {
         q.addFrom(qcChromosome);
         q.addToSelect(qcChromosome);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Item expChromosomeItem = toItem(expectedChromosome);
@@ -943,7 +942,7 @@ public class CreateReferencesTest extends TestCase {
         q.addFrom(qcExon);
         q.addToSelect(qcExon);
 
-        res = new Results(q, os, os.getSequence());
+        res = os.execute(q);
         row = (ResultsRow) res.iterator().next();
 
         Item expExonItem = toItem(expectedExon);

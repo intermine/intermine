@@ -76,8 +76,7 @@ public class CalculateLocationsTest extends TestCase {
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                                                    .getSequence());
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
         LOG.error("created results");
         Iterator resIter = res.iterator();
         osw.beginTransaction();
@@ -222,8 +221,7 @@ public class CalculateLocationsTest extends TestCase {
         QueryClass qc = new QueryClass(OverlapRelation.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        SingletonResults res =
-            new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore().getSequence());
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
 
         Assert.assertEquals(expectedOverlaps.length, res.size());
 
@@ -272,8 +270,7 @@ public class CalculateLocationsTest extends TestCase {
         QueryClass qc = new QueryClass(OverlapRelation.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        SingletonResults res =
-            new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore().getSequence());
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
 
         Assert.assertEquals(expectedOverlaps.length, res.size());
 
@@ -3004,7 +3001,7 @@ Iterator chrBandExonIter = results.iterator();
 //         QueryClass qc2 = new QueryClass(ChromosomeBand.class);
 //         q2.addToSelect(qc2);
 //         q2.addFrom(qc2);
-//         SingletonResults sr2 = new SingletonResults(q2, os, os.getSequence());
+//         SingletonResults sr2 = os.executeSingleton(q2);
 //         ChromosomeBand result2 = (ChromosomeBand) sr2.iterator().next();
 //         Item resItem2 = itemFactory.makeItem(result2);
 //         resItem2.setIdentifier("0");
@@ -3018,7 +3015,7 @@ Iterator chrBandExonIter = results.iterator();
 //         QueryClass qc = new QueryClass(Chromosome.class);
 //         q.addToSelect(qc);
 //         q.addFrom(qc);
-//         SingletonResults sr = new SingletonResults(q, os, os.getSequence());
+//         SingletonResults sr = os.executeSingleton(q);
 //         Chromosome result = (Chromosome) sr.iterator().next();
 //         Item resItem = itemFactory.makeItem(result);
 //         resItem.setIdentifier("0");
@@ -3035,7 +3032,7 @@ Iterator chrBandExonIter = results.iterator();
 // //         QueryClass qc2 = new QueryClass(ChromosomeBand.class);
 // //         q2.addToSelect(qc2);
 // //         q2.addFrom(qc2);
-// //         SingletonResults sr2 = new SingletonResults(q2, os, os.getSequence());
+// //         SingletonResults sr2 = os.executeSingleton(q2);
 // //         ChromosomeBand result2 = (ChromosomeBand) sr2.iterator().next();
 // //         Item resItem2 = itemFactory.makeItem(result2);
 // //         resItem2.setIdentifier("0");

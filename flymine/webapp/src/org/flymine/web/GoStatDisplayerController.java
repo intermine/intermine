@@ -178,7 +178,7 @@ public class GoStatDisplayerController extends TilesAction
             q.addToGroupBy(qfGoTerm);
             q.addToGroupBy(qfGoTermId);
             
-            Results rBag = new Results(q, os, os.getSequence());
+            Results rBag = os.execute(q);
 
             Iterator itBag = rBag.iterator();
             HashMap geneCountMap = new HashMap();
@@ -229,7 +229,7 @@ public class GoStatDisplayerController extends TilesAction
             int geneCountAll = getGeneTotal(os, organisms);
             int geneCountBag = bag.size();
 
-            Results rAll = new Results(q, os, os.getSequence());
+            Results rAll = os.execute(q);
             rAll.setBatchSize(5000);
 
             Iterator itAll = rAll.iterator();
@@ -307,7 +307,7 @@ public class GoStatDisplayerController extends TilesAction
 
             q.setConstraint(cs);
 
-            Results r = new Results(q, os, os.getSequence());
+            Results r = os.execute(q);
             Iterator it = r.iterator();
             ResultsRow rr =  (ResultsRow) it.next();
             Long l = (java.lang.Long) rr.get(0);

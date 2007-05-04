@@ -114,7 +114,7 @@ public class CreateFlyBaseLinkIns
         q.setConstraint(cs);
         q.addToOrderBy(qf);
         q.setDistinct(true);
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
         res.setBatchSize(10000);
         return res.iterator();
     }

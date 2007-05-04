@@ -115,7 +115,7 @@ public class BagTableWidgetLoader
 
         List results;
         try {
-            results = os.execute(q, 0, 10, true, true, os.getSequence());
+            results = os.execute(q, 0, 10, true, true, ObjectStore.SEQUENCE_IGNORE);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }

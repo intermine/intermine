@@ -12,8 +12,13 @@ package org.intermine.objectstore.intermine;
 
 import junit.framework.Test;
 
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
 
 public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMineImplTest
 {
@@ -31,5 +36,15 @@ public class WithNotXmlObjectStoreInterMineImplTest extends ObjectStoreInterMine
     public static Test suite() {
         return buildSuite(WithNotXmlObjectStoreInterMineImplTest.class);
     }
-}
 
+    public void testFailFast2() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+
+        Results r = os.execute(q);
+        storeDataWriter.store((Company) data.get("CompanyA"));
+        r.iterator().hasNext();
+    }
+}

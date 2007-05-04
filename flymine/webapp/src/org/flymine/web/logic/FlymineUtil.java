@@ -78,7 +78,7 @@ public abstract class FlymineUtil
         
         q.addToOrderBy(qfOrganismName);
         
-        Results r = new Results(q, os, os.getSequence());
+        Results r = os.execute(q);
         Iterator it = r.iterator();
         Collection organismNames = new ArrayList();
         
@@ -143,7 +143,7 @@ public abstract class FlymineUtil
         
         q.addToOrderBy(qfChromosome);
         
-        Results r = new Results(q, os, os.getSequence());
+        Results r = os.execute(q);
         Iterator it = r.iterator();
         Collection<String> chromosomes = new ArrayList<String>();
         

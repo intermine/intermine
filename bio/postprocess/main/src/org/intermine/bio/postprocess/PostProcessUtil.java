@@ -110,7 +110,7 @@ public class PostProcessUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(500);
         return res.iterator();
     }
@@ -189,7 +189,7 @@ public class PostProcessUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(500);
 
         return res.iterator();
@@ -233,7 +233,7 @@ public class PostProcessUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(500);
         return res.iterator();
     }
@@ -274,7 +274,7 @@ public class PostProcessUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(500);
         return res.iterator();
     }
@@ -291,7 +291,7 @@ public class PostProcessUtil
         QueryClass qc = new QueryClass(cls);
         q.addToSelect(qc);
         q.addFrom(qc);
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
         res.setBatchSize(500);
         return res.iterator();
     }
@@ -346,7 +346,7 @@ public class PostProcessUtil
         indexesToCreate.add(qcSub);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
 
         return res;
     }
@@ -388,7 +388,7 @@ public class PostProcessUtil
         q.setConstraint(cs);
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
 
         return res;
     }
@@ -451,7 +451,7 @@ public class PostProcessUtil
         q.setConstraint(cs);
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
 
         return res;
     }

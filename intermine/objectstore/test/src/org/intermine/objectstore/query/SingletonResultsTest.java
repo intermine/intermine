@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import java.util.List;
 
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
@@ -59,7 +60,7 @@ public class SingletonResultsTest extends TestCase
         q.addFrom(qc1);
 
         try {
-            Results res = new SingletonResults(q, os, os.getSequence());
+            Results res = os.executeSingleton(q);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -68,7 +69,7 @@ public class SingletonResultsTest extends TestCase
 
     public void testConstructNullQuery() throws Exception {
         try {
-            Results res = new SingletonResults(null, new ObjectStoreDummyImpl(), 0);
+            Results res = new SingletonResults(null, new ObjectStoreDummyImpl(), ObjectStore.SEQUENCE_IGNORE);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -77,7 +78,7 @@ public class SingletonResultsTest extends TestCase
 
     public void testConstructNullObjectStore() throws Exception {
         try {
-            Results res = new SingletonResults(new Query(), null, 0);
+            Results res = new SingletonResults(new Query(), null, ObjectStore.SEQUENCE_IGNORE);
             fail("Expected: NullPointerException");
         }
         catch (NullPointerException e) {
@@ -85,7 +86,7 @@ public class SingletonResultsTest extends TestCase
     }
 
     public void testGet() throws Exception {
-        Results res = new SingletonResults(q, os, os.getSequence());
+        Results res = os.executeSingleton(q);
 
         assertTrue(res.get(0) instanceof Employee);
         assertEquals("0", ((Employee) res.get(0)).getName());
@@ -93,7 +94,7 @@ public class SingletonResultsTest extends TestCase
     }
 
     public void testRange() throws Exception {
-        Results res = new SingletonResults(q, os, os.getSequence());
+        Results res = os.executeSingleton(q);
         List objs = res.range(0,5);
 
         for (int i = 0; i <= 5; i++) {
@@ -104,7 +105,7 @@ public class SingletonResultsTest extends TestCase
 
 
     public void testGetOutOfBounds() throws Exception {
-        Results res = new SingletonResults(q, os, os.getSequence());
+        Results res = os.executeSingleton(q);
         try {
             res.get(10);
             fail("Expected IndexOutOfBoundsException");
@@ -114,7 +115,7 @@ public class SingletonResultsTest extends TestCase
     }
 
     public void testRangeOutOfBounds() throws Exception {
-        Results res = new SingletonResults(q, os, os.getSequence());
+        Results res = os.executeSingleton(q);
         res.setBatchSize(5);
         try {
             res.range(6,11);

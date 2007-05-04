@@ -42,7 +42,7 @@ public class StoreSequencesTest extends TestCase {
         q.addFrom(qc);
         q.addToSelect(qc);
         ObjectStore os = osw.getObjectStore();
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
         Iterator resIter = res.iterator();
         //osw.beginTransaction();
         while (resIter.hasNext()) {
@@ -78,7 +78,7 @@ public class StoreSequencesTest extends TestCase {
                                new QueryValue("CR381709.1.2001.2054"));
         q1.setConstraint(sc1);
         ObjectStore os = osw.getObjectStore();
-        SingletonResults res1 = new SingletonResults(q1, os, os.getSequence());
+        SingletonResults res1 = os.executeSingleton(q1);
         Contig con1 = (Contig) res1.get(0);
         String seq1 =  con1.getSequence().getResidues();
         String expectedSequence = "TTCCTAGGAGGTTCTAATCAATGCAACTATAGGTATTTTCTGCCAAGGTCTAGC";
@@ -90,7 +90,7 @@ public class StoreSequencesTest extends TestCase {
         SimpleConstraint sc2 = new SimpleConstraint(qf, ConstraintOp.EQUALS,
                                new QueryValue("AADD01209098.1.15791.15883"));
         q2.setConstraint(sc2);
-        SingletonResults res2 = new SingletonResults(q2, os, os.getSequence());
+        SingletonResults res2 = os.executeSingleton(q2);
         Contig con2 = (Contig) res2.get(0);
         String seq2 =  con2.getSequence().getResidues();
         expectedSequence = "TAAGTCTCTCAAAAACCCCTGGAAGACTGTATCAAGGGGTTGTTGTTGGTGGCACTGGTGTGATAATGGATCTGATATTCATTGTGATAGCAG";

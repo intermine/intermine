@@ -56,8 +56,7 @@ public class SynonymUpdaterTest extends TestCase {
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                                                    .getSequence());
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
         Iterator resIter = res.iterator();
         osw.beginTransaction();
         while (resIter.hasNext()) {
@@ -119,7 +118,7 @@ public class SynonymUpdaterTest extends TestCase {
 
         ObjectStore os = osw.getObjectStore();
         
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         Iterator iter = res.iterator();
         
         while (iter.hasNext()) {

@@ -153,7 +153,7 @@ public class EntrezOrganismRetriever extends Task
         QueryClass qc = new QueryClass(Organism.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        List results = new SingletonResults(q, os, os.getSequence());
+        List results = os.executeSingleton(q);
 
         Map retMap = new HashMap();
 

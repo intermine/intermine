@@ -489,6 +489,9 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeA1") } };
         results.put("OrderDescending", toList(r));
         results.put("ObjectStoreBagCombination", Collections.EMPTY_LIST);
+        results.put("ObjectStoreBagCombination2", Collections.EMPTY_LIST);
+        results.put("ObjectStoreBagsForObject", Collections.EMPTY_LIST);
+        results.put("ObjectStoreBagsForObject2", Collections.EMPTY_LIST);
     }
 
     /**
@@ -625,28 +628,32 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     public void testCountNoGroupByNotDistinct() throws Exception {
         Query q = QueryCloner.cloneQuery((Query) queries.get("ContainsDuplicatesMN"));
         q.setDistinct(false);
-        int count = os.count(q, os.getSequence());
+        int count = os.count(q, ObjectStore.SEQUENCE_IGNORE);
         assertEquals(4, count);
+        assertEquals(4, os.execute(q).size());
     }
 
     public void testCountNoGroupByDistinct() throws Exception {
         Query q = (Query) queries.get("ContainsDuplicatesMN");
-        int count = os.count(q, os.getSequence());
+        int count = os.count(q, ObjectStore.SEQUENCE_IGNORE);
+        assertEquals(4, count);
         assertEquals(4, os.execute(q).size());
     }
 
    public void testCountGroupByNotDistinct() throws Exception {
         Query q = QueryCloner.cloneQuery((Query) queries.get("SimpleGroupBy"));
         q.setDistinct(false);
-        int count = os.count(q, os.getSequence());
+        int count = os.count(q, ObjectStore.SEQUENCE_IGNORE);
         assertEquals(2, count);
+        assertEquals(2, os.execute(q).size());
     }
 
     public void testCountGroupByDistinct() throws Exception {
     // distinct doesn't actually do anything to group by reuslt
         Query q = (Query) queries.get("SimpleGroupBy");
-        int count = os.count(q, os.getSequence());
+        int count = os.count(q, ObjectStore.SEQUENCE_IGNORE);
         assertEquals(2, count);
+        assertEquals(2, os.execute(q).size());
     }
 
     // getObjectByExample tests
