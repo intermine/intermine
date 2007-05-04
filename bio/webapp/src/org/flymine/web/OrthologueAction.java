@@ -112,7 +112,7 @@ public class OrthologueAction extends InterMineAction
                 .addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
             columnName = bag.getType();
         }
-        Results results = os.execute(q);
+        Results results = os.execute(query);
 
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
