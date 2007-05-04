@@ -278,30 +278,16 @@
 
         <%--  The Summary table --%>
         <div id="summary" style="display:none;" >
-        <div>
-          <div align="right" ><img style="padding-bottom: 4px"
-                                   onclick="javascript:Effect.Fade('summary', { duration: 0.30 });"
-                                   src="images/close.png" title="Close" 
-                                   onmouseout="this.style.cursor='normal';" 
-                                   onmouseover="this.style.cursor='pointer';"/>
-          </div>
-        <div id="summary_loading">Loading...</div>
-        <div id="summary_loaded" style="display:none;" >
-          <div class="box">
-            <div class="title">
-              <fmt:message key="columnsummary.name"/>
+            <div align="right" >
+              <img style="padding-bottom: 4px"
+                   onclick="javascript:Effect.Fade('summary', { duration: 0.30 });"
+                   src="images/close.png" title="Close" 
+                   onmouseout="this.style.cursor='normal';" 
+                   onmouseover="this.style.cursor='pointer';"/>
             </div>
-            <p><fmt:message key="columnsummary.message" /></p>
-            <div id="summary_row_count"></div>
-            <div id="summary_unique_count"></div>
-            <table class="results" cellpadding="0" cellspacing="0">
-              <thead id="summary_head"></thead>
-              <tbody id="summary_table"></tbody>
-            </table>
-          </div>
-        </div>
-        </div></div>
-        
+            <div id="summary_loading">Loading...</div>
+            <div id="summary_loaded" style="display:none;"></div>
+        </div>  
         <c:if test="${resultsTable.size > 1}">
           <br/>
           <table cellpadding="0" cellspacing="0" >
