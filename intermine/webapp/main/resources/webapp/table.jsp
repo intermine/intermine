@@ -17,7 +17,6 @@
 <c:set var="isWebResults"
        value="${resultsTable.webTableClass.name == 'org.intermine.web.logic.results.WebResults'}"/>
 
-<script type="text/javascript" src="js/table.js" ></script>
 <script type="text/javascript">
 <!--//<![CDATA[
   function changePageSize() {
@@ -30,8 +29,13 @@
     }
     document.location.href=url;
   }
+
+  var columnsToDisable = ${columnsToDisable};
+  var columnsToHighlight = ${columnsToHighlight};
+  var bagType = null;
 //]]>-->
 </script>
+<script type="text/javascript" src="js/table.js" ></script>
 <c:choose>
   <c:when test="${resultsTable.size == 0}">
     <div class="body">
@@ -135,7 +139,7 @@
                   <c:if test="${column.selectable}">
                     <th align="center" class="checkbox">
                       <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
-                                     onclick="selectColumnCheckbox(${status.index}, '${column.columnId}')"
+                                     onclick="selectColumnCheckbox(columnsToDisable, columnsToHighlight, ${status.index})"
                                      disabled="${resultsTable.maxRetrievableIndex > resultsTable.size ? 'false' : 'true'}">
                         <c:out value="${status.index},${column.columnId}"/>
                       </html:multibox>
@@ -250,7 +254,7 @@
                         <td align="center" class="checkbox" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
                           <html:multibox property="selectedObjects"
                                          styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].htmlId}"
-                                         onclick="itemChecked(${status.index},${status2.index}, '${row[column.index].htmlId}',this)">
+                                         onclick="itemChecked(columnsToDisable, columnsToHighlight, ${status.index},${status2.index}, this)">
                             <c:out value="${status2.index},${status.index},${row[column.index].htmlId}"/>
                           </html:multibox>
                         </td>
