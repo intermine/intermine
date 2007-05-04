@@ -10,11 +10,16 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PageOutOfRangeException;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -32,6 +37,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.stringtree.json.JSONWriter;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Sets up PagedTable
@@ -55,23 +61,18 @@ public class TableController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
-    public ActionForward execute(ComponentContext context,
+    @Override
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
         String trail = request.getParameter("trail");
         
-//        if (trail != null) {
-//            trail += request.getParameter("table");
-//        } else {
-//            trail = request.getParameter("table");
-//        }
-            
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         if (query != null) {
             HashMap<String, String> sortOrderMap = setSortOrderMap(query);        
@@ -110,10 +111,118 @@ public class TableController extends TilesAction
             saveErrors(request, actionMessages);
         }
         
+        List<Column> columns = pt.getColumns();
+        
+        // a Map from column index to List of column indexes - if any element in a column is
+        // selected then all the columns in the coresponding list should be disabled
+        Map<String, List<String>> columnsToDisableMap = new HashMap<String, List<String>>();
+
+        /*
+         * code to make a columnsToDisableMap that disables only those columns that have a type
+         * that isn't a sub-type of the selected column
+        for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+            Column column = columns.get(columnIndex);
+            Path columnPath = column.getPath();
+            if (columnPath != null) {
+                Class columnEndType = columnPath.getLastClassDescriptor().getType();
+                if (columnEndType != null) {
+                    List<String> columnsToDisable = new ArrayList<String>();
+                    // find columns that should be disabled if an object from this column is 
+                    // selected
+                    for (int otherColumnIndex = 0; 
+                        otherColumnIndex < columns.size(); 
+                        otherColumnIndex++) {
+                        Column otherColumn = columns.get(otherColumnIndex);
+                        if (otherColumn.equals(column) || !otherColumn.isSelectable()) {
+                            continue;
+                        } else {
+                            Path otherColumnPath = otherColumn.getPath();
+                            if (otherColumnPath != null) {
+                                Class otherColumnEndType = 
+                                    otherColumnPath.getLastClassDescriptor().getType();
+                                if (otherColumnEndType != null) {
+                                    if (!columnEndType.isAssignableFrom(otherColumnEndType)) {
+                                        columnsToDisable.add("" + otherColumnIndex);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    columnsToDisableMap.put("" + columnIndex, columnsToDisable);
+                }
+            }
+        }
+        */
+        
+        // disable all other columns that have a different type
+        for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+            Column column = columns.get(columnIndex);
+            Path columnPath = column.getPath();
+            if (columnPath != null) {
+                Class columnEndType = columnPath.getLastClassDescriptor().getType();
+                if (columnEndType != null) {
+                    List<String> columnsToDisable = new ArrayList<String>();
+                    // find columns that should be disabled if an object from this column is 
+                    // selected
+                    for (int otherColumnIndex = 0; 
+                        otherColumnIndex < columns.size(); 
+                        otherColumnIndex++) {
+                        Column otherColumn = columns.get(otherColumnIndex);
+                        if (otherColumn.equals(column) || !otherColumn.isSelectable()) {
+                            continue;
+                        } else {
+                            Path otherColumnPath = otherColumn.getPath();
+                            if (otherColumnPath != null) {
+                                Class otherColumnEndType = 
+                                    otherColumnPath.getLastClassDescriptor().getType();
+                                if (otherColumnEndType != null) {
+                                    if (!columnEndType.equals(otherColumnEndType)) {
+                                        columnsToDisable.add("" + otherColumnIndex);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    columnsToDisableMap.put("" + columnIndex, columnsToDisable);
+                }
+            }
+        }
+        
+        JSONWriter jsonWriter = new JSONWriter();
+        request.setAttribute("columnsToDisable", jsonWriter.write(columnsToDisableMap));
+
+        // a Map from column index to List of column indexes - if an element in row R and column C
+        // is selected then the elements in the columns in the coresponding list should be 
+        // highlighted if they are in row R (because they are fields from the object)
+        Map<String, List<String>> columnsToHighlightMap = new HashMap<String, List<String>>();
+        
+        for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
+            Column column = columns.get(columnIndex);
+            Path columnPath = column.getPath();
+            if (columnPath != null) {
+                List<String> columnsToHighlight = new ArrayList<String>();
+                for (int otherColumnIndex = 0;
+                     otherColumnIndex < columns.size(); 
+                     otherColumnIndex++) {
+                    Column otherColumn = columns.get(otherColumnIndex);
+                    Path otherColumnPath = otherColumn.getPath();
+                    if (columnPath.getElements().size() > 0
+                        && otherColumnPath.getElements().size() > 0
+                        && columnPath.getPrefix().equals(otherColumnPath.getPrefix())) {
+                        columnsToHighlight.add("" + otherColumnIndex);
+                    }
+                }
+
+                columnsToHighlightMap.put("" + columnIndex, columnsToHighlight);
+            }
+        }
+        
+        request.setAttribute("columnsToHighlight", jsonWriter.write(columnsToHighlightMap));
+        
         return null;
     }
     
-    private HashMap setSortOrderMap(PathQuery q) {
+    private HashMap<String, String> setSortOrderMap(PathQuery q) {
         HashMap<String, String> mappy = new HashMap<String, String>();
         String sortBy, direction = null;
         List<OrderBy> sortOrderList = q.getSortOrder();
