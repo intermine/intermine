@@ -10,38 +10,51 @@ package org.intermine.task;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-import org.intermine.dataconversion.ObjectStoreItemWriter;
-import org.intermine.dataconversion.ItemWriter;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileSet;
 import org.intermine.dataconversion.FullXmlConverter;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
-import org.apache.tools.ant.BuildException;
-
 /**
- * Task in invoke XML conversion.
+ * Load InterMine Items XML file(s) into a target items database.
  *
  * @author Matthew Wakeling
+ * @author Richard Smith
  */
 public class FullXmlConverterTask extends ConverterTask
 {
-    protected File xmlFile;
-    protected String xmlRes;
+    protected FileSet fileSet;
+    protected String xmlRes, file, sourceName;
 
     /**
-     * Set the XML file to load data from.
-     *
-     * @param xmlFile the XML file
+     * Set the data fileset
+     * @param fileSet the fileset
      */
-    public void setXmlFile(File xmlFile) {
-        this.xmlFile = xmlFile;
+    public void addFileSet(FileSet fileSet) {
+        this.fileSet = fileSet;
     }
-
+    
+    /**
+     * Set a file name to load from
+     * @param file name of file to load
+     */
+    public void setFile(String file) {
+        this.file = file;
+    }
+    
     /**
      * Set XML resource name (to load data from classloader).
      * @param resName classloader resource name
@@ -51,19 +64,25 @@ public class FullXmlConverterTask extends ConverterTask
     }
 
     /**
+     * Set the source name, as used by primary key priority config.
+     *
+     * @param sourceName the name of the data source
+     */
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public void execute() throws BuildException {
-        if (xmlFile == null && xmlRes == null) {
-            throw new BuildException("neither xmlRes nor xmlFile attributes set");
-        }
-        if (xmlFile != null && xmlRes != null) {
-            throw new BuildException("both xmlRes and xmlFile attributes set");
-        }
         if (osName == null) {
             throw new BuildException("osName must be specified");
         }
-
+        if (sourceName == null) {
+            throw new BuildException("sourceName attribute is not set");
+        }
+        
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         File toRead = null;
@@ -72,20 +91,45 @@ public class FullXmlConverterTask extends ConverterTask
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             writer = new ObjectStoreItemWriter(osw);
             FullXmlConverter converter = new FullXmlConverter(writer);
-            System.err .println("Processing file " + xmlFile);
+            
+            List<File> files = new ArrayList<File>();
+
+            // read an InputStream from the classpath
             if (xmlRes != null) {
-                converter.process(new BufferedReader(new InputStreamReader(getClass()
-                                .getClassLoader().getResourceAsStream(xmlRes))));
+                InputStream is = getClass().getClassLoader().getResourceAsStream(xmlRes);
+                if (is == null) {
+                    throw new BuildException("Failed to find resource '" + xmlRes 
+                                             + "' on classpath.");
+                }
+                converter.process(new InputStreamReader(is));  
             } else {
-                converter.process(new BufferedReader(new FileReader(xmlFile)));
+                if (file != null && !file.equals("")) {
+                    files = new ArrayList<File>(Collections.singleton(new File(file)));
+                } else {
+                    DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
+                    String[] fileArray = ds.getIncludedFiles();
+                    for (int i = 0; i < fileArray.length; i++) {
+                        files.add(new File(ds.getBasedir(), fileArray[i]));
+                    }
+                    if (files.isEmpty()) {
+                        throw new BuildException("No xml files read from: " + fileSet.toString());
+                    }
+                }
+                if (files.isEmpty()) {
+                    throw new BuildException("No files found to load for source: " + sourceName);
+                }
+                Iterator<File> fileIter = files.iterator();
+                while (fileIter.hasNext()) {
+                    toRead = fileIter.next();              
+                    System.out .println("Processing file " + toRead.toString());
+                    converter.process(new FileReader(toRead));
+                }
             }
         } catch (Exception e) {
-            if (xmlFile == null) {
-                throw new BuildException("Exception in FullXmlConverterTask while reading from "
-                        + xmlRes, e);
+            if (toRead == null) {
+                throw new BuildException("Exception in FullXmlConverterTask", e);
             } else {
-                throw new BuildException("Exception in FullXmlConverterTask while reading from "
-                        + xmlFile, e);
+                throw new BuildException("Exception while reading from: " + toRead, e);
             }
         } finally {
             try {
