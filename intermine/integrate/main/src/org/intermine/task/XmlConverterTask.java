@@ -82,13 +82,18 @@ public class XmlConverterTask extends ConverterTask
                                                       writer);
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
+            if (files.length == 0) {
+                throw new BuildException("No .xml files found in: " + fileSet.getDir(getProject()));
+            }
             for (int i = 0; i < files.length; i++) {
                 toRead = new File(ds.getBasedir(), files[i]);
                 System.err .println("Processing file " + toRead.toString());
                 converter.process(new BufferedReader(new FileReader(toRead)));
             }
         } catch (Exception e) {
-            if (toRead == null) {
+            if (e instanceof BuildException) {
+                throw (BuildException) e;
+            } else if (toRead == null) {
                 throw new BuildException("Exception in XmlConverterTask", e);
             } else {
                 throw new BuildException("Exception while reading from: " + toRead, e);

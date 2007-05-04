@@ -259,6 +259,7 @@
           if="have.large.file.xml.tgt">
     <convert-fullxml-file
       osName="osw.${common.os.prefix}-tgt-items"
+      sourceName="${source.name}"
       file="${src.data.file}">
       <fileset dir="${src.data.dir}">
         <include name="${src.data.dir.includes}"/>
