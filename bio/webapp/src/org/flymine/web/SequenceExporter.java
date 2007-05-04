@@ -38,6 +38,7 @@ import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Translation;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -282,23 +283,30 @@ public class SequenceExporter extends InterMineAction implements TableExporter
 
                     }
                 } else if (object instanceof Translation) {
-                    Translation translation = (Translation) object;
-                    flyMineSequence = FlyMineSequenceFactory.make(translation);
-                    header.append(translation.getIdentifier());
-                    header.append(' ');
-                    if (translation.getName() == null) {
-                        header.append("[unknown_name]");
-                    } else {
-                        header.append(translation.getName());
-                    }
-                    if (translation.getGene() != null) {
-                        Gene gene = translation.getGene();
-                        String geneIdentifier = gene.getIdentifier();
-                        if (geneIdentifier != null) {
-                            header.append(' ');
-                            header.append("gene:");
-                            header.append(geneIdentifier);
+                    Model model = os.getModel();
+                    ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName()
+                                                                         + "." + "Translation");
+                    if (cld.getReferenceDescriptorByName("sequence", true) != null) {
+                        Translation translation = (Translation) object;
+                        flyMineSequence = FlyMineSequenceFactory.make(translation);
+                        header.append(translation.getIdentifier());
+                        header.append(' ');
+                        if (translation.getName() == null) {
+                            header.append("[unknown_name]");
+                        } else {
+                            header.append(translation.getName());
                         }
+                        if (translation.getGene() != null) {
+                            Gene gene = translation.getGene();
+                            String geneIdentifier = gene.getIdentifier();
+                            if (geneIdentifier != null) {
+                                header.append(' ');
+                                header.append("gene:");
+                                header.append(geneIdentifier);
+                            }
+                        }
+                    } else {
+                        flyMineSequence = null;
                     }
                 } else {
                     // ignore other objects
@@ -375,8 +383,9 @@ public class SequenceExporter extends InterMineAction implements TableExporter
      */
     protected boolean validType(Class type) {
         return (LocatedSequenceFeature.class.isAssignableFrom(type)
-                || Protein.class.isAssignableFrom(type)
-                || Sequence.class.isAssignableFrom(type));
+                        || Protein.class.isAssignableFrom(type)
+                        || Translation.class.isAssignableFrom(type)
+                        || Sequence.class.isAssignableFrom(type));
     }
 
     private boolean validType(String className) {
