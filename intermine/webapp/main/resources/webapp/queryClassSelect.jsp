@@ -7,35 +7,50 @@
 <%@ page import="java.lang.String" %>
 
 <html:xhtml/>
-
 <!-- queryClassSelect.jsp -->
 
 <script type="text/javascript">
+<!--
   // array of help texts built in the controller
   var helpMap = {${helpMap}};
 
   function showClassSelectHelp() {
-  var i = document.queryClassSelectForm.className.selectedIndex;
-  var fullSelectedClassName = document.queryClassSelectForm.className[i].value;
-  var selectedClassName =
-  fullSelectedClassName.substring(fullSelectedClassName.lastIndexOf('.')+1);
-  var helpText = helpMap[selectedClassName];
-  if (!helpText) {
-  helpText = "no description available";
-  }
-  document.getElementById('queryClassSelect').innerHTML =
-  selectedClassName + ":  " + helpText;
-  document.getElementById('classSelectDiv').style.display = 'block';
+      var i = document.queryClassSelectForm.className.selectedIndex;
+      var fullSelectedClassName = document.queryClassSelectForm.className[i].value;
+      var selectedClassName =
+          fullSelectedClassName.substring(fullSelectedClassName.lastIndexOf('.')+1);
+      var helpText = helpMap[selectedClassName];
+      if (!helpText) {
+          helpText = "no description available";
+      }
+      document.getElementById('queryClassSelect').innerHTML =
+          selectedClassName + ":  " + helpText;
+      document.getElementById('classSelectDiv').style.display = 'block';
   }
 
+  function handleClassClick(e) {
+      if (e.detail == 2) {
+          $('queryClassForm').submit();
+      }
+  }
+
+  window.onload = function() {
+      var selector = $('queryClassSelector');
+      addEvent(selector, 'click', handleClassClick);
+  }
+-->
 </script>
 <div class="body">
+
+  <p>
+    <fmt:message key="classChooser.intro"/>
+  </p>
 
   <table border=0>
     <tr>
       <td>
-        <html:form action="/queryClassSelect">
-          <html:select property="className" size="20" onchange="showClassSelectHelp();">
+        <html:form styleId="queryClassForm" action="/queryClassSelect">
+          <html:select styleId="queryClassSelector" property="className" size="20" onchange="showClassSelectHelp();">
             <c:forEach items="${classes}" var="entry">
               <c:if test="${classCounts[entry.key] > 0}">
                 <html:option value="${entry.key}">
