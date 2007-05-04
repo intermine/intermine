@@ -679,7 +679,7 @@ public class WriteGFFTask extends Task
         indexesToCreate.add(qfSyn);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(50000);
 
         Iterator resIter = res.iterator();
@@ -756,7 +756,7 @@ public class WriteGFFTask extends Task
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
 
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
 
         res.setBatchSize(50000);
 

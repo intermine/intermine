@@ -1,15 +1,15 @@
 package org.intermine.objectstore.dummy;
 
-import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsInfo;
-
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.SingletonResults;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -107,12 +107,16 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
        // do nothing
     }
 
-    public Results execute(Query q) throws ObjectStoreException {
+    public Results execute(Query q) {
+        throw new UnsupportedOperationException();
+    }
+
+    public SingletonResults executeSingleton(Query q) {
         throw new UnsupportedOperationException();
     }
 
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-                        int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         throw new UnsupportedOperationException();
     }
 
@@ -152,7 +156,7 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         throw new UnsupportedOperationException();
     }
 
-    public int count(Query q, int sequence) throws ObjectStoreException {
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         throw new UnsupportedOperationException();
     }
 
@@ -168,7 +172,7 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         throw new UnsupportedOperationException();
     }
 
-    public int getSequence() {
+    public Map<Object, Integer> getSequence(Set<Object> tables) {
         throw new UnsupportedOperationException();
     }
 

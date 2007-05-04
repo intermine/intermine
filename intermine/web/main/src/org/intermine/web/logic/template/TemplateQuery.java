@@ -296,7 +296,7 @@ public class TemplateQuery extends PathQuery
             PathNode node = (PathNode) iter.next();
             Query q = TemplateHelper.getPrecomputeQuery(this, null, node);
             LOG.error("Running query: " + q);
-            List results = os.execute(q, 0, 20, true, false, os.getSequence());
+            List results = os.execute(q, 0, 20, true, false, ObjectStore.SEQUENCE_IGNORE);
             if (results.size() < 20) {
                 List values = new ArrayList();
                 Iterator resIter = results.iterator();
@@ -317,8 +317,7 @@ public class TemplateQuery extends PathQuery
                 q.addToSelect(qc);
                 q.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "template"),
                             ConstraintOp.CONTAINS, savedTemplateQuery));
-                Iterator oldIter = new SingletonResults(q, osw.getObjectStore(),
-                        osw.getObjectStore().getSequence()).iterator();
+                Iterator oldIter = osw.getObjectStore().executeSingleton(q).iterator();
                 while (oldIter.hasNext()) {
                     osw.delete((TemplateSummary) oldIter.next());
                 }

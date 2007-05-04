@@ -13,6 +13,7 @@ package org.intermine.objectstore;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -241,6 +242,9 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ObjectStoreBagQueryClass", objectStoreBagQueryClass());
         queries.put("OrderDescending", orderDescending());
         queries.put("ObjectStoreBagCombination", objectStoreBagCombination());
+        queries.put("ObjectStoreBagCombination2", objectStoreBagCombination2());
+        queries.put("ObjectStoreBagsForObject", objectStoreBagsForObject());
+        queries.put("ObjectStoreBagsForObject2", objectStoreBagsForObject2());
     }
 
     /*
@@ -1685,6 +1689,47 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         osbc.addBag(osb1);
         osbc.addBag(osb2);
         q.addToSelect(osbc);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT BAG(5) INTERSECT BAG(6)
+     */
+    public static Query objectStoreBagCombination2() throws Exception {
+        Query q = new Query();
+        ObjectStoreBag osb1 = new ObjectStoreBag(5);
+        ObjectStoreBag osb2 = new ObjectStoreBag(6);
+        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(ObjectStoreBagCombination.INTERSECT);
+        osbc.addBag(osb1);
+        osbc.addBag(osb2);
+        q.addToSelect(osbc);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT BAGS FOR 6
+     */
+    public static Query objectStoreBagsForObject() throws Exception {
+        Query q = new Query();
+        ObjectStoreBagsForObject osbfo = new ObjectStoreBagsForObject(new Integer(6));
+        q.addToSelect(osbfo);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT BAGS FOR 6 IN BAGS(10, 11, 12)
+     */
+    public static Query objectStoreBagsForObject2() throws Exception {
+        Query q = new Query();
+        Collection bags = new HashSet();
+        bags.add(new ObjectStoreBag(10));
+        bags.add(new ObjectStoreBag(11));
+        bags.add(new ObjectStoreBag(12));
+        ObjectStoreBagsForObject osbfo = new ObjectStoreBagsForObject(new Integer(6), bags);
+        q.addToSelect(osbfo);
         q.setDistinct(false);
         return q;
     }

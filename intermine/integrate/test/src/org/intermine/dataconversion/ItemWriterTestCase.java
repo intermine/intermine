@@ -55,8 +55,7 @@ public class ItemWriterTestCase extends TestCase {
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
         q.addFrom(qc);
-        Collection toDelete = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                .getSequence());
+        Collection toDelete = osw.getObjectStore().executeSingleton(q);
         Iterator iter = toDelete.iterator();
         osw.beginTransaction();
         while (iter.hasNext()) {
@@ -73,7 +72,7 @@ public class ItemWriterTestCase extends TestCase {
         QueryClass qc = new QueryClass(Item.class);
         q.addToSelect(qc);
         q.addFrom(qc);
-        Collection results = new SingletonResults(q, osw, osw.getSequence());
+        Collection results = osw.executeSingleton(q);
         //assertEquals(items.size(), results.size());
         assertEquals(items, results);
     }

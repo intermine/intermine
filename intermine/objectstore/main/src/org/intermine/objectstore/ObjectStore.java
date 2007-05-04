@@ -11,7 +11,9 @@ package org.intermine.objectstore;
  */
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
@@ -20,6 +22,7 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.SingletonResults;
 
 /**
  * Gets the Results of a Query from an underlying store.
@@ -28,17 +31,23 @@ import org.intermine.objectstore.query.ResultsInfo;
  */
 public interface ObjectStore
 {
-    /** A sequence number indicating no concurrency control is needed. */
-    public static final int SEQUENCE_IGNORE = Integer.MAX_VALUE;
+    public static final Map<Object, Integer> SEQUENCE_IGNORE = Collections.emptyMap();
 
     /**
      * Execute a Query on this ObjectStore
      *
      * @param q the Query to execute
      * @return the results of the Query
-     * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public Results execute(Query q) throws ObjectStoreException;
+    public Results execute(Query q);
+
+    /**
+     * Execute a Query on this ObjectStore, returning a SingletonResults
+     *
+     * @param q the Query to execute
+     * @return the results of the Query
+     */
+    public SingletonResults executeSingleton(Query q);
 
     /**
      * Execute a Query on this ObjectStore, asking for a certain range of rows to be returned.
@@ -50,7 +59,7 @@ public interface ObjectStore
      * @param limit the maximum number of rows to return
      * @param optimise true if it is expected that optimising the query will improve performance
      * @param explain true if the ObjectStore should enforce maximum query running time constraints
-     * @param sequence a number representing the state of the database corresponding to when the
+     * @param sequence an object representing the state of the database corresponding to when the
      * action that resulted in this execute was started. This number must match the ObjectStore's
      * internal sequence number or a DataChangedException is thrown. The sequence number is
      * incremented each time the data in the objectstore is changed
@@ -58,7 +67,7 @@ public interface ObjectStore
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException;
+            Map<Object, Integer> sequence) throws ObjectStoreException;
 
     /**
      * Get an object from the ObjectStore by giving an ID.
@@ -159,14 +168,14 @@ public interface ObjectStore
      * Counts the number of rows the query will produce
      *
      * @param q InterMine Query on which to count rows
-     * @param sequence a number representing the state of the database corresponding to when the
+     * @param sequence an object representing the state of the database corresponding to when the
      * action that resulted in this execute was started. This number must match the ObjectStore's
      * internal sequence number or a DataChangedException is thrown. The sequence number is
      * incremented each time the data in the objectstore is changed
      * @return the number of rows that will be produced by query
      * @throws ObjectStoreException if an error occurs counting the query
      */
-    public int count(Query q, int sequence) throws ObjectStoreException;
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException;
 
     /**
      * Return the metadata associated with this ObjectStore
@@ -203,9 +212,10 @@ public interface ObjectStore
      * Return the sequence number representing the state of the ObjectStore. This number is
      * incremented each time the data in the ObjectStore is changed.
      *
-     * @return an integer
+     * @param tables a Set of independent database components to get data for
+     * @return an object representing the current database state
      */
-    public int getSequence();
+    public Map<Object, Integer> getSequence(Set<Object> tables);
 
     /**
      * Get the maximum LIMIT that can be used in an SQL query without throwing an

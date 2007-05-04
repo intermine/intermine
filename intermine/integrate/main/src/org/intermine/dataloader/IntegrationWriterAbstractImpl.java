@@ -161,7 +161,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             throw new ObjectStoreException(e);
         }
         if (q != null) {
-            SingletonResults result = new SingletonResults(q, this, getSequence());
+            SingletonResults result = executeSingleton(q);
             result.setNoOptimise();
             result.setNoExplain();
             long before = System.currentTimeMillis();
@@ -594,15 +594,22 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
-    public Results execute(Query q) throws ObjectStoreException {
+    public Results execute(Query q) {
         return osw.execute(q);
     }
 
     /**
      * {@inheritDoc}
      */
+    public SingletonResults executeSingleton(Query q) {
+        return osw.executeSingleton(q);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         return osw.execute(q, start, limit, optimise, explain, sequence);
     }
 
@@ -651,7 +658,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
-    public int count(Query q, int sequence) throws ObjectStoreException {
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return osw.count(q, sequence);
     }
 
@@ -697,8 +704,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
-    public int getSequence() {
-        return osw.getSequence();
+    public Map<Object, Integer> getSequence(Set<Object> tables) {
+        return osw.getSequence(tables);
     }
 
     /**

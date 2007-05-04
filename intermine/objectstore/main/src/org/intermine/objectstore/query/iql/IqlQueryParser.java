@@ -149,7 +149,7 @@ public class IqlQueryParser
             processAST(ast.getNextSibling(), q, modelPackage, iterator);
         }
         if (processSelect) {
-            processSelectList(ast.getFirstChild(), q, modelPackage);
+            processSelectList(ast.getFirstChild(), q, modelPackage, iterator);
         }
     }
 
@@ -306,13 +306,15 @@ public class IqlQueryParser
      *
      * @param ast an AST node to process
      * @param q the Query to build
+     * @param iterator an iterator through the list of parameters of the IqlQuery
      * @param modelPackage the package for unqualified class names
      */
-    private static void processSelectList(AST ast, Query q, String modelPackage) {
+    private static void processSelectList(AST ast, Query q, String modelPackage,
+            Iterator iterator) {
         do {
             switch (ast.getType()) {
                 case IqlTokenTypes.SELECT_VALUE:
-                    processNewSelect(ast.getFirstChild(), q, modelPackage);
+                    processNewSelect(ast.getFirstChild(), q, modelPackage, iterator);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -327,9 +329,10 @@ public class IqlQueryParser
      *
      * @param ast an AST node to process
      * @param q the Query to build
+     * @param iterator an iterator through the list of parameters of the IqlQuery
      * @param modelPackage the package for unqualified class names
      */
-    private static void processNewSelect(AST ast, Query q, String modelPackage) {
+    private static void processNewSelect(AST ast, Query q, String modelPackage, Iterator iterator) {
         QuerySelectable node = null;
         String nodeAlias = null;
         do {
@@ -404,6 +407,9 @@ public class IqlQueryParser
                         throw new IllegalArgumentException("EXCEPT can only apply to bag fetches");
                     }
                     break;
+                case IqlTokenTypes.BAGS_FOR:
+                    node = processNewBagsFor(ast.getFirstChild(), iterator);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
@@ -412,7 +418,8 @@ public class IqlQueryParser
         } while (ast != null);
         if ((nodeAlias == null) != (node instanceof QueryClass
                     || node instanceof ObjectStoreBag
-                    || node instanceof ObjectStoreBagCombination)) {
+                    || node instanceof ObjectStoreBagCombination
+                    || node instanceof ObjectStoreBagsForObject)) {
             throw new IllegalArgumentException("No alias for item in SELECT list, or an alias "
                     + "present for a QueryClass");
         }
@@ -499,6 +506,27 @@ public class IqlQueryParser
     private static ObjectStoreBag processNewObjectStoreBag(AST ast) {
         String value = unescape(ast.getText());
         return new ObjectStoreBag(Integer.parseInt(value));
+    }
+
+    /**
+     * Process an AST node that describes an ObjectStoreBagsForObject.
+     *
+     * @param ast an AST node to process
+     * @param iterator an iterator through the list of parameters of the IqlQuery
+     * @return an ObjectStoreBagsForObject object
+     */
+    private static ObjectStoreBagsForObject processNewBagsFor(AST ast, Iterator iterator) {
+        String value = unescape(ast.getText());
+        AST sibling = ast.getNextSibling();
+        if (sibling != null) {
+            if (IqlTokenTypes.QUESTION_MARK == sibling.getType()) {
+                return new ObjectStoreBagsForObject(new Integer(Integer.parseInt(value)),
+                        (Collection<ObjectStoreBag>) iterator.next());
+            }
+            throw new IllegalArgumentException("Unknown AST node: " + sibling.getText() + " ["
+                    + sibling.getType() + "]");
+        }
+        return new ObjectStoreBagsForObject(new Integer(Integer.parseInt(value)));
     }
 
     /**

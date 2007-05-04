@@ -12,6 +12,7 @@ package org.intermine.objectstore;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
@@ -20,6 +21,7 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.SingletonResults;
 
 /**
  * A generic ObjectStore that passes through every request to an underlying ObjectStore. Extend
@@ -43,15 +45,22 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public Results execute(Query q) throws ObjectStoreException {
+    public Results execute(Query q) {
         return os.execute(q);
     }
 
     /**
      * {@inheritDoc}
      */
+    public SingletonResults executeSingleton(Query q) {
+        return os.executeSingleton(q);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.execute(q, start, limit, optimise, explain, sequence);
     }
 
@@ -121,7 +130,7 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public int count(Query q, int sequence) throws ObjectStoreException {
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.count(q, sequence);
     }
 
@@ -150,8 +159,8 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public int getSequence() {
-        return os.getSequence();
+    public Map<Object, Integer> getSequence(Set<Object> tables) {
+        return os.getSequence(tables);
     }
 
     /**

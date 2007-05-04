@@ -130,6 +130,14 @@ public class QueryTestCase extends OneTimeTestCase
                 } else {
                     fail(msg + ": ObjectStoreBagCombination does not match " + qc2.getClass().getName());
                 }
+            } else if (qc1 instanceof ObjectStoreBagsForObject) {
+                if (qc2 instanceof ObjectStoreBagsForObject) {
+                    if (!qc1.equals(qc2)) {
+                        fail(msg + ": ObjectStoreBagsForObjects are not equal");
+                    }
+                } else {
+                    fail(msg + ": ObjectStoreBagsForObject does not match " + qc2.getClass().getName());
+                }
             } else {
                 fail(msg + ": Unknown type of Object in list: " + qc1.getClass().getName());
             }

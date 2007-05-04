@@ -831,6 +831,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 Integer element = (Integer) iter.next();
                 batch.addRow(c, INT_BAG_TABLE_NAME, BAGID_COLUMN, BAGVAL_COLUMN, osb.getBagId(),
                         element.intValue());
+                tablesAltered.add(osb);
                 tablesAltered.add(INT_BAG_TABLE_NAME);
             }
         } catch (SQLException e) {
@@ -892,6 +893,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 Integer element = (Integer) iter.next();
                 batch.deleteRow(c, INT_BAG_TABLE_NAME, BAGID_COLUMN, BAGVAL_COLUMN, osb.getBagId(),
                         element.intValue());
+                tablesAltered.add(osb);
                 tablesAltered.add(INT_BAG_TABLE_NAME);
             }
         } catch (SQLException e) {
@@ -925,7 +927,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             Connection c = null;
             try {
                 c = getConnection();
-                Set readTables = SqlGenerator.findTableNames(query, getSchema());
+                Set readTables = SqlGenerator.findTableNames(query, getSchema(), false);
                 readTables.add(INT_BAG_TABLE_NAME);
                 batch.flush(c, readTables);
                 addToBagFromQueryWithConnection(c, osb, query);
@@ -987,6 +989,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                         + " NOT IN (SELECT " + BAGVAL_COLUMN + " FROM " + INT_BAG_TABLE_NAME
                         + " WHERE " + BAGID_COLUMN + " = " + osb.getBagId() + ")";
                 s.execute(sql);
+                tablesAltered.add(osb);
                 tablesAltered.add(INT_BAG_TABLE_NAME);
             } finally {
                 deregisterStatement(s);
@@ -1208,11 +1211,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * This method is overridden in order to flush batches properly before the read.
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
-            Set readTables = SqlGenerator.findTableNames(q, getSchema());
+            Set readTables = SqlGenerator.findTableNames(q, getSchema(), false);
             batch.flush(c, readTables);
             return executeWithConnection(c, q, start, limit, optimise, explain, sequence);
         } catch (SQLException e) {
@@ -1237,11 +1240,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      *
      * This method is overridden in order to flush batches properly before the read.
      */
-    public int count(Query q, int sequence) throws ObjectStoreException {
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
-            Set readTables = SqlGenerator.findTableNames(q, getSchema());
+            Set readTables = SqlGenerator.findTableNames(q, getSchema(), false);
             batch.flush(c, readTables);
             return countWithConnection(c, q, sequence);
         } catch (SQLException e) {

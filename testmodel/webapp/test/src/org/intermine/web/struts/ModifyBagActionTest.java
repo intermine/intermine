@@ -125,8 +125,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
 //                                                     userProfileOSW.getObjectStore()
 //                                                     .getSequence());
 
-        SingletonResults res = new SingletonResults(q, userProfileOSW,
-                                                    userProfileOSW.getSequence());
+        SingletonResults res = userProfileOSW.executeSingleton(q);
 
         Iterator resIter = res.iterator();
         userProfileOSW.beginTransaction();

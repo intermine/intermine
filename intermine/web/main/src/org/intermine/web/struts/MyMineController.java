@@ -158,13 +158,7 @@ public class MyMineController extends TilesAction
             }
             q.addToSelect(new QueryField(qc, constrainField));
             q.addFrom(qc);
-            Results results;
-            try {
-                results = os.execute(q);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("problem querying values of: " + extraClassName + "."
-                                           + constrainField);
-            }
+            Results results = os.execute(q);
             fieldValues = new ArrayList();
             for (Iterator j = results.iterator(); j.hasNext();) {
                 Object fieldValue = ((ResultsRow) j.next()).get(0);

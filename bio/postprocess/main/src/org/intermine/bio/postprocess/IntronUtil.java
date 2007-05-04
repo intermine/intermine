@@ -127,7 +127,7 @@ public class IntronUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
-        Results results = new Results(q, os, os.getSequence());
+        Results results = os.execute(q);
         results.setBatchSize(500);
         Iterator resultsIter = results.iterator();
 

@@ -116,8 +116,7 @@ public class BagTableWidgetResults extends InterMineAction
         
         q.setConstraint(cstSet);
 
-        Results results = new Results(q, os, os.getSequence());
-
+        Results results = os.execute(q);
 
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);

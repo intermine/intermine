@@ -443,7 +443,7 @@ public class TransferSequences
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(200);
 
         Iterator resIter = res.iterator();

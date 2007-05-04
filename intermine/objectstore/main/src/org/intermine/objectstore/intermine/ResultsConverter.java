@@ -70,12 +70,13 @@ public class ResultsConverter
      * @param q the Query
      * @param os the ObjectStoreInterMineImpl with which to associate any new lazy objects
      * @param c a Connection with which to make extra requests
+     * @param sequence an object representing the state of the database
      * @return a List of ResultsRow objects
      * @throws ObjectStoreException if the ResultSet does not match the Query in any way, or if a
      * SQL exception occurs
      */
     public static List convert(ResultSet sqlResults, Query q, ObjectStoreInterMineImpl os,
-            Connection c) throws ObjectStoreException {
+            Connection c, Map<Object, Integer> sequence) throws ObjectStoreException {
         Object currentColumn = null;
         HashSet noObjectColumns = new HashSet();
         HashSet noObjectClassColumns = new HashSet();
@@ -168,7 +169,7 @@ public class ResultsConverter
                     bttr = os.createTempBagTable(c, bc, false, null);
                 }
                 Iterator iter = os.executeWithConnection(c, q2, 0, Integer.MAX_VALUE, false, false,
-                        os.getSequence()).iterator();
+                        sequence).iterator();
                 if (bttr != null) {
                     os.removeTempBagTable(c, bttr);
                 }

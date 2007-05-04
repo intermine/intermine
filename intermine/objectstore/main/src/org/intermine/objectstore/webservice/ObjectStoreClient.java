@@ -13,11 +13,13 @@ package org.intermine.objectstore.webservice;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.rmi.RemoteException;
 
 import org.apache.axis.AxisFault;
@@ -154,7 +156,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
      * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         checkStartLimit(start, limit, q);
 
         if (explain) {
@@ -186,7 +188,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
-    public int count(Query q, int sequence) throws ObjectStoreException {
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return ((Integer) remoteMethod("count", new Object [] {getQueryId(q)})).intValue();
     }
 
@@ -226,8 +228,8 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
-    public int getSequence() {
-        return 0;
+    public Set<Object> getComponentsForQuery(Query q) {
+        return Collections.emptySet();
     }
 
     /**

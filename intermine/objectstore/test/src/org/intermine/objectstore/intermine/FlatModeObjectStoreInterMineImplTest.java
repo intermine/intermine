@@ -14,10 +14,13 @@ import junit.framework.Test;
 
 import java.util.List;
 
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
 
 import org.intermine.model.testmodel.Employee;
 
@@ -59,5 +62,16 @@ public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineIm
     }
 
     public void testLazyCollectionMtoN() throws Exception {
+    }
+
+    public void testFailFast2() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+
+        Results r = os.execute(q);
+        storeDataWriter.store((Company) data.get("CompanyA"));
+        r.iterator().hasNext();
     }
 }

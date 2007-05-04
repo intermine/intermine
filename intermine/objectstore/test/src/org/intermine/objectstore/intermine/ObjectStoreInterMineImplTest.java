@@ -30,10 +30,12 @@ import junit.framework.Test;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Types;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -78,16 +80,16 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.addFrom(qc);
         q.addToSelect(qc);
         Query q2 = QueryCloner.cloneQuery(q);
-        SingletonResults r = new SingletonResults(q, os, os.getSequence());
+        SingletonResults r = os.executeSingleton(q);
         r.setBatchSize(2);
         InterMineObject o = (InterMineObject) r.get(5);
         SqlGenerator.registerOffset(q2, 6, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId(), new HashMap());
-        SingletonResults r2 = new SingletonResults(q2, os, os.getSequence());
+        SingletonResults r2 = os.executeSingleton(q2);
         r2.setBatchSize(2);
 
         Query q3 = QueryCloner.cloneQuery(q);
         SqlGenerator.registerOffset(q3, 5, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId(), new HashMap());
-        SingletonResults r3 = new SingletonResults(q3, os, os.getSequence());
+        SingletonResults r3 = os.executeSingleton(q3);
         r3.setBatchSize(2);
 
         assertEquals(r, r2);
@@ -106,16 +108,16 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             q.addToSelect(qc);
             q.addToOrderBy(new QueryField(qc, "name"));
             Query q2 = QueryCloner.cloneQuery(q);
-            SingletonResults r = new SingletonResults(q, os, os.getSequence());
+            SingletonResults r = os.executeSingleton(q);
             r.setBatchSize(2);
             Employee o = (Employee) r.get(2);
             SqlGenerator.registerOffset(q2, 3, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getName(), new HashMap());
-            SingletonResults r2 = new SingletonResults(q2, os, os.getSequence());
+            SingletonResults r2 = os.executeSingleton(q2);
             r2.setBatchSize(2);
 
             Query q3 = QueryCloner.cloneQuery(q);
             SqlGenerator.registerOffset(q3, 2, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getName(), new HashMap());
-            SingletonResults r3 = new SingletonResults(q3, os, os.getSequence());
+            SingletonResults r3 = os.executeSingleton(q3);
             r3.setBatchSize(2);
 
             assertEquals(r, r2);
@@ -176,7 +178,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             q.addFrom(qc);
             q.addToSelect(f);
             q.setDistinct(false);
-            SingletonResults r = new SingletonResults(q, os, os.getSequence());
+            SingletonResults r = os.executeSingleton(q);
             r.setBatchSize(10);
             assertEquals("Fred_00000", r.get(6));
             now = System.currentTimeMillis();
@@ -200,7 +202,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
             q = QueryCloner.cloneQuery(q);
             ((ObjectStoreInterMineImpl) os).precompute(q);
-            r = new SingletonResults(q, os, os.getSequence());
+            r = os.executeSingleton(q);
             r.setBatchSize(10);
             now = System.currentTimeMillis();
             System.out.println("Took " + (now - start) + "ms to precompute results");
@@ -735,6 +737,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
     }
 
     public void testObjectStoreBag() throws Exception {
+        System.out.println("Starting testObjectStoreBag");
         ObjectStoreBag osb = storeDataWriter.createObjectStoreBag();
         ArrayList coll = new ArrayList();
         coll.add(new Integer(3));
@@ -747,34 +750,34 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         storeDataWriter.addAllToBag(osb, coll);
         Query q = new Query();
         q.addToSelect(osb);
-        SingletonResults r = new SingletonResults(q, os, os.getSequence());
+        SingletonResults r = os.executeSingleton(q);
         assertEquals(Collections.EMPTY_LIST, r);
         q = new Query();
         q.addToSelect(osb);
-        r = new SingletonResults(q, os, os.getSequence());
+        r = os.executeSingleton(q);
         storeDataWriter.commitTransaction();
         try {
-            assertEquals(Collections.EMPTY_LIST, r);
+            r.get(0);
             fail("Expected: ConcurrentModificationException");
         } catch (ConcurrentModificationException e) {
         }
         q = new Query();
         q.addToSelect(osb);
-        r = new SingletonResults(q, os, os.getSequence());
+        r = os.executeSingleton(q);
         assertEquals(coll, r);
         q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, osb));
-        r = new SingletonResults(q, os, os.getSequence());
+        r = os.executeSingleton(q);
         assertEquals(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("EmployeeA2")}), r);
         ObjectStoreBag osb2 = storeDataWriter.createObjectStoreBag();
         storeDataWriter.addToBag(osb2, ((Employee) data.get("EmployeeA1")).getId());
         storeDataWriter.addToBagFromQuery(osb2, q);
         q = new Query();
         q.addToSelect(osb2);
-        r = new SingletonResults(q, os, os.getSequence());
+        r = os.executeSingleton(q);
         assertEquals(Arrays.asList(new Object[] {((Employee) data.get("EmployeeA1")).getId(), ((Employee) data.get("EmployeeA2")).getId()}), r);
     }
 
@@ -824,6 +827,55 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         cs.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, qc7));
         cs.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, qc8));
         cs.addConstraint(new ClassConstraint(qc1, ConstraintOp.EQUALS, qc9));
-        assertEquals(Collections.EMPTY_LIST, os.execute(q, 0, 1000, true, true, os.getSequence()));
+        assertEquals(Collections.EMPTY_LIST, os.execute(q, 0, 1000, true, true, ObjectStore.SEQUENCE_IGNORE));
+    }
+
+    public void testFailFast() throws Exception {
+        Query q1 = new Query();
+        ObjectStoreBag osb1 = new ObjectStoreBag(100);
+        q1.addToSelect(osb1);
+        Query q2 = new Query();
+        ObjectStoreBag osb2 = new ObjectStoreBag(200);
+        q2.addToSelect(osb2);
+        Query q3 = new Query();
+        QueryClass qc1 = new QueryClass(Employee.class);
+        q3.addFrom(qc1);
+        q3.addToSelect(qc1);
+
+        Results r1 = os.execute(q1);
+        Results r2 = os.execute(q2);
+        Results r3 = os.execute(q3);
+        storeDataWriter.addToBag(osb1, new Integer(1));
+        try {
+            r1.iterator().hasNext();
+            fail("Expected: ConcurrentModificationException");
+        } catch (ConcurrentModificationException e) {
+        }
+        r2.iterator().hasNext();
+        r3.iterator().hasNext();
+
+        r1 = os.execute(q1);
+        r2 = os.execute(q2);
+        r3 = os.execute(q3);
+        storeDataWriter.addToBag(osb2, new Integer(2));
+        r1.iterator().hasNext();
+        try {
+            r2.iterator().hasNext();
+            fail("Expected: ConcurrentModificationException");
+        } catch (ConcurrentModificationException e) {
+        }
+        r3.iterator().hasNext();
+
+        r1 = os.execute(q1);
+        r2 = os.execute(q2);
+        r3 = os.execute(q3);
+        storeDataWriter.store((Employee) data.get("EmployeeA1"));
+        r1.iterator().hasNext();
+        r2.iterator().hasNext();
+        try {
+            r3.iterator().hasNext();
+            fail("Expected: ConcurrentModificationException");
+        } catch (ConcurrentModificationException e) {
+        }
     }
 }

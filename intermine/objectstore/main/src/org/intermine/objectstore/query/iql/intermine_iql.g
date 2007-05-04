@@ -8,7 +8,7 @@ class IqlParser extends Parser;
 
 options {
     exportVocab = Iql;
-    k = 6;
+    k = 7;
     buildAST = true;
     defaultErrorHandler=false;
 }
@@ -44,6 +44,7 @@ tokens {
     FIELD_PATH_EXPRESSION;
     OBJECTSTOREBAG;
     ORDER_DESC;
+    BAGS_FOR;
 }
 
 
@@ -95,12 +96,13 @@ select_value:
             | safe_function "as"! field_alias
             | paren_value "as"! field_alias
             | objectstorebag (( "union" | "intersect" | "except" ) objectstorebag )*
+            | bags_for
         )
         { #select_value = #([SELECT_VALUE, "SELECT_VALUE"], #select_value); }
     ;
 
 abstract_table:
-        table | subquery | multitable | query_class_bag | query_class_bag_multi
+        table | subquery | multitable | ( query_class_bag )=> query_class_bag | query_class_bag_multi
     ;
 
 orderby_value:
@@ -123,8 +125,12 @@ typecast: (constant | thing | safe_function | paren_value) COLONTYPE! IDENTIFIER
 
 paren_value: OPEN_PAREN! abstract_value CLOSE_PAREN! ;
 
-objectstorebag: "BAG"! OPEN_PAREN! INTEGER CLOSE_PAREN!
+objectstorebag: "bag"! OPEN_PAREN! INTEGER CLOSE_PAREN!
         { #objectstorebag = #([OBJECTSTOREBAG, "OBJECTSTOREBAG"], #objectstorebag); }
+    ;
+
+bags_for: "bags"! "for"! INTEGER ( "in"! "bags"! QUESTION_MARK )?
+        { #bags_for = #([BAGS_FOR, "BAGS_FOR"], #bags_for); }
     ;
 
 field_alias:

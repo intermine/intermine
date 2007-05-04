@@ -93,8 +93,7 @@ public class WriteGFFTaskTest extends TestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         ObjectStore os = osw.getObjectStore();
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                                                    .getSequence());
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
         LOG.info("created results");
         Iterator resIter = res.iterator();
         osw.beginTransaction();

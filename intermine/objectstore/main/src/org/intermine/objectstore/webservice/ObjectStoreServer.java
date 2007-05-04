@@ -83,8 +83,6 @@ public class ObjectStoreServer
                 registeredResults.put(new Integer(++nextQueryId), os.execute(query.toQuery()));
             }
             return nextQueryId;
-        } catch (ObjectStoreException e) {
-            throw (ObjectStoreException) Util.verboseException(e);
         } catch (RuntimeException e) {
             throw (RuntimeException) Util.verboseException(e);
         }

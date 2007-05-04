@@ -74,8 +74,7 @@ public class IntronTest extends TestCase{
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        SingletonResults res = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                                                    .getSequence());
+        SingletonResults res = osw.getObjectStore().executeSingleton(q);
         Iterator resIter = res.iterator();
         osw.beginTransaction();
         while (resIter.hasNext()) {
@@ -119,7 +118,7 @@ public class IntronTest extends TestCase{
         QueryClass qc = new QueryClass(Intron.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
         Iterator resIter = res.iterator();
 
 

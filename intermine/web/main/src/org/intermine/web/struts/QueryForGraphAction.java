@@ -97,8 +97,7 @@ public class QueryForGraphAction extends InterMineAction
         ((ConstraintSet) query.getConstraint())
             .addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
 
-        Results results = new Results(query, os, os.getSequence());
-
+        Results results = os.execute(query);
 
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);

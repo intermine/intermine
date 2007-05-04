@@ -732,7 +732,7 @@ public class CalculateLocations
 
         ((ObjectStoreInterMineImpl) os).precompute(q, 
             PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
 
         res.setBatchSize(500);
         return res.iterator();
@@ -969,7 +969,7 @@ public class CalculateLocations
         q.addToSelect(qc);
         q.addFrom(qc);
 
-        SingletonResults sr = new SingletonResults(q, os, os.getSequence());
+        SingletonResults sr = os.executeSingleton(q);
         Iterator chrIter = sr.iterator();
         while (chrIter.hasNext()) {
             Chromosome chr = (Chromosome) chrIter.next();

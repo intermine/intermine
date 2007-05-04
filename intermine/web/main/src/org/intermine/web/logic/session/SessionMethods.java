@@ -617,7 +617,7 @@ public class SessionMethods
             private Object getCount() {
                 if (count == -1) {
                     try {
-                        count = os.count(query, os.getSequence());
+                        count = os.count(query, ObjectStore.SEQUENCE_IGNORE);
                     } catch (ObjectStoreException e) {
                         String message = "object store exception while getting " 
                             + "row count of query";

@@ -12,11 +12,15 @@ package org.intermine.objectstore;
 
 //import java.io.PrintWriter;
 //import java.io.StringWriter;
+import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -25,6 +29,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCreator;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.metadata.MetaDataException;
@@ -36,6 +41,7 @@ import org.apache.log4j.Logger;
  * between different ObjectStore implementations.
  *
  * @author Andrew Varley
+ * @author Matthew Wakeling
  */
 public abstract class ObjectStoreAbstractImpl implements ObjectStore
 {
@@ -52,7 +58,9 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected int getObjectOps = 0;
     protected int getObjectHits = 0;
     protected int getObjectPrefetches = 0;
-    protected int sequenceNumber;
+    protected Map<Object, Integer> sequenceNumber = new WeakHashMap<Object, Integer>();
+    protected Map<Object, WeakReference<Object>> sequenceKeys
+        = new WeakHashMap<Object, WeakReference<Object>>();
 
     /**
      * No-arg constructor for testing purposes
@@ -72,9 +80,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         maxLimit = Integer.parseInt((String) props.get("max-limit"));
         maxOffset = Integer.parseInt((String) props.get("max-offset"));
         maxTime = Long.parseLong((String) props.get("max-time"));
-        synchronized (rand) {
-            sequenceNumber = rand.nextInt();
-        }
         LOG.info("Creating new " + getClass().getName() + " with sequence = " + sequenceNumber
                 + ", model = \"" + model.getName() + "\"");
         cache = new CacheMap(getClass().getName() + " with sequence = " + sequenceNumber
@@ -82,15 +87,26 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * Execute a Query on this ObjectStore
-     *
-     * @param q the Query to execute
-     * @return the results of the Query
-     * @throws ObjectStoreException if an error occurs during the running of the Query
+     * {@inheritDoc}
      */
-    public Results execute(Query q) throws ObjectStoreException {
-        return new Results(q, this, getSequence());
+    public Results execute(Query q) {
+        return new Results(q, this, getSequence(getComponentsForQuery(q)));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q) {
+        return new SingletonResults(q, this, getSequence(getComponentsForQuery(q)));
+    }
+
+    /**
+     * Returns a Set of independent components that affect the results of the given Query.
+     *
+     * @param q a Query
+     * @return a Set of objects
+     */
+    public abstract Set<Object> getComponentsForQuery(Query q);
 
     /**
      * {@inheritDoc}
@@ -211,7 +227,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public void invalidateObjectById(Integer id) {
         synchronized (cache) {
             cache.remove(id);
-            sequenceNumber++;
         }
     }
 
@@ -231,7 +246,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     public void flushObjectById() {
         synchronized (cache) {
             cache.clear();
-            sequenceNumber++;
         }
     }
 
@@ -298,35 +312,75 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * Checks a number against the sequence number, and throws an exception if they do not match.
      *
-     * @param sequence an integer
+     * @param sequence a Map representing a database state
      * @param q the Query that is to be run
      * @param message some description of the operation that is about to happen
      * @throws DataChangedException if the sequence numbers do not match
      */
-    public void checkSequence(int sequence, Query q, String message) throws DataChangedException {
-        if ((sequence != getSequence()) && (sequence != SEQUENCE_IGNORE)) {
-            DataChangedException e = new DataChangedException("Sequence numbers do not match - was "
-                    + "given " + sequence + " but needed " + getSequence() + " for operation \""
-                    + message + q + "\"");
-            throw e;
-            /*e.fillInStackTrace();
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            pw.flush();
-            String m = sw.toString();
-            int index = m.indexOf("at junit.framework.TestCase.runBare");
-            LOG.warn(index < 0 ? m : m.substring(0, index));*/
+    public synchronized void checkSequence(Map<Object, Integer> sequence, Query q, String message)
+    throws DataChangedException {
+        System.out.println("checkSequence: " + sequence + ", sequenceNumber = " + sequenceNumber);
+        for (Map.Entry<Object, Integer> entry : sequence.entrySet()) {
+            Object key = entry.getKey();
+            if (!entry.getValue().equals(sequenceNumber.get(key))) {
+                throw new DataChangedException("Sequence numbers do not match - was given " + key
+                        + " = " + entry.getValue() + " but needed " + key + " = "
+                        + sequenceNumber.get(key) + " for operation \"" + message + q + "\"");
+            }
         }
     }
 
     /**
-     * Returns the current sequence number.
+     * Returns an object representing the current state of the database, for fail-fast concurrency
+     * control.
      *
-     * @return an integer
+     * @param tables a Set of objects representing independent components of the database
+     * @return a Map containing sequence data
      */
-    public int getSequence() {
-        return sequenceNumber;
+    public synchronized Map<Object, Integer> getSequence(Set<Object> tables) {
+        Map<Object, Integer> retval = new HashMap<Object, Integer>();
+        for (Object key : tables) {
+            WeakReference<Object> keyRef = sequenceKeys.get(key);
+            Integer s = null;
+            if (keyRef != null) {
+                Object keyCandidate = keyRef.get();
+                if (keyCandidate != null) {
+                    key = keyCandidate;
+                    s = sequenceNumber.get(key);
+                }
+            }
+            if (s == null) {
+                synchronized(rand) {
+                    s = new Integer(rand.nextInt());
+                }
+                sequenceNumber.put(key, s);
+                sequenceKeys.put(key, new WeakReference(key));
+            }
+            retval.put(key, s);
+        }
+        System.out.println("getSequence: " + retval + ", sequenceNumber = " + sequenceNumber);
+        return retval;
+    }
+
+    /**
+     * Increments the sequence numbers for the given set of database components.
+     *
+     * @param tables a Set of objects representing independent components of the database
+     */
+    public synchronized void changeSequence(Set tables) {
+        System.out.println("changeSequence: " + tables);
+        System.out.println("Before: " + sequenceNumber);
+        for (Object key : tables) {
+            WeakReference keyRef = sequenceKeys.get(key);
+            if (keyRef != null) {
+                Object realKey = keyRef.get();
+                Integer value = sequenceNumber.get(key);
+                if (realKey != null) {
+                    sequenceNumber.put(realKey, new Integer(value.intValue() + 1));
+                }
+            }
+        }
+        System.out.println("After: " + sequenceNumber);
     }
 
     /**

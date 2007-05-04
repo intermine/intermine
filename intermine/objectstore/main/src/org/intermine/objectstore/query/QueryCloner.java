@@ -238,6 +238,14 @@ public class QueryCloner
             ObjectStoreBagCombination retval = new ObjectStoreBagCombination(origO.getOp());
             retval.getBags().addAll(origO.getBags());
             return retval;
+        } else if (orig instanceof ObjectStoreBagsForObject) {
+            ObjectStoreBagsForObject origO = (ObjectStoreBagsForObject) orig;
+            if (origO.getBags() == null) {
+                return new ObjectStoreBagsForObject(origO.getValue());
+            } else {
+                return new ObjectStoreBagsForObject(origO.getValue(),
+                        origO.getBags());
+            }
         } else if (orig instanceof OrderDescending) {
             return new OrderDescending((QueryOrderable) cloneThing(((OrderDescending) orig)
                         .getQueryOrderable(), fromElementMap));

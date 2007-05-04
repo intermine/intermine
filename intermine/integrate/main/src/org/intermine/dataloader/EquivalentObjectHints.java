@@ -61,7 +61,7 @@ public class EquivalentObjectHints
             QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
             q.addToSelect(qc);
-            List results = os.execute(q, 0, 1, false, false, os.getSequence());
+            List results = os.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
             if (results.isEmpty()) {
                 databaseEmpty = true;
             }
@@ -90,7 +90,7 @@ public class EquivalentObjectHints
                 QueryClass qc = new QueryClass(clazz);
                 q.addFrom(qc);
                 q.addToSelect(qc);
-                List results = os.execute(q, 0, 1, false, false, os.getSequence());
+                List results = os.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
                 if (results.isEmpty()) {
                     status = Boolean.TRUE;
                 } else {

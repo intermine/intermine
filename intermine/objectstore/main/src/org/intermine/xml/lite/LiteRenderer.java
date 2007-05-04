@@ -223,7 +223,7 @@ public class LiteRenderer
                 // Reference
                 try {
                     Method m = value.getClass().getMethod("getId", new Class[] {});
-                    id = m.invoke(value, null);
+                    id = m.invoke(value, (Object[]) null);
                 } catch (InvocationTargetException e) {
                     // empty
                 } catch (IllegalAccessException e) {

@@ -129,7 +129,7 @@ public class MagePostProcess extends PostProcessor
         ObjectStore os = osw.getObjectStore();
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(500);
 
         int count = 0;
@@ -220,7 +220,7 @@ public class MagePostProcess extends PostProcessor
         ObjectStore os = osw.getObjectStore();
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(500);
 
         int count = 0;
@@ -312,7 +312,7 @@ public class MagePostProcess extends PostProcessor
         ObjectStore os = osw.getObjectStore();
 
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(500);
 
         int count = 0;

@@ -87,7 +87,7 @@ public class ProteinInteractionRetriever
      q.addFrom(qcInteraction);
      
      // get results
-     SingletonResults res = new SingletonResults(q, os, os.getSequence());
+     SingletonResults res = os.executeSingleton(q);
 
      // TODO: make sure res is List of ProteinInteractions
      return FlyNetworkCreator.createFlyNetwork(res);
@@ -140,7 +140,7 @@ public class ProteinInteractionRetriever
         q.addFrom(qcInteraction);
 
         // get results
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
 
         return FlyNetworkCreator.createFlyNetwork(res);
     }

@@ -116,7 +116,7 @@ public class AddLicences
                                                    ConstraintOp.EQUALS,
                                                    new QueryValue(HGX_DATABASE));
         cs.addConstraint(sc);
-        return new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore().getSequence());
+        return osw.getObjectStore().executeSingleton(q);
     }
 
     /**

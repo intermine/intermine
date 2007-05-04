@@ -376,11 +376,7 @@ public class PrecomputeTask extends Task
                 PrintStream outputStream = System.out;
                 outputStream.println("  running test " + testqueryKey + ":");
                 Results results;
-                try {
-                    results = os.execute(query);
-                } catch (ObjectStoreException e) {
-                    throw new BuildException("problem executing " + testqueryKey + " test", e);
-                }
+                results = os.execute(query);
                 int resultsSize = results.size();
                 outputStream.println("  got size " + resultsSize + " in "
                                    + (System.currentTimeMillis() - start) / 1000 + " seconds");

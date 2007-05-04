@@ -174,7 +174,7 @@ public class ProxyCollection extends AbstractSet implements LazyCollection
             // Or if we have a one-to-many collection, then:
             //    SELECT that FROM that WHERE that.reverseColl CONTAINS <this>
             Query q = internalGetQuery();
-            collection = new SingletonResults(q, os, os.getSequence());
+            collection = os.executeSingleton(q);
             if (batchSize != 0) {
                 ((SingletonResults) collection).setBatchSize(batchSize);
             }

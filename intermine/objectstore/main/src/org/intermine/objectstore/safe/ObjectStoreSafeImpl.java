@@ -11,6 +11,7 @@ package org.intermine.objectstore.safe;
  */
 
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -19,6 +20,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.SingletonResults;
 
 /**
  * Provides a safe implementation of an objectstore - that is, an implementation that works
@@ -40,15 +42,22 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
-    public Results execute(Query q) throws ObjectStoreException {
+    public Results execute(Query q) {
         return os.execute(QueryCloner.cloneQuery(q));
     }
 
     /**
      * {@inheritDoc}
      */
+    public SingletonResults executeSingleton(Query q) {
+        return os.executeSingleton(QueryCloner.cloneQuery(q));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.execute(QueryCloner.cloneQuery(q), start, limit, optimise, explain, sequence);
     }
 
@@ -62,7 +71,7 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
-    public int count(Query q, int sequence) throws ObjectStoreException {
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.count(QueryCloner.cloneQuery(q), sequence);
     }
 }

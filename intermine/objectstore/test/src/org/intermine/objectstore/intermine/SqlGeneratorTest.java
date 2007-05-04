@@ -347,6 +347,12 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("OrderDescending", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("ObjectStoreBagCombination", "SELECT DISTINCT value AS a1_ FROM osbag_int WHERE bagid IN (5, 6) ORDER BY value");
         results2.put("ObjectStoreBagCombination", Collections.singleton("osbag_int"));
+        results.put("ObjectStoreBagCombination2", "SELECT value AS a1_ FROM osbag_int WHERE bagid = 5 INTERSECT SELECT value AS a1_ FROM osbag_int WHERE bagid = 6 ORDER BY a1_");
+        results2.put("ObjectStoreBagCombination2", Collections.singleton("osbag_int"));
+        results.put("ObjectStoreBagsForObject", "SELECT bagid AS a1_ FROM osbag_int WHERE value = 6 ORDER BY bagid");
+        results2.put("ObjectStoreBagsForObject", Collections.singleton("osbag_int"));
+        results.put("ObjectStoreBagsForObject2", "SELECT bagid AS a1_ FROM osbag_int WHERE value = 6 AND bagid IN (10, 11, 12) ORDER BY bagid");
+        results2.put("ObjectStoreBagsForObject2", Collections.singleton("osbag_int"));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
@@ -392,10 +398,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
                 assertTrue("No result found for " + type, false);
             }
 
-            assertEquals(results2.get(type), SqlGenerator.findTableNames(q, getSchema()));
+            assertEquals(results2.get(type), SqlGenerator.findTableNames(q, getSchema(), false));
 
             // TODO: extend sql so that it can represent these
-            if (!(type.startsWith("Empty") || "SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type))) {
+            if (!(type.startsWith("Empty") || "SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type) || "ObjectStoreBagCombination2".equals(type))) {
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser.
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
@@ -501,7 +507,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             assertEquals("interface org.intermine.model.testmodel.Company is not in the model", e.getMessage());
         }
         try {
-            SqlGenerator.findTableNames(q, s);
+            SqlGenerator.findTableNames(q, s, false);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
             assertEquals("interface org.intermine.model.testmodel.Company is not in the model", e.getMessage());
@@ -522,7 +528,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             assertTrue(e.getMessage().startsWith("Unknown FromElement: "));
         }
         try {
-            SqlGenerator.findTableNames(q, getSchema());
+            SqlGenerator.findTableNames(q, getSchema(), false);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
             assertTrue(e.getMessage().startsWith("Unknown FromElement: "));
@@ -542,7 +548,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             assertTrue(e.getMessage().startsWith("Unknown constraint type: "));
         }
         try {
-            SqlGenerator.findTableNames(q, getSchema());
+            SqlGenerator.findTableNames(q, getSchema(), false);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
             assertTrue(e.getMessage().startsWith("Unknown constraint type: "));

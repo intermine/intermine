@@ -127,7 +127,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
      * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            int sequence) throws ObjectStoreException {
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         //if (start == 0) {
         //    LOG.error("Fetching batch 0 for query " + q.toString());
         //}
@@ -169,7 +169,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
-    public int count(Query q, int sequence) throws ObjectStoreException {
+    public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.count(translateQuery(q), sequence);
     }
 
@@ -201,8 +201,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
-    public int getSequence() {
-        return os.getSequence();
+    public Set<Object> getComponentsForQuery(Query q) {
+        return Collections.emptySet();
     }
 
     private int internalGetObjectByIdCount = 0;

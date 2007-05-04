@@ -157,7 +157,7 @@ public class ResidueFieldExporter implements FieldExporter
         cs.addConstraint(new SimpleConstraint(seqIdQf, ConstraintOp.EQUALS, seqIdQv));
         q.setConstraint(cs);
 
-        Results results = new Results(q, os, os.getSequence());
+        Results results = os.execute(q);
 
         if (results.size() == 1) {
             return (LocatedSequenceFeature) ((List) results.get(0)).get(0);
@@ -191,7 +191,7 @@ public class ResidueFieldExporter implements FieldExporter
         cs.addConstraint(new SimpleConstraint(seqIdQf, ConstraintOp.EQUALS, seqIdQv));
         q.setConstraint(cs);
 
-        Results results = new Results(q, os, os.getSequence());
+        Results results = os.execute(q);
 
         if (results.size() == 1) {
             return (Protein) ((List) results.get(0)).get(0);

@@ -119,7 +119,7 @@ public class UpdateOrthologues
         q.addToOrderBy(qcGene);
 
         os = osw.getObjectStore();
-        Results res = new Results(q, os, os.getSequence());
+        Results res = os.execute(q);
         res.setBatchSize(500);
 
         Translation lastTranslation = null;

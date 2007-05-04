@@ -81,7 +81,7 @@ public class BagDetailsAction extends Action
         q.addToSelect(qc);
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, bag.getOsb()));
         q.setDistinct(false);
-        SingletonResults res = new SingletonResults(q, os, os.getSequence());
+        SingletonResults res = os.executeSingleton(q);
 
         WebPathCollection webPathCollection = 
             new WebPathCollection(os, new Path(model, bag.getType()), res, model, webConfig, 

@@ -36,6 +36,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
@@ -421,11 +422,8 @@ public class TemplateHelper
         //} catch (ClassNotFoundException e) {
         //    // probably a template is out of date
         //    LOG.error("error while getting inline template information", e);
-        } catch (ObjectStoreException e) {
-            LOG.error("error while getting inline template information", e);
-            throw new RuntimeException("error while getting inline template information", e);
         } catch (RuntimeException e) {
-            if (e.getCause() instanceof ObjectStoreException) {
+            if (e.getCause() instanceof ObjectStoreQueryDurationException) {
                 // special case: if there is an object store problem it's probably an
                 // ObjectStoreQueryDurationException - returning null will cause the template to
                 // be run again later when, hopefully, the genetic query optimiser will choose a

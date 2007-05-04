@@ -59,8 +59,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
         q.addToSelect(qc);
         q.addFrom(qc);
         ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.fulldatatest");
-        Collection toDelete = new SingletonResults(q, osw.getObjectStore(), osw.getObjectStore()
-                .getSequence());
+        Collection toDelete = osw.getObjectStore().executeSingleton(q);
         Iterator iter = toDelete.iterator();
         osw.beginTransaction();
         while (iter.hasNext()) {
@@ -82,7 +81,7 @@ public class ItemToObjectTranslatorFunctionalTest extends TestCase
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        List objects = new SingletonResults(q, os, os.getSequence());
+        List objects = os.executeSingleton(q);
 
         assertEquals(items, FullRenderer.toItems(objects, model));
     }
