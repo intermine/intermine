@@ -82,6 +82,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         q.setConstraint(cs);
 
         results = os.execute(q);
+        results.setBatchSize(100000);
         Iterator iter = results.iterator();
         HashMap callTable = new HashMap();
         HashMap geneMap = new HashMap();
