@@ -126,7 +126,7 @@ public class PathQueryBinding
             String description = entry.getValue();
             
             writer.writeStartElement("pathDescription");
-            writer.writeAttribute("pathString", path.toString());
+            writer.writeAttribute("pathString", path.toStringNoConstraints());
             writer.writeAttribute("description", description);
             writer.writeEndElement();
         }
