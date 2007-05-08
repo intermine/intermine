@@ -103,6 +103,7 @@ public abstract class FlymineUtil
 //        WHERE c.organism CONTAINS o 
             
         /* TODO put this in a config file */
+        // TODO this may well go away once chromosomes sorted out in #1186
         if (organism.equals("Drosophila melanogaster")) {
             
             ArrayList<String> chromosomes = new ArrayList<String>();

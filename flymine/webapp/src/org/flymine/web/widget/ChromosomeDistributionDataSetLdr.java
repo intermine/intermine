@@ -17,6 +17,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Organism;
+import org.flymine.web.logic.FlymineUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -30,18 +35,9 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
-
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.flymine.web.logic.FlymineUtil;
-
 import org.jfree.data.category.DefaultCategoryDataset;
 /**
  *
@@ -67,7 +63,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         this.os = os;
         
         Collection organisms = FlymineUtil.getOrganisms(os, bag);
-    
+
+        // TODO this may not be necessary once chromosomes are sorted out in #1186.
         organisms.remove("Drosophila pseudoobscura");
         organisms.remove("Apis mellifera");
         
@@ -105,6 +102,12 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 hasResults = true;
             }
             
+            // find out how many genes in the bag have a chromosome location, use this
+            // to work out the expected number for each chromosome.  This is a hack to
+            // deal with the proportion of genes not assigned to a chromosome, it would
+            // be easier of they were located on an 'unknown' chromosome.
+            int totalWithLocation = 0;
+            
             // put results in maps
             iter = results.iterator();
             while (iter.hasNext()) {
@@ -114,17 +117,12 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 if (resultsTable.get(chromosome) != null) { 
                     (resultsTable.get(chromosome))[0]++;    
                     (geneMap.get(chromosome)).add(geneIdentifier);
+                    totalWithLocation++;
                 }
             }
 
             // update results with expected results
-            try {
-                // TODO handle this exception more sensibly, changes need to be made to
-                // BagDetailsController
-                addExpected(os, resultsTable, bag.getSize(), organismName);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("Error getting size of bag. ", e);
-            }
+            addExpected(os, resultsTable, new Integer(totalWithLocation), organismName);
             
             // Build a map from chromosome to gene list
             geneCategoryArray = new Object[resultsTable.size()];
@@ -170,7 +168,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                              int bagSize, String organismName) {
         // totals
         long total = getTotal(os, organismName);
-        
+
         // get expected results
         Query q = createQuery(organismName, "expected", null);
         results = os.execute(q);
@@ -191,9 +189,9 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 proportion = count / total;
             } 
             expectedValue = bagSize * proportion;
-                      
             if (resultsTable.get(chromosome) != null) {  
-                ((int[]) resultsTable.get(chromosome))[1] = (int) expectedValue;             
+                ((int[]) resultsTable.get(chromosome))[1] = 
+                    (int) Math.round(expectedValue);             
             }
             i++;
         }
@@ -231,6 +229,13 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         QueryObjectReference r = new QueryObjectReference(geneQC, "chromosome");
         ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, chromosomeQC);
         cs.addConstraint(cc);
+        
+        // constrain to be in chosen list of chomosomes, this may not be all chromosomes
+        // TODO probably remove this once #1186 fixed.
+        QueryField qfChrId = new QueryField(chromosomeQC, "identifier");
+        BagConstraint bagChr = new BagConstraint(qfChrId, ConstraintOp.IN, 
+                                               FlymineUtil.getChromosomes(os, organismName)); 
+        cs.addConstraint(bagChr);
         
         QueryObjectReference r2 = new QueryObjectReference(geneQC, "organism");
         ContainsConstraint cc2 = new ContainsConstraint(r2, ConstraintOp.CONTAINS, organismQC);
