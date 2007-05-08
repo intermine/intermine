@@ -81,7 +81,9 @@ function roundToSignificantDecimal(n) {
 
 function updateCountInColumnSummary() {
     var countString = document.resultsCountText;
-    document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
+    if (countString != null) {
+        document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
+    }
     setTimeout("updateCountInColumnSummary()", 1000);
 }
 
