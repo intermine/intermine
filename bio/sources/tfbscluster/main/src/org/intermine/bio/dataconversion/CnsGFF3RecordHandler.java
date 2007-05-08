@@ -66,7 +66,7 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
         }
     }
 
-    private Item createItem(String clsName) {
+    private Item makeItem(String clsName) {
         return getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
                                   + clsName);
     }
@@ -82,7 +82,7 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
                 if (conservedOrgMap.containsKey(orgAbbrev)) {
                     conservedOrg = (Item) conservedOrgMap.get(orgAbbrev);
                 } else {
-                    conservedOrg = createItem("Organism");
+                    conservedOrg = makeItem("Organism");
                     conservedOrg.setAttribute("abbreviation", orgAbbrev);
                     addItem(conservedOrg);
                     conservedOrgMap.put(orgAbbrev, conservedOrg);
@@ -96,7 +96,7 @@ public class CnsGFF3RecordHandler extends GFF3RecordHandler
     private Item getSequenceItem(String residues) {
         Item sequence = (Item) sequenceMap.get(residues);
         if (sequence == null) {
-            sequence = createItem("Sequence");
+            sequence = makeItem("Sequence");
             sequence.setAttribute("residues", residues);
             sequence.setAttribute("length", residues.length() + "");
             addItem(sequence);
