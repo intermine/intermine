@@ -77,12 +77,7 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
 
     }
 
-
-    /**
-     * @param clsName
-     * @return item
-     */
-    private Item createItem(String clsName) {
+    private Item makeItem(String clsName) {
         return getItemFactory().makeItemForClass(getTargetModel().getNameSpace()
                                   + clsName);
     }
@@ -98,7 +93,7 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
                 if (conservedOrgMap.containsKey(orgAbbrev)) {
                     conservedOrg = (Item) conservedOrgMap.get(orgAbbrev);
                 } else {
-                    conservedOrg = createItem("Organism");
+                    conservedOrg = makeItem("Organism");
                     conservedOrg.setAttribute("abbreviation", orgAbbrev);
                     addItem(conservedOrg);
                     conservedOrgMap.put(orgAbbrev, conservedOrg);
@@ -112,7 +107,7 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
     private Item getSequenceItem(String residues) {
         Item sequence = (Item) sequenceMap.get(residues);
         if (sequence == null) {
-            sequence = createItem("Sequence");
+            sequence = makeItem("Sequence");
             sequence.setAttribute("residues", residues);
             sequence.setAttribute("length", residues.length() + "");
             addItem(sequence);
@@ -142,12 +137,12 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
             if (geneMap.containsKey(organismDbId)) {
                 geneItem = (Item) geneMap.get(organismDbId);
             } else {
-                geneItem = createItem("Gene");
+                geneItem = makeItem("Gene");
                 geneItem.setAttribute("organismDbId", organismDbId);
                 geneMap.put(organismDbId, geneItem);
                 addItem(geneItem);
             }
-            Item distanceRelation = createItem("DistanceRelation");
+            Item distanceRelation = makeItem("DistanceRelation");
             distanceRelation.setAttribute("type", (String) genes.get(1));
             distanceRelation.setAttribute("distance", (String) genes.get(2));
             distanceRelation.setReference("object", feature.getIdentifier());
