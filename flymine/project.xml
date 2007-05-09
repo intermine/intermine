@@ -78,6 +78,12 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
+    <source name="tiffin" type="tiffin">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="Sanger"/>
+      <property name="src.data.dir" location="/shared/data/tiffin/tiffin1.2"/>
+    </source>
     <source name="homophila" type="homophila">
       <property name="src.data.dir" location="/shared/data/homophila/current"/>
       <property name="src.data.dir.includes" value="homophila_matches.txt"/>
