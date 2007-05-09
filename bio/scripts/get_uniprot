@@ -53,14 +53,22 @@ if (!defined $version) {
 
 unlink $local_release_notes_copy;
 
+my ($version_buffer,$log_buffer);
 #if there is a new release, download and unzip it, update the current link
 my $download_dir = "$uniprot_main_dir/$version";
 if(&checkdir_exists($download_dir)==1){
 	$connection->cwd("/$uniprot_full_path")
 		or die "Cannot change working directory ", $connection->message;
-
+	
+	my $date = &convert_date();
+	$log_buffer = "Uniprot\nNew data available in $download_dir containing file(s):\n";
+	$version_buffer = "Current Uniprot data is in $download_dir. Updated on $date with file(s):\n";
+	
 	for my $file_to_get (@files_to_get) {
-	  &ftp_download($connection,$download_dir,$file_to_get);
+		&ftp_download($connection,$download_dir,$file_to_get);
+	  	$log_buffer .= "$file_to_get\n";
+		$version_buffer .= "$file_to_get\n";
+	  
 	}
 	
 	#download keydefs.xml
@@ -69,12 +77,18 @@ if(&checkdir_exists($download_dir)==1){
 	&ftp_download($connection,$download_dir,$keywords_file);	
 	&unzip_dir($download_dir);
 	
+	$log_buffer .= "keydef.xml\n\n";
+	$version_buffer .= "keydef.xml\n";
+	&write_version($uniprot_main_dir,$version_buffer);
+	
 	my $uniprot_link = "/shared/data/uniprot/current";
-	&make_link($version,$uniprot_link);
+	&make_link($version,$uniprot_link);	
 }else{ 
 	warn " current version up to date - skipping download\n";
+	$log_buffer = "Uniprot\nCurrent data ok\n\n";
 }
 
+&write_log($log_buffer);
 system "chmod -R a+r,g+w $download_dir";
 $connection->quit;
 

@@ -32,10 +32,8 @@ my @page = io($inparanoid_server)->slurp;
 foreach (@page){
 	#print "$_\n";
 	if ($_=~ /href="(sqltable\.\w{3}(\w{5})\.fa-\w{3}(\w{5}).fa)"/g) {
-		#print "$1\t $2\t $3\n";
 		if( (exists $key_codes{$2} && (exists $other_codes{$3} || exists $key_codes{$3}) ) ||
 			(exists $other_codes{$2} && (exists $key_codes{$3}) ) ){
-			print "$1\n";
 			$files{$1}=$1;
 		}	
 	}
@@ -46,6 +44,7 @@ foreach (@page){
 &checkdir_exists($InP_main_dir);
 &checkdir_exists($download_dir);
 
+my ($updated,$version_buffer,$version_names,$version_start,$log_buffer,$log_names,$log_start);
 my $current_link = "/shared/data/orthologues/inparanoid/current";
 for my $file_to_get (sort keys %files) {
 	&http_download("$inparanoid_server/$file_to_get",$temp_file);
@@ -54,11 +53,20 @@ for my $file_to_get (sort keys %files) {
 	if($result == 1){
 		print "Keeping downloaded files.\n";
 		&update_files($InP_main_dir,$file_to_get,$temp_file,$current_link);
+		$updated = 1;
 	}elsif($result == 0 ){
 		print "Downloaded files deleted.\n";
 		unlink $temp_file;
+		$log_buffer = "InParanoid\nCurrent data ok\n\n";
+		$updated = 0;
 	}
 }
+if($updated == 1){
+$version_buffer = $version_start.$version_names;
+$log_buffer = $log_start.$log_names."\n";
+&write_version($InP_main_dir,$version_buffer);
+}
+&write_log($log_buffer);
 
 sub update_files(){
 	my ($dir,$new_name,$oldfile,$link) = @_;
@@ -68,4 +76,8 @@ sub update_files(){
 	&checkdir_exists($new_dir);
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
+	$log_start = "InParanoid\nNew data available in $new_dir containing file(s):\n";
+	$log_names .= "$new_name\n"; 
+	$version_start = "Current data is in $new_dir. Updated on $date with file(s):\n";
+	$version_names .= "$new_name\n";
 }	

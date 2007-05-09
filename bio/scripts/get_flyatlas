@@ -28,6 +28,7 @@ my $temp_file = "$download_dir/temp.txt";
 
 my $current_link = "/shared/data/flyatlas/current";
 my $old_file = "$current_link/../orig/all.txt";
+my ($version_buffer,$log_buffer);
 
 #compare the files, create version directory if it is a new version or
 #the current data link is missing
@@ -38,12 +39,13 @@ if($result == 1){
 }elsif($result == 0 ){
 	print "Downloaded files deleted.\n";
 	unlink $temp_file;
+	$log_buffer = "FlyAtlas\nCurrent data ok\n\n";
 }
+&write_log($log_buffer);
 
 #create data directory, move files, make link	
 sub update_files(){
 	my ($dir,$new_name,$oldfile,$link) = @_;
-	
 	my $date = &convert_date();
 	my $new_dir = "$dir/$date";
 	my $orig_file = "$new_dir/orig/$new_name";
@@ -54,6 +56,9 @@ sub update_files(){
 	system("mv $oldfile $orig_file");
 	&fix_file($orig_file,$fixed_file);
 	&make_link("$date/fixed",$link);
+	$log_buffer = "FlyAtlas\nNew data available in $new_dir/fixed/ containing file $new_name\n\n"; 
+	$version_buffer = "Current data is in $new_dir/fixed/. Updated on $date with file $new_name\n";
+	&write_version($dir,$version_buffer);
 }
 #correct the column names
 sub fix_file(){

@@ -8,7 +8,9 @@ use File::Compare;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_files checkdir_exists date_string_file unzip_dir convert_date config_species);
+our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_files 
+				checkdir_exists date_string_file unzip_dir convert_date 
+				config_species write_version write_log);
 
 #connect to server
 sub ftp_connect(){
@@ -21,13 +23,6 @@ $ftp->login($user,$password)
 or die "Cannot login ", $ftp->message;
 
 return $ftp;
-}
-
-#create symbolic links to the latest file
-sub make_link(){
-	my ($dir, $link) = @_;
-	unlink $link;
-	symlink ($dir, "$link") or die "can't create $link";
 }
 
 #download file from ftp server
@@ -86,7 +81,6 @@ sub date_string_file(){
 	my ($ftp,$file) = @_;
 
 	my $gene_date_stamp = $ftp->mdtm($file);
-	print "file creation ";
 	my $date_string = &convert_date($gene_date_stamp);
 	return $date_string;
 }
@@ -104,7 +98,7 @@ sub convert_date(){
 	$month += 1;
 	$year -= 100;
 	$year += 2000;
-	print "date is $day $month $year\n";
+	#print "date is $day $month $year\n";
 	my $date_string = sprintf "%02s-%02s-%02s", $year, $month, $day;
 
 	return $date_string;
@@ -117,6 +111,13 @@ sub unzip_dir(){
 	if ((system "gzip -dr $dir") != 0) {
 	  die qq|system "gzip -dr $dir" failed: $?\n|;
 	}
+}
+
+#create symbolic links to the latest file
+sub make_link(){
+	my ($dir, $link) = @_;
+	unlink $link;
+	symlink ($dir, "$link") or die "can't create $link";
 }
 
 #get taxon Ids from file
@@ -141,8 +142,41 @@ sub config_species(){
 		}	
 	}
 	close(F) or die "$!";
-
-return %data;
-
+	return %data;
 }
+
+#write the version file
+sub write_version(){
+	my ($root_dir,$buffer) = @_;
+	
+	my $version = "$root_dir/version.txt";
+	unlink $version;
+	&write_file($version,$buffer); 
+}
+
+#write the download log file
+sub write_log(){
+	my ($buffer) = @_;
+	
+	my $today= &convert_date();
+	my $log = "/shared/data/download_logs/$today.txt";
+	&checkdir_exists("/shared/data/download_logs");
+	&write_file($log,$buffer);
+}
+
+#for write_version and write_log
+sub write_file(){
+	my($path,$buffer)=@_;
+	
+	if(-e $path){
+		open(FH, ">>$path") || die "$!";
+		print FH $buffer;
+		close(FH);
+	}else{
+	open(FH, ">$path") || die "$!";
+		print FH $buffer;
+		close(FH);
+	} 	
+}	
+
 1;

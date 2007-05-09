@@ -15,9 +15,43 @@ use InterMine::DataDownloader;
 my $server = "http://obo.cvs.sourceforge.net/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly";
 my $file = "fly_anatomy.obo";
 
-my $download_dir = "/shared/data/ontologies/fly_anatomy";
+my $fly_ont_main_dir = "/shared/data/ontologies/fly_anatomy";
+my $download_dir = "$fly_ont_main_dir/temp";
 my $file_to_get = "$server/$file";
-my $data_file = "$download_dir/$file";
+my $temp_file = "$download_dir/temp.txt";
 
+&checkdir_exists($fly_ont_main_dir);
 &checkdir_exists($download_dir);
-&http_download($file_to_get,$data_file);
+&http_download($file_to_get,$temp_file);
+
+my $current_link = "/shared/data/ontologies/fly_anatomy/current";
+my $old_file = "$current_link/fly_anatomy.obo";
+my ($version_buffer,$log_buffer);
+
+#compare the files, create version directory if it is a new version or
+#the current data link is missing
+my $result = &compare_files($old_file,$temp_file);
+if($result == 1){
+	print "Keeping downloaded files.\n";
+	&update_files($fly_ont_main_dir,$file,$temp_file,$current_link);
+}elsif($result == 0 ){
+	print "Downloaded files deleted.\n";
+	unlink $temp_file;
+	$log_buffer = "Fly Anatomy Ontology\nCurrent data ok\n\n";
+}
+
+&write_log($log_buffer);
+
+#create data directory, move files, make link	
+sub update_files(){
+	my ($dir,$new_name,$oldfile,$link) = @_;
+	my $date = &convert_date();
+	my $new_dir = "$dir/$date";
+	my $newfile = "$new_dir/$new_name";
+	&checkdir_exists($new_dir);
+	system("mv $oldfile $newfile");
+	&make_link($date,$link);
+	$log_buffer = "Fly Anatomy Ontology\nNew data available in $new_dir containing file $new_name\n\n"; 
+	$version_buffer = "Current data is in $new_dir. Updated on $date with file $new_name\n";
+	&write_version($dir,$version_buffer);
+}	

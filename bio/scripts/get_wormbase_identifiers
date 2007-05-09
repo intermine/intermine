@@ -40,6 +40,7 @@ unlink $temp_file;
 
 my $current_link = "/shared/data/wormbase/current";
 my $old_file = "$current_link/genes2molecular_names.txt";
+my ($version_buffer,$log_buffer);
 
 #compare the files, create version directory if it is a new version or
 #the current data link is missing
@@ -50,16 +51,21 @@ if($result == 1){
 }elsif($result == 0 ){
 	print "Downloaded files deleted.\n";
 	unlink $tab_delim_file;
+	$log_buffer = "Wormbase Identifiers\nCurrent data ok\n\n";
 }
 
+&write_log($log_buffer);
+	
 #create data directory, move files, make link	
 sub update_files(){
 	my ($dir,$new_name,$oldfile,$link) = @_;
-	
 	my $date = &convert_date();
 	my $new_dir = "$dir/$date";
 	my $newfile = "$new_dir/$new_name";
 	&checkdir_exists($new_dir);
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
+	$log_buffer = "Wormbase Identifiers\nNew data available in $new_dir containing file $new_name\n\n"; 
+	$version_buffer = "Current data is in $new_dir. Updated on $date with file $new_name\n";
+	&write_version($dir,$version_buffer);
 }	
