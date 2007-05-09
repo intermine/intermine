@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # script to download the latest homophila release into a directory like
-# homophila/2.1
+# homophila/2007-03-07
 # the version used in the directory name is the version mentioned on the Homophila web page
 # the script should be run in /shared/data
 # modified by Philip North 20/03/07 to include parts of the process that were previously done manually
@@ -31,6 +31,7 @@ my $date = &convert_date();
 my $data_dir = "$homophila_main_dir/$date";
 my $data_file = "$data_dir/$homophila_data_file";
 
+my ($updated,$version_buffer,$log_buffer);
 #make sure that the necessary directories exist and download the file
 &checkdir_exists($homophila_main_dir);
 &checkdir_exists($temp_dir);
@@ -48,10 +49,15 @@ if($result == 1){
 	&checkdir_exists($data_dir);
 	system("mv $temp_file $data_file");
 	&make_link($date,$current_link);
+	$updated = 1;
+	$log_buffer = "Homophila\nNew data available in $data_dir containing file(s):\n";
+	$version_buffer = "Current data is in $data_dir. Updated on $date with file(s):\n";
 }elsif($result == 0 ){
 	unlink $temp_file;
 	print "Downloaded files deleted.\n";
 	$data_dir = $current_link;
+	$updated = 0;
+	$log_buffer = "Homophila\nCurrent data ok\n\n";
 }
 
 #create the diseases and matches file and the hash needed to query Entrez
@@ -93,6 +99,9 @@ if( (-e $matches)&&(-e $diseases)&&(-e $prots) ){
 	&print_hash2file($matches,%homophila_matches);
 	&print_hash2file($diseases,%homophila_diseases);
 	&print_hash2file($prots,%proteinID);
+	
+	$log_buffer	.= "$homophila_matches_file\n$homophila_diseases_file\n";
+	$version_buffer	.= "$homophila_matches_file\n$homophila_diseases_file\n";
 }
 
 #print file
@@ -210,3 +219,11 @@ if(-e $prot_gene_file){
 	close (FILE) or die "$!";
 	close PROT_GENES;
 }
+if($updated == 1){
+	$log_buffer.="protein_gene.txt\n\n";
+	$version_buffer .= "protein_gene.txt\n\n";
+	&write_version($homophila_main_dir,$version_buffer);
+}
+&write_log($log_buffer);
+
+

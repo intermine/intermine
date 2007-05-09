@@ -1,0 +1,65 @@
+#!/usr/bin/perl
+
+# This script gets the latest Drosophila kegg pathway release into a directory
+# like kegg/2007-05-08.
+# The date used in the directory name is the date on the file on the
+# FTP server 
+
+use strict;
+use warnings;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+#for connecting to the ftp server
+my $kegg_server = "ftp.genome.jp";
+my $map_title_dir = "pub/kegg/pathway";
+my $dme_map_dir = "pub/kegg/pathway/organisms/dme";
+my $username = "anonymous";
+my $password = "-anonymous\@";
+
+#files to download
+my $map_title_file = "map_title.tab";
+my $dme_map_file = "dme_gene_map.tab";
+
+#### Access ftp server
+my $connection = &ftp_connect($kegg_server,$username,$password);
+
+$connection->cwd($dme_map_dir)
+  or die "Cannot change working directory ", $connection->message;
+
+#use the date stamp to create a version id for the output directory
+my $date_string = &date_string_file($connection,$dme_map_file);
+
+#destination directories
+my $kegg_main_dir = "/shared/data/kegg";
+my $download_dir = "$kegg_main_dir/$date_string";
+my ($updated,$version_buffer,$log_buffer);
+
+#make sure that the necessary directories exist
+my $current_link = "/shared/data/kegg/current";
+&checkdir_exists($kegg_main_dir);
+if(&checkdir_exists($download_dir)==1){
+	&ftp_download($connection,$download_dir,$dme_map_file);
+	$connection->cwd("../../")
+  		or die "Cannot change working directory ", $connection->message;
+	&ftp_download($connection,$download_dir,$map_title_file);
+	#&unzip_dir($download_dir);
+	
+	&make_link($date_string,$current_link);
+	my $date = &convert_date();
+	$log_buffer = "KEGG\nNew data available in $download_dir containing file(s):"
+		."\n$dme_map_file\n$map_title_file\n\n";
+	$version_buffer = "Current data is in $download_dir. Updated on $date with file(s):"
+		."\n$dme_map_file\n$map_title_file";
+	&write_version($kegg_main_dir,$version_buffer)
+}else{
+	warn " current version up to date - skipping download\n";
+	$log_buffer = "KEGG\nCurrent data ok\n\n";
+	$updated = 0;
+}
+&write_log($log_buffer);
+$connection->quit;

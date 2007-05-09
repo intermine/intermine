@@ -33,6 +33,7 @@ my $date_string = &date_string_file($connection,$pubmed_info_file);
 #destination directories
 my $ncbi_main_dir = "/shared/data/pubmed";
 my $download_dir = "$ncbi_main_dir/$date_string";
+my ($updated,$version_buffer,$log_buffer);
 
 #make sure that the necessary directories exist
 my $current_link = "/shared/data/pubmed/current";
@@ -42,9 +43,14 @@ if(&checkdir_exists($download_dir)==1){
 	&ftp_download($connection,$download_dir,$pubmed_info_file);
 	&unzip_dir($download_dir);
 	&make_link($date_string,$current_link);
-
+	my $date = &convert_date();
+	$log_buffer = "NCBI_Id_PubmedId\nNew data available in $download_dir containing file ";
+	$version_buffer = "Current data is in $download_dir. Updated on $date with file ";
+	$updated = 1;
 }else{
 	warn " current version up to date - skipping download\n";
+	$log_buffer = "NCBI_Id_PubmedId\nCurrent data ok\n\n";
+	$updated = 0;
 }
 
 $connection->quit;
@@ -216,6 +222,13 @@ if(-e $outfile){
 	$writer->end();
 	$output->close();
 }
+# write log and version files
+if($updated == 1){
+	$version_buffer .= "ncbiID_pubmedID.xml\n";
+	$log_buffer .= "ncbiID_pubmedID.xml\n\n";
+	&write_version($ncbi_main_dir,$version_buffer);
+}
+&write_log($log_buffer);
 
 sub make_item
 {

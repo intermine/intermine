@@ -163,7 +163,7 @@
       <property name="src.data.dir" location="/shared/data/liftover/redfly"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
-      <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/fly_anatomy.obo"/>
+      <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
     </source>
     <source name="flyreg" type="flyreg">
       <property name="gff3.taxonId" value="7227"/>

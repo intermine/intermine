@@ -39,25 +39,35 @@ my $download_dir = "$intact_main_dir/$date_string";
 
 &checkdir_exists($psi_dir);
 &checkdir_exists($intact_main_dir);
+my ($updated,$version_buffer,$log_buffer);
 
 #if download dir doesn't exist, create it and download data
 if(&checkdir_exists($download_dir)==1){
 	$connection->cwd($species_dir)
  	   or die "Cannot change working directory to $species_dir";
-
+	
+	my $date = &convert_date();
+	$log_buffer = "Intact\nNew data available in $download_dir containing file(s):\n";
+	$version_buffer = "Current Intact data is in $download_dir. Updated on $date with file(s):\n";
+	
 	my @psi_files = $connection->ls();
 
 	for my $psi_file (@psi_files) {
 	    my $start = substr($psi_file, 0, index($psi_file, "_"));
 		if (grep {$start eq $_} keys %organisms) {
 	        &ftp_download($connection,$download_dir,$psi_file);
+			$log_buffer .= "$psi_file\n";
+			$version_buffer .= "$psi_file\n";
 	    }
 	}
 	
 	my $current_link = "/shared/data/psi/intact/current";
 	&make_link($date_string,$current_link);
+	$updated = 1;
 }else{ 
 	warn " current version up to date - skipping download\n";
+	$log_buffer = "Intact\nCurrent data ok\n";
+	$updated = 0;
 }
 
 $connection->quit;
@@ -75,3 +85,10 @@ my $data_file = "$psi_mi_download_dir/$psi_mi_data_file";
 
 &checkdir_exists($psi_mi_download_dir);
 &http_download($file_to_get,$data_file);
+
+if($updated == 1){
+	$version_buffer .= $psi_mi_data_file." saved to $psi_dir/ontology/\n";
+	&write_version($psi_dir,$version_buffer);
+}
+$log_buffer .= $psi_mi_data_file." saved to $psi_dir/ontology/\n\n";
+&write_log($log_buffer);
