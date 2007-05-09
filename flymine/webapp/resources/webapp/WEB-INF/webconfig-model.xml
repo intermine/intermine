@@ -546,6 +546,15 @@
    </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.Motif">
+    <fields>
+      <fieldconfig fieldExpr="identifier" />
+    </fields>
+    <longdisplayers>
+      <displayer src="/model/tiffinDisplayer.jsp"/>
+    </longdisplayers>
+  </class>
+
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
                      className="org.flymine.web.SequenceExporter"/>
   <tableExportConfig id="gff3Exporter" actionPath="/exportAction?type=gff3Exporter"
