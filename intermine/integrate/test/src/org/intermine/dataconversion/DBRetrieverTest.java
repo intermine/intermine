@@ -35,10 +35,10 @@ import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
-public class DBConverterTest extends TestCase {
+public class DBRetrieverTest extends TestCase {
     private Model model;
     private MockItemWriter itemWriter;
-    private DBConverter converter;
+    private DBRetriever converter;
     private ArrayList blank;
     private Map map;
     private DBReader reader;
@@ -136,7 +136,7 @@ public class DBConverterTest extends TestCase {
     }
 
 /*
- * This test is not relevant - 1N collections are ignored by the dataloader, so the DBConverter doesn't have to bother with them.
+ * This test is not relevant - 1N collections are ignored by the dataloader, so the DBRetriever doesn't have to bother with them.
     public void test1NCollection() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
 
@@ -398,7 +398,7 @@ public class DBConverterTest extends TestCase {
         return rows;
     }
 
-    class MockDBConverter extends DBConverter {
+    class MockDBConverter extends DBRetriever {
         private int identifier = 2;
         private boolean isUnique = true;
         //private String excludeList = null;
