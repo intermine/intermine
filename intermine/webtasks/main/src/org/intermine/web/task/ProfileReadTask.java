@@ -116,7 +116,7 @@ public class ProfileReadTask extends Task
             if (source == null) {
                 upgrader = new PkQueryIdUpgrader();
             } else {
-                upgrader = new PkQueryIdUpgrader(this.source);
+                upgrader = new PkQueryIdUpgrader(this.source, osw);
             }
             ProfileManagerBinding.unmarshal(reader, pm, osw, upgrader, classKeys);
         } catch (Exception e) {

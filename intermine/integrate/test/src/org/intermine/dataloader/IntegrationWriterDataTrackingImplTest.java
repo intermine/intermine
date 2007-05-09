@@ -70,10 +70,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             iw.abortTransaction();
         }
         storeData();
-        iw.idMap.clear();
+        iw.reset();
         iw.skeletons.clear();
         iw.beginTransaction();
-        iw.setEof(new HintingFetcher(iw.getObjectStoreWriter().getObjectStore(), iw));
+        //iw.setEof(new HintingFetcher(iw.getObjectStoreWriter().getObjectStore(), iw));
     }
 
     public void tearDown() throws Exception {
@@ -81,7 +81,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.commitTransaction();
         iw.getDataTracker().clear();
         removeDataFromStore();
-        iw.idMap.clear();
+        iw.reset();
     }
 
     public static void oneTimeSetUp() throws Exception {
@@ -362,8 +362,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
                 ceo.setId(new Integer(4));
             }
 
-            iw.idMap.clear();
             iw.commitTransaction();
+            iw.reset();
             iw.beginTransaction();
             iw.store(c, source2, skelSource2); // method we are testing
             //          CompanyA ------- CEOA            CompanyA --.   - CEOA
@@ -604,8 +604,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             companyB.setId(new Integer(5));
         }
 
-        iw.idMap.clear();
         iw.commitTransaction();
+        iw.reset();
         iw.beginTransaction();
         iw.store(con, source2, skelSource2);
 
@@ -731,8 +731,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         } catch (IllegalArgumentException e) {
         }
 
-        iw.idMap.clear();
         iw.commitTransaction();
+        iw.reset();
         iw.beginTransaction();
         iw.store(con, source2, skelSource2); // method we are testing
 
@@ -755,6 +755,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertTrue(rconZ.getCompanys().contains(rca));
 
         conA.setCompanys(new HashSet());
+        //Contractor sConA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
+        Query equivQuery = iw.beof.createPKQuery(conA, source2, false);
+        Set equiv = iw.getEquivalentObjects(conA, source2);
+        assertEquals(equiv.getClass().getName() + ": " + equiv + ", " + equivQuery, 2, equiv.size());
         iw.store(conA, source2, skelSource2);
         Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
         assertNotNull(rconA);
@@ -870,8 +874,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(c2, source2, skelSource2);
         iw.store(a2, source2, skelSource2);
 
-        iw.idMap.clear();
         iw.commitTransaction();
+        iw.reset();
         iw.beginTransaction();
         assertEquals(1, iw.executeSingleton(q).size());
 
@@ -880,8 +884,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
         iw.store(c3, source3, skelSource3);
 
-        iw.idMap.clear();
         iw.commitTransaction();
+        iw.reset();
         iw.beginTransaction();
         assertEquals(2, iw.executeSingleton(q).size());
 
@@ -891,10 +895,11 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.store(c4, source4, skelSource4);
         iw.store(a4, source4, skelSource4);
 
-        iw.idMap.clear();
         iw.commitTransaction();
+        iw.reset();
         iw.beginTransaction();
-        assertEquals(DataLoaderHelper.createPKQuery(iw.getModel(), c4, source4, iw.idMap, null, false).toString(), 1, iw.executeSingleton(q).size());
+        //assertEquals(eof.createPKQuery(iw.getModel(), c4, source4, iw.idMap, null, false).toString(), 1, iw.executeSingleton(q).size());
+        assertEquals(1, iw.executeSingleton(q).size());
     }
 
     // a bug existed whereby storing a skeleton then a real object retrieved and failed to materialise

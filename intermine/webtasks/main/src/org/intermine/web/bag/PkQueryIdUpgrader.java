@@ -15,7 +15,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.intermine.dataloader.BaseEquivalentObjectFetcher;
 import org.intermine.dataloader.DataLoaderHelper;
+import org.intermine.dataloader.EquivalentObjectFetcher;
 import org.intermine.dataloader.Source;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
@@ -36,6 +38,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
     private static final Logger LOG = Logger
             .getLogger(PkQueryIdUpgrader.class);
     private Source source = null;
+    EquivalentObjectFetcher eof;
 
     /**
      * No argument constructor - will use all available keyDefs to upgrade bags.
@@ -48,9 +51,10 @@ public class PkQueryIdUpgrader implements IdUpgrader
      * Construct with the name of a source - will use defined keys to upgrade bags.
      * @param sourceName name of source
      */
-    public PkQueryIdUpgrader(String sourceName) {
+    public PkQueryIdUpgrader(String sourceName, ObjectStore os) {
         this.source = new Source();
         this.source.setName(sourceName);
+        this.eof = new BaseEquivalentObjectFetcher(os.getModel(), new IntToIntMap(), os);
     }
 
     /**
@@ -63,8 +67,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
     public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
         Query query;
         try {
-            query = DataLoaderHelper.createPKQuery(os.getModel(), oldObject, source,
-                                                   new IntToIntMap(), null, false);
+            query = eof.createPKQuery(oldObject, source, false);
         } catch (MetaDataException e) {
             throw new RuntimeException("Unable to create query for new object", e);
         } catch (IllegalArgumentException e) {

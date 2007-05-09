@@ -199,7 +199,8 @@ public class DataTracker
             throw new NullPointerException("id cannot be null");
         }
         if (!sourceToName.containsKey(source)) {
-            throw new NullPointerException("Could not find given source in tracker");
+            throw new NullPointerException("Could not find given source (" + source
+                    + ") in tracker. sourceToName = " + sourceToName);
         }
         if (broken != null) {
             IllegalArgumentException e = new IllegalArgumentException();

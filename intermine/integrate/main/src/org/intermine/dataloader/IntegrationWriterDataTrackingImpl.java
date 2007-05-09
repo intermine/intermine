@@ -318,14 +318,22 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     InterMineObject obj = (InterMineObject) objIter.next();
                     if (obj == o) {
                         copyField(obj, newObj, source, skelSource, field, type);
-                        lastSource = (type == SOURCE ? source : skelSource);
+                        if (!(field instanceof CollectionDescriptor)) {
+                            lastSource = (type == SOURCE ? source : skelSource);
+                        }
                     } else {
-                        Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
-                        copyField(obj, newObj, fieldSource, fieldSource, field, FROM_DB);
-                        lastSource = fieldSource;
+                        if (!(field instanceof CollectionDescriptor)) {
+                            lastSource = dataTracker.getSource(obj.getId(), fieldName);
+                            if (lastSource == null) {
+                                throw new NullPointerException("Error: lastSource is null for object " + obj.getId() + " and fieldName " + fieldName);
+                            }
+                        }
+                        copyField(obj, newObj, lastSource, lastSource, field, FROM_DB);
                     }
                 }
-                trackingMap.put(fieldName, lastSource);
+                if (!(field instanceof CollectionDescriptor)) {
+                    trackingMap.put(fieldName, lastSource);
+                }
             }
 
             store(newObj);
