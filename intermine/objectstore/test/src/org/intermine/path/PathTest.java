@@ -85,6 +85,21 @@ public class PathTest extends TestCase
 
         checkConstrainedPath(path);
     }
+    
+    public void testNotValidWithClassConstraintMap() {
+        Map constraintMap = new HashMap();
+        constraintMap.put("Department.manager", "CEO");
+        constraintMap.put("Department.manager.company.departments.employees", "Manager");
+
+        String stringPath = "Department.manager[CEO].company.departments.employees[Manager].seniority";
+
+        try {
+            new Path(model, stringPath, constraintMap);
+            fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
 
     private void checkConstrainedPath(Path path) {
         ClassDescriptor ceoCld =
