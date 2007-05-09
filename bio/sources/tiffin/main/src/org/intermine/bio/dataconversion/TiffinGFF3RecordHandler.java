@@ -10,8 +10,13 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.Item;
 
 /**
  * A converter/retriever for Tiffin motifs.  See http://servlet.sanger.ac.uk/tiffin/
@@ -21,6 +26,8 @@ import org.intermine.metadata.Model;
 
 public class TiffinGFF3RecordHandler extends GFF3RecordHandler
 {
+    private Map<String, Item> motifs = new HashMap<String, Item>();
+
     /**
      * Create a new TiffinGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
@@ -32,7 +39,33 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
     /**
      * @see GFF3RecordHandler#process(GFF3Record)
      */
+    @Override
     public void process(GFF3Record record) {
-        // empty
+        Item bindingSite = getFeature();
+        bindingSite.setAttribute("curated", "false");
+
+        String name = record.getNames().get(0);
+        Item motif = getMotif(name);
+        bindingSite.setReference("motif", motif);
+    }
+
+    /**
+     * Return the Motif objects created by process().
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<Item> getFinalItems() {
+        return motifs.values();
+    }
+
+    private Item getMotif(String name) {
+        Item motif = motifs.get(name);
+        if (motif == null) {
+            motif = createItem("Motif");
+            motif.setAttribute("identifier", name);
+            motif.setAttribute("curated", "false");
+            motifs.put(name, motif);
+        }
+        return motif;
     }
 }

@@ -298,7 +298,7 @@ public class GFF3Record
      * Return the list of the Name field from the attributes of this record.
      * @return the Name from the attributes of this record or null of there isn't a value
      */
-    public List getNames() {
+    public List<String> getNames() {
         if (getAttributes().containsKey("Name")) {
             return (List) getAttributes().get("Name");
         } else {
@@ -322,7 +322,7 @@ public class GFF3Record
      * Return the list of the Parent field from the attributes of this record.
      * @return the Parent from the attributes of this record or null of there isn't a value
      */
-    public List getParents () {
+    public List<String> getParents () {
         if (getAttributes().containsKey("Parent")) {
             return (List) getAttributes().get("Parent");
         } else {
@@ -334,7 +334,7 @@ public class GFF3Record
      * Return the first value of the Target field from the attributes of this record.
      * @return the Target from the attributes of this record or null of there isn't a value
      */
-    public String getTarget () {
+    public String getTarget() {
         if (getAttributes().containsKey("Target")) {
             return (String) ((List) getAttributes().get("Target")).get(0);
         } else {
@@ -346,7 +346,7 @@ public class GFF3Record
      * Return the first value of the Gap field from the attributes of this record.
      * @return the Gap from the attributes of this record or null of there isn't a value
      */
-    public String getGap () {
+    public String getGap() {
         if (getAttributes().containsKey("Gap")) {
             return (String) ((List) getAttributes().get("Gap")).get(0);
         } else {
@@ -358,7 +358,7 @@ public class GFF3Record
      * Return the first value of the Note field from the attributes of this record.
      * @return the Note from the attributes of this record or null of there isn't a value
      */
-    public String getNote () {
+    public String getNote() {
         if (getAttributes().containsKey("Note")) {
             return (String) ((List) getAttributes().get("Note")).get(0);
         } else {
@@ -370,7 +370,7 @@ public class GFF3Record
      * Return the first value of the Dbxref field from the attributes of this record.
      * @return the Dbxref from the attributes of this record or null of there isn't a value
      */
-    public List getDbxrefs () {
+    public List<String> getDbxrefs() {
         if (getAttributes().containsKey("Dbxref")) {
             return (List) getAttributes().get("Dbxref");
         } else {
@@ -400,7 +400,7 @@ public class GFF3Record
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     public String toString() {
         return "<GFF3Record: sequenceID: " + sequenceID + " source: " + source + " type: "
