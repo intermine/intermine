@@ -50,8 +50,7 @@ import org.apache.log4j.Logger;
  * @author Matthew Wakeling
  */
 
-public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter,
-       EquivalentObjectFetcher
+public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
 {
     private static final Logger LOG = Logger.getLogger(IntegrationWriterAbstractImpl.class);
 
@@ -64,8 +63,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected int idMapOps = 0;
     protected boolean ignoreDuplicates = false;
     protected EquivalentObjectFetcher eof;
-    protected Map summaryTimes = new HashMap();
-    protected Map summaryCounts = new HashMap();
+    protected BaseEquivalentObjectFetcher beof;
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -74,7 +72,16 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public IntegrationWriterAbstractImpl(ObjectStoreWriter osw) {
         this.osw = osw;
-        eof = new HintingFetcher(osw.getObjectStore(), this);
+        beof = new BaseEquivalentObjectFetcher(getModel(), idMap, osw);
+        eof = new HintingFetcher(beof);
+    }
+
+    /**
+     * Resets the IntegrationWriter, clearing the id map and the hints
+     */
+    public void reset() {
+        idMap.clear();
+        eof = new HintingFetcher(beof);
     }
 
     /**
@@ -132,7 +139,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         + (idMap.size() < 100 ? ", idMap = " : ""));
             }
             if ((obj.getId() == null) || ignoreDuplicates) {
-                return queryEquivalentObjects(obj, source);
+                return beof.queryEquivalentObjects(obj, source);
             } else {
                 return eof.queryEquivalentObjects(obj, source);
             }
@@ -141,52 +148,6 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             return Collections.singleton(new ProxyReference(osw, destId, InterMineObject.class));
         }
     }
-
-
-    /**
-     * Queries the database for equivalent objects for the given object, according
-     * to the primary keys defined by the given Source.
-     *
-     * @param obj the Object to look for
-     * @param source the data Source
-     * @return a Set of InterMineObjects
-     * @throws ObjectStoreException if an error occurs
-     */
-    public Set queryEquivalentObjects(InterMineObject obj, Source source)
-        throws ObjectStoreException {
-        Query q = null;
-        try {
-            q = DataLoaderHelper.createPKQuery(getModel(), obj, source, idMap, null, false);
-        } catch (MetaDataException e) {
-            throw new ObjectStoreException(e);
-        }
-        if (q != null) {
-            SingletonResults result = executeSingleton(q);
-            result.setNoOptimise();
-            result.setNoExplain();
-            long before = System.currentTimeMillis();
-            try {
-                result.get(0);
-            } catch (Exception e) {
-                // Ignore - operation will be repeated later
-            }
-            long time = System.currentTimeMillis() - before;
-            String summaryName = DynamicUtil.getFriendlyName(obj.getClass());
-            Long soFar = (Long) summaryTimes.get(summaryName);
-            Integer soFarCount = (Integer) summaryCounts.get(summaryName);
-            if (soFar == null) {
-                soFar = new Long(0L);
-                soFarCount = new Integer(0);
-            }
-            summaryTimes.put(summaryName, new Long(time + soFar.longValue()));
-            summaryCounts.put(summaryName, new Integer(soFarCount.intValue() + 1));
-            return result;
-        } else {
-            return Collections.EMPTY_SET;
-        }
-    }
-
-
 
     /**
      * {@inheritDoc}
@@ -682,16 +643,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void close() throws ObjectStoreException {
         osw.close();
-        LOG.info("Equivalent object query summary:");
-        Iterator summaryNames = summaryTimes.keySet().iterator();
-        while (summaryNames.hasNext()) {
-            String summaryName = (String) summaryNames.next();
-            Long summaryTime = (Long) summaryTimes.get(summaryName);
-            Integer summaryCount = (Integer) summaryCounts.get(summaryName);
-            LOG.info("Performed equivalence query for " + summaryName + " " + summaryCount
-                     + " times. Average time "
-                     + (summaryTime.longValue() / summaryCount.longValue()) + " ms");
-        }
+        beof.close();
     }
 
     /**

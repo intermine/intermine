@@ -25,22 +25,18 @@ import org.intermine.model.InterMineObject;
  *
  * @author Matthew Wakeling
  */
-public class HintingFetcher implements EquivalentObjectFetcher
+public class HintingFetcher extends BaseEquivalentObjectFetcher
 {
-    ObjectStore os;
     EquivalentObjectHints hints;
-    EquivalentObjectFetcher fetcher;
 
     /**
      * Constructor
      *
-     * @param os the ObjectStore containing the equivalent objects
      * @param fetcher another EquivalentObjectFetcher
      */
-    public HintingFetcher(ObjectStore os, EquivalentObjectFetcher fetcher) {
-        this.os = os;
-        this.hints = new EquivalentObjectHints(os);
-        this.fetcher = fetcher;
+    public HintingFetcher(BaseEquivalentObjectFetcher fetcher) {
+        super(fetcher.getModel(), fetcher.getIdMap(), fetcher.getLookupOs());
+        this.hints = new EquivalentObjectHints(lookupOs);
     }
 
     /**
@@ -52,7 +48,7 @@ public class HintingFetcher implements EquivalentObjectFetcher
             return Collections.EMPTY_SET;
         }
         boolean allPkClassesEmpty = true;
-        Set classDescriptors = os.getModel().getClassDescriptorsForClass(obj.getClass());
+        Set classDescriptors = lookupOs.getModel().getClassDescriptorsForClass(obj.getClass());
         Iterator cldIter = classDescriptors.iterator();
         while (cldIter.hasNext() && allPkClassesEmpty) {
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
@@ -66,6 +62,6 @@ public class HintingFetcher implements EquivalentObjectFetcher
         if (allPkClassesEmpty) {
             return Collections.EMPTY_SET;
         }
-        return fetcher.queryEquivalentObjects(obj, source);
+        return super.queryEquivalentObjects(obj, source);
     }
 }
