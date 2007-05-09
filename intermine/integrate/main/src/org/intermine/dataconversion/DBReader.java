@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Provides an interface between a DBConverter and the source SQL database.
+ * Provides an interface between a DBRetriever and the source SQL database.
  *
  * @author Matthew Wakeling
  */

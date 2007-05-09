@@ -63,7 +63,7 @@ public class DBRetrieverTask extends ConverterTask
             writer = new ObjectStoreItemWriter(osw);
             DBReader reader = new ReadAheadDBReader(db, m);
             System.err .println("Processing data from DB " + db.getURL());
-            new DBConverter(m, db, reader, writer, excludeList).process();
+            new DBRetriever(m, db, reader, writer, excludeList).process();
             reader.close();
         } catch (Exception e) {
             LOG.error("problem retrieving data: ", e);

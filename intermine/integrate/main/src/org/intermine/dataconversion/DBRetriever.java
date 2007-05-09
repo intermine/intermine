@@ -37,9 +37,9 @@ import org.apache.log4j.Logger;
  * @author Andrew Varley
  * @author Mark Woodbridge
  */
-public class DBConverter extends DataConverter
+public class DBRetriever extends DataConverter
 {
-    private static final Logger LOG = Logger.getLogger(DBConverter.class);
+    private static final Logger LOG = Logger.getLogger(DBRetriever.class);
     protected Connection c = null;
     protected Model model;
     protected Database db;
@@ -65,7 +65,7 @@ public class DBConverter extends DataConverter
      * @param writer the ItemWriter used to handle the resultant Items
      * @param excludeList A list of Source Item Class names to skip
      */
-    protected DBConverter(
+    protected DBRetriever(
             Model model, Database db, DBReader reader, ItemWriter writer, String excludeList) {
         super(writer);
         this.model = model;
