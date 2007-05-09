@@ -48,7 +48,7 @@ my $go_connection = &ftp_connect($godatabase_server,$username,$password);
 $go_connection->cwd($go_dir)
 	or die "Cannot change working directory ", $go_connection->message;
 
-my $go_download_dir = "/shared/data/gene_ontology";
+my $go_download_dir = "/shared/data/go-annotation";
 &ftp_download($go_connection,$go_download_dir,$go_file);
 $go_connection->quit;
 $log_buffer = "Go Annotation - update run on $date:\ngene_ontology.obo updated to $go_download_dir\n";

@@ -60,7 +60,7 @@
       <property name="src.data.dir" location="/shared/data/affy-probes"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
-      <property name="src.data.dir" location="/shared/data/kegg/release41"/>
+      <property name="src.data.dir" location="/shared/data/kegg/current"/>
     </source>
     <source name="ensembl-anopheles" type="ensembl" dump="true">
       <property name="organism" value="AGP"/>
@@ -190,7 +190,7 @@
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
      <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
-	<property name="src.data.file" location="/shared/data/pubmed/uploadFiles/ncbiID_pubmedID_good.xml"/>
+	<property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
     <source name="tiling_path" type="tiling_path" dump="true">
