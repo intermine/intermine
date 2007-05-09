@@ -496,12 +496,21 @@ public class GFF3RecordHandler
 
     /**
      * Create an item with given className and item identifier
-     * @param className
-     * @param implementations
+     * @param className the class to create
+     * @param identifier the Item identifier of the new Item
      * @return the created item
      */
     private Item createItem(String className, String identifier) {
         return itemFactory.makeItem(identifier, tgtModel.getNameSpace() + className, "");
+    }
+
+    /**
+     * Create an item with given className and a new unique identifier
+     * @param className the class to create
+     * @return the created item
+     */
+    public Item createItem(String className) {
+        return createItem(className, createIdentifier());
     }
 
     /**
