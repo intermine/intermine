@@ -11,14 +11,19 @@ package org.intermine.dataloader;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.util.AlwaysSet;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +38,9 @@ public class EquivalentObjectHints
 
     private boolean databaseEmptyChecked = false;
     private boolean databaseEmpty = false;
-    private Map classStatus = new HashMap();
+    private Map<Class, Boolean> classStatus = new HashMap<Class, Boolean>();
+    private Map<ClassAndFieldName, Set> classAndFieldNameValues
+        = new HashMap<ClassAndFieldName, Set>();
 
     private ObjectStore os;
 
@@ -83,7 +90,7 @@ public class EquivalentObjectHints
         if (databaseEmpty) {
             return true;
         }
-        Boolean status = (Boolean) classStatus.get(clazz);
+        Boolean status = classStatus.get(clazz);
         if (status == null) {
             try {
                 Query q = new Query();
@@ -115,8 +122,60 @@ public class EquivalentObjectHints
      * @return a boolean
      */
     public boolean pkQueryFruitless(Class clazz, String fieldName, Object value) {
-        // For now, we can just ignore all the parameters, and check to see if the database is empty
-        // or not.
-        return classNotExists(clazz);
+        if (classNotExists(clazz)) {
+            return true;
+        }
+        ClassAndFieldName cafn = new ClassAndFieldName(clazz, fieldName);
+        Set values = classAndFieldNameValues.get(cafn);
+        if (values == null) {
+            try {
+                Query q = new Query();
+                QueryClass qc = new QueryClass(clazz);
+                q.addFrom(qc);
+                try {
+                    q.addToSelect(new QueryField(qc, fieldName));
+                } catch (IllegalArgumentException e) {
+                    q.addToSelect(new QueryObjectReference(qc, fieldName));
+                }
+                List<List> results = os.execute(q, 0, 100, false, false,
+                        ObjectStore.SEQUENCE_IGNORE);
+                if (results.size() >= 100) {
+                    values = AlwaysSet.INSTANCE;
+                } else {
+                    values = new HashSet();
+                    for (List row : results) {
+                        values.add(row.get(0));
+                    }
+                }
+                classAndFieldNameValues.put(cafn, values);
+            } catch (ObjectStoreException e) {
+                LOG.error("Error checking database for " + clazz.getName() + "." + fieldName, e);
+                return false;
+            }
+        }
+        return !values.contains(value);
+    }
+
+    private static class ClassAndFieldName
+    {
+        private Class clazz;
+        private String fieldName;
+
+        public ClassAndFieldName(Class clazz, String fieldName) {
+            this.clazz = clazz;
+            this.fieldName = fieldName;
+        }
+
+        public int hashCode() {
+            return clazz.hashCode() + 3 * fieldName.hashCode();
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof ClassAndFieldName) {
+                ClassAndFieldName c = (ClassAndFieldName) o;
+                return clazz.equals(c.clazz) && fieldName.equals(c.fieldName);
+            }
+            return false;
+        }
     }
 }

@@ -210,6 +210,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         if (doIds) {
             e.setId(new Integer(1));
             d.setId(new Integer(2));
+            c.setId(new Integer(3));
         }
         Source source = iw.getMainSource("testsource3");
         Source skelSource = iw.getSkeletonSource("testsource3");

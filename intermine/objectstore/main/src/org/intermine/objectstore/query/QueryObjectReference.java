@@ -23,7 +23,7 @@ import org.intermine.util.TypeUtil;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class QueryObjectReference extends QueryReference implements QueryOrderable
+public class QueryObjectReference extends QueryReference implements QueryOrderable, QuerySelectable
 {
     /**
      * Constructs a QueryObjectReference representing the specified field of a QueryClass

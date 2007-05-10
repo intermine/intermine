@@ -325,7 +325,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         if (!(field instanceof CollectionDescriptor)) {
                             lastSource = dataTracker.getSource(obj.getId(), fieldName);
                             if (lastSource == null) {
-                                throw new NullPointerException("Error: lastSource is null for object " + obj.getId() + " and fieldName " + fieldName);
+                                throw new NullPointerException("Error: lastSource is null for"
+                                        + " object " + obj.getId() + " and fieldName " + fieldName);
                             }
                         }
                         copyField(obj, newObj, lastSource, lastSource, field, FROM_DB);

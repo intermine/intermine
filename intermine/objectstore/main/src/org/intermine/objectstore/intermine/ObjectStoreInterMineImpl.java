@@ -56,6 +56,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.iql.IqlQuery;
@@ -858,7 +859,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                          + (postConvert - preBagTableTime) + " ms");
             }
             Object firstOrderByObject = q.getEffectiveOrderBy().iterator().next();
-            if (firstOrderByObject instanceof QueryOrderable) {
+            if ((firstOrderByObject instanceof QueryOrderable)
+                    && (!(firstOrderByObject instanceof QueryObjectReference))) {
                 QueryOrderable firstOrderBy = (QueryOrderable) firstOrderByObject;
                 if (firstOrderBy instanceof OrderDescending) {
                     firstOrderBy = ((OrderDescending) firstOrderBy).getQueryOrderable();

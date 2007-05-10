@@ -614,6 +614,8 @@ public class SqlGenerator
             } else if ((selectable instanceof QueryFieldPathExpression)
                     && ("id".equals(((QueryFieldPathExpression) selectable).getFieldName()))) {
                 // Do nothing
+            } else if (selectable instanceof QueryObjectReference) {
+                // Do nothing
             } else if (selectable instanceof ObjectStoreBag) {
                 if (individualOsbs) {
                     tablenames.add(selectable);
@@ -1700,6 +1702,12 @@ public class SqlGenerator
                     .append(DatabaseUtil.generateSqlCompatibleName(alias));
             } else if (node instanceof QueryPathExpression) {
                 // Do nothing
+            } else if (node instanceof QueryObjectReference) {
+                QueryObjectReference qor = (QueryObjectReference) node;
+                retval.append((String) state.getFieldToAlias(qor.getQueryClass()).get(qor
+                            .getFieldName()))
+                    .append(" AS ")
+                    .append(DatabaseUtil.generateSqlCompatibleName(alias));
             } else {
                 throw new ObjectStoreException("Unknown object in SELECT list: " + node.getClass());
             }
@@ -1786,7 +1794,9 @@ public class SqlGenerator
                         retval.append(buffer.toString());
                         seen.add(buffer.toString());
                         if (q.isDistinct()) {
-                            if (q.getSelect().contains(ref.getQueryClass())) {
+                            if (q.getSelect().contains(ref)) {
+                                // Nothing required
+                            } else if (q.getSelect().contains(ref.getQueryClass())) {
                                 // This means that the field's QueryClass is present in the SELECT
                                 // list, so adding the field artificially will not alter the number
                                 // of rows of a DISTINCT query.
