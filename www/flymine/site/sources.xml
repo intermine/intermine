@@ -1283,7 +1283,7 @@
         </source>
       </sources>
 
-      <sources version="7.0-preview">
+       <sources version="7.0">
         <source>
           <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation</name>
           <description>
@@ -1487,9 +1487,26 @@
           </description>
           <version>Release 41</version>
         </source>
-      </sources>
+        <source>
+          <name>DrosDel</name>
+          <description>
+            &lt;i&gt;D. melanogaster&lt;/i&gt; P-element insertion and
+            deletion locations from &lt;a
+            href="http://www.drosdel.org.uk/"&gt;DrosDel&lt;/a&gt;
+          </description>
+          <version></version>
+        </source>
+        <source>
+          <name>Whole genome tiling path</name>
+          <description>
+            Locations of primers and amplimers tiled across whole
+            &lt;i&gt;D. melanogaster&lt;/i&gt; genome
+          </description>
+          <version>4.0</version>
+        </source>
+     </sources>
 
-       <sources version="7.0">
+       <sources version="7.1">
         <source>
           <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation</name>
           <description>
