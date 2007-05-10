@@ -10,21 +10,17 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.PrimaryKey;
-import org.intermine.metadata.PrimaryKeyUtil;
+import junit.framework.Test;
+
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employable;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -39,8 +35,6 @@ import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntToIntMap;
-
-import junit.framework.Test;
 
 public class EquivalentObjectFetcherTest extends QueryTestCase
 {
@@ -107,11 +101,8 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
             (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
-        try {
-            Query q = eof.createPKQuery(e, source, false);
-            fail("" + q);
-        } catch (IllegalArgumentException ex) {
-        }
+        Query q = eof.createPKQuery(e, source, false);
+        assertNull(q);
     }
 
     // null key field in object (reference)
@@ -124,11 +115,8 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         c.setName("company1");
         c.setAddress(null);
 
-        try {
-            Query q = eof.createPKQuery(c, source, false);
-            fail("" + q);
-        } catch (IllegalArgumentException ex) {
-        }
+        Query q = eof.createPKQuery(c, source, false);
+        assertNull(q);
     }
 
     // null key fields in referenced object
@@ -143,11 +131,8 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         a.setAddress(null);
         c.setAddress(a);
 
-        try {
-            Query q = eof.createPKQuery(c, source, false);
-            fail("" + q);
-        } catch (IllegalArgumentException ex) {
-        }
+        Query q = eof.createPKQuery(c, source, false);
+        assertNull(q);
     }
 
     // one key has null values, expect just the other key

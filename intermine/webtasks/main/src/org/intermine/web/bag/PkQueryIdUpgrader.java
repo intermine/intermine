@@ -76,6 +76,10 @@ public class PkQueryIdUpgrader implements IdUpgrader
             return Collections.EMPTY_SET;
         }
 
+        if (query == null) {
+            throw new IllegalArgumentException("No usable primary key query found for "
+                                               + "object: " + oldObject);
+        }
         SingletonResults results = os.executeSingleton(query);
 
         // faster just to execute the query immediately:
