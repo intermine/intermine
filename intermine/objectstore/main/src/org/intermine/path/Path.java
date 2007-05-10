@@ -110,9 +110,8 @@ public class Path
         this.path = stringPath;
         this.subClassConstraintPaths = new HashMap<String, String>(constraintMap);
         if (path.indexOf("[") != -1) {
-       //     throw new IllegalArgumentException("path: " + stringPath 
-       //                                        + " contains illegal character '['");
-            this.path = stringPath.replaceAll("\\[[a-zA-Z][a-zA-Z0-9]+\\]", "");
+            throw new IllegalArgumentException("path: " + stringPath 
+                                               + " contains illegal character '['");
         }
         initialise();
     }
