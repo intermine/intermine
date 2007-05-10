@@ -59,7 +59,6 @@ public class UniprotConverter extends FileConverter
     private Map dbMaster = new HashMap();
     private Map dsMaster = new HashMap();
     private Map ontoMaster = new HashMap();
-//    private Map taxIdToDb = new HashMap(); 
     private Map featureTypes = new HashMap();
     private Map geneMaster = new HashMap();
     private Map interproMaster = new HashMap();
@@ -89,7 +88,6 @@ public class UniprotConverter extends FileConverter
 
         mapMaps();
         readConfig();
-        //mapDatabases();
         mapFeatures();
         UniprotHandler handler = new UniprotHandler(writer, mapMaster, createInterpro);
 
@@ -106,7 +104,6 @@ public class UniprotConverter extends FileConverter
         mapMaster.put("pubMaster", pubMaster);
         mapMaster.put("orgMaster", orgMaster);
         mapMaster.put("dbMaster", dbMaster);
-        //mapMaster.put("taxIdToDb", taxIdToDb);
         mapMaster.put("featureTypes", featureTypes);
         mapMaster.put("dsMaster", dsMaster);
         mapMaster.put("ontoMaster", ontoMaster);
@@ -505,7 +502,6 @@ public class UniprotConverter extends FileConverter
                         geneDataMap.setSource("UniProt"); 
                         String message = "No gene source database defined for organism: "
                             + taxonId + ", using UniProt.[" + geneDataMap.toString()  + "]";
-                        System.err.println(message);
                         LOG.warn(message);
                         dbName = "UniProt";
                     } 
