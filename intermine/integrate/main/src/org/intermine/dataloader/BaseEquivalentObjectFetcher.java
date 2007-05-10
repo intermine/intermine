@@ -44,7 +44,6 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntToIntMap;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -228,113 +227,132 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         LOG.debug("primary keys for class " + cld.getName() + " = " + primaryKeys);
 
         Set returnSet = new LinkedHashSet();
-        boolean valid = primaryKeys.isEmpty();
+        int pkCount = primaryKeys.size();
 
         Iterator pkSetIter = primaryKeys.iterator();
         while (pkSetIter.hasNext()) {
             PrimaryKey pk = (PrimaryKey) pkSetIter.next();
-            if (!queryNulls && !DataLoaderHelper.objectPrimaryKeyNotNull(model, obj, cld, pk,
-                        source, idMap)) {
-                LOG.warn("Null values found for key (" + pk + ") for object: " + obj);
-                continue;
+            try {
+                createPKQueryForPK(obj, queryNulls, cld, pk, source, returnSet);
+            } catch (IllegalArgumentException e) {
+                pkCount--;
             }
-            valid = true;
-
-            Query query = new Query();
-            query.setDistinct(false);
-            QueryClass qc = new QueryClass(cld.getType());
-            query.addFrom(qc);
-            query.addToSelect(qc);
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            Iterator pkIter = pk.getFieldNames().iterator();
-            PK:
-            while (pkIter.hasNext()) {
-                String fieldName = (String) pkIter.next();
-                FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
-                if (fd instanceof AttributeDescriptor) {
-                    Object value;
-                    try {
-                        value = TypeUtil.getFieldValue(obj, fieldName);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException("failed to get field value for field name: "
-                                                   + fieldName + " in " + obj, e);
-                    }
-                    if (value == null) {
-                        cs.addConstraint(new SimpleConstraint(new QueryField(qc,
-                                                                             fieldName),
-                                                              ConstraintOp.IS_NULL));
-                    } else {
-                        cs.addConstraint(new SimpleConstraint(new QueryField(qc,
-                                                                             fieldName),
-                                                              ConstraintOp.EQUALS,
-                                                              new QueryValue(value)));
-                    }
-                } else if (fd instanceof CollectionDescriptor) {
-                    throw new MetaDataException("Primary key " + pk.getName() + " for class "
-                            + cld.getName() + " cannot contain collection " + fd.getName()
-                            + ": collections cannot be part of a primary key. Please edit"
-                            + model.getName() + "_keyDefs.properties");
-                } else if (fd instanceof ReferenceDescriptor) {
-                    InterMineObject refObj;
-                    try {
-                        refObj = (InterMineObject) TypeUtil.getFieldProxy(obj, fieldName);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException("failed to get field proxy for field name: "
-                                                   + fieldName + " in " + obj, e);
-                    }
-                    if (refObj == null) {
-                        QueryObjectReference queryObjectReference =
-                            new QueryObjectReference(qc, fieldName);
-                        cs.addConstraint(new ContainsConstraint(queryObjectReference,
-                                                                ConstraintOp.IS_NULL));
-                        continue PK;
-                    }
-
-                    Integer destId = null;
-                    if (refObj.getId() != null) {
-                        destId = idMap.get(refObj.getId());
-                    }
-                    if (destId == null) {
-                        if (refObj instanceof ProxyReference) {
-                            InterMineObject originalRefObj = refObj;
-                            refObj = ((ProxyReference) refObj).getObject();
-
-                            if (refObj == null) {
-                                throw new RuntimeException("cannot get object of ProxyReference "
-                                                           + originalRefObj + " while processing "
-                                                           + obj);
-                            }
-                        }
-                        Query refSubQuery =
-                            createPKQuery(refObj, source, queryNulls);
-
-                        ClassDescriptor referencedClassDescriptor =
-                            ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
-                        QueryClass qc2 = new QueryClass(referencedClassDescriptor.getType());
-                        query.addFrom(qc2);
-                        QueryObjectReference fieldQOF = new QueryObjectReference(qc, fieldName);
-                        cs.addConstraint(new ContainsConstraint(fieldQOF,
-                                                                ConstraintOp.CONTAINS, qc2));
-                        cs.addConstraint(new SubqueryConstraint(qc2, ConstraintOp.IN,
-                                                                refSubQuery));
-                    } else {
-                        InterMineObject destObj = (InterMineObject)
-                            DynamicUtil.createObject(Collections.singleton(InterMineObject.class));
-                        destObj.setId(destId);
-                        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc,
-                                                                                         fieldName),
-                                                                ConstraintOp.CONTAINS, destObj));
-                    }
-                }
-            }
-            query.setConstraint(cs);
-            returnSet.add(query);
         }
 
-        if (valid) {
+        if (primaryKeys.isEmpty() || (pkCount > 0)) {
             return returnSet;
         } else {
             return null;
         }
+    }
+
+    /**
+     * Adds a Query to handle a primary key to a Set.
+     *
+     * @param obj an InterMineObject
+     * @param queryNulls true to make null a valid value, false to make null ignore the key
+     * @param cld the ClassDescriptor for the key
+     * @param pk the PrimaryKey
+     * @param source the Source of the object
+     * @param returnSet the Set to which the Query will be added
+     * @throws MetaDataException if something goes wrong
+     */
+    public void createPKQueryForPK(InterMineObject obj, boolean queryNulls, ClassDescriptor cld,
+            PrimaryKey pk, Source source, Set returnSet) throws MetaDataException {
+        if (!queryNulls && !DataLoaderHelper.objectPrimaryKeyNotNull(model, obj, cld, pk,
+                    source, idMap)) {
+            LOG.warn("Null values found for key (" + pk + ") for object: " + obj);
+            throw new IllegalArgumentException("Null values");
+        }
+
+        Query query = new Query();
+        query.setDistinct(false);
+        QueryClass qc = new QueryClass(cld.getType());
+        query.addFrom(qc);
+        query.addToSelect(qc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        Iterator pkIter = pk.getFieldNames().iterator();
+        PK:
+        while (pkIter.hasNext()) {
+            String fieldName = (String) pkIter.next();
+            FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+            if (fd instanceof AttributeDescriptor) {
+                Object value;
+                try {
+                    value = TypeUtil.getFieldValue(obj, fieldName);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("failed to get field value for field name: "
+                                               + fieldName + " in " + obj, e);
+                }
+                if (value == null) {
+                    cs.addConstraint(new SimpleConstraint(new QueryField(qc,
+                                                                         fieldName),
+                                                          ConstraintOp.IS_NULL));
+                } else {
+                    cs.addConstraint(new SimpleConstraint(new QueryField(qc,
+                                                                         fieldName),
+                                                          ConstraintOp.EQUALS,
+                                                          new QueryValue(value)));
+                }
+            } else if (fd instanceof CollectionDescriptor) {
+                throw new MetaDataException("Primary key " + pk.getName() + " for class "
+                        + cld.getName() + " cannot contain collection " + fd.getName()
+                        + ": collections cannot be part of a primary key. Please edit"
+                        + model.getName() + "_keyDefs.properties");
+            } else if (fd instanceof ReferenceDescriptor) {
+                InterMineObject refObj;
+                try {
+                    refObj = (InterMineObject) TypeUtil.getFieldProxy(obj, fieldName);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("failed to get field proxy for field name: "
+                                               + fieldName + " in " + obj, e);
+                }
+                if (refObj == null) {
+                    QueryObjectReference queryObjectReference =
+                        new QueryObjectReference(qc, fieldName);
+                    cs.addConstraint(new ContainsConstraint(queryObjectReference,
+                                                            ConstraintOp.IS_NULL));
+                    continue PK;
+                }
+
+                Integer destId = null;
+                if (refObj.getId() != null) {
+                    destId = idMap.get(refObj.getId());
+                }
+                if (destId == null) {
+                    if (refObj instanceof ProxyReference) {
+                        InterMineObject originalRefObj = refObj;
+                        refObj = ((ProxyReference) refObj).getObject();
+
+                        if (refObj == null) {
+                            throw new RuntimeException("cannot get object of ProxyReference "
+                                                       + originalRefObj + " while processing "
+                                                       + obj);
+                        }
+                    }
+                    Query refSubQuery =
+                        createPKQuery(refObj, source, queryNulls);
+
+                    ClassDescriptor referencedClassDescriptor =
+                        ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
+                    QueryClass qc2 = new QueryClass(referencedClassDescriptor.getType());
+                    query.addFrom(qc2);
+                    QueryObjectReference fieldQOF = new QueryObjectReference(qc, fieldName);
+                    cs.addConstraint(new ContainsConstraint(fieldQOF,
+                                                            ConstraintOp.CONTAINS, qc2));
+                    cs.addConstraint(new SubqueryConstraint(qc2, ConstraintOp.IN,
+                                                            refSubQuery));
+                } else {
+                    InterMineObject destObj = (InterMineObject)
+                        DynamicUtil.createObject(Collections.singleton(InterMineObject.class));
+                    destObj.setId(destId);
+                    cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc,
+                                                                                     fieldName),
+                                                            ConstraintOp.CONTAINS, destObj));
+                }
+            }
+        }
+        query.setConstraint(cs);
+        returnSet.add(query);
     }
 }
