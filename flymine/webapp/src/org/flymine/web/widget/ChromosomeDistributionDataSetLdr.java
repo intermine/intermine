@@ -232,10 +232,13 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         
         // constrain to be in chosen list of chomosomes, this may not be all chromosomes
         // TODO probably remove this once #1186 fixed.
-        QueryField qfChrId = new QueryField(chromosomeQC, "identifier");
-        BagConstraint bagChr = new BagConstraint(qfChrId, ConstraintOp.IN, 
-                                               FlymineUtil.getChromosomes(os, organismName)); 
-        cs.addConstraint(bagChr);
+        Collection chrs = FlymineUtil.getChromosomes(os, organismName);
+        if (chrs != null && !chrs.isEmpty()) {
+            QueryField qfChrId = new QueryField(chromosomeQC, "identifier");
+            BagConstraint bagChr = new BagConstraint(qfChrId, ConstraintOp.IN, 
+                                                     FlymineUtil.getChromosomes(os, organismName)); 
+            cs.addConstraint(bagChr);
+        }
         
         QueryObjectReference r2 = new QueryObjectReference(geneQC, "organism");
         ContainsConstraint cc2 = new ContainsConstraint(r2, ConstraintOp.CONTAINS, organismQC);
