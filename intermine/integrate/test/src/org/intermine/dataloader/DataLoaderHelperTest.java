@@ -18,29 +18,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import junit.framework.Test;
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employable;
 import org.intermine.objectstore.query.QueryTestCase;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntToIntMap;
-
-import junit.framework.Test;
 
 public class DataLoaderHelperTest extends QueryTestCase
 {
