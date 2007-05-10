@@ -111,6 +111,7 @@ public class MyMineController extends TilesAction
                 typeList.add(unqualifiedName);
             }
         }
+        Collections.sort(preferedTypeList);
         Collections.sort(typeList);
         request.setAttribute("typeList", typeList);
         request.setAttribute("preferredTypeList", preferedTypeList);
