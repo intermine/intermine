@@ -210,6 +210,33 @@ public class DagValidator
         return valid;
     }
 
+    private void collectSynonyms(DagTerm term) { 
+        synMap.put(term.getName(), term.getSynonyms()); 
+        nameMap.put(term.getName(), term); 
+    } 
+
+    private void collectNames(DagTerm term) { 
+        HashSet tmpIds = (HashSet) ids.get(term.getId()); 
+        if (tmpIds == null) { 
+            tmpIds = new HashSet(); 
+            ids.put(term.getId(), tmpIds); 
+        } 
+        tmpIds.add(term); 
+    } 
+
+    private void collectIds(DagTerm term) { 
+        HashSet tmpNames = (HashSet) names.get(term.getName()); 
+        if (tmpNames == null) { 
+            tmpNames = new HashSet(); 
+            names.put(term.getName(), tmpNames); 
+        } 
+        tmpNames.add(term); 
+    } 
+
+    private void flattenRelations(DagTerm term) { 
+        partofs.addAll(term.getComponents()); 
+        isas.addAll(term.getChildren()); 
+    } 
 //     public static void main(String[] args) {
 //         String dagFilename = args[0];
 //         String outputFilename = args[1];
