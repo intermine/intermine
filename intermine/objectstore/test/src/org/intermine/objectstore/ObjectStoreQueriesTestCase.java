@@ -1724,7 +1724,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
      */
     public static Query objectStoreBagsForObject2() throws Exception {
         Query q = new Query();
-        Collection bags = new HashSet();
+        Collection bags = new LinkedHashSet();
         bags.add(new ObjectStoreBag(10));
         bags.add(new ObjectStoreBag(11));
         bags.add(new ObjectStoreBag(12));
