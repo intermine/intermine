@@ -4,6 +4,84 @@
 <article>
 
   <section>
+    <title>FlyMine version 7.1 - release notes</title>
+    <para>
+      Release 7.1 includes a number of new user interface features.  Results of queries can be ordered by a selected column and results tables have a new summary button which brings up statistics on the values in that column.  Many template queries now have more descriptive column titles in results tables.
+    </para>
+
+    <itemizedlist>
+      <listitem>
+        <para>User Interface</para>
+        <itemizedlist>
+    <listitem><para>NEW - Column summaries in results tables.  Each column of a results table now has a summary icon, clicking this will bring up a box with more information about data in the column.  For numerical data it will show the minimum value, maximum value, mean and standard deviation.  For text it will display the number of unique values and the most commonly occuring values with their frequency.</para></listitem>
+    <listitem><para>NEW - Sorting query results.  The QueryBuilder allows you to select an element from the output to sort results by.  A sort button lets you choose ascending or descending order, for example to display results with the highest confience score or most recent publication first.</para></listitem>
+    <listitem><para>NEW - Results column titles.  Many template queries are now configured to have more descriptive column headings in results tables.  The full path can be seen by hovering the mouse pointer over the description.</para></listitem>
+    <listitem><para>NEW - Chromosome distribution viewer. The gene details page for <emphasis>D. melanogaster</emphasis> and <emphasis>A. gambiae</emphasis> now includes a chromosome distribution viewer.  This shows how many genes from the bag are found on each chromosome, click on a bar to see a list of the genes.  The graph also shows an expected number of genes for each chromosome based on the distribution of all genes between chromosomes and the size of the bag.</para></listitem>
+    <listitem><para>NEW - Accurate counts on the results page.  The results page used to show only an approximate number of rows returned from a query (unless the 'Last' link was clicked).  The estimate is now updated to give an accurate 'Total rows' figure once it has been calculated. </para></listitem>
+    <listitem><para>UPDATE - The trail (e.g. Query -> Results -> Gene -> Protein) is now more complete to allow easy navigation back to recently viewed queries, results, object details or bag pages.</para></listitem>
+    <listitem><para>FIX - Performace has been improved when saving and viewing large bags of objects.</para></listitem>
+    <listitem><para>FIX - Renaming bags now works correctly. </para></listitem>
+    <listitem><para>FIX - Missing export options from results pages have been fixed.  Genome features can be exported as FASTA or GFF3, protein interactions can be exported in Cytoscape SIF format.</para></listitem>
+    <listitem><para>FIX - Sequences from Translation objects can now be exported as FASTA.</para></listitem>
+    <listitem><para>FIX - Some minor issues with display on Internet Explorer have been fixed..</para></listitem>
+        </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Tools</para>
+          <itemizedlist>
+    <listitem><para>FIX - TFModules from REDfly are now shown in GBrowse and have a GBrowse image on their details pages.</para></listitem>
+         </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>Known issues</para>
+        <itemizedlist>
+    <listitem><para>There are currently no known problems with release 7.1.</para></listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>FlyMine version 7.0 - release notes</title>
+    <para>
+      Release 7.0 updates the <emphasis>D. melanogaster</emphasis> genome to 5.1 annotation and other genome annotation sources have been re-mapped.  GO enrichment and KEGG pathway viewers have been added to the gene Bag Details page.
+    </para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Data</para>
+        <itemizedlist>
+    <listitem><para>UPDATE - The <emphasis>D. melanogaster</emphasis> genome has been updated to annotation version 5.1.  Data from DrosDel, FlyReg, REDfly and the microarray tiling path have been re-mapped using <ulink url="http://genome.ucsc.edu/cgi-bin/hgLiftOver">USCS LiftOver</ulink>.</para></listitem>
+    <listitem><para> NEW - UniProt keywords (e.g. Acetylation, Sulfate transport) and protein features (e.g. HELIX, DNA_BIND) have been added.</para></listitem>
+    <listitem><para>NEW - KEGG pathway information added for <emphasis>D. melanogaster</emphasis>.</para></listitem>
+    <listitem><para>NEW - FlyAtlas now has data for three more tissues - larval fat body, larval tubule and male accessory gland.</para></listitem>
+    <listitem><para>UPDATE - InParanoid orthologues have been updated to a release from January 2007.</para></listitem>
+    <listitem><para>UPDATE - Four more D. melanogaster RNAi screens added from the DRSC (see <ulink url="aspect.do?name=RNAi">RNAi aspect</ulink>)</para></listitem>
+    <listitem><para>UPDATE GO annotation, protein-protein interactions and UniProt protein data are all updated to recent releases.</para></listitem>
+    <listitem><para>FIX -  Missing protein structure data has been added, protein structures can now be viewed with JMol again.</para></listitem>
+    <listitem><para>FIX - Missing protein interaction detection method has been replaced.</para></listitem>
+    <listitem><para>FIX - Missing INDAC oligo sequences added.</para></listitem>
+       </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>User Interface</para>
+        <itemizedlist>
+    <listitem><para>FIX -Drosophila gene names now work in the quick search box, a number of minor problems with quick search have been fixed.</para></listitem>
+    <listitem><para>NEW - The trail (e.g. Query -> Results -> Gene) has been improved for easy navigation between queries, results, and details pages.</para></listitem>
+    <listitem><para>NEW - GO enrichment widget on the gene Bag Details page.  For the genes in the bag this lists the number of genes with a particular GO term and a p-value which is the probability that this number of genes were annotated with the GO term by chance, given the abundance of the GO term in a reference population.</para></listitem>
+    <listitem><para>NEW - KEGG pathway widget on the gene Bag Details page.  This shows the number of genes in the bag that are associated with a particular KEGG pathway, links give the list of genes and more information about the pathway.</para></listitem>
+    <listitem><para>UPDATE - The constraint editor pane of the QueryBuilder has been made clearer.</para></listitem>
+    <listitem><para>NEW - import query from XML link added to the FlyMine home page.</para></listitem>
+       </itemizedlist>
+      </listitem>
+    </itemizedlist>
+
+  </section>
+
+  <section>
     <title>FlyMine version 6.1 - release notes</title>
 
     <para>

@@ -10,6 +10,18 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>FlyMine 7.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 7.1&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 7.1 includes a number of new user interface features. Results of queries can be ordered by a selected column and results tables have a new summary button which brings up statistics on the values in that column. Many template queries now have more descriptive column titles in results tables.
+      </description>
+      <pubDate>Thurs, 10th May 2007</pubDate>
+    </item>
+
+    <item>
       <title>FlyMine 7.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
