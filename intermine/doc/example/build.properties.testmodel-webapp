@@ -1,0 +1,17 @@
+# You don't really need to change these
+project.helpLocation=http://www.flymine.org/doc/manual
+project.sitePrefix=http://www.flymine.org/flymine
+project.releaseVersion=test
+
+# You may want to change the following 6 properties:
+webapp.deploy.url=http://localhost:8080
+webapp.path=intermine-test
+webapp.manager=manager
+webapp.password=manager
+webapp.logdir=/var/logs
+superuser.account=you@yourdomain.com
+
+# You don't need to change these
+webapp.os.alias=os.unittest
+webapp.userprofile.os.alias=osw.userprofile-test
+project.standalone=true
