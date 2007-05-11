@@ -278,6 +278,8 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ObjectStoreBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME})));
         results.put("OrderDescending", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id DESC");
         results2.put("OrderDescending", Collections.singleton("InterMineObject"));
+        results.put("SelectObjectReference", "SELECT a1_.departmentId AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.departmentId");
+        results2.put("SelectObjectReference", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {

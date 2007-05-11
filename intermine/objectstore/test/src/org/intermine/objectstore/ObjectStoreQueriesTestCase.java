@@ -245,6 +245,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ObjectStoreBagCombination2", objectStoreBagCombination2());
         queries.put("ObjectStoreBagsForObject", objectStoreBagsForObject());
         queries.put("ObjectStoreBagsForObject2", objectStoreBagsForObject2());
+        queries.put("SelectObjectReference", selectObjectReference());
     }
 
     /*
@@ -1730,6 +1731,18 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         bags.add(new ObjectStoreBag(12));
         ObjectStoreBagsForObject osbfo = new ObjectStoreBagsForObject(new Integer(6), bags);
         q.addToSelect(osbfo);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT Employee.department.id FROM Employee
+     */
+    public static Query selectObjectReference() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(new QueryObjectReference(qc, "department"));
         q.setDistinct(false);
         return q;
     }

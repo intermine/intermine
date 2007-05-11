@@ -492,6 +492,14 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("ObjectStoreBagCombination2", Collections.EMPTY_LIST);
         results.put("ObjectStoreBagsForObject", Collections.EMPTY_LIST);
         results.put("ObjectStoreBagsForObject2", Collections.EMPTY_LIST);
+
+        r = new Object[][] { { ((Employee) data.get("EmployeeA1")).getDepartment().getId() },
+                             { ((Employee) data.get("EmployeeA2")).getDepartment().getId() },
+                             { ((Employee) data.get("EmployeeA3")).getDepartment().getId() },
+                             { ((Employee) data.get("EmployeeB1")).getDepartment().getId() },
+                             { ((Employee) data.get("EmployeeB2")).getDepartment().getId() },
+                             { ((Employee) data.get("EmployeeB3")).getDepartment().getId() } };
+        results.put("SelectObjectReference", toList(r));
     }
 
     /**
