@@ -648,7 +648,7 @@ public class GoConverter extends FileConverter
 //                    (identAttr != null ? identAttr.getValue() : NO_ID_ATTR));
 //        }
 
-        writer.store(ItemHelper.convert(itemToStore));
+        getItemWriter().store(ItemHelper.convert(itemToStore));
     }
 
 
@@ -718,7 +718,7 @@ public class GoConverter extends FileConverter
                 accession,
                 dataSourceId);
 
-        writer.store(ItemHelper.convert(synonym));
+        getItemWriter().store(ItemHelper.convert(synonym));
 
         ItemWrapper newProductWrapper = new ItemWrapper(key, product);
         productWrapperMap.put(key, newProductWrapper);
@@ -781,7 +781,7 @@ public class GoConverter extends FileConverter
             item.addAttribute(new Attribute("code", code));
             goEvidence.put(code, item);
             //doStore(item, "newGoEvidence");
-            writer.store(ItemHelper.convert(item));
+            getItemWriter().store(ItemHelper.convert(item));
         }
         return item;
     }
@@ -820,7 +820,7 @@ public class GoConverter extends FileConverter
             item = createItem("DataSource");
             item.setAttribute("name", title);
             datasources.put(title, item);
-            writer.store(ItemHelper.convert(item));
+            getItemWriter().store(ItemHelper.convert(item));
         }
         return item;
     }
@@ -843,7 +843,7 @@ public class GoConverter extends FileConverter
                     item.addAttribute(new Attribute("pubMedId", code));
                     pubId = item.getIdentifier();
                     publications.put(code, pubId);
-                    writer.store(ItemHelper.convert(item));
+                    getItemWriter().store(ItemHelper.convert(item));
                 }
                 break;
             }
@@ -867,7 +867,7 @@ public class GoConverter extends FileConverter
             item = createItem("Organism");
             item.addAttribute(new Attribute("taxonId", taxonIdNew));
             organisms.put(taxonIdNew, item);
-            writer.store(ItemHelper.convert(item));
+            getItemWriter().store(ItemHelper.convert(item));
         }
         return item;
     }

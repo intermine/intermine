@@ -76,7 +76,7 @@ public class FullXmlConverter extends DataConverter
          */
         public void finishedItem(Item item) {
             try {
-                writer.store(ItemHelper.convert(item));
+                getItemWriter().store(ItemHelper.convert(item));
             } catch (ObjectStoreException e) {
                 throw new RuntimeException(e);
             }

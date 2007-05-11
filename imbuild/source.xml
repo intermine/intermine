@@ -75,11 +75,8 @@
       have.file.dag - this source in read from a DAG file into a tgt items objectstore, no translate
       have.file.xml.tgt - source is XML that is loaded directly, no translation
       have.large.file.xml.tgt - source is XML that is converted to tgt items, no translation
-      have.file.custom.direct - source is read from a custom file using a DirectDataLoader, no translation,
-                         no src or tgt items
-
-
-    For the future:
+      have.file.custom.direct - source is read from a custom file using a DirectDataLoader, no 
+                                translation, no src or tgt items
       have.db.tgt
         - the DB is put into a tgt items objectstore, no translate
         - eg. when the the source pulls things directly from a foreign DB into
@@ -210,6 +207,19 @@
   </target>
 
   <!--
+    Retrieve from a database in a tgt items db with the convertor specified via the property
+    convertor.class
+  -->
+  <target name="-retrieve-tgt-from-db"
+          if="have.db.tgt">
+    <convert-db clsName="${convertor.class}"
+                dbAlias="db.${source.db.name}"
+                modelName="${target.model}"
+                osName="osw.${common.os.prefix}-tgt-items">
+    </convert-db>
+  </target>
+
+  <!--
     Retrieve from an XML file in a src items db using an XmlConverter and a
     XML Schema file
   -->
@@ -337,6 +347,7 @@
                                        build-db-tgt-items,
                                        -pre-retrieve,
                                        -retrieve-tgt-from-custom-file,
+                                       -retrieve-tgt-from-db,
                                        -retrieve-from-gff3,
                                        -retrieve-from-dag,
                                        -retrieve-tgt-from-xml-file,

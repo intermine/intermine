@@ -76,7 +76,7 @@ public class FullXmlConverterTask extends ConverterTask
      * {@inheritDoc}
      */
     public void execute() throws BuildException {
-        if (osName == null) {
+        if (getOsName() == null) {
             throw new BuildException("osName must be specified");
         }
         if (sourceName == null) {
@@ -88,7 +88,7 @@ public class FullXmlConverterTask extends ConverterTask
         File toRead = null;
 
         try {
-            osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());
             writer = new ObjectStoreItemWriter(osw);
             FullXmlConverter converter = new FullXmlConverter(writer);
             

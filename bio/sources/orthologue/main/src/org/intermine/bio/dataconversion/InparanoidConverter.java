@@ -202,8 +202,8 @@ public class InparanoidConverter extends FileConverter
 
             }
 
-            writer.store(ItemHelper.convert(item1));
-            writer.store(ItemHelper.convert(item2));
+            getItemWriter().store(ItemHelper.convert(item1));
+            getItemWriter().store(ItemHelper.convert(item2));
 
             // switched first BioEntity of next group
             if (!lastCode.equals(code)) {
@@ -264,7 +264,7 @@ public class InparanoidConverter extends FileConverter
         synonym.setReference("subject", item.getIdentifier());
         Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
         synonym.setReference("source", source.getIdentifier());
-        writer.store(ItemHelper.convert(synonym));
+        getItemWriter().store(ItemHelper.convert(synonym));
 
         return item;
     }
@@ -314,7 +314,7 @@ public class InparanoidConverter extends FileConverter
 
         List toStore = Arrays.asList(new Object[] {db, pub});
         for (Iterator i = toStore.iterator(); i.hasNext();) {
-            writer.store(ItemHelper.convert((Item) i.next()));
+            getItemWriter().store(ItemHelper.convert((Item) i.next()));
         }
     }
 

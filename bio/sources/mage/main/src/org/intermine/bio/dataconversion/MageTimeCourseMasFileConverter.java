@@ -70,7 +70,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
         dataSource.setAttribute("name", "The Weatherall Institute of Molecular Medicine, "
                                 + "Oxford University");
         dataSource.setAttribute("url", "http://www.imm.ox.ac.uk/");
-        writer.store(ItemHelper.convert(dataSource));
+        getItemWriter().store(ItemHelper.convert(dataSource));
 
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
@@ -82,11 +82,11 @@ public class MageTimeCourseMasFileConverter extends FileConverter
 
         dataSet.setAttribute("url",
                         "http://www.imm.ox.ac.uk/pages/research/molecular_haematology/tariq.htm");
-        writer.store(ItemHelper.convert(dataSet));
+        getItemWriter().store(ItemHelper.convert(dataSet));
 
         organismMM = createItem("Organism");
         organismMM.setAttribute("abbreviation", "MM");
-        writer.store(ItemHelper.convert(organismMM));
+        getItemWriter().store(ItemHelper.convert(organismMM));
 
         experiment = createItem("MicroArrayExperiment");
         experiment.setAttribute("identifier", expName);
@@ -103,10 +103,10 @@ public class MageTimeCourseMasFileConverter extends FileConverter
         String pmid = getConfig(expName, "pmid");
         if (pmid != null && !pmid.equals("")) {
             Item pub = getPublication(pmid.trim());
-            writer.store(ItemHelper.convert(pub));
+            getItemWriter().store(ItemHelper.convert(pub));
             experiment.setReference("publication", pub.getIdentifier());
         }
-        writer.store(ItemHelper.convert(experiment));
+        getItemWriter().store(ItemHelper.convert(experiment));
 
         Item sample1 = createItem("Sample");
         sample1.setReference("organism", organismMM.getIdentifier());
@@ -122,7 +122,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             sample1.setAttribute("primaryCharacteristic",
                                  getConfig(expName, "primaryCharacteristic"));
         }
-        writer.store(ItemHelper.convert(sample1));
+        getItemWriter().store(ItemHelper.convert(sample1));
     }
 
 
@@ -155,10 +155,10 @@ public class MageTimeCourseMasFileConverter extends FileConverter
 
             Item probe = createProbe("CompositeSequence", PROBEPREFIX, probeId,
                                      organismMM.getIdentifier(), dataSource.getIdentifier(),
-                                     dataSet.getIdentifier(), writer);
+                                     dataSet.getIdentifier(), getItemWriter());
 
             String name = timePoint.concat(" ").concat(timeUnit);
-            Item assay = getAssay(name, writer);
+            Item assay = getAssay(name, getItemWriter());
 
             Item result = createItem("MicroArrayResult");
             result.setAttribute("type", type);
@@ -173,12 +173,12 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             result.setReference("experiment", experiment.getIdentifier());
             result.addCollection(new ReferenceList("assays",
                                  new ArrayList(Collections.singleton(assay.getIdentifier()))));
-            writer.store(ItemHelper.convert(result));
+            getItemWriter().store(ItemHelper.convert(result));
 
             probe.addCollection(new ReferenceList("results",
                                 new ArrayList(Collections.singleton(result.getIdentifier()))));
 
-            writer.store(ItemHelper.convert(probe));
+            getItemWriter().store(ItemHelper.convert(probe));
 
         }
     }
@@ -210,7 +210,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
         synonym.setAttribute("value", PROBEPREFIX + id);
         synonym.setReference("source", datasourceId);
         synonym.setReference("subject", probe.getIdentifier());
-        writer.store(ItemHelper.convert(synonym));
+        getItemWriter().store(ItemHelper.convert(synonym));
 
         return probe;
     }
@@ -230,7 +230,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
                                 new ArrayList(Collections.singleton(sample1.getIdentifier()))));
             }
             assayMap.put(name, assay);
-            writer.store(ItemHelper.convert(assay));
+            getItemWriter().store(ItemHelper.convert(assay));
         }
         return assay;
     }

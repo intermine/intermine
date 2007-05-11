@@ -89,7 +89,7 @@ public class UniprotConverter extends FileConverter
         mapMaps();
         readConfig();
         mapFeatures();
-        UniprotHandler handler = new UniprotHandler(writer, mapMaster, createInterpro);
+        UniprotHandler handler = new UniprotHandler(getItemWriter(), mapMaster, createInterpro);
 
         try {
             SAXParser.parse(new InputSource(reader), handler);

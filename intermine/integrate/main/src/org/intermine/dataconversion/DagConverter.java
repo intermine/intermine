@@ -106,12 +106,12 @@ public class DagConverter extends DataConverter
         for (Iterator i = rootTerms.iterator(); i.hasNext();) {
             process((DagTerm) i.next());
         }
-        writer.store(ItemHelper.convert(ontology));
+        getItemWriter().store(ItemHelper.convert(ontology));
         for (Iterator i = nameToTerm.values().iterator(); i.hasNext();) {
-            writer.store(ItemHelper.convert((Item) i.next()));
+            getItemWriter().store(ItemHelper.convert((Item) i.next()));
         }
         for (Iterator i = synToItem.values().iterator(); i.hasNext();) {
-            writer.store(ItemHelper.convert((Item) i.next()));
+            getItemWriter().store(ItemHelper.convert((Item) i.next()));
         }
     }
 
@@ -230,6 +230,6 @@ public class DagConverter extends DataConverter
         parentRelations.addRefId(relation.getIdentifier());
         ReferenceList childRelations = item.getCollection("childRelations");
         childRelations.addRefId(relation.getIdentifier());
-        writer.store(ItemHelper.convert(relation));
+        getItemWriter().store(ItemHelper.convert(relation));
     }
 }

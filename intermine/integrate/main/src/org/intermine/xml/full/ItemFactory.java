@@ -37,7 +37,7 @@ public class ItemFactory
 
     private Model model;
     private int newItemId = 1;
-    private String prefix = "";
+    private String prefix = "0_";
 
     /**
      * Create an ItemFactory that isn't specific to a particular model.  Items created by this

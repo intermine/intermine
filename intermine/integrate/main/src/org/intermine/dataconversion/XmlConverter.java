@@ -350,7 +350,7 @@ public class XmlConverter extends DataConverter
                 String path = (String) paths.pop();
                 try {
                     if (!xmlInfo.isReferenceElement(path)) {
-                        writer.store((ItemHelper.convert((Item) items.pop())));
+                        getItemWriter().store(ItemHelper.convert((Item) items.pop()));
                         count++;
                         if (count % 10000 == 0) {
                             long now = System.currentTimeMillis();

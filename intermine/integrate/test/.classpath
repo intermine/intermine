@@ -10,7 +10,7 @@
 	<classpathentry kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry kind="src" path="/fulldata"/>
 	<classpathentry kind="src" path="/testmodel"/>
-	<classpathentry kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry exported="true" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry exported="true" kind="lib" path="/testmodel/dist/testmodel.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

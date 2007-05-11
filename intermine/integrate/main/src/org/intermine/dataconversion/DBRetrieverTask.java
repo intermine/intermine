@@ -50,20 +50,20 @@ public class DBRetrieverTask extends ConverterTask
         if (database == null) {
             throw new BuildException("database attribute is not set");
         }
-        if (model == null) {
-            throw new BuildException("model attribute is not set");
+        if (getOsName() == null) {
+            throw new BuildException("osName attribute is not set");
         }
 
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         try {
             Database db = DatabaseFactory.getDatabase(database);
-            Model m = Model.getInstanceByName(model);
-            osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            Model m = Model.getInstanceByName(getModelName());
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());
             writer = new ObjectStoreItemWriter(osw);
             DBReader reader = new ReadAheadDBReader(db, m);
             System.err .println("Processing data from DB " + db.getURL());
-            new DBRetriever(m, db, reader, writer, excludeList).process();
+            new DBRetriever(m, db, reader, writer, getExcludeList()).process();
             reader.close();
         } catch (Exception e) {
             LOG.error("problem retrieving data: ", e);

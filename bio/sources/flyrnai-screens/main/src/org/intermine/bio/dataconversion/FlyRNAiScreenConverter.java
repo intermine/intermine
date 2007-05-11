@@ -122,7 +122,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         if (organism == null) {
             organism = newItem("Organism");
             organism.setAttribute("taxonId", taxonId);
-            writer.store(ItemHelper.convert(organism));
+            getItemWriter().store(ItemHelper.convert(organism));
         }
 
         System.err .println("Processing file: " + getCurrentFile().getName());
@@ -139,15 +139,15 @@ public class FlyRNAiScreenConverter extends FileConverter
         if (dataSource == null) {
             dataSource = newItem("DataSource");
             dataSource.setAttribute("name", "Drosophila RNAi Screening Center");
-            writer.store(ItemHelper.convert(dataSource));
+            getItemWriter().store(ItemHelper.convert(dataSource));
         }
         if (hfaSource == null) {
             hfaSource = newItem("DataSource");
             hfaSource.setAttribute("name", "Renato Paro lab");
-            writer.store(ItemHelper.convert(hfaSource));
+            getItemWriter().store(ItemHelper.convert(hfaSource));
         }
         dataSet.setReference("dataSource", dataSource);
-        writer.store(ItemHelper.convert(dataSet));
+        getItemWriter().store(ItemHelper.convert(dataSet));
 
         Item rnaiScreen = newItem("RNAiScreen");
         rnaiScreen.setAttribute("name", (String) headerFieldValues.get(SCREEN_NAME_PREFIX));
@@ -156,7 +156,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         rnaiScreen.setAttribute("cellLine", (String) headerFieldValues.get(CELL_LINE_PREFIX));
         rnaiScreen.setReference("organism", organism);
         rnaiScreen.setReference("publication", publication);
-        writer.store(ItemHelper.convert(rnaiScreen));
+        getItemWriter().store(ItemHelper.convert(rnaiScreen));
 
         String[] columnNameRow = null;
 
@@ -217,7 +217,7 @@ public class FlyRNAiScreenConverter extends FileConverter
                 amplicon.setAttribute("length", ampliconLength);
                 amplicon.setReference("organism", organism);
                 amplicons.put(ampliconIdentifier, amplicon);
-                writer.store(ItemHelper.convert(amplicon));
+                getItemWriter().store(ItemHelper.convert(amplicon));
 
                 newSynonym(ampliconIdentifier, amplicon, dataSource);
                 newSynonym(hfaAmpliconIdentifier, amplicon, hfaSource);
@@ -268,7 +268,7 @@ public class FlyRNAiScreenConverter extends FileConverter
                     String offTarget = offTargetFalse.contains(ampliconIdentifier)
                         ? "false" : "true";
                     screenHit.setAttribute("hasPredictedOffTargetEffect", offTarget);
-                    writer.store(ItemHelper.convert(screenHit));
+                    getItemWriter().store(ItemHelper.convert(screenHit));
                 }
             }
         }

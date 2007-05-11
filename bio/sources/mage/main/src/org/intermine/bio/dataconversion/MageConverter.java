@@ -1007,7 +1007,7 @@ public class MageConverter extends FileConverter
     }
 
     private void storeItem(Item item) throws Exception {
-        writer.store(ItemHelper.convert(item));
+        getItemWriter().store(ItemHelper.convert(item));
     }
 
     private String findItemIdentifier(Object obj, boolean create) throws Exception {
