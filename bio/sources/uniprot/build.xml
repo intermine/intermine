@@ -17,9 +17,9 @@
   
   <target name="-retrieve-tgt-from-custom-file" if="have.file.custom.tgt">
     <convert-file      
-      model="${target.model}"
-	  clsName="${convertor.class}"
-      osName="osw.${common.os.prefix}-tgt-items">
+       modelName="${target.model}"
+       clsName="${convertor.class}"
+       osName="osw.${common.os.prefix}-tgt-items">
       <fileset dir="${build.data.dir}" includes="*.xml"/>
     </convert-file>
   </target>
