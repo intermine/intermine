@@ -31,6 +31,7 @@
     </source>
    <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
+      <property name="src.data.dir.includes" value="keydef.xml"/>
     </source>
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/rnai/wormbase/current"/>
@@ -44,7 +45,7 @@
       <property name="organisms" value="7227 6239 4932"/>
     </source>
     <source name="psi-mi-ontology" type="psi-mi-ontology">
-      <property name="src.data.file" location="/shared/data/psi/ontolgy/psi-mi.obo"/>
+      <property name="src.data.file" location="/shared/data/psi/ontology/psi-mi.obo"/>
     </source>
     <source name="mage" type="mage" dump="true">
       <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
