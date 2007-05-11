@@ -104,6 +104,9 @@ public class IqlQuery
                     || (qn instanceof ObjectStoreBagCombination)
                     || (qn instanceof ObjectStoreBagsForObject)) {
                 retval.append(nodeToString(q, qn, parameters));
+            } else if (qn instanceof QueryObjectReference) {
+                retval.append(nodeToString(q, qn, parameters)).append(".id")
+                    .append(nodeAlias == null ? "" : " AS " + escapeReservedWord(nodeAlias));
             } else {
                 retval.append(nodeToString(q, qn, parameters))
                     .append(nodeAlias == null ? "" : " AS " + escapeReservedWord(nodeAlias));

@@ -434,7 +434,7 @@ public class IqlQueryParser
      * @return a QueryNode object corresponding to the input
      */
     private static QueryNode processNewQueryNode(AST ast, Query q) {
-        Object retval = processNewQueryNodeOrReference(ast, q);
+        Object retval = processNewQueryNodeOrReference(ast, q, false);
         if (retval instanceof QueryObjectReference) {
             QueryObjectReference qor = (QueryObjectReference) retval;
             throw new IllegalArgumentException("Object reference " + qor.getQueryClass().getType()
@@ -452,18 +452,14 @@ public class IqlQueryParser
      * @return a QuerySelectable object corresponding to the input
      */
     private static QuerySelectable processNewQuerySelectable(AST ast, Query q) {
-        Object retval = processNewQueryNodeOrReference(ast, q);
-        if (retval instanceof QueryObjectReference) {
-            retval = new QueryObjectPathExpression(((QueryObjectReference) retval).getQueryClass(),
-                    ((QueryObjectReference) retval).getFieldName());
-        }
-        return (QuerySelectable) retval;
+        return (QuerySelectable) processNewQueryNodeOrReference(ast, q, true);
     }
 
-    private static QueryOrderable processNewQueryNodeOrReference(AST ast, Query q) {
+    private static Object processNewQueryNodeOrReference(AST ast, Query q,
+            boolean isSelect) {
         switch (ast.getType()) {
             case IqlTokenTypes.FIELD:
-                return processNewField(ast.getFirstChild(), q);
+                return processNewField(ast.getFirstChild(), q, isSelect);
             case IqlTokenTypes.CONSTANT:
                 return processNewQueryValue(ast.getFirstChild(), q);
             case IqlTokenTypes.UNSAFE_FUNCTION:
@@ -473,7 +469,8 @@ public class IqlQueryParser
             case IqlTokenTypes.TYPECAST:
                 return processNewTypeCast(ast.getFirstChild(), q);
             case IqlTokenTypes.ORDER_DESC:
-                return new OrderDescending(processNewQueryNodeOrReference(ast.getFirstChild(), q));
+                return new OrderDescending((QueryOrderable) processNewQueryNodeOrReference(ast
+                            .getFirstChild(), q, isSelect));
             default:
                 throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
@@ -601,9 +598,10 @@ public class IqlQueryParser
      *
      * @param ast an AST node to process
      * @param q the Query to build
+     * @param isSelect true if this is on a SELECT list
      * @return a QueryNode object corresponding to the input
      */
-    private static QueryOrderable processNewField(AST ast, Query q) {
+    private static Object processNewField(AST ast, Query q, boolean isSelect) {
         if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
             throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                     + ast.getType() + "]");
@@ -621,8 +619,13 @@ public class IqlQueryParser
                         try {
                             return new QueryField((QueryClass) obj, unescape(secondAst.getText()));
                         } catch (IllegalArgumentException e) {
-                            return new QueryObjectReference((QueryClass) obj, unescape(secondAst
-                                        .getText()));
+                            if (isSelect) {
+                                return new QueryObjectPathExpression((QueryClass) obj, unescape(
+                                            secondAst.getText()));
+                            } else {
+                                return new QueryObjectReference((QueryClass) obj, unescape(secondAst
+                                            .getText()));
+                            }
                         }
                     } else if ("id".equals(secondAst.getText())) {
                         return new QueryField((QueryClassBag) obj);
@@ -630,6 +633,9 @@ public class IqlQueryParser
                         throw new IllegalArgumentException("Can only access the \"id\" attribute of"
                                 + " a QueryClassBag");
                     }
+                } else if ("id".equals(thirdAst.getText())) {
+                    return new QueryObjectReference((QueryClass) obj, unescape(secondAst
+                                .getText()));
                 } else {
                     throw new IllegalArgumentException("Path expression " + ast.getText() + "."
                             + secondAst.getText() + "." + thirdAst.getText() + " extends beyond a "
@@ -922,7 +928,7 @@ public class IqlQueryParser
      */
     private static void processOrderClause(AST ast, Query q) {
         do {
-            q.addToOrderBy(processNewQueryNodeOrReference(ast, q));
+            q.addToOrderBy((QueryOrderable) processNewQueryNodeOrReference(ast, q, false));
             ast = ast.getNextSibling();
         } while (ast != null);
     }
@@ -1177,7 +1183,7 @@ public class IqlQueryParser
 
     private static Constraint processSimpleConstraint(AST ast, Query q, Iterator iterator) {
         AST subAST = ast.getFirstChild();
-        Object left = processNewQueryNodeOrReference(subAST, q);
+        Object left = processNewQueryNodeOrReference(subAST, q, false);
         subAST = subAST.getNextSibling();
         ConstraintOp op = null;
         switch (subAST.getType()) {

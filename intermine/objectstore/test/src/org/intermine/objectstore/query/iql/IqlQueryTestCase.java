@@ -268,5 +268,6 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq = new IqlQuery("SELECT BAGS FOR 6 IN BAGS ?", null);
         fq.setParameters(Collections.singletonList(new HashSet(Arrays.asList(new ObjectStoreBag[] {new ObjectStoreBag(10), new ObjectStoreBag(11), new ObjectStoreBag(12)}))));
         results.put("ObjectStoreBagsForObject2", fq);
+        results.put("SelectObjectReference", new IqlQuery("SELECT a1_.department.id AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
     }
 }
