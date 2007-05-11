@@ -79,7 +79,7 @@ public class MageFlatFileConverter extends FileConverter
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "Proceedings of the National Academy of Sciences USA");
         dataSource.setAttribute("url", "http://www.pnas.org/");
-        writer.store(ItemHelper.convert(dataSource));
+        getItemWriter().store(ItemHelper.convert(dataSource));
 
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
@@ -89,11 +89,11 @@ public class MageFlatFileConverter extends FileConverter
         
         dataSet.setAttribute("url", 
         "http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls");
-        writer.store(ItemHelper.convert(dataSet));
+        getItemWriter().store(ItemHelper.convert(dataSet));
 
         organismMM = createItem("Organism");
         organismMM.setAttribute("abbreviation", "MM");
-        writer.store(ItemHelper.convert(organismMM));
+        getItemWriter().store(ItemHelper.convert(organismMM));
 
         experiment = createItem("MicroArrayExperiment");
         experiment.setAttribute("identifier", expName);
@@ -110,10 +110,10 @@ public class MageFlatFileConverter extends FileConverter
         String pmid = getConfig(expName, "pmid");
         if (pmid != null && !pmid.equals("")) {
             Item pub = getPublication(pmid.trim()); 
-            writer.store(ItemHelper.convert(pub));
+            getItemWriter().store(ItemHelper.convert(pub));
             experiment.setReference("publication", pub.getIdentifier());
         }
-        writer.store(ItemHelper.convert(experiment));
+        getItemWriter().store(ItemHelper.convert(experiment));
 
     }
 
@@ -142,18 +142,18 @@ public class MageFlatFileConverter extends FileConverter
 
             Item probe = createProbe("ProbeSet", PROBEPREFIX, probeId,
                                      organismMM.getIdentifier(), dataSource.getIdentifier(), 
-                                     dataSet.getIdentifier(), writer);
+                                     dataSet.getIdentifier(), getItemWriter());
             Item result = createItem("MicroArrayResult");
             result.setAttribute("type", "Fold Change");
             result.setAttribute("scale", "linear");
             result.setAttribute("isControl", "false");
             result.setAttribute("value", foldChange);
             result.setReference("experiment", experiment.getIdentifier());
-            writer.store(ItemHelper.convert(result));
+            getItemWriter().store(ItemHelper.convert(result));
             probe.addCollection(new ReferenceList("results", 
                                 new ArrayList(Collections.singleton(result.getIdentifier()))));
 
-            writer.store(ItemHelper.convert(probe));            
+            getItemWriter().store(ItemHelper.convert(probe));            
             
         }
     }
@@ -185,7 +185,7 @@ public class MageFlatFileConverter extends FileConverter
         synonym.setAttribute("value", PROBEPREFIX + id);
         synonym.setReference("source", datasourceId);
         synonym.setReference("subject", probe.getIdentifier());
-        writer.store(ItemHelper.convert(synonym));
+        getItemWriter().store(ItemHelper.convert(synonym));
 
         return probe;
     }

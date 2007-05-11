@@ -57,15 +57,15 @@ public class FlyBaseGeneNamesConverter extends FileConverter
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "FlyBase");
-        writer.store(ItemHelper.convert(dataSource));
+        getItemWriter().store(ItemHelper.convert(dataSource));
 
         dmel = createItem("Organism");
         dmel.setAttribute("taxonId", "7227");
-        writer.store(ItemHelper.convert(dmel));
+        getItemWriter().store(ItemHelper.convert(dmel));
 
         dpse = createItem("Organism");
         dpse.setAttribute("taxonId", "7237");
-        writer.store(ItemHelper.convert(dpse));
+        getItemWriter().store(ItemHelper.convert(dpse));
     }
 
 
@@ -141,7 +141,7 @@ public class FlyBaseGeneNamesConverter extends FileConverter
                 }
 
                 gene.setReference("organism", organism.getIdentifier());
-                writer.store(ItemHelper.convert(gene));
+                getItemWriter().store(ItemHelper.convert(gene));
             }
             lineNo++;
         }
@@ -154,7 +154,7 @@ public class FlyBaseGeneNamesConverter extends FileConverter
         synonym.setAttribute("value", value);
         synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", subject.getIdentifier());
-        writer.store(ItemHelper.convert(synonym));
+        getItemWriter().store(ItemHelper.convert(synonym));
     }
 
     private String newId(String className) {

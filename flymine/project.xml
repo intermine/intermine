@@ -39,7 +39,6 @@
     <source name="protein_structure" type="protein_structure" dump="true">
       <property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
-
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
       <property name="organisms" value="7227 6239 4932"/>
@@ -57,6 +56,9 @@
     </source>
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
+    </source>
+    <source name="anoest" type="anoest">
+      <property name="source.db.name" value="anoest"/>
     </source>
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes"/>

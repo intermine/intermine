@@ -38,10 +38,10 @@ public class ItemFactoryTest extends TestCase
         Item item3FromItemFactory1 = itemFactory1.makeItem("some_id_from_itemFactory1");
         Item item4FromItemFactory1 = itemFactory1.makeItem();
         
-        assertEquals("1", item1FromItemFactory1.getIdentifier());
-        assertEquals("2", item2FromItemFactory1.getIdentifier());
+        assertEquals("0_1", item1FromItemFactory1.getIdentifier());
+        assertEquals("0_2", item2FromItemFactory1.getIdentifier());
         assertEquals("some_id_from_itemFactory1", item3FromItemFactory1.getIdentifier());
-        assertEquals("3", item4FromItemFactory1.getIdentifier());
+        assertEquals("0_3", item4FromItemFactory1.getIdentifier());
 
         ItemFactory itemFactory2 = new ItemFactory(model);
 
@@ -50,10 +50,10 @@ public class ItemFactoryTest extends TestCase
         Item item3FromItemFactory2 = itemFactory2.makeItem("some_id_from_itemFactory2");
         Item item4FromItemFactory2 = itemFactory2.makeItem();
         
-        assertEquals("1", item1FromItemFactory2.getIdentifier());
-        assertEquals("2", item2FromItemFactory2.getIdentifier());
+        assertEquals("0_1", item1FromItemFactory2.getIdentifier());
+        assertEquals("0_2", item2FromItemFactory2.getIdentifier());
         assertEquals("some_id_from_itemFactory2", item3FromItemFactory2.getIdentifier());
-        assertEquals("3", item4FromItemFactory2.getIdentifier());
+        assertEquals("0_3", item4FromItemFactory2.getIdentifier());
 
         ItemFactory itemFactory3 = new ItemFactory(model, "prefix_");
 

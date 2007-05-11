@@ -62,10 +62,10 @@ public class XmlConverterTask extends ConverterTask
         if (schema == null) {
             throw new BuildException("schema must be specified");
         }
-        if (model == null) {
-            throw new BuildException("model must be specified");
+        if (getModelName() == null) {
+            throw new BuildException("modelName must be specified");
         }
-        if (osName == null) {
+        if (getOsName() == null) {
             throw new BuildException("osName must be specified");
         }
 
@@ -74,8 +74,8 @@ public class XmlConverterTask extends ConverterTask
         File toRead = null;
         
         try {
-            Model m = Model.getInstanceByName(model);
-            osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            Model m = Model.getInstanceByName(getModelName());
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());
             writer = new ObjectStoreItemWriter(osw);
             XmlConverter converter = new XmlConverter(m,
                                                       new BufferedReader(new FileReader(schema)),

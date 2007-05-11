@@ -89,7 +89,7 @@ public abstract class FileConverter extends DataConverter
      * @throws ObjectStoreException if an error occurs in storing
      */
     protected void store(Item item) throws ObjectStoreException {
-        writer.store(ItemHelper.convert(item));
+        getItemWriter().store(ItemHelper.convert(item));
     }
     
     /**
@@ -99,7 +99,7 @@ public abstract class FileConverter extends DataConverter
      */
     protected void store(Collection c) throws ObjectStoreException {
         for (Iterator i = c.iterator(); i.hasNext(); ) {
-            writer.store(ItemHelper.convert((Item) i.next()));
+            getItemWriter().store(ItemHelper.convert((Item) i.next()));
         }
     }
 }

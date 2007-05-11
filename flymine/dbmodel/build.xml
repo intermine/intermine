@@ -29,6 +29,7 @@
     <merge-additions file="bio/sources/redfly/redfly_additions.xml"/>
     <merge-additions file="bio/sources/flyrnai-screens/flyrnai-screens_additions.xml"/>
     <merge-additions file="bio/sources/flyatlas/flyatlas_additions.xml"/>
+    <merge-additions file="bio/sources/anoest/anoest_additions.xml"/>
     <merge-additions file="bio/sources/affy-probes/affy-probes_additions.xml"/>
     <merge-additions file="bio/sources/fly-anatomy-ontology/fly-anatomy-ontology_additions.xml"/>
     <merge-additions file="bio/sources/kegg-pathway/kegg-pathway_additions.xml"/>

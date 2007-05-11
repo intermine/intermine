@@ -18,7 +18,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 /**
@@ -28,9 +31,9 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
  */
 public class ConverterTask extends DynamicAttributeTask
 {
-    protected String model;
-    protected String osName;
-    protected String excludeList;
+    private String modelName = null;
+    private String osName;
+    private String excludeList;
 
     /**
      * Set the objectstore name
@@ -41,19 +44,44 @@ public class ConverterTask extends DynamicAttributeTask
     }
 
     /**
-     * Set the model name
-     * @param model the model name
+     * Sets the list of classes to NOT try and convert
+     * @param excludeList the suitably formatted list of classs to exclude. 
      */
-    public void setModel(String model) {
-        this.model = model;
+    public void setExcludeList(String excludeList) {
+        this.excludeList = excludeList;
     }
 
     /**
-     * Sets the list of classes to NOT try and convert
-     *@param excludeList the suitably formatted list of classs to exclude. 
-     * */
-    public void setExcludeList(String excludeList) {
-        this.excludeList = excludeList;
+     * Return the list set by setExcludeList().
+     * @return the exclude list
+     */
+    public String getExcludeList() {
+        return excludeList;
+    }
+
+    /**
+     * Return the model name 
+     * @return the Model name
+     */
+    public String getModelName() {
+        return modelName;
+    }
+    
+    /**
+     * Set the target model name 
+     * @param modelName the Model name
+     */
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+    
+
+    /**
+     * Return the object store alias set by setOsName().
+     * @return the object store alias
+     */
+    public String getOsName() {
+        return osName;
     }
 
     /**
@@ -72,7 +100,7 @@ public class ConverterTask extends DynamicAttributeTask
                 System.err .println("ALTER TABLE reference ALTER refid SET STATISTICS 1000");
                 s.execute("ALTER TABLE reference ALTER refid SET STATISTICS 1000");
                 // TODO: files should be placed in resources
-                String filename = model + "_src_items.sql";
+                String filename = getModelName() + "_src_items.sql";
                 InputStream is = ConverterTask.class.getClassLoader().getResourceAsStream(filename);
                 // .sql files not always being copied correctly
                 if (is != null) {

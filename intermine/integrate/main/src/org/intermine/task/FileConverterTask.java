@@ -72,17 +72,17 @@ public class FileConverterTask extends ConverterTask
         if (clsName == null) {
             throw new BuildException("clsName attribute is not set");
         }
-        if (osName == null) {
+        if (getOsName() == null) {
             throw new BuildException("osName attribute is not set");
         }
-        if (model == null) {
-            throw new BuildException("model attribute is not set");
+        if (getModelName() == null) {
+            throw new BuildException("modelName attribute is not set");
         }
 
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         try {
-            osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());
             writer = new ObjectStoreItemWriter(osw);
 
             Class c = Class.forName(clsName);

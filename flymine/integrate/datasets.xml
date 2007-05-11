@@ -322,6 +322,19 @@
         <attribute name="description" value="The Sanger Institute"/>
         <attribute name="url" value="http://www.sanger.ac.uk"/>
     </item>
+
+    <item id="350" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="VectorBase"/>
+        <attribute name="description" value="The Sanger Institute"/>
+        <attribute name="url" value="http://www.sanger.ac.uk"/>
+    </item>
+    <item id="351" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="AnoEST clusters"/>
+        <attribute name="description"
+                   value="Annotated EST clusters for Anopheles gambiae"/>
+        <attribute name="version" value="8"/>
+        <attribute name="url" 
+                   value="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php"/>
+        <reference name="dataSource" ref_id="350"/>
+    </item>
 </items>
-
-

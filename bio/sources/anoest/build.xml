@@ -1,0 +1,8 @@
+
+<project name="AnoEST" default="default" basedir=".">
+  <description>build, test, package AnoEST</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+  
+</project>
+

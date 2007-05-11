@@ -52,20 +52,20 @@ public class RNAiConverter extends FileConverter
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "WormBase");
-        writer.store(ItemHelper.convert(dataSource));
+        getItemWriter().store(ItemHelper.convert(dataSource));
 
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "WormBase RNAi Phenotype");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
-        writer.store(ItemHelper.convert(dataSet));
+        getItemWriter().store(ItemHelper.convert(dataSet));
 
         org = createItem("Organism");
         org.setAttribute("taxonId", "6239");
-        writer.store(ItemHelper.convert(org));
+        getItemWriter().store(ItemHelper.convert(org));
 
         ontology = createItem("Ontology");
         ontology.setAttribute("title", "WormBase phenotype codes");
-        writer.store(ItemHelper.convert(ontology));
+        getItemWriter().store(ItemHelper.convert(ontology));
     }
 
     /**
@@ -104,7 +104,7 @@ public class RNAiConverter extends FileConverter
                 Item screen = createScreen(pub);
                 phenotype.setReference("analysis", screen.getIdentifier());
 
-                writer.store(ItemHelper.convert(phenotype));
+                getItemWriter().store(ItemHelper.convert(phenotype));
             }
         }
     }
@@ -123,8 +123,8 @@ public class RNAiConverter extends FileConverter
             synonym.setReference("subject", gene.getIdentifier());
             synonym.setReference("source", dataSource.getIdentifier());
 
-            writer.store(ItemHelper.convert(gene));
-            writer.store(ItemHelper.convert(synonym));
+            getItemWriter().store(ItemHelper.convert(gene));
+            getItemWriter().store(ItemHelper.convert(synonym));
         }
         return gene;
     }
@@ -146,7 +146,7 @@ public class RNAiConverter extends FileConverter
             phenotype.setReference("ontology", ontology.getIdentifier());
             phenotypeMap.put(code, phenotype);
 
-            writer.store(ItemHelper.convert(phenotype));
+            getItemWriter().store(ItemHelper.convert(phenotype));
         }
         rnaiPhenotype.setReference("property", phenotype.getIdentifier());
         return rnaiPhenotype;
@@ -160,7 +160,7 @@ public class RNAiConverter extends FileConverter
             pub = createItem("Publication");
             pub.setAttribute("pubMedId", pubMedId);
             pubMap.put(pubMedId, pub);
-            writer.store(ItemHelper.convert(pub));
+            getItemWriter().store(ItemHelper.convert(pub));
         }
         return pub;
     }
@@ -174,7 +174,7 @@ public class RNAiConverter extends FileConverter
             screen.setReference("publication", pubId);
             screen.setReference("organism", org.getIdentifier());
             screenMap.put(pubId, screen);
-            writer.store(ItemHelper.convert(screen));
+            getItemWriter().store(ItemHelper.convert(screen));
         }
         return screen;
     }

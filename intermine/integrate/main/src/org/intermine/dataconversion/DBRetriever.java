@@ -217,7 +217,7 @@ public class DBRetriever extends DataConverter
                     attr.setValue(alias(clsName) + "_" + clsId);
                     item.addAttributes(attr);
                 }
-                writer.store(item);
+                getItemWriter().store(item);
                 count++;
                 if (count % 10000 == 0) {
                     long now = System.currentTimeMillis();

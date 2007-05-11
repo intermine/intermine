@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.EST" is-interface="true">
+    <collection name="ESTClusters" referenced-type="org.flymine.model.genomic.ESTCluster"
+                reverse-reference="ESTs"/>
+  </class>
+  <class name="org.flymine.model.genomic.ESTCluster"
+         extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
+    <collection name="ESTs" referenced-type="org.flymine.model.genomic.EST"
+                reverse-reference="ESTClusters"/>
+  </class>
+</classes>

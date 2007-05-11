@@ -1,0 +1,4 @@
+<project name="anoest-tasks" default="default" basedir=".">
+  <description>build anoest tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

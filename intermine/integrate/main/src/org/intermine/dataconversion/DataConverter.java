@@ -27,9 +27,9 @@ public abstract class DataConverter
 {
     private static final Logger LOG = Logger.getLogger(DataConverter.class);
 
-    protected ItemWriter writer;
-    protected Map aliases = new HashMap();
-    protected int nextClsId = 0;
+    private ItemWriter writer;
+    private Map aliases = new HashMap();
+    private int nextClsId = 0;
 
     /**
     * Constructor that should be called by children
@@ -39,6 +39,14 @@ public abstract class DataConverter
         this.writer = writer;
     }
 
+    /**
+     * Return the ItemWriter that was passed to the constructor.
+     * @return the ItemWriter
+     */
+    public ItemWriter getItemWriter() {
+        return writer;
+    }
+    
     /**
      * Uniquely alias a className
      * @param className the class name
