@@ -57,7 +57,7 @@ public class UniprotKeywordConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         mapMaps();
-        UniprotHandler handler = new UniprotHandler(writer, mapMaster);
+        UniprotHandler handler = new UniprotHandler(getItemWriter(), mapMaster);
 
         try {
             SAXParser.parse(new InputSource(reader), handler);
