@@ -114,7 +114,7 @@ public class Drosophila2ProbeConverter extends FileConverter
                         loc.setCollection("evidence",
                             new ArrayList(Collections.singleton(dataSet.getIdentifier())));
 
-                        writer.store(ItemHelper.convert(loc));
+                        getItemWriter().store(ItemHelper.convert(loc));
                     }
                 }
 
@@ -132,13 +132,13 @@ public class Drosophila2ProbeConverter extends FileConverter
                         probeSet.setReference("gene", gene.getIdentifier());
                     }
                 }
-                writer.store(ItemHelper.convert(probeSet));
+                getItemWriter().store(ItemHelper.convert(probeSet));
             } else {
                 // still in the header
                 if (line[0].startsWith("Arrays")) {
                     arrayName = line[0].substring(line[0].indexOf('=') + 1);
                     dataSet.setAttribute("title", "Affymetrix array: " + arrayName);
-                    writer.store(ItemHelper.convert(dataSet));
+                    getItemWriter().store(ItemHelper.convert(dataSet));
                 }
             }
 
@@ -167,7 +167,7 @@ public class Drosophila2ProbeConverter extends FileConverter
             bio.setReference("organism", org.getIdentifier());
             bio.setAttribute("identifier", identifier);
             bioMap.put(identifier, bio);
-            writer.store(ItemHelper.convert(bio));
+            getItemWriter().store(ItemHelper.convert(bio));
         }
         return bio;
     }
@@ -195,7 +195,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         synonym.setAttribute("value", probeSetId);
         synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", probeSet.getIdentifier());
-        writer.store(ItemHelper.convert(synonym));
+        getItemWriter().store(ItemHelper.convert(synonym));
 
         return probeSet;
     }
@@ -208,7 +208,7 @@ public class Drosophila2ProbeConverter extends FileConverter
             chr.setAttribute("identifier", chrId.substring(3, chrId.length()));
             chr.setReference("organism", org.getIdentifier());
             chrMap.put(chrId, chr);
-            writer.store(ItemHelper.convert(chr));
+            getItemWriter().store(ItemHelper.convert(chr));
         }
         return chr;
     }

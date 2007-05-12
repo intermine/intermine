@@ -101,16 +101,17 @@ public class AffyConverter extends CDNACloneConverter
             if (geneEnsembl.startsWith("ENSG")) {               
                 Item probe = createProbe("CompositeSequence", probeId.trim(), 
                                  organism.getIdentifier(), dataSource.getIdentifier(), 
-                                 dataSet.getIdentifier(), writer);
+                                 dataSet.getIdentifier(), getItemWriter());
                 StringTokenizer st = new StringTokenizer(geneEnsembl, "///");
                 ReferenceList rf = new ReferenceList("genes");
                 while (st.hasMoreTokens()) {
                     String token = st.nextToken();
-                    Item gene = createGene("Gene", organism.getIdentifier(), token.trim(), writer);
+                    Item gene = createGene("Gene", organism.getIdentifier(), token.trim(),
+                                           getItemWriter());
                     rf.addRefId(gene.getIdentifier());
                 }
                 probe.addCollection(rf);
-                writer.store(ItemHelper.convert(probe));
+                getItemWriter().store(ItemHelper.convert(probe));
             }
 
         }

@@ -77,7 +77,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
             }
 
             Item gene = createBioEntity("Gene", array[0], organism.getIdentifier());
-            writer.store(ItemHelper.convert(gene));
+            getItemWriter().store(ItemHelper.convert(gene));
 
             String[] cloneIds = array[3].split(";");
 
@@ -90,11 +90,11 @@ public class BDGPCloneConverter extends CDNACloneConverter
                 synonym.setAttribute("value", cloneIds[i]);
                 synonym.setReference("source", dataSource.getIdentifier());
                 synonym.setReference("subject", clone.getIdentifier());
-                writer.store(ItemHelper.convert(synonym));
+                getItemWriter().store(ItemHelper.convert(synonym));
 
                 clone.addCollection(new ReferenceList("evidence",
                     new ArrayList(Collections.singleton(dataSet.getIdentifier()))));
-                writer.store(ItemHelper.convert(clone));
+                getItemWriter().store(ItemHelper.convert(clone));
             }
         }
     }
