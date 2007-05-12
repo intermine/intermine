@@ -57,7 +57,7 @@
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
-    <source name="anoest" type="anoest">
+    <source name="anoest" type="anoest" dump="true">
       <property name="source.db.name" value="anoest"/>
     </source>
     <source name="affy-probes" type="affy-probes">
@@ -69,7 +69,7 @@
     <source name="ensembl-anopheles" type="ensembl" dump="true">
       <property name="organism" value="AGP"/>
     </source>
-    <source name="ensembl-apis-mellifera" type="ensembl" dump="true">
+    <source name="ensembl-apis-mellifera" type="ensembl">
       <property name="organism" value="AM"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
@@ -82,7 +82,7 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
-    <source name="tiffin" type="tiffin">
+    <source name="tiffin" type="tiffin" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="Sanger"/>
@@ -150,7 +150,7 @@
       <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
     </source>
-    <source name="flybase-dpse-chromosome-fasta" type="fasta" dump="true">
+    <source name="flybase-dpse-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="dpse-all-chromosome-*.fasta"/>
@@ -190,10 +190,10 @@
       <property name="src.data.file" location="/shared/data/orthologues/ensembl/geneid2translationid/xml/geneId2translationId_good.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source> 
-    <source name="inparanoid-orthologue" type="orthologue" dump="true">
+    <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
-     <source name="ncbigene2pubmed" type="intermine-items-xml-file" dump="true">
+     <source name="ncbigene2pubmed" type="intermine-items-xml-file">
 	<property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source>   
