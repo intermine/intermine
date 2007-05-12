@@ -91,7 +91,7 @@ public class KeggPathwayConvertor extends FileConverter
                 String mapName = line[1];
                 Item pathway = getPathway(mapIdentifier);
                 pathway.setAttribute("name", mapName);
-                writer.store(ItemHelper.convert(pathway));
+                getItemWriter().store(ItemHelper.convert(pathway));
             } else if (currentFile.getName().startsWith("dme_gene_map")) {
                 String geneName = line[0];
                 if (geneName.startsWith("Dmel_")) {
@@ -108,7 +108,7 @@ public class KeggPathwayConvertor extends FileConverter
                 gene.setReference("organism", dmel);
 
                 gene.addCollection(referenceList);
-                writer.store(ItemHelper.convert(gene));
+                getItemWriter().store(ItemHelper.convert(gene));
             }
         }
     }
