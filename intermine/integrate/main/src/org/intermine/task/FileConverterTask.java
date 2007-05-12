@@ -13,6 +13,7 @@ package org.intermine.task;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -79,6 +80,10 @@ public class FileConverterTask extends ConverterTask
             throw new BuildException("modelName attribute is not set");
         }
 
+        // Needed so that STAX can find its implementation classes
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         try {
@@ -118,6 +123,7 @@ public class FileConverterTask extends ConverterTask
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {
+            Thread.currentThread().setContextClassLoader(cl);
             try {
                 if (writer != null) {
                     writer.close();
