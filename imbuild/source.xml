@@ -157,7 +157,7 @@
   <target name="-retrieve-src-from-custom-file" if="have.file.custom.src">
     <convert-file clsName="${convertor.class}"
                   osName="osw.${common.os.prefix}-src-items"
-                  model="${target.model}">
+                  modelName="${target.model}">
       <fileset dir="${src.data.dir}"/>
     </convert-file>
   </target>
@@ -174,7 +174,7 @@
   <target name="-retrieve-src-from-custom-dir" if="custom.src.dir">
     <convert-file clsName="${convertor.class}"
                   osName="osw.${common.os.prefix}-src-items"
-                  model="${target.model}">
+                  modelName="${target.model}">
       <fileset dir="${custom.src.data.dir}"/>
     </convert-file>
   </target -->
@@ -198,7 +198,7 @@
           if="have.file.custom.tgt">
     <convert-file clsName="${convertor.class}"
                   osName="osw.${common.os.prefix}-tgt-items"
-                  model="${target.model}">
+                  modelName="${target.model}">
       <fileset dir="${src.data.dir}">
         <include name="${src.data.dir.includes}"/>
         <exclude name="${src.data.dir.excludes}"/>
@@ -326,7 +326,7 @@
   -->
   <target name="-retrieve-src-from-db" if="have.db.src">
     <db-retriever
-      model="${source.model}"
+      modelName="${source.model}"
       database="db.${source.name}"
       osName="osw.${common.os.prefix}-src-items"/>
   </target>
