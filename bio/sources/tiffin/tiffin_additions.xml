@@ -2,6 +2,7 @@
 <classes>
   <class name="org.flymine.model.genomic.Motif" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
+    <attribute name="curated" type="java.lang.Boolean"/>
     <collection name="predictedBindingSites"
                 referenced-type="org.flymine.model.genomic.TFBindingSite" 
                 ordered="true" reverse-reference="motif"/>
