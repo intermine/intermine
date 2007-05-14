@@ -187,7 +187,7 @@
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
     <source name="geneid-translationid" type="intermine-items-large-xml-file">
-      <property name="src.data.file" location="/shared/data/orthologues/inparanoid/geneid2peptideid/xml/geneId2peptideId.xml"/>
+      <property name="src.data.file" location="/shared/data/orthologues/inparanoid/geneid2peptideid/current/geneId2peptideId.xml"/>
       <property name="ignore.duplicates" value="true"/>
     </source> 
     <source name="inparanoid-orthologue" type="orthologue">
