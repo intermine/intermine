@@ -61,7 +61,6 @@ for my $species (keys %species_map) {
 	}elsif($result == 0 ){
 		print "Downloaded files deleted.\n";
 		unlink $temp_file;
-		#$log_buffer = "FlyAtlas\nCurrent data ok\n\n";
 	}
 }
 #create data directory, move files to archive and keep the new file	
@@ -69,7 +68,7 @@ sub update_files(){
 	my ($dir,$new_name,$tempfile) = @_;
 	
 	if(&checkdir_exists($archive_dir)==1){
-		system("cp $dir/*.txt $archive_dir");
+		system("cp $dir/*mart_export.txt $archive_dir");
 	}
 	my $orig_file = "$dir/$new_name";
 	system("mv $tempfile $orig_file");
@@ -90,17 +89,17 @@ my $model = new InterMine::Model(file => $model_file);
 my $item_factory = new InterMine::ItemFactory(model => $model);
 my @items_to_write = ();
 
-my $log_buffer;
+my ($log_buffer,$version_buffer);
 
 if($updated == 0){
 	warn "XML already up to date\n";
-	$log_buffer = "Ensembl geneId to peptideId\nCurrent data in $main_dir is up to date\n\n";
+	$log_buffer = "Ensembl geneId to peptideId\nCurrent data is up to date\n\n";
 }elsif($updated == 1 ){
 	#the output directory and file
 	my $out_dir = "$main_dir/xml";
 	&checkdir_exists($out_dir);
 	my $outfile = "$out_dir/geneId2peptideId.xml";
-	$log_buffer = "Ensembl geneId to peptideId\nNew data downloaded and XML generated and saved to $outfile\n\n";
+	$log_buffer = "Ensembl geneId to peptideId\nNew data downloaded and XML generated on $date. Saved to $outfile\n\n";
 	
 	#add the existing xml file to the archive directory
 	my $archive_xml = "$archive_dir/geneId2peptideId.xml";
@@ -114,9 +113,8 @@ if($updated == 0){
 	print "\nCreating xml objects.\n";
 	my @files;
 	#identify the input files
-	my $source_dir ='/shared/data/orthologues/ensembl/geneid2translationid/';
-	opendir(DIR,$source_dir) || die("Cannot open directory !\n");
-	@files=grep(/txt$/,readdir DIR);
+	opendir(DIR,$main_dir) || die("Cannot open directory !\n");
+	@files=grep(/mart_export.txt$/,readdir DIR);
 	closedir(DIR);
 	
 	#get the taxon ID from each file name and create the organism object
@@ -129,8 +127,12 @@ if($updated == 0){
 		#print "file $file Taxon $taxonID\n";
 	
 		#add the path to the file name, open the file and read each line
-		$file = "$main_dir/$file";
-		open(F,"<$file") or die "$!";
+		my $filepath = "$main_dir/$file";
+		my $mtime = (stat ($filepath) )[9];
+		my $file_date = &convert_date($mtime);
+		$version_buffer.= "$file was last updated on $file_date\n";
+		
+		open(F,"<$filepath") or die "$!";
 		
 		while(<F>){
 			my $gene_item;
@@ -191,6 +193,10 @@ if($updated == 0){
 	$writer->endTag('items');
 	$writer->end();
 	$output->close(); 
+	
+	my $current_link = "$main_dir/current";
+	&make_link("xml",$current_link);
+	&write_version($main_dir, $version_buffer);
 }
 
 &write_log($log_buffer);
