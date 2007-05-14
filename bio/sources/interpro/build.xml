@@ -6,6 +6,7 @@
     <property name="interpro.src.alias.token" value="##INTERPRO_SRC_ALIAS##"/>
     <property name="interpro.organism.taxid.list.token" value="##ORGANISM_TAXID_LIST##"/>
 
+<!--
     <target name="-pre-retrieve">
 
         <delete dir="${build.dir}/sql"/>
@@ -26,6 +27,7 @@
         />
 
     </target>
+-->
 
 </project>
 
