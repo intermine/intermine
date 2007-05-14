@@ -19,7 +19,7 @@
     </collection>
   </item>
   <item id="5_7" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="A2M"/>
+    <attribute name="symbol" value="A2M"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="omimDiseases">
       <reference ref_id="6_8"/>

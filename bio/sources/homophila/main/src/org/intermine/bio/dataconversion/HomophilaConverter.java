@@ -276,7 +276,10 @@ public class HomophilaConverter extends FileConverter
             protein = newItem("Protein");
             protein.addAttribute(new Attribute("identifier", array[PROTEIN_ID]));
             protein.addReference(new Reference("organism", orgHuman.getIdentifier()));
-            addToCollection(protein, "genes", findGene(array));
+            Item gene = findGene(array);
+            if (gene != null) {
+                addToCollection(protein, "genes", gene);
+            }
             proteins.put(array[PROTEIN_ID], protein);
             store(protein);
         }
@@ -293,14 +296,14 @@ public class HomophilaConverter extends FileConverter
     protected Item findGene(String array[]) throws ObjectStoreException {
         String geneId = (String) proteinToGene.get(array[PROTEIN_ID]);
         if (geneId == null) {
-            throw new IllegalStateException("protein id " + array[PROTEIN_ID]
-                    + " doesn't map to a gene id");
+            LOG.warn("protein id " + array[PROTEIN_ID] + " doesn't map to a gene id");
+            return null;
         }
         Item gene = (Item) genes.get(geneId);
         if (gene == null) {
             gene = newItem("Gene");
             genes.put(geneId, gene);
-            gene.addAttribute(new Attribute("identifier", geneId));
+            gene.addAttribute(new Attribute("symbol", geneId));
             gene.addReference(new Reference("organism", orgHuman.getIdentifier()));
             addToCollection(gene, "omimDiseases", findDisease(array));
             store(gene);
