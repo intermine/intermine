@@ -118,35 +118,6 @@ public class UniprotConverter extends FileConverter
 
     }
 
-    // makes map so we know which datasource to use for each organism
-    private void xxxmapDatabases() {
-
-        //  this map is used to check if the value here should be saved:
-        //   <dbReference type="FlyBase/UniProt/etc" id="*" key="12345">
-//        taxIdToDb.put("7227", new String("FlyBase"));   // D. melanogaster
-//        taxIdToDb.put("6239", new String("WormBase"));  // C. elegans
-//        taxIdToDb.put("3702", new String("UniProt"));   // Arabidopsis thaliana
-//        taxIdToDb.put("4896", new String("GeneDB"));    // S. pombe
-//        taxIdToDb.put("180454", new String("Ensembl")); // A. gambiae str. PEST
-//        taxIdToDb.put("7165", new String("Ensembl"));   // Anopheles gambiae
-//        taxIdToDb.put("7460", new String("Ensembl"));   // Apis mellifera
-//        taxIdToDb.put("9606", new String("Ensembl"));   // H. sapiens
-//        taxIdToDb.put("4932", new String("SGD"));       // S. cerevisiae
-//        taxIdToDb.put("36329", new String("GeneDB"));   // Malaria
-//        taxIdToDb.put("10090", new String("Ensembl"));  // Mus musculus
-//        taxIdToDb.put("10116", new String("Ensembl"));  // Rattus norvegicus
-
-
-        // a. these databases are used to obtain the geneOrganismDbId
-        //    (instead of data source)
-        // b. dummy taxonIDs are used
-        // c. these are here because this map is used as a look up
-        //    to see if the value in the dbreference's id field is an identifier
-//        taxIdToDb.put("-1", new String("SGD")); // S. cerevisiae [geneOrganismDbId]
-//        taxIdToDb.put("-2", new String("MGI")); // Mus musculus [geneOrganismDbId]
-//        taxIdToDb.put("-3", new String("RGD")); // Rattus norvegicus [geneOrganismDbId]
-    }
-
     private void mapFeatures() {
 
         featureTypes.put("INIT_MET", "initiator methionine");    // VDAC_DROME
@@ -308,7 +279,6 @@ public class UniprotConverter extends FileConverter
         private Map dsMaster;
         private Map ontoMaster;
         private Map interproMaster;
-        //private Map taxIdToDb;        // which database to use for which organism
         private Map featureTypes;
         private Item datasource;
         private Item dataset;
@@ -344,7 +314,6 @@ public class UniprotConverter extends FileConverter
             this.dsMaster = (Map) mapMaster.get("dsMaster");
             this.ontoMaster = (Map) mapMaster.get("ontoMaster");
             this.interproMaster = (Map) mapMaster.get("interproMaster");
-            //this.taxIdToDb = (Map) mapMaster.get("taxIdToDb");
             this.featureTypes = (Map) mapMaster.get("featureTypes");
             this.geneMaster = (Map) mapMaster.get("geneMaster");
             this.geneIdentifiers = (Set) mapMaster.get("geneIdentifiers");
@@ -557,9 +526,18 @@ public class UniprotConverter extends FileConverter
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("gene designation")
                            && geneNames.contains(attrs.getValue("value"))) {
+                    /* for everyone but homo sapiens */
+                    if (possibleGeneIdSource != null && possibleGeneId != null) {
+                        geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
+                    }                    
+               //    <dbreference><property type="organism name" value="Homo sapiens"/>
+                } else if (qName.equals("property") && stack.peek().equals("dbReference")
+                           && attrs.getValue("type").equals("organism name")
+                           && attrs.getValue("value").equals("Homo sapiens")) {
                     if (possibleGeneIdSource != null && possibleGeneId != null) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
+                    
                 // <uniprot>
                 } else if (qName.equals("uniprot")) {
                    initData();
@@ -766,8 +744,7 @@ public class UniprotConverter extends FileConverter
                         if (protein.getAttribute("primaryAccession") == null) {
                             protein.setAttribute("primaryAccession", attValue.toString());
                             hasPrimary = true;
-                        }
-
+                        }                        
                         if (hasPrimary) {
                             writer.store(ItemHelper.convert(syn));
                         }
@@ -979,7 +956,7 @@ public class UniprotConverter extends FileConverter
                 UniProtGeneDataMap geneDataMap = (UniProtGeneDataMap) geneDataMaps.get(taxonId);
                 
                 if (geneDataMap != null) {
-                
+                   
                     /* set vars if they come from datasource or name */
                     geneOrganismDbId = setGeneVars(designations, nameTypeToName, null,
                                                  geneDataMap.getOrganismDbIdSrcType(),
@@ -1022,7 +999,7 @@ public class UniprotConverter extends FileConverter
                     variableLookup.put("geneIdentifier", geneIdentifier);
                     variableLookup.put("geneOrganismDbId", geneOrganismDbId);
                     variableLookup.put("primaryGeneName", primaryGeneName);   
-                                    
+                    
                     /* set unique identifier */
                     uniqueGeneIdentifier = (String) variableLookup.get(geneDataMap.getAttribute());
                     variableLookup = null;
@@ -1031,7 +1008,6 @@ public class UniprotConverter extends FileConverter
                 // uniprot data source has primary key of Gene.organismDbId
                 // only create gene if a value was found
                 if (uniqueGeneIdentifier != null) {
-
                     String geneItemId = (String) geneMaster.get(uniqueGeneIdentifier);
 
                     // UniProt sometimes has same identifier paired with two organismDbIds
