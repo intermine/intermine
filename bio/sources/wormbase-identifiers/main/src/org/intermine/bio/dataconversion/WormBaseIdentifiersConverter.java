@@ -103,7 +103,7 @@ public class WormBaseIdentifiersConverter extends FileConverter
             }
 
             gene.setReference("organism", worm.getIdentifier());
-            writer.store(ItemHelper.convert(gene));
+            getItemWriter().store(ItemHelper.convert(gene));
 
         }
     }
@@ -115,7 +115,7 @@ public class WormBaseIdentifiersConverter extends FileConverter
         synonym.setAttribute("value", value);
         synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", subject.getIdentifier());
-        writer.store(ItemHelper.convert(synonym));
+        getItemWriter().store(ItemHelper.convert(synonym));
     }
 
     private String newId(String className) {
