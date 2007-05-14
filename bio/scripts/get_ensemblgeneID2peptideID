@@ -1,0 +1,204 @@
+#!/usr/bin/perl
+
+#creates an xml file to link the ensembl geneid to it's translation Id for 
+#entering inparanoid data into flymine
+#source files are downloaded from BioMart for species that are sourced from ensembl.
+
+use strict;
+use warnings;
+use IO::All;
+use LWP::Simple;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+# BioMart http server
+my $biomart_server = "http://www.biomart.org/biomart/martservice";
+
+#destination files and directories
+my $main_dir = "/shared/data/orthologues/inparanoid/geneid2peptideid";
+my $temp_dir = "$main_dir/temp";
+my $archive_dir = "$main_dir/archive";
+&checkdir_exists($main_dir);
+&checkdir_exists($temp_dir);
+&checkdir_exists($archive_dir);
+my $date = &convert_date();
+$archive_dir = "$archive_dir/$date";
+
+# configure which species to download
+my $file = "/shared/data/taxonID.config";
+my %species_map = &config_species($file,"biomart");
+
+# variable to control whether a new xml file is created
+my $updated = 0;
+
+for my $species (keys %species_map) {
+	#define the URL for the BioMart data
+	my $query = '?query=<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Query><Query  virtualSchemaName = "default" header = "0" count = "" softwareVersion = "0.5" ><Dataset name ="'.$species.'_gene_ensembl" interface = "default" ><Attribute name = "ensembl_gene_id" /><Attribute name = "ensembl_peptide_id" /></Dataset></Query>';
+	my $url = $biomart_server.$query;
+	
+	# slurp the contents of the URL and write it to a file
+	my $taxonID = $species_map{$species}{taxon};
+	my $filename = $taxonID."_mart_export.txt";
+	print "Getting $filename to $temp_dir\n";
+	my $io = io"$url";
+	my $contents = $io->slurp;
+	my $temp_file = "$temp_dir/$filename";
+	my $old_file = "$main_dir/$filename";	
+	open FH, ">$temp_file";
+	print FH $contents;		
+	close FH;
+	
+	#compare the new data to the existing file and keep it if it is different  
+	my $result = &compare_files($old_file,$temp_file);
+	if($result == 1){
+		print "Keeping downloaded files.\n";
+		&update_files($main_dir,$filename,$temp_file);
+		$updated = 1;
+	}elsif($result == 0 ){
+		print "Downloaded files deleted.\n";
+		unlink $temp_file;
+		#$log_buffer = "FlyAtlas\nCurrent data ok\n\n";
+	}
+}
+#create data directory, move files to archive and keep the new file	
+sub update_files(){
+	my ($dir,$new_name,$tempfile) = @_;
+	
+	if(&checkdir_exists($archive_dir)==1){
+		system("cp $dir/*.txt $archive_dir");
+	}
+	my $orig_file = "$dir/$new_name";
+	system("mv $tempfile $orig_file");
+}
+#==========================================================================================
+#creates the xml file (this part was ensemblgene2translation_xml.pl)
+
+use IO::File;
+use XML::Writer;
+use InterMine::Item;
+use InterMine::ItemFactory;
+use InterMine::Model;
+
+#Kim's stuff for writing XML
+my @items = ();
+my $model_file = '../../flymine/dbmodel/build/model/genomic_model.xml';
+my $model = new InterMine::Model(file => $model_file);
+my $item_factory = new InterMine::ItemFactory(model => $model);
+my @items_to_write = ();
+
+my $log_buffer;
+
+if($updated == 0){
+	warn "XML already up to date\n";
+	$log_buffer = "Ensembl geneId to peptideId\nCurrent data in $main_dir is up to date\n\n";
+}elsif($updated == 1 ){
+	#the output directory and file
+	my $out_dir = "$main_dir/xml";
+	&checkdir_exists($out_dir);
+	my $outfile = "$out_dir/geneId2peptideId.xml";
+	$log_buffer = "Ensembl geneId to peptideId\nNew data downloaded and XML generated and saved to $outfile\n\n";
+	
+	#add the existing xml file to the archive directory
+	my $archive_xml = "$archive_dir/geneId2peptideId.xml";
+	system("mv $outfile $archive_xml");
+	
+	#create the DataSource object
+	my $source = 'Ensembl';
+	my $source_item = make_item('DataSource');
+	$source_item->set('name', $source);
+
+	print "\nCreating xml objects.\n";
+	my @files;
+	#identify the input files
+	my $source_dir ='/shared/data/orthologues/ensembl/geneid2translationid/';
+	opendir(DIR,$source_dir) || die("Cannot open directory !\n");
+	@files=grep(/txt$/,readdir DIR);
+	closedir(DIR);
+	
+	#get the taxon ID from each file name and create the organism object
+	foreach my $file (@files){
+		my %genes; #hash to store the gene objects
+		my ($taxonID) = ($file=~/^(\d+)/);
+	
+		my $org_item = make_item('Organism');
+		$org_item->set('taxonId', $taxonID);
+		#print "file $file Taxon $taxonID\n";
+	
+		#add the path to the file name, open the file and read each line
+		$file = "$main_dir/$file";
+		open(F,"<$file") or die "$!";
+		
+		while(<F>){
+			my $gene_item;
+			my @f = split/\t/;
+			my ($geneID,$translationID) = ($f[0],$f[1]);
+			chomp $translationID;
+			#print "$geneID $translationID\t";
+		
+			#check that there is a translation ID and that the current line does not contain column titles
+			if($translationID && $translationID ne 'Ensembl Peptide ID'){
+	
+				#create the synonym object and add a reference to the source object
+				my $t_syn_item = make_item('Synonym');
+				$t_syn_item->set('value', $translationID);
+				$t_syn_item->set('type', 'identifier');
+				$t_syn_item->set('source', $source_item);
+			
+				#create the translation object and add a reference to the synonym object
+				my $trans_item = make_item('Translation');
+				$trans_item->set('identifier', $translationID);
+				$trans_item->set('synonyms', [$t_syn_item]);
+				$trans_item->set('organism', $org_item);
+			
+				#if the gene has already been identified add a reference to it's object to the translation object
+				if(exists $genes{$geneID}){
+					$gene_item = $genes{$geneID}->{'object'};
+					$trans_item->set('gene', $gene_item);
+					#print "Already found gene\n";
+				}else{
+					#else create a new gene synonym object. add reference to the source object
+					my $g_syn_item = make_item('Synonym');
+					$g_syn_item->set('value', $geneID);
+					$g_syn_item->set('type', 'identifier');
+					$g_syn_item->set('source', $source_item);
+				
+					#create the gene object, add a link to the gene synonym object and add the gene object to the hash
+					$gene_item = make_item('Gene');
+					$gene_item->set('identifier', $geneID);
+					$gene_item->set('synonyms', [$g_syn_item]);
+					$gene_item->set('organism', $org_item);
+					$genes{$geneID}={'object' => $gene_item};
+					$trans_item->set('gene', $gene_item);
+					#print "New gene\n";
+				}
+			}#else{print"\n";}
+		}	
+		close(F) or die "$!";
+	}#end foreach
+
+	#write xml file
+	print "Writing xml\n";
+	my $output = new IO::File(">$outfile");
+	my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
+	$writer->startTag('items');
+	for my $item (@items_to_write) {
+		$item->as_xml($writer);
+	}
+	$writer->endTag('items');
+	$writer->end();
+	$output->close(); 
+}
+
+&write_log($log_buffer);
+
+#kim's subroutine. Organsim object references are automatically created where necessary
+sub make_item{
+	my $implements = shift;
+	my $item = $item_factory->make_item(implements => $implements);
+	push @items_to_write, $item;
+	return $item;
+}

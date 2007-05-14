@@ -57,7 +57,7 @@ my ($old,$new)=@_;
 		return 0;
 	#download anyway if no comparison can be made
 	}else{
-		print "Current data file not found - current link missing? ";
+		print "Current data file not found - cannot compare files. ";
 		return 1;
 	}
 }
