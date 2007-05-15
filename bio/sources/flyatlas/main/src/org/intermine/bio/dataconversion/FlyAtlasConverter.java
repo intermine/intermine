@@ -140,8 +140,8 @@ public class FlyAtlasConverter extends FileConverter
 
         // set assay
         if (!assays.containsKey(tissue)) {
-            throw new IllegalArgumentException("Unrecognised tissue type read from file: "
-                                               + tissue + "assays = " + assays);
+            throw new IllegalArgumentException("Unrecognised tissue type read from file: '"
+                                               + tissue + "' assays = " + assays);
         }
         result.setCollection("assays", new ArrayList(Collections.singleton(((Item)
                                                assays.get(tissue)).getIdentifier())));
@@ -202,6 +202,7 @@ public class FlyAtlasConverter extends FileConverter
         assays.put("ag", createAssay("Accessory Gland"));
         assays.put("lt", createAssay("Tubule (larval)"));
         assays.put("fb", createAssay("Fat Body (larval)"));
+        assays.put("crops", createAssay("Crop"));
     }
 
     private Item createAssay(String name) {
