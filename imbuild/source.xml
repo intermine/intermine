@@ -226,7 +226,7 @@
   <target name="-retrieve-src-from-xml-file" if="have.file.xml.src">
     <convert-xml-file
       schema="${source.schema.file}"
-      model="${source.model}"
+      modelName="${source.model}"
       osName="osw.${common.os.prefix}-src-items">
       <fileset dir="${src.data.dir}" includes="**/*.xml"/>
     </convert-xml-file>
