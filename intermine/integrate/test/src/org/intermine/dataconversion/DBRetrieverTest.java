@@ -50,7 +50,7 @@ public class DBRetrieverTest extends TestCase {
         Database db = DatabaseFactory.getDatabase("db.unittest");
         itemWriter = new MockItemWriter(new HashMap());
         reader = new MockDBReader();
-        converter = new MockDBConverter(model, db, reader, itemWriter, excludeList);
+        converter = new MockDBRetriever(model, db, reader, itemWriter, excludeList);
         blank = new ArrayList();
         map = new HashMap();
     }
@@ -355,7 +355,7 @@ public class DBRetrieverTest extends TestCase {
         s1.push("1_4");
         idMap.put("1_1", s1);
         converter.uniqueIdMap = idMap;
-        ((MockDBConverter) converter).setIsUnique(false);
+        ((MockDBRetriever) converter).setIsUnique(false);
 
         Reference ref = new Reference();
         ref.setName("company");
@@ -398,12 +398,12 @@ public class DBRetrieverTest extends TestCase {
         return rows;
     }
 
-    class MockDBConverter extends DBRetriever {
+    class MockDBRetriever extends DBRetriever {
         private int identifier = 2;
         private boolean isUnique = true;
         //private String excludeList = null;
 
-        public MockDBConverter(Model model, Database db, DBReader reader, ItemWriter writer, String excludeList) {
+        public MockDBRetriever(Model model, Database db, DBReader reader, ItemWriter writer, String excludeList) {
             super(model, db, reader, writer, excludeList);
         }
 
