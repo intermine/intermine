@@ -161,6 +161,7 @@ $log_buffer .= "\n";
 &write_log($log_buffer);
 &write_version("/shared/data/go-annotation/",$version_buffer);
 
+#add files that are still up to date to the version buffer
 sub get_version(){
 	my ($link,$main_dir) = @_;
 	
