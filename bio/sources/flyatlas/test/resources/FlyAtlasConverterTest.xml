@@ -23,6 +23,9 @@
   <item id="3_8" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
     <attribute name="name" value="Whole Fly"/>
   </item>
+  <item id="3_12" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+    <attribute name="name" value="Crop"/>
+  </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#FlyAtlasResult">
     <attribute name="MRNASignal" value="1874.55"/>
     <attribute name="MRNASignalSEM" value="85.34"/>
