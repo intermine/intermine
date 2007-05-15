@@ -47,7 +47,7 @@ public class RegionGFF3HandlerTest extends ItemsTestCase
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new RegionGFF3RecordHandler(tgtModel);
         converter = new GFF3Converter(writer, seqClsName, "9606", dataSourceName, dataSetTitle,
-                                      dataSourceName, tgtModel, handler);
+                                      dataSourceName, tgtModel, handler, null);
     }
 
     public void testParse() throws Exception {

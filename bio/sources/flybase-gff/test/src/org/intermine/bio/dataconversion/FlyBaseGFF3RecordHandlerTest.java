@@ -57,7 +57,7 @@ public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
         handler = new FlyBaseGFF3RecordHandler(tgtModel);
         tgtIw = new MockItemWriter(new LinkedHashMap());
         converter = new GFF3Converter(tgtIw, seqClsName, taxonId, dataSourceName, dateSetTitle,
-                                      "FlyBase", tgtModel, handler);
+                                      "FlyBase", tgtModel, handler, new FlyBaseGFF3SeqHandler());
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
     }
@@ -281,4 +281,16 @@ public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
         converter.close();
         System.out.println(FullRenderer.render(tgtIw.getItems()));
     }
+    
+    public void testUnknownChromosomes() throws Exception{
+      String gff = "Unknown_4\tFlyBase\tmRNA\t3871513\t3872386\t.\t-\t.\tID=FBtr0077514;Name=symbol-RA;Parent=FBgn0051957;Dbxref=FlyBase_Annotation_IDs:CG31957-RA;";
+      BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+      converter.parse(srcReader);
+      converter.store();
+      converter.close();
+      // uncomment to write out a new target items file
+      writeItemsFile(tgtIw.getItems(), "flybase_cds_tgt.xml");
+      Set expected = readItemSet("FlyBaseGFF3RecordHandlerTest_unknown_chr_tgt.xml"); 
+      assertEquals(expected, tgtIw.getItems());
+  }
 }

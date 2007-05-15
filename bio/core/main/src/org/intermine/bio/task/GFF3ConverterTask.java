@@ -18,6 +18,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.bio.dataconversion.GFF3Converter;
 import org.intermine.bio.dataconversion.GFF3RecordHandler;
+import org.intermine.bio.dataconversion.GFF3SeqHandler;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
@@ -47,6 +48,8 @@ public class GFF3ConverterTask extends Task
 
     private String dataSourceName;
     private String dataSetTitle;
+
+    private String seqHandlerClassName;
 
      /**
      * Set the data fileset
@@ -131,10 +134,19 @@ public class GFF3ConverterTask extends Task
         this.handlerClassName = handlerClassName;
     }
 
+    /**
+     * Set the name of GFF3SeqHandler to use when processing.
+     * @param sequenceHandlerClassName the name of the handler
+     */
+    public void setSeqHandlerClassName(String sequenceHandlerClassName) {
+        this.seqHandlerClassName = sequenceHandlerClassName;
+    }
 
     /**
      * @see Task#execute()
+     * {@inheritDoc}
      */
+    @Override
     public void execute() throws BuildException {
         if (fileSet == null) {
             throw new BuildException("fileSet must be specified");
@@ -171,9 +183,9 @@ public class GFF3ConverterTask extends Task
             writer = new ObjectStoreItemWriter(osw);
             parser = new GFF3Parser();
             Model tgtModel = Model.getInstanceByName(model);
-            GFF3RecordHandler handler;
+            GFF3RecordHandler recordHandler;
             if (handlerClassName == null) {
-                handler = new GFF3RecordHandler(tgtModel);
+                recordHandler = new GFF3RecordHandler(tgtModel);
             } else {
                 Class handlerClass;
                 try {
@@ -183,12 +195,29 @@ public class GFF3ConverterTask extends Task
                 }
                 Class [] types = new Class[] {Model.class};
                 Object [] args = new Object[] {tgtModel};
-                handler = (GFF3RecordHandler) handlerClass.getConstructor(types).newInstance(args);
+                recordHandler =
+                    (GFF3RecordHandler) handlerClass.getConstructor(types).newInstance(args);
             }
+            GFF3SeqHandler sequenceHandler;
+            if (seqHandlerClassName == null) {
+                sequenceHandler = new GFF3SeqHandler();
+            } else {
+                Class handlerClass;
+                try {
+                    handlerClass = Class.forName(seqHandlerClassName);
+                } catch (ClassNotFoundException e) {
+                    throw new BuildException("Class not found for " + seqHandlerClassName, e);
+                }
+                Class [] types = new Class[] {};
+                Object [] args = new Object[] {};
+                sequenceHandler = 
+                    (GFF3SeqHandler) handlerClass.getConstructor(types).newInstance(args);
+            }
+
             GFF3Converter gff3converter =
                 new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName,
                                   dataSetTitle, seqDataSourceName,
-                                  tgtModel, handler);
+                                  tgtModel, recordHandler, sequenceHandler);
 
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
@@ -206,7 +235,7 @@ public class GFF3ConverterTask extends Task
                 if (writer != null) {
                     writer.close();
                 }
-                if (writer != null) {
+                if (osw != null) {
                     osw.close();
                 }
             } catch (Exception e) {

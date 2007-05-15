@@ -48,7 +48,7 @@ public class OcGFF3HandlerTest extends ItemsTestCase
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new GFF3RecordHandler(tgtModel);
         converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName, dataSetTitle,
-                                      dataSourceName, tgtModel, handler);
+                                      dataSourceName, tgtModel, handler, null);
     }
 
     public void testParse() throws Exception {

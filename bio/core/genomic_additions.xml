@@ -101,4 +101,14 @@
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
     </class>
 
+    <class name="org.flymine.model.genomic.GenomeRegion" is-interface="true"
+           extends="org.flymine.model.genomic.Region"/>
+
+    <class name="org.flymine.model.genomic.Assembly" is-interface="true"
+           extends="org.flymine.model.genomic.GenomeRegion">
+      <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.Chromosome" is-interface="true"
+           extends="org.flymine.model.genomic.GenomeRegion"/>
 </classes>

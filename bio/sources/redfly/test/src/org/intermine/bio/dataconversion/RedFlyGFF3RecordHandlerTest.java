@@ -58,7 +58,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         handler = new RedFlyGFF3RecordHandler(tgtModel);
         // call the GFF3Converter constructor to initialise the handler
         converter = new GFF3Converter(tgtIw, seqClsName, taxonId, dataSourceName,
-                          "FlyBase", dataSetTitle, tgtModel, handler);
+                          "FlyBase", dataSetTitle, tgtModel, handler, null);
         tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
 

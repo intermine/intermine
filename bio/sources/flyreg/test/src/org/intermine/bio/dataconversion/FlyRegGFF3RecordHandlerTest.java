@@ -55,7 +55,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         tgtNs = tgtModel.getNameSpace().toString();
         handler = new FlyRegGFF3RecordHandler(tgtModel);
         converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
-                                      "FlyBase", dataSetTitle, tgtModel, handler);
+                                      "FlyBase", dataSetTitle, tgtModel, handler, null);
         itemFactory = handler.getItemFactory();
     }
 
