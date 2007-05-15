@@ -138,7 +138,7 @@ public class GFF3ConverterTask extends Task
      * Set the name of GFF3SeqHandler to use when processing.
      * @param sequenceHandlerClassName the name of the handler
      */
-    public void setSeqHandlerClassName(String sequenceHandlerClassName) {
+    public void setSequenceHandlerClassName(String sequenceHandlerClassName) {
         this.seqHandlerClassName = sequenceHandlerClassName;
     }
 
