@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -217,7 +218,15 @@ public class ClassDescriptorTest extends TestCase
         Model model = new Model("test", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
         assertEquals(expected, cld3.toString());
     }
-
+    
+    public void testToString2() throws Exception {
+        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        String expected = "<class name=\"Class2\" extends=\"Interface1\" is-interface=\"false\">"
+            + "</class>";
+        Model model = new Model("test", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        assertEquals(expected, cld2.toString());
+    }
     // ============================================
 
     private Set getAttributes() {
@@ -346,6 +355,90 @@ public class ClassDescriptorTest extends TestCase
             fail("Expected: MetaDataException");
         } catch (MetaDataException e) {
         }
+    }
+
+    public void testFindSuperClassNames() throws Exception {
+        String class1Name = "org.intermine.model.testmodel.Class1";
+        String class3Name = "org.intermine.model.testmodel.Class3";
+        String class2Name = "org.intermine.model.testmodel.Class2";
+        String class4Name = "org.intermine.model.testmodel.Class4";
+        ClassDescriptor c1 = new ClassDescriptor(class1Name, class3Name, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c2 = new ClassDescriptor(class2Name, class3Name, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c3 = new ClassDescriptor(class3Name, class4Name, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c4 = new ClassDescriptor(class4Name, null, true, new HashSet(), new HashSet(), new HashSet());
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {c1, c2, c3, c4})));
+
+        Set<String> supers = new LinkedHashSet<String>();
+        ClassDescriptor.findSuperClassNames(model, class1Name, supers);
+        assertEquals(2, supers.size());
+        Set<String> expected = new LinkedHashSet<String>();
+        expected.add(class3Name);
+        expected.add(class4Name);
+        assertEquals(expected, supers);
+
+        supers = new LinkedHashSet<String>();
+        ClassDescriptor.findSuperClassNames(model, class2Name, supers);
+        assertEquals(2, supers.size());
+
+        supers = new LinkedHashSet<String>();
+        ClassDescriptor.findSuperClassNames(model, class3Name, supers);
+        assertEquals(1, supers.size());
+
+        supers = new LinkedHashSet<String>();
+        ClassDescriptor.findSuperClassNames(model, class4Name, supers);
+        assertEquals(0, supers.size());
+    }
+    
+    public void testClassInheritanceCompare() throws Exception {
+        String class1Name = "org.intermine.model.testmodel.Class1";
+        String class2Name = "org.intermine.model.testmodel.Class2";
+        String class3Name = "org.intermine.model.testmodel.Class3";
+        String class4Name = "org.intermine.model.testmodel.Class4";
+        ClassDescriptor c1 = new ClassDescriptor(class1Name, class2Name + " " + class3Name, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c2 = new ClassDescriptor(class2Name, class4Name, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c3 = new ClassDescriptor(class3Name, class4Name, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c4 = new ClassDescriptor(class4Name, null, true, new HashSet(), new HashSet(), new HashSet());
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {c1, c2, c3, c4})));
+
+        int comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class2Name);
+        assertEquals(1, comp);
+        
+        comp = ClassDescriptor.classInheritanceCompare(model, class2Name, class1Name);
+        assertEquals(-1, comp);
+        
+        comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class3Name);
+        assertEquals(1, comp);
+        
+        comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class4Name);
+        assertEquals(1, comp);
+        
+        comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class2Name);
+        assertEquals(1, comp);
+        
+        comp = ClassDescriptor.classInheritanceCompare(model, class2Name, class3Name);
+        assertEquals(0, comp);
+    }
+
+    public void testClassInheritanceCompare2() throws Exception {
+        String class1Name = "org.intermine.model.testmodel.Class1";
+        String class2Name = "org.intermine.model.testmodel.Class2";
+        String class3Name = "org.intermine.model.testmodel.Class3";
+        ClassDescriptor c1 = new ClassDescriptor(class1Name, class2Name + " " + class3Name, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c2 = new ClassDescriptor(class2Name, class3Name, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c3 = new ClassDescriptor(class3Name, null, true, new HashSet(), new HashSet(), new HashSet());
+        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {c1, c2, c3})));
+
+        int comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class2Name);
+        assertEquals(1, comp);
+        
+        comp = ClassDescriptor.classInheritanceCompare(model, class2Name, class1Name);
+        assertEquals(-1, comp);
+        
+        comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class3Name);
+        assertEquals(1, comp);
+        
+        comp = ClassDescriptor.classInheritanceCompare(model, class2Name, class3Name);
+        assertEquals(1, comp);
     }
 
 }

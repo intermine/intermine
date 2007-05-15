@@ -29,9 +29,14 @@ import org.intermine.util.TypeUtil;
  */
 public class ClassDescriptor implements Comparable<ClassDescriptor>
 {
+    private static final String INTERMINEOBJECT_NAME = "org.intermine.model.InterMineObject";
+
     private final String className;        // name of this class
 
-    private final String supers;
+    // the supers string passed to the constructor
+    private String origSuperNames;
+    
+    // supers set after redundant super classes have been removed
     private final Set<String> superNames = new LinkedHashSet<String>();
     private final Set<ClassDescriptor> superDescriptors = new LinkedHashSet<ClassDescriptor>();
     private ClassDescriptor superclassDescriptor;
@@ -75,7 +80,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         for (int i = 0; i < unqualified.length(); i++) {
             if (!Character.isJavaIdentifierPart(unqualified.charAt(i))) {
                 throw new IllegalArgumentException("Java field names may not contain character: "
-                                                   + unqualified.charAt(i) 
+                                                   + unqualified.charAt(i)
                                                    + " but class name was: " + unqualified);
             }
         }
@@ -85,13 +90,17 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             throw new IllegalArgumentException("'supers' parameter must be null or a valid"
                     + " list of interface or superclass names");
         }
-
-        this.supers = supers;
-
+        
+        if (supers == null) {
+            this.origSuperNames = "";
+        } else {
+            this.origSuperNames = supers;    
+        }
+        
         if (supers != null) {
             superNames.addAll(StringUtil.tokenize(supers));
-        } else if (!"org.intermine.model.InterMineObject".equals(name)) {
-            superNames.add("org.intermine.model.InterMineObject");
+        } else if (!INTERMINEOBJECT_NAME.equals(name)) {
+            superNames.add(INTERMINEOBJECT_NAME);
         }
 
         this.isInterface = isInterface;
@@ -145,7 +154,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      */
     public Set<String> getSuperclassNames() {
         Set<String> copy = new LinkedHashSet<String>(superNames);
-        copy.remove("org.intermine.model.InterMineObject");
+        copy.remove(INTERMINEOBJECT_NAME);
         return copy;
     }
 
@@ -491,11 +500,109 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             throw new IllegalStateException("Model has already been set and may not be changed.");
         }
         this.model = model;
+
+        Set<String> allSupers = new LinkedHashSet<String>();
+        findSuperClassNames(model, className, allSupers);
+        if (allSupers.contains(className)) {
+            throw new MetaDataException("circular dependency: " + className
+                                        + " is a super class of itself");
+        }
+        
+        List<String> redundantSupers = new ArrayList<String>();
+        
+        if (superNames.size() > 0) {
+            for (String superName : superNames) {
+                for (String otherSuperName : superNames) {
+                    if (superName.equals(otherSuperName)) {
+                        continue;
+                    }
+                    int testResult = classInheritanceCompare(model, superName, otherSuperName);
+
+                    if (testResult == 0) {
+                        // incomparable neither super is a sub class of the other
+                        continue;
+                    } else {
+                        if (testResult == -1) {
+                            // superName is a super class of otherSuperName
+                            redundantSupers.add(superName);
+                        } else {
+                            // otherSuperName is a super class of superName
+                            redundantSupers.add(otherSuperName);
+                        }
+                    }
+                }
+            }
+        }
+        
+        superNames.removeAll(redundantSupers);
+        
         findSuperDescriptors();
         findSuperclassDescriptor();
         configureReferenceDescriptors();
 
         modelSet = true;
+    }
+
+    /**
+     * Return -1 if superName names a class that is a super class of otherSuperName, 1 if 
+     * otherSuperName names a class that is a super class of superName, 0 if they neither is a super
+     * class of the other.
+     * @param model the Model to use to find super classes
+     * @param className1 a super class name
+     * @param className2 a super class name
+     * @throws MetaDataException of superName names a class that is a super class of otherSuperName
+     * and otherSuperName names a class that is a super class of superName - ie. a circular 
+     * dependency
+     * @return -1, 1, or 0
+     */
+    static int classInheritanceCompare(Model model, String className1, String className2)
+        throws MetaDataException {
+        Set<String> class1Supers = new LinkedHashSet<String>();
+        findSuperClassNames(model, className1, class1Supers);
+        Set<String> class2Supers = new LinkedHashSet<String>();
+        findSuperClassNames(model, className2, class2Supers);
+        boolean class1InClass2Supers = class2Supers.contains(className1);
+        boolean class2InClass1Supers = class1Supers.contains(className2);
+
+        if (class1InClass2Supers) {
+            if (class2InClass1Supers) {
+                throw new MetaDataException("circular dependency: " + className1
+                                            + " is a super class of " + className2 
+                                            + " and vice versa");
+            } else {
+                return -1;
+            }
+        } else {
+            if (class2InClass1Supers) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    /**
+     * Return a list of the super class names for the given class name
+     * @param model the Model
+     * @param className the className
+     * @param superClassNames return set of super class names
+     * @throws MetaDataException if className isn't in the model
+     */
+    static void findSuperClassNames(Model model, String className,
+                                    Set<String> superClassNames) throws MetaDataException {
+        ClassDescriptor cd = model.getClassDescriptorByName(className);
+        if (cd == null) {
+            throw new MetaDataException("Model construction failed - class: " + className 
+                                        + " is not in the model but is used as a super class");
+        }
+        for (String superName: cd.getSuperclassNames()) {
+            if (superClassNames.contains(superName)) {
+                continue;
+            } else {
+                superClassNames.add(superName);
+                findSuperClassNames(model, superName, superClassNames);
+            }
+        }
     }
 
     /**
@@ -532,7 +639,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      */
     public int hashCode() {
         return 3 * className.hashCode()
-            + 7 * superNames.hashCode()
+            + 7 * origSuperNames.hashCode()
             + 11 * (isInterface ? 1 : 0)
             + 13 * fieldDescriptors.hashCode();
     }
@@ -557,10 +664,14 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
+        Set<String> superClassNames = getSuperclassNames();
         sb.append("<class name=\"" + className + "\"")
-            .append(supers != null ? " extends=\"" + supers + "\"" : "")
+            .append(superClassNames.size() > 0
+                    ? " extends=\"" + StringUtil.join(superClassNames, " ") + "\"" 
+                    : "")
             .append(" is-interface=\"" + isInterface + "\">");
         Set<FieldDescriptor> l = new LinkedHashSet<FieldDescriptor>();
         l.addAll(getAttributeDescriptors());
@@ -582,8 +693,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     public String getHumanReadableText() {
         StringBuffer retval = new StringBuffer(isInterface ? "Interface " : "Class ")
             .append(terseClass(className));
-        if (supers != null) {
-            retval.append(" extends ").append(terseClasses(supers));
+        if (superNames != null) {
+            retval.append(" extends ").append(StringUtil.join(terseClasses(superNames), ", "));
         }
         retval.append("\n");
         TextTable table = new TextTable(true, true, true);
@@ -626,20 +737,16 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * For each element in a ", " separated list, strips everything before the last dot out.
-     *
-     * @param c a String
-     * @return a String
+     * Return a new List that contains everything in the argument but strips everything before the
+     * last dot out.
+     * @param list the List
+     * @return the compact List
      */
-    public static String terseClasses(String c) {
-        StringBuffer retval = new StringBuffer(c.length());
-        String elements[] = StringUtil.split(c, ", ");
-        for (int i = 0; i < elements.length; i++) {
-            if (i > 0) {
-                retval.append(", ");
-            }
-            retval.append(terseClass(elements[i]));
+    private static Set<String> terseClasses(Set<String> list) {
+        Set<String> retList = new LinkedHashSet<String>();
+        for (String name: list) {
+            retList.add(terseClass(name));
         }
-        return retval.toString();
+        return retList;
     }
 }

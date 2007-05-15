@@ -115,7 +115,9 @@ public class Model
         //    etc.  Set ClassDescriptors and reverse refs in ReferenceDescriptors.
         for (ClassDescriptor cld : orderedClds) {
             cld.setModel(this);
-
+        }
+ 
+        for (ClassDescriptor cld : orderedClds) {
             // add this class to subMap sets for any interfaces and superclasses
             Set<ClassDescriptor> supers = cld.getSuperDescriptors();
             for (ClassDescriptor iCld : supers) {

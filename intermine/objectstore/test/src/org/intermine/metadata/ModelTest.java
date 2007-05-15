@@ -192,4 +192,36 @@ public class ModelTest extends TestCase
 
         assertEquals(expected, model.toString());
     }
+    
+    // test that we end up with BaseClass < MidClass < SubClass from BaseClass < SubClass, 
+    // MidClass < SubClass and BaseClass < MidClass
+    public void testRemoveRedundantClasses() throws Exception {
+        String baseName = "org.intermine.model.testmodel.BaseClass";
+        String subName = "org.intermine.model.testmodel.SubClass";
+        String midName = "org.intermine.model.testmodel.MidClass";
+        ClassDescriptor base = new ClassDescriptor(baseName, null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor sub = new ClassDescriptor(subName, "org.intermine.model.testmodel.BaseClass org.intermine.model.testmodel.MidClass", true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor mid = new ClassDescriptor(midName, baseName, true, new HashSet(), new HashSet(), new HashSet());
+        Set clds = new HashSet(Arrays.asList(new Object[] {base, mid, sub}));
+        Model model = new Model("model", uri, clds);
+
+        ClassDescriptor subCD = model.getClassDescriptorByName(subName);
+        
+        assertEquals(1, subCD.getSuperclassNames().size());
+        assertEquals(midName, subCD.getSuperclassNames().iterator().next());
+        
+        System.err.println(model);
+    }
+
+    public void testCircularDependencyFail() throws Exception {
+        ClassDescriptor c1 = new ClassDescriptor("org.intermine.model.testmodel.Class1", "org.intermine.model.testmodel.Class2", true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor c2 = new ClassDescriptor("org.intermine.model.testmodel.Class2", "org.intermine.model.testmodel.Class1", true, new HashSet(), new HashSet(), new HashSet());
+        Set clds = new HashSet(Arrays.asList(new Object[] {c1, c2}));
+        try {
+            Model model = new Model("model", uri, clds);
+            fail("expected exception");
+        } catch (MetaDataException e) {
+            // expected
+        }
+    }
 }
