@@ -10,6 +10,7 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+# EBI ftp server information
 my $ebi_server = "ftp.ebi.ac.uk";
 my $intact_dir = "pub/databases/intact/current/";
 my $species_dir = "psi1/species";
