@@ -133,8 +133,13 @@ public class InparanoidConverter extends FileConverter
             String index = array[0];
             String geneId = null;
             String transId = null;
-
-            String code = array[2].substring(0, array[2].indexOf('.'));
+            String code = null;
+            
+            if (array[2].indexOf('.') > 0) {
+                code = array[2].substring(0, array[2].indexOf('.'));
+            } else {
+                code = array[2];
+            }
             if (createObjects.get(code) != null && createObjects.get(code).equals("Gene")) {
                 geneId = array[4];
             } else {
