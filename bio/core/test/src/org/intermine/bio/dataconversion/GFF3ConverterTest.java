@@ -51,7 +51,7 @@ public class GFF3ConverterTest extends TestCase {
         Model tgtModel = Model.getInstanceByName("genomic");
         converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName,
                                       dataSetTitle, seqDataSourceName, tgtModel,
-                                      new GFF3RecordHandler(tgtModel));
+                                      new GFF3RecordHandler(tgtModel), null);
     }
 
     public void tearDown() throws Exception {

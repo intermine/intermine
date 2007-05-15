@@ -49,7 +49,6 @@ public class GFF3Converter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Converter.class);
 
-
     private Reference orgRef;
     private ItemWriter writer;
     private String seqClsName, orgTaxonId;
@@ -61,6 +60,7 @@ public class GFF3Converter
     private Map identifierMap = new HashMap();
     private GFF3RecordHandler handler;
     private ItemFactory itemFactory;
+    private GFF3SeqHandler sequenceHander;
 
     /**
      * Constructor
@@ -74,17 +74,19 @@ public class GFF3Converter
      * to dataSourceName
      * @param tgtModel the model to create items in
      * @param handler object to perform optional additional operations per GFF3 line
+     * @param sequenceHander the GFF3SeqHandler use to create sequence Items
      */
 
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgTaxonId,
                          String dataSourceName, String dataSetTitle, String seqDataSourceName,
-                         Model tgtModel, GFF3RecordHandler handler) {
+                         Model tgtModel, GFF3RecordHandler handler, GFF3SeqHandler sequenceHander) {
 
         this.writer = writer;
         this.seqClsName = seqClsName;
         this.orgTaxonId = orgTaxonId;
         this.tgtModel = tgtModel;
         this.handler = handler;
+        this.sequenceHander = sequenceHander;
         this.itemFactory = new ItemFactory(tgtModel, "1_");
 
         this.organism = getOrganism();
@@ -102,6 +104,10 @@ public class GFF3Converter
             seqDataSource = dataSource;
         }
 
+        if (sequenceHander == null) {
+            this.sequenceHander = new GFF3SeqHandler();
+        }
+        
         handler.setItemFactory(itemFactory);
         handler.setIdentifierMap(identifierMap);
         handler.setDataSource(dataSource);
@@ -111,12 +117,12 @@ public class GFF3Converter
 
     /**
      * parse a bufferedReader and process GFF3 record
+     * @param readerName the name of the reader (file name)
      * @param bReader BufferedReader
      * @throws java.io.IOException if an error occurs reading GFF
      * @throws ObjectStoreException if an error occurs storing items
      */
-    public void parse(BufferedReader bReader) throws IOException, ObjectStoreException {
-
+    public void parse(BufferedReader bReader)  throws IOException, ObjectStoreException {
         GFF3Record record;
         long start, now, opCount;
 
@@ -428,6 +434,22 @@ public class GFF3Converter
     }
 
     /**
+     * Return the sequence class name that was passed to the constructor.
+     * @return the class name
+     */
+    public String getSeqClsName() {
+        return seqClsName;
+    }
+
+    /**
+     * Return the 
+     * @return the target Model
+     */
+    public Model getTgtModel() {
+        return tgtModel;
+    }
+
+    /**
      * @return organism reference
      */
     private Reference getOrgRef() {
@@ -459,16 +481,16 @@ public class GFF3Converter
         }
         Item seq = (Item) seqs.get(identifier);
         if (seq == null) {
-            seq = createItem(seqClsName);
-            seq.setAttribute("identifier", identifier);
+            seq = sequenceHander.makeSequenceItem(this, identifier);
             seq.addReference(getOrgRef());
-            seqs.put(identifier, seq);
+
             Item synonym = createItem("Synonym");
             synonym.addReference(new Reference("subject", seq.getIdentifier()));
             synonym.addAttribute(new Attribute("value", identifier));
             synonym.addAttribute(new Attribute("type", "identifier"));
             synonym.addReference(new Reference("source", seqDataSource.getIdentifier()));
             handler.addItem(synonym);
+            seqs.put(identifier, seq);
         }
         handler.setSequence(seq);
         return seq;
@@ -485,18 +507,17 @@ public class GFF3Converter
 
     /**
      * Create an item with given className and item identifier
-     * @param className
-     * @param implementations
+     * @param className the class of the new Item
+     * @param identifier the identifier of the new Item
      * @return the created item
      */
-    private Item createItem(String className, String identifier) {
+    Item createItem(String className, String identifier) {
         return itemFactory.makeItem(identifier, tgtModel.getNameSpace() + className, "");
     }
 
     private String createIdentifier() {
         return "0_" + itemid++;
     }
-
 
 }
 

@@ -1,0 +1,60 @@
+<items>
+<item id="0_9" class="http://www.flymine.org/model/genomic#Location">
+<attribute name="end" value="3872386"/>
+<attribute name="start" value="3871513"/>
+<attribute name="strand" value="-1"/>
+<reference name="object" ref_id="0_3"/>
+<reference name="subject" ref_id="0_5"/>
+<collection name="evidence"><reference ref_id="0_1"/></collection>
+</item>
+<item id="0_10" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBtr0077514"/>
+<reference name="source" ref_id="0_2"/>
+<reference name="subject" ref_id="0_5"/>
+</item>
+<item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="0_3" class="http://www.flymine.org/model/genomic#Assembly">
+<attribute name="identifier" value="Unknown_4"/>
+<reference name="organism" ref_id="0_0"/>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
+<attribute name="title" value="FlyBase Drosophila melanogaster data set"/>
+</item>
+<item id="0_6" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="symbol"/>
+<attribute name="value" value="symbol-RA"/>
+<reference name="source" ref_id="0_2"/>
+<reference name="subject" ref_id="0_5"/>
+</item>
+<item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
+<attribute name="name" value="FlyBase"/>
+</item>
+<item id="0_5" class="http://www.flymine.org/model/genomic#MRNA">
+<attribute name="curated" value="true"/>
+<attribute name="identifier" value="CG31957-RA"/>
+<attribute name="organismDbId" value="FBtr0077514"/>
+<attribute name="symbol" value="symbol-RA"/>
+<reference name="gene" ref_id="0_8"/>
+<reference name="organism" ref_id="0_0"/>
+<collection name="evidence"><reference ref_id="0_1"/></collection>
+</item>
+<item id="1_1" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="CG31957-RA"/>
+<reference name="source" ref_id="0_2"/>
+<reference name="subject" ref_id="0_5"/>
+</item>
+<item id="0_7" class="http://www.flymine.org/model/genomic#SimpleRelation">
+<reference name="object" ref_id="0_8"/>
+<reference name="subject" ref_id="0_5"/>
+</item>
+<item id="0_4" class="http://www.flymine.org/model/genomic#Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="Unknown_4"/>
+<reference name="source" ref_id="0_2"/>
+<reference name="subject" ref_id="0_3"/>
+</item>
+</items>

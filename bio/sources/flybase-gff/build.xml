@@ -40,7 +40,8 @@
                   seqDataSourceName="${gff3.seqDataSourceName}"
                   dataSetTitle="${gff3.dataSetTitle}"
                   model="${target.model}"
-                  handlerClassName="${gff3.handlerClassName}">
+                  handlerClassName="${gff3.handlerClassName}"
+                  sequenceHandlerClassName="${gff3.sequenceHandlerClassName}">
       <fileset dir="${build.data.dir}">
         <include name="*.gff"/>
       </fileset>
