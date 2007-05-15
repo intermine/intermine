@@ -11,10 +11,12 @@ package org.intermine.task;
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.metadata.Model;
 
@@ -74,7 +76,7 @@ public class CreateIndexesTaskTest extends TestCase
 
     // test that primary key indexes are created on subclasses
     public void testCreateIndexesSubclasses() throws Exception {
-        List expected = new ArrayList();
+        Set expected = new HashSet();
         expected.add("create index Contractor__ImportantPerson__key on Contractor(seniority, id)");
         expected.add("create index Contractor__ImportantPerson__key__nulls on Contractor((seniority IS NULL))");
         expected.add("create index CEO__ImportantPerson__key on CEO(seniority, id)");
@@ -90,7 +92,7 @@ public class CreateIndexesTaskTest extends TestCase
         Map statements = new LinkedHashMap();
         task.getStandardIndexStatements(m.getClassDescriptorByName("org.intermine.model.testmodel.ImportantPerson"),
                                    statements);
-        assertEquals(expected, getIndexStatementStrings(statements));
+        assertEquals(expected, new HashSet(getIndexStatementStrings(statements)));
 
         //assertEquals(new HashSet(expected), new HashSet(task.sqlStatements));
     }
