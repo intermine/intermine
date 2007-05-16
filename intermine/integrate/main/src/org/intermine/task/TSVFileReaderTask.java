@@ -46,9 +46,8 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * Query all objects of the class given by the className specified in the configurationFile that
-     * have a reference to the organism given by the organismAbbreviation parameter.  Set fields in
-     * the objects by using the tab separated files as input.
+     * Query all objects of the class given by the className specified in the configurationFile. 
+     * Set fields in the objects by using the tab separated files as input.
      * @param file the File to process
      * @throws BuildException if an ObjectStore method fails
      */
