@@ -51,7 +51,7 @@ $go_connection->cwd($go_dir)
 my $go_download_dir = "/shared/data/go-annotation";
 &ftp_download($go_connection,$go_download_dir,$go_file);
 $go_connection->quit;
-$log_buffer = "Go Annotation - update run on $date:\ngene_ontology.obo updated to $go_download_dir\n";
+$log_buffer = "Go Annotation\ngene_ontology.obo updated to $go_download_dir\n";
 $version_buffer = "Current data found in:\n$go_download_dir\n\tgene_ontology.obo\n";
 
 ### Get goa files

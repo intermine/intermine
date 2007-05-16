@@ -58,3 +58,8 @@ echo "==========================================================="
 echo "Getting Interpro xml file"
 ./get_interproXML
 echo "==========================================================="
+today=$(date +"%F")
+tempfile="/shared/data/download_logs/temp_log.txt"
+logfile="/shared/data/download_logs/$today.txt"
+mv $tempfile $logfile
+mail -s "Data download log for $today" philip@flymine.org < $logfile
