@@ -17,23 +17,24 @@ import org.intermine.model.InterMineObject;
 import org.intermine.util.TypeUtil;
 
 /**
- * Represents a field of a QueryClass that is a business object
+ * Represents the ID of a field of a QueryClass that is a business object
  *
- * @author Mark Woodbridge
- * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class QueryObjectReference extends QueryReference implements QueryOrderable
+public class QueryForeignKey implements QueryEvaluable
 {
+    protected QueryClass qc = null;
+    protected String fieldName;
+
     /**
-     * Constructs a QueryObjectReference representing the specified field of a QueryClass
+     * Constructs a QueryForeignKey representing the specified field of a QueryClass
      *
      * @param qc the QueryClass
      * @param fieldName the name of the relevant field
      * @throws NullPointerException if the field name is null
      * @throws IllegalArgumentException if the field is not a reference, or does not exist
      */    
-    public QueryObjectReference(QueryClass qc, String fieldName) {
+    public QueryForeignKey(QueryClass qc, String fieldName) {
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
         }
@@ -51,6 +52,46 @@ public class QueryObjectReference extends QueryReference implements QueryOrderab
         }
         this.qc = qc;
         this.fieldName = fieldName;
-        this.type = field.getReturnType();
+    }
+    
+    /**
+     * Gets the QueryClass of which this reference is an member.
+     *
+     * @return the QueryClass
+     */    
+    public QueryClass getQueryClass() {
+        return qc;
+    }
+
+    /**
+     * Gets the Java class of this QueryReference.
+     *
+     * @return the class name
+     */    
+    public Class getType() {
+        return Integer.class;
+    }
+
+    /**
+     * Gets the fieldname of this QueryReference.
+     *
+     * @return the field name
+     */
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void youAreType(Class cls) {
+        throw new ClassCastException("youAreType called on Foreign Key");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getApproximateType() {
+        throw new ClassCastException("getApproximateType called on a Foreign Key");
     }
 }

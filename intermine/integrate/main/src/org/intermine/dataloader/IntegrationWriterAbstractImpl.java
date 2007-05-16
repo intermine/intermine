@@ -59,7 +59,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected IntPresentSet dbIdsStored = new IntPresentSet();
     protected int idMapOps = 0;
     protected boolean ignoreDuplicates = false;
-    protected EquivalentObjectFetcher eof;
+    protected HintingFetcher eof;
     protected BaseEquivalentObjectFetcher beof;
 
     /**
@@ -95,18 +95,6 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public ObjectStoreWriter getObjectStoreWriter() {
         return osw;
-    }
-
-    /**
-     * Sets the EquivalentObjectFetcher that this IntegrationWriter will use to fetch equivalent
-     * objects from the production database. If this method is not called, the IntegrationWriter
-     * falls back to "this". This method is provided to permit a higher-performance system to be
-     * used instead.
-     *
-     * @param eof an EquivalentObjectFinder
-     */
-    public void setEof(EquivalentObjectFetcher eof) {
-        this.eof = eof;
     }
 
     /**
@@ -641,6 +629,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public void close() throws ObjectStoreException {
         osw.close();
         beof.close();
+        eof.close();
     }
 
     /**

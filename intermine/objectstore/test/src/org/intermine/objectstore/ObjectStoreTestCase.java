@@ -499,7 +499,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { ((Employee) data.get("EmployeeB1")).getDepartment().getId() },
                              { ((Employee) data.get("EmployeeB2")).getDepartment().getId() },
                              { ((Employee) data.get("EmployeeB3")).getDepartment().getId() } };
-        results.put("SelectObjectReference", toList(r));
+        results.put("SelectForeignKey", toList(r));
     }
 
     /**

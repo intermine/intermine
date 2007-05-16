@@ -12,7 +12,9 @@ package org.intermine.dataloader;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -23,7 +25,10 @@ import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+
+import org.apache.log4j.Logger;
 
 /**
  * Class providing EquivalentObjectFetcher functionality that makes use of hints to improve
@@ -33,7 +38,12 @@ import org.intermine.util.TypeUtil;
  */
 public class HintingFetcher extends BaseEquivalentObjectFetcher
 {
+    private static final Logger LOG = Logger.getLogger(HintingFetcher.class);
+
     EquivalentObjectHints hints;
+    int savedDatabaseEmpty = 0;
+    protected Map<String, Long> savedTimes = new TreeMap<String, Long>();
+    protected Map<String, Integer> savedCounts = new TreeMap<String, Integer>();
 
     /**
      * Constructor
@@ -48,9 +58,44 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
+    public void close() {
+        LOG.info("Hinting equivalent object query summary:" + getSummary().toString());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected StringBuffer getSummary() {
+        StringBuffer retval = super.getSummary();
+        if (savedDatabaseEmpty > 0) {
+            retval.append("\nSaved " + savedDatabaseEmpty + " queries on empty database");
+        }
+        for (String summaryName : savedTimes.keySet()) {
+            long savedTime = savedTimes.get(summaryName).longValue();
+            int savedCount = savedCounts.get(summaryName).intValue();
+            if (savedCount == 0) {
+                retval.append("\nNo queries saved for " + summaryName + ", hints took " + savedTime
+                        + " ms to fetch");
+            } else {
+                retval.append("\nSaved " + savedCount + " queries for " + summaryName
+                        + ", hints took " + savedTime + " ms to fetch");
+            }
+            Set queried = hints.getQueried(summaryName);
+            Set values = hints.getValues(summaryName);
+            if (queried != null) {
+                retval.append(". Queried values " + queried + " in database values " + values);
+            }
+        }
+        return retval;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Set queryEquivalentObjects(InterMineObject obj, Source source)
         throws ObjectStoreException {
         if (hints.databaseEmpty()) {
+            savedDatabaseEmpty++;
             return Collections.EMPTY_SET;
         }
         boolean allPkClassesEmpty = true;
@@ -60,8 +105,18 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             ClassDescriptor cld = (ClassDescriptor) cldIter.next();
             Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
             if (!primaryKeys.isEmpty()) {
-                if (!hints.classNotExists(cld.getType())) {
+                long time = System.currentTimeMillis();
+                boolean classNotExists = hints.classNotExists(cld.getType());
+                String className = DynamicUtil.getFriendlyName(cld.getType());
+                if (!savedTimes.containsKey(className)) {
+                    savedTimes.put(className, new Long(System.currentTimeMillis() - time));
+                    savedCounts.put(className, new Integer(0));
+                }
+                if (!classNotExists) {
                     allPkClassesEmpty = false;
+                } else {
+                    savedCounts.put(className, new Integer(savedCounts.get(className).intValue()
+                                + 1));
                 }
             }
         }
@@ -97,7 +152,17 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
                     throw new RuntimeException("Failed to get field value for field name: "
                             + fieldName + " in " + obj, e);
                 }
-                if (hints.pkQueryFruitless(cld.getType(), fieldName, value)) {
+                long time = System.currentTimeMillis();
+                boolean pkQueryFruitless = hints.pkQueryFruitless(cld.getType(), fieldName, value);
+                String summaryName = DynamicUtil.getFriendlyName(cld.getType()) + "."
+                    + fieldName;
+                if (!savedTimes.containsKey(summaryName)) {
+                    savedTimes.put(summaryName, new Long(System.currentTimeMillis() - time));
+                    savedCounts.put(summaryName, new Integer(0));
+                }
+                if (pkQueryFruitless) {
+                    savedCounts.put(summaryName, new Integer(savedCounts.get(summaryName).intValue()
+                                + 1));
                     return;
                 }
             } else if (fd instanceof CollectionDescriptor) {
@@ -116,7 +181,19 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
                         destId = idMap.get(refObj.getId());
                     }
                     if ((destId != null) || (refObj.getId() == null)) {
-                        if (hints.pkQueryFruitless(cld.getType(), fieldName, destId)) {
+                        long time = System.currentTimeMillis();
+                        boolean pkQueryFruitless = hints.pkQueryFruitless(cld.getType(), fieldName,
+                                destId);
+                        String summaryName = DynamicUtil.getFriendlyName(cld.getType()) + "."
+                            + fieldName;
+                        if (!savedTimes.containsKey(summaryName)) {
+                            savedTimes.put(summaryName, new Long(System.currentTimeMillis()
+                                        - time));
+                            savedCounts.put(summaryName, new Integer(0));
+                        }
+                        if (pkQueryFruitless) {
+                            savedCounts.put(summaryName, new Integer(savedCounts.get(summaryName)
+                                        .intValue() + 1));
                             return;
                         }
                     }

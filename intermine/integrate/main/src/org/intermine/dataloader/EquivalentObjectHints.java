@@ -21,9 +21,13 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryForeignKey;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.util.AlwaysSet;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.PseudoSet;
 
 import org.apache.log4j.Logger;
 
@@ -35,12 +39,16 @@ import org.apache.log4j.Logger;
 public class EquivalentObjectHints
 {
     private static final Logger LOG = Logger.getLogger(EquivalentObjectHints.class);
+    private static final int SUMMARY_SIZE = 100;
 
     private boolean databaseEmptyChecked = false;
     private boolean databaseEmpty = false;
     private Map<Class, Boolean> classStatus = new HashMap<Class, Boolean>();
     private Map<ClassAndFieldName, Set> classAndFieldNameValues
         = new HashMap<ClassAndFieldName, Set>();
+    private Map<ClassAndFieldName, Set> classAndFieldNameQueried
+        = new HashMap<ClassAndFieldName, Set>();
+    private Map<String, ClassAndFieldName> summaryToCafn = new HashMap<String, ClassAndFieldName>();
 
     private ObjectStore os;
 
@@ -126,21 +134,37 @@ public class EquivalentObjectHints
             return true;
         }
         ClassAndFieldName cafn = new ClassAndFieldName(clazz, fieldName);
+        String summaryName = DynamicUtil.getFriendlyName(clazz) + "." + fieldName;
         Set values = classAndFieldNameValues.get(cafn);
         if (values == null) {
             try {
                 Query q = new Query();
                 QueryClass qc = new QueryClass(clazz);
                 q.addFrom(qc);
+                QueryEvaluable qs;
                 try {
-                    q.addToSelect(new QueryField(qc, fieldName));
+                    qs = new QueryField(qc, fieldName);
                 } catch (IllegalArgumentException e) {
-                    q.addToSelect(new QueryObjectReference(qc, fieldName));
+                    qs = new QueryForeignKey(qc, fieldName);
                 }
-                List<List> results = os.execute(q, 0, 100, false, false,
+                q.addToSelect(qs);
+                q.setDistinct(true);
+                List<List> results = os.execute(q, 0, SUMMARY_SIZE, false, false,
                         ObjectStore.SEQUENCE_IGNORE);
-                if (results.size() >= 100) {
-                    values = AlwaysSet.INSTANCE;
+                if (results.size() >= SUMMARY_SIZE) {
+                    if (Integer.class.equals(qs.getType())) {
+                        q = new Query();
+                        q.addFrom(qc);
+                        q.addToSelect(new QueryFunction(qs, QueryFunction.MIN));
+                        q.addToSelect(new QueryFunction(qs, QueryFunction.MAX));
+                        q.setDistinct(false);
+                        List<List<Integer>> results2 = os.execute(q, 0, 2, false, false,
+                                ObjectStore.SEQUENCE_IGNORE);
+                        values = new IntegerRangeSet(results2.get(0).get(0).intValue(),
+                                results2.get(0).get(1).intValue());
+                    } else {
+                        values = AlwaysSet.INSTANCE;
+                    }
                 } else {
                     values = new HashSet();
                     for (List row : results) {
@@ -148,12 +172,41 @@ public class EquivalentObjectHints
                     }
                 }
                 classAndFieldNameValues.put(cafn, values);
+                classAndFieldNameQueried.put(cafn, new HashSet());
+                summaryToCafn.put(summaryName, cafn);
             } catch (ObjectStoreException e) {
                 LOG.error("Error checking database for " + clazz.getName() + "." + fieldName, e);
                 return false;
             }
         }
+        Set queried = classAndFieldNameQueried.get(cafn);
+        if (queried instanceof HashSet) {
+            queried.add(value);
+            if (queried.size() >= SUMMARY_SIZE) {
+                classAndFieldNameQueried.put(cafn, AlwaysSet.INSTANCE);
+            }
+        }
         return !values.contains(value);
+    }
+
+    /**
+     * Returns a Set of values that have been tested for a particular class and fieldname.
+     *
+     * @param summaryName a String
+     * @return a Set of values, or an AlwaysSet if too many values were tested
+     */
+    public Set getQueried(String summaryName) {
+        return classAndFieldNameQueried.get(summaryToCafn.get(summaryName));
+    }
+
+    /**
+     * Returns a Set of values that were in the database for a particular class and fieldname.
+     *
+     * @param summaryName a String
+     * @return a Set of values, or an AlwaysSet if too many values were tested
+     */
+    public Set getValues(String summaryName) {
+        return classAndFieldNameValues.get(summaryToCafn.get(summaryName));
     }
 
     private static class ClassAndFieldName
@@ -176,6 +229,25 @@ public class EquivalentObjectHints
                 return clazz.equals(c.clazz) && fieldName.equals(c.fieldName);
             }
             return false;
+        }
+    }
+
+    private static class IntegerRangeSet extends PseudoSet
+    {
+        private int low, high;
+
+        public IntegerRangeSet(int low, int high) {
+            this.low = low;
+            this.high = high;
+        }
+
+        public boolean contains(Object o) {
+            int i = ((Integer) o).intValue();
+            return (i >= low) && (i <= high);
+        }
+
+        public String toString() {
+            return "IntegerRangeSet(" + low + " - " + high + ")";
         }
     }
 }

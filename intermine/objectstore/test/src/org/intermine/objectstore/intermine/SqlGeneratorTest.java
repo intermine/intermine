@@ -353,8 +353,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ObjectStoreBagsForObject", Collections.singleton("osbag_int"));
         results.put("ObjectStoreBagsForObject2", "SELECT bagid AS a1_ FROM osbag_int WHERE value = 6 AND bagid IN (10, 11, 12) ORDER BY bagid");
         results2.put("ObjectStoreBagsForObject2", Collections.singleton("osbag_int"));
-        results.put("SelectObjectReference", "SELECT a1_.departmentId AS a2_ FROM Employee AS a1_ ORDER BY a1_.departmentId");
-        results2.put("SelectObjectReference", Collections.singleton("Employee"));
+        results.put("SelectForeignKey", "SELECT a1_.departmentId AS a2_ FROM Employee AS a1_ ORDER BY a1_.departmentId");
+        results2.put("SelectForeignKey", Collections.singleton("Employee"));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

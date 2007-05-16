@@ -81,7 +81,7 @@ public class ObjectStoreDataLoader extends DataLoader
             q.addToSelect(qc);
             q.setDistinct(false);
             long opCount = 0;
-            long time = (new Date()).getTime();
+            long time = System.currentTimeMillis();
             long startTime = time;
             getIntegrationWriter().beginTransaction();
             SingletonResults res = os.executeSingleton(q);
@@ -100,7 +100,7 @@ public class ObjectStoreDataLoader extends DataLoader
                 getIntegrationWriter().store(obj, source, skelSource);
                 opCount++;
                 if (opCount % 1000 == 0) {
-                    long now = (new Date()).getTime();
+                    long now = System.currentTimeMillis();
                     if (times[(int) ((opCount / 1000) % 20)] == -1) {
                         LOG.info("Dataloaded " + opCount + " objects - running at "
                                 + (60000000 / (now - time)) + " (avg "
@@ -121,9 +121,10 @@ public class ObjectStoreDataLoader extends DataLoader
                     getIntegrationWriter().beginTransaction();
                 }
             }
+            long now = System.currentTimeMillis();
             LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
-                        / ((new Date()).getTime() - startTime)) + " object per minute for source "
-                    + source.getName());
+                        / (now - startTime)) + " object per minute (" + (now - startTime)
+                    + " ms total) for source " + source.getName());
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().close();
         } catch (RuntimeException e) {

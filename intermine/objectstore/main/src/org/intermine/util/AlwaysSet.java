@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Matthew Wakeling
  */
-public class AlwaysSet implements Set
+public class AlwaysSet extends PseudoSet
 {
     /**
      * public instance
@@ -27,27 +27,6 @@ public class AlwaysSet implements Set
     public static final AlwaysSet INSTANCE = new AlwaysSet();
 
     private AlwaysSet() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean add(Object o) {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean addAll(Collection c) {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void clear() {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
     }
 
     /**
@@ -67,70 +46,7 @@ public class AlwaysSet implements Set
     /**
      * {@inheritDoc}
      */
-    public boolean equals(Object o) {
-        return o == this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int hashCode() {
-        return 8732342;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isEmpty() {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Iterator iterator() {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean remove(Object o) {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean removeAll(Collection c) {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean retainAll(Collection c) {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int size() {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object[] toArray() {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object[] toArray(Object o[]) {
-        throw new UnsupportedOperationException("Immutable virtual AlwaysSet");
+    public String toString() {
+        return "AlwaysSet";
     }
 }
