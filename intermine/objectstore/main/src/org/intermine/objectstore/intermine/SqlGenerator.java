@@ -58,6 +58,7 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFieldPathExpression;
+import org.intermine.objectstore.query.QueryForeignKey;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
@@ -614,7 +615,7 @@ public class SqlGenerator
             } else if ((selectable instanceof QueryFieldPathExpression)
                     && ("id".equals(((QueryFieldPathExpression) selectable).getFieldName()))) {
                 // Do nothing
-            } else if (selectable instanceof QueryObjectReference) {
+            } else if (selectable instanceof QueryForeignKey) {
                 // Do nothing
             } else if (selectable instanceof ObjectStoreBag) {
                 if (individualOsbs) {
@@ -1638,6 +1639,10 @@ public class SqlGenerator
                     .toLowerCase());
             Domain torqueDomain = torquePlatform.getDomainForSchemaType(torqueType);
             buffer.append(torqueDomain.getSqlType());
+        } else if (node instanceof QueryForeignKey) {
+            QueryForeignKey qor = (QueryForeignKey) node;
+            buffer.append((String) state.getFieldToAlias(qor.getQueryClass()).get(qor
+                        .getFieldName()));
         } else {
             throw (new ObjectStoreException("Invalid QueryEvaluable: " + node));
         }
@@ -1702,12 +1707,6 @@ public class SqlGenerator
                     .append(DatabaseUtil.generateSqlCompatibleName(alias));
             } else if (node instanceof QueryPathExpression) {
                 // Do nothing
-            } else if (node instanceof QueryObjectReference) {
-                QueryObjectReference qor = (QueryObjectReference) node;
-                retval.append((String) state.getFieldToAlias(qor.getQueryClass()).get(qor
-                            .getFieldName()))
-                    .append(" AS ")
-                    .append(DatabaseUtil.generateSqlCompatibleName(alias));
             } else {
                 throw new ObjectStoreException("Unknown object in SELECT list: " + node.getClass());
             }

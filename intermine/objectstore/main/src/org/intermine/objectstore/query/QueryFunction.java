@@ -48,33 +48,18 @@ public class QueryFunction implements QueryEvaluable
     private int op;
 
     /**
-     * @param qf the QueryField to aggregate over
+     * @param qe the QueryEvaluable to aggregate over
      * @param op the operation code
      * @throws IllegalArgumentException if there is a mismatch between the argument type
      * and the specified operation
      */
-    public QueryFunction(QueryField qf, int op) throws IllegalArgumentException {
-        constructNonCount(qf, op);
-    }
-
-    /**
-     * @param qe the QueryExpression to aggregate over
-     * @param op the operation code
-     * @throws IllegalArgumentException if there is a mismatch between the argument type
-     * and the specified operation
-     */
-    public QueryFunction(QueryExpression qe, int op) throws IllegalArgumentException {
-        constructNonCount(qe, op);
-    }
-
-    /**
-     * @param qc the QueryCast to aggregate over
-     * @param op the operation code
-     * @throws IllegalArgumentException if there is a mismatch between the argument type
-     * and the specified operation
-     */
-    public QueryFunction(QueryCast qc, int op) throws IllegalArgumentException {
-        constructNonCount(qc, op);
+    public QueryFunction(QueryEvaluable qe, int op) throws IllegalArgumentException {
+        if ((qe instanceof QueryField) || (qe instanceof QueryExpression)
+                || (qe instanceof QueryCast) || (qe instanceof QueryForeignKey)) {
+            constructNonCount(qe, op);
+        } else {
+            throw new IllegalArgumentException("Value unsuitable for QueryFunction: " + qe);
+        }
     }
 
     /**

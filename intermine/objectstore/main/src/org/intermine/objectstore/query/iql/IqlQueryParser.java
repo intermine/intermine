@@ -634,7 +634,7 @@ public class IqlQueryParser
                                 + " a QueryClassBag");
                     }
                 } else if ("id".equals(thirdAst.getText())) {
-                    return new QueryObjectReference((QueryClass) obj, unescape(secondAst
+                    return new QueryForeignKey((QueryClass) obj, unescape(secondAst
                                 .getText()));
                 } else {
                     throw new IllegalArgumentException("Path expression " + ast.getText() + "."

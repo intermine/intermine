@@ -101,6 +101,10 @@ public class QueryCloner
             QueryObjectReference origR = (QueryObjectReference) orig;
             return new QueryObjectReference((QueryClass) fromElementMap.get(origR.getQueryClass()),
                     origR.getFieldName());
+        } else if (orig instanceof QueryForeignKey) {
+            QueryForeignKey origK = (QueryForeignKey) orig;
+            return new QueryForeignKey((QueryClass) fromElementMap.get(origK.getQueryClass()),
+                    origK.getFieldName());
         } else if (orig instanceof QueryCollectionReference) {
             QueryCollectionReference origR = (QueryCollectionReference) orig;
             if (origR.getQueryClass() != null) {

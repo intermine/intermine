@@ -104,9 +104,6 @@ public class IqlQuery
                     || (qn instanceof ObjectStoreBagCombination)
                     || (qn instanceof ObjectStoreBagsForObject)) {
                 retval.append(nodeToString(q, qn, parameters));
-            } else if (qn instanceof QueryObjectReference) {
-                retval.append(nodeToString(q, qn, parameters)).append(".id")
-                    .append(nodeAlias == null ? "" : " AS " + escapeReservedWord(nodeAlias));
             } else {
                 retval.append(nodeToString(q, qn, parameters))
                     .append(nodeAlias == null ? "" : " AS " + escapeReservedWord(nodeAlias));
@@ -260,6 +257,9 @@ public class IqlQuery
         } else if (qn instanceof QueryObjectReference) {
             QueryObjectReference ref = (QueryObjectReference) qn;
             return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName();
+        } else if (qn instanceof QueryForeignKey) {
+            QueryForeignKey key = (QueryForeignKey) qn;
+            return q.getAliases().get(key.getQueryClass()) + "." + key.getFieldName() + ".id";
         } else if (qn instanceof QueryObjectPathExpression) {
             QueryObjectPathExpression ref = (QueryObjectPathExpression) qn;
             return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName();

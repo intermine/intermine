@@ -245,7 +245,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ObjectStoreBagCombination2", objectStoreBagCombination2());
         queries.put("ObjectStoreBagsForObject", objectStoreBagsForObject());
         queries.put("ObjectStoreBagsForObject2", objectStoreBagsForObject2());
-        queries.put("SelectObjectReference", selectObjectReference());
+        queries.put("SelectForeignKey", selectForeignKey());
     }
 
     /*
@@ -1738,11 +1738,11 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     /*
      * SELECT Employee.department.id FROM Employee
      */
-    public static Query selectObjectReference() throws Exception {
+    public static Query selectForeignKey() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
-        q.addToSelect(new QueryObjectReference(qc, "department"));
+        q.addToSelect(new QueryForeignKey(qc, "department"));
         q.setDistinct(false);
         return q;
     }

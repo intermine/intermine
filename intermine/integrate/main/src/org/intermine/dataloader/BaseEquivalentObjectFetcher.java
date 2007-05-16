@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -61,8 +62,8 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
     protected Model model;
     protected IntToIntMap idMap;
     protected ObjectStore lookupOs;
-    protected Map summaryTimes = new HashMap();
-    protected Map summaryCounts = new HashMap();
+    protected Map summaryTimes = new TreeMap();
+    protected Map summaryCounts = new TreeMap();
 
     /**
      * Constructor for this EquivalentObjectFetcher.
@@ -108,16 +109,26 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
      * Close method - prints out summary data.
      */
     public void close() {
-        LOG.info("Equivalent object query summary:");
+        LOG.info("Base equivalent object query summary:" + getSummary().toString());
+    }
+
+    /**
+     * Returns a StringBuffer containing summary information.
+     *
+     * @return a StringBuffer
+     */
+    protected StringBuffer getSummary() {
+        StringBuffer retval = new StringBuffer();
         Iterator summaryNames = summaryTimes.keySet().iterator();
         while (summaryNames.hasNext()) {
             String summaryName = (String) summaryNames.next();
             Long summaryTime = (Long) summaryTimes.get(summaryName);
             Integer summaryCount = (Integer) summaryCounts.get(summaryName);
-            LOG.info("Performed equivalence query for " + summaryName + " " + summaryCount
+            retval.append("\nPerformed equivalence query for " + summaryName + " " + summaryCount
                      + " times. Average time "
                      + (summaryTime.longValue() / summaryCount.longValue()) + " ms");
         }
+        return retval;
     }
 
     /**
