@@ -158,8 +158,7 @@ sub write_version(){
 sub write_log(){
 	my ($buffer) = @_;
 	
-	my $today= &convert_date();
-	my $log = "/shared/data/download_logs/$today.txt";
+	my $log = "/shared/data/download_logs/temp_log.txt";
 	&checkdir_exists("/shared/data/download_logs");
 	&write_file($log,$buffer);
 }

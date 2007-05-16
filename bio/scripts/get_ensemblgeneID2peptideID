@@ -93,7 +93,7 @@ my ($log_buffer,$version_buffer);
 
 if($updated == 0){
 	warn "XML already up to date\n";
-	$log_buffer = "Ensembl geneId to peptideId\nCurrent data is up to date\n\n";
+	$log_buffer = "Ensembl geneId to peptideId\nCurrent data ok\n\n";
 }elsif($updated == 1 ){
 	#the output directory and file
 	my $out_dir = "$main_dir/xml";

@@ -88,8 +88,8 @@ my $data_file = "$psi_mi_download_dir/$psi_mi_data_file";
 &http_download($file_to_get,$data_file);
 
 if($updated == 1){
-	$version_buffer .= $psi_mi_data_file." saved to $psi_dir/ontology/\n";
+	$version_buffer .= $psi_mi_data_file." saved to $psi_mi_download_dir\n";
 	&write_version($psi_dir,$version_buffer);
 }
-$log_buffer .= $psi_mi_data_file." saved to $psi_dir/ontology/\n\n";
+$log_buffer .= $psi_mi_data_file." saved to $psi_mi_download_dir\n\n";
 &write_log($log_buffer);
