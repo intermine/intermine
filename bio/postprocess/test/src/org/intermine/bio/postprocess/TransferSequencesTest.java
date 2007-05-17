@@ -330,7 +330,7 @@ public class TransferSequencesTest extends TestCase
                                                     storedChromosome,
                                                     storedSupercontig,
                                                 }));
-        toStore.add(createLocation(storedChromosome, storedSupercontig, 1, 501, 4000));
+        toStore.add(createLocation(storedChromosome, storedSupercontig, "1", 501, 4000));
 
         storedContigSequences[0] =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
@@ -360,7 +360,7 @@ public class TransferSequencesTest extends TestCase
         storedContigSequences[0].setResidues(contigResidues0);
         storedContigs[0].setSequence(storedContigSequences[0]);
 
-        toStore.add(createLocation(storedSupercontig, storedContigs[0], 1, 1001, 2000));
+        toStore.add(createLocation(storedSupercontig, storedContigs[0], "1", 1001, 2000));
 
         storedContigSequences[1] =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
@@ -398,7 +398,7 @@ public class TransferSequencesTest extends TestCase
         storedContigSequences[1].setResidues(contigResidues1);
         storedContigs[1].setSequence(storedContigSequences[1]);
 
-        toStore.add(createLocation(storedSupercontig, storedContigs[1], -1, 2001, 3500));
+        toStore.add(createLocation(storedSupercontig, storedContigs[1], "-1", 2001, 3500));
 
         storedContigSequences[2] =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
@@ -428,7 +428,7 @@ public class TransferSequencesTest extends TestCase
         storedContigSequences[2].setResidues(contigResidues2);
         storedContigs[2].setSequence(storedContigSequences[2]);
 
-        toStore.add(createLocation(storedSupercontig, storedContigs[2], -1, 1, 1000));
+        toStore.add(createLocation(storedSupercontig, storedContigs[2], "-1", 1, 1000));
 
         storedTranscripts = new Transcript[2];
         for (int i = 0 ; i < storedTranscripts.length ; i++) {
@@ -475,23 +475,23 @@ public class TransferSequencesTest extends TestCase
             storedRepeatRegions[i].setIdentifier("repeat_region_" + i);
         }
 
-        toStore.add(createLocation(storedContigs[0], storedExons[0], 1,   173,  259));
-        toStore.add(createLocation(storedContigs[0], storedExons[4], -1,  454,  605));
-        toStore.add(createLocation(storedContigs[0], storedExons[1], 1,   773,  814));
-        toStore.add(createLocation(storedContigs[0], storedExons[2], 1,   984, 1000));
-        toStore.add(createLocation(storedContigs[0], storedExons[5], -1,  996, 1000));
+        toStore.add(createLocation(storedContigs[0], storedExons[0], "1",   173,  259));
+        toStore.add(createLocation(storedContigs[0], storedExons[4], "-1",  454,  605));
+        toStore.add(createLocation(storedContigs[0], storedExons[1], "1",   773,  814));
+        toStore.add(createLocation(storedContigs[0], storedExons[2], "1",   984, 1000));
+        toStore.add(createLocation(storedContigs[0], storedExons[5], "-1",  996, 1000));
 
-        toStore.add(createLocation(storedContigs[1], storedExons[7], 1,     8,  138));
-        toStore.add(createLocation(storedContigs[1], storedExons[6], 1,   368,  493));
-        toStore.add(createLocation(storedContigs[1], storedExons[3], -1,  663, 1173));
-        toStore.add(createLocation(storedContigs[1], storedExons[2], -1, 1224, 1500));
-        toStore.add(createLocation(storedContigs[1], storedExons[5], 1,  1287, 1500));
+        toStore.add(createLocation(storedContigs[1], storedExons[7], "1",     8,  138));
+        toStore.add(createLocation(storedContigs[1], storedExons[6], "1",   368,  493));
+        toStore.add(createLocation(storedContigs[1], storedExons[3], "-1",  663, 1173));
+        toStore.add(createLocation(storedContigs[1], storedExons[2], "-1", 1224, 1500));
+        toStore.add(createLocation(storedContigs[1], storedExons[5], "1",  1287, 1500));
 
-        toStore.add(createLocation(storedContigs[0], storedRepeatRegions[0], 1, 572, 607));
-        toStore.add(createLocation(storedContigs[0], storedRepeatRegions[1], -1, 732, 779));
+        toStore.add(createLocation(storedContigs[0], storedRepeatRegions[0], "1", 572, 607));
+        toStore.add(createLocation(storedContigs[0], storedRepeatRegions[1], "-1", 732, 779));
 
-        toStore.add(createLocation(storedContigs[1], storedRepeatRegions[2], 1, 1034, 1078));
-        toStore.add(createLocation(storedContigs[1], storedRepeatRegions[3], -1, 399, 443));
+        toStore.add(createLocation(storedContigs[1], storedRepeatRegions[2], "1", 1034, 1078));
+        toStore.add(createLocation(storedContigs[1], storedRepeatRegions[3], "-1", 399, 443));
 
         Iterator iter = toStore.iterator();
         osw.beginTransaction();
@@ -518,16 +518,15 @@ public class TransferSequencesTest extends TestCase
     }
 
     private Location createLocation(BioEntity object, BioEntity subject,
-                                    int strand, int start, int end) {
+                                    String strand, int start, int end) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         loc.setObject(object);
         loc.setSubject(subject);
-        loc.setStrand(new Integer(strand));
+        loc.setStrand(strand);
         loc.setStart(new Integer(start));
         loc.setEnd(new Integer(end));
         loc.setStartIsPartial(Boolean.FALSE);
         loc.setEndIsPartial(Boolean.FALSE);
-        loc.setStrand(new Integer(strand));
         return loc;
     }
 }

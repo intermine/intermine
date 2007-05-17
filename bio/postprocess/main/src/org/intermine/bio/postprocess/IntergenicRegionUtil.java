@@ -235,7 +235,7 @@ public class IntergenicRegionUtil
                     (Synonym) DynamicUtil.createObject(Collections.singleton(Synonym.class));
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
-                location.setStrand(new Integer(1));
+                location.setStrand("1");
                 location.setPhase(new Integer(0));
                 location.setStartIsPartial(Boolean.FALSE);
                 location.setEndIsPartial(Boolean.FALSE);
@@ -266,9 +266,9 @@ public class IntergenicRegionUtil
 
                     while (nextGenesIter.hasNext()) {
                         Gene nextGene = (Gene) nextGenesIter.next();
-                        Integer strand = nextGene.getChromosomeLocation().getStrand();
+                        String strand = nextGene.getChromosomeLocation().getStrand();
                         if (strand != null) {
-                            if (strand.intValue() == 1) {
+                            if (strand.equals("1")) {
                                 nextGene.setUpstreamIntergenicRegion(intergenicRegion);
                             } else {
                                 nextGene.setDownstreamIntergenicRegion(intergenicRegion);
@@ -284,9 +284,9 @@ public class IntergenicRegionUtil
 
                     while (prevGenesIter.hasNext()) {
                         Gene prevGene = (Gene) prevGenesIter.next();
-                        Integer strand = prevGene.getChromosomeLocation().getStrand();
+                        String strand = prevGene.getChromosomeLocation().getStrand();
                         if (strand != null) {
-                            if (strand.intValue() == 1) {
+                            if (strand.equals("1")) {
                                 prevGene.setDownstreamIntergenicRegion(intergenicRegion);
                             } else {
                                 prevGene.setUpstreamIntergenicRegion(intergenicRegion);

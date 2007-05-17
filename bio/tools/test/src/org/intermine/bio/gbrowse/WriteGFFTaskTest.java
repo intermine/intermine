@@ -223,7 +223,7 @@ public class WriteGFFTaskTest extends TestCase
         storedTranscript1Location.setSubject(storedTranscript1);
         storedTranscript1Location.setStart(new Integer(201));
         storedTranscript1Location.setEnd(new Integer(400));
-        storedTranscript1Location.setStrand(new Integer(1));
+        storedTranscript1Location.setStrand("1");
 
         storedTranscript2Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
@@ -231,7 +231,7 @@ public class WriteGFFTaskTest extends TestCase
         storedTranscript2Location.setSubject(storedTranscript2);
         storedTranscript2Location.setStart(new Integer(351));
         storedTranscript2Location.setEnd(new Integer(620));
-        storedTranscript2Location.setStrand(new Integer(1));
+        storedTranscript2Location.setStrand("1");
 
         storedGeneLocation =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
@@ -239,7 +239,7 @@ public class WriteGFFTaskTest extends TestCase
         storedGeneLocation.setSubject(storedGene);
         storedGeneLocation.setStart(new Integer(201));
         storedGeneLocation.setEnd(new Integer(620));
-        storedGeneLocation.setStrand(new Integer(1));
+        storedGeneLocation.setStrand("1");
 
         storedExon1Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
@@ -247,7 +247,7 @@ public class WriteGFFTaskTest extends TestCase
         storedExon1Location.setSubject(storedExon1);
         storedExon1Location.setStart(new Integer(201));
         storedExon1Location.setEnd(new Integer(300));
-        storedExon1Location.setStrand(new Integer(1));
+        storedExon1Location.setStrand("1");
 
         storedExon2Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
@@ -255,7 +255,7 @@ public class WriteGFFTaskTest extends TestCase
         storedExon2Location.setSubject(storedExon2);
         storedExon2Location.setStart(new Integer(351));
         storedExon2Location.setEnd(new Integer(400));
-        storedExon2Location.setStrand(new Integer(1));
+        storedExon2Location.setStrand("1");
 
         storedExon3Location =
             (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
@@ -263,7 +263,7 @@ public class WriteGFFTaskTest extends TestCase
         storedExon3Location.setSubject(storedExon3);
         storedExon3Location.setStart(new Integer(591));
         storedExon3Location.setEnd(new Integer(620));
-        storedExon3Location.setStrand(new Integer(1));
+        storedExon3Location.setStrand("1");
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                                                     storedOrganism, storedChromosome,
