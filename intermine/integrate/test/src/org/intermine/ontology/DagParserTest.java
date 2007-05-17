@@ -207,11 +207,6 @@ public class DagParserTest extends TestCase
         assertFalse(i1.equals(i4));
     }
 
-//     public void testStripEscaped() throws Exception {
-//         assertEquals("%£", parser.stripEscaped("\\%\\£"));
-//         assertEquals("a\\d", parser.stripEscaped("a\\d"));
-//     }
-
     public void testTrimLeft() throws Exception {
         assertEquals("string  ", parser.trimLeft("  string  "));
         assertEquals("string  ", parser.trimLeft("string  "));
