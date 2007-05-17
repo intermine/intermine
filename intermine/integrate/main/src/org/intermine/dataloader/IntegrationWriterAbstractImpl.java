@@ -61,6 +61,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected boolean ignoreDuplicates = false;
     protected HintingFetcher eof;
     protected BaseEquivalentObjectFetcher beof;
+    protected Source lastSource = null;
 
     /**
      * Constructs a new instance of an IntegrationWriter
@@ -108,6 +109,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public Set getEquivalentObjects(InterMineObject obj, Source source)
             throws ObjectStoreException {
+        lastSource = source;
         if (obj == null) {
             throw new NullPointerException("obj should not be null");
         }
@@ -628,8 +630,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void close() throws ObjectStoreException {
         osw.close();
-        beof.close();
-        eof.close();
+        beof.close(lastSource);
+        eof.close(lastSource);
     }
 
     /**
