@@ -62,8 +62,9 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
     protected Model model;
     protected IntToIntMap idMap;
     protected ObjectStore lookupOs;
-    protected Map summaryTimes = new TreeMap();
-    protected Map summaryCounts = new TreeMap();
+    protected Map<Class, Long> summaryTimes = new HashMap<Class, Long>();
+    protected Map<Class, Integer> summaryCounts = new HashMap<Class, Integer>();
+    protected Map<Class, Integer> summaryCallCounts = new HashMap<Class, Integer>();
 
     /**
      * Constructor for this EquivalentObjectFetcher.
@@ -107,26 +108,54 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
 
     /**
      * Close method - prints out summary data.
+     *
+     * @param source the Source used
      */
-    public void close() {
-        LOG.info("Base equivalent object query summary:" + getSummary().toString());
+    public void close(Source source) {
+        LOG.info("Base equivalent object query summary for source " + source + " :"
+                + getSummary(source).toString());
     }
 
     /**
      * Returns a StringBuffer containing summary information.
      *
+     * @param source the Source used
      * @return a StringBuffer
      */
-    protected StringBuffer getSummary() {
+    protected StringBuffer getSummary(Source source) {
         StringBuffer retval = new StringBuffer();
-        Iterator summaryNames = summaryTimes.keySet().iterator();
-        while (summaryNames.hasNext()) {
-            String summaryName = (String) summaryNames.next();
-            Long summaryTime = (Long) summaryTimes.get(summaryName);
-            Integer summaryCount = (Integer) summaryCounts.get(summaryName);
+        TreeMap<String, Class> summaryNames = new TreeMap<String, Class>();
+        for (Class c : summaryTimes.keySet()) {
+            summaryNames.put(DynamicUtil.getFriendlyName(c), c);
+        }
+        for (String summaryName : summaryNames.keySet()) {
+            Class summaryClass = summaryNames.get(summaryName);
+            Long summaryTime = summaryTimes.get(summaryClass);
+            Integer summaryCount = summaryCounts.get(summaryClass);
+            Integer summaryCallCount = summaryCallCounts.get(summaryClass);
             retval.append("\nPerformed equivalence query for " + summaryName + " " + summaryCount
-                     + " times. Average time "
+                     + "/" + summaryCallCount + " times.");
+            if (summaryCount.longValue() > 0) {
+                retval.append(" Average time "
                      + (summaryTime.longValue() / summaryCount.longValue()) + " ms");
+            }
+            // Work out if the class has no keys
+            boolean noKeys = true;
+            Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(summaryClass);
+            for (ClassDescriptor cld : classDescriptors) {
+                if (source == null) {
+                    if (!PrimaryKeyUtil.getPrimaryKeys(cld).isEmpty()) {
+                        noKeys = false;
+                    }
+                } else {
+                    if (!DataLoaderHelper.getPrimaryKeys(cld, source).isEmpty()) {
+                        noKeys = false;
+                    }
+                }
+            }
+            if (noKeys) {
+                retval.append("No primary keys for this class");
+            }
         }
         return retval;
     }
@@ -142,6 +171,18 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         } catch (MetaDataException e) {
             throw new ObjectStoreException(e);
         }
+        Class summaryName = obj.getClass();
+        Long soFar = summaryTimes.get(summaryName);
+        Integer soFarCount = summaryCounts.get(summaryName);
+        Integer soFarCallCount = summaryCallCounts.get(summaryName);
+        if (soFar == null) {
+            soFar = new Long(0L);
+            soFarCount = new Integer(0);
+            soFarCallCount = new Integer(0);
+            summaryTimes.put(summaryName, soFar);
+            summaryCounts.put(summaryName, soFarCount);
+            summaryCallCounts.put(summaryName, soFarCallCount);
+        }
         if (q != null) {
             SingletonResults result = lookupOs.executeSingleton(q);
             result.setNoOptimise();
@@ -153,17 +194,12 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                 // Ignore - operation will be repeated later
             }
             long time = System.currentTimeMillis() - before;
-            String summaryName = DynamicUtil.getFriendlyName(obj.getClass());
-            Long soFar = (Long) summaryTimes.get(summaryName);
-            Integer soFarCount = (Integer) summaryCounts.get(summaryName);
-            if (soFar == null) {
-                soFar = new Long(0L);
-                soFarCount = new Integer(0);
-            }
             summaryTimes.put(summaryName, new Long(time + soFar.longValue()));
             summaryCounts.put(summaryName, new Integer(soFarCount.intValue() + 1));
+            summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
             return result;
         } else {
+            summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
             return Collections.EMPTY_SET;
         }
     }
@@ -219,10 +255,10 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                     // integrated with anything (although we have defined that the class should
                     // be integrated.  For the moment just log an error.                    
                     LOG.warn("No valid primary key found for object: " + obj);  
-                    return null;
                     //throw new IllegalArgumentException("No valid primary key found for object: "
                     //        + obj);
                 }
+                return null;
             default:
                 return q;
         }

@@ -58,15 +58,16 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
-    public void close() {
-        LOG.info("Hinting equivalent object query summary:" + getSummary().toString());
+    public void close(Source source) {
+        LOG.info("Hinting equivalent object query summary for source " + source + " :"
+                + getSummary(source).toString());
     }
 
     /**
      * {@inheritDoc}
      */
-    protected StringBuffer getSummary() {
-        StringBuffer retval = super.getSummary();
+    protected StringBuffer getSummary(Source source) {
+        StringBuffer retval = super.getSummary(source);
         if (savedDatabaseEmpty > 0) {
             retval.append("\nSaved " + savedDatabaseEmpty + " queries on empty database");
         }
