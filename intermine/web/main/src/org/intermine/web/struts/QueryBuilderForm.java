@@ -355,14 +355,20 @@ public class QueryBuilderForm extends ActionForm
                 errors.add(ActionMessages.GLOBAL_MESSAGE,
                            new ActionMessage("errors.date", value, df.format(new Date())));
             }
-        } else if (String.class.equals(type) && (constraintOp == ConstraintOp.MATCHES
-                   || constraintOp == ConstraintOp.DOES_NOT_MATCH)) {
-            // Is the expression valid? We need a non-zero length string at least
+        } else if (String.class.equals(type)) {
             if (value.length() == 0) {
+                // Is the expression valid? We need a non-zero length string at least
                 errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.like"));
             } else {
-                value = value.trim();
-                parsedValue = WebUtil.wildcardUserToSql(value);
+                String trimmedValue = value.trim();
+                if (constraintOp == ConstraintOp.EQUALS
+                    || constraintOp == ConstraintOp.NOT_EQUALS
+                    || constraintOp == ConstraintOp.MATCHES
+                    || constraintOp == ConstraintOp.DOES_NOT_MATCH) {
+                    parsedValue = WebUtil.wildcardUserToSql(trimmedValue);
+                } else {
+                    parsedValue = trimmedValue;
+                }
             }
         } else {
             try {

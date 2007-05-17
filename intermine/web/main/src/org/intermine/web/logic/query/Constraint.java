@@ -116,7 +116,8 @@ public class Constraint
      * @return  constraint value translated for the user as a string
      */
     public String getDisplayValue() {
-        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH) {
+        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH 
+            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS) {
             return WebUtil.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
             return "";

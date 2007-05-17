@@ -14,6 +14,16 @@
       </constraint>
     </node>
   </query>
+    <query name="employeeDepartmentCompanyWildcard" model="testmodel" view="Employee.name Employee.department.name Employee.department.company.name">
+    <node path="Employee" type="Employee">
+    </node>
+    <node path="Employee.department" type="Department">
+    </node>
+    <node path="Employee.department.name" type="String">
+      <constraint op="=" value="DepartmentA%" description="" identifier="" code="A">
+      </constraint>
+    </node>
+  </query>
   <query name="employeeCompany" model="testmodel" view="Employee.name Employee.department.company.name">
     <node path="Employee" type="Employee">
     </node>
