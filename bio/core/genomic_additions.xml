@@ -101,6 +101,8 @@
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
     </class>
 
+    <class name="org.flymine.model.genomic.Region" is-interface="true"/>
+
     <class name="org.flymine.model.genomic.GenomeRegion" is-interface="true"
            extends="org.flymine.model.genomic.Region"/>
 
