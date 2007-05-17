@@ -503,7 +503,7 @@ public class CalculateLocations
         while (mapOfPartialsIter.hasNext()) {
             int minChrStart = Integer.MAX_VALUE;
             int maxChrEnd = -1;
-            int newStrand = 0;
+            String newStrand = "0";
             Integer newStartPhase = null;
             Integer newEndPhase = null;
             BioEntity bioEntity = (BioEntity) mapOfPartialsIter.next();
@@ -542,15 +542,15 @@ public class CalculateLocations
                     newEndPhase = pl.getEndPhase();
                 }
 
-                if (newStrand == 0) {
-                    newStrand = pl.getStrand().intValue();
+                if (newStrand.equals("0")) {
+                    newStrand = pl.getStrand();
                 } else {
-                    if (newStrand != pl.getStrand().intValue()) {
+                    if (newStrand != pl.getStrand()) {
                         throw new RuntimeException("BioEntity (" + bioEntity + ") has two "
                                                    + "Locations "
                                                    + "with inconsistent strands: "
                                                    + newStrand + " != "
-                                                   + pl.getStrand().intValue());
+                                                   + pl.getStrand());
                     }
                 }
             }
@@ -566,7 +566,7 @@ public class CalculateLocations
             newLocation.setEnd(new Integer(maxChrEnd));
             newLocation.setStartIsPartial(Boolean.FALSE);
             newLocation.setEndIsPartial(Boolean.FALSE);
-            newLocation.setStrand(new Integer(newStrand));
+            newLocation.setStrand(newStrand);
             newLocation.setPhase(newStartPhase);
             newLocation.setEndPhase(newEndPhase);
             newLocation.setSubject(bioEntity);
@@ -637,7 +637,7 @@ public class CalculateLocations
             SimpleLoc parentObjectSimpleLoc = (SimpleLoc) parentObjectMap.get(parentObject.getId());
 
             if (parentObjectSimpleLoc == null) {
-                parentObjectSimpleLoc = new SimpleLoc(-1, -1, Integer.MAX_VALUE, -1, 0);
+                parentObjectSimpleLoc = new SimpleLoc(-1, -1, Integer.MAX_VALUE, -1, "0");
                 parentObjectMap.put(parentObject.getId(), parentObjectSimpleLoc);
             }
 
@@ -652,7 +652,7 @@ public class CalculateLocations
                 parentObjectSimpleLoc.setEnd(location.getEnd().intValue());
             }
 
-            parentObjectSimpleLoc.setStrand(location.getStrand().intValue());
+            parentObjectSimpleLoc.setStrand(location.getStrand());
 
             // TODO XXX FIXME: deal with partial locations and do consistency checks (eg. make
             // sure all exons are on the same strand)
@@ -679,7 +679,7 @@ public class CalculateLocations
                 newLocation.setEnd(new Integer(parentObjectSimpleLoc.getEnd()));
                 newLocation.setStartIsPartial(Boolean.FALSE);
                 newLocation.setEndIsPartial(Boolean.FALSE);
-                newLocation.setStrand(new Integer(parentObjectSimpleLoc.getStrand()));
+                newLocation.setStrand(parentObjectSimpleLoc.getStrand());
                 newLocation.setSubject(parentObject);
                 newLocation.setObject(locatedOnObject);
 
@@ -801,7 +801,7 @@ public class CalculateLocations
         int parentLength = (parentOnChr.getEnd() - parentOnChr.getStart()) + 1;
         int childLength = (childOnChr.getEnd() - childOnChr.getStart()) + 1;
 
-        if (parentOnChr.getStrand() == -1) {
+        if (parentOnChr.getStrand().equals("-1")) {
             if (parentOnChr.getEnd() < childOnChr.getEnd()) {
                 startIsPartial = true;
             }
@@ -825,11 +825,11 @@ public class CalculateLocations
             pl.setSubjectEnd(new Integer(childLength));
 
             if (startIsPartial) {
-                if (parentOnChr.getStrand() == -1) {
+                if (parentOnChr.getStrand().equals("-1")) {
                     //  <--------+-----      parent
                     //           |
                     //           +---------  child
-                    if (childOnChr.getStrand () == -1) {
+                    if (childOnChr.getStrand ().equals("-1")) {
                         pl.setSubjectStart(new Integer(childOnChr.getEnd()
                                                        - parentOnChr.getEnd() + 1));
                     } else {
@@ -840,7 +840,7 @@ public class CalculateLocations
                     //      ------+------->  parent
                     //            |
                     //   ---------+          child
-                    if (childOnChr.getStrand () == -1) {
+                    if (childOnChr.getStrand ().equals("-1")) {
                         pl.setSubjectEnd(new Integer(childOnChr.getEnd()
                                                      - parentOnChr.getStart() + 1));
                     } else {
@@ -852,11 +852,11 @@ public class CalculateLocations
             }
 
             if (endIsPartial) {
-                if (parentOnChr.getStrand() == -1) {
+                if (parentOnChr.getStrand().equals("-1")) {
                     //       <----+-------  parent
                     //            |
                     //  ----------+         child
-                    if (childOnChr.getStrand() == -1) {
+                    if (childOnChr.getStrand().equals("-1")) {
                         pl.setSubjectEnd(new Integer(childOnChr.getEnd()
                                                      - parentOnChr.getStart() + 1));
                     } else {
@@ -867,7 +867,7 @@ public class CalculateLocations
                     //   -------+---->        parent
                     //          |
                     //          +----------   child
-                    if (childOnChr.getStrand() == -1) {
+                    if (childOnChr.getStrand().equals("-1")) {
                         pl.setSubjectStart(new Integer(childOnChr.getEnd()
                                                        - parentOnChr.getEnd() + 1));
                     } else {
@@ -901,7 +901,7 @@ public class CalculateLocations
         if (startIsPartial) {
             newChildOnParentStart = 1;
         } else {
-            if (parentOnChr.getStrand() == -1) {
+            if (parentOnChr.getStrand().equals("-1")) {
                 newChildOnParentStart = parentOnChr.getEnd() - childOnChr.getEnd() + 1;
             } else {
                 newChildOnParentStart = childOnChr.getStart() - parentOnChr.getStart() + 1;
@@ -911,7 +911,7 @@ public class CalculateLocations
         if (endIsPartial) {
             newChildOnParentEnd = parentLength;
         } else {
-            if (parentOnChr.getStrand() == -1) {
+            if (parentOnChr.getStrand().equals("-1")) {
                 newChildOnParentEnd = parentOnChr.getEnd() - childOnChr.getStart() + 1;
             } else {
                 newChildOnParentEnd = childOnChr.getEnd() - parentOnChr.getStart() + 1;
@@ -923,17 +923,17 @@ public class CalculateLocations
 
         // we don't just check for (childOnChr.getStrand() == parentOnChr.getStrand()) because we
         // treat strand of 0 as equal to strand 1
-        if (childOnChr.getStrand() == -1 && parentOnChr.getStrand() == -1) {
-            childOnParent.setStrand(new Integer(1));
+        if (childOnChr.getStrand().equals("-1") && parentOnChr.getStrand().equals("-1")) {
+            childOnParent.setStrand("1");
         } else {
-            if (childOnChr.getStrand() == -1 || parentOnChr.getStrand() == -1) {
-                childOnParent.setStrand(new Integer(-1));
+            if (childOnChr.getStrand().equals("-1") || parentOnChr.getStrand().equals("-1")) {
+                childOnParent.setStrand("-1");
             } else {
-                childOnParent.setStrand(new Integer(1));
+                childOnParent.setStrand("1");
             }
         }
 
-        if (parentOnChr.getStrand() == -1) {
+        if (parentOnChr.getStrand().equals("-1")) {
             if (childOnChr.endIsPartial()) {
                 startIsPartial = true;
             }
@@ -1213,7 +1213,7 @@ public class CalculateLocations
             childOnDest = (Location)
                 DynamicUtil.createObject(Collections.singleton(Location.class));
         }
-        if (parentOnDest.getStrand() == -1) {
+        if (parentOnDest.getStrand().equals("-1")) {
             childOnDest.setStart(new Integer((parentOnDest.getEnd() - childOnParent.getEnd()) + 1));
             childOnDest.setEnd(new Integer((parentOnDest.getEnd() - childOnParent.getStart()) + 1));
         } else {
@@ -1221,17 +1221,17 @@ public class CalculateLocations
                                              + childOnParent.getStart()) - 1));
             childOnDest.setEnd(new Integer((parentOnDest.getStart() + childOnParent.getEnd()) - 1));
         }
-        if (childOnParent.getStrand() == -1) {
-            if (parentOnDest.getStrand() == -1) {
-                childOnDest.setStrand(new Integer(1));
+        if (childOnParent.getStrand().equals("-1")) {
+            if (parentOnDest.getStrand().equals("-1")) {
+                childOnDest.setStrand("1");
             } else {
-                childOnDest.setStrand(new Integer(-1));
+                childOnDest.setStrand("-1");
             }
         } else {
-            if (parentOnDest.getStrand() == -1) {
-                childOnDest.setStrand(new Integer(-1));
+            if (parentOnDest.getStrand().equals("-1")) {
+                childOnDest.setStrand("-1");
             } else {
-                childOnDest.setStrand(new Integer(1));
+                childOnDest.setStrand("1");
             }
         }
 
@@ -1359,7 +1359,7 @@ public class CalculateLocations
         private int start;
         private int parentId;
         private int childId;
-        private int strand;
+        private String strand;
         private int end;
         private boolean startIsPartial;
         private boolean endIsPartial;
@@ -1372,7 +1372,7 @@ public class CalculateLocations
          * @param end end value
          * @param strand strand value
          */
-        public SimpleLoc(int parentId, int childId, int start, int end, int strand) {
+        public SimpleLoc(int parentId, int childId, int start, int end, String strand) {
             this(parentId, childId, start, end, strand, false, false);
         }
 
@@ -1386,7 +1386,7 @@ public class CalculateLocations
          * @param startIsPartial start is partial flag
          * @param endIsPartial end is partial flag
          */
-        public SimpleLoc(int parentId, int childId, int start, int end, int strand,
+        public SimpleLoc(int parentId, int childId, int start, int end, String strand,
                          boolean startIsPartial, boolean endIsPartial) {
             this.parentId = parentId;
             this.childId = childId;
@@ -1419,9 +1419,9 @@ public class CalculateLocations
                 this.endIsPartial = loc.getEndIsPartial().booleanValue();
             }
             if (loc.getStrand() != null) {
-                this.strand = loc.getStrand().intValue();
+                this.strand = loc.getStrand();
             } else {
-                this.strand = 0;
+                this.strand = "0";
             }
         }
 
@@ -1477,7 +1477,7 @@ public class CalculateLocations
          * Get strand value
          * @return strand value
          */
-        public int getStrand() {
+        public String getStrand() {
             return strand;
         }
 
@@ -1485,7 +1485,7 @@ public class CalculateLocations
          * Set strand value
          * @param strand value
          */
-        public void setStrand(int strand) {
+        public void setStrand(String strand) {
             this.strand = strand;
         }
 
@@ -1531,6 +1531,7 @@ public class CalculateLocations
 
         /**
          * @see Object#toString()
+         * {@inheritDoc}
          */
         public String toString() {
             return "parent " + parentId + " child " + childId + " start " + start

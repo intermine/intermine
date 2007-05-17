@@ -45,7 +45,7 @@
     <attribute name="phase" type="java.lang.Integer"/>
     <attribute name="start" type="java.lang.Integer"/>
     <attribute name="endIsPartial" type="java.lang.Boolean"/>
-    <attribute name="strand" type="java.lang.Integer"/>
+    <attribute name="strand" type="java.lang.String"/>
     <attribute name="startIsPartial" type="java.lang.Boolean"/>
   </class>
   <class name="org.flymine.model.genomic.Evidence" is-interface="true">

@@ -493,10 +493,10 @@ public class WriteGFFTask extends Task
         if (chromosomeLocation == null) {
             lineBuffer.append(".");
         } else {
-            if (chromosomeLocation.getStrand().intValue() == 1) {
+            if (chromosomeLocation.getStrand().equals("1")) {
                 lineBuffer.append("+");
             } else {
-                if (chromosomeLocation.getStrand().intValue() == -1) {
+                if (chromosomeLocation.getStrand().equals("-1")) {
                     lineBuffer.append("-");
                 } else {
                     lineBuffer.append(".");

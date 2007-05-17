@@ -182,7 +182,7 @@ public class IntergenicRegionsTest extends TestCase
                         
                         Set adjacentGenes = new HashSet(ir.getAdjacentGenes());
                         assertTrue(adjacentGenes.contains(prevGene));
-                        if (loc.getStrand().intValue() == 1) {
+                        if (loc.getStrand().equals("1")) {
                             IntergenicRegion nextIntergenicRegion =
                                 prevGene.getDownstreamIntergenicRegion();
                             Integer id = nextIntergenicRegion.getId();
@@ -208,7 +208,7 @@ public class IntergenicRegionsTest extends TestCase
                     while (nextGeneIdsIter.hasNext()) {
                         Gene nextGene = (Gene) os.getObjectById((Integer) nextGeneIdsIter.next());
 
-                        if (loc.getStrand().intValue() == 1) {
+                        if (loc.getStrand().equals("1")) {
                             assertTrue(ir.getAdjacentGenes().contains(nextGene));
                             assertEquals(nextGene.getUpstreamIntergenicRegion().getId(), ir.getId());
                         } else {
@@ -289,7 +289,7 @@ public class IntergenicRegionsTest extends TestCase
             genes[i].setId(new Integer(geneId));
             genes[i].setLength(new Integer(end - start + 1));
             genes[i].setChromosome(chr);
-            geneLocs[i] = createLocation(chr, genes[i], 1, start, end, Location.class);
+            geneLocs[i] = createLocation(chr, genes[i], "1", start, end, Location.class);
             geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
             IntergenicRegionUtil.addToListMap(chrXlocMap, geneLocs[i].getStart(), genes[i]);
@@ -344,7 +344,7 @@ public class IntergenicRegionsTest extends TestCase
             genes[i].setId(new Integer(geneId));
             genes[i].setLength(new Integer(end - start + 1));
             genes[i].setChromosome(chr);
-            geneLocs[i] = createLocation(chr, genes[i], 1, start, end, Location.class);
+            geneLocs[i] = createLocation(chr, genes[i], "1", start, end, Location.class);
             geneLocs[i].setId(new Integer(100 + geneId));
             genes[i].setChromosomeLocation(geneLocs[i]);
             IntergenicRegionUtil.addToListMap(chr1locMap, geneLocs[i].getStart(), genes[i]);
@@ -364,17 +364,16 @@ public class IntergenicRegionsTest extends TestCase
         return chr.getId();
     }
 
-    private Location createLocation(BioEntity object, BioEntity subject, int strand,
+    private Location createLocation(BioEntity object, BioEntity subject, String strand,
                                     int start, int end, Class locationClass) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(locationClass));
         loc.setObject(object);
         loc.setSubject(subject);
-        loc.setStrand(new Integer(strand));
+        loc.setStrand(strand);
         loc.setStart(new Integer(start));
         loc.setEnd(new Integer(end));
         loc.setStartIsPartial(Boolean.FALSE);
         loc.setEndIsPartial(Boolean.FALSE);
-        loc.setStrand(new Integer(strand));
         return loc;
     }
 }

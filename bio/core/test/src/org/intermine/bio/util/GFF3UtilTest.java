@@ -44,7 +44,7 @@ public class GFF3UtilTest extends TestCase
 
         geneLocation.setStart(new Integer(100));
         geneLocation.setEnd(new Integer(800));
-        geneLocation.setStrand(new Integer(1));
+        geneLocation.setStrand("1");
         
         exon.setChromosome(chromosome);
         exon.setChromosomeLocation(exonLocation);
@@ -52,7 +52,7 @@ public class GFF3UtilTest extends TestCase
 
         exonLocation.setStart(new Integer(200));
         exonLocation.setEnd(new Integer(300));
-        exonLocation.setStrand(new Integer(-1));
+        exonLocation.setStrand("-1");
         
         chromosome.setIdentifier("4");
         chromosome.setLength(new Integer(1000));

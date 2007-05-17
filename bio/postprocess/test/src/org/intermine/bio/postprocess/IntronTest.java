@@ -188,7 +188,7 @@ public class IntronTest extends TestCase{
         t1.setOrganism(organism);
         t1.setExonCount(new Integer(3));
         t1.setChromosome(chr);
-        Location location = createLocation(chr, t1, 1, 1, 1000);
+        Location location = createLocation(chr, t1, "1", 1, 1000);
         t1.setChromosomeLocation(location);
         toStore.add(location);
         toStore.add(t1);
@@ -209,7 +209,7 @@ public class IntronTest extends TestCase{
             exons[i].setId(new Integer(exonId));
             exons[i].setLength(new Integer(end - start + 1));
             exons[i].setChromosome(chr);
-            exonLocs[i] = createLocation(chr, exons[i], 1, start, end);
+            exonLocs[i] = createLocation(chr, exons[i], "1", start, end);
             exonLocs[i].setId(new Integer(exonId + 100));
             exons[i].setChromosomeLocation(exonLocs[i]);
             // System.out.println("exonLocs[" + i + "]" + exonLocs[i]);
@@ -249,7 +249,7 @@ public class IntronTest extends TestCase{
         t2.setOrganism(organism);
         t2.setExonCount(new Integer(3));
         t2.setChromosome(chr);
-        Location location = createLocation(chr, t2, 1, 1, 1150);
+        Location location = createLocation(chr, t2, "1", 1, 1150);
         t2.setChromosomeLocation(location);
         toStore.add(location);
         toStore.add(t2);
@@ -270,7 +270,7 @@ public class IntronTest extends TestCase{
             exons[i].setId(new Integer(exonId));
             exons[i].setLength(new Integer(end - start + 1));
             exons[i].setChromosome(chr);
-            exonLocs[i] = createLocation(chr, exons[i], 1, start, end);
+            exonLocs[i] = createLocation(chr, exons[i], "1", start, end);
             exonLocs[i].setId(new Integer(exonId + 100));
             //System.out.println("exonLocs[" + i + "]" + exonLocs[i]);
             exons[i].setChromosomeLocation(exonLocs[i]);
@@ -311,7 +311,7 @@ public class IntronTest extends TestCase{
         t3.setOrganism(organism);
         t3.setExonCount(new Integer(1));
         t3.setChromosome(chr);
-        Location location = createLocation(chr, t3, 1, 1, 1000);
+        Location location = createLocation(chr, t3, "1", 1, 1000);
         t3.setChromosomeLocation(location);
         toStore.add(location);
         toStore.add(t3);
@@ -321,7 +321,7 @@ public class IntronTest extends TestCase{
         exon.setId(new Integer(140));
         exon.setOrganism(organism);
         exon.setChromosome(chr);
-        Location exonLoc = createLocation(chr, exon, 1, 1, 1000);
+        Location exonLoc = createLocation(chr, exon, "1", 1, 1000);
         exon.setChromosomeLocation(exonLoc);
         toStore.add(location);
         toStore.add(exon);
@@ -341,17 +341,16 @@ public class IntronTest extends TestCase{
         return t3;
     }
 
-    private Location createLocation(BioEntity object, BioEntity subject, int strand,
+    private Location createLocation(BioEntity object, BioEntity subject, String strand,
                                     int start, int end) {
         Location loc = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         loc.setObject(object);
         loc.setSubject(subject);
-        loc.setStrand(new Integer(strand));
+        loc.setStrand(strand);
         loc.setStart(new Integer(start));
         loc.setEnd(new Integer(end));
         loc.setStartIsPartial(Boolean.FALSE);
         loc.setEndIsPartial(Boolean.FALSE);
-        loc.setStrand(new Integer(strand));
         return loc;
     }
 }

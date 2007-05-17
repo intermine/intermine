@@ -262,7 +262,7 @@ public class IntronUtil
 
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
-                location.setStrand(new Integer(1));
+                location.setStrand("1");
                 location.setPhase(new Integer(0));
                 location.setStartIsPartial(Boolean.FALSE);
                 location.setEndIsPartial(Boolean.FALSE);

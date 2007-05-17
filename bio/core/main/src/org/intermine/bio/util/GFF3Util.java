@@ -92,7 +92,7 @@ public abstract class GFF3Util
 
             start = chrLocation.getStart().intValue();
             end = chrLocation.getEnd().intValue();
-            strand = chrLocation.getStrand().intValue() > 0 ? "+" : "-";
+            strand = chrLocation.getStrand().equals("1") ? "+" : "-";
         }
 
         Map recordAttribute = new LinkedHashMap(extraAttributes);

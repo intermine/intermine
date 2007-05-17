@@ -128,7 +128,7 @@ public class TransferSequences
 
             copySeqArray(currentChrBases, assembly.getSequence().getResidues(),
                          assemblyOnChrLocation.getStart().intValue(),
-                         assemblyOnChrLocation.getStrand().intValue());
+                         assemblyOnChrLocation.getStrand());
         }
         if (currentChrBases == null) {
             LOG.error("in transferToChromosome(): no Assembly sequences found");
@@ -355,7 +355,7 @@ public class TransferSequences
             subSeqString = new String(chromosomeSequenceString.substring(endPos, startPos));
         }
 
-        if (locationOnChr.getStrand().intValue() == -1) {
+        if (locationOnChr.getStrand().equals("-1")) {
             SymbolList symbolList = DNATools.createDNA(subSeqString);
 
             symbolList = DNATools.reverseComplement(symbolList);
@@ -367,12 +367,12 @@ public class TransferSequences
     }
 
     private void copySeqArray(RandomAccessFile raf, String sourceSequence,
-                              int start, int strand)
+                              int start, String strand)
         throws IllegalSymbolException, IllegalAlphabetException, IOException {
 
         byte[] byteArray = new byte[sourceSequence.length()];
 
-        if (strand == -1) {
+        if (strand.equals("-1")) {
             SymbolList symbolList = DNATools.createDNA(sourceSequence);
 
             symbolList = DNATools.reverseComplement(symbolList);
@@ -470,7 +470,7 @@ public class TransferSequences
            Sequence exonSequence = (Sequence) rr.get(2);
            Location  location = (Location) rr.get(3);
 
-           if (location.getStrand() != null && location.getStrand().intValue() == -1) {
+           if (location.getStrand() != null && location.getStrand().equals("-1")) {
                currentTranscriptBases.insert(0, exonSequence.getResidues());
            } else {
                currentTranscriptBases.append(exonSequence.getResidues());
