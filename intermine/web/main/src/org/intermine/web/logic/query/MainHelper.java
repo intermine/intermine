@@ -127,8 +127,8 @@ public class MainHelper
 
         Set<FieldDescriptor> attributeNodes = new TreeSet<FieldDescriptor>(comparator);
         Set<FieldDescriptor> referenceAndCollectionNodes = new TreeSet<FieldDescriptor>(comparator);
-        for (Iterator i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
-            FieldDescriptor fd = (FieldDescriptor) i.next();
+        for (Iterator<FieldDescriptor> i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
+            FieldDescriptor fd = i.next();
             if (!fd.isReference() && !fd.isCollection()) {
                 attributeNodes.add(fd);
             } else {
@@ -196,7 +196,7 @@ public class MainHelper
      */
     public static Query makeQuery(PathQuery pathQueryOrig, Map savedBags,
                                   Map<String, QueryNode> pathToQueryNode) {
-        PathQuery pathQuery = (PathQuery) pathQueryOrig.clone();
+        PathQuery pathQuery = pathQueryOrig.clone();
         Map qNodes = pathQuery.getNodes();
         List<Path> view = pathQuery.getView();
         List<OrderBy> sortOrder = pathQuery.getSortOrder();
@@ -227,38 +227,7 @@ public class MainHelper
             andcs.addConstraint(rootcs);
         }
 
-        // Build a map to collapse nodes in loop queries
-
-        Map<String, String> loops = new HashMap<String, String>();
-
-        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
-            String path = node.getPathString();
-            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
-                Constraint c = (Constraint) j.next();
-                if ((node.isReference() || node.isCollection())
-                        && (c.getOp() == ConstraintOp.EQUALS)
-                        && (codeToCS.get(c.getCode()) == andcs)) {
-                    String dest = (String) c.getValue();
-                    String finalDest = loops.get(dest);
-                    if (finalDest == null) {
-                        finalDest = dest;
-                    }
-                    Map<String, String> newLoops = new HashMap<String, String>();
-                    newLoops.put(path, finalDest);
-                    for (Iterator<Entry<String, String>> k = loops.entrySet().iterator();
-                         k.hasNext();) {
-                        Entry<String, String> entry = k.next();
-                        String entryDest = entry.getValue();
-                        if (entryDest.equals(path)) {
-                            entryDest = finalDest;
-                        }
-                        newLoops.put(entry.getKey(), entryDest);
-                    }
-                    loops = newLoops;
-                }
-            }
-        }
+        Map<String, String> loops = makeLoopsMap(pathQuery, codeToCS, andcs);
 
         Map<String, QueryNode> queryBits = new HashMap<String, QueryNode>();
         LinkedList<PathNode> queue = new LinkedList<PathNode>();
@@ -359,12 +328,7 @@ public class MainHelper
                         cs.addConstraint(new SimpleConstraint((QueryEvaluable) qn, c.getOp()));
                     } else {
                         if (qn.getType().equals(String.class)) {
-                            // do a case-insensitive search
-                            QueryExpression qf = new QueryExpression(QueryExpression.LOWER,
-                                    (QueryField) qn);
-                            String lowerCaseValue = ((String) c.getValue()).toLowerCase();
-                            cs.addConstraint(new SimpleConstraint(qf, c.getOp(),
-                                                                  new QueryValue(lowerCaseValue)));
+                            cs.addConstraint(makeQueryStringConstraint(qn, c));
                         } else {
                             cs.addConstraint(new SimpleConstraint((QueryField) qn, c.getOp(),
                                                                   new QueryValue(c.getValue())));
@@ -380,31 +344,9 @@ public class MainHelper
             }
         }
 
-        // Now process loop != constraints. The constraint parameter refers backwards and 
+        // Now process loop constraints. The constraint parameter refers backwards and 
         // forwards in the query so we can't process these in the above loop. 
-        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) { 
-            PathNode node = (PathNode) i.next(); 
-            if (node.isReference() || node.isCollection()) {
-                String path = node.getPathString(); 
-                QueryNode qn = queryBits.get(path); 
-
-                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) { 
-                    Constraint c = (Constraint) j.next(); 
-                    ConstraintSet cs = codeToCS.get(c.getCode()); 
-                    if ((c.getOp() == ConstraintOp.NOT_EQUALS)
-                        || ((c.getOp() == ConstraintOp.EQUALS)
-                            && (!loops.containsKey(path))
-                            && (!loops.containsKey(c.getValue())))) { 
-                        QueryClass refQc = (QueryClass) queryBits.get(c.getValue()); 
-                        if (refQc == null) {
-                            throw new NullPointerException("Could not find QueryClass for "
-                                    + c.getValue() + " in querybits: " + queryBits);
-                        }
-                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc)); 
-                    } 
-                }
-            }
-        }
+        makeQueryProcessLoopsHelper(pathQuery, codeToCS, loops, queryBits);
 
         if (andcs.getConstraints().isEmpty()) {
             q.setConstraint(null);
@@ -457,6 +399,102 @@ public class MainHelper
         }
 
         return q;
+    }
+
+    /**
+     * Make a SimpleConstraint for the given Constraint obejct.  The Constraint will be 
+     * case-insensitive.  If the Constraint value contains a wildcard and the operation is "=" or
+     * "<>" then the operation will be changed to "LIKE" or "NOT_LIKE"as appropriate.
+     */
+    private static SimpleConstraint makeQueryStringConstraint(QueryNode qn, Constraint c) {
+        QueryExpression qf = new QueryExpression(QueryExpression.LOWER, (QueryField) qn);
+        String lowerCaseValue = ((String) c.getValue()).toLowerCase();
+        SimpleConstraint stringConstraint;
+        if (lowerCaseValue.indexOf('%') != -1 || lowerCaseValue.indexOf('_') != -1) {
+            if (c.getOp().equals(ConstraintOp.EQUALS)) {
+                return new SimpleConstraint(qf, ConstraintOp.MATCHES, 
+                                            new QueryValue(lowerCaseValue));
+            } else {
+                if (c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
+                    return new SimpleConstraint(qf, ConstraintOp.DOES_NOT_MATCH,
+                                                new QueryValue(lowerCaseValue));
+                } else {
+                    // fail through
+                }
+            }
+        }
+        return new SimpleConstraint(qf, c.getOp(), new QueryValue(lowerCaseValue));
+    }
+
+    /**
+     * Process loop constraints. The constraint parameter refers backwards and 
+     * forwards in the query so we can't process these in the main makeQuery loop
+     */
+    private static void makeQueryProcessLoopsHelper(PathQuery pathQuery, 
+                                                    Map<String, ConstraintSet> codeToCS, 
+                                                    Map<String, String> loops,
+                                                    Map<String, QueryNode> queryBits) {
+        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) { 
+            PathNode node = (PathNode) i.next(); 
+            if (node.isReference() || node.isCollection()) {
+                String path = node.getPathString(); 
+                QueryNode qn = queryBits.get(path); 
+
+                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) { 
+                    Constraint c = (Constraint) j.next(); 
+                    ConstraintSet cs = codeToCS.get(c.getCode()); 
+                    if ((c.getOp() == ConstraintOp.NOT_EQUALS)
+                        || ((c.getOp() == ConstraintOp.EQUALS)
+                            && (!loops.containsKey(path))
+                            && (!loops.containsKey(c.getValue())))) { 
+                        QueryClass refQc = (QueryClass) queryBits.get(c.getValue()); 
+                        if (refQc == null) {
+                            throw new NullPointerException("Could not find QueryClass for "
+                                    + c.getValue() + " in querybits: " + queryBits);
+                        }
+                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc)); 
+                    } 
+                }
+            }
+        }
+    }
+
+    /**
+     * Build a map to collapse nodes in loop queries
+     */
+    private static Map<String, String> makeLoopsMap(PathQuery pathQuery, 
+                                                    Map<String, ConstraintSet> codeToCS, 
+                                                    ConstraintSet andcs) {
+        Map<String, String> loops = new HashMap<String, String>();
+        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
+            String path = node.getPathString();
+            for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
+                Constraint c = (Constraint) j.next();
+                if ((node.isReference() || node.isCollection())
+                        && (c.getOp() == ConstraintOp.EQUALS)
+                        && (codeToCS.get(c.getCode()) == andcs)) {
+                    String dest = (String) c.getValue();
+                    String finalDest = loops.get(dest);
+                    if (finalDest == null) {
+                        finalDest = dest;
+                    }
+                    Map<String, String> newLoops = new HashMap<String, String>();
+                    newLoops.put(path, finalDest);
+                    for (Iterator<Entry<String, String>> k = loops.entrySet().iterator();
+                         k.hasNext();) {
+                        Entry<String, String> entry = k.next();
+                        String entryDest = entry.getValue();
+                        if (entryDest.equals(path)) {
+                            entryDest = finalDest;
+                        }
+                        newLoops.put(entry.getKey(), entryDest);
+                    }
+                    loops = newLoops;
+                }
+            }
+        }
+        return loops;
     }
 
     /*
@@ -565,7 +603,7 @@ public class MainHelper
      * @param className the name of the class
      * @return the relevant Class
      */
-    public static Class getClass(String className) {
+    public static Class<?> getClass(String className) {
         Class cls = TypeUtil.instantiate(className);
         if (cls == null) {
             if ("Date".equals(className)) {

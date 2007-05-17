@@ -34,9 +34,9 @@ public class DisplayConstraint
     /** The related model. */
     protected Model model;
     /** The list of valid operators. */
-    private Map validOps;
+    private Map<Integer, String> validOps;
     /** List of fixed operator indices. */
-    private List fixedOps;
+    private List<Integer> fixedOps;
     /** List of possible attribute values. */
     private List optionsList;
     /** The object store summary. */
@@ -69,8 +69,15 @@ public class DisplayConstraint
             return validOps;
         }
         
-        validOps = MainHelper.mapOps(SimpleConstraint.validOps(MainHelper.
-                getClass(node.getType())));
+        Class nodeType = MainHelper.getClass(node.getType());
+        List<ConstraintOp> allOps = SimpleConstraint.validOps(nodeType);
+        
+        List<ConstraintOp> simpleConstraintOps = new ArrayList<ConstraintOp>(allOps);
+        if (String.class.equals(nodeType)) {
+            simpleConstraintOps.remove(ConstraintOp.MATCHES);
+            simpleConstraintOps.remove(ConstraintOp.DOES_NOT_MATCH);
+        }
+        validOps = MainHelper.mapOps(simpleConstraintOps);
         
         return validOps;
     }
@@ -82,12 +89,12 @@ public class DisplayConstraint
      *
      * @return  indices of operators that should only be applied to values in the options list
      */
-    public List getFixedOpIndices() {
+    public List<Integer> getFixedOpIndices() {
         if (fixedOps != null) {
             return fixedOps;
         }
         
-        fixedOps = new ArrayList();
+        fixedOps = new ArrayList<Integer>();
         List newOptionsList = new ArrayList();
         
         String parentType = node.getParentType();

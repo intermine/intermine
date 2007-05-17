@@ -242,6 +242,43 @@ public class MainHelperTest extends TestCase {
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
     }
 
+    // As above but add a wildcard in the constraint which makes a MATCHES constraint
+    // Constrain Employee.department.name = 'DepartmentA*'
+    public void testMakeQueryWildcard() throws Exception {
+        Map queries = readQueries();
+        PathQuery pq = (PathQuery) queries.get("employeeDepartmentCompanyWildcard");
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Employee.class);
+        q.addToSelect(qc1);
+        q.addFrom(qc1);
+        QueryClass qc2 = new QueryClass(Department.class);
+        q.addToSelect(qc2);
+        q.addFrom(qc2);
+        QueryField qf1 = new QueryField(qc2, "name");
+        QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
+        SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.MATCHES, 
+                                                    new QueryValue("departmenta%"));
+        QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
+        ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
+        cs.addConstraint(cc1);
+        cs.addConstraint(sc1);
+        QueryClass qc3 = new QueryClass(Company.class);
+        q.addToSelect(qc3);
+        q.addFrom(qc3);
+        QueryObjectReference qor2 = new QueryObjectReference(qc2, "company");
+        ContainsConstraint cc2 = new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qc3);
+        cs.addConstraint(cc2);
+        q.setConstraint(cs);
+        q.addToOrderBy(new QueryField(qc1, "name"));
+        q.addToOrderBy(qf1);
+        q.addToOrderBy(new QueryField(qc3, "name"));
+
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
+    }
+
+
 
     // Select Employee.name, Employee.departments.company.name  (should not select Department)
     // Constrain Employee.department.name = 'DepartmentA1'

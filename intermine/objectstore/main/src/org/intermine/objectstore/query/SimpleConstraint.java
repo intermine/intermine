@@ -122,6 +122,7 @@ public class SimpleConstraint extends Constraint
      * @param obj the object to compare with
      * @return true if objects are equal
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof SimpleConstraint) {
             SimpleConstraint sc = (SimpleConstraint) obj;
@@ -137,13 +138,14 @@ public class SimpleConstraint extends Constraint
      *
      * @return the hashCode
      */
+    @Override
     public int hashCode() {
         return qe1.hashCode()
             + 3 * op.hashCode() 
             + 7 * Util.hashCode(qe2);
     }
 
-    protected static final List NUMBER_OPS = Arrays.asList(new ConstraintOp[] {
+    protected static final List<ConstraintOp> NUMBER_OPS = Arrays.asList(new ConstraintOp[] {
         ConstraintOp.EQUALS,
         ConstraintOp.NOT_EQUALS,
         ConstraintOp.LESS_THAN,
@@ -151,9 +153,9 @@ public class SimpleConstraint extends Constraint
         ConstraintOp.GREATER_THAN,
         ConstraintOp.GREATER_THAN_EQUALS});
 
-    protected static final List DATE_OPS = NUMBER_OPS;
+    protected static final List<ConstraintOp> DATE_OPS = NUMBER_OPS;
 
-    protected static final List STRING_OPS = Arrays.asList(new ConstraintOp[] {
+    protected static final List<ConstraintOp> STRING_OPS = Arrays.asList(new ConstraintOp[] {
         ConstraintOp.EQUALS,
         ConstraintOp.NOT_EQUALS,
         ConstraintOp.LESS_THAN,
@@ -163,11 +165,11 @@ public class SimpleConstraint extends Constraint
         ConstraintOp.MATCHES,
         ConstraintOp.DOES_NOT_MATCH});
 
-    protected static final List BOOLEAN_OPS = Arrays.asList(new ConstraintOp[] {
+    protected static final List<ConstraintOp> BOOLEAN_OPS = Arrays.asList(new ConstraintOp[] {
         ConstraintOp.EQUALS,
         ConstraintOp.NOT_EQUALS});
 
-    protected static final List ALL_OPS = Arrays.asList(new ConstraintOp[] {
+    protected static final List<ConstraintOp> ALL_OPS = Arrays.asList(new ConstraintOp[] {
         ConstraintOp.EQUALS,
         ConstraintOp.NOT_EQUALS,
         ConstraintOp.LESS_THAN,
@@ -185,7 +187,7 @@ public class SimpleConstraint extends Constraint
      * @param arg2 the second argument
      * @return whether the comparison is valid
      */
-    public static boolean validComparison(Class arg1, ConstraintOp op, Class arg2) {
+    public static boolean validComparison(Class<?> arg1, ConstraintOp op, Class<?> arg2) {
         if (arg2 == null) {
             return op == ConstraintOp.IS_NULL || op == ConstraintOp.IS_NOT_NULL;
         }
@@ -202,7 +204,7 @@ public class SimpleConstraint extends Constraint
      * @param arg2 the second argument
      * @return whether the types are comparable
      */
-    public static boolean comparable(Class arg1, Class arg2) {
+    public static boolean comparable(Class<?> arg1, Class<?> arg2) {
         if (arg1.equals(arg2)
                 && (arg1.equals(String.class) || arg1.equals(Boolean.class)
                     || arg1.equals(Date.class) || arg1.equals(Short.class)
@@ -219,7 +221,7 @@ public class SimpleConstraint extends Constraint
      * @param arg the argument type
      * @return an array of character codes
      */
-    public static List validOps(Class arg) {
+    public static List<ConstraintOp> validOps(Class<?> arg) {
         if (Number.class.isAssignableFrom(arg)) {
             return NUMBER_OPS;
         } else if (String.class.equals(arg)) {
@@ -242,7 +244,7 @@ public class SimpleConstraint extends Constraint
      * @param arg the argument type
      * @return  constraint operators that will only accept an enumerated value
      */
-    public static List fixedEnumOps(Class arg) {
+    public static List<ConstraintOp> fixedEnumOps(Class<?> arg) {
         if (Number.class.isAssignableFrom(arg)) {
             return NUMBER_OPS;
         } else if (String.class.equals(arg)) {
