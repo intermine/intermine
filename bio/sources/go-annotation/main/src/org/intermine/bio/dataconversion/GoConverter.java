@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,7 +63,6 @@ public class GoConverter extends FileConverter
     protected Map publications = new LinkedHashMap();
     protected Map organisms = new LinkedHashMap();
     protected Map termIdNameMap = new LinkedHashMap();
-    protected int id = 0;
     protected Map ids = new HashMap();
     protected File ontology;
     protected Map withTypes = new LinkedHashMap();
@@ -71,7 +71,8 @@ public class GoConverter extends FileConverter
     protected Map holderMap = new LinkedHashMap();
     protected ItemFactory itemFactory;
     private OboParser oboParser = null;
-
+    protected Set productIds = new HashSet();
+    
     /*Some Debugging vars*/
     private static final String STORE_ONE = "store_1";
     //private static final String STORE_TWO = "store_2";
@@ -172,7 +173,7 @@ public class GoConverter extends FileConverter
         }
 
         BufferedReader br = new BufferedReader(reader);
-        String line;
+        String line, lastProductId = null;
 
         // loop through entire file
         while ((line = br.readLine()) != null) {
@@ -195,6 +196,28 @@ public class GoConverter extends FileConverter
 
             // parse the line into the different fields
             String productId = array[1];
+            
+            
+            if (lastProductId != null && !lastProductId.equals(productId)) {
+                // we have moved onto the next product, store the previous one
+                storeProductData();
+                
+                if (productIds.contains(productId)) {
+                    throw new IllegalArgumentException("Product was found twice in file but not in "
+                                               + "consecutive entries: " + productId + " in file: "
+                                               + getCurrentFile() + ".  To save memory"
+                                               + " we assume the file is ordered");
+                }
+                productIds.add(productId);
+                
+                // and free up some memory
+                // Free up some memory
+                productWrapperMap = new LinkedHashMap();
+                holderMap = new LinkedHashMap();
+                goAnnoItems = new LinkedHashMap();
+            }
+            
+            lastProductId = productId;
             String goId = array[4];
             String qualifier = array[3];
             String strEvidence = array[6];
@@ -221,7 +244,7 @@ public class GoConverter extends FileConverter
                 }
                 Item newOrganism = newOrganism(array[12]);
 
-                // new gene
+                // new gene/protein
                 ItemWrapper newProductWrapper =
                     newProduct(productId, type, newOrganism,
                                newDatasource.getIdentifier(), true, null);
@@ -257,6 +280,12 @@ public class GoConverter extends FileConverter
                 LOG.debug("PROCESS - OLD KEY:" + key.toString());
             }
         }
+        // store the final product
+        storeProductData();
+    }
+
+        
+    private void storeProductData() throws ObjectStoreException {
 
         // Now create and store all the new items...
         // First put everything on a stack so we don't have to hold too many items in memory
@@ -266,6 +295,7 @@ public class GoConverter extends FileConverter
         // terms
         Map goTermId2ParentTermIdSetsMap = null;
 
+        // TODO move to enclosing method
         // do we have an obo based ontology file ?
         if (oboParser != null) {
             try {
@@ -314,12 +344,8 @@ public class GoConverter extends FileConverter
             Item nextGeneProduct = nextWrapper.getItem();
             doStore(nextGeneProduct, STORE_THREE);
         }
-
-        // Free up some memory
-        productWrapperMap = null;
-        holderMap = null;
-        goAnnoItems = null;
     }
+
 
     private Stack buildHolderStack() {
         Stack holderStack = new Stack();
@@ -609,45 +635,6 @@ public class GoConverter extends FileConverter
      * @param callSource  info string so I can work out where the method was called from...
      */
     private void doStore(Item itemToStore, String callSource) throws ObjectStoreException {
-
-//        Attribute identAttr = null;
-//        identAttr = itemToStore.getAttribute("identifier");
-//
-//
-//        String i2sId = itemToStore.getIdentifier();
-//
-//        if (storedItemMap.containsKey(itemToStore.getIdentifier())) {
-//
-//            StringBuffer bigLogMsg = new StringBuffer();
-//
-//            bigLogMsg.append("doStore ");
-//            bigLogMsg.append(callSource);
-//            bigLogMsg.append(" has seen this item id before:");
-//            bigLogMsg.append(i2sId);
-//            bigLogMsg.append(" id_attr:");
-//            bigLogMsg.append(identAttr != null ? identAttr.getValue() : NO_ID_ATTR);
-//            bigLogMsg.append(" previous_id_attr:");
-//            bigLogMsg.append(storedItemMap.get(i2sId) != null
-//                    ? storedItemMap.get(i2sId) : "no_prev_attr");
-//            bigLogMsg.append(" are attrs the same:");
-//
-//            if (identAttr != null) {
-//                bigLogMsg.append(identAttr.getValue().equalsIgnoreCase(
-//                        storedItemMap.get(i2sId).toString()) ? "true" : "false");
-//            }
-//
-//            LOG.error(bigLogMsg.toString());
-//        } else {
-//
-//            LOG.debug("doStore " + callSource
-//                    + " called on a new item:" + itemToStore.getClassName()
-//                    + " id:" + i2sId
-//                    + " id_attr:" + (identAttr != null ? identAttr.getValue() : NO_ID_ATTR));
-//
-//            storedItemMap.put(i2sId,
-//                    (identAttr != null ? identAttr.getValue() : NO_ID_ATTR));
-//        }
-
         getItemWriter().store(ItemHelper.convert(itemToStore));
     }
 
@@ -893,7 +880,7 @@ public class GoConverter extends FileConverter
      * @return a new Item
      */
     protected Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + (id++),
+        return itemFactory.makeItem(alias(className) + "_" + newId(className),
                                     GENOMIC_NS + className, "");
     }
 
@@ -1034,71 +1021,6 @@ public class GoConverter extends FileConverter
 
     }
 
-    /**
-     * Class to hold the current GoAnnotation Item and the set of its parent terms.
-     */
-//    class GoAnnotationItem
-//    {
-//
-//        private Item goAnnotationItem;
-//        private Set parentItems;
-//
-//        /**
-//         * Constructor
-//         *
-//         * @param goAnnotationItem - current go term of interest
-//         * @param parentItems      - set of current items parent terms
-//         */
-//        GoAnnotationItem(Item goAnnotationItem, Set parentItems) {
-//            this.goAnnotationItem = goAnnotationItem;
-//            this.parentItems = parentItems;
-//        }
-//
-//        /**
-//         * @return Get the current go term.
-//         */
-//        Item getGoAnnotationItem() {
-//            return goAnnotationItem;
-//        }
-//
-//        /**
-//         * @return Get the parent go term set for the current go term.
-//         */
-//        Set getParentItems() {
-//            return parentItems;
-//        }
-//
-//        /**
-//         * @return a string that is usefull for debugging...
-//         */
-//        public String toUsefulLogString() {
-//
-//            StringBuffer tsBuff = new StringBuffer();
-//
-//            Item item = goAnnotationItem;
-//
-//            tsBuff.append(" GOANNOITEM: ")
-//                    .append(item.getClassName())
-//                    .append(" ")
-//                    .append(item.getAttribute("identifier").getValue())
-//                    .append(" ")
-//                    .append(item.getIdentifier() != null ? item.getIdentifier() : "no_id")
-//                    .append("\n");
-//
-//            for (Iterator piit = parentItems.iterator(); piit.hasNext();) {
-//                item = (Item) piit.next();
-//                tsBuff.append(" NEXTPARENT: ")
-//                        .append(item.getClassName())
-//                        .append(" ")
-//                        .append(item.getAttribute("identifier").getValue())
-//                        .append(" ")
-//                        .append(item.getIdentifier() != null ? item.getIdentifier() : "no_id")
-//                        .append("\n");
-//            }
-//
-//            return tsBuff.toString();
-//        }
-//    }
 
     /**
      * Class to identify an Item using a unique key
@@ -1155,7 +1077,6 @@ public class GoConverter extends FileConverter
         GoTermToGene(String productId, String goId, String qualifier) {
             this.productId = productId;
             this.goId = goId;
-            //this.code = code;
             this.qualifier = qualifier;
         }
 
@@ -1165,7 +1086,6 @@ public class GoConverter extends FileConverter
         public boolean equals(Object o) {
             if (o instanceof GoTermToGene) {
                 GoTermToGene go = (GoTermToGene) o;
-//              && code.equals(go.code)
                 return productId.equals(go.productId)
                         && goId.equals(go.goId)
                         && qualifier.equals(go.qualifier);
@@ -1177,8 +1097,6 @@ public class GoConverter extends FileConverter
          * @see Object#hashCode()
          */
         public int hashCode() {
-//          + (7 * code.hashCode())
-
             return ((3 * productId.hashCode())
                     + (5 * goId.hashCode())
                     + (7 * qualifier.hashCode()));
@@ -1188,17 +1106,14 @@ public class GoConverter extends FileConverter
          * @see Object#toString()
          */
         public String toString() {
-
             StringBuffer toStringBuff = new StringBuffer();
 
             toStringBuff.append("GoTermToGene - productId:");
             toStringBuff.append(productId);
             toStringBuff.append(" goId:");
             toStringBuff.append(goId);
-            //toStringBuff.append(" code:");
-            //toStringBuff.append(code);
-            //toStringBuff.append(" qualifier:");
-            //toStringBuff.append(qualifier);
+            toStringBuff.append(" qualifier:");
+            toStringBuff.append(qualifier);
 
             return toStringBuff.toString();
         }

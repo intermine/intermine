@@ -36,13 +36,6 @@ public class GoConverterTest extends ItemsTestCase
     }
 
     public void setUp() throws Exception {
-//        goFile = File.createTempFile("go-tiny", ".ontology");
-//      
-//        Reader goReader = new InputStreamReader(
-//                getClass().getClassLoader().getResourceAsStream("go-tiny.ontology"));
-//        writeTempFile(goFile, goReader);
-
-
         goOboFile = File.createTempFile("go-tiny", ".obo");
         Reader goOboReader = new InputStreamReader(
             getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
@@ -59,35 +52,23 @@ public class GoConverterTest extends ItemsTestCase
     }
 
     public void tearDown() throws Exception {
-        //goFile.delete();
-        //goOboFile.delete();
+        goOboFile.delete();
     }
 
-//    public void testTranslate() throws Exception {
-//        translateCommon(goFile, "GoConverterTest_src.txt",
-//                "GoConverterTest_tgt.xml", true, false);
-//    }
-
-    public void testOboTranslate() throws Exception {
-        translateCommon(goOboFile, "GoConverterOboTest_src.txt",
-                "GoConverterOboTest_tgt.xml", true, false);
-    }
-
-    private void translateCommon(File onotologyFile, String srcFile, String tgtFile,
-                                 boolean verbose, boolean writeItemFile) throws Exception{
+    public void testProcess() throws Exception {
 
         Reader reader = new InputStreamReader(
-                getClass().getClassLoader().getResourceAsStream(srcFile));
+                getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
         GoConverter converter = new GoConverter(writer);
-        converter.setOntologyfile(onotologyFile);
+        converter.setOntologyfile(goOboFile);
         converter.process(reader);
         converter.close();
 
         // uncomment to write a new target items file
-        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        writeItemsFile(writer.getItems(), "go-tgt-items.xml");
         
-        assertEquals(readItemSet(tgtFile), writer.getItems());
+        assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
 
 
@@ -97,17 +78,38 @@ public class GoConverterTest extends ItemsTestCase
 
         Set expected = new HashSet();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-        Item gene1 = tgtItemFactory.makeItem("2_2", GENOMIC_NS + "Gene", "");
+        Item gene1 = tgtItemFactory.makeItem("2_1", GENOMIC_NS + "Gene", "");
         gene1.setAttribute("organismDbId", "FBgn0026430");
-        gene1.addToCollection("evidence", "0_3");
+        gene1.addToCollection("evidence", "0_2");
         expected.add(gene1);
-        Item gene2 = tgtItemFactory.makeItem("2_5", GENOMIC_NS + "Gene", "");
+        Item gene2 = tgtItemFactory.makeItem("2_2", GENOMIC_NS + "Gene", "");
         gene2.setAttribute("organismDbId", "FBgn0001612");
-        gene2.addToCollection("evidence", "0_3");
+        gene2.addToCollection("evidence", "0_2");
         expected.add(gene2);
         Item organism = tgtItemFactory.makeItem("1_1", GENOMIC_NS + "Organism", "");
         organism.setAttribute("taxonId", "7227");
         assertEquals(expected, new HashSet(converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "10_10")));
+    }
+    
+    
+    // if we see the same product id twice but not in order process should fail
+    public void testFileNotOrdered() throws Exception {
+        MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+        GoConverter converter = new GoConverter(writer);
+        converter.setOntologyfile(goOboFile);
+
+        Reader reader = new InputStreamReader(
+            getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
+
+        converter.productIds.add("FBgn0020002");
+                
+        try {
+            converter.process(reader);
+            fail("Expected an exception due to unordered file");
+        } catch (IllegalArgumentException e) {
+            // expected
+            converter.close();
+        }
     }
 }
