@@ -301,7 +301,7 @@ public class DataTranslator
      * @throws ObjectStoreException if error reading/writing an item
      * @throws InterMineException if no target class/property name can be found
      */
-    protected Collection translateItem(Item srcItem)
+    protected Collection<Item> translateItem(Item srcItem)
         throws ObjectStoreException, InterMineException {
         String tgtClsName = null;
 
