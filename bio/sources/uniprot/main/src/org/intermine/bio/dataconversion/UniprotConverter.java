@@ -11,10 +11,12 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -71,6 +73,9 @@ public class UniprotConverter extends FileConverter
     private Map aliases = new HashMap();
     private Map keyMaster = new HashMap();
     private boolean createInterpro = false;
+    private static final List<String> GENE_PREFIXES_TO_STRIP = 
+        Arrays.asList(new String[] {"AgaP_"});
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -690,6 +695,9 @@ public class UniprotConverter extends FileConverter
                     String type = attName;
                     String name = attValue.toString();
 
+                    // See #1199 - remove organism prefixes ("AgaP_" or "Dmel_")
+                    name = name.replaceAll("^[A-Z][a-z][a-z][A-Za-z]_", "");
+                    
                     geneNames.add(new String(name));
 
                     // genes can have more than one synonym, so use name as key for map
