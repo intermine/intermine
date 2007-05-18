@@ -270,6 +270,7 @@
       <fieldconfig fieldExpr="subject.identifier"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
+      <fieldconfig fieldExpr="strand"/>
     </fields>
   </class>
 
