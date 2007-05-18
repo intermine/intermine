@@ -37,11 +37,6 @@ public class EnsemblDataTranslator extends DataTranslator
     /**
      * USEFULL CONSTANT
      * */
-    public static final String EMPTY_STRING = "";
-
-    /**
-     * USEFULL CONSTANT
-     * */
     public static final String IDENTIFIER = "identifier";
 
     protected static final String PATH_NAME_SPACE = "http://www.intermine.org/model/ensembl#";
@@ -532,8 +527,8 @@ public class EnsemblDataTranslator extends DataTranslator
             }
 
             //check to see if we have a valid accession & dbname.
-            if (accession != null && !accession.equals(EMPTY_STRING)
-                && dbname != null && !dbname.equals(EMPTY_STRING)) {
+            if (accession != null && !accession.equals("")
+                && dbname != null && !dbname.equals("")) {
                 //If we have a valid xref for this dsname then we can create the synonym for the
                 // external database accession.
                 //NOTE: if the xref is being used as an alternative identifier it will already have
@@ -565,8 +560,8 @@ public class EnsemblDataTranslator extends DataTranslator
 
 
             //check to see if we have a valid display_lable (synonym) & dbname.
-            if (symbol != null && !symbol.equals(EMPTY_STRING)
-                && dbname != null && !dbname.equals(EMPTY_STRING)) {
+            if (symbol != null && !symbol.equals("")
+                && dbname != null && !dbname.equals("")) {
                 //Now check to see if we can create a synonym that represents a symbol as well.
                 if (config.containsXrefSymbolDataSourceNamed(dbname)) {
                     extDbRef = config.getDataSrcRefByDataSrcName(dbname);
