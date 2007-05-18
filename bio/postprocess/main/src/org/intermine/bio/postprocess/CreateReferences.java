@@ -90,7 +90,7 @@ public class CreateReferences
                               Chromosome.class, "transcripts", false);
         insertCollectionField(Exon.class, "objects", Location.class, "object",
                               Chromosome.class, "exons", false);
-        insertCollectionField(ChromosomeBand.class, "subjects", Location.class, "subject",
+        insertCollectionField(ChromosomeBand.class, "objects", Location.class, "object",
                               Chromosome.class, "chromosomeBands", false);
 
         LOG.info("insertReferences stage 5");
