@@ -13,7 +13,7 @@
   </protein>
   <gene>
     <name type="primary">eve</name>
-    <name type="ORF">CG2328</name>
+    <name type="ORF">AgaP_CG2328</name>
   </gene>
   <organism key="1">
     <name type="scientific">Drosophila melanogaster</name>
