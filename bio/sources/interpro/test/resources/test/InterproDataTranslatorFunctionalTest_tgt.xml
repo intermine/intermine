@@ -563,7 +563,7 @@
     </item>
 
     <item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
-        <attribute name="taxonId" value="7165"/>
+        <attribute name="taxonId" value="180454"/>
     </item>
 
     <item id="-1_3" class="http://www.flymine.org/model/genomic#DataSource">

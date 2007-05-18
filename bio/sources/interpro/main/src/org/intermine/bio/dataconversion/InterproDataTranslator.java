@@ -172,9 +172,11 @@ public class InterproDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslator#translateItem
+     * @see DataTranslator#translateItem()
+     * {@inheritDoc}
      */
-    protected Collection translateItem(Item srcItem)
+    @Override
+    protected Collection<Item> translateItem(Item srcItem)
             throws ObjectStoreException, InterMineException {
 
         // Needed so that STAX can find it's implementation classes
@@ -183,7 +185,7 @@ public class InterproDataTranslator extends DataTranslator
         cl = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-        Set result = new HashSet();
+        Collection<Item> result = new HashSet();
         String srcItemClassName = XmlUtil.getFragmentFromURI(srcItem.getClassName());
 
 
@@ -196,36 +198,47 @@ public class InterproDataTranslator extends DataTranslator
             //But we need to set the version field in the interpro dataset
             setVersionInDataSetItem(srcItem, interproDataSet, "InterPro");
         } else {
-
-            Collection translated = super.translateItem(srcItem);
-
-            if (translated != null) {
-
-                for (Iterator i = translated.iterator(); i.hasNext();) {
-                    Item tgtItem = (Item) i.next();
-
-                    if (PROTEIN.equals(srcItemClassName)) {
-                        result.addAll(processProteinItem(srcItem, tgtItem));
-                    } else if (METHOD.equals(srcItemClassName)) {
-                        result.addAll(processMethodItem(srcItem, tgtItem));
-                    } else if (ENTRY.equals(srcItemClassName)) {
-                        result.addAll(processEntryItem(srcItem, tgtItem));
-                    } else if (MATCHES.equals(srcItemClassName)) {
-                        processMatchesItem(srcItem, tgtItem);
-                    } else if (COMMON_ANNOTATION.equals(srcItemClassName)) {
-                        processCommonAnnotationItem(tgtItem);
-                    }
-
-                    if (tgtItem != null) {
-                        result.add(tgtItem);
+            Collection<Item> translated = super.translateItem(srcItem);
+            if (srcItemClassName.equals("taxonomy")) {
+                result = translated;
+                if (translated.size() != 1) {
+                    throw new RuntimeException("didn't get one target item when translating an "
+                                               + "organism");
+                } else {
+                    Item organism = translated.iterator().next();
+                    if (organism.getAttribute("taxonId").getValue().equals("7165")) {
+                        organism.setAttribute("taxonId", "180454");
                     }
                 }
             } else {
+                if (translated != null) {
 
-                if (CV_DATABASE.equals(srcItemClassName)) {
-                    processCVDatabaseItem(srcItem);
+                    for (Iterator i = translated.iterator(); i.hasNext();) {
+                        Item tgtItem = (Item) i.next();
+
+                        if (PROTEIN.equals(srcItemClassName)) {
+                            result.addAll(processProteinItem(srcItem, tgtItem));
+                        } else if (METHOD.equals(srcItemClassName)) {
+                            result.addAll(processMethodItem(srcItem, tgtItem));
+                        } else if (ENTRY.equals(srcItemClassName)) {
+                            result.addAll(processEntryItem(srcItem, tgtItem));
+                        } else if (MATCHES.equals(srcItemClassName)) {
+                            processMatchesItem(srcItem, tgtItem);
+                        } else if (COMMON_ANNOTATION.equals(srcItemClassName)) {
+                            processCommonAnnotationItem(tgtItem);
+                        }
+
+                        if (tgtItem != null) {
+                            result.add(tgtItem);
+                        }
+                    }
                 } else {
-                    LOG.debug("SKIPPING AN UNTRANSLATED CLASS:" + srcItemClassName);
+
+                    if (CV_DATABASE.equals(srcItemClassName)) {
+                        processCVDatabaseItem(srcItem);
+                    } else {
+                        LOG.debug("SKIPPING AN UNTRANSLATED CLASS:" + srcItemClassName);
+                    }
                 }
             }
         }
