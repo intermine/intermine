@@ -10,6 +10,15 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>InterMine and modENCODE</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        InterMine will be used as a major component of the Data Coordination Centre for the $57m modENCODE project; G. Micklem has been awarded two posts for four years to apply the technology developed in the FlyMine project to the dissemination of data produced as part of the $57m US NIH modENCODE project (&lt;a href="http://www.modencode.org"&gt;www.modencode.org&lt;/a&gt;).  This programme will generate an unprecedented amount of data about functional elements in the genomes of the fruit fly &lt;i&gt;Drosophila melanogaster&lt;/i&gt; and the nematode &lt;i&gt;Caenorhabditis elegans&lt;/i&gt;.
+      </description>
+      <pubDate>Fri, 18th May 2007</pubDate>
+    </item>
+
+    <item>
       <title>FlyMine 7.1 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
