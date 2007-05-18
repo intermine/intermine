@@ -255,10 +255,10 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                     // integrated with anything (although we have defined that the class should
                     // be integrated.  For the moment just log an error.                    
                     LOG.warn("No valid primary key found for object: " + obj);  
+                    return null;
                     //throw new IllegalArgumentException("No valid primary key found for object: "
                     //        + obj);
                 }
-                return null;
             default:
                 return q;
         }
