@@ -132,6 +132,7 @@ public class InitialiserPlugin implements PlugIn
         if (is == null) {
             LOG.info("Unable to find /WEB-INF/aspects.xml, there will be no aspects");
             servletContext.setAttribute(Constants.ASPECTS, Collections.EMPTY_MAP);
+            servletContext.setAttribute(Constants.CATEGORIES, Collections.EMPTY_SET);
         } else {
             Map sets = AspectBinding.unmarhsal(is);
             servletContext.setAttribute(Constants.ASPECTS, sets);
