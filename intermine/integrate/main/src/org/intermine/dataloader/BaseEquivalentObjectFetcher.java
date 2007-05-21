@@ -293,8 +293,10 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         }
 
         if (primaryKeys.isEmpty() || (pkCount > 0)) {
+            // This set may be empty
             return returnSet;
         } else {
+            // All PK queries were invalid
             return null;
         }
     }
@@ -394,7 +396,10 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                             cs.addConstraint(new SubqueryConstraint(qc2, ConstraintOp.IN,
                                                                     refSubQuery));
                         } else {
-                            throw new IllegalArgumentException("Reference was hinted out");
+                            // Note - if we throw an IllegalArgumentException, then this PK gets
+                            // marked as invalid. This one is valid, but there are no results.
+                            //throw new IllegalArgumentException("Reference was hinted out");
+                            return;
                         }
                     } else {
                         InterMineObject destObj = (InterMineObject)
