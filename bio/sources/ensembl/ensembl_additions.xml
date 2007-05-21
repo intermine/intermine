@@ -23,7 +23,6 @@
   </class>
 
   <class name="org.flymine.model.genomic.Gene" is-interface="true">
-    <attribute name="accession" type="java.lang.String"/>
     <reference name="comment" referenced-type="org.flymine.model.genomic.Comment"/>
   </class>
 

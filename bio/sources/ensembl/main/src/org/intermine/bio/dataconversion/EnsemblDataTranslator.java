@@ -506,7 +506,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     srcItem.getReference("display_xref").getRefId()));
 
             String dbname = null;
-            String accession = null;
+            String xrefIdentifier = null;
             String symbol = null;
 
             //look for the reference to an xref database - the external_db
@@ -519,7 +519,7 @@ public class EnsemblDataTranslator extends DataTranslator
             }
             //look for a primary accession - if we have one we may be able to create a synonym
             if (xref.hasAttribute("dbprimary_acc")) {
-                accession = xref.getAttribute("dbprimary_acc").getValue();
+                xrefIdentifier = xref.getAttribute("dbprimary_acc").getValue();
             }
             //look for the display label - since we might be able to use it as a symbol synonym.
             if (xref.hasAttribute("display_label")) {
@@ -527,7 +527,7 @@ public class EnsemblDataTranslator extends DataTranslator
             }
 
             //check to see if we have a valid accession & dbname.
-            if (accession != null && !accession.equals("")
+            if (xrefIdentifier != null && !xrefIdentifier.equals("")
                 && dbname != null && !dbname.equals("")) {
                 //If we have a valid xref for this dsname then we can create the synonym for the
                 // external database accession.
@@ -535,10 +535,10 @@ public class EnsemblDataTranslator extends DataTranslator
                 // a synonym with type 'identifier'.
                 if (config.useXrefDbsForGeneOrganismDbId()
                     && config.geneXrefDbName.equalsIgnoreCase(dbname)) {
-                    tgtItem.addAttribute(new Attribute("organismDbId", accession));
+                    tgtItem.addAttribute(new Attribute("organismDbId", xrefIdentifier));
                     extDbRef = config.getDataSrcRefByDataSrcName(dbname);
                     Item synonym = createProductSynonym(tgtItem, "accession",
-                                   accession, extDbRef);
+                                   xrefIdentifier, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
 
@@ -547,12 +547,21 @@ public class EnsemblDataTranslator extends DataTranslator
                 }
 
                 if (config.containsXrefDataSourceNamed(dbname)) {
+                    String identifierType;
+                    // WARNING TODO XXX FIXME
+                    // this is an ugly hack the code is assuming the all xrefs are accession numbers
+                    // which isn't true for Anopheles
+                    if (config.useXrefDbsForGeneSymbol()) {
+                        identifierType = "symbol";
+                    } else {
+                        identifierType = "accession";
+                    }
                     extDbRef = config.getDataSrcRefByDataSrcName(dbname);
-                    Item synonym = createProductSynonym(tgtItem, "accession", accession, extDbRef);
+                    Item synonym = 
+                        createProductSynonym(tgtItem, identifierType, xrefIdentifier, extDbRef);
                     addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                     synonyms.add(synonym);
-                    tgtItem.addAttribute(new Attribute("accession", accession));
-
+                    tgtItem.addAttribute(new Attribute(identifierType, xrefIdentifier));
                 }
             } else {
                 tgtItem.addAttribute(new Attribute("identifier", stableId));
@@ -1355,6 +1364,7 @@ public class EnsemblDataTranslator extends DataTranslator
         private Reference organismRef = null;
 
         private boolean useXrefDbsForGeneOrganismDbId;
+        private boolean useXrefDbsForGeneSymbol;
         private boolean storeDna;
         private boolean createAnalysisResult;
 
@@ -1408,6 +1418,8 @@ public class EnsemblDataTranslator extends DataTranslator
             //This boolean indicates that we want to use configurable identifier fields...
             useXrefDbsForGeneOrganismDbId = Boolean.valueOf(
                     organismProps.getProperty("flag.useXrefDbsForGeneOrganismDbId")).booleanValue();
+            useXrefDbsForGeneSymbol = Boolean.valueOf(
+                    organismProps.getProperty("flag.useXrefDbsForGeneSymbol")).booleanValue();
             createAnalysisResult = Boolean.valueOf(
                     organismProps.getProperty("flag.createAnalysisResult")).booleanValue();
             storeDna = Boolean.valueOf(
@@ -1549,6 +1561,14 @@ public class EnsemblDataTranslator extends DataTranslator
         boolean useXrefDbsForGeneOrganismDbId() {
             return useXrefDbsForGeneOrganismDbId;
         }
+        
+        /**
+         * Return true if we should put external ids into the symbol field (eg. for Anopheles)
+         */
+        public boolean useXrefDbsForGeneSymbol() {
+            return useXrefDbsForGeneSymbol;
+        }
+
         boolean createAnalysisResult() {
             return createAnalysisResult;
         }
