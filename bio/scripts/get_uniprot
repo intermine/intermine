@@ -62,13 +62,11 @@ if(&checkdir_exists($download_dir)==1){
 	
 	my $date = &convert_date();
 	$log_buffer = "Uniprot\nNew data available in $download_dir containing file(s):\n";
-	$version_buffer = "Current Uniprot data is in $download_dir. Updated on $date with file(s):\n";
+	$version_buffer = "UniProt\n$version $date\nUniProt Universal Protein Resource\nhttp://www.uniprot.org\n";
 	
 	for my $file_to_get (@files_to_get) {
 		&ftp_download($connection,$download_dir,$file_to_get);
-	  	$log_buffer .= "$file_to_get\n";
-		$version_buffer .= "$file_to_get\n";
-	  
+	  	$log_buffer .= "$file_to_get\n";	  
 	}
 	
 	#download keydefs.xml
@@ -78,7 +76,6 @@ if(&checkdir_exists($download_dir)==1){
 	&unzip_dir($download_dir);
 	
 	$log_buffer .= "keydef.xml\n\n";
-	$version_buffer .= "keydef.xml\n";
 	&write_version($uniprot_main_dir,$version_buffer);
 	
 	my $uniprot_link = "/shared/data/uniprot/current";
