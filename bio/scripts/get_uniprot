@@ -129,7 +129,7 @@ if(&checkdir_exists($split_dir)==0){
 	             );		
 
 	#open file to get taxonIDs from the config file
-	my $config_file = "/shared/data/taxonID.config";
+	my $config_file = "resources/get_scripts.config";
 	my %taxons = &config_species($config_file,"uniprot");
 	
 	#open each uniprot file
