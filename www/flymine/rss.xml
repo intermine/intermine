@@ -9,6 +9,18 @@
     <webMaster>info@flymine.org</webMaster>
 
     <!-- Add new news at the top here -->
+
+    <item>
+      <title>FlyMine Workshop</title>
+      <link>http://www.flymine.org/project/jobs</link>
+      <description>
+        A joint FlyMine/FlyBase workshop will held on Wednesday 20th June in the Department of Genetics, Cambridge University. For more information and booking please see &lt;a href="http://www.bio.cam.ac.uk/gradschool/current/courses/bioinformatics.html
+
+"&gt;workshop information&lt;/a&gt;.
+      </description>
+      <pubDate>Mon, 21st May 2006</pubDate>
+    </item>
+
     <item>
       <title>InterMine and modENCODE</title>
       <link>http://www.flymine.org/</link>
