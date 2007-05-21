@@ -154,7 +154,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             while (transIter.hasNext()) {
                 transcriptId = (String) transIter.next();
 
-                CDSHolder holder = new CDSHolder(cdsName, transcriptId);
+                CDSHolder holder = new CDSHolder(cdsName, transcriptId, getSequence());
                 cdss.add(holder);
 
                 // TODO does reference to transcript get set?
@@ -413,7 +413,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
             retval.add(cds);
 
             Item loc = getItemFactory().makeItem(null, tgtNs + "Location", "");
-            loc.setReference("object", getSequence().getIdentifier());
+            loc.setReference("object", holder.sequence);
             loc.setReference("subject", cds.getIdentifier());
             String start = ((TreeSet) cdsStarts.get(holder)).first().toString();
             String strand = (String) cdsStrands.get(holder.key + "_" + start);
@@ -542,10 +542,12 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
     private class CDSHolder
     {
         String cdsName, transcriptId, key;
+        Item sequence;
 
-        public CDSHolder(String cdsName, String transcriptId) {
+        public CDSHolder(String cdsName, String transcriptId, Item sequence) {
             this.cdsName = cdsName;
             this.transcriptId = transcriptId;
+            this.sequence = sequence;
             this.key = cdsName + transcriptId;
         }
 
