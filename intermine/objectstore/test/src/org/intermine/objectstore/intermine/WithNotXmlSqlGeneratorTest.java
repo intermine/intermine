@@ -96,7 +96,7 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectClassObjectSubquery", new HashSet(Arrays.asList(new String[] {"Department", "Company"})));
         results.put("SelectUnidirectionalCollection", "SELECT DISTINCT a2_.OBJECT AS a2_, a2_.id AS a2_id FROM Company AS a1_, Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a1_.name = 'CompanyA' AND a1_.id = indirect0.Secretarys AND indirect0.HasSecretarys = a2_.id ORDER BY a2_.id");
         results2.put("SelectUnidirectionalCollection", new HashSet(Arrays.asList(new String[] {"Company", "Secretary", "HasSecretarysSecretarys"})));
-        results.put("EmptyAndConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE true ORDER BY a1_.id");
+        results.put("EmptyAndConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("EmptyAndConstraintSet", Collections.singleton("Company"));
         results.put("EmptyOrConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE false ORDER BY a1_.id");
         results2.put("EmptyOrConstraintSet", Collections.singleton("Company"));
@@ -226,6 +226,8 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ObjectStoreBag", new HashSet(Arrays.asList(new String[] {"Employee", ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME})));
         results.put("OrderDescending", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id DESC");
         results2.put("OrderDescending", Collections.singleton("Employee"));
+        results.put("WhereCount", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a3_ FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId GROUP BY a1_.OBJECT, a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
+        results2.put("WhereCount", new HashSet(Arrays.asList("Employee", "Department")));
     }
 
     protected DatabaseSchema getSchema() {

@@ -500,6 +500,9 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { ((Employee) data.get("EmployeeB2")).getDepartment().getId() },
                              { ((Employee) data.get("EmployeeB3")).getDepartment().getId() } };
         results.put("SelectForeignKey", toList(r));
+        r = new Object[][] { { data.get("DepartmentA1"), new Long(3) },
+                             { data.get("DepartmentB1"), new Long(2) } };
+        results.put("WhereCount", toList(r));
     }
 
     /**
