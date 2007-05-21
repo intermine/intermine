@@ -78,6 +78,7 @@
       <fileset dir="${src.data.dir}">
         <include name="*-4-*.gff"/>
         <include name="*-4_*.gff"/>
+        <include name="dmel-dmel_mitochondrion_genome-r5.1.gff"/>
         <include name="*-Unknown_group_*.gff"/>
       </fileset>
     </filter-flybase-gff>
