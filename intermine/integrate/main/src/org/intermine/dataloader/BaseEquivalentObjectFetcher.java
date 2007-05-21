@@ -154,7 +154,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                 }
             }
             if (noKeys) {
-                retval.append("No primary keys for this class");
+                retval.append(" No primary keys for this class");
             }
         }
         return retval;
@@ -165,12 +165,6 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
      */
     public Set queryEquivalentObjects(InterMineObject obj, Source source)
     throws ObjectStoreException {
-        Query q = null;
-        try {
-            q = createPKQuery(obj, source, false);
-        } catch (MetaDataException e) {
-            throw new ObjectStoreException(e);
-        }
         Class summaryName = obj.getClass();
         Long soFar = summaryTimes.get(summaryName);
         Integer soFarCount = summaryCounts.get(summaryName);
@@ -182,6 +176,12 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
             summaryTimes.put(summaryName, soFar);
             summaryCounts.put(summaryName, soFarCount);
             summaryCallCounts.put(summaryName, soFarCallCount);
+        }
+        Query q = null;
+        try {
+            q = createPKQuery(obj, source, false);
+        } catch (MetaDataException e) {
+            throw new ObjectStoreException(e);
         }
         if (q != null) {
             SingletonResults result = lookupOs.executeSingleton(q);
@@ -255,10 +255,10 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                     // integrated with anything (although we have defined that the class should
                     // be integrated.  For the moment just log an error.                    
                     LOG.warn("No valid primary key found for object: " + obj);  
-                    return null;
                     //throw new IllegalArgumentException("No valid primary key found for object: "
                     //        + obj);
                 }
+                return null;
             default:
                 return q;
         }
@@ -325,7 +325,6 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         query.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         Iterator pkIter = pk.getFieldNames().iterator();
-        PK:
         while (pkIter.hasNext()) {
             String fieldName = (String) pkIter.next();
             FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
@@ -365,45 +364,46 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                         new QueryObjectReference(qc, fieldName);
                     cs.addConstraint(new ContainsConstraint(queryObjectReference,
                                                             ConstraintOp.IS_NULL));
-                    continue PK;
-                }
-
-                Integer destId = null;
-                if (refObj.getId() != null) {
-                    destId = idMap.get(refObj.getId());
-                }
-                if (destId == null) {
-                    if (refObj instanceof ProxyReference) {
-                        InterMineObject originalRefObj = refObj;
-                        refObj = ((ProxyReference) refObj).getObject();
-
-                        if (refObj == null) {
-                            throw new RuntimeException("cannot get object of ProxyReference "
-                                                       + originalRefObj + " while processing "
-                                                       + obj);
-                        }
-                    }
-                    Query refSubQuery =
-                        createPKQuery(refObj, source, queryNulls);
-
-                    if (refSubQuery != null) {
-                        ClassDescriptor referencedClassDescriptor =
-                            ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
-                        QueryClass qc2 = new QueryClass(referencedClassDescriptor.getType());
-                        query.addFrom(qc2);
-                        QueryObjectReference fieldQOF = new QueryObjectReference(qc, fieldName);
-                        cs.addConstraint(new ContainsConstraint(fieldQOF,
-                                                                ConstraintOp.CONTAINS, qc2));
-                        cs.addConstraint(new SubqueryConstraint(qc2, ConstraintOp.IN,
-                                                                refSubQuery));
-                    }
                 } else {
-                    InterMineObject destObj = (InterMineObject)
-                        DynamicUtil.createObject(Collections.singleton(InterMineObject.class));
-                    destObj.setId(destId);
-                    cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc,
-                                                                                     fieldName),
-                                                            ConstraintOp.CONTAINS, destObj));
+                    Integer destId = null;
+                    if (refObj.getId() != null) {
+                        destId = idMap.get(refObj.getId());
+                    }
+                    if (destId == null) {
+                        if (refObj instanceof ProxyReference) {
+                            InterMineObject originalRefObj = refObj;
+                            refObj = ((ProxyReference) refObj).getObject();
+
+                            if (refObj == null) {
+                                throw new RuntimeException("cannot get object of ProxyReference "
+                                                           + originalRefObj + " while processing "
+                                                           + obj);
+                            }
+                        }
+                        Query refSubQuery =
+                            createPKQuery(refObj, source, queryNulls);
+
+                        if (refSubQuery != null) {
+                            ClassDescriptor referencedClassDescriptor =
+                                ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
+                            QueryClass qc2 = new QueryClass(referencedClassDescriptor.getType());
+                            query.addFrom(qc2);
+                            QueryObjectReference fieldQOF = new QueryObjectReference(qc, fieldName);
+                            cs.addConstraint(new ContainsConstraint(fieldQOF,
+                                                                    ConstraintOp.CONTAINS, qc2));
+                            cs.addConstraint(new SubqueryConstraint(qc2, ConstraintOp.IN,
+                                                                    refSubQuery));
+                        } else {
+                            throw new IllegalArgumentException("Reference was hinted out");
+                        }
+                    } else {
+                        InterMineObject destObj = (InterMineObject)
+                            DynamicUtil.createObject(Collections.singleton(InterMineObject.class));
+                        destObj.setId(destId);
+                        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc,
+                                                                                         fieldName),
+                                                                ConstraintOp.CONTAINS, destObj));
+                    }
                 }
             }
         }

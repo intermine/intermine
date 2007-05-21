@@ -1039,4 +1039,60 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         SingletonResults r2 = iw.executeSingleton(q2);
         assertEquals("Results: " + r2, 1, r2.size());
     }
+
+    public void testHintedPrimaryKeyReference() throws Exception {
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        // In testsource1, Company has key name, address, and address has key address.
+        c.setName("CompanyA");
+        a.setAddress("Albert");
+        c.setAddress(a);
+        // The company will clash with CompanyA if address gets mistakenly missed off the primary key query.
+
+        if (doIds) {
+            c.setId(new Integer(1));
+            a.setId(new Integer(2));
+        }
+
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
+
+        iw.store(c, source, skelSource);
+
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("CompanyA")));
+        SingletonResults r = iw.executeSingleton(q);
+        assertEquals(2, r.size());
+    }
+
+    public void testPrimaryKeyReferenceContainsNull() throws Exception {
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        // In testsource1, Company has key name, address, and address has key address.
+        c.setName("CompanyA");
+        a.setAddress(null);
+        c.setAddress(a);
+        // The company will clash with CompanyA if address gets mistakenly missed off the primary key query.
+
+        if (doIds) {
+            c.setId(new Integer(1));
+            a.setId(new Integer(2));
+        }
+
+        Source source = iw.getMainSource("testsource");
+        Source skelSource = iw.getSkeletonSource("testsource");
+
+        iw.store(c, source, skelSource);
+
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("CompanyA")));
+        SingletonResults r = iw.executeSingleton(q);
+        assertEquals(2, r.size());
+    }
 }
