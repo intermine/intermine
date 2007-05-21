@@ -27,7 +27,7 @@ my $goa_file_gz = "$goa_file.gz";
 # taxon IDs that should be grepped out of the $goa_file and the suffix to use
 # when creating the output file
 
-my $file = "/shared/data/taxonID.config";
+my $file = "resources/get_scripts.config";
 my %taxon_map = &config_species($file,"go_taxon");
 
 my $godatabase_server = "ftp.geneontology.org";
@@ -91,18 +91,24 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 	#print each buffer out to a file
 	print "writing files\n";
 	for my $taxon_id (keys %taxon_map) {
-		my $suffix = $taxon_map{$taxon_id}{suffix};
-		open OUT_FILE, ">$uniprot_download_dir/gene_association_$suffix"
-        	or die "can't open $uniprot_download_dir/gene_association_$suffix for writing\n";
+		my $suffix = $taxon_map{$taxon_id}{suffix};  
+		my $unsorted = "$uniprot_download_dir/unsorted_$suffix";
+		my $sorted = "$uniprot_download_dir/gene_association_$suffix";
+		
+		open OUT_FILE, ">$unsorted"
+        	or die "can't open $unsorted for writing\n";
       	
 		for my $line (@{$taxon_map{$taxon_id}{lines}}) {
-      	print OUT_FILE $line;
+      		print OUT_FILE $line;
     	}
-		$log_buffer .= "gene_association_$suffix updated to $uniprot_download_dir\n";
-		$version_buffer .= "\tgene_association_$suffix\n";
-      	close OUT_FILE or die;
+		close OUT_FILE or die;
+		system "sort -o $sorted -k 2,2 $unsorted";
+		unlink $unsorted;
+		
+		$log_buffer .= "$sorted updated into $uniprot_download_dir\n";
+		$version_buffer .= "\t$sorted\n";
 	}
- 	#make links for the current data
+	#make links for the current data
 	&make_link($uniprot_date_string,$uniprot_link);
 	my $go_uniprot_link = "/shared/data/go-annotation/current/uniprot";
 	my $go_link_dir = "../uniprot/$uniprot_date_string";
@@ -122,11 +128,10 @@ my $assoc_connection = &ftp_connect($godatabase_server,$username,$password);
 $assoc_connection->cwd($godatabase_dir)
 	or die "Cannot change working directory ", $go_connection->message;
 
-my $gene_association_prefix = "gene_association";
 #download file for each organism in the gene association map
 for my $source_database (keys %gene_association_map) {
 	my $suffix = $gene_association_map{$source_database}{suffix};
-	my $gene_association_file_gz = "$gene_association_prefix.$suffix.gz";
+	my $gene_association_file_gz = "gene_association.$suffix.gz";
 	my $date_string = &date_string_file($assoc_connection,$gene_association_file_gz);
   
 	# create directory for source if necessary
@@ -140,13 +145,20 @@ for my $source_database (keys %gene_association_map) {
 		&ftp_download($assoc_connection,$gene_association_download_dir,$gene_association_file_gz);
 		&unzip_dir($gene_association_download_dir);
     	
+		my $unsorted = "$gene_association_download_dir/unsorted.$suffix";
+		my $sorted = "$gene_association_download_dir/gene_association.$suffix";
+		system "mv $sorted $unsorted";
+		system "sort -o $sorted -k 2,2 $unsorted";
+		unlink $unsorted;
+		
 		#make links to current data
 		&make_link($date_string,$source_dir_link);
 		my $current_link = "/shared/data/go-annotation/current/$source_database";
 		my $current_link_dir = "../$source_database/$date_string";
 		&make_link($current_link_dir,$current_link);
-		$log_buffer .= "$gene_association_prefix.$suffix updated to $gene_association_download_dir\n";
-		$version_buffer .= "$gene_association_download_dir\n\t$gene_association_prefix.$suffix\n";
+		
+		$log_buffer .= "$sorted updated to $gene_association_download_dir\n";
+		$version_buffer .= "$gene_association_download_dir\n\tgene_association.$suffix\n";
 		system "chmod -R a+r,g+w $gene_association_download_dir";
 	}else {
 		warn " current $source_database version up to date - skipping download\n";
@@ -154,7 +166,6 @@ for my $source_database (keys %gene_association_map) {
 		$version_buffer .= &get_version($source_dir_link,$source_dir);
 	}
 }
-system "chmod -R a+r,g+w $uniprot_download_dir";
 $assoc_connection->quit;
 
 $log_buffer .= "\n";
