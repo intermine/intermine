@@ -147,6 +147,16 @@
           Identified 232 distinct multiprotein complexes.<br/>                   
          </dd>
          <dt>
+          Gavin AC. et al (2006) Nature 440: 631-636 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16429126">PubMed: 16429126</a>)
+          - Proteome survey reveals modularity of the yeast cell machinery.
+         </dt>
+         <dd>
+         Used affinity purification and mass spectrometry to perform a
+genome-wide screen for protein complexes in <i>Saccharomyces
+cerevisiae</i>.<br/>
+          Identified 491 complexes (257 novel).<br/>                   
+         </dd>
+         <dt>
            In addition a number of protein interactions and complexes from smaller scale experiments are available:
              <im:querylink text=" <i>S. cerevisiae</i> experiment list" skipBuilder="true">
                  <query name="" model="genomic" view="Protein.publications.title Protein.publications.pubMedId Protein.publications.firstAuthor Protein.publications.year">
