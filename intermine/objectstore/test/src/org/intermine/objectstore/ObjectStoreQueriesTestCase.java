@@ -246,6 +246,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ObjectStoreBagsForObject", objectStoreBagsForObject());
         queries.put("ObjectStoreBagsForObject2", objectStoreBagsForObject2());
         queries.put("SelectForeignKey", selectForeignKey());
+        queries.put("WhereCount", whereCount());
     }
 
     /*
@@ -1743,6 +1744,27 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc = new QueryClass(Employee.class);
         q.addFrom(qc);
         q.addToSelect(new QueryForeignKey(qc, "department"));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT Department, COUNT(*) FROM Department, Employee WHERE Department.employees CONTAINS Employee AND COUNT(*) > 1 GROUP BY Department
+     */
+    public static Query whereCount() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Department.class);
+        QueryClass qc2 = new QueryClass(Employee.class);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        q.addToSelect(qc1);
+        QueryFunction count = new QueryFunction();
+        q.addToSelect(count);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        q.setConstraint(cs);
+        cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "employees"), ConstraintOp.CONTAINS, qc2));
+        cs.addConstraint(new SimpleConstraint(count, ConstraintOp.GREATER_THAN, new QueryValue(new Long(1))));
+        q.addToGroupBy(qc1);
         q.setDistinct(false);
         return q;
     }

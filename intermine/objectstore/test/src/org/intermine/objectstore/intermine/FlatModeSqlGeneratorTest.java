@@ -98,7 +98,7 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectClassObjectSubquery", new HashSet(Arrays.asList(new String[] {"Department", "Company"})));
         results.put("SelectUnidirectionalCollection", "SELECT DISTINCT a2_.id AS a2_id, a2_.name AS a2_name FROM Company AS a1_, Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a1_.name = 'CompanyA' AND a1_.id = indirect0.Secretarys AND indirect0.HasSecretarys = a2_.id ORDER BY a2_.id");
         results2.put("SelectUnidirectionalCollection", new HashSet(Arrays.asList(new String[] {"Company", "Secretary", "HasSecretarysSecretarys"})));
-        results.put("EmptyAndConstraintSet", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE true ORDER BY a1_.id");
+        results.put("EmptyAndConstraintSet", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("EmptyAndConstraintSet", Collections.singleton("Company"));
         results.put("EmptyOrConstraintSet", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE false ORDER BY a1_.id");
         results2.put("EmptyOrConstraintSet", Collections.singleton("Company"));
@@ -228,6 +228,8 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results.put("OrderDescending", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.objectclass AS a1_objectclass FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id DESC");
         results2.put("OrderDescending", Collections.singleton("Employee"));
         results.put("SelectForeignKey", "SELECT a1_.departmentId AS a2_ FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.departmentId");
+        results.put("WhereCount", "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, COUNT(*) AS a3_ FROM Department AS a1_, Employee AS a2_ WHERE a2_.class = 'org.intermine.model.testmodel.Employee' AND a1_.id = a2_.departmentId GROUP BY a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
+        results2.put("WhereCount", new HashSet(Arrays.asList("Employee", "Department")));
     }
 
     protected DatabaseSchema getSchema() throws Exception {

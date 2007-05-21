@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class ConstraintSet extends Constraint
 {
-    protected LinkedHashSet constraints;
+    protected LinkedHashSet<Constraint> constraints;
 
     /**
      * Construct empty ConstraintSet
@@ -70,7 +70,7 @@ public class ConstraintSet extends Constraint
      *
      * @return Set of Constraint objects
      */
-    public Set getConstraints() {
+    public Set<Constraint> getConstraints() {
         return constraints;
     }
 

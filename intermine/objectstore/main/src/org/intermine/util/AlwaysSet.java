@@ -11,8 +11,6 @@ package org.intermine.util;
  */
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * A Set that always returns true for the contains method.

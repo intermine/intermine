@@ -41,10 +41,12 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
@@ -167,7 +169,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("SelectClassObjectSubquery", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("SelectUnidirectionalCollection", "SELECT DISTINCT a2_.id AS a2_id FROM Company AS a1_, Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a1_.name = 'CompanyA' AND a1_.id = indirect0.Secretarys AND indirect0.HasSecretarys = a2_.id ORDER BY a2_.id");
         results2.put("SelectUnidirectionalCollection", new HashSet(Arrays.asList(new String[] {"Company", "Secretary", "HasSecretarysSecretarys", "InterMineObject"})));
-        results.put("EmptyAndConstraintSet", "SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE true ORDER BY a1_.id");
+        results.put("EmptyAndConstraintSet", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("EmptyAndConstraintSet", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("EmptyOrConstraintSet", "SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE false ORDER BY a1_.id");
         results2.put("EmptyOrConstraintSet", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
@@ -355,6 +357,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ObjectStoreBagsForObject2", Collections.singleton("osbag_int"));
         results.put("SelectForeignKey", "SELECT a1_.departmentId AS a2_ FROM Employee AS a1_ ORDER BY a1_.departmentId");
         results2.put("SelectForeignKey", Collections.singleton("Employee"));
+        results.put("WhereCount", "SELECT a1_.id AS a1_id, COUNT(*) AS a3_ FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId GROUP BY a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
+        results2.put("WhereCount", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Department", "Employee"})));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
@@ -547,13 +551,13 @@ public class SqlGeneratorTest extends SetupDataTestCase
             SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
-            assertTrue(e.getMessage().startsWith("Unknown constraint type: "));
+            assertTrue(e.getMessage(), e.getMessage().startsWith("Unrecognised object "));
         }
         try {
             SqlGenerator.findTableNames(q, getSchema(), false);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
-            assertTrue(e.getMessage().startsWith("Unknown constraint type: "));
+            assertTrue(e.getMessage(), e.getMessage().startsWith("Unknown constraint "));
         }
     }
 
@@ -699,23 +703,48 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
     public void testInvalidSafenesses() throws Exception {
         try {
-            SqlGenerator.constraintToString(null, null, null, null, 3, false);
+            SqlGenerator.constraintToString(null, null, null, null, null, 3, false);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
             assertEquals("Unknown ContainsConstraint safeness: 3", e.getMessage());
         }
         try {
-            SqlGenerator.constraintSetToString(null, null, null, null, 3, false);
+            SqlGenerator.constraintSetToString(null, null, null, null, null, 3, false);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
             assertEquals("Unknown ContainsConstraint safeness: 3", e.getMessage());
         }
         try {
-            SqlGenerator.containsConstraintToString(null, null, null, null, 3, false);
+            SqlGenerator.containsConstraintToString(null, null, null, null, null, 3, false);
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
             assertEquals("Unknown ContainsConstraint safeness: 3", e.getMessage());
         }
+    }
+
+    public void testWhereHavingSafe() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Employee.class);
+        QueryField qf1 = new QueryField(qc1, "end");
+        QueryField qf2 = new QueryField(qc1, "name");
+        QueryFunction qf3 = new QueryFunction();
+        QueryField qf4 = new QueryField(qc1, "age");
+        q.addFrom(qc1);
+        q.addToSelect(qf1);
+        q.addToGroupBy(qf1);
+        assertArrayEquals(new boolean[] {true, true}, SqlGenerator.whereHavingSafe(qf1, q));
+        assertArrayEquals(new boolean[] {true, false}, SqlGenerator.whereHavingSafe(qf2, q));
+        assertArrayEquals(new boolean[] {false, true}, SqlGenerator.whereHavingSafe(qf3, q));
+        assertArrayEquals(new boolean[] {true, false}, SqlGenerator.whereHavingSafe(qf4, q));
+        assertArrayEquals(new boolean[] {true, false}, SqlGenerator.whereHavingSafe(new SimpleConstraint(qf1, ConstraintOp.EQUALS, qf2), q));
+        assertArrayEquals(new boolean[] {false, false}, SqlGenerator.whereHavingSafe(new SimpleConstraint(qf3, ConstraintOp.EQUALS, new QueryCast(qf4, Long.class)), q));
+
+    }
+
+    private void assertArrayEquals(boolean arg1[], boolean arg2[]) {
+        String s1 = "(" + arg1[0] + ", " + arg1[1] + ")";
+        String s2 = "(" + arg2[0] + ", " + arg2[1] + ")";
+        assertEquals(s1, s2);
     }
 
     protected DatabaseSchema getSchema() throws Exception {

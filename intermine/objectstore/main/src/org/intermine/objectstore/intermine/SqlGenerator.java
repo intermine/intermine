@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -475,6 +476,7 @@ public class SqlGenerator
             .append(state.getFrom())
             .append(state.getWhere())
             .append(buildGroupBy(q, schema, state))
+            .append(state.getHaving())
             .append(orderBy);
 
         return retval.toString();
@@ -833,10 +835,151 @@ public class SqlGenerator
     protected static void buildWhereClause(State state, Query q, Constraint c,
             DatabaseSchema schema) throws ObjectStoreException {
         if (c != null) {
-            if (state.getWhereBuffer().length() > 0) {
-                state.addToWhere(" AND ");
+            LinkedList<Constraint> constraints = new LinkedList<Constraint>();
+            boolean needWhereComma = state.getWhereBuffer().length() > 0;
+            boolean needHavingComma = state.getHavingBuffer().length() > 0;
+            constraints.add(c);
+            while (!constraints.isEmpty()) {
+                Constraint con = constraints.removeFirst();
+                if ((con instanceof ConstraintSet)
+                        && ((ConstraintSet) con).getOp().equals(ConstraintOp.AND)) {
+                    constraints.addAll(0, ((ConstraintSet) con).getConstraints());
+                } else {
+                    boolean whs[] = whereHavingSafe(con, q);
+                    if (whs[0]) {
+                        StringBuffer buffer = state.getWhereBuffer();
+                        if (needWhereComma) {
+                            buffer.append(" AND ");
+                        }
+                        needWhereComma = true;
+                        constraintToString(state, buffer, con, q, schema, SAFENESS_SAFE, true);
+                    } else if (whs[1]) {
+                        StringBuffer buffer = state.getHavingBuffer();
+                        if (needHavingComma) {
+                            buffer.append(" AND ");
+                        }
+                        needHavingComma = true;
+                        constraintToString(state, buffer, con, q, schema, SAFENESS_SAFE, true);
+                    } else {
+                        throw new ObjectStoreException("Constraint " + con + " mixes WHERE"
+                                + " and HAVING components");
+                    }
+                }
             }
-            constraintToString(state, c, q, schema, SAFENESS_SAFE, true);
+        }
+    }
+
+    /**
+     * Returns an array containing two boolean values. The first is whether this object is suitable
+     * for use in a WHERE clause, and the second is whether the object is suitable for use in a
+     * HAVING clause.
+     *
+     * @param o an Object of some kind
+     * @param q the current Query
+     * @return an array of two booleans
+     * @throws ObjectStoreException if the object type is not recognised
+     */
+    protected static boolean[] whereHavingSafe(Object o, Query q) throws ObjectStoreException {
+        if (o instanceof QueryField) {
+            return new boolean[] {true, q.getGroupBy().contains(o)
+                || q.getGroupBy().contains(((QueryField) o).getFromElement())};
+        } else if (o instanceof QueryClass) {
+            return new boolean[] {true, q.getGroupBy().contains(o)};
+        } else if (o instanceof QueryValue) {
+            return new boolean[] {true, true};
+        } else if (o instanceof QueryFunction) {
+            return new boolean[] {false, true};
+        } else if (o instanceof QueryCast) {
+            return whereHavingSafe(((QueryCast) o).getValue(), q);
+        } else if (o instanceof QueryExpression) {
+            QueryExpression qe = (QueryExpression) o;
+            QueryEvaluable arg1 = qe.getArg1();
+            QueryEvaluable arg2 = qe.getArg2();
+            QueryEvaluable arg3 = qe.getArg3();
+            boolean s[] = whereHavingSafe(arg1, q);
+            boolean whereSafe = s[0];
+            boolean havingSafe = s[1];
+            if (arg2 != null) {
+                s = whereHavingSafe(arg2, q);
+                whereSafe = whereSafe && s[0];
+                havingSafe = havingSafe && s[1];
+            }
+            if (arg3 != null) {
+                s = whereHavingSafe(arg3, q);
+                whereSafe = whereSafe && s[0];
+                havingSafe = havingSafe && s[1];
+            }
+            return new boolean[] {whereSafe, havingSafe};
+        } else if (o instanceof QueryForeignKey) {
+            return new boolean[] {true, q.getGroupBy().contains(o)
+                || q.getGroupBy().contains(((QueryForeignKey) o).getQueryClass())};
+        } else if (o instanceof QueryReference) {
+            QueryClass qc = ((QueryReference) o).getQueryClass();
+            if (qc == null) {
+                return new boolean[] {true, true};
+            } else {
+                return whereHavingSafe(qc, q);
+            }
+        } else if (o instanceof SimpleConstraint) {
+            SimpleConstraint c = (SimpleConstraint) o;
+            QueryEvaluable arg1 = c.getArg1();
+            QueryEvaluable arg2 = c.getArg2();
+            if (arg2 == null) {
+                return whereHavingSafe(arg1, q);
+            } else {
+                boolean s1[] = whereHavingSafe(arg1, q);
+                boolean s2[] = whereHavingSafe(arg2, q);
+                return new boolean[] {s1[0] && s2[0], s1[1] && s2[1]};
+            }
+        } else if (o instanceof ConstraintSet) {
+            boolean whereSafe = true;
+            boolean havingSafe = true;
+            for (Constraint c : ((ConstraintSet) o).getConstraints()) {
+                boolean s[] = whereHavingSafe(c, q);
+                whereSafe = whereSafe && s[0];
+                havingSafe = havingSafe && s[1];
+            }
+            return new boolean[] {whereSafe, havingSafe};
+        } else if (o instanceof BagConstraint) {
+            return whereHavingSafe(((BagConstraint) o).getQueryNode(), q);
+        } else if (o instanceof ClassConstraint) {
+            ClassConstraint cc = (ClassConstraint) o;
+            QueryClass arg1 = cc.getArg1();
+            QueryClass arg2 = cc.getArg2QueryClass();
+            boolean s[] = whereHavingSafe(arg1, q);
+            boolean whereSafe = s[0];
+            boolean havingSafe = s[1];
+            if (arg2 != null) {
+                s = whereHavingSafe(arg2, q);
+                whereSafe = whereSafe && s[0];
+                havingSafe = havingSafe && s[1];
+            }
+            return new boolean[] {whereSafe, havingSafe};
+        } else if (o instanceof ContainsConstraint) {
+            ContainsConstraint c = (ContainsConstraint) o;
+            QueryReference arg1 = c.getReference();
+            QueryClass arg2 = c.getQueryClass();
+            boolean s[] = whereHavingSafe(arg1, q);
+            boolean whereSafe = s[0];
+            boolean havingSafe = s[1];
+            if (arg2 != null) {
+                s = whereHavingSafe(arg2, q);
+                whereSafe = whereSafe && s[0];
+                havingSafe = havingSafe && s[1];
+            }
+            return new boolean[] {whereSafe, havingSafe};
+        } else if (o instanceof SubqueryConstraint) {
+            QueryClass qc = ((SubqueryConstraint) o).getQueryClass();
+            QueryEvaluable qe = ((SubqueryConstraint) o).getQueryEvaluable();
+            if (qc != null) {
+                return whereHavingSafe(qc, q);
+            } else {
+                return whereHavingSafe(qe, q);
+            }
+        } else if (o instanceof SubqueryExistsConstraint) {
+            return new boolean[] {true, true};
+        } else {
+            throw new ObjectStoreException("Unrecognised object " + o);
         }
     }
 
@@ -850,7 +993,8 @@ public class SqlGenerator
     /**
      * Converts a Constraint object into a String suitable for putting in an SQL query.
      *
-     * @param state the object to place text into
+     * @param state the current SqlGenerator state
+     * @param buffer the StringBuffer to place text into
      * @param c the Constraint object
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
@@ -859,27 +1003,30 @@ public class SqlGenerator
      * surrounding parentheses
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void constraintToString(State state, Constraint c, Query q,
-            DatabaseSchema schema, int safeness, boolean loseBrackets) throws ObjectStoreException {
+    protected static void constraintToString(State state, StringBuffer buffer, Constraint c,
+            Query q, DatabaseSchema schema, int safeness,
+            boolean loseBrackets) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
                 & (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown ContainsConstraint safeness: " + safeness);
         }
         if (c instanceof ConstraintSet) {
-            constraintSetToString(state, (ConstraintSet) c, q, schema, safeness, loseBrackets);
+            constraintSetToString(state, buffer, (ConstraintSet) c, q, schema, safeness,
+                    loseBrackets);
         } else if (c instanceof SimpleConstraint) {
-            simpleConstraintToString(state, (SimpleConstraint) c, q);
+            simpleConstraintToString(state, buffer, (SimpleConstraint) c, q);
         } else if (c instanceof SubqueryConstraint) {
-            subqueryConstraintToString(state, (SubqueryConstraint) c, q, schema);
+            subqueryConstraintToString(state, buffer, (SubqueryConstraint) c, q, schema);
         } else if (c instanceof SubqueryExistsConstraint) {
-            subqueryExistsConstraintToString(state, (SubqueryExistsConstraint) c, q, schema);
+            subqueryExistsConstraintToString(state, buffer, (SubqueryExistsConstraint) c, q,
+                    schema);
         } else if (c instanceof ClassConstraint) {
-            classConstraintToString(state, (ClassConstraint) c, q, schema);
+            classConstraintToString(state, buffer, (ClassConstraint) c, q, schema);
         } else if (c instanceof ContainsConstraint) {
-            containsConstraintToString(state, (ContainsConstraint) c, q, schema, safeness,
+            containsConstraintToString(state, buffer, (ContainsConstraint) c, q, schema, safeness,
                     loseBrackets);
         } else if (c instanceof BagConstraint) {
-            bagConstraintToString(state, (BagConstraint) c, q, schema, safeness);
+            bagConstraintToString(state, buffer, (BagConstraint) c, q, schema, safeness);
         } else {
             throw (new ObjectStoreException("Unknown constraint type: " + c));
         }
@@ -888,7 +1035,8 @@ public class SqlGenerator
     /**
      * Converts a ConstraintSet object into a String suitable for putting in an SQL query.
      *
-     * @param state the object to place text into
+     * @param state the current SqlGenerator state
+     * @param buffer the StringBuffer to place text into
      * @param c the ConstraintSet object
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
@@ -897,8 +1045,9 @@ public class SqlGenerator
      * surrounding parentheses
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void constraintSetToString(State state, ConstraintSet c, Query q,
-            DatabaseSchema schema, int safeness, boolean loseBrackets) throws ObjectStoreException {
+    protected static void constraintSetToString(State state, StringBuffer buffer, ConstraintSet c,
+            Query q, DatabaseSchema schema, int safeness,
+            boolean loseBrackets) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
                 & (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown ContainsConstraint safeness: " + safeness);
@@ -918,9 +1067,9 @@ public class SqlGenerator
             newSafeness = SAFENESS_UNSAFE;
         }
         if (c.getConstraints().isEmpty()) {
-            state.addToWhere((disjunctive ? negate : !negate) ? "true" : "false");
+            buffer.append((disjunctive ? negate : !negate) ? "true" : "false");
         } else {
-            state.addToWhere(negate ? "(NOT (" : (loseBrackets && (!disjunctive) ? "" : "("));
+            buffer.append(negate ? "(NOT (" : (loseBrackets && (!disjunctive) ? "" : "("));
             boolean needComma = false;
             Map subqueryConstraints = new HashMap();
             Set constraints = c.getConstraints();
@@ -951,10 +1100,10 @@ public class SqlGenerator
                                 QUERY_SUBQUERY_CONSTRAINT, state.getBagTableNames()));
                 } else {
                     if (needComma) {
-                        state.addToWhere(disjunctive ? " OR " : " AND ");
+                        buffer.append(disjunctive ? " OR " : " AND ");
                     }
                     needComma = true;
-                    constraintToString(state, subC, q, schema, newSafeness, (!negate)
+                    constraintToString(state, buffer, subC, q, schema, newSafeness, (!negate)
                             && (!disjunctive));
                 }
             }
@@ -964,74 +1113,78 @@ public class SqlGenerator
                 String left = (String) entry.getKey();
                 String right = ((StringBuffer) entry.getValue()).toString();
                 if (needComma) {
-                    state.addToWhere(" OR ");
+                    buffer.append(" OR ");
                 }
                 needComma = true;
-                state.addToWhere(left);
-                state.addToWhere(right);
-                state.addToWhere(")");
+                buffer.append(left);
+                buffer.append(right);
+                buffer.append(")");
             }
-            state.addToWhere(negate ? "))" : (loseBrackets && (!disjunctive) ? "" : ")"));
+            buffer.append(negate ? "))" : (loseBrackets && (!disjunctive) ? "" : ")"));
         }
     }
 
     /**
      * Converts a SimpleConstraint object into a String suitable for putting in an SQL query.
      *
-     * @param state the object to place text into
+     * @param state the current SqlGenerator state
+     * @param buffer the StringBuffer to place text into
      * @param c the SimpleConstraint object
      * @param q the Query
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void simpleConstraintToString(State state, SimpleConstraint c, Query q)
-        throws ObjectStoreException {
-        queryEvaluableToString(state.getWhereBuffer(), c.getArg1(), q, state);
-        state.addToWhere(" " + c.getOp().toString());
+    protected static void simpleConstraintToString(State state, StringBuffer buffer,
+            SimpleConstraint c, Query q) throws ObjectStoreException {
+        queryEvaluableToString(buffer, c.getArg1(), q, state);
+        buffer.append(" " + c.getOp().toString());
         if (c.getArg2() != null) {
-            state.addToWhere(" ");
-            queryEvaluableToString(state.getWhereBuffer(), c.getArg2(), q, state);
+            buffer.append(" ");
+            queryEvaluableToString(buffer, c.getArg2(), q, state);
         }
     }
 
     /**
      * Converts a SubqueryConstraint object into a String suitable for putting in an SQL query.
      *
-     * @param state the object to place text into
+     * @param state the current SqlGenerator state
+     * @param buffer the StringBuffer to place text into
      * @param c the SubqueryConstraint object
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void subqueryConstraintToString(State state, SubqueryConstraint c, Query q,
-            DatabaseSchema schema) throws ObjectStoreException {
+    protected static void subqueryConstraintToString(State state, StringBuffer buffer,
+            SubqueryConstraint c, Query q, DatabaseSchema schema) throws ObjectStoreException {
         Query subQ = c.getQuery();
         QueryEvaluable qe = c.getQueryEvaluable();
         QueryClass cls = c.getQueryClass();
         if (qe != null) {
-            queryEvaluableToString(state.getWhereBuffer(), qe, q, state);
+            queryEvaluableToString(buffer, qe, q, state);
         } else {
-            queryClassToString(state.getWhereBuffer(), cls, q, schema, QUERY_SUBQUERY_CONSTRAINT,
+            queryClassToString(buffer, cls, q, schema, QUERY_SUBQUERY_CONSTRAINT,
                     state);
         }
-        state.addToWhere(" " + c.getOp().toString() + " ("
-                         + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT,
-                                    state.getBagTableNames()) + ")");
+        buffer.append(" " + c.getOp().toString() + " ("
+                + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT,
+                    state.getBagTableNames()) + ")");
     }
 
     /**
      * Converts a SubqueryExistsConstraint object into a String suitable for putting in an SQL
      * query.
      *
-     * @param state the object to place text into
+     * @param state the current SqlGenerator state
+     * @param buffer the StringBuffer to place text into
      * @param c the SubqueryExistsConstraint object
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void subqueryExistsConstraintToString(State state, SubqueryExistsConstraint c,
-            Query q, DatabaseSchema schema) throws ObjectStoreException {
+    protected static void subqueryExistsConstraintToString(State state, StringBuffer buffer,
+            SubqueryExistsConstraint c, Query q,
+            DatabaseSchema schema) throws ObjectStoreException {
         Query subQ = c.getQuery();
-        state.addToWhere((c.getOp() == ConstraintOp.EXISTS ? "EXISTS(" : "(NOT EXISTS(")
+        buffer.append((c.getOp() == ConstraintOp.EXISTS ? "EXISTS(" : "(NOT EXISTS(")
                          + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT,
                                     state.getBagTableNames())
                          + (c.getOp() == ConstraintOp.EXISTS ? ")" : "))"));
@@ -1040,23 +1193,24 @@ public class SqlGenerator
     /**
      * Converts a ClassConstraint object into a String suitable for putting in an SQL query.
      *
-     * @param state the object to place text into
+     * @param state the current SqlGenerator state
+     * @param buffer the StringBuffer to place text into
      * @param c the ClassConstraint object
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void classConstraintToString(State state, ClassConstraint c, Query q,
-            DatabaseSchema schema) throws ObjectStoreException {
+    protected static void classConstraintToString(State state, StringBuffer buffer,
+            ClassConstraint c, Query q, DatabaseSchema schema) throws ObjectStoreException {
         QueryClass arg1 = c.getArg1();
         QueryClass arg2QC = c.getArg2QueryClass();
         InterMineObject arg2O = c.getArg2Object();
-        queryClassToString(state.getWhereBuffer(), arg1, q, schema, ID_ONLY, state);
-        state.addToWhere(" " + c.getOp().toString() + " ");
+        queryClassToString(buffer, arg1, q, schema, ID_ONLY, state);
+        buffer.append(" " + c.getOp().toString() + " ");
         if (arg2QC != null) {
-            queryClassToString(state.getWhereBuffer(), arg2QC, q, schema, ID_ONLY, state);
+            queryClassToString(buffer, arg2QC, q, schema, ID_ONLY, state);
         } else if (arg2O.getId() != null) {
-            objectToString(state.getWhereBuffer(), arg2O);
+            objectToString(buffer, arg2O);
         } else {
             throw new ObjectStoreException("ClassConstraint cannot contain an InterMineObject"
                     + " without an ID set");
@@ -1066,7 +1220,8 @@ public class SqlGenerator
     /**
      * Converts a ContainsConstraint object into a String suitable for putting in an SQL query.
      *
-     * @param state the object to place text into
+     * @param state the current SqlGenerator state
+     * @param buffer the StringBuffer to place text into
      * @param c the ContainsConstraint object
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
@@ -1075,9 +1230,9 @@ public class SqlGenerator
      * surrounding parentheses
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void containsConstraintToString(State state, ContainsConstraint c,
-            Query q, DatabaseSchema schema, int safeness, boolean loseBrackets)
-        throws ObjectStoreException {
+    protected static void containsConstraintToString(State state, StringBuffer buffer,
+            ContainsConstraint c, Query q, DatabaseSchema schema, int safeness,
+            boolean loseBrackets) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
                 & (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown ContainsConstraint safeness: " + safeness);
@@ -1099,13 +1254,13 @@ public class SqlGenerator
                     .getName());
             if (c.getOp().equals(ConstraintOp.IS_NULL) || c.getOp().equals(ConstraintOp
                         .IS_NOT_NULL)) {
-                state.addToWhere(arg1Alias + " " + c.getOp().toString());
+                buffer.append(arg1Alias + " " + c.getOp().toString());
             } else {
-                state.addToWhere(arg1Alias + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
+                buffer.append(arg1Alias + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != "));
                 if (arg2 == null) {
-                    objectToString(state.getWhereBuffer(), arg2Obj);
+                    objectToString(buffer, arg2Obj);
                 } else {
-                    queryClassToString(state.getWhereBuffer(), arg2, q, schema, ID_ONLY, state);
+                    queryClassToString(buffer, arg2, q, schema, ID_ONLY, state);
                 }
             }
         } else if (arg1 instanceof QueryCollectionReference) {
@@ -1131,67 +1286,67 @@ public class SqlGenerator
                             .getClassDescriptor());
                     state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS "
                             + indirectTableAlias);
-                    state.addToWhere(loseBrackets ? "" : "(");
+                    buffer.append(loseBrackets ? "" : "(");
                     if (schema.isTruncated(tableMaster)) {
-                        state.addToWhere(indirectTableAlias + ".class = '"
+                        buffer.append(indirectTableAlias + ".class = '"
                                 + reverse.getClassDescriptor().getType().getName() + "' AND ");
                     }
                     if (arg1Qc != null) {
-                        queryClassToString(state.getWhereBuffer(), arg1Qc, q, schema, ID_ONLY,
-                                state);
-                        state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
+                        queryClassToString(buffer, arg1Qc, q, schema, ID_ONLY, state);
+                        buffer.append((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
                                 + arg2Alias);
                     } else if (arg1Qcb != null) {
                         if (fieldToAlias.containsKey("id")) {
-                            state.addToWhere(arg2Alias + " = " + fieldToAlias.get("id"));
+                            buffer.append(arg2Alias + " = " + fieldToAlias.get("id"));
                         } else {
                             fieldToAlias.put("id", arg2Alias);
                             if (arg1Qcb.getIds() == null) {
-                                bagConstraintToString(state, new BagConstraint(new QueryField(
-                                                arg1Qcb), ConstraintOp.IN, arg1Qcb.getOsb()), q,
+                                bagConstraintToString(state, buffer, new BagConstraint(new
+                                            QueryField(arg1Qcb), ConstraintOp.IN,
+                                            arg1Qcb.getOsb()), q,
                                         schema, SAFENESS_UNSAFE); // TODO: Not really unsafe
                             } else {
-                                bagConstraintToString(state, new BagConstraint(new QueryField(
-                                                arg1Qcb), (c.getOp() == ConstraintOp.CONTAINS
-                                                    ? ConstraintOp.IN : ConstraintOp.NOT_IN),
+                                bagConstraintToString(state, buffer, new BagConstraint(
+                                            new QueryField(arg1Qcb), (c.getOp() == ConstraintOp
+                                                .CONTAINS ? ConstraintOp.IN : ConstraintOp.NOT_IN),
                                             arg1Qcb.getIds()), q, schema,
                                         SAFENESS_UNSAFE); // TODO: Not really unsafe
                             }
                         }
                     } else {
-                        state.addToWhere(arg1Obj.getId() + (c.getOp() == ConstraintOp.CONTAINS
+                        buffer.append(arg1Obj.getId() + (c.getOp() == ConstraintOp.CONTAINS
                                     ? " = " : " != ") + arg2Alias);
                     }
-                    state.addToWhere(" AND " + indirectTableAlias + ".id = " + arg2Obj.getId());
-                    state.addToWhere(loseBrackets ? "" : ")");
+                    buffer.append(" AND " + indirectTableAlias + ".id = " + arg2Obj.getId());
+                    buffer.append(loseBrackets ? "" : ")");
                 } else {
                     String arg2Alias = (String) state.getFieldToAlias(arg2)
                         .get(arg1Desc.getReverseReferenceDescriptor().getName());
                     if (arg1Qc != null) {
-                        queryClassToString(state.getWhereBuffer(), arg1Qc, q, schema, ID_ONLY,
-                                state);
-                        state.addToWhere((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
+                        queryClassToString(buffer, arg1Qc, q, schema, ID_ONLY, state);
+                        buffer.append((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
                                 + arg2Alias);
                     } else if (arg1Qcb != null) {
                         Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
                         if (fieldToAlias.containsKey("id")) {
-                            state.addToWhere(arg2Alias + " = " + fieldToAlias.get("id"));
+                            buffer.append(arg2Alias + " = " + fieldToAlias.get("id"));
                         } else {
                             fieldToAlias.put("id", arg2Alias);
                             if (arg1Qcb.getIds() == null) {
-                                bagConstraintToString(state, new BagConstraint(new QueryField(
-                                                arg1Qcb), ConstraintOp.IN, arg1Qcb.getOsb()), q,
-                                        schema, SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                bagConstraintToString(state, buffer, new BagConstraint(
+                                            new QueryField(arg1Qcb), ConstraintOp.IN,
+                                            arg1Qcb.getOsb()), q, schema,
+                                        SAFENESS_UNSAFE); // TODO: Not really unsafe
                             } else {
-                                bagConstraintToString(state, new BagConstraint(new QueryField(
-                                                arg1Qcb), (c.getOp() == ConstraintOp.CONTAINS
-                                                    ? ConstraintOp.IN : ConstraintOp.NOT_IN),
+                                bagConstraintToString(state, buffer, new BagConstraint(
+                                            new QueryField(arg1Qcb), (c.getOp() == ConstraintOp
+                                                .CONTAINS ? ConstraintOp.IN : ConstraintOp.NOT_IN),
                                             arg1Qcb.getIds()), q, schema,
                                         SAFENESS_UNSAFE); // TODO: Not really unsafe
                             }
                         }
                     } else {
-                        state.addToWhere("" + arg1Obj.getId()
+                        buffer.append("" + arg1Obj.getId()
                                 + (c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
                                 + arg2Alias);
                     }
@@ -1210,38 +1365,40 @@ public class SqlGenerator
                     + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc);
                 state.addToFrom(DatabaseUtil.getIndirectionTableName(arg1ColDesc) + " AS "
                         + indirectTableAlias);
-                state.addToWhere(loseBrackets ? "" : "(");
+                buffer.append(loseBrackets ? "" : "(");
                 if (arg1Qc != null) {
-                    queryClassToString(state.getWhereBuffer(), arg1Qc, q, schema, ID_ONLY, state);
-                    state.addToWhere(" = " + arg2Alias);
+                    queryClassToString(buffer, arg1Qc, q, schema, ID_ONLY, state);
+                    buffer.append(" = " + arg2Alias);
                 } else if (arg1Qcb != null) {
                     Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
                     if (fieldToAlias.containsKey("id")) {
-                        state.addToWhere(arg2Alias + " = " + fieldToAlias.get("id"));
+                        buffer.append(arg2Alias + " = " + fieldToAlias.get("id"));
                     } else {
                         fieldToAlias.put("id", arg2Alias);
                         if (arg1Qcb.getIds() == null) {
-                            bagConstraintToString(state, new BagConstraint(new QueryField(arg1Qcb),
-                                        ConstraintOp.IN, arg1Qcb.getOsb()), q, schema,
+                            bagConstraintToString(state, buffer, new BagConstraint(
+                                        new QueryField(arg1Qcb), ConstraintOp.IN, arg1Qcb
+                                        .getOsb()), q, schema,
                                     SAFENESS_UNSAFE); // TODO: Not really unsafe
                         } else {
-                            bagConstraintToString(state, new BagConstraint(new QueryField(arg1Qcb),
-                                        (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
-                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds()), q, schema,
+                            bagConstraintToString(state, buffer, new BagConstraint(
+                                        new QueryField(arg1Qcb), (c.getOp() == ConstraintOp
+                                            .CONTAINS ? ConstraintOp.IN : ConstraintOp.NOT_IN),
+                                        arg1Qcb.getIds()), q, schema,
                                     SAFENESS_UNSAFE); // TODO: Not really unsafe
                         }
                     }
                 } else {
-                    state.addToWhere(arg1Obj.getId() + " = " + arg2Alias);
+                    buffer.append(arg1Obj.getId() + " = " + arg2Alias);
                 }
-                state.addToWhere(" AND " + indirectTableAlias + "."
+                buffer.append(" AND " + indirectTableAlias + "."
                         + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc) + " = ");
                 if (arg2 == null) {
-                    state.addToWhere("" + arg2Obj.getId());
+                    buffer.append("" + arg2Obj.getId());
                 } else {
-                    queryClassToString(state.getWhereBuffer(), arg2, q, schema, ID_ONLY, state);
+                    queryClassToString(buffer, arg2, q, schema, ID_ONLY, state);
                 }
-                state.addToWhere(loseBrackets ? "" : ")");
+                buffer.append(loseBrackets ? "" : ")");
             }
         }
     }
@@ -1256,17 +1413,16 @@ public class SqlGenerator
     /**
      * Converts a BagConstraint object into a String suitable for putting on an SQL query.
      *
-     * @param state the object to place text into
+     * @param state the current SqlGenerator state
+     * @param buffer the StringBuffer to place text into
      * @param c the BagConstraint object
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
      * @param safeness the constraint context safeness
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static void bagConstraintToString(State state, BagConstraint c, Query q,
-            DatabaseSchema schema, int safeness)
-        throws ObjectStoreException {
-
+    protected static void bagConstraintToString(State state, StringBuffer buffer, BagConstraint c,
+            Query q, DatabaseSchema schema, int safeness) throws ObjectStoreException {
         Class type = c.getQueryNode().getType();
         String leftHandSide;
         if (c.getQueryNode() instanceof QueryEvaluable) {
@@ -1283,10 +1439,10 @@ public class SqlGenerator
         if (bagColl == null) {
             ObjectStoreBag osb = c.getOsb();
             if (c.getOp() == ConstraintOp.IN) {
-                state.addToWhere(leftHandSide);
+                buffer.append(leftHandSide);
             } else {
-                state.addToWhere("(NOT (");
-                state.addToWhere(leftHandSide);
+                buffer.append("(NOT (");
+                buffer.append(leftHandSide);
             }
 
             if (((safeness == SAFENESS_SAFE) && (c.getOp() == ConstraintOp.IN))
@@ -1296,19 +1452,19 @@ public class SqlGenerator
                 String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
                 state.addToFrom(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + " AS "
                         + indirectTableAlias);
-                state.addToWhere(" = " + indirectTableAlias + "."
+                buffer.append(" = " + indirectTableAlias + "."
                         + ObjectStoreInterMineImpl.BAGVAL_COLUMN);
-                state.addToWhere(" AND " + indirectTableAlias + "."
+                buffer.append(" AND " + indirectTableAlias + "."
                         + ObjectStoreInterMineImpl.BAGID_COLUMN + " = " + osb.getBagId());
             } else {
-                state.addToWhere(" IN (SELECT " + ObjectStoreInterMineImpl.BAGVAL_COLUMN
+                buffer.append(" IN (SELECT " + ObjectStoreInterMineImpl.BAGVAL_COLUMN
                         + " FROM ");
-                state.addToWhere(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
-                state.addToWhere(" WHERE " + ObjectStoreInterMineImpl.BAGID_COLUMN + " = "
+                buffer.append(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                buffer.append(" WHERE " + ObjectStoreInterMineImpl.BAGID_COLUMN + " = "
                         + osb.getBagId() + ")");
             }
             if (c.getOp() == ConstraintOp.NOT_IN) {
-                state.addToWhere("))");
+                buffer.append("))");
             }
         } else {
             Iterator bagIter = bagColl.iterator();
@@ -1323,7 +1479,7 @@ public class SqlGenerator
                 }
             }
             if (filteredBag.isEmpty()) {
-                state.addToWhere(c.getOp() == ConstraintOp.IN ? "false" : "true");
+                buffer.append(c.getOp() == ConstraintOp.IN ? "false" : "true");
             } else {
                 String bagTableName = (String) state.getBagTableNames().get(c);
                 if (filteredBag.size() < MAX_BAG_INLINE_SIZE || bagTableName == null) {
@@ -1331,26 +1487,26 @@ public class SqlGenerator
                     Iterator orIter = filteredBag.iterator();
                     while (orIter.hasNext()) {
                         if (needComma == 0) {
-                            state.addToWhere((c.getOp() == ConstraintOp.IN
+                            buffer.append((c.getOp() == ConstraintOp.IN
                                         ? (filteredBag.size() > 9000 ? "(" : "")
                                         : "(NOT (") + leftHandSide + " IN (");
                         } else if (needComma % 9000 == 0) {
-                            state.addToWhere(") OR " + leftHandSide + " IN (");
+                            buffer.append(") OR " + leftHandSide + " IN (");
                         } else {
-                            state.addToWhere(", ");
+                            buffer.append(", ");
                         }
                         needComma++;
                         StringBuffer constraint = new StringBuffer();
-                        objectToString(state.getWhereBuffer(), orIter.next());
+                        objectToString(buffer, orIter.next());
                     }
-                    state.addToWhere(c.getOp() == ConstraintOp.IN ? (filteredBag.size() > 9000
+                    buffer.append(c.getOp() == ConstraintOp.IN ? (filteredBag.size() > 9000
                                 ? "))" : ")") : ")))");
                 } else {
                     if (c.getOp() == ConstraintOp.IN) {
-                        state.addToWhere(leftHandSide);
+                        buffer.append(leftHandSide);
                     } else {
-                        state.addToWhere("(NOT (");
-                        state.addToWhere(leftHandSide);
+                        buffer.append("(NOT (");
+                        buffer.append(leftHandSide);
                     }
 
                     if (((safeness == SAFENESS_SAFE) && (c.getOp() == ConstraintOp.IN))
@@ -1360,15 +1516,15 @@ public class SqlGenerator
                         String indirectTableAlias = state.getIndirectAlias(); // Not really
                                                                               // indirection
                         state.addToFrom(bagTableName + " AS " + indirectTableAlias);
-                        state.addToWhere(" = " + indirectTableAlias + ".value");
+                        buffer.append(" = " + indirectTableAlias + ".value");
                     } else {
-                        state.addToWhere(" IN (SELECT value FROM ");
+                        buffer.append(" IN (SELECT value FROM ");
 
-                        state.addToWhere(bagTableName);
-                        state.addToWhere(")");
+                        buffer.append(bagTableName);
+                        buffer.append(")");
                     }
                     if (c.getOp() == ConstraintOp.NOT_IN) {
-                        state.addToWhere("))");
+                        buffer.append("))");
                     }
                 }
             }
@@ -1855,6 +2011,7 @@ public class SqlGenerator
     private static class State
     {
         private StringBuffer whereText = new StringBuffer();
+        private StringBuffer havingText = new StringBuffer();
         private StringBuffer fromText = new StringBuffer();
         private Set orderBy = new LinkedHashSet();
         private int number = 0;
@@ -1881,6 +2038,15 @@ public class SqlGenerator
 
         public StringBuffer getWhereBuffer() {
             return whereText;
+        }
+
+        public String getHaving() {
+            String having = havingText.toString();
+            return (having.length() == 0 ? "" : " HAVING " + having);
+        }
+
+        public StringBuffer getHavingBuffer() {
+            return havingText;
         }
 
         public String getFrom() {
@@ -1976,6 +2142,3 @@ public class SqlGenerator
         }
     }
 }
-
-
-
