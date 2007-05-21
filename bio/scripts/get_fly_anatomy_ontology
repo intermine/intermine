@@ -12,7 +12,7 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
-my $server = "http://obo.cvs.sourceforge.net/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly";
+my $server = "http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly";
 my $file = "fly_anatomy.obo";
 
 my $fly_ont_main_dir = "/shared/data/ontologies/fly_anatomy";
@@ -52,6 +52,6 @@ sub update_files(){
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
 	$log_buffer = "Fly Anatomy Ontology\nNew data available in $new_dir containing file $new_name\n\n"; 
-	$version_buffer = "Current data is in $new_dir. Updated on $date with file $new_name\n";
+	$version_buffer = "Fly Anatomy Ontology\n$date\nA structured controlled vocabulary of the anatomy of Drosophila melanogaster.\nhttp://obofoundry.org/cgi-bin/detail.cgi?id=fly_anatomy&title=Drosophila%20gross%20anatomy\n";
 	&write_version($dir,$version_buffer);
 }	

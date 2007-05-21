@@ -8,6 +8,7 @@
 
 use strict;
 use warnings;
+use IO::All;
 
 BEGIN {
   # find the lib directory by looking at the path to this script
@@ -50,8 +51,14 @@ if($result == 1){
 	system("mv $temp_file $data_file");
 	&make_link($date,$current_link);
 	$updated = 1;
+	
+	my $version;
+	my $homophila_page = io($homophila_server)->slurp();
+	if ($homophila_page =~ /Version ([\d\.]+)/) {
+		$version = $1;
+	}
 	$log_buffer = "Homophila\nNew data available in $data_dir containing file(s):\n";
-	$version_buffer = "Current data is in $data_dir. Updated on $date with file(s):\n";
+	$version_buffer = "Homophila\n$version $date\nHomophila: Human Disease to Drosophila Gene Database\nhttp://superfly.ucsd.edu/homophila/\n";
 }elsif($result == 0 ){
 	unlink $temp_file;
 	print "Downloaded files deleted.\n";
@@ -101,7 +108,6 @@ if( (-e $matches)&&(-e $diseases)&&(-e $prots) ){
 	&print_hash2file($prots,%proteinID);
 	
 	$log_buffer	.= "$homophila_matches_file\n$homophila_diseases_file\n";
-	$version_buffer	.= "$homophila_matches_file\n$homophila_diseases_file\n";
 }
 
 #print file
@@ -169,7 +175,7 @@ if(-e $sequences_file){
 			my $efetch_result = get($efetch);
 	  		print SEQUENCES "$efetch_result\n";		
 		}
-		&delay();
+		#&delay();
 	}close SEQUENCES;
 }
 # implements the three second delay between queries as required by ncbi
@@ -221,7 +227,6 @@ if(-e $prot_gene_file){
 }
 if($updated == 1){
 	$log_buffer.="protein_gene.txt\n\n";
-	$version_buffer .= "protein_gene.txt\n\n";
 	&write_version($homophila_main_dir,$version_buffer);
 }
 &write_log($log_buffer);

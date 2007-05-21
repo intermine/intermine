@@ -19,7 +19,7 @@ my $password = "-anonymous\@";
 
 # get the list of organisms from the config file - this is the five letter
 # abbreviation used as the start of intact filenames. 
-my $file = "/shared/data/taxonID.config";
+my $file = "resources/get_scripts.config";
 my %organisms = &config_species($file,"intact");
 
 #### Access EBI ftp server
@@ -40,7 +40,7 @@ my $download_dir = "$intact_main_dir/$date_string";
 
 &checkdir_exists($psi_dir);
 &checkdir_exists($intact_main_dir);
-my ($updated,$version_buffer,$log_buffer);
+my $log_buffer;
 
 #if download dir doesn't exist, create it and download data
 if(&checkdir_exists($download_dir)==1){
@@ -49,7 +49,7 @@ if(&checkdir_exists($download_dir)==1){
 	
 	my $date = &convert_date();
 	$log_buffer = "Intact\nNew data available in $download_dir containing file(s):\n";
-	$version_buffer = "Current Intact data is in $download_dir. Updated on $date with file(s):\n";
+	my $int_version_buffer = "IntAct\n$date_string\nProtein interaction database\nhttp://www.ebi.ac.uk/intact";
 	
 	my @psi_files = $connection->ls();
 
@@ -58,17 +58,16 @@ if(&checkdir_exists($download_dir)==1){
 		if (grep {$start eq $_} keys %organisms) {
 	        &ftp_download($connection,$download_dir,$psi_file);
 			$log_buffer .= "$psi_file\n";
-			$version_buffer .= "$psi_file\n";
 	    }
 	}
 	
 	my $current_link = "/shared/data/psi/intact/current";
 	&make_link($date_string,$current_link);
-	$updated = 1;
+	&write_version($intact_main_dir,$int_version_buffer);
+	system "chmod -R a+r,g+w $download_dir";
 }else{ 
 	warn " current version up to date - skipping download\n";
 	$log_buffer = "Intact\nCurrent data ok\n";
-	$updated = 0;
 }
 
 $connection->quit;
@@ -77,19 +76,64 @@ $connection->quit;
 #download psi-mi.obo from http://obo.cvs.sourceforge.net/obo/obo/ontology/genomic-proteomic/protein/
 #to /shared/data/psi/ontology/
 
-my $psi_mi_server = "http://obo.cvs.sourceforge.net/obo/obo/ontology/genomic-proteomic/protein";
-my $psi_mi_data_file = "psi-mi.obo";
+my $psi_mi_server = "http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/genomic-proteomic/protein";
+my $psi_mi_file = "psi-mi.obo";
 
-my $psi_mi_download_dir = "$psi_dir/ontology";
-my $file_to_get = "$psi_mi_server/$psi_mi_data_file";
-my $data_file = "$psi_mi_download_dir/$psi_mi_data_file";
+my $psi_mi_main_dir = "$psi_dir/ontology";
+my $psi_mi_download_dir = "$psi_dir/ontology/temp";
+my $file_to_get = "$psi_mi_server/$psi_mi_file";
+my $temp_file = "$psi_mi_download_dir/$psi_mi_file";
 
+&checkdir_exists($psi_mi_main_dir);
 &checkdir_exists($psi_mi_download_dir);
-&http_download($file_to_get,$data_file);
+&http_download($file_to_get,$temp_file);
 
-if($updated == 1){
-	$version_buffer .= $psi_mi_data_file." saved to $psi_mi_download_dir\n";
-	&write_version($psi_dir,$version_buffer);
+my $current_link = "/shared/data/psi/ontology/current";
+my $old_file = "$current_link/psi-mi.obo";
+
+
+#compare the files, create version directory if it is a new version or
+#the current data link is missing
+my $result = &compare_files($old_file,$temp_file);
+if($result == 1){
+	print "Keeping downloaded files.\n";
+	&update_files($psi_mi_main_dir,$psi_mi_file,$temp_file,$current_link);
+}elsif($result == 0 ){
+	print "Downloaded files deleted.\n";
+	unlink $temp_file;
+	$log_buffer .= "\npsi-mi.obo\nCurrent data ok\n\n";
 }
-$log_buffer .= $psi_mi_data_file." saved to $psi_mi_download_dir\n\n";
+
 &write_log($log_buffer);
+
+
+#create data directory, move files, make link	
+sub update_files(){
+	my ($dir,$new_name,$oldfile,$link) = @_;
+	my $date = &convert_date();
+	my $new_dir = "$dir/$date";
+	my $newfile = "$new_dir/$new_name";
+	&checkdir_exists($new_dir);
+	system("mv $oldfile $newfile");
+	&make_link($date,$link);
+	$log_buffer .= "\npsi-mi.obo\nNew data available in $new_dir containing file $new_name\n\n"; 
+	my $ont_version_buffer = "psi-mi.obo\n$date\nA structured controlled vocabulary for the annotation of experiments concerned with protein-protein interactions.\nhttp://obofoundry.org/cgi-bin/detail.cgi?id=psi-mi&title=Protein-protein%20interaction";
+	&write_version($dir,$ont_version_buffer);
+}	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

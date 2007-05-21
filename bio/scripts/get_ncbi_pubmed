@@ -45,7 +45,8 @@ if(&checkdir_exists($download_dir)==1){
 	&make_link($date_string,$current_link);
 	my $date = &convert_date();
 	$log_buffer = "NCBI_Id_PubmedId\nNew data available in $download_dir containing file ";
-	$version_buffer = "Current data is in $download_dir. Updated on $date with file ";
+	$version_buffer = "NCBI_Id_PubmedId\n$date_string\nA link between the NCBI gene Id and the PubMed Id of publications in which it is found.\nhttp://www.ncbi.nlm.nih.gov/sites/entrez?db=PubMed\n";
+	
 	$updated = 1;
 }else{
 	warn " current version up to date - skipping download\n";
@@ -224,7 +225,6 @@ if(-e $outfile){
 }
 # write log and version files
 if($updated == 1){
-	$version_buffer .= "ncbiID_pubmedID.xml\n";
 	$log_buffer .= "ncbiID_pubmedID.xml\n\n";
 	&write_version($ncbi_main_dir,$version_buffer);
 }

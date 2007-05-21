@@ -149,7 +149,7 @@ sub config_species(){
 sub write_version(){
 	my ($root_dir,$buffer) = @_;
 	
-	my $version = "$root_dir/version.txt";
+	my $version = "$root_dir/VERSION";
 	unlink $version;
 	&write_file($version,$buffer); 
 }
