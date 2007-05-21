@@ -51,7 +51,7 @@ if($result == 1){
 }elsif($result == 0 ){
 	print "Downloaded files deleted.\n";
 	unlink $tab_delim_file;
-	$log_buffer = "Wormbase Identifiers\nCurrent data ok\n\n";
+	$log_buffer = "WormBase Identifiers\nCurrent data ok\n\n";
 }
 
 &write_log($log_buffer);
@@ -65,7 +65,7 @@ sub update_files(){
 	&checkdir_exists($new_dir);
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
-	$log_buffer = "Wormbase Identifiers\nNew data available in $new_dir containing file $new_name\n\n"; 
-	$version_buffer = "Current data is in $new_dir. Updated on $date with file $new_name\n";
+	$log_buffer = "WormBase Identifiers\nNew data available in $new_dir containing file $new_name\n\n"; 
+	$version_buffer = "WormBase\n$date\nThe database of the genetics, genomics and biology of Caenorhabditis elegans.\nhttp://www.wormbase.org/\n";
 	&write_version($dir,$version_buffer);
 }	

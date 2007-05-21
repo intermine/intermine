@@ -44,7 +44,9 @@ foreach (@page){
 &checkdir_exists($InP_main_dir);
 &checkdir_exists($download_dir);
 
-my ($updated,$version_buffer,$version_names,$version_start,$log_buffer,$log_names,$log_start);
+my $date = &convert_date();
+my $updated = 0;
+my ($version_buffer,$log_buffer,$log_names,$log_start);
 my $current_link = "/shared/data/orthologues/inparanoid/current";
 for my $file_to_get (sort keys %files) {
 	&http_download("$inparanoid_server/$file_to_get",$temp_file);
@@ -58,11 +60,10 @@ for my $file_to_get (sort keys %files) {
 		print "Downloaded files deleted.\n";
 		unlink $temp_file;
 		$log_buffer = "InParanoid\nCurrent data ok\n\n";
-		$updated = 0;
 	}
 }
 if($updated == 1){
-$version_buffer = $version_start.$version_names;
+$version_buffer = "InParanoid\n$date\nInParanoid eukaryotic orthologue groups\nhttp://inparanoid.sbc.su.se/\n";
 $log_buffer = $log_start.$log_names."\n";
 &write_version($InP_main_dir,$version_buffer);
 }
@@ -70,14 +71,11 @@ $log_buffer = $log_start.$log_names."\n";
 
 sub update_files(){
 	my ($dir,$new_name,$oldfile,$link) = @_;
-	my $date = &convert_date();
 	my $new_dir = "$dir/$date";
 	my $newfile = "$new_dir/$new_name";
 	&checkdir_exists($new_dir);
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
 	$log_start = "InParanoid\nNew data available in $new_dir containing file(s):\n";
-	$log_names .= "$new_name\n"; 
-	$version_start = "Current data is in $new_dir. Updated on $date with file(s):\n";
-	$version_names .= "$new_name\n";
+	$log_names .= "$new_name\n";
 }	

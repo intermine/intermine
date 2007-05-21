@@ -37,7 +37,7 @@ my $date_string = &date_string_file($connection,$dme_map_file);
 #destination directories
 my $kegg_main_dir = "/shared/data/kegg";
 my $download_dir = "$kegg_main_dir/$date_string";
-my ($updated,$version_buffer,$log_buffer);
+my ($version_buffer,$log_buffer);
 
 #make sure that the necessary directories exist
 my $current_link = "/shared/data/kegg/current";
@@ -50,16 +50,13 @@ if(&checkdir_exists($download_dir)==1){
 	#&unzip_dir($download_dir);
 	
 	&make_link($date_string,$current_link);
-	my $date = &convert_date();
 	$log_buffer = "KEGG\nNew data available in $download_dir containing file(s):"
 		."\n$dme_map_file\n$map_title_file\n\n";
-	$version_buffer = "Current data is in $download_dir. Updated on $date with file(s):"
-		."\n$dme_map_file\n$map_title_file";
+	$version_buffer = "KEGG\n$date_string\nKEGG PATHWAY Database: Wiring diagrams of molecular interactions, reactions, and relations.\nhttp://www.genome.jp/kegg/pathway.html\n";
 	&write_version($kegg_main_dir,$version_buffer)
 }else{
 	warn " current version up to date - skipping download\n";
 	$log_buffer = "KEGG\nCurrent data ok\n\n";
-	$updated = 0;
 }
 &write_log($log_buffer);
 $connection->quit;
