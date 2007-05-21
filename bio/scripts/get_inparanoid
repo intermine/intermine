@@ -15,7 +15,7 @@ BEGIN {
 use InterMine::DataDownloader;
 
 # get species from config file
-my $file = "/shared/data/taxonID.config";
+my $file = "resources/get_scripts.config";
 my %key_codes = &config_species($file,"key_inparanoid");
 my %other_codes = &config_species($file,"other_inparanoid");
 

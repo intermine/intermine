@@ -29,7 +29,7 @@ my $date = &convert_date();
 $archive_dir = "$archive_dir/$date";
 
 # configure which species to download
-my $file = "/shared/data/taxonID.config";
+my $file = "resources/get_scripts.config";
 my %species_map = &config_species($file,"biomart");
 
 # variable to control whether a new xml file is created

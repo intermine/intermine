@@ -82,7 +82,7 @@ if(-e $outfile){
 	warn "XML already generated\n";
 }else{
 	#define organism ids to include
-	my $config_file = "/shared/data/taxonID.config";
+	my $config_file = "resources/get_scripts.config";
 	my %ids=&config_species($config_file,"pubmed");
 
 
