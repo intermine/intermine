@@ -235,6 +235,7 @@
     <action path="/importQueriesAction" name="importQueriesForm" type="org.intermine.web.struts.ImportQueriesAction" scope="request" input="importQueries">
       <forward name="importQueries" path="importQueries.page"/>
       <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/browseAction" name="browseForm" type="org.intermine.web.struts.TemplateAction" input="begin">
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
