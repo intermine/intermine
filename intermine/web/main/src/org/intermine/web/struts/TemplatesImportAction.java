@@ -73,9 +73,10 @@ public class TemplatesImportAction extends InterMineAction
             String templateName = template.getName();
              if (!WebUtil.isValidName(templateName)) {  
                 templateName = WebUtil.replaceSpecialChars(templateName);
-                template = renameTemplate(templateName, template);
                 renamed++;
-            }      
+            }
+            templateName = validateQueryName(templateName, profile);
+            template = renameTemplate(templateName, template);
             profile.saveTemplate(templateName, template);
             imported++;
         }
@@ -104,4 +105,33 @@ public class TemplatesImportAction extends InterMineAction
         
         return newTemplate;
     }
+    
+    /**
+     * Checks that the query name doesn't already exist and returns a numbered
+     * name if it does.  
+     * @param queryName the query name
+     * @param profile the user profile
+     * @return a validated name for the query
+     */
+    private String validateQueryName(String queryName, Profile profile) {
+        String newQueryName = queryName;
+
+        if (!WebUtil.isValidName(queryName)) {   
+            newQueryName = WebUtil.replaceSpecialChars(newQueryName);
+        }
+        
+        if (profile.getSavedTemplates().containsKey(newQueryName)) {
+            int i = 1;
+            while (true) {
+                String testName = newQueryName + "_" + i;
+                if (!profile.getSavedTemplates().containsKey(testName)) {
+                    return testName;
+                }
+                i++;
+            }
+        } else {
+            return newQueryName;
+        }
+    }
+    
 }
