@@ -95,8 +95,17 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
      */
     public Set queryEquivalentObjects(InterMineObject obj, Source source)
         throws ObjectStoreException {
+        Class summaryName = obj.getClass();
+        Integer soFarCallCount = summaryCallCounts.get(summaryName);
+        if (soFarCallCount == null) {
+            soFarCallCount = new Integer(0);
+            summaryTimes.put(summaryName, new Long(0));
+            summaryCounts.put(summaryName, new Integer(0));
+            summaryCallCounts.put(summaryName, soFarCallCount);
+        }
         if (hints.databaseEmpty()) {
             savedDatabaseEmpty++;
+            summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
             return Collections.EMPTY_SET;
         }
         boolean allPkClassesEmpty = true;
@@ -122,6 +131,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             }
         }
         if (allPkClassesEmpty) {
+            summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
             return Collections.EMPTY_SET;
         }
         return super.queryEquivalentObjects(obj, source);
