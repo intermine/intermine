@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE set PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+
+<set>
+  <title>FlyMine Cookbook</title>
+
+<book id="flymineCookbook">
+  <title>
+    FlyMine Cookbook.
+  </title>
+
+  <bookinfo>
+    <productname>
+      <emphasis>FlyMine</emphasis> - An integrated database for Drosophila and
+      Anopheles genomics 
+    </productname>
+  </bookinfo>
+
+<chapter id="HowTo">
+
+   <title>Introduction</title>
+
+      <para>The coookbook provides a series of example queries and
+      show you how they can be built in the query builder.  A basic
+      knowledge of the query builder is assumed (e.g. how to add
+      navigate the model browser, add a constraint and select fields
+      for your results output).  If you are not familar with these
+      then please see the tutorials first.</para>
+
+</chapter>
+
+  <chapter id="GO_annotation">    
+   <title>GO annotation queries</title>
+
+   <sect1 id="GO_annotation1">
+           <title>How do I find which GO terms my gene has been annotated with?</title>
+	
+	<para>A template query is available for this query: </para>
+
+	<para>Gene --> GO terms, which can be accessed via the 'Gene Ontology' aspect.</para>
+
+	<para>To build this query in the query builder:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Select the class from which you will start
+          building your query: from the query builder tab on the home
+          page, select 'Gene'.  </para>
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="GO_query2.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+	  </listitem>
+
+
+
+        <listitem>
+          <para>Constrain the Gene class to the Gene of interest by
+          adding a constraint to either the Gene identifier, symbol or
+          organismdbid.
+          </para>
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="GO_query1.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+
+        </listitem>
+	
+
+       <listitem>
+          <para>Select the 'Summary' button next to 'Gene' to add the
+          key gene fields to your output.  Alternatively use the
+          'Show' buttons to select individual fields that you would
+          like to see in your results.
+          </para>
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="GO_query3.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+
+        </listitem>
+	
+
+       <listitem>
+          <para> Looking down the list of classes in the model browser
+          you will notice one called 'allGoAnnotation' and one called
+          'goAnnotation'.  The goAnnotation class holds only the
+          deepest level GO term annotation (ie the primary annotation
+          assignment). The allGoAnnotation class holds all the parents
+          of the primary annotation assignment as well.  So, depending
+          on whether you want to return only the most specific GO
+          terms or the most specific GO terms and all of the parents
+          of these GO terms, you will choose either the goAnnotation
+          class or the allGoAnnotation class respectively. If you
+          expand each of these classes (using the '+' to the left of
+          the class name), you will see that the fields available are
+          the same for both. Click on 'show' next to 'idenitifer' and
+          'name' to return the GO annotation identifier and name.
+          Alternatively click on 'summary' to return the key fields.
+          </para>
+
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="GO_query4.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+
+        </listitem>
+	
+
+      <listitem>
+          <para>Run the query by pressing 'Show Results'.
+          </para>
+
+        </listitem>
+	
+</orderedlist>
+
+
+
+      </sect1>
+
+
+</chapter>
+
+
+
+
+  <chapter id="RegulatoryRegions">    
+   <title>Regulatory region queries</title>
+
+  <sect1 id="RR_1">
+           <title>How do I find regulatory regions associated with a gene?</title>
+	
+	<para>A template query is available for this query: </para>
+
+</sect1>
+
+</chapter>
+
+
+
+
+</book>
+</set>
