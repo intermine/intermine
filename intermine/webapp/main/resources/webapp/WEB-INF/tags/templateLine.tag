@@ -16,7 +16,10 @@
       </html:link>
     </c:if>
     <c:if test="${templateQuery.valid}">
+      <html:link action="/template?name=${templateQuery.name}&amp;type=${type}${extra}" 
+                 title="${linkTitle}">
       <span class="templateTitle">${!empty desc ? desc : templateQuery.title}</span>
+      </html:link>
       <fmt:message var="linkTitle" key="templateList.run">
         <fmt:param value="${templateQuery.name}"/>
       </fmt:message>
