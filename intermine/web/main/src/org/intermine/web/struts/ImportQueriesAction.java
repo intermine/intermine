@@ -59,20 +59,25 @@ public class ImportQueriesAction extends InterMineAction
                                      response);
             return mapping.findForward("query");
         } else {
-            Iterator iter = queries.keySet().iterator();
-            StringBuffer sb = new StringBuffer();
-            while (iter.hasNext()) {
-                String queryName = (String) iter.next();
-                PathQuery query = (PathQuery) queries.get(queryName);
-                queryName = validateQueryName(queryName, profile);
-                SessionMethods.saveQuery(session, queryName, query);
-                if (sb.length() > 0) {
-                    sb.append(", ");
+            try {
+                profile.disableSaving();
+                Iterator iter = queries.keySet().iterator();
+                StringBuffer sb = new StringBuffer();
+                while (iter.hasNext()) {
+                    String queryName = (String) iter.next();
+                    PathQuery query = (PathQuery) queries.get(queryName);
+                    queryName = validateQueryName(queryName, profile);
+                    SessionMethods.saveQuery(session, queryName, query);
+                    if (sb.length() > 0) {
+                        sb.append(", ");
+                    }
+                    sb.append(queryName);
                 }
-                sb.append(queryName);
+                recordMessage(new ActionMessage("query.imported", sb.toString()), request);
+                return mapping.findForward("mymine");
+            } finally {
+                profile.enableSaving();
             }
-            recordMessage(new ActionMessage("query.imported", sb.toString()), request);
-            return mapping.findForward("mymine");
         }
     }
     

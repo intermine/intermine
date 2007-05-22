@@ -18,10 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.collections.map.ListOrderedMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.store.Directory;
-
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
@@ -33,6 +29,9 @@ import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateRepository;
+
+import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.lucene.store.Directory;
 
 /**
  * Class to represent a user of the webapp
@@ -52,7 +51,8 @@ public class Profile
     //protected Map categoryTemplates;
     protected Map queryHistory = new ListOrderedMap();
     protected Directory templateIndex;
-    
+    private boolean savingDisabled;
+
     /**
      * Construct a Profile
      * @param manager the manager for this profile
@@ -64,7 +64,7 @@ public class Profile
      * @param savedTemplates the saved templates for this profile
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
-                   Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags, 
+                   Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
                    Map<String, TemplateQuery> savedTemplates) {
         this.manager = manager;
         this.username = username;
@@ -75,16 +75,15 @@ public class Profile
         this.savedTemplates.putAll(savedTemplates);
         buildTemplateCategories();
     }
-    
+
     /**
      * Return the ProfileManager that was passed to the constructor.
      * @return the ProfileManager
      */
     public ProfileManager getProfileManager() {
         return manager;
-        
     }
-    
+
     /**
      * Get the value of username
      * @return the value of username
@@ -92,7 +91,7 @@ public class Profile
     public String getUsername() {
         return username;
     }
-    
+
     /**
      * Get the value of userId
      * @return an Integer
@@ -109,7 +108,7 @@ public class Profile
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
-    
+
     /**
      * Get the value of password
      * @return the value of password
@@ -117,7 +116,27 @@ public class Profile
     public String getPassword() {
         return password;
     }
-    
+
+    /**
+     * Disable saving until enableSaving() is called.  This is called before many templates or
+     * queries need to be saved or deleted because each call to ProfileManager.saveProfile() is
+     * slow.
+     */
+    public void disableSaving() {
+        savingDisabled = true;
+    }
+
+    /**
+     * Re-enable saving when saveTemplate(), deleteQuery() etc. are called.  Also calls
+     * ProfileManager.saveProfile() to write this Profile to the database.
+     */
+    public void enableSaving() {
+        savingDisabled = false;
+        if (manager != null) {
+            manager.saveProfile(this);
+        }
+    }
+
     /**
      * Get the users saved templates
      * @return saved templates
@@ -133,19 +152,19 @@ public class Profile
      */
     public void saveTemplate(String name, TemplateQuery template) {
         savedTemplates.put(name, template);
-        if (manager != null) {
+        if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
         }
         buildTemplateCategories();
     }
-    
+
     /**
      * Delete a template
      * @param name the template name
      */
     public void deleteTemplate(String name) {
         savedTemplates.remove(name);
-        if (manager != null) {
+        if (manager != null && !savingDisabled) {
             List favourites = manager.getTags("favourite", name, TagTypes.TEMPLATE, username);
             for (Iterator iter = favourites.iterator(); iter.hasNext();) {
                 Tag tag = (Tag) iter.next();
@@ -171,7 +190,7 @@ public class Profile
      */
     public void saveQuery(String name, SavedQuery query) {
         savedQueries.put(name, query);
-        if (manager != null) {
+        if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
         }
     }
@@ -182,11 +201,11 @@ public class Profile
      */
     public void deleteQuery(String name) {
         savedQueries.remove(name);
-        if (manager != null) {
+        if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
         }
     }
-    
+
     /**
      * Get the session query history.
      * @return map from query name to SavedQuery
@@ -194,7 +213,7 @@ public class Profile
     public Map<String, SavedQuery> getHistory() {
         return Collections.unmodifiableMap(queryHistory);
     }
-    
+
     /**
      * Save a query to the query history.
      * @param query the SavedQuery to save to the history
@@ -202,7 +221,7 @@ public class Profile
     public void saveHistory(SavedQuery query) {
         queryHistory.put(query.getName(), query);
     }
-    
+
     /**
      * Remove an item from the query history.
      * @param name the of the SavedQuery from the history
@@ -210,7 +229,7 @@ public class Profile
     public void deleteHistory(String name) {
         queryHistory.remove(name);
     }
-    
+
     /**
      * Rename an item in the history.
      * @param oldName the name of the old item
@@ -237,7 +256,7 @@ public class Profile
     public Map<String, InterMineBag> getSavedBags() {
         return Collections.unmodifiableMap(savedBags);
     }
-    
+
     /**
      * Stores a new bag in the profile. Note that bags are always present in the user profile
      * database, so this just adds the bag to the in-memory list of this profile.
@@ -263,8 +282,8 @@ public class Profile
         while (subIter.hasNext()) {
             classAndSubs.add(((ClassDescriptor) subIter.next()).getType().getName());
         }
-        
-        TreeMap map = new TreeMap();        
+
+        TreeMap map = new TreeMap();
         for (Iterator iter = savedBags.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
             InterMineBag bag = (InterMineBag) entry.getValue();
@@ -273,7 +292,7 @@ public class Profile
             }
         }
         return map;
-    
+
     }
 
     /**
@@ -291,7 +310,7 @@ public class Profile
         InterMineBag bag = new InterMineBag(name, type, description, os, userId, uosw);
         savedBags.put(name, bag);
     }
-    
+
     /**
      * Delete a bag
      * @param name the bag name
@@ -299,19 +318,19 @@ public class Profile
     public void deleteBag(String name) {
         savedBags.remove(name);
     }
-    
+
     /**
      * Create a map from category name to a list of templates contained
      * within that category.
      */
-    private void buildTemplateCategories() {        
+    private void buildTemplateCategories() {
         // We also take this opportunity to index the user's template queries
         templateIndex = TemplateRepository.indexTemplates(savedTemplates, "user");
     }
-    
+
     /**
      * Get the users's template index.
-     * 
+     *
      * @return the user's template index
      */
     public Directory getUserTemplatesIndex() {
