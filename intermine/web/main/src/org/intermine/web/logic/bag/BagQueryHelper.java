@@ -56,7 +56,7 @@ public class BagQueryHelper
      * @param model the Model to pass to the BagQuery constructor
      * @return a BagQuery that queries for objects of class given of type where any of the class
      * key fields match any of the input identifiers
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException if the type isn't in the model
      */
     public static BagQuery createDefaultBagQuery(String type, BagQueryConfig bagQueryConfig,
                                                  Model model, Map classKeys, Collection input)

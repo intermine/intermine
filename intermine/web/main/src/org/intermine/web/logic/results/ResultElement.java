@@ -117,7 +117,7 @@ public class ResultElement implements Serializable
 
     /**
      * Set the type
-     * @param type the type
+     * @param typeCls the type
      */
     public void setTypeClass(Class typeCls) {
         this.typeCls = typeCls;

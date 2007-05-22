@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.intermine.dataloader.BaseEquivalentObjectFetcher;
-import org.intermine.dataloader.DataLoaderHelper;
 import org.intermine.dataloader.EquivalentObjectFetcher;
 import org.intermine.dataloader.Source;
 import org.intermine.metadata.MetaDataException;
@@ -50,6 +49,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
     /**
      * Construct with the name of a source - will use defined keys to upgrade bags.
      * @param sourceName name of source
+     * @param os the ObjectStore to query
      */
     public PkQueryIdUpgrader(String sourceName, ObjectStore os) {
         this.source = new Source();

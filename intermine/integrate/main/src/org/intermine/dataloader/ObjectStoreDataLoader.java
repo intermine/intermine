@@ -10,7 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import java.util.Date;
 import java.util.Iterator;
 
 import org.intermine.model.InterMineObject;

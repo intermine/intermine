@@ -35,7 +35,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;

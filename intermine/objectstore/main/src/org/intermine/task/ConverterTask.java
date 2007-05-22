@@ -18,10 +18,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
 /**
