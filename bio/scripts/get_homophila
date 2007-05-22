@@ -56,7 +56,7 @@ if($result == 1){
 	my $expression = qr/Version ([\d\.]+)/;
 	my $version = &search_webpage($homophila_server,$expression);
 	
-	$log_buffer = "Homophila\nNew data available in $data_dir containing file(s):\n";
+	$log_buffer = "Homophila\nNew data available for version $version in $data_dir containing file(s):\n";
 	$version_buffer = "Homophila\n$version $date\nHomophila: Human disease to Drosophila gene data set\nhttp://superfly.ucsd.edu/homophila/\n";
 }elsif($result == 0 ){
 	unlink $temp_file;

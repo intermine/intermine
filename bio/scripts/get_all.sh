@@ -60,8 +60,14 @@ echo "==========================================================="
 echo "Getting Interpro xml file"
 ./get_interproXML
 echo "==========================================================="
+
 today=$(date +"%F")
 logfile="/shared/data/download_logs/$today.txt"
 mv $tempfile $logfile
 
-mail -s "Data download log for $today" philip@flymine.org < $logfile
+file_with_usernames=${1:-./resources/mail_list}
+for name in `cat ${file_with_usernames}`
+do  
+	mail -s "Outcome of data download run on $today" $name < $logfile
+done
+

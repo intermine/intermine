@@ -52,7 +52,7 @@ my $go_download_dir = "/shared/data/go-annotation";
 $go_connection->quit;
 
 my $log_buffer = "Go Annotation\ngene_ontology.obo updated to $go_download_dir\n";
-my $go_version_buffer = "Gene Ontology\n$date\n\The Gene Ontology\nhttp://www.geneontology.org";
+my $go_version_buffer = "Gene Ontology\n$date\nThe Gene Ontology\nhttp://www.geneontology.org";
 &write_version($go_download_dir,$go_version_buffer);
 
 ### Get goa files
@@ -158,7 +158,7 @@ for my $source_database (keys %gene_association_map) {
 		&make_link($current_link_dir,$current_link);
 		
 		$log_buffer .= "$sorted updated to $gene_association_download_dir\n";
-		my $version_buffer = "GO annotations for D. melanogaster, M. musculus, S. cerevisiae and C. elegans\n$date_string\n\Gene Ontology assignments from the Gene Ontology Site\nhttp://www.geneontology.org/GO.current.annotations.shmtl\n";
+		my $version_buffer = "GO annotations for D. melanogaster, M. musculus, S. cerevisiae and C. elegans\n$date_string\nGene Ontology assignments from the Gene Ontology Site\nhttp://www.geneontology.org/GO.current.annotations.shmtl\n";
 		&write_version($source_dir,$version_buffer);
 		
 		system "chmod -R a+r,g+w $gene_association_download_dir";
@@ -171,4 +171,3 @@ $assoc_connection->quit;
 
 $log_buffer .= "\n";
 &write_log($log_buffer);
-&write_version("/shared/data/go-annotation/",$version_buffer);

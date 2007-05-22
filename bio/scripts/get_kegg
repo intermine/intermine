@@ -57,7 +57,7 @@ if(&checkdir_exists($download_dir)==1){
 	my $release = &search_webpage($kegg_server,$expression);
 	
 	&make_link($date_string,$current_link);
-	$log_buffer = "KEGG\nNew data available in $download_dir containing file(s):"
+	$log_buffer = "KEGG\nNew data available (release $release) in $download_dir containing file(s):"
 		."\n$dme_map_file\n$map_title_file\n\n";
 	$version_buffer = "KEGG pathways\nRelease $release $date_string\nKEGG pathways and D. melanogaster genes that are involved with them. From KEGG\nhttp://www.genome.jp/kegg/\n";
 	&write_version($kegg_main_dir,$version_buffer)
