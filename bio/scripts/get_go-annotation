@@ -40,7 +40,6 @@ my $password = "-anonymous\@";
 # the key is the name of the directory to put the gene association file in, the
 # suffix is used to find the file on the server
 my %gene_association_map = &config_species($file,"go_assoc");
-my ($log_buffer,$version_buffer);
 my $date = &convert_date();
 
 # Get latest version of the gene ontology - is updated every 30 mins
@@ -51,15 +50,17 @@ $go_connection->cwd($go_dir)
 my $go_download_dir = "/shared/data/go-annotation";
 &ftp_download($go_connection,$go_download_dir,$go_file);
 $go_connection->quit;
-$log_buffer = "Go Annotation\ngene_ontology.obo updated to $go_download_dir\n";
-$version_buffer = "Current data found in:\n$go_download_dir\n\tgene_ontology.obo\n";
+
+my $log_buffer = "Go Annotation\ngene_ontology.obo updated to $go_download_dir\n";
+my $go_version_buffer = "Gene Ontology\n$date\n\The Gene Ontology\nhttp://www.geneontology.org";
+&write_version($go_download_dir,$go_version_buffer);
 
 ### Get goa files
 my $goa_connection = &ftp_connect($uniprot_go_server,$username,$password);
 $goa_connection->cwd($uniprot_go_dir)
 	or die "Cannot change working directory ", $goa_connection->message;
-#use the date stamp of a file in the $intact_dir to create a version id 
-#for the output directory
+
+#use the date stamp of the uniprot goa file to create a version id for the output directory
 my $uniprot_date_string = &date_string_file($goa_connection,$goa_file_gz);
 
 # make uniprot directory if necessary and download file
@@ -72,8 +73,7 @@ if(&checkdir_exists($uniprot_download_dir)==1){
   	&ftp_download($goa_connection,$uniprot_download_dir,$goa_file_gz);
 	&ftp_download($goa_connection,$uniprot_download_dir,"README");
 	&unzip_dir($uniprot_download_dir);
-  	$version_buffer .= "$uniprot_download_dir\n\tREADME\n";
-	
+  	
   	open GOA_FILE, "$uniprot_download_dir/$goa_file"
 		or die "can't open $uniprot_download_dir/$goa_file";
   
@@ -106,7 +106,8 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 		unlink $unsorted;
 		
 		$log_buffer .= "$sorted updated into $uniprot_download_dir\n";
-		$version_buffer .= "\t$sorted\n";
+		my $goa_version_buffer = "GO annotations for A. gambiae, A. mellifera\n$uniprot_date_string\nGene Ontology assignemnts from Uniprot GOA\nhttp://www.geneontology.org/GO.current.annotations.shmtl\n";
+		&write_version($uniprot_dir,$goa_version_buffer);
 	}
 	#make links for the current data
 	&make_link($uniprot_date_string,$uniprot_link);
@@ -117,7 +118,6 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 }else {
     warn " current uniprot version up to date - skipping download\n";
 	$log_buffer .= "$uniprot_dir up to date\n";
-	$version_buffer .= &get_version($uniprot_link,$uniprot_dir);
 }
 $goa_connection->quit;
 
@@ -158,12 +158,13 @@ for my $source_database (keys %gene_association_map) {
 		&make_link($current_link_dir,$current_link);
 		
 		$log_buffer .= "$sorted updated to $gene_association_download_dir\n";
-		$version_buffer .= "$gene_association_download_dir\n\tgene_association.$suffix\n";
+		my $version_buffer = "GO annotations for D. melanogaster, M. musculus, S. cerevisiae and C. elegans\n$date_string\n\Gene Ontology assignments from the Gene Ontology Site\nhttp://www.geneontology.org/GO.current.annotations.shmtl\n";
+		&write_version($source_dir,$version_buffer);
+		
 		system "chmod -R a+r,g+w $gene_association_download_dir";
 	}else {
 		warn " current $source_database version up to date - skipping download\n";
 		$log_buffer .= "$source_dir up to date\n";
-		$version_buffer .= &get_version($source_dir_link,$source_dir);
 	}
 }
 $assoc_connection->quit;
@@ -171,18 +172,3 @@ $assoc_connection->quit;
 $log_buffer .= "\n";
 &write_log($log_buffer);
 &write_version("/shared/data/go-annotation/",$version_buffer);
-
-#add files that are still up to date to the version buffer
-sub get_version(){
-	my ($link,$main_dir) = @_;
-	
-	my $dir = readlink $link;
-	my $buffer .= "$main_dir/$dir\n";
-	opendir(DIR, $link) or die "can't opendir $link: $!";
-	while (defined( my $file = readdir(DIR))) {
-		next if $file =~ /^\.\.?$/;
-		$buffer .= "\t$file\n";
-	}
-	closedir(DIR);
-	return $buffer;
-}

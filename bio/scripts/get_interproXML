@@ -46,8 +46,8 @@ if(&checkdir_exists($download_dir)==1){
 			$version = $1;
 		}
 	}
-	$version_buffer = "InterPro\n$date_string\n"
-						."A database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.\n"
+	$version_buffer = "InterPro protein family and domain data\n$version $date_string\n"
+						."Protein Family and Domain data for D. melanogaster, A. gambiae and C. elegans from Interpro\n"
 						."http://www.ebi.ac.uk/interpro\n";
 	$log_buffer = "Interpro\nNew version $version is available in $download_dir containing file $interpro_file\n\n";
 	&write_version($main_dir,$version_buffer);

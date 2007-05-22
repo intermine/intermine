@@ -57,7 +57,7 @@ sub update_files(){
 	&fix_file($orig_file,$fixed_file);
 	&make_link("$date/fixed",$link);
 	$log_buffer = "FlyAtlas\nNew data available in $new_dir/fixed/ containing file $new_name\n\n"; 
-	$version_buffer = "FlyAtlas\n$date\nFlyAtlas: Gene expression in the adult fly.\nhttp://www.flyatlas.org\n";
+	$version_buffer = "FlyAtlas gene expression data\n$date\nMicroarray-based gene expression data for adult D. melanogaster tissues from FlyAtlas\nhttp://www.flyatlas.org\n";
 	&write_version($dir,$version_buffer);
 }
 #correct the column names

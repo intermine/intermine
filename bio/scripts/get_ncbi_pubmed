@@ -45,7 +45,7 @@ if(&checkdir_exists($download_dir)==1){
 	&make_link($date_string,$current_link);
 	my $date = &convert_date();
 	$log_buffer = "NCBI_Id_PubmedId\nNew data available in $download_dir containing file ";
-	$version_buffer = "NCBI_Id_PubmedId\n$date_string\nA link between the NCBI gene Id and the PubMed Id of publications in which it is found.\nhttp://www.ncbi.nlm.nih.gov/sites/entrez?db=PubMed\n";
+	$version_buffer = "Gene versus publications from PubMed\n$date_string\nA mapping between genes and publications which mention them for D. melanogaster, C. elegans and S. cerevisiae  from NCBI\nhttp://www.ncbi.nlm.nih.gov/\n";
 	
 	$updated = 1;
 }else{
