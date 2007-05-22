@@ -318,8 +318,10 @@ public class PathQuery
         try {
             sortOrder.clear(); // there can only be one sort column
             Path p = getFirstPathFromView();
-            OrderBy o = new OrderBy(p, "asc");
-            sortOrder.add(o);
+            if (p != null) {
+                OrderBy o = new OrderBy(p, "asc");
+                sortOrder.add(o);
+            }
         } catch (PathError e) {
             problems.add(e);
         }
