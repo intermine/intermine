@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Cookbook</title>
+
+    <para>The FlyMine cookbook consists of a set of FAQs to help answer commonly encountered questions and queries in FlyMine.</para>
+
+    <orderedlist>
+      <listitem>
+        <para><ulink url="cookbook_generalFaq.xml">General FAQ</ulink>: Whats what in FlyMine</para>
+      </listitem>
+
+   
+      <listitem>
+        <para><ulink url="cookbook_queryFaq.xml">Query FAQ</ulink>: How do I do 'this' in FlyMine</para>
+      </listitem>
+
+
+
+    </orderedlist>
+  </section>
+</article>
