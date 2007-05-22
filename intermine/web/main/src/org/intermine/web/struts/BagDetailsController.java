@@ -33,8 +33,6 @@ import org.intermine.web.logic.config.GraphDisplayer;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
