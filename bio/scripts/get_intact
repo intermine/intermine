@@ -91,7 +91,6 @@ my $temp_file = "$psi_mi_download_dir/$psi_mi_file";
 my $current_link = "/shared/data/psi/ontology/current";
 my $old_file = "$current_link/psi-mi.obo";
 
-
 #compare the files, create version directory if it is a new version or
 #the current data link is missing
 my $result = &compare_files($old_file,$temp_file);
@@ -106,7 +105,6 @@ if($result == 1){
 
 &write_log($log_buffer);
 
-
 #create data directory, move files, make link	
 sub update_files(){
 	my ($dir,$new_name,$oldfile,$link) = @_;
@@ -116,9 +114,11 @@ sub update_files(){
 	&checkdir_exists($new_dir);
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
+	
 	$log_buffer .= "\npsi-mi.obo\nNew data available in $new_dir containing file $new_name\n\n"; 
 	my $ont_version_buffer = "psi-mi.obo\n$date\nA structured controlled vocabulary for the annotation of experiments concerned with protein-protein interactions.\nhttp://obofoundry.org/cgi-bin/detail.cgi?id=psi-mi&title=Protein-protein%20interaction";
 	&write_version($dir,$ont_version_buffer);
+	system "chmod -R a+r,g+w $new_dir";
 }	
 
 

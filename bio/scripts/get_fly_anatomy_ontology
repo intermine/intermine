@@ -12,12 +12,14 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#data source
 my $server = "http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly";
 my $file = "fly_anatomy.obo";
+my $file_to_get = "$server/$file";
 
+#data destination
 my $fly_ont_main_dir = "/shared/data/ontologies/fly_anatomy";
 my $download_dir = "$fly_ont_main_dir/temp";
-my $file_to_get = "$server/$file";
 my $temp_file = "$download_dir/temp.txt";
 
 &checkdir_exists($fly_ont_main_dir);
@@ -51,7 +53,9 @@ sub update_files(){
 	&checkdir_exists($new_dir);
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
+	
 	$log_buffer = "Fly Anatomy Ontology\nNew data available in $new_dir containing file $new_name\n\n"; 
 	$version_buffer = "Drosophila Anatomy Ontology\n$date\nDrosophila Anatomy ontology from FlyBase\nhttp://www.flybase.net/\n";
 	&write_version($dir,$version_buffer);
+	system "chmod -R a+r,g+w $new_dir";
 }	

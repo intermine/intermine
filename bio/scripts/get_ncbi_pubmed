@@ -46,7 +46,6 @@ if(&checkdir_exists($download_dir)==1){
 	my $date = &convert_date();
 	$log_buffer = "NCBI_Id_PubmedId\nNew data available in $download_dir containing file ";
 	$version_buffer = "Gene versus publications from PubMed\n$date_string\nA mapping between genes and publications which mention them for D. melanogaster, C. elegans and S. cerevisiae  from NCBI\nhttp://www.ncbi.nlm.nih.gov/\n";
-	
 	$updated = 1;
 }else{
 	warn " current version up to date - skipping download\n";
@@ -227,6 +226,7 @@ if(-e $outfile){
 if($updated == 1){
 	$log_buffer .= "ncbiID_pubmedID.xml\n\n";
 	&write_version($ncbi_main_dir,$version_buffer);
+	system "chmod -R a+r,g+w $download_dir";
 }
 &write_log($log_buffer);
 

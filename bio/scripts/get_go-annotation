@@ -19,6 +19,7 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#data source
 my $uniprot_go_server = "ftp.ebi.ac.uk";
 my $uniprot_go_dir = "pub/databases/GO/goa/UNIPROT";
 my $goa_file = "gene_association.goa_uniprot";
@@ -26,7 +27,6 @@ my $goa_file_gz = "$goa_file.gz";
 
 # taxon IDs that should be grepped out of the $goa_file and the suffix to use
 # when creating the output file
-
 my $file = "resources/get_scripts.config";
 my %taxon_map = &config_species($file,"go_taxon");
 
@@ -102,6 +102,8 @@ if(&checkdir_exists($uniprot_download_dir)==1){
       		print OUT_FILE $line;
     	}
 		close OUT_FILE or die;
+		
+		#sort the file based on the second column
 		system "sort -o $sorted -k 2,2 $unsorted";
 		unlink $unsorted;
 		
@@ -109,6 +111,7 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 		my $goa_version_buffer = "GO annotations for A. gambiae, A. mellifera\n$uniprot_date_string\nGene Ontology assignemnts from Uniprot GOA\nhttp://www.geneontology.org/GO.current.annotations.shmtl\n";
 		&write_version($uniprot_dir,$goa_version_buffer);
 	}
+	
 	#make links for the current data
 	&make_link($uniprot_date_string,$uniprot_link);
 	my $go_uniprot_link = "/shared/data/go-annotation/current/uniprot";
@@ -145,6 +148,7 @@ for my $source_database (keys %gene_association_map) {
 		&ftp_download($assoc_connection,$gene_association_download_dir,$gene_association_file_gz);
 		&unzip_dir($gene_association_download_dir);
     	
+		#sort the file based on the second column
 		my $unsorted = "$gene_association_download_dir/unsorted.$suffix";
 		my $sorted = "$gene_association_download_dir/gene_association.$suffix";
 		system "mv $sorted $unsorted";

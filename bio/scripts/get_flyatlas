@@ -13,12 +13,14 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#data source
 my $flyatlas_server = "http://130.209.132.177/atlas";
 my $flyatlas_data_file = "all.txt";
+my $file_to_get = "$flyatlas_server/$flyatlas_data_file";
 
+#data destination
 my $flyatlas_main_dir = "/shared/data/flyatlas";
 my $download_dir = "$flyatlas_main_dir/temp";
-my $file_to_get = "$flyatlas_server/$flyatlas_data_file";
 my $temp_file = "$download_dir/temp.txt";
 
 #create directories and download the file
@@ -56,9 +58,11 @@ sub update_files(){
 	system("mv $oldfile $orig_file");
 	&fix_file($orig_file,$fixed_file);
 	&make_link("$date/fixed",$link);
+	
 	$log_buffer = "FlyAtlas\nNew data available in $new_dir/fixed/ containing file $new_name\n\n"; 
 	$version_buffer = "FlyAtlas gene expression data\n$date\nMicroarray-based gene expression data for adult D. melanogaster tissues from FlyAtlas\nhttp://www.flyatlas.org\n";
 	&write_version($dir,$version_buffer);
+	system "chmod -R a+r,g+w $new_dir";
 }
 #correct the column names
 sub fix_file(){
