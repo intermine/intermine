@@ -66,6 +66,6 @@ sub update_files(){
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
 	$log_buffer = "WormBase Identifiers\nNew data available in $new_dir containing file $new_name\n\n"; 
-	$version_buffer = "WormBase\n$date\nThe database of the genetics, genomics and biology of Caenorhabditis elegans.\nhttp://www.wormbase.org/\n";
+	$version_buffer = "WormBase Identifiers\n$date\nThe database of the genetics, genomics and biology of Caenorhabditis elegans.\nhttp://www.wormbase.org/\n";
 	&write_version($dir,$version_buffer);
 }	

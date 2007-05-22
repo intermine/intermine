@@ -62,7 +62,7 @@ if(&checkdir_exists($download_dir)==1){
 	
 	my $date = &convert_date();
 	$log_buffer = "Uniprot\nNew data available in $download_dir containing file(s):\n";
-	$version_buffer = "UniProt\n$version $date\nUniProt Universal Protein Resource\nhttp://www.uniprot.org\n";
+	$version_buffer = "UniProt proteins\nRelease $version $date\nProteins for D. melanogaster, D. pseudoobscura, A. gambiae, A. mellifera, C. elegans and S. cerevisiae  from Uniprot (trembl and swissprot)\nhttp://www.ebi.uniprot.org/index.shtml\n";
 	
 	for my $file_to_get (@files_to_get) {
 		&ftp_download($connection,$download_dir,$file_to_get);

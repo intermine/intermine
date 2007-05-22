@@ -10,7 +10,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_files 
 				checkdir_exists date_string_file unzip_dir convert_date 
-				config_species write_version write_log);
+				config_species write_version write_log search_webpage);
 
 #connect to server
 sub ftp_connect(){
@@ -177,5 +177,17 @@ sub write_file(){
 		close(FH);
 	} 	
 }	
+
+#use a reg exp to get a version/release number from a web page
+sub search_webpage(){
+	my ($server,$reg_exp) = @_;
+	my $number;
+	
+	my $page = io($server)->slurp();
+	if ($page =~ $reg_exp) {
+		$number = $1;
+	}
+	return $number;
+}
 
 1;

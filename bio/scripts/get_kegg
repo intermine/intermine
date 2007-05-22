@@ -7,6 +7,7 @@
 
 use strict;
 use warnings;
+use IO::All;
 
 BEGIN {
   # find the lib directory by looking at the path to this script
@@ -49,10 +50,16 @@ if(&checkdir_exists($download_dir)==1){
 	&ftp_download($connection,$download_dir,$map_title_file);
 	#&unzip_dir($download_dir);
 	
+	
+	#get the KEGG release number from the webpage
+	my $kegg_server = "http://www.genome.jp/kegg/";
+	my $expression = qr/KEGG Release ([\d\.]+),/;
+	my $release = &search_webpage($kegg_server,$expression);
+	
 	&make_link($date_string,$current_link);
 	$log_buffer = "KEGG\nNew data available in $download_dir containing file(s):"
 		."\n$dme_map_file\n$map_title_file\n\n";
-	$version_buffer = "KEGG\n$date_string\nKEGG PATHWAY Database: Wiring diagrams of molecular interactions, reactions, and relations.\nhttp://www.genome.jp/kegg/pathway.html\n";
+	$version_buffer = "KEGG pathways\nRelease $release $date_string\nKEGG pathways and D. melanogaster genes that are involved with them. From KEGG\nhttp://www.genome.jp/kegg/\n";
 	&write_version($kegg_main_dir,$version_buffer)
 }else{
 	warn " current version up to date - skipping download\n";

@@ -52,6 +52,6 @@ sub update_files(){
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
 	$log_buffer = "Fly Anatomy Ontology\nNew data available in $new_dir containing file $new_name\n\n"; 
-	$version_buffer = "Fly Anatomy Ontology\n$date\nA structured controlled vocabulary of the anatomy of Drosophila melanogaster.\nhttp://obofoundry.org/cgi-bin/detail.cgi?id=fly_anatomy&title=Drosophila%20gross%20anatomy\n";
+	$version_buffer = "Drosophila Anatomy Ontology\n$date\nDrosophila Anatomy ontology from FlyBase\nhttp://www.flybase.net/\n";
 	&write_version($dir,$version_buffer);
 }	

@@ -63,7 +63,7 @@ for my $file_to_get (sort keys %files) {
 	}
 }
 if($updated == 1){
-$version_buffer = "InParanoid\n$date\nInParanoid eukaryotic orthologue groups\nhttp://inparanoid.sbc.su.se/\n";
+$version_buffer = "Orthologues and paralogues\n$date\nOrthologues and Paralogues between D. melanogaster, C. elegans, D. pseudoobscura, A. gambiae and A. mellifera. Also orthologues from these five organisms to C. familiaris, D. discoideum, D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, R. norvegicus, S. cerevisiae, S. pombe  from InParanoid\nhttp://inparanoid.sbc.su.se/\n";
 $log_buffer = $log_start.$log_names."\n";
 &write_version($InP_main_dir,$version_buffer);
 }
