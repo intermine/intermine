@@ -128,13 +128,15 @@ public class Profile
 
     /**
      * Re-enable saving when saveTemplate(), deleteQuery() etc. are called.  Also calls
-     * ProfileManager.saveProfile() to write this Profile to the database.
+     * ProfileManager.saveProfile() to write this Profile to the database and rebuilds the
+     * template description index.
      */
     public void enableSaving() {
         savingDisabled = false;
         if (manager != null) {
             manager.saveProfile(this);
         }
+        buildTemplateCategories();
     }
 
     /**
@@ -154,8 +156,8 @@ public class Profile
         savedTemplates.put(name, template);
         if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
+            buildTemplateCategories();
         }
-        buildTemplateCategories();
     }
 
     /**
@@ -164,15 +166,17 @@ public class Profile
      */
     public void deleteTemplate(String name) {
         savedTemplates.remove(name);
-        if (manager != null && !savingDisabled) {
+        if (manager != null) {
             List favourites = manager.getTags("favourite", name, TagTypes.TEMPLATE, username);
             for (Iterator iter = favourites.iterator(); iter.hasNext();) {
                 Tag tag = (Tag) iter.next();
                 manager.deleteTag(tag);
             }
-            manager.saveProfile(this);
+            if (!savingDisabled) {
+                manager.saveProfile(this);
+                buildTemplateCategories();
+            }
         }
-        buildTemplateCategories();
     }
 
     /**
