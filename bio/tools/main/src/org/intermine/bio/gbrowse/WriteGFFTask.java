@@ -44,6 +44,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 import org.flymine.model.genomic.Analysis;
+import org.flymine.model.genomic.ArtificialDeletion;
 import org.flymine.model.genomic.CDS;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.ChromosomeBand;
@@ -56,6 +57,7 @@ import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.NcRNA;
+import org.flymine.model.genomic.PCRProduct;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Synonym;
 import org.flymine.model.genomic.Transcript;
@@ -552,9 +554,7 @@ public class WriteGFFTask extends Task
             }
         }
 
-        String bioEntityClassName = bioEntity.getClass().getName();
-
-        if (bioEntityClassName.equals("org.flymine.model.genomic.PCRProduct")) {
+        if (bioEntity instanceof PCRProduct) {
             Boolean fieldValue;
             try {
                 fieldValue = (Boolean) TypeUtil.getFieldValue(bioEntity, "promoter");
@@ -566,7 +566,7 @@ public class WriteGFFTask extends Task
             attributes.put("promoter", promoterFlagList);
         }
 
-        if (bioEntityClassName.equals("org.flymine.model.genomic.ArtificialDeletion")) {
+        if (bioEntity instanceof ArtificialDeletion) {
             Boolean fieldValue;
             try {
                 fieldValue = (Boolean) TypeUtil.getFieldValue(bioEntity, "available");
