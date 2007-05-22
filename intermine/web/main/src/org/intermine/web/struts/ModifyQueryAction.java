@@ -83,13 +83,18 @@ public class ModifyQueryAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyQueryForm mqf = (ModifyQueryForm) form;
         String type = request.getParameter("type");
-        
-        for (int i = 0; i < mqf.getSelectedQueries().length; i++) {
-            if ("history".equals(type)) {
-                profile.deleteHistory(mqf.getSelectedQueries()[i]);
-            } else {
-                profile.deleteQuery(mqf.getSelectedQueries()[i]);
+
+        try {
+            profile.disableSaving();
+            for (int i = 0; i < mqf.getSelectedQueries().length; i++) {
+                if ("history".equals(type)) {
+                    profile.deleteHistory(mqf.getSelectedQueries()[i]);
+                } else {
+                    profile.deleteQuery(mqf.getSelectedQueries()[i]);
+                }
             }
+        } finally {
+            profile.enableSaving();
         }
 
         if ("history".equals(type)) {

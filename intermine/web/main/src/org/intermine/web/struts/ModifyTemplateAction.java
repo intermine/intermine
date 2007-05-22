@@ -94,10 +94,15 @@ public class ModifyTemplateAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
 
-        for (int i = 0; i < mqf.getSelected().length; i++) {
-            profile.deleteTemplate(mqf.getSelected()[i]);
+        try {
+            profile.disableSaving();
+            for (int i = 0; i < mqf.getSelected().length; i++) {
+                profile.deleteTemplate(mqf.getSelected()[i]);
+            }
+        } finally {
+            profile.enableSaving();
         }
-
+        
         if (profile.getUsername() != null
             && profile.getUsername()
             .equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {

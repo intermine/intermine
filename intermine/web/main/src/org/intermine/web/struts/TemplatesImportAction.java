@@ -56,42 +56,48 @@ public class TemplatesImportAction extends InterMineAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), profile.getSavedBags(),
                                                     classKeys);
-        
-        if (tif.isOverwriting()
-            && profile.getSavedTemplates().size() > 0) {
-            Iterator iter = new HashSet(profile.getSavedTemplates().keySet()).iterator();
-            while (iter.hasNext()) {
-                profile.deleteTemplate((String) iter.next());
-                deleted++;
-            }
-        }
-       
-        Iterator iter = templates.values().iterator();
-        while (iter.hasNext()) {
-            TemplateQuery template = (TemplateQuery) iter.next();
-            
-            String templateName = template.getName();
-             if (!WebUtil.isValidName(templateName)) {  
-                templateName = WebUtil.replaceSpecialChars(templateName);
-                renamed++;
-            }
-            templateName = validateQueryName(templateName, profile);
-            template = renameTemplate(templateName, template);
-            profile.saveTemplate(templateName, template);
-            imported++;
-        }
 
-        TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
-        tr.globalTemplatesChanged();
-        //InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
-        
-        recordMessage(new ActionMessage("importTemplates.done",
-                                        new Integer(deleted), 
-                                        new Integer(imported), 
-                                        new Integer(renamed)), 
-                                        request);
-        
-        return mapping.findForward("mymine");
+        try {
+            profile.disableSaving();
+
+            if (tif.isOverwriting()
+                            && profile.getSavedTemplates().size() > 0) {
+                Iterator iter = new HashSet(profile.getSavedTemplates().keySet()).iterator();
+                while (iter.hasNext()) {
+                    profile.deleteTemplate((String) iter.next());
+                    deleted++;
+                }
+            }
+
+            Iterator iter = templates.values().iterator();
+            while (iter.hasNext()) {
+                TemplateQuery template = (TemplateQuery) iter.next();
+
+                String templateName = template.getName();
+                if (!WebUtil.isValidName(templateName)) {  
+                    templateName = WebUtil.replaceSpecialChars(templateName);
+                    renamed++;
+                }
+                templateName = validateQueryName(templateName, profile);
+                template = renameTemplate(templateName, template);
+                profile.saveTemplate(templateName, template);
+                imported++;
+            }
+
+            TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
+            tr.globalTemplatesChanged();
+            //InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
+
+            recordMessage(new ActionMessage("importTemplates.done",
+                                            new Integer(deleted), 
+                                            new Integer(imported), 
+                                            new Integer(renamed)), 
+                                            request);
+
+            return mapping.findForward("mymine");
+        } finally {
+            profile.enableSaving();
+        }
     }
     
     // rebuild the template, but with the new special-character-free name
