@@ -27,11 +27,11 @@ $connection->cwd($interpro_dir)
 my $interpro_file = "interpro.xml";
 my $date_string = &date_string_file($connection,"$interpro_file.gz");
 
-# check psi and intact directory exists
+# check interpro directory exists
 my $main_dir = "/shared/data/interpro";
 my $download_dir = "$main_dir/$date_string";
-
 &checkdir_exists($main_dir);
+
 my ($version,$version_buffer,$log_buffer);
 #if download dir doesn't exist, create it and download data
 if(&checkdir_exists($download_dir)==1){
@@ -40,6 +40,7 @@ if(&checkdir_exists($download_dir)==1){
 	my $current_link = "/shared/data/interpro/current";
 	&make_link($date_string,$current_link);
 	
+	#get the interpro version from the downloaded file
 	open(F,"<$download_dir/$interpro_file") or die "$! can't open $interpro_file";
 	while(my $newline = <F>){
 		if($newline && $newline =~ /dbname="INTERPRO" version="(\S+)"/gi){
@@ -51,6 +52,7 @@ if(&checkdir_exists($download_dir)==1){
 						."http://www.ebi.ac.uk/interpro\n";
 	$log_buffer = "Interpro\nNew version $version is available in $download_dir containing file $interpro_file\n\n";
 	&write_version($main_dir,$version_buffer);
+	system "chmod -R a+r,g+w $download_dir";
 }else{ 
 	warn " current version up to date - skipping download\n";
 	$log_buffer = "Interpro\nCurrent data ok\n\n";

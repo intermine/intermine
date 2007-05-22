@@ -13,9 +13,7 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
-my @files_to_get = qw(
-                      uniprot.xsd.gz uniprot_sprot.xml.gz uniprot_trembl.xml.gz
-                     );
+#data source
 my $uniprot_address = "ftp.uniprot.org";
 my $username = "anonymous";
 my $password = "-anonymous\@";
@@ -23,6 +21,9 @@ my $uniprot_base_path = "pub/databases/uniprot/current_release";
 my $uniprot_full_path = "$uniprot_base_path/knowledgebase/complete";
 my $release_notes_file = "relnotes.txt";
 my $uniprot_main_dir = "/shared/data/uniprot";
+my @files_to_get = qw(
+                      uniprot.xsd.gz uniprot_sprot.xml.gz uniprot_trembl.xml.gz
+                     );
 my $keywords_file = "keydef.xml.gz";
 
 #### Access ftp server
@@ -63,12 +64,12 @@ if(&checkdir_exists($download_dir)==1){
 	my $date = &convert_date();
 	$log_buffer = "Uniprot\nNew data available (release $version) in $download_dir containing file(s):\n";
 	$version_buffer = "UniProt proteins\nRelease $version $date\nProteins for D. melanogaster, D. pseudoobscura, A. gambiae, A. mellifera, C. elegans and S. cerevisiae  from Uniprot (trembl and swissprot)\nhttp://www.ebi.uniprot.org/index.shtml\n";
-	
+
 	for my $file_to_get (@files_to_get) {
 		&ftp_download($connection,$download_dir,$file_to_get);
 	  	$log_buffer .= "$file_to_get\n";	  
 	}
-	
+
 	#download keydefs.xml
 	$connection->cwd("/$uniprot_full_path/docs")
 		or die "Cannot change working directory ", $connection->message;
@@ -86,7 +87,6 @@ if(&checkdir_exists($download_dir)==1){
 }
 
 &write_log($log_buffer);
-system "chmod -R a+r,g+w $download_dir";
 $connection->quit;
 
 #============================================================================
@@ -170,7 +170,8 @@ if(&checkdir_exists($split_dir)==0){
 		open( FILE, ">>$file") or die "cannot open $file: $!";
 		print FILE "$element_end";
 		close(FILE);
-	}	
+	}
+	system "chmod -R a+r,g+w $download_dir";	
 }
 
 #creates files and adds elements as appropriate 

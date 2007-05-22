@@ -43,11 +43,12 @@ for my $species (keys %species_map) {
 	# slurp the contents of the URL and write it to a file
 	my $taxonID = $species_map{$species}{taxon};
 	my $filename = $taxonID."_mart_export.txt";
+	my $temp_file = "$temp_dir/$filename";
+	my $old_file = "$main_dir/$filename";
+	
 	print "Getting $filename to $temp_dir\n";
 	my $io = io"$url";
 	my $contents = $io->slurp;
-	my $temp_file = "$temp_dir/$filename";
-	my $old_file = "$main_dir/$filename";	
 	open FH, ">$temp_file";
 	print FH $contents;		
 	close FH;
@@ -198,7 +199,7 @@ if($updated == 0){
 	&make_link("xml",$current_link);
 	&write_version($main_dir, $version_buffer);
 }
-
+system "chmod -R a+r,g+w $main_dir";
 &write_log($log_buffer);
 
 #kim's subroutine. Organsim object references are automatically created where necessary

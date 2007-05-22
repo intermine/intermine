@@ -13,12 +13,14 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#data source
 my $wb_id_server = "http://www.sanger.ac.uk/Projects/C_elegans/LOCI";
 my $wb_id_data_file = "genes2molecular_names.txt";
+my $file_to_get = "$wb_id_server/$wb_id_data_file";
 
+#data destination
 my $wb_main_dir = "/shared/data/wormbase";
 my $download_dir = "$wb_main_dir/temp";
-my $file_to_get = "$wb_id_server/$wb_id_data_file";
 my $temp_file = "$download_dir/temp.txt";
 my $tab_delim_file = "$download_dir/$wb_id_data_file";
 
@@ -65,7 +67,9 @@ sub update_files(){
 	&checkdir_exists($new_dir);
 	system("mv $oldfile $newfile");
 	&make_link($date,$link);
+	
 	$log_buffer = "WormBase Identifiers\nNew data available in $new_dir containing file $new_name\n\n"; 
 	$version_buffer = "WormBase Identifiers\n$date\nThe database of the genetics, genomics and biology of Caenorhabditis elegans.\nhttp://www.wormbase.org/\n";
 	&write_version($dir,$version_buffer);
+	system "chmod -R a+r,g+w $new_dir";
 }	

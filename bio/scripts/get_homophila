@@ -216,7 +216,6 @@ if(-e $prot_gene_file){
 	    	$cds = 1;
   		}
 		if ($cds && /gene="(.+)"/) {
-    		if ($more) { print "|"; }
     		print PROT_GENES "$1\n";
    			$more = 1;
   		}	
@@ -227,6 +226,7 @@ if(-e $prot_gene_file){
 if($updated == 1){
 	$log_buffer.="protein_gene.txt\n\n";
 	&write_version($homophila_main_dir,$version_buffer);
+	system "chmod -R a+r,g+w $data_dir";
 }
 &write_log($log_buffer);
 

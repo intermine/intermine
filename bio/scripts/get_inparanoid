@@ -78,4 +78,5 @@ sub update_files(){
 	&make_link($date,$link);
 	$log_start = "InParanoid\nNew data available in $new_dir containing file(s):\n";
 	$log_names .= "$new_name\n";
+	system "chmod -R a+r,g+w $new_dir";
 }	
