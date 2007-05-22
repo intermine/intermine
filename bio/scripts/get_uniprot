@@ -61,7 +61,7 @@ if(&checkdir_exists($download_dir)==1){
 		or die "Cannot change working directory ", $connection->message;
 	
 	my $date = &convert_date();
-	$log_buffer = "Uniprot\nNew data available in $download_dir containing file(s):\n";
+	$log_buffer = "Uniprot\nNew data available (release $version) in $download_dir containing file(s):\n";
 	$version_buffer = "UniProt proteins\nRelease $version $date\nProteins for D. melanogaster, D. pseudoobscura, A. gambiae, A. mellifera, C. elegans and S. cerevisiae  from Uniprot (trembl and swissprot)\nhttp://www.ebi.uniprot.org/index.shtml\n";
 	
 	for my $file_to_get (@files_to_get) {
