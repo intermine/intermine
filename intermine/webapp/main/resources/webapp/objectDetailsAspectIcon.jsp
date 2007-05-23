@@ -12,6 +12,7 @@
 
 <%-- relies on 'aspect' being in the request scope --%>
 
-<img src="${ASPECTS[aspect].iconImage}" width="18" height="18" class="objectDetailsAspectIcon"/>
-
+<html:link action="/aspect?name=${aspect}">
+  <img src="${ASPECTS[aspect].iconImage}" width="18" height="18" class="objectDetailsAspectIcon"/>
+</html:link>
 <!-- /objectDetailsAspectIcon.jsp -->
