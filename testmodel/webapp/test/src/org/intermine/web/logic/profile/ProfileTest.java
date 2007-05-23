@@ -47,7 +47,8 @@ public class ProfileTest extends TestCase
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         userprofileOS = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         objectstoreOS = ObjectStoreFactory.getObjectStore("os.unittest");
-        bag = new InterMineBag("bob", "String", "Description", objectstoreOS, bobId, userprofileOS);
+        bag = new InterMineBag("bob", "String", "Description", new Date(),
+                               objectstoreOS, bobId, userprofileOS);
         //Collections.singleton("testElement"));
 //        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);

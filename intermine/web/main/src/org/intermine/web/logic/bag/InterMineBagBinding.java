@@ -22,7 +22,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
 import org.xml.sax.InputSource;
@@ -75,8 +74,6 @@ public class InterMineBagBinding
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
-        } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
     }

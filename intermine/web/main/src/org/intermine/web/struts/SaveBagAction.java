@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.AbstractList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -148,7 +149,7 @@ public class SaveBagAction extends InterMineAction
         ObjectStoreWriter osw = null;
         try {
             if (bag == null) {
-                bag = new InterMineBag(bagName, objectTypes.iterator().next(), null, os,
+                bag = new InterMineBag(bagName, objectTypes.iterator().next(), null, new Date(), os,
                         profile.getUserId(), uosw);
                 profile.saveBag(bagName, bag);
             }

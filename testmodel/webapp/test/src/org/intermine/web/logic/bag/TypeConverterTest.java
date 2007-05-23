@@ -12,6 +12,7 @@ package org.intermine.web.logic.bag;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class TypeConverterTest extends MockStrutsTestCase
         Results r = os.execute(q);
         assertEquals("Results: " + r, 2, r.size());
         ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
-        InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", os, null, uosw);
+        InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
         ObjectStoreBag osb = imb.getOsb();
         osw.addToBag(osb, ((Employee) ((List) r.get(0)).get(0)).getId());
         osw.addToBag(osb, ((Employee) ((List) r.get(1)).get(0)).getId());
