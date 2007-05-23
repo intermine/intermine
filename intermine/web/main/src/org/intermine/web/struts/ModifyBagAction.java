@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -106,7 +107,8 @@ public class ModifyBagAction extends InterMineAction
         // Now combine
         String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
         ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
-        InterMineBag combined = new InterMineBag(name, type, null, os, profile.getUserId(), uosw);
+        InterMineBag combined = new InterMineBag(name, type, null, new Date(), os, 
+                                                 profile.getUserId(), uosw);
         ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(op);
         for (int i = 0; i < selectedBags.length; i++) {
             osbc.addBag(savedBags.get(selectedBags[i]).getOsb());

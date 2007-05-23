@@ -10,6 +10,7 @@ package org.intermine.web.logic.bag;
  *
  */
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -41,8 +42,9 @@ public class InterMineBag
     private Integer profileId;
     private Integer savedBagId;
     private String name;
-    private String type;
+    private final String type;
     private String description;
+    private final Date dateCreated;
     private ObjectStoreBag osb;
     private ObjectStore os;
     
@@ -52,16 +54,19 @@ public class InterMineBag
      * @param name the name of the bag
      * @param type the class of objects stored in the bag
      * @param description the description of the bag
+     * @param dateCreated the Date when this bag was created
      * @param os the production ObjectStore
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @throws ObjectStoreException if an error occurs
      */
-    public InterMineBag(String name, String type, String description, ObjectStore os,
-            Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
+    public InterMineBag(String name, String type, String description, Date dateCreated,
+                        ObjectStore os, Integer profileId, ObjectStoreWriter uosw) 
+      throws ObjectStoreException {
         this.name = name;
         this.type = type;
         this.description = description;
+        this.dateCreated = dateCreated;
         this.os = os;
         this.profileId = profileId;
         this.osb = os.createObjectStoreBag();
@@ -77,6 +82,7 @@ public class InterMineBag
             savedBag.setName(name);
             savedBag.setType(type);
             savedBag.setDescription(description);
+            savedBag.setDateCreated(dateCreated);
             savedBag.proxyUserProfile(new ProxyReference(null, profileId, UserProfile.class));
             savedBag.setOsbId(osb.getBagId());
             uosw.store(savedBag);
@@ -102,6 +108,7 @@ public class InterMineBag
         this.name = savedBag.getName();
         this.type = savedBag.getType();
         this.description = savedBag.getDescription();
+        this.dateCreated = savedBag.getDateCreated();
         this.profileId = savedBag.proxGetUserProfile().getId();
         this.osb = new ObjectStoreBag(savedBag.getOsbId());
     }
@@ -110,9 +117,8 @@ public class InterMineBag
      * Returns a List which contains the contents of this bag as Integer IDs.
      *
      * @return a List of Integers
-     * @throws ObjectStoreException if something goes wrong
      */
-    public List getContentsAsIds() throws ObjectStoreException {
+    public List getContentsAsIds() {
         Query q = new Query();
         q.addToSelect(osb);
         q.setDistinct(false);
@@ -125,9 +131,8 @@ public class InterMineBag
      * Returns a List which contains the contents of this bag as InterMineObjects.
      *
      * @return a List of InterMineObjects
-     * @throws ObjectStoreException if something goes wrong
      */
-    public List getContentsAsObjects() throws ObjectStoreException {
+    public List getContentsAsObjects() {
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addFrom(qc);
@@ -214,10 +219,19 @@ public class InterMineBag
     }
     
     /**
+     * Return the description of this bag.
      * @return the description
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Return the creation date that was passed to the constructor.
+     * @return the creation date
+     */
+    public Date getDateCreated() {
+        return dateCreated;
     }
 
     /**

@@ -11,6 +11,7 @@ package org.intermine.web.logic.profile;
  */
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -311,7 +312,7 @@ public class Profile
      */
     public void createBag(String name, String type, String description, ObjectStore os,
             ObjectStoreWriter uosw) throws ObjectStoreException {
-        InterMineBag bag = new InterMineBag(name, type, description, os, userId, uosw);
+        InterMineBag bag = new InterMineBag(name, type, description, new Date(), os, userId, uosw);
         savedBags.put(name, bag);
     }
 

@@ -104,7 +104,8 @@ public class ProfileManagerTest extends XMLTestCase
         String bobName = "bob";
 
         Set contents = new HashSet();
-        InterMineBag bag = new InterMineBag("bag1", "org.intermine.model.testmodel.Department", "This is some description", os, bobId, uosw);
+        InterMineBag bag = new InterMineBag("bag1", "org.intermine.model.testmodel.Department",
+                                            "This is some description", new Date(), os, bobId, uosw);
 
         Department deptEx = new Department();
         deptEx.setName("DepartmentA1");
@@ -148,7 +149,8 @@ public class ProfileManagerTest extends XMLTestCase
         fieldNames.add("name");
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
-        InterMineBag objectBag = new InterMineBag("bag2", "org.intermine.model.testmodel.Employee", "description", os, sallyId, uosw);
+        InterMineBag objectBag = new InterMineBag("bag2", "org.intermine.model.testmodel.Employee",
+                                                  "description", new Date(), os, sallyId, uosw);
         osw.addToBag(objectBag.getOsb(), ceoB1.getId());
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",

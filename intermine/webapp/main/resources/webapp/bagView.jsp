@@ -21,10 +21,10 @@
     }
   }
   function noenter() {
-    return !(window.event && window.event.keyCode == 13); 
+    return !(window.event && window.event.keyCode == 13);
   }
 //]]>-->
-</script>              
+</script>
 
 <html:xhtml/>
 
@@ -42,7 +42,7 @@
     <c:otherwise>
 
       <html:form action="/modifyBag">
-        
+
         <table class="results history" cellspacing="0">
           <tr>
             <th>
@@ -54,6 +54,12 @@
             </th>
             <th nowrap>
               <fmt:message key="query.savedbags.typecolumnheader"/>
+            </th>
+            <th nowrap>
+              <fmt:message key="query.savedbags.descriptioncolumnheader"/>
+            </th>
+            <th nowrap>
+              <fmt:message key="query.savedbags.datecreatedcolumnheader"/>
             </th>
             <th align="right" nowrap>
               <fmt:message key="query.savedbags.countcolumnheader"/>
@@ -72,9 +78,17 @@
                 <tiles:put name="type" value="bag"/>
                 <tiles:put name="index" value="${status.index}"/>
               </tiles:insert>
-              
+
               <td><c:out value="${savedBag.value.type}" /></td>
-              
+
+              <td><c:out value="${savedBag.value.description}" /></td>
+
+              <td>
+                <c:if test="${!empty savedBag.value.dateCreated}">
+                  <c:out value="${savedBag.value.dateCreated}"/>
+                </c:if>
+              </td>
+
               <td align="right">
                 <c:out value="${savedBag.value.size}"/>
                 <c:if test="${savedBag.value.size == 1}">
@@ -110,5 +124,5 @@
     </c:otherwise>
   </c:choose>
 
-  
+
 <!-- /bagView.jsp -->

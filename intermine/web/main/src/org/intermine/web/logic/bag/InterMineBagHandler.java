@@ -10,6 +10,7 @@ package org.intermine.web.logic.bag;
  *
  */
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -76,8 +77,9 @@ public class InterMineBagHandler extends DefaultHandler
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
-                bag = new InterMineBag(bagName, bagType, bagDescription, osw.getObjectStore(),
-                        userId, uosw);
+                Date dateCreated = new Date(Long.parseLong(attrs.getValue("date-created")));
+                bag = new InterMineBag(bagName, bagType, bagDescription, 
+                                       dateCreated, osw.getObjectStore(), userId, uosw);
             }
 
             if (qName.equals("bagElement")) {

@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -96,7 +97,8 @@ public class BagUploadConfirmAction extends InterMineAction
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         ObjectStoreWriter profileOs = profileManager.getUserProfileObjectStore();
                                                                       
-        InterMineBag bag = new InterMineBag(bagName, bagType, null, os, profile.getUserId(),
+        InterMineBag bag = new InterMineBag(bagName, bagType, null, new Date(), os,
+                                            profile.getUserId(),
                 profileOs);
         ObjectStoreWriter osw = null;
         try {
