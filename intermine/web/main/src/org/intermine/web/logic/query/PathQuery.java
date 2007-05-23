@@ -182,6 +182,9 @@ public class PathQuery
      * @param view a List of Path
      */
     public void setView(List<Path> view) {
+        if (view == null) {
+            throw new RuntimeException("setView() was passed null");
+        }
         this.view = view;
     }
 
