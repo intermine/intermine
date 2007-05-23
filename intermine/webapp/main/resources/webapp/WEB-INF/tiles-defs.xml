@@ -121,7 +121,10 @@
     <put name="pageName" value="aspect"/>
   </definition>
   <definition name="waiting.page" path="/waiting.jsp"/>
-  <definition name="error.page" path="/error.jsp"/>
+  <definition name="error.page" extends="layout.template">
+    <put name="body" value="error.tile"/>
+    <put name="pageName" value="error"/>
+  </definition>
   <definition name="createAccount.page" extends="layout.template">
     <put name="body" value="createAccount.jsp"/>
     <put name="pageName" value="createAccount"/>
@@ -135,6 +138,7 @@
     <put name="pageName" value="bagDetails"/>
   </definition>
   <!--tiles-->
+  <definition name="error.tile" path="/error.jsp"/>
   <definition name="begin.tile" path="/begin.jsp"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
   <definition name="query.tile" path="/query.jsp">

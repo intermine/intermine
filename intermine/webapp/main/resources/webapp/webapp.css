@@ -204,6 +204,15 @@ table td {
   color: green;
   background-color: #E6FFB3;
 }
+#errorApology {
+  -moz-border-radius: 8px;
+  border: 2px solid red;
+  font-weight: bold;
+  padding: 10px;
+  margin: 30px 50px 50px 50px;
+  background: #fff;
+}
+
 .contextHelp {
 }
 .waitmsg {
