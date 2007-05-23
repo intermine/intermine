@@ -82,20 +82,30 @@ public class InterMineExceptionHandler extends ExceptionHandler
         // Put the original exception on the request
         request.setAttribute("exception", ex);
 
+/*  * this makes ActionError objects which then get displayed in red at the top of the webapp
+ *  * the errors look like: An exception occurred: java.util.NoSuchElementException
+ *  * which isn't so useful
         do {
             // Figure out the error
             if (t instanceof ModuleException) {
                 error = ((ModuleException) t).getError();
                 property = ((ModuleException) t).getProperty();
             } else {
-                error = new ActionError(ae.getKey(), t.getMessage());
+                String message;
+                if (t.getMessage() == null) {
+                    message = t.getClass().getName();
+                } else {
+                    message = t.getMessage();
+                }
+                error = new ActionError(ae.getKey(), message);
                 property = error.getKey();
             }
 
             // Store the exception as a message
             storeException(request, property, error, forward, ae.getScope());
         } while ((t = t.getCause()) != null);
-
+*/
+        
         return forward;
     }
 
