@@ -72,6 +72,7 @@
           </tr>
           <c:forEach items="${queryMap}" var="savedQuery" varStatus="status">
             <c:if test="${!empty savedQuery.key && !empty savedQuery.value}">
+              <c:set var="validQuery" value="${savedQuery.value.pathQuery.valid}"/>
               <tr>
                 <td>
                   <html:multibox property="selectedQueries"
@@ -81,7 +82,7 @@
                   </html:multibox>
                 </td>
                 <c:choose>
-                  <c:when test="${!savedQuery.value.pathQuery.valid}">
+                  <c:when test="${!validQuery}">
                     <td align="left" colspan="2" nowrap>
                       <html:link action="/templateProblems?name=${savedQuery.key}&amp;type=saved" styleClass="brokenTmplLink">
                       <strike>${savedQuery.value.name}</strike>
@@ -137,10 +138,17 @@
                   </c:forEach>
                 </td>
                 <td align="center" nowrap>
-                  <html:link action="/modifyQueryChange?method=run&amp;name=${savedQuery.key}&amp;type=${type}"
-                             titleKey="history.action.execute.hover">
-                    <fmt:message key="history.action.execute"/>
-                  </html:link>
+                  <c:choose>
+                    <c:when test="${validQuery}">
+                      <html:link action="/modifyQueryChange?method=run&amp;name=${savedQuery.key}&amp;type=${type}"
+                                 titleKey="history.action.execute.hover">
+                        <fmt:message key="history.action.execute"/>
+                      </html:link>
+                    </c:when>
+                    <c:otherwise>
+                      <fmt:message key="history.action.execute"/>
+                    </c:otherwise>
+                  </c:choose>
                   |
                           <html:link action="/modifyQueryChange?method=load&amp;name=${savedQuery.key}&type=${type}"
                              titleKey="history.action.edit.hover">
