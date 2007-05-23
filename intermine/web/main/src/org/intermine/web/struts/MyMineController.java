@@ -124,7 +124,9 @@ public class MyMineController extends TilesAction
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
-        request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
+        if (extraClassName != null) {
+            request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
+        }
 
         List extraClassFieldValues =
             getFieldValues(os, oss, extraClassName, bagQueryConfig.getConstrainField());
