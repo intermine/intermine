@@ -409,7 +409,7 @@ span.viewPathDescription {
 div.sortorderBorder {
   float: left;
   width: 250px;
-  
+
 }
 
 /* surrounds sort order paths */
@@ -420,18 +420,18 @@ div.sortorder {
 
 /* one path added to the sort order area */
 div.sortorderpath {
-  	BORDER-RIGHT: #bbb 1px solid; 
-	BORDER-TOP: #bbb 1px solid; 
-	FONT-SIZE: 10px; 
+  	BORDER-RIGHT: #bbb 1px solid;
+	BORDER-TOP: #bbb 1px solid;
+	FONT-SIZE: 10px;
 	COLOR:  #660099;
-	BACKGROUND: #F5F0FF; 
-	BORDER-LEFT: #bbb 1px solid; 
-	CURSOR: hand; 
-	BORDER-BOTTOM: #bbb 1px solid; 
+	BACKGROUND: #F5F0FF;
+	BORDER-LEFT: #bbb 1px solid;
+	CURSOR: hand;
+	BORDER-BOTTOM: #bbb 1px solid;
 	TEXT-ALIGN: center;
-	PADDING-RIGHT: 4px; 
-	PADDING-LEFT: 4px; 
-	PADDING-BOTTOM: 14px; 
+	PADDING-RIGHT: 4px;
+	PADDING-LEFT: 4px;
+	PADDING-BOTTOM: 14px;
 	PADDING-TOP: 4px
 }
 
@@ -756,7 +756,7 @@ a.constraintId {
 }
 
 .viewTable td {
-  
+
 }
 
 .viewTable td.tab {
@@ -942,22 +942,33 @@ img.objectDetailsAspectIcon {
 	cursor: pointer;
 }
 .fakelink:hover{
-	color:#CF4D23; 
+	color:#CF4D23;
 	text-decoration:underline;
 }
-.fakelink:active { 
-	color:#58e; 
-	text-decoration:none 
+.fakelink:active {
+	color:#58e;
+	text-decoration:none
 }
 td.resBar {
     background-image:url('model/res_bar_middle.gif');
 }
 #summary {
-	position:absolute; 
+	position:absolute;
 	background-color:#FFFFFF;
 	top:360px;
 	left:40%;
 	min-width:100px;
 	padding:5px;
 	border: solid black 1px;
+}
+
+/* query ages */
+.queryAgeYoung {
+  background-color: #faa;
+}
+.queryAgeToday {
+  background-color: #fdd;
+}
+.queryAgeOld {
+  /* default */
 }

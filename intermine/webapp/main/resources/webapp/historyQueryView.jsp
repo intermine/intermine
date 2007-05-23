@@ -73,7 +73,7 @@
           <c:forEach items="${queryMap}" var="savedQuery" varStatus="status">
             <c:if test="${!empty savedQuery.key && !empty savedQuery.value}">
               <c:set var="validQuery" value="${savedQuery.value.pathQuery.valid}"/>
-              <tr>
+              <tr class="${queryAgeClasses[savedQuery.key]}">
                 <td>
                   <html:multibox property="selectedQueries"
                                  styleId="selected_${type}_${status.index}"
