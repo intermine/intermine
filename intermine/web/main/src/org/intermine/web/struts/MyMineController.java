@@ -13,9 +13,33 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -29,25 +53,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Tiles controller for history tile (page).
@@ -60,6 +65,7 @@ public class MyMineController extends TilesAction
      * Set up attributes for the myMine page.
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
@@ -141,7 +147,41 @@ public class MyMineController extends TilesAction
         }
         request.setAttribute("typesWithConnectingField", typesWithConnectingField);
 
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        request.setAttribute("queryAgeClasses", getQueryAgeClasses(profile.getSavedQueries()));
+
         return null;
+    }
+
+    /**
+     * Return a Map from query name to css class to use on the div/tr/td displaying the query.
+     * @param queries a Map from query name to SavedQuery
+     * @return a Map from query name to CSS class
+     */
+    static Map<String, String> getQueryAgeClasses(Map<String, ? extends SavedQuery> queries) {
+        Map<String, String> ageClassMap = new HashMap<String, String>();
+        for (Map.Entry<String, ? extends SavedQuery> entry: queries.entrySet()) {
+            String queryName = entry.getKey();
+            Date creationDate = entry.getValue().getDateCreated();
+            if (creationDate == null) {
+                // give up
+                ageClassMap.put(queryName, "queryAgeOld");
+            }
+            Date currentDate = new Date();
+            long age = (currentDate.getTime() - creationDate.getTime()) / 1000;
+            if (age < 10 * 60) {
+                // 10 minutes
+                ageClassMap.put(queryName, "queryAgeYoung");
+            } else {
+                if (age < 60 * 60 * 12) {
+                    // today (-ish)
+                    ageClassMap.put(queryName, "queryAgeToday");                    
+                } else {
+                    ageClassMap.put(queryName, "queryAgeOld");
+                }
+            }
+        }
+        return ageClassMap;
     }
 
     private List getFieldValues(ObjectStore os, ObjectStoreSummary oss, String extraClassName,

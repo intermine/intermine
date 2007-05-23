@@ -325,6 +325,8 @@
     </action>
     <action path="/initMymine" type="org.intermine.web.struts.MyMineController">
     </action>
+    <action path="/initQueryHistory" type="org.intermine.web.struts.HistoryController">
+    </action>
     <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController">
     </action>
     <action path="/initObjectTrail" type="org.intermine.web.struts.ObjectTrailController">
