@@ -36,6 +36,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.SavedQuery;
@@ -151,6 +152,7 @@ public class MyMineController extends TilesAction
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         request.setAttribute("queryAgeClasses", getQueryAgeClasses(profile.getSavedQueries()));
+        request.setAttribute("bagAgeClasses", getBagAgeClasses(profile.getSavedBags()));
 
         return null;
     }
@@ -160,30 +162,52 @@ public class MyMineController extends TilesAction
      * @param queries a Map from query name to SavedQuery
      * @return a Map from query name to CSS class
      */
-    static Map<String, String> getQueryAgeClasses(Map<String, ? extends SavedQuery> queries) {
+    static Map<String, String> getQueryAgeClasses(Map<String, SavedQuery> queries) {
         Map<String, String> ageClassMap = new HashMap<String, String>();
-        for (Map.Entry<String, ? extends SavedQuery> entry: queries.entrySet()) {
+        for (Map.Entry<String, SavedQuery> entry: queries.entrySet()) {
             String queryName = entry.getKey();
-            Date creationDate = entry.getValue().getDateCreated();
-            if (creationDate == null) {
-                // give up
-                ageClassMap.put(queryName, "queryAgeOld");
-            }
-            Date currentDate = new Date();
-            long age = (currentDate.getTime() - creationDate.getTime()) / 1000;
-            if (age < 10 * 60) {
-                // 10 minutes
-                ageClassMap.put(queryName, "queryAgeYoung");
-            } else {
-                if (age < 60 * 60 * 12) {
-                    // today (-ish)
-                    ageClassMap.put(queryName, "queryAgeToday");                    
-                } else {
-                    ageClassMap.put(queryName, "queryAgeOld");
-                }
-            }
+            ageClassMap.put(queryName, getCSSClassForAge(entry.getValue().getDateCreated()));
         }
         return ageClassMap;
+    }
+
+    /**
+     * Return a Map from bag name to css class to use on the div/tr/td displaying the bag.
+     * @param bags a Map from bag name to InterMineBag
+     * @return a Map from query name to CSS class
+     */
+    static Map<String, String> getBagAgeClasses(Map<String, InterMineBag> bags) {
+        Map<String, String> ageClassMap = new HashMap<String, String>();
+        for (Map.Entry<String, InterMineBag> entry: bags.entrySet()) {
+            String bagName = entry.getKey();
+            ageClassMap.put(bagName, getCSSClassForAge(entry.getValue().getDateCreated()));
+        }
+        return ageClassMap;
+    }
+
+    /**
+     * For a given Date, return a CSS class to when displaying objects of that age.
+     * @param date the Date
+     * @return a css class
+     */
+    static String getCSSClassForAge(Date date) {
+        if (date == null) {
+            // give up
+            return "queryAgeOld";
+        }
+        Date currentDate = new Date();
+        long age = (currentDate.getTime() - date.getTime()) / 1000;
+        if (age < 10 * 60) {
+            // 10 minutes
+            return "queryAgeYoung";
+        } else {
+            if (age < 60 * 60 * 12) {
+                // today (-ish)
+                return "queryAgeToday";                    
+            } else {
+                return "queryAgeOld";
+            }
+        }
     }
 
     private List getFieldValues(ObjectStore os, ObjectStoreSummary oss, String extraClassName,
