@@ -246,7 +246,7 @@
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences" dump="true"/>
-    <post-process name="create-overlap-relations-flymine"/>
+    <post-process name="create-overlap-relations-flymine" dump="true"/>
     <post-process name="do-sources"/>
 
     <post-process name="set-collection-counts" dump="true"/>
