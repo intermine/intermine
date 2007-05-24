@@ -26,9 +26,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Date;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
 
 /**
@@ -474,6 +476,25 @@ public class TypeUtil
          }
          filtered = sb.toString();
          return filtered;
+    }
+
+    /**
+     * Return true if and only if the object is an instance of the class given by the className.
+     * @param object the object to test
+     * @param className the super class name to test for
+     * @return true if object is an instance of className
+     * @exception ClassNotFoundException if the class given by className cannot be located
+     */
+    public static boolean isInstanceOf(InterMineObject object, String className)
+        throws ClassNotFoundException {
+        Set<Class> classes = DynamicUtil.decomposeClass(object.getClass());
+        for (Class objectClass: classes) {
+            Class testClass = Class.forName(className);
+            if (testClass.isAssignableFrom(objectClass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
