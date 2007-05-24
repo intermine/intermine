@@ -126,28 +126,28 @@ public class MyMineController extends TilesAction
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         if (extraClassName != null) {
             request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
-        }
 
-        List extraClassFieldValues =
-            getFieldValues(os, oss, extraClassName, bagQueryConfig.getConstrainField());
-        request.setAttribute("extraClassFieldValues", extraClassFieldValues);
+            List extraClassFieldValues =
+                getFieldValues(os, oss, extraClassName, bagQueryConfig.getConstrainField());
+            request.setAttribute("extraClassFieldValues", extraClassFieldValues);
 
-        // find the types in typeList that contain a field with the name given by
-        // bagQueryConfig.getConnectField()
-        List typesWithConnectingField = new ArrayList();
-        Iterator allTypesIterator =
-            new IteratorChain(typeList.iterator(), preferedTypeList.iterator());
-        while (allTypesIterator.hasNext()) {
-            String connectFieldName = bagQueryConfig.getConnectField();
-            String typeName = (String) allTypesIterator.next();
-            String qualifiedTypeName = model.getPackageName() + "." + typeName;
-            ClassDescriptor cd = model.getClassDescriptorByName(qualifiedTypeName);
-            FieldDescriptor fd = cd.getFieldDescriptorByName(connectFieldName);
-            if (fd != null && fd instanceof ReferenceDescriptor) {
-                typesWithConnectingField.add(typeName);
+            // find the types in typeList that contain a field with the name given by
+            // bagQueryConfig.getConnectField()
+            List typesWithConnectingField = new ArrayList();
+            Iterator allTypesIterator =
+                new IteratorChain(typeList.iterator(), preferedTypeList.iterator());
+            while (allTypesIterator.hasNext()) {
+                String connectFieldName = bagQueryConfig.getConnectField();
+                String typeName = (String) allTypesIterator.next();
+                String qualifiedTypeName = model.getPackageName() + "." + typeName;
+                ClassDescriptor cd = model.getClassDescriptorByName(qualifiedTypeName);
+                FieldDescriptor fd = cd.getFieldDescriptorByName(connectFieldName);
+                if (fd != null && fd instanceof ReferenceDescriptor) {
+                    typesWithConnectingField.add(typeName);
+                }
             }
+            request.setAttribute("typesWithConnectingField", typesWithConnectingField);
         }
-        request.setAttribute("typesWithConnectingField", typesWithConnectingField);
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         request.setAttribute("queryAgeClasses", getQueryAgeClasses(profile.getSavedQueries()));
