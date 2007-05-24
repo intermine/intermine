@@ -178,6 +178,19 @@ public class TypeUtilTest extends TestCase
         assertEquals("OneTwo", TypeUtil.javaiseClassName("one (two)"));
     }
 
+    public void testIsInstanceOf() throws Exception {
+        Manager man = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Manager"));
+        assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Employee"));
+        assertFalse(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Company"));
+        try {
+            assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.NoSuchClass"));
+            fail("Expected exception");
+        } catch (ClassNotFoundException e) {
+            // expected
+        }
+    }
+    
     //===========================
 
     private class NoGetSet {
