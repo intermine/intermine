@@ -120,8 +120,6 @@
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="organism.name" />
-      <fieldconfig fieldExpr="wildTypeFunction" showInSummary="true"
-                   showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>

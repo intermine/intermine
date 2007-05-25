@@ -94,8 +94,6 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="organismDbId"/>
       <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="wildTypeFunction" showInSummary="true"
-                   showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
       <fieldconfig fieldExpr="chromosomeLocation.end" showInResults="false"/>
       <fieldconfig fieldExpr="chromosome.identifier" showInResults="false"/>
