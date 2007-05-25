@@ -148,7 +148,6 @@
     <attribute name="organismDbId" type="java.lang.String"/>
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
-    <attribute name="wildTypeFunction" type="java.lang.String"/>
     <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="genes"/>
   </class>
   <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
