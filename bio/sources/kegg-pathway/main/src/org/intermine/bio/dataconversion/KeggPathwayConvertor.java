@@ -96,6 +96,8 @@ public class KeggPathwayConvertor extends FileConverter
                 String geneName = line[0];
                 if (geneName.startsWith("Dmel_")) {
                     geneName = geneName.substring(5);
+                } else {
+                    continue;
                 }
                 String mapIdentifiers = line[1];
                 ReferenceList referenceList = new ReferenceList("pathways");
