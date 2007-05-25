@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -37,8 +39,9 @@ public class LogoutAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
@@ -46,6 +49,12 @@ public class LogoutAction extends InterMineAction
         session.invalidate();
         SessionMethods.setLoggedOutCookie(session, response);
         SessionMethods.setHasQueryCookie(session, response, true);
-        return mapping.findForward("begin");
+        recordMessage(new ActionMessage("login.loggedout"), request);
+        
+        if (request.getParameter("returnto") != null) {
+            return new ActionForward(request.getParameter("returnto"));
+        } else {
+            return mapping.findForward("begin");
+        }
     }
 }

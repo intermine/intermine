@@ -6,8 +6,9 @@
 <!-- login.jsp -->
 <html:xhtml/>
 <div class="body">
-  <html:form action="/loginAction">
+  <html:form action="/loginAction" focus="username" method="post" enctype="multipart/form-data">
     <fmt:message key="login.haspassword"/><br/><br/>
+    <html:hidden property="returnToString"/>
     <table>
       <tr>
         <td><fmt:message key="login.username"/></td>

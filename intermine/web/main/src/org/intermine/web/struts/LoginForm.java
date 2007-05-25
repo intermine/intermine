@@ -28,7 +28,7 @@ import org.intermine.web.logic.profile.ProfileManager;
  */
 public class LoginForm extends ActionForm
 {
-    protected String username, password;
+    protected String username, password, returnToString;
 
     /**
      * Gets the value of username
@@ -67,9 +67,27 @@ public class LoginForm extends ActionForm
     }
 
     /**
+     * Sets the URL to return to if the login is successful.
+     * @param returnToString the path to return to after log in
+     */
+    public void setReturnToString(String returnToString) {
+        this.returnToString = returnToString;
+    }
+
+    /**
+     * Return the returnToString set by setReturnToURL().
+     * @return the the path to return to after log in
+     */
+    public String getReturnToString() {
+        return returnToString;
+    }
+    
+    /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+    @Override
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
@@ -96,7 +114,9 @@ public class LoginForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    @Override
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
+                      @SuppressWarnings("unused") HttpServletRequest request) {
         username = null;
         password = null;
     }

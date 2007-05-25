@@ -45,8 +45,10 @@ public class LoginAction extends LoginHandler
      * @exception Exception
      *                if the application business logic throws an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+                                 HttpServletRequest request, HttpServletResponse response) 
+        throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
@@ -55,6 +57,11 @@ public class LoginAction extends LoginHandler
         doLogin(servletContext, request, response, session, pm, lf.getUsername(), lf.getPassword());
 
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
-        return mapping.findForward("mymine");
+        
+        if (lf.returnToString != null && lf.returnToString.startsWith("/")) {
+            return new ActionForward(lf.returnToString);            
+        } else {
+            return mapping.findForward("mymine");
+        }
     }
 }

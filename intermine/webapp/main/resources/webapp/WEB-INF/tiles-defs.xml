@@ -19,7 +19,7 @@
   <!--pages-->
   <definition name="standalone.page" path="/standalone.jsp"/>
   <definition name="login.page" extends="layout.template">
-    <put name="body" value="login.jsp"/>
+    <put name="body" value="login.tile"/>
     <put name="pageName" value="login"/>
   </definition>
   <definition name="query.page" extends="layout.template">
@@ -140,6 +140,7 @@
   <!--tiles-->
   <definition name="error.tile" path="/error.jsp"/>
   <definition name="begin.tile" path="/begin.jsp"/>
+  <definition name="login.tile" path="/login.jsp" controllerUrl="/initLogin.do"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
