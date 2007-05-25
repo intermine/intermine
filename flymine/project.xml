@@ -21,6 +21,10 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7237"/>
     </source>
+    <source name="flybase-gene-names" type="flybase-gene-names">
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/"/>
+      <property name="src.data.dir.includes" value="fb_synonym_truegenes.tsv"/>
+    </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>
     </source>
@@ -36,6 +40,75 @@
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/rnai/wormbase/current"/>
     </source>
+    <source name="mage" type="mage" dump="true">
+      <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
+      <property name="quantitationtypes" value="Signal med ratio"/>
+    </source>
+    <source name="bdgp-clone" type="bdgp-clone">
+      <property name="src.data.dir" location="/shared/data/bdgp_clones"/>
+      <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
+    </source>
+    <source name="flyrnai-screens" type="flyrnai-screens">
+      <property name="taxonId" value="7227"/>
+      <property name="src.data.dir" location="/shared/data/DRSC/current"/>
+    </source>
+    <source name="long_oligo" type="long_oligo" dump="true">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="MRNA"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/long_oligo"/>
+    </source>
+    <source name="drosdel-gff" type="drosdel-gff">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/liftover/drosdel/combined"/>
+    </source>
+    <source name="ensembl-anopheles" type="ensembl" dump="true">
+      <property name="organism" value="AGP"/>
+    </source>
+    <source name="ensembl-apis-mellifera" type="ensembl" dump="true">
+      <property name="organism" value="AM"/>
+    </source>
+    <source name="flyreg" type="flyreg">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/liftover/flyreg"/>
+    </source>
+    <source name="interpro" type="interpro" dump="true">
+      <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
+    </source>
+    <source name="homophila" type="homophila">
+      <property name="src.data.dir" location="/shared/data/homophila/current"/>
+      <property name="src.data.dir.includes" value="homophila_matches.txt"/>
+      <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
+      <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
+    </source>
+    <source name="tiling_path" type="tiling_path" dump="true">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="FlyBase"/>
+      <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
+    </source>
+    <source name="kegg-pathway" type="kegg-pathway">
+      <property name="src.data.dir" location="/shared/data/kegg/current"/>
+    </source>
+    <source name="flyatlas" type="flyatlas">
+      <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
+    </source>
+    <source name="affy-probes" type="affy-probes">
+      <property name="src.data.dir" location="/shared/data/affy-probes"/>
+    </source>
+    <source name="tiffin" type="tiffin" dump="true">
+      <property name="gff3.taxonId" value="7227"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.seqDataSourceName" value="Sanger"/>
+      <property name="src.data.dir" location="/shared/data/tiffin/tiffin1.2"/>
+    </source>
+    <source name="anoest" type="anoest" dump="true">
+      <property name="source.db.name" value="anoest"/>
+    </source>
     <source name="protein_structure" type="protein_structure" dump="true">
       <property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model"/>
     </source>
@@ -46,59 +119,20 @@
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/psi-mi.obo"/>
     </source>
-    <source name="mage" type="mage" dump="true">
-      <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
-      <property name="quantitationtypes" value="Signal med ratio"/>
+    <source name="go" type="go">
+      <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
-    <source name="bdgp-clone" type="bdgp-clone">
-      <property name="src.data.dir" location="/shared/data/bdgp_clones"/>
-      <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
+    <source name="go-annotation" type="go-annotation" dump="true">
+      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/current/"/>
+      <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
-    <source name="flyatlas" type="flyatlas">
-      <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
-    </source>
-    <source name="anoest" type="anoest" dump="true">
-      <property name="source.db.name" value="anoest"/>
-    </source>
-    <source name="affy-probes" type="affy-probes">
-      <property name="src.data.dir" location="/shared/data/affy-probes"/>
-    </source>
-    <source name="kegg-pathway" type="kegg-pathway">
-      <property name="src.data.dir" location="/shared/data/kegg/current"/>
-    </source>
-    <source name="ensembl-anopheles" type="ensembl" dump="true">
-      <property name="organism" value="AGP"/>
-    </source>
-    <source name="ensembl-apis-mellifera" type="ensembl">
-      <property name="organism" value="AM"/>
-    </source>
-    <source name="flyrnai-screens" type="flyrnai-screens">
-      <property name="taxonId" value="7227"/>
-      <property name="src.data.dir" location="/shared/data/DRSC/current"/>
-    </source>
-    <source name="long_oligo" type="long_oligo">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="MRNA"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/long_oligo"/>
-    </source>
-    <source name="tiffin" type="tiffin" dump="true">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="Sanger"/>
-      <property name="src.data.dir" location="/shared/data/tiffin/tiffin1.2"/>
-    </source>
-    <source name="homophila" type="homophila">
-      <property name="src.data.dir" location="/shared/data/homophila/current"/>
-      <property name="src.data.dir.includes" value="homophila_matches.txt"/>
-      <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
-      <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
-    </source>
-    <source name="drosdel-gff" type="drosdel-gff">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/drosdel/combined"/>
+    <source name="geneid-translationid" type="intermine-items-large-xml-file">
+      <property name="src.data.file" location="/shared/data/orthologues/inparanoid/geneid2peptideid/current/geneId2peptideId.xml"/>
+      <property name="ignore.duplicates" value="true"/>
+    </source> 
+    <source name="inparanoid-orthologue" type="orthologue" dump="true">
+      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
@@ -156,10 +190,10 @@
       <property name="fasta.includes" value="dpse-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
     </source>
-    <source name="flybase-gene-names" type="flybase-gene-names">
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/"/>
-      <property name="src.data.dir.includes" value="fb_synonym_truegenes.tsv"/>
-    </source>
+     <source name="ncbigene2pubmed" type="intermine-items-xml-file">
+	<property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>
+      <property name="ignore.duplicates" value="true"/>
+    </source>   
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -168,40 +202,6 @@
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
-    </source>
-    <source name="flyreg" type="flyreg">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/flyreg"/>
-    </source>
-    <source name="interpro" type="interpro" dump="true">
-      <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
-    </source>
-    <source name="go" type="go">
-      <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
-    </source>
-    <source name="go-annotation" type="go-annotation" dump="true">
-      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/current/"/>
-      <property name="src.data.dir.includes" value="*/gene_association*"/>
-    </source>
-    <source name="geneid-translationid" type="intermine-items-large-xml-file">
-      <property name="src.data.file" location="/shared/data/orthologues/inparanoid/geneid2peptideid/current/geneId2peptideId.xml"/>
-      <property name="ignore.duplicates" value="true"/>
-    </source> 
-    <source name="inparanoid-orthologue" type="orthologue">
-      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
-    </source>
-     <source name="ncbigene2pubmed" type="intermine-items-xml-file">
-	<property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>
-      <property name="ignore.duplicates" value="true"/>
-    </source>   
-    <source name="tiling_path" type="tiling_path" dump="true">
-      <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
     </source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
