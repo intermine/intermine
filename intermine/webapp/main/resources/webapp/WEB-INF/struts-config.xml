@@ -62,7 +62,7 @@
     </action>
     <action path="/classDescription" forward="classDescription.page">
     </action>
-    <action path="/login" forward="login.page">
+    <action path="/login" forward="login.page" name="loginForm" validate="false">
     </action>
     <action path="/feedback" forward="feedback.page">
     </action>
@@ -308,6 +308,8 @@
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
+    </action>
+    <action path="/initLogin" name="loginForm" validate="false" type="org.intermine.web.struts.LoginController">
     </action>
     <action path="/initMain" type="org.intermine.web.struts.QueryBuilderController">
     </action>
