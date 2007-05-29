@@ -10,6 +10,16 @@ package org.intermine.web.struts;
  *
  */
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.template.TemplateQuery;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,14 +29,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for the inline tag editing tile
@@ -39,11 +41,12 @@ public class InlineTagEditorController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         // Retrieve the taggable thing from the context
         Object taggable = context.getAttribute("taggable");
@@ -70,6 +73,9 @@ public class InlineTagEditorController extends TilesAction
         } else if (taggable instanceof ClassDescriptor) {
             type = "class";
             uid = ((ClassDescriptor) taggable).getName();
+        } else if (taggable instanceof InterMineBag) {
+            type = "bag";
+            uid = ((InterMineBag) taggable).getName();
         }
         
         LOG.info("taggable uid " + uid + " and type " + type);
