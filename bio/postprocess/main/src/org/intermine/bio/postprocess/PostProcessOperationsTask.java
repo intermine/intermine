@@ -209,10 +209,7 @@ public class PostProcessOperationsTask extends Task
             } else if ("set-collection-counts".equals(operation)) {
                 SetCollectionCounts setCounts = new SetCollectionCounts(getObjectStoreWriter());
                 setCounts.setCollectionCount();
-            //Links proteins and interactions together directly rather than via an indirection class
-            } else if ("link-related-proteins-and-interactions".equals(operation)) {
-                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
-                cr.linkProteinToProtenInteractionAndRelatedProteins();
+
             } else if ("synonym-update".equals(operation)) {
                 SynonymUpdater synonymUpdater = new SynonymUpdater(getObjectStoreWriter());
                 synonymUpdater.update();
