@@ -23,13 +23,13 @@
                 foundDisplayer == true ||
                 !empty templates}">
 
-  <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}" scope="request"/>
+    <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}" scope="request"/>
 
-  <im:heading id="${placement}" topLeftTile="/objectDetailsAspectIcon.jsp">
-  </im:heading>
-    <html:link action="/aspect?name=${aspect}">
-      ${aspect}<%--<im:manualLink section="manualObjectDetails.shtml"/>--%>
-    </html:link>
+    <im:heading id="${placement}" topLeftTile="/objectDetailsAspectIcon.jsp">
+      <html:link action="/aspect?name=${aspect}">
+        ${aspect}<%--<im:manualLink section="manualObjectDetails.shtml"/>--%>
+      </html:link>
+    </im:heading>
     <im:body id="${placement}">
       <c:if test="${! empty displayObject}">
         <tiles:insert page="/objectDetailsRefsCols.jsp">
