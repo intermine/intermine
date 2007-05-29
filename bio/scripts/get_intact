@@ -26,7 +26,7 @@ my %organisms = &config_species($file,"intact");
 my $connection = &ftp_connect($ebi_server,$username,$password);
 
 $connection->cwd($intact_dir)
-	or die "Cannot change working directory ", $connection->message;
+	or die "Cannot change working directory to $intact_dir", $connection->message;
 
 #use the date stamp of a file in the $intact_dir to create a version id 
 #for the output directory
