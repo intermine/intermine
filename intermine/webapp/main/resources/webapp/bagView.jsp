@@ -49,7 +49,14 @@
               <input type="checkbox" id="selected_bag"
                      onclick="selectColumnCheckbox(this.form, 'bag')">
             </th>
+            <c:choose>
+            <c:when test="${IS_SUPERUSER}">
+              <th align="left" colspan="3" nowrap>
+            </c:when>
+            <c:otherwise>
             <th align="left" colspan="2" nowrap>
+			</c:otherwise>
+			</c:choose>
               <fmt:message key="query.savedbags.namecolumnheader"/>
             </th>
             <th nowrap>
@@ -78,6 +85,17 @@
                 <tiles:put name="type" value="bag"/>
                 <tiles:put name="index" value="${status.index}"/>
               </tiles:insert>
+
+              <c:if test="${IS_SUPERUSER}">
+                <td>
+                  <c:set var="taggable" value="${savedBag.value}"/>
+                  <tiles:insert name="inlineTagEditor.tile">
+                    <tiles:put name="taggable" beanName="taggable"/>
+                    <tiles:put name="vertical" value="true"/>
+                    <tiles:put name="show" value="true"/>
+                  </tiles:insert>
+                </td>
+              </c:if>
 
               <td><c:out value="${savedBag.value.type}" /></td>
 
@@ -123,6 +141,5 @@
 
     </c:otherwise>
   </c:choose>
-
 
 <!-- /bagView.jsp -->

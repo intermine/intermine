@@ -716,6 +716,14 @@ public class ProfileManager
         };
         newTagCheckers.put("template", templateChecker);
 
+        TagChecker bagChecker = new TagChecker() {
+            public void isValid(String tagName, String objectIdentifier, String type,
+                                UserProfile userProfile) {
+                // OK
+            }
+        };
+        newTagCheckers.put("bag", bagChecker);
+
         TagChecker classChecker = new TagChecker() {
             public void isValid(@SuppressWarnings("unused") String tagName, 
                                 String objectIdentifier, 
