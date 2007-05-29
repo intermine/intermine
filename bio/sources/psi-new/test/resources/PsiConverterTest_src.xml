@@ -1,0 +1,285 @@
+   <entrySet level="2" minorVersion="3" version="5" xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/rel25/src/MIF253.xsd">
+     <entry>
+       <source releaseDate="2007-05-04">
+         <names>
+           <shortLabel>European Bioinformatics Institute</shortLabel>
+         </names>
+         <bibref>
+           <xref>
+             <primaryRef db="pubmed" dbAc="MI:0446" id="14681455" refType="primary-reference" refTypeAc="MI:0358"/>
+           </xref>
+         </bibref>
+         <xref>
+           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0469" refType="primary-reference" refTypeAc="MI:0358"/>
+         </xref>
+         <attributeList>
+           <attribute name="postalAddress">Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+           <attribute name="url">http://www.ebi.ac.uk</attribute>
+         </attributeList>
+       </source>
+       <experimentList>
+         <experimentDescription id="2">
+           <names>
+             <shortLabel>taru-2002-3</shortLabel>
+             <fullName>Interaction of Alzheimer&apos;s beta -amyloid precursor family proteins with scaffold proteins of the JNK signaling cascade.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" dbAc="MI:0446" id="11912189" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-74199" secondary="taru-2002-3"/>
+             <secondaryRef db="newt" dbAc="MI:0247" id="7227" refType="target-species" secondary="drome"/>
+           </xref>
+           <hostOrganismList>
+             <hostOrganism ncbiTaxId="9534">
+               <names>
+                 <shortLabel>cerae-cos_7</shortLabel>
+                 <fullName>Cercopithecus aethiops simian cells transformed with SV40</fullName>
+               </names>
+               <cellType>
+                 <names>
+                   <shortLabel>cos_7</shortLabel>
+                   <fullName>cercopithecus aethiops, by transformation with SV40</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="cabri" dbAc="MI:0246" id="ACC 60" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="intact" dbAc="MI:0469" id="IA:0064" refType="identity" refTypeAc="MI:0356"/>
+                 </xref>
+               </cellType>
+             </hostOrganism>
+           </hostOrganismList>
+           <interactionDetectionMethod>
+             <names>
+               <shortLabel>anti tag coip</shortLabel>
+               <fullName>anti tag coimmunoprecipitation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0007" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="7708014" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionDetectionMethod>
+           <participantIdentificationMethod>
+             <names>
+               <shortLabel>polyclonal western</shortLabel>
+               <fullName>polyclonal antibody western blot</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0086" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </participantIdentificationMethod>
+           <attributeList>
+             <attribute name="author-list">Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T.</attribute>
+             <attribute name="publication-year">2002</attribute>
+             <attribute name="journal">J. Biol. Chem. (0021-9258)</attribute>
+           </attributeList>
+         </experimentDescription>
+     </experimentList>
+     <interactorList>
+         <interactor id="4">
+           <names>
+             <shortLabel>jip1_drome</shortLabel>
+             <fullName>JNK-interacting protein 1</fullName>
+             <alias type="gene name" typeAc="MI:0301">Aplip1</alias>
+             <alias type="gene name synonym" typeAc="MI:0302">SP512</alias>
+             <alias type="orf name" typeAc="MI:0306">CG1200</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q9W0K0" refType="identity" refTypeAc="MI:0356" secondary="jip1_drome" version="SP_48"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q9NH69" refType="secondary-ac" refTypeAc="MI:0360" secondary="jip1_drome" version="SP_48"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR011993" secondary="PH_type"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0042802" secondary="F:protein self binding"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0019894" secondary="F:kinesin binding"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005078" secondary="F:MAP-kinase scaffold activity"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0019901" secondary="F:protein kinase binding"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0046328" secondary="P:regulation of JNK cascade"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR006020" secondary="PTB_PID"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR001452" secondary="SH3"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q8IGG5" refType="secondary-ac" refTypeAc="MI:0360" secondary="jip1_drome" version="SP_48"/>
+             <secondaryRef db="flybase" dbAc="MI:0478" id="FBgn0040281" secondary="Aplip1"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-74120" secondary="jip1_drome"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="7227">
+             <names>
+               <shortLabel>drome</shortLabel>
+               <fullName>Drosophila melanogaster</fullName>
+             </names>
+           </organism>
+           <sequence>MADSEFEEFHRPIFEPHTIAGFGSGAGSKKNNPHAFYSLIPNDDLEDSHSSKSDGDGSDQEDGIGLVDHEPKMRQVEDDELGDGLKVTLSSDGSLDTNDSFNSHRHHPLNHQDAIGGFLGMDTSGLGGNSAPVTIGASTDLLAPNTAATRRRRKLPEIPKNKKSSILHLLGGSNFGSLADEFRNGGGGGIPPAVRSGQQRSFLSLKCGYLMDEDSSPDSERMQSLGDVDSGHSTAHSPNDFKSMSPQITSPVSQSPFPPPFGGVPFGQLEMLEATHRGLHKFVPRHHDEIELEIGDAIYVQKEAEDLWCEGVNLRTGRQGIFPSAYAVDLDYNEFDPTVQLVKKERYLLGYLGSVETLAHKGTGVVCQAVRKIVGEYGNSPTGQTCILEVSDQGLRMVDRSGPNQNKKDKKPCIDYFYSLKNVSFCAFHPRDHRFIGFITKHPTVQRFACHVFKGSESTRPVAEAVGRAFQRFYQKFIETAYPIEDIYIE</sequence>
+         </interactor>
+         <interactor id="6">
+           <names>
+             <shortLabel>a4_drome</shortLabel>
+             <fullName>Beta-amyloid-like protein precursor</fullName>
+             <alias type="gene name" typeAc="MI:0301">Appl</alias>
+             <alias type="gene name synonym" typeAc="MI:0302">VND</alias>
+             <alias type="orf name" typeAc="MI:0306">CG7727</alias>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="P14599" refType="identity" refTypeAc="MI:0356" secondary="a4_drome" version="SP_48"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005576" secondary="C:extracellular"/>
+             <secondaryRef db="go" dbAc="MI:0448" id="GO:0005886" secondary="C:plasma membrane"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR008155" secondary="A4_APP"/>
+             <secondaryRef db="interpro" dbAc="MI:0449" id="IPR008154" secondary="A4_extra"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q9TVV0" refType="secondary-ac" refTypeAc="MI:0360" secondary="a4_drome" version="SP_48"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q9U4H3" refType="secondary-ac" refTypeAc="MI:0360" secondary="a4_drome" version="SP_48"/>
+             <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q9W5F1" refType="secondary-ac" refTypeAc="MI:0360" secondary="a4_drome" version="SP_48"/>
+             <secondaryRef db="flybase" dbAc="MI:0478" id="FBgn0000108" secondary="Appl"/>
+             <secondaryRef db="intact" dbAc="MI:0469" id="EBI-74135" secondary="a4_drome"/>
+           </xref>
+           <interactorType>
+             <names>
+               <shortLabel>protein</shortLabel>
+               <fullName>protein</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+               <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+             </xref>
+           </interactorType>
+           <organism ncbiTaxId="7227">
+             <names>
+               <shortLabel>drome</shortLabel>
+               <fullName>Drosophila melanogaster</fullName>
+             </names>
+           </organism>
+           <sequence>MCAALRRNLLLRSLWVVLAIGTAQVQAASPRWEPQIAVLCEAGQIYQPQYLSEEGRWVTDLSKKTTGPTCLRDKMDLLDYCKKAYPNRDITNIVESSHYQKIGGWCRQGALNAAKCKGSHRWIKPFRCLGPFQSDALLVPEGCLFDHIHNASRCWPFVRWNQTGAAACQERGMQMRSFAMLLPCGISVFSGVEFVCCPKHFKTDEIHVKKTDLPVMPAAQINSANDELVMNDEDDSNDSNYSKDANEDDLDDEDDLMGDDEEDDMVADEAATAGGSPNTGSSGDSNSGSLDDINAEYDSGEEGDNYEEDGAGSESEAEVEASWDQSGGAKVVSLKSDSSSPSSAPVAPAPEKAPVKSESVTSTPQLSASAAAFVAANSGNSGTGAGAPPSTAQPTSDPYFTHFDPHYEHQSYKVSQKRLEESHREKVTRVMKDWSDLEEKYQDMRLADPKAAQSFKQRMTARFQTSVQALEEEGNAEKHQLAAMHQQRVLAHINQRKREAMTCYTQALTEQPPNAHHVEKCLQKLLRALHKDRAHALAHYRHLLNSGGPGGLEAAASERPRTLERLIDIDRAVNQSMTMLKRYPELSAKIAQLMNDYILALRSKDDIPGSSLGMSEEAEAGILDKYRVEIERKVAEKERLRLAEKQRKEQRAAEREKLREEKLRLEAKKVDDMLKSQVAEQQSQPTQSSTQSQAQQQQQEKSLPGKELGPDAALVTAANPNLETTKSEKDLSDTEYGEATVSSTKVQTVLPTVDDDAVQRAVEDVAAAVAHQEAEPQVQHFMTHDLGHRESSFSLRREFAQHAHAAKEGRNVYFTLSFAGIALMAAVFVGVAVAKWRTSRSPHAQGFIEVDQNVTTHHPIVREEKIVPNMQINGYENPTYKYFEVKE</sequence>
+         </interactor>
+</interactorList>
+<interactionList>
+         <interaction id="1">
+           <names>
+             <shortLabel>appl-aplip1-2</shortLabel>
+             <fullName>coimmunoprecipitation of appl with flag-aplip1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="intact" dbAc="MI:0469" id="EBI-74201" secondary="appl-aplip1-2"/>
+           </xref>
+           <experimentList>
+             <experimentRef>2</experimentRef>
+           </experimentList>
+           <participantList>
+             <participant id="3">
+               <interactorRef>4</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>prey</shortLabel>
+                     <fullName>prey</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+             </participant>
+             <participant id="5">
+               <interactorRef>6</interactorRef>
+               <biologicalRole>
+                 <names>
+                   <shortLabel>unspecified role</shortLabel>
+                   <fullName>unspecified role</fullName>
+                 </names>
+                 <xref>
+                   <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                   <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                 </xref>
+               </biologicalRole>
+               <experimentalRoleList>
+                 <experimentalRole>
+                   <names>
+                     <shortLabel>bait</shortLabel>
+                     <fullName>bait</fullName>
+                   </names>
+                   <xref>
+                     <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                     <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                   </xref>
+                 </experimentalRole>
+               </experimentalRoleList>
+               <featureList>
+                 <feature id="4945">
+                   <names>
+                     <shortLabel>region</shortLabel>
+                   </names>
+                   <featureType>
+                     <names>
+                       <shortLabel>binding site</shortLabel>
+                       <fullName>binding site</fullName>
+                     </names>
+                     <xref>
+                       <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117" refType="identity" refTypeAc="MI:0356"/>
+                       <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                     </xref>
+                   </featureType>
+                   <featureRangeList>
+                     <featureRange>
+                       <startStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </startStatus>
+                       <begin position="1"/>
+                       <endStatus>
+                         <names>
+                           <shortLabel>certain</shortLabel>
+                         </names>
+                         <xref>
+                           <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                         </xref>
+                       </endStatus>
+                       <end position="370"/>
+                     </featureRange>
+                   </featureRangeList>
+                 </feature>
+               </featureList>
+             </participant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>physical interaction</shortLabel>
+               <fullName>physical interaction</fullName>
+               <alias>aggregation</alias>
+               <alias>aggregation</alias>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+             </xref>
+           </interactionType>
+           <attributeList>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+               </interactionList>
+              </entry>
+   </entrySet>
