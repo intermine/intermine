@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<classes>
+    <class name="org.flymine.model.genomic.ProteinInteractionExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="hostOrganism" type="java.lang.String"/>
+        <reference name="interactionDetectionMethod" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
+        <reference name="participantIdentificationMethod" referenced-type="org.flymine.model.genomic.ProteinInteractionTerm"/>
+        <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
+        <collection name="interactions" referenced-type="org.flymine.model.genomic.ProteinInteraction" ordered="true" reverse-reference="experiment"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.ProteinInteractionTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
+
+    <class name="org.flymine.model.genomic.ProteinInteraction" is-interface="true">
+        <attribute name="experimentalRole" type="java.lang.String"/>
+        <attribute name="biologicalRole" type="java.lang.String"/>
+        <attribute name="shortName" type="java.lang.String"/>        
+        <attribute name="confidence" type="java.lang.Double"/>
+        <attribute name="confidenceText" type="java.lang.String"/>        
+        <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="proteinInteractions" />
+        <reference name="experiment" referenced-type="org.flymine.model.genomic.ProteinInteractionExperiment" reverse-reference="interactions"/>
+        <collection name="interactingRegions" referenced-type="org.flymine.model.genomic.ProteinInteractionRegion" ordered="true" reverse-reference="interaction"/>
+        <collection name="interactingProteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="proteinInteractions"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.Protein" is-interface="true">       
+        <collection name="proteinInteractions" referenced-type="org.flymine.model.genomic.ProteinInteraction" ordered="true" reverse-reference="protein"/>
+    </class>
+
+    <class name="org.flymine.model.genomic.ProteinInteractionRegion" is-interface="true">    
+    	<attribute name="startStatus" type="java.lang.String"/>
+    	<attribute name="endStatus" type="java.lang.String"/>
+    	<reference name="ontologyTerm" referenced-type="org.flymine.model.genomic.OntologyTerm"/>
+        <reference name="location" referenced-type="org.flymine.model.genomic.Location"/>
+        <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
+        <reference name="interaction" referenced-type="org.flymine.model.genomic.ProteinInteraction" reverse-reference="interactingRegions"/>
+    </class>
+</classes>
+	
