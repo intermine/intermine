@@ -173,7 +173,8 @@ public class CreateTemplateAction extends InterMineAction
 
         cleanCache(servletContext, template);
         
-        return mapping.findForward("mymine");
+        ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("mymine"));
+        return forwardParameters.addParameter("page", "templates").forward();
     }
 
     /**
