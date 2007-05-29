@@ -1,6 +1,0 @@
-
-<project name="psi" default="default" basedir=".">
-  <description>build psi model</description>
-  <import file="../../../../imbuild/model.xml"/> 
-</project>
-
