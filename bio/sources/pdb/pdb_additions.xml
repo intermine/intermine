@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<classes>
+<class name="org.flymine.model.genomic.ProteinStructure" is-interface="true">
+  <attribute name="keywords" type="java.lang.String"/>
+  <attribute name="title" type="java.lang.String"/>
+</class>
+</classes>
