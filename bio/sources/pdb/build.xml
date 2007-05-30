@@ -1,0 +1,8 @@
+
+<project name="pdb" default="default" basedir=".">
+  <description>build, test, package pdb</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+  
+</project>
+
