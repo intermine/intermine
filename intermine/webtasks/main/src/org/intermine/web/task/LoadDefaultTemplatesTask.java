@@ -96,6 +96,7 @@ public class LoadDefaultTemplatesTask extends Task
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         ObjectStoreWriter osw = null;
+        Profile profileDest = null;
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
@@ -108,12 +109,12 @@ public class LoadDefaultTemplatesTask extends Task
             Reader reader = new FileReader(xmlFile);
 
             // Copy into existing or new superuser profile
-            Profile profileDest = null;
             if (!pm.hasProfile(username)) {
                 LOG.info("Creating profile for " + username);
                 String password = RequestPasswordAction.generatePassword();
                 profileDest = new Profile(pm, username, null, password,
                                       new HashMap(), new HashMap(), new HashMap());
+                profileDest.disableSaving();
                 pm.createProfile(profileDest);
             } else {
                 LOG.info("Profile for " + username + ", clearing template queries");
@@ -159,6 +160,7 @@ public class LoadDefaultTemplatesTask extends Task
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {
+            profileDest.enableSaving();
             Thread.currentThread().setContextClassLoader(cl);
             try {
                 if (osw != null) {
