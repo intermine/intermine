@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protein_structure>
+  <fragment id="10102">
+    <modelled_region>
+       <uniprot_id>Q8IQ89</uniprot_id>
+       <begin>66</begin>
+       <end>284</end>
+    </modelled_region>
+    <sequence_family>
+      <pfam_id>PF00089</pfam_id>
+      <evidence>complete proteome file at EBI</evidence>
+    </sequence_family>
+    <structural_family rank="1">
+      <evidence>in-house FUGUE search</evidence>
+      <homstrad_id>sermam</homstrad_id>
+      <fugue_z_score>40.00</fugue_z_score>
+      <pid>39</pid>
+      <alignment_file format="joy_html" type="ma">../../seq/10102/10102_sermam_ma.html</alignment_file>
+      <alignment_file format="pir" type="ma">../../seq/10102/10102_sermam_ma.ali</alignment_file>
+    </structural_family>
+    <structural_family rank="2">
+      <evidence>in-house FUGUE search</evidence>
+      <homstrad_id>hs1elva</homstrad_id>
+      <fugue_z_score>38.37</fugue_z_score>
+    </structural_family>
+    <structural_family rank="3">
+      <evidence>in-house FUGUE search</evidence>
+      <homstrad_id>hs1gpza</homstrad_id>
+      <fugue_z_score>36.33</fugue_z_score>
+    </structural_family>
+    <structural_family rank="4">
+      <evidence>in-house FUGUE search</evidence>
+      <homstrad_id>hsd1agja</homstrad_id>
+      <fugue_z_score>29.68</fugue_z_score>
+    </structural_family>
+    <structural_family rank="5">
+      <evidence>in-house FUGUE search</evidence>
+      <homstrad_id>serbact</homstrad_id>
+      <fugue_z_score>24.02</fugue_z_score>
+    </structural_family>
+    <structural_family rank="6">
+      <evidence>in-house FUGUE search</evidence>
+      <homstrad_id>hs1ky9a</homstrad_id>
+      <fugue_z_score>3.34</fugue_z_score>
+    </structural_family>
+    <model>
+      <atomic_coordinate_file>10102.atm</atomic_coordinate_file>
+      <template_hit>sermam</template_hit>
+      <template_structure_file>1fxya_fit.pdb</template_structure_file>
+      <alignment_file format="joy_html">10102.html</alignment_file>
+      <alignment_file format="pir">10102.ali</alignment_file>
+      <method>MODELLER</method>
+      <prosa_z_score>-8.75</prosa_z_score>
+      <prosa_q_score>-1.62</prosa_q_score>
+      <kinemage_file>10102.kin</kinemage_file>
+    </model>
+  </fragment>
+</protein_structure>

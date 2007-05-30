@@ -3,4 +3,15 @@
 
   <import file="../../../imbuild/source.xml"/>
 
+  <target name="-retrieve-tgt-from-custom-file" if="have.file.custom.tgt">
+    <convert-file      
+       modelName="${target.model}"
+       clsName="${convertor.class}"
+       osName="osw.${common.os.prefix}-tgt-items">
+      <fileset dir="${src.data.dir}" >
+        <include name="**/*.xml"/>
+	  </fileset>
+    </convert-file>
+  </target>
+
 </project>
