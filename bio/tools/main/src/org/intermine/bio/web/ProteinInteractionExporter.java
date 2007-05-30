@@ -10,12 +10,19 @@ package org.intermine.bio.web;
  *
  */
 
+/**
+ * Export protein interaction information as SIF file suitable for use with
+ * CytoScape if there are ProteinInteraction objects on the select list of
+ * the query.
+ * 
+ * @author Florian Reisinger
+ * @author Richard Smith
+ */
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -29,9 +36,9 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.ProteinInteraction;
-import org.flymine.model.genomic.ProteinInteractor;
+import org.intermine.bio.networkview.FlyNetworkCreator;
+import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
@@ -107,9 +114,7 @@ public class ProteinInteractionExporter implements TableExporter
                 if (!exported.contains(object.getId())) {
                     // cast to ProteinInteraction
                     ProteinInteraction feature = (ProteinInteraction) object;
-                    // retrieve the interacting proteins from the feature
-                    Collection interactors = feature.getInteractors();
-
+                    
                     if (outputStream == null) {
                         // try to avoid opening the OutputStream until we know that the query is
                         // going to work - this avoids some problems that occur when
@@ -119,9 +124,10 @@ public class ProteinInteractionExporter implements TableExporter
                         printWriter = new PrintWriter(outputStream, true);
                     }
 
-                   
-                    printWriter.write(getSifLines(interactors)); //flo
-                    printWriter.flush(); //flo
+                    Set<ProteinInteraction> interactions = 
+                        (Set<ProteinInteraction>) Collections.singleton(feature);
+                    printWriter.write(getSifLines(interactions));
+                    printWriter.flush();
 
                     writtenInteractionsCount++; //flo
                     exported.add(object.getId());
@@ -145,13 +151,13 @@ public class ProteinInteractionExporter implements TableExporter
 
                 return mapping.findForward("results");
             }
-        } catch (ObjectStoreException e) {
+        //} catch (ObjectStoreException e) {
+        } catch (Exception e) {
             ActionErrors messages = new ActionErrors();
             ActionError error = new ActionError("errors.query.objectstoreerror");
             messages.add(ActionErrors.GLOBAL_ERROR, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
         }
-
         return null;
     }
 
@@ -164,78 +170,88 @@ public class ProteinInteractionExporter implements TableExporter
     public boolean canExport(PagedTable pt) {
         return ExportHelper.canExport(pt, ProteinInteraction.class);
     }
-
+    
     /**
      * create lines in sif format
      * @param interactors list of interactors
      * @return String respresenting the network in sif format
      */
-    public static String getSifLines(Collection interactors) {
-        StringBuffer sif = new StringBuffer();
-        if (DEBUG) {
-            if (interactors.size() > 0) {
-                sif.append("found interactors - ");
-            }
-        } // flo debug
-        // lists of proteins
-        ArrayList baits = new ArrayList();
-        ArrayList preys = new ArrayList();
-        ArrayList others = new ArrayList();
-        ProteinInteractor pInt = null;
-        for (Iterator i = interactors.iterator(); i.hasNext();) {
-            pInt = (ProteinInteractor) i.next();
-            if (DEBUG) {
-                if (pInt != null) {
-                    sif.append("found protIntractr - ");
-                }
-            } // flo debug
-            if (pInt.getRole().equalsIgnoreCase("bait")) {
-                if (DEBUG) {
-                    sif.append("found bait - ");
-                } // flo debug
-                baits.add(pInt.getProtein());
-            } else if (pInt.getRole().equalsIgnoreCase("prey")) {
-                if (DEBUG) {
-                    sif.append("found prey - ");
-                } // flo debug
-                preys.add(pInt.getProtein());
-            } else {
-                if (DEBUG) {
-                    sif.append("found other - ");
-                }
-                others.add(pInt.getProtein());
-            }
-        }
-
-        Protein protein = null;
-        if (baits.size() == 1 && preys.size() > 0 && others.size() == 0) {
-            if (DEBUG) {
-                sif.append("adding protein name");
-            } // flo debug
-            protein = (Protein) baits.get(0);
-            // adding bait and Interaction type
-            sif.append(protein.getPrimaryAccession() + "\t" + "pp");
-            for (Iterator i = preys.iterator(); i.hasNext();) {
-                protein = (Protein) i.next();
-                // adding prey(s)
-                sif.append("\t" + protein.getPrimaryAccession());
-            }
-            sif.append("\n");
-        } else {
-            // link all proteins to each other
-            // TODO: test this
-            others.addAll(preys);
-            others.addAll(baits);
-            Protein[] p = new Protein[1];
-            p = (Protein[]) others.toArray(p);
-            for (int i = 0; i < others.size(); i++) {
-                for (int j = i + 1; j < others.size(); j++) {
-                    sif.append(p[i].getPrimaryAccession() + "\tcp\t"
-                            + p[j].getPrimaryAccession() + "\n");
-                }
-            }
-        }
-        return sif.toString();
+    public static String getSifLines(Collection<ProteinInteraction> interactions) {
+        FlyNetwork fn = FlyNetworkCreator.createFlyNetwork(interactions);
+        return fn.toSIF();
     }
+        
+        /**
+     * create lines in sif format
+     * @param interactors list of interactors
+     * @return String respresenting the network in sif format
+     */
+//    public static String getSifLinesOld(Collection interactors) {
+//        StringBuffer sif = new StringBuffer();
+//        if (DEBUG) {
+//            if (interactors.size() > 0) {
+//                sif.append("found interactors - ");
+//            }
+//        } // flo debug
+//        // lists of proteins
+//        ArrayList baits = new ArrayList();
+//        ArrayList preys = new ArrayList();
+//        ArrayList others = new ArrayList();
+//        ProteinInteractor pInt = null;
+//        for (Iterator i = interactors.iterator(); i.hasNext();) {
+//            pInt = (ProteinInteractor) i.next();
+//            if (DEBUG) {
+//                if (pInt != null) {
+//                    sif.append("found protIntractr - ");
+//                }
+//            } // flo debug
+//            if (pInt.getRole().equalsIgnoreCase("bait")) {
+//                if (DEBUG) {
+//                    sif.append("found bait - ");
+//                } // flo debug
+//                baits.add(pInt.getProtein());
+//            } else if (pInt.getRole().equalsIgnoreCase("prey")) {
+//                if (DEBUG) {
+//                    sif.append("found prey - ");
+//                } // flo debug
+//                preys.add(pInt.getProtein());
+//            } else {
+//                if (DEBUG) {
+//                    sif.append("found other - ");
+//                }
+//                others.add(pInt.getProtein());
+//            }
+//        }
+//
+//        Protein protein = null;
+//        if (baits.size() == 1 && preys.size() > 0 && others.size() == 0) {
+//            if (DEBUG) {
+//                sif.append("adding protein name");
+//            } // flo debug
+//            protein = (Protein) baits.get(0);
+//            // adding bait and Interaction type
+//            sif.append(protein.getPrimaryAccession() + "\t" + "pp");
+//            for (Iterator i = preys.iterator(); i.hasNext();) {
+//                protein = (Protein) i.next();
+//                // adding prey(s)
+//                sif.append("\t" + protein.getPrimaryAccession());
+//            }
+//            sif.append("\n");
+//        } else {
+//            // link all proteins to each other
+//            // TODO: test this
+//            others.addAll(preys);
+//            others.addAll(baits);
+//            Protein[] p = new Protein[1];
+//            p = (Protein[]) others.toArray(p);
+//            for (int i = 0; i < others.size(); i++) {
+//                for (int j = i + 1; j < others.size(); j++) {
+//                    sif.append(p[i].getPrimaryAccession() + "\tcp\t"
+//                            + p[j].getPrimaryAccession() + "\n");
+//                }
+//            }
+//        }
+//        return sif.toString();
+//    }
 
 }
