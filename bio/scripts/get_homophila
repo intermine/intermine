@@ -44,8 +44,7 @@ my ($updated,$version_buffer,$log_buffer);
 my $current_link = "/shared/data/homophila/current";
 my $old_file = "$current_link/homophila_all.txt";
 
-my $result = &compare_files($old_file,$temp_file);
-if($result == 1){
+if(&compare_files($old_file,$temp_file)==1){
 	print "Keeping downloaded files.\n";
 	&checkdir_exists($data_dir);
 	system("mv $temp_file $data_file");
@@ -58,7 +57,7 @@ if($result == 1){
 	
 	$log_buffer = "Homophila\nNew data available for version $version in $data_dir containing file(s):\n";
 	$version_buffer = "Homophila\n$version $date\nHomophila: Human disease to Drosophila gene data set\nhttp://superfly.ucsd.edu/homophila/\n";
-}elsif($result == 0 ){
+}else{	
 	unlink $temp_file;
 	print "Downloaded files deleted.\n";
 	$data_dir = $current_link;

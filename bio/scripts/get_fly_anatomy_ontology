@@ -32,11 +32,10 @@ my ($version_buffer,$log_buffer);
 
 #compare the files, create version directory if it is a new version or
 #the current data link is missing
-my $result = &compare_files($old_file,$temp_file);
-if($result == 1){
+if(&compare_files($old_file,$temp_file)==1){
 	print "Keeping downloaded files.\n";
 	&update_files($fly_ont_main_dir,$file,$temp_file,$current_link);
-}elsif($result == 0 ){
+}else{
 	print "Downloaded files deleted.\n";
 	unlink $temp_file;
 	$log_buffer = "Fly Anatomy Ontology\nCurrent data ok\n\n";
