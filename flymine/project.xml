@@ -110,7 +110,7 @@
       <property name="source.db.name" value="anoest"/>
     </source>
     <source name="protein_structure" type="protein_structure" dump="true">
-      <property name="src.data.dir" location="/shared/data/kenji/data/pfam-3d/model"/>
+      <property name="src.data.dir" location="/shared/data/kenji/files_8_feb_2007/model/"/>
     </source>
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
