@@ -38,7 +38,7 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateRepository;
+import org.intermine.web.logic.template.SearchRepository;
 
 /**
  * Action to create a new TemplateQuery from current query.
@@ -161,7 +161,7 @@ public class CreateTemplateAction extends InterMineAction
         // If superuser then rebuild shared templates
         if (profile.getUsername() != null && profile.getUsername().equals
                 (servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
-            TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
+            SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
             if (editing != null) {
                 tr.globalTemplateUpdated(template);
             } else {

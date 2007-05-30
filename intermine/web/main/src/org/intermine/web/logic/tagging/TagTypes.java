@@ -31,4 +31,14 @@ public interface TagTypes
      * Template.
      */
     public static final String TEMPLATE = "template";
+    
+    /**
+     * Bag.
+     */
+    public static final String BAG = "bag";
+
+    /**
+     * A Class/ClassDescriptor.
+     */
+    public static final String CLASS = "class";
 }

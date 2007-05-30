@@ -77,7 +77,12 @@ public class InterMineBagHandler extends DefaultHandler
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
-                Date dateCreated = new Date(Long.parseLong(attrs.getValue("date-created")));
+                Date dateCreated;
+                try {
+                    dateCreated = new Date(Long.parseLong(attrs.getValue("date-created")));
+                } catch (NumberFormatException e) {
+                    dateCreated = null;
+                }
                 bag = new InterMineBag(bagName, bagType, bagDescription, 
                                        dateCreated, osw.getObjectStore(), userId, uosw);
             }

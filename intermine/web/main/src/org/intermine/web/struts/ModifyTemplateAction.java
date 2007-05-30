@@ -31,7 +31,7 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateRepository;
+import org.intermine.web.logic.template.SearchRepository;
 
 /**
  * Action that results from a button press on the user profile page.
@@ -106,7 +106,7 @@ public class ModifyTemplateAction extends InterMineAction
         if (profile.getUsername() != null
             && profile.getUsername()
             .equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
-            TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
+            SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
             tr.globalTemplatesChanged();
         }
 

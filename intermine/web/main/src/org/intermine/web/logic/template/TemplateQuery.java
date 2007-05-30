@@ -37,6 +37,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.search.WebSearchable;
 
 import net.sourceforge.iharder.Base64;
 
@@ -47,7 +48,7 @@ import net.sourceforge.iharder.Base64;
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
-public class TemplateQuery extends PathQuery
+public class TemplateQuery extends PathQuery implements WebSearchable
 {
     private static final Logger LOG = Logger.getLogger(TemplateQuery.class);
 

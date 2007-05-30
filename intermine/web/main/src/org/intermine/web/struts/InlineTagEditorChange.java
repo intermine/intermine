@@ -10,8 +10,16 @@ package org.intermine.web.struts;
  *
  */
 
+import org.intermine.model.userprofile.Tag;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.template.SearchRepository;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -19,10 +27,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Controller for the inline tag editing tile - all actions here are called via
@@ -48,14 +52,21 @@ public class InlineTagEditorChange extends DispatchAction
         
         String uid = request.getParameter("uid");
         String type = request.getParameter("type");
-        String tag = request.getParameter("tag");
+        String tagName = request.getParameter("tag");
         
-        LOG.info("adding tag " + tag + " uid " + uid + " type " + type);
+        LOG.info("adding tag " + tagName + " uid " + uid + " type " + type);
         
-        if (profile.getUsername() != null && !StringUtils.isEmpty(tag)
+        if (profile.getUsername() != null && !StringUtils.isEmpty(tagName)
             && !StringUtils.isEmpty(type)
             && !StringUtils.isEmpty(uid)) {
-            pm.addTag(tag, uid, type, profile.getUsername());
+            Tag tag = pm.addTag(tagName, uid, type, profile.getUsername());
+            HttpSession session = request.getSession();
+            ServletContext servletContext = session.getServletContext();
+            Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
+            if (isSuperUser) {
+                SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
+                tr.webSearchableTagged(tag);
+            }
         }
         return null;
     }
@@ -78,6 +89,13 @@ public class InlineTagEditorChange extends DispatchAction
             // only let users delete their own tags
             if (tag.getUserProfile().getUsername().equals(profile.getUsername())) {
                 pm.deleteTag(tag);
+                HttpSession session = request.getSession();
+                ServletContext servletContext = session.getServletContext();
+                Boolean isSuperUser = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
+                if (isSuperUser) {
+                    SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
+                    tr.webSearchableUnTagged(tag);
+                }
             }
         }
         return null;

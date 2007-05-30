@@ -41,6 +41,7 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -89,7 +90,7 @@ public class MyMineController extends TilesAction
                 String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
                 if (userName != null) {
                     // discard result
-                    pm.getTags(null, null, "template", userName);
+                    pm.getTags(null, null, TagTypes.TEMPLATE, userName);
                 }
             }
         }

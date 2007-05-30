@@ -29,7 +29,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateRepository;
+import org.intermine.web.logic.template.SearchRepository;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.lucene.store.Directory;
@@ -330,7 +330,7 @@ public class Profile
      */
     private void buildTemplateCategories() {
         // We also take this opportunity to index the user's template queries
-        templateIndex = TemplateRepository.indexTemplates(savedTemplates, "user");
+        templateIndex = SearchRepository.indexWebSearchables(savedTemplates, "user");
     }
 
     /**

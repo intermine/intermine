@@ -18,6 +18,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,13 +69,13 @@ public class InlineTagEditorController extends TilesAction
                 type = "attribute";
             }
         } else if (taggable instanceof TemplateQuery) {
-            type = "template";
+            type = TagTypes.TEMPLATE;
             uid = ((TemplateQuery) taggable).getName();
         } else if (taggable instanceof ClassDescriptor) {
-            type = "class";
+            type = TagTypes.CLASS;
             uid = ((ClassDescriptor) taggable).getName();
         } else if (taggable instanceof InterMineBag) {
-            type = "bag";
+            type = TagTypes.BAG;
             uid = ((InterMineBag) taggable).getName();
         }
         

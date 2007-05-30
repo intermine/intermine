@@ -28,7 +28,7 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateRepository;
+import org.intermine.web.logic.template.SearchRepository;
 
 /**
  * Imports templates in XML format.
@@ -84,7 +84,7 @@ public class TemplatesImportAction extends InterMineAction
                 imported++;
             }
 
-            TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
+            SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
             tr.globalTemplatesChanged();
             //InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
 
