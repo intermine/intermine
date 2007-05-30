@@ -34,11 +34,10 @@ my ($version_buffer,$log_buffer);
 
 #compare the files, create version directory if it is a new version or
 #the current data link is missing
-my $result = &compare_files($old_file,$temp_file);
-if($result == 1){
+if(&compare_files($old_file,$temp_file)==1){
 	print "Keeping downloaded files.\n";
 	&update_files($flyatlas_main_dir,$flyatlas_data_file,$temp_file,$current_link);
-}elsif($result == 0 ){
+}else{
 	print "Downloaded files deleted.\n";
 	unlink $temp_file;
 	$log_buffer = "FlyAtlas\nCurrent data ok\n\n";
