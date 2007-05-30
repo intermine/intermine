@@ -161,7 +161,7 @@ for my $source_database (keys %gene_association_map) {
 		my $current_link_dir = "../$source_database/$date_string";
 		&make_link($current_link_dir,$current_link);
 		
-		$log_buffer .= "$sorted updated to $gene_association_download_dir\n";
+		$log_buffer .= "gene_association.$suffix updated to $gene_association_download_dir\n";
 		my $version_buffer = "GO annotations for D. melanogaster, M. musculus, S. cerevisiae and C. elegans\n$date_string\nGene Ontology assignments from the Gene Ontology Site\nhttp://www.geneontology.org/GO.current.annotations.shmtl\n";
 		&write_version($source_dir,$version_buffer);
 		
