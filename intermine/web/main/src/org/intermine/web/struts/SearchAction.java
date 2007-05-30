@@ -55,9 +55,9 @@ import org.intermine.web.logic.template.TemplateQuery;
  *
  * @author Thomas Riley
  */
-public class TemplateSearchAction extends InterMineAction
+public class SearchAction extends InterMineAction
 {
-    private static final Logger LOG = Logger.getLogger(TemplateSearchAction.class);
+    private static final Logger LOG = Logger.getLogger(SearchAction.class);
 
     private Formatter formatter = new Formatter() {
         public String highlightTerm(String term, TokenGroup group) {
@@ -86,7 +86,7 @@ public class TemplateSearchAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext context = session.getServletContext();
-        TemplateSearchForm sf = (TemplateSearchForm) form;
+        SearchForm sf = (SearchForm) form;
         String queryString = sf.getQueryString();
         Map globalTemplates = SessionMethods.getSuperUserProfile(context).getSavedTemplates();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -95,7 +95,7 @@ public class TemplateSearchAction extends InterMineAction
             LOG.info("Searching " + sf.getType() + " templates for \""
                     + sf.getQueryString() + "\"");
             long time = System.currentTimeMillis();
-            Directory dir = (Directory) context.getAttribute(Constants.TEMPLATE_INDEX_DIR);
+            Directory dir = (Directory) context.getAttribute(Constants.GLOBAL_TEMPLATE_INDEX_DIR);
             IndexSearcher is = new IndexSearcher(profile.getUserTemplatesIndex());
             IndexSearcher is2 = new IndexSearcher(dir);
             Searchable[] searchables;

@@ -40,7 +40,7 @@ import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayReference;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateRepository;
+import org.intermine.web.logic.template.SearchRepository;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an object.
@@ -127,7 +127,7 @@ public class ObjectDetailsController extends InterMineAction
         }
 
         Map miscRefs = new TreeMap(dobj.getRefsAndCollections());
-        placementRefsAndCollections.put(TemplateRepository.MISC, miscRefs);
+        placementRefsAndCollections.put(SearchRepository.MISC, miscRefs);
         
         for (Iterator iter = dobj.getRefsAndCollections().entrySet().iterator();
             iter.hasNext(); ) {

@@ -54,7 +54,7 @@ import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateRepository;
+import org.intermine.web.logic.template.SearchRepository;
 
 /**
  * Initialiser for the InterMine web application.
@@ -111,7 +111,7 @@ public class InitialiserPlugin implements PlugIn
         // Loading shared template queries requires profile manager
         loadSuperUserDetails(servletContext);
         servletContext.setAttribute(Constants.TEMPLATE_REPOSITORY,
-                new TemplateRepository(servletContext));
+                new SearchRepository(servletContext));
         
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 

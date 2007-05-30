@@ -54,6 +54,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.PathQueryBinding;
 import org.intermine.web.logic.query.SavedQueryBinding;
+import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
@@ -73,7 +74,7 @@ public class ProfileManager
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
     protected CacheMap profileCache = new CacheMap();
     private Map<String, TagChecker> tagCheckers = null;
-    private Map<MultiKey, ArrayList> tagCache = null;
+    private HashMap<MultiKey, List<Tag>> tagCache = null;
     private Map classKeys;
 
     /**
@@ -475,9 +476,9 @@ public class ProfileManager
      * @param userName the use name this tag is associated with
      * @return the matching Tags
      */
-    public synchronized List getTags(String tagName, String objectIdentifier, String type,
+    public synchronized List<Tag> getTags(String tagName, String objectIdentifier, String type,
                         String userName) {
-        Map<MultiKey, ArrayList> cache = getTagCache();
+        Map<MultiKey, List<Tag>> cache = getTagCache();
         MultiKey key = makeKey(tagName, objectIdentifier, type, userName);
 
         if (cache.containsKey(key)) {
@@ -542,14 +543,45 @@ public class ProfileManager
         return results;
     }
 
+
+    /**
+     * Given a Map from name to WebSearchable, return a Map that contains only those name,
+     * WebSearchable pairs where the name is tagged with all of the tags listed.
+     * @param webSearchables the Map to filter
+     * @param tagNames the tag names to use for filtering
+     * @param tagType the tag type (from TagTypes)
+     * @param userName the user name to pass to getTags()
+     * @return the filtered Map
+     */
+    public Map<String, WebSearchable>
+        filterByTags(Map<String, ? extends WebSearchable> webSearchables, 
+                     List<String> tagNames, String tagType, String userName) {
+        Map<String, WebSearchable> returnMap = new HashMap<String, WebSearchable>(webSearchables);
+
+        // prime the cache
+        for (String tagName: tagNames) {
+            getTags(tagName, null, tagType, userName);
+        }
+        for (String tagName: tagNames) {
+            for (Map.Entry<String, ? extends WebSearchable> entry: webSearchables.entrySet()) {
+                String webSearchableName = entry.getKey();
+                if (getTags(tagName, webSearchableName, tagType, userName).size() == 0) {
+                    returnMap.remove(webSearchableName);
+                }
+            }
+        }
+
+        return returnMap;
+    }
+    
     private MultiKey makeKey(String tagName, String objectIdentifier, String type,
                              String userName) {
         return new MultiKey(tagName, objectIdentifier, type, userName);
     }
 
-    private void addToCache(Map<MultiKey, ArrayList> cache, MultiKey key, List results) {
+    private void addToCache(Map<MultiKey, List<Tag>> cache, MultiKey key, List<Tag> results) {
         LOG.error("adding to cache: " + key);
-        cache.put(key, new ArrayList (results));
+        cache.put(key, new ArrayList<Tag>(results));
 
         int keyNullPartCount = 0;
 
@@ -602,9 +634,9 @@ public class ProfileManager
 
     }
 
-    private Map<MultiKey, ArrayList> getTagCache() {
+    private Map<MultiKey, List<Tag>> getTagCache() {
         if (tagCache == null) {
-            tagCache  = new HashMap<MultiKey, ArrayList>();
+            tagCache  = new HashMap<MultiKey, List<Tag>>();
         }
         return tagCache;
     }
@@ -618,9 +650,10 @@ public class ProfileManager
      * (eg. "Department.name" for the "collection" type)
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
      * @param userName the name of the UserProfile to associate this tag with
+     * @return the new Tag
      */
-    public synchronized void addTag(String tagName, String objectIdentifier, String type,
-                       String userName) {
+    public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
+                                   String userName) {
         LOG.error("addTag() deleting cache");
         tagCache = null;
         if (tagName == null) {
@@ -653,6 +686,7 @@ public class ProfileManager
 
         try {
             osw.store(tag);
+            return tag;
         } catch (ObjectStoreException e) {
             throw new RuntimeException("cannot set tag", e);
         }

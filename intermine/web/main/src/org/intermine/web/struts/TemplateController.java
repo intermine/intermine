@@ -101,14 +101,14 @@ public class TemplateController extends TilesAction
         // it will be missing one of its original constraints (which will have been
         // replaced by constraining the id to be in the bag.  
         TemplateQuery modifiedTemplate = null;
-        if (loadModifiedTemplate != null) {
+/*        if (loadModifiedTemplate != null) {
             String userName = ((Profile) session
                     .getAttribute(Constants.PROFILE)).getUsername();
             modifiedTemplate = TemplateHelper.findTemplate(servletContext, session,
                     userName, queryName, TemplateHelper.TEMP_TEMPLATE);
             queryName = modifiedTemplate.getName();
         }
-
+*/
         if (context.getAttribute("builder") != null) {
             PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
             TemplateBuildState tbs = (TemplateBuildState) session

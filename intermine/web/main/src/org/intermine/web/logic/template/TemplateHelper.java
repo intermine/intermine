@@ -52,7 +52,6 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.InlineTemplateTable;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
@@ -70,14 +69,12 @@ public class TemplateHelper
 
     /** Type parameter indicating globally shared template. */
     public static final String GLOBAL_TEMPLATE = "global";
-    /** Type parameter indicating group shared template. */
-    public static final String SHARED_TEMPLATE = "shared";
     /** Type parameter indicating private user template. */
     public static final String USER_TEMPLATE = "user";
     /** Type parameter indicating ALL templates */
     public static final String ALL_TEMPLATE = "all";
     /** Type parameter indicating temporary templates **/
-    public static final String TEMP_TEMPLATE = "temp";
+//    public static final String TEMP_TEMPLATE = "temp";
 
     /**
      * Locate TemplateQuery by identifier. The type parameter
@@ -110,9 +107,6 @@ public class TemplateHelper
             return (TemplateQuery) templates.get(templateName);
         } else if (USER_TEMPLATE.equals(type)) {
             return profile.getSavedTemplates().get(templateName);
-        } else if (SHARED_TEMPLATE.equals(type)) {
-            // TODO implement shared templates
-            return null;
         } else if (ALL_TEMPLATE.equals(type)) {
             TemplateQuery tq = findTemplate(servletContext, session, userName,
                                             templateName, GLOBAL_TEMPLATE);
@@ -121,9 +115,9 @@ public class TemplateHelper
             } else {
                 return tq;
             }
-        } else if (TEMP_TEMPLATE.equals(type)) {
-           SavedQuery savedQuery = profile.getHistory().get(templateName);
-           return (TemplateQuery) savedQuery.getPathQuery();
+   //     } else if (TEMP_TEMPLATE.equals(type)) {
+  //         SavedQuery savedQuery = profile.getHistory().get(templateName);
+  //         return (TemplateQuery) savedQuery.getPathQuery();
         } else {
             throw new IllegalArgumentException("type: " + type);
         }

@@ -22,7 +22,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateRepository;
+import org.intermine.web.logic.template.SearchRepository;
 
 /**
  * Make some change to a user template.
@@ -60,7 +60,7 @@ public class UserTemplateAction extends InterMineDispatchAction
             if (profile.getUsername() != null
                 && profile.getUsername().equals
                     (servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
-                TemplateRepository tr = TemplateRepository.getTemplateRepository(servletContext);
+                SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
                 tr.globalTemplateRemoved(template);
             }
         } else {

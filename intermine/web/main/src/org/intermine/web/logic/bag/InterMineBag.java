@@ -27,6 +27,8 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.web.logic.search.WebSearchable;
+
 
 /**
  * An object that represents a bag of objects in our database for the webapp. It is backed by an
@@ -35,7 +37,7 @@ import org.intermine.objectstore.query.SingletonResults;
  * @author Kim Rutherford
  * @author Matthew Wakeling
  */
-public class InterMineBag
+public class InterMineBag implements WebSearchable
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
 
@@ -267,5 +269,13 @@ public class InterMineBag
      */
     public String getQualifiedType() {
         return os.getModel().getPackageName() + "." + type;
+    }
+
+    /**
+     * @see org.intermine.web.logic.search.WebSearchable#getTitle()
+     * {@inheritDoc}
+     */
+    public String getTitle() {
+       return getName();
     }
 }

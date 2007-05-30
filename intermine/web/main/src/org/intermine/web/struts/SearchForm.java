@@ -16,17 +16,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
 /**
- * Form bean representing feedback form.
+ * Form bean for the search form.
  *
  * @author  Thomas Riley
  */
-public class TemplateSearchForm extends ActionForm
+public class SearchForm extends ActionForm
 {
     private String queryString;
     private String type;
     
     /** Creates a new instance of FeedbackForm */
-    public TemplateSearchForm() {
+    public SearchForm() {
         reset();
     }
     

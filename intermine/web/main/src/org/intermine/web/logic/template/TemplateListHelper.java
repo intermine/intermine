@@ -40,6 +40,7 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 
@@ -231,6 +232,9 @@ public class TemplateListHelper
             // give up
             return Collections.emptyList();
         }
+        Map<String, WebSearchable> webSearchables = 
+            (Map) context.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
+        Map<String, WebSearchable> globalTemplates = webSearchables;
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
@@ -243,8 +247,9 @@ public class TemplateListHelper
                 String aspectFromTagName = tag.getTagName().substring(7).trim();
 
                 if (StringUtils.equals(aspect, aspectFromTagName)) {
+
                     TemplateQuery templateQuery = 
-                        p.getSavedTemplates().get(tag.getObjectIdentifier());
+                        (TemplateQuery) globalTemplates.get(tag.getObjectIdentifier());
                     if (templateQuery != null) {
                         List constraints = templateQuery.getAllConstraints();
                         Iterator constraintIter = constraints.iterator();

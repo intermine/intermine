@@ -40,7 +40,7 @@ public interface Constants
     //public static final String CLASS_CATEGORY_TEMPLATES = "CLASS_CATEGORY_TEMPLATES";
 
     /**
-     * ServletContext attribute - global instance of TemplateRepository.
+     * ServletContext attribute - global instance of SearchRepository.
      */
     public static final String TEMPLATE_REPOSITORY = "TEMPLATE_REPOSITORY";
 
@@ -161,7 +161,7 @@ public interface Constants
      * Servlet context attribute that is a reference to a lucene Directory object containing
      * the template query index.
      */
-    public static final String TEMPLATE_INDEX_DIR = "TEMPLATE_INDEX_DIR";
+    public static final String GLOBAL_TEMPLATE_INDEX_DIR = "GLOBAL_TEMPLATE_INDEX_DIR";
 
     /**
      * Period of time to wait for client to poll a running query before cancelling the query.

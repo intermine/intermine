@@ -28,6 +28,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.InterMineAction;
 
@@ -85,11 +86,11 @@ public abstract class LoginHandler extends InterMineAction
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
             
             // prime the cache (hopefuly)
-            pm.getTags("im:public", null, "template", superuser);
+            pm.getTags(TagNames.IM_PUBLIC, null, "template", superuser);
             
             for (Map.Entry<String, TemplateQuery> entry: profile.getSavedTemplates().entrySet()) {
-                if (pm.getTags("im:public", entry.getKey(), "template", superuser).size() == 0) {
-                   pm.addTag("im:public", entry.getKey(), "template", superuser);
+                if (pm.getTags(TagNames.IM_PUBLIC, entry.getKey(), "template", superuser).size() == 0) {
+                   pm.addTag(TagNames.IM_PUBLIC, entry.getKey(), "template", superuser);
                 }
             }
         }

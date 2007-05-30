@@ -34,6 +34,7 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -44,11 +45,6 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class TypeConverter
 {
-    /**
-     * String used to tag converter templates in the webapp.
-     */
-    public static final String CONVERTER = "im:converter";
-
     /**
      * Converts a List of objects from one type to another type using a TemplateQuery.
      *
@@ -128,7 +124,7 @@ public class TypeConverter
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         Profile p = pm.getProfile(sup);
 
-        List tags = pm.getTags(CONVERTER, null, TagTypes.TEMPLATE, sup);
+        List tags = pm.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, sup);
         Map<Class, TemplateQuery> retval = new HashMap<Class, TemplateQuery>();
         Iterator iter = tags.iterator();
         while (iter.hasNext()) {
