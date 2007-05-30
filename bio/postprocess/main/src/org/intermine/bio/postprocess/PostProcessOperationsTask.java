@@ -196,16 +196,6 @@ public class PostProcessOperationsTask extends Task
 
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 cl.createOverlapRelations(classNamesToIgnoreList, false);
-            } else if ("add-licences".equals(operation)) {
-                LOG.info("Starting add-licences");
-                new AddLicences(getObjectStoreWriter()).execute();
-            } else if ("update-orthologues".equals(operation)) {
-                UpdateOrthologues uo = new UpdateOrthologues(getObjectStoreWriter());
-                LOG.info("Starting UpdateOrthologues.process()");
-                uo.process();
-                CreateReferences cr = new CreateReferences(getObjectStoreWriter());
-                LOG.info("Starting CreateReferences.populateOrthologuesCollection()");
-                cr.populateOrthologuesCollection();
             } else if ("set-collection-counts".equals(operation)) {
                 SetCollectionCounts setCounts = new SetCollectionCounts(getObjectStoreWriter());
                 setCounts.setCollectionCount();

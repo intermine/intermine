@@ -59,31 +59,11 @@ public class ProteinInteractionRetrieverTest extends TestCase {
 
 	}
 
-//	public void testExpandNetworkFromProtein(){
-//		ProteinInteractionRetriever ret = new ProteinInteractionRetriever(os);
-//		FlyNetwork net = ret.expandNetworkFromProtein("Q9VI89");
-//		Collection nodes = net.getNodes();
-//		for (Iterator iter = nodes.iterator(); iter.hasNext();) {
-//			FlyNode node = (FlyNode) iter.next();
-//			System.out.println(node.getLabel());
-//		}
-//	}
-//	
 	public void testExpandNetworkFromProteins(){
 		ProteinInteractionRetriever ret = new ProteinInteractionRetriever(os);
 		ArrayList list = new ArrayList();
 		list.add("Q9W5X1");
-//		list.add("Q9XTN4");
-//		list.add("Q9W0B3");
-//		list.add("Q8MQW8");
 		list.add("P09956");
-//		list.add("P23758");
-//		list.add("Q9VN10");
-//		list.add("Q8T3W6");
-//		list.add("Q9VK43");
-//		list.add("Q8SX72");
-//		list.add("Q9VMD7");
-//		list.add("Q9VH72");
 
 		FlyNetwork net = ret.expandNetworkFromProteins(list,2);
 		Collection nodes = net.getNodes();

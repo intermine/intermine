@@ -3,13 +3,12 @@ package org.intermine.bio.networkview;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.ProteinInteraction;
-import org.flymine.model.genomic.ProteinInteractor;
-
-import org.intermine.bio.networkview.FlyNetworkCreator;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.bio.networkview.network.FlyNode;
 import org.intermine.metadata.Model;
@@ -42,15 +41,15 @@ public class FlyNetworkCreatorTest extends TestCase
         for (Iterator iter = interactions.iterator(); iter.hasNext();) {
             ProteinInteraction ion = (ProteinInteraction) iter.next();
             System.out.println("new interaction...");
-            Collection iors = ion.getInteractors();
-            for (Iterator iterator = iors.iterator(); iterator.hasNext();) {
-                ProteinInteractor ia = (ProteinInteractor) iterator.next();
-                if (!l1.contains(ia.getProtein().getPrimaryAccession())) {
-                    l1.add(ia.getProtein().getPrimaryAccession());
+            if (!l1.contains(ion.getProtein().getPrimaryAccession())) {
+                l1.add(ion.getProtein().getPrimaryAccession());
+            }
+            Set<Protein> interacts = (Set<Protein>) ion.getInteractingProteins();
+            for (Protein protein : interacts) {
+                if (!l1.contains(protein.getPrimaryAccession())) {
+                    l1.add(protein.getPrimaryAccession());
                 }
                 count++;
-                System.out.println("protein acc: "
-                        + ia.getProtein().getPrimaryAccession());
             }
         }
         System.out.println("total proteins: " + count);
@@ -86,7 +85,7 @@ public class FlyNetworkCreatorTest extends TestCase
         // test if all proteins have become nodes
         assertTrue(l2.containsAll(l1));
         assertTrue(l1.containsAll(l2));
-        assertEquals("numer of nodes/proteins: ", l1.size(), l2.size());
+        assertEquals("number of nodes/proteins: ", l1.size(), l2.size());
     }
 
     //*** helper methods
