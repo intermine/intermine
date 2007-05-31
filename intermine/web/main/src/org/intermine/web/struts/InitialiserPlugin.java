@@ -75,7 +75,8 @@ public class InitialiserPlugin implements PlugIn
 
     ProfileManager profileManager;
     
-    private static final List<String> PUBLIC_TAG_LIST = Arrays.asList(new String[] {TagNames.IM_PUBLIC});
+    private static final List<String> PUBLIC_TAG_LIST =
+        Arrays.asList(new String[] {TagNames.IM_PUBLIC});
     
     /**
      * Init method called at Servlet initialisation

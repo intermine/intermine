@@ -60,8 +60,8 @@ public class UserTemplateAction extends InterMineDispatchAction
             if (profile.getUsername() != null
                 && profile.getUsername().equals
                     (servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
-                SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
-                tr.globalTemplateRemoved(template);
+                SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
+                tr.webSearchableRemoved(template);
             }
         } else {
             recordError(new ActionMessage("errors.template.nosuchtemplate"), request);
