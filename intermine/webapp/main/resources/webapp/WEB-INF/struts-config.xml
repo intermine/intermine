@@ -23,7 +23,7 @@
     <form-bean name="feedbackForm" type="org.intermine.web.struts.FeedbackForm"/>
     <form-bean name="importTemplatesForm" type="org.intermine.web.struts.TemplatesImportForm"/>
     <form-bean name="importTagsForm" type="org.intermine.web.struts.ImportTagsForm"/>
-    <form-bean name="templateSearchForm" type="org.intermine.web.struts.SearchForm"/>
+    <form-bean name="searchForm" type="org.intermine.web.struts.SearchForm"/>
     <form-bean name="importQueriesForm" type="org.intermine.web.struts.ImportQueriesForm"/>
     <form-bean name="templateSettingsForm" type="org.intermine.web.struts.TemplateSettingsForm"/>
     <form-bean name="createAccountForm" type="org.intermine.web.struts.CreateAccountForm"/>
@@ -269,8 +269,8 @@
       <forward name="error" path="bagUploadConfirm.page"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>
-    <action path="/templateSearch" name="templateSearchForm" type="org.intermine.web.struts.SearchAction" input="templateSearch">
-      <forward name="templateSearch" path="templateSearch.page"/>
+    <action path="/search" name="searchForm" type="org.intermine.web.struts.SearchAction" input="search">
+      <forward name="search" path="search.page"/>
     </action>
     <action path="/queryClassSelect" name="queryClassSelectForm" type="org.intermine.web.struts.QueryClassSelectAction" scope="request" input="query">
       <forward name="classChooser" path="classChooser.page"/>

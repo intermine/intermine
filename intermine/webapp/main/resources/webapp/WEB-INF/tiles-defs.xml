@@ -111,9 +111,9 @@
     <put name="body" value="templateProblems.jsp"/>
     <put name="pageName" value="templateProblems"/>
   </definition>
-  <definition name="templateSearch.page" extends="layout.template">
-    <put name="body" value="templateSearch.jsp"/>
-    <put name="pageName" value="templateSearch"/>
+  <definition name="search.page" extends="layout.template">
+    <put name="body" value="search.jsp"/>
+    <put name="pageName" value="search"/>
   </definition>
   <definition name="aspect.page" extends="layout.template">
     <put name="title" value="/aspectTitle.jsp" />

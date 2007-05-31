@@ -23,9 +23,11 @@ import org.apache.struts.action.ActionMapping;
 public class SearchForm extends ActionForm
 {
     private String queryString;
-    private String type;
+    private String scope;
     
-    /** Creates a new instance of FeedbackForm */
+    /**
+     * Creates a new instance of FeedbackForm
+     */
     public SearchForm() {
         reset();
     }
@@ -45,17 +47,17 @@ public class SearchForm extends ActionForm
     }
     
     /**
-     * @return the template type
+     * @return the search scope "global", "user" or "ALL"
      */
-    public String getType() {
-        return type;
+    public String getScope() {
+        return scope;
     }
     
     /**
-     * @param type the template type
+     * @param scope the new scope
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setScope(String scope) {
+        this.scope = scope;
     }
     
     /**
@@ -64,6 +66,7 @@ public class SearchForm extends ActionForm
      * @param mapping  the action mapping associated with this form bean
      * @param request  the current http servlet request
      */
+    @Override
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
         reset();
@@ -71,6 +74,6 @@ public class SearchForm extends ActionForm
     
     private void reset() {
         queryString = "";
-        type = "global";
+        scope = "global";
     }
 }

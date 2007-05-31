@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<!-- templateSearch.jsp -->
+<!-- search.jsp -->
 
 <html:xhtml/>
 
@@ -14,15 +14,15 @@ window.onload = function() { document.getElementById("queryString").focus(); }
 </script>
 
 <div class="body">
-  <html:form action="/templateSearch" method="get">
-    <fmt:message key="templateSearch.search.label"/>
+  <html:form action="/search?type=template" method="get">
+    <fmt:message key="search.search.label"/>
     <html:text property="queryString" size="40" styleId="queryString"/>
-    <html:select property="type">
-      <html:option key="templateSearch.form.global" value="global"/>
-      <html:option key="templateSearch.form.user" value="user"/>
-      <html:option key="templateSearch.form.all" value="ALL"/>
+    <html:select property="scope">
+      <html:option key="search.form.global" value="global"/>
+      <html:option key="search.form.user" value="user"/>
+      <html:option key="search.form.all" value="ALL"/>
     </html:select>
-    <html:submit><fmt:message key="templateSearch.form.submit"/></html:submit>
+    <html:submit><fmt:message key="search.form.submit"/></html:submit>
   </html:form>
   <p class="smallnote">
     <fmt:message key="begin.searchtemplates.help.message"/>
@@ -49,7 +49,8 @@ window.onload = function() { document.getElementById("queryString").focus(); }
       <fmt:formatNumber value="${entry.value*10}" maxFractionDigits="0" var="heat"/>
       <img class="searchHeatImg" src="images/heat${heat}.gif" width="${heat*2}" height="10"
            style="margin-right:${24-(heat*2)}px"/>
-      <im:templateLine type="${templateTypes[entry.key]}" templateQuery="${entry.key}" desc="${highlighted[entry.key]}"/>
+      <im:templateLine type="${resultScopes[entry.key]}" 
+                       templateQuery="${entry.key}" desc="${highlighted[entry.key]}"/>
       <c:if test="${!status.last}">
         <hr class="tmplSeperator"/>
       </c:if>
@@ -58,15 +59,15 @@ window.onload = function() { document.getElementById("queryString").focus(); }
   
   <c:if test="${empty results && !empty param.queryString}">
     <p>
-      <b><fmt:message key="templateSearch.noresults"/></b>
+      <b><fmt:message key="search.noresults"/></b>
     </p>
   </c:if>
   
   <p>
-    <html:link action="/templates"><fmt:message key="templateSearch.viewall"/></html:link>
+    <html:link action="/templates"><fmt:message key="search.viewall"/></html:link>
   </p>
   
 </div>
 
 
-<!-- /templateSearch.jsp -->
+<!-- /search.jsp -->
