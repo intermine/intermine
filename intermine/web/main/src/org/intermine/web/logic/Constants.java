@@ -24,11 +24,6 @@ public interface Constants
     public static final String WEB_PROPERTIES = "WEB_PROPERTIES";
 
     /**
-     * ServletContext attribute used to store global template queries
-     */
-    public static final String GLOBAL_TEMPLATE_QUERIES = "GLOBAL_TEMPLATE_QUERIES";
-
-    /**
      * ServletContext attribute maps category name to List of TemplateQuerys
      */
     //public static final String CATEGORY_TEMPLATES = "CATEGORY_TEMPLATES";
@@ -38,11 +33,6 @@ public interface Constants
      * TemplateQuerys.
      */
     //public static final String CLASS_CATEGORY_TEMPLATES = "CLASS_CATEGORY_TEMPLATES";
-
-    /**
-     * ServletContext attribute - global instance of SearchRepository.
-     */
-    public static final String TEMPLATE_REPOSITORY = "TEMPLATE_REPOSITORY";
 
     /**
      * ServletContext attribute maps a class name to a Map of template names to simple expressions -
@@ -158,12 +148,6 @@ public interface Constants
     public static final String DEFAULT_OPERATOR = "DEFAULT_OPERATOR";
 
     /**
-     * Servlet context attribute that is a reference to a lucene Directory object containing
-     * the template query index.
-     */
-    public static final String GLOBAL_TEMPLATE_INDEX_DIR = "GLOBAL_TEMPLATE_INDEX_DIR";
-
-    /**
      * Period of time to wait for client to poll a running query before cancelling the query.
      */
     public static final int QUERY_TIMEOUT_SECONDS = 20;
@@ -228,4 +212,9 @@ public interface Constants
      * Servlet attribute.  Map from class name to custom bag query.
      */
     public static final String BAG_QUERY_CONFIG = "BAG_QUERY_CONFIG";
+
+    /**
+     * Servlet attribute.  Contains the SearchRepository for global/public WebSearchable objects.
+     */
+    public static final String GLOBAL_SEARCH_REPOSITORY = "GLOBAL_SEARCH_REPOSITORY";
 }

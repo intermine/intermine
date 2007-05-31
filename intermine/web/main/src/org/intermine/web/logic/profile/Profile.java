@@ -51,8 +51,8 @@ public class Profile
     protected Map<String, TemplateQuery> savedTemplates = new TreeMap<String, TemplateQuery>();
     //protected Map categoryTemplates;
     protected Map queryHistory = new ListOrderedMap();
-    protected Directory templateIndex;
     private boolean savingDisabled;
+    private SearchRepository searchRepository;
 
     /**
      * Construct a Profile
@@ -330,7 +330,8 @@ public class Profile
      */
     private void buildTemplateCategories() {
         // We also take this opportunity to index the user's template queries
-        templateIndex = SearchRepository.indexWebSearchables(savedTemplates, "user");
+        searchRepository = new SearchRepository();
+        searchRepository.addWebSearchables(TagTypes.TEMPLATE, savedTemplates);
     }
 
     /**
@@ -339,6 +340,6 @@ public class Profile
      * @return the user's template index
      */
     public Directory getUserTemplatesIndex() {
-        return templateIndex;
+        return searchRepository.getDirectory(TagTypes.TEMPLATE);
     }
 }

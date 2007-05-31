@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,9 +51,14 @@ import org.intermine.web.logic.aspects.AspectBinding;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryHelper;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagNames;
+import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.SearchRepository;
 
@@ -69,6 +75,8 @@ public class InitialiserPlugin implements PlugIn
 
     ProfileManager profileManager;
     
+    private static final List<String> PUBLIC_TAG_LIST = Arrays.asList(new String[] {TagNames.IM_PUBLIC});
+    
     /**
      * Init method called at Servlet initialisation
      *
@@ -81,7 +89,7 @@ public class InitialiserPlugin implements PlugIn
      * be successfully initialized
      */
     public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
-        ServletContext servletContext = servlet.getServletContext();
+        final ServletContext servletContext = servlet.getServletContext();
  
         System.setProperty("java.awt.headless", "true");
         
@@ -107,12 +115,37 @@ public class InitialiserPlugin implements PlugIn
         summarizeObjectStore(servletContext, os);
         // load class keys
         loadClassKeys(servletContext, os);
-        ProfileManager pm = createProfileManager(servletContext, os);
+        final ProfileManager pm = createProfileManager(servletContext, os);
         // Loading shared template queries requires profile manager
         loadSuperUserDetails(servletContext);
-        servletContext.setAttribute(Constants.TEMPLATE_REPOSITORY,
-                new SearchRepository(servletContext));
         
+        // index global webSearchables
+        SearchRepository searchRepository = new SearchRepository();
+        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
+        final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
+        
+        AbstractMap<String, WebSearchable> templateSearchableMap =
+            new AbstractMap<String, WebSearchable>() {
+                @Override
+                public Set<Map.Entry<String, WebSearchable>> entrySet() {
+                    return pm.filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG_LIST,
+                                           TagTypes.TEMPLATE,
+                                           superProfile.getUsername()).entrySet();
+                }
+            };
+        searchRepository.addWebSearchables(TagTypes.TEMPLATE, templateSearchableMap);
+        
+        AbstractMap<String, WebSearchable> bagSearchableMap =
+            new AbstractMap<String, WebSearchable>() {
+                @Override
+                public Set<Map.Entry<String, WebSearchable>> entrySet() {
+                    return pm.filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG_LIST,
+                                           TagTypes.BAG,
+                                           superProfile.getUsername()).entrySet();
+                }
+            };
+        searchRepository.addWebSearchables(TagTypes.BAG, bagSearchableMap);
+ 
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 
         // load custom bag queries

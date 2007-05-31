@@ -48,6 +48,8 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.SearchRepository;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -95,7 +97,9 @@ public class SearchAction extends InterMineAction
             LOG.info("Searching " + sf.getType() + " templates for \""
                     + sf.getQueryString() + "\"");
             long time = System.currentTimeMillis();
-            Directory dir = (Directory) context.getAttribute(Constants.GLOBAL_TEMPLATE_INDEX_DIR);
+            SearchRepository searchRepository =
+                (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+            Directory dir = searchRepository.getDirectory(TagTypes.TEMPLATE);
             IndexSearcher is = new IndexSearcher(profile.getUserTemplatesIndex());
             IndexSearcher is2 = new IndexSearcher(dir);
             Searchable[] searchables;

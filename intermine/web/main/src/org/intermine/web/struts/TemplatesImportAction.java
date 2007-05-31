@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.SearchRepository;
@@ -85,7 +86,7 @@ public class TemplatesImportAction extends InterMineAction
             }
 
             SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
-            tr.globalTemplatesChanged();
+            tr.globalChange(TagTypes.TEMPLATE);
             //InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
 
             recordMessage(new ActionMessage("importTemplates.done",
