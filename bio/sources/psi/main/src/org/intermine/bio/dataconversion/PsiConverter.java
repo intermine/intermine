@@ -10,16 +10,19 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -30,10 +33,6 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -53,7 +52,7 @@ public class PsiConverter extends FileConverter
     private Map<String, Map> mapMaster = new HashMap<String, Map>();  // map of maps
     private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
-    private Map<String, String> proteins = new HashMap<String, String>();
+    private LinkedHashMap<String, String> proteins = new LinkedHashMap<String, String>();
     private Map<String, Object> experimentNames = new HashMap<String, Object>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> masterList = new HashMap<String, String>();
@@ -412,27 +411,22 @@ setComment();
 
                     interactorHolder.isRegionFeature = true;
 
-                    // create region
-                    Item region = createItem("ProteinRegion");
-                    region.setReference("protein", interactorHolder.proteinId);
+                    // create interacting region
+                    Item interactionRegion = createItem("ProteinInteractionRegion");
+                    interactionRegion.setReference("protein", interactorHolder.proteinId);
+                    interactionRegion.setReference("ontologyTerm", psiDagTermItemId);
 
                     // create new location object (start and end are coming later)
                     Item location = createItem("Location");
                     location.setReference("object", interactorHolder.proteinId);
-                    location.setReference("subject", region.getIdentifier());
-
-                    // create interacting region
-                    Item interactionRegion = createItem("ProteinInteractionRegion");
+                    location.setReference("subject", interactionRegion.getIdentifier());
+                    
                     interactionRegion.setReference("location", location);
-                    interactionRegion.setReference("protein", interactorHolder.proteinId);
-                    interactionRegion.setReference("ontologyTerm", psiDagTermItemId);
-
+                    
                     // add location and region to interaction object
                     interactorHolder.setInteractionRegion(interactionRegion);
                     //interactorHolder.interactingRegion = interactingRegion;
                     interactorHolder.location = location;
-                    //interactorHolder.region = region;
-                    interactorHolder.setRegion(region);
 
                     holder.addRegion(interactionRegion.getIdentifier());
 
@@ -765,7 +759,6 @@ setComment();
                     if (interactorHolder.getInteractionRegion() != null) {
                         writer.store(ItemHelper.convert(interactorHolder.getInteractionRegion()));
                         writer.store(ItemHelper.convert(interactorHolder.location));
-                        writer.store(ItemHelper.convert(interactorHolder.getRegion()));
                     }
                 }
 
@@ -943,8 +936,7 @@ setComment();
          */
         protected String alias(String className) {
             String alias = aliases.get(className);
-            LOG.error("~~ classname " + className);
-
+            
             if (alias != null) {
                 LOG.error("alias " + alias);
                 return alias;
@@ -958,7 +950,9 @@ setComment();
             String nextIndex = "" + i;
             masterList.put("nextClsId", nextIndex);
             aliases.put(className, nextIndex);
+            LOG.error("set alias: classname " + className + " alias: " + nextIndex);
 
+            
             return nextIndex;
         }
 
@@ -1032,7 +1026,6 @@ setComment();
             private String experimentalRole;
             private String biologicalRole;
             private Item interactionRegion;
-            private Item region;
             private Item location;
             private String startStatus;
             private String endStatus;
@@ -1054,14 +1047,6 @@ setComment();
              */
             public InteractorHolder(String proteinId) {
                 this.proteinId = proteinId;
-            }
-
-            protected void setRegion(Item region) {
-                this.region = region;
-            }
-
-            protected Item getRegion() {
-                return region;
             }
 
             protected void setInteractionRegion(Item interactionRegion) {
