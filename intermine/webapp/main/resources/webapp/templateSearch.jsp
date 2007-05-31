@@ -32,7 +32,9 @@ window.onload = function() { document.getElementById("queryString").focus(); }
     <p>
       <b>${resultCount}</b> results for <b>${queryString}</b>. <span class="tmplSearchTime">(${querySeconds} seconds)</span>
       <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
-        <br/><i><fmt:message key="template.notlogged">
+        <br/><br/>
+        <i>
+          <fmt:message key="template.notlogged">
             <fmt:param>
               <im:login/>
             </fmt:param>
