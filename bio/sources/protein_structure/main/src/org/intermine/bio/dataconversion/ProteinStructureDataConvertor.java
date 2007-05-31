@@ -10,16 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -30,6 +24,14 @@ import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -48,8 +50,8 @@ public class ProteinStructureDataConvertor extends FileConverter
     private String dataLocation;
     protected static final String ENDL = System.getProperty("line.separator");
     private Item proteinStructureExperiment;
-    private Map<String, Item> proteinMap, featureMap;
-    
+    private final Map<String, Item> featureMap = new HashMap<String, Item>();
+    private final Map<String, String> proteinMap = new HashMap<String, String>();
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -58,8 +60,6 @@ public class ProteinStructureDataConvertor extends FileConverter
     public ProteinStructureDataConvertor(ItemWriter writer) {
         super(writer);
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-        proteinMap = new HashMap();
-        featureMap = new HashMap();
         proteinStructureExperiment = createItem("ProteinStructureExperiment");
         proteinStructureExperiment.setAttribute("type", "Computer prediction");
         try {
@@ -81,23 +81,32 @@ public class ProteinStructureDataConvertor extends FileConverter
     /**
      * @see FileConverter#process(Reader)
      */
+    @Override
     public void process(Reader reader) throws Exception {
         File currentFile = getCurrentFile();
-        if(currentFile.getName().endsWith(".xml")){
+        if (currentFile.getName().endsWith(".xml")) {
             if (dataLocation == null || dataLocation.startsWith("$")) {
                 throw new IllegalArgumentException("No data location specified, required"
                                   + "for finding .atm structure files (was: " + dataLocation + ")");
             }
-            ProteinStructureHandler handler = new ProteinStructureHandler (getItemWriter(), proteinMap, featureMap);
+            ProteinStructureHandler handler =
+                new ProteinStructureHandler (getItemWriter(), proteinMap, featureMap);
             try {
                 SAXParser.parse(new InputSource(reader), handler);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
-            store(proteinMap.values());
-            store(featureMap.values());
+
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws ObjectStoreException {
+        store(featureMap.values());
     }
     
     /**
@@ -109,7 +118,7 @@ public class ProteinStructureDataConvertor extends FileConverter
         return itemFactory.makeItemForClass(GENOMIC_NS + className);
     }
     
-    protected String getFileContent(String fileName, String extention) throws InterMineException{
+    protected String getFileContent(String fileName, String extention) throws InterMineException {
         String str;
         StringBuffer fileBuffer = new StringBuffer();
         try {
@@ -122,7 +131,7 @@ public class ProteinStructureDataConvertor extends FileConverter
                 BufferedReader in = new BufferedReader(new FileReader(filename));
                 boolean firstLine = true;
                 while ((str = in.readLine()) != null) {
-                    if (!firstLine ) {
+                    if (!firstLine) {
                         fileBuffer.append(ENDL);
                     }
                     fileBuffer.append(str);
@@ -145,7 +154,7 @@ public class ProteinStructureDataConvertor extends FileConverter
     {
 
         private Item proteinStructure;
-        private Item protein;
+        private String proteinItemIdentifier;
         private Item proteinFeature;
         private Item dataSource;
         private String attName = null;
@@ -153,14 +162,16 @@ public class ProteinStructureDataConvertor extends FileConverter
         private ItemWriter writer;
         private boolean alignmentFile = false;
         private Stack stack = new Stack();
-        private Map<String, Item> proteinMap, featureMap;
+        private Map<String, Item> featureMap;
+        private Map<String, String> proteinMap;
         private String protId, strId;
         
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
          */
-        public ProteinStructureHandler (ItemWriter writer, Map proteinMap, Map featureMap) throws ObjectStoreException {
+        public ProteinStructureHandler (ItemWriter writer, Map proteinMap, Map featureMap)
+            throws ObjectStoreException {
             this.writer = writer;
             dataSource = createItem("DataSource");
             dataSource.setAttribute("name", "Kenji");
@@ -170,7 +181,8 @@ public class ProteinStructureDataConvertor extends FileConverter
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attrs)
+            throws SAXException {
             super.startElement(uri, localName, qName, attrs);
             if (qName.equals("fragment")) {
                 proteinStructure = createItem("ProteinStructure");
@@ -192,10 +204,10 @@ public class ProteinStructureDataConvertor extends FileConverter
             try {
                 stack.pop();
                 if (qName.equals("uniprot_id")) {
-                    //Reference my be to protein accession
+                    //Reference my be to proteinItemIdentifier accession
                     protId = attValue.toString();
-                    protein = getProtein(protId);
-                    proteinStructure.setReference("protein", protein);
+                    proteinItemIdentifier = getProtein(protId);
+                    proteinStructure.setReference("protein", proteinItemIdentifier);
                 } else if (qName.equals("pfam_id")) {
                     proteinFeature = getFeature(attValue.toString());
                     proteinStructure.setReference("proteinFeature", proteinFeature);
@@ -234,18 +246,25 @@ public class ProteinStructureDataConvertor extends FileConverter
             }
         }
         
-        private Item getProtein(String identifier) {
-            Item protein = (Item) proteinMap.get(identifier);
-            if (protein == null) {
-                protein = createItem("Protein");
-                protein.setAttribute("primaryAccession", protId);
-                proteinMap.put(identifier, protein);
+        private String getProtein(String identifier) {
+            String proteinIdentifier = proteinMap.get(identifier);
+            if (proteinIdentifier == null) {
+                Item protein = createItem("Protein");
+                protein.setAttribute("primaryAccession", identifier);
+                proteinMap.put(identifier, protein.getIdentifier());
+                try {
+                    writer.store(ItemHelper.convert(protein));
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException("error while storing: " + proteinItemIdentifier, e);
+                }
+                return protein.getIdentifier();
+            } else {
+                return proteinIdentifier;
             }
-            return protein;
         }
 
         private Item getFeature(String identifier) {
-            Item feature = (Item) featureMap.get(identifier);
+            Item feature = featureMap.get(identifier);
             if (feature == null) {
                 feature = createItem("ProteinFeature");
                 feature.setAttribute("identifier", attValue.toString());
