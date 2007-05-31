@@ -235,6 +235,14 @@
     </c:if>
   </html:form>
   <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
-    <p><i><fmt:message key="template.notlogged"/></i></p>
+    <p>
+      <i>
+        <fmt:message key="template.notlogged">
+          <fmt:param>
+            <im:login/>
+          </fmt:param>
+        </fmt:message>
+      </i>
+    </p>
   </c:if>
 </div>
