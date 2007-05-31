@@ -10,18 +10,14 @@ package org.intermine.web.logic.template;
  *
  */
 
-import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 
 import java.io.IOException;
@@ -38,9 +34,10 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 
 /**
- * Respository object for TemplateQueries.
+ * Respository object for WebSearchable objects.
  *
  * @author Thomas Riley
+ * @author Kim Rutherford
  */
 public class SearchRepository
 {
@@ -55,19 +52,18 @@ public class SearchRepository
 
     /**
      * Construct a new instance of SearchRepository.
-     * @param context the servlet context
      */
     public SearchRepository() {
         // empty
     }
 
     /**
-     * Get the singleton TemplateRespository.
+     * Get the SearchRepository for global (public) object.
      *
      * @param context the servlet context
      * @return the singleton SearchRepository object
      */
-    public static final SearchRepository getTemplateRepository(ServletContext context) {
+    public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
         return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
     }
 
@@ -77,7 +73,7 @@ public class SearchRepository
      *
      * @param webSearchable the WebSearchable added
      */
-    public void globalTemplateAdded(WebSearchable webSearchable) {
+    public void webSearchableAdded(WebSearchable webSearchable) {
         reindex(getWebSearchableType(webSearchable));
     }
 
@@ -87,7 +83,7 @@ public class SearchRepository
      *
      * @param webSearchable the WebSearchable removed
      */
-    public void globalTemplateRemoved(WebSearchable webSearchable) {
+    public void webSearchableRemoved(WebSearchable webSearchable) {
         reindex(getWebSearchableType(webSearchable));
     }
 
@@ -97,7 +93,7 @@ public class SearchRepository
      *
      * @param webSearchable the WebSearchable updated
      */
-    public void globalTemplateUpdated(WebSearchable webSearchable) {
+    public void webSearchableUpdated(WebSearchable webSearchable) {
         reindex(getWebSearchableType(webSearchable));
     }
 
@@ -158,10 +154,10 @@ public class SearchRepository
      * Index some TemplateQueries and return the RAMDirectory containing the index.
      *
      * @param webSearchableMap from name to WebSearchable
-     * @param type webSearchable type (see TemplateHelper)
+     * @param gobalOrUser webSearchable type (see TemplateHelper)
      * @return a RAMDirectory containing the index
      */
-    private static RAMDirectory indexWebSearchables(Map webSearchableMap, String type) {
+    private static RAMDirectory indexWebSearchables(Map webSearchableMap, String gobalOrUser) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing webSearchable queries");
 
@@ -188,7 +184,7 @@ public class SearchRepository
             doc.add(new Field("content", webSearchable.getTitle() + " : "
                               + webSearchable.getDescription(),
                               Field.Store.NO, Field.Index.TOKENIZED));
-            doc.add(new Field("type", type, Field.Store.YES, Field.Index.NO));
+            doc.add(new Field("type", gobalOrUser, Field.Store.YES, Field.Index.NO));
 
             try {
                 writer.addDocument(doc);
@@ -212,11 +208,21 @@ public class SearchRepository
         return ram;
     }
 
-    public Map<String, ? extends WebSearchable> get(String name) {
-        return webSearchablesMap.get(name);
+    /**
+     * Return a Map from name to WebSearchable for the given type.
+     * @param type a tag type from TagTypes
+     * @return the WebSearchable Map
+     */
+    public Map<String, ? extends WebSearchable> getWebSearchableMap(String type) {
+        return webSearchablesMap.get(type);
     }
 
-
+    /**
+     * Add a Map from name to WebSearchable for the given type.  The Map can be retrieved later
+     * with getWebSearchableMap().
+     * @param type a tag type from TagTypes
+     * @param map the WebSearchable Map
+     */
     public void addWebSearchables(String type, Map<String, ? extends WebSearchable> map) {
         webSearchablesMap.put(type, map);
         reindex(type);

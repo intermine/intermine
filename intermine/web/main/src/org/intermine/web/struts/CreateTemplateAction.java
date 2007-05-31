@@ -161,11 +161,11 @@ public class CreateTemplateAction extends InterMineAction
         // If superuser then rebuild shared templates
         if (profile.getUsername() != null && profile.getUsername().equals
                 (servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
-            SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
+            SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
             if (editing != null) {
-                tr.globalTemplateUpdated(template);
+                tr.webSearchableUpdated(template);
             } else {
-                tr.globalTemplateAdded(template);
+                tr.webSearchableAdded(template);
             }
         }
         

@@ -106,7 +106,7 @@ public class ModifyTemplateAction extends InterMineAction
         if (profile.getUsername() != null
             && profile.getUsername()
             .equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
-            SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
+            SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
             tr.globalChange(TagTypes.TEMPLATE);
         }
 

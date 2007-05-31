@@ -85,7 +85,7 @@ public class TemplatesImportAction extends InterMineAction
                 imported++;
             }
 
-            SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
+            SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
             tr.globalChange(TagTypes.TEMPLATE);
             //InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
 

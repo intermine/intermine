@@ -235,7 +235,7 @@ public class TemplateListHelper
         SearchRepository searchRepository  = 
             (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
         Map<String, ? extends WebSearchable> globalTemplates = 
-            searchRepository.get(TagTypes.TEMPLATE);
+            searchRepository.getWebSearchableMap(TagTypes.TEMPLATE);
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
