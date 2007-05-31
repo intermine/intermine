@@ -120,6 +120,7 @@ public class DataTracker
         s.execute("create table tracker (objectid int, fieldname text, sourcename text,"
                 + " version int)");
         s.execute("create index tracker_objectid on tracker (objectid);");
+        conn.commit();
     }
 
     /**
