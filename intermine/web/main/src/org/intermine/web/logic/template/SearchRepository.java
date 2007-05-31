@@ -146,6 +146,11 @@ public class SearchRepository
         directoryMap.put(type, ram);
     }
 
+    /**
+     * Get the lucene Directory for the given type
+     * @param type a tag type from TagTypes
+     * @return the Directory
+     */
     public Directory getDirectory(String type) {
         return directoryMap.get(type);
     }
