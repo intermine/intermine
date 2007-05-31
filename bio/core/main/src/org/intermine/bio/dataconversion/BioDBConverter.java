@@ -32,7 +32,9 @@ public abstract class BioDBConverter extends DBConverter
     private Item organism;
     
     // the DataSet Item for the evidence collection of the new Location
-    private Item dataSet;
+    private final Item dataSet;
+    // the DataSource for the Synonym objects
+    private final Item dataSource;
 
     /**
      * Create a new BioDBConverter object.
@@ -41,12 +43,16 @@ public abstract class BioDBConverter extends DBConverter
      * @param writer an ItemWriter used to handle the resultant Items
      * @param taxonId organism taxon id to use to create the Organism object for BioEntitys
      * @param dataSetTitle the title attribute to user when creating the DataSet item
+     * @param datasource_name 
      * @throws ObjectStoreException thrown if ItemWriter.store() fails
      */
     public BioDBConverter(Database database, Model tgtModel, ItemWriter writer, int taxonId,
-                          String dataSetTitle) 
+                          String dataSetTitle, String dataSourceName) 
         throws ObjectStoreException {
         super(database, tgtModel, writer);
+        dataSource = makeItem("DataSource");
+        dataSource.setAttribute("name", dataSourceName);
+        writer.store(ItemHelper.convert(dataSource));
         organism = makeItem("Organism");
         organism.setAttribute("taxonId", String.valueOf(taxonId));
         writer.store(ItemHelper.convert(organism));
@@ -111,5 +117,25 @@ public abstract class BioDBConverter extends DBConverter
             getItemWriter().store(ItemHelper.convert(chromosome));
         }
         return chromosome;
+    }
+
+    /**
+     * Create and return a new Synonym, but don't store it.
+     * @param subject the Synonym subject
+     * @param type the Synonym type
+     * @param value the Synonym value
+     * @param evidence the Synonym evidence (eg. a DataSet)
+     * @return the new Synonym
+     */
+    public Item createSynonym(Item subject, String type, String value, boolean isPrimary,
+                              Item evidence) {
+        Item synonym = makeItem("Synonym");
+        synonym.setAttribute("type", type);
+        synonym.setAttribute("value", value);
+        synonym.setAttribute("isPrimary", String.valueOf(isPrimary));
+        synonym.setReference("subject", subject);
+        synonym.setReference("source", dataSource);
+        synonym.addToCollection("evidence", evidence);
+        return synonym;
     }
 }
