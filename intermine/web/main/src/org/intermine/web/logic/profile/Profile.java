@@ -335,11 +335,10 @@ public class Profile
     }
 
     /**
-     * Get the users's template index.
-     *
-     * @return the user's template index
+     * 
+     * @return
      */
-    public Directory getUserTemplatesIndex() {
-        return searchRepository.getDirectory(TagTypes.TEMPLATE);
+    public SearchRepository getSearchRepository() {
+        return searchRepository;
     }
 }

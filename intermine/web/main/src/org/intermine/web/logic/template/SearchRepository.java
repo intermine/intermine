@@ -58,7 +58,7 @@ public class SearchRepository
     }
 
     /**
-     * Get the SearchRepository for global (public) object.
+     * Get the SearchRepository for global (public) objects.
      *
      * @param context the servlet context
      * @return the singleton SearchRepository object
@@ -156,7 +156,7 @@ public class SearchRepository
     }
 
     /**
-     * Index some TemplateQueries and return the RAMDirectory containing the index.
+     * Index some WebSearchables and return the RAMDirectory containing the index.
      *
      * @param webSearchableMap from name to WebSearchable
      * @param gobalOrUser webSearchable type (see TemplateHelper)

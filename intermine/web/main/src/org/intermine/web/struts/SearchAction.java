@@ -47,13 +47,14 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.SearchRepository;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
- * Action handles template search.
+ * Action handles search.
  *
  * @author Thomas Riley
  */
@@ -90,25 +91,31 @@ public class SearchAction extends InterMineAction
         ServletContext context = session.getServletContext();
         SearchForm sf = (SearchForm) form;
         String queryString = sf.getQueryString();
-        Map globalTemplates = SessionMethods.getSuperUserProfile(context).getSavedTemplates();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        String type = request.getParameter("type");
         
         if (StringUtils.isNotEmpty(queryString)) {
-            LOG.info("Searching " + sf.getType() + " templates for \""
-                    + sf.getQueryString() + "\"");
+            LOG.info("Searching " + sf.getScope() + " for \""
+                    + sf.getQueryString() + "\"    - type: " + type);
             long time = System.currentTimeMillis();
-            SearchRepository searchRepository =
+            SearchRepository globalSearchRepository =
                 (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-            Directory dir = searchRepository.getDirectory(TagTypes.TEMPLATE);
-            IndexSearcher is = new IndexSearcher(profile.getUserTemplatesIndex());
-            IndexSearcher is2 = new IndexSearcher(dir);
+            Map<String, ? extends WebSearchable> globalWebSearchables =
+                globalSearchRepository.getWebSearchableMap(type);
+            Directory globalDirectory = globalSearchRepository.getDirectory(type);
+            SearchRepository userSearchRepository = profile.getSearchRepository();
+            Map<String, ? extends WebSearchable> userWebSearchables = 
+                userSearchRepository.getWebSearchableMap(type);
+            Directory userDirectory = userSearchRepository.getDirectory(type);
+            IndexSearcher userIndexSearcher = new IndexSearcher(userDirectory);
+            IndexSearcher globalIndexSearcher = new IndexSearcher(globalDirectory);
             Searchable[] searchables;
-            if (sf.getType().equals("user")) {
-                searchables = new Searchable[]{is};
-            } else if (sf.getType().equals("global")) {
-                searchables = new Searchable[]{is2};
+            if (sf.getScope().equals("user")) {
+                searchables = new Searchable[]{userIndexSearcher};
+            } else if (sf.getScope().equals("global")) {
+                searchables = new Searchable[]{globalIndexSearcher};
             } else {
-                searchables = new Searchable[]{is, is2};
+                searchables = new Searchable[]{userIndexSearcher, globalIndexSearcher};
             }
             MultiSearcher searcher = new MultiSearcher(searchables);
             
@@ -119,16 +126,18 @@ public class SearchAction extends InterMineAction
                 QueryParser queryParser = new QueryParser("content", analyzer);
                 query = queryParser.parse(queryString);
             } catch (ParseException err) {
-                recordError(new ActionMessage("errors.templatesearch.badinput", err.getMessage()),
+                recordError(new ActionMessage("errors.search.badinput", err.getMessage()),
                         request);
-                return mapping.findForward("templateSearch");
+                return mapping.findForward("search");
             }
-            query = query.rewrite(IndexReader.open(dir)); // required to expand search terms
+            
+            // required to expand search terms
+            query = query.rewrite(IndexReader.open(globalDirectory));
             Hits hits = searcher.search(query);
             
             time = System.currentTimeMillis() - time;
             Map hitMap = new LinkedHashMap();
-            Map typeMap = new LinkedHashMap();
+            Map scopeMap = new LinkedHashMap();
             Map highlightedMap = new HashMap();
             
             LOG.info("Found " + hits.length() + " document(s) that matched query '"
@@ -138,36 +147,36 @@ public class SearchAction extends InterMineAction
             Highlighter highlighter = new Highlighter(formatter, scorer);
             
             for (int i = 0; i < hits.length(); i++) {
-                TemplateQuery template = null;
+                WebSearchable webSearchable = null;
                 Document doc = hits.doc(i);
-                String type = doc.get("type");
+                String scope = doc.get("scope");
                 String name = doc.get("name");
                 
-                if (type.equals("user")) {
-                    template = profile.getSavedTemplates().get(name);
-                } else if (type.equals("global")) {
-                    template = (TemplateQuery) globalTemplates.get(name);
+                if (scope.equals("user")) {
+                    webSearchable = userWebSearchables.get(name);
+                } else if (scope.equals("global")) {
+                    webSearchable = globalWebSearchables.get(name);
                 }
                 
-                hitMap.put(template, new Float(hits.score(i)));
-                typeMap.put(template, type);
+                hitMap.put(webSearchable, new Float(hits.score(i)));
+                scopeMap.put(webSearchable, scope);
                 
                 TokenStream tokenStream
-                    = analyzer.tokenStream("", new StringReader(template.getTitle()));
+                    = analyzer.tokenStream("", new StringReader(webSearchable.getTitle()));
                 highlighter.setTextFragmenter(new NullFragmenter());
-                highlightedMap.put(template,
-                        highlighter.getBestFragment(tokenStream, template.getTitle()));
+                highlightedMap.put(webSearchable,
+                        highlighter.getBestFragment(tokenStream, webSearchable.getTitle()));
             }
             
             request.setAttribute("results", hitMap);
-            request.setAttribute("templateTypes", typeMap);
+            request.setAttribute("resultScopes", scopeMap);
             request.setAttribute("highlighted", highlightedMap);
             request.setAttribute("querySeconds", new Float(time / 1000f));
             request.setAttribute("queryString", queryString);
             request.setAttribute("resultCount", new Integer(hitMap.size()));
         }
         
-        return mapping.findForward("templateSearch");
+        return mapping.findForward("search");
     }
 
     
