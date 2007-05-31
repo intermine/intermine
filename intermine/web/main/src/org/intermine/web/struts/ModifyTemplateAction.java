@@ -107,7 +107,7 @@ public class ModifyTemplateAction extends InterMineAction
             && profile.getUsername()
             .equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
             SearchRepository tr = SearchRepository.getTemplateRepository(servletContext);
-            tr.globalTemplatesChanged();
+            tr.globalChange(TagTypes.TEMPLATE);
         }
 
         return mapping.findForward("mymine");

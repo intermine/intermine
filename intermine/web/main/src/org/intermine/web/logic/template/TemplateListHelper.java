@@ -232,9 +232,10 @@ public class TemplateListHelper
             // give up
             return Collections.emptyList();
         }
-        Map<String, WebSearchable> webSearchables = 
-            (Map) context.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
-        Map<String, WebSearchable> globalTemplates = webSearchables;
+        SearchRepository searchRepository  = 
+            (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+        Map<String, ? extends WebSearchable> globalTemplates = 
+            searchRepository.get(TagTypes.TEMPLATE);
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();

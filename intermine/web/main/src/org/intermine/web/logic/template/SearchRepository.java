@@ -12,17 +12,15 @@ package org.intermine.web.logic.template;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 
@@ -36,6 +34,7 @@ import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 
 /**
@@ -49,28 +48,17 @@ public class SearchRepository
     /** "Miscellaneous" */
     public static final String MISC = "aspect:Miscellaneous";
 
-    private ServletContext servletContext;
-    private static final List<String> PUBLIC_TAG = Arrays.asList(new String[] {TagNames.IM_PUBLIC});
+    private Map<String, Map<String, ? extends WebSearchable>> webSearchablesMap =
+        new HashMap<String, Map<String, ? extends WebSearchable>>();
+    private Map<String, Directory> directoryMap = new HashMap<String, Directory>();
+
 
     /**
      * Construct a new instance of SearchRepository.
      * @param context the servlet context
      */
-    public SearchRepository(ServletContext context) {
-        // index global webSearchables
-        servletContext = context;
-
-        servletContext.setAttribute(Constants.GLOBAL_TEMPLATE_QUERIES, new AbstractMap() {
-            public Set entrySet() {
-                Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
-                ProfileManager pm =
-                    (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-                return pm.filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG,
-                                       TagTypes.TEMPLATE, superProfile.getUsername()).entrySet();
-            }
-        });
-
-        reindexGlobalTemplates(servletContext);
+    public SearchRepository() {
+        // empty
     }
 
     /**
@@ -80,7 +68,7 @@ public class SearchRepository
      * @return the singleton SearchRepository object
      */
     public static final SearchRepository getTemplateRepository(ServletContext context) {
-        return (SearchRepository) context.getAttribute(Constants.TEMPLATE_REPOSITORY);
+        return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
     }
 
     /**
@@ -90,7 +78,7 @@ public class SearchRepository
      * @param webSearchable the WebSearchable added
      */
     public void globalTemplateAdded(WebSearchable webSearchable) {
-        reindexGlobalTemplates(servletContext);
+        reindex(getWebSearchableType(webSearchable));
     }
 
     /**
@@ -100,7 +88,7 @@ public class SearchRepository
      * @param webSearchable the WebSearchable removed
      */
     public void globalTemplateRemoved(WebSearchable webSearchable) {
-        reindexGlobalTemplates(servletContext);
+        reindex(getWebSearchableType(webSearchable));
     }
 
     /**
@@ -110,15 +98,30 @@ public class SearchRepository
      * @param webSearchable the WebSearchable updated
      */
     public void globalTemplateUpdated(WebSearchable webSearchable) {
-        reindexGlobalTemplates(servletContext);
+        reindex(getWebSearchableType(webSearchable));
     }
 
     /**
      * Called to tell the repository that the set of global webSearchables in the superuser
      * profile has changed.
      */
-    public void globalTemplatesChanged() {
-        reindexGlobalTemplates(servletContext);
+    public void globalChange(String type) {
+        reindex(type);
+    }
+
+    /**
+     * Return the type of this webSearchable from the possibilities in the TagTypes interface.
+     */
+    private String getWebSearchableType(WebSearchable webSearchable) {
+        if (webSearchable instanceof TemplateQuery) {
+            return TagTypes.TEMPLATE;
+        } else {
+            if (webSearchable instanceof InterMineBag) {
+                return TagTypes.BAG;
+            } else {
+                throw new IllegalArgumentException("unknown argument: " + webSearchable);
+            }
+        }
     }
 
     /**
@@ -126,7 +129,7 @@ public class SearchRepository
      * @param tag the Tag
      */
     public void webSearchableTagged(Tag tag) {
-        reindexGlobalTemplates(servletContext);
+        reindex(tag.getType());
     }
 
     /**
@@ -134,17 +137,21 @@ public class SearchRepository
      * @param tag the Tag
      */
     public void webSearchableUnTagged(Tag tag) {
-        reindexGlobalTemplates(servletContext);
+        reindex(tag.getType());
     }
     /**
      * Create the lucene search index of all global webSearchable queries.
      *
      * @param servletContext the servlet context
      */
-    private static void reindexGlobalTemplates(ServletContext servletContext) {
-        Map webSearchables = (Map) servletContext.getAttribute(Constants.GLOBAL_TEMPLATE_QUERIES);
+    private void reindex(String type) {
+        Map<String, ? extends WebSearchable> webSearchables = webSearchablesMap.get(type);
         RAMDirectory ram = indexWebSearchables(webSearchables, "global");
-        servletContext.setAttribute(Constants.GLOBAL_TEMPLATE_INDEX_DIR, ram);
+        directoryMap.put(type, ram);
+    }
+
+    public Directory getDirectory(String type) {
+        return directoryMap.get(type);
     }
 
     /**
@@ -154,7 +161,7 @@ public class SearchRepository
      * @param type webSearchable type (see TemplateHelper)
      * @return a RAMDirectory containing the index
      */
-    public static RAMDirectory indexWebSearchables(Map webSearchableMap, String type) {
+    private static RAMDirectory indexWebSearchables(Map webSearchableMap, String type) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing webSearchable queries");
 
@@ -203,6 +210,16 @@ public class SearchRepository
                 + time + " milliseconds");
 
         return ram;
+    }
+
+    public Map<String, ? extends WebSearchable> get(String name) {
+        return webSearchablesMap.get(name);
+    }
+
+
+    public void addWebSearchables(String type, Map<String, ? extends WebSearchable> map) {
+        webSearchablesMap.put(type, map);
+        reindex(type);
     }
 
 }
