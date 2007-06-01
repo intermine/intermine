@@ -82,7 +82,7 @@ public class PagedResultsTest extends TestCase
             results.get(0);
         } catch (IndexOutOfBoundsException e) {
         }
-        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
+        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }
 
@@ -91,7 +91,7 @@ public class PagedResultsTest extends TestCase
         // Make sure we definitely know the end
         results.setBatchSize(20);
         results.get(0);
-        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
+        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }
 
@@ -99,7 +99,7 @@ public class PagedResultsTest extends TestCase
         os.setEstimatedResultsSize(25);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
+        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }
 
@@ -107,7 +107,7 @@ public class PagedResultsTest extends TestCase
         os.setEstimatedResultsSize(10);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys);
+        WebResults webResults = new WebResults(columnPath, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }
 
@@ -192,10 +192,10 @@ public class PagedResultsTest extends TestCase
 
             PathQuery pq = (PathQuery) entry.getValue();
             Map pathToQueryNode = new HashMap();
-            Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode);
+            Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
             Results r = new DummyResults(os, q, (List) results.get(queryName));
 //            PagedTable pr = new PagedTable(pq.getView(), r, model, pathToQueryNode, null);
-            WebResults webResults = new WebResults((List) headers.get(queryName),r, model, pathToQueryNode, classKeys);
+            WebResults webResults = new WebResults((List) headers.get(queryName),r, model, pathToQueryNode, classKeys, null);
             PagedTable pr = new PagedTable(webResults);
             assertEquals("Failed with query: " + queryName + ". ", (List) expected.get(queryName), (List) pr.getResultElementRows().get(0));
          }

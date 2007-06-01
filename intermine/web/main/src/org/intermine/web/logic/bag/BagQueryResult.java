@@ -44,7 +44,8 @@ public class BagQueryResult
     public static final String TYPE_CONVERTED = "TYPE_CONVERTED";
 
     private Map<Integer, List> matches = new LinkedHashMap<Integer, List>();
-    private Map<String, Map> issues = new LinkedHashMap<String, Map>();
+    private Map<String, Map<String, Map<String, List>>> issues =
+        new LinkedHashMap<String, Map<String, Map<String, List>>>();
     private Map unresolved = new HashMap();
 
     /**
@@ -53,7 +54,7 @@ public class BagQueryResult
      * "TYPE_TRANSLATED": [issue type -> [query -> [input string -> List of ConvertedObjectPair]]
      * @return a map from issues type to queries to input to possible objects
      */
-    public Map<String, Map> getIssues() {
+    public Map<String, Map<String, Map<String, List>>> getIssues() {
         return issues;
     }
 
@@ -65,9 +66,9 @@ public class BagQueryResult
      * @param objects the objects found for the input identifiers
      */
     public void addIssue(String type, String query, String input, List objects) {
-        Map<String, Map> issuesOfType = issues.get(type);
+        Map<String, Map<String, List>> issuesOfType = issues.get(type);
         if (issuesOfType == null) {
-            issuesOfType = new LinkedHashMap<String, Map>();
+            issuesOfType = new LinkedHashMap<String, Map<String, List>>();
             issues.put(type, issuesOfType);
         }
         Map<String, List> queryIssues = issuesOfType.get(query);

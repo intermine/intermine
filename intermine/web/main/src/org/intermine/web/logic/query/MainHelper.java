@@ -24,18 +24,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.InterMineException;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -57,6 +62,10 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.path.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
@@ -181,10 +190,15 @@ public class MainHelper
      * Make an InterMine query from a path query
      * @param query the PathQuery
      * @param savedBags the current saved bags map
+     * @param servletContext the current servlet context
+     * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
+     * returned
      * @return an InterMine Query
+     * @throws ObjectStoreException if something goes wrong
      */
-    public static Query makeQuery(PathQuery query, Map savedBags) {
-        return makeQuery(query, savedBags, null);
+    public static Query makeQuery(PathQuery query, Map savedBags, ServletContext servletContext,
+            Map returnBagQueryResults) throws ObjectStoreException {
+        return makeQuery(query, savedBags, null, servletContext, returnBagQueryResults);
     }
 
     /**
@@ -192,10 +206,15 @@ public class MainHelper
      * @param pathQueryOrig the PathQuery
      * @param savedBags the current saved bags map
      * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
+     * @param servletContext the current servlet context
+     * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
+     * returned
      * @return an InterMine Query
+     * @throws ObjectStoreException if something goes wrong
      */
     public static Query makeQuery(PathQuery pathQueryOrig, Map savedBags,
-                                  Map<String, QueryNode> pathToQueryNode) {
+            Map<String, QueryNode> pathToQueryNode, ServletContext servletContext,
+            Map returnBagQueryResults) throws ObjectStoreException {
         PathQuery pathQuery = pathQueryOrig.clone();
         Map qNodes = pathQuery.getNodes();
         List<Path> view = pathQuery.getView();
@@ -238,7 +257,13 @@ public class MainHelper
             queue.addLast(node);
         }
 
+        Map<PathNode, String> deferralReasons = new HashMap<PathNode, String>();
+        int queueDeferred = 0;
         while (!queue.isEmpty()) {
+            if (queueDeferred > queue.size() + 10) {
+                throw new IllegalArgumentException("Cannot handle entries in queue: " + queue
+                        + ", reasons: " + deferralReasons);
+            }
             PathNode node = queue.removeFirst();
             String path = node.getPathString();
             QueryReference qr = null;
@@ -255,7 +280,10 @@ public class MainHelper
                     if (parentQc == null) {
                         // We cannot process this QueryField yet. It depends on a parent QueryClass
                         // that we have not yet processed. Put it to the back of the queue.
+                        deferralReasons.put(node, "Could not process QueryField " + node
+                                + " because its parent has not been processed");
                         queue.addLast(node);
+                        queueDeferred++;
                         continue;
                     }
 
@@ -279,7 +307,10 @@ public class MainHelper
                 if (queryBits.get(finalPath) == null) {
                     // We cannot process this node yet. It is looped onto another node that has not
                     // been processed yet. Put it to the back of the queue.
+                    deferralReasons.put(node, "Could not process node " + node + " because it is"
+                            + " looped onto " + finalPath + " which has not been processed yet");
                     queue.addLast(node);
+                    queueDeferred++;
                     continue;
                 }
                 if (finalPath.indexOf(".") != -1) {
@@ -334,14 +365,43 @@ public class MainHelper
                                                                   new QueryValue(c.getValue())));
                         }
                     }
-                } else if (node.isReference()) {
-                    if (c.getOp() == ConstraintOp.IS_NOT_NULL
-                        || c.getOp() == ConstraintOp.IS_NULL) {
-                        cs.addConstraint(
-                            new ContainsConstraint((QueryObjectReference) qr, c.getOp()));
+                } else if (node.isReference() && (c.getOp() == ConstraintOp.IS_NOT_NULL
+                            || c.getOp() == ConstraintOp.IS_NULL)) {
+                    cs.addConstraint(new ContainsConstraint((QueryObjectReference) qr, c.getOp()));
+                } else if (c.getOp() == ConstraintOp.LOOKUP) {
+                    QueryClass qc = (QueryClass) qn;
+                    String identifiers = (String) c.getValue();
+                    ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants
+                            .OBJECTSTORE);
+                    Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+                    BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext.getAttribute(
+                            Constants.BAG_QUERY_CONFIG);
+                    BagQueryRunner bagQueryRunner = new BagQueryRunner(os, classKeys,
+                            bagQueryConfig, servletContext);
+                    BagQueryResult bagQueryResult;
+                    List identifierList = new ArrayList();
+                    StringTokenizer st = new StringTokenizer(identifiers, " \n\t,");
+                    while (st.hasMoreTokens()) {
+                        String token = st.nextToken();
+                        identifierList.add(token);
+                    }
+                    try {
+                        bagQueryResult = bagQueryRunner.searchForBag(node.getType(),
+                            identifierList, null);
+                    } catch (ClassNotFoundException e) {
+                        throw new ObjectStoreException(e);
+                    } catch (InterMineException e) {
+                        throw new ObjectStoreException(e);
+                    }
+                    cs.addConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
+                                bagQueryResult.getMatches().keySet()));
+                    if (returnBagQueryResults != null) {
+                        returnBagQueryResults.put(node.getPathString(), bagQueryResult);
                     }
                 }
             }
+            deferralReasons.remove(node);
+            queueDeferred = 0;
         }
 
         // Now process loop constraints. The constraint parameter refers backwards and 
@@ -404,7 +464,7 @@ public class MainHelper
     /**
      * Make a SimpleConstraint for the given Constraint obejct.  The Constraint will be 
      * case-insensitive.  If the Constraint value contains a wildcard and the operation is "=" or
-     * "<>" then the operation will be changed to "LIKE" or "NOT_LIKE"as appropriate.
+     * "&lt;&gt;" then the operation will be changed to "LIKE" or "NOT_LIKE" as appropriate.
      */
     private static SimpleConstraint makeQueryStringConstraint(QueryNode qn, Constraint c) {
         QueryExpression qf = new QueryExpression(QueryExpression.LOWER, (QueryField) qn);
@@ -858,11 +918,15 @@ public class MainHelper
      * @param summaryPath a String path of the column to summarise
      * @return an InterMine Query
      */
-    public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags, 
-                                         Map<String, QueryNode> pathToQueryNode,
-            String summaryPath) {
+    public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags,
+            Map<String, QueryNode> pathToQueryNode, String summaryPath) {
         Map<String, QueryNode> origPathToQueryNode = new HashMap<String, QueryNode>();
-        Query q = makeQuery(pathQuery, savedBags, origPathToQueryNode);
+        Query q = null;
+        try {
+            q = makeQuery(pathQuery, savedBags, origPathToQueryNode, null, null);
+        } catch (ObjectStoreException e) {
+            // Not possible if last argument is null
+        }
         q.clearSelect();
         q.clearOrderBy();
         QueryField qf = (QueryField) origPathToQueryNode.get(summaryPath);

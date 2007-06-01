@@ -96,11 +96,14 @@ public class BagQueryHelper
             }
 
             QueryField qf = new QueryField(qc, fld.getName());
-            QueryExpression qe = new QueryExpression(QueryExpression.LOWER, qf);
-            // constrain field to be in a bag
-            BagConstraint bc = new BagConstraint(qe, ConstraintOp.IN, lowerCaseInput);
+            if (qf.getType().equals(String.class)) {
+                QueryExpression qe = new QueryExpression(QueryExpression.LOWER, qf);
+                // constrain field to be in a bag
+                cs.addConstraint(new BagConstraint(qe, ConstraintOp.IN, lowerCaseInput));
+            } else {
+                cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, lowerCaseInput));
+            }
 
-            cs.addConstraint(bc);
             q.addToSelect(qf);
         }
 

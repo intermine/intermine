@@ -532,7 +532,7 @@ public class PathQuery
      */
     protected void checkValidity(Map savedBags) {
         try {
-            MainHelper.makeQuery(this, savedBags);
+            MainHelper.makeQuery(this, savedBags, null, null);
         } catch (Exception err) {
             problems.add(err);
         }

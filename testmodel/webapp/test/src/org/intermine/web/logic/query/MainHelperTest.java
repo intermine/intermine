@@ -204,7 +204,7 @@ public class MainHelperTest extends TestCase {
         q.addFrom(qc1);
         q.addToOrderBy(new QueryField(qc1, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null).toString());
     }
 
      // Select Employee.name, Employee.departments.name, Employee.departments.company.name
@@ -239,7 +239,7 @@ public class MainHelperTest extends TestCase {
         q.addToOrderBy(qf1);
         q.addToOrderBy(new QueryField(qc3, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null).toString());
     }
 
     // As above but add a wildcard in the constraint which makes a MATCHES constraint
@@ -275,7 +275,7 @@ public class MainHelperTest extends TestCase {
         q.addToOrderBy(qf1);
         q.addToOrderBy(new QueryField(qc3, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null).toString());
     }
 
 
@@ -310,7 +310,7 @@ public class MainHelperTest extends TestCase {
         q.addToOrderBy(new QueryField(qc1, "name"));
         q.addToOrderBy(new QueryField(qc3, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap()).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null).toString());
     }
 
     private Map readQueries() throws Exception {
@@ -385,7 +385,7 @@ public class MainHelperTest extends TestCase {
     public void doQuery(String web, String iql) throws Exception {
         Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap(), classKeys);
         PathQuery pq = (PathQuery) parsed.get("test");
-        Query q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP);
+        Query q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, null);
         String got = q.toString();
         assertEquals(iql, got);
     }

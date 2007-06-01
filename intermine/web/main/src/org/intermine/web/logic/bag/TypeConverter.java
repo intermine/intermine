@@ -23,6 +23,7 @@ import org.intermine.InterMineException;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
@@ -74,7 +75,12 @@ public class TypeConverter
         Constraint newC = new Constraint(ConstraintOp.IN, bag, false, "", c.getCode(), null);
         parent.getConstraints().add(newC);
 
-        Query q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null);
+        Query q;
+        try {
+            q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null, servletContext, null);
+        } catch (ObjectStoreException e) {
+            throw new InterMineException(e);
+        }
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Results r;
         Map<InterMineObject, List<InterMineObject>> retval = 

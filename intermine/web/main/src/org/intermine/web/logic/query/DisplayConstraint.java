@@ -11,6 +11,7 @@ package org.intermine.web.logic.query;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -69,15 +70,19 @@ public class DisplayConstraint
             return validOps;
         }
         
-        Class nodeType = MainHelper.getClass(node.getType());
-        List<ConstraintOp> allOps = SimpleConstraint.validOps(nodeType);
-        
-        List<ConstraintOp> simpleConstraintOps = new ArrayList<ConstraintOp>(allOps);
-        if (String.class.equals(nodeType)) {
-            simpleConstraintOps.remove(ConstraintOp.MATCHES);
-            simpleConstraintOps.remove(ConstraintOp.DOES_NOT_MATCH);
+        if (node.isAttribute()) {
+            Class nodeType = MainHelper.getClass(node.getType());
+            List<ConstraintOp> allOps = SimpleConstraint.validOps(nodeType);
+            
+            List<ConstraintOp> simpleConstraintOps = new ArrayList<ConstraintOp>(allOps);
+            if (String.class.equals(nodeType)) {
+                simpleConstraintOps.remove(ConstraintOp.MATCHES);
+                simpleConstraintOps.remove(ConstraintOp.DOES_NOT_MATCH);
+            }
+            validOps = MainHelper.mapOps(simpleConstraintOps);
+        } else {
+            validOps = Collections.singletonMap(new Integer(18), ConstraintOp.LOOKUP.toString());
         }
-        validOps = MainHelper.mapOps(simpleConstraintOps);
         
         return validOps;
     }

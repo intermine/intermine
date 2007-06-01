@@ -35,6 +35,7 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagQueryResult;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user
@@ -54,6 +55,7 @@ public class WebResults extends AbstractList implements WebTable
     private List columnNames;
     private Map classKeys;
     private Map pathToQueryNode;
+    private Map<String, BagQueryResult> pathToBagQueryResult;
     
     /**
      * Create a new WebResults object.
@@ -64,14 +66,16 @@ public class WebResults extends AbstractList implements WebTable
      * @param pathToQueryNode the mapping between Paths (in the columnPaths argument) and the 
      * QueryNodes in the results object
      * @param classKeys the Map from class name to set of defined keys
+     * @param pathToBagQueryResult a Map containing results from LOOKUP operations
      */
     public WebResults(List columnPaths, Results results, Model model, Map pathToQueryNode, 
-                      Map classKeys) {
+                      Map classKeys, Map<String, BagQueryResult> pathToBagQueryResult) {
         this.osResults = results;
         this.model = model;
         this.columnPaths = columnPaths;
         this.classKeys = classKeys;
         this.pathToQueryNode = pathToQueryNode;
+        this.pathToBagQueryResult = pathToBagQueryResult;
         
         pathToIndex = getPathToIndex(pathToQueryNode);
         setColumns(columnPaths);
@@ -210,7 +214,16 @@ public class WebResults extends AbstractList implements WebTable
     public Map getPathToQueryNode() {
         return pathToQueryNode;
     }
-    
+
+    /**
+     * Returns the pathToBagQueryResult Map.
+     *
+     * @return a Map
+     */
+    public Map<String, BagQueryResult> getPathToBagQueryResult() {
+        return pathToBagQueryResult;
+    }
+
     /**
      * The batch size to use when we need to iterate through the whole result set.
      */

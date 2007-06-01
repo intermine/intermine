@@ -56,6 +56,7 @@ public class ExportQueryAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String type = request.getParameter("type");
         String name = request.getParameter("name");
@@ -86,12 +87,13 @@ public class ExportQueryAction extends InterMineAction
             xml = XmlUtil.indentXmlSimple(xml);
             response.getWriter().write(xml);
         } else if (request.getParameter("as").toLowerCase().equals("iql")) {
-            Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags());
+            Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags(), servletContext,
+                    null);
             String iql = osQuery.toString();
             response.getWriter().println(iql);
         } else if (request.getParameter("as").toLowerCase().equals("sql")) {
-            Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags());
-            ServletContext servletContext = session.getServletContext();
+            Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags(), servletContext,
+                    null);
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             if (os instanceof ObjectStoreInterMineImpl) {
                 String sql = ((ObjectStoreInterMineImpl) os).generateSql(osQuery);

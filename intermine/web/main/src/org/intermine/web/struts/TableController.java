@@ -11,12 +11,16 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.Column;
@@ -92,6 +96,38 @@ public class TableController extends TilesAction
             return null;
         }
         request.setAttribute("resultsTable", pt);
+        if (pt.getAllRows().getPathToBagQueryResult() != null) {
+            Map<String, BagQueryResult> pathToBagQueryResult = pt.getAllRows()
+                .getPathToBagQueryResult();
+            Map<String, DisplayLookup> lookupResults = new HashMap<String, DisplayLookup>();
+            for (Map.Entry<String, BagQueryResult> entry : pathToBagQueryResult.entrySet()) {
+                String path = entry.getKey();
+                BagQueryResult bqr = entry.getValue();
+                int matches = bqr.getMatches().size();
+                Set<String> unresolved = bqr.getUnresolved().keySet();
+                Set<String> duplicates = new HashSet<String>();
+                Map<String, Map<String, List>> duplicateMap = bqr.getIssues().get(BagQueryResult
+                        .DUPLICATE);
+                if (duplicateMap != null) {
+                    for (Map.Entry<String, Map<String, List>> queries : duplicateMap.entrySet()) {
+                        duplicates.addAll(queries.getValue().keySet());
+                    }
+                }
+                Set<String> translated = new HashSet<String>();
+                Map<String, Map<String, List>> translatedMap = bqr.getIssues().get(BagQueryResult
+                        .TYPE_CONVERTED);
+                if (translatedMap != null) {
+                    for (Map.Entry<String, Map<String, List>> queries : translatedMap.entrySet()) {
+                        translated.addAll(queries.getValue().keySet());
+                    }
+                }
+                lookupResults.put(path, new DisplayLookup(matches, unresolved, duplicates,
+                            translated));
+            }
+            request.setAttribute("lookupResults", lookupResults);
+        } else {
+            request.setAttribute("lookupResults", Collections.EMPTY_MAP);
+        }
 
         if (session.getAttribute(Constants.QUERY) != null) {
             if (session.getAttribute(Constants.QUERY) instanceof TemplateQuery) {
@@ -246,5 +282,68 @@ public class TableController extends TilesAction
         }
             
         return mappy;
+    }
+
+    /**
+     * Class to pass to JSP.
+     *
+     * @author Matthew Wakeling
+     */
+    protected static class DisplayLookup
+    {
+        private int matches;
+        private Set<String> unresolved, duplicates, translated;
+
+        /**
+         * Constructor.
+         *
+         * @param matches the number of identifiers that matched useful objects
+         * @param unresolved a Set of the identifiers that did not match anything useful
+         * @param duplicates a Set of the identifiers that matched multiple useful objects
+         * @param translated a Set of the identifiers that only matched objects of the wrong type
+         */
+        public DisplayLookup(int matches, Set<String> unresolved, Set<String> duplicates,
+                Set<String> translated) {
+            this.matches = matches;
+            this.unresolved = unresolved;
+            this.duplicates = duplicates;
+            this.translated = translated;
+        }
+
+        /**
+         * Returns the number of identifiers that matched useful objects.
+         *
+         * @return an int
+         */
+        public int getMatches() {
+            return matches;
+        }
+
+        /**
+         * Returns a Set of the identifiers that did not match anything useful.
+         *
+         * @return a Set of Strings
+         */
+        public Set<String> getUnresolved() {
+            return unresolved;
+        }
+
+        /**
+         * Returns a Set of the identifiers that matched more than one useful object.
+         *
+         * @return a Set of Strings
+         */
+        public Set<String> getDuplicates() {
+            return duplicates;
+        }
+
+        /**
+         * Returns a Set of the identifiers that matched only objects of the wrong type.
+         *
+         * @return a Set of Strings
+         */
+        public Set<String> getTranslated() {
+            return translated;
+        }
     }
 }

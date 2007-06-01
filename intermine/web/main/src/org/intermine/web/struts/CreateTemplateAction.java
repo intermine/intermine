@@ -86,14 +86,12 @@ public class CreateTemplateAction extends InterMineAction
         boolean foundEditableConstraint = false;
         while (iter.hasNext()) {
             PathNode node = (PathNode) iter.next();
-            if (node.isAttribute()) {
-                Iterator citer = node.getConstraints().iterator();
-                while (citer.hasNext()) {
-                    Constraint c = (Constraint) citer.next();
-                    if (c.isEditable()) {
-                        foundEditableConstraint = true;
-                        break;
-                    }
+            Iterator citer = node.getConstraints().iterator();
+            while (citer.hasNext()) {
+                Constraint c = (Constraint) citer.next();
+                if (c.isEditable()) {
+                    foundEditableConstraint = true;
+                    break;
                 }
             }
         }
@@ -133,7 +131,8 @@ public class CreateTemplateAction extends InterMineAction
         if (!seenProblem) {
             try {
                 if (query.getInfo() == null) {
-                    query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags())));
+                    query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags(),
+                                    servletContext, null)));
                 }
             } catch (ObjectStoreException e) {
                 recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);

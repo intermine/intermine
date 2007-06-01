@@ -14,12 +14,13 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.logic.bag.BagQueryResult;
 
 /**
  * A simple WebTable that wraps an arbitrary Results object.
@@ -40,6 +41,13 @@ public class WebResultsSimple extends AbstractList implements WebTable
     public WebResultsSimple(Results results, List<String> columnNames) {
         this.results = results;
         this.columnNames = columnNames;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, BagQueryResult> getPathToBagQueryResult() {
+        throw new UnsupportedOperationException();
     }
 
     /** 

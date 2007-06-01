@@ -100,9 +100,7 @@ public class QueryBuilderAction extends InterMineAction
                         id);
                 node.getConstraints().add(c);
             }
-        }
-
-        if (request.getParameter("bag") != null) {
+        } else if (request.getParameter("bag") != null) {
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf.getBagOp()));
             Object constraintValue = mf.getBagValue();
             // constrain parent object of this node to be in bag or node
@@ -121,23 +119,17 @@ public class QueryBuilderAction extends InterMineAction
             if (node.getConstraints().size() == 0) {
                 query.getNodes().remove(node.getPathString());
             } 
-        }
-
-        if (request.getParameter("loop") != null) {
+        } else if (request.getParameter("loop") != null) {
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getLoopQueryOp()));
             Object constraintValue = mf.getLoopQueryValue();
             Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id);
             node.getConstraints().add(c);
-        }
-
-        if (request.getParameter("subclass") != null) {
+        } else if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());
             session.setAttribute("prefix", mf.getPath());
-        }
-
-        if (request.getParameter("nullnotnull") != null) {
+        } else if (request.getParameter("nullnotnull") != null) {
             if (mf.getNullConstraint().equals("NotNULL")) {
                 node.getConstraints().add(
                         new Constraint(ConstraintOp.IS_NOT_NULL, null, false, label, code, id));
@@ -145,11 +137,11 @@ public class QueryBuilderAction extends InterMineAction
                 node.getConstraints().add(
                         new Constraint(ConstraintOp.IS_NULL, null, false, label, code, id));
             }
-        }
-
-        if (request.getParameter("expression") != null) {
+        } else if (request.getParameter("expression") != null) {
             query.setConstraintLogic(request.getParameter("expr"));
             query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
+        } else {
+            throw new IllegalArgumentException("Unrecognised action: " + request.getParameterMap());
         }
 
         if (cindex != null) {

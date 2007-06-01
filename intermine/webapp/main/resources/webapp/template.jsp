@@ -126,13 +126,21 @@
               <c:out value="${names[con]}"/>:
             </td>
             <td valign="top">
-              <html:select property="attributeOps(${index})" onchange="updateConstraintForm(${index-1}, document.templateForm['attributeOps(${index})'], document.templateForm['attributeOptions(${index})'], document.templateForm['attributeValues(${index})'])">
-                <c:forEach items="${validOps}" var="op">
-                  <html:option value="${op.key}">
-                    <c:out value="${op.value}"/>
-                  </html:option>
-                </c:forEach>
-              </html:select>
+              <c:choose>
+                <c:when test="${fn:length(validOps) == 1}">
+                  List of identifiers: 
+                  <input type="hidden" name="attributeOps(${index})" value="18"/>
+                </c:when>
+                <c:otherwise>
+                  <html:select property="attributeOps(${index})" onchange="updateConstraintForm(${index-1}, document.templateForm['attributeOps(${index})'], document.templateForm['attributeOptions(${index})'], document.templateForm['attributeValues(${index})'])">
+                    <c:forEach items="${validOps}" var="op">
+                      <html:option value="${op.key}">
+                        <c:out value="${op.value}"/>
+                      </html:option>
+                    </c:forEach>
+                  </html:select>
+                </c:otherwise>
+              </c:choose>
               <span id="operandEditSpan${index-1}">
                 <html:text property="attributeValues(${index})"/>
                 <%-- might want to show up arrow --%>

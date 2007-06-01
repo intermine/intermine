@@ -11,6 +11,9 @@ package org.intermine.web.logic.results;
  */
 
 import java.util.List;
+import java.util.Map;
+
+import org.intermine.web.logic.bag.BagQueryResult;
 
 /**
  * A List that can understand ResultElement objects.
@@ -51,4 +54,10 @@ public interface WebTable extends List
      */
     public int getMaxRetrievableIndex();
     
+    /**
+     * Returns the pathToBagQueryResult Map.
+     *
+     * @return a Map
+     */
+    public Map<String, BagQueryResult> getPathToBagQueryResult();
 }

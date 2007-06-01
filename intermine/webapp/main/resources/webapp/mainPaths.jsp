@@ -135,7 +135,7 @@
               </html:link>
               <c:if test="${TEMPLATE_BUILD_STATE != null}">
                 <c:choose>
-                  <c:when test="${constraint.editableInTemplate && node.attribute}">
+                  <c:when test="${constraint.editableInTemplate}">
                     <html:link action="/mainChange?method=editTemplateConstraint&amp;path=${node.pathString}&amp;index=${status.index}"
                                titleKey="templateBuilder.editTemplateConstraint.linktitle">
                       <c:choose>
