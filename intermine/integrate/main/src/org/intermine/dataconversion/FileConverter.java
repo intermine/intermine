@@ -49,6 +49,7 @@ public abstract class FileConverter extends DataConverter
      * @throws Exception if an error occurs
      */
     public void close() throws Exception {
+        // empty
     }
 
     /**
