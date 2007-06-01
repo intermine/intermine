@@ -152,20 +152,24 @@ public class SearchAction extends InterMineAction
                 String scope = doc.get("scope");
                 String name = doc.get("name");
                 
-                if (scope.equals("user")) {
-                    webSearchable = userWebSearchables.get(name);
-                } else if (scope.equals("global")) {
+                webSearchable = userWebSearchables.get(name);
+                if (webSearchable == null) {
                     webSearchable = globalWebSearchables.get(name);
+                }
+                if (webSearchable == null) {
+                    throw new RuntimeException("unknown WebSearchable: " + name);
                 }
                 
                 hitMap.put(webSearchable, new Float(hits.score(i)));
                 scopeMap.put(webSearchable, scope);
                 
+                String highlightString = 
+                    webSearchable.getTitle() + "  - " + webSearchable.getDescription();
                 TokenStream tokenStream
-                    = analyzer.tokenStream("", new StringReader(webSearchable.getTitle()));
+                    = analyzer.tokenStream("", new StringReader(highlightString));
                 highlighter.setTextFragmenter(new NullFragmenter());
-                highlightedMap.put(webSearchable,
-                        highlighter.getBestFragment(tokenStream, webSearchable.getTitle()));
+                highlightedMap.put(webSearchable, 
+                                   highlighter.getBestFragment(tokenStream, highlightString));
             }
             
             request.setAttribute("results", hitMap);
