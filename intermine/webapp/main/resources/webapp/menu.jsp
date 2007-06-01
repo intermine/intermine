@@ -61,6 +61,12 @@
     &nbsp;
   </span>
   <span class="menu-item">
+    <html:link action="/search.do?type=bag">
+      Search bags
+    </html:link>
+    &nbsp;
+  </span>
+  <span class="menu-item">
     <html:link action="/history.do">
       <fmt:message key="menu.history"/>
     </html:link>

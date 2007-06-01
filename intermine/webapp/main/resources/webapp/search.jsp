@@ -14,9 +14,10 @@ window.onload = function() { document.getElementById("queryString").focus(); }
 </script>
 
 <div class="body">
-  <html:form action="/runSearch?type=template" method="get">
+  <html:form action="/runSearch" method="get">
     <fmt:message key="search.search.label"/>
     <html:text property="queryString" size="40" styleId="queryString"/>
+    <html:hidden property="type"/>
     <html:select property="scope">
       <html:option key="search.form.global" value="global"/>
       <html:option key="search.form.user" value="user"/>
@@ -25,16 +26,16 @@ window.onload = function() { document.getElementById("queryString").focus(); }
     <html:submit><fmt:message key="search.form.submit"/></html:submit>
   </html:form>
   <p class="smallnote">
-    <fmt:message key="begin.searchtemplates.help.message"/>
+    <fmt:message key="begin.search.help.message.${searchForm.type}"/>
   </p>
   
   <c:if test="${!empty results}">
     <p>
-      <b>${resultCount}</b> results for <b>${queryString}</b>. <span class="tmplSearchTime">(${querySeconds} seconds)</span>
+      <b>${resultCount}</b> results for <b>${queryString}</b>. <span class="searchTime">(${querySeconds} seconds)</span>
       <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
         <br/><br/>
         <i>
-          <fmt:message key="template.notlogged">
+          <fmt:message key="${searchForm.type}.notlogged">
             <fmt:param>
               <im:login/>
             </fmt:param>
@@ -49,8 +50,19 @@ window.onload = function() { document.getElementById("queryString").focus(); }
       <fmt:formatNumber value="${entry.value*10}" maxFractionDigits="0" var="heat"/>
       <img class="searchHeatImg" src="images/heat${heat}.gif" width="${heat*2}" height="10"
            style="margin-right:${24-(heat*2)}px"/>
-      <im:templateLine type="${resultScopes[entry.key]}" 
-                       templateQuery="${entry.key}" desc="${highlighted[entry.key]}"/>
+      <c:choose>
+        <c:when test="${searchForm.type == 'template'}">
+          <im:templateLine scope="${resultScopes[entry.key]}" 
+                           templateQuery="${entry.key}" desc="${highlighted[entry.key]}"/>
+        </c:when>
+        <c:when test="${searchForm.type == 'bag'}">
+          <im:bagLine scope="${resultScopes[entry.key]}" 
+                      interMineBag="${entry.key}" desc="${highlighted[entry.key]}"/>
+        </c:when>
+        <c:otherwise>
+          <%-- unknown type --%>
+        </c:otherwise>
+      </c:choose>
       <c:if test="${!status.last}">
         <hr class="tmplSeperator"/>
       </c:if>

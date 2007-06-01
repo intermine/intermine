@@ -135,6 +135,15 @@ public class SearchRepository
     public void webSearchableUnTagged(Tag tag) {
         reindex(tag.getType());
     }
+    
+    /**
+     * Called when the description of a WebSearchable changes.
+     * @param webSearchable the item that has changed
+     */
+    public void descriptionChanged(WebSearchable webSearchable) {
+        reindex(getWebSearchableType(webSearchable));
+    }
+
     /**
      * Create the lucene search index of all global webSearchable queries.
      *

@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.SearchRepository;
@@ -52,7 +53,7 @@ public class Profile
     //protected Map categoryTemplates;
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
-    private SearchRepository searchRepository;
+    private SearchRepository searchRepository = new SearchRepository();;
 
     /**
      * Construct a Profile
@@ -74,7 +75,8 @@ public class Profile
         this.savedQueries.putAll(savedQueries);
         this.savedBags.putAll(savedBags);
         this.savedTemplates.putAll(savedTemplates);
-        buildTemplateCategories();
+        reindex(TagTypes.TEMPLATE);
+        reindex(TagTypes.BAG);
     }
 
     /**
@@ -137,7 +139,8 @@ public class Profile
         if (manager != null) {
             manager.saveProfile(this);
         }
-        buildTemplateCategories();
+        reindex(TagTypes.TEMPLATE);
+        reindex(TagTypes.BAG);
     }
 
     /**
@@ -157,7 +160,7 @@ public class Profile
         savedTemplates.put(name, template);
         if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
-            buildTemplateCategories();
+            reindex(TagTypes.TEMPLATE);
         }
     }
 
@@ -175,7 +178,7 @@ public class Profile
             }
             if (!savingDisabled) {
                 manager.saveProfile(this);
-                buildTemplateCategories();
+                reindex(TagTypes.TEMPLATE);
             }
         }
     }
@@ -271,6 +274,7 @@ public class Profile
      */
     public void saveBag(String name, InterMineBag bag) {
         savedBags.put(name, bag);
+        reindex(TagTypes.BAG);
     }
 
     /**
@@ -314,6 +318,7 @@ public class Profile
             ObjectStoreWriter uosw) throws ObjectStoreException {
         InterMineBag bag = new InterMineBag(name, type, description, new Date(), os, userId, uosw);
         savedBags.put(name, bag);
+        reindex(TagTypes.BAG);
     }
 
     /**
@@ -322,20 +327,35 @@ public class Profile
      */
     public void deleteBag(String name) {
         savedBags.remove(name);
+        reindex(TagTypes.BAG);
     }
 
     /**
      * Create a map from category name to a list of templates contained
      * within that category.
      */
-    private void buildTemplateCategories() {
-        // We also take this opportunity to index the user's template queries
-        searchRepository = new SearchRepository();
-        searchRepository.addWebSearchables(TagTypes.TEMPLATE, savedTemplates);
+    private void reindex(String type) {
+        // We also take this opportunity to index the user's template queries, bags, etc.
+        searchRepository.addWebSearchables(type, getWebSearchablesByType(type));
     }
 
     /**
-     * 
+     * Return a WebSearchable Map for the given type.
+     */
+    private Map<String, ? extends WebSearchable> getWebSearchablesByType(String type) {
+        if (type.equals(TagTypes.TEMPLATE)) {
+            return savedTemplates;
+        } else {
+            if (type.equals(TagTypes.BAG)) {
+                return getSavedBags();
+            } else {
+                throw new RuntimeException("unknown type: " + type);
+            }
+        }
+    }
+
+    /**
+     * Get the SearchRepository for this Profile.
      * @return
      */
     public SearchRepository getSearchRepository() {

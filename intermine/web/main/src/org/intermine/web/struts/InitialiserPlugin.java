@@ -140,7 +140,7 @@ public class InitialiserPlugin implements PlugIn
             new AbstractMap<String, WebSearchable>() {
                 @Override
                 public Set<Map.Entry<String, WebSearchable>> entrySet() {
-                    return pm.filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG_LIST,
+                    return pm.filterByTags(superProfile.getSavedBags(), PUBLIC_TAG_LIST,
                                            TagTypes.BAG,
                                            superProfile.getUsername()).entrySet();
                 }

@@ -99,7 +99,16 @@
 
               <td><c:out value="${savedBag.value.type}" /></td>
 
-              <td><c:out value="${savedBag.value.description}" /></td>
+              <td>
+                <c:choose>
+                  <c:when test="${empty savedBag.value.description}">
+                    &nbsp;  <!-- so that IE 6 renders the cell borders -->
+                  </c:when>
+                  <c:otherwise>
+                    <c:out value="${savedBag.value.description}" />
+                  </c:otherwise>
+                </c:choose>
+              </td>
 
               <td>
                 <c:if test="${!empty savedBag.value.dateCreated}">

@@ -225,6 +225,7 @@ public class AjaxServices
             throw new InterMineException("Bag \"" + bagName + "\" not found.");
         }
         bag.setDescription(description, uosw);
+        profile.getSearchRepository().descriptionChanged(bag);
         return description;
     }
 
