@@ -12,17 +12,20 @@
     <span class="menu-logged-in-item">
       <html:link action="/changePassword.do" title="Change Password">${PROFILE.username}</html:link>
     </span>
+    &nbsp;  <%-- for IE 6 - setting padding in CSS doesn't work --%>
   </c:if>
   <span class="menu-item">
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
       <fmt:message key="menu.home"/>
     </html:link>
+    &nbsp;
   </span>
   <c:if test="${WEB_PROPERTIES['project.standalone']}">
     <span class="menu-item">
       <html:link action="/begin.do">
         <fmt:message key="menu.newquery"/>
       </html:link>
+      &nbsp;
     </span>
   </c:if>
   <span class="menu-item">
@@ -36,45 +39,54 @@
         <fmt:message key="menu.currentquery"/>
       </c:otherwise>
     </c:choose>
+    &nbsp;
   </span>
   <span class="menu-item">
     <html:link action="/mymine.do">
       <fmt:message key="menu.mymine"/>
     </html:link>
+    &nbsp;
   </span>
   <span class="menu-item">
     <html:link action="/mymine.do?page=bags">
       <fmt:message key="menu.bags"/>
     </html:link>
+    &nbsp;
   </span>
   <span class="menu-item">
-    <html:link action="/templateSearch.do">
+    <html:link action="/search.do?type=template">
       <fmt:message key="menu.searchTemplates"/>
     </html:link>
     <img src="images/inspect.gif" width="12" height="11" alt="-&gt;"/>
+    &nbsp;
   </span>
   <span class="menu-item">
     <html:link action="/history.do">
       <fmt:message key="menu.history"/>
     </html:link>
+    &nbsp;
   </span>
   <span class="menu-item">
     <html:link action="/feedback.do">
       <fmt:message key="menu.feedback"/>
     </html:link>
+    &nbsp;
   </span>
   <span class="menu-item">
     <im:login/>
+    &nbsp;
   </span>
   <span class="menu-item">
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/">
       <fmt:message key="menu.help"/>
     </html:link>
+    &nbsp;
   </span>
   <span class="menu-item">
     <tiles:insert name="browse.tile">
       <tiles:put name="menuItem" value="true"/>
     </tiles:insert>
+    &nbsp;
   </span>
 </div>
 <!-- /menu.jsp -->
