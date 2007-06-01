@@ -14,7 +14,7 @@ window.onload = function() { document.getElementById("queryString").focus(); }
 </script>
 
 <div class="body">
-  <html:form action="/search?type=template" method="get">
+  <html:form action="/runSearch?type=template" method="get">
     <fmt:message key="search.search.label"/>
     <html:text property="queryString" size="40" styleId="queryString"/>
     <html:select property="scope">

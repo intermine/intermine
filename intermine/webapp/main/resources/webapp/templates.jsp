@@ -34,7 +34,9 @@
 </c:choose>
 <div class="body">
   <p>
-    <html:link action="/templateSearch"><fmt:message key="templates.searchtemplates"/></html:link>
+    <html:link action="/search?type=template">
+      <fmt:message key="templates.searchtemplates"/>
+    </html:link>
   </p>
 </div>
 <!-- /templates.jsp -->

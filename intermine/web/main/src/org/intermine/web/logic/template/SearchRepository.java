@@ -159,10 +159,10 @@ public class SearchRepository
      * Index some WebSearchables and return the RAMDirectory containing the index.
      *
      * @param webSearchableMap from name to WebSearchable
-     * @param gobalOrUser webSearchable type (see TemplateHelper)
+     * @param scope webSearchable type (see TemplateHelper)
      * @return a RAMDirectory containing the index
      */
-    private static RAMDirectory indexWebSearchables(Map webSearchableMap, String gobalOrUser) {
+    private static RAMDirectory indexWebSearchables(Map webSearchableMap, String scope) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing webSearchable queries");
 
@@ -189,7 +189,7 @@ public class SearchRepository
             doc.add(new Field("content", webSearchable.getTitle() + " : "
                               + webSearchable.getDescription(),
                               Field.Store.NO, Field.Index.TOKENIZED));
-            doc.add(new Field("type", gobalOrUser, Field.Store.YES, Field.Index.NO));
+            doc.add(new Field("scope", scope, Field.Store.YES, Field.Index.NO));
 
             try {
                 writer.addDocument(doc);
