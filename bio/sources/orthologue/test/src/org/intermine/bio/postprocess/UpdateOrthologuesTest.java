@@ -24,7 +24,6 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Orthologue;
 import org.flymine.model.genomic.Paralogue;
-import org.flymine.model.genomic.Relation;
 import org.flymine.model.genomic.Translation;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -107,15 +106,15 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         setUpData(Orthologue.class, objGene1, subGene1, false);
 
         UpdateOrthologues pp = new UpdateOrthologues(osw);
-        pp.process();
+        pp.postProcess();
 
         // find orthologue in database and check object and subject reference
         Set results = getFromDb(Orthologue.class);
         assertTrue("expected only one result", results.size() == 1);
         Orthologue resOrth = (Orthologue) results.iterator().next();
         resOrth.setId(null);
-        assertEquals(objGene1, resOrth.getObject());
-        assertEquals(subGene1, resOrth.getSubject());
+        assertEquals(objGene1, resOrth.getGene());
+        assertEquals(subGene1, resOrth.getOrthologue());
     }
 
     public void testParalogueSingleGenes() throws Exception {
@@ -128,7 +127,7 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         setUpData(Paralogue.class, objGene1, subGene1, false);
 
         UpdateOrthologues pp = new UpdateOrthologues(osw);
-        pp.process();
+        pp.postProcess();
 
         // find paralogue in database and check object and subject reference
         osw.getObjectStore().flushObjectById();
@@ -137,8 +136,8 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         assertTrue("expected only one result", results.size() == 1);
         Paralogue resPara = (Paralogue) results.iterator().next();
         resPara.setId(null);
-        assertEquals(objGene1, resPara.getObject());
-        assertEquals(subGene1, resPara.getSubject());
+        assertEquals(objGene1, resPara.getGene());
+        assertEquals(subGene1, resPara.getParalogue());
     }
 
 
@@ -153,21 +152,21 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         setUpData(Orthologue.class, objGene1, subGene1, true);
 
         UpdateOrthologues pp = new UpdateOrthologues(osw);
-        pp.process();
+        pp.postProcess();
 
         // find orthologue in database and check object and subject reference
         Set results = getFromDb(Orthologue.class);
         assertTrue("expected only one result", results.size() == 1);
         Orthologue resOrth = (Orthologue) results.iterator().next();
         resOrth.setId(null);
-        assertEquals(objGene1, resOrth.getObject());
-        assertEquals(subGene1, resOrth.getSubject());
+        assertEquals(objGene1, resOrth.getGene());
+        assertEquals(subGene1, resOrth.getOrthologue());
     }
 
     // create an [Ortho|Para]logue with object and subject Translations that have objGenes and subGenes
     // in their respective genes collections
     private void setUpData(Class relClass, Gene objGene, Gene subGene, boolean startsOnSubGene) throws Exception {
-        Relation rel = (Relation) DynamicUtil.createObject(Collections.singleton(relClass));
+        InterMineObject io = (InterMineObject) DynamicUtil.createObject(Collections.singleton(relClass));
         Translation objTranslation = (Translation) DynamicUtil.createObject(Collections.singleton(Translation.class));
         objTranslation.setId(OBJ_TRANSLATION_ID);
         System.out.println("setUpData: objGenes= " + objGene);
@@ -182,18 +181,18 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         if (clsName.equals("Orthologue")) {
             if (startsOnSubGene) {
                 // in this case one end of the orthologue already references a Gene
-                ((Orthologue) rel).setObjectTranslation(objTranslation);
-                ((Orthologue) rel).setSubject(subGene);
+                ((Orthologue) io).setTranslation(objTranslation);
+                ((Orthologue) io).setOrthologue(subGene);
             } else {
-                ((Orthologue) rel).setObjectTranslation(objTranslation);
-                ((Orthologue) rel).setSubjectTranslation(subTranslation);
+                ((Orthologue) io).setTranslation(objTranslation);
+                ((Orthologue) io).setOrthologueTranslation(subTranslation);
             }
         } else {
-            ((Paralogue) rel).setObjectTranslation(objTranslation);
-            ((Paralogue) rel).setSubjectTranslation(subTranslation);
+            ((Paralogue) io).setTranslation(objTranslation);
+            ((Paralogue) io).setParalogueTranslation(subTranslation);
         }
 
-        List toStore = new ArrayList(Arrays.asList(new Object[] {rel, objTranslation, subTranslation}));
+        List toStore = new ArrayList(Arrays.asList(new Object[] {io, objTranslation, subTranslation}));
         toStore.add(objGene);
         toStore.add(subGene);
 

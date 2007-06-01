@@ -6,19 +6,225 @@
     <reference name="source" ref_id="5_2"/>
     <reference name="subject" ref_id="7_2"/>
   </item>
+  <item id="8_1" class="http://www.flymine.org/model/genomic#Orthologue">
+    <attribute name="inParanoidScore" value="1.000"/>
+    <attribute name="bootstrapScore" value="100"/>
+    <attribute name="orthologueBootstrapScore" value="98"/>
+    <attribute name="type" value="main"/>
+    <reference name="gene" ref_id="3_1"/>
+    <reference name="orthologueTranslation" ref_id="7_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+    <collection name="paralogues">
+      <reference ref_id="6_1"/>
+      <reference ref_id="6_3"/>
+      <reference ref_id="6_5"/>
+    </collection>
+    <collection name="coOrthologues">
+      <reference ref_id="8_3"/>
+      <reference ref_id="8_5"/>
+      <reference ref_id="8_7"/>
+    </collection>
+  </item>
   <item id="8_2" class="http://www.flymine.org/model/genomic#Orthologue">
-    <attribute name="score" value="1.000"/>
-    <reference name="subject" ref_id="3_1"/>
-    <reference name="objectTranslation" ref_id="7_1"/>
+    <attribute name="inParanoidScore" value="1.000"/>
+    <attribute name="bootstrapScore" value="98"/>
+    <attribute name="orthologueBootstrapScore" value="100"/>
+    <attribute name="type" value="main"/>
+    <reference name="orthologue" ref_id="3_1"/>
+    <reference name="translation" ref_id="7_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+    <collection name="paralogues">
+      <reference ref_id="6_2"/>
+      <reference ref_id="6_4"/>
+      <reference ref_id="6_6"/>
+    </collection>
+    <collection name="coOrthologues">
+      <reference ref_id="8_4"/>
+      <reference ref_id="8_6"/>
+      <reference ref_id="8_8"/>
+    </collection>
+  </item>
+  <item id="8_3" class="http://www.flymine.org/model/genomic#Orthologue">
+    <attribute name="bootstrapScore" value="100"/>
+    <attribute name="orthologueBootstrapScore" value="98"/>
+    <attribute name="type" value="secondary"/>
+    <reference name="gene" ref_id="3_2"/>
+    <reference name="orthologueTranslation" ref_id="7_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+    <collection name="paralogues">
+      <reference ref_id="6_1"/>
+      <reference ref_id="6_3"/>
+      <reference ref_id="6_5"/>
+    </collection>
+    <collection name="coOrthologues">
+      <reference ref_id="8_1"/>
+      <reference ref_id="8_5"/>
+      <reference ref_id="8_7"/>
+    </collection>
+  </item>
+  <item id="8_4" class="http://www.flymine.org/model/genomic#Orthologue">
+    <attribute name="bootstrapScore" value="98"/>
+    <attribute name="orthologueBootstrapScore" value="100"/>
+    <attribute name="type" value="secondary"/>
+    <reference name="orthologue" ref_id="3_2"/>
+    <reference name="translation" ref_id="7_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+    <collection name="paralogues">
+      <reference ref_id="6_2"/>
+      <reference ref_id="6_4"/>
+      <reference ref_id="6_6"/>
+    </collection>
+    <collection name="coOrthologues">
+      <reference ref_id="8_2"/>
+      <reference ref_id="8_6"/>
+      <reference ref_id="8_8"/>
+    </collection>
+  </item>
+  <item id="8_5" class="http://www.flymine.org/model/genomic#Orthologue">
+    <attribute name="bootstrapScore" value="100"/>
+    <attribute name="orthologueBootstrapScore" value="95"/>
+    <attribute name="type" value="secondary"/>
+    <reference name="gene" ref_id="3_1"/>
+    <reference name="orthologueTranslation" ref_id="7_2"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+    <collection name="paralogues">
+      <reference ref_id="6_1"/>
+      <reference ref_id="6_3"/>
+      <reference ref_id="6_5"/>
+    </collection>
+    <collection name="coOrthologues">
+      <reference ref_id="8_1"/>
+      <reference ref_id="8_3"/>
+      <reference ref_id="8_7"/>
+    </collection>
+  </item>
+  <item id="8_6" class="http://www.flymine.org/model/genomic#Orthologue">
+    <attribute name="bootstrapScore" value="95"/>
+    <attribute name="orthologueBootstrapScore" value="100"/>
+    <attribute name="type" value="secondary"/>
+    <reference name="orthologue" ref_id="3_1"/>
+    <reference name="translation" ref_id="7_2"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+    <collection name="paralogues">
+      <reference ref_id="6_2"/>
+      <reference ref_id="6_4"/>
+      <reference ref_id="6_6"/>
+    </collection>
+    <collection name="coOrthologues">
+      <reference ref_id="8_2"/>
+      <reference ref_id="8_4"/>
+      <reference ref_id="8_8"/>
+    </collection>
+  </item>
+  <item id="8_7" class="http://www.flymine.org/model/genomic#Orthologue">
+    <attribute name="bootstrapScore" value="100"/>
+    <attribute name="orthologueBootstrapScore" value="100"/>
+    <attribute name="type" value="secondary"/>
+    <reference name="gene" ref_id="3_1"/>
+    <reference name="orthologueTranslation" ref_id="7_3"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+    <collection name="paralogues">
+      <reference ref_id="6_1"/>
+      <reference ref_id="6_3"/>
+      <reference ref_id="6_5"/>
+    </collection>
+    <collection name="coOrthologues">
+      <reference ref_id="8_1"/>
+      <reference ref_id="8_3"/>
+      <reference ref_id="8_5"/>
+    </collection>
+  </item>
+  <item id="8_8" class="http://www.flymine.org/model/genomic#Orthologue">
+    <attribute name="bootstrapScore" value="100"/>
+    <attribute name="orthologueBootstrapScore" value="100"/>
+    <attribute name="type" value="secondary"/>
+    <reference name="orthologue" ref_id="3_1"/>
+    <reference name="translation" ref_id="7_3"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+    <collection name="paralogues">
+      <reference ref_id="6_2"/>
+      <reference ref_id="6_4"/>
+      <reference ref_id="6_6"/>
+    </collection>
+    <collection name="coOrthologues">
+      <reference ref_id="8_2"/>
+      <reference ref_id="8_4"/>
+      <reference ref_id="8_6"/>
+    </collection>
+  </item>
+  <item id="6_1" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="inParanoidScore" value="0.997"/>
+    <reference name="gene" ref_id="3_1"/>
+    <reference name="paralogue" ref_id="3_2"/>
     <collection name="evidence">
       <reference ref_id="1_1"/>
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="8_1" class="http://www.flymine.org/model/genomic#Orthologue">
-    <attribute name="score" value="1.000"/>
-    <reference name="object" ref_id="3_1"/>
-    <reference name="subjectTranslation" ref_id="7_1"/>
+  <item id="6_2" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="inParanoidScore" value="0.997"/>
+    <reference name="gene" ref_id="3_2"/>
+    <reference name="paralogue" ref_id="3_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="6_3" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="inParanoidScore" value="1.000"/>
+    <reference name="translation" ref_id="7_1"/>
+    <reference name="paralogueTranslation" ref_id="7_2"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="6_4" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="inParanoidScore" value="1.000"/>
+    <reference name="translation" ref_id="7_2"/>
+    <reference name="paralogueTranslation" ref_id="7_1"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="6_5" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="inParanoidScore" value="0.566"/>
+    <reference name="translation" ref_id="7_1"/>
+    <reference name="paralogueTranslation" ref_id="7_3"/>
+    <collection name="evidence">
+      <reference ref_id="1_1"/>
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="6_6" class="http://www.flymine.org/model/genomic#Paralogue">
+    <attribute name="inParanoidScore" value="0.566"/>
+    <reference name="translation" ref_id="7_3"/>
+    <reference name="paralogueTranslation" ref_id="7_1"/>
     <collection name="evidence">
       <reference ref_id="1_1"/>
       <reference ref_id="0_1"/>
@@ -43,50 +249,14 @@
     <attribute name="identifier" value="ENSANGP00000008615"/>
     <reference name="organism" ref_id="2_2"/>
   </item>
-  <item id="6_3" class="http://www.flymine.org/model/genomic#Paralogue">
-    <attribute name="score" value="1.000"/>
-    <reference name="objectTranslation" ref_id="7_1"/>
-    <reference name="subjectTranslation" ref_id="7_2"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="InParanoid data set"/>
-  </item>
-  <item id="6_5" class="http://www.flymine.org/model/genomic#Paralogue">
-    <attribute name="score" value="0.566"/>
-    <reference name="objectTranslation" ref_id="7_1"/>
-    <reference name="subjectTranslation" ref_id="7_3"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-      <reference ref_id="0_1"/>
-    </collection>
   </item>
   <item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="S000001208"/>
     <reference name="source" ref_id="5_1"/>
     <reference name="subject" ref_id="3_1"/>
-  </item>
-  <item id="6_2" class="http://www.flymine.org/model/genomic#Paralogue">
-    <attribute name="score" value="0.997"/>
-    <reference name="object" ref_id="3_2"/>
-    <reference name="subject" ref_id="3_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
-  <item id="6_6" class="http://www.flymine.org/model/genomic#Paralogue">
-    <attribute name="score" value="0.566"/>
-    <reference name="objectTranslation" ref_id="7_3"/>
-    <reference name="subjectTranslation" ref_id="7_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-      <reference ref_id="0_1"/>
-    </collection>
   </item>
   <item id="2_2" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="180454"/>
@@ -104,29 +274,11 @@
   <item id="5_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="SGD"/>
   </item>
-  <item id="6_1" class="http://www.flymine.org/model/genomic#Paralogue">
-    <attribute name="score" value="0.997"/>
-    <reference name="object" ref_id="3_1"/>
-    <reference name="subject" ref_id="3_2"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
   <item id="4_5" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGP00000008615"/>
     <reference name="source" ref_id="5_2"/>
     <reference name="subject" ref_id="7_3"/>
-  </item>
-  <item id="6_4" class="http://www.flymine.org/model/genomic#Paralogue">
-    <attribute name="score" value="1.000"/>
-    <reference name="objectTranslation" ref_id="7_2"/>
-    <reference name="subjectTranslation" ref_id="7_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-      <reference ref_id="0_1"/>
-    </collection>
   </item>
   <item id="7_2" class="http://www.flymine.org/model/genomic#Translation">
     <attribute name="identifier" value="ENSANGP00000029999"/>
