@@ -31,7 +31,6 @@ import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
-import org.flymine.model.genomic.Orthologue;
 import org.flymine.model.genomic.OverlapRelation;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.RankedRelation;
@@ -88,8 +87,6 @@ public class CreateReferencesTest extends TestCase {
     private Location storedTranscriptLocation3 = null;
     private SimpleRelation storedTranscriptRelation = null;
     private RankedRelation storedExonRankedRelation = null;
-    private Orthologue storedOrthologue1 = null;
-    private Orthologue storedOrthologue2 = null;
     private GOTerm storedGOTerm = null;
     private OverlapRelation storedOverlapRelation = null;
     private MRNA storedMRNA1 = null;
@@ -136,11 +133,6 @@ public class CreateReferencesTest extends TestCase {
         LOG.info("closed objectstore");
     }
 
-    public void testGeneOrthologueCollection() throws Exception {
-        CreateReferences cr = new CreateReferences(osw);
-        cr.insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
-        compareGeneOrthologuesToExpected();
-    }
 
     public void testInsertGeneTranscriptReferences() throws Exception {
         CalculateLocations cl = new CalculateLocations(osw);
@@ -183,7 +175,6 @@ public class CreateReferencesTest extends TestCase {
         cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
         cr.insertReferences();
-        cr.populateOrthologuesCollection();
 
         compareResultsToExpected();
     }
@@ -552,12 +543,6 @@ public class CreateReferencesTest extends TestCase {
     private void compareGeneTranscriptResultsToExpected() throws Exception {
         osw.flushObjectById();
 
-        Orthologue expectedOrthologue1 = (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        expectedOrthologue1.setId(storedOrthologue1.getId());
-
-        Orthologue expectedOrthologue2 = (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        expectedOrthologue2.setId(storedOrthologue2.getId());
-
         Protein expectedProtein =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         expectedProtein.setId(storedProtein.getId());
@@ -569,7 +554,7 @@ public class CreateReferencesTest extends TestCase {
         Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
-        expectedGene.setObjects(new HashSet(Arrays.asList(new Object[] {expectedGeneLocation, expectedOrthologue2})));
+        expectedGene.setObjects(new HashSet(Arrays.asList(new Object[] {expectedGeneLocation})));
         expectedGene.setProteins(Collections.singleton(expectedProtein));
 
         Transcript expectedTranscript =
@@ -589,7 +574,7 @@ public class CreateReferencesTest extends TestCase {
         expectedTranscriptRelation.setObject(expectedGene);
         expectedTranscriptRelation.setSubject(expectedTranscript);
         expectedTranscript.setObjects(new HashSet(Arrays.asList(new Object[] { expectedTranscriptLocation, expectedTranscriptRelation })));
-        expectedGene.setSubjects(new HashSet(Arrays.asList(new Object[] { expectedOrthologue1, expectedTranscriptRelation })));
+        expectedGene.setSubjects(new HashSet(Arrays.asList(new Object[] { expectedTranscriptRelation })));
 
         RankedRelation expectedExonRelation =
             (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
@@ -647,72 +632,7 @@ public class CreateReferencesTest extends TestCase {
         compareItemsCollectionOrderInsensitive(expGeneItem, resGeneItem);
     }
 
-    private void compareGeneOrthologuesToExpected() throws Exception {
-        osw.flushObjectById();
-        Orthologue expectedOrthologue1 = (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        expectedOrthologue1.setId(storedOrthologue1.getId());
-        expectedOrthologue1.setObject(storedGene);
 
-        // in gene0 objects collection
-        Orthologue expectedOrthologue2 =
-            (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        expectedOrthologue2.setId(storedOrthologue2.getId());
-        expectedOrthologue2.setSubject(storedGene);
-
-        Transcript expectedTranscript =
-            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        expectedTranscript.setId(storedTranscript.getId());
-
-        SimpleRelation expectedTranscriptRelation =
-            (SimpleRelation) DynamicUtil.createObject(Collections.singleton(SimpleRelation.class));
-        expectedTranscriptRelation.setId(storedTranscriptRelation.getId());
-
-        Protein expectedProtein =
-            (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
-        expectedProtein.setId(storedProtein.getId());
-
-        Location expectedGeneLocation =
-            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        expectedGeneLocation.setId(storedGeneLocation.getId());
-
-        Gene expectedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        expectedGene.setIdentifier("gene0");
-        expectedGene.setId(storedGene.getId());
-        expectedGene.setOrthologues(Collections.singleton(expectedOrthologue1));
-        expectedGene.setSubjects(new HashSet(Arrays.asList(new Object[] {expectedOrthologue1,
-            expectedTranscriptRelation})));
-        expectedGene.setObjects(new HashSet(Arrays.asList(new Object[] {expectedGeneLocation,
-            expectedOrthologue2})));
-        expectedGene.setTranscripts(Collections.singleton(expectedTranscript));
-        expectedGene.setProteins(Collections.singleton(expectedProtein));
-
-        Item expGeneItem = toItem(expectedGene);
-
-        ObjectStore os = osw.getObjectStore();
-
-        os.flushObjectById();
-
-        Query q;
-        Results res;
-        ResultsRow row;
-
-        q = new Query();
-        QueryClass qcGene = new QueryClass(Gene.class);
-        q.addFrom(qcGene);
-        q.addToSelect(qcGene);
-
-        QueryField qf1 = new QueryField(qcGene, "identifier");
-        SimpleConstraint sc1 =
-            new SimpleConstraint(qf1, ConstraintOp.EQUALS, new QueryValue("gene0"));
-        q.setConstraint(sc1);
-
-        res = os.execute(q);
-        row = (ResultsRow) res.iterator().next();
-
-        Gene resGene = (Gene) row.get(0);
-        Item resGeneItem = toItem(resGene);
-        compareItemsCollectionOrderInsensitive(expGeneItem, resGeneItem);
-    }
 
     private void compareResultsToExpected() throws Exception {
         osw.flushObjectById();
@@ -731,14 +651,6 @@ public class CreateReferencesTest extends TestCase {
         Transcript expectedTranscript3 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         Exon expectedExon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-
-        Orthologue expectedOrthologue1 =
-            (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        expectedOrthologue1.setId(storedOrthologue1.getId());
-
-        Orthologue expectedOrthologue2 =
-            (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        expectedOrthologue2.setId(storedOrthologue2.getId());
 
         GOTerm expectedGOTerm =
             (GOTerm) DynamicUtil.createObject(Collections.singleton(GOTerm.class));
@@ -793,8 +705,7 @@ public class CreateReferencesTest extends TestCase {
 
         expectedGene.setIdentifier("gene0");
         expectedGene.setId(storedGene.getId());
-        expectedGene.setObjects(new HashSet(Arrays.asList(new Object[] {expectedChromosomeGeneLocation, expectedOrthologue2})));
-        expectedGene.setOrthologues(Collections.singleton(expectedOrthologue1));
+        expectedGene.setObjects(new HashSet(Arrays.asList(new Object[] {expectedChromosomeGeneLocation })));
         expectedGene.setProteins(Collections.singleton(expectedProtein));
 
         expectedGene1.setId(storedGene1.getId());
@@ -817,8 +728,7 @@ public class CreateReferencesTest extends TestCase {
         expectedTranscriptRelation.setSubject(expectedTranscript);
         expectedTranscript.setObjects(new HashSet(Arrays.asList(new Object[] {
             expectedChromosomeTranscriptLocation, expectedTranscriptRelation })));
-        expectedGene.setSubjects(new HashSet(Arrays.asList(new Object[] { expectedOrthologue1,
-            expectedTranscriptRelation })));
+        expectedGene.setSubjects(new HashSet(Arrays.asList(new Object[] { expectedTranscriptRelation })));
 
         expectedExon.setIdentifier("exon1");
         expectedExon.setId(storedExon.getId());
@@ -1066,17 +976,6 @@ public class CreateReferencesTest extends TestCase {
         storedGOTerm = (GOTerm) DynamicUtil.createObject(Collections.singleton(GOTerm.class));
         storedGOTerm.setIdentifier("GOTerm1");
 
-        // in gene1 subject collection
-        storedOrthologue1 =
-            (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        storedOrthologue1.setObject(storedGene);
-
-        // in gene1 objects collection
-        storedOrthologue2 =
-            (Orthologue) DynamicUtil.createObject(Collections.singleton(Orthologue.class));
-        storedOrthologue2.setSubject(storedGene);
-
-
         // used by testInsertCollectionField1()
         storedTranscript1.setGene(storedGene1);
         storedTranscript2.setGene(storedGene1);
@@ -1102,8 +1001,7 @@ public class CreateReferencesTest extends TestCase {
                 storedTranscript1,
                 storedTranscript2, storedTranscript3,
                 storedExon, storedExonRankedRelation,
-                storedChromosome, storedOrthologue1,
-                storedOrthologue2,
+                storedChromosome,
                 storedGOTerm, storedProtein,
                 storedProtein1, storedProtein2, storedProtein3,
                 storedOverlapRelation,

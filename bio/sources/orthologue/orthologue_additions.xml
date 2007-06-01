@@ -1,25 +1,31 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
-<class name="org.flymine.model.genomic.Orthologue" extends="org.flymine.model.genomic.Relation" is-interface="true">
-  <attribute name="score" type="java.lang.Double"/>
-  <attribute name="subjectBootstrapScore" type="java.lang.Integer"/>
-  <attribute name="objectBootstrapScore" type="java.lang.Integer"/>
-  <reference name="objectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
-  <reference name="subjectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
-  <collection name="coOrthologues" referenced-type="org.flymine.model.genomic.Orthologue" ordered="true"/>
-  <collection name="inParalogues" referenced-type="org.flymine.model.genomic.Paralogue" ordered="true"/>
+<class name="org.flymine.model.genomic.Orthologue" is-interface="true">
+  <attribute name="inParanoidScore" type="java.lang.Double"/>
+  <attribute name="bootstrapScore" type="java.lang.Integer"/>
+  <attribute name="orthologueBootstrapScore" type="java.lang.Integer"/>
+  <attribute name="type" type="java.lang.String"/>
+  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="orthologues"/>
+  <reference name="orthologue" referenced-type="org.flymine.model.genomic.Gene"/>
+  <reference name="translation" referenced-type="org.flymine.model.genomic.Translation"/>
+  <reference name="orthologueTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
+  <collection name="coOrthologues" referenced-type="org.flymine.model.genomic.Orthologue"/>
+  <collection name="paralogues" referenced-type="org.flymine.model.genomic.Paralogue"/>
+  <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence"/>
 </class>
-<class name="org.flymine.model.genomic.Paralogue" extends="org.flymine.model.genomic.Relation" is-interface="true">
-  <attribute name="score" type="java.lang.Double"/>
-  <attribute name="subjectBootstrapScore" type="java.lang.Integer"/>
-  <attribute name="objectBootstrapScore" type="java.lang.Integer"/>
-  <reference name="objectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
-  <reference name="subjectTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
-  <collection name="coOrthologues" referenced-type="org.flymine.model.genomic.Orthologue" ordered="true"/>
-  <collection name="inParalogues" referenced-type="org.flymine.model.genomic.Paralogue" ordered="true"/>
+<class name="org.flymine.model.genomic.Paralogue" is-interface="true">
+  <attribute name="inParanoidScore" type="java.lang.Double"/>
+  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="paralogues"/>
+  <reference name="paralogue" referenced-type="org.flymine.model.genomic.Gene"/>
+  <reference name="translation" referenced-type="org.flymine.model.genomic.Translation"/>
+  <reference name="paralogueTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
+  <collection name="coOrthologues" referenced-type="org.flymine.model.genomic.Orthologue"/>
+  <collection name="inParalogues" referenced-type="org.flymine.model.genomic.Paralogue"/>
+  <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
-  <collection name="orthologues" referenced-type="org.flymine.model.genomic.Orthologue" ordered="true"/>
+  <collection name="orthologues" referenced-type="org.flymine.model.genomic.Orthologue" reverse-reference="gene"/>
+  <collection name="paralogues" referenced-type="org.flymine.model.genomic.Paralogue" reverse-reference="gene"/>
 </class>
 </classes>

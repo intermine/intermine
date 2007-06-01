@@ -158,15 +158,6 @@ public class CreateReferences
         }
     }
 
-    /**
-     * Fill in the "orthologues" collection of Gene.  Needs to be run after
-     * UpdateOrthologues which in turn relies on CreateReferences -&gt; so has
-     * become a separate method.
-     * @throws Exception if anything goes wrong
-     */
-    public void populateOrthologuesCollection() throws Exception {
-        insertReferences(Gene.class, Orthologue.class, "subjects", "orthologues");
-    }
 
     /**
      * Add a reference to and object of type X in objects of type Y by using a connecting class.
