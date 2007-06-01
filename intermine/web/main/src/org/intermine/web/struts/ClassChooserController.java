@@ -66,8 +66,10 @@ public class ClassChooserController extends TilesAction
                 sb.append("'" + helpKey + "': '" + escaped + "', ");
             }
         }
-        // remove last comma
-        sb.deleteCharAt(sb.length() - 2);
+        if (sortedClassDescrs.size() > 0) {
+            // remove last comma
+            sb.deleteCharAt(sb.length() - 2);
+        }
         request.setAttribute("helpMap", sb);
         return null;
     }
