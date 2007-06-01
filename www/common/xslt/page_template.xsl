@@ -73,7 +73,7 @@
             <a href="/">
               Home
             </a>
-            &nbsp;
+            &#160;
           </span>
           <span class="menu-item">
             <script type="text/javascript">
@@ -83,38 +83,38 @@
                 document.write('Current query');
               }
             </script>
-            &nbsp;
+            &#160;
           </span>
           <span class="menu-item">
             <a href="{xsl:concat($webappprefix,'/mymine.do')}">
               MyMine
             </a>
-            &nbsp;
+            &#160;
           </span>
           <span class="menu-item">
             <a href="{xsl:concat($webappprefix,'/mymine.do?page=bags')}">
               Bags
             </a>
-            &nbsp;
+            &#160;
           </span>
           <span class="menu-item">
             <a href="{xsl:concat($webappprefix,'/templateSearch.do')}">
               Search templates
             </a>
             <img src="{xsl:concat($webappprefix,'/images/inspect.gif')}" width="12" height="11" alt="-&gt;"/>
-            &nbsp;
+            &#160;
           </span>
           <span class="menu-item">
             <a href="{xsl:concat($webappprefix,'/history.do')}">
               Query History
             </a>
-            &nbsp;
+            &#160;
           </span>
           <span class="menu-item">
             <a href="{xsl:concat($webappprefix,'/feedback.do')}">
               Feedback form
             </a>
-            &nbsp;
+            &#160;
           </span>
           <span class="menu-item">
             <script type="text/javascript">
@@ -124,13 +124,13 @@
                 document.write(linkTo('<xsl:value-of select="concat($webappprefix,'/login.do')"/>', 'Log in'));
               }
             </script>
-            &nbsp;
+            &#160;
           </span>
           <span class="menu-item">
             <a href="/doc/manual/">
               Help
             </a>
-            &nbsp;
+            &#160;
           </span>
         </div>
         
