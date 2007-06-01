@@ -27,7 +27,7 @@
         <collection name="proteinInteractions" referenced-type="org.flymine.model.genomic.ProteinInteraction" ordered="true" reverse-reference="protein"/>
     </class>
 
-    <class name="org.flymine.model.genomic.ProteinInteractionRegion" is-interface="true">    
+    <class name="org.flymine.model.genomic.ProteinInteractionRegion" extends ="org.flymine.model.genomic.BioEntity" is-interface="true">    
     	<attribute name="startStatus" type="java.lang.String"/>
     	<attribute name="endStatus" type="java.lang.String"/>
     	<reference name="ontologyTerm" referenced-type="org.flymine.model.genomic.OntologyTerm"/>
