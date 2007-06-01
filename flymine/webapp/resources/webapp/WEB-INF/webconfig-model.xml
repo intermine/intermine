@@ -249,10 +249,20 @@
 
   <class className="org.flymine.model.genomic.Orthologue">
     <fields>
-      <fieldconfig fieldExpr="object.identifier"/>
-      <fieldconfig fieldExpr="object.organism.name"/>
-      <fieldconfig fieldExpr="subject.identifier"/>
-      <fieldconfig fieldExpr="subject.organism.name"/>
+      <fieldconfig fieldExpr="gene.identifier"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="orthologue.identifier"/>
+      <fieldconfig fieldExpr="orthologue.organism.shortName"/>
+      <fieldconfig fieldExpr="orthologueTranslation.identifier"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Paralogue">
+    <fields>
+      <fieldconfig fieldExpr="gene.identifier"/>
+      <fieldconfig fieldExpr="paralogue.identifier"/>
+      <fieldconfig fieldExpr="paralogue.organism.shortName"/>
+      <fieldconfig fieldExpr="paralogueTranslation.identifier"/>
     </fields>
   </class>
 

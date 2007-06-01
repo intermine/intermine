@@ -240,8 +240,6 @@
     <post-process name="create-utr-references"/>
     <post-process name="calculate-locations"/>
     <post-process name="create-references" dump="true"/>
-    <post-process name="link-related-proteins-and-interactions"/>
-    <post-process name="update-orthologues"/>
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
