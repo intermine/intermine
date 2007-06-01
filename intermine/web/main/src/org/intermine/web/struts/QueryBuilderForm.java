@@ -316,7 +316,12 @@ public class QueryBuilderForm extends ActionForm
 
         if (request.getParameter("attribute") != null) {
             PathNode node = query.getNodes().get(path);
-            Class fieldClass = MainHelper.getClass(node.getType());
+            Class fieldClass;
+            if (node.isAttribute()) {
+                fieldClass = MainHelper.getClass(node.getType());
+            } else {
+                fieldClass = String.class;
+            }
             parsedAttributeValue =
                 parseValue(attributeValue, fieldClass, constraintOp, locale, errors);
         }

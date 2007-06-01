@@ -55,7 +55,7 @@ public class BagQueryRunner
     private ServletContext context;
 
     /**
-     * Construct with configured bag queries and a map of type -> key fields.
+     * Construct with configured bag queries and a map of type -&gt; key fields.
      *
      * @param os
      *            the ObjectStore to run queries on

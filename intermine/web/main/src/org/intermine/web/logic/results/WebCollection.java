@@ -14,6 +14,9 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import org.intermine.web.logic.bag.BagQueryResult;
 
 /**
  * A wrapper for a collection that makes for easier rendering in the webapp.
@@ -46,6 +49,13 @@ public class WebCollection extends AbstractList implements WebTable
      */
     public List<ResultElement> getResultElements(int index) {
         return getElementsInternal(index, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, BagQueryResult> getPathToBagQueryResult() {
+        throw new UnsupportedOperationException();
     }
 
     /**

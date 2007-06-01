@@ -42,6 +42,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
@@ -541,15 +542,18 @@ public class SessionMethods
                         LOG.debug("startQuery qid " + qid + " thread started");
 
                         Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
+                        Map<String, BagQueryResult> pathToBagQueryResult
+                                = new HashMap<String, BagQueryResult>();
                         Query q =
                             MainHelper.makeQuery(pathQuery, profile.getSavedBags(),
-                                                 pathToQueryNode);
+                                pathToQueryNode, servletContext, pathToBagQueryResult);
                         Results results = TableHelper.makeResults(os, q);
                         results.setNoPrefetch();
 
-                        WebResults webResults =
-                            new WebResults(pathQuery.getView(), results, model, pathToQueryNode,
-                                           (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
+                        WebResults webResults = new WebResults(pathQuery.getView(), results, model,
+                            pathToQueryNode,
+                            (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                            pathToBagQueryResult);
                         PagedTable pr = new PagedTable(webResults);
                         SessionMethods.runQuery(session, messages, qid, pr);
 

@@ -68,6 +68,9 @@ public class ConstraintOp
     /** Combine constraints with the NOR operation */
     public static final ConstraintOp NOR = new ConstraintOp("NOR");
 
+    /** Special operation indicating a bag upload step should be used, for the webapp only. */
+    public static final ConstraintOp LOOKUP = new ConstraintOp("LOOKUP");
+
     private ConstraintOp(String name) { 
         this.name = name;
         values.add(this);

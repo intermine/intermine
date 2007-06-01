@@ -36,6 +36,49 @@
 //]]>-->
 </script>
 <script type="text/javascript" src="js/table.js" ></script>
+<c:forEach var="bagQueryResultEntry" items="${lookupResults}">
+  <fmt:message key="results.lookup.title"/> <c:out value="${bagQueryResultEntry.key}" escapeXml="false"/>:<BR/>
+  <c:set var="matchesCount" value="${bagQueryResultEntry.value.matches}"/>
+  <c:choose>
+    <c:when test="${matchesCount == 0}">
+      <fmt:message key="results.lookup.matches.zero"/><BR/>
+    </c:when>
+    <c:when test="${matchesCount == 1}">
+      <fmt:message key="results.lookup.matches.one"/><BR/>
+    </c:when>
+    <c:otherwise>
+      <fmt:message key="results.lookup.matches.many.first"/> <c:out value="${matchesCount}"/> <fmt:message key="results.lookup.matches.many.second"/><BR/>
+    </c:otherwise>
+  </c:choose>
+  <c:set var="unresolvedCount" value="${fn:length(bagQueryResultEntry.value.unresolved)}"/>
+  <c:choose>
+    <c:when test="${unresolvedCount == 1}">
+      <fmt:message key="results.lookup.unresolved.one"/>:
+    </c:when>
+    <c:when test="${unresolvedCount > 1}">
+      <fmt:message key="results.lookup.unresolved.many"/>:
+    </c:when>
+  </c:choose>
+  <c:if test="${unresolvedCount > 0}">
+    <c:forEach var="identifier" items="${bagQueryResultEntry.value.unresolved}" varStatus="status"><c:if test="${status.index != 0}">,
+      </c:if><c:out value="${identifier}"/></c:forEach>
+    <BR/>
+  </c:if>
+  <c:set var="duplicateCount" value="${fn:length(bagQueryResultEntry.value.duplicates)}"/>
+  <c:if test="${duplicateCount > 0}">
+    <fmt:message key="results.lookup.duplicate"/>:
+    <c:forEach var="identifier" items="${bagQueryResultEntry.value.duplicates}" varStatus="status"><c:if test="${status.index != 0}">,
+      </c:if><c:out value="${identifier}"/></c:forEach>
+    <BR/>
+  </c:if>
+  <c:set var="translatedCount" value="${fn:length(bagQueryResultEntry.value.translated)}"/>
+  <c:if test="${translatedCount > 0}">
+    <fmt:message key="results.lookup.translated"/>:
+    <c:forEach var="identifier" items="${bagQueryResultEntry.value.translated}" varStatus="status"><c:if test="${status.index != 0}">,
+      </c:if><c:out value="${identifier}"/></c:forEach>
+    <BR/>
+  </c:if>
+</c:forEach>
 <c:choose>
   <c:when test="${resultsTable.size == 0}">
     <div class="body">

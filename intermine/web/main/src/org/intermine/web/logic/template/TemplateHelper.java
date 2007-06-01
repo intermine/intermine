@@ -163,17 +163,21 @@ public class TemplateHelper
                         bag = (InterMineBag) savedBags.get(constraintValue);
                     }
                     if (bag != null) {
-                        // constrain parent object of this node to be in bag
-                        PathNode parent = queryCopy.getNodes()
-                            .get(nodeCopy.getParent().getPathString());
                         Constraint bagConstraint = new Constraint(constraintOp, constraintValue,
                                 true, c.getDescription(), c.getCode(), c.getIdentifier());
-                        parent.getConstraints().add(bagConstraint);
-
-                        // remove the constraint on this node, possibly remove node
-                        //nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
-                        if (nodeCopy.getConstraints().size() == 1) {
-                            queryCopy.getNodes().remove(nodeCopy.getPathString());
+                        if (nodeCopy.isAttribute()) {
+                            // remove the constraint on this node, possibly remove node
+                            //nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
+                            if (nodeCopy.getConstraints().size() == 1) {
+                                queryCopy.getNodes().remove(nodeCopy.getPathString());
+                            }
+                            // constrain parent object of this node to be in bag
+                            PathNode parent = queryCopy.getNodes()
+                                .get(nodeCopy.getParent().getPathString());
+                            parent.getConstraints().add(bagConstraint);
+                        } else {
+                            nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
+                                    bagConstraint);
                         }
                     } else {
                         nodeCopy.getConstraints().set(
@@ -358,9 +362,7 @@ public class TemplateHelper
      * InterMineIdBag
      */
     private static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
-                                                               TemplateQuery template,
-                                                               InterMineObject object,
-                                                               InterMineBag bag) {
+            TemplateQuery template, InterMineObject object, InterMineBag bag) {
         TemplateForm templateForm = new TemplateForm();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
@@ -378,16 +380,17 @@ public class TemplateHelper
 
         templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
 
-         PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
-                                                                          new HashMap());
+        PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
+                new HashMap());
         try {
             Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
-            Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode);
+            Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode,
+                    servletContext, null);
             Results results = os.execute(query);
             Model model = os.getModel();
             WebResults webResults =
                 new WebResults(pathQuery.getView(), results, model, pathToQueryNode,
-                               (Map) servletContext.getAttribute(Constants.CLASS_KEYS));
+                        (Map) servletContext.getAttribute(Constants.CLASS_KEYS), null);
             PagedTable pagedResults = new PagedTable(webResults);
 
             InlineTemplateTable itt =
@@ -409,13 +412,12 @@ public class TemplateHelper
                 }
             }*/
             return itt;
-
         } catch (IllegalArgumentException e) {
             // probably a template is out of date
             LOG.error("error while getting inline template information", e);
-        //} catch (ClassNotFoundException e) {
-        //    // probably a template is out of date
-        //    LOG.error("error while getting inline template information", e);
+            //} catch (ClassNotFoundException e) {
+            // probably a template is out of date
+            //LOG.error("error while getting inline template information", e);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ObjectStoreQueryDurationException) {
                 // special case: if there is an object store problem it's probably an
@@ -424,6 +426,8 @@ public class TemplateHelper
                 // better plan
                 return null;
             }
+        } catch (ObjectStoreException e) {
+            LOG.error("Error while getting inline template information", e);
         }
 
         return null;
@@ -623,8 +627,12 @@ public class TemplateHelper
         }
 
         HashMap<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
-        Query query = MainHelper.makeQuery(templateClone, new HashMap(),
-                pathToQueryNode);
+        Query query = null;
+        try {
+            query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null, null);
+        } catch (ObjectStoreException e) {
+            // Not possible if last argument is null
+        }
         if (groupByNode != null) {
             query.clearOrderBy();
             query.clearSelect();

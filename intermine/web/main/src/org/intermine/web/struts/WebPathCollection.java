@@ -29,6 +29,7 @@ import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -84,6 +85,13 @@ public class WebPathCollection extends AbstractList implements WebTable
      */
     public List getResultElements(int index) {
         return getElementsInternal(index, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, BagQueryResult> getPathToBagQueryResult() {
+        throw new UnsupportedOperationException();
     }
 
     /**

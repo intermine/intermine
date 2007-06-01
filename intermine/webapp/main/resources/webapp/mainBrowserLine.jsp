@@ -119,13 +119,6 @@
         </c:otherwise>
       </c:choose>
       <c:choose>
-        <c:when test="${empty node.parent && prefix == path
-                      && empty loopQueryOps}">
-          <%-- don't offer to constrain if this is the top node, there are no
-               bags and no potential loop queries --%> 
-          <img class="arrow" src="images/constrain-disabled.gif" width="70"
-               height="13" alt="constrain"/> 
-        </c:when>
         <c:when test="${isNull}">
           <img class="arrow" src="images/constrain-disabled.gif" width="70"
                height="13" alt="constrain"/> 

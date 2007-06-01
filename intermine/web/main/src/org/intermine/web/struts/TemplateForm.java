@@ -278,7 +278,12 @@ public class TemplateForm extends ActionForm
                 Constraint c = (Constraint) ci.next();
                 
                 String key = "" + (j + 1);
-                Class fieldClass = MainHelper.getClass(node.getType());
+                Class fieldClass;
+                if (node.isAttribute()) {
+                    fieldClass = MainHelper.getClass(node.getType());
+                } else {
+                    fieldClass = String.class;
+                }
                 
                 if (getUseBagConstraint(key)) {
                     // validate choice of bag in some way?

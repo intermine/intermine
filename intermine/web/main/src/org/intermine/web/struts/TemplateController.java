@@ -203,6 +203,17 @@ public class TemplateController extends TilesAction
                         }
                     }
                 }
+                if (!node.isAttribute()) {
+                    constraintBagTypes.put(c, node.getType());
+                    Map constraintBags = profile.getBagsOfType(node.getType(), os.getModel());
+                    if (constraintBags != null && constraintBags.size() != 0) {
+                        bags.put(c, constraintBags);
+                        if (bagName != null && constraintBags.containsKey(bagName)) {
+                            tf.setUseBagConstraint(j + "", true);
+                            selectedBagNames.put(c, bagName);
+                        }
+                    }
+                }
                 j++;
             }
             constraints.put(displayNode, displayTemplate.getEditableConstraints(displayNode));

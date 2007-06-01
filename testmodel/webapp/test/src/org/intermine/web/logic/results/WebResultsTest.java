@@ -162,7 +162,7 @@ public class WebResultsTest extends TestCase
         HashSet keys = new HashSet();
         keys.add(new HashSet(Arrays.asList(new Object[]{fd})));
         classKeys.put("Company", keys);
-        webResults = new WebResults(view, results, model, pathToQueryNode, classKeys);
+        webResults = new WebResults(view, results, model, pathToQueryNode, classKeys, null);
     }
     
     public void test() {
