@@ -92,9 +92,9 @@ public class SearchAction extends InterMineAction
         SearchForm sf = (SearchForm) form;
         String queryString = sf.getQueryString();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        String type = request.getParameter("type");
         
         if (StringUtils.isNotEmpty(queryString)) {
+            String type = sf.getType();
             LOG.info("Searching " + sf.getScope() + " for \""
                     + sf.getQueryString() + "\"    - type: " + type);
             long time = System.currentTimeMillis();

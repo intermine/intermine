@@ -24,6 +24,7 @@ public class SearchForm extends ActionForm
 {
     private String queryString;
     private String scope;
+    private String type;
     
     /**
      * Creates a new instance of FeedbackForm
@@ -59,7 +60,23 @@ public class SearchForm extends ActionForm
     public void setScope(String scope) {
         this.scope = scope;
     }
-    
+
+    /**
+     * Get the type of thing to search
+     * @return a type from TagTypes
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Set the type of thing to search
+     * @param type a type from TagTypes
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
     /**
      * Reset form bean.
      *

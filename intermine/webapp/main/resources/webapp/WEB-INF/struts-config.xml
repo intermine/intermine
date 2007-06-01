@@ -64,6 +64,8 @@
     </action>
     <action path="/login" forward="login.page" name="loginForm" validate="false">
     </action>
+    <action path="/search" forward="search.page" name="searchForm" validate="false">
+    </action>
     <action path="/feedback" forward="feedback.page">
     </action>
     <action path="/contextHelp" forward="contextHelp.page">
@@ -269,7 +271,7 @@
       <forward name="error" path="bagUploadConfirm.page"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>
-    <action path="/search" name="searchForm" type="org.intermine.web.struts.SearchAction" input="search">
+    <action path="/runSearch" name="searchForm" type="org.intermine.web.struts.SearchAction" input="search">
       <forward name="search" path="search.page"/>
     </action>
     <action path="/queryClassSelect" name="queryClassSelectForm" type="org.intermine.web.struts.QueryClassSelectAction" scope="request" input="query">
@@ -326,6 +328,8 @@
     <action path="/initObjectDetailsTemplateTable" type="org.intermine.web.struts.ObjectDetailsTemplateController">
     </action>
     <action path="/initMymine" type="org.intermine.web.struts.MyMineController">
+    </action>
+    <action path="/initSearch" name="searchForm" type="org.intermine.web.struts.SearchController">
     </action>
     <action path="/initQueryHistory" type="org.intermine.web.struts.HistoryController">
     </action>

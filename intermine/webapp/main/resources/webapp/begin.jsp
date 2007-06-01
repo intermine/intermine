@@ -123,15 +123,16 @@
 <im:vspacer height="12"/>
 <im:box titleKey="begin.heading.searchtemplates">
   <div class="body" align="center">
-    <html:form action="/templateSearch" method="get">
-      <fmt:message key="templateSearch.search.label"/>
+    <html:form action="/search" method="get">
+      <fmt:message key="search.search.label"/>
       <html:text property="queryString" size="40" styleId="queryString"/>
-      <html:select property="type">
-        <html:option key="templateSearch.form.global" value="global"/>
-        <html:option key="templateSearch.form.user" value="user"/>
-        <html:option key="templateSearch.form.all" value="ALL"/>
+      <html:hidden property="type" value="template"/>
+      <html:select property="scope">
+        <html:option key="search.form.global" value="global"/>
+        <html:option key="search.form.user" value="user"/>
+        <html:option key="search.form.all" value="ALL"/>
       </html:select>
-      <html:submit><fmt:message key="templateSearch.form.submit"/></html:submit>
+      <html:submit><fmt:message key="search.form.submit"/></html:submit>
       <br/>
       <p class="smallnote">
         <fmt:message key="begin.searchtemplates.help.message"/>
