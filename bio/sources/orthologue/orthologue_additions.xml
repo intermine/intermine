@@ -20,8 +20,6 @@
   <reference name="paralogue" referenced-type="org.flymine.model.genomic.Gene"/>
   <reference name="translation" referenced-type="org.flymine.model.genomic.Translation"/>
   <reference name="paralogueTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
-  <collection name="coOrthologues" referenced-type="org.flymine.model.genomic.Orthologue"/>
-  <collection name="inParalogues" referenced-type="org.flymine.model.genomic.Paralogue"/>
   <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
