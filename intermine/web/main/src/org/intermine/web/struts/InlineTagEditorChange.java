@@ -53,6 +53,7 @@ public class InlineTagEditorChange extends DispatchAction
         String uid = request.getParameter("uid");
         String type = request.getParameter("type");
         String tagName = request.getParameter("tag");
+        tagName = tagName.trim();
         
         LOG.info("adding tag " + tagName + " uid " + uid + " type " + type);
         
