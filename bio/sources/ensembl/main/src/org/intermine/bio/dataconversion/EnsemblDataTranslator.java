@@ -548,20 +548,17 @@ public class EnsemblDataTranslator extends DataTranslator
 
                 if (config.containsXrefDataSourceNamed(dbname)) {
                     String identifierType;
-                    // WARNING TODO XXX FIXME
-                    // this is an ugly hack the code is assuming the all xrefs are accession numbers
-                    // which isn't true for Anopheles
+
                     if (config.useXrefDbsForGeneSymbol()) {
                         identifierType = "symbol";
-                    } else {
-                        identifierType = "accession";
-                    }
-                    extDbRef = config.getDataSrcRefByDataSrcName(dbname);
-                    Item synonym = 
+                   
+                        extDbRef = config.getDataSrcRefByDataSrcName(dbname);
+                        Item synonym = 
                         createProductSynonym(tgtItem, identifierType, xrefIdentifier, extDbRef);
-                    addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
-                    synonyms.add(synonym);
-                    tgtItem.addAttribute(new Attribute(identifierType, xrefIdentifier));
+                        addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
+                        synonyms.add(synonym);
+                        tgtItem.addAttribute(new Attribute(identifierType, xrefIdentifier));
+                    }
                 }
             } else {
                 tgtItem.addAttribute(new Attribute("identifier", stableId));
