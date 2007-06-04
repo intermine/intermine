@@ -90,7 +90,7 @@
 <%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
 <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartBrowsing.shtml"/>
 <c:set var="browseTemplateName" value="${WEB_PROPERTIES['begin.browse.template']}"/>
-<c:if test="${!empty browseTemplateName && !empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
+<c:if test="${!empty browseTemplateName && !empty GLOBAL_SEARCH_REPOSITORY.webSearchableMaps['template'][browseTemplateName]}">
   <im:vspacer height="12"/>
   <im:box helpUrl="${helpUrl}"
           titleKey="begin.heading.browse">
@@ -111,7 +111,7 @@
 
 
 
-<c:if test="${IS_SUPERUSER && !empty browseTemplateName && empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
+<c:if test="${IS_SUPERUSER && !empty browseTemplateName && empty GLOBAL_SEARCH_REPOSITORY.webSearchableMaps['template'][browseTemplateName]}">
   <im:vspacer height="12"/>
   <div class="altmessage">
     <fmt:message key="begin.noBrowseTemplate">
