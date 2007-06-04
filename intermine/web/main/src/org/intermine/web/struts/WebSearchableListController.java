@@ -19,6 +19,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.Scope;
+import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -34,18 +35,18 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 
 /**
- * Controller for the login page.
+ * Controller for webSearchableLisp.tile
  * @author Kim Rutherford
  */
 
 public class WebSearchableListController extends TilesAction
 {
     /**
-     * Set up the form for login.
+     * Set up the attributes for webSearchableLisp.tile
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+    public ActionForward execute(ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
@@ -60,27 +61,31 @@ public class WebSearchableListController extends TilesAction
         ServletContext servletContext = session.getServletContext();
 
         Profile profile;
-
         if (scope.equals(Scope.GLOBAL)) {
             profile = SessionMethods.getSuperUserProfile(servletContext);            
         } else {
             profile = (Profile) session.getAttribute(Constants.PROFILE);
         }
-        if (profile == null) {
-            return null;
+        SearchRepository searchRepository;
+        if (scope.equals(Scope.GLOBAL)) {
+            searchRepository =
+                (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
         } else {
-            Map<String, ? extends WebSearchable> webSearchables =
-                profile.getWebSearchablesByType(type);
-            final ProfileManager pm = 
-                (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
 
-            final List<String> tagList = Arrays.asList(StringUtil.split(tags, " "));
-
-            Map<String, ? extends WebSearchable> filteredWebSearchables =
-                pm.filterByTags(webSearchables, tagList, type, profile.getUsername());
-            request.setAttribute("filteredWebSearchables", filteredWebSearchables);
-            
-            return null;
+            searchRepository = profile.getSearchRepository();
         }
+        Map<String, ? extends WebSearchable> webSearchables =
+            searchRepository.getWebSearchableMap(type);
+
+        final ProfileManager pm = 
+            (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+
+        final List<String> tagList = Arrays.asList(StringUtil.split(tags, " "));
+
+        Map<String, ? extends WebSearchable> filteredWebSearchables =
+            pm.filterByTags(webSearchables, tagList, type, profile.getUsername());
+        request.setAttribute("filteredWebSearchables", filteredWebSearchables);
+
+        return null;
     }
 }
