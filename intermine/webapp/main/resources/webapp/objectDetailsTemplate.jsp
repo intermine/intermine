@@ -13,7 +13,7 @@
 <tiles:importAttribute name="interMineIdBag" ignore="true"/>
 <tiles:importAttribute name="templateQuery"/>
 <tiles:importAttribute name="placement"/>
-<tiles:importAttribute name="type"/>
+<tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="trail"/>
 
 <c:set var="templateName" value="${templateQuery.name}"/>
@@ -65,7 +65,7 @@
   <%--title line e.g. "+ Gene --> Proteins.  [STAR] (t)  1 results" --%>
   <div class="${displayObject == null ? '' : 'templateDetails'}">
     <span class="${cssClass}" id="label_${uid}">
-      <im:templateLine type="${type}" templateQuery="${templateQuery}"
+      <im:templateLine scope="${scope}" templateQuery="${templateQuery}"
                        className="${className}" interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" />
       <span id="count_${uid}" class="templateResCount"></span><br/>
     </span>

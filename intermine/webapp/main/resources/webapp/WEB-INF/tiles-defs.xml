@@ -178,6 +178,8 @@
               controllerUrl="/initTableCountEstimate.do"/>
   <definition name="aspect.tile" path="/aspect.jsp" controllerUrl="/initAspect.do"/>
   <definition name="search.tile" path="/search.jsp" controllerUrl="/initSearch.do"/>
+  <definition name="webSearchableList.tile" path="/webSearchableList.jsp"
+              controllerUrl="/initWebSearchableList.do"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
   <definition name="bagUploadConfirm.tile" path="/bagUploadConfirm.jsp" controllerUrl="/initBagUploadConfirm.do"/>
   <definition name="bagUploadConfirmIssue.tile" path="/bagUploadConfirmIssue.jsp" controllerUrl="/initBagUploadConfirmIssue.do"/>

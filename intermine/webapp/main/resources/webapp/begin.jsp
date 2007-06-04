@@ -108,6 +108,16 @@
   </im:box>
 </c:if>
 
+
+
+<tiles:insert name="webSearchableList.tile">
+  <tiles:put name="type" value="template"/>
+  <tiles:put name="scope" value="global"/>
+  <tiles:put name="tags" value="im:frontpage im:public"/>
+</tiles:insert>
+
+
+
 <c:if test="${IS_SUPERUSER && !empty browseTemplateName && empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
   <im:vspacer height="12"/>
   <div class="altmessage">
@@ -135,7 +145,7 @@
       <html:submit><fmt:message key="search.form.submit"/></html:submit>
       <br/>
       <p class="smallnote">
-        <fmt:message key="begin.searchtemplates.help.message"/>
+        <fmt:message key="search.help.message.template"/>
       </p>
     </html:form>
   </div>
@@ -152,7 +162,7 @@
     <c:forEach items="${CATEGORIES}" var="category">
       <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
         <im:heading id="globalTmpls${category}">${category}</im:heading>
-        <im:body id="globalTmpls${category}"><im:templateList type="global" category="${category}"/></im:body>
+        <im:body id="globalTmpls${category}"><im:templateList scope="global" category="${category}"/></im:body>
         <im:vspacer height="5"/>
       </c:if>
     </c:forEach>
@@ -168,13 +178,13 @@
     <c:forEach items="${PROFILE.categoryTemplates}" var="entry">
       <c:if test="${!empty entry.value && !empty entry.key}">
         <im:heading id="userTmpls${entry.key}">${entry.key}</im:heading>
-        <im:body id="userTmpls${entry.key}"><im:templateList type="user" category="${entry.key}"/></im:body>
+        <im:body id="userTmpls${entry.key}"><im:templateList scope="user" category="${entry.key}"/></im:body>
         <im:vspacer height="5"/>
       </c:if>
     </c:forEach>
     <c:if test="${!empty PROFILE.categoryTemplates['']}">
       <div class="heading"><fmt:message key="begin.noCategory"/></div>
-      <div class="body"><im:templateList type="user" category=""/></div>
+      <div class="body"><im:templateList scope="user" category=""/></div>
     </c:if>
   </im:box>
 </c:if>

@@ -61,12 +61,7 @@ public class TemplateController extends TilesAction
      * </ol>
      * In all cases where a template name is provided (in other words, the template query
      * was not provided in the "previewTemplate" request attribute), the template is then
-     * looked up based on the value of the "type" request parameter.
-     * <ol>
-     *    <li>no type parameter means the template is loaded from built-in templates
-     *    <li>if type == user then it's one of the users saved templates
-     *    <li>shared? public?
-     * </ol>
+     * looked up based on the value of the "scope" request parameter.
      *
      * {@inheritDoc}
      */
@@ -83,7 +78,7 @@ public class TemplateController extends TilesAction
         TemplateForm tf = (TemplateForm) form;
         TemplateQuery template = null;
         String queryName = request.getParameter("name");
-        String type = request.getParameter("type");
+        String scope = request.getParameter("scope");
         String loadModifiedTemplate = request
                 .getParameter("loadModifiedTemplate");
         String bagName = request.getParameter("bagName");
@@ -120,13 +115,13 @@ public class TemplateController extends TilesAction
         if (queryName == null && template != null) {
             queryName = template.getName();
         } else {
-            if (type == null) {
-                type = TemplateHelper.GLOBAL_TEMPLATE;
+            if (scope == null) {
+                scope = TemplateHelper.GLOBAL_TEMPLATE;
             }
             String userName = ((Profile) session
                     .getAttribute(Constants.PROFILE)).getUsername();
             template = TemplateHelper.findTemplate(servletContext, session,
-                    userName, queryName, type);
+                    userName, queryName, scope);
         }
 
         if (template == null) {
@@ -222,7 +217,7 @@ public class TemplateController extends TilesAction
         populateTemplateForm(displayTemplate, tf, request);
 
         tf.setTemplateName(queryName);
-        tf.setTemplateType(type);
+        tf.setTemplateType(scope);
         request.setAttribute("templateQuery", displayTemplate);
         request.setAttribute("names", names);
         request.setAttribute("constraints", constraints);
