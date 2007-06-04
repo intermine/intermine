@@ -129,7 +129,6 @@
     </source>
     <source name="geneid-translationid" type="intermine-items-large-xml-file">
       <property name="src.data.file" location="/shared/data/orthologues/inparanoid/geneid2peptideid/current/geneId2peptideId.xml"/>
-      <property name="ignore.duplicates" value="true"/>
     </source> 
     <source name="inparanoid-orthologue" type="orthologue" dump="true">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
