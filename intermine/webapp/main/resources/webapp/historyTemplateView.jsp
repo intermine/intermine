@@ -120,7 +120,7 @@
                 </c:choose>
               </td>
               <td align="center" nowrap>
-               <html:link action="/template?name=${savedTemplate.value.name}&amp;type=user" 
+               <html:link action="/template?name=${savedTemplate.value.name}&amp;scope=user" 
                					titleKey="history.action.execute.hover">
                   <fmt:message key="history.action.execute"/>
                </html:link> |

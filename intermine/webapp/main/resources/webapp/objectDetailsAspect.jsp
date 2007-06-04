@@ -43,7 +43,7 @@
         <hr class="seperator"/>
       </c:if>
       <tiles:insert name="/templateList.jsp">
-        <tiles:put name="type" value="global"/>
+        <tiles:put name="scope" value="global"/>
         <tiles:put name="placement" value="${placement}"/>
         <tiles:put name="displayObject" beanName="displayObject"/>
         <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>

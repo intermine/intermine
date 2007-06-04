@@ -13,7 +13,7 @@
 <tiles:importAttribute name="interMineIdBag" ignore="true"/>
 <tiles:importAttribute name="noTemplatesMsgKey" ignore="true"/>
 <tiles:importAttribute name="placement"/>
-<tiles:importAttribute name="type"/>
+<tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="trail" ignore="true"/>
 
 <c:if test="${!empty displayObject}">
@@ -26,7 +26,7 @@
     <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
     <tiles:put name="templateQuery" beanName="templateQuery"/>
     <tiles:put name="placement" value="${placement}"/>
-    <tiles:put name="type" value="${type}"/>
+    <tiles:put name="scope" value="${scope}"/>
     <tiles:put name="trail" value="${trail}"/>
   </tiles:insert>
   <c:if test="${!status.last}">

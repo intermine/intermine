@@ -341,8 +341,10 @@ public class Profile
 
     /**
      * Return a WebSearchable Map for the given type.
+     * @param type the type (from TagTypes)
+     * @return the Map
      */
-    private Map<String, ? extends WebSearchable> getWebSearchablesByType(String type) {
+    public Map<String, ? extends WebSearchable> getWebSearchablesByType(String type) {
         if (type.equals(TagTypes.TEMPLATE)) {
             return savedTemplates;
         } else {

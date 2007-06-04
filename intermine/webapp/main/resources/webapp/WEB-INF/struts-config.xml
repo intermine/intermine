@@ -311,6 +311,10 @@
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
     </action>
+    <action path="/gotows" type="org.intermine.web.struts.GotoWebSearchable">
+      <forward name="template" redirect="true" path="/template.do"/>
+      <forward name="bag" redirect="true" path="/bagView.do"/>
+    </action>
     <action path="/initLogin" name="loginForm" validate="false" type="org.intermine.web.struts.LoginController">
     </action>
     <action path="/initMain" type="org.intermine.web.struts.QueryBuilderController">
@@ -330,6 +334,8 @@
     <action path="/initMymine" type="org.intermine.web.struts.MyMineController">
     </action>
     <action path="/initSearch" name="searchForm" type="org.intermine.web.struts.SearchController">
+    </action>
+    <action path="/initWebSearchableList" type="org.intermine.web.struts.WebSearchableListController">
     </action>
     <action path="/initQueryHistory" type="org.intermine.web.struts.HistoryController">
     </action>
