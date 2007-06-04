@@ -31,6 +31,13 @@ public class LogicExpressionTest extends TestCase
         roundtrip("A or B and (C or D)");
         roundtrip("(A or B) and (C or D)");
     }
+
+    public void testInvalidNot() {
+        try {
+            fail("" + new LogicExpression("A not B"));
+        } catch (IllegalArgumentException e) {
+        }
+    }
     
     private void roundtrip(String expr) {
         assertEquals(expr, new LogicExpression(expr).toString());
