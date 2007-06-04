@@ -24,7 +24,7 @@ tokens {
 }
 
 expr
-    : orExpr
+    : orExpr EOF
     ;
 
 orExpr
@@ -41,7 +41,7 @@ atom
     ;
     
 bracketedExpr
-    : OPEN_PAREN! expr CLOSE_PAREN!
+    : OPEN_PAREN! orExpr CLOSE_PAREN!
     ;
 
 
