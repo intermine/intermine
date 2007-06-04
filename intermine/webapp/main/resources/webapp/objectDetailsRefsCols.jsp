@@ -23,9 +23,9 @@
       <tr>
         <td width="10">
           <div style="white-space:nowrap">
-            <c:choose>
-              <c:when test="${verbose && collection.size > 0}">
-                <span style="white-space: nowrap">
+            <nobr> <%-- for IE --%>
+              <c:choose>
+                <c:when test="${verbose && collection.size > 0}">
                   <html:link onclick="return toggleCollectionVisibility('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"  action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
                     <img id="img_${placement}_${fieldName}" border="0" src="images/minus.gif" alt="-" width="11" height="11"/>
                     <span class="collectionField">${fieldName}</span>
@@ -33,10 +33,8 @@
                       <im:typehelp type="${cld.unqualifiedName}.${fieldName}"/>
                     </c:forEach>
                   </html:link>
-                </span>
-              </c:when>
-              <c:when test="${collection.size > 0}">
-                <span style="white-space: nowrap">
+                </c:when>
+                <c:when test="${collection.size > 0}">
                   <html:link onclick="return toggleCollectionVisibility('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"  action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
                     <img id="img_${placement}_${fieldName}" border="0" src="images/plus.gif" alt="+" width="11" height="11"/>
                     <span class="collectionField">${fieldName}</span>
@@ -44,31 +42,29 @@
                       <im:typehelp type="${cld.unqualifiedName}.${fieldName}"/>
                     </c:forEach>
                   </html:link>
-                </html:link>
-                <c:if test="${collection.size == 1}">
-                  <c:forEach items="${LEAF_DESCRIPTORS_MAP[collection.table.rowObjects[0]]}" var="cld2">
-                    <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
-                      <c:set var="cld2" value="${cld2}" scope="request"/>
-                      <c:set var="backup" value="${object}"/>
-                      <c:set var="object" value="${collection.table.rowObjects[0]}" scope="request"/>
-                      <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/>
-                      <c:set var="object" value="${backup}" scope="request"/>
-                    </c:if>
-                  </c:forEach>
-                </c:if>
-              </c:when>
-              <c:otherwise>
-                <span class="nullStrike">
-                  <span style="white-space: nowrap">
+                  <c:if test="${collection.size == 1}">
+                    <c:forEach items="${LEAF_DESCRIPTORS_MAP[collection.table.rowObjects[0]]}" var="cld2">
+                      <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
+                        <c:set var="cld2" value="${cld2}" scope="request"/>
+                        <c:set var="backup" value="${object}"/>
+                        <c:set var="object" value="${collection.table.rowObjects[0]}" scope="request"/>
+                        <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/>
+                        <c:set var="object" value="${backup}" scope="request"/>
+                      </c:if>
+                    </c:forEach>
+                  </c:if>
+                </c:when>
+                <c:otherwise>
+                  <span class="nullStrike">
                     <img border="0" src="images/plus-disabled.gif" alt=" " width="11" height="11"/>
                     <span class="collectionField nullReferenceField">${fieldName}</span>
                     <c:forEach items="${object.clds}" var="cld">
                       <im:typehelp type="${cld.unqualifiedName}.${fieldName}"/>
                     </c:forEach>
                   </span>
-                </span>
-              </c:otherwise>
-            </c:choose>
+                </c:otherwise>
+              </c:choose>
+            </nobr>
           </div>
         </td>
         <td width="1%" nowrap>
