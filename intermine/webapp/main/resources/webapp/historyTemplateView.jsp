@@ -157,11 +157,17 @@
       </c:otherwise>
     </c:choose>
   
-      <span class="smallnote">
-        <html:link action="/import" titleKey="begin.importTemplatesDesc">
-          <fmt:message key="begin.importTemplates"/>
-        </html:link>
-      </span>
+    <span class="smallnote">
+      <html:link action="/summariseAllTemplates" titleKey="begin.summariseAllTemplatesDesc">
+        <fmt:message key="begin.summariseAllTemplates"/>
+      </html:link>
+    </span>
+    <BR/>
+    <span class="smallnote">
+      <html:link action="/import" titleKey="begin.importTemplatesDesc">
+        <fmt:message key="begin.importTemplates"/>
+      </html:link>
+    </span>
   </im:body>
 
 <!-- /historyTemplates.jsp -->
