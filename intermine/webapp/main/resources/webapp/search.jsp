@@ -76,7 +76,7 @@ window.onload = function() { document.getElementById("queryString").focus(); }
   </c:if>
   
   <p>
-    <html:link action="/templates"><fmt:message key="search.viewall"/></html:link>
+    <html:link action="/templates?scope=global"><fmt:message key="search.viewall"/></html:link>
   </p>
   
 </div>

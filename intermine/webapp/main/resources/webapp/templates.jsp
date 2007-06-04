@@ -13,7 +13,7 @@
       <div class="heading">${category}</div>
       <div class="body">
         <tiles:insert name="templateList.tile">
-          <tiles:put name="type" value="global"/>
+          <tiles:put name="scope" value="global"/>
           <tiles:put name="placement" value="${category}"/>
           <tiles:put name="noTemplatesMsgKey" value="templateList.noTemplates"/>
         </tiles:insert>
