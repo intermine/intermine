@@ -83,6 +83,9 @@ public class BagDetailsController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         String bagName = request.getParameter("bagName");
+        if (bagName == null) {
+            bagName = request.getParameter("name");
+        }
         InterMineBag imBag = profile.getSavedBags().get(bagName);
         /* forward to bag page if this is an invalid bag */
         if (imBag == null) {

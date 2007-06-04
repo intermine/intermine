@@ -58,10 +58,11 @@ public class BagDetailsAction extends Action
      *
      * @exception Exception if an error occurs
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -69,8 +70,11 @@ public class BagDetailsAction extends Action
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         String bagName = request.getParameter("bagName");
-        InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
-        
+        if (bagName == null) {
+            bagName = request.getParameter("name");
+        }
+        InterMineBag bag = profile.getSavedBags().get(bagName);
+
         String identifier = "bag." + bagName;
         PagedTable pc = SessionMethods.getResultsTable(session, identifier);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
@@ -83,15 +87,15 @@ public class BagDetailsAction extends Action
         q.setDistinct(false);
         SingletonResults res = os.executeSingleton(q);
 
-        WebPathCollection webPathCollection = 
-            new WebPathCollection(os, new Path(model, bag.getType()), res, model, webConfig, 
+        WebPathCollection webPathCollection =
+            new WebPathCollection(os, new Path(model, bag.getType()), res, model, webConfig,
                                   classKeys);
 
         if (pc == null) {
             pc = new PagedTable(webPathCollection);
             SessionMethods.setResultsTable(session, identifier, pc);
         }
-        
+
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("table", identifier)
                         .addParameter("size", "25").forward();
