@@ -343,7 +343,10 @@ public class ProfileManager
                 try {
                     Map.Entry entry = (Map.Entry) i.next();
                     template = (TemplateQuery) entry.getValue();
-                    SavedTemplateQuery savedTemplate = new SavedTemplateQuery();
+                    SavedTemplateQuery savedTemplate = template.getSavedTemplateQuery();
+                    if (savedTemplate == null) {
+                        savedTemplate = new SavedTemplateQuery();
+                    }
                     savedTemplate.setTemplateQuery(templateBinding.marshal(template));
                     savedTemplate.setUserProfile(userProfile);
                     osw.store(savedTemplate);

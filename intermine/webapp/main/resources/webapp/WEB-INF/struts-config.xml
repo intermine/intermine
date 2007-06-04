@@ -222,6 +222,9 @@
       <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
+    <action path="/summariseAllTemplates" type="org.intermine.web.struts.SummariseAllTemplatesAction">
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+    </action>
     <action path="/changeTableSize" name="changeTableSizeForm" type="org.intermine.web.struts.ChangeTableSizeAction" scope="request">
       <forward name="results" redirect="true" path="/results.do"/>
     </action>

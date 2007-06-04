@@ -284,6 +284,16 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     }
 
     /**
+     * Gets the saved template query object.
+     *
+     * @return a SavedTemplateQuery object that represents this TemplateQuery in the userprofile
+     * database
+     */
+    public SavedTemplateQuery getSavedTemplateQuery() {
+        return savedTemplateQuery;
+    }
+
+    /**
      * Populates the possibleValues data for this TemplateQuery from the os.
      *
      * @param os the production ObjectStore
