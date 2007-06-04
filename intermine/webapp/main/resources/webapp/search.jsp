@@ -26,7 +26,7 @@ window.onload = function() { document.getElementById("queryString").focus(); }
     <html:submit><fmt:message key="search.form.submit"/></html:submit>
   </html:form>
   <p class="smallnote">
-    <fmt:message key="begin.search.help.message.${searchForm.type}"/>
+    <fmt:message key="search.help.message.${searchForm.type}"/>
   </p>
   
   <c:if test="${!empty results}">
