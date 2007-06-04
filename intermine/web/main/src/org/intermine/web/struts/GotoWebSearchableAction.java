@@ -22,7 +22,7 @@ import org.apache.struts.action.ActionMapping;
  *
  * @author Kim Rutherford
  */
-public class GotoWebSearchable extends InterMineAction
+public class GotoWebSearchableAction extends InterMineAction
 {
     /** 
      * Method called when user has submitted search form.
