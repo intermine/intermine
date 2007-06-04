@@ -110,13 +110,6 @@
 
 
 
-<tiles:insert name="webSearchableList.tile">
-  <tiles:put name="type" value="template"/>
-  <tiles:put name="scope" value="global"/>
-  <tiles:put name="tags" value="im:frontpage im:public"/>
-</tiles:insert>
-
-
 
 <c:if test="${IS_SUPERUSER && !empty browseTemplateName && empty GLOBAL_TEMPLATE_QUERIES[browseTemplateName]}">
   <im:vspacer height="12"/>
