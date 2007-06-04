@@ -45,7 +45,7 @@
     <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
   </html:link>
 </c:if>
-<c:if test="${type == 'user'}">
+<c:if test="${scope == 'user'}">
   <%-- pull required messages --%>
   <fmt:message var="confirmMessage" key="templateList.deleteMessage">
     <fmt:param value="${templateQuery.name}"/>
