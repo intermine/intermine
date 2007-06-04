@@ -230,6 +230,14 @@ public class SearchRepository
     public Map<String, ? extends WebSearchable> getWebSearchableMap(String type) {
         return webSearchablesMap.get(type);
     }
+    
+    /**
+     * Return a map from type (TagTypes: "template", "bag", etc.) to Map from name to WebSearchable.
+     * @return the Map
+     */
+    public Map<String, Map<String, ? extends WebSearchable>> getWebSearchableMaps() {
+        return webSearchablesMap;
+    }
 
     /**
      * Add a Map from name to WebSearchable for the given type.  The Map can be retrieved later
