@@ -53,24 +53,41 @@ for my $species (keys %species_map) {
 	print FH $contents;		
 	close FH;
 	
+	#remove duplicate lines from the temporary file before comparing it to the current data
+	#put each line into a hash, print each line unless it is already seen i.e if it's hash 
+	#element has a value >1
+	my %seen = ();
+		{
+			local @ARGV = ($temp_file);
+			local $^I = '.bac';
+			while(<>){
+				$seen{$_}++;
+				next if $seen{$_} > 1;
+				print;
+			}
+			unlink "$temp_file.bac";
+		}
+	
+	
 	#compare the new data to the existing file and keep it if it is different  
-	my $result = &compare_files($old_file,$temp_file);
-	if($result == 1){
+	if(&compare_files($old_file,$temp_file)==1){
 		print "Keeping downloaded files.\n";
 		&update_files($main_dir,$filename,$temp_file);
 		$updated = 1;
-	}elsif($result == 0 ){
+	}else{
 		print "Downloaded files deleted.\n";
 		unlink $temp_file;
 	}
 }
-#create data directory, move files to archive and keep the new file	
+#create data directory, move old files to archive and keep the new file	
 sub update_files(){
 	my ($dir,$new_name,$tempfile) = @_;
 	
+	#for the first file, create archive and copy files to archive
 	if(&checkdir_exists($archive_dir)==1){
 		system("cp $dir/*mart_export.txt $archive_dir");
 	}
+	
 	my $orig_file = "$dir/$new_name";
 	system("mv $tempfile $orig_file");
 }
