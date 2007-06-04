@@ -14,7 +14,7 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.template.SearchRepository;
+import org.intermine.web.logic.search.SearchRepository;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

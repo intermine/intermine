@@ -39,8 +39,8 @@ import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayReference;
+import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.SearchRepository;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an object.

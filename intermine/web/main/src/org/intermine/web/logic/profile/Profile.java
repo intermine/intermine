@@ -27,10 +27,10 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
+import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.SearchRepository;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.lucene.store.Directory;

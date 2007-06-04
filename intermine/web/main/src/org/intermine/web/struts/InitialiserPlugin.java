@@ -55,12 +55,12 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.SearchRepository;
 
 /**
  * Initialiser for the InterMine web application.
