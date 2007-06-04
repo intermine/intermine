@@ -1,4 +1,4 @@
-package org.intermine.web.logic.template;
+package org.intermine.web.logic.search;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -17,8 +17,8 @@ import java.util.Map;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateQuery;
 
 import java.io.IOException;
 
