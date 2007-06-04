@@ -46,7 +46,7 @@ public class TemplateListController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        String type = (String) context.getAttribute("type");
+        String scope = (String) context.getAttribute("scope");
         String aspect = (String) context.getAttribute("placement");
 
         if (aspect.startsWith("aspect:")) {
@@ -57,7 +57,7 @@ public class TemplateListController extends TilesAction
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
         List templates = null;
         
-        if (StringUtils.equals("global", type)) {
+        if (StringUtils.equals("global", scope)) {
             if (interMineIdBag != null) {
                 templates = TemplateListHelper.getAspectTemplatesForType(aspect, servletContext, 
                                                                   interMineIdBag, new HashMap());
@@ -70,7 +70,7 @@ public class TemplateListController extends TilesAction
                             fieldExprs);
                 request.setAttribute("fieldExprMap", fieldExprs);
             }
-        } else if (StringUtils.equals("user", type)) {
+        } else if (StringUtils.equals("user", scope)) {
             //templates = profile.get
         }
         

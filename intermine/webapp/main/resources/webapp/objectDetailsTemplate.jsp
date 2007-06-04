@@ -66,7 +66,7 @@
   <div class="${displayObject == null ? '' : 'templateDetails'}">
     <span class="${cssClass}" id="label_${uid}">
       <im:templateLine scope="${scope}" templateQuery="${templateQuery}"
-                       className="${className}" interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" />
+                       interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" />
       <span id="count_${uid}" class="templateResCount"></span><br/>
     </span>
   </div>
