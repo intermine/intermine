@@ -16,7 +16,6 @@
 <attribute name="primaryAccession" value="P14599"/>
 <reference name="organism" ref_id="2_1"/>
 <reference name="sequence" ref_id="11_2"/>
-<collection name="synonyms"><reference ref_id="10_2"/></collection>
 </item>
 <item id="11_2" class="http://www.flymine.org/model/genomic#Sequence">
 <attribute name="length" value="887"/>
@@ -40,7 +39,6 @@
 <attribute name="primaryAccession" value="Q9W0K0"/>
 <reference name="organism" ref_id="2_1"/>
 <reference name="sequence" ref_id="11_1"/>
-<collection name="synonyms"><reference ref_id="10_1"/></collection>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="description" value="Interaction of Alzheimer's beta -amyloid precursor family proteins with scaffold proteins of the JNK signaling cascade."/>
@@ -50,7 +48,7 @@
 <item id="7_2" class="http://www.flymine.org/model/genomic#ProteinInteractionTerm">
 <attribute name="identifier" value="MI:0086"/>
 </item>
-<item id="14_2" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+<item id="14_1" class="http://www.flymine.org/model/genomic#ProteinInteraction">
 <attribute name="biologicalRole" value="unspecified role"/>
 <attribute name="experimentalRole" value="prey"/>
 <attribute name="shortName" value="appl-aplip1-2"/>
@@ -74,7 +72,7 @@
 <reference name="source" ref_id="3_1"/>
 <reference name="subject" ref_id="9_2"/>
 </item>
-<item id="14_1" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+<item id="14_2" class="http://www.flymine.org/model/genomic#ProteinInteraction">
 <attribute name="biologicalRole" value="unspecified role"/>
 <attribute name="experimentalRole" value="bait"/>
 <attribute name="shortName" value="appl-aplip1-2"/>

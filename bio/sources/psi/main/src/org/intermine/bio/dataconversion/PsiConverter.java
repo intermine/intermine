@@ -52,7 +52,7 @@ public class PsiConverter extends FileConverter
     private Map<String, Map> mapMaster = new HashMap<String, Map>();  // map of maps
     private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
-    private LinkedHashMap<String, String> proteins = new LinkedHashMap<String, String>();
+    private LinkedHashMap<String, String> proteinAccessions = new LinkedHashMap<String, String>();
     private Map<String, Object> experimentNames = new HashMap<String, Object>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> masterList = new HashMap<String, String>();
@@ -89,7 +89,7 @@ public class PsiConverter extends FileConverter
         mapMaster.put("organisms", organisms);
         mapMaster.put("publications", pubs);
         mapMaster.put("experimentNames", experimentNames);
-        mapMaster.put("proteins", proteins);
+        mapMaster.put("proteinAccessions", proteinAccessions);
         mapMaster.put("terms", terms);
         mapMaster.put("masterList", masterList);
         //masterList.put("nextClsId", "0");
@@ -122,7 +122,8 @@ public class PsiConverter extends FileConverter
         private Map<String, Integer> ids;
         private Map<String, String> aliases;
         private Map<String, String> pubs;
-        private Map<String, String> proteins = new HashMap<String, String>();
+        private Map<String, String> validProteins = new HashMap<String, String>();
+        private Map<String, String> proteinAccessions = new HashMap<String, String>();
         private Map<String, String> organisms = new HashMap<String, String>();
         private Map<String, String> terms = new HashMap<String, String>();
         private Map<String, String> masterList = new HashMap<String, String>();
@@ -137,7 +138,7 @@ public class PsiConverter extends FileConverter
         private StringBuffer attValue = null;
         private InteractionHolder holder;
         private ExperimentHolder experimentHolder;
-        private Item protein;
+        private Item protein, sequence;
         private Item comment;
         //private Item dataset;
         private String datasourceItemId;
@@ -145,7 +146,8 @@ public class PsiConverter extends FileConverter
         private String proteinId; // id used in xml to refer to protein
         private Set<Item> synonyms;
         private String psiDagTermItemId;
-
+        private boolean newProtein = false;
+        
 
         /**
          * Constructor
@@ -163,7 +165,7 @@ public class PsiConverter extends FileConverter
             this.aliases = (Map) mapMaster.get("aliases");
             this.organisms = (Map) mapMaster.get("organisms");
             this.pubs = (Map) mapMaster.get("publications");
-            this.proteins = (Map) mapMaster.get("proteins");
+            this.proteinAccessions = (Map) mapMaster.get("proteinAccessions");
             this.experimentNames = (Map) mapMaster.get("experimentNames");
             this.terms = (Map) mapMaster.get("terms");
             this.masterList = (Map) mapMaster.get("masterList");
@@ -171,7 +173,8 @@ public class PsiConverter extends FileConverter
                 this.psiDagTermItemId = masterList.get("psiDagTerm");
                 this.datasourceItemId = masterList.get("datasource");
             }
-            //nextClsId = masterList.get("nextClsId");
+            //nextClsId = mastproteinAccessionserList.get("nextClsId");
+            validProteins = new HashMap<String, String>();
         }
 
 
@@ -271,7 +274,6 @@ setComment();
                                 && stack.peek().equals("interactorList")) {
 
                     proteinId = attrs.getValue("id");
-                    protein = createItem("Protein");
 
                 // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
                 } else if (qName.equals("organism")
@@ -279,9 +281,14 @@ setComment();
 
                     /* if organism is valid, put the protein in our list for later reference */
                     String taxId = attrs.getValue("ncbiTaxId");
-                    if (organisms.get(taxId) != null && proteins.get(proteinId) == null) {
-                        protein.setReference("organism", organisms.get(taxId));
-                        proteins.put(proteinId, protein.getIdentifier());
+                    if (organisms.containsKey(taxId)) {
+                        if (protein != null) {
+                            protein.setReference("organism", organisms.get(taxId));
+                        }
+                        if (!validProteins.containsKey(proteinId)) {
+                            validProteins.put(proteinId, protein.getIdentifier());
+                        }
+                
                     }
 
                 // <interactorList><interactor id="4"><xref><primaryRef>
@@ -292,50 +299,51 @@ setComment();
                     String db = attrs.getValue("db");
                     String id = attrs.getValue("id");
                     synonyms = new HashSet<Item>();
-                    if (db != null && db.startsWith("uniprot")) {
-
-                        // accessions like P14734-1 are isoform identifiers, remove the '-n'
-                        // to get back to main protein id
-                        if (id.indexOf("-") > 0) {
-                            id = id.substring(0, id.indexOf("-"));
+                    if (db != null) {
+                        String primaryAccession = null;
+                        if (db.startsWith("uniprot")) {
+                            // accessions like P14734-1 are isoform identifiers, remove the '-n'
+                            // to get back to main protein id
+                            if (id.indexOf("-") > 0) {
+                                id = id.substring(0, id.indexOf("-"));
+                            }
+                            primaryAccession = id;
+                        } else if (db.equals("intact")) {
+                            primaryAccession = "IntAct:" + id;
+                        } else {
+                            primaryAccession = id;
                         }
-                        protein.setAttribute("primaryAccession", id);
-
+                        
+                        protein = createItem("Protein");
+                        protein.setAttribute("primaryAccession", primaryAccession);
+                        String proteinIdentifier = proteinAccessions.get(primaryAccession);
+                        if (proteinIdentifier == null) {
+                            // we have seen this before so set the correct identifier, this won't
+                            // be stored this time.
+                            proteinIdentifier = protein.getIdentifier();
+                        } else {
+                            protein.setIdentifier(proteinIdentifier);
+                        }
+                        
+                        // TODO this should maybe create a data source for each db
+                        
                         Item synonym = createItem("Synonym");
                         synonym.setAttribute("id", id);
-                        synonym.setAttribute("type", "accession");
+                        synonym.setAttribute("type", db.startsWith("uniprot") 
+                                             ? "accession" : "identifier");
                         synonym.setReference("source", datasourceItemId);
-                        synonym.setReference("subject", protein.getIdentifier());
-
+                        synonym.setReference("subject", proteinIdentifier);
                         synonyms.add(synonym);
-                        ReferenceList synonymsList = new ReferenceList("synonyms", new ArrayList());
-                        addToCollection(protein, synonymsList, synonym);
-
-                    } else if (!protein.hasAttribute("primaryAccession")
-                                    && db != null
-                                    && db.equals("intact")) {
-
-                        // Since there's no usable Uniprot id, just use the Intact internal id.
-                        protein.setAttribute("primaryAccession", "IntAct:" + id);
-
-                        ReferenceList synonymsList = new ReferenceList("synonyms", new ArrayList());
-                        // store one syn as "IntAct:<id>"
-                        Item synonym = createItem("Synonym");
-                        synonym.setReference("source", datasourceItemId);
-                        synonym.setAttribute("value", "IntAct:" + id);
-                        synonym.setAttribute("type", "identifier");
-                        synonym.setReference("subject", protein.getIdentifier());
-                        synonyms.add(synonym);
-                        addToCollection(protein, synonymsList, synonym);
-
-                        // store one syn as "<id>"
-                        Item idSynonym = createItem("Synonym");
-                        idSynonym.setReference("source", datasourceItemId);
-                        idSynonym.setAttribute("value", id);
-                        idSynonym.setAttribute("type", "identifier");
-                        idSynonym.setReference("subject", protein.getIdentifier());
-                        synonyms.add(synonym);
-                        addToCollection(protein, synonymsList, idSynonym);
+                        
+                        // create an extra synonym for proteins that have an IntAct identifier
+                        if (db.equals("intact")) {
+                            synonym = createItem("Synonym");
+                            synonym.setAttribute("id", id);
+                            synonym.setAttribute("type", "identifier");
+                            synonym.setReference("source", datasourceItemId);
+                            synonym.setReference("subject", proteinIdentifier);
+                            synonyms.add(synonym);
+                        }
                     }
 
                 // <interactorList><interactor id="4"><sequence>
@@ -577,25 +585,30 @@ setComment();
                                 && qName.equals("sequence")
                                 && stack.peek().equals("interactor")) {
 
-                    Item sequence = createItem("Sequence");
+                    sequence = createItem("Sequence");
                     String srcResidues = attValue.toString();
                     sequence.setAttribute("residues", srcResidues);
                     sequence.setAttribute("length", "" + srcResidues.length());
                     protein.setReference("sequence", sequence);
-                    writer.store(ItemHelper.convert(sequence));
-
                 // <interactorList><interactor id="4">
                 } else if (qName.equals("interactor")) {
 
-                    if (proteins.get(proteinId) != null) {
+                    String accession = protein.getAttribute("primaryAccession").getValue();
+                    if (!proteinAccessions.containsKey(accession)) {
                         writer.store(ItemHelper.convert(protein));
+                        proteinAccessions.put(protein.getAttribute("primaryAccession").getValue(),
+                                              protein.getIdentifier());
                         for (Object ob : synonyms) {
                             writer.store(ItemHelper.convert((Item) ob));
                         }
-                        protein = null;
-                        proteinId = null;
-                        synonyms = null;
+                        if (sequence != null) {
+                            writer.store(ItemHelper.convert(sequence));
+                        }
                     }
+                    protein = null;
+                    proteinId = null;
+                    synonyms = null;
+                    sequence = null;
 
                     //<interactionList><interaction>
                     //<participantList><participant id="5"><interactorRef>
@@ -604,8 +617,8 @@ setComment();
 
                     // get protein from our list, using the id as the key
                     String id = attValue.toString();
-                    if (proteins.get(id) != null) {
-                        String proteinRefId = proteins.get(id);
+                    if (validProteins.get(id) != null) {
+                        String proteinRefId = validProteins.get(id);
                         interactorHolder = new InteractorHolder(proteinRefId);
                         holder.addInteractor(interactorHolder);
                         holder.addProtein(proteinRefId);
@@ -857,6 +870,7 @@ setComment();
         throws SAXException {
 
                 try {
+                    // TODO why doesn't this call getTerm()???
                     Item psiDagTerm = createItem("OntologyTerm");
                     psiDagTermItemId = psiDagTerm.getIdentifier();
                     psiDagTerm.setAttribute("identifier", "MI:0117");
