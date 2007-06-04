@@ -311,9 +311,9 @@
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
     </action>
-    <action path="/gotows" type="org.intermine.web.struts.GotoWebSearchable">
+    <action path="/gotows" type="org.intermine.web.struts.GotoWebSearchableAction">
       <forward name="template" redirect="true" path="/template.do"/>
-      <forward name="bag" redirect="true" path="/bagView.do"/>
+      <forward name="bag" redirect="true" path="/bagDetails.do"/>
     </action>
     <action path="/initLogin" name="loginForm" validate="false" type="org.intermine.web.struts.LoginController">
     </action>
