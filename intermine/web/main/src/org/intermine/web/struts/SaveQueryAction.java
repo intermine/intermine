@@ -86,6 +86,7 @@ public class SaveQueryAction extends InterMineAction
         messages.add("saveQuery", new ActionMessage("saveQuery.message", queryName));
         request.setAttribute(Globals.MESSAGE_KEY, messages);
         
-        return mapping.findForward("query");
+        ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("mymine"));
+        return forwardParameters.addParameter("page", "saved").forward();
     }
 }
