@@ -81,14 +81,34 @@
       </a>
     </h4>
     <table>
-      <tr><td>
+      <tr>
+        <td>
           <html:textarea styleId="pasteInput" disabled="false" property="text" rows="10" cols="40"/>
-      </td></tr>
+        </td>
+        <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
+        <c:set var="bagExampleIdentifiers" value="${WEB_PROPERTIES['bag.example.identifiers']}"/>
+        <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">
+          <td rowspan="5">
+            <div>
+              <html:link href="" title="${bagExampleComment}" 
+                         onmouseover="javascript:$('bagExampleCommentDiv').style.visibility = 'visible'"
+                         onmouseout="javascript:$('bagExampleCommentDiv').style.visibility = 'hidden'"
+                         onclick="javascript:$('pasteInput').value='${bagExampleIdentifiers}'; return false;">
+                &lt;- example
+              </html:link>
+            </div>
+            <div id="bagExampleCommentDiv" style="visibility: hidden">
+              ${bagExampleComment}
+            </div>
+          </td>
+        </c:if>
+      </tr>
       <tr>
         <td align="right">
           <html:submit styleId="pasteSubmit" property="paste">
             <fmt:message key="bagBuild.makeBag"/>
           </html:submit>
+        </td>
       </tr>
       <tr>
         <td>
