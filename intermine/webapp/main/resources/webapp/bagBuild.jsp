@@ -90,7 +90,7 @@
         <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">
           <td rowspan="5">
             <div>
-              <html:link href="" title="${bagExampleComment}" 
+              <html:link href=""
                          onmouseover="javascript:$('bagExampleCommentDiv').style.visibility = 'visible'"
                          onmouseout="javascript:$('bagExampleCommentDiv').style.visibility = 'hidden'"
                          onclick="javascript:$('pasteInput').value='${bagExampleIdentifiers}'; return false;">
