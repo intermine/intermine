@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class WebPathCollection extends AbstractList implements WebTable
      * {@inheritDoc}
      */
     public Map<String, BagQueryResult> getPathToBagQueryResult() {
-        throw new UnsupportedOperationException();
+        return Collections.emptyMap();
     }
 
     /**
