@@ -23,6 +23,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -250,9 +251,18 @@ public class SaveBagAction extends InterMineAction
         public Object get(int index) {
             Object row = list.get(index);
             if (row instanceof List) {
-                return ((List) row).get(0);
+                Object obj = ((List) row).get(0);
+                if (obj instanceof InterMineObject) {
+                    return ((InterMineObject) obj).getId();
+                } else {
+                    return obj;
+                }
             } else {
-                return row;
+                if (row instanceof InterMineObject) {
+                    return ((InterMineObject) row).getId();
+                } else {
+                    return row;
+                }
             }
         }
 
