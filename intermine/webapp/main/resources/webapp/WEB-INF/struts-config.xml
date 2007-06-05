@@ -264,6 +264,7 @@
     </action>
     <action path="/saveQuery" name="saveQueryForm" type="org.intermine.web.struts.SaveQueryAction" input="query">
       <forward name="query" path="query.page"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/buildBag" name="buildBagForm" type="org.intermine.web.struts.BuildBagAction" input="mymine" parameter="action">
       <forward name="mymine" path="mymine.page"/>
