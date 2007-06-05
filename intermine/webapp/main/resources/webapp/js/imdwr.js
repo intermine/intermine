@@ -79,24 +79,30 @@ function roundToSignificantDecimal(n) {
     } else return 100;
 }
 
-function updateCountInColumnSummary() {
+function updateCountInColumnSummary(uniqueCountQid) {
     var countString = document.resultsCountText;
     if (countString != null) {
         document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
+
+        // only update the unique count once the row count is available
+        var count = parseInt(countString.match(/([\d]+)\s*$/g)[0]);
+
+        setTimeout("updateUniqueCountInColumnSummary(" + uniqueCountQid + "," + count + ")", 300);
     }
     setTimeout("updateCountInColumnSummary()", 1000);
 }
 
-function resultsCountCallback(results) {
+function resultsCountCallback(results, rowCount) {
     var size = results[0][0];
-    if (size > 1) {
-        document.getElementById('summary_unique_count').style.display='inline';
-        document.getElementById('summary_unique_count').innerHTML='Total unique values: ' + size;
+    if (rowCount > 1 && size > 1) {
+        var summaryUniqueCountElement = document.getElementById('summary_unique_count');
+        summaryUniqueCountElement.style.display='inline';
+        summaryUniqueCountElement.innerHTML='Total unique values: ' + size;
     }
 }
 
-function updateUniqueCountInColumnSummary(qid) {
-    getResults(qid, 1000, resultsCountCallback);
+function updateUniqueCountInColumnSummary(qid, rowCount) {
+    getResults(qid, 1000, resultsCountCallback, rowCount);
 }
 
 function getColumnSummary(columnName, columnDisplayName) {
@@ -152,25 +158,25 @@ function getColumnSummary(columnName, columnDisplayName) {
 
         var summaryLoadedElement = document.getElementById('summary_loaded');
         summaryLoadedElement.innerHTML = html;
-        setTimeout("updateCountInColumnSummary()", 200);
-        var qid = str[1];
-        setTimeout("updateUniqueCountInColumnSummary(" + qid + ")", 300);
+        var uniqueCountQid = str[1];
+        setTimeout("updateCountInColumnSummary(" + uniqueCountQid + ")", 200);
     });
 }
 
-function getResultsPoller(qid, timeout, userCallback) {
+function getResultsPoller(qid, timeout, userCallback, userData) {
     var callback = function(results) {
         if (results == null) {
             // try again
-            getResults(qid, timeout, userCallback);
+            getResults(qid, timeout, userCallback, userData);
         } else {
-            userCallback(results);
+            userCallback(results, userData);
         }
     }
 
     AjaxServices.getResults(qid, callback);
 }
 
-function getResults(qid, timeout, userCallback) {
-    setTimeout("getResultsPoller(" + qid + ", " + timeout + ", " + userCallback + ")", timeout);
+function getResults(qid, timeout, userCallback, userData) {
+    setTimeout("getResultsPoller(" + qid + ", " + timeout + ", " + userCallback + "," 
+               + userData + ")", timeout);
 }
