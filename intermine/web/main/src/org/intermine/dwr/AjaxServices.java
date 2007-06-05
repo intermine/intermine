@@ -266,10 +266,10 @@ public class AjaxServices
 
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Query query = MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
+        Query distinctQuery = MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
                                                   new HashMap<String, QueryNode>(), summaryPath);
         
-        Results results = os.execute(query);
+        Results results = os.execute(distinctQuery);
         List columns = Arrays.asList(new String[] {"col1", "col2"});
         WebResultsSimple webResults = new WebResultsSimple(results, columns);
         PagedTable pagedTable = new PagedTable(webResults);
@@ -279,8 +279,10 @@ public class AjaxServices
         = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
                                                           .getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startCollectionCount(clientState, session, messages,
-                                                         pagedTable.getAllRows());
+        Query countQuery =
+            MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
+                                        new HashMap<String, QueryNode>(), summaryPath);
+        String qid = SessionMethods.startQueryCount(clientState, session, messages, countQuery);
         return Arrays.asList(new Object[] {pagedTable.getRows(), qid});
     }
     
