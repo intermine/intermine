@@ -13,7 +13,6 @@
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7227"/>
-      <!--<property name="flybase.small" value="true"/>-->
     </source>
     <source name="flybase-dpse-gff" type="flybase-gff" dump="true">
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/gff"/>
