@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Collection;
+import java.util.TreeSet;
 
 /**
  * Collection of commonly used String utilities
@@ -344,5 +345,43 @@ public class StringUtil
         }
 
         return true;
+    }
+    /**
+     * Take a collection of Strings and return a combined string as a comma separated list
+     * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c". 
+     * @param elements a collection of strings to put in the list.
+     * @return a string with all the elements suitable for inclusion in a sentence.
+     */
+    public static String prettyList(Collection<String> elements) {
+        return StringUtil.prettyList(elements, false);
+        
+    }
+    
+    /**
+     * Take a collection of Strings and return a combined string as a comma separated list
+     * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c". 
+     * @param elements a collection of strings to put in the list.
+     * @param sort if true then order the strings alpabetically
+     * @return a string with all the elements suitable for inclusion in a sentence.
+     */
+    public static String prettyList(Collection<String> elements, boolean sort) {
+        Collection<String> col;
+        if (sort) {
+            col = new TreeSet<String>(elements); 
+        } else {
+            col = elements;
+        }
+        StringBuffer sb = new StringBuffer();
+        int pos = 1;
+        for (String str : col) {
+            sb.append(str);
+            if (pos == (col.size() - 1)) {
+                sb.append(" and ");
+            } else if (pos < col.size()) {
+                sb.append(", ");
+            }
+            pos++;
+        }
+        return sb.toString();
     }
 }
