@@ -68,7 +68,7 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
 
 GO terms that are enriched for genes in this bag compared to the reference population.  Smaller p-values show greater enrichment. Method: Hypergeometric test with Bonferroni error correction (using a significance value of 0.05).
 <br><br>
-Reference population: All genes from <c:out value='${goStatOrganisms}'/>.
+Reference population: <c:out value='${goStatOrganisms}'/>.
 <br><br>
 
 
