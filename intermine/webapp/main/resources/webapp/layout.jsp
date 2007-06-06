@@ -142,13 +142,15 @@
       </div>
     </c:if>
     
-
-<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
-</script>
-<script type="text/javascript">
-_uacct = "UA-1566492-2";
-urchinTracker();
-</script>
+    <c:set var="googleAnalyticsId" value="${WEB_PROPERTIES['google.analytics.id']}"/>
+    <c:if test="${!empty googleAnalyticsId}">
+      <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+      </script>
+      <script type="text/javascript">
+        _uacct = "${googleAnalyticsId}";
+        urchinTracker();
+      </script>
+    </c:if>
 
   </body>
 </html:html>
