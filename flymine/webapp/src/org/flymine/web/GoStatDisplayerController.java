@@ -71,213 +71,219 @@ public class GoStatDisplayerController extends TilesAction
                                   ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response)
-                    throws Exception {
+     throws Exception {
 
+         try {
+             HttpSession session = request.getSession();
+             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+             ServletContext servletContext = session.getServletContext();
+             ObjectStoreInterMineImpl os =
+                 (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-            HttpSession session = request.getSession();
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            ServletContext servletContext = session.getServletContext();
-            ObjectStoreInterMineImpl os =
-                (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
-
-            String significanceValue = null;
-            significanceValue = request.getParameter("significanceValue");
-            if (significanceValue == null)  {
-                significanceValue = new String("0.05");
-            }
-            String namespace = null;
-            namespace = request.getParameter("ontology");
-            if (namespace == null)  {
+             String significanceValue = null;
+             significanceValue = request.getParameter("significanceValue");
+             if (significanceValue == null)  {
+                 significanceValue = new String("0.05");
+             }
+             String namespace = null;
+             namespace = request.getParameter("ontology");
+             if (namespace == null)  {
                  namespace = new String("biological_process");
-            }
-            Double maxValue = new Double("0.10");
-            String bagName = request.getParameter("bagName");
-            InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
+             }
+             Double maxValue = new Double("0.10");
+             String bagName = request.getParameter("bagName");
+             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
 
-            // put all vars in request for getting on the .jsp page
-            request.setAttribute("bagName", bagName);
-            request.setAttribute("ontology", namespace);
+             // put all vars in request for getting on the .jsp page
+             request.setAttribute("bagName", bagName);
+             request.setAttribute("ontology", namespace);
 
-           // Collection organisms = getOrganisms(os, bag);
-            Collection badOntologies = getOntologies(); // list of ontologies to ignore
+             // Collection organisms = getOrganisms(os, bag);
+             Collection badOntologies = getOntologies(); // list of ontologies to ignore
 
-            // ~~~~~~~~~~~~~~~~~~ BAG QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            Query q = new Query();
-            q.setDistinct(false);
-            QueryClass qcGene = new QueryClass(Gene.class);
-            QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
-            QueryClass qcOrganism = new QueryClass(Organism.class);
-            QueryClass qcGo = new QueryClass(GOTerm.class);
+             // ~~~~~~~~~~~~~~~~~~ BAG QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+             Query q = new Query();
+             q.setDistinct(false);
+             QueryClass qcGene = new QueryClass(Gene.class);
+             QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
+             QueryClass qcOrganism = new QueryClass(Organism.class);
+             QueryClass qcGo = new QueryClass(GOTerm.class);
 
-            QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
-            QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
-            QueryField qfGeneId = new QueryField(qcGene, "id");
-            QueryField qfNamespace = new QueryField(qcGo, "namespace");
-            QueryField qfGoTermId = new QueryField(qcGo, "identifier");
-            QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-            
-            QueryFunction geneCount = new QueryFunction();
+             QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
+             QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
+             QueryField qfGeneId = new QueryField(qcGene, "id");
+             QueryField qfNamespace = new QueryField(qcGo, "namespace");
+             QueryField qfGoTermId = new QueryField(qcGo, "identifier");
+             QueryField qfOrganismName = new QueryField(qcOrganism, "name");
 
-            q.addFrom(qcGene);
-            q.addFrom(qcGoAnnotation);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcGo);
+             QueryFunction geneCount = new QueryFunction();
 
-            q.addToSelect(qfGoTermId);
-            q.addToSelect(geneCount);
-            q.addToSelect(qfGoTerm);
+             q.addFrom(qcGene);
+             q.addFrom(qcGoAnnotation);
+             q.addFrom(qcOrganism);
+             q.addFrom(qcGo);
 
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+             q.addToSelect(qfGoTermId);
+             q.addToSelect(geneCount);
+             q.addToSelect(qfGoTerm);
 
-            if (bag != null) {
-                // genes must be in bag
-                BagConstraint bc1 =
-                    new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-                cs.addConstraint(bc1);
-            }
+             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-            // get organisms
-            ArrayList organisms = (ArrayList) FlymineUtil.getOrganisms(os, bag);
-            
-            // limit to organisms in the bag
-            BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-            cs.addConstraint(bc2);
+             if (bag != null) {
+                 // genes must be in bag
+                 BagConstraint bc1 =
+                     new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+                 cs.addConstraint(bc1);
+             }
 
-            // ignore main 3 ontologies
-            BagConstraint bc3 = new BagConstraint(qfGoTermId, ConstraintOp.NOT_IN, badOntologies);
-            cs.addConstraint(bc3);
+             // get organisms
+             ArrayList organisms = (ArrayList) FlymineUtil.getOrganisms(os, bag);
+
+             // limit to organisms in the bag
+             BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
+             cs.addConstraint(bc2);
+
+             // ignore main 3 ontologies
+             BagConstraint bc3 = new BagConstraint(qfGoTermId, ConstraintOp.NOT_IN, badOntologies);
+             cs.addConstraint(bc3);
 
 
-            // gene.goAnnotation CONTAINS GOAnnotation
-            QueryCollectionReference qr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
-            ContainsConstraint cc1 =
-                new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcGoAnnotation);
-            cs.addConstraint(cc1);
+             // gene.goAnnotation CONTAINS GOAnnotation
+             QueryCollectionReference qr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
+             ContainsConstraint cc1 =
+                 new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcGoAnnotation);
+             cs.addConstraint(cc1);
 
-            // gene is from organism
-            QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
-            ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
-            cs.addConstraint(cc2);
+             // gene is from organism
+             QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
+             ContainsConstraint cc2 
+                                 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
+             cs.addConstraint(cc2);
 
-            // goannotation contains go term
-            QueryObjectReference qr3 = new QueryObjectReference(qcGoAnnotation, "property");
-            ContainsConstraint cc3 = new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcGo);
-            cs.addConstraint(cc3);
+             // goannotation contains go term
+             QueryObjectReference qr3 = new QueryObjectReference(qcGoAnnotation, "property");
+             ContainsConstraint cc3 = new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcGo);
+             cs.addConstraint(cc3);
 
-            // can't be a NOT relationship!
-            SimpleConstraint sc1 = new SimpleConstraint(qfQualifier,
+             // can't be a NOT relationship!
+             SimpleConstraint sc1 = new SimpleConstraint(qfQualifier,
                                                          ConstraintOp.IS_NULL);
-            cs.addConstraint(sc1);
+             cs.addConstraint(sc1);
 
-            // go term is of the specified namespace
-            SimpleConstraint sc2 = new SimpleConstraint(qfNamespace,
-                                                       ConstraintOp.EQUALS,
-                                                       new QueryValue(namespace));
-            cs.addConstraint(sc2);
-            q.setConstraint(cs);
-            q.addToGroupBy(qfGoTerm);
-            q.addToGroupBy(qfGoTermId);
-            
-            Results rBag = os.execute(q);
+             // go term is of the specified namespace
+             SimpleConstraint sc2 = new SimpleConstraint(qfNamespace,
+                                                         ConstraintOp.EQUALS,
+                                                         new QueryValue(namespace));
+             cs.addConstraint(sc2);
+             q.setConstraint(cs);
+             q.addToGroupBy(qfGoTerm);
+             q.addToGroupBy(qfGoTermId);
 
-            Iterator itBag = rBag.iterator();
-            HashMap geneCountMap = new HashMap();
-            HashMap goTermToIdMap = new HashMap();
+             Results rBag = os.execute(q);
 
-            // rattle through go terms for genes in bag
-            while (itBag.hasNext()) {
+             Iterator itBag = rBag.iterator();
+             HashMap geneCountMap = new HashMap();
+             HashMap goTermToIdMap = new HashMap();
 
-                // extract results
-                ResultsRow rrBag =  (ResultsRow) itBag.next();
+             // rattle through go terms for genes in bag
+             while (itBag.hasNext()) {
 
-                String goTermIdBag = (String) rrBag.get(0);
-//              put all vars in request for getting on the .jsp page
-                Long countBag = (java.lang.Long) rrBag.get(1);  
-                
-                // put in our map
-                geneCountMap.put(goTermIdBag, countBag);
+                 // extract results
+                 ResultsRow rrBag =  (ResultsRow) itBag.next();
 
-                // go term id & term, used to display on results page
-                goTermToIdMap.put(goTermIdBag, rrBag.get(2));
+                 String goTermIdBag = (String) rrBag.get(0);
+//               put all vars in request for getting on the .jsp page
+                 Long countBag = (java.lang.Long) rrBag.get(1);  
 
-            }
+                 // put in our map
+                 geneCountMap.put(goTermIdBag, countBag);
 
-            // ~~~~~~~~~~~~~~~~~~~~~~~ ALL QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            q = new Query();
-            q.setDistinct(false);
+                 // go term id & term, used to display on results page
+                 goTermToIdMap.put(goTermIdBag, rrBag.get(2));
 
-            q.addFrom(qcGene);
-            q.addFrom(qcGoAnnotation);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcGo);
+             }
 
-            q.addToSelect(qfGoTermId);
-            q.addToSelect(geneCount);
+             // ~~~~~~~~~~~~~~~~~~~~~~~ ALL QUERY ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+             q = new Query();
+             q.setDistinct(false);
 
-            cs = new ConstraintSet(ConstraintOp.AND);
-            cs.addConstraint(cc1);
-            cs.addConstraint(cc2);
-            cs.addConstraint(cc3);
-            cs.addConstraint(sc1);
-            cs.addConstraint(sc2);
-            cs.addConstraint(bc2);
-            cs.addConstraint(bc3);
-            q.setConstraint(cs);
+             q.addFrom(qcGene);
+             q.addFrom(qcGoAnnotation);
+             q.addFrom(qcOrganism);
+             q.addFrom(qcGo);
 
-            q.addToGroupBy(qfGoTermId);
+             q.addToSelect(qfGoTermId);
+             q.addToSelect(geneCount);
 
-            int geneCountAll = getGeneTotal(os, organisms);
-            int geneCountBag = bag.size();
+             cs = new ConstraintSet(ConstraintOp.AND);
+             cs.addConstraint(cc1);
+             cs.addConstraint(cc2);
+             cs.addConstraint(cc3);
+             cs.addConstraint(sc1);
+             cs.addConstraint(sc2);
+             cs.addConstraint(bc2);
+             cs.addConstraint(bc3);
+             q.setConstraint(cs);
 
-            Results rAll = os.execute(q);
-            rAll.setBatchSize(5000);
+             q.addToGroupBy(qfGoTermId);
 
-            Iterator itAll = rAll.iterator();
+             int geneCountAll = getGeneTotal(os, organisms);
+             int geneCountBag = bag.size();
 
-            Hypergeometric h = new Hypergeometric(geneCountAll);
+             Results rAll = os.execute(q);
+             rAll.setBatchSize(5000);
 
-            HashMap goGeneCountBagMap = new HashMap();
-            HashMap resultsMap = new HashMap();
+             Iterator itAll = rAll.iterator();
 
-            while (itAll.hasNext()) {
+             Hypergeometric h = new Hypergeometric(geneCountAll);
 
-                ResultsRow rrAll =  (ResultsRow) itAll.next();
-                // goterm identifier (ie GO:0000001, etc)
-                String goTerm = (String) rrAll.get(0);
+             HashMap goGeneCountBagMap = new HashMap();
+             HashMap resultsMap = new HashMap();
 
-                if (geneCountMap.containsKey(goTerm)) {
+             while (itAll.hasNext()) {
 
-                    // get counts
-                    Long countBag = (Long) geneCountMap.get(goTerm);
-                    int goGeneCountBag = countBag.intValue();
-                    Long countAll = (java.lang.Long) rrAll.get(1);
-                    int goGeneCount = countAll.intValue();
-                    double p =
-                        h.calculateP(geneCountBag, goGeneCountBag, goGeneCount, geneCountAll);
+                 ResultsRow rrAll =  (ResultsRow) itAll.next();
+                 // goterm identifier (ie GO:0000001, etc)
+                 String goTerm = (String) rrAll.get(0);
 
-                    // maps can't handle doubles
-                    resultsMap.put(goTerm, new Double(p));
-                    goGeneCountBagMap.put(goTerm, String.valueOf(goGeneCountBag));
-                }
-            }
+                 if (geneCountMap.containsKey(goTerm)) {
 
-            Bonferroni b = new Bonferroni(resultsMap, significanceValue);
-            b.calculate(maxValue);
-            HashMap adjustedResultsMap = b.getAdjustedMap();
+                     // get counts
+                     Long countBag = (Long) geneCountMap.get(goTerm);
+                     int goGeneCountBag = countBag.intValue();
+                     Long countAll = (java.lang.Long) rrAll.get(1);
+                     int goGeneCount = countAll.intValue();
+                     double p =
+                         h.calculateP(geneCountBag, goGeneCountBag, goGeneCount, geneCountAll);
 
-            SortableMap sortedMap = new SortableMap(adjustedResultsMap);
-            sortedMap.sortValues();
+                     // maps can't handle doubles
+                     resultsMap.put(goTerm, new Double(p));
+                     goGeneCountBagMap.put(goTerm, String.valueOf(goGeneCountBag));
+                 }
+             }
 
-            request.setAttribute("goStatPvalues", sortedMap);
-            request.setAttribute("goStatGeneTotals", goGeneCountBagMap);
-            request.setAttribute("goStatGoTermToId", goTermToIdMap);
-            request.setAttribute("goStatOrganisms", organisms.toString());
-           
-            return null;
-        }
+             Bonferroni b = new Bonferroni(resultsMap, significanceValue);
+             b.calculate(maxValue);
+             HashMap adjustedResultsMap = b.getAdjustedMap();
 
-        /* gets total number of genes */
-        private int getGeneTotal(ObjectStore os, Collection organisms) {
+             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
+             sortedMap.sortValues();
+
+             request.setAttribute("goStatPvalues", sortedMap);
+             request.setAttribute("goStatGeneTotals", goGeneCountBagMap);
+             request.setAttribute("goStatGoTermToId", goTermToIdMap);
+             request.setAttribute("goStatOrganisms", "All genes from:  " + organisms.toString());
+             return null;
+         } catch (Exception e) {
+             request.setAttribute("goStatOrganisms", "UNKNOWN");
+             return null;
+         }
+
+
+     }
+
+     /* gets total number of genes */
+     private int getGeneTotal(ObjectStore os, Collection organisms) {
 
             Query q = new Query();
             q.setDistinct(false);
