@@ -1209,50 +1209,6 @@
     </node>
   </query>
 </template>
-<template name="Gene_ProteinInteractingproteinConfidenceOtherDetails" title="Gene --&gt; Protein + Interacting Proteins + confidence value for interaction + interaction detection method + publication" longDescription="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction, the interaction detection method and the publication for the experiment performed." comment="02.01.07: Changed so runs from Gene.identifier so appears on ODPs. Rachel.">
-  <query name="Gene_ProteinInteractingproteinConfidenceOtherDetails" model="genomic" view="Synonym.subject.identifier Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.interactors.protein.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.evidence.confidence Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId" constraintLogic="A and D">
-    <pathDescription pathString="Synonym.subject.proteins" description="Protein">
-    </pathDescription>
-    <pathDescription pathString="Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection" description="Protein interaction detection">
-    </pathDescription>
-    <pathDescription pathString="Synonym.subject.proteins.interactionRoles.interaction.evidence.source.dataSource" description="Protein interaction &gt; data source">
-    </pathDescription>
-    <pathDescription pathString="Synonym.subject.proteins.interactionRoles.interaction.evidence" description="Protein interaction">
-    </pathDescription>
-    <pathDescription pathString="Synonym.subject" description="Gene">
-    </pathDescription>
-    <pathDescription pathString="Synonym.subject.proteins.interactionRoles.interaction.interactors.protein" description="Interacting protein">
-    </pathDescription>
-    <pathDescription pathString="Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.publication" description="Protein interaction">
-    </pathDescription>
-    <node path="Synonym" type="Synonym">
-    </node>
-    <node path="Synonym.subject" type="Gene">
-    </node>
-    <node path="Synonym.subject.proteins" type="Protein">
-    </node>
-    <node path="Synonym.subject.proteins.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Synonym.subject.proteins.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Synonym.subject.proteins.interactionRoles.interaction.evidence" type="ExperimentalResult">
-    </node>
-    <node path="Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis" type="ProteinInteractionExperiment">
-    </node>
-    <node path="Synonym.subject.proteins.interactionRoles.interaction.evidence.source" type="DataSet">
-    </node>
-    <node path="Synonym.subject.proteins.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Synonym.subject.proteins.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="!=" value="Synonym.subject.proteins" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Synonym.subject.identifier" type="String">
-      <constraint op="=" value="CG1046" description="Gene:" identifier="Gene.identifier" editable="true" code="D">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Gene_ProteinInteractingproteinPfamdomainStructure" title="Gene --&gt; Protein + Interacting Proteins + Pfam domain with predicted 3-D structure." longDescription="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." comment="07:02:07:Updated to work from gene identifier - Rachel.">
   <query name="Gene_ProteinInteractingproteinPfamdomainStructure" model="genomic" view="Gene.identifier Gene.symbol Gene.proteins.primaryAccession Gene.proteins.regions.structures.region.proteinFeature.identifier Gene.proteins.regions.structures.identifier Gene.proteins.interactingProteins.primaryAccession Gene.proteins.interactingProteins.regions.structures.region.proteinFeature.identifier Gene.proteins.interactingProteins.regions.structures.identifier">
     <pathDescription pathString="Gene.proteins.interactingProteins.regions.structures.region.proteinFeature" description="Interacting protein &gt; protein feature">
@@ -1269,32 +1225,6 @@
     </node>
     <node path="Gene.identifier" type="String">
       <constraint op="=" value="CG8340" description="Show protein interactions and Pfam domains with predicted 3-D structures for the protein product of gene:" identifier="Gene.identifier" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Gene_ProteinStructure" title="Gene [D. melanogaster] --&gt; Protein + regions with predicted 3-D structure." longDescription="For a particular Drosophila gene show any regions of its protein for which there is a predicted 3-D structure." comment="07:02:07:Updated to work from gene identifier - Rachel.">
-  <query name="Gene_ProteinStructure" model="genomic" view="Gene.identifier Gene.symbol Gene.proteins.primaryAccession Gene.proteins.regions.structures.region.proteinFeature.identifier Gene.proteins.regions.structures.region.objects.start Gene.proteins.regions.structures.region.objects.end Gene.proteins.regions.structures.identifier" constraintLogic="A and B">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.proteins" type="Protein">
-    </node>
-    <node path="Gene.proteins.regions" type="ProteinRegion">
-    </node>
-    <node path="Gene.proteins.regions.structures" type="ProteinStructure">
-    </node>
-    <node path="Gene.proteins.regions.structures.region" type="ProteinRegion">
-    </node>
-    <node path="Gene.proteins.regions.structures.region.objects" type="Location">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" code="B">
-      </constraint>
-    </node>
-    <node path="Gene.identifier" type="String">
-      <constraint op="=" value="CG1511" description="Show regions which have a predicted 3-D structure for the protein of gene:" identifier="Gene.identifier" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -1869,64 +1799,6 @@
     </node>
   </query>
 </template>
-<template name="InferInteractions_LEFT_BRACKET_proteinbased_RIGHT_BRACKET_" title="Infer interactions from one organism to another based on orthologues" longDescription="" comment="">
-  <query name="InferInteractions_LEFT_BRACKET_proteinbased_RIGHT_BRACKET_" model="genomic" view="Gene Gene.proteins Gene.proteins.interactionRoles.interaction.interactors.protein Gene.proteins.genes.orthologues.subject Gene.proteins.genes.orthologues.subject.proteins Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins" constraintLogic="A and B and C and D and E">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Organism1" identifier="Organism1" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.proteins" type="Protein">
-    </node>
-    <node path="Gene.proteins.organism" type="Organism">
-    </node>
-    <node path="Gene.proteins.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
-      </constraint>
-    </node>
-    <node path="Gene.proteins.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="!=" value="Gene.proteins" description="" identifier="" code="C">
-      </constraint>
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes" type="Gene">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues" type="Orthologue">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject" type="Gene">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism" type="Organism">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism.name" type="String">
-      <constraint op="=" value="Caenorhabditis elegans" description="Organism2" identifier="Organsim2" editable="true" code="E">
-      </constraint>
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins" type="Protein">
-    </node>
-    <node path="Gene.proteins.genes" type="Gene">
-    </node>
-    <node path="Gene.proteins.genes.orthologues" type="Orthologue">
-    </node>
-    <node path="Gene.proteins.genes.orthologues.subject" type="Gene">
-    </node>
-    <node path="Gene.proteins.genes.orthologues.subject.organism" type="Organism">
-    </node>
-    <node path="Gene.proteins.genes.orthologues.subject.organism.name" type="String">
-      <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="D">
-      </constraint>
-    </node>
-    <node path="Gene.proteins.genes.orthologues.subject.proteins" type="Protein">
-    </node>
-  </query>
-</template>
 <template name="Insertion_GeneLocation" title="P-element insertion --&gt; Genes that overlap this insertion +  chromosomal coordinates of insertion and genes." longDescription="For a specific P-element insertion, search for overlapping genes. Show chromosomal coordinates of the insertion and the genes." comment="">
   <query name="Insertion_GeneLocation" model="genomic" view="InsertionSite.identifier InsertionSite.chromosome.identifier InsertionSite.chromosomeLocation.start InsertionSite.chromosomeLocation.end InsertionSite.overlappingFeatures.identifier InsertionSite.overlappingFeatures.symbol InsertionSite.overlappingFeatures.chromosomeLocation.start InsertionSite.overlappingFeatures.chromosomeLocation.end InsertionSite.overlappingFeatures.chromosomeLocation.strand">
     <pathDescription pathString="InsertionSite.overlappingFeatures.chromosomeLocation" description="Overlapping gene &gt; chromosome location">
@@ -1969,42 +1841,6 @@
     </node>
     <node path="Protein.proteinFeatures.name" type="String">
       <constraint op="LIKE" value="%leucine%" description="that code for the following protein domain:" identifier="" editable="true" code="D">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="InterProDomain_ProteinInteractingProtein" title="Protein Domain --&gt; Proteins + Interacting proteins." longDescription="For proteins with a particular domain, search for proteins they have been shown to interact with. Display the confidence of the interaction and the PubMed id of the paper describing the experiment." comment="">
-  <query name="InterProDomain_ProteinInteractingProtein" model="genomic" view="Protein.proteinFeatures.interproId Protein.proteinFeatures.name Protein.identifier Protein.primaryAccession Protein.interactionRoles.interaction.interactors.protein.identifier Protein.interactionRoles.interaction.interactors.protein.primaryAccession Protein.interactionRoles.interaction.evidence.confidence Protein.interactionRoles.interaction.evidence.confidenceDesc Protein.interactionRoles.interaction.evidence.analysis.publication.pubMedId" constraintLogic="A and B and C and D">
-    <node path="Protein" type="Protein">
-    </node>
-    <node path="Protein.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Protein.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="!=" value="Protein" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles.interaction.evidence" type="ExperimentalResult">
-    </node>
-    <node path="Protein.organism" type="Organism">
-    </node>
-    <node path="Protein.organism.shortName" type="String">
-      <constraint op="=" value="D. melanogaster" description="Search for proteins from organism:" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Protein.proteinFeatures" type="ProteinFeature">
-    </node>
-    <node path="Protein.proteinFeatures.evidence" type="Evidence">
-    </node>
-    <node path="Protein.proteinFeatures.identifier" type="String">
-      <constraint op="LIKE" value="IPR%" description="" identifier="" code="C">
-      </constraint>
-    </node>
-    <node path="Protein.proteinFeatures.name" type="String">
-      <constraint op="LIKE" value="%leucine%" description="Constrain the name of the domain, use '*' for wildcards:" identifier="" editable="true" code="D">
       </constraint>
     </node>
   </query>
@@ -2245,28 +2081,6 @@
     </node>
   </query>
 </template>
-<template name="Organism_GeneProteinStructure" title="Organism [D. melanogaster] --&gt; Genes + Proteins with region with 3-D structure." longDescription="Search for genes whose proteins have regions for which there is a predicted 3-D structure.  Give the location of the region on the protein and the structure details." comment="">
-  <query name="Organism_GeneProteinStructure" model="genomic" view="Gene.identifier Gene.symbol Gene.proteins.primaryAccession Gene.proteins.regions.structures.region.proteinFeature.identifier Gene.proteins.regions.structures.region.objects.start Gene.proteins.regions.structures.region.objects.end Gene.proteins.regions.structures.identifier">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Show genes from:" identifier="Organism.name" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.proteins" type="Protein">
-    </node>
-    <node path="Gene.proteins.regions" type="ProteinRegion">
-    </node>
-    <node path="Gene.proteins.regions.structures" type="ProteinStructure">
-    </node>
-    <node path="Gene.proteins.regions.structures.region" type="ProteinRegion">
-    </node>
-    <node path="Gene.proteins.regions.structures.region.objects" type="Location">
-    </node>
-  </query>
-</template>
 <template name="Organism_GoTerm_Gene" title="Organism + GO term [with particular evidence code] --&gt; Genes" longDescription="Show genes from a particular organism annotated with a particular GO term with a particular evidence code." comment="">
   <query name="Organism_GoTerm_Gene" model="genomic" view="Gene.identifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.goEvidenceCodes.code" constraintLogic="A and B and C">
     <node path="Gene" type="Gene">
@@ -2373,36 +2187,6 @@
     </node>
   </query>
 </template>
-<template name="Organism_ProteinInteraction" title="Organism --&gt; All protein interactions." longDescription="For a particular organism, show all pairs of interacting proteins, the confidence assigned to the interaction and the PubMed ID of the paper describing the experiment." comment="">
-  <query name="Organism_ProteinInteraction" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.interactionRoles.interaction.interactors.protein.identifier Protein.interactionRoles.interaction.interactors.protein.primaryAccession Protein.interactionRoles.interaction.evidence.confidence Protein.interactionRoles.interaction.evidence.confidenceDesc Protein.interactionRoles.interaction.evidence.analysis.publication.pubMedId" constraintLogic="A and B">
-    <pathDescription pathString="Protein.interactionRoles.interaction.evidence" description="Protein interaction">
-    </pathDescription>
-    <pathDescription pathString="Protein.interactionRoles.interaction.interactors.protein" description="Interacting protein">
-    </pathDescription>
-    <pathDescription pathString="Protein.interactionRoles.interaction.evidence.analysis.publication" description="Protein interaction">
-    </pathDescription>
-    <node path="Protein" type="Protein">
-    </node>
-    <node path="Protein.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Protein.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="!=" value="Protein" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles.interaction.evidence" type="ExperimentalResult">
-    </node>
-    <node path="Protein.organism" type="Organism">
-    </node>
-    <node path="Protein.organism.shortName" type="String">
-      <constraint op="=" value="D. melanogaster" description="Show all protein interactions for organism:" identifier="Organism.shortName" editable="true" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Organism_TFBindingSiteLocationFactor" title="Organism [D. melanogaster] --&gt; TF Binding sites + chromosomal location and factors of the sites." longDescription="List all the FlyReg transcription factor binding sites in Drosophila melanogaster, with their locations and the factors that bind to the sites." comment="">
   <query name="Organism_TFBindingSiteLocationFactor" model="genomic" view="TFBindingSite.identifier TFBindingSite.gene.identifier TFBindingSite.gene.symbol TFBindingSite.chromosomeLocation.object.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.factor.identifier TFBindingSite.factor.symbol">
     <node path="TFBindingSite" type="TFBindingSite">
@@ -2428,126 +2212,6 @@
     <node path="Transcript.organism.name" type="String">
       <constraint op="=" value="Drosophila melanogaster" description="" identifier="Organism.name" editable="true" code="A">
       </constraint>
-    </node>
-  </query>
-</template>
-<template name="P2P _null_ interacting proteins upregulated in certain tissues" title="P2P - interacting proteins upregulated in certain tissues" longDescription="" comment="">
-  <query name="P2P _null_ interacting proteins upregulated in certain tissues" model="genomic" view="Protein.interactionRoles.interaction.shortName Protein.primaryAccession Protein.genes.microArrayResults.affyCall Protein.interactionRoles.interaction.interactors.protein.primaryAccession Protein.interactionRoles.interaction.interactors.protein.genes.microArrayResults.affyCall Protein.interactionRoles.interaction.interactors.protein.genes.microArrayResults.assays.name Protein.genes.microArrayResults.assays.name" constraintLogic="B and C and D and E and F and G and I and J and K and L and H and A">
-    <node path="Protein" type="Protein">
-    </node>
-    <node path="Protein.genes" type="Gene">
-    </node>
-    <node path="Protein.genes.microArrayResults" type="FlyAtlasResult">
-    </node>
-    <node path="Protein.genes.microArrayResults.assays" type="MicroArrayAssay">
-    </node>
-    <node path="Protein.genes.microArrayResults.assays.name" type="String">
-      <constraint op="=" value="Brain" description="Tissue of interest (protein A)" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Protein.genes.microArrayResults.affyCall" type="String">
-      <constraint op="=" value="Up" description="" identifier="" code="D">
-      </constraint>
-    </node>
-    <node path="Protein.genes.microArrayResults.enrichment" type="Double">
-      <constraint op="&gt;=" value="2.0" description="" identifier="" code="C">
-      </constraint>
-    </node>
-    <node path="Protein.genes.microArrayResults.MRNASignal" type="Double">
-      <constraint op="&gt;=" value="100.0" description="" identifier="" code="E">
-      </constraint>
-    </node>
-    <node path="Protein.genes.microArrayResults.presentCall" type="Integer">
-      <constraint op="&gt;=" value="3" description="" identifier="" code="F">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Protein.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Protein.interactionRoles.interaction.shortName" type="String">
-      <constraint op="=" value="" description="Interaction Short Name - Protein Pairs of interest" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="!=" value="Protein" description="" identifier="" code="G">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes" type="Gene">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.microArrayResults" type="FlyAtlasResult">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.microArrayResults.assays" type="MicroArrayAssay">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.microArrayResults.assays.name" type="String">
-      <constraint op="=" value="Brain" description="Tissue of interest (proteinB)" identifier="" editable="true" code="H">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.microArrayResults.affyCall" type="String">
-      <constraint op="=" value="Up" description="" identifier="" code="I">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.microArrayResults.enrichment" type="Double">
-      <constraint op="&gt;=" value="2.0" description="" identifier="" code="J">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.microArrayResults.MRNASignal" type="Double">
-      <constraint op="&gt;=" value="100.0" description="" identifier="" code="K">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.microArrayResults.presentCall" type="Integer">
-      <constraint op="&gt;=" value="3" description="" identifier="" code="L">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="PPinteractionsFromGene" title="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction and some experimental details." longDescription="" comment="Remove as duplicated. Need to create from gene for details pages - Rachel.">
-  <query name="PPinteractionsFromGene" model="genomic" view="Gene.identifier Gene.proteins.primaryAccession Gene.proteins.identifier Gene.proteins.name Gene.proteins.interactionRoles.interaction.evidence.confidence Gene.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name Gene.proteins.interactionRoles.interaction.interactors.protein.primaryAccession Gene.proteins.interactionRoles.interaction.interactors.protein.identifier Gene.proteins.interactionRoles.interaction.interactors.protein.name Gene.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId" constraintLogic="A and B">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.identifier" type="String">
-      <constraint op="=" value="CG4722" description="show the protein interactions for the protein product of gene:" identifier="Gene.identifier" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.proteins" type="Protein">
-    </node>
-    <node path="Gene.proteins.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.evidence" type="ExperimentalResult">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.evidence.analysis" type="ProteinInteractionExperiment">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="!=" value="Gene.proteins" description="" identifier="" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="PfamDomain_ProteinStructure" title="Pfam Domain --&gt; D. melanogaster proteins + predicted 3-D structure for Pfam domain." longDescription="Search for Drosophila proteins which contain a particular Pfam domain for which there is also a predicted 3-D structure." comment="">
-  <query name="PfamDomain_ProteinStructure" model="genomic" view="ProteinFeature.identifier ProteinFeature.proteins.primaryAccession ProteinFeature.proteins.regions.objects.start ProteinFeature.proteins.regions.objects.end ProteinFeature.proteins.regions.structures.identifier" constraintLogic="A and B">
-    <node path="ProteinFeature" type="ProteinFeature">
-    </node>
-    <node path="ProteinFeature.identifier" type="String">
-      <constraint op="=" value="PF00812" description="Show the Drosophila proteins which contain Pfam domain:  (and which also have a predicted 3-D structure for this region.)" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="ProteinFeature.proteins" type="Protein">
-    </node>
-    <node path="ProteinFeature.proteins.organism" type="Organism">
-    </node>
-    <node path="ProteinFeature.proteins.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
-      </constraint>
-    </node>
-    <node path="ProteinFeature.proteins.regions" type="ProteinRegion">
-    </node>
-    <node path="ProteinFeature.proteins.regions.objects" type="Location">
     </node>
   </query>
 </template>
@@ -2631,146 +2295,6 @@
     </node>
   </query>
 </template>
-<template name="ProteinInteractionOrganism_ProteinInteractionOrganism" title="All pairs of interacting proteins in organism1 --&gt; All pairs of interacting proteins in organism2." longDescription="Search for &quot;interologues&quot; (interologs): protein interactions conserved in different species. NOTE: Only relatively highly conserved interologues are reliable - see Mika S and Rost B (2006) PLoS Comput Biol 2(7): e79. DOI: 10.1371/journal.pcbi.0020079 " comment="">
-  <query name="ProteinInteractionOrganism_ProteinInteractionOrganism" model="genomic" view="Gene.organism.shortName Gene.proteins.identifier Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins.identifier Gene.orthologues.subject.organism.shortName Gene.orthologues.subject.proteins.identifier Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.identifier" constraintLogic="A and B and D and C and E">
-    <pathDescription pathString="Gene.proteins" description="Organism1 &gt; interacting protein1">
-    </pathDescription>
-    <pathDescription pathString="Gene.organism" description="Organism1">
-    </pathDescription>
-    <pathDescription pathString="Gene.orthologues.subject.proteins" description="Organism2 &gt; interacting protein1">
-    </pathDescription>
-    <pathDescription pathString="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein" description="Organism2 &gt; interacting protein2">
-    </pathDescription>
-    <pathDescription pathString="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins" description="Organism1 &gt; interacting protein2">
-    </pathDescription>
-    <pathDescription pathString="Gene" description="Organism1 &gt; gene">
-    </pathDescription>
-    <pathDescription pathString="Gene.orthologues.subject.organism" description="Organism2">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="For proteins that interact in this organism:" identifier="" editable="true" code="C">
-      </constraint>
-    </node>
-    <node path="Gene.organism.shortName" type="String">
-    </node>
-    <node path="Gene.orthologues" type="Orthologue">
-    </node>
-    <node path="Gene.orthologues.subject" type="Gene">
-    </node>
-    <node path="Gene.orthologues.subject.proteins" type="Protein">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="!=" value="Gene.orthologues.subject.proteins" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes" type="Gene">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues" type="Orthologue">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject" type="Gene">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins" type="Protein">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins.organism" type="Organism">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins.interactingProteins" type="Protein">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="=" value="Gene.proteins" description="" identifier="" code="D">
-      </constraint>
-    </node>
-    <node path="Gene.orthologues.subject.organism" type="Organism">
-    </node>
-    <node path="Gene.orthologues.subject.organism.name" type="String">
-      <constraint op="=" value="Caenorhabditis elegans" description="search for interologues in the following organism:" identifier="" editable="true" code="E">
-      </constraint>
-    </node>
-    <node path="Gene.proteins" type="Protein">
-    </node>
-    <node path="Gene.proteins.organism" type="Organism">
-      <constraint op="=" value="Gene.orthologues.subject.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.proteins.organism" description="" identifier="" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="ProteinInteraction_OrthologueOrganism" title="All pairs of interacting proteins in organism1 --&gt; Orthologues in organism2." longDescription="For the protein interactions of a particular organism, show all pairs of interacting proteins and their corresponding genes and the orthologues of these genes in another organism." comment="Do not precompute - rns">
-  <query name="ProteinInteraction_OrthologueOrganism" model="genomic" view="Protein.organism.shortName Protein.identifier Protein.interactionRoles.interaction.interactors.protein.identifier Protein.genes.identifier Protein.interactionRoles.interaction.interactors.protein.genes.identifier Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism.shortName Protein.genes.orthologues.subject.identifier Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.identifier" constraintLogic="A and B and D and C">
-    <pathDescription pathString="Protein.genes.orthologues.subject" description="Organism2 &gt; orthologue to interacting protein1 &gt; gene">
-    </pathDescription>
-    <pathDescription pathString="Protein.genes" description="Organism1 &gt; interacting protein1 &gt; gene">
-    </pathDescription>
-    <pathDescription pathString="Protein" description="Organism1 &gt; interacting protein1">
-    </pathDescription>
-    <pathDescription pathString="Protein.genes.orthologues.subject.organism" description="Organism1">
-    </pathDescription>
-    <pathDescription pathString="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject" description="Organism2 &gt; orthologue to interacting protein2 &gt; gene">
-    </pathDescription>
-    <pathDescription pathString="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism" description="Organism2">
-    </pathDescription>
-    <pathDescription pathString="Protein.interactionRoles.interaction.interactors.protein" description="Organism1 &gt; interacting protein2">
-    </pathDescription>
-    <pathDescription pathString="Protein.organism" description="Organsim1">
-    </pathDescription>
-    <pathDescription pathString="Protein.interactionRoles.interaction.interactors.protein.genes" description="Organism1 &gt; interacting protein2 &gt; gene">
-    </pathDescription>
-    <node path="Protein" type="Protein">
-    </node>
-    <node path="Protein.genes" type="Gene">
-    </node>
-    <node path="Protein.genes.orthologues" type="Orthologue">
-    </node>
-    <node path="Protein.genes.orthologues.subject" type="Gene">
-    </node>
-    <node path="Protein.genes.orthologues.subject.organism" type="Organism">
-      <constraint op="=" value="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism" description="" identifier="" code="C">
-      </constraint>
-    </node>
-    <node path="Protein.organism" type="Organism">
-    </node>
-    <node path="Protein.organism.name" type="String">
-      <constraint op="=" value="Saccharomyces cerevisiae" description="For the following organism, show all pairs of interacting proteins with their corresponding genes:" identifier="" editable="true" code="D">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Protein.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="!=" value="Protein" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes" type="Gene">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues" type="Orthologue">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject" type="Gene">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism" type="Organism">
-    </node>
-    <node path="Protein.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="and search for orthologues of these genes in the following organism:" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Protein_GOterms" title="Protein --&gt; GO terms." longDescription="Show all GO terms that have been associated with the gene that codes for the following protein." comment="">
   <query name="Protein_GOterms" model="genomic" view="Protein.primaryAccession Protein.genes.identifier Protein.genes.symbol Protein.genes.goAnnotation.property.namespace Protein.genes.goAnnotation.property.identifier Protein.genes.goAnnotation.property.name">
     <node path="Protein" type="Protein">
@@ -2848,92 +2372,6 @@
     <node path="Protein.primaryAccession" type="String">
       <constraint op="=" value="P09089" description="Show interactions for protein primary accession:" identifier="Protein.primaryAccession" editable="true" code="A">
       </constraint>
-    </node>
-  </query>
-</template>
-<template name="Protein_ProteinInteractionOrthologue" title="Protein [D. melanogaster] --&gt; Interacting proteins + orthologues." longDescription="For a particular protein from Drosophila melanogaster, show the proteins it has been shown to interact with and their orthologues." comment="">
-  <query name="Protein_ProteinInteractionOrthologue" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.genes.identifier Protein.proteinInteractions.interactors.interaction.shortName Protein.proteinInteractions.interactors.protein.identifier Protein.proteinInteractions.interactors.protein.primaryAccession Protein.proteinInteractions.interactors.protein.genes.identifier Protein.proteinInteractions.interactors.protein.genes.orthologues.subject.identifier Protein.proteinInteractions.interactors.protein.genes.orthologues.subject.organism.name" constraintLogic="A and B">
-    <pathDescription pathString="Protein.proteinInteractions.interactors.protein.genes" description="Interacting protein &gt; gene">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.interactors.protein" description="Interacting protein">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.interactors.interaction" description="Protein interaction">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.interactors.protein.genes.orthologues.subject" description="Interacting protein &gt; orthologue">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.interactors.protein.genes.orthologues.subject.organism" description="Interacting protein &gt; orthologue &gt; organism">
-    </pathDescription>
-    <node path="Protein" type="Protein">
-    </node>
-    <node path="Protein.primaryAccession" type="String">
-      <constraint op="=" value="P07207" description="" identifier="Protein.primaryAccession" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Protein.proteinInteractions" type="ProteinInteraction">
-    </node>
-    <node path="Protein.proteinInteractions.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Protein.proteinInteractions.interactors.protein" type="Protein">
-      <constraint op="!=" value="Protein" description="" identifier="" code="B">
-      </constraint>
-    </node>
-    <node path="Protein.proteinInteractions.interactors.protein.genes" type="Gene">
-    </node>
-    <node path="Protein.proteinInteractions.interactors.protein.genes.orthologues" type="Orthologue">
-    </node>
-  </query>
-</template>
-<template name="Protein_ProteinInteractionOrthologueRNAi" title="Protein [D. melanogaster] --&gt; Interacting proteins + C. elegans orthologues that have an RNAi phenotype." longDescription="For a particular protein from Drosophila melanogaster, show the proteins it has been shown to interact with and that have an orthologue in C. elegans with an associated RNAi phenotype." comment="Do not precompute - rns">
-  <query name="Protein_ProteinInteractionOrthologueRNAi" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.genes.identifier Protein.proteinInteractions.interactors.interaction.shortName Protein.proteinInteractions.interactors.protein.identifier Protein.proteinInteractions.interactors.protein.primaryAccession Protein.proteinInteractions.interactors.protein.genes.identifier Protein.proteinInteractions.interactors.protein.genes.orthologues.subject.identifier Protein.proteinInteractions.interactors.protein.genes.orthologues.subject.rnaiResults.name" constraintLogic="A and B">
-    <pathDescription pathString="Protein.proteinInteractions.interactors.protein.genes" description="Interacting protein &gt; gene">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.interactors.protein.genes.orthologues.subject.rnaiResults" description="C. elegans orthologue &gt; RNAi phenotype">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.interactors.protein" description="Interacting protein">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.interactors.protein.genes.orthologues.subject" description="Interacting protein &gt; C. elegans orthologue">
-    </pathDescription>
-    <pathDescription pathString="Protein.proteinInteractions.interactors.interaction" description="Protein  interaction">
-    </pathDescription>
-    <node path="Protein" type="Protein">
-    </node>
-    <node path="Protein.primaryAccession" type="String">
-      <constraint op="=" value="P07207" description="" identifier="Protein.primaryAccession" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Protein.proteinInteractions" type="ProteinInteraction">
-    </node>
-    <node path="Protein.proteinInteractions.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Protein.proteinInteractions.interactors.protein" type="Protein">
-      <constraint op="!=" value="Protein" description="" identifier="" code="B">
-      </constraint>
-    </node>
-    <node path="Protein.proteinInteractions.interactors.protein.genes" type="Gene">
-    </node>
-    <node path="Protein.proteinInteractions.interactors.protein.genes.orthologues" type="Orthologue">
-    </node>
-    <node path="Protein.proteinInteractions.interactors.protein.genes.orthologues.subject" type="Gene">
-    </node>
-    <node path="Protein.proteinInteractions.interactors.protein.genes.orthologues.subject.rnaiResults" type="RNAiPhenotype">
-    </node>
-  </query>
-</template>
-<template name="Protein_Structure" title="Protein [D. melanogaster] --&gt; regions with predicted 3-D structure." longDescription="For the following protein, show all regions for which there is a predicted 3D structure." comment="">
-  <query name="Protein_Structure" model="genomic" view="Protein.primaryAccession Protein.name Protein.regions.structures.region.proteinFeature.identifier Protein.regions.structures.region.objects.start Protein.regions.structures.region.objects.end Protein.regions.structures.identifier">
-    <node path="Protein" type="Protein">
-    </node>
-    <node path="Protein.primaryAccession" type="String">
-      <constraint op="=" value="Q8IMC2" description="" identifier="Protein.primaryAccession" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Protein.regions" type="ProteinRegion">
-    </node>
-    <node path="Protein.regions.structures" type="ProteinStructure">
-    </node>
-    <node path="Protein.regions.structures.region" type="ProteinRegion">
-    </node>
-    <node path="Protein.regions.structures.region.objects" type="Location">
     </node>
   </query>
 </template>
@@ -3345,60 +2783,6 @@
     </node>
     <node path="Pathway.name" type="String">
       <constraint op="=" value="Pentose phosphate pathway" description="Pathway name:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="transferInteractionsGeneBased" title="Transfer potential protein interactions onto the Genes of another organism via orthologues." longDescription="" comment="Do not make public - test template - Rachel.">
-  <query name="transferInteractionsGeneBased" model="genomic" view="Gene Gene.proteins Gene.proteins.interactionRoles.interaction.interactors.protein Gene.proteins.genes.orthologues.subject Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject" constraintLogic="A and B and C and D and E">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Transfer interactions from:" identifier="Organism1" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.proteins" type="Protein">
-    </node>
-    <node path="Gene.proteins.organism" type="Organism">
-    </node>
-    <node path="Gene.proteins.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
-      </constraint>
-    </node>
-    <node path="Gene.proteins.interactionRoles" type="ProteinInteractor">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction" type="ProteinInteraction">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors" type="ProteinInteractor">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein" type="Protein">
-      <constraint op="!=" value="Gene.proteins" description="" identifier="" code="C">
-      </constraint>
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes" type="Gene">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues" type="Orthologue">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject" type="Gene">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism" type="Organism">
-    </node>
-    <node path="Gene.proteins.interactionRoles.interaction.interactors.protein.genes.orthologues.subject.organism.name" type="String">
-      <constraint op="=" value="Apis mellifera" description="to:" identifier="organism2" editable="true" code="E">
-      </constraint>
-    </node>
-    <node path="Gene.proteins.genes" type="Gene">
-    </node>
-    <node path="Gene.proteins.genes.orthologues" type="Orthologue">
-    </node>
-    <node path="Gene.proteins.genes.orthologues.subject" type="Gene">
-    </node>
-    <node path="Gene.proteins.genes.orthologues.subject.organism" type="Organism">
-    </node>
-    <node path="Gene.proteins.genes.orthologues.subject.organism.name" type="String">
-      <constraint op="=" value="Apis mellifera" description="" identifier="" code="D">
       </constraint>
     </node>
   </query>
