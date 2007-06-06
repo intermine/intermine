@@ -77,101 +77,125 @@ public class BagDetailsController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
-        HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-        String bagName = request.getParameter("bagName");
-        if (bagName == null) {
-            bagName = request.getParameter("name");
-        }
-        InterMineBag imBag = profile.getSavedBags().get(bagName);
-        /* forward to bag page if this is an invalid bag */
-        if (imBag == null) {
-            return null; 
-        }
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = os.getModel();
-        Type type = (Type) webConfig.getTypes().get(model.getPackageName() 
+            HttpSession session = request.getSession();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            ServletContext servletContext = session.getServletContext();
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+
+            String bagName = request.getParameter("bagName");
+            if (bagName == null) {
+                bagName = request.getParameter("name");
+            }
+            InterMineBag imBag = profile.getSavedBags().get(bagName);
+            /* forward to bag page if this is an invalid bag */
+            if (imBag == null) {
+                return null; 
+            }
+            Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+            WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+            Model model = os.getModel();
+            Type type = (Type) webConfig.getTypes().get(model.getPackageName() 
                                                         + "." + imBag.getType());
-               
-        Set graphDisplayers = type.getGraphDisplayers();
-        ArrayList<String[]> graphDisplayerArray = new ArrayList<String[]>();
-        for (Iterator iter = graphDisplayers.iterator(); iter.hasNext();) {
-            GraphDisplayer graphDisplayer = (GraphDisplayer) iter.next();
-            String dataSetLoader = graphDisplayer.getDataSetLoader();
-            Class clazz = TypeUtil.instantiate(dataSetLoader);
-            Constructor constr = clazz.getConstructor(new Class[]
-            {
-                InterMineBag.class, ObjectStore.class
-            });
 
-            DataSetLdr dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
-            {
-                imBag, os
-            });
+            Set graphDisplayers = type.getGraphDisplayers();
+            ArrayList<String[]> graphDisplayerArray = new ArrayList<String[]>();
+            for (Iterator iter = graphDisplayers.iterator(); iter.hasNext();) {
 
-            //TODO use caching here
-            if (!dataSetLdr.getDataSets().isEmpty()) {
-                for (Iterator it = dataSetLdr.getDataSets().keySet().iterator(); it.hasNext();) {
-                    String key = (String) it.next();            
-                    GraphDataSet graphDataSet = (GraphDataSet) dataSetLdr.getDataSets().get(key);
-                    /* stacked bar chart */
-                    if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
-                        setStackedBarGraph(session, graphDisplayer, graphDataSet, 
-                                           graphDisplayerArray, bagName);
-                    /* regular bar chart */
-                    } else {
-                        setBarGraph(session, graphDisplayer, graphDataSet, 
-                                    graphDisplayerArray, bagName, key);
-                    } 
+                try {
+
+                    GraphDisplayer graphDisplayer = (GraphDisplayer) iter.next();
+                    String dataSetLoader = graphDisplayer.getDataSetLoader();
+                    Class clazz = TypeUtil.instantiate(dataSetLoader);
+                    Constructor constr = clazz.getConstructor(new Class[]
+                                                                        {
+                        InterMineBag.class, ObjectStore.class
+                                                                        });
+
+                    DataSetLdr dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
+                                                                                       {
+                        imBag, os
+                                                                                       });
+
+                    //TODO use caching here
+                    if (!dataSetLdr.getDataSets().isEmpty()) {
+                        for (Iterator it 
+                                  = dataSetLdr.getDataSets().keySet().iterator(); it.hasNext();) {
+                            String key = (String) it.next();            
+                            GraphDataSet graphDataSet 
+                            = (GraphDataSet) dataSetLdr.getDataSets().get(key);
+                            /* stacked bar chart */
+                            if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
+                                setStackedBarGraph(session, graphDisplayer, graphDataSet, 
+                                                   graphDisplayerArray, bagName);
+                            /* regular bar chart */
+                            } else {
+                                setBarGraph(session, graphDisplayer, graphDataSet, 
+                                            graphDisplayerArray, bagName, key);
+                            } 
+                        }
+                    }
+
+
+                } catch  (Exception e) {
+                    // TODO do something clever
+                    //return null;
+                    //throw new Exception();
                 }
             }
-        }
 
-        ArrayList<BagTableWidgetLoader> tableDisplayerArray = new ArrayList<BagTableWidgetLoader>();
-        Set bagTabledisplayers = type.getBagTableDisplayers();
-        for (Iterator iter = bagTabledisplayers.iterator(); iter.hasNext();) {
-            BagTableDisplayer bagTableDisplayer = (BagTableDisplayer) iter.next();
-            String ldrType = bagTableDisplayer.getType();
-            String collectionName = bagTableDisplayer.getCollectionName();
-            String fields = bagTableDisplayer.getFields();
-            String title = bagTableDisplayer.getTitle();
-            String description = bagTableDisplayer.getDescription();
-            BagTableWidgetLoader bagWidgLdr =
-                new BagTableWidgetLoader(title, description, ldrType, collectionName,
-                                         imBag, os, webConfig, model,
-                                         classKeys, fields);
-            tableDisplayerArray.add(bagWidgLdr);
-        }
+            ArrayList<BagTableWidgetLoader> tableDisplayerArray 
+                                                           = new ArrayList<BagTableWidgetLoader>();
+            Set bagTabledisplayers = type.getBagTableDisplayers();
+            for (Iterator iter = bagTabledisplayers.iterator(); iter.hasNext();) {
+                try {
+                    BagTableDisplayer bagTableDisplayer = (BagTableDisplayer) iter.next();
+                    String ldrType = bagTableDisplayer.getType();
+                    String collectionName = bagTableDisplayer.getCollectionName();
+                    String fields = bagTableDisplayer.getFields();
+                    String title = bagTableDisplayer.getTitle();
+                    String description = bagTableDisplayer.getDescription();
+                    BagTableWidgetLoader bagWidgLdr =
+                        new BagTableWidgetLoader(title, description, ldrType, collectionName,
+                                                 imBag, os, webConfig, model,
+                                                 classKeys, fields);
+                    tableDisplayerArray.add(bagWidgLdr);
 
-        Query q = new Query();
-        QueryClass qc = new QueryClass(InterMineObject.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
-        q.setDistinct(false);
-        SingletonResults res = os.executeSingleton(q);
+                } catch  (Exception e) {
+                    // TODO do something clever
+                    //return null;
+                    //throw new Exception();
+                }
+            }
 
-        WebPathCollection webPathCollection =
-            new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig,
-                                  classKeys);
+            Query q = new Query();
+            QueryClass qc = new QueryClass(InterMineObject.class);
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
+            q.setDistinct(false);
+            SingletonResults res = os.executeSingleton(q);
 
-        PagedTable pagedColl = new PagedTable(webPathCollection);
+            WebPathCollection webPathCollection =
+                new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig,
+                                      classKeys);
 
-        // TODO This code allows to load a PathQuery for the bag and load it in the QueryBuilder
-        // PathQuery pathQuery = MainHelper.webTableToPathQuery(pagedColl, model, imBag);
-        // session.setAttribute(Constants.QUERY, pathQuery);
-        // session.setAttribute("path", imBag.getType());
-        
-        request.setAttribute("bag", imBag);
-        request.setAttribute("bagSize", imBag.size());
-        request.setAttribute("pagedColl", pagedColl);
-        request.setAttribute("graphDisplayerArray", graphDisplayerArray);
-        request.setAttribute("tableDisplayerArray", tableDisplayerArray);
-        return null;
+            PagedTable pagedColl = new PagedTable(webPathCollection);
+
+            // TODO This code allows to load a PathQuery for the bag and load it in the QueryBuilder
+            // PathQuery pathQuery = MainHelper.webTableToPathQuery(pagedColl, model, imBag);
+            // session.setAttribute(Constants.QUERY, pathQuery);
+            // session.setAttribute("path", imBag.getType());
+
+            request.setAttribute("bag", imBag);
+            request.setAttribute("bagSize", imBag.size());
+            request.setAttribute("pagedColl", pagedColl);
+            request.setAttribute("graphDisplayerArray", graphDisplayerArray);
+            request.setAttribute("tableDisplayerArray", tableDisplayerArray);
+            return null;
+
+
+
     }
 
 
