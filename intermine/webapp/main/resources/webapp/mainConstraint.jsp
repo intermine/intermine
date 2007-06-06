@@ -217,15 +217,27 @@ options displayConstraint.optionsList
           </table>
         </c:when>
         <c:otherwise>
-          <p style="text-align: left;">
-            <fmt:message key="query.bagUploadConstraint"/><%--List of identifiers:--%>
-            <html:hidden property="attributeOp" styleId="attribute1" value="18" disabled="false" />
-            <html:text property="attributeValue" styleId="attribute2" value="${editingConstraintValue}"/>
-            <html:submit property="attribute" styleId="attributeSubmit" disabled="false" >
-              <fmt:message key="query.submitConstraint"/><%--Add to query--%>
-            </html:submit>
-          </p>
+        
+          <!-- lookup constraint -->
+          <c:if test="${!empty keyFields}">
+            <p style="text-align: left;">
+              <fmt:message key="query.lookupConstraintLabel"/><%--Search for:--%>
+              <html:hidden property="attributeOp" styleId="attribute1" value="18" disabled="false" />
+              <html:text property="attributeValue" styleId="attribute2" value="${editingConstraintValue}"/>
 
+              <html:submit property="attribute" styleId="attributeSubmit" disabled="false" >
+                <fmt:message key="query.submitConstraint"/><%--Add to query--%>
+              </html:submit>
+            </p>
+            <p style="text-align: left;">
+              <span class="smallnote">
+                <fmt:message key="query.lookupConstraintHelp"><%--This will search...--%>
+                  <fmt:param value="${keyFields}"/>
+                </fmt:message>
+              </span>
+            </p>
+          </c:if>
+          
           <c:if test="${editingNode.indentation != 0 && !empty SUBCLASSES[editingNode.type]}">
 
 

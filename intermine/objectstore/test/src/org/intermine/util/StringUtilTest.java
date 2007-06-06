@@ -196,4 +196,15 @@ public class StringUtilTest extends TestCase
         assertNull(StringUtil.reverseCapitalisation(null));
     }
 
+    public void testPrettyList() throws Exception {
+        List<String> col = new ArrayList<String>(Arrays.asList(new String[] {""}));
+        assertEquals("", StringUtil.prettyList(col));
+        col = new ArrayList<String>(Arrays.asList(new String[] {"a"}));
+        assertEquals("a", StringUtil.prettyList(col));
+        col = new ArrayList<String>(Arrays.asList(new String[] {"a", "b"}));
+        assertEquals("a and b", StringUtil.prettyList(col));
+        col = new ArrayList<String>(Arrays.asList(new String[] {"b", "c", "a"}));
+        assertEquals("a, b and c", StringUtil.prettyList(col));
+    }
+    
 }

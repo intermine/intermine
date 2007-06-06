@@ -494,6 +494,9 @@ table.results th.checkbox,table.results td.checkbox{
 .and {
   font-size: 10px;
 }
+.smallHelpText {
+  font-size:10px;
+}
 
 /* classes for the object details page */
 table.refSummary {

@@ -158,7 +158,7 @@ public class ClassKeyHelper
      *            the class name to look up
      * @return true if the class has any key fields
      */
-    public static boolean hasKeyFields(Map classKeys, String clsName) {
+    public static boolean hasKeyFields(Map<String, Set> classKeys, String clsName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
@@ -175,13 +175,40 @@ public class ClassKeyHelper
      * @param clsName the class name to look up
      * @return the fields that are class keys for the class
      */
-    public static Collection getKeyFields(Map classKeys, String clsName) {
+    public static Collection getKeyFields(Map<String, Set> classKeys, String clsName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
         return (Collection) classKeys.get(clsName);
     }
 
+    
+    /**
+     * Return names of the key fields for a given class.
+     * @param classKeys map of classname to set of keys
+     * @param clsName the class name to look up
+     * @return the names of fields that are class keys for the class
+     */
+    public static Collection<String> getKeyFieldNames(Map<String, Set> classKeys, String clsName) {
+        if (clsName.indexOf('.') != -1) {
+            clsName = TypeUtil.unqualifiedName(clsName);
+        }
+        Set fieldNames = new HashSet();
+        Set keys = classKeys.get(clsName);
+        if (keys != null) {
+            Iterator i = keys.iterator();
+            while (i.hasNext()) {
+                Set key = (Set) i.next();
+                Iterator j = key.iterator();
+                while (j.hasNext()) {
+                    fieldNames.add(((FieldDescriptor) j.next()).getName());
+                }
+            }
+        }
+        return fieldNames;
+    }
+    
+    
     /**
      * For a given object/field return true if it is an 'identifying' field. An
      * identifying field is an attribute (not a reference or collection) of the
