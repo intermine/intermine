@@ -38,16 +38,16 @@ function toggleForm(matchCount) {
           Also found&nbsp;
       </c:if>
       <c:set var="comCount" value="0"/>
-      <c:if test="${fn:length(duplicates)>0}">
-        <strong><span id="duplicateCount">${fn:length(duplicates)}</span> duplicate(s)</strong>
-        <c:set var="comCount" value="${comCount+1}"/>
-      </c:if>
       <c:if test="${fn:length(lowQualityMatches)>0}">
-        <c:if test="${comCount>=1}">,</c:if>
         <strong>
           <span id="lowQCount">${fn:length(lowQualityMatches)}</span>
           low quality matches
         </strong>
+        <c:set var="comCount" value="${comCount+1}"/>
+      </c:if>
+      <c:if test="${fn:length(duplicates)>0}">
+        <c:if test="${comCount>=1}">,</c:if>
+        <strong><span id="duplicateCount">${fn:length(duplicates)}</span> duplicate(s)</strong>
         <c:set var="comCount" value="${comCount+1}"/>
       </c:if>
       <c:if test="${fn:length(convertedObjects)>0}">
@@ -83,7 +83,7 @@ function toggleForm(matchCount) {
       </html:submit>
     </div>
   </div>
-  <c:if test="${!empty duplicates || ! empty lowQualityMatches}">
+  <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
     <div class="heading">
       <fmt:message key="bagUploadConfirm.issues"/>
     </div>
@@ -91,8 +91,15 @@ function toggleForm(matchCount) {
     <p><fmt:message key="bagUploadConfirm.issuesHelp">
          <fmt:param value="${bagUploadConfirmForm.bagType}"/>
        </fmt:message></p>
+
     <c:if test="${! empty lowQualityMatches}">
-    <p><fmt:message key="bagUploadConfirm.lowQ"  />
+      <p> 
+        <strong>
+          Low quality matches
+        </strong>
+      </p>
+
+      <p><fmt:message key="bagUploadConfirm.lowQ"/>
         <c:set var="issueMap" value="${lowQualityMatches}"/>
         <tiles:insert name="bagUploadConfirmIssue.tile">
           <tiles:put name="message" value="${message}"/>
@@ -102,6 +109,12 @@ function toggleForm(matchCount) {
     </p>
     </c:if>
     <c:if test="${! empty duplicates}">
+      <p> 
+        <strong>
+          Duplicates
+        </strong>
+      </p>
+
     <p><fmt:message key="bagUploadConfirm.duplicatesHeader"  />
         <c:set var="issueMap" value="${duplicates}"/>
         <tiles:insert name="bagUploadConfirmIssue.tile">
@@ -111,26 +124,26 @@ function toggleForm(matchCount) {
         </tiles:insert>
     </p>
     </c:if>
+
+    <c:if test="${!empty convertedObjects}">
+      <p>
+        <strong>
+          <fmt:message key="bagUploadConfirm.convertedHeader"/>
+        </strong>
+      </p>
+      <p><fmt:message key="bagUploadConfirm.converted">
+          <fmt:param value="${bagUploadConfirmForm.bagType}"/>
+        </fmt:message>
+        <c:set var="issueMap" value="${convertedObjects}"/>
+        <tiles:insert name="bagUploadConfirmIssue.tile">
+          <tiles:put name="message" value="${message}"/>
+          <tiles:put name="issueMap" beanName="issueMap"/>
+          <tiles:put name="issueType" value="converted"/>
+        </tiles:insert>
+      </p>
+    </c:if>
     </div>
   </c:if>
-
-<c:if test="${!empty convertedObjects}">
-  <div class="heading">
-    <fmt:message key="bagUploadConfirm.convertedHeader"/>
-  </div>
-  <div class="body">
-  <p><fmt:message key="bagUploadConfirm.converted">
-        <fmt:param value="${bagUploadConfirmForm.bagType}"/>
-      </fmt:message>
-      <c:set var="issueMap" value="${convertedObjects}"/>
-      <tiles:insert name="bagUploadConfirmIssue.tile">
-        <tiles:put name="message" value="${message}"/>
-        <tiles:put name="issueMap" beanName="issueMap"/>
-        <tiles:put name="issueType" value="converted"/>
-      </tiles:insert>
-  </p>
-  </div>
-</c:if>
 
 
   <c:if test="${fn:length(unresolved) > 0}">
