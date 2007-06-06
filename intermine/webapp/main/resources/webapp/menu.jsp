@@ -60,12 +60,14 @@
     <img src="images/inspect.gif" width="12" height="11" alt="-&gt;"/>
     &nbsp;
   </span>
+<!--
   <span class="menu-item">
     <html:link action="/search.do?type=bag">
       Search bags
     </html:link>
     &nbsp;
   </span>
+-->
   <span class="menu-item">
     <html:link action="/history.do">
       <fmt:message key="menu.history"/>
