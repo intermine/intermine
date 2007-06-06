@@ -85,9 +85,6 @@ public class AnoESTConverter extends BioDBConverter
 
             // some cluster have no location
             if (chromosomeIdentifier != null && start > 0 && end > 0) {
-                if (chromosomeIdentifier.equals("mitochondrial")) {
-                    chromosomeIdentifier = "dmel_mitochondrion_genome";
-                }
                 makeLocation(chromosomeIdentifier, cluster, start, end, strand);
             }
             getItemWriter().store(ItemHelper.convert(cluster));
