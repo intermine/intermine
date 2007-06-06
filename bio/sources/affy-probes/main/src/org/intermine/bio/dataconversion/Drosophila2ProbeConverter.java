@@ -77,19 +77,24 @@ public class Drosophila2ProbeConverter extends FileConverter
      * @see DataConverter#process
      */
     public void process(Reader reader) throws Exception {
-        String arrayName;
+        String arrayName = "";
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
-        String [] headers = null;
-        int lineNo = 0;
         boolean readingData = false;
 
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-
             // get the name of the array.  TODO also version?
             if (readingData) {
                 String seqType = line[6];
+                if (line.length > 12) {
+                    String chrId = line[12];
+                    if (arrayName.startsWith("Drosophila")
+                        && chrId.endsWith("h")) {
+                        // ignore heterchromatin chromosomes
+                        continue;
+                    }
+                }
 
                 Item probeSet = createProbeSet(line[3]);
                 if (seqType.equalsIgnoreCase("control sequence")) {
@@ -100,7 +105,6 @@ public class Drosophila2ProbeConverter extends FileConverter
                     probeSet.setAttribute("isControl", "false");
 
                     // create chromosome location for probe set
-
                     String chrId = line[12];
                     if (chrId != null && !chrId.equals("")) {
                         Item chr = createChromosome(line[12]);
