@@ -43,7 +43,7 @@ public abstract class BioDBConverter extends DBConverter
      * @param writer an ItemWriter used to handle the resultant Items
      * @param taxonId organism taxon id to use to create the Organism object for BioEntitys
      * @param dataSetTitle the title attribute to user when creating the DataSet item
-     * @param datasource_name 
+     * @param dataSourceName the name for the DataSource for this conversion
      * @throws ObjectStoreException thrown if ItemWriter.store() fails
      */
     public BioDBConverter(Database database, Model tgtModel, ItemWriter writer, int taxonId,
