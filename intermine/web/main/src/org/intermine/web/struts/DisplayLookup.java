@@ -18,7 +18,7 @@ import java.util.Set;
  *
  * @author Matthew Wakeling
  */
-class DisplayLookup
+public class DisplayLookup
 {
     private int matches;
     private Set<String> unresolved, duplicates, translated;
