@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
@@ -66,7 +68,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
     }
 
     private ObjectStore os;
-	private Map eIds;
+	private Map<String, Employee> eIds;
 	private BagQueryRunner runner;
 	
 	public BagQueryRunnerTest(String arg0) {
@@ -261,11 +263,25 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         assertEquals(4, emps.size());
     }
     
+    // test that getMatchandIssueIds returns all ids - expect one match, one
+    // duplicate (two ids) and one unresolved
+    public void testGetMatchAndIssueIds() throws Exception {
+        List input = Arrays.asList(new Object[] {"EmployeeA1", "Mr.", "gibbon"});
+        BagQueryResult res = runner.searchForBag("Manager", input, null);       
+        assertEquals(1, res.getMatches().size());
+        Set<Integer> ids = new HashSet(Arrays.asList(new Object[] {
+            eIds.get("EmployeeB1").getId(), 
+            eIds.get("EmployeeA1").getId(),
+            eIds.get("EmployeeB3").getId()}));
+        assertEquals(ids, res.getMatchAndIssueIds());
+        assertEquals(1, res.getUnresolved().size());
+    }
+    
 	// we need to test a query that matches a different type.  Probably 
 	// need to add another query to: testmodel/webapp/main/resources/webapp/WEB-INF/bag-queries.xml
 	
-	private Map getEmployeeIds() throws ObjectStoreException {
-		Map employees = new HashMap();
+	private Map<String, Employee> getEmployeeIds() throws ObjectStoreException {
+		Map<String, Employee> employees = new HashMap<String, Employee>();
 		Query q = new Query();
 		QueryClass qc = new QueryClass(Employee.class);
 		q.addFrom(qc);
