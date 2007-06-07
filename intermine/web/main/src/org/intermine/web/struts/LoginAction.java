@@ -58,7 +58,8 @@ public class LoginAction extends LoginHandler
 
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
         
-        if (lf.returnToString != null && lf.returnToString.startsWith("/")) {
+        if (lf.returnToString != null && lf.returnToString.startsWith("/") 
+            && !lf.returnToString.startsWith("error")) {
             return new ActionForward(lf.returnToString);            
         } else {
             return mapping.findForward("mymine");
