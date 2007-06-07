@@ -50,7 +50,7 @@ public class ImportQueriesAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Map queries = qif.getQueryMap(profile.getSavedBags(), classKeys);
-        
+
         if (queries.size() == 1
             && ((request.getParameter("query_builder") != null && request
                 .getParameter("query_builder").equals("yes")) || profile.getUsername() == null)) {
@@ -59,6 +59,13 @@ public class ImportQueriesAction extends InterMineAction
                                      response);
             return mapping.findForward("query");
         } else {
+            if (!profile.isLoggedIn()) {
+                ActionMessages actionMessages = getErrors(request);
+                actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                                   new ActionMessage("import.queries.notloggedin"));
+                saveErrors(request, actionMessages);
+                return mapping.findForward("importQueries");
+            }
             try {
                 profile.disableSaving();
                 Iterator iter = queries.keySet().iterator();
@@ -82,10 +89,10 @@ public class ImportQueriesAction extends InterMineAction
             }
         }
     }
-    
+
     /**
      * Checks that the query name doesn't already exist and returns a numbered
-     * name if it does.  
+     * name if it does.
      * @param queryName the query name
      * @param profile the user profile
      * @return a validated name for the query
@@ -93,10 +100,10 @@ public class ImportQueriesAction extends InterMineAction
     private String validateQueryName(String queryName, Profile profile) {
         String newQueryName = queryName;
 
-        if (!WebUtil.isValidName(queryName)) {   
+        if (!WebUtil.isValidName(queryName)) {
             newQueryName = WebUtil.replaceSpecialChars(newQueryName);
         }
-        
+
         if (profile.getSavedQueries().containsKey(newQueryName)) {
             int i = 1;
             while (true) {
