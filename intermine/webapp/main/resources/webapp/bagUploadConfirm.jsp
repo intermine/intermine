@@ -85,9 +85,13 @@ function toggleForm(matchCount) {
   </div>
   <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
     <div class="heading">
-      <fmt:message key="bagUploadConfirm.issues"/>
-    </div>
+      <fmt:message key="bagUploadConfirm.issues"/>    
+	</div>
     <div class="body">
+    
+	<p><span onclick="addAll('${jsArray}');" class="fakelink">Add all</span> | 
+		<span onclick="removeAll('${jsArray}');" class="fakelink">Remove all</span></p>
+        
     <p><fmt:message key="bagUploadConfirm.issuesHelp">
          <fmt:param value="${bagUploadConfirmForm.bagType}"/>
        </fmt:message></p>
