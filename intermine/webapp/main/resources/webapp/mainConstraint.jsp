@@ -172,13 +172,16 @@ options displayConstraint.optionsList
                   <td valign="top">
                     <html:select property="attributeOp" styleId="attribute5" onchange="updateConstraintForm(0, this.form.attributeOp, this.form.attributeOptions, this.form.attributeValue)">
                       <c:forEach items="${validOps}" var="op">
-                        <option value="${op.key}"
-                                <c:if test="${editingConstraintOperand == op.key}">
-                                  selected
-                                </c:if>
-                                >
-                          <c:out value="${op.value}"/>
-                        </option>
+                        <c:if test="${!(editingNode.type == 'String' && (op.value == '<=' || op.value == '>='))}">
+                          <option value="${op.key}"
+                                  <c:if test="${editingConstraintOperand == op.key}">
+                                    selected
+                                  </c:if>
+                                  >
+                            <im:displayableOpName opName="${op.value}"
+                                                  valueType="${editingNode.type}"/>
+                          </option>
+                        </c:if>
                       </c:forEach>
                     </html:select>
                   </td>
@@ -214,6 +217,15 @@ options displayConstraint.optionsList
                 </html:submit>
               </td>
             </tr>
+            <c:if test="${editingNode.type == 'String'}">
+              <tr>
+                <td colspan="3">
+                  <span class="smallnote">
+                    <fmt:message key="query.filterValue.wildcardHint"/>
+                  </span>
+                </td>
+              </tr>
+            </c:if>
           </table>
         </c:when>
         <c:otherwise>
