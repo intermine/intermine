@@ -2,7 +2,6 @@ var duplicateArray = new Array();
 var tdColorArray = new Array();
 
 
-
 function addId2Bag(id,row,parentId,issueType){
     if(document.getElementById('add_'+issueType+'_'+id).className=='fakelink'){
         document.getElementById('add_'+issueType+'_'+id).className = '';
@@ -72,4 +71,28 @@ function removeIdFromBag(id,row, parentId, issueType){
         }      
         toggleForm(document.getElementById('matchCount').innerHTML);        
     }
+}
+
+function addAll(flatArray){
+	// split string into rows
+	// a,b,c,d|e,f,g,h
+	var a = flatArray.split("|");
+	
+	for (i=0;i<a.length-1;i++) {
+		// split rows into vars
+		var b = a[i].split(",");
+		addId2Bag(b[0],b[1],b[2],b[3]);
+	}
+}
+
+function removeAll(flatArray){
+	// split string into rows
+	// a,b,c,d|e,f,g,h
+	var a = flatArray.split("|");
+	
+	for (i=0;i<a.length-1;i++) {
+		// split rows into vars
+		var b = a[i].split(",");
+		removeIdFromBag(b[0],b[1],b[2],b[3]);
+	}
 }

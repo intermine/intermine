@@ -13,6 +13,10 @@ package org.intermine.web.struts;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -24,12 +28,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.DynamicUtil;
+
+import org.intermine.web.logic.bag.ConvertedObjectPair;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.results.InlineResultsTable;
+
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Controller for the bagUploadConfirm
  * @author Kim Rutherford
@@ -50,6 +66,7 @@ public class BagUploadConfirmController extends TilesAction
         request.setAttribute("issues", issues);
         request.setAttribute("unresolved", bagQueryResult.getUnresolved());
         ServletContext servletContext = session.getServletContext();
+        StringBuffer flattenedArray = new StringBuffer();
         
         // get all of the "low quality" matches ie. those found by queries other than matching 
         // class keys
@@ -63,6 +80,7 @@ public class BagUploadConfirmController extends TilesAction
             }
         }
         request.setAttribute("lowQualityMatches", lowQualityMatches);
+        flattenedArray.append(setJSArray(lowQualityMatches, "other"));
         
         // find all input strings that match more than one object
         Map duplicates = new LinkedHashMap();
@@ -75,7 +93,8 @@ public class BagUploadConfirmController extends TilesAction
             }
         }
         request.setAttribute("duplicates", duplicates);
-
+        flattenedArray.append(setJSArray(duplicates, "duplicate"));
+        
         // make a List of [input string, ConvertedObjectPair]
         Map convertedObjects = new LinkedHashMap();
         Map convertedMap = (Map) bagQueryResult.getIssues().get(BagQueryResult.TYPE_CONVERTED);
@@ -87,7 +106,8 @@ public class BagUploadConfirmController extends TilesAction
             }
         }
         request.setAttribute("convertedObjects", convertedObjects);
-
+        flattenedArray.append(setJSArray(convertedObjects, "convertedObject"));
+        
         // create a string containing the ids of the high-quality matches
         StringBuffer matchesStringBuffer = new StringBuffer();
         BagUploadConfirmForm bagUploadConfirmForm = ((BagUploadConfirmForm) form);
@@ -117,6 +137,52 @@ public class BagUploadConfirmController extends TilesAction
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         bagUploadConfirmForm.setExtraFieldValue((String) TypeUtil.unqualifiedName(extraClassName));
         request.setAttribute("matchCount", new Integer(matchCount));
+        request.setAttribute("jsArray", flattenedArray);
         return null;
     }
+    
+    // takes all the issues and puts them in a flattened array that the javascript can use for
+    // the "add all" and "remove all" buttons
+    private String setJSArray(Map issues, String issueType) {
+
+        StringBuffer sb = new StringBuffer();
+        Map orderedIssuesMap = new LinkedHashMap(issues);
+
+        // Make a Map from identifier to a List of rows for display.  Each row will contain
+        // information about one object.  The row List will contain (first) the class name, then
+        // a ResultElement object for each field to display.
+        
+        // a map from identifiers to indexes into objectList (and hence into the InlineResultsTable)
+        Map identifierResultElementMap = new LinkedHashMap();
+        
+        // a map from identifier to initial type (for converted identifiers)
+        Map initialTypeMap = new HashMap();
+     
+        
+        int objectListIndex = 0;
+        Iterator identifierIter = orderedIssuesMap.keySet().iterator();
+        while (identifierIter.hasNext()) {
+            String identifier = (String) identifierIter.next();
+            identifierResultElementMap.put(identifier, new ArrayList());
+            List objectListPerIdentifierMap = (List) orderedIssuesMap.get(identifier);
+            for (int objIndex = 0; objIndex < objectListPerIdentifierMap.size(); objIndex++) {
+                Object obj = objectListPerIdentifierMap.get(objIndex);
+                InterMineObject o;
+                if (obj instanceof ConvertedObjectPair) {
+                    ConvertedObjectPair pair = (ConvertedObjectPair) obj;
+                    o = (InterMineObject) pair;
+                } else {
+                    o = (InterMineObject) obj;
+                }
+                //addId2Bag('${resultElementRow[rowStatus.index]}','${idcounter}',
+                //          '${identifier}','${issueType}');
+                sb.append(o.getId() + "," + objectListIndex + "," 
+                          + identifier + "," + issueType + "|");
+                objectListIndex++;
+            }
+        }
+     
+        return sb.toString();
+    }
+    
 }
