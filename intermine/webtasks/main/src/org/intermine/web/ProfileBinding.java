@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -286,12 +287,12 @@ public class ProfileBinding
      * @param username default username - used if there is no username in the XML
      * @param password default password
      * @param tags a set to populate with user tags
-     * @param classKeys class key fields in model
+     * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter for the production database, to write bags
      * @return the new Profile
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, String username,
-            String password, Set tags, Map classKeys, ObjectStoreWriter osw) {
+            String password, Set tags, ServletContext servletContext, ObjectStoreWriter osw) {
         try {
             IdUpgrader idUpgrader = new IdUpgrader() {
                 public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
@@ -300,8 +301,8 @@ public class ProfileBinding
                 }
             };
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, idUpgrader, username, password, tags, classKeys,
-                                   osw);
+                new ProfileHandler(profileManager, idUpgrader, username, password, tags,
+                                   servletContext, osw);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

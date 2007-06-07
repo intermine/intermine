@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -78,13 +79,14 @@ public class SavedQueryBinding
      * @param reader the saved templates
      * @return a Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
-     * @param classKeys class key fields for the model
+     * @param servletContext global ServletContext object
      */
-    public static Map<String, SavedQuery> unmarshal(Reader reader, Map savedBags, Map classKeys) {
+    public static Map<String, SavedQuery> unmarshal(Reader reader, Map savedBags, 
+                                                    ServletContext servletContext) {
         Map<String, SavedQuery> queries = new LinkedHashMap<String, SavedQuery>();
         try {
             SAXParser.parse(new InputSource(reader), new SavedQueryHandler(queries, savedBags, 
-                                                                           classKeys));
+                                                                           servletContext));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

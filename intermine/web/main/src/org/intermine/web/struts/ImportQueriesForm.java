@@ -48,17 +48,17 @@ public class ImportQueriesForm extends ValidatorForm
     /**
      * Return a Map from query name to Query object.
      * @param savedBags map from bag name to bag
-     * @param classKeys class keys for model
+     * @param servletContext global ServletContext object
      * @return the Map
      */
-    public Map getQueryMap(Map savedBags, Map classKeys) {
+    public Map getQueryMap(Map savedBags, ServletContext servletContext) {
         if (map == null) {
             try {
-                map = PathQueryBinding.unmarshal(new StringReader(getXml()), savedBags, classKeys);
+                map = PathQueryBinding.unmarshal(new StringReader(getXml()), savedBags, servletContext);
             } catch (Exception e) {
                 map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml() 
                                                                   + "</queries>"), savedBags,
-                                                                  classKeys);
+                                                                  servletContext);
             }
         }
         return map;
@@ -125,11 +125,10 @@ public class ImportQueriesForm extends ValidatorForm
         }
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
         try {
-           if (getQueryMap(profile.getSavedBags(), classKeys).size() == 0) {
+            if (getQueryMap(profile.getSavedBags(), servletContext).size() == 0) {
                if (errors == null) {
                    errors = new ActionErrors();
                }

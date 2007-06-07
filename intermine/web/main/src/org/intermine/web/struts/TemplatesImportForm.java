@@ -104,7 +104,7 @@ public class TemplatesImportForm extends ValidatorForm
             return errors;
         }
         try {
-           TemplateHelper.xmlToTemplateMap(getXml(), profile.getSavedBags(), classKeys);
+           TemplateHelper.xmlToTemplateMap(getXml(), profile.getSavedBags(), servletContext);
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();

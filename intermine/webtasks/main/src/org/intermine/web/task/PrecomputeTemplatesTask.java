@@ -19,9 +19,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.ResultsInfo;
+
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -29,14 +30,20 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
+
+import javax.servlet.ServletContext;
+
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+
+import servletunit.ServletContextSimulator;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -240,7 +247,9 @@ public class PrecomputeTemplatesTask extends Task
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
             Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-            pm = new ProfileManager(os, userProfileOS, classKeys);
+            ServletContext servletContext = new ServletContextSimulator();
+            servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
+            pm = new ProfileManager(os, userProfileOS, servletContext);
         } catch (Exception err) {
             throw new BuildException("Exception creating objectstore/profile manager", err);
         }

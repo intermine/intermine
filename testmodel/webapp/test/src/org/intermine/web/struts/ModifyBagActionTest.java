@@ -1,6 +1,5 @@
 package org.intermine.web.struts;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,7 +7,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -18,13 +23,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
@@ -36,6 +34,10 @@ import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+
+import servletunit.ServletContextSimulator;
 import servletunit.struts.MockStrutsTestCase;
 
 
@@ -61,7 +63,9 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        profileManager = new ProfileManager(os, userProfileOSW, Collections.EMPTY_MAP);
+        ServletContext servletContext = new ServletContextSimulator();
+        servletContext.setAttribute(Constants.CLASS_KEYS, Collections.emptyMap());
+        profileManager = new ProfileManager(os, userProfileOSW, servletContext);
 
         Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
                                       new HashMap(), new HashMap(), new HashMap());

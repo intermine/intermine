@@ -10,10 +10,6 @@ package org.intermine.web.logic.profile;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,12 +20,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.CEO;
@@ -41,23 +39,31 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.bag.BagElement;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.template.TemplateQuery;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+
+import javax.servlet.ServletContext;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLUnit;
+
+import servletunit.ServletContextSimulator;
 
 /**
  * Tests for the Profile class.
@@ -74,6 +80,7 @@ public class ProfileManagerTest extends XMLTestCase
     private String bobPass = "bob_pass";
     private String sallyPass = "sally_pass";
     private Map classKeys;
+    private ServletContext servletContext;
     
     public ProfileManagerTest(String arg) {
         super(arg);
@@ -91,7 +98,9 @@ public class ProfileManagerTest extends XMLTestCase
         classKeyProps.load(getClass().getClassLoader()
                            .getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-        pm = new ProfileManager(os, uosw, classKeys);
+        servletContext = new ServletContextSimulator();
+        servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
+        pm = new ProfileManager(os, uosw, servletContext);
     }
 
     private void setUpUserProfiles() throws Exception {
@@ -258,7 +267,7 @@ public class ProfileManagerTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), classKeys);
+        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), servletContext);
 
         assertEquals(3, pm.getProfileUserNames().size());
 
@@ -350,7 +359,7 @@ public class ProfileManagerTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), classKeys);
+        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), servletContext);
 
         pm.addTag("test-tag", "Department.name", "attribute", "bob");
         pm.addTag("test-tag", "Department.company", "reference", "bob");
@@ -438,7 +447,7 @@ public class ProfileManagerTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), classKeys);
+        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), servletContext);
 
         pm.addTag("test_tag1", "Department.name", "attribute", "bob");
         pm.addTag("test_tag1", "Department.company", "reference", "bob");

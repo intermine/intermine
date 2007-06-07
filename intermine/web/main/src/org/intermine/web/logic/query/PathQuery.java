@@ -30,6 +30,8 @@ import org.intermine.util.CollectionUtil;
 
 import java.io.StringReader;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -529,10 +531,11 @@ public class PathQuery
      * Check validity of receiver by trying to create an objectstore Query. If
      * conversion fails, the exception is recorded and isValid will return false.
      * @param savedBags Map from bag name to bag
+     * @param servletContext global ServletContext object
      */
-    protected void checkValidity(Map savedBags) {
+    protected void checkValidity(Map savedBags, ServletContext servletContext) {
         try {
-            MainHelper.makeQuery(this, savedBags, null, null);
+            MainHelper.makeQuery(this, savedBags, servletContext, null);
         } catch (Exception err) {
             problems.add(err);
         }
@@ -627,10 +630,10 @@ public class PathQuery
      * @param xml PathQuery XML
      * @return a PathQuery object
      * @param savedBags Map from bag name to bag
-     * @param classKeys class key fields for the model
+     * @param servletContext global ServletContext object
      */
-    public static PathQuery fromXml(String xml, Map savedBags, Map classKeys) {
-        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, classKeys);
+    public static PathQuery fromXml(String xml, Map savedBags, ServletContext servletContext) {
+        Map queries = PathQueryBinding.unmarshal(new StringReader(xml), savedBags, servletContext);
         return (PathQuery) queries.values().iterator().next();
     }
 

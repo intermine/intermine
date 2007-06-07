@@ -22,6 +22,7 @@ import org.intermine.util.StringUtil;
 import java.io.Reader;
 import java.io.StringWriter;
 
+import javax.servlet.ServletContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -136,15 +137,15 @@ public class PathQueryBinding
      * Parse PathQueries from XML
      * @param reader the saved queries
      * @param savedBags map from bag name to bag
-     * @param classKeys class keys for model
+     * @param servletContext global ServletContext object
      * @return a Map from query name to PathQuery
      */
     public static Map<String, PathQuery> unmarshal(Reader reader, Map savedBags,
-                                                   Map<String, Set> classKeys) {
+                                                   ServletContext servletContext) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
-            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, savedBags, 
-                                                                          classKeys));
+            SAXParser.parse(new InputSource(reader),
+                            new PathQueryHandler(queries, savedBags, servletContext));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

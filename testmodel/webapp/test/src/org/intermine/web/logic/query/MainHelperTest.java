@@ -39,6 +39,9 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.struts.WebTestBase;
+
+import servletunit.struts.MockStrutsTestCase;
 
 /**
  * Tests for the MainHelper class
@@ -46,7 +49,7 @@ import org.intermine.web.logic.ClassKeyHelper;
  * @author Kim Rutherford
  */
 
-public class MainHelperTest extends TestCase {
+public class MainHelperTest extends MockStrutsTestCase {
     private Map classKeys;
     
     public MainHelperTest(String arg) {
@@ -315,7 +318,8 @@ public class MainHelperTest extends TestCase {
 
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(), classKeys);
+        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(), 
+                                          getActionServlet().getServletContext());
     }
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
@@ -383,7 +387,8 @@ public class MainHelperTest extends TestCase {
     }
 
     public void doQuery(String web, String iql) throws Exception {
-        Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap(), classKeys);
+        Map parsed = PathQueryBinding.unmarshal(new StringReader(web), new HashMap(),
+                                                getActionServlet().getServletContext());
         PathQuery pq = (PathQuery) parsed.get("test");
         Query q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, null);
         String got = q.toString();

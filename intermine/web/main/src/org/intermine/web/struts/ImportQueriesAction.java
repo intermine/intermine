@@ -13,6 +13,12 @@ package org.intermine.web.struts;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,11 +28,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.session.SessionMethods;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * Imports query in XML format and forward user to the query builder.
@@ -48,8 +50,7 @@ public class ImportQueriesAction extends InterMineAction
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        Map queries = qif.getQueryMap(profile.getSavedBags(), classKeys);
+        Map queries = qif.getQueryMap(profile.getSavedBags(), servletContext);
 
         if (queries.size() == 1
             && ((request.getParameter("query_builder") != null && request

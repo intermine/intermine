@@ -27,6 +27,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import servletunit.struts.MockStrutsTestCase;
+
 import junit.framework.TestCase;
 
 /**
@@ -34,7 +36,7 @@ import junit.framework.TestCase;
  *
  * @author Kim Rutherford
  */
-public class PathQueryBindingTest extends TestCase
+public class PathQueryBindingTest extends MockStrutsTestCase
 {
     Map savedQueries, expected, classKeys;
     
@@ -45,7 +47,8 @@ public class PathQueryBindingTest extends TestCase
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
-        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(), classKeys);
+        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(), 
+                                                  getActionServlet().getServletContext());
         expected = getExpectedQueries();
     }
     
@@ -157,7 +160,7 @@ public class PathQueryBindingTest extends TestCase
                                               "employeesWithOldManagers", "testmodel");
         Map readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
-                                                 new HashMap(), classKeys);
+                                                 new HashMap(), getActionServlet().getServletContext());
         Map expectedQuery = new LinkedHashMap();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
@@ -167,7 +170,7 @@ public class PathQueryBindingTest extends TestCase
                                        "queryWithConstraint", "testmodel");
         readFromXml = new LinkedHashMap();
         readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())),
-                                                 new HashMap(), classKeys);
+                                                 new HashMap(), getActionServlet().getServletContext());
         expectedQuery = new LinkedHashMap();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
 
