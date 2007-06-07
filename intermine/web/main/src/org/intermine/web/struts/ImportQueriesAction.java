@@ -74,7 +74,9 @@ public class ImportQueriesAction extends InterMineAction
                     sb.append(queryName);
                 }
                 recordMessage(new ActionMessage("query.imported", sb.toString()), request);
-                return mapping.findForward("mymine");
+                ForwardParameters forwardParameters =
+                    new ForwardParameters(mapping.findForward("mymine"));
+                return forwardParameters.addParameter("page", "saved").forward();
             } finally {
                 profile.enableSaving();
             }
