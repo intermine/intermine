@@ -394,7 +394,7 @@ public class MainHelper
                         throw new ObjectStoreException(e);
                     }
                     cs.addConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
-                                bagQueryResult.getMatches().keySet()));
+                                bagQueryResult.getMatchAndIssueIds()));
                     if (returnBagQueryResults != null) {
                         returnBagQueryResults.put(node.getPathString(), bagQueryResult);
                     }

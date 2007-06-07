@@ -12,9 +12,13 @@ package org.intermine.web.logic.bag;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import org.intermine.model.InterMineObject;
 
 
 /**
@@ -94,6 +98,27 @@ public class BagQueryResult
         return matches;
     }
 
+    
+    public Set<Integer> getMatchAndIssueIds() {
+        Set<Integer> ids = new HashSet<Integer>();
+        ids.addAll(matches.keySet());
+        for (Map<String, Map<String, List>> issueTypes : issues.values()) {
+            for (Map<String, List> issue : issueTypes.values()) {
+                for (List objects : issue.values()) {
+                    for (Object obj : objects) {
+                        if (obj instanceof InterMineObject) {
+                            ids.add(((InterMineObject) obj).getId());
+                        } else if (obj instanceof ConvertedObjectPair) {
+                            ids.add(((ConvertedObjectPair) obj).getNewObject().getId());
+                        }
+                    }
+                }
+            }
+        }
+        return ids;
+    }
+    
+    
     /**
      * Add a new match from an input string to an InterMineObject id.
      * @param input the original input string entered
