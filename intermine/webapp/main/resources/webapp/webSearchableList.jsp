@@ -10,12 +10,14 @@
 <tiles:importAttribute name="scope"/>
 
 <html:xhtml/>
-<c:forEach items="${filteredWebSearchables}" var="webSearchableEntry">
-  <div class="webSearchableList">
+<div class="webSearchableList">
+  <c:forEach items="${filteredWebSearchables}" var="webSearchableEntry">
     <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${webSearchableEntry.key}">
-      ${webSearchableEntry.value.title}
+      <div class="webSearchableListElement">
+        ${webSearchableEntry.value.title}
+      </div>
     </html:link>
-  </div>
-</c:forEach>
+  </c:forEach>
+</div>
 
 <!-- /webSearchableList.jsp -->
