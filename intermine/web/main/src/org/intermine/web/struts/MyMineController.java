@@ -80,6 +80,12 @@ public class MyMineController extends TilesAction
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         String page = request.getParameter("page");
 
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        
+        if (page != null && !profile.isLoggedIn()) {
+            page = "bags";
+        }
+        
         if (!StringUtils.isEmpty(page)) {
             session.setAttribute(Constants.MYMINE_PAGE, page);
         }
@@ -151,7 +157,6 @@ public class MyMineController extends TilesAction
             request.setAttribute("typesWithConnectingField", typesWithConnectingField);
         }
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         request.setAttribute("queryAgeClasses", getQueryAgeClasses(profile.getSavedQueries()));
         request.setAttribute("bagAgeClasses", getBagAgeClasses(profile.getSavedBags()));
 
