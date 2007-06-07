@@ -11,6 +11,9 @@ package org.intermine.web.logic.profile;
  */
 
 import java.io.StringReader;
+
+import javax.servlet.ServletContext;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,19 +78,20 @@ public class ProfileManager
     protected CacheMap profileCache = new CacheMap();
     private Map<String, TagChecker> tagCheckers = null;
     private HashMap<MultiKey, List<Tag>> tagCache = null;
-    private Map classKeys;
+    private final ServletContext servletContext;
 
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
      * @param userProfileOS the object store that hold user profile information
-     * @param classKeys class key fields for model
+     * @param servletContext global ServletContext object
      */
-    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS, Map classKeys) {
+    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS, 
+                          ServletContext servletContext) {
         this.os = os;
+        this.servletContext = servletContext;
         tagCheckers = makeTagCheckers(os.getModel());
         this.osw = userProfileOS;
-        this.classKeys = classKeys;
     }
 
     /**
@@ -179,6 +183,7 @@ public class ProfileManager
     /**
      * Get a user's Profile using a username
      * @param username the username
+     * @param servletContext global ServletContext object
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username) {
@@ -223,11 +228,11 @@ public class ProfileManager
             try {
                 Map queries = 
                     SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags, 
-                                                classKeys);
+                                                servletContext);
                 if (queries.size() == 0) {
                     queries = 
                         PathQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags, 
-                                                   classKeys);
+                                                   servletContext);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
@@ -249,7 +254,7 @@ public class ProfileManager
             SavedTemplateQuery template = (SavedTemplateQuery) i.next();
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map templateMap = templateBinding.unmarshal(sr, savedBags, classKeys);
+                Map templateMap = templateBinding.unmarshal(sr, savedBags, servletContext);
                 String templateName = (String) templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
                 templateQuery.setSavedTemplateQuery(template);

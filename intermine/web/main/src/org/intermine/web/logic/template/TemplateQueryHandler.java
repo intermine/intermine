@@ -15,6 +15,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.query.PathQueryHandler;
+
+import javax.servlet.ServletContext;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -37,10 +40,10 @@ public class TemplateQueryHandler extends PathQueryHandler
      * Constructor
      * @param templates Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
-     * @param classKeys class key fields for the model
+     * @param servletContext global ServletContext object
      */
-    public TemplateQueryHandler(Map templates, Map savedBags, Map classKeys) {
-        super(new HashMap(), savedBags, classKeys);
+    public TemplateQueryHandler(Map templates, Map savedBags, ServletContext servletContext) {
+        super(new HashMap(), savedBags, servletContext);
         this.templates = templates;
         reset();
     }

@@ -31,6 +31,9 @@ import org.intermine.web.logic.tagging.TagHandler;
 import org.intermine.web.logic.template.TemplateQueryHandler;
 import org.intermine.xml.full.FullHandler;
 import org.intermine.xml.full.FullParser;
+
+import javax.servlet.ServletContext;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -62,18 +65,19 @@ class ProfileHandler extends DefaultHandler
      * subHandler.endElement(), etc will be called from this class.
      */
     DefaultHandler subHandler = null;
+    private final ServletContext servletContext;
 
     /**
      * Create a new ProfileHandler
      * @param profileManager the ProfileManager to pass to the Profile constructor
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
-     * @param classKeys class key fields in model
+     * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
      */
-    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader, Map classKeys,
-            ObjectStoreWriter osw) {
-        this(profileManager, idUpgrader, null, null, new HashSet(), classKeys, osw);
+    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader, 
+                          ServletContext servletContext, ObjectStoreWriter osw) {
+        this(profileManager, idUpgrader, null, null, new HashSet(), servletContext, osw);
     }
 
     /**
@@ -84,15 +88,16 @@ class ProfileHandler extends DefaultHandler
      * @param defaultUsername default username
      * @param defaultPassword default password
      * @param tags a set to populate with user tags
-     * @param classKeys class key fields in model
+     * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-            String defaultUsername, String defaultPassword, Set tags, Map classKeys,
-            ObjectStoreWriter osw) {
+                          String defaultUsername, String defaultPassword, Set tags,
+                          ServletContext servletContext, ObjectStoreWriter osw) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
+        this.servletContext = servletContext;
         items = new ArrayList();
         this.username = defaultUsername;
         this.password = defaultPassword;
@@ -142,11 +147,11 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
-            subHandler = new TemplateQueryHandler(savedTemplates, savedBags, classKeys);
+            subHandler = new TemplateQueryHandler(savedTemplates, savedBags, servletContext);
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new SavedQueryHandler(savedQueries, savedBags, classKeys);
+            subHandler = new SavedQueryHandler(savedQueries, savedBags, servletContext);
         }
         if (qName.equals("tags")) {
             subHandler = new TagHandler(username, tags);

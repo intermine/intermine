@@ -16,6 +16,7 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -28,8 +29,10 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import servletunit.ServletContextSimulator;
 
 /**
  * Dump templates and configuration tags.
@@ -106,7 +109,9 @@ public class DumpDefaultTemplatesTask extends Task
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
             Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
+            ServletContext servletContext = new ServletContextSimulator();
+            servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
+            ProfileManager pm = new ProfileManager(os, userProfileOS, servletContext);
 
             if (!pm.hasProfile(username)) {
                 throw new BuildException("no such user " + username);

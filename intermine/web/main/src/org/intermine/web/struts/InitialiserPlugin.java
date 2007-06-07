@@ -450,7 +450,7 @@ public class InitialiserPlugin implements PlugIn
             Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            profileManager = new ProfileManager(os, userProfileOS, classKeys);
+            profileManager = new ProfileManager(os, userProfileOS, servletContext);
         } catch (ObjectStoreException e) {
             throw new ServletException("Unable to create profile manager - please check that the "
                     + "userprofile database is available", e);

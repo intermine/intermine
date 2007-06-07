@@ -17,13 +17,17 @@ import java.util.Properties;
 
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.query.SavedQueryBinding;
 
 import java.io.StringReader;
 
+import javax.servlet.ServletContext;
+
 import junit.framework.TestCase;
+import servletunit.ServletContextSimulator;
 
 public class SavedQueryBindingTest extends TestCase
 {
@@ -45,10 +49,11 @@ public class SavedQueryBindingTest extends TestCase
         SavedQuery sq = new SavedQuery("hello", created, query);
         
         String xml = SavedQueryBinding.marshal(sq);
-        
+        ServletContext servletContext = new ServletContextSimulator();
+        servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
         SavedQuery sq2 = (SavedQuery) SavedQueryBinding.unmarshal(new StringReader(xml), 
                                                                   new HashMap(),
-                                                                  classKeys).values().iterator().next();
+                                                                  servletContext).values().iterator().next();
         
         assertEquals(sq, sq2);
     }

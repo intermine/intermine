@@ -25,9 +25,13 @@ import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.template.TemplateQuery;
 
+import javax.servlet.ServletContext;
+
+import servletunit.struts.MockStrutsTestCase;
+
 import junit.framework.TestCase;
 
-public class ProfileTest extends TestCase
+public class ProfileTest extends MockStrutsTestCase
 {
     PathQuery query;
     SavedQuery sq;
@@ -55,7 +59,8 @@ public class ProfileTest extends TestCase
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")),
                                      "");
-        profileManager = new DummyProfileManager(userprofileOS);
+        profileManager = new DummyProfileManager(userprofileOS,
+                                                 getActionServlet().getServletContext());
     }
 
     public void tearDown() throws Exception {
@@ -164,8 +169,10 @@ public class ProfileTest extends TestCase
 
     class DummyProfileManager extends ProfileManager
     {
-        public DummyProfileManager(ObjectStore os) throws ObjectStoreException {
-            super(os, ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test"), new HashMap());
+        public DummyProfileManager(ObjectStore os, ServletContext servletContext)
+            throws ObjectStoreException {
+            super(os, ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test"),
+                  servletContext);
         }
 
         public void saveProfile(Profile profile) {

@@ -88,14 +88,13 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 }
                 Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                 String queryXml = (String) session.getAttribute("ser-query");
-                Map classKeys = (Map) sc.getAttribute(Constants.CLASS_KEYS);
                 if (queryXml != null) {
                     PathQuery pq = PathQuery.fromXml(queryXml, profile.getSavedBags(),
-                                                     classKeys);
+                                                     sc);
                     if (pq.isValid()) {
                         session.setAttribute(Constants.QUERY, 
                                              PathQuery.fromXml(queryXml, profile.getSavedBags(),
-                                                               classKeys));
+                                                               sc));
                     } else {
                         LOG.warn("PathQuery XML in saved session invalid! " + queryXml);
                     }

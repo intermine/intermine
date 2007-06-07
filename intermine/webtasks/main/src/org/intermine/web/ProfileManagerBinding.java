@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -67,13 +68,14 @@ public class ProfileManagerBinding
      * @param osw ObjectStoreWriter used to resolve object ids and write bags
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
-     * @param classKeys class key fields in model
+     * @param servletContext global ServletContext object
      */
     public static void unmarshal(Reader reader, ProfileManager profileManager,
-            ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader, Map classKeys) {
+                                 ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader,
+                                 ServletContext servletContext) {
         try {
             ProfileManagerHandler profileManagerHandler =
-                new ProfileManagerHandler(profileManager, idUpgrader, classKeys, osw);
+                new ProfileManagerHandler(profileManager, idUpgrader, servletContext, osw);
             SAXParser.parse(new InputSource(reader), profileManagerHandler);
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,33 +94,34 @@ class ProfileManagerHandler extends DefaultHandler
     private ProfileHandler profileHandler = null;
     private ProfileManager profileManager = null;
     private IdUpgrader idUpgrader;
-    private Map classKeys;
     private ObjectStoreWriter osw;
+    private final ServletContext servletContext;
     
     /**
      * Create a new ProfileManagerHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
-     * @param classKeys class key fields in model
+     * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
      */
     public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-            Map classKeys, ObjectStoreWriter osw) {
+                                 ServletContext servletContext, ObjectStoreWriter osw) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
-        this.classKeys = classKeys;
+        this.servletContext = servletContext;
         this.osw = osw;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (qName.equals("userprofile")) {
-            profileHandler = new ProfileHandler(profileManager, idUpgrader, classKeys, osw);
+            profileHandler = new ProfileHandler(profileManager, idUpgrader, servletContext, osw);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);
@@ -128,6 +131,7 @@ class ProfileManagerHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
         if (qName.equals("userprofile")) {

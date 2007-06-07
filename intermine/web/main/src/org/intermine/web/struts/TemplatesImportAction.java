@@ -56,7 +56,7 @@ public class TemplatesImportAction extends InterMineAction
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), profile.getSavedBags(),
-                                                    classKeys);
+                                                    servletContext);
 
         try {
             profile.disableSaving();

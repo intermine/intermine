@@ -67,7 +67,7 @@ public class LoadQueryAction extends DispatchAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
                                                  profile.getSavedBags(),
-                                                 classKeys);
+                                                 servletContext);
         PathQuery query = (PathQuery) queries.values().iterator().next();
         SessionMethods.loadQuery((PathQuery) query, session, response);
         

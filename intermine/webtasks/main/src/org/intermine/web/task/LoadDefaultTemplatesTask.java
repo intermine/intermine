@@ -10,8 +10,6 @@ package org.intermine.web.task;
  *
  */
 
-import java.io.FileReader;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,9 +17,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -31,10 +26,22 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.RequestPasswordAction;
+
+import java.io.FileReader;
+import java.io.Reader;
+
+import javax.servlet.ServletContext;
+
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+
+import servletunit.ServletContextSimulator;
 
 /**
  * Load template queries form an XML file into a given user profile.
@@ -105,7 +112,9 @@ public class LoadDefaultTemplatesTask extends Task
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
             Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-            ProfileManager pm = new ProfileManager(os, userProfileOS, classKeys);
+            ServletContext servletContext = new ServletContextSimulator();
+            servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
+            ProfileManager pm = new ProfileManager(os, userProfileOS, servletContext);
             Reader reader = new FileReader(xmlFile);
 
             // Copy into existing or new superuser profile
@@ -130,7 +139,7 @@ public class LoadDefaultTemplatesTask extends Task
             Set tags = new HashSet();
             osw = new ObjectStoreWriterInterMineImpl(os);
             Profile profileSrc = ProfileBinding.unmarshal(reader, pm, profileDest.getUsername(),
-                    profileDest.getPassword(), tags, classKeys, osw);
+                    profileDest.getPassword(), tags, servletContext, osw);
 
             if (profileDest.getSavedTemplates().size() == 0) {
                 Iterator iter = profileSrc.getSavedTemplates().values().iterator();
