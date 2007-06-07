@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import org.apache.commons.collections.IteratorUtils;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
@@ -33,16 +35,12 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
-import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.util.StringUtil;
-
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.log4j.Logger;
 
 /**
  * A summary of the data in an ObjectStore
@@ -114,7 +112,6 @@ public class ObjectStoreSummary
         LOG.info("Looking for empty collections and references...");
         Model model = os.getModel();
         for (Iterator iter = model.getClassDescriptors().iterator(); iter.hasNext();) {
-            long startTime = System.currentTimeMillis();
             ClassDescriptor cld = (ClassDescriptor) iter.next();
             lookForEmptyThings(cld, os);
         }
@@ -312,8 +309,6 @@ public class ObjectStoreSummary
                 q.addFrom(qc1);
                 q.addFrom(qc2);
                 
-                q.addToSelect(qc2);
-                
                 ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
                 QueryReference qd;
                 if (desc instanceof CollectionDescriptor) {
@@ -326,19 +321,15 @@ public class ObjectStoreSummary
                 
                 q.setConstraint(cs);
                 
-                Query q2 = new Query();
-                q2.setDistinct(false);
-                q2.addToSelect(new QueryValue(new Integer(1)));
+                q.addToSelect(new QueryFunction());
                 
-                ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
-                cs2.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q));
-                q2.setConstraint(cs2);
+                Results results = os.execute(q);
                 
-                Results results = os.execute(q2);
                 results.setBatchSize(1);
                 results.setNoExplain();
                 results.setNoOptimise();
-                if (results.iterator().hasNext()) {
+                Long count = (Long) ((ResultsRow) results.iterator().next()).get(0);
+                if (count.longValue() > 0) {
                     LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + "");
                     Stack s = new Stack();
                     s.push(cld);

@@ -204,7 +204,7 @@ public class StringUtilTest extends TestCase
         col = new ArrayList<String>(Arrays.asList(new String[] {"a", "b"}));
         assertEquals("a and b", StringUtil.prettyList(col));
         col = new ArrayList<String>(Arrays.asList(new String[] {"b", "c", "a"}));
-        assertEquals("a, b and c", StringUtil.prettyList(col));
+        assertEquals("a, b and c", StringUtil.prettyList(col, true));
     }
     
 }
