@@ -96,6 +96,15 @@ public class Profile
     }
 
     /**
+     * Return true if and only if the user is logged is (and the Profile will be written to the
+     * userprofile).
+     * @return
+     */
+    public boolean isLoggedIn() {
+        return getUsername() != null;
+    }
+    
+    /**
      * Get the value of userId
      * @return an Integer
      */
