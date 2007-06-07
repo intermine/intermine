@@ -109,7 +109,7 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </c:forEach>
               <span class="constraint">
-                <c:out value="${constraint.op}"/>
+                <im:displayableOpName opName="${constraint.op}" valueType="${node.type}"/>
                 <c:choose>
                   <c:when test="${node.reference}">
                     <c:out value=" ${fn:replace(constraintDisplayValues[constraint], '.', ' > ')}"/>
