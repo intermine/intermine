@@ -21,8 +21,8 @@
   <class className="org.flymine.model.genomic.ProteinStructure">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="ZScore"/>
-      <fieldconfig fieldExpr="QScore"/>
+      <fieldconfig fieldExpr="zScore"/>
+      <fieldconfig fieldExpr="qScore"/>
       <fieldconfig fieldExpr="alignment" displayer="/htmlDisplayer.jsp" showInResults="false" />
     </fields>
     <longdisplayers>
