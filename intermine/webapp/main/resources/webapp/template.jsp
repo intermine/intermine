@@ -128,7 +128,7 @@
             <td valign="top">
               <c:choose>
                 <c:when test="${fn:length(validOps) == 1}">
-                  List of identifiers: 
+                  <fmt:message key="query.lookupConstraintLabel"/><%--Search for:--%>
                   <input type="hidden" name="attributeOps(${index})" value="18"/>
                 </c:when>
                 <c:otherwise>
@@ -157,8 +157,21 @@
                   </c:forEach>
                 </select>
               </c:if>
-
-              <br/>
+            </td>
+            <td valign="top">
+              <c:if test="${!empty keyFields}">
+                  <span class="smallnote">
+                    <fmt:message key="query.lookupConstraintHelp"><%--This will search...--%>
+                      <fmt:param value="${keyFields}"/>
+                    </fmt:message>
+                  </span>
+              </c:if>
+            </td>
+          </tr>
+          <tr>
+            <td />
+            <td />
+           	<td valign="top" colspan="2">
            	  <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">                
                 <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
 
@@ -226,6 +239,7 @@
                 //-->
               </script>
             </td>
+
           </tr>
         </c:forEach>
       </c:forEach>
