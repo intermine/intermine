@@ -50,7 +50,7 @@ public class EntrezPublicationsRetriever
     protected static final String ESUMMARY_URL =
         "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
     // number of summaries to retrieve per request
-    protected static final int BATCH_SIZE = 50;
+    protected static final int BATCH_SIZE = 500;
 
     private String osAlias = null, outputFile = null;
     private Set seenPubMeds = new HashSet();
@@ -106,8 +106,19 @@ public class EntrezPublicationsRetriever
             for (Iterator i = getPublications(os).iterator(); i.hasNext();) {
                 pubMedIds.add(((Publication) i.next()).getPubMedId());
                 if (pubMedIds.size() == BATCH_SIZE || !i.hasNext()) {
-                    SAXParser.parse(new InputSource(getReader(pubMedIds)),
-                                    new Handler(toStore, itemFactory));
+                    BufferedReader br = new BufferedReader(getReader(pubMedIds));
+                    StringBuffer buf = new StringBuffer();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        System.err.println(line);
+                        buf.append(line + "\n");
+                    }
+                    try {
+                        SAXParser.parse(new InputSource(new StringReader(buf.toString())),
+                                        new Handler(toStore, itemFactory));
+                    } catch (Throwable e) {
+                        throw new RuntimeException("failed to parse: " + buf.toString(), e);
+                    }
                     for (Iterator j = toStore.iterator(); j.hasNext();) {
                         writer.write(FullRenderer.render((Item) j.next()));
                     }
