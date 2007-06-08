@@ -10,6 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -156,7 +158,7 @@ public class ProteinStructureDataConvertor extends FileConverter
         private Item proteinStructure;
         private String proteinItemIdentifier;
         private Item proteinFeature;
-        private Item dataSource;
+        private Item dataSet;
         private String attName = null;
         private StringBuffer attValue = null;
         private ItemWriter writer;
@@ -164,7 +166,7 @@ public class ProteinStructureDataConvertor extends FileConverter
         private Stack stack = new Stack();
         private Map<String, Item> featureMap;
         private Map<String, String> proteinMap;
-        private String protId, strId;
+        private String protId, strId, pfamId;
         
         /**
          * Constructor
@@ -173,9 +175,10 @@ public class ProteinStructureDataConvertor extends FileConverter
         public ProteinStructureHandler (ItemWriter writer, Map proteinMap, Map featureMap)
             throws ObjectStoreException {
             this.writer = writer;
-            dataSource = createItem("DataSource");
-            dataSource.setAttribute("name", "Kenji");
-            writer.store(ItemHelper.convert(dataSource));
+            dataSet = createItem("DataSet");
+            dataSet.setAttribute("title", "Kenji Mizuguchi - NIBIO, Japan");
+            dataSet.setAttribute("url", "http://www.nibio.go.jp");
+            writer.store(ItemHelper.convert(dataSet));
             this.proteinMap = proteinMap;
             this.featureMap = featureMap;
         }
@@ -209,7 +212,8 @@ public class ProteinStructureDataConvertor extends FileConverter
                     proteinItemIdentifier = getProtein(protId);
                     proteinStructure.setReference("protein", proteinItemIdentifier);
                 } else if (qName.equals("pfam_id")) {
-                    proteinFeature = getFeature(attValue.toString());
+                    pfamId = attValue.toString();
+                    proteinFeature = getFeature(pfamId);
                     proteinStructure.setReference("proteinFeature", proteinFeature);
                 } else if (qName.equals("begin")) {
                     proteinStructure.setAttribute("start", attValue.toString());
@@ -238,8 +242,12 @@ public class ProteinStructureDataConvertor extends FileConverter
                     proteinStructure.setAttribute("qScore", attValue.toString());
                 } else if (qName.equals("protein_structure")) {
                     proteinStructure.setReference("experiment", proteinStructureExperiment);
-                    proteinStructure.setAttribute("identifier", strId + "_" + protId);
+                    proteinStructure.setAttribute("identifier", protId + "_" + pfamId);
+                    proteinStructure.setCollection("evidence",
+                        new ArrayList(Collections.singleton(dataSet.getIdentifier())));
                     writer.store(ItemHelper.convert(proteinStructure));
+                    protId = null;
+                    pfamId = null;
                 }
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);

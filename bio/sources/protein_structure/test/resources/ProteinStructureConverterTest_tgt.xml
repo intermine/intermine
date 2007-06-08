@@ -1,26 +1,30 @@
 <items>
-<item id="0_6" class="http://www.flymine.org/model/genomic#Protein">
-  <attribute name="identifier" value="Q8IQ89"/>
+<item id="0_4" class="http://www.flymine.org/model/genomic#Protein">
+  <attribute name="primaryAccession" value="Q8IQ89"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#ProteinStructureExperiment">
   <attribute name="type" value="Computer prediction"/>
 </item>
-<item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
-  <attribute name="name" value="Kenji"/>
+<item id="0_2" class="http://www.flymine.org/model/genomic#DataSet">
+  <attribute name="title" value="Kenji Mizuguchi - NIBIO, Japan"/>
+  <attribute name="url" value="http://www.nibio.go.jp"/>
 </item>
-<item id="0_5" class="http://www.flymine.org/model/genomic#ProteinStructure">
-  <attribute name="QScore" value="-1.62"/>
-  <attribute name="ZScore" value="-8.75"/>
+<item id="0_3" class="http://www.flymine.org/model/genomic#ProteinStructure">
+  <attribute name="qScore" value="-1.62"/>
+  <attribute name="zScore" value="-8.75"/>
   <attribute name="alignment" value="&lt;HTML&gt;&lt;HEAD&gt;&lt;/HEAD&gt;&lt;BODY&gt;&lt;/BODY&gt;&lt;/HTML&gt;"/>
   <attribute name="atm" value="ATOM      1  N   ILE    66       8.330   5.820   8.368  1.00  0.00      1MOD   2"/>
-  <attribute name="identifier" value="kenji_10102"/>
+  <attribute name="identifier" value="Q8IQ89_PF00089"/>
   <reference name="experiment" ref_id="0_1"/>
-  <reference name="protein" ref_id="0_6"/>
+  <reference name="protein" ref_id="0_4"/>
   <attribute name="end" value="284"/>
   <attribute name="start" value="66"/>
-  <reference name="proteinFeature" ref_id="0_7"/>
+  <reference name="proteinFeature" ref_id="0_5"/>
+  <collection name="evidence">
+    <reference ref_id ="0_2"/>
+  </collection>
 </item>
-<item id="0_7" class="http://www.flymine.org/model/genomic#ProteinFeature">
+<item id="0_5" class="http://www.flymine.org/model/genomic#ProteinFeature">
   <attribute name="identifier" value="PF00089"/>
 </item>
 </items>
