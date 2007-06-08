@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -29,14 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.DynamicUtil;
 
 import org.intermine.web.logic.bag.ConvertedObjectPair;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.results.InlineResultsTable;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;

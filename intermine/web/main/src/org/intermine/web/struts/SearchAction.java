@@ -49,9 +49,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Action handles search.

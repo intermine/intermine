@@ -13,7 +13,6 @@ package org.intermine.web.logic.query;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.path.Path;
 import org.intermine.util.SAXParser;

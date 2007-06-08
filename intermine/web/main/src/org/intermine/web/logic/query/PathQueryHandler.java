@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -56,7 +55,6 @@ public class PathQueryHandler extends DefaultHandler
      * Constructor
      * @param queries Map from query name to PathQuery
      * @param savedBags Map from bag name to bag
-     * @param classKeys class key fields for the model
      * @param servletContext global ServletContext object
      */
 

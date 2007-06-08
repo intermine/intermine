@@ -183,7 +183,6 @@ public class ProfileManager
     /**
      * Get a user's Profile using a username
      * @param username the username
-     * @param servletContext global ServletContext object
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username) {

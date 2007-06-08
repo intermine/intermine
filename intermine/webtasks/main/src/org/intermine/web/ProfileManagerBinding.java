@@ -13,7 +13,6 @@ package org.intermine.web;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.xml.stream.XMLStreamException;

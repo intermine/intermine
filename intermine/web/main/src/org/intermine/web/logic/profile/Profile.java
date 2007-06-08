@@ -33,7 +33,6 @@ import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
 import org.apache.commons.collections.map.ListOrderedMap;
-import org.apache.lucene.store.Directory;
 
 /**
  * Class to represent a user of the webapp
@@ -98,7 +97,7 @@ public class Profile
     /**
      * Return true if and only if the user is logged is (and the Profile will be written to the
      * userprofile).
-     * @return
+     * @return Return true if logged in
      */
     public boolean isLoggedIn() {
         return getUsername() != null;
@@ -367,7 +366,7 @@ public class Profile
 
     /**
      * Get the SearchRepository for this Profile.
-     * @return
+     * @return the SearchRepository for the user
      */
     public SearchRepository getSearchRepository() {
         return searchRepository;
