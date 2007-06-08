@@ -110,7 +110,6 @@ public class EntrezPublicationsRetriever
                     StringBuffer buf = new StringBuffer();
                     String line;
                     while ((line = br.readLine()) != null) {
-                        System.err.println(line);
                         buf.append(line + "\n");
                     }
                     try {
