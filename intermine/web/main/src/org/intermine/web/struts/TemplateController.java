@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,6 +29,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
@@ -49,6 +51,7 @@ import org.intermine.web.logic.template.TemplateQuery;
  *
  * @author Mark Woodbridge
  * @author Thomas Riley
+ * @author Richard Smith
  */
 public class TemplateController extends TilesAction 
 {
@@ -180,11 +183,13 @@ public class TemplateController extends TilesAction
                 } else {
                     parent = displayNode;
                 }
-                names.put(c, parent.getType()
-                        + " "
-                        + displayNode.getPathString().substring(
-                                displayNode.getPathString().lastIndexOf(".") + 1));
-
+                String displayName = parent.getType();
+                if (displayNode.getPathString().indexOf('.') >= 0) {
+                    displayName += " " + displayNode.getPathString()
+                    .substring(displayNode.getPathString().lastIndexOf(".") + 1);
+                }
+                names.put(c, displayName);
+                        
                 // check if this constraint can be used with bags and if any available
                 if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), displayNode
                         .getFieldName())) {
@@ -207,6 +212,13 @@ public class TemplateController extends TilesAction
                             tf.setUseBagConstraint(j + "", true);
                             selectedBagNames.put(c, bagName);
                         }
+                    }
+                    // this might be a lookup constraint, find the key fields for a help message
+                    if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+                        Collection<String> keyFields = ClassKeyHelper.getKeyFieldNames(classKeys,
+                                                                                  node.getType());
+                        String keyFieldStr = StringUtil.prettyList(keyFields, true);
+                        request.setAttribute("keyFields", keyFieldStr);
                     }
                 }
                 j++;
