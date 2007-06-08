@@ -100,6 +100,7 @@ public class SearchRepository
     /**
      * Called to tell the repository that the set of global webSearchables in the superuser
      * profile has changed.
+     * @param type a tag type from TagTypes
      */
     public void globalChange(String type) {
         reindex(type);

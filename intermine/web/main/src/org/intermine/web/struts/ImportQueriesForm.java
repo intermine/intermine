@@ -54,7 +54,8 @@ public class ImportQueriesForm extends ValidatorForm
     public Map getQueryMap(Map savedBags, ServletContext servletContext) {
         if (map == null) {
             try {
-                map = PathQueryBinding.unmarshal(new StringReader(getXml()), savedBags, servletContext);
+                map = PathQueryBinding.unmarshal(new StringReader(getXml()), savedBags,
+                                                 servletContext);
             } catch (Exception e) {
                 map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml() 
                                                                   + "</queries>"), savedBags,

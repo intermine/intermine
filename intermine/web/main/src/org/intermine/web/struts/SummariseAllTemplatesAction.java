@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -18,29 +17,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.cache.InterMineCache;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ServletMethods;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.Constraint;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateBuildState;
-import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
