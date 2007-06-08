@@ -412,7 +412,7 @@ span.viewPathDescription {
 //  font-style: italic;
 }
 
-/* surrounds sort order section */
+/* surrounds sort order section NOT USED */
 div.sortorderBorder {
   float: left;
   width: 250px;
@@ -439,8 +439,15 @@ div.sortorderpath {
   PADDING-RIGHT: 4px;
   PADDING-LEFT: 4px;
   PADDING-BOTTOM: 14px;
-  PADDING-TOP: 4px
+  PADDING-TOP: 4px;
+  width: 250px
 }
+
+/* 
+should be used after floats to clear formatting 
+to prevent the dreaded IE peekaboo bug
+*/
+div.clearer {clear: both; line-height: 0; height: 0;}
 
 table.results tr.even {
   background: #F5F0FF;
