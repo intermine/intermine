@@ -9,29 +9,29 @@
 
 <!-- viewElement.jsp -->
 <html:xhtml/>
-   <im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${viewIndex}">
-   
-      <%-- class name --%>   
-      <div>
-        <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[pathString]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[pathString]]}">
-          ${fn:replace(pathString, ".", " > ")}
-        </html:link>
-            
-      <%-- (x) img --%>
-       <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
-          <fmt:param value="${pathString}"/>
-        </fmt:message>
-        <fmt:message key="view.removeFromViewSymbol" var="removeFromViewString"/>
+<im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${viewIndex}">
 
-        <html:link action="/viewChange?method=removeFromView&amp;path=${pathString}"
-                   title="${removeFromViewTitle}">
-          <img border="0" align="top"
-               src="images/cross.gif" width="13" height="13"
-               alt="${removeFromViewString}" style="margin-top: 3px;"/>
-        </html:link>
-        
-	</div>
-	
+  <%-- class name --%>
+  <div>
+    <html:link action="/mainChange?method=changePath&amp;prefix=${viewPathLinkPrefixes[pathString]}&amp;path=${viewPathLinkPaths[viewPathLinkPrefixes[pathString]]}">
+      ${fn:replace(pathString, ".", " > ")}
+    </html:link>
+
+    <%-- (x) img --%>
+    <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
+      <fmt:param value="${pathString}"/>
+    </fmt:message>
+    <fmt:message key="view.removeFromViewSymbol" var="removeFromViewString"/>
+
+    <html:link action="/viewChange?method=removeFromView&amp;path=${pathString}"
+               title="${removeFromViewTitle}">
+      <img border="0" align="top"
+           src="images/cross.gif" width="13" height="13"
+           alt="${removeFromViewString}" style="margin-top: 3px;"/>
+    </html:link>
+
+  </div>
+
   <c:if test="${!empty path && IS_SUPERUSER}">
     <im:prefixSubstring str="${pathString}" outVar="pathPrefix" delimiter="."/>
     <tiles:insert name="viewElementDescription.jsp">
@@ -40,34 +40,34 @@
     </tiles:insert>
   </c:if>
 
-      <div style="white-space:nowrap;">
-        <noscript>
-          <c:choose>
-            <c:when test="${status.first}">
-              <img style="margin-right: 5px" border="0" align="middle"
-                   src="images/blank13x13.gif" alt=" " width="13" height="13"/>
-            </c:when>
-            <c:otherwise>
-              <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
-                <fmt:param value="${pathString}"/>
-              </fmt:message>
-              <fmt:message key="view.moveLeftSymbol" var="moveLeftString"/>
+  <div style="white-space:nowrap;">
+    <noscript>
+      <c:choose>
+        <c:when test="${status.first}">
+          <img style="margin-right: 5px" border="0" align="middle"
+               src="images/blank13x13.gif" alt=" " width="13" height="13"/>
+        </c:when>
+        <c:otherwise>
+          <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
+            <fmt:param value="${pathString}"/>
+          </fmt:message>
+          <fmt:message key="view.moveLeftSymbol" var="moveLeftString"/>
 
-              <html:link action="/viewChange?method=moveLeft&amp;index=${viewIndex}"
-                         title="${moveLeftTitle}">
-                <img style="margin-right: 5px" border="0" align="middle"
-                     src="images/left-arrow-square.gif" width="13" height="13"
-                     alt="${moveRightString}"/>
-              </html:link>
+          <html:link action="/viewChange?method=moveLeft&amp;index=${viewIndex}"
+                     title="${moveLeftTitle}">
+            <img style="margin-right: 5px" border="0" align="middle"
+                 src="images/left-arrow-square.gif" width="13" height="13"
+                 alt="${moveRightString}"/>
+          </html:link>
 
-            </c:otherwise>
-          </c:choose>
-        </noscript>
+        </c:otherwise>
+      </c:choose>
+    </noscript>
 
-		<%-- sort button --%>
-		<input type="image" id="btn_${viewIndex}" onclick="javascript:updateSortOrder('${pathString}', '${viewIndex}');"
-               width="39" height="11" alt="sort" src="images/sort.gif">
-    
-      </div>
-    </im:viewableDiv>
+    <%-- sort button --%>
+    <input type="image" id="btn_${viewIndex}" onclick="javascript:updateSortOrder('${pathString}', '${viewIndex}');"
+           width="39" height="11" alt="sort" src="images/sort.gif">
+
+  </div>
+</im:viewableDiv>
 <!-- /viewElement.jsp -->
