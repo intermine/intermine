@@ -15,6 +15,7 @@
     
     <echo message="retrieving from ${src.data.file}"/>
 
-    <retrieve-publications osAlias="os.production" outputFile="${src.data.file}"/>
+    <retrieve-publications osAlias="os.production" outputFile="${src.data.file}"
+                           cacheDirName="${build.dir}"/>
   </target>
 </project>

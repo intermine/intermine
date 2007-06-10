@@ -10,14 +10,15 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -29,7 +30,19 @@ import org.intermine.xml.full.ItemFactory;
 
 import org.flymine.model.genomic.Publication;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
@@ -37,6 +50,17 @@ import org.apache.tools.ant.BuildException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.sleepycat.je.Database;
+import com.sleepycat.je.DatabaseConfig;
+import com.sleepycat.je.DatabaseEntry;
+import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.Environment;
+import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.Transaction;
+
+
 
 /**
  * Class to fill in all publication information from pubmed
@@ -53,7 +77,9 @@ public class EntrezPublicationsRetriever
     protected static final int BATCH_SIZE = 500;
 
     private String osAlias = null, outputFile = null;
-    private Set seenPubMeds = new HashSet();
+    private Set<String> seenPubMeds = new HashSet<String>();
+    private String cacheDirName;
+    private ItemFactory itemFactory;
 
     static final String TARGET_NS = "http://www.flymine.org/model/genomic#";
 
@@ -74,6 +100,14 @@ public class EntrezPublicationsRetriever
     }
 
     /**
+     * Set the cache file name
+     * @param cacheDirName The cache file
+     */
+    public void setCacheDirName(String cacheDirName) {
+        this.cacheDirName = cacheDirName;
+    }
+
+    /**
      * Synchronize publications with pubmed using pmid
      * @throws Exception if an error occurs
      */
@@ -83,53 +117,140 @@ public class EntrezPublicationsRetriever
 
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-        if (osAlias == null) {
-            throw new BuildException("osAlias attribute is not set");
-        }
-        if (outputFile == null) {
-            throw new BuildException("outputFile attribute is not set");
-        }
-
-        LOG.info("Starting EntrezPublicationsRetriever");
-
-        Writer writer = null;
-
+        Database db = null;
+        Transaction txn = null;
         try {
-            writer = new FileWriter(outputFile);
+            if (osAlias == null) {
+                throw new BuildException("osAlias attribute is not set");
+            }
+            if (outputFile == null) {
+                throw new BuildException("outputFile attribute is not set");
+            }
 
+
+            // environment is transactional
+            EnvironmentConfig envConfig = new EnvironmentConfig();
+            envConfig.setTransactional(true);
+            envConfig.setAllowCreate(true);
+
+            Environment env = new Environment(new File(cacheDirName), envConfig);
+
+            DatabaseConfig dbConfig = new DatabaseConfig();
+            dbConfig.setTransactional(true);
+            dbConfig.setAllowCreate(true);
+            dbConfig.setSortedDuplicates(true);
+
+            db = env.openDatabase(null , "publications_db", dbConfig);
+
+            txn = env.beginTransaction(null, null);
+            
+            LOG.info("Starting EntrezPublicationsRetriever");
+
+            Writer writer = new FileWriter(outputFile);
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
 
-            Set pubMedIds = new HashSet();
-            Set toStore = new HashSet();
-            ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
+            Set<String> idsToFetch = new HashSet<String>();
+            Set<String> toStore = new HashSet<String>();
+            itemFactory = new ItemFactory(os.getModel(), "-1_");
             writer.write(FullRenderer.getHeader() + ENDL);
-            for (Iterator i = getPublications(os).iterator(); i.hasNext();) {
-                pubMedIds.add(((Publication) i.next()).getPubMedId());
-                if (pubMedIds.size() == BATCH_SIZE || !i.hasNext()) {
-                    BufferedReader br = new BufferedReader(getReader(pubMedIds));
-                    StringBuffer buf = new StringBuffer();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        buf.append(line + "\n");
-                    }
+            for (Iterator<Publication> iter = getPublications(os).iterator(); iter.hasNext();) {
+                String pubMedId = iter.next().getPubMedId();
+                
+                if (seenPubMeds.contains(pubMedId)) {
+                    continue;
+                }
+                
+                DatabaseEntry key = new DatabaseEntry(pubMedId.getBytes());
+                DatabaseEntry data = new DatabaseEntry();
+                if (db.get(txn, key, data, null).equals(OperationStatus.SUCCESS)) {
                     try {
-                        SAXParser.parse(new InputSource(new StringReader(buf.toString())),
-                                        new Handler(toStore, itemFactory));
-                    } catch (Throwable e) {
-                        throw new RuntimeException("failed to parse: " + buf.toString(), e);
+                        ByteArrayInputStream mapInputStream =
+                            new ByteArrayInputStream(data.getData());
+                        ObjectInputStream deserializer = new ObjectInputStream(mapInputStream);
+                        Map<String, Object> pubMap = (Map) deserializer.readObject();
+                        writeItems(writer, mapToItems(itemFactory, pubMap));
+                        // System.err. println("found in cache: " + pubMedId);
+                        seenPubMeds.add(pubMedId);
+                    } catch (EOFException e) {
+                        // ignore and fetch it again
+                        System.err .println("found in cache, but igored due to cache problem: " 
+                                            + pubMedId);
                     }
-                    for (Iterator j = toStore.iterator(); j.hasNext();) {
-                        writer.write(FullRenderer.render((Item) j.next()));
+                } else {
+                    idsToFetch.add(pubMedId);
+                }
+            }
+
+            Iterator<String> idIter = idsToFetch.iterator();
+            while (idIter.hasNext()) {
+                String pubMedId = idIter.next();
+                idsToFetch.add(pubMedId);
+                if (idsToFetch.size() == BATCH_SIZE || !idIter.hasNext() && idsToFetch.size() > 0) {
+                    try {
+                        BufferedReader br = new BufferedReader(getReader(idsToFetch));
+                        StringBuffer buf = new StringBuffer();
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            buf.append(line + "\n");
+                        }
+                        // the server may return less publications than we ask for, so keep a Map
+                        Map<String, Map<String, Object>> fromServerMap = 
+                            new HashMap<String, Map<String, Object>>();
+                        try {
+                            SAXParser.parse(new InputSource(new StringReader(buf.toString())),
+                                            new Handler(toStore, fromServerMap));
+                        } catch (Throwable e) {
+                            throw new RuntimeException("failed to parse: " + buf.toString(), e);
+                        }
+                        for (String id: fromServerMap.keySet()) {
+                            writeItems(writer, mapToItems(itemFactory, fromServerMap.get(id)));
+                        }
+                        addToDb(txn, db, fromServerMap);
+                        idsToFetch.clear();
+                        toStore.clear();
+                    } finally {
+                        txn.commit();
+                        // start a new transaction incase there is an exception while parsing
+                        txn = env.beginTransaction(null, null);
                     }
-                    pubMedIds.clear();
-                    toStore.clear();
                 }
             }
             writer.write(FullRenderer.getFooter() + ENDL);
             writer.flush();
             writer.close();
+        } catch (Throwable e) {
+            throw new RuntimeException("failed to get all publications", e);
         } finally {
+            txn.commit();
+            db.close();
             Thread.currentThread().setContextClassLoader(cl);
+        }
+
+    }
+
+    private void writeItems(Writer writer, Set<Item> items) throws IOException {
+        for (Item item: items) {
+            writer.write(FullRenderer.render(item));
+        }
+    }
+
+    /**
+     * Add a Map of pubication information to the Database 
+     */
+    private void addToDb(Transaction txn, Database db,
+                         Map<String, Map<String, Object>> fromServerMap) 
+        throws IOException, DatabaseException {
+        for (Map.Entry<String, Map<String, Object>> entry: fromServerMap.entrySet()) {
+            String pubMedId = entry.getKey();
+            // System.err .println("adding to cache: " + pubMedId);
+            DatabaseEntry key = new DatabaseEntry(pubMedId.getBytes());
+            Map dataMap = entry.getValue();
+            ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream serializer = new ObjectOutputStream(arrayOutputStream);
+            serializer.writeObject(dataMap);
+            DatabaseEntry data = new DatabaseEntry(arrayOutputStream.toByteArray());
+            
+            db.put(txn, key, data);
         }
     }
 
@@ -138,12 +259,12 @@ public class EntrezPublicationsRetriever
      * @param os The ObjectStore to read from
      * @return a List of publications
      */
-    protected List getPublications(ObjectStore os) {
+    protected List<Publication> getPublications(ObjectStore os) {
         Query q = new Query();
         QueryClass qc = new QueryClass(Publication.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        return os.executeSingleton(q);
+        return (List<Publication>) os.executeSingleton(q);
     }
 
     /**
@@ -152,10 +273,37 @@ public class EntrezPublicationsRetriever
      * @return a Reader for the information
      * @throws Exception if an error occurs
      */
-    protected Reader getReader(Set ids) throws Exception {
+    protected Reader getReader(Set<String> ids) throws Exception {
         String urlString = ESUMMARY_URL + StringUtil.join(ids, ",");
-        System.err. println("retrieving: " + urlString);
+        System.err .println("retrieving: " + urlString);
         return new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
+    }
+
+    private Set<Item> mapToItems(ItemFactory itemFactory, Map map) {
+        Set<Item> retSet = new HashSet<Item>();
+        Item publication = itemFactory.makeItemForClass(TARGET_NS + "Publication");
+        retSet.add(publication);
+        publication.setAttribute("pubMedId", (String) map.get("id"));
+        publication.setAttribute("journal", (String) map.get("journal"));
+        publication.setAttribute("title", (String) map.get("title"));
+        publication.setAttribute("volume", (String) map.get("volume"));
+        publication.setAttribute("issue", (String) map.get("issue"));
+        publication.setAttribute("pages", (String) map.get("pages"));
+
+        Set<String> authors = (Set<String>) map.get("authors");
+        if (authors != null) {
+            for (String authorString : authors) {
+                Item author = itemFactory.makeItemForClass(TARGET_NS + "Author");
+                author.setAttribute("name", authorString);
+                author.addToCollection("publications", publication);
+                publication.addToCollection("authors", author);
+                if (!publication.hasAttribute("firstAuthor")) {
+                    publication.setAttribute("firstAuthor", authorString);
+                }
+                retSet.add(author);
+            }
+        }
+        return retSet;
     }
 
     /**
@@ -163,26 +311,27 @@ public class EntrezPublicationsRetriever
      */
     class Handler extends DefaultHandler
     {
-        Set toStore;
-        Item publication;
+        Set<String> toStore;
+        Map<String, Object> pubMap;
         String name;
         StringBuffer characters;
-        ItemFactory itemFactory;
         boolean duplicateEntry = false;
+        Map<String, Map<String, Object>> cache;
 
         /**
          * Constructor
          * @param toStore a set in which the new publication items are stored
          * @param itemFactory the factory
          */
-        public Handler(Set toStore, ItemFactory itemFactory) {
+        public Handler(Set<String> toStore, Map<String, Map<String, Object>> fromServerMap) {
             this.toStore = toStore;
-            this.itemFactory = itemFactory;
+            this.cache = fromServerMap;
         }
 
         /**
          * @see DefaultHandler#startElement(String, String, String, Attributes)
          */
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
             if ("ERROR".equals(qName)) {
                 name = qName;
@@ -199,6 +348,7 @@ public class EntrezPublicationsRetriever
         /**
          * @see DefaultHandler#characters(char[], int, int)
          */
+        @Override
         public void characters(char[] ch, int start, int length) {
             characters.append(new String(ch, start, length));
         }
@@ -206,6 +356,7 @@ public class EntrezPublicationsRetriever
         /**
          * @see DefaultHandler#endElement(String, String, String)
          */
+        @Override
         public void endElement(String uri, String localName, String qName) {
             // do nothing if we have seen this pubmed id before
             if (duplicateEntry) {
@@ -219,39 +370,38 @@ public class EntrezPublicationsRetriever
                     duplicateEntry = true;
                     return;
                 }
-                publication = itemFactory.makeItemForClass(TARGET_NS + "Publication");
-                publication.setAttribute("pubMedId", pubMedId);
-                toStore.add(publication);
+                pubMap = new HashMap<String, Object>();
+                pubMap.put("id", pubMedId);
+                toStore.add(pubMedId);
                 seenPubMeds.add(pubMedId);
+                cache.put(pubMedId, pubMap);
             } else if ("PubDate".equals(name)) {
                 String year = characters.toString().split(" ")[0];
                 try {
                     Integer.parseInt(year);
-                    publication.setAttribute("year", year);
+                    pubMap.put("year", year);
                 } catch (NumberFormatException e) {
-                    LOG.warn("Publication: " + publication + " has a year that cannot be parsed"
-                             + " to an Integer: " + year);
+                    LOG.warn("Cannot parse year from publication: " + year);
                 }
             } else if ("Source".equals(name)) {
-                publication.setAttribute("journal", characters.toString());
+                pubMap.put("journal", characters.toString());
             } else if ("Title".equals(name)) {
-                publication.setAttribute("title", characters.toString());
+                pubMap.put("title", characters.toString());
             } else if ("Volume".equals(name)) {
-                publication.setAttribute("volume", characters.toString());
+                pubMap.put("volume", characters.toString());
             } else if ("Issue".equals(name)) {
-                publication.setAttribute("issue", characters.toString());
+                pubMap.put("issue", characters.toString());
             } else if ("Pages".equals(name)) {
-                publication.setAttribute("pages", characters.toString());
+                pubMap.put("pages", characters.toString());
             } else if ("Author".equals(name)) {
-                Item author = itemFactory.makeItemForClass(TARGET_NS + "Author");
-                toStore.add(author);
                 String authorString = characters.toString();
-                author.setAttribute("name", authorString);
-                author.addToCollection("publications", publication);
-                publication.addToCollection("authors", author);
-                if (!publication.hasAttribute("firstAuthor")) {
-                    publication.setAttribute("firstAuthor", authorString);
+                toStore.add(authorString);
+                Set<String> authorSet = (Set<String>) pubMap.get("authors");
+                if (authorSet == null) {
+                    authorSet = new HashSet<String>();
+                    pubMap.put("authors", authorSet);
                 }
+                authorSet.add(authorString);
             }
             name = null;
         }
