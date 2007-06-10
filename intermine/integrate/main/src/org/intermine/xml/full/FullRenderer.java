@@ -83,7 +83,7 @@ public class FullRenderer
      * @param items a collection of items to render
      * @return the XML for the list of items
      */
-    public static String render(Collection items) {
+    public static String render(Collection<Item> items) {
         StringBuffer sb = new StringBuffer();
         sb.append(getHeader()).append(ENDL);
         Iterator iter = items.iterator();
