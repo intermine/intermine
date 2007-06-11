@@ -58,7 +58,7 @@ public class BagQueryHelperTest extends TestCase {
 		List input = new ArrayList(Arrays.asList(new Object[] {"EmployeeA1", "EmployeeB1"}));
 		BagQuery bq = BagQueryHelper.createDefaultBagQuery(model.getPackageName() + ".Manager",
                                                            bagQueryConfig, model, classKeys, input);
-		String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.title AS a3_, a1_.name AS a4_ FROM org.intermine.model.testmodel.Manager AS a1_ WHERE (LOWER(a1_.title) IN ? OR LOWER(a1_.name) IN ?) 1: [employeea1, employeeb1] 2: [employeea1, employeeb1]";
+		String expected = "SELECT DISTINCT a1_.id AS a2_, a1_.name AS a3_, a1_.title AS a4_ FROM org.intermine.model.testmodel.Manager AS a1_ WHERE (LOWER(a1_.name) IN ? OR LOWER(a1_.title) IN ?) 1: [employeea1, employeeb1] 2: [employeea1, employeeb1]";
 		assertEquals(expected, bq.getQuery(input, "DepartmentB1").toString());		
 	}
 }

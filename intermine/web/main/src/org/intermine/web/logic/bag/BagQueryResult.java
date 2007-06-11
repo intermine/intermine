@@ -47,6 +47,11 @@ public class BagQueryResult
      */
     public static final String TYPE_CONVERTED = "TYPE_CONVERTED";
 
+    /**
+     * Key of the Map returned by getIssues() when the object found by querying with a wildcard.
+     */
+    public static final String WILDCARD = "WILDCARD";
+
     private Map<Integer, List> matches = new LinkedHashMap<Integer, List>();
     private Map<String, Map<String, Map<String, List>>> issues =
         new LinkedHashMap<String, Map<String, Map<String, List>>>();
@@ -110,6 +115,8 @@ public class BagQueryResult
                             ids.add(((InterMineObject) obj).getId());
                         } else if (obj instanceof ConvertedObjectPair) {
                             ids.add(((ConvertedObjectPair) obj).getNewObject().getId());
+                        } else if (obj instanceof Integer) {
+                            ids.add((Integer) obj);
                         }
                     }
                 }

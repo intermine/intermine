@@ -13,11 +13,14 @@ package org.intermine.web.logic.bag;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -28,6 +31,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
@@ -118,6 +122,58 @@ public class BagQuery
             return addExtraContraint(q.toQuery(), extraFieldValue);
         }
         return addExtraContraint(query, extraFieldValue);
+    }
+
+    /**
+     * Return a Query to fetch bag contents for wildcards.
+     *
+     * @param bag the Collection of strings to use to constrain the query
+     * @param extraFieldValue the value used if any extra constraint is configured
+     * @return the Query
+     */
+    public Query getQueryForWildcards(Collection<String> bag, String extraFieldValue) {
+        Query q = QueryCloner.cloneQuery(getQuery(Collections.EMPTY_SET, extraFieldValue));
+        Map<QueryEvaluable, ConstraintSet> nodes = new HashMap<QueryEvaluable, ConstraintSet>();
+        if (q.getConstraint() instanceof BagConstraint) {
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+            nodes.put((QueryEvaluable) ((BagConstraint) q.getConstraint()).getQueryNode(), cs);
+            q.setConstraint(cs);
+        } else {
+            traverseConstraint(q.getConstraint(), nodes);
+        }
+        if (nodes.isEmpty()) {
+            throw new IllegalArgumentException("Query " + q + " does not contain any"
+                    + " BagConstraints");
+        }
+        for (String string : bag) {
+            String wildcardSql = string.replace('*', '%').toLowerCase();
+            for (Map.Entry<QueryEvaluable, ConstraintSet> entry : nodes.entrySet()) {
+                entry.getValue().addConstraint(new SimpleConstraint(entry.getKey(),
+                            ConstraintOp.MATCHES, new QueryValue(wildcardSql)));
+            }
+        }
+        return q;
+    }
+
+    public void traverseConstraint(Constraint con, Map<QueryEvaluable, ConstraintSet> nodes) {
+        if (con instanceof ConstraintSet) {
+            ConstraintSet cs = (ConstraintSet) con;
+            Set<Constraint> constraints = (cs).getConstraints();
+            for (Constraint c : constraints) {
+                if (c instanceof BagConstraint) {
+                    ((ConstraintSet) con).removeConstraint(c);
+                    if (cs.getOp().equals(ConstraintOp.OR)) {
+                        nodes.put((QueryEvaluable) ((BagConstraint) c).getQueryNode(), cs);
+                    } else {
+                        ConstraintSet replacement = new ConstraintSet(ConstraintOp.OR);
+                        nodes.put((QueryEvaluable) ((BagConstraint) c).getQueryNode(), replacement);
+                        cs.addConstraint(replacement);
+                    }
+                } else if (c instanceof ConstraintSet) {
+                    traverseConstraint(c, nodes);
+                }
+            }
+        }
     }
 
     /**

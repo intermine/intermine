@@ -16,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 /**
  * Convenience class for working with global properties
  *
@@ -23,6 +25,8 @@ import java.io.IOException;
  */
 public class PropertiesUtil
 {
+    private static final Logger LOG = Logger.getLogger(PropertiesUtil.class);
+
     private PropertiesUtil() {
     }
 
@@ -148,9 +152,10 @@ public class PropertiesUtil
     public static Properties loadProperties(String filename) {
         Properties props = new NonOverrideableProperties();
         try {
-            InputStream is = PropertiesUtil.class.getClassLoader()
-                .getResourceAsStream(filename);
+            ClassLoader loader = PropertiesUtil.class.getClassLoader();
+            InputStream is = loader.getResourceAsStream(filename);
             if (is == null) {
+                LOG.error("Could not find file " + filename + " from " + loader);
                 return null;
             }
             props.load(is);
