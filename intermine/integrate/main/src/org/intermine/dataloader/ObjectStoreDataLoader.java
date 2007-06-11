@@ -122,7 +122,7 @@ public class ObjectStoreDataLoader extends DataLoader
             }
             long now = System.currentTimeMillis();
             LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
-                        / (now - startTime)) + " object per minute (" + (now - startTime)
+                        / (now - startTime)) + " objects per minute (" + (now - startTime)
                     + " ms total) for source " + source.getName());
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().close();

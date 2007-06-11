@@ -68,7 +68,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
     }
 
     private ObjectStore os;
-	private Map<String, Employee> eIds;
+    private Map<String, Employee> eIds;
 	private BagQueryRunner runner;
 	
 	public BagQueryRunnerTest(String arg0) {
@@ -93,7 +93,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
 	// expect each input string to match one object
 	public void testSearchForBagMatches() throws Exception {
 		List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});
-		BagQueryResult res = runner.searchForBag("Employee", input, null);
+		BagQueryResult res = runner.searchForBag("Employee", input, null, true);
 		assertEquals(2, res.getMatches().values().size());
 		assertTrue(res.getIssues().isEmpty());
 		assertTrue(res.getUnresolved().isEmpty());
@@ -102,7 +102,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
     // test for the case when an identifier appears twice in the input - ignore duplicates
     public void testSearchForBagDuplicates1() throws Exception {
         List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2", "EmployeeA1"});
-        BagQueryResult res = runner.searchForBag("Employee", input, null);
+        BagQueryResult res = runner.searchForBag("Employee", input, null, true);
         assertEquals(2, res.getMatches().values().size());
         assertTrue(res.getIssues().isEmpty());
         assertTrue(res.getUnresolved().isEmpty());
@@ -111,7 +111,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
 	// expect to get two objects back for 'Mr.'
 	public void testSearchForBagDuplicates2() throws Exception {
 		List input = Arrays.asList(new Object[] {"Mr."});
-		BagQueryResult res = runner.searchForBag("Manager", input, null);		
+		BagQueryResult res = runner.searchForBag("Manager", input, null, true);		
 		assertEquals(0, res.getMatches().size());
 		Map expected = new HashMap();
 		Map queries = new HashMap();
@@ -127,7 +127,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
 	// expect one match and one unresolved
 	public void testSearchForBagUnresolved() throws Exception {
 		List input = Arrays.asList(new Object[] {"EmployeeA1", "rubbish"});
-		BagQueryResult res = runner.searchForBag("Employee", input, null);
+		BagQueryResult res = runner.searchForBag("Employee", input, null, true);
 		assertEquals(1, res.getMatches().values().size());
 		assertTrue(res.getIssues().isEmpty());
 		assertEquals(res.getUnresolved().size(), 1);
@@ -138,7 +138,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
 	// the same id - so getMatches().values().size() == 1
 	public void testSearchForBagDoubleInput1() throws Exception {
 		List input = Arrays.asList(new Object[] {"EmployeeB1", "Mr."});
-		BagQueryResult res = runner.searchForBag("CEO", input, null);		
+		BagQueryResult res = runner.searchForBag("CEO", input, null, true);		
 		assertEquals(1, res.getMatches().size());
 		assertEquals(2, ((List) ((Collection) res.getMatches().values()).iterator().next()).size());
 		assertTrue(res.getIssues().isEmpty());
@@ -148,7 +148,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
 	// two identifiers for same object - one matches twice
 	public void testSearchForBagDoubleInput2() throws Exception {
 		List input = Arrays.asList(new Object[] {"EmployeeB1", "Mr."});
-		BagQueryResult res = runner.searchForBag("Manager", input, null);		
+		BagQueryResult res = runner.searchForBag("Manager", input, null, true);		
 		assertEquals(1, res.getMatches().size());
 		Map expected = new HashMap();
 		Map queries = new HashMap();
@@ -164,7 +164,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
 	// match nothing from first query, match both from second
 	public void testSecondQueryIssue() throws Exception {
 		List input = Arrays.asList(new Object[] {"1"});
-		BagQueryResult res = runner.searchForBag("Employee", input, null);
+		BagQueryResult res = runner.searchForBag("Employee", input, null, true);
 		assertEquals(0, res.getMatches().values().size());
 		Map expected = new HashMap();
 		Map queries = new HashMap();
@@ -181,7 +181,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
     public void testObjectNotFound() throws Exception {
         String nonMatchingString = "non_matching_string";
         List input = Arrays.asList(new Object[] {nonMatchingString});
-        BagQueryResult res = runner.searchForBag("Employee", input, null);
+        BagQueryResult res = runner.searchForBag("Employee", input, null, true);
         assertEquals(0, res.getMatches().values().size());
         Map resUnresolved = res.getUnresolved();
         assertTrue(resUnresolved.size() == 1);
@@ -192,7 +192,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
     // test searching for an input string that only matches an object of the wrong type and can't
     // be converted
     public void testObjectWrongType() throws Exception {
-        String contractorName = "ContractorA";
+        String contractorName = "EmployeeA2";
         List input = Arrays.asList(new Object[] {contractorName});
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
@@ -201,20 +201,21 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
         runner = new BagQueryRunnerNoConversion(os, classKeys, bagQueryConfig, 
                                                 getActionServlet().getServletContext());
-        BagQueryResult res = runner.searchForBag("Employee", input, null);
+        BagQueryResult res = runner.searchForBag("Contractor", input, null, true);
         assertEquals(0, res.getMatches().values().size());
+        //fail("" + res.getIssues());
         Map resUnresolved = res.getUnresolved();
-        assertTrue(resUnresolved.size() == 1);
+        assertEquals(1, resUnresolved.size());
         assertTrue(resUnresolved.containsKey(contractorName));
         Set contractors = (Set) resUnresolved.get(contractorName);
-        assertEquals(contractorName, ((Contractor) contractors.iterator().next()).getName());
+        assertEquals(contractorName, ((Employee) contractors.iterator().next()).getName());
     }
     
     // test searching for an input string that has to be converted
     public void testTypeConverted() throws Exception {
         String empName = "EmployeeA2";
         List input = Arrays.asList(new Object[] {empName});
-        BagQueryResult res = runner.searchForBag("Manager", input, null);
+        BagQueryResult res = runner.searchForBag("Manager", input, null, true);
         assertEquals(0, res.getMatches().values().size());
         Map issues = res.getIssues();
         Map translated = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
@@ -228,7 +229,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
         String empName1 = "EmployeeA1";
         String empName2 = "EmployeeA2";
         List input = Arrays.asList(new Object[] {empName1, empName2});
-        BagQueryResult res = runner.searchForBag("Manager", input, null);
+        BagQueryResult res = runner.searchForBag("Manager", input, null, true);
         assertEquals(1, res.getMatches().values().size());
         assertEquals(empName1, ((List) res.getMatches().values().iterator().next()).get(0));
         Map issues = res.getIssues();
@@ -251,7 +252,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
     public void testTypeConvertedMultipleResults() throws Exception {
         String managerName = "ContractorA";
         List input = Arrays.asList(new Object[] {managerName});
-        BagQueryResult res = runner.searchForBag("Employee", input, null);
+        BagQueryResult res = runner.searchForBag("Employee", input, null, true);
         assertEquals(0, res.getMatches().values().size());
         Map issues = res.getIssues();
         Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
@@ -267,7 +268,7 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
     // duplicate (two ids) and one unresolved
     public void testGetMatchAndIssueIds() throws Exception {
         List input = Arrays.asList(new Object[] {"EmployeeA1", "Mr.", "gibbon"});
-        BagQueryResult res = runner.searchForBag("Manager", input, null);       
+        BagQueryResult res = runner.searchForBag("Manager", input, null, true);       
         assertEquals(1, res.getMatches().size());
         Set<Integer> ids = new HashSet(Arrays.asList(new Object[] {
             eIds.get("EmployeeB1").getId(), 
@@ -275,6 +276,14 @@ public class BagQueryRunnerTest extends MockStrutsTestCase {
             eIds.get("EmployeeB3").getId()}));
         assertEquals(ids, res.getMatchAndIssueIds());
         assertEquals(1, res.getUnresolved().size());
+    }
+
+    public void testWildcards() throws Exception {
+        List input = Arrays.asList("EmployeeA*", "EmployeeB3");
+        BagQueryResult res = runner.searchForBag("Employee", input, null, true);
+        Set<Integer> ids = new HashSet<Integer>(Arrays.asList(eIds.get("EmployeeA3").getId(), eIds.get("EmployeeA2").getId(), eIds.get("EmployeeA1").getId()));
+        assertEquals(ids, new HashSet(res.getIssues().get(BagQueryResult.WILDCARD).get("searching key fields").get("EmployeeA*")));
+        assertEquals(ids, new HashSet(res.getIssues().get(BagQueryResult.WILDCARD).get("Employable by name").get("EmployeeA*")));
     }
     
 	// we need to test a query that matches a different type.  Probably 

@@ -135,7 +135,7 @@ public class BuildBagAction extends InterMineAction
         }
 
         BagQueryResult bagQueryResult = 
-            bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue());
+            bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue(), false);
         session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagName", newBagName);
         request.setAttribute("bagType", type);

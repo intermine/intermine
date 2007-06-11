@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
@@ -44,6 +46,7 @@ import javax.servlet.ServletContext;
  */
 public class BagQueryRunner
 {
+    private static final Logger LOG = Logger.getLogger(BagQueryRunner.class);
     private ObjectStoreInterMineImpl os;
 
     private Model model;
@@ -88,22 +91,32 @@ public class BagQueryRunner
      *            BagQueryConfig (eg. if connectField is "organism", the extraClassName is
      *            "Organism" and the constrainField is "name", the extraFieldValue might be
      *            "Drosophila melanogaster")
+     * @param doWildcards true if the strings should be evaluated as wildcards
      * @return the matches, issues and unresolved input
      * @throws ClassNotFoundException if the type isn't in the model
      * @throws ObjectStoreException if there is an object store problem
      * @throws InterMineException if there is any other exception
      */
-    public BagQueryResult searchForBag(String type, List input, String extraFieldValue)
-        throws ClassNotFoundException, ObjectStoreException, InterMineException {
+    public BagQueryResult searchForBag(String type, List input, String extraFieldValue,
+            boolean doWildcards) throws ClassNotFoundException, ObjectStoreException,
+           InterMineException {
 
         Map<String, String> lowerCaseInput = new HashMap<String, String>();
         List<String> cleanInput = new ArrayList<String>();
+        List<String> wildcardInput = new ArrayList<String>();
+        Map<String, Pattern> patterns = new HashMap<String, Pattern>();
         Iterator inputIter = input.iterator();
         while (inputIter.hasNext()) {
             String inputString = (String) inputIter.next();
             if (!(inputString == null) && !(inputString.equals(""))) {
-                cleanInput.add(inputString);
-                lowerCaseInput.put(inputString.toLowerCase(), inputString);
+                if (inputString.indexOf('*') == -1 || (!doWildcards)) {
+                    cleanInput.add(inputString);
+                    lowerCaseInput.put(inputString.toLowerCase(), inputString);
+                } else {
+                    wildcardInput.add(inputString);
+                    patterns.put(inputString, Pattern.compile(inputString.toLowerCase()
+                            .replaceAll("\\*", "\\.\\*")));
+                }
             }
         }
 
@@ -119,45 +132,80 @@ public class BagQueryRunner
         Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
         Iterator<BagQuery> qIter = queries.iterator();
         BagQueryResult bqr = new BagQueryResult();
-        while (qIter.hasNext() && !unresolved.isEmpty()) {
+        while (qIter.hasNext()) {
             BagQuery bq = qIter.next();
-            Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
             // run the next query on identifiers not yet resolved
-            Query q = bq.getQuery(unresolved, extraFieldValue);
-            // TODO this is hacky as default batch size is hard coded in the os
-            boolean faster = false;
-            if (unresolved.size() > 1000) {
-                os.goFaster(q);
-                faster = true;
-            }
-            Results res = os.execute(q);
-            res.setNoPrefetch();
-            Iterator resIter = res.iterator();
-            while (resIter.hasNext()) {
-                ResultsRow row = (ResultsRow) resIter.next();
-                Integer id = (Integer) row.get(0);
-                for (int i = 1; i < row.size(); i++) {
-                    String field = (String) row.get(i);
-                    if (field != null) {
-                        String lowerField = field.toLowerCase();
-                        if (lowerCaseInput.containsKey(lowerField)) {
-                            Set<Integer> ids = resMap.get(field);
-                            if (ids == null) {
-                                ids = new HashSet<Integer>();
-                                resMap.put(field, ids);
+            if (!unresolved.isEmpty()) {
+                Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
+                Query q = bq.getQuery(unresolved, extraFieldValue);
+                // TODO this is hacky as default batch size is hard coded in the os
+                boolean faster = false;
+                try {
+                    if (unresolved.size() > 1000) {
+                        os.goFaster(q);
+                        faster = true;
+                    }
+                    Results res = os.execute(q);
+                    res.setNoPrefetch();
+                    Iterator resIter = res.iterator();
+                    while (resIter.hasNext()) {
+                        ResultsRow row = (ResultsRow) resIter.next();
+                        Integer id = (Integer) row.get(0);
+                        for (int i = 1; i < row.size(); i++) {
+                            String field = (String) row.get(i);
+                            if (field != null) {
+                                String lowerField = field.toLowerCase();
+                                if (lowerCaseInput.containsKey(lowerField)) {
+                                    Set<Integer> ids = resMap.get(field);
+                                    if (ids == null) {
+                                        ids = new HashSet<Integer>();
+                                        resMap.put(field, ids);
+                                    }
+                                    // obj is an Integer
+                                    ids.add(id);
+                                    // remove any identifiers that are now resolved
+                                    unresolved.remove(lowerCaseInput.get(lowerField));
+                                }
                             }
-                            // obj is an Integer
-                            ids.add(id);
-                            // remove any identifiers that are now resolved
-                            unresolved.remove(lowerCaseInput.get(lowerField));
+                        }
+                    }
+                } finally {
+                    if (faster) {
+                        os.releaseGoFaster(q);
+                    }
+                }
+                addResults(resMap, unresolved, bqr, bq, typeCls);
+            }
+            if (!wildcardInput.isEmpty()) {
+                Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
+                Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
+                Results res = os.execute(q);
+                res.setNoPrefetch();
+                for (ResultsRow row : (List<ResultsRow>) res) {
+                    Integer id = (Integer) row.get(0);
+                    for (int i = 1; i < row.size(); i++) {
+                        String field = (String) row.get(i);
+                        if (field != null) {
+                            String lowerField = field.toLowerCase();
+                            for (String wildcard : wildcardInput) {
+                                Pattern pattern = patterns.get(wildcard);
+                                if (pattern.matcher(lowerField).matches()) {
+                                    Set<Integer> ids = resMap.get(wildcard);
+                                    if (ids == null) {
+                                        ids = new HashSet<Integer>();
+                                        resMap.put(wildcard, ids);
+                                    }
+                                    ids.add(id);
+                                }
+                            }
                         }
                     }
                 }
+                for (Map.Entry<String, Set<Integer>> entry : resMap.entrySet()) {
+                    bqr.addIssue(BagQueryResult.WILDCARD, bq.getMessage(),
+                            entry.getKey(), new ArrayList(entry.getValue()));
+                }
             }
-            if (faster) {
-                os.releaseGoFaster(q);
-            }
-            addResults(resMap, unresolved, bqr, bq, typeCls);
         }
 
         Map<String, ?> unresolvedMap = new HashMap();

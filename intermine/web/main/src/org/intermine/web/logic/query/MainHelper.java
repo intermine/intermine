@@ -387,7 +387,7 @@ public class MainHelper
                     }
                     try {
                         bagQueryResult = bagQueryRunner.searchForBag(node.getType(),
-                            identifierList, null);
+                            identifierList, null, true);
                     } catch (ClassNotFoundException e) {
                         throw new ObjectStoreException(e);
                     } catch (InterMineException e) {

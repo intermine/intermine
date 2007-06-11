@@ -45,7 +45,8 @@ public class TypeUtil
     private TypeUtil() {
     }
 
-    private static Map classToFieldnameToFieldInfo = new HashMap();
+    private static Map<Class, Map<String, FieldInfo>> classToFieldnameToFieldInfo
+        = new HashMap<Class, Map<String, FieldInfo>>();
 
     /**
      * Returns the package name from a fully qualified class name
@@ -231,33 +232,31 @@ public class TypeUtil
      * @param c the Class
      * @return a Map from field name to FieldInfo object
      */
-    public static Map getFieldInfos(Class c) {
-        Map infos = null;
+    public static Map<String, FieldInfo> getFieldInfos(Class c) {
+        Map<String, FieldInfo> infos = null;
         synchronized (classToFieldnameToFieldInfo) {
-            infos = (Map) classToFieldnameToFieldInfo.get(c);
+            infos = classToFieldnameToFieldInfo.get(c);
 
             if (infos == null) {
                 infos = new TreeMap();
 
-                Map methods = new HashMap();
+                Map<String, Method> methods = new HashMap();
                 Method methodArray[] = c.getMethods();
                 for (int i = 0; i < methodArray.length; i++) {
                     String methodName = methodArray[i].getName();
                     methods.put(methodName, methodArray[i]);
                 }
 
-                Iterator methodIter = methods.keySet().iterator();
-                while (methodIter.hasNext()) {
-                    String getterName = (String) methodIter.next();
+                for (String getterName : methods.keySet()) {
                     if (getterName.startsWith("get")) {
                         String setterName = "set" + getterName.substring(3);
                         String proxySetterName = "proxy" + getterName.substring(3);
                         String proxyGetterName = "proxGet" + getterName.substring(3);
                         if (methods.containsKey(setterName)) {
-                            Method getter = (Method) methods.get(getterName);
-                            Method setter = (Method) methods.get(setterName);
-                            Method proxySetter = (Method) methods.get(proxySetterName);
-                            Method proxyGetter = (Method) methods.get(proxyGetterName);
+                            Method getter = methods.get(getterName);
+                            Method setter = methods.get(setterName);
+                            Method proxySetter = methods.get(proxySetterName);
+                            Method proxyGetter = methods.get(proxyGetterName);
                             String fieldName = getterName.substring(3);
                             fieldName = StringUtil.reverseCapitalisation(fieldName);
                             
@@ -265,7 +264,7 @@ public class TypeUtil
                             if (!getter.getName().equals("getClass")
                                 && !getter.getName().startsWith("getCallback")) {
                                 FieldInfo info = new FieldInfo(fieldName, getter, setter,
-                                                               proxySetter, proxyGetter);
+                                        proxySetter, proxyGetter);
                                 infos.put(fieldName, info);
                             }
                         }
@@ -286,7 +285,7 @@ public class TypeUtil
      * @return a FieldInfo object, or null if the fieldname is not found
      */
     public static FieldInfo getFieldInfo(Class c, String fieldname) {
-        return (FieldInfo) getFieldInfos(c).get(fieldname);
+        return getFieldInfos(c).get(fieldname);
     }
 
     /**

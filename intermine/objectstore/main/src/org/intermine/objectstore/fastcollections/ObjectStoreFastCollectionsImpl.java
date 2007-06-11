@@ -37,6 +37,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryForeignKey;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
@@ -203,6 +204,16 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                 cs.addConstraint(new SimpleConstraint(idField,
                                             ConstraintOp.LESS_THAN_EQUALS,
                                             new QueryValue(new Integer(highestId))));
+                                if (coll.relationType() == FieldDescriptor.ONE_N_RELATION) {
+                                    QueryForeignKey reverseIdField = new QueryForeignKey(qc2,
+                                            coll.getReverseReferenceFieldName());
+                                    cs.addConstraint(new SimpleConstraint(reverseIdField,
+                                                ConstraintOp.GREATER_THAN_EQUALS,
+                                                new QueryValue(new Integer(lowestId))));
+                                    cs.addConstraint(new SimpleConstraint(reverseIdField,
+                                                ConstraintOp.LESS_THAN_EQUALS,
+                                                new QueryValue(new Integer(highestId))));
+                                }
                                 Results l = new Results(subQ, os, sequence);
                                 if (!optimise) {
                                     l.setNoOptimise();
@@ -210,7 +221,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                 if (!explain) {
                                     l.setNoExplain();
                                 }
-                                l.setBatchSize(limit * 2);
+                                l.setBatchSize(limit * 20);
                                 insertResults(collections, l, fieldName);
                             } else {
                                 List bagList = new ArrayList(bag);
