@@ -52,6 +52,7 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.InlineTemplateTable;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
@@ -74,7 +75,7 @@ public class TemplateHelper
     /** Type parameter indicating ALL templates */
     public static final String ALL_TEMPLATE = "all";
     /** Type parameter indicating temporary templates **/
-//    public static final String TEMP_TEMPLATE = "temp";
+    public static final String TEMP_TEMPLATE = "temp";
 
     /**
      * Locate TemplateQuery by identifier. The type parameter
@@ -115,9 +116,9 @@ public class TemplateHelper
             } else {
                 return tq;
             }
-   //     } else if (TEMP_TEMPLATE.equals(type)) {
-  //         SavedQuery savedQuery = profile.getHistory().get(templateName);
-  //         return (TemplateQuery) savedQuery.getPathQuery();
+        } else if (TEMP_TEMPLATE.equals(type)) {
+            SavedQuery savedQuery = profile.getHistory().get(templateName);
+            return (TemplateQuery) savedQuery.getPathQuery();
         } else {
             throw new IllegalArgumentException("type: " + type);
         }
