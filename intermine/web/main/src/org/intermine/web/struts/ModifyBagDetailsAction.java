@@ -10,6 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -20,13 +22,25 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -63,6 +77,34 @@ public class ModifyBagDetailsAction extends InterMineAction
         } else {
             if (request.getParameter("showInResultsTable") != null) {
                 return showBagInResultsTable(mbdf.getBagName(), mapping, session);
+            } else if (request.getParameter("useBagInQuery") != null) {
+                Map savedBags = profile.getSavedBags();
+                InterMineBag imBag = (InterMineBag) savedBags.get(mbdf.getBagName());
+                Model model = os.getModel();
+                Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+                WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+
+                
+                Query q = new Query();
+                QueryClass qc = new QueryClass(InterMineObject.class);
+                q.addFrom(qc);
+                q.addToSelect(qc);
+                q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
+                q.setDistinct(false);
+                SingletonResults res = os.executeSingleton(q);
+
+                WebPathCollection webPathCollection =
+                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model, 
+                                          webConfig, classKeys);
+
+                PagedTable pagedColl = new PagedTable(webPathCollection);
+                
+                PathQuery pathQuery = MainHelper.webTableToPathQuery(pagedColl, model, imBag);
+                session.setAttribute(Constants.QUERY, pathQuery);
+                session.setAttribute("path", imBag.getType());
+                session.setAttribute("prefix", imBag.getType());
+                
+                return mapping.findForward("query");
             }
         }
         return new ForwardParameters(mapping.findForward("bagDetails"))
