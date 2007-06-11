@@ -75,7 +75,8 @@ public class EntrezPublicationsRetriever
         "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
     // number of summaries to retrieve per request
     protected static final int BATCH_SIZE = 500;
-
+    // number of times to try the same bacth from the server
+    private static final int MAX_TRIES = 5;
     private String osAlias = null, outputFile = null;
     private Set<String> seenPubMeds = new HashSet<String>();
     private String cacheDirName;
@@ -182,31 +183,49 @@ public class EntrezPublicationsRetriever
             }
 
             Iterator<String> idIter = idsToFetch.iterator();
+            Set<String> thisBatch = new HashSet<String>();
             while (idIter.hasNext()) {
                 String pubMedId = idIter.next();
-                idsToFetch.add(pubMedId);
-                if (idsToFetch.size() == BATCH_SIZE || !idIter.hasNext() && idsToFetch.size() > 0) {
+                thisBatch.add(pubMedId);
+                if (thisBatch.size() == BATCH_SIZE || !idIter.hasNext() && thisBatch.size() > 0) {
                     try {
-                        BufferedReader br = new BufferedReader(getReader(idsToFetch));
-                        StringBuffer buf = new StringBuffer();
-                        String line;
-                        while ((line = br.readLine()) != null) {
-                            buf.append(line + "\n");
-                        }
                         // the server may return less publications than we ask for, so keep a Map
-                        Map<String, Map<String, Object>> fromServerMap = 
-                            new HashMap<String, Map<String, Object>>();
-                        try {
-                            SAXParser.parse(new InputSource(new StringReader(buf.toString())),
-                                            new Handler(toStore, fromServerMap));
-                        } catch (Throwable e) {
-                            throw new RuntimeException("failed to parse: " + buf.toString(), e);
+                        Map<String, Map<String, Object>> fromServerMap = null;
+                        
+                        for (int i = 0; i < MAX_TRIES; i++) {
+                            BufferedReader br = new BufferedReader(getReader(thisBatch));
+                            StringBuffer buf = new StringBuffer();
+                            String line;
+                            while ((line = br.readLine()) != null) {
+                                buf.append(line + "\n");
+                            }
+                            fromServerMap = new HashMap<String, Map<String, Object>>();
+                            Throwable throwable = null;
+                            try {
+                                SAXParser.parse(new InputSource(new StringReader(buf.toString())),
+                                                new Handler(toStore, fromServerMap));
+                            } catch (Throwable e) {
+                                // try again or re-throw the Throwable
+                                throwable = e;
+                            }
+                            if (i == MAX_TRIES) {
+                                throw new RuntimeException("failed to parse: " + buf.toString()
+                                                           + " - tried " + MAX_TRIES + " times",
+                                                           throwable);
+                            } else {
+                                if (throwable != null) {
+                                    // try again
+                                    continue;
+                                }
+                            }
+
+                            for (String id: fromServerMap.keySet()) {
+                                writeItems(writer, mapToItems(itemFactory, fromServerMap.get(id)));
+                            }
+                            addToDb(txn, db, fromServerMap);
+                            break;
                         }
-                        for (String id: fromServerMap.keySet()) {
-                            writeItems(writer, mapToItems(itemFactory, fromServerMap.get(id)));
-                        }
-                        addToDb(txn, db, fromServerMap);
-                        idsToFetch.clear();
+                        thisBatch.clear();
                         toStore.clear();
                     } finally {
                         txn.commit();
