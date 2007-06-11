@@ -497,7 +497,8 @@ public class QueryBuilderChange extends DispatchAction
                 FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
                 Path pathToAdd = new Path(model, path.toString() + "." + fc.getFieldExpr());
                 if (pathToAdd.getEndClassDescriptor() == null
-                                && !view.contains(pathToAdd)) {
+                                && !view.contains(pathToAdd)
+                                && fc.getShowInResults()) {
                     view.add(pathToAdd);
                 }
                 // if sort order is empty, then add first element to sort order 
