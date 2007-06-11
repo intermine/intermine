@@ -114,12 +114,17 @@ public class InitialiserPlugin implements PlugIn
         loadClassDescriptions(servletContext, os);
         
         summarizeObjectStore(servletContext, os);
+
         // load class keys
         loadClassKeys(servletContext, os);
+
+        // load custom bag queries
+        loadBagQueries(servletContext, os);
+        
         final ProfileManager pm = createProfileManager(servletContext, os);
         // Loading shared template queries requires profile manager
         loadSuperUserDetails(servletContext);
-        
+
         // index global webSearchables
         SearchRepository searchRepository = new SearchRepository();
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
@@ -149,8 +154,6 @@ public class InitialiserPlugin implements PlugIn
  
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 
-        // load custom bag queries
-        loadBagQueries(servletContext, os);
         makeCache(servletContext, os);
         
         cleanTags(pm);
