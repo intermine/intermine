@@ -70,7 +70,7 @@
 
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv3');">
-              <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+              <img id='hiddenDiv3Toggle' src="images/undisclosed.gif"/>
               Tiffin binding site predictions for <i>D. melanogaster</i> ...
             </a>
           </h4>
