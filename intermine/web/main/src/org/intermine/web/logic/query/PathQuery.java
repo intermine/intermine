@@ -236,7 +236,7 @@ public class PathQuery
         try {
             view.add(MainHelper.makePath(model, this, viewString));
         } catch (PathError e) {
-            problems.add(e);
+            addProblem(e);
         }
     }
 
@@ -283,7 +283,7 @@ public class PathQuery
 //                sortOrder.add(o);
 //            }
 //        } catch (PathError e) {
-//            problems.add(e);
+//            addProblem(e);
 //        }
 //    }
 
@@ -294,7 +294,7 @@ public class PathQuery
         try {
             sortOrder.get(0).setDirection(direction);
         } catch (PathError e) {
-            problems.add(e);
+            addProblem(e);
         }
     }
     
@@ -311,7 +311,7 @@ public class PathQuery
             OrderBy o = new OrderBy(p, direction);
             sortOrder.add(o);
         } catch (PathError e) {
-            problems.add(e);
+            addProblem(e);
         }
     }
   
@@ -328,7 +328,7 @@ public class PathQuery
                 sortOrder.add(o);
             }
         } catch (PathError e) {
-            problems.add(e);
+            addProblem(e);
         }
     }
 
@@ -399,7 +399,7 @@ public class PathQuery
             try {
                 MainHelper.getQualifiedTypeName(path, model);
             } catch (ClassNotFoundException err) {
-                problems.add(err);
+                addProblem(err);
             }
         } else {
             String prefix = path.substring(0, path.lastIndexOf("."));
@@ -419,7 +419,7 @@ public class PathQuery
                 try {
                     node.setModel(model);
                 } catch (Exception err) {
-                    problems.add(err);
+                    addProblem(err);
                 }
             } else {
                 addNode(prefix);
@@ -484,7 +484,7 @@ public class PathQuery
             try {
                 newNode.setModel(model);
             } catch (IllegalArgumentException err) {
-                query.problems.add(err);
+                query.addProblem(err);
             }
             newNode.setType(node.getType());
         }
@@ -537,8 +537,12 @@ public class PathQuery
         try {
             MainHelper.makeQuery(this, savedBags, servletContext, null);
         } catch (Exception err) {
-            problems.add(err);
+            addProblem(err);
         }
+    }
+
+    private void addProblem(Throwable err) {
+        problems.add(err);
     }
 
     /**
@@ -684,7 +688,7 @@ public class PathQuery
             Path path = MainHelper.makePath(model, this, viewString);
             pathDescriptions.put(path, description);
         } catch (PathError e) {
-            problems.add(e);
+            addProblem(e);
         }
     }
 }
