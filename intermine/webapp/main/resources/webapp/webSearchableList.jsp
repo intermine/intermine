@@ -8,15 +8,22 @@
 
 <tiles:importAttribute name="type"/>
 <tiles:importAttribute name="scope"/>
+<tiles:importAttribute name="showDescriptions" ignore="true"/>
 
 <html:xhtml/>
 <div class="webSearchableList">
   <c:forEach items="${filteredWebSearchables}" var="webSearchableEntry">
     <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${webSearchableEntry.key}">
       <div class="webSearchableListElement">
-        ${webSearchableEntry.value.title}
+        ${webSearchableEntry.value.title}        
       </div>
-    </html:link>
+      </html:link>
+     <c:if test="${showDescriptions}">
+      <div class="webSearchableListDescription">
+        ${webSearchableEntry.value.description}        
+      </div>
+     </c:if>
+    
   </c:forEach>
 </div>
 
