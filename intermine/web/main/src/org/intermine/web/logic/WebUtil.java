@@ -10,9 +10,15 @@ package org.intermine.web.logic;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.intermine.objectstore.query.Results;
 
@@ -29,8 +35,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -93,7 +97,7 @@ public abstract class WebUtil
         return cacheDir;
     }
 
-    /**
+    /**new Integer(
      * Given an image on disk, write the image to the client. Assumes content type from
      * the file extensions.
      * @param imgFile image file
@@ -325,4 +329,22 @@ public abstract class WebUtil
         return specCharToText;
     }
 
+    /**
+     * takes a map and puts it in random order
+     * also shortens the list to be map.size() = max
+     * @param map The map to be randomised
+     * @param max the number of items to be in the final list
+     * @return the newly randomised, shortened map
+     */
+    public static Map shuffle(Map map, int max) {
+        List keys = new ArrayList(map.keySet());
+        // randomise!
+        Collections.shuffle(keys);
+        // remove items from the list until short enough
+        int i = 0;
+        while (map.size() > max) {
+            map.remove(keys.get(i++));
+        }
+        return map;
+    }    
 }
