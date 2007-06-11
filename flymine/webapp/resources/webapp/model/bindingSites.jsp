@@ -12,7 +12,7 @@
       </div>
       <div class="body">
         <dl>
-          <h4>   
+          <h4>
             <a href="javascript:toggleDiv('hiddenDiv1');">
               <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
               <i>D. melanogaster</i>  - Regulatory elements ...
@@ -21,10 +21,10 @@
 
           <div id="hiddenDiv1" style="display:none;">
 
-	    <dt>
-	      Note: The REDfly data has been re-mapped to
-	      genome sequence release 5.0 as of FlyMine release 7.0. 
-	    </dt>
+            <dt>
+              Note: The REDfly data has been re-mapped to
+              genome sequence release 5.0 as of FlyMine release 7.0.
+            </dt>
 
 
             <dt>
@@ -36,14 +36,15 @@
 
 
             <dt>
-              Regulatory elements for <i>D. melanogaster</i> annotated by 
+              Regulatory elements for <i>D. melanogaster</i> annotated by
               <a href="http://flybase.bio.indiana.edu">FlyBase</a>.
             </dt>
 
             <br/>
 
           </div>
-          <h4>           
+
+          <h4>
             <a href="javascript:toggleDiv('hiddenDiv2');">
               <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
               <i>D. melanogaster</i>  - Binding sites ...
@@ -52,18 +53,40 @@
 
           <div id="hiddenDiv2" style="display:none;">
 
-	    <dt>
-	      Note: The FlyReg data has been re-mapped to
-	      genome sequence release 5.0 as of FlyMine release 7.0. 
-	    </dt>	
+            <dt>
+              Note: The FlyReg data has been re-mapped to
+              genome sequence release 5.0 as of FlyMine release 7.0.
+            </dt>
 
 
             <dt>
-              DNase I footprints for <i>D. melanogaster</i> from the 
+              DNase I footprints for <i>D. melanogaster</i> from the
               <a href="http://www.flyreg.org"> DNase I footprint database (V2.0)</a>.
             </dt>
             <dd>
               Bergman et al (2005) Bioinformatics 21:1747-1749 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468">PubMed: 15572468</a>) - <i>Drosophila</i> DNase I footprint database: a systematic genome annotation of transcription factor binding sites in the fruitfly, <i>Drosophila melanogaster</i>.
+            </dd>
+          </div>
+
+          <h4>
+            <a href="javascript:toggleDiv('hiddenDiv3');">
+              <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+              Tiffin binding site predictions for <i>D. melanogaster</i> ...
+            </a>
+          </h4>
+
+          <div id="hiddenDiv3" style="display:none;">
+
+            <dt>
+              Note: The Tiffin data has been re-mapped to
+              genome sequence release 5.0 as of FlyMine release 7.0.
+            </dt>
+
+            <dt>
+              Tiffin is a database of predicted regulatory motifs and predicted functional sites ("motif instances") on genome sequences.
+            </dt>
+            <dd>
+              <a href="http://servlet.sanger.ac.uk/tiffin/">Tiffin page at The Sanger Insitute</a>
             </dd>
           </div>
         </dl>
@@ -74,7 +97,7 @@
       <div class="heading2">
         Bulk download
       </div>
-      <div class="body">        
+      <div class="body">
         <ul>
 
           <li>
@@ -117,6 +140,30 @@
                 <node path="TFBindingSite.evidence.title" type="String">
                   <constraint op="=" value="FlyReg data set">
                   </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
+
+          <li>
+            <im:querylink text="Transcription factor binding sites predicted by Tiffin"
+                          skipBuilder="true">
+              <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.motif.identifier">
+                <pathDescription pathString="TFBindingSite.motif" description="Motif"/>
+                <pathDescription pathString="TFBindingSite.chromosomeLocation" description="Chromosome location"/>
+                <pathDescription pathString="TFBindingSite.chromosome" description="Chromosome"/>
+                <pathDescription pathString="TFBindingSite" description="Binding site"/>
+                <node path="TFBindingSite" type="TFBindingSite">
+                </node>
+                <node path="TFBindingSite.evidence" type="DataSet">
+                </node>
+                <node path="TFBindingSite.evidence.title" type="String">
+                  <constraint op="=" value="Tiffin" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+                <node path="TFBindingSite.organism" type="Organism">
+                </node>
+                <node path="TFBindingSite.organism.name" type="String">
                 </node>
               </query>
             </im:querylink>
