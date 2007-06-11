@@ -322,6 +322,13 @@
         <attribute name="description" value="The Sanger Institute"/>
         <attribute name="url" value="http://www.sanger.ac.uk"/>
     </item>
+    <item id="341" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Tiffin"/>
+        <attribute name="description" value="Tiffin predicted Drosophila transcription factor binding sites"/>
+        <attribute name="version" value="1.2"/>
+        <attribute name="url" value="http://servlet.sanger.ac.uk/tiffin/"/>
+        <reference name="dataSource" ref_id="340"/>
+    </item>
 
     <item id="350" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="VectorBase"/>
