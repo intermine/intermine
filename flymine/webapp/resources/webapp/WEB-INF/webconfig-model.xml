@@ -561,7 +561,7 @@
       <fieldconfig fieldExpr="identifier" />
     </fields>
     <longdisplayers>
-      <displayer src="/model/tiffinDisplayer.jsp"/>
+      <displayer src="/model/tiffinMotifDisplayer.jsp"/>
     </longdisplayers>
   </class>
 
