@@ -30,6 +30,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
@@ -117,48 +118,65 @@ public class TemplateListHelper
         }
         
         
+      Model model = os.getModel();
       TEMPLATE:
-        for (Iterator<TemplateQuery> iter = all.iterator(); iter.hasNext(); ) {
+        for (Iterator<TemplateQuery> iter = all.iterator(); iter.hasNext();) {
             TemplateQuery template = iter.next();
-            List constraints = template.getAllConstraints();
-            Model model = os.getModel();
-            Iterator constraintIter = constraints.iterator();
             List<String> fieldExprs = new ArrayList<String>();
-            while (constraintIter.hasNext()) {
-                Constraint c = (Constraint) constraintIter.next();
-
-                if (!c.isEditable()) {
-                    continue;
-                }
-                
-                String constraintIdentifier = c.getIdentifier();
-                String[] bits = constraintIdentifier.split("\\.");
- 
-                if (bits.length != 2) {
-                    // we can't handle anything like "Department.company.name" yet so ignore this
-                    // template
+            // Only want one editable constraint
+            for (Map.Entry<String, PathNode> entry : template.getNodes().entrySet()) {
+                PathNode pathNode = entry.getValue();
+                if (template.getEditableConstraints(pathNode).size() > 1) {
                     continue TEMPLATE;
                 }
+                for (Constraint c : pathNode.getConstraints()) {
+                    if (!c.isEditable()) {
+                        continue;
+                    }
 
-                String className = model.getPackageName() + "." + bits[0];
-                String fieldName = bits[1];
-                String fieldExpr = TypeUtil.unqualifiedName(className) + "." + fieldName;
-                try {
-                    Class iface = Class.forName(className);
-                    if (types.contains(iface)
-                                    && model.getClassDescriptorByName(className)
-                                    .getFieldDescriptorByName(fieldName) != null) {
-                        Path path = new Path(model, fieldExpr);
-                        if (path.resolve(object) == null) {
-                            // ignore this template because putting a null into a template isn't
-                            // a good idea
+                    if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+                        try {
+                            if (TypeUtil.isInstanceOf(object, model.getPackageName() + "."
+                                                              + pathNode.getType())) {
+                                templates.add(template);
+                            }
+                        } catch (ClassNotFoundException err) {
+                            LOG.error(err);
+                            continue TEMPLATE;
+                        } 
+                    } else {
+                        String constraintIdentifier = c.getIdentifier();
+                        String[] bits = constraintIdentifier.split("\\.");
+
+                        if (bits.length != 2) {
+                            // we can't handle anything like "Department.company.name" yet so ignore
+                            // this
+                            // template
                             continue TEMPLATE;
                         }
-                        fieldExprs.add(fieldExpr);
+
+                        String className = model.getPackageName() + "." + bits[0];
+                        String fieldName = bits[1];
+                        String fieldExpr = TypeUtil.unqualifiedName(className) + "." + fieldName;
+                        try {
+                            Class iface = Class.forName(className);
+                            if (types.contains(iface)
+                                && model.getClassDescriptorByName(className)
+                                        .getFieldDescriptorByName(fieldName) != null) {
+                                Path path = new Path(model, fieldExpr);
+                                if (path.resolve(object) == null) {
+                                    // ignore this template because putting a null into a template
+                                    // isn't
+                                    // a good idea
+                                    continue TEMPLATE;
+                                }
+                                fieldExprs.add(fieldExpr);
+                            }
+                        } catch (ClassNotFoundException err) {
+                            LOG.error(err);
+                            continue TEMPLATE;
+                        }
                     }
-                } catch (ClassNotFoundException err) {
-                    LOG.error(err);
-                    continue TEMPLATE;
                 }
             }
             if (fieldExprs.size() > 0) {
