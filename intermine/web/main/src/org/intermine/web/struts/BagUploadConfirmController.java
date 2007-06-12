@@ -164,7 +164,7 @@ public class BagUploadConfirmController extends TilesAction
                 InterMineObject o;
                 if (obj instanceof ConvertedObjectPair) {
                     ConvertedObjectPair pair = (ConvertedObjectPair) obj;
-                    o = (InterMineObject) pair;
+                    o = pair.getNewObject();
                 } else {
                     o = (InterMineObject) obj;
                 }
