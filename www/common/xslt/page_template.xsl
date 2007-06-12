@@ -98,7 +98,7 @@
             &#160;
           </span>
           <span class="menu-item">
-            <a href="{xsl:concat($webappprefix,'/templateSearch.do')}">
+            <a href="{xsl:concat($webappprefix,'/search.do?type=template')}">
               Search templates
             </a>
             <img src="{xsl:concat($webappprefix,'/images/inspect.gif')}" width="12" height="11" alt="-&gt;"/>
