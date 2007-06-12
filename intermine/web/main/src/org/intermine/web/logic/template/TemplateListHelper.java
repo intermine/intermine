@@ -271,48 +271,58 @@ public class TemplateListHelper
                     TemplateQuery templateQuery = 
                         (TemplateQuery) globalTemplates.get(tag.getObjectIdentifier());
                     if (templateQuery != null) {
-                        List constraints = templateQuery.getAllConstraints();
-                        Iterator constraintIter = constraints.iterator();
                         List<String> fieldExprs = new ArrayList<String>();
-                        while (constraintIter.hasNext()) {
-                            Constraint c = (Constraint) constraintIter.next();
-
-                            if (!c.isEditable()) {
-                                continue;
-                            }
-                            
-                            String constraintIdentifier = c.getIdentifier();
-                            String[] bits = constraintIdentifier.split("\\.");
-             
-                            if (bits.length != 2) {
-                                // we can't handle anything like "Department.company.name" yet so
-                                // ignore this template
+                        for (Map.Entry<String, PathNode> entry : templateQuery.getNodes()
+                                                                              .entrySet()) {
+                            PathNode pathNode = entry.getValue();
+                            if (templateQuery.getEditableConstraints(pathNode).size() > 1) {
                                 continue TAGS;
                             }
+                            for (Constraint c : pathNode.getConstraints()) {
+                                if (!c.isEditable()) {
+                                    continue;
+                                }
+                                if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+                                    if (bag.getType().equals(pathNode.getType())) {
+                                        templates.add(templateQuery);
+                                    }
+                                } else {
+                                    String constraintIdentifier = c.getIdentifier();
+                                    String[] bits = constraintIdentifier.split("\\.");
 
-                            String className = model.getPackageName() + "." + bits[0];
-                            String fieldName = bits[1];
-                            String fieldExpr =
-                                TypeUtil.unqualifiedName(className) + "." + fieldName;
+                                    if (bits.length != 2) {
+                                        // we can't handle anything like "Department.company.name"
+                                        // yet
+                                        // so
+                                        // ignore this template
+                                        continue TAGS;
+                                    }
 
-                            /*if (allNull(os, bag, fieldName)) {
-                                // ignore this template because putting a null into a template isn't
-                                // a good idea
-                                continue TAGS;
-                            }*/
-                            Class identifierClass;
-                            try {
-                                identifierClass = Class.forName(className);
-                            } catch (ClassNotFoundException e) {
-                               continue TAGS;
+                                    String className = model.getPackageName() + "." + bits[0];
+                                    String fieldName = bits[1];
+                                    String fieldExpr = TypeUtil.unqualifiedName(className) + "."
+                                                       + fieldName;
+
+                                    /*
+                                     * if (allNull(os, bag, fieldName)) { // ignore this template
+                                     * because putting a null into a template isn't // a good idea
+                                     * continue TAGS; }
+                                     */
+                                    Class identifierClass;
+                                    try {
+                                        identifierClass = Class.forName(className);
+                                    } catch (ClassNotFoundException e) {
+                                        continue TAGS;
+                                    }
+
+                                    if (identifierClass.isAssignableFrom(bagClass)
+                                        && model.getClassDescriptorByName(className)
+                                                .getFieldDescriptorByName(fieldName) != null) {
+                                        fieldExprs.add(fieldExpr);
+                                    }
+                                }
                             }
-                            
-                            if (identifierClass.isAssignableFrom(bagClass)
-                                && model.getClassDescriptorByName(className)
-                                   .getFieldDescriptorByName(fieldName) != null) {
-                                fieldExprs.add(fieldExpr);
-                            }
-                         }
+                        }
                         if (fieldExprs.size() > 0) {
                             templates.add(templateQuery);
                             fieldExprsOut.put(templateQuery, fieldExprs);
