@@ -9,13 +9,13 @@
 <%@ include file="/shared/taglibs.jsp" %>
 
 <c:if test="${!templateQuery.valid}">
-  <html:link action="/templateProblems?name=${templateQuery.name}&amp;type=${scope}" styleClass="brokenTmplLink">
+  <html:link action="/templateProblems?name=${templateQuery.name}&amp;scope=${scope}" styleClass="brokenTmplLink">
     <strike><span class="templateTitle"><c:out value="${templateQuery.title}"/></span></strike>
     <img border="0" class="arrow" src="images/template_t.gif" alt="->"/>
   </html:link>
 </c:if>
 <c:if test="${templateQuery.valid}">
-  <html:link action="/template?name=${templateQuery.name}&amp;type=${scope}${extra}" 
+  <html:link action="/template?name=${templateQuery.name}&amp;scope=${scope}${extra}" 
              title="${linkTitle}">
     <span class="templateTitle">${!empty desc ? desc : templateQuery.title}</span>
   </html:link>
@@ -40,7 +40,7 @@
   </tiles:insert>
   
   <%-- (t) img.  trail isn't used here because queries always reset the trail --%>
-  <html:link action="/template?name=${templateQuery.name}&amp;type=${scope}${extra}" 
+  <html:link action="/template?name=${templateQuery.name}&amp;scope=${scope}${extra}" 
              title="${linkTitle}">
     <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
   </html:link>
