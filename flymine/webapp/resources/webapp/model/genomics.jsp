@@ -96,6 +96,23 @@
             </dd>
           </dl>
         </div>
+
+        <h4>
+          <a href="javascript:toggleDiv('hiddenDiv3');">
+            <img id='hiddenDiv3Toggle' src="images/undisclosed.gif"/>
+            EST data sets ...
+          </a>
+        </h4>
+
+        <div id="hiddenDiv3" style="display:none;">
+          <dl>
+            <dt><i>A. gambiae</i> EST data set</dt>
+            <dd>
+              Clustered EST data set from the 
+              <a href="http://web.bioinformatics.ic.ac.uk/AnoEST/">Imperial College London Centre for Bioinformatics</a>.
+            </dd>
+          </dl>
+        </div>
       </div>
     </td>
     <td width="40%" valign="top">
@@ -162,6 +179,27 @@
             </im:querylink>
           </li>
 
+          <li>
+            <im:querylink text="All <i>A. gambiae</i> EST clusters from Imperial College"
+ skipBuilder="true">
+              <query name="" model="genomic" view="ESTCluster.identifier ESTCluster.length ESTCluster.chromosome.identifier ESTCluster.chromosomeLocation.start ESTCluster.chromosomeLocation.end">
+                <pathDescription pathString="ESTCluster.chromosomeLocation" description="Chromosome location">
+                </pathDescription>
+                <pathDescription pathString="ESTCluster.chromosome" description="Chromosome">
+                </pathDescription>
+                <pathDescription pathString="ESTCluster" description="EST cluster">
+                </pathDescription>
+                <node path="ESTCluster" type="ESTCluster">
+                </node>
+                <node path="ESTCluster.organism" type="Organism">
+                </node>
+                <node path="ESTCluster.organism.name" type="String">
+                  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
+          </li>
         </ul>
       </div>
     </td>
