@@ -156,10 +156,14 @@ public class BagQueryRunner
                             if (field != null) {
                                 String lowerField = field.toLowerCase();
                                 if (lowerCaseInput.containsKey(lowerField)) {
-                                    Set<Integer> ids = resMap.get(field);
+                                    // beacuse we are converting to lower case we need to match
+                                    // to original input so that 'h' matches 'H' and 'h' becomes
+                                    // a duplicate.
+                                    String originalInput = lowerCaseInput.get(lowerField);
+                                    Set<Integer> ids = resMap.get(originalInput);
                                     if (ids == null) {
                                         ids = new HashSet<Integer>();
-                                        resMap.put(field, ids);
+                                        resMap.put(originalInput, ids);
                                     }
                                     // obj is an Integer
                                     ids.add(id);
