@@ -74,7 +74,7 @@ public class BagUploadConfirmController extends TilesAction
             }
         }
         request.setAttribute("lowQualityMatches", lowQualityMatches);
-        flattenedArray.append(setJSArray(lowQualityMatches, "other"));
+        flattenedArray.append(setJSArray(lowQualityMatches, "lowQ"));
         
         // find all input strings that match more than one object
         Map duplicates = new LinkedHashMap();
@@ -100,7 +100,7 @@ public class BagUploadConfirmController extends TilesAction
             }
         }
         request.setAttribute("convertedObjects", convertedObjects);
-        flattenedArray.append(setJSArray(convertedObjects, "convertedObject"));
+        flattenedArray.append(setJSArray(convertedObjects, "converted"));
         
         // create a string containing the ids of the high-quality matches
         StringBuffer matchesStringBuffer = new StringBuffer();
@@ -171,7 +171,7 @@ public class BagUploadConfirmController extends TilesAction
                 //addId2Bag('${resultElementRow[rowStatus.index]}','${idcounter}',
                 //          '${identifier}','${issueType}');
                 sb.append(o.getId() + "," + objectListIndex + "," 
-                          + identifier + "," + issueType + "|");
+                          + identifier + "," + issueType + "|");                
                 objectListIndex++;
             }
         }
