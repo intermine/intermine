@@ -47,7 +47,7 @@ public class ObjectDetailsAspectController extends TilesAction
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         
         ComponentContext cc = new ComponentContext();
-        cc.putAttribute("type", "global");
+        cc.putAttribute("scope", "global");
         cc.putAttribute("placement", context.getAttribute("placement"));
         cc.putAttribute("displayObject", dobj);
         cc.putAttribute("interMineIdBag", interMineIdBag);
