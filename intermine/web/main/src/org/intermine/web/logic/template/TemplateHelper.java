@@ -10,10 +10,6 @@ package org.intermine.web.logic.template;
  *
  */
 
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,14 +17,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
 
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
 import org.intermine.cache.InterMineCache;
 import org.intermine.cache.ObjectCreator;
 import org.intermine.metadata.ClassDescriptor;
@@ -37,11 +30,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.Results;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
@@ -58,6 +47,20 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateForm;
+
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
 
 /**
  * Static helper routines related to templates.
@@ -286,75 +289,84 @@ public class TemplateHelper
 
     /**
      * Try to fill the TemplateForm argument using the attribute values in the InterMineObject
-     * arg and return the number of form fields that aren't set afterwards.
+     * arg and return true if successful (ie. all constraints are filled in)
      */
-    private static int fillTemplateForm(TemplateQuery template, //String viewName,
-                                        InterMineObject object,
-                                        InterMineBag bag,
-                                        TemplateForm templateForm, Model model) {
-        List constraints = template.getAllConstraints();
-        int unmatchedConstraintCount = constraints.size();
+    private static boolean fillTemplateForm(TemplateQuery template, InterMineObject object,
+                                            InterMineBag bag, TemplateForm templateForm, 
+                                            Model model) {
         String equalsString = ConstraintOp.EQUALS.getIndex().toString();
         String inString = ConstraintOp.IN.getIndex().toString();
+        String lookupOpString = ConstraintOp.LOOKUP.getIndex().toString();
+        
+        int editableConstraintCount = template.getAllEditableConstraints().size();
+        if (editableConstraintCount > 1) {
+            return false;
+        }
 
-        //templateForm.setView(viewName);
-
-        Iterator constraintIter = constraints.iterator();
-        while (constraintIter.hasNext()) {
-            Constraint c = (Constraint) constraintIter.next();
-
-            if (!c.isEditable()) {
-                // this constraint doesn't need to be filled in
-                unmatchedConstraintCount--;
-                continue;
-            }
-            
-            String constraintIdentifier = c.getIdentifier();
-            String[] bits = constraintIdentifier.split("\\.");
-
-            int formIndex = 1;
-            
-            if (bits.length == 2) {
-                String className = model.getPackageName() + "." + bits[0];
-                String fieldName = bits[1];
+        for (Map.Entry<String, PathNode> entry: template.getNodes().entrySet()) {
+            PathNode pathNode = entry.getValue();
+            for (Constraint c: pathNode.getConstraints()) {
+                if (!c.isEditable()) {
+                    // this constraint doesn't need to be filled in
+                    continue;
+                }
 
                 try {
-                    Class testClass = Class.forName(className);
+                    if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+                        if (TypeUtil.isInstanceOf(object, pathNode.getType())) {
+                            templateForm.setAttributeOps("1", equalsString);
+                            templateForm.setAttributeValues("1", object.getId());
+                        } else {
+                            Class bagClass = Class.forName(bag.getQualifiedType());
+                            Class pathNodeClass = Class.forName(pathNode.getType());
+                            if (pathNodeClass.isAssignableFrom(bagClass)) {
+                                templateForm.setAttributeOps("1", inString);
+                                templateForm.setAttributeValues("1", bag);
+                                templateForm.setUseBagConstraint("1", true);
+                            }
+                        }
+                    } else {
+                        String constraintIdentifier = c.getIdentifier();
+                        String[] bits = constraintIdentifier.split("\\.");
 
-                    if (object != null && testClass.isInstance(object)) {
-                        ClassDescriptor cd = model.getClassDescriptorByName(className);
-                        if (cd.getFieldDescriptorByName(fieldName) != null) {
-                            Object fieldValue = TypeUtil.getFieldValue(object, fieldName);
+                        if (bits.length == 2) {
+                            String className = model.getPackageName() + "." + bits[0];
+                            String fieldName = bits[1];
+                            
+                            Class testClass = Class.forName(className);
 
-                            if (fieldValue == null) {
-                                // this field is not a good constraint value
-                                continue;
+                            if (object != null && testClass.isInstance(object)) {
+                                ClassDescriptor cd = model.getClassDescriptorByName(className);
+                                if (cd.getFieldDescriptorByName(fieldName) != null) {
+                                    Object fieldValue = TypeUtil.getFieldValue(object, fieldName);
+
+                                    if (fieldValue != null) {
+                                        templateForm.setAttributeOps("1", equalsString);
+                                        templateForm.setAttributeValues("1", fieldValue);
+                                        return true;
+                                    }
+                                }
+                            }
+                            String unqualifiedName = TypeUtil.unqualifiedName(testClass.toString());
+                            if (bag != null
+                                            && unqualifiedName.equals(bag.getType())) {
+                                templateForm.setBagOp("1", inString);
+                                templateForm.setBag("1", bag);
+                                templateForm.setUseBagConstraint("1", true);
+                                return true;
                             }
 
-                            unmatchedConstraintCount--;
-
-                            templateForm.setAttributeOps("" + formIndex, equalsString);
-                            templateForm.setAttributeValues("" + formIndex, fieldValue);
-
-                            formIndex++;                            
                         }
-                    }
-                    if (bag != null && (TypeUtil.unqualifiedName(testClass.toString()))
-                                    .equals(bag.getType())) {
-                        unmatchedConstraintCount--;
-                        templateForm.setBagOp("" + formIndex, inString);
-                        templateForm.setBag("" + formIndex, bag);
-                        templateForm.setUseBagConstraint("" + formIndex, true);
                     }
                 } catch (ClassNotFoundException e) {
                     LOG.error(e);
                 } catch (IllegalAccessException e) {
                     LOG.error(e);
-                }
-            }
-        }
 
-        return unmatchedConstraintCount;
+                }
+            }        
+        }
+        return false;
     }
 
 
@@ -363,19 +375,14 @@ public class TemplateHelper
      * InterMineIdBag
      */
     private static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
-            TemplateQuery template, InterMineObject object, InterMineBag bag) {
+                                                               TemplateQuery template,
+                                                               InterMineObject object, 
+                                                               InterMineBag bag) {
         TemplateForm templateForm = new TemplateForm();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
 
-        /*if (template.getQuery().getAlternativeView(viewName) == null) {
-            // ignore templates that don't have an attributes only view
-            return null;
-        }*/
-
-        int unconstrainedCount =
-            fillTemplateForm(template, /*viewName,*/ object, bag, templateForm, os.getModel());
-        if (unconstrainedCount > 0) {
+        if (!fillTemplateForm(template, object, bag, templateForm, os.getModel())) {
             return null;
         }
 
