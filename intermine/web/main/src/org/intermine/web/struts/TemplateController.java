@@ -12,8 +12,10 @@ package org.intermine.web.struts;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -25,11 +27,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
@@ -85,7 +91,13 @@ public class TemplateController extends TilesAction
         String loadModifiedTemplate = request
                 .getParameter("loadModifiedTemplate");
         String bagName = request.getParameter("bagName");
-
+        
+        String idForLookup = request.getParameter("idForLookup");
+        InterMineObject imObj = null;
+        if (idForLookup != null && idForLookup.length() != 0) {
+            imObj = os.getObjectById(new Integer(idForLookup));
+        }
+        
         if (queryName == null) {
             queryName = request.getParameter("templateName");
         }
@@ -226,7 +238,7 @@ public class TemplateController extends TilesAction
             constraints.put(displayNode, displayTemplate.getEditableConstraints(displayNode));
         }
         
-        populateTemplateForm(displayTemplate, tf, request);
+        populateTemplateForm(displayTemplate, tf, request, servletContext, imObj);
 
         tf.setTemplateName(queryName);
         tf.setTemplateType(scope);
@@ -250,7 +262,8 @@ public class TemplateController extends TilesAction
      *  Populate parts of the template form that are used in javscript methods in template.jsp
      */
     private static void populateTemplateForm(TemplateQuery template,
-            TemplateForm tf, HttpServletRequest request) {
+            TemplateForm tf, HttpServletRequest request, ServletContext servletContext, 
+            InterMineObject imObject) {
         int j = 0;
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
@@ -261,7 +274,22 @@ public class TemplateController extends TilesAction
                 String attributeKey = "" + (j + 1);
                 tf.setAttributeValues(attributeKey, "" + c.getDisplayValue());
                 tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
-                if (c.getIdentifier() != null) {
+                if (c.getOp().equals(ConstraintOp.LOOKUP) && imObject != null) {
+                    Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+                    Set keyFields = (Set) classKeys.get(DynamicUtil.getFriendlyName(imObject
+                                                                   .getClass()));
+                    HashSet classKey = (HashSet) keyFields.iterator().next();
+                    String value = null;
+                    try {
+                        AttributeDescriptor attrDesc = (AttributeDescriptor) classKey.iterator()
+                                                        .next();
+                        value = (String) TypeUtil.getFieldValue(imObject, attrDesc.getName());
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("Error while filling in Lookup template values:" 
+                                                   + e.getMessage());
+                    }
+                    tf.setAttributeValues(attributeKey, value);
+                } else if (c.getIdentifier() != null) {
                     // If special request parameter key is present then we initialise
                     // the form bean with the parameter value
                     String paramName = c.getIdentifier() + "_value";
