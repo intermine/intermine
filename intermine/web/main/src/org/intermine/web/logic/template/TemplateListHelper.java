@@ -124,11 +124,11 @@ public class TemplateListHelper
             TemplateQuery template = iter.next();
             List<String> fieldExprs = new ArrayList<String>();
             // Only want one editable constraint
+            if (template.getAllEditableConstraints().size() > 1) {
+                continue;
+            }
             for (Map.Entry<String, PathNode> entry : template.getNodes().entrySet()) {
                 PathNode pathNode = entry.getValue();
-                if (template.getEditableConstraints(pathNode).size() > 1) {
-                    continue TEMPLATE;
-                }
                 for (Constraint c : pathNode.getConstraints()) {
                     if (!c.isEditable()) {
                         continue;
@@ -272,12 +272,12 @@ public class TemplateListHelper
                         (TemplateQuery) globalTemplates.get(tag.getObjectIdentifier());
                     if (templateQuery != null) {
                         List<String> fieldExprs = new ArrayList<String>();
+                        if (templateQuery.getAllEditableConstraints().size() > 1) {
+                            continue;
+                        }
                         for (Map.Entry<String, PathNode> entry : templateQuery.getNodes()
                                                                               .entrySet()) {
                             PathNode pathNode = entry.getValue();
-                            if (templateQuery.getEditableConstraints(pathNode).size() > 1) {
-                                continue TAGS;
-                            }
                             for (Constraint c : pathNode.getConstraints()) {
                                 if (!c.isEditable()) {
                                     continue;
