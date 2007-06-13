@@ -201,12 +201,13 @@ public class TemplateHelper
                         && constraintOp.equals(ConstraintOp.EQUALS)) {
                         // special case: for inline templates we put the object ID in the form
                         // because we don't want to do a lookup - we already know the object 
-                        nodeCopy.getConstraints().remove(c);
+                        nodeCopy.removeConstraint(c);
+                        queryCopy.removeCodeFromLogic(c.getCode());
                         PathNode newNode = queryCopy.addNode(nodeCopy.getPathString() + ".id");
                         Integer valueAsInteger = Integer.valueOf((String) constraintValue);
                         Constraint objectConstraint =
                             new Constraint(ConstraintOp.EQUALS, valueAsInteger, true,
-                                           null, null, null);
+                                           null, queryCopy.getUnusedConstraintCode(), null);
                         newNode.getConstraints().add(objectConstraint);
                         
                     } else {
