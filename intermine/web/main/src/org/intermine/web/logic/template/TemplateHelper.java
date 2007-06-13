@@ -197,10 +197,24 @@ public class TemplateHelper
                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
                     Object constraintValue = tf.getParsedAttributeValues(key);
 
-                    // In query copy, replace old constraint with new one
-                    nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
+                    if (c.getOp().equals(ConstraintOp.LOOKUP)
+                        && constraintOp.equals(ConstraintOp.EQUALS)) {
+                        // special case: for inline templates we put the object ID in the form
+                        // because we don't want to do a lookup - we already know the object 
+                        nodeCopy.getConstraints().remove(c);
+                        PathNode newNode = queryCopy.addNode(nodeCopy.getPathString() + ".id");
+                        Integer valueAsInteger = Integer.valueOf((String) constraintValue);
+                        Constraint objectConstraint =
+                            new Constraint(ConstraintOp.EQUALS, valueAsInteger, true,
+                                           null, null, null);
+                        newNode.getConstraints().add(objectConstraint);
+                        
+                    } else {
+                     // In query copy, replace old constraint with new one
+                        nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
                             new Constraint(constraintOp, constraintValue, true,
                                     c.getDescription(), c.getCode(), c.getIdentifier()));
+                    }
                 }
                 j++;
             }
