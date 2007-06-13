@@ -600,7 +600,9 @@ public class PathQuery
      * @param code the code to remove
      */
     public void removeCodeFromLogic(String code) {
-        constraintLogic.removeVariable(code);
+        if (constraintLogic != null) {
+            constraintLogic.removeVariable(code);
+        }
     }
 
     /**
