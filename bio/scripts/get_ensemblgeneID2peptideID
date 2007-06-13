@@ -3,6 +3,9 @@
 #creates an xml file to link the ensembl geneid to it's translation Id for 
 #entering inparanoid data into flymine
 #source files are downloaded from BioMart for species that are sourced from ensembl.
+#As the downloaded files are updated independently of each other, the "current" dataset does not
+#relate to a single date. An archive is used to keep a record of the complete dataset before
+#any updates are made. 
 
 use strict;
 use warnings;
