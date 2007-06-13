@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,17 +21,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
+
+import java.io.Reader;
+
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -92,7 +95,6 @@ public class PsiConverter extends FileConverter
         mapMaster.put("proteinAccessions", proteinAccessions);
         mapMaster.put("terms", terms);
         mapMaster.put("masterList", masterList);
-        //masterList.put("nextClsId", "0");
     }
 
 
@@ -127,8 +129,10 @@ public class PsiConverter extends FileConverter
         private Map<String, String> organisms = new HashMap<String, String>();
         private Map<String, String> terms = new HashMap<String, String>();
         private Map<String, String> masterList = new HashMap<String, String>();
+        // [experiment name] [experiment holder]
         private Map<String, ExperimentHolder> experimentNames;  // keeps names until experiment is
                                                                 // stored
+        // [id][experimentholder]1
         private Map<String, ExperimentHolder> experimentIds     // keeps names for this file only
                                                         = new HashMap<String, ExperimentHolder>();
         private InteractorHolder interactorHolder;
@@ -146,8 +150,7 @@ public class PsiConverter extends FileConverter
         private String proteinId; // id used in xml to refer to protein
         private Set<Item> synonyms;
         private String psiDagTermItemId;
-        private boolean newProtein = false;
-        
+        private String experimentId;
 
         /**
          * Constructor
@@ -188,12 +191,10 @@ public class PsiConverter extends FileConverter
                  // <experimentList><experimentDescription>
                  if (qName.equals("experimentDescription")) {
 
-                    // [id][experimentHolder]
+                    // this experiment may have already been created
+                    // we won't know until the name is processed
                     try {
-                        String id = attrs.getValue("id");
-                        experimentHolder
-                                = new ExperimentHolder(createItem("ProteinInteractionExperiment"));
-                        experimentIds.put(id, experimentHolder);
+                        experimentId = attrs.getValue("id");
                     } catch (Exception e) {
                         throw new SAXException(e);
                     }
@@ -221,8 +222,10 @@ public class PsiConverter extends FileConverter
                                 && stack.search("experimentDescription") == 3) {
 
                     String pubMedId = attrs.getValue("id");
-                    String pub = getPub(pubMedId);
-                    experimentHolder.setPublication(pub);
+                    if (StringUtil.allDigits(pubMedId)) {
+                        String pub = getPub(pubMedId);
+                        experimentHolder.setPublication(pub);
+                    }
 
                 //<experimentList><experimentDescription><attributeList><attribute>
                 } else if (qName.equals("attribute")
@@ -232,8 +235,7 @@ public class PsiConverter extends FileConverter
                     String name = attrs.getValue("name");
                     if (experimentHolder.experiment != null && name != null) {
                         comment = createItem("Comment");
-
-setComment();
+                        setComment();
                         comment.setAttribute("type", name);
 //                        String title = experimentHolder.name;
 //                        Item item = getInfoSource(title);
@@ -542,14 +544,14 @@ setComment();
                     if (shortLabel != null) {
 
                         // you can have an experiment spread across several xml files
-                        checkExperiment(shortLabel);
-
-                        experimentHolder.name = shortLabel;
+                        experimentHolder = checkExperiment(shortLabel);
+                        experimentIds.put(experimentId, experimentHolder);
+                        experimentHolder.setName(shortLabel);
                         Item dataset = createItem("DataSet");
                         dataset.setAttribute("title", shortLabel);
                         experimentHolder.setDataSet(dataset);
                     } else {
-                        LOG.error("Experiment doesn't have a shortLabel");
+                        LOG.error("Experiment " + experimentId + " doesn't have a shortLabel");
                     }
 
                     // <experimentList><experimentDescription><names><fullName>
@@ -711,7 +713,7 @@ setComment();
                         storeAll(holder);
                         holder = null;
                         interactorHolder = null;
-                        experimentHolder = null;
+                        //experimentHolder = null;
                     }
                 }
 
@@ -836,21 +838,19 @@ setComment();
         }
 
 
-        private void checkExperiment(String name) {
+        private ExperimentHolder checkExperiment(String name) {
 
             ExperimentHolder eh = experimentNames.get(name);
             if (eh == null) {
-                eh = new ExperimentHolder(createItem("ProteinInteractionExperiment"));
+                Item exp = createItem("ProteinInteractionExperiment");
+                eh = new ExperimentHolder(exp);
                 commentCollection = new ReferenceList("comments", new ArrayList());
                 experimentNames.put(name, eh);
-            } else {
-                experimentHolder = eh;
             }
-
+            return eh;
         }
 
         private void setComment() {
-
             experimentHolder.comments.add(comment);
             addToCollection(experimentHolder.experiment, commentCollection, comment);
         }
@@ -952,7 +952,6 @@ setComment();
             String alias = aliases.get(className);
             
             if (alias != null) {
-                LOG.error("alias " + alias);
                 return alias;
             }
             String s = "0";
@@ -964,9 +963,6 @@ setComment();
             String nextIndex = "" + i;
             masterList.put("nextClsId", nextIndex);
             aliases.put(className, nextIndex);
-            LOG.error("set alias: classname " + className + " alias: " + nextIndex);
-
-            
             return nextIndex;
         }
 
@@ -1087,7 +1083,8 @@ setComment();
             //private Item participantIdentificationMethod;
             protected Item dataset;
             protected HashSet comments = new HashSet(); // items to be stored
-            protected boolean isStored = false; // whether or not this item has been stored in the db yet
+            // whether or not this item has been stored in the db yet
+            protected boolean isStored = false; 
 
             /**
              * Constructor
@@ -1097,6 +1094,11 @@ setComment();
                 this.experiment = experiment;
             }
 
+            protected void setName(String name) {
+                experiment.setAttribute("name", name);
+                this.name = name;
+            }
+            
             protected void setPublication(String publication) {
                 //this.publication = publication;
                 experiment.setReference("publication", publication);
