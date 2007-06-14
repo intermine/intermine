@@ -689,7 +689,7 @@
         <source>
           <name>Homophila</name>
           <description>
-             &lt;a href=""&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
+            &lt;a href=""&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
           </description>
           <version>2.1</version>
         </source>
@@ -870,7 +870,7 @@
         <source>
           <name>Homophila</name>
           <description>
-             &lt;a href=""&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
+            &lt;a href=""&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
           </description>
           <version>2.1, April 19th 2006</version>
         </source>
@@ -1042,14 +1042,14 @@
         <source>
           <name>Homophila</name>
           <description>
-             &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
+            &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
           </description>
           <version>2.1, 11th October 2006</version>
         </source>
         <source>
           <name>REDfly</name>
           <description>
-             Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
+            Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
             href="http://redfly.ccr.buffalo.edu/"&gt;REDfly&lt;/a&gt;
           </description>
           <version>25th June 2006</version>
@@ -1057,7 +1057,7 @@
         <source>
           <name>Affymetrix GeneChip Probes</name>
           <description>
-              GeneChip genome Array from &lt;a
+            GeneChip genome Array from &lt;a
             href="http://www.affymetrix.com/"&gt;Affymetrix&lt;/a&gt;
           </description>
           <version>2.0</version>
@@ -1245,14 +1245,14 @@
         <source>
           <name>Homophila</name>
           <description>
-             &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
+            &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
           </description>
           <version>2.1, 11th October 2006</version>
         </source>
         <source>
           <name>REDfly</name>
           <description>
-             Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
+            Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
             href="http://redfly.ccr.buffalo.edu/"&gt;REDfly&lt;/a&gt;
           </description>
           <version>25th June 2006</version>
@@ -1260,7 +1260,7 @@
         <source>
           <name>Affymetrix GeneChip Probes</name>
           <description>
-              GeneChip genome Array from &lt;a
+            GeneChip genome Array from &lt;a
             href="http://www.affymetrix.com/"&gt;Affymetrix&lt;/a&gt;
           </description>
           <version>2.0</version>
@@ -1283,7 +1283,7 @@
         </source>
       </sources>
 
-       <sources version="7.0">
+      <sources version="7.0">
         <source>
           <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation</name>
           <description>
@@ -1432,14 +1432,14 @@
         <source>
           <name>Homophila</name>
           <description>
-             &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
+            &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
           </description>
           <version>2.1, 25th February 2007</version>
         </source>
         <source>
           <name>REDfly</name>
           <description>
-             Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
+            Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
             href="http://redfly.ccr.buffalo.edu/"&gt;REDfly&lt;/a&gt;
           </description>
           <version>25th June 2006</version>
@@ -1447,7 +1447,7 @@
         <source>
           <name>Affymetrix GeneChip Probes</name>
           <description>
-              GeneChip genome Array from &lt;a
+            GeneChip genome Array from &lt;a
             href="http://www.affymetrix.com/"&gt;Affymetrix&lt;/a&gt;
           </description>
           <version>2.0</version>
@@ -1504,9 +1504,9 @@
           </description>
           <version>4.0</version>
         </source>
-     </sources>
+      </sources>
 
-       <sources version="7.1">
+      <sources version="7.1">
         <source>
           <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation</name>
           <description>
@@ -1655,14 +1655,14 @@
         <source>
           <name>Homophila</name>
           <description>
-             &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
+            &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
           </description>
           <version>2.1, 25th February 2007</version>
         </source>
         <source>
           <name>REDfly</name>
           <description>
-             Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
+            Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
             href="http://redfly.ccr.buffalo.edu/"&gt;REDfly&lt;/a&gt;
           </description>
           <version>25th June 2006</version>
@@ -1670,7 +1670,7 @@
         <source>
           <name>Affymetrix GeneChip Probes</name>
           <description>
-              GeneChip genome Array from &lt;a
+            GeneChip genome Array from &lt;a
             href="http://www.affymetrix.com/"&gt;Affymetrix&lt;/a&gt;
           </description>
           <version>2.0</version>
@@ -1727,11 +1727,7 @@
           </description>
           <version>4.0</version>
         </source>
-     </sources>
-    </para>
-  </section>
-</article>
-
+      </sources>
 
       <sources version="8.0">
         <source>
@@ -1812,7 +1808,7 @@
           </description>
           <version>8th Febuary 2007</version>
         </source>
-      <source>
+        <source>
           <name>&lt;i&gt;C. elegans&lt;/i&gt; RNAi phenotypes</name>
           <description>
             RNAi phenotypes for &lt;i&gt;C. elegans&lt;/i&gt; from
@@ -1890,14 +1886,14 @@
         <source>
           <name>Homophila</name>
           <description>
-             &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
+            &lt;a href="http://superfly.ucsd.edu/homophila/"&gt;Homophila human disease to Drosophila gene data set&lt;/a&gt;
           </description>
           <version>2.1, 25th February 2007</version>
         </source>
         <source>
           <name>REDfly</name>
           <description>
-             Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
+            Transcriptional cis-regulatory modules (CRMs) for &lt;i&gt;D. melanogaster&lt;/i&gt; from  &lt;a
             href="http://redfly.ccr.buffalo.edu/"&gt;REDfly&lt;/a&gt;
           </description>
           <version>25th June 2006</version>
@@ -1905,7 +1901,7 @@
         <source>
           <name>Affymetrix GeneChip Probes</name>
           <description>
-              GeneChip genome Array from &lt;a
+            GeneChip genome Array from &lt;a
             href="http://www.affymetrix.com/"&gt;Affymetrix&lt;/a&gt;
           </description>
           <version>2.0</version>
@@ -1962,7 +1958,7 @@
           </description>
           <version>4.0</version>
         </source>
-       <source>
+        <source>
           <name>Tiffin</name>
           <description>
             Predicted regulatory motifs and predicted functional sites
@@ -1971,8 +1967,8 @@
           </description>
           <version>1.2</version>
         </source>
-
-     </sources>
+        
+      </sources>
     </para>
   </section>
 </article>
