@@ -42,149 +42,147 @@
         <ul>
           <li>
             <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>A. gambiae</i> " skipBuilder="true">
-              <query name="" model="genomic" view="Orthologue.object.identifier Orthologue.object.organismDbId Orthologue.object.symbol Orthologue.subject.identifier Orthologue.subject.organismDbId Orthologue.subject.symbol" constraintLogic="A and B">
-  <node path="Orthologue" type="Orthologue">
-  </node>
-  <node path="Orthologue.object" type="Gene">
-  </node>
-  <node path="Orthologue.object.organism" type="Organism">
-  </node>
-  <node path="Orthologue.object.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Orthologue.subject" type="Gene">
-  </node>
-  <node path="Orthologue.subject.organism" type="Organism">
-  </node>
-  <node path="Orthologue.subject.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="B">
-    </constraint>
-  </node>
-</query>
+             <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+ 				 <node path="Orthologue" type="Orthologue">
+ 				 </node>
+ 				 <node path="Orthologue.gene" type="Gene">
+ 				 </node>
+ 				 <node path="Orthologue.gene.organism" type="Organism">
+ 				 </node>
+  				 <node path="Orthologue.gene.organism.name" type="String">
+    				<constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    				</constraint>
+  				 </node>
+ 				 <node path="Orthologue.orthologue" type="Gene">
+ 				 </node>
+ 				 <node path="Orthologue.orthologue.organism" type="Organism">
+ 				 </node>
+ 				 <node path="Orthologue.orthologue.organism.name" type="String">
+   					<constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="B">
+    				</constraint>
+  				 </node>
+			 </query>
             </im:querylink>
           </li> 
 
           <li>            
             <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>C. elegans</i> " skipBuilder="true">
-              <query name="" model="genomic" 
-                     view="Orthologue.object.identifier Orthologue.object.organismDbId Orthologue.object.symbol Orthologue.subject.identifier Orthologue.subject.organismDbId Orthologue.subject.symbol">
-                <node path="Orthologue" type="Orthologue">
-                </node>
-                <node path="Orthologue.object" type="Gene">
-                </node>
-                <node path="Orthologue.object.organism" type="Organism">
-                </node>
-                <node path="Orthologue.object.organism.name" type="String">
-                  <constraint op="=" value="Drosophila melanogaster">
-                  </constraint>
-                </node>
-                <node path="Orthologue.subject" type="Gene">
-                </node>
-                <node path="Orthologue.subject.organism" type="Organism">
-                </node>
-                <node path="Orthologue.subject.organism.name" type="String">
-                  <constraint op="=" value="Caenorhabditis elegans">
-                  </constraint>
-                </node>
-              </query>
+              <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+  <node path="Orthologue" type="Orthologue">
+  </node>
+  <node path="Orthologue.gene" type="Gene">
+  </node>
+  <node path="Orthologue.gene.organism" type="Organism">
+  </node>
+  <node path="Orthologue.gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="Orthologue.orthologue" type="Gene">
+  </node>
+  <node path="Orthologue.orthologue.organism" type="Organism">
+  </node>
+  <node path="Orthologue.orthologue.organism.name" type="String">
+    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="B">
+    </constraint>
+  </node>
+</query>
             </im:querylink>
           </li>
 
           <li>
            <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>H. sapiens</i> " skipBuilder="true">
-            <query name="" model="genomic" view="Orthologue.object.identifier Orthologue.object.organismDbId Orthologue.object.symbol Orthologue.subject.identifier Orthologue.subject.organismDbId Orthologue.subject.symbol" constraintLogic="A and B">
-             <node path="Orthologue" type="Orthologue">
-              </node>
-             <node path="Orthologue.object" type="Gene">
-              </node>
-             <node path="Orthologue.object.organism" type="Organism">
-              </node>
-             <node path="Orthologue.object.organism.name" type="String">
-                <constraint op="=" value="Drosophila melanogaster" code="A">
-                </constraint>
-              </node>
-             <node path="Orthologue.subject" type="Gene">
-              </node>
-             <node path="Orthologue.subject.organism" type="Organism">
-              </node>
-             <node path="Orthologue.subject.organism.name" type="String">
-                 <constraint op="=" value="Homo sapiens" code="B">
-                 </constraint>
-              </node>
-             </query>
+            <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+  <node path="Orthologue" type="Orthologue">
+  </node>
+  <node path="Orthologue.gene" type="Gene">
+  </node>
+  <node path="Orthologue.gene.organism" type="Organism">
+  </node>
+  <node path="Orthologue.gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="Orthologue.orthologue" type="Gene">
+  </node>
+  <node path="Orthologue.orthologue.organism" type="Organism">
+  </node>
+  <node path="Orthologue.orthologue.organism.name" type="String">
+    <constraint op="=" value="Homo sapiens" description="" identifier="" code="C">
+    </constraint>
+  </node>
+</query>
             </im:querylink>
            </li>
 
           <li>            
            <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>M. musculus</i> " skipBuilder="true">
-            <query name="" model="genomic" view="Orthologue.object.identifier Orthologue.object.organismDbId Orthologue.object.symbol Orthologue.subject.identifier Orthologue.subject.organismDbId Orthologue.subject.symbol" constraintLogic="A and B">
-             <node path="Orthologue" type="Orthologue">
-              </node>
-             <node path="Orthologue.object" type="Gene">
-              </node>
-             <node path="Orthologue.object.organism" type="Organism">
-              </node>
-             <node path="Orthologue.object.organism.name" type="String">
-               <constraint op="=" value="Drosophila melanogaster" code="A">
-               </constraint>
-              </node>
-             <node path="Orthologue.subject" type="Gene">
-              </node>
-             <node path="Orthologue.subject.organism" type="Organism">
-              </node>
-             <node path="Orthologue.subject.organism.name" type="String">
-              <constraint op="=" value="Mus musculus" code="B">
-              </constraint>
-             </node>
-            </query>
+<query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+  <node path="Orthologue" type="Orthologue">
+  </node>
+  <node path="Orthologue.gene" type="Gene">
+  </node>
+  <node path="Orthologue.gene.organism" type="Organism">
+  </node>
+  <node path="Orthologue.gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="Orthologue.orthologue" type="Gene">
+  </node>
+  <node path="Orthologue.orthologue.organism" type="Organism">
+  </node>
+  <node path="Orthologue.orthologue.organism.name" type="String">
+    <constraint op="=" value="Mus musculus" description="" identifier="" code="B">
+    </constraint>
+  </node>
+</query>
            </im:querylink>
           </li>
 
           <li>
           <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>D. pseudoobscura</i> " skipBuilder="true">
-           <query name="" model="genomic" view="Orthologue.object.identifier Orthologue.object.organismDbId Orthologue.object.symbol Orthologue.subject.identifier Orthologue.subject.organismDbId Orthologue.subject.symbol" constraintLogic="A and B">
-            <node path="Orthologue" type="Orthologue">
-             </node>
-            <node path="Orthologue.object" type="Gene">
-             </node>
-            <node path="Orthologue.object.organism" type="Organism">
-             </node>
-            <node path="Orthologue.object.organism.name" type="String">
-             <constraint op="=" value="Drosophila melanogaster" code="A">
-              </constraint>
-            </node>
-            <node path="Orthologue.subject" type="Gene">
-            </node>
-            <node path="Orthologue.subject.organism" type="Organism">
-            </node>
-            <node path="Orthologue.subject.organism.name" type="String">
-             <constraint op="=" value="Drosophila pseudoobscura" code="B">
-             </constraint>
-            </node>
-           </query>
+           <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+  <node path="Orthologue" type="Orthologue">
+  </node>
+  <node path="Orthologue.gene" type="Gene">
+  </node>
+  <node path="Orthologue.gene.organism" type="Organism">
+  </node>
+  <node path="Orthologue.gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    </constraint>
+  </node>
+  <node path="Orthologue.orthologue" type="Gene">
+  </node>
+  <node path="Orthologue.orthologue.organism" type="Organism">
+  </node>
+  <node path="Orthologue.orthologue.organism.name" type="String">
+    <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" code="B">
+    </constraint>
+  </node>
+</query>
           </im:querylink>
          </li>
 
-
           <li>
             <im:querylink text="Orthologues: <i>A. gambiae</i> vs <i>C. elegans</i> " skipBuilder="true">
-              <query name="" model="genomic" view="Orthologue.object.identifier Orthologue.object.organismDbId Orthologue.object.symbol Orthologue.subject.identifier Orthologue.subject.organismDbId Orthologue.subject.symbol" constraintLogic="A and B">
+              <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
   <node path="Orthologue" type="Orthologue">
   </node>
-  <node path="Orthologue.object" type="Gene">
+  <node path="Orthologue.gene" type="Gene">
   </node>
-  <node path="Orthologue.object.organism" type="Organism">
+  <node path="Orthologue.gene.organism" type="Organism">
   </node>
-  <node path="Orthologue.object.organism.name" type="String">
+  <node path="Orthologue.gene.organism.name" type="String">
     <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
     </constraint>
   </node>
-  <node path="Orthologue.subject" type="Gene">
+  <node path="Orthologue.orthologue" type="Gene">
   </node>
-  <node path="Orthologue.subject.organism" type="Organism">
+  <node path="Orthologue.orthologue.organism" type="Organism">
   </node>
-  <node path="Orthologue.subject.organism.name" type="String">
+  <node path="Orthologue.orthologue.organism.name" type="String">
     <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="B">
     </constraint>
   </node>
