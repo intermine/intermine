@@ -144,6 +144,8 @@
          s = s.replace(/\./g," > ");
          document.getElementById('querySortOrder').innerHTML = s;
 	     updateSortImgs(index);
+	     // the sort direction has been reset, so reset img too.
+		 document.getElementById('sortImg').src = 'images/asc.gif';
        }
        
        // enable all imgs, disable the one the user just selected 
