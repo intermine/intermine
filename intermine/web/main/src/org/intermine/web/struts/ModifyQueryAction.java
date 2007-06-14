@@ -94,7 +94,9 @@ public class ModifyQueryAction extends InterMineAction
                 }
             }
         } finally {
-            profile.enableSaving();
+            if (profile.getUsername() != null) {
+                profile.enableSaving();
+            }
         }
 
         if ("history".equals(type)) {
