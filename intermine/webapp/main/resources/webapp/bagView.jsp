@@ -112,7 +112,7 @@
 
               <td>
                 <c:if test="${!empty savedBag.value.dateCreated}">
-                  <c:out value="${savedBag.value.dateCreated}"/>
+                  <im:dateDisplay date="${savedBag.value.dateCreated}"/>
                 </c:if>
               </td>
 

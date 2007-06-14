@@ -100,7 +100,7 @@
                 <td align="center" nowrap>
                   <c:choose>
                     <c:when test="${savedQuery.value.dateCreated != null}">
-                      <fmt:formatDate value="${savedQuery.value.dateCreated}" type="both" pattern="dd/M/yy K:mm a"/>
+                      <im:dateDisplay date="${savedQuery.value.dateCreated}"/>
                     </c:when>
                     <c:otherwise>
                       n/a
