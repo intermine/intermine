@@ -18,30 +18,30 @@
 
 <div class="body">
 
-	<div class="clearer">&nbsp;</div>
+  <div class="clearer">&nbsp;</div>
 
-	<div>	
-		<h3><fmt:message key="view.heading"/></h3>
-	
-        <fmt:message key="view.instructions"/>
-  		<c:if test="${fn:length(viewStrings) > 1}">
-	    <noscript>
-    	    <fmt:message key="view.intro"/>
-	    </noscript>
-    	<script type="text/javascript">
-	       <!--
-    	   document.write('<fmt:message key="view.intro.jscript"/>');
-	       // -->
-	    </script>
-		</c:if>
-    </div>
-    
-<br/>      
+  <div>
+    <h3><fmt:message key="view.heading"/></h3>
+
+    <fmt:message key="view.instructions"/>
+    <c:if test="${fn:length(viewStrings) > 1}">
+      <noscript>
+        <fmt:message key="view.intro"/>
+      </noscript>
+      <script type="text/javascript">
+        <!--
+            document.write('<fmt:message key="view.intro.jscript"/>');
+            // -->
+      </script>
+    </c:if>
+  </div>
+
+  <br/>
 
   <c:choose>
     <c:when test="${empty viewStrings}">
       <div class="body">
-		<p><i><fmt:message key="view.empty.description"/></i>&nbsp;</p>
+	<p><i><fmt:message key="view.empty.description"/></i>&nbsp;</p>
       </div>
     </c:when>
     <c:otherwise>
@@ -49,23 +49,25 @@
     </c:otherwise>
   </c:choose>
 
-<br><br>
+  <br/>
+  <br/>
 
-<c:if test="${fn:length(viewStrings) > 0}">
-	<div class="clearer">&nbsp;</div>
-	<div>	
-		<h3><fmt:message key="sortOrder.heading"/></h3>	
-		<fmt:message key="sortOrder.instructions"/>
-	</div>
+  <c:if test="${fn:length(viewStrings) > 0}">
+    <div class="clearer">&nbsp;</div>
+    <div>
+      <h3><fmt:message key="sortOrder.heading"/></h3>
+      <fmt:message key="sortOrder.instructions"/>
+    </div>
 
-	<br>
+    <br/>
 
-	<!-- sort by -->
+    <!-- sort by -->
     <c:if test="${!empty viewStrings}">
-		<tiles:insert page="/sortOrderLine.jsp"/>	  
-	</c:if>
+      <tiles:insert page="/sortOrderLine.jsp"/>
+    </c:if>
 
-	<br><br>
+    <br/>
+    <br/>
 
     <div style="clear:left; margin-bottom: 18px">
       <p>
@@ -99,7 +101,7 @@
        function recordCurrentOrder() {
          previousOrder = Sortable.serialize('viewDivs');
          previousOrder = previousOrder.replace(/viewDivs/g, 'oldOrder');
-         
+
          //previousSortOrder = Sortable.serialize('sortOrderDivs');
          //previousSortOrder = previousSortOrder.replace(/sortOrderDivs/g, 'oldSortOrder');
        }
@@ -117,7 +119,7 @@
          recordCurrentOrder();
        }
 
-	  // change from ascending to descending sort, or vice versa 
+	  // change from ascending to descending sort, or vice versa
       function reverseSortDirection() {
         var img = document.getElementById('sortImg').src;
       	var newDirection;
@@ -139,7 +141,7 @@
            parameters:'method=addToSortOrder&pathString='+pathString,
            asynchronous:true
          });
-         // replace . with > 
+         // replace . with >
          s = new String(pathString);
          s = s.replace(/\./g," > ");
          document.getElementById('querySortOrder').innerHTML = s;
@@ -147,8 +149,8 @@
 	     // the sort direction has been reset, so reset img too.
 		 document.getElementById('sortImg').src = 'images/asc.gif';
        }
-       
-       // enable all imgs, disable the one the user just selected 
+
+       // enable all imgs, disable the one the user just selected
        function updateSortImgs(index) {
        	for (i=0;true;i++) {
        		if (!document.getElementById("btn_" + i)) return;
@@ -160,7 +162,7 @@
 			}
 		}
        }
-       
+
        function disable(b) {
 		b.src = "images/sort-disabled.gif";
 		b.disabled = true;
@@ -172,14 +174,9 @@
      //-->
     </script>
   </c:if>
- </div>
-
-
+</div>
 
 <c:if test="${!empty PROFILE.username && TEMPLATE_BUILD_STATE == null}">
-
-
-
   <div align="center">
     <p>
       <form action="<html:rewrite action="/mainChange"/>" method="post">
