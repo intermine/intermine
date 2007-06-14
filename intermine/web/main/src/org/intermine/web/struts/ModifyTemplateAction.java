@@ -10,10 +10,21 @@ package org.intermine.web.struts;
  *
  */
 
-import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.intermine.model.userprofile.Tag;
+import org.intermine.util.XmlUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateQuery;
+
+import java.io.PrintStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -24,14 +35,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.util.XmlUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Action that results from a button press on the user profile page.
@@ -131,18 +134,29 @@ public class ModifyTemplateAction extends InterMineAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
-
+        ServletContext servletContext = session.getServletContext();
+        
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
 
         PrintStream out = new PrintStream(response.getOutputStream());
         out.println("<template-list>");
-        Map templates = profile.getSavedTemplates();
+        Map myTemplates = profile.getSavedTemplates();
+        Map publicTemplates
+                = SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
         for (int i = 0; i < mqf.getSelected().length; i++) {
             String name = mqf.getSelected()[i];
-            String xml = ((TemplateQuery) templates.get(name)).toXml();
-            xml = XmlUtil.indentXmlSimple(xml);
-            out.println(xml);
+            String xml = null;
+            
+            if (publicTemplates.get(name) != null) {
+                xml = ((TemplateQuery) publicTemplates.get(name)).toXml();
+            } else if (myTemplates.get(name) != null) {
+                xml = ((TemplateQuery) myTemplates.get(name)).toXml();
+            }
+            if (xml != null) { 
+                xml = XmlUtil.indentXmlSimple(xml);
+                out.println(xml);
+            }
         }
         out.println("</template-list>");
         out.flush();
