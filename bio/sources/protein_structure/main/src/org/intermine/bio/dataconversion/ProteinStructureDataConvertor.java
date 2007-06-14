@@ -54,6 +54,8 @@ public class ProteinStructureDataConvertor extends FileConverter
     private Item proteinStructureExperiment;
     private final Map<String, Item> featureMap = new HashMap<String, Item>();
     private final Map<String, String> proteinMap = new HashMap<String, String>();
+    private String parentDir;
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -86,6 +88,7 @@ public class ProteinStructureDataConvertor extends FileConverter
     @Override
     public void process(Reader reader) throws Exception {
         File currentFile = getCurrentFile();
+        parentDir = currentFile.getParent();
         if (currentFile.getName().endsWith(".xml")) {
             if (dataLocation == null || dataLocation.startsWith("$")) {
                 throw new IllegalArgumentException("No data location specified, required"
@@ -125,10 +128,11 @@ public class ProteinStructureDataConvertor extends FileConverter
         StringBuffer fileBuffer = new StringBuffer();
         try {
             String filename =
-                    ((dataLocation.lastIndexOf("/") == (dataLocation.length() - 1))
-                            ? dataLocation
-                            : dataLocation + "/")
-                            + (StringUtil.split(fileName, extention))[0] + "/" + fileName;
+                    ((parentDir.lastIndexOf("/") == (parentDir.length() - 1))
+                            ? parentDir
+                            : parentDir + "/")
+                            + fileName;
+            
             if (new File(filename).exists()) {
                 BufferedReader in = new BufferedReader(new FileReader(filename));
                 boolean firstLine = true;
