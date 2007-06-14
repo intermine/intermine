@@ -30,6 +30,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
+import org.intermine.sql.logging.QueryLogger;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -38,6 +39,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.LogicExpression;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
@@ -202,14 +204,12 @@ public class TemplateHelper
                         // special case: for inline templates we put the object ID in the form
                         // because we don't want to do a lookup - we already know the object 
                         nodeCopy.removeConstraint(c);
-                        queryCopy.removeCodeFromLogic(c.getCode());
                         PathNode newNode = queryCopy.addNode(nodeCopy.getPathString() + ".id");
                         Integer valueAsInteger = Integer.valueOf((String) constraintValue);
                         Constraint objectConstraint =
                             new Constraint(ConstraintOp.EQUALS, valueAsInteger, true,
-                                           null, queryCopy.getUnusedConstraintCode(), null);
+                                           null, c.getCode(), null);
                         newNode.getConstraints().add(objectConstraint);
-                        
                     } else {
                      // In query copy, replace old constraint with new one
                         nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
@@ -397,19 +397,20 @@ public class TemplateHelper
                                                                TemplateQuery template,
                                                                InterMineObject object, 
                                                                InterMineBag bag) {
-        TemplateForm templateForm = new TemplateForm();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-
-        if (!fillTemplateForm(template, object, bag, templateForm, os.getModel())) {
-            return null;
-        }
-
-        templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
-
-        PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
-                new HashMap());
         try {
+            TemplateForm templateForm = new TemplateForm();
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+
+            if (!fillTemplateForm(template, object, bag, templateForm, os.getModel())) {
+                return null;
+            }
+
+            templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
+
+            PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
+                    new HashMap());
+            
             Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
             Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode,
                     servletContext, null);
@@ -439,12 +440,6 @@ public class TemplateHelper
                 }
             }*/
             return itt;
-        } catch (IllegalArgumentException e) {
-            // probably a template is out of date
-            LOG.error("error while getting inline template information", e);
-            //} catch (ClassNotFoundException e) {
-            // probably a template is out of date
-            //LOG.error("error while getting inline template information", e);
         } catch (RuntimeException e) {
             if (e.getCause() instanceof ObjectStoreQueryDurationException) {
                 // special case: if there is an object store problem it's probably an
@@ -453,8 +448,9 @@ public class TemplateHelper
                 // better plan
                 return null;
             }
-        } catch (ObjectStoreException e) {
-            LOG.error("Error while getting inline template information", e);
+        } catch (Throwable e) {
+            // probably a template is out of date
+            LOG.error("error while getting inline template information", e);
         }
 
         return null;
