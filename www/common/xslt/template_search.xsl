@@ -5,7 +5,7 @@
   xmlns="http://www.w3.org/1999/xhtml">
   
   <xsl:template match="template-search">
-    <form name="templateSearchForm" method="get" action="{xsl:concat($webappprefix,'/templateSearch.do')}">
+    <form name="searchForm" method="get" action="{xsl:concat($webappprefix,'/search.do?type=template')}">
         Search:
         <input type="text" name="queryString" size="20" value="" id="queryString" />
         <select name="type"><option value="global" selected="selected">Public templates</option>
