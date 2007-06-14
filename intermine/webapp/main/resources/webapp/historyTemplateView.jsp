@@ -117,7 +117,8 @@
                   <c:otherwise>
                     ${savedTemplate.value.comment}
                   </c:otherwise>
-                </c:choose>
+                </c:choose>                
+                &nbsp;
               </td>
               <td align="center" nowrap>
                <html:link action="/template?name=${savedTemplate.value.name}&amp;scope=user" 
