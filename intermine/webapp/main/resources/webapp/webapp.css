@@ -509,7 +509,7 @@ table.results th.checkbox,table.results td.checkbox{
   font-family: monospace;
   font-size: 13px;
 }
-.nullStrike {
+.nullStrike,span.nullStrike a:link {
 /* see #643:    text-decoration: line-through; */
   color: #888;
 }
