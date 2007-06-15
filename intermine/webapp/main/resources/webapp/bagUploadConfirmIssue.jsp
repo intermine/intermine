@@ -50,7 +50,7 @@
               valign="top" id="td_${issueType}_${identifier}">${identifier}</td>
           <c:if test="${issueType == 'converted' }">
             <td border="1" rowSpan="${fn:length(resultElementRowList)}"
-                valign="top" id="td_${issueType}_${identifier}">${initialTypeMap[identifier]}</td>
+                valign="top" id="td_${issueType}_${identifier}">${initialTypeMap[identifier]}&nbsp;</td>
           </c:if>
         </c:if>
         <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">
@@ -74,6 +74,7 @@
                 ${resultElement.field}
               </c:otherwise>
             </c:choose>
+            &nbsp;
           </td>
         </c:forEach>
       </tr>
