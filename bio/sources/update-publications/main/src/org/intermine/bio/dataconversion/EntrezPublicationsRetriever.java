@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -308,6 +309,7 @@ public class EntrezPublicationsRetriever
         publication.setAttribute("volume", (String) map.get("volume"));
         publication.setAttribute("issue", (String) map.get("issue"));
         publication.setAttribute("pages", (String) map.get("pages"));
+        publication.setAttribute("year", (String) map.get("year"));
 
         Set<String> authors = (Set<String>) map.get("authors");
         if (authors != null) {
@@ -417,7 +419,7 @@ public class EntrezPublicationsRetriever
                 toStore.add(authorString);
                 Set<String> authorSet = (Set<String>) pubMap.get("authors");
                 if (authorSet == null) {
-                    authorSet = new HashSet<String>();
+                    authorSet = new LinkedHashSet<String>();
                     pubMap.put("authors", authorSet);
                 }
                 authorSet.add(authorString);
