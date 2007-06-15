@@ -46,7 +46,7 @@
               <c:choose>
                 <c:when test="${!favouriteTemplate.valid}">
                   <td align="left" nowrap>
-                    <html:link action="/templateProblems?name=${favouriteTemplate.key}&amp;type=user" styleClass="brokenTmplLink">
+                    <html:link action="/templateProblems?name=${favouriteTemplate.key}&amp;scope=user" styleClass="brokenTmplLink">
                     <strike>${favouriteTemplate.name}</strike>
                     </html:link>
                   </td>
@@ -80,11 +80,11 @@
                 </c:choose>
               </td>
               <td align="center" nowrap>
-                <html:link action="/template?name=${favouriteTemplate.name}&amp;type=all" 
+                <html:link action="/template?name=${favouriteTemplate.name}&amp;scope=all" 
                 				titleKey="history.action.execute.hover">
                   <fmt:message key="history.action.execute"/>
                 </html:link> |
-                <html:link action="/exportTemplates?name=${favouriteTemplate.name}&amp;type=all"
+                <html:link action="/exportTemplates?name=${favouriteTemplate.name}&amp;scope=all"
                 				titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link>
@@ -107,7 +107,7 @@
 <!--    <c:if test="${IS_SUPERUSER}">
       <span class="smallnote">
         <c:if test="${!empty PROFILE.savedTemplates}">
-          <html:link action="/exportTemplates?type=user" titleKey="begin.exportTemplatesDesc">
+          <html:link action="/exportTemplates?scope=user" titleKey="begin.exportTemplatesDesc">
             <fmt:message key="begin.exportTemplates"/>
           </html:link><br/>
         </c:if>

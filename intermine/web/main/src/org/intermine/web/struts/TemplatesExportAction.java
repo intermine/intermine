@@ -46,27 +46,28 @@ public class TemplatesExportAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String name = request.getParameter("name");
-        String type = request.getParameter("type");
+        String scope = request.getParameter("scope");
         
         String xml = null;
 
         if (name == null) {
-            if (type == null || type.equals("user")) {
+            if (scope == null || scope.equals("user")) {
                 xml = TemplateHelper.templateMapToXml(profile.getSavedTemplates());
-            } else if (type.equals("global")) {
+            } else if (scope.equals("global")) {
                 xml = TemplateHelper.templateMapToXml(SessionMethods
                         .getSuperUserProfile(servletContext).getSavedTemplates());
             } else {
-                throw new IllegalArgumentException("Cannot export all templates for type " + type);
+                throw new IllegalArgumentException("Cannot export all templates for scope " 
+                                                   + scope);
             }
         } else {
             TemplateQuery t = TemplateHelper.findTemplate(servletContext, session,
-                    profile.getUsername(), name, type);
+                    profile.getUsername(), name, scope);
             if (t != null) {
                 xml = t.toXml();
             } else {
                 throw new IllegalArgumentException("Cannot find template " + name + " in context "
-                        + type);
+                        + scope);
             }
         }
         xml = XmlUtil.indentXmlSimple(xml);

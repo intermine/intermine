@@ -30,8 +30,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
-import org.intermine.sql.logging.QueryLogger;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
@@ -39,7 +37,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.Constraint;
-import org.intermine.web.logic.query.LogicExpression;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
@@ -114,10 +111,11 @@ public class TemplateHelper
         } else if (USER_TEMPLATE.equals(type)) {
             return profile.getSavedTemplates().get(templateName);
         } else if (ALL_TEMPLATE.equals(type)) {
-            TemplateQuery tq = findTemplate(servletContext, session, userName,
-                                            templateName, GLOBAL_TEMPLATE);
+            TemplateQuery tq = 
+                findTemplate(servletContext, session, userName, templateName, USER_TEMPLATE); 
             if (tq == null) {
-                return findTemplate(servletContext, session, userName, templateName, USER_TEMPLATE);
+                return findTemplate(servletContext, session, userName,
+                                    templateName, GLOBAL_TEMPLATE);
             } else {
                 return tq;
             }
@@ -125,7 +123,7 @@ public class TemplateHelper
             SavedQuery savedQuery = profile.getHistory().get(templateName);
             return (TemplateQuery) savedQuery.getPathQuery();
         } else {
-            throw new IllegalArgumentException("type: " + type);
+            throw new IllegalArgumentException("findTemplate found bad type: " + type);
         }
     }
 
