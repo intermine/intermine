@@ -23,11 +23,18 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="zScore"/>
       <fieldconfig fieldExpr="qScore"/>
+      <fieldconfig fieldExpr="experiment.type"/>
       <fieldconfig fieldExpr="alignment" displayer="/htmlDisplayer.jsp" showInResults="false" />
     </fields>
     <longdisplayers>
       <displayer src="/model/modelledStructure.jsp"/>
     </longdisplayers>
+  </class>
+
+  <class className="org.flymine.model.genomic.ProteinStructureExperiment">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
   </class>
 
   <class className="org.flymine.model.genomic.Publication">
@@ -49,6 +56,14 @@
   <class className="org.flymine.model.genomic.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.Analysis">
+    <fields>
+      <fieldconfig fieldExpr="publication.title"/>
+      <fieldconfig fieldExpr="publication.firstAuthor"/>
+      <fieldconfig fieldExpr="publication.journal"/>
     </fields>
   </class>
 
@@ -185,6 +200,7 @@
   <class className="org.flymine.model.genomic.BioEntity">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
 
@@ -270,6 +286,9 @@
   <class className="org.flymine.model.genomic.ProteinInteraction">
     <fields>
       <fieldconfig fieldExpr="shortName"/>
+      <fieldconfig fieldExpr="confidenceText"/>
+      <fieldconfig fieldExpr="confidence"/>
+      <fieldconfig fieldExpr="experimentalRole"/>
     </fields>
   </class>
 
@@ -298,7 +317,6 @@
   <class className="org.flymine.model.genomic.AnalysisResult">
     <fields>
       <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="confidenceDesc"/>
       <fieldconfig fieldExpr="source.title"/>
     </fields>
   </class>
@@ -565,9 +583,19 @@
     </longdisplayers>
   </class>
 
+  <class className="org.flymine.model.genomic.BindingSite">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="factor.identifier"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.TFBindingSite">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="gene.identifier"/>
+      <fieldconfig fieldExpr="factor.identifier"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
     </fields>
     <longdisplayers>
