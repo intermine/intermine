@@ -9,6 +9,9 @@
 
 <!-- viewElement.jsp -->
 <html:xhtml/>
+
+<c:set var="iePre7" value='<%= request.getHeader("user-agent").matches(".*MSIE [123456].*") %>'/>
+
 <im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${viewIndex}">
 
   <%-- class name --%>
@@ -40,10 +43,13 @@
     </tiles:insert>
   </c:if>
 
+
   <div style="white-space:nowrap;">
-    <noscript>
+    <c:if test="${!iePre7}">
+      <c:out value="<noscript>" escapeXml="false"/>
+    </c:if>
       <c:choose>
-        <c:when test="${status.first}">
+        <c:when test="${isFirst}">
           <img style="margin-right: 5px" border="0" align="middle"
                src="images/blank13x13.gif" alt=" " width="13" height="13"/>
         </c:when>
@@ -62,12 +68,40 @@
 
         </c:otherwise>
       </c:choose>
-    </noscript>
+    <c:if test="${!iePre7}">
+      <c:out value="</noscript>" escapeXml="false"/>
+    </c:if>
 
     <%-- sort button --%>
     <input type="image" id="btn_${viewIndex}" onclick="javascript:updateSortOrder('${pathString}', '${viewIndex}');"
-           width="39" height="11" alt="sort" src="images/sort.gif">
+           width="39" height="11" alt="sort" src="images/sort.gif"/>
 
+    <c:if test="${!iePre7}">
+      <c:out value="<noscript>" escapeXml="false"/>
+    </c:if>
+    <c:choose>
+      <c:when test="${isLast || errorPath}">
+        <img style="margin-left: 5px" border="0" align="middle"
+             src="images/blank13x13.gif" alt=" " width="13" height="13" />
+      </c:when>
+      <c:otherwise>
+        <fmt:message key="view.moveRightHelp" var="moveRightTitle">
+          <fmt:param value="${pathString}"/>
+        </fmt:message>
+        <fmt:message key="view.moveRightSymbol" var="moveRightString"/>
+
+        <html:link action="/viewChange?method=moveRight&amp;index=${viewIndex}"
+                   title="${moveRightTitle}">
+          <img style="margin-left: 5px" border="0" align="middle"
+               src="images/right-arrow-square.gif" width="13" height="13"
+               alt="${moveRightString}"/>
+        </html:link>
+
+      </c:otherwise>
+    </c:choose>
+    <c:if test="${!iePre7}">
+      <c:out value="</noscript>" escapeXml="false"/>
+    </c:if>
   </div>
 </im:viewableDiv>
 <!-- /viewElement.jsp -->

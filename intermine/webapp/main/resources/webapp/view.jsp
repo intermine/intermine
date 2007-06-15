@@ -12,6 +12,8 @@
 
 <a name="showing"></a>
 
+<c:set var="iePre7" value='<%= request.getHeader("user-agent").matches(".*MSIE [123456].*") %>'/>
+
 <div class="heading">
   <fmt:message key="view.notEmpty.description"/><im:manualLink section="manualPageQB.shtml#manualOutputListQB"/>
 </div>
@@ -23,18 +25,19 @@
   <div>
     <h3><fmt:message key="view.heading"/></h3>
 
-    <fmt:message key="view.instructions"/>
-    <c:if test="${fn:length(viewStrings) > 1}">
-      <noscript>
-        <fmt:message key="view.intro"/>
-      </noscript>
-      <script type="text/javascript">
-        <!--
+      <fmt:message key="view.instructions"/>
+
+      <c:if test="${fn:length(viewStrings) > 1 && iePre7 != 'true'}">
+        <noscript>
+          <fmt:message key="view.intro"/>
+        </noscript>
+        <script type="text/javascript">
+          <!--
             document.write('<fmt:message key="view.intro.jscript"/>');
-            // -->
-      </script>
-    </c:if>
-  </div>
+          // -->
+        </script>
+      </c:if>
+    </div>
 
   <br/>
 
@@ -83,11 +86,13 @@
      <!--
        var previousOrder = '';
 
-       Sortable.create('viewDivs', {
-         tag:'div', dropOnEmpty:true,  constraint:'horizontal', overlap:'horizontal', onUpdate:function() {
-           reorderOnServer();
-         }
-       });
+       if ("${iePre7}" != "true") {
+           Sortable.create('viewDivs', {
+             tag:'div', dropOnEmpty:true,  constraint:'horizontal', overlap:'horizontal', onUpdate:function() {
+               reorderOnServer();
+             }
+           });
+       }
 
        Sortable.create('sortOrderDivs', {
          tag:'div', dropOnEmpty:true, constraint:'horizontal', overlap:'horizontal', onUpdate:function() {
