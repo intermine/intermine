@@ -137,7 +137,8 @@ public class ModifyDetails extends DispatchAction
             new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messageResources = 
             (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messageResources, false);
+        String qid = SessionMethods.startQuery(clientState, session, messageResources, 
+                                               false, query);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting"))
                                             .addParameter("qid", qid)

@@ -520,13 +520,13 @@ public class SessionMethods
     public static String startQuery(final QueryMonitor monitor,
                                     final HttpSession session,
                                     final MessageResources messages,
-                                    final boolean saveQuery) {
+                                    final boolean saveQuery,
+                                    final PathQuery pathQuery) {
         synchronized (session) {
             final ServletContext servletContext = session.getServletContext();
             final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             final Model model = os.getModel();
-            final PathQuery pathQuery = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
-
+            
             Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
             if (queries == null) {
                 queries = new HashMap();
