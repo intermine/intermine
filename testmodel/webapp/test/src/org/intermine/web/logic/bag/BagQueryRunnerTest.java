@@ -1,5 +1,6 @@
 package org.intermine.web.logic.bag;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,28 +12,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.Results;
+import javax.servlet.ServletContext;
 
-import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.bag.BagQuery;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryHelper;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.bag.BagQueryRunner;
-import org.intermine.web.logic.bag.ConvertedObjectPair;
-
-import java.io.InputStream;
-
-import javax.servlet.ServletContext;
 
 import servletunit.struts.MockStrutsTestCase;
 

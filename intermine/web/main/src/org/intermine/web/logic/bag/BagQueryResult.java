@@ -55,7 +55,7 @@ public class BagQueryResult
     private Map<Integer, List> matches = new LinkedHashMap<Integer, List>();
     private Map<String, Map<String, Map<String, List>>> issues =
         new LinkedHashMap<String, Map<String, Map<String, List>>>();
-    private Map unresolved = new HashMap();
+    private Map<String, Object> unresolved = new HashMap<String, Object>();
 
     /**
      * Get any results that require some user input before adding to the bag.
@@ -145,7 +145,7 @@ public class BagQueryResult
      * @return a Map of from input string to null/object - null when the input doesn't match any
      * object of any type, otherwise a reference to a Set of the objects that matched
      */
-    public Map getUnresolved() {
+    public Map<String, Object> getUnresolved() {
         return unresolved;
     }
 

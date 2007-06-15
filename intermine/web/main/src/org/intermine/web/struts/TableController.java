@@ -102,10 +102,14 @@ public class TableController extends TilesAction
             Map<String, DisplayLookup> lookupResults = new HashMap<String, DisplayLookup>();
             for (Map.Entry<String, BagQueryResult> entry : pathToBagQueryResult.entrySet()) {
                 String path = entry.getKey();
+                String type = query.getNode(path).getType();
                 BagQueryResult bqr = entry.getValue();
-                int matches = bqr.getMatches().size();
+                int matches = bqr.getMatchAndIssueIds().size();
                 Set<String> unresolved = bqr.getUnresolved().keySet();
                 Set<String> duplicates = new HashSet<String>();
+                Set<String> lowQuality = new HashSet<String>();
+                Set<String> translated = new HashSet<String>();
+                Map<String, List> wildcards = new HashMap<String, List>();
                 Map<String, Map<String, List>> duplicateMap = bqr.getIssues().get(BagQueryResult
                         .DUPLICATE);
                 if (duplicateMap != null) {
@@ -113,7 +117,6 @@ public class TableController extends TilesAction
                         duplicates.addAll(queries.getValue().keySet());
                     }
                 }
-                Set<String> translated = new HashSet<String>();
                 Map<String, Map<String, List>> translatedMap = bqr.getIssues().get(BagQueryResult
                         .TYPE_CONVERTED);
                 if (translatedMap != null) {
@@ -121,8 +124,23 @@ public class TableController extends TilesAction
                         translated.addAll(queries.getValue().keySet());
                     }
                 }
-                lookupResults.put(path, new DisplayLookup(matches, unresolved, duplicates,
-                            translated));
+                Map<String, Map<String, List>> lowQualityMap = bqr.getIssues().get(BagQueryResult
+                        .OTHER);
+                if (lowQualityMap != null) {
+                    for (Map.Entry<String, Map<String, List>> queries : lowQualityMap.entrySet()) {
+                        lowQuality.addAll(queries.getValue().keySet());
+                    }
+                }
+                Map<String, Map<String, List>> wildcardMap = bqr.getIssues().get(BagQueryResult
+                                                                  .WILDCARD);
+                if (wildcardMap != null) {
+                    for (Map.Entry<String, Map<String, List>> queries : wildcardMap.entrySet()) {
+                        wildcards.putAll(queries.getValue());
+                    }
+                }
+                
+                lookupResults.put(path, new DisplayLookup(type, matches, unresolved, duplicates,
+                            translated, lowQuality, wildcards));
             }
             request.setAttribute("lookupResults", lookupResults);
         } else {

@@ -338,6 +338,24 @@ table.toolbox, table.toolbox td, table.toolbox th {
   align:center;
 }
 
+.lookupReport
+{
+  margin-left: 10px;
+  margin-right: 10px; 
+  background: white;
+  padding: 6px;
+  font-size: 14px;
+  border: 1px dashed #777;
+}
+
+.lookupWarn
+{
+  color: green;
+}
+
+.lookupError {
+  color: red;
+}
 
 .showing {
   background: #E7F1FB;
