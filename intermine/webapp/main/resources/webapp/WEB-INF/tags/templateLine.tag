@@ -15,13 +15,6 @@
   </html:link>
 </c:if>
 <c:if test="${templateQuery.valid}">
-  <html:link action="/template?name=${templateQuery.name}&amp;scope=${scope}${extra}" 
-             title="${linkTitle}">
-    <span class="templateTitle">${!empty desc ? desc : templateQuery.title}</span>
-  </html:link>
-  <fmt:message var="linkTitle" key="templateList.run">
-    <fmt:param value="${templateQuery.name}"/>
-  </fmt:message>
   <c:set var="extra" value=""/>
   <c:if test="${!empty fieldExprMap}">
     <c:forEach items="${fieldExprMap[templateQuery]}" var="fieldExpr">
@@ -38,6 +31,14 @@
     <c:set var="extra" value="${extra}&amp;idForLookup=${object.object.id}" />
   </c:if>
   
+  <html:link action="/template?name=${templateQuery.name}&amp;scope=${scope}${extra}" 
+             title="${linkTitle}">
+    <span class="templateTitle">${!empty desc ? desc : templateQuery.title}</span>
+  </html:link>
+  <fmt:message var="linkTitle" key="templateList.run">
+    <fmt:param value="${templateQuery.name}"/>
+  </fmt:message>
+ 
   <%-- favourites star --%>
   <tiles:insert name="starTemplate.tile">
     <tiles:put name="templateName" value="${templateQuery.name}"/>
