@@ -9,25 +9,23 @@
 <html:xhtml/>
 <div id="sortOrderDivs"></div>
 
-  
-  <c:forEach var="results" items="${sortOrderMap}" varStatus="status">
+<c:forEach var="results" items="${sortOrderMap}" varStatus="status">
+  <c:set var="sortField" value="${results.key}"/>
+  <c:set var="sortDirection" value="${results.value}"/>
 
- 	<c:set var="sortField" value="${results.key}"/>
-  	<c:set var="sortDirection" value="${results.value}"/>
-	
-  
-      <im:sortableDiv path="${sortField}" sortOrderPaths="${sortOrderMap}" idPrefix="sorting" idPostfix="_${status.index}">
-    
-      	<div id="querySortOrder">
-      	    ${fn:replace(sortField, ".", " > ")}       
-     	 </div>
-      
-      	<!-- down = asc, up = desc -->
-      	<img src="images/${sortDirection}.gif" id="sortImg" onclick="javascript:reverseSortDirection();" alt="sort">
+  <im:sortableDiv path="${sortField}" sortOrderPaths="${sortOrderMap}" idPrefix="sorting"
+                  idPostfix="_${status.index}">
 
-	
-  		</im:sortableDiv>
-  </c:forEach>
-   
-  
+    <div id="querySortOrder">
+      ${fn:replace(sortField, ".", " > ")}
+    </div>
+
+    <!-- down = asc, up = desc -->
+    <img src="images/${sortDirection}.gif" id="sortImg"
+         onclick="javascript:reverseSortDirection();" alt="sort">
+
+  </im:sortableDiv>
+</c:forEach>
+
+
 <!-- sortOrderLine.jsp -->
