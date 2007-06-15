@@ -74,7 +74,8 @@
 
     <%-- sort button --%>
     <input type="image" id="btn_${viewIndex}" onclick="javascript:updateSortOrder('${pathString}', '${viewIndex}');"
-           width="39" height="11" alt="sort" src="images/sort.gif"/>
+           width="39" height="11" alt="sort" src="images/sort.gif"
+           title="Click to sort results by this field"/>
 
     <c:if test="${!iePre7}">
       <c:out value="<noscript>" escapeXml="false"/>

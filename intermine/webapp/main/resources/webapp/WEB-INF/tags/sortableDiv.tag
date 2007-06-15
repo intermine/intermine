@@ -25,7 +25,6 @@
 
   <div class="sortorderpath" id="${idPrefix}${fn:replace(path,".","")}${idPostfix}"
                         name="${idPrefix}${fn:replace(path,".","")}"
-                        title="Click here to reverse the sort order" 
     <c:if test="${empty disabled || !disabled}">
           onmouseover="enterPath('${fn:replace(path,".","")}')"
           onmouseout="exitPath('${fn:replace(path,".","")}')"
