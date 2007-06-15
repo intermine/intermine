@@ -208,7 +208,7 @@ table td {
   font-weight: bold;
   padding: 10px;
   margin: 30px 50px 50px 50px;
-  background: #fff;
+  background-color: #fff;
 }
 
 .contextHelp {
@@ -309,10 +309,10 @@ table.collection th, table.collection td {
   padding: 4px;
   border-right: solid 1px #666;
   border-bottom: solid 1px #666;
-  background: #white;
+  background-color: #fff;
 }
 table.collection th {
-  background: #eee;
+  background-color: #eee;
 }
 table.collection th {
   font-size: 12px;
@@ -323,8 +323,8 @@ table.collection t td {
 table.collection {
   font-size: small;
 }
-table.collection tr.even {
-  background: #F5F0FF;
+table.collection tr.even TD{
+  background-color: #F5F0FF;
 }
 
 table.noborder, table.noborder td, table.noborder th {
@@ -332,7 +332,7 @@ table.noborder, table.noborder td, table.noborder th {
 }
 table.toolbox, table.toolbox td, table.toolbox th {
   border: none;
-  background: none;
+  background-color: none;
   padding:0px;
   spacing:0px;
   align:center;
@@ -342,7 +342,7 @@ table.toolbox, table.toolbox td, table.toolbox th {
 {
   margin-left: 10px;
   margin-right: 10px; 
-  background: white;
+  background-color: white;
   padding: 6px;
   font-size: 14px;
   border: 1px dashed #777;
@@ -358,7 +358,7 @@ table.toolbox, table.toolbox td, table.toolbox th {
 }
 
 .showing {
-  background: #E7F1FB;
+  background-color: #E7F1FB;
   border: 1px solid #bbb;
   padding-top: 1px;
   padding-bottom: 1px;
@@ -378,7 +378,7 @@ table.toolbox, table.toolbox td, table.toolbox th {
 
 
 .sorting {
-  background: #E7F1FB;
+  background-color: #E7F1FB;
   border: 1px solid #bbb;
   padding-top: 1px;
   padding-bottom: 1px;
@@ -395,7 +395,7 @@ div.view {
 }
 /* one path added to the view area */
 div.viewpath {
-  background: #E7F1FB;
+  background-color: #E7F1FB;
   border: 1px solid #bbb;
   padding: 5px;
   margin-right: 5px;
@@ -408,7 +408,7 @@ div.viewpath {
 }
 /* a path in the view that has an error */
 div.errorPath {
-  background: #FBB;
+  background-color: #FBB;
   border: 1px solid #eaa;
   padding: 5px;
   margin-right: 5px;
@@ -449,7 +449,7 @@ div.sortorderpath {
   BORDER-TOP: #bbb 1px solid;
   FONT-SIZE: 10px;
   COLOR:  #660099;
-  BACKGROUND: #F5F0FF;
+  BACKGROUND-color: #F5F0FF;
   BORDER-LEFT: #bbb 1px solid;
   CURSOR: hand;
   BORDER-BOTTOM: #bbb 1px solid;
@@ -467,8 +467,8 @@ to prevent the dreaded IE peekaboo bug
 */
 div.clearer {clear: both; line-height: 0; height: 0;}
 
-table.results tr.even {
-  background: #F5F0FF;
+table.results tr.even TD{
+  background-color: #F5F0FF;
 }
 table.results th.checkbox,table.results td.checkbox{
   border-right-style: dotted;
@@ -530,19 +530,19 @@ table.refSummary {
   width: 100%;
 }
 table.refSummary thead tr td {
-  background: #eee;
+  background-color: #eee;
   border-bottom: 1px solid #888;
   border-right: 1px solid #888;
 }
 table.refSummary thead tr td.object {
-  background: #eee;
+  background-color: #eee;
   font-weight: bold;
   border-bottom: 1px solid #888;
   border-right: 1px solid #888;
 }
 table.refSummary tbody tr td {
   padding: 3px;
-  background: #FAF8FF;
+  background-color: #FAF8FF;
   border-bottom: 1px solid #888;
   border-right: 1px solid #888;
 }
@@ -572,7 +572,7 @@ span.collectionDescription {
 #tmplPreview {
   margin: 15px;
   padding: 14px;
-  background: #f5f5f5;
+  background-color: #f5f5f5;
   border: 4px solid #eee;
   text-align: left;
   background: url(images/stripes.gif) top center repeat;
@@ -742,7 +742,7 @@ dd {
 }
 
 .historySummaryRoot {
-  background: #e7F1E7;
+  background-color: #e7F1E7;
   border: 1px solid #bbb;
   padding-left: 2px;
   padding-right: 2px;
@@ -752,7 +752,7 @@ dd {
 }
 
 .historySummaryShowing {
-  background: #E7F1FB;
+  background-color: #E7F1FB;
   border: 1px solid #bbb;
   padding-left: 2px;
   padding-right: 2px;
@@ -761,7 +761,7 @@ dd {
 }
 
 .templateOutputSummaryItem {
-  background: #E7F1FB;
+  background-color: #E7F1FB;
   border: 1px solid #888;
   padding-left: 3px;
   padding-right: 3px;
