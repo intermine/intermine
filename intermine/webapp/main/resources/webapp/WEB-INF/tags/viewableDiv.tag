@@ -33,7 +33,6 @@
     <c:if test="${viewPaths[path] && (empty test || test)}">
       <div class="viewpath" id="${idPrefix}${fn:replace(path,".","")}${idPostfix}"
            name="${idPrefix}${fn:replace(path,".","")}"
-           title="Click here to sort results by this field"
         <c:if test="${(empty disabled || !disabled)}">
               onmouseover="enterPath('${fn:replace(path,".","")}')"
               onmouseout="exitPath('${fn:replace(path,".","")}')"
