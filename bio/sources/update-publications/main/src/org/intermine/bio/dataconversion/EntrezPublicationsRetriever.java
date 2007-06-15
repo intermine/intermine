@@ -309,7 +309,9 @@ public class EntrezPublicationsRetriever
         publication.setAttribute("volume", (String) map.get("volume"));
         publication.setAttribute("issue", (String) map.get("issue"));
         publication.setAttribute("pages", (String) map.get("pages"));
-        publication.setAttribute("year", (String) map.get("year"));
+        if (map.get("year") != null) {
+            publication.setAttribute("year", (String) map.get("year"));
+        }
 
         Set<String> authors = (Set<String>) map.get("authors");
         if (authors != null) {
