@@ -49,8 +49,10 @@
           <td border="1" rowSpan="${fn:length(resultElementRowList)}"
               valign="top" id="td_${issueType}_${identifier}">${identifier}</td>
           <c:if test="${issueType == 'converted' }">
-            <td border="1" rowSpan="${fn:length(resultElementRowList)}"
-                valign="top" id="td_${issueType}_${identifier}">${initialTypeMap[identifier]}&nbsp;</td>
+            <!-- <td border="1" rowSpan="${fn:length(resultElementRowList)}"
+                valign="top" id="td_${issueType}_${identifier}">${initialTypeMap[identifier]}</td> -->
+             <td border="1" rowSpan="${fn:length(resultElementRowList)}"
+                valign="top" id="row_${issueType}_${idcounter}">${initialTypeMap[identifier]}</td>
           </c:if>
         </c:if>
         <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">
