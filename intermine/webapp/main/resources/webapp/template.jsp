@@ -141,6 +141,8 @@
                   </html:select>
                 </c:otherwise>
               </c:choose>
+            </td>
+            <td valign="top">
               <span id="operandEditSpan${index-1}">
                 <html:text property="attributeValues(${index})"/>
                 <%-- might want to show up arrow --%>
@@ -171,7 +173,7 @@
           <tr>
             <td />
             <td />
-           	<td valign="top" colspan="2">
+           	<td valign="top" colspan="3">
            	  <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">                
                 <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
 

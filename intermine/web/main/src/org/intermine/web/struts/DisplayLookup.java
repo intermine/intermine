@@ -10,6 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,7 +23,9 @@ import java.util.Set;
 public class DisplayLookup
 {
     private int matches;
-    private Set<String> unresolved, duplicates, translated;
+    private Set<String> unresolved, duplicates, translated, lowQuality;
+    private Map<String, List> wildcards;
+    private String type;
 
     /**
      * Create a new DisplayLookup object.
@@ -31,14 +35,27 @@ public class DisplayLookup
      * @param duplicates a Set of the identifiers that matched multiple useful objects
      * @param translated a Set of the identifiers that only matched objects of the wrong type
      */
-    public DisplayLookup(int matches, Set<String> unresolved, Set<String> duplicates,
-                         Set<String> translated) {
+    public DisplayLookup(String type, int matches, Set<String> unresolved, Set<String> duplicates,
+                         Set<String> translated, Set<String> lowQuality,
+                         Map<String, List> wildcards) {
         this.matches = matches;
         this.unresolved = unresolved;
         this.duplicates = duplicates;
         this.translated = translated;
+        this.lowQuality = lowQuality;
+        this.wildcards = wildcards;
+        this.type = type;
     }
 
+    /**
+     * Check if there are any identifiers that didn't match.
+     * @return true if there are any issues
+     */
+    public boolean isIssues() {
+        return (!unresolved.isEmpty() || !duplicates.isEmpty() || !translated.isEmpty() 
+                        || !wildcards.isEmpty() || !lowQuality.isEmpty());
+    }
+    
     /**
      * Returns the number of identifiers that matched useful objects.
      *
@@ -46,6 +63,14 @@ public class DisplayLookup
      */
     public int getMatches() {
         return matches;
+    }
+
+    /**
+     * Get the type (class name) for which this lookup was performed.
+     * @return the unqualified class name
+     */
+    public String getType() {
+        return type;
     }
 
     /**
@@ -73,5 +98,22 @@ public class DisplayLookup
      */
     public Set<String> getTranslated() {
         return translated;
+    }
+    
+    /**
+     * Returns a Set of the identifiers that were low quality matches - e.g. matched an
+     * alternate identifier.
+     * @return a Set of Strings
+     */
+    public Set<String> getLowQuality() {
+        return lowQuality;
+    }
+    
+    /**
+     * Return a map of any wildcards used and the number of identifiers they matched.
+     * @return map of wildcards to the number of matches.
+     */
+    public Map<String, List> getWildcards() {
+        return wildcards;
     }
 }

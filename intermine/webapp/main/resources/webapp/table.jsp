@@ -10,7 +10,7 @@
 <tiles:importAttribute/>
 <html:xhtml/>
 
-<tiles:get name="objectTrail.tile"/><im:vspacer height="3"/>
+<tiles:get name="objectTrail.tile"/> <%--<im:vspacer height="1"/>--%>
 
 <%-- PagedTable.getWebTableClass() is a bit hacky - replace with a boolean
      method or make it unnecessary --%>
@@ -36,56 +36,7 @@
 //]]>-->
 </script>
 <script type="text/javascript" src="js/table.js" ></script>
-<c:forEach var="bagQueryResultEntry" items="${lookupResults}">
-  <fmt:message key="results.lookup.title"/> <c:out value="${bagQueryResultEntry.key}" escapeXml="false"/>:<BR/>
-  <c:set var="matchesCount" value="${bagQueryResultEntry.value.matches}"/>
-  <c:choose>
-    <c:when test="${matchesCount == 0}">
-      <fmt:message key="results.lookup.matches.zero"/><BR/>
-    </c:when>
-    <c:when test="${matchesCount == 1}">
-      <fmt:message key="results.lookup.matches.one"/><BR/>
-    </c:when>
-    <c:otherwise>
-      <fmt:message key="results.lookup.matches.many.first"/> <c:out value="${matchesCount}"/> <fmt:message key="results.lookup.matches.many.second"/><BR/>
-    </c:otherwise>
-  </c:choose>
-  <c:set var="unresolvedCount" value="${fn:length(bagQueryResultEntry.value.unresolved)}"/>
-  <c:choose>
-    <c:when test="${unresolvedCount == 1}">
-      <fmt:message key="results.lookup.unresolved.one"/>:
-    </c:when>
-    <c:when test="${unresolvedCount > 1}">
-      <fmt:message key="results.lookup.unresolved.many"/>:
-    </c:when>
-  </c:choose>
-  <c:if test="${unresolvedCount > 0}">
-    <c:forEach var="identifier" items="${bagQueryResultEntry.value.unresolved}" varStatus="status"><c:if test="${status.index != 0}">,
-      </c:if><c:out value="${identifier}"/></c:forEach>
-    <BR/>
-  </c:if>
-  <c:set var="duplicateCount" value="${fn:length(bagQueryResultEntry.value.duplicates)}"/>
-  <c:if test="${duplicateCount > 0}">
-    <fmt:message key="results.lookup.duplicate"/>:
-    <c:forEach var="identifier" items="${bagQueryResultEntry.value.duplicates}" varStatus="status"><c:if test="${status.index != 0}">,
-      </c:if><c:out value="${identifier}"/></c:forEach>
-    <BR/>
-  </c:if>
-  <c:set var="translatedCount" value="${fn:length(bagQueryResultEntry.value.translated)}"/>
-  <c:if test="${translatedCount > 0}">
-    <fmt:message key="results.lookup.translated"/>:
-    <c:forEach var="identifier" items="${bagQueryResultEntry.value.translated}" varStatus="status"><c:if test="${status.index != 0}">,
-      </c:if><c:out value="${identifier}"/></c:forEach>
-    <BR/>
-  </c:if>
-</c:forEach>
-<c:choose>
-  <c:when test="${resultsTable.size == 0}">
-    <div class="body">
-      <fmt:message key="results.pageinfo.empty"/><br/>
-    </div>
-  </c:when>
-  <c:otherwise>
+
 
     <c:if test="${!empty templateQuery}">
 
@@ -108,6 +59,146 @@
         </div>
       </c:if>
     </c:if>
+
+	<c:set var="lookupCount" value="${fn:length(lookupResults)}"/>
+	<c:forEach var="bagQueryResultEntry" items="${lookupResults}">
+  	  <c:if test="${bagQueryResultEntry.value.issues || resultsTable.size == 0}">
+  	    <div class="lookupReport">
+      </c:if>
+  
+ 	  <c:if test="${lookupCount > 1}">
+        <fmt:message key="results.lookup.title"/> <c:out value="${bagQueryResultEntry.key}" escapeXml="false"/>:<BR/>
+      </c:if>
+       
+     
+    <c:if test="${resultsTable.size == 0}">
+      <c:set var="matchesCount" value="${bagQueryResultEntry.value.matches}"/>
+      <c:if test="${matchesCount > 0}">
+        <div class="lookupError">
+          <c:choose>      
+            <c:when test="${matchesCount == 1}">
+              <fmt:message key="results.lookup.noresults.one">
+                <fmt:param value="${bagQueryResultEntry.value.matches}"/>
+                <fmt:param value="${bagQueryResultEntry.value.type}"/>
+              </fmt:message>
+            </c:when>
+            <c:when test="${matchesCount > 1}">
+              <fmt:message key="results.lookup.noresults.many">
+                <fmt:param value="${bagQueryResultEntry.value.matches}"/>
+                <fmt:param value="${bagQueryResultEntry.value.type}"/>
+              </fmt:message>
+            </c:when>
+          </c:choose>
+        </div>
+      </c:if>
+    </c:if>
+  <c:set var="unresolvedCount" value="${fn:length(bagQueryResultEntry.value.unresolved)}"/>
+  <c:if test="${unresolvedCount > 0}">
+    <div class="lookupError">
+      <c:choose>
+        <c:when test="${unresolvedCount == 1}">
+          <fmt:message key="results.lookup.unresolved.one">
+            <fmt:param value="${bagQueryResultEntry.value.type}"/>
+          </fmt:message>
+        </c:when>
+        <c:when test="${unresolvedCount > 1}">
+          <fmt:message key="results.lookup.unresolved.many">
+            <fmt:param value="${bagQueryResultEntry.value.type}"/>
+          </fmt:message>
+        </c:when>
+      </c:choose>
+      <c:forEach var="identifier" items="${bagQueryResultEntry.value.unresolved}" varStatus="status">
+        <c:if test="${status.index != 0}">,</c:if>
+      <c:out value="${identifier}"/></c:forEach>
+    </div>
+  </c:if>
+
+  <c:set var="duplicateCount" value="${fn:length(bagQueryResultEntry.value.duplicates)}"/>
+  <c:if test="${duplicateCount > 0}">
+    <div class="lookupWarn">
+      <c:choose>
+        <c:when test="${duplicateCount == 1}">
+          <fmt:message key="results.lookup.duplicate.one"/>:
+        </c:when>
+        <c:when test="${duplicateCount > 1}">
+          <fmt:message key="results.lookup.duplicate.many"/>:
+        </c:when>
+      </c:choose>  
+      <c:forEach var="identifier" items="${bagQueryResultEntry.value.duplicates}" varStatus="status">
+        <c:if test="${status.index != 0}">,</c:if>
+        <c:out value="${identifier}"/>
+      </c:forEach>
+    </div>
+  </c:if>
+
+
+  <c:set var="translatedCount" value="${fn:length(bagQueryResultEntry.value.translated)}"/>
+  <c:if test="${translatedCount > 0}">
+    <div class="lookupWarn">
+      <c:choose>
+        <c:when test="${translatedCount == 1}">
+          <fmt:message key="results.lookup.translated.one"/>:
+        </c:when>
+        <c:when test="${translatedCount > 1}">
+          <fmt:message key="results.lookup.translated.many"/>:
+        </c:when>
+      </c:choose>         
+      <c:forEach var="identifier" items="${bagQueryResultEntry.value.translated}" varStatus="status">
+        <c:if test="${status.index != 0}">,</c:if>
+        <c:out value="${identifier}"/>
+      </c:forEach>
+    </div>
+  </c:if>
+
+  <c:set var="lowQualityCount" value="${fn:length(bagQueryResultEntry.value.lowQuality)}"/>
+  <c:if test="${lowQualityCount > 0}">
+    <div class="lookupWarn">
+      <c:choose>
+        <c:when test="${lowQualityCount == 1}">
+          <fmt:message key="results.lookup.lowQuality.one"/>:
+        </c:when>
+        <c:when test="${lowQualityCount > 1}">
+          <fmt:message key="results.lookup.lowQuality.many"/>:
+        </c:when>
+      </c:choose>         
+      <c:forEach var="identifier" items="${bagQueryResultEntry.value.lowQuality}" varStatus="status">
+        <c:if test="${status.index != 0}">,</c:if>
+        <c:out value="${identifier}"/>
+      </c:forEach>
+    </div>
+  </c:if>
+  
+  <c:set var="wildcardCount" value="${fn:length(bagQueryResultEntry.value.wildcards)}"/>
+  <c:if test="${wildcardCount > 0}">
+    <div class="lookupWarn">
+      <c:choose>
+        <c:when test="${wildcardCount == 1}">
+          <fmt:message key="results.lookup.wildcard.one"/>:
+        </c:when>
+        <c:when test="${wildcardCount > 1}">
+          <fmt:message key="results.lookup.wildcard.many"/>:
+        </c:when>
+      </c:choose>         
+      <c:forEach var="wildcard" items="${bagQueryResultEntry.value.wildcards}" varStatus="status">
+        <c:if test="${status.index != 0}">,</c:if>
+        <c:out value="${wildcard.key}"/> (<c:out value="${fn:length(wildcard.value)}"/>)
+      </c:forEach>
+    </div>
+  </c:if>
+  
+  <c:if test="${bagQueryResultEntry.value.issues || resultsTable.size == 0}">
+    </div> <%-- lookupReport --%>
+  </c:if>
+  
+</c:forEach>
+<c:choose>
+  <c:when test="${resultsTable.size == 0}">
+    <div class="body">
+      <fmt:message key="results.pageinfo.empty"/><br/>
+    </div>
+  </c:when>
+  <c:otherwise>
+
 
     <div class="body">
       <table cellpadding="0" cellspacing="0" >

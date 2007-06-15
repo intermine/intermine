@@ -95,6 +95,16 @@
         </node>
       </query>
     </template>
+
+<template name="ManagerLookup" title="Search for Managers" longDescription="Use a LOOKUP constraint to search for Managers." comment="">
+  <query name="ManagerLookup" model="testmodel" view="Manager.name Manager.title">
+    <node path="Manager" type="Manager">
+      <constraint op="LOOKUP" value="Mr." description="" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+
   </template-queries>
 
   <tags>
@@ -121,6 +131,8 @@
     <tag name="aspect:People" objectIdentifier="employeeByName" type="template">
     </tag>
     <tag name="aspect:People" objectIdentifier="employeesOfACertainAge" type="template">
+    </tag>
+    <tag name="aspect:People" objectIdentifier="ManagerLookup" type="template">
     </tag>
     <tag name="im:converter" objectIdentifier="convertEmployeesToAddresses" type="template"/>
     <tag name="im:converter" objectIdentifier="convertContractorToEmployees" type="template"/>

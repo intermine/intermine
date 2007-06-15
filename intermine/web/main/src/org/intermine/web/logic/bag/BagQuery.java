@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -31,19 +36,11 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.iql.IqlQuery;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * A class encapsulating a query used to create a bag from a collection of input identifiers.
@@ -158,7 +155,7 @@ public class BagQuery
     public void traverseConstraint(Constraint con, Map<QueryEvaluable, ConstraintSet> nodes) {
         if (con instanceof ConstraintSet) {
             ConstraintSet cs = (ConstraintSet) con;
-            Set<Constraint> constraints = (cs).getConstraints();
+            Set<Constraint> constraints = new HashSet(cs.getConstraints());
             for (Constraint c : constraints) {
                 if (c instanceof BagConstraint) {
                     ((ConstraintSet) con).removeConstraint(c);
