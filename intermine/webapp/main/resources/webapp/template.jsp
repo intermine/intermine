@@ -52,7 +52,7 @@
     document.templateForm["attributeValues("+index+")"].disabled=useBag;
     document.templateForm["bag("+index+")"].disabled=!useBag;
     document.templateForm["bagOp("+index+")"].disabled=!useBag;
-    if(selectedBagName){
+    if(document.getElementById('selectedBagName')){
       document.templateForm["bag("+index+")"].value=selectedBagName;
     }
   }
