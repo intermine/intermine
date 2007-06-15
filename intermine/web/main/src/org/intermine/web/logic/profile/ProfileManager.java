@@ -455,11 +455,10 @@ public class ProfileManager
      */
     public synchronized void deleteTag(Tag tag) {
         try {
-            LOG.error("deleteTag() removing cache");
             tagCache = null;
             getUserProfileObjectStore().delete(tag);
         } catch (ObjectStoreException err) {
-            LOG.error(err);
+            LOG.error("deleteTag(): " + err);
         }
     }
 
@@ -587,7 +586,7 @@ public class ProfileManager
     }
 
     private void addToCache(Map<MultiKey, List<Tag>> cache, MultiKey key, List<Tag> results) {
-        LOG.error("adding to cache: " + key);
+        
         cache.put(key, new ArrayList<Tag>(results));
 
         int keyNullPartCount = 0;
@@ -661,7 +660,7 @@ public class ProfileManager
      */
     public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
                                    String userName) {
-        LOG.error("addTag() deleting cache");
+
         tagCache = null;
         if (tagName == null) {
             throw new IllegalArgumentException("tagName cannot be null");
