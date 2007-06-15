@@ -20,6 +20,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -58,7 +59,8 @@ public class ViewAction extends InterMineAction
         QueryMonitorTimeout clientState
                 = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages, true);
+        PathQuery pathQuery = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
+        String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
         
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         

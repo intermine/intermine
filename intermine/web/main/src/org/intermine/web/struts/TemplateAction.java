@@ -108,13 +108,16 @@ public class TemplateAction extends InterMineAction
         // Otherwise show the results: load the modified query from the template
         TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template, 
                                                                              savedBags);
-        SessionMethods.loadQuery(queryCopy, request.getSession(), response);
+        if (saveQuery) {
+            SessionMethods.loadQuery(queryCopy, request.getSession(), response);
+        }
         form.reset(mapping, request);
 
         QueryMonitorTimeout clientState = new QueryMonitorTimeout(
                 Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages, saveQuery);
+        String qid = SessionMethods.startQuery(clientState, session, messages, 
+                                               saveQuery, queryCopy);
         Thread.sleep(200);
         
         String trail = "";
@@ -125,7 +128,8 @@ public class TemplateAction extends InterMineAction
         if (saveQuery) {
             trail = "|query";
         } else {
-            session.removeAttribute(Constants.QUERY);
+            trail = "";
+            //session.removeAttribute(Constants.QUERY);
         }
                         
         return new ForwardParameters(mapping.findForward("waiting"))

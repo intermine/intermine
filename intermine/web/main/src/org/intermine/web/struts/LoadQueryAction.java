@@ -78,7 +78,7 @@ public class LoadQueryAction extends DispatchAction
                     = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
             MessageResources messages =
                 (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-            String qid = SessionMethods.startQuery(clientState, session, messages, false);
+            String qid = SessionMethods.startQuery(clientState, session, messages, false, query);
             Thread.sleep(200); // slight pause in the hope of avoiding holding page
             return new ForwardParameters(mapping.findForward("waiting"))
                                 .addParameter("qid", qid).forward();
