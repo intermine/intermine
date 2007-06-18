@@ -986,10 +986,11 @@ td.resBar {
 }
 
 /* query ages */
-.queryAgeYoung {
+table.results tr.queryAgeYoung td{
   background-color: #faa;
 }
-.queryAgeToday {
+
+table.results tr.queryAgeToday td{
   background-color: #fdd;
 }
 .queryAgeOld {

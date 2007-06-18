@@ -43,7 +43,7 @@
 
       <html:form action="/modifyBag">
 
-        <table class="results history" cellspacing="0">
+        <table class="results" cellspacing="0">
           <tr>
             <th>
               <input type="checkbox" id="selected_bag"
