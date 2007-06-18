@@ -10,6 +10,9 @@ package org.intermine.web.logic.template;
  *
  */
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,27 +21,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.intermine.objectstore.query.ConstraintOp;
-
+import org.apache.struts.action.ActionErrors;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
 import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateQueryBinding;
 import org.intermine.web.struts.TemplateForm;
-
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-
-import junit.framework.TestCase;
-
-import org.apache.struts.action.ActionErrors;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -47,6 +39,7 @@ public class TemplateHelperTest extends MockStrutsTestCase
     private Map templates, classKeys;
 
     public void setUp() throws Exception {
+        super.setUp();
         Model model = Model.getInstanceByName("testmodel");
         Properties classKeyProps = new Properties();
         classKeyProps.load(getClass().getClassLoader()
@@ -162,5 +155,23 @@ public class TemplateHelperTest extends MockStrutsTestCase
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
         System.out.println(t.getConstraintLogic() + " -> " + tc.getConstraintLogic());
         assertEquals("SELECT DISTINCT a1_, a1_.age AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age != 10 AND a1_.age != 30) ORDER BY a1_.name, a1_.age", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
+    }
+    
+    public void testGetPrecomputeLookup() throws Exception {
+        TemplateQueryBinding binding = new TemplateQueryBinding();
+        Reader reader = new StringReader("<template name=\"ManagerLookup\" title=\"Search for Managers\" longDescription=\"Use a LOOKUP constraint to search for Managers.\" comment=\"\">\n" + 
+        "  <query name=\"ManagerLookup\" model=\"testmodel\" view=\"Manager.name Manager.title\">\n" + 
+        "    <node path=\"Manager\" type=\"Manager\">\n" + 
+        "      <constraint op=\"LOOKUP\" value=\"Mr.\" description=\"\" identifier=\"\" editable=\"true\" code=\"A\">\n" + 
+        "      </constraint>\n" + 
+        "    </node>\n" + 
+        "  </query>\n" + 
+        "</template>");
+        List indexes = new ArrayList();
+        TemplateQuery t = 
+            (TemplateQuery) binding.unmarshal(reader, new HashMap(), getActionServlet().getServletContext()).values().iterator().next();
+        Query precomputeQuery = TemplateHelper.getPrecomputeQuery(t, new ArrayList());
+        assertEquals("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Manager AS a1_ ORDER BY a1_.name, a1_.title",
+                     precomputeQuery.toString());
     }
 }

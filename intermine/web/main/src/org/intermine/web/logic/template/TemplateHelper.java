@@ -638,12 +638,20 @@ public class TemplateHelper
             if (ecs != null && ecs.size() > 0) {
                 // NOTE: at one point this exhibited a bug where aliases were repeated
                 // in the generated query, seems to be fixed now though.
+                Iterator ecsIter = ecs.iterator();
+                // LOOKUP constraints already add the object (id) to the select list
+                // so we don't want to add it again here.while (ecsIter.hasNext()) {
+                Constraint c = (Constraint) ecsIter.next();
                 String path = node.getPathString();
-                if (!templateClone.viewContains(path)) {
-                    templateClone.getView().add(MainHelper.makePath(templateClone.getModel(),
-                                                                    templateClone, path));
+                if (!c.getOp().equals(ConstraintOp.LOOKUP)) {        
+                    if (!templateClone.viewContains(path)) {
+                        templateClone.getView().add(MainHelper.makePath(templateClone.getModel(),
+                                                                        templateClone, path));
+                    }
+                    if (!indexPaths.contains(path)) {
+                        indexPaths.add(path);
+                    }
                 }
-                indexPaths.add(path);
             }
         }
 
