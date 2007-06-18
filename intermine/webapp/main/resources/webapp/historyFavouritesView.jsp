@@ -78,6 +78,7 @@
                     ${favouriteTemplate.description}
                   </c:otherwise>
                 </c:choose>
+                &nbsp;
               </td>
               <td align="center" nowrap>
                 <html:link action="/template?name=${favouriteTemplate.name}&amp;scope=all" 

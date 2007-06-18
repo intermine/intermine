@@ -549,19 +549,7 @@ table.refSummary tbody tr td {
 
 span.collectionDescription {
 }
-/* IE (at least version 6, will actually parse the following
-   rules prefixed with // - this makes up for the lack of
-   "rules" parameter support on the table tags.
-*/
-.objSummary {
-  //border-top: 1px solid #888;
-  //border-left: 1px solid #888;
-}
 
-.objSummary td {
-  //border-bottom: 1px solid #888;
-  //border-right: 1px solid #888;
-}
 
 /* classes relating to the begin page */
 
