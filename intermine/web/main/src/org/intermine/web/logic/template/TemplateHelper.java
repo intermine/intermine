@@ -326,19 +326,21 @@ public class TemplateHelper
 
                 try {
                     if (c.getOp().equals(ConstraintOp.LOOKUP)) {
-                        String pathNodeType = pathNode.getType();
-                        if (TypeUtil.isInstanceOf(object, model.getPackageName() + "."
-                                                  + pathNodeType)) {
-                            templateForm.setAttributeOps("1", equalsString);
-                            templateForm.setAttributeValues("1", String.valueOf(object.getId()));
-                            return true;
-                        } else {
+                        String pathNodeType = model.getPackageName() + "." + pathNode.getType();
+                        if (object == null) {
                             Class bagClass = Class.forName(bag.getQualifiedType());
                             Class pathNodeClass = Class.forName(pathNodeType);
                             if (pathNodeClass.isAssignableFrom(bagClass)) {
-                                templateForm.setAttributeOps("1", inString);
-                                templateForm.setAttributeValues("1", bag);
+                                templateForm.setBagOp("1", inString);
+                                templateForm.setBag("1", bag);
                                 templateForm.setUseBagConstraint("1", true);
+                                return true;
+                            }
+                        } else {
+                            if (TypeUtil.isInstanceOf(object, model.getPackageName() + "."
+                                                      + pathNodeType)) {
+                                templateForm.setAttributeOps("1", equalsString);
+                                templateForm.setAttributeValues("1", String.valueOf(object.getId()));
                                 return true;
                             }
                         }
@@ -365,8 +367,7 @@ public class TemplateHelper
                                 }
                             }
                             String unqualifiedName = TypeUtil.unqualifiedName(testClass.toString());
-                            if (bag != null
-                                            && unqualifiedName.equals(bag.getType())) {
+                            if (bag != null && unqualifiedName.equals(bag.getType())) {
                                 templateForm.setBagOp("1", inString);
                                 templateForm.setBag("1", bag);
                                 templateForm.setUseBagConstraint("1", true);
