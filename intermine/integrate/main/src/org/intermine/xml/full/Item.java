@@ -33,7 +33,7 @@ public class Item implements Comparable
     private String identifier = "";
     private String className = "";
     private String implementations = "";
-    private Map attributes = new HashMap();
+    private Map<String, Attribute> attributes = new HashMap<String, Attribute>();
     private Map references = new HashMap();
     private Map collections = new HashMap();
     private Model model = null;
@@ -173,7 +173,7 @@ public class Item implements Comparable
      * Get all the attributes
      * @return all the attributes
      */
-    public Collection getAttributes() {
+    public Collection<Attribute> getAttributes() {
         return attributes.values();
     }
 

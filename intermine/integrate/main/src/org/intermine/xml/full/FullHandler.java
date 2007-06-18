@@ -25,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class FullHandler extends DefaultHandler
 {
-    private List items = null;
+    private List<Item> items = null;
     private Item currentItem = null;
     private ItemFactory itemFactory;
     private String currentCollectionName;
@@ -36,14 +36,14 @@ public class FullHandler extends DefaultHandler
     public FullHandler () {
         super();
         itemFactory = new ItemFactory();
-        items = new ArrayList();
+        items = new ArrayList<Item>();
     }
 
     /**
      * Return the Items that have been read with this handler.
      * @return the new Items
      */
-    public List getItems() {
+    public List<Item> getItems() {
         return items;
     }
     
@@ -51,8 +51,8 @@ public class FullHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attrs) {
 
         if (qName.equals("item")) {
             currentItem = itemFactory.makeItem();
