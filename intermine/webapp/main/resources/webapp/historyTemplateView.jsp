@@ -70,7 +70,7 @@
               <c:choose>
                 <c:when test="${!savedTemplate.value.valid}">
                   <td align="left" nowrap>
-                    <html:link action="/templateProblems?name=${savedTemplate.key}&amp;type=user" styleClass="brokenTmplLink">
+                    <html:link action="/templateProblems?name=${savedTemplate.key}&amp;scope=user" styleClass="brokenTmplLink">
                     <strike>${savedTemplate.value.name}</strike>
                     </html:link>
                   </td>
@@ -130,7 +130,7 @@
                 				titleKey="history.action.edit.hover">
                   <fmt:message key="history.action.edit"/>
                 </html:link> |
-                <html:link action="/exportTemplates?type=user&amp;name=${savedTemplate.value.name}"
+                <html:link action="/exportTemplates?scope=user&amp;name=${savedTemplate.value.name}"
                 				titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link>
