@@ -919,11 +919,11 @@ public class MainHelper
      * @return an InterMine Query
      */
     public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags,
-            Map<String, QueryNode> pathToQueryNode, String summaryPath) {
+            Map<String, QueryNode> pathToQueryNode, String summaryPath, ServletContext servletContext) {
         Map<String, QueryNode> origPathToQueryNode = new HashMap<String, QueryNode>();
         Query q = null;
         try {
-            q = makeQuery(pathQuery, savedBags, origPathToQueryNode, null, null);
+            q = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null);
         } catch (ObjectStoreException e) {
             // Not possible if last argument is null
         }

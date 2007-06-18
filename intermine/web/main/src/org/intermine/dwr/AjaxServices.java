@@ -267,7 +267,8 @@ public class AjaxServices
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         Query distinctQuery = MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
-                                                  new HashMap<String, QueryNode>(), summaryPath);
+                                                  new HashMap<String, QueryNode>(), summaryPath
+                                                  , servletContext);
         
         Results results = os.execute(distinctQuery);
         List columns = Arrays.asList(new String[] {"col1", "col2"});
@@ -281,7 +282,8 @@ public class AjaxServices
                                                           .getAttribute(Globals.MESSAGES_KEY);
         Query countQuery =
             MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
-                                        new HashMap<String, QueryNode>(), summaryPath);
+                                        new HashMap<String, QueryNode>(), summaryPath
+                                        , servletContext);
         String qid = SessionMethods.startQueryCount(clientState, session, messages, countQuery);
         return Arrays.asList(new Object[] {pagedTable.getRows(), qid});
     }
