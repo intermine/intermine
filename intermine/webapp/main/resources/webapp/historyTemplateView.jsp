@@ -108,6 +108,7 @@
                     ${savedTemplate.value.description}
                   </c:otherwise>
                 </c:choose>
+                &nbsp;
               </td>
               <td>
                 <c:choose>
