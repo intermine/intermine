@@ -117,7 +117,8 @@ public class Constraint
      */
     public String getDisplayValue() {
         if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH 
-            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS) {
+            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS
+            || op == ConstraintOp.LOOKUP) {
             return WebUtil.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
             return "";
@@ -125,6 +126,8 @@ public class Constraint
             return "" + getValue();
         }
     }
+    
+    
     
     /**
      * Return true if this constraint can be presented as editable in a
