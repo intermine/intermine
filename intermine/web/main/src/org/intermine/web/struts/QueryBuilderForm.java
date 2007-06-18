@@ -369,7 +369,8 @@ public class QueryBuilderForm extends ActionForm
                 if (constraintOp == ConstraintOp.EQUALS
                     || constraintOp == ConstraintOp.NOT_EQUALS
                     || constraintOp == ConstraintOp.MATCHES
-                    || constraintOp == ConstraintOp.DOES_NOT_MATCH) {
+                    || constraintOp == ConstraintOp.DOES_NOT_MATCH
+                    || constraintOp == ConstraintOp.LOOKUP) {
                     parsedValue = WebUtil.wildcardUserToSql(trimmedValue);
                 } else {
                     parsedValue = trimmedValue;
