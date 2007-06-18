@@ -27,7 +27,7 @@ html, body
   border-bottom: 1px solid #888;
 }
 
-table.results td.highlightCell {
+table.results tr td.highlightCell {
   background-color: #FFCBFF;
 }
 
