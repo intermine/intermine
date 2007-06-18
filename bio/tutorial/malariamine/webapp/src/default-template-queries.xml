@@ -293,80 +293,6 @@
         </node>
       </query>
     </template>
-    <template name="AAO_GeneOrthologuesSequence" description="Show predicted orthologues for a particular gene." important="false">
-      <query name="AAO_GeneOrthologuesSequence" model="genomic"
-             view="Gene Gene.orthologues.subject.identifier
-                   Gene.orthologues.subject.organism.name Gene.orthologues.subject">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.synonyms" type="Synonym">
-        </node>
-        <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="notch" description="Search for
-                                                        predicted orthologues for the following gene (use any
-                                                        identifier):" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAQ_GeneOrtholSpecies" description="For a particular gene, show predicted orthologues in one particular organism." important="false">
-      <query name="AAQ_GeneOrtholSpecies" model="genomic"
-             view="Gene.name Gene.identifier Gene.organism.name
-                   Gene.orthologues.subject.identifier
-                   Gene.orthologues.subject.organism.name" constraintLogic="A and B
-                                                                            and C">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.synonyms" type="Synonym">
-        </node>
-        <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="notch" description="Show the
-                                                        predicted orthologues for gene (use any gene identifier):"
-                      identifier="" editable="true" code="A"> </constraint>
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="From" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-        <node path="Gene.orthologues" type="Orthologue">
-        </node>
-        <node path="Gene.orthologues.subject" type="BioEntity">
-        </node>
-        <node path="Gene.orthologues.subject.organism" type="Organism">
-        </node>
-        <node path="Gene.orthologues.subject.organism.name" type="String">
-          <constraint op="=" value="Anopheles gambiae str. PEST" description="In" identifier="" editable="true" code="C">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAY_orthologues" description="Show the predicted orthologues between two organisms." important="false">
-      <query name="AAY_orthologues" model="genomic"
-             view="Orthologue.object.identifier Orthologue.object
-                   Orthologue.subject.identifier Orthologue.subject"
-             constraintLogic="A and B">
-        <node path="Orthologue" type="Orthologue">
-        </node>
-        <node path="Orthologue.object" type="BioEntity">
-        </node>
-        <node path="Orthologue.object.organism" type="Organism">
-        </node>
-        <node path="Orthologue.object.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Orthologue.subject" type="BioEntity">
-        </node>
-        <node path="Orthologue.subject.organism" type="Organism">
-        </node>
-        <node path="Orthologue.subject.organism.name" type="String">
-          <constraint op="=" value="Caenorhabditis elegans" description="and:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-      </query>
-    </template>
     <template name="GOterm2GeneProteinInteraction" description="Show
                                                                 genes from a particular organism annotated with a particular GO term
                                                                 which has evidence code IPI (inferred from Protein
@@ -417,46 +343,6 @@
         </node>
         <node path="Synonym.value" type="String">
           <constraint op="=" value="timeout" description="" identifier="Synonym.value.1" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="PPinteractionsFromGene" description="For
-                                                         the protein product of a particular gene, show the proteins it has
-                                                         been shown to interact with, the confidence value assigned to this
-                                                         interaction and some experimental details." important="false">
-      <query name="PPinteractionsFromGene" model="genomic"
-             view="Gene.identifier Gene.proteins.primaryAccession
-                   Gene.proteins.identifier Gene.proteins.name
-                   Gene.proteins.interactionRoles.interaction.evidence.confidence
-                   Gene.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name
-                   Gene.proteins.interactionRoles.interaction.interactors.protein.primaryAccession
-                   Gene.proteins.interactionRoles.interaction.interactors.protein.identifier
-                   Gene.proteins.interactionRoles.interaction.interactors.protein.name
-                   Gene.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId"
-             constraintLogic="A and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.identifier" type="String">
-          <constraint op="=" value="CG4722" description="show the
-                                                         protein interactions for the protein product of gene:"
-                      identifier="Gene.identifier" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Gene.proteins" type="Protein">
-        </node>
-        <node path="Gene.proteins.interactionRoles" type="ProteinInteractor">
-        </node>
-        <node path="Gene.proteins.interactionRoles.interaction" type="ProteinInteraction">
-        </node>
-        <node path="Gene.proteins.interactionRoles.interaction.evidence" type="ExperimentalResult">
-        </node>
-        <node path="Gene.proteins.interactionRoles.interaction.evidence.analysis" type="ProteinInteractionExperiment">
-        </node>
-        <node path="Gene.proteins.interactionRoles.interaction.interactors" type="ProteinInteractor">
-        </node>
-        <node path="Gene.proteins.interactionRoles.interaction.interactors.protein" type="Protein">
-          <constraint op="!=" value="Gene.proteins" code="B">
           </constraint>
         </node>
       </query>
@@ -547,41 +433,6 @@
                                                       code: (note: for 'with' annotations the evidence code should
                                                       be IC, IEA, IGI, IPI OR ISS)" identifier="" editable="true"
                       code="C"> </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="interactionsForOrganism"
-              description="For a particular organism, show all proteins that have
-                           been shown to interact, the confidence assigned to the interaction
-                           and the PubMed id of the paper describing the experiment."
-              important="false">
-      <query name="interactionsForOrganism" model="genomic"
-             view="Protein.identifier Protein.primaryAccession
-                   Protein.interactionRoles.interaction.interactors.protein.identifier
-                   Protein.interactionRoles.interaction.interactors.protein.primaryAccession
-                   Protein.interactionRoles.interaction.evidence.confidence
-                   Protein.interactionRoles.interaction.evidence.confidenceDesc
-                   Protein.interactionRoles.interaction.evidence.analysis.publication.pubMedId"
-             constraintLogic="A and B">
-        <node path="Protein" type="Protein">
-        </node>
-        <node path="Protein.interactionRoles" type="ProteinInteractor">
-        </node>
-        <node path="Protein.interactionRoles.interaction" type="ProteinInteraction">
-        </node>
-        <node path="Protein.interactionRoles.interaction.interactors" type="ProteinInteractor">
-        </node>
-        <node path="Protein.interactionRoles.interaction.interactors.protein" type="Protein">
-          <constraint op="!=" value="Protein" code="A">
-          </constraint>
-        </node>
-        <node path="Protein.interactionRoles.interaction.evidence" type="ExperimentalResult">
-        </node>
-        <node path="Protein.organism" type="Organism">
-        </node>
-        <node path="Protein.organism.shortName" type="String">
-          <constraint op="=" value="D. melanogaster" description="Show all protein interactions for organism:" identifier="" editable="true" code="B">
-          </constraint>
         </node>
       </query>
     </template>
