@@ -101,7 +101,7 @@
               <td align="right" valign="top" rowspan="2">
                 <c:out value="[${index}]"/>
               </td>
-              <td colspan="2">
+              <td colspan="5">
                 <i><c:out value="${con.description}"/></i>
               </td>
             </tr>
@@ -171,8 +171,6 @@
             </td>
           </tr>
           <tr>
-            <td />
-            <td />
            	<td valign="top" colspan="3">
            	  <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">                
                 <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
