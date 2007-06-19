@@ -27,7 +27,7 @@
     <c:set var="extra" value="${extra}&amp;bagName=${bagName}" />
   </c:if>
   <%-- if bagName empty and fieldExprMap too then it's probably a LOOKUP template --%>
-  <c:if test="${empty bagName && empty fieldExprMap}">
+  <c:if test="${empty bagName && (empty fieldExprMap || empty fieldExprMap[templateQuery])}">
     <c:set var="extra" value="${extra}&amp;idForLookup=${object.object.id}" />
   </c:if>
   
