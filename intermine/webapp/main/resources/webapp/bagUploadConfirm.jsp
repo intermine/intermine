@@ -98,9 +98,9 @@ function toggleForm(matchCount) {
 
     <c:if test="${! empty lowQualityMatches}">
       <p> 
-        <strong>
+        <h3>
           Low quality matches
-        </strong>
+        </h3>
       </p>
 
       <p><fmt:message key="bagUploadConfirm.lowQ"/>
@@ -114,9 +114,9 @@ function toggleForm(matchCount) {
     </c:if>
     <c:if test="${! empty duplicates}">
       <p> 
-        <strong>
+        <h3>
           Duplicates
-        </strong>
+        </h3>
       </p>
 
     <p><fmt:message key="bagUploadConfirm.duplicatesHeader"  />
@@ -131,9 +131,9 @@ function toggleForm(matchCount) {
 
     <c:if test="${!empty convertedObjects}">
       <p>
-        <strong>
+        <h3>
           <fmt:message key="bagUploadConfirm.convertedHeader"/>
-        </strong>
+        </h3>
       </p>
       <p><fmt:message key="bagUploadConfirm.converted">
           <fmt:param value="${bagUploadConfirmForm.bagType}"/>
