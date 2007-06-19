@@ -74,20 +74,18 @@ public class ModifyDetails extends DispatchAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         String name = request.getParameter("name");
-        String type = request.getParameter("type");
+        String scope = request.getParameter("scope");
         String bagName = request.getParameter("bagName");
         String useBagNode = request.getParameter("useBagNode");
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                             name, type);
+                                                             name, scope);
         PathQuery query = template.clone();
         String trail = request.getParameter("trail");
 
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             PathNode nodeCopy = query.getNodes().get(node.getPathString());
-
-            name = TypeUtil.unqualifiedName(node.getParentType());
 
             // object details page - fill in identified constraint with value from object
             if (bagName == null || bagName.length() == 0) {
