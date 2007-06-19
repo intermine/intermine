@@ -337,8 +337,7 @@ public class TemplateHelper
                                 return true;
                             }
                         } else {
-                            if (TypeUtil.isInstanceOf(object, model.getPackageName() + "."
-                                                      + pathNodeType)) {
+                            if (TypeUtil.isInstanceOf(object, pathNodeType)) {
                                 templateForm.setAttributeOps("1", equalsString);
                                 templateForm.setAttributeValues("1", String.valueOf(object.getId()));
                                 return true;
