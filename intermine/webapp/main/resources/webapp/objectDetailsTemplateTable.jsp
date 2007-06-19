@@ -124,6 +124,9 @@
 <c:set var="extra" value=""/>
 <c:if test="${!empty fieldExprMap}">
   <c:choose>
+  <c:when test="${! empty displayObject && empty fieldExprMap[templateQuery]}">
+     <c:set var="extra" value="${extra}&amp;idForLookup=${displayObject.object.id}" />
+  </c:when>
   <c:when test="${! empty displayObject}">
   <c:forEach items="${fieldExprMap[templateQuery]}" var="fieldExpr">
     <c:set var="fieldName" value="${fn:split(fieldExpr, '.')[1]}"/>
