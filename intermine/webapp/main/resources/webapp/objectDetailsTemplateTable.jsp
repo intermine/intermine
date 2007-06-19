@@ -136,7 +136,7 @@
   </c:otherwise>
   </c:choose>
 </c:if>
-[<html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;type=global${extra}&amp;trail=${param.trail}">
+[<html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">
   Show in table...
 </html:link>]
 
