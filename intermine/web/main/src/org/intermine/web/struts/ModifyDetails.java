@@ -77,6 +77,7 @@ public class ModifyDetails extends DispatchAction
         String scope = request.getParameter("scope");
         String bagName = request.getParameter("bagName");
         String useBagNode = request.getParameter("useBagNode");
+        String idForLookup = request.getParameter("idForLookup");
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              name, scope);
@@ -87,6 +88,22 @@ public class ModifyDetails extends DispatchAction
             PathNode node = (PathNode) i.next();
             PathNode nodeCopy = query.getNodes().get(node.getPathString());
 
+            // object details page - lookup constraint. Use object id
+            if (idForLookup != null && idForLookup.length() != 0) {
+                for (int ci = 0; ci < node.getConstraints().size(); ci++) {
+                    Constraint c = node.getConstraint(ci);
+                    if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+                        nodeCopy.removeConstraint(c);
+                        PathNode newNode = query.addNode(nodeCopy.getPathString() + ".id");
+                        Integer valueAsInteger = Integer.valueOf(idForLookup);
+                        Constraint objectConstraint =
+                            new Constraint(ConstraintOp.EQUALS, valueAsInteger, true,
+                                           null, c.getCode(), null);
+                        newNode.getConstraints().add(objectConstraint);
+                    }
+                }
+            }
+            
             // object details page - fill in identified constraint with value from object
             if (bagName == null || bagName.length() == 0) {
                 for (int ci = 0; ci < node.getConstraints().size(); ci++) {
