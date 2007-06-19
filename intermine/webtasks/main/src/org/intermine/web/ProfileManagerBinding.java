@@ -59,9 +59,34 @@ public class ProfileManagerBinding
             throw new RuntimeException(e);
         }
     }
-
     /**
      * Read a ProfileManager from an XML stream Reader
+     * @param reader contains the ProfileManager XML
+     * @param profileManager the ProfileManager to store the unmarshalled Profiles to
+     * @param osw ObjectStoreWriter used to resolve object ids and write bags
+     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
+     * correspond to object in old bags.
+     * @param servletContext global ServletContext object
+     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
+     * problem and continue if possible (used by read-userprofile-xml).
+     */
+    public static void unmarshal(Reader reader, ProfileManager profileManager,
+                                 ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader,
+                                 ServletContext servletContext, boolean abortOnError) {
+        try {
+            ProfileManagerHandler profileManagerHandler =
+                new ProfileManagerHandler(profileManager, idUpgrader, servletContext, osw,
+                                          abortOnError);
+            SAXParser.parse(new InputSource(reader), profileManagerHandler);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Read a ProfileManager from an XML stream Reader.  If there is a problem, throw an
+     * exception.
      * @param reader contains the ProfileManager XML
      * @param profileManager the ProfileManager to store the unmarshalled Profiles to
      * @param osw ObjectStoreWriter used to resolve object ids and write bags
@@ -72,15 +97,7 @@ public class ProfileManagerBinding
     public static void unmarshal(Reader reader, ProfileManager profileManager,
                                  ObjectStoreWriter osw, PkQueryIdUpgrader idUpgrader,
                                  ServletContext servletContext) {
-        try {
-            ProfileManagerHandler profileManagerHandler =
-                new ProfileManagerHandler(profileManager, idUpgrader, servletContext, osw);
-            SAXParser.parse(new InputSource(reader), profileManagerHandler);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-
+        unmarshal(reader, profileManager, osw, idUpgrader, servletContext, true);
     }
 }
 
@@ -95,6 +112,7 @@ class ProfileManagerHandler extends DefaultHandler
     private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
     private final ServletContext servletContext;
+    private boolean abortOnError;
     
     /**
      * Create a new ProfileManagerHandler
@@ -103,14 +121,18 @@ class ProfileManagerHandler extends DefaultHandler
      * correspond to object in old bags.
      * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
+     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
+     * problem and continue if possible (used by read-userprofile-xml).
      */
     public ProfileManagerHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                                 ServletContext servletContext, ObjectStoreWriter osw) {
+                                 ServletContext servletContext, ObjectStoreWriter osw,
+                                 boolean abortOnError) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
         this.servletContext = servletContext;
         this.osw = osw;
+        this.abortOnError = abortOnError;
     }
 
     /**
@@ -120,7 +142,8 @@ class ProfileManagerHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (qName.equals("userprofile")) {
-            profileHandler = new ProfileHandler(profileManager, idUpgrader, servletContext, osw);
+            profileHandler = new ProfileHandler(profileManager, idUpgrader, servletContext, osw,
+                                                abortOnError);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);
@@ -140,7 +163,7 @@ class ProfileManagerHandler extends DefaultHandler
             while (tagIter.hasNext()) {
                 Tag tag = (Tag) tagIter.next();
                 profileManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
-                                      profile.getUsername());
+                                      profile.getUsername(), abortOnError);
 
             }
             profileHandler = null;

@@ -109,7 +109,11 @@ public class MainHelper
         }
         Map<String, MetadataNode> nodes = new LinkedHashMap<String, MetadataNode>();
         nodes.put(className, new MetadataNode(className));
-        makeNodes(getClassDescriptor(className, model), subPath, className, nodes, isSuperUser);
+        try {
+            makeNodes(getClassDescriptor(className, model), subPath, className, nodes, isSuperUser);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("class not found in the model", e);
+        }
         return nodes.values();
     }
 
@@ -120,9 +124,11 @@ public class MainHelper
      * @param currentPath current path suffix (eg organism.name)
      * @param nodes the current Node set
      * @param isSuperUser true if the user is the superuser
+     * @throws ClassNotFoundException if a class name isn't in the model
      */
     protected static void makeNodes(ClassDescriptor cld, String path, String currentPath,
-                                    Map<String, MetadataNode> nodes, boolean isSuperUser) {
+                                    Map<String, MetadataNode> nodes, boolean isSuperUser)
+        throws ClassNotFoundException {
         List<FieldDescriptor> sortedNodes = new ArrayList<FieldDescriptor>();
 
         // compare FieldDescriptors by name
@@ -271,7 +277,13 @@ public class MainHelper
 
             if (finalPath == null) {           
                 if (path.indexOf(".") == -1) {
-                    QueryClass qc = new QueryClass(getClass(node.getType(), model));
+                    QueryClass qc;
+                    try {
+                        qc = new QueryClass(getClass(node.getType(), model));
+                    } catch (ClassNotFoundException e) {
+                        throw new IllegalArgumentException("class not found in the model: "
+                                                           + node.getType(), e);
+                    }
                     q.addFrom(qc);
                     queryBits.put(path, qc);
                 } else {
@@ -296,7 +308,13 @@ public class MainHelper
                         } else {
                             qr = new QueryCollectionReference(parentQc, fieldName);
                         }
-                        QueryClass qc = new QueryClass(getClass(node.getType(), model));
+                        QueryClass qc;
+                        try {
+                            qc = new QueryClass(getClass(node.getType(), model));
+                        } catch (ClassNotFoundException e) {
+                            throw new IllegalArgumentException("class not found in the model: "
+                                                               + node.getType(), e);
+                        }
                         andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
                         q.addFrom(qc);
                         queryBits.put(path, qc);
@@ -643,18 +661,16 @@ public class MainHelper
      * @param className the name of the class
      * @param model the Model used to resolve class names
      * @return the relevant Class
+     * @throws ClassNotFoundException if the class name is not in the model 
      */
-    public static Class getClass(String className, Model model) {
+    public static Class getClass(String className, Model model)
+        throws ClassNotFoundException {
         if ("InterMineObject".equals(className)) {
             className = "org.intermine.model.InterMineObject";
         } else {
             className = model.getPackageName() + "." + className;
         }
-        try {
-            return Class.forName(className);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return Class.forName(className);
     }
 
     /**
@@ -689,8 +705,10 @@ public class MainHelper
      * @param className the name of the class
      * @param model the Model used to resolve class names
      * @return the relevant ClassDescriptor
+     * @throws ClassNotFoundException if the class name is not in the model 
      */
-    public static ClassDescriptor getClassDescriptor(String className, Model model) {
+    public static ClassDescriptor getClassDescriptor(String className, Model model)
+        throws ClassNotFoundException {
         return model.getClassDescriptorByName(getClass(className, model).getName());
     }
 
@@ -844,7 +862,12 @@ public class MainHelper
             }
         } else {
             PathNode pn = pathQuery.getNodes().get(longestPrefix);
-            cld = getClassDescriptor(pn.getType(), model);
+            try {
+                cld = getClassDescriptor(pn.getType(), model);
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("class not found in the model: " + pn.getType(),
+                                                   e);
+            }
         }
 
         int startIndex = bitsList.size();

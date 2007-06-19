@@ -58,8 +58,9 @@ public class Node
      * 
      * @param model model to attach
      * @throws IllegalArgumentException if class or field are not found in the model
+     * @throws ClassNotFoundException if the class name is not in the model
      */
-    public void setModel(Model model) throws IllegalArgumentException {
+    public void setModel(Model model) throws IllegalArgumentException, ClassNotFoundException {
         ClassDescriptor cld = MainHelper.getClassDescriptor(getParentType(), model);
         if (cld == null) {
             throw new IllegalArgumentException("No class '" + getParentType() + "' found in model"

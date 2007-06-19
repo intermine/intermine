@@ -267,7 +267,7 @@ public class ProfileManagerTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), servletContext);
+        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os), servletContext);
 
         assertEquals(3, pm.getProfileUserNames().size());
 
@@ -359,7 +359,7 @@ public class ProfileManagerTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), servletContext);
+        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os), servletContext);
 
         pm.addTag("test-tag", "Department.name", "attribute", "bob");
         pm.addTag("test-tag", "Department.company", "reference", "bob");
@@ -447,7 +447,7 @@ public class ProfileManagerTest extends XMLTestCase
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(), servletContext);
+        ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os), servletContext);
 
         pm.addTag("test_tag1", "Department.name", "attribute", "bob");
         pm.addTag("test_tag1", "Department.company", "reference", "bob");

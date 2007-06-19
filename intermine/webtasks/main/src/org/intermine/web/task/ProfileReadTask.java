@@ -123,11 +123,11 @@ public class ProfileReadTask extends Task
 
             PkQueryIdUpgrader upgrader;
             if (source == null) {
-                upgrader = new PkQueryIdUpgrader();
+                upgrader = new PkQueryIdUpgrader(osw);
             } else {
                 upgrader = new PkQueryIdUpgrader(this.source, osw);
             }
-            ProfileManagerBinding.unmarshal(reader, pm, osw, upgrader, servletContext);
+            ProfileManagerBinding.unmarshal(reader, pm, osw, upgrader, servletContext, false);
         } catch (Exception e) {
             throw new BuildException(e);
         } finally {

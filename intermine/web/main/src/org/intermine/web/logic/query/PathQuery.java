@@ -485,6 +485,8 @@ public class PathQuery
                 newNode.setModel(model);
             } catch (IllegalArgumentException err) {
                 query.addProblem(err);
+            } catch (ClassNotFoundException e) {
+                query.addProblem(e);
             }
             newNode.setType(node.getType());
         }

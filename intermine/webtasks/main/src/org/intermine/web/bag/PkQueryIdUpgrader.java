@@ -42,8 +42,9 @@ public class PkQueryIdUpgrader implements IdUpgrader
     /**
      * No argument constructor - will use all available keyDefs to upgrade bags.
      */
-    public PkQueryIdUpgrader() {
-        // empty
+    public PkQueryIdUpgrader(ObjectStore os) {
+        this.source = null;
+        this.eof = new BaseEquivalentObjectFetcher(os.getModel(), new IntToIntMap(), os);
     }
 
     /**
@@ -77,9 +78,10 @@ public class PkQueryIdUpgrader implements IdUpgrader
         }
 
         if (query == null) {
-            throw new IllegalArgumentException("No usable primary key query found for "
-                                               + "object: " + oldObject);
+            LOG.error("No usable primary key query found for object: " + oldObject);
+            return Collections.EMPTY_SET;
         }
+        
         SingletonResults results = os.executeSingleton(query);
 
         // faster just to execute the query immediately:

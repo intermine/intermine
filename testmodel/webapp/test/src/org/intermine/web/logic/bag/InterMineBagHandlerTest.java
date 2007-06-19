@@ -51,7 +51,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setName("Old company");
 
         // no new object so expect an empt set
-        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
+        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
         assertEquals(new HashSet(), newIds);
     }
 
@@ -62,7 +62,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setName("Old company");
         oldCompany.setVatNumber(5678);
 
-        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
+        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
 
         assertEquals(1, newIds.size());
     }
@@ -77,7 +77,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setName("CompanyB");
         oldCompany.setAddress(oldAddress);
 
-        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
+        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
 
         assertEquals(1, newIds.size());
     }
@@ -88,7 +88,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setName("CompanyB");
 
         // can't find a new object so expect empty set
-        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
+        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
         assertEquals(new HashSet(), newIds);
     }
 
@@ -103,7 +103,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setAddress(oldAddress);
         oldCompany.setVatNumber(5678);
 
-        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
+        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
 
         assertEquals(1, newIds.size());
     }
@@ -123,7 +123,7 @@ public class InterMineBagHandlerTest extends TestCase
         oldCompany.setAddress(oldAddress);
         oldCompany.setVatNumber(1234);
 
-        Set newIds = new PkQueryIdUpgrader().getNewIds(oldCompany, os);
+        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
         assertEquals(2, newIds.size());
     }
 

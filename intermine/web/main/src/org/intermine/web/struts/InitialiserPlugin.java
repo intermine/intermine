@@ -318,7 +318,12 @@ public class InitialiserPlugin implements PlugIn
         Map subclassesMap = new LinkedHashMap();
         for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
             String className = TypeUtil.unqualifiedName((String) i.next());
-            ClassDescriptor cld = MainHelper.getClassDescriptor(className, model);
+            ClassDescriptor cld;
+            try {
+                cld = MainHelper.getClassDescriptor(className, model);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("unexpected exception", e);
+            }
             ArrayList subclasses = new ArrayList();
             Iterator iter = new TreeSet(getChildren(cld)).iterator();
             while (iter.hasNext()) {

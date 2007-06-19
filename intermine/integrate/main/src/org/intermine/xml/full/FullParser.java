@@ -10,13 +10,6 @@ package org.intermine.xml.full;
  *
  */
 
-import org.intermine.metadata.Model;
-import org.intermine.dataconversion.OntologyUtil;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.SAXParser;
-import org.intermine.util.TypeUtil;
-
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +17,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.dataconversion.OntologyUtil;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.SAXParser;
+import org.intermine.util.TypeUtil;
+
+import java.io.InputStream;
+
+import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 
 /**
@@ -33,7 +36,9 @@ import org.xml.sax.InputSource;
  * @author Richard Smith
  */
 public class FullParser
-{
+{    
+    private static final Logger LOG = Logger.getLogger(FullParser.class);
+    
     /**
      * Parse a InterMine Full XML file
      *
@@ -55,19 +60,39 @@ public class FullParser
     }
 
     /**
+     * Create business objects from a collection of Items.  If there are any problems, throw an
+     * exception
+     * @param items a collection of items to realise
+     * @param model the parent model
+     * @param useIdentifier if true, set the id of each new object using the identifier of the Item
+     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
+     * problem and continue if possible
+     * @return a collection of realised business objects
+     * @throws ClassNotFoundException if one of the items has a class that isn't in the model 
+     */
+    public static List<InterMineObject> realiseObjects(Collection<Item> items, Model model,
+                                                       boolean useIdentifier)
+        throws ClassNotFoundException {
+        return realiseObjects(items, model, useIdentifier, true);
+    }
+
+    /**
      * Create business objects from a collection of Items.
      * @param items a collection of items to realise
      * @param model the parent model
      * @param useIdentifier if true, set the id of each new object using the identifier of the Item
+     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
+     * problem and continue if possible
      * @return a collection of realised business objects
-     * @throws ClassNotFoundException if invalid item className found
+     * @throws ClassNotFoundException if one of the items has a class that isn't in the model 
      */
-    public static List realiseObjects(Collection items, Model model, boolean useIdentifier)
+    public static List<InterMineObject> realiseObjects(Collection<Item> items, Model model,
+                                                       boolean useIdentifier, boolean abortOnError)
         throws ClassNotFoundException {
         Map objMap = new LinkedHashMap(); // map from id to outline object
 
-        for (Iterator i = items.iterator(); i.hasNext();) {
-            Item item = (Item) i.next();
+        for (Iterator<Item> i = items.iterator(); i.hasNext();) {
+            Item item = i.next();
             objMap.put(item.getIdentifier(),
                 DynamicUtil.instantiateObject(
                     OntologyUtil.generateClassNames(item.getClassName(),
@@ -78,7 +103,7 @@ public class FullParser
 
         List result = new ArrayList();
         for (Iterator i = items.iterator(); i.hasNext();) {
-            result.add(populateObject((Item) i.next(), objMap, useIdentifier));
+            result.add(populateObject((Item) i.next(), objMap, useIdentifier, abortOnError));
         }
 
         return result;
@@ -91,9 +116,12 @@ public class FullParser
      * @param item a the Item to read field data from
      * @param objMap a map of item identifiers to outline business objects
      * @param useIdentifier if true, set the id of the new object using the identifier of the Item
+     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
+     * problem and continue if possible
      * @return a populated object
      */
-    protected static Object populateObject(Item item, Map objMap, boolean useIdentifier) {
+    protected static Object populateObject(Item item, Map objMap, boolean useIdentifier,
+                                           boolean abortOnError) {
         Object obj = objMap.get(item.getIdentifier());
 
         try {
@@ -103,8 +131,14 @@ public class FullParser
                 Attribute attr = (Attribute) attrIter.next();
                 TypeUtil.FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
                 if (info == null) {
-                    throw new IllegalArgumentException("Field " + attr.getName()
-                            + " not found in " + DynamicUtil.decomposeClass(obj.getClass()));
+                    String message = "Field " + attr.getName()
+                        + " not found in " + DynamicUtil.decomposeClass(obj.getClass());
+                    if (abortOnError) {
+                        throw new IllegalArgumentException(message);
+                    } else {
+                        LOG.warn(message);
+                        continue;
+                    }
                 }
                 Class attrClass = info.getType();
                 if (!attr.getName().equalsIgnoreCase("id")) {
@@ -123,7 +157,11 @@ public class FullParser
             while (refIter.hasNext()) {
                 Reference ref = (Reference) refIter.next();
                 Object refObj = objMap.get(ref.getRefId());
-                TypeUtil.setFieldValue(obj, ref.getName(), refObj);
+                if (refObj == null) {
+                    LOG.warn("no field " + ref.getName() + " in object: " + obj);
+                } else {
+                    TypeUtil.setFieldValue(obj, ref.getName(), refObj);
+                }
             }
 
             // Set objects for every collection
