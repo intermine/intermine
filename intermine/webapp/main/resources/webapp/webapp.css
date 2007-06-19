@@ -702,6 +702,7 @@ td.aspectIconCell {
 .aspectIntro {
   padding: 5px;
   font-size: larger;
+  position:relative
 }
 
 .aspectTitle {
