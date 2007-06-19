@@ -104,7 +104,12 @@ public class DisplayConstraint
         
         String parentType = node.getParentType();
         if (parentType != null) {
-            String parentClassName = MainHelper.getClass(parentType, model).getName();
+            String parentClassName;
+            try {
+                parentClassName = MainHelper.getClass(parentType, model).getName();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("unexpected exception", e);
+            }
             List fieldNames = oss.getFieldValues(parentClassName, node.getFieldName());
             if (fieldNames != null && node.getType() != null) {
                 newOptionsList.addAll(fieldNames);

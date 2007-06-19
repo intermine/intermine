@@ -119,7 +119,12 @@ public class BagTableWidgetLoader
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-        ClassDescriptor cld = MainHelper.getClassDescriptor(type, model);
+        ClassDescriptor cld;
+        try {
+            cld = MainHelper.getClassDescriptor(type, model);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("unexpected exception", e);
+        }
         columns = new ArrayList();
 
         if ((fields != null) && (fields.length() != 0)) {

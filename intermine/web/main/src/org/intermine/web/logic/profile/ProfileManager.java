@@ -646,6 +646,23 @@ public class ProfileManager
         }
         return tagCache;
     }
+    
+    /**
+     * Add a new tag.  The format of objectIdentifier depends on the tag type.
+     * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
+     * "ClassName.fieldName".
+     * Throw an exception if there are any problems. 
+     * @param tagName the tag name - any String
+     * @param objectIdentifier an object identifier that is appropriate for the given tag type
+     * (eg. "Department.name" for the "collection" type)
+     * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
+     * @param userName the name of the UserProfile to associate this tag with
+     * @return the new Tag
+     */
+    public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
+                                   String userName) {
+        return addTag(tagName, objectIdentifier, type, userName, true);
+    }
 
     /**
      * Add a new tag.  The format of objectIdentifier depends on the tag type.
@@ -656,10 +673,12 @@ public class ProfileManager
      * (eg. "Department.name" for the "collection" type)
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
      * @param userName the name of the UserProfile to associate this tag with
+     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
+     * problem and continue if possible
      * @return the new Tag
      */
     public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
-                                   String userName) {
+                                   String userName, boolean abortOnError) {
 
         tagCache = null;
         if (tagName == null) {
@@ -683,7 +702,16 @@ public class ProfileManager
             throw new RuntimeException("no such user " + userName);
         }
 
-        tagCheckers.get(type).isValid(tagName, objectIdentifier, type, userProfile);
+        try {
+            tagCheckers.get(type).isValid(tagName, objectIdentifier, type, userProfile);
+        } catch (RuntimeException e) {
+            if (abortOnError) {
+                throw e;
+            } else {
+                LOG.warn("not storing invalid tag: " + tagName + " on " + objectIdentifier
+                         + " type " + type);
+            }
+        }
         Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag.setTagName(tagName);
         tag.setObjectIdentifier(objectIdentifier);

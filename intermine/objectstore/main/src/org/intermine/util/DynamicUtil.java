@@ -194,8 +194,10 @@ public class DynamicUtil
      * @param className the class name
      * @param implementations a space separated list of interface names
      * @return the materialised business object
+     * @throws ClassNotFoundException if className can't be found 
      */
-    public static Object instantiateObject(String className, String implementations) {
+    public static Object instantiateObject(String className, String implementations)
+        throws ClassNotFoundException {
 
         Set<String> classNames = new HashSet<String>();
 
@@ -212,11 +214,7 @@ public class DynamicUtil
                                        + "classes or interfaces");
         }
 
-        try {
-            return DynamicUtil.createObject(convertToClasses(classNames));
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Cannot find one of '" + classNames + "' in model", e);
-        }
+        return DynamicUtil.createObject(convertToClasses(classNames));
     }
 
     /**

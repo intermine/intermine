@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -29,11 +31,14 @@ import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.SavedQueryHandler;
 import org.intermine.web.logic.tagging.TagHandler;
 import org.intermine.web.logic.template.TemplateQueryHandler;
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.FullHandler;
 import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.Item;
 
 import javax.servlet.ServletContext;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -45,6 +50,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class ProfileHandler extends DefaultHandler
 {
+    private static final Logger LOG = Logger.getLogger(ProfileHandler.class);
     private ProfileManager profileManager;
     private String username;
     private String password;
@@ -52,7 +58,7 @@ class ProfileHandler extends DefaultHandler
     private Map savedBags;
     private Map savedTemplates;
     private Set tags;
-    private List items;
+    private List<Item> items;
     private Map idObjectMap;
     private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
@@ -66,6 +72,7 @@ class ProfileHandler extends DefaultHandler
      */
     DefaultHandler subHandler = null;
     private final ServletContext servletContext;
+    private boolean abortOnError;
 
     /**
      * Create a new ProfileHandler
@@ -74,10 +81,14 @@ class ProfileHandler extends DefaultHandler
      * correspond to object in old bags.
      * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
+     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
+     * problem and continue if possible (used by read-userprofile-xml).
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader, 
-                          ServletContext servletContext, ObjectStoreWriter osw) {
-        this(profileManager, idUpgrader, null, null, new HashSet(), servletContext, osw);
+                          ServletContext servletContext, ObjectStoreWriter osw,
+                          boolean abortOnError) {
+        this(profileManager, idUpgrader, null, null, new HashSet(), servletContext, osw,
+             abortOnError);
     }
 
     /**
@@ -90,10 +101,13 @@ class ProfileHandler extends DefaultHandler
      * @param tags a set to populate with user tags
      * @param servletContext global ServletContext object
      * @param osw an ObjectStoreWriter to the production database, to write bags
+     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
+     * problem and continue if possible (used by read-userprofile-xml).
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
                           String defaultUsername, String defaultPassword, Set tags,
-                          ServletContext servletContext, ObjectStoreWriter osw) {
+                          ServletContext servletContext, ObjectStoreWriter osw, 
+                          boolean abortOnError) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
@@ -104,6 +118,25 @@ class ProfileHandler extends DefaultHandler
         this.tags = tags;
         this.classKeys = classKeys;
         this.osw = osw;
+        this.abortOnError = abortOnError;
+    }
+
+    /**
+     * Create a new ProfileHandler.  Throw an exception if there is a problem while reading 
+     * @param profileManager the ProfileManager to pass to the Profile constructor
+     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
+     * correspond to object in old bags.
+     * @param defaultUsername default username
+     * @param defaultPassword default password
+     * @param tags a set to populate with user tags
+     * @param servletContext global ServletContext object
+     * @param osw an ObjectStoreWriter to the production database, to write bags
+     */
+    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
+                          String defaultUsername, String defaultPassword, Set tags,
+                          ServletContext servletContext, ObjectStoreWriter osw) {
+        this(profileManager, idUpgrader, defaultPassword, defaultPassword, tags, servletContext,
+             osw, true);
     }
 
     /**
@@ -170,11 +203,20 @@ class ProfileHandler extends DefaultHandler
             items = ((FullHandler) subHandler).getItems();
             idObjectMap = new HashMap();
             Model model = profileManager.getObjectStore().getModel();
-            List objects;
-            try {
-                objects = FullParser.realiseObjects(items, model, true);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("cannot turn items into objects", e);
+            List<InterMineObject> objects = new ArrayList();
+            for (Item item: items) {
+                try {
+                    List<Item> oneItemList = new ArrayList<Item>();
+                    oneItemList.add(item);
+                    objects.addAll(FullParser.realiseObjects(oneItemList, model, true, false));
+                } catch (ClassNotFoundException e) {
+                    String message = "cannot turn item into object";
+                    if (abortOnError) {
+                        throw new RuntimeException(message, e);
+                    } else {
+                        LOG.warn(message + ": " + item);
+                    }
+                }
             }
             Iterator objectIter = objects.iterator();
             while (objectIter.hasNext()) {

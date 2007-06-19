@@ -142,7 +142,12 @@ public class QueryBuilderChange extends DispatchAction
         Model model = pathQuery.getModel();
 
         if (parentType != null) {
-            ClassDescriptor parentCld = MainHelper.getClassDescriptor(parentType, model);
+            ClassDescriptor parentCld;
+            try {
+                parentCld = MainHelper.getClassDescriptor(parentType, model);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("unexpected exception", e);
+            }
             String pathLastField = path.substring(path.lastIndexOf(".") + 1);
             FieldDescriptor fd = parentCld.getFieldDescriptorByName(pathLastField);
 

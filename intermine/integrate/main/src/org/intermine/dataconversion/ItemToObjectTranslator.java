@@ -265,10 +265,16 @@ public class ItemToObjectTranslator extends Translator
                     + identifierToId(item.getIdentifier()) + ") - classname = "
                     + item.getClassName() + ", size = " + itemSize);
         }
-        InterMineObject obj = (InterMineObject)
-            DynamicUtil.instantiateObject(
-                OntologyUtil.generateClassNames(item.getClassName(), model),
-                OntologyUtil.generateClassNames(item.getImplementations(), model));
+        InterMineObject obj;
+        try {
+            obj = (InterMineObject)
+                DynamicUtil.instantiateObject(
+                    OntologyUtil.generateClassNames(item.getClassName(), model),
+                    OntologyUtil.generateClassNames(item.getImplementations(), model));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("class \"" + item.getClassName() + "\" not found in model",
+                                       e);
+        }
 
         obj.setId(identifierToId(item.getIdentifier()));
 
