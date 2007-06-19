@@ -30,6 +30,7 @@ import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
 import org.apache.commons.collections.map.ListOrderedMap;
@@ -52,7 +53,7 @@ public class Profile
     //protected Map categoryTemplates;
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
-    private SearchRepository searchRepository = new SearchRepository();;
+    private SearchRepository searchRepository = new SearchRepository(TemplateHelper.USER_TEMPLATE);
 
     /**
      * Construct a Profile
