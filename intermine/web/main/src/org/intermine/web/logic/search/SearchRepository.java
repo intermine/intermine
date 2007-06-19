@@ -48,13 +48,15 @@ public class SearchRepository
     private Map<String, Map<String, ? extends WebSearchable>> webSearchablesMap =
         new HashMap<String, Map<String, ? extends WebSearchable>>();
     private Map<String, Directory> directoryMap = new HashMap<String, Directory>();
+    private final String scope;
 
 
     /**
      * Construct a new instance of SearchRepository.
+     * @param scope USER_TEMPLATE or GLOBAL_TEMPLATE from TemplateHelper
      */
-    public SearchRepository() {
-        // empty
+    public SearchRepository(String scope) {
+        this.scope = scope;
     }
 
     /**
@@ -152,7 +154,7 @@ public class SearchRepository
      */
     private void reindex(String type) {
         Map<String, ? extends WebSearchable> webSearchables = webSearchablesMap.get(type);
-        RAMDirectory ram = indexWebSearchables(webSearchables, "global");
+        RAMDirectory ram = indexWebSearchables(webSearchables, scope);
         directoryMap.put(type, ram);
     }
 
