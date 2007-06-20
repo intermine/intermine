@@ -4,6 +4,32 @@
 <article>
 
   <section>
+    <title>FlyMine version 8.0 - release notes</title>
+    <para>
+      In release 8.0 we have updated the data model for protein interactions, protein structure and orthologues to make them easier and faster to query.  We also include three new data sets: Tiffin (predicted regulatory motifs), anoEST (A. gambiae EST clusters) and predicted 3-D protein structures for A. gambiae domains. A new type of constraint is used in template queries which now allows you to enter any identifier or symbol.
+    </para> 
+
+    <itemizedlist>
+      <listitem>
+        <para>Data</para>
+        <itemizedlist>
+    <listitem><para>NEW - D. melanogaster predicted regulatory motifs and functional sites (motif instances) from the <ulink url="http://servlet.sanger.ac.uk/tiffin/">Tiffin database</ulink>. Note these have been mapped to the release 5.0 genome sequence.</para></listitem>
+    <listitem><para>NEW - A. gambiae EST and EST clusters from the <ulink url="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php">anoEST database</ulink>.</para></listitem>
+    <listitem><para>NEW - A. gambiae protein domain 3-D structure predictions from <ulink url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Kenji Mizuguchi</ulink>.  This data provides structure predictions for regions of A. gambiae proteins that correspond to a Pfam domain.    </para></listitem>
+    <listitem><para>NEW - H. sapiens and M. musculus protein information included from UniProt, we already include InParanoid orthologues to these organisms.</para></listitem>
+       </itemizedlist>
+      </listitem>
+
+      <listitem>
+        <para>User Interface</para>
+        <itemizedlist>
+    <listitem><para>NEW - LOOKUP constraints.  Most template queries are now updated to use a new type of constraint.  Now you don't need to enter a specific type of identifier - for example for the D. melanogaster gene zen you could enter 'zen', 'CG1046', 'FBgn0004053' or 'zerknullt' and get the same result.  You could even enter a protein and or transcript identifier and it would find the gene.</para></listitem>    
+       </itemizedlist>
+      </listitem>
+    </itemizedlist>
+  </section> 
+
+  <section>
     <title>FlyMine version 7.1 - release notes</title>
     <para>
       Release 7.1 includes a number of new user interface features.  Results of queries can be ordered by a selected column and results tables have a new summary button which brings up statistics on the values in that column.  Many template queries now have more descriptive column titles in results tables.

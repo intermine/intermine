@@ -9,16 +9,22 @@
     <webMaster>info@flymine.org</webMaster>
 
     <!-- Add new news at the top here -->
+    <item>
+      <title>Job opportunities</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        We are recruiting two Senior Software Developers to work on the NIH funded modENCODE project.  InterMine (the software behind FlyMine) will be used as a major part of the Data Coordination Centre of modENCODE.  See &lt;a href="http://www.flymine.org/project/jobs.shtml"&gt;more information&lt;/a&gt;.
+      </description>
+      <pubDate>Fri, 15th June 2007</pubDate>
+    </item>
 
     <item>
-      <title>FlyMine Workshop</title>
-      <link>http://www.flymine.org/project/jobs</link>
+      <title>FlyMine workshop</title>
+      <link>http://www.flymine.org/</link>
       <description>
-        A joint FlyMine/FlyBase workshop will held on Wednesday 20th June in the Department of Genetics, Cambridge University. For more information and booking please see &lt;a href="http://www.bio.cam.ac.uk/gradschool/current/courses/bioinformatics.html
-
-"&gt;workshop information&lt;/a&gt;.
+        We are running a half day workshop on using FlyMine in Cambridge UK on June 20th.  This is part of a joint workshop with FlyBase, half a day will be devoted to each.  The workshop is free of charge, for more information and to sign up see &lt;a href="http://www.biomed.cam.ac.uk/gradschool/current/courses/flymine.html"&gt;here&lt;/a&gt;. 
       </description>
-      <pubDate>Mon, 21st May 2006</pubDate>
+      <pubDate>Fri, 15th June 2007</pubDate>
     </item>
 
     <item>
@@ -98,7 +104,7 @@
 
     <item>
       <title>FlyMine Workshop</title>
-      <link>http://www.flymine.org/project/jobs</link>
+      <link>http://www.flymine.org</link>
       <description>
         A joint FlyMine/FlyBase workshop will held on Thursday 23rd November in the Department of Genetics, Cambridge University. For more information and booking please see &lt;a href="http://www.bio.cam.ac.uk/gradschool/current/courses/bioinformatics.html
 
