@@ -137,10 +137,14 @@
     <div class="lookupWarn">
       <c:choose>
         <c:when test="${translatedCount == 1}">
-          <fmt:message key="results.lookup.translated.one"/>:
+          <fmt:message key="results.lookup.translated.one">
+            <fmt:param value="${bagQueryResultEntry.value.type}"/>
+          </fmt:message>
         </c:when>
         <c:when test="${translatedCount > 1}">
-          <fmt:message key="results.lookup.translated.many"/>:
+          <fmt:message key="results.lookup.translated.many">
+            <fmt:param value="${bagQueryResultEntry.value.type}"/>
+          </fmt:message>
         </c:when>
       </c:choose>         
       <c:forEach var="identifier" items="${bagQueryResultEntry.value.translated}" varStatus="status">
