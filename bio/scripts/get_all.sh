@@ -56,10 +56,10 @@ echo "Getting InParanoid"
 ./get_inparanoid
 echo "==========================================================="
 echo
-echo "==========================================================="
-echo "Getting Interpro xml file"
-./get_interproXML
-echo "==========================================================="
+#echo "==========================================================="
+#echo "Getting Interpro xml file"
+#./get_interproXML
+#echo "==========================================================="
 
 today=$(date +"%F")
 logfile="/shared/data/download_logs/$today.txt"
