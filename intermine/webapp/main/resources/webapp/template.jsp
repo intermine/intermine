@@ -171,7 +171,10 @@
             </td>
           </tr>
           <tr>
-            <td valign="top" colspan="3">
+            <td>
+              &nbsp; <%-- for IE --%>
+            </td>
+            <td valign="top" colspan="4">
               <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">
                 <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
 
