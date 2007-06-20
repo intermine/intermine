@@ -406,4 +406,27 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     public void setEdited(boolean edited) {
         this.edited = edited;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object o) {
+        return (o instanceof TemplateQuery)
+            && super.equals(this)
+            && ((TemplateQuery) o).getName().equals(getName())
+            && ((TemplateQuery) o).getDescription().equals(getDescription())
+            && ((TemplateQuery) o).getTitle().equals(getTitle())
+            && ((TemplateQuery) o).getComment().equals(getComment());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return 13 * super.hashCode()
+            + 3 * name.hashCode()
+            + 5 * title.hashCode()
+            + 7 * description.hashCode()
+            + 11 * comment.hashCode();
+    }
 }
