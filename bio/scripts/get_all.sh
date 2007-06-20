@@ -60,6 +60,11 @@ echo
 #echo "Getting Interpro xml file"
 #./get_interproXML
 #echo "==========================================================="
+echo
+echo "==========================================================="
+echo "Getting FlyBase version"
+./get_flybase_version
+echo "==========================================================="
 
 today=$(date +"%F")
 logfile="/shared/data/download_logs/$today.txt"

@@ -1,0 +1,95 @@
+#!/usr/bin/perl
+# script to identify if a new flybase version is available
+
+use strict;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+#for connecting to the ftp server
+my $flybase_server = "ftp.flybase.net";
+my $dmel_dir = "genomes/dmel/current";
+my $dpse_dir = "genomes/dpse/current";
+my $username = "anonymous";
+my $password = "-anonymous\@";
+
+my %dates;
+my $version_buffer;
+my $log_buffer = "\nFlyBase\n";
+
+#connect to the server
+my $connection = &ftp_connect($flybase_server,$username,$password);
+
+#get the last modification dates for one file in each directory	
+$connection->cwd("$dmel_dir/gff")
+	or die "Cannot change working directory ", $connection->message;
+$dates{dmel_gff} = &get_date($connection);
+
+$connection->cwd("../fasta")
+	or die "Cannot change working directory ", $connection->message;
+$dates{dmel_fasta} = &get_date($connection);
+
+#the chado=xml directory is the only one where the files have different modification dates
+$connection->cwd("../chado-xml")
+	or die "Cannot change working directory ", $connection->message;
+my @chado_list = $connection->ls();
+for my $file (@chado_list) {
+	if($file =~ /^chado/){
+		my $date = &date_string_file($connection,$file);
+		$dates{$file} = $date;
+	}
+}
+
+$connection->cwd("../../../../$dpse_dir/gff")
+	or die "Cannot change working directory ", $connection->message;
+$dates{dpse_gff} = &get_date($connection);
+	
+$connection->cwd("../fasta")
+	or die "Cannot change working directory ", $connection->message;
+$dates{dpse_fasta}=	&get_date($connection);
+	
+$connection->quit;
+
+# check for updates
+my $version_dir = "/shared/data/flybase/get_version_file";
+my $version_file = "$version_dir/VERSION";
+
+foreach my $date_key (sort keys %dates){
+	open(F,"<$version_file") or die "$!";
+	while(<F>){
+		my @f = split/\t/;
+		chomp $f[1];
+		#if the file has been downloaded before, check for an update
+		if($date_key eq $f[0]){
+			if($dates{$f[0]} eq $f[1]){
+				$version_buffer .= "$f[0]\t$f[1]\n";
+				$log_buffer .= "$f[0]\tUp to date ($f[1]).\n";
+			}elsif($dates{$f[0]} ne $f[1]){
+				$version_buffer .= "$f[0]\t$dates{$f[0]}\n";
+				$log_buffer .= "$f[0]\tNEW VERSION AVAILABLE ($dates{$f[0]}).\n";
+			}
+		}elsif(!exists $dates{$f[0]}) {
+			#new file added to ftp site
+			$version_buffer .= "$date_key\t$dates{$f[0]}\n";
+			$log_buffer .= "$date_key\tNEW FILE ADDED TO ftp site ($dates{$f[0]}).\n";
+		}
+	}
+}
+
+#write the report files
+&write_log($log_buffer);
+&write_version($version_dir,$version_buffer);
+
+# get the date string from a directory where all the files have the same modification date
+sub get_date(){
+	my $ftp = shift;
+	
+	my @list = $ftp->ls();
+	my $date = &date_string_file($ftp,$list[0]);
+	
+	return $date;
+}
+
