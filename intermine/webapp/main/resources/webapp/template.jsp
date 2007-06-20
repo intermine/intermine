@@ -162,17 +162,17 @@
             </td>
             <td valign="top">
               <c:if test="${!empty keyFields}">
-                  <span class="smallnote">
-                    <fmt:message key="query.lookupConstraintHelp"><%--This will search...--%>
-                      <fmt:param value="${keyFields}"/>
-                    </fmt:message>
-                  </span>
+                <span class="smallnote">
+                  <fmt:message key="query.lookupConstraintHelp"><%--This will search...--%>
+                    <fmt:param value="${keyFields}"/>
+                  </fmt:message>
+                </span>
               </c:if>
             </td>
           </tr>
           <tr>
-           	<td valign="top" colspan="3">
-           	  <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">                
+            <td valign="top" colspan="3">
+              <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">
                 <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
 
                 <fmt:message key="template.or"/>
@@ -200,8 +200,8 @@
                     </fmt:message>
                   </div>
                 </c:if>
- 
-             <script type="text/javascript">
+
+                <script type="text/javascript">
                 <!--
                   // var selectedBagName = '${selectedBagNames[con]}';
                   // if(selectedBagName){
