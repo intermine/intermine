@@ -411,8 +411,19 @@ public class MainHelper
                     } catch (InterMineException e) {
                         throw new ObjectStoreException(e);
                     }
-                    cs.addConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
-                                bagQueryResult.getMatchAndIssueIds()));
+                    if (!bagQueryResult.getMatchAndIssueIds().isEmpty()) {
+                        cs.addConstraint(new BagConstraint(new QueryField(qc, "id"), 
+                                                           ConstraintOp.IN,
+                                                           bagQueryResult.getMatchAndIssueIds()));
+                    } else {
+                        // TODO this is a massive hack to avoid a query taking too long.  If
+                        // getMatchAndIssueIds() returns an empty set the queru is run with an
+                        // empty bag which postgres thinks will take too long.  The code that
+                        // does a lookup for ifs should be moved out of this method. See #1284.
+                        cs.addConstraint(new SimpleConstraint(new QueryField(qc, "id"), 
+                                                              ConstraintOp.EQUALS,
+                                                              new QueryValue(new Integer(0))));
+                    }
                     if (returnBagQueryResults != null) {
                         returnBagQueryResults.put(node.getPathString(), bagQueryResult);
                     }
