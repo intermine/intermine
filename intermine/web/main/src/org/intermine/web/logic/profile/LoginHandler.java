@@ -16,21 +16,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.InterMineAction;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Xavier Watkins
@@ -84,15 +83,6 @@ public abstract class LoginHandler extends InterMineAction
 
         if (profile.getUsername().equals(superuser)) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
-            
-            // prime the cache (hopefuly)
-            pm.getTags(TagNames.IM_PUBLIC, null, "template", superuser);
-            
-            for (Map.Entry<String, TemplateQuery> entry: profile.getSavedTemplates().entrySet()) {
-                if (pm.getTags(TagNames.IM_PUBLIC, entry.getKey(), "template", superuser).size() == 0) {
-                   pm.addTag(TagNames.IM_PUBLIC, entry.getKey(), "template", superuser);
-                }
-            }
         }
 
         // Merge in anonymous query history
