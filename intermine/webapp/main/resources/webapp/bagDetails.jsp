@@ -27,7 +27,7 @@
 <div class="body" >
   <p>The bag <b>${bag.name}</b> contains ${bag.size} elements of type: <b>${bag.type}</b>.</p>
   <c:if test="${!empty bag.dateCreated}">
-    <p>Created: ${bag.dateCreated}</p>
+    <p>Created: <im:dateDisplay date="${bag.dateCreated}" /></p>
   </c:if>
 
   <html:form action="/modifyBagDetailsAction">
