@@ -69,9 +69,16 @@ public class BagQueryHelper
         }
 
         List lowerCaseInput = new ArrayList();
-        Iterator inputIter = input.iterator();
-        while (inputIter.hasNext()) {
-            lowerCaseInput.add(((String) inputIter.next()).toLowerCase());
+        for (Object o : input) {
+            if (o instanceof String) {
+                o = ((String) o).toLowerCase();
+                try {
+                    lowerCaseInput.add(new Integer((String) o));
+                } catch (NumberFormatException e) {
+                    // Not a number
+                }
+            }
+            lowerCaseInput.add(o);
         }
 
         Query q = new Query();

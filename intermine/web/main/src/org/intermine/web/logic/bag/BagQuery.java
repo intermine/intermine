@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -48,6 +49,7 @@ import org.intermine.objectstore.query.iql.IqlQuery;
  */
 public class BagQuery
 {
+    private static final Logger LOG = Logger.getLogger(BagQuery.class);
     private Query query;
     private String message, queryString, packageName;
     private boolean matchesAreIssues;
@@ -108,9 +110,19 @@ public class BagQuery
      */
     public Query getQuery(Collection bag, String extraFieldValue) {
         List lowerCaseBag = new ArrayList();
-        Iterator inputIter = bag.iterator();
-        while (inputIter.hasNext()) {
-            lowerCaseBag.add(((String) inputIter.next()).toLowerCase());
+        for (Object o : bag) {
+            if (o instanceof String) {
+                o = ((String) o).toLowerCase();
+                lowerCaseBag.add(o);
+                try {
+                    lowerCaseBag.add(new Integer((String) o));
+                } catch (NumberFormatException e) {
+                    LOG.info("Couldn't parse string \"" + o + "\" into integer");
+                    // Wasn't a number
+                }
+            } else {
+                lowerCaseBag.add(o);
+            }
         }
         
         if (query == null) {
@@ -152,6 +164,13 @@ public class BagQuery
         return q;
     }
 
+    /**
+     * Finds all BagConstraints in a Constraint, and places the QueryEvaluable and the containing
+     * ConstraintSet into the given Map.
+     *
+     * @param con the Constraint to search
+     * @param nodes the Map to put results into
+     */
     public void traverseConstraint(Constraint con, Map<QueryEvaluable, ConstraintSet> nodes) {
         if (con instanceof ConstraintSet) {
             ConstraintSet cs = (ConstraintSet) con;

@@ -152,11 +152,15 @@ public class BagQueryRunner
                         ResultsRow row = (ResultsRow) resIter.next();
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {
-                            String field = (String) row.get(i);
-                            if (field != null) {
+                            Object fieldObject = row.get(i);
+                            if (fieldObject != null) {
+                                if (!(fieldObject instanceof String)) {
+                                    fieldObject = fieldObject.toString();
+                                }
+                                String field = (String) fieldObject;
                                 String lowerField = field.toLowerCase();
                                 if (lowerCaseInput.containsKey(lowerField)) {
-                                    // beacuse we are converting to lower case we need to match
+                                    // because we are converting to lower case we need to match
                                     // to original input so that 'h' matches 'H' and 'h' becomes
                                     // a duplicate.
                                     String originalInput = lowerCaseInput.get(lowerField);
