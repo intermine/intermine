@@ -870,4 +870,18 @@ public class SessionMethods
         String username = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
         return getProfileManager(context).getProfile(username);
     }
+
+    /**
+     * Return true if and only if the current user if the superuser.
+     * @param session the session
+     * @return true for superuser
+     */
+    public static boolean isSuperUser(HttpSession session) {
+        Boolean superUserAttribute = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
+        if (superUserAttribute != null && superUserAttribute.equals(Boolean.TRUE)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
