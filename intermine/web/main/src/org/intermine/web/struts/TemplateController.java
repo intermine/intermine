@@ -131,7 +131,7 @@ public class TemplateController extends TilesAction
             queryName = template.getName();
         } else {
             if (scope == null) {
-                scope = TemplateHelper.GLOBAL_TEMPLATE;
+                scope = TemplateHelper.ALL_TEMPLATE;
             }
             String userName = ((Profile) session
                     .getAttribute(Constants.PROFILE)).getUsername();
