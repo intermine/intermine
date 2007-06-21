@@ -27,6 +27,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -85,9 +86,11 @@ public class TemplatesImportAction extends InterMineAction
                 imported++;
             }
 
-            SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
-            tr.globalChange(TagTypes.TEMPLATE);
-            //InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
+            if (SessionMethods.isSuperUser(session)) {
+                SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
+                tr.globalChange(TagTypes.TEMPLATE);
+                // InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
+            }
 
             recordMessage(new ActionMessage("importTemplates.done",
                                             new Integer(deleted), 

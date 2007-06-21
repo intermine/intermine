@@ -143,13 +143,7 @@ public class QueryBuilderController extends TilesAction
         
         // set up the metadata
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        boolean isSuperUser;
-        Boolean superUserAttribute = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
-        if (superUserAttribute != null && superUserAttribute.equals(Boolean.TRUE)) {
-            isSuperUser = true;
-        } else {
-            isSuperUser = false;
-        }
+        boolean isSuperUser = SessionMethods.isSuperUser(session);
         
         String prefix = (String) session.getAttribute("prefix");
         Collection nodes = 
