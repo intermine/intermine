@@ -58,7 +58,7 @@ public class DisplayConstraint
         this.oss = oss;
         this.optionsList = optionsList;
     }
-    
+
     /**
      * Get a map of valid operators for the constraint. Maps an operator index Integer to
      * an operator name. Creates the map lazily.
@@ -69,11 +69,11 @@ public class DisplayConstraint
         if (validOps != null) {
             return validOps;
         }
-        
+
         if (node.isAttribute()) {
             Class nodeType = MainHelper.getClass(node.getType());
             List<ConstraintOp> allOps = SimpleConstraint.validOps(nodeType);
-            
+
             List<ConstraintOp> simpleConstraintOps = new ArrayList<ConstraintOp>(allOps);
             if (String.class.equals(nodeType)) {
                 simpleConstraintOps.remove(ConstraintOp.MATCHES);
@@ -83,10 +83,10 @@ public class DisplayConstraint
         } else {
             validOps = Collections.singletonMap(new Integer(18), ConstraintOp.LOOKUP.toString());
         }
-        
+
         return validOps;
     }
-    
+
     /**
      * Get a List of simple constraint operator indices that can only apply to an
      * argument selected from a fixed list of values, the values being provided by
@@ -98,10 +98,10 @@ public class DisplayConstraint
         if (fixedOps != null) {
             return fixedOps;
         }
-        
+
         fixedOps = new ArrayList<Integer>();
         List newOptionsList = new ArrayList();
-        
+
         String parentType = node.getParentType();
         if (parentType != null) {
             String parentClassName;
@@ -115,18 +115,25 @@ public class DisplayConstraint
                 newOptionsList.addAll(fieldNames);
                 Class parentClass = MainHelper.getClass(node.getType());
                 Iterator iter = SimpleConstraint.fixedEnumOps(parentClass).iterator();
-                while (iter.hasNext()) {
-                    fixedOps.add(((ConstraintOp) iter.next()).getIndex());
+
+                if (!String.class.equals(parentClass)) {
+                    // for Strings always allow the user to type in a pattern because EQUALS
+                    // constraints are automatically converted to MATCHES constraints if the
+                    // pattern contains a wildcard
+                    while (iter.hasNext()) {
+                        fixedOps.add(((ConstraintOp) iter.next()).getIndex());
+                    }
                 }
+
             }
         }
-        
+
         if (optionsList == null) {
             optionsList = newOptionsList;
         }
         return fixedOps;
     }
-    
+
     /**
      * Will return an empty list or alternatively, a list of all possible values of the field that
      * the constraint is attached to. This allows the user interface to present a list of possible
@@ -138,7 +145,7 @@ public class DisplayConstraint
         if (optionsList == null) {
             getFixedOpIndices();
         }
-        
+
         return optionsList;
     }
 }
