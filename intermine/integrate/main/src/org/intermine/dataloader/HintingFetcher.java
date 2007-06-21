@@ -11,6 +11,7 @@ package org.intermine.dataloader;
  */
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -44,6 +46,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     int savedDatabaseEmpty = 0;
     protected Map<String, Long> savedTimes = new TreeMap<String, Long>();
     protected Map<String, Integer> savedCounts = new TreeMap<String, Integer>();
+    protected Map<Class, Boolean> allPkClassesEmptyForClass = new HashMap<Class, Boolean>();
 
     /**
      * Constructor
@@ -52,6 +55,9 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
      */
     public HintingFetcher(BaseEquivalentObjectFetcher fetcher) {
         super(fetcher.getModel(), fetcher.getIdMap(), fetcher.getLookupOs());
+        if (lookupOs instanceof ObjectStoreWriter) {
+            lookupOs = ((ObjectStoreWriter) lookupOs).getObjectStore();
+        }
         this.hints = new EquivalentObjectHints(lookupOs);
     }
 
@@ -73,8 +79,10 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
         }
         for (String summaryName : savedTimes.keySet()) {
             long savedTime = savedTimes.get(summaryName).longValue();
-            int savedCount = savedCounts.get(summaryName).intValue();
-            if (savedCount == 0) {
+            Integer savedCount = savedCounts.get(summaryName);
+            if (savedCount == null) {
+                retval.append("\nHints for " + summaryName + " took " + savedTime + " ms to fetch");
+            } else if (savedCount.intValue() == 0) {
                 retval.append("\nNo queries saved for " + summaryName + ", hints took " + savedTime
                         + " ms to fetch");
             } else {
@@ -108,29 +116,29 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
             return Collections.EMPTY_SET;
         }
-        boolean allPkClassesEmpty = true;
-        Set classDescriptors = lookupOs.getModel().getClassDescriptorsForClass(obj.getClass());
-        Iterator cldIter = classDescriptors.iterator();
-        while (cldIter.hasNext() && allPkClassesEmpty) {
-            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-            Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
-            if (!primaryKeys.isEmpty()) {
-                long time = System.currentTimeMillis();
-                boolean classNotExists = hints.classNotExists(cld.getType());
-                String className = DynamicUtil.getFriendlyName(cld.getType());
-                if (!savedTimes.containsKey(className)) {
-                    savedTimes.put(className, new Long(System.currentTimeMillis() - time));
-                    savedCounts.put(className, new Integer(0));
-                }
-                if (!classNotExists) {
-                    allPkClassesEmpty = false;
-                } else {
-                    savedCounts.put(className, new Integer(savedCounts.get(className).intValue()
-                                + 1));
+        Boolean allPkClassesEmpty = allPkClassesEmptyForClass.get(obj.getClass());
+        if (allPkClassesEmpty == null) {
+            allPkClassesEmpty = Boolean.TRUE;
+            Set classDescriptors = lookupOs.getModel().getClassDescriptorsForClass(obj.getClass());
+            Iterator cldIter = classDescriptors.iterator();
+            while (cldIter.hasNext() && allPkClassesEmpty.booleanValue()) {
+                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
+                if (!primaryKeys.isEmpty()) {
+                    long time = System.currentTimeMillis();
+                    boolean classNotExists = hints.classNotExists(cld.getType());
+                    String className = DynamicUtil.getFriendlyName(cld.getType());
+                    if (!savedTimes.containsKey(className)) {
+                        savedTimes.put(className, new Long(System.currentTimeMillis() - time));
+                    }
+                    if (!classNotExists) {
+                        allPkClassesEmpty = Boolean.FALSE;
+                    }
                 }
             }
+            allPkClassesEmptyForClass.put(obj.getClass(), allPkClassesEmpty);
         }
-        if (allPkClassesEmpty) {
+        if (allPkClassesEmpty.booleanValue()) {
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
             return Collections.EMPTY_SET;
         }

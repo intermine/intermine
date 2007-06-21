@@ -395,7 +395,7 @@ public class Batch
                     }
                     long end = System.currentTimeMillis();
                     totalSpent += end - start;
-                    if (totalSpent / 100000 > (totalSpent + start - end) / 100000) {
+                    if (end / 100000 > (timeAtLastMessage) / 100000) {
                         int totalDutyCycle = (int) (((100 * totalSpent + ((end - flusherStart) / 2))
                                     / (end - flusherStart)));
                         lastDutyCycle = (int) (((100 * (totalSpent - spentAtLastMessage)

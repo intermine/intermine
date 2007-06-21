@@ -47,6 +47,8 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheHoldingArrayList;
 import org.intermine.util.TypeUtil;
 
+import org.apache.log4j.Logger;
+
 /**
  * Provides an implementation of an objectstore that explicitly materialises all the collections
  * in the results set it provides.
@@ -55,6 +57,8 @@ import org.intermine.util.TypeUtil;
  */
 public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
 {
+    private static final Logger LOG = Logger.getLogger(ObjectStoreFastCollectionsImpl.class);
+
     private boolean fetchAllFields = true;
     private Set fieldExceptions = Collections.EMPTY_SET;
     
@@ -125,12 +129,21 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
         return new SingletonResults(q, this, SEQUENCE_IGNORE);
     }
 
+    private long timeSpentExecute = 0;
+    private long timeSpentInspect = 0;
+    private long timeSpentPrepare = 0;
+    private long timeSpentQuery = 0;
+    private long timeSpentSubExecute = 0;
+    private long timeSpentProcess = 0;
+    private int queryCount = 0;
+
     /**
      * {@inheritDoc}
      */
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             Map<Object, Integer> sequence) throws ObjectStoreException {
         try {
+            long time1 = System.currentTimeMillis();
             List results = os.execute(q, start, limit, optimise, explain, sequence);
             CacheHoldingArrayList retval;
             if (results instanceof CacheHoldingArrayList) {
@@ -138,6 +151,8 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
             } else {
                 retval = new CacheHoldingArrayList(results);
             }
+            long time2 = System.currentTimeMillis();
+            timeSpentExecute += time2 - time1;
             if (retval.size() > 1) {
                 QuerySelectable node = (QuerySelectable) q.getSelect().get(0);
                 if (node instanceof QueryClass) {
@@ -154,6 +169,8 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                     }
                     Class clazz = ((QueryClass) node).getType();
                     Map fieldDescriptors = getModel().getFieldDescriptorsForClass(clazz);
+                    time1 = System.currentTimeMillis();
+                    timeSpentInspect += time1 - time2;
                     Iterator fieldIter = fieldDescriptors.entrySet().iterator();
                     while (fieldIter.hasNext()) {
                         Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
@@ -162,6 +179,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                         Map collections = new HashMap();
                         if (doThisField(field) && (field instanceof CollectionDescriptor)) {
                             CollectionDescriptor coll = (CollectionDescriptor) field;
+                            time1 = System.currentTimeMillis();
                             Iterator bagIter = bagMap.entrySet().iterator();
                             while (bagIter.hasNext()) {
                                 Map.Entry entry = (Map.Entry) bagIter.next();
@@ -176,6 +194,8 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                 }
                                 retval.addToHolder(materialisedCollection);
                             }
+                            time2 = System.currentTimeMillis();
+                            timeSpentPrepare += time2 - time1;
                             Set bag = collections.keySet();
                             if ((q.getConstraint() == null) && q.getOrderBy().isEmpty()
                                     && q.getGroupBy().isEmpty()) {
@@ -222,7 +242,11 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                     l.setNoExplain();
                                 }
                                 l.setBatchSize(limit * 20);
+                                time1 = System.currentTimeMillis();
+                                timeSpentQuery += time1 - time2;
                                 insertResults(collections, l, fieldName);
+                                time2 = System.currentTimeMillis();
+                                timeSpentSubExecute += time2 - time1;
                             } else {
                                 List bagList = new ArrayList(bag);
                                 for (int i = 0; i < bagList.size(); i += 1000) {
@@ -252,8 +276,12 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                     if (!explain) {
                                         l.setNoExplain();
                                     }
-                                    l.setBatchSize(limit * 2);
+                                    l.setBatchSize(limit * 20);
+                                    time1 = System.currentTimeMillis();
+                                    timeSpentQuery += time1 - time2;
                                     insertResults(collections, l, fieldName);
+                                    time2 = System.currentTimeMillis();
+                                    timeSpentSubExecute += time2 - time1;
                                 }
                             }
                             Iterator iter = collections.entrySet().iterator();
@@ -266,9 +294,18 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                     .getFieldValue(fromObj, fieldName);
                                 pc.setMaterialisedCollection(materialisedCollection);
                             }
+                            time1 = System.currentTimeMillis();
+                            timeSpentProcess += time1 - time2;
                         }
                     }
                 }
+            }
+            queryCount++;
+            if (queryCount % 10 == 0) {
+                LOG.info("Time spent: Execute: " + timeSpentExecute + ", Inspect: "
+                        + timeSpentInspect + ", Prepare: " + timeSpentPrepare + ", Generate query: "
+                        + timeSpentQuery + ", Execute query: " + timeSpentSubExecute
+                        + ", Process: " + timeSpentProcess);
             }
             return retval;
         } catch (IllegalAccessException e) {

@@ -49,18 +49,7 @@ public class DynamicUtil
     public static synchronized Object createObject(Set classes) throws IllegalArgumentException {
         Class requiredClass = (Class) classMap.get(classes);
         if (requiredClass != null) {
-            Object retval = null;
-            try {
-                retval = requiredClass.newInstance();
-            } catch (Exception e) {
-                IllegalArgumentException e2 = new IllegalArgumentException();
-                e2.initCause(e);
-                throw e2;
-            }
-            if (retval instanceof Factory) {
-                ((Factory) retval).setCallback(0, new DynamicBean());
-            }
-            return retval;
+            return createObject(requiredClass);
         } else {
             Iterator<Class> classIter = classes.iterator();
             Class clazz = null;
@@ -104,6 +93,28 @@ public class DynamicUtil
             classMap.put(classes, retval.getClass());
             return retval;
         }
+    }
+
+    /**
+     * Create a new object given a class.
+     *
+     * @param clazz the class of the object to instantiate
+     * @return the object
+     * @throws IllegalArgumentException if an error occurs
+     */
+    public static Object createObject(Class clazz) throws IllegalArgumentException {
+        Object retval = null;
+        try {
+            retval = clazz.newInstance();
+        } catch (Exception e) {
+            IllegalArgumentException e2 = new IllegalArgumentException();
+            e2.initCause(e);
+            throw e2;
+        }
+        if (retval instanceof Factory) {
+            ((Factory) retval).setCallback(0, new DynamicBean());
+        }
+        return retval;
     }
 
     /**

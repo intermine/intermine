@@ -153,6 +153,13 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         return dataTracker;
     }
 
+    private long timeSpentEquiv = 0;
+    private long timeSpentCreate = 0;
+    private long timeSpentPriorities = 0;
+    private long timeSpentCopyFields = 0;
+    private long timeSpentStore = 0;
+    private long timeSpentDataTrackerWrite = 0;
+
     /**
      * {@inheritDoc}
      */
@@ -162,7 +169,47 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             return null;
         }
         try {
+            long time1 = System.currentTimeMillis();
             Set equivObjects = getEquivalentObjects(o, source);
+            long time2 = System.currentTimeMillis();
+            timeSpentEquiv += time2 - time1;
+            if ((equivObjects.size() == 0) && (type != FROM_DB)) {
+                // Take a shortcut!
+                InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(o.getClass());
+                Integer newId = getSerial();
+                newObj.setId(newId);
+                assignMapping(o.getId(), newId);
+                time1 = System.currentTimeMillis();
+                timeSpentCreate += time1 - time2;
+                Map<String, FieldDescriptor> fields = getModel().getFieldDescriptorsForClass(newObj
+                        .getClass());
+                Map<String, Source> trackingMap = new HashMap();
+                for (Map.Entry<String, FieldDescriptor> entry : fields.entrySet()) {
+                    String fieldName = entry.getKey();
+                    FieldDescriptor field = entry.getValue();
+                    copyField(o, newObj, source, skelSource, field, type);
+                    if (!(field instanceof CollectionDescriptor)) {
+                        trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+                    }
+                }
+                time2 = System.currentTimeMillis();
+                timeSpentCopyFields += time2 - time1;
+                store(newObj);
+                time1 = System.currentTimeMillis();
+                timeSpentStore += time1 - time2;
+                dataTracker.clearObj(newId);
+                for (Map.Entry<String, Source> entry : trackingMap.entrySet()) {
+                    dataTracker.setSource(newObj.getId(), entry.getKey(), entry.getValue());
+                }
+                if (type == SKELETON) {
+                    skeletons.add(newObj.getId());
+                } else if (skeletons.contains(newObj.getId().intValue())) {
+                    skeletons.set(newObj.getId().intValue(), false);
+                }
+                time2 = System.currentTimeMillis();
+                timeSpentDataTrackerWrite += time2 - time1;
+                return newObj;
+            }
             if ((equivObjects.size() == 1) && (type == SKELETON)) {
                 InterMineObject onlyEquivalent = (InterMineObject) equivObjects.iterator().next();
                 if (onlyEquivalent instanceof ProxyReference) {
@@ -171,8 +218,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     if (idMap.get(o.getId()) == null) {
                         LOG.error("Got a ProxyReference as the only equivalent object, but not from"
                                 + " the ID map! o = " + o);
+                    } else {
+                        return onlyEquivalent;
                     }
-                    return onlyEquivalent;
                 }
             }
             Integer newId = null;
@@ -196,13 +244,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     throw new ObjectStoreException(e);
                 }
             }
-            if (newId == null) {
-                newId = getSerial();
-            }
             InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(classes);
-            newObj.setId(newId);
+            if (newId == null) {
+                newObj.setId(getSerial());
+            } else {
+                newObj.setId(newId);
+            }
             if (type != FROM_DB) {
-                assignMapping(o.getId(), newId);
+                assignMapping(o.getId(), newObj.getId());
             }
 
             Map trackingMap = new HashMap();
@@ -405,5 +454,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             throw new ObjectStoreException("Some skeletons where not replaced by real "
                                        + "objects: " + skeletons.size());
         }
+        LOG.info("Time spent: Equivalent object queries: " + timeSpentEquiv + ", Create object: "
+                + timeSpentCreate + ", Compute priorities: " + timeSpentPriorities
+                + ", Copy fields: " + timeSpentCopyFields + ", Store object: " + timeSpentStore
+                + ", Data tracker write: " + timeSpentDataTrackerWrite);
     }
 }
