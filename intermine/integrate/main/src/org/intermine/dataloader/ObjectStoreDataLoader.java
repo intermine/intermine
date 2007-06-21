@@ -82,14 +82,24 @@ public class ObjectStoreDataLoader extends DataLoader
             long opCount = 0;
             long time = System.currentTimeMillis();
             long startTime = time;
+            long timeSpentRead = 0;
+            long timeSpentWrite = 0;
+            long timeSpentCommit = 0;
+            long timeSpentLoop = 0;
             getIntegrationWriter().beginTransaction();
             SingletonResults res = os.executeSingleton(q);
             res.setNoOptimise();
             res.setNoExplain();
             res.setBatchSize(1000);
             Iterator iter = res.iterator();
+            long time4 = System.currentTimeMillis();
+            long time1, time2, time3;
             while (iter.hasNext()) {
+                time1 = System.currentTimeMillis();
+                timeSpentLoop += time1 - time4;
                 InterMineObject obj = (InterMineObject) iter.next();
+                time2 = System.currentTimeMillis();
+                timeSpentRead += time2 - time1;
                 //if (obj.getClass().getName().equals("org.intermine.model.chado.feature")) {
                 //    String objText = obj.toString();
                 //    int objTextLen = objText.length();
@@ -97,6 +107,8 @@ public class ObjectStoreDataLoader extends DataLoader
                 //                    : objTextLen)));
                 //}
                 getIntegrationWriter().store(obj, source, skelSource);
+                time3 = System.currentTimeMillis();
+                timeSpentWrite += time3 - time2;
                 opCount++;
                 if (opCount % 1000 == 0) {
                     long now = System.currentTimeMillis();
@@ -116,16 +128,22 @@ public class ObjectStoreDataLoader extends DataLoader
                     }
                     time = now;
                     times[(int) ((opCount / 1000) % 20)] = now;
-                    getIntegrationWriter().commitTransaction();
-                    getIntegrationWriter().beginTransaction();
+                    if (opCount % 500000 == 0) {
+                        getIntegrationWriter().commitTransaction();
+                        getIntegrationWriter().beginTransaction();
+                    }
                 }
+                time4 = System.currentTimeMillis();
+                timeSpentCommit += time4 - time3;
             }
+            getIntegrationWriter().commitTransaction();
+            getIntegrationWriter().close();
             long now = System.currentTimeMillis();
             LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
                         / (now - startTime)) + " objects per minute (" + (now - startTime)
                     + " ms total) for source " + source.getName());
-            getIntegrationWriter().commitTransaction();
-            getIntegrationWriter().close();
+            LOG.info("Time spent: Reading: " + (timeSpentRead + timeSpentLoop) + ", Writing: "
+                    + timeSpentWrite + ", Committing: " + timeSpentCommit);
         } catch (RuntimeException e) {
             if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
                 LOG.error("Exception while dataloading - doneAlreadyMap = "

@@ -123,6 +123,12 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         return translator;
     }
     
+    private long timeSpentQuery = 0;
+    private long timeSpentExecute = 0;
+    private long timeSpentTranslate = 0;
+    private int queryCount = 0;
+    private int objectCount = 0;
+
     /**
      * {@inheritDoc}
      */
@@ -131,9 +137,14 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         //if (start == 0) {
         //    LOG.error("Fetching batch 0 for query " + q.toString());
         //}
+        long time1 = System.currentTimeMillis();
         Query q2 = translateQuery(q);
+        long time2 = System.currentTimeMillis();
+        timeSpentQuery += time2 - time1;
         List results = new ArrayList();
         Iterator resIter = os.execute(q2, start, limit, optimise, explain, sequence).iterator();
+        time1 = System.currentTimeMillis();
+        timeSpentExecute += time1 - time2;
 
         try {
             while (resIter.hasNext()) {
@@ -146,6 +157,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
                             translator.translateFromDbObject((InterMineObject) o);
                         row.add(imo);
                         cacheObjectById(imo.getId(), imo);
+                        objectCount++;
                     } else {
                         row.add(o);
                     }
@@ -154,6 +166,14 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
             }
         } catch (MetaDataException e) {
             throw new ObjectStoreException(e);
+        }
+        time2 = System.currentTimeMillis();
+        timeSpentTranslate += time2 - time1;
+        queryCount++;
+        if (queryCount % 10 == 0) {
+            LOG.info("Translated " + queryCount + " queries, " + objectCount + " objects. Time"
+                    + " spent: Translate query: " + timeSpentQuery + ", Execute: "
+                    + timeSpentExecute + ", Translate objects: " + timeSpentTranslate);
         }
 
         return results;

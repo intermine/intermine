@@ -208,6 +208,10 @@ public class ResultsConverter
         }
     }
 
+    //private static long timeSpentBuildObject = 0;
+    //private static long timeSpentSql = 0;
+    //private static int countBuildObject = 0;
+
     /**
      * Builds an object from separate fields in flat mode.
      *
@@ -221,11 +225,14 @@ public class ResultsConverter
      */
     protected static InterMineObject buildObject(ResultSet sqlResults, String alias,
             ObjectStoreInterMineImpl os, Class type, Set noObjectClassColumns) throws SQLException {
+        //long time1 = System.currentTimeMillis();
         Set classes = Collections.singleton(type);
         if (!noObjectClassColumns.contains(alias)) {
             String objectClass = null;
             try {
+                //long time3 = System.currentTimeMillis();
                 objectClass = sqlResults.getString(alias + "objectclass");
+                //timeSpentSql += System.currentTimeMillis() - time3;
             } catch (SQLException e) {
                 noObjectClassColumns.add(alias);
             }
@@ -251,12 +258,18 @@ public class ResultsConverter
             String fieldName = (String) entry.getKey();
             FieldDescriptor fd = (FieldDescriptor) entry.getValue();
             if (fd instanceof AttributeDescriptor) {
+                TypeUtil.FieldInfo fieldInfo = TypeUtil.getFieldInfo(type, fieldName);
+                //long time3 = System.currentTimeMillis();
                 Object value = sqlResults.getObject(alias + DatabaseUtil.getColumnName(fd));
-                if ((value instanceof Long) && Date.class.equals(TypeUtil.getFieldInfo(type,
-                                fieldName).getType())) {
+                //timeSpentSql += System.currentTimeMillis() - time3;
+                if ((value instanceof Long) && Date.class.equals(fieldInfo.getType())) {
                     value = new Date(((Long) value).longValue());
                 }
-                TypeUtil.setFieldValue(retval, fieldName, value);
+                try {
+                    fieldInfo.getSetter().invoke(retval, value);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
+                }
             } else if (fd instanceof CollectionDescriptor) {
                 CollectionDescriptor cd = (CollectionDescriptor) fd;
                 Collection lazyColl = new ProxyCollection(os, retval, cd.getName(),
@@ -264,11 +277,19 @@ public class ResultsConverter
                 TypeUtil.setFieldValue(retval, cd.getName(), lazyColl);
             } else if (fd instanceof ReferenceDescriptor) {
                 ReferenceDescriptor rd = (ReferenceDescriptor) fd;
+                //long time3 = System.currentTimeMillis();
                 Integer id = new Integer(sqlResults.getInt(alias + DatabaseUtil.getColumnName(fd)));
+                //timeSpentSql += System.currentTimeMillis() - time3;
                 Class refType = rd.getReferencedClassDescriptor().getType();
                 TypeUtil.setFieldValue(retval, fieldName, new ProxyReference(os, id, refType));
             }
         }
+        //long time2 = System.currentTimeMillis();
+        //timeSpentBuildObject += time2 - time1;
+        //countBuildObject++;
+        //if (countBuildObject % 100000 == 0) {
+        //    LOG.info("Called buildObject " + countBuildObject + " times. Time spent: " + timeSpentBuildObject + ", Sql: " + timeSpentSql);
+        //}
         return retval;
     }
 }

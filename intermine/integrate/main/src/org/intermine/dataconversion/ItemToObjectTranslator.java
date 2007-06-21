@@ -235,11 +235,17 @@ public class ItemToObjectTranslator extends Translator
         return o;
     }
 
+    private long timeSpentSizing = 0;
+    private long timeSpentCreate = 0;
+    private long timeSpentAttributes = 0;
+    private int objectCount = 0;
+
     /**
      * {@inheritDoc}
      */
     public InterMineObject translateFromDbObject(InterMineObject o)
-        throws MetaDataException {
+    throws MetaDataException {
+        long time1 = System.currentTimeMillis();
         if (!(o instanceof Item)) {
             return o;
         }
@@ -265,6 +271,8 @@ public class ItemToObjectTranslator extends Translator
                     + identifierToId(item.getIdentifier()) + ") - classname = "
                     + item.getClassName() + ", size = " + itemSize);
         }
+        long time2 = System.currentTimeMillis();
+        timeSpentSizing += time2 - time1;
         InterMineObject obj;
         try {
             obj = (InterMineObject)
@@ -277,6 +285,8 @@ public class ItemToObjectTranslator extends Translator
         }
 
         obj.setId(identifierToId(item.getIdentifier()));
+        time1 = System.currentTimeMillis();
+        timeSpentCreate += time1 - time2;
 
         try {
             for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
@@ -351,6 +361,14 @@ public class ItemToObjectTranslator extends Translator
             LOG.error("Broken with: " + DynamicUtil.decomposeClass(obj.getClass())
                       + item.getIdentifier(), e);
             throw new RuntimeException(e);
+        }
+        time2 = System.currentTimeMillis();
+        timeSpentAttributes += time2 - time1;
+        objectCount++;
+        if (objectCount % 10000 == 0) {
+            LOG.info("Translated " + objectCount + " objects. Time spent: sizing: "
+                    + timeSpentSizing + ", Create object: " + timeSpentCreate
+                    + ", Copy fields: " + timeSpentAttributes);
         }
         return obj;
     }

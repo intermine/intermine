@@ -145,7 +145,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             if (contains) {
                 fromDb = cached;
             } else {
-                cache.put(id, fromDb);
+                cacheObjectById(id, fromDb);
             }
         }
         return fromDb;
