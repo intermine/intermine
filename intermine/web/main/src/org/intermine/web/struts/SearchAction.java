@@ -62,7 +62,7 @@ public class SearchAction extends InterMineAction
     private Formatter formatter = new Formatter() {
         public String highlightTerm(String term, TokenGroup group) {
             if (group.getTotalScore() > 0) {
-                return "<span style=\"background: yellow\">" + term + "</span>";
+                return "<span style=\"background: #ffff77\">" + term + "</span>";
             }
             return term;
         }
@@ -136,7 +136,7 @@ public class SearchAction extends InterMineAction
             Map hitMap = new LinkedHashMap();
             Map scopeMap = new LinkedHashMap();
             Map highlightedMap = new HashMap();
-            
+            Map descrMap = new HashMap();
             LOG.info("Found " + hits.length() + " document(s) that matched query '"
                     + queryString + "' in " + time + " milliseconds:");
             
@@ -160,8 +160,8 @@ public class SearchAction extends InterMineAction
                 hitMap.put(webSearchable, new Float(hits.score(i)));
                 scopeMap.put(webSearchable, scope);
                 
-                String highlightString = 
-                    webSearchable.getTitle() + "  - " + webSearchable.getDescription();
+                String highlightString = webSearchable.getTitle();
+                descrMap.put(webSearchable, webSearchable.getDescription());
                 TokenStream tokenStream
                     = analyzer.tokenStream("", new StringReader(highlightString));
                 highlighter.setTextFragmenter(new NullFragmenter());
@@ -175,6 +175,7 @@ public class SearchAction extends InterMineAction
             request.setAttribute("querySeconds", new Float(time / 1000f));
             request.setAttribute("queryString", queryString);
             request.setAttribute("resultCount", new Integer(hitMap.size()));
+            request.setAttribute("descriptions", descrMap);
         }
         
         return mapping.findForward("search");
