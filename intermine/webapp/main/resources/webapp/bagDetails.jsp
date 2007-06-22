@@ -86,9 +86,11 @@
           <html:submit property="showInResultsTable">
             <fmt:message key="bagDetails.viewBag"/>
           </html:submit>
+<%-- See #1290 - disable in 8.0
           <html:submit property="useBagInQuery">
             <fmt:message key="bagDetails.useBagInQuery"/>
           </html:submit>
+--%>
           <br/>
           <i>
             <fmt:message key="bagDetails.viewBagHelp"/>
