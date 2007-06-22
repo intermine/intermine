@@ -155,7 +155,7 @@
     </action>
     <action path="/modifyDetails" type="org.intermine.web.struts.ModifyDetails" parameter="method">
       <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
-      <forward name="results" path="results.page"/>
+      <forward name="results" path="/results.do" redirect="true"/>
       <forward name="objectDetailsCollectionTable" path="/objectDetailsCollectionTable.jsp"/>
       <forward name="objectDetailsTemplateTable" path="/objectDetailsTemplateTable.jsp"/>
       <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>

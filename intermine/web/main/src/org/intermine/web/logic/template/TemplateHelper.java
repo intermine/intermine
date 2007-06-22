@@ -339,11 +339,13 @@ public class TemplateHelper
                         } else {
                             if (TypeUtil.isInstanceOf(object, pathNodeType)) {
                                 templateForm.setAttributeOps("1", equalsString);
-                                templateForm.setAttributeValues("1", String.valueOf(object.getId()));
+                                templateForm.setAttributeValues("1", String.valueOf(
+                                                                object.getId()));
                                 return true;
                             }
                         }
-                    } else {
+                    } else if (c.getOp().equals(ConstraintOp.EQUALS) 
+                                    || c.getOp().equals(ConstraintOp.IN)){
                         String constraintIdentifier = c.getIdentifier();
                         String[] bits = constraintIdentifier.split("\\.");
 
@@ -374,6 +376,9 @@ public class TemplateHelper
                             }
 
                         }
+                    } else {
+                        LOG.error("Constraint error:" + c.getOp());
+                        return false;
                     }
                 } catch (ClassNotFoundException e) {
                     LOG.error(e);
@@ -418,7 +423,7 @@ public class TemplateHelper
                 new WebResults(pathQuery.getView(), results, model, pathToQueryNode,
                         (Map) servletContext.getAttribute(Constants.CLASS_KEYS), null);
             PagedTable pagedResults = new PagedTable(webResults);
-
+            
             InlineTemplateTable itt =
                 new InlineTemplateTable(pagedResults, webProperties);
 

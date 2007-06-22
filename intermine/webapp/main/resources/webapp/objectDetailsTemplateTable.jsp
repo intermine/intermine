@@ -122,23 +122,23 @@
 <%-- Produce show in table link --%>
 
 <c:set var="extra" value=""/>
-<c:if test="${!empty fieldExprMap}">
+<%--<c:if test="${!empty fieldExprMap}">--%>
   <c:choose>
-  <c:when test="${! empty displayObject && empty fieldExprMap[templateQuery]}">
-     <c:set var="extra" value="${extra}&amp;idForLookup=${displayObject.object.id}" />
+  <c:when test="${! empty interMineIdBag}">
+    <c:set var="extra" value="&amp;bagName=${interMineIdBag.name}&amp;useBagNode=${fieldExprMap[templateQuery]}"/>
   </c:when>
-  <c:when test="${! empty displayObject}">
+  <c:otherwise>
+     <c:set var="extra" value="${extra}&amp;idForLookup=${displayObject.object.id}" />
+  </c:otherwise>
+  <%--<c:when test="${! empty displayObject}">
   <c:forEach items="${fieldExprMap[templateQuery]}" var="fieldExpr">
     <c:set var="fieldName" value="${fn:split(fieldExpr, '.')[1]}"/>
     <c:set var="fieldValue" value="${displayObject.object[fieldName]}"/>
     <c:set var="extra" value="${extra}&amp;${fieldExpr}_value=${fieldValue}"/>
   </c:forEach>
-  </c:when>
-  <c:otherwise>
-    <c:set var="extra" value="&amp;bagName=${interMineIdBag.name}&amp;useBagNode=${fieldExprMap[templateQuery]}"/>
-  </c:otherwise>
+  </c:when>--%>
   </c:choose>
-</c:if>
+<%--</c:if>--%>
 [<html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}">
   Show in table...
 </html:link>]

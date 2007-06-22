@@ -276,7 +276,7 @@
     <c:forEach items="${CATEGORIES}" var="aspect">
       <tiles:insert name="objectDetailsAspect.tile">
         <tiles:put name="placement" value="aspect:${aspect}"/>
-        <tiles:put name="trail" value="|bag${bag.name}"/>
+        <tiles:put name="trail" value="|bag.${bag.name}"/>
         <tiles:put name="interMineIdBag" beanName="bag"/>
       </tiles:insert>
     </c:forEach>

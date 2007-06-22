@@ -20,26 +20,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.Constraint;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.InlineTemplateTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateListHelper;
@@ -76,89 +69,31 @@ public class ModifyDetails extends DispatchAction
         String name = request.getParameter("name");
         String scope = request.getParameter("scope");
         String bagName = request.getParameter("bagName");
-        String useBagNode = request.getParameter("useBagNode");
         String idForLookup = request.getParameter("idForLookup");
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              name, scope);
-        PathQuery query = template.clone();
         String trail = request.getParameter("trail");
-
-        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
-            PathNode nodeCopy = query.getNodes().get(node.getPathString());
-
-            // object details page - lookup constraint. Use object id
-            if (idForLookup != null && idForLookup.length() != 0) {
-                for (int ci = 0; ci < node.getConstraints().size(); ci++) {
-                    Constraint c = node.getConstraint(ci);
-                    if (c.getOp().equals(ConstraintOp.LOOKUP)) {
-                        nodeCopy.removeConstraint(c);
-                        PathNode newNode = query.addNode(nodeCopy.getPathString() + ".id");
-                        Integer valueAsInteger = Integer.valueOf(idForLookup);
-                        Constraint objectConstraint =
-                            new Constraint(ConstraintOp.EQUALS, valueAsInteger, true,
-                                           null, c.getCode(), null);
-                        newNode.getConstraints().add(objectConstraint);
-                    }
-                }
-            }
-            
-            // object details page - fill in identified constraint with value from object
-            if (bagName == null || bagName.length() == 0) {
-                for (int ci = 0; ci < node.getConstraints().size(); ci++) {
-                    Constraint c = node.getConstraint(ci);
-                    if (c.getIdentifier() != null) {
-                        // If special request parameter key is present then we initialise
-                        // the form bean with the parameter value
-                        String paramName = c.getIdentifier() + "_value";
-                        String constraintValue = request.getParameter(paramName);
-                        if (constraintValue != null) {
-                            nodeCopy.setConstraintValue(nodeCopy.getConstraint(ci),
-                                                        constraintValue);
-                        }
-                    }
-                }
-            } else if (useBagNode != null) { // && name.equals(useBagNode)) {
-                // bag details page - remove the identified constraint and constrain
-                // its parent to be in the bag
-                PathNode parent = query.getNodes().get(nodeCopy.getParent().getPathString());
-                for (int ci = 0; ci < node.getConstraints().size(); ci++) {
-                    Constraint c = node.getConstraint(ci);
-                    if (c.getIdentifier() != null) {
-                        // Constraint c = (Constraint) node.getConstraint(0);
-                        ConstraintOp constraintOp = ConstraintOp.IN;
-                        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-                        InterMineBag interMineIdBag = (InterMineBag) profile
-                                                                            .getSavedBags()
-                                                                            .get(bagName);
-                        Constraint bagConstraint = new Constraint(constraintOp, interMineIdBag,
-                                                                  true, c.getDescription(),
-                                                                  c.getCode(), c.getIdentifier());
-                        parent.getConstraints().add(bagConstraint);
-
-                        // remove the constraint on this node, possibly remove node
-                        if (nodeCopy.getConstraints().size() == 1) {
-                            query.getNodes().remove(nodeCopy.getPathString());
-                        } else {
-                            nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
-                        }
-                    }
-                }
-            }
+        InlineTemplateTable itt = null;
+        
+        if (idForLookup != null && idForLookup.length() != 0) {
+            Integer objectId = new Integer(idForLookup);
+            itt =
+                TemplateHelper.getInlineTemplateTable(servletContext, name,
+                                                      objectId, userName);
+        } else if (bagName != null && bagName.length() != 0) {
+            InterMineBag interMineBag = ((Profile) session
+                            .getAttribute(Constants.PROFILE)).getSavedBags().get(bagName);
+            itt = TemplateHelper.getInlineTemplateTable(servletContext, name, 
+                                                        interMineBag, userName);
         }
-        SessionMethods.loadQuery(query, request.getSession(), response);
-        QueryMonitorTimeout clientState =
-            new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messageResources = 
-            (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messageResources, 
-                                               false, query);
-        Thread.sleep(200); // slight pause in the hope of avoiding holding page
-        return new ForwardParameters(mapping.findForward("waiting"))
-                                            .addParameter("qid", qid)
-                                            .addParameter("trail", trail)
-                                            .forward();
+        String identifier = "itt." + template.getName() + "." + idForLookup;
+        SessionMethods.setResultsTable(session, identifier, itt.getPagedTable());
+
+        return new ForwardParameters(mapping.findForward("results"))
+                        .addParameter("table", identifier)
+                        .addParameter("size", "10")
+                        .addParameter("trail", trail).forward();
     }
 
     /**
