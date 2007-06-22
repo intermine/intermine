@@ -32,6 +32,7 @@ public class InlineTemplateTable implements Serializable
     private final List columnNames;
     private int resultsSize = -1;
     private int maxInlineTableSize = 10;
+    private PagedTable pagedTable;
     
     /**
      * Construct a new InlineTemplateTable
@@ -40,7 +41,7 @@ public class InlineTemplateTable implements Serializable
      */
     public InlineTemplateTable(PagedTable pagedResults, Map webProperties) {
         this.columnNames = pagedResults.getColumnNames();
-        
+        this.pagedTable = pagedResults;
         String maxInlineTableSizeString =
             (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
 
@@ -96,4 +97,21 @@ public class InlineTemplateTable implements Serializable
     public int getResultsSize() {
         return resultsSize;
     }
+
+    /**
+     * Get the corresponding PagedTable
+     * @return the pagedTable
+     */
+    public PagedTable getPagedTable() {
+        return pagedTable;
+    }
+
+    /**
+     * Set the PagedTable
+     * @param pagedTable the pagedTable to set
+     */
+    public void setPagedTable(PagedTable pagedTable) {
+        this.pagedTable = pagedTable;
+    }
+    
 }
