@@ -168,6 +168,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     protected abstract InterMineObject store(InterMineObject o, Source source,
             Source skelSource, int type) throws ObjectStoreException;
 
+    protected long timeSpentRecursing = 0;
+
     /**
      * Copies the value of the field given from the source object into the destination object.
      *
@@ -207,8 +209,11 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                     sourceTarget = ((ProxyReference) sourceTarget).getObject();
                                 }
                             }
+                            long time1 = System.currentTimeMillis();
                             InterMineObject target = store(sourceTarget, source, skelSource,
                                     SKELETON);
+                            long time2 = System.currentTimeMillis();
+                            timeSpentRecursing += time2 - time1;
                             TypeUtil.setFieldValue(dest, fieldName, target);
                         }
                     }
@@ -239,7 +244,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                     && (target instanceof ProxyReference)) {
                                 target = ((ProxyReference) target).getObject();
                             }
+                            long time1 = System.currentTimeMillis();
                             target = store(target, source, skelSource, SKELETON);
+                            long time2 = System.currentTimeMillis();
+                            timeSpentRecursing += time2 - time1;
                         } else {
                             target = (InterMineObject) TypeUtil.getFieldValue(srcObj,
                                     fieldName);
@@ -263,6 +271,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                     }
                     break;
                 case FieldDescriptor.ONE_N_RELATION:
+                    /* Okay, I don't think we should bother with this.
                     if ((type == FROM_DB) && ((dest.getId() == null)
                                 || (!dest.getId().equals(srcObj.getId())))) {
                         Collection col = (Collection) TypeUtil.getFieldValue(srcObj, fieldName);
@@ -283,7 +292,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                 store(colObj, source, skelSource, SKELETON);
                             }
                         }
-                    }
+                    }*/
                     break;
                 case FieldDescriptor.M_N_RELATION:
                     if ((type == SOURCE) || ((type == FROM_DB) && ((dest.getId() == null)
@@ -297,7 +306,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                 destCol.add(colObj);
                             } else {
                                 try {
+                                    long time1 = System.currentTimeMillis();
                                     destCol.add(store(colObj, source, skelSource, SKELETON));
+                                    long time2 = System.currentTimeMillis();
+                                    timeSpentRecursing += time2 - time1;
                                 } catch (RuntimeException bob) {
                                     if (colObj instanceof ProxyReference) {
                                         LOG.warn("colObj: " + colObj + ", "
