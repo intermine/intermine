@@ -6,6 +6,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- viewLine.jsp -->
+
+<div class="clearer">&nbsp;</div> 
   
 <div id="viewDivs">
   <c:forEach var="path" items="${viewStrings}" varStatus="status">

@@ -7,7 +7,6 @@
 
 <!-- sortOrderLine.jsp -->
 <html:xhtml/>
-<div id="sortOrderDivs"></div>
 
 <c:forEach var="results" items="${sortOrderMap}" varStatus="status">
   <c:set var="sortField" value="${results.key}"/>

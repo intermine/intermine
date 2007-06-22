@@ -386,6 +386,7 @@ table.toolbox, table.toolbox td, table.toolbox th {
   margin-left: 3px;
   margin-right: 3px;
   line-height: 25px;
+  
 }
 
 /* surrounds view paths */
@@ -430,13 +431,6 @@ span.viewPathDescription {
 //  font-style: italic;
 }
 
-/* surrounds sort order section NOT USED */
-div.sortorderBorder {
-  float: left;
-  width: 250px;
-
-}
-
 /* surrounds sort order paths */
 div.sortorder {
   padding: 4px;
@@ -461,11 +455,17 @@ div.sortorderpath {
   width: 250px
 }
 
-/* 
-should be used after floats to clear formatting 
-to prevent the dreaded IE peekaboo bug
-*/
-div.clearer {clear: both; line-height: 0; height: 0;}
+/* instead of using the body div, use this one */
+div.bodyPeekaboo
+{
+  font-size: 12px;
+  margin-top: 10px;
+  margin-right: 12px;
+  margin-left: 12px;
+  margin-bottom: 10px;
+  position:relative;
+}
+
 
 table.results tr.even TD{
   background-color: #F5F0FF;
