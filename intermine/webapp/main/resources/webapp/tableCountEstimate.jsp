@@ -15,15 +15,15 @@
 </fmt:message>
 <span class="resBar">&nbsp;|&nbsp;</span>
 <span id="resultsCountEstimate" style="display: inline">
-<img src="images/spinner.gif"/>
-<fmt:message key="results.pageinfo.estimate"/>
-${resultsTable.size}
-<im:helplink key="results.help.estimate"/>
+  <img src="images/spinner.gif"/>
+  <fmt:message key="results.pageinfo.estimate"/>
+  ${resultsTable.size}
+  <im:helplink key="results.help.estimate"/>
 </span>
 
 <span id="resultsCountExact" style="display: none">
-<fmt:message key="results.pageinfo.exact"/>
-<span  style="display: inline" id="resultsCountExactSize"> </span>
+  <fmt:message key="results.pageinfo.exact"/>
+  <span  style="display: inline" id="resultsCountExactSize"> </span>
 </span>
 
 <fmt:message key="results.pageinfo.exact" var="exactMessage"/>
