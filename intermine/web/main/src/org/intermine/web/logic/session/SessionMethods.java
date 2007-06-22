@@ -680,8 +680,8 @@ public class SessionMethods
 
                 private Object getCount() {
                     if (count == -1) {
-                        if (collection instanceof WebResults) {
-                            count = ((WebResults) collection).getExactSize();
+                        if (collection instanceof WebTable) {
+                            count = ((WebTable) collection).getExactSize();
                         } else {
                             count = collection.size();
                         }
