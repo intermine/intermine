@@ -253,6 +253,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (type != FROM_DB) {
                 assignMapping(o.getId(), newObj.getId());
             }
+            time1 = System.currentTimeMillis();
+            timeSpentCreate += time1 - time2;
 
             Map trackingMap = new HashMap();
             Map fieldToEquivalentObjects = new HashMap();
@@ -353,6 +355,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     fieldToEquivalentObjects.put(field, sortedEquivalentObjects);
                 }
             }
+            time2 = System.currentTimeMillis();
+            timeSpentPriorities += time2 - time1;
 
             Iterator fieldToEquivIter = fieldToEquivalentObjects.entrySet().iterator();
             while (fieldToEquivIter.hasNext()) {
@@ -385,8 +389,12 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     trackingMap.put(fieldName, lastSource);
                 }
             }
+            time1 = System.currentTimeMillis();
+            timeSpentCopyFields += time1 - time2;
 
             store(newObj);
+            time2 = System.currentTimeMillis();
+            timeSpentStore += time2 - time1;
 
             // We have called store() on an object, and we are about to write all of its data
             // tracking data. We should tell the data tracker, ONLY IF THE ID OF THE OBJECT IS NEW,
@@ -417,6 +425,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     skeletons.set(newObj.getId().intValue(), false);
                 }
             }
+            time1 = System.currentTimeMillis();
+            timeSpentDataTrackerWrite += time1 - time2;
             return newObj;
         } catch (RuntimeException e) {
             throw new RuntimeException("Exception while loading object " + o, e);
@@ -457,6 +467,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         LOG.info("Time spent: Equivalent object queries: " + timeSpentEquiv + ", Create object: "
                 + timeSpentCreate + ", Compute priorities: " + timeSpentPriorities
                 + ", Copy fields: " + timeSpentCopyFields + ", Store object: " + timeSpentStore
-                + ", Data tracker write: " + timeSpentDataTrackerWrite);
+                + ", Data tracker write: " + timeSpentDataTrackerWrite + ", recursing: "
+                + timeSpentRecursing);
     }
 }
