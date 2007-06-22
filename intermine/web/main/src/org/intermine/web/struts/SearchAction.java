@@ -67,8 +67,8 @@ public class SearchAction extends InterMineAction
             return term;
         }
     };
-    
-    /** 
+
+    /**
      * Method called when user has submitted search form.
      *
      * @param mapping The ActionMapping used to select this instance
@@ -79,6 +79,7 @@ public class SearchAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -87,10 +88,12 @@ public class SearchAction extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext context = session.getServletContext();
         SearchForm sf = (SearchForm) form;
-        String queryString = sf.getQueryString();
+        String origQueryString = sf.getQueryString();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
-        if (StringUtils.isNotEmpty(queryString)) {
+
+        if (StringUtils.isNotEmpty(origQueryString)) {
+            // special case for word ending in "log" eg. "ortholog" - add "orthologue" to the search
+            String queryString = origQueryString.replaceAll("(\\w+log\\b)", "$1ue $1");
             String type = sf.getType();
             LOG.info("Searching " + sf.getScope() + " for \""
                     + sf.getQueryString() + "\"    - type: " + type);
@@ -101,7 +104,7 @@ public class SearchAction extends InterMineAction
                 globalSearchRepository.getWebSearchableMap(type);
             Directory globalDirectory = globalSearchRepository.getDirectory(type);
             SearchRepository userSearchRepository = profile.getSearchRepository();
-            Map<String, ? extends WebSearchable> userWebSearchables = 
+            Map<String, ? extends WebSearchable> userWebSearchables =
                 userSearchRepository.getWebSearchableMap(type);
             Directory userDirectory = userSearchRepository.getDirectory(type);
             IndexSearcher userIndexSearcher = new IndexSearcher(userDirectory);
@@ -115,7 +118,7 @@ public class SearchAction extends InterMineAction
                 searchables = new Searchable[]{userIndexSearcher, globalIndexSearcher};
             }
             MultiSearcher searcher = new MultiSearcher(searchables);
-            
+
             Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
 
             Query query;
@@ -127,11 +130,11 @@ public class SearchAction extends InterMineAction
                         request);
                 return mapping.findForward("search");
             }
-            
+
             // required to expand search terms
             query = query.rewrite(IndexReader.open(globalDirectory));
             Hits hits = searcher.search(query);
-            
+
             time = System.currentTimeMillis() - time;
             Map hitMap = new LinkedHashMap();
             Map scopeMap = new LinkedHashMap();
@@ -139,16 +142,16 @@ public class SearchAction extends InterMineAction
             Map descrMap = new HashMap();
             LOG.info("Found " + hits.length() + " document(s) that matched query '"
                     + queryString + "' in " + time + " milliseconds:");
-            
+
             QueryScorer scorer = new QueryScorer(query);
             Highlighter highlighter = new Highlighter(formatter, scorer);
-            
+
             for (int i = 0; i < hits.length(); i++) {
                 WebSearchable webSearchable = null;
                 Document doc = hits.doc(i);
                 String scope = doc.get("scope");
                 String name = doc.get("name");
-                
+
                 webSearchable = userWebSearchables.get(name);
                 if (webSearchable == null) {
                     webSearchable = globalWebSearchables.get(name);
@@ -156,30 +159,30 @@ public class SearchAction extends InterMineAction
                 if (webSearchable == null) {
                     throw new RuntimeException("unknown WebSearchable: " + name);
                 }
-                
+
                 hitMap.put(webSearchable, new Float(hits.score(i)));
                 scopeMap.put(webSearchable, scope);
-                
+
                 String highlightString = webSearchable.getTitle();
                 descrMap.put(webSearchable, webSearchable.getDescription());
                 TokenStream tokenStream
                     = analyzer.tokenStream("", new StringReader(highlightString));
                 highlighter.setTextFragmenter(new NullFragmenter());
-                highlightedMap.put(webSearchable, 
+                highlightedMap.put(webSearchable,
                                    highlighter.getBestFragment(tokenStream, highlightString));
             }
-            
+
             request.setAttribute("results", hitMap);
             request.setAttribute("resultScopes", scopeMap);
             request.setAttribute("highlighted", highlightedMap);
             request.setAttribute("querySeconds", new Float(time / 1000f));
-            request.setAttribute("queryString", queryString);
+            request.setAttribute("queryString", origQueryString);
             request.setAttribute("resultCount", new Integer(hitMap.size()));
             request.setAttribute("descriptions", descrMap);
         }
-        
+
         return mapping.findForward("search");
     }
 
-    
+
 }
