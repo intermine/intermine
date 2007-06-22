@@ -16,7 +16,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.objectstore.query.ResultsInfo;
+
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.web.logic.bag.BagQueryResult;
+
+import org.apache.log4j.Logger;
 
 /**
  * A wrapper for a collection that makes for easier rendering in the webapp.
@@ -24,6 +30,8 @@ import org.intermine.web.logic.bag.BagQueryResult;
  */
 public class WebCollection extends AbstractList implements WebTable
 {
+    private static final Logger LOG = Logger.getLogger(WebCollection.class);
+
     private List list = null;
     private List<Column> columns;
     private final Collection collection;
@@ -117,7 +125,21 @@ public class WebCollection extends AbstractList implements WebTable
      * {@inheritDoc}
      */
     public boolean isSizeEstimate() {
-        return false;
+        if (collection instanceof LazyCollection) {
+            LazyCollection lazy = (LazyCollection) collection;
+            try {
+                if (lazy.getInfo().getStatus() == ResultsInfo.SIZE) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } catch (ObjectStoreException e) {
+                LOG.error("unexpected exception while getting ResultsInfo for collection", e);
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
