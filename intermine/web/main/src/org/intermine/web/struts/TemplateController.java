@@ -274,7 +274,7 @@ public class TemplateController extends TilesAction
                 String attributeKey = "" + (j + 1);
                 tf.setAttributeValues(attributeKey, "" + c.getDisplayValue());
                 tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
-                if (c.getOp().equals(ConstraintOp.LOOKUP) && imObject != null) {
+                if (imObject != null) {
                     Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
                     Set keyFields = (Set) classKeys.get(DynamicUtil.getFriendlyName(imObject
                                                                    .getClass()));
@@ -289,14 +289,6 @@ public class TemplateController extends TilesAction
                                                    + e.getMessage());
                     }
                     tf.setAttributeValues(attributeKey, value);
-                } else if (c.getIdentifier() != null) {
-                    // If special request parameter key is present then we initialise
-                    // the form bean with the parameter value
-                    String paramName = c.getIdentifier() + "_value";
-                    String constraintValue = request.getParameter(paramName);
-                    if (constraintValue != null) {
-                        tf.setAttributeValues(attributeKey, constraintValue);
-                    }
                 }
                 j++;
             }
