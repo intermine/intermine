@@ -6,6 +6,7 @@
 <%@ attribute name="name" required="false" type="java.lang.String" %>
 <%@ attribute name="descr" required="false" type="java.lang.String" %>
 <%@ attribute name="bagName" required="false" type="java.lang.String" %>
+<%@ attribute name="trail" required="false" type="java.lang.String" %>
 
 <%@ include file="/shared/taglibs.jsp" %>
 
@@ -32,6 +33,8 @@
     <c:set var="extra" value="${extra}&amp;idForLookup=${object.object.id}" />
   </c:if>
   
+  <c:set var="extra" value="${extra}&trail=${trail}" />
+  
   <html:link action="/template?name=${templateQuery.name}&amp;scope=${scope}${extra}" 
              title="${linkTitle}">
     <span class="templateTitle">${!empty name ? name : templateQuery.title}</span>
@@ -50,10 +53,11 @@
              title="${linkTitle}">
     <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
   </html:link>
-  <br>
   <%-- description --%>
+  <c:if test="${! empty descr}">
+  <br>
   ${descr}
-  
+  </c:if>
 </c:if>
 <c:if test="${scope == 'user'}">
   <%-- pull required messages --%>
