@@ -53,7 +53,9 @@ window.onload = function() { document.getElementById("queryString").focus(); }
       <c:choose>
         <c:when test="${searchForm.type == 'template'}">
           <im:templateLine scope="${resultScopes[entry.key]}" 
-                           templateQuery="${entry.key}" desc="${highlighted[entry.key]}"/>
+                           templateQuery="${entry.key}" 
+                           name="${highlighted[entry.key]}"
+                           descr="${descriptions[entry.key]}" />
         </c:when>
         <c:when test="${searchForm.type == 'bag'}">
           <im:bagLine scope="${resultScopes[entry.key]}" 
