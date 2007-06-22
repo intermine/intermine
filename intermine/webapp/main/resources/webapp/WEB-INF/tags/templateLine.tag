@@ -3,7 +3,8 @@
 <%@ attribute name="scope" required="true" %>
 <%@ attribute name="templateQuery" required="true" type="org.intermine.web.logic.template.TemplateQuery" %>
 <%@ attribute name="interMineObject" required="false" type="java.lang.Object" %>
-<%@ attribute name="desc" required="false" type="java.lang.String" %>
+<%@ attribute name="name" required="false" type="java.lang.String" %>
+<%@ attribute name="descr" required="false" type="java.lang.String" %>
 <%@ attribute name="bagName" required="false" type="java.lang.String" %>
 
 <%@ include file="/shared/taglibs.jsp" %>
@@ -33,7 +34,7 @@
   
   <html:link action="/template?name=${templateQuery.name}&amp;scope=${scope}${extra}" 
              title="${linkTitle}">
-    <span class="templateTitle">${!empty desc ? desc : templateQuery.title}</span>
+    <span class="templateTitle">${!empty name ? name : templateQuery.title}</span>
   </html:link>
   <fmt:message var="linkTitle" key="templateList.run">
     <fmt:param value="${templateQuery.name}"/>
@@ -49,6 +50,10 @@
              title="${linkTitle}">
     <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
   </html:link>
+  <br>
+  <%-- description --%>
+  ${descr}
+  
 </c:if>
 <c:if test="${scope == 'user'}">
   <%-- pull required messages --%>
