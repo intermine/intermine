@@ -18,9 +18,7 @@
   <fmt:message key="view.notEmpty.description"/><im:manualLink section="manualPageQB.shtml#manualOutputListQB"/>
 </div>
 
-<div class="body">
-
-  <div class="clearer">&nbsp;</div>
+<div class="bodyPeekaboo">
 
   <div>
     <h3><fmt:message key="view.heading"/></h3>
@@ -56,7 +54,7 @@
   <br/>
 
   <c:if test="${fn:length(viewStrings) > 0}">
-    <div class="clearer">&nbsp;</div>
+    <div class="clear-both">&nbsp;</div>
     <div>
       <h3><fmt:message key="sortOrder.heading"/></h3>
       <fmt:message key="sortOrder.instructions"/>
