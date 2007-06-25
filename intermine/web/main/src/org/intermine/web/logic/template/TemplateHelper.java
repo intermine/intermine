@@ -420,7 +420,7 @@ public class TemplateHelper
             Results results = os.execute(query);
             Model model = os.getModel();
             WebResults webResults =
-                new WebResults(pathQuery.getView(), results, model, pathToQueryNode,
+                new WebResults(pathQuery, results, model, pathToQueryNode,
                         (Map) servletContext.getAttribute(Constants.CLASS_KEYS), null);
             PagedTable pagedResults = new PagedTable(webResults);
             

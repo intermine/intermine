@@ -272,7 +272,9 @@ public class TableController extends TilesAction
         }
         
         request.setAttribute("columnsToHighlight", jsonWriter.write(columnsToHighlightMap));
-        
+        request.setAttribute("pathQuery", pt.getWebTable().getPathQuery());
+        request.setAttribute("table", request.getParameter("table"));
+
         return null;
     }
     

@@ -35,6 +35,7 @@ import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebTable;
@@ -251,5 +252,10 @@ public class WebPathCollection extends AbstractList implements WebTable
      */
     public int getMaxRetrievableIndex() {
         return Integer.MAX_VALUE;
+    }
+
+    public PathQuery getPathQuery() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

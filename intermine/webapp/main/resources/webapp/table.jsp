@@ -43,7 +43,7 @@
       <%-- show the description only if we've run a query (rather than viewing
            a bag) - see #1031 --%>
       <c:if test="${isWebResults
-                  && (templateQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
+                  && (pathQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
         <div class="body">
           <div class="resultsTableTemplateHeader">
             <div>
@@ -317,7 +317,7 @@
                       <%-- summary --%>
                       <c:if test="${isWebResults}">
 		        <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-                        <a href="javascript:getColumnSummary('${column.name}', &quot;${columnDisplayName}&quot;)" 
+                        <a href="javascript:getColumnSummary('${table}','${column.name}', &quot;${columnDisplayName}&quot;)" 
                            title="${summaryTitle}"><img src="images/summary_maths.png" alt="${summaryTitle}"></a>
                       </c:if>
 
