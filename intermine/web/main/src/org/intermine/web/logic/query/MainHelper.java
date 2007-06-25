@@ -422,7 +422,7 @@ public class MainHelper
                         // does a lookup for ifs should be moved out of this method. See #1284.
                         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "id"), 
                                                               ConstraintOp.EQUALS,
-                                                              new QueryValue(new Integer(0))));
+                                                              new QueryValue(new Integer(-1))));
                     }
                     if (returnBagQueryResults != null) {
                         returnBagQueryResults.put(node.getPathString(), bagQueryResult);
