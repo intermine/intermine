@@ -130,6 +130,7 @@ public class BagQueryRunner
         List<BagQuery> queries = 
             getBagQueriesForType(bagQueryConfig.getBagQueries(), typeCls.getName(), cleanInput);
         Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
+        unresolved.addAll(wildcardInput);
         Iterator<BagQuery> qIter = queries.iterator();
         BagQueryResult bqr = new BagQueryResult();
         while (qIter.hasNext()) {
@@ -204,6 +205,8 @@ public class BagQueryRunner
                                         resMap.put(wildcard, ids);
                                     }
                                     ids.add(id);
+                                    // we have matched at least once with wildcard
+                                    unresolved.remove(wildcard);
                                 }
                             }
                         }
