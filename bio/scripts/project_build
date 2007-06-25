@@ -164,6 +164,9 @@ sub get_prop_val
   my $ret_val;
 
   while (my $line = <F>) {
+    if ($line =~ /^\s*#/) {
+      next;
+    }
     if ($line =~ /$key=(.*)/) {
       $ret_val = $1;
     }
