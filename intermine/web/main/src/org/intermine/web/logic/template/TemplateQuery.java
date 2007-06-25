@@ -412,7 +412,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public boolean equals(Object o) {
         return (o instanceof TemplateQuery)
-            && super.equals(this)
+            && super.equals(o)
             && ((TemplateQuery) o).getName().equals(getName())
             && ((TemplateQuery) o).getDescription().equals(getDescription())
             && ((TemplateQuery) o).getTitle().equals(getTitle())
