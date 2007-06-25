@@ -50,11 +50,11 @@
     </c:otherwise>
   </c:choose>
 
-  <br/>
+  <br clear="all"/>
   <br/>
 
   <c:if test="${fn:length(viewStrings) > 0}">
-    <div class="clear-both">&nbsp;</div>
+
     <div>
       <h3><fmt:message key="sortOrder.heading"/></h3>
       <fmt:message key="sortOrder.instructions"/>
