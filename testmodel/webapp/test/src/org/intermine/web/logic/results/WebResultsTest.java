@@ -33,6 +33,7 @@ import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.WebResults;
 
 import junit.framework.TestCase;
@@ -140,6 +141,8 @@ public class WebResultsTest extends TestCase
             add(new Path(model, "Department.manager[CEO].company.vatNumber"));
             add(new Path(model, "Department.employees[Manager].seniority"));
         }};
+        PathQuery pathQuery = new PathQuery(model);
+        pathQuery.setView(view);
         Map pathToQueryNode = new HashMap();
         QueryClass deptQC = (QueryClass) query.getSelect().get(0);
         pathToQueryNode.put("Department", deptQC);
@@ -162,7 +165,7 @@ public class WebResultsTest extends TestCase
         HashSet keys = new HashSet();
         keys.add(new HashSet(Arrays.asList(new Object[]{fd})));
         classKeys.put("Company", keys);
-        webResults = new WebResults(view, results, model, pathToQueryNode, classKeys, null);
+        webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
     }
     
     public void test() {
