@@ -37,6 +37,7 @@ import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResultsSimple;
+import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -258,21 +259,24 @@ public class AjaxServices
      * @return a collection of rows
      * @throws Exception an exception
      */
-    public static List getColumnSummary(String summaryPath) throws Exception {
+    public static List getColumnSummary(String tableName, String summaryPath) throws Exception {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-        PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
+//        PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
+        WebTable webTable = ((PagedTable) SessionMethods.getResultsTable(session, tableName))
+                               .getWebTable();
+        PathQuery pathQuery = webTable.getPathQuery();
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         Query distinctQuery = MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
                                                   new HashMap<String, QueryNode>(), summaryPath
                                                   , servletContext);
         
         Results results = os.execute(distinctQuery);
-        List columns = Arrays.asList(new String[] {"col1", "col2"});
-        WebResultsSimple webResults = new WebResultsSimple(results, columns);
+        WebResultsSimple webResults = new WebResultsSimple(results, 
+                                                    Arrays.asList(new String[] {"col1", "col2"}));
         PagedTable pagedTable = new PagedTable(webResults);
         
         // Start the count of results
