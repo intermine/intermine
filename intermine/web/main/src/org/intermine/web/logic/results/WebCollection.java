@@ -21,6 +21,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.query.PathQuery;
 
 import org.apache.log4j.Logger;
 
@@ -128,7 +129,8 @@ public class WebCollection extends AbstractList implements WebTable
         if (collection instanceof LazyCollection) {
             LazyCollection lazy = (LazyCollection) collection;
             try {
-                if (lazy.getInfo().getStatus() == ResultsInfo.SIZE) {
+                if( lazy.getInfo().getStatus() == 
+                    ResultsInfo.SIZE) {
                     return false;
                 } else {
                     return true;
@@ -147,5 +149,13 @@ public class WebCollection extends AbstractList implements WebTable
      */
     public int getMaxRetrievableIndex() {
         return Integer.MAX_VALUE;
+    }
+
+    /* (non-Javadoc)
+     * @see org.intermine.web.logic.results.WebTable#getPathQuery()
+     */
+    public PathQuery getPathQuery() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

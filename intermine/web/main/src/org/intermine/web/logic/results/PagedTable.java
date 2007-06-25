@@ -399,4 +399,11 @@ public class PagedTable
     public void setColumnNames(List<String> columnNames) {
         this.columnNames = columnNames;
     }
+
+    /**
+     * @return the webTable
+     */
+    public WebTable getWebTable() {
+        return webTable;
+    }
 }

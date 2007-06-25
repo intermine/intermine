@@ -36,6 +36,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.query.PathQuery;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user
@@ -56,6 +57,7 @@ public class WebResults extends AbstractList implements WebTable
     private Map classKeys;
     private Map pathToQueryNode;
     private Map<String, BagQueryResult> pathToBagQueryResult;
+    private PathQuery pathQuery;
     
     /**
      * Create a new WebResults object.
@@ -68,15 +70,15 @@ public class WebResults extends AbstractList implements WebTable
      * @param classKeys the Map from class name to set of defined keys
      * @param pathToBagQueryResult a Map containing results from LOOKUP operations
      */
-    public WebResults(List columnPaths, Results results, Model model, Map pathToQueryNode, 
+    public WebResults(PathQuery pathQuery, Results results, Model model, Map pathToQueryNode, 
                       Map classKeys, Map<String, BagQueryResult> pathToBagQueryResult) {
         this.osResults = results;
         this.model = model;
-        this.columnPaths = columnPaths;
+        this.columnPaths = pathQuery.getView();
         this.classKeys = classKeys;
         this.pathToQueryNode = pathToQueryNode;
         this.pathToBagQueryResult = pathToBagQueryResult;
-        
+        this.pathQuery = pathQuery;
         pathToIndex = getPathToIndex(pathToQueryNode);
         setColumns(columnPaths);
     }
@@ -313,5 +315,9 @@ public class WebResults extends AbstractList implements WebTable
      */
     public List getColumns() {
         return columns;
+    }
+    
+    public PathQuery getPathQuery() {
+        return pathQuery;
     }
 }

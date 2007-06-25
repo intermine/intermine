@@ -21,6 +21,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.query.PathQuery;
 
 /**
  * A simple WebTable that wraps an arbitrary Results object.
@@ -129,6 +130,11 @@ public class WebResultsSimple extends AbstractList implements WebTable
      */
     public int getExactSize() {
         return results.size();
+    }
+
+    public PathQuery getPathQuery() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -105,11 +105,11 @@ function updateUniqueCountInColumnSummary(qid, rowCount) {
     getResults(qid, 1000, resultsCountCallback, rowCount);
 }
 
-function getColumnSummary(columnName, columnDisplayName) {
+function getColumnSummary(tableName, columnName, columnDisplayName) {
     document.getElementById('summary_loaded').style.display = "none";
     document.getElementById('summary_loading').style.display = "block";
     Effect.Appear('summary', { duration: 0.30 });
-    AjaxServices.getColumnSummary(columnName, function(str){
+    AjaxServices.getColumnSummary(tableName, columnName, function(str){
         var rows = str[0];
         function rounder(cell) {
             if (cell==null) {

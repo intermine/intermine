@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.query.PathQuery;
 
 /**
  * A List that can understand ResultElement objects.
@@ -60,4 +61,11 @@ public interface WebTable extends List
      * @return a Map
      */
     public Map<String, BagQueryResult> getPathToBagQueryResult();
+    
+    /**
+     * Get the PathQuery associated with this WebTable
+     * @return the PathQuery
+     */
+    public PathQuery getPathQuery();
+    
 }

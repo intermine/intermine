@@ -550,7 +550,7 @@ public class SessionMethods
                         Results results = TableHelper.makeResults(os, q);
                         results.setNoPrefetch();
 
-                        WebResults webResults = new WebResults(pathQuery.getView(), results, model,
+                        WebResults webResults = new WebResults(pathQuery, results, model,
                             pathToQueryNode,
                             (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
                             pathToBagQueryResult);
