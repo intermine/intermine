@@ -345,6 +345,11 @@ public class QueryBuilderForm extends ActionForm
     public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
                                     Locale locale, ActionMessages errors) {
         Object parsedValue = null;
+        
+        if (value == null || value.length() == 0) {
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.emptyField"));
+            return null;
+        }
 
         if (Date.class.equals(type)) {
             DateFormat df;

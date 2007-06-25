@@ -244,6 +244,7 @@
     </action>
     <action path="/browseAction" name="browseForm" type="org.intermine.web.struts.TemplateAction" input="begin">
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
+      <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
     <action path="/feedbackAction" name="feedbackForm" type="org.intermine.web.struts.FeedbackAction" scope="request" input="feedback">
       <forward name="feedback" path="feedback.page"/>
