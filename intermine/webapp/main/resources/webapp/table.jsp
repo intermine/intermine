@@ -109,6 +109,7 @@
       </c:choose>
       <c:forEach var="identifier" items="${bagQueryResultEntry.value.unresolved}" varStatus="status">
         <c:if test="${status.index != 0}">,</c:if>
+        <c:out value="${identifier}"/>
       </c:forEach>
     </div>
   </c:if>
