@@ -64,8 +64,8 @@ public class Results extends AbstractList implements LazyCollection
     // Basically, this keeps a tally of how many times in a row accesses have been sequential.
     // If sequential gets above a PREFETCH_SEQUENTIAL_THRESHOLD, then we prefetch the batch after
     // the one we are currently using.
-    protected SoftReference thisBatchHolder;
-    protected SoftReference nextBatchHolder;
+    protected SoftReference<List> thisBatchHolder;
+    protected SoftReference<List> nextBatchHolder;
 
     protected int lastGetAtGetInfoBatch = -1;
     protected ResultsInfo info;
@@ -301,9 +301,9 @@ public class Results extends AbstractList implements LazyCollection
                 // Set holders, so our data doesn't go away too quickly
                 if (sequential > PREFETCH_SEQUENTIAL_THRESHOLD) {
                     if (batchNo == getBatchNoForRow(lastGet + 1)) {
-                        thisBatchHolder = new SoftReference(rows);
+                        thisBatchHolder = new SoftReference<List>(rows);
                     } else if (batchNo == getBatchNoForRow(lastGet + 1) + 1) {
-                        nextBatchHolder = new SoftReference(rows);
+                        nextBatchHolder = new SoftReference<List>(rows);
                     }
                 }
 
@@ -513,6 +513,8 @@ public class Results extends AbstractList implements LazyCollection
          * Index of element to be returned by subsequent call to next.
          */
         int cursor = 0;
+        List hardThisBatchHolder;
+        List hardNextBatchHolder;
 
         Object nextObject = null;
 
@@ -530,6 +532,13 @@ public class Results extends AbstractList implements LazyCollection
                 return true;
             } catch (IndexOutOfBoundsException e) {
                 // Ignore - it means that we should return false;
+            } finally {
+                if (thisBatchHolder != null) {
+                    hardThisBatchHolder = thisBatchHolder.get();
+                }
+                if (nextBatchHolder != null) {
+                    hardNextBatchHolder = nextBatchHolder.get();
+                }
             }
             return false;
         }
@@ -546,6 +555,13 @@ public class Results extends AbstractList implements LazyCollection
                     retval = get(cursor);
                 } catch (IndexOutOfBoundsException e) {
                     throw (new NoSuchElementException());
+                } finally {
+                    if (thisBatchHolder != null) {
+                        hardThisBatchHolder = thisBatchHolder.get();
+                    }
+                    if (nextBatchHolder != null) {
+                        hardNextBatchHolder = nextBatchHolder.get();
+                    }
                 }
             }
             cursor++;
