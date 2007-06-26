@@ -49,6 +49,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     private static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImpl.class);
     protected DataTracker dataTracker;
     protected IntPresentSet skeletons = new IntPresentSet();
+    /** This is a list of the objects that did not merge with anything from a previous data
+     * source */
+    protected IntPresentSet pureObjects = new IntPresentSet();
 
     /**
      * Creates a new instance of this class, given the properties defining it.
@@ -131,6 +134,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     }
 
     /**
+     * Resets the IntegrationWriter, clearing the id map and the hints
+     */
+    public void reset() {
+        super.reset();
+        pureObjects = new IntPresentSet();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public Source getMainSource(String name) {
@@ -173,12 +184,21 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             Set equivObjects = getEquivalentObjects(o, source);
             long time2 = System.currentTimeMillis();
             timeSpentEquiv += time2 - time1;
-            if ((equivObjects.size() == 0) && (type != FROM_DB)) {
+            if ((type != FROM_DB) && ((equivObjects.size() == 0)
+                        || ((equivObjects.size() == 1)
+                            && (o.getId() != null)
+                            && (pureObjects.contains(o.getId()))
+                            && (type == SOURCE)))) {
                 // Take a shortcut!
                 InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(o.getClass());
-                Integer newId = getSerial();
+                Integer newId;
+                if (equivObjects.size() == 0) {
+                    newId = getSerial();
+                    assignMapping(o.getId(), newId);
+                } else {
+                    newId = ((InterMineObject) equivObjects.iterator().next()).getId();
+                }
                 newObj.setId(newId);
-                assignMapping(o.getId(), newId);
                 time1 = System.currentTimeMillis();
                 timeSpentCreate += time1 - time2;
                 Map<String, FieldDescriptor> fields = getModel().getFieldDescriptorsForClass(newObj
@@ -207,6 +227,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     skeletons.set(newObj.getId().intValue(), false);
                 }
                 time2 = System.currentTimeMillis();
+                if (o.getId() != null) {
+                    pureObjects.add(o.getId());
+                }
                 timeSpentDataTrackerWrite += time2 - time1;
                 return newObj;
             }

@@ -148,7 +148,12 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                         noKeys = false;
                     }
                 } else {
-                    if (!DataLoaderHelper.getPrimaryKeys(cld, source).isEmpty()) {
+                    try {
+                        if (!DataLoaderHelper.getPrimaryKeys(cld, source).isEmpty()) {
+                            noKeys = false;
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // No keys file - no problem
                         noKeys = false;
                     }
                 }
