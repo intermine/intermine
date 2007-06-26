@@ -44,6 +44,11 @@
    **********************************************************/
   function clickUseBag(index)
   {
+    if(selectedBagName){
+      document.templateForm["bag("+index+")"].value=selectedBagName;
+      document.templateForm["useBagConstraint("+index+")"].checked = true;
+    }
+
     var useBag = document.templateForm["useBagConstraint("+index+")"].checked;
 
     document.templateForm["attributeOps("+index+")"].disabled=useBag;
@@ -52,9 +57,6 @@
     document.templateForm["attributeValues("+index+")"].disabled=useBag;
     document.templateForm["bag("+index+")"].disabled=!useBag;
     document.templateForm["bagOp("+index+")"].disabled=!useBag;
-    if(document.getElementById('selectedBagName')){
-      document.templateForm["bag("+index+")"].value=selectedBagName;
-    }
   }
 
   /***********************************************************
@@ -206,12 +208,10 @@
                 </c:if>
 
                 <script type="text/javascript">
-                <!--
-                  // var selectedBagName = '${selectedBagNames[con]}';
-                  // if(selectedBagName){
+                  var selectedBagName = '${selectedBagNames[con]}';
+                  if(selectedBagName){
                           clickUseBag(${index});
-                  // }
-                //-->
+                  }
                 </script>
               </c:if>
               <script type="text/javascript">
