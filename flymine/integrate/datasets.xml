@@ -332,8 +332,8 @@
 
     <item id="350" class="" implements="http://www.flymine.org/model/genomic#DataSource">
         <attribute name="name" value="VectorBase"/>
-        <attribute name="description" value="The Sanger Institute"/>
-        <attribute name="url" value="http://www.sanger.ac.uk"/>
+        <attribute name="description" value="Database for disease vectors"/>
+        <attribute name="url" value="http://www.vectorbase.org/>
     </item>
     <item id="351" class="" implements="http://www.flymine.org/model/genomic#DataSet">
         <attribute name="title" value="AnoEST clusters"/>
