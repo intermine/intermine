@@ -95,10 +95,6 @@
           <i>
             <fmt:message key="bagDetails.viewBagHelp"/>
           </i>
-        </td>
-      </tr>
-    </table>
-  </html:form>
   </td>
 
   <td valign="top" width="50%" align="center">
@@ -122,7 +118,9 @@
       </div>
     </div>
   </td>
-  </tr></table>
+  </tr>
+  </table>
+  </html:form>
 </div>
 
 <br/>

@@ -53,7 +53,7 @@ table.results tr td.highlightCell {
 
 #bagDescriptionDiv{
 	background-color: #F5F0FF;
-	height:150px;
+	min-height:150px;
 	width:70%;
 	text-align:left;
 	padding:10px;
