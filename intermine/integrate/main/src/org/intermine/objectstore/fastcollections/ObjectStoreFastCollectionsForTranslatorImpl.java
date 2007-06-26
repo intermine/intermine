@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemToObjectTranslator;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -55,6 +56,8 @@ import org.intermine.util.TypeUtil;
  */
 public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePassthruImpl
 {
+    private static final Logger LOG = Logger.getLogger(
+            ObjectStoreFastCollectionsForTranslatorImpl.class);
     private IntPresentSet doneAlready = new IntPresentSet();
 
     /**
