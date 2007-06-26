@@ -92,21 +92,12 @@
            });
        }
 
-       Sortable.create('sortOrderDivs', {
-         tag:'div', dropOnEmpty:true, constraint:'horizontal', overlap:'horizontal', onUpdate:function() {
-           updateSortOrder();
-         }
-       });
-
        recordCurrentOrder();
        updateSortImgs("${sortByIndex}");
 
        function recordCurrentOrder() {
          previousOrder = Sortable.serialize('viewDivs');
          previousOrder = previousOrder.replace(/viewDivs/g, 'oldOrder');
-
-         //previousSortOrder = Sortable.serialize('sortOrderDivs');
-         //previousSortOrder = previousSortOrder.replace(/sortOrderDivs/g, 'oldSortOrder');
        }
 
        /**
