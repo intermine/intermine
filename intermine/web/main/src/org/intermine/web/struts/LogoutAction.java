@@ -51,8 +51,10 @@ public class LogoutAction extends InterMineAction
         SessionMethods.setHasQueryCookie(session, response, true);
         recordMessage(new ActionMessage("login.loggedout"), request);
         
-        if (request.getParameter("returnto") != null) {
-            return new ActionForward(request.getParameter("returnto"));
+        if (request.getParameter("returnto") != null
+            && request.getParameter("returnto").startsWith("/") 
+            && request.getParameter("returnto").indexOf("error") != -1) {      
+          return new ActionForward(request.getParameter("returnto"));
         } else {
             return mapping.findForward("begin");
         }
