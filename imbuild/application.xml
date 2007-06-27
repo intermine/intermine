@@ -152,6 +152,7 @@ Couldn't find ${build.properties.file}
     <precompute-templates alias="${objectstore.name}" 
                           userProfileAlias="${userprofile.objectstorewriter.name}"
                           minRows="0" username="${superuser.account}"
+                          summarise="${summarise}"
                           ignore="${ignore}"/>
   </target>
 
