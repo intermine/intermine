@@ -44,11 +44,6 @@
    **********************************************************/
   function clickUseBag(index)
   {
-    if(selectedBagName){
-      document.templateForm["bag("+index+")"].value=selectedBagName;
-      document.templateForm["useBagConstraint("+index+")"].checked = true;
-    }
-
     var useBag = document.templateForm["useBagConstraint("+index+")"].checked;
 
     document.templateForm["attributeOps("+index+")"].disabled=useBag;
@@ -57,6 +52,15 @@
     document.templateForm["attributeValues("+index+")"].disabled=useBag;
     document.templateForm["bag("+index+")"].disabled=!useBag;
     document.templateForm["bagOp("+index+")"].disabled=!useBag;
+  }
+
+  function initClickUseBag(index)
+  {
+    if(selectedBagName){
+      document.templateForm["bag("+index+")"].value=selectedBagName;
+      document.templateForm["useBagConstraint("+index+")"].checked = true;
+    }
+    clickUseBag(index);
   }
 
   /***********************************************************
@@ -210,7 +214,7 @@
                 <script type="text/javascript">
                   var selectedBagName = '${selectedBagNames[con]}';
                   if(selectedBagName){
-                          clickUseBag(${index});
+                          initClickUseBag(${index});
                   }
                 </script>
               </c:if>
