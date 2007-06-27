@@ -398,10 +398,10 @@ public class MainHelper
                             bagQueryConfig, servletContext);
                     BagQueryResult bagQueryResult;
                     List identifierList = new ArrayList();
-                    StringTokenizer st = new StringTokenizer(identifiers, " \n\t,");
+                    StringTokenizer st = new StringTokenizer(identifiers, "\n\t,");
                     while (st.hasMoreTokens()) {
                         String token = st.nextToken();
-                        identifierList.add(token);
+                        identifierList.add(token.trim());
                     }
                     try {
                         bagQueryResult = bagQueryRunner.searchForBag(node.getType(),
