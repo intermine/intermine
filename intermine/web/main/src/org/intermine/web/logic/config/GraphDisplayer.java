@@ -10,6 +10,7 @@ package org.intermine.web.logic.config;
  *
  */
 
+
 /**
  * Configuration object describing details of a graph displayer
  *
@@ -25,8 +26,7 @@ public class GraphDisplayer
     private String urlGen;
     private String description;
     private String graphType;
-    private String groupBy;
-    
+
     /**
      * @return the description
      */
@@ -166,9 +166,7 @@ public class GraphDisplayer
     public String getGraphType() {
         return graphType;
     }
-        
-    
-
+            
     
     /**
      * Return an XML String of this Type object

@@ -42,6 +42,10 @@ public class ChromosomeDistributionToolTipGenerator implements CategoryToolTipGe
     public String generateToolTip(@SuppressWarnings("unused") CategoryDataset dataset, int series,
                                   int category) {
         ArrayList geneList = (ArrayList) ((Object[]) geneMap[category])[series];
+        // charts may have results but no tool tip, ie "expected" results
+        if (geneList == null) {
+            return null;
+        }
         StringBuffer sb = new StringBuffer();
         for (Iterator iter = geneList.iterator(); iter.hasNext();) {
             if (sb.length() > 0) {

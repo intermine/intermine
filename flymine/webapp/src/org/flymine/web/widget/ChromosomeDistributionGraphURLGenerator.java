@@ -53,8 +53,6 @@ public class ChromosomeDistributionGraphURLGenerator implements CategoryURLGener
     public String generateURL(CategoryDataset dataset, @SuppressWarnings("unused") int series,
                               int category) {
         StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
-
-
         
         Query q = new Query();
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);

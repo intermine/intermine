@@ -76,6 +76,7 @@ public class BagGraphWidget
             renderer.setPositiveItemLabelPosition(new ItemLabelPosition(
                                         ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
             
+            // TODO put this in a config file
             // set colors for each data series
             ChartColor blue = new ChartColor(47, 114,  255);
             renderer.setSeriesPaint(0, blue); 
@@ -100,18 +101,20 @@ public class BagGraphWidget
             renderer.setToolTipGenerator(categoryToolTipGen);
 
             // url to display genes
-            Class clazz2 = TypeUtil.instantiate(urlGen);
-            Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
-                {
+            // this may be already set individually for the different series
+            if (urlGen != null) {
+                Class clazz2 = TypeUtil.instantiate(urlGen);
+                Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
+                                                                                {
                     String.class
-                });
-            CategoryURLGenerator categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
+                                                                                });
+                CategoryURLGenerator categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
                 .newInstance(new Object[]
-                    {
-                        bagName
-                    });
-            renderer.setItemURLGenerator(categoryUrlGen);
-
+                                        {
+                    bagName
+                                        });
+                renderer.setItemURLGenerator(categoryUrlGen);
+            }
             NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
             rangeAxis.setUpperMargin(0.15);
             

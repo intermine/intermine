@@ -58,11 +58,16 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
      * @param os the ObjectStore
      */
     
-    public ChromosomeDistributionDataSetLdr(InterMineBag bag, ObjectStore os) {
+    public ChromosomeDistributionDataSetLdr(InterMineBag bag, ObjectStore os) 
+        throws Exception {
         super();
         this.os = os;
-        
-        Collection organisms = FlymineUtil.getOrganisms(os, bag);
+        Collection organisms = null;
+        try {
+            organisms = FlymineUtil.getOrganisms(os, bag);
+        } catch (Exception e) {
+            throw new Exception("Can't render chromosome view without a bag.");
+        }
 
         // TODO this may not be necessary once chromosomes are sorted out in #1186.
         organisms.remove("Drosophila pseudoobscura");
@@ -72,7 +77,6 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             
             String organismName = (String) it.next();
             DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-
                         
             // chromosome, count of genes
             LinkedHashMap<String, int[]> resultsTable = new LinkedHashMap<String, int[]> (); 
@@ -134,7 +138,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 Object[] geneSeriesArray = new Object[2];
                 /* why are there two? */
                 geneSeriesArray[0] = geneMap.get(chromosome);   // actual
-                geneSeriesArray[1] = geneMap.get(chromosome);   // expected
+                // expected shouldn't be a link
+                // geneSeriesArray[1] = geneMap.get(chromosome);   // expected
                 geneCategoryArray[i] = geneSeriesArray;
 
                 i++;

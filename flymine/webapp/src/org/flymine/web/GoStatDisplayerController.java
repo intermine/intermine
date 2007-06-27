@@ -92,7 +92,7 @@ public class GoStatDisplayerController extends TilesAction
              }
              Double maxValue = new Double("0.10");
              String bagName = request.getParameter("bagName");
-             InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
+             InterMineBag bag = profile.getSavedBags().get(bagName);
 
              // put all vars in request for getting on the .jsp page
              request.setAttribute("bagName", bagName);
@@ -134,6 +134,9 @@ public class GoStatDisplayerController extends TilesAction
                  BagConstraint bc1 =
                      new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
                  cs.addConstraint(bc1);
+             } else {
+                 // always need a bag!
+                 throw new Exception("Need a bag to calculate gostats!  Bad user!");
              }
 
              // get organisms
@@ -146,7 +149,6 @@ public class GoStatDisplayerController extends TilesAction
              // ignore main 3 ontologies
              BagConstraint bc3 = new BagConstraint(qfGoTermId, ConstraintOp.NOT_IN, badOntologies);
              cs.addConstraint(bc3);
-
 
              // gene.goAnnotation CONTAINS GOAnnotation
              QueryCollectionReference qr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
@@ -180,7 +182,7 @@ public class GoStatDisplayerController extends TilesAction
              q.addToGroupBy(qfGoTermId);
 
              Results rBag = os.execute(q);
-
+             rBag.setBatchSize(10000);
              Iterator itBag = rBag.iterator();
              HashMap geneCountMap = new HashMap();
              HashMap goTermToIdMap = new HashMap();
@@ -231,7 +233,7 @@ public class GoStatDisplayerController extends TilesAction
              int geneCountBag = bag.size();
 
              Results rAll = os.execute(q);
-             rAll.setBatchSize(5000);
+             rAll.setBatchSize(10000);
 
              Iterator itAll = rAll.iterator();
 
@@ -278,8 +280,6 @@ public class GoStatDisplayerController extends TilesAction
              request.setAttribute("goStatOrganisms", "UNKNOWN");
              return null;
          }
-
-
      }
 
      /* gets total number of genes */
