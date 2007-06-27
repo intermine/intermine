@@ -10,6 +10,18 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>FlyMine 7.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 8.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 8.0 includes three new data sets: Tiffin (predicted regulatory motifs), anoEST (A. gambiae EST clusters) and predicted 3-D protein structures for A. gambiae domains. A new type of constraint is used in template queries which now allows you to enter any identifier or symbol.
+      </description>
+      <pubDate>Weds, 27th June 2007</pubDate>
+    </item>
+
+    <item>
       <title>Job opportunities</title>
       <link>http://www.flymine.org/</link>
       <description>
