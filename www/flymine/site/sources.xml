@@ -1729,7 +1729,7 @@
         </source>
       </sources>
 
-      <sources version="8.0-preview">
+      <sources version="8.0">
         <source>
           <name>&lt;i&gt;D. melanogaster&lt;/i&gt; genome annotation</name>
           <description>
