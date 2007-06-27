@@ -94,7 +94,7 @@
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
     </source>
     <source name="flyatlas" type="flyatlas">
-      <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
+      <property name="src.data.dir" location="/shared/data/flyatlas/current/fixed"/>
     </source>
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes"/>
