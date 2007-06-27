@@ -76,10 +76,10 @@ public class AjaxServices
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         HttpServletRequest request = ctx.getHttpServletRequest();
-        templateName = templateName.replaceAll("#039;", "'");
+        String templateNameCopy = templateName.replaceAll("#039;", "'");
         ProfileManager pm = (ProfileManager) request.getSession().getServletContext().getAttribute(
                 Constants.PROFILE_MANAGER);
-        pm.addTag("favourite", templateName, TagTypes.TEMPLATE, profile.getUsername());
+        pm.addTag("favourite", templateNameCopy, TagTypes.TEMPLATE, profile.getUsername());
     }
 
     /**
@@ -148,14 +148,14 @@ public class AjaxServices
      * Rename a element such as history, name, bag
      * @param name the name of the element
      * @param type history, saved, bag
-     * @param newName the new name for the element
+     * @param reName the new name for the element
      * @return the new name of the element as a String
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public String rename(String name, String type, String newName)
+    public String rename(String name, String type, String reName)
         throws Exception {
-        newName = newName.trim();
+        String newName = reName.trim();
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -221,7 +221,7 @@ public class AjaxServices
         ServletContext servletContext = ctx.getServletContext();
         ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
                     Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
-        InterMineBag bag = (InterMineBag) profile.getSavedBags().get(bagName);
+        InterMineBag bag = profile.getSavedBags().get(bagName);
         if (bag == null) {
             throw new InterMineException("Bag \"" + bagName + "\" not found.");
         }
@@ -237,25 +237,27 @@ public class AjaxServices
      * @return the description, or null if the description was empty
      */
     public String changeViewPathDescription(String pathString, String description) {
+        String descr = description;
         if (description.trim().length() == 0) {
-            description = null;
+            descr = null;
         }
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         Path path = MainHelper.makePath(query.getModel(), query, pathString);
         Path prefixPath = path.getPrefix();
-        if (description == null) {
+        if (descr == null) {
             query.getPathDescriptions().remove(prefixPath);
         } else {
-            query.getPathDescriptions().put(prefixPath, description);
+            query.getPathDescriptions().put(prefixPath, descr);
         }
-        return description;
+        return descr;
     }
     
     /**
      * Get the summary for the given column
      * @param summaryPath the path for the column as a String
+     * @param tableName name of column-owning table
      * @return a collection of rows
      * @throws Exception an exception
      */
@@ -266,7 +268,7 @@ public class AjaxServices
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
 //        PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
-        WebTable webTable = ((PagedTable) SessionMethods.getResultsTable(session, tableName))
+        WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                .getWebTable();
         PathQuery pathQuery = webTable.getPathQuery();
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -301,7 +303,7 @@ public class AjaxServices
      */
     public static List getResults(String qid) {
         // results to return if there is an internal error
-        List<List<String>> unavailableListList = new ArrayList();
+        List<List<String>> unavailableListList = new ArrayList<List<String>>();
         ArrayList<String> unavailableList = new ArrayList<String>();
         unavailableList.add("results unavailable");
         unavailableListList.add(unavailableList);
