@@ -111,7 +111,7 @@
               <span class="constraint">
                 <im:displayableOpName opName="${constraint.op}" valueType="${node.type}"/>
                 <c:choose>
-                  <c:when test="${node.reference}">
+                  <c:when test="${(node.reference || node.collection) && constraint.op == '='}">
                     <c:out value=" ${fn:replace(constraintDisplayValues[constraint], '.', ' > ')}"/>
                   </c:when>
                   <c:when test="${constraint.value.class.name == 'java.util.Date'}">
