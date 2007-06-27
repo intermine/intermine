@@ -49,7 +49,8 @@ public abstract class FlymineUtil
      * @param bag InterMineBag
      * @return collection of organism names
      */
-    public static Collection getOrganisms(ObjectStore os, InterMineBag bag) {
+    public static Collection getOrganisms(ObjectStore os, InterMineBag bag) 
+    throws Exception {
 
         Query q = new Query();
 
@@ -68,6 +69,9 @@ public abstract class FlymineUtil
         if (bag != null) {
             BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
             cs.addConstraint(bc);
+        } else {
+            // always need a bag
+            throw new Exception("Need a bag to calculate gostats!  Bad user!");
         }
 
         QueryObjectReference qr = new QueryObjectReference(qcGene, "organism");
