@@ -70,7 +70,8 @@ public class PrecomputeTemplatesTask extends Task
     protected String username;
     protected String ignore = "";
     protected Set ignoreNames = new HashSet();
-
+    protected boolean doSummarise = true;
+    
     /**
      * Set the ObjectStore alias
      * @param alias the ObjectStore alias
@@ -112,6 +113,14 @@ public class PrecomputeTemplatesTask extends Task
         username = user;
     }
 
+    public void setSummarise(String summarise) {
+        if (summarise.equals("false")) {
+            doSummarise = false;
+        } else {
+            doSummarise = true;
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -193,10 +202,12 @@ public class PrecomputeTemplatesTask extends Task
                 LOG.info("precomputing template " + entry.getKey());
                 precompute(os, q, indexes, template.getName());
             }
-            try {
-                template.summarise(os, userProfileOS);
-            } catch (ObjectStoreException e) {
-                LOG.error("Exception while summarising template " + template.getName(), e);
+            if (doSummarise) {
+                try {
+                    template.summarise(os, userProfileOS);
+                } catch (ObjectStoreException e) {
+                    LOG.error("Exception while summarising template " + template.getName(), e);
+                }
             }
         }
     }
