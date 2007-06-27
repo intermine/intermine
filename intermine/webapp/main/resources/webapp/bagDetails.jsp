@@ -286,12 +286,4 @@
   </c:forEach>
 </div>
 
-<c:if test="${pagedColl.size > 0}">
-  <c:set var="tableName" value="${bag.name}" scope="request"/>
-  <c:set var="tableType" value="bag" scope="request"/>
-  <c:set var="pagedTable" value="${pagedColl}" scope="request"/>
-  <tiles:get name="export.tile"/>
-</c:if>
-
-
 <!-- /bagDetails.jsp -->
