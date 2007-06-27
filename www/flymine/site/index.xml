@@ -19,7 +19,7 @@
       </para>
       
       <para style="color:#e00;"> 
-        This is release 8.0 of FlyMine.  See the <ulink url="release-notes.xml">release notes<ulink> to find out whats new.
+        This is release 8.0 of FlyMine.  See the <ulink url="release-notes.xml">release notes</ulink> to find out whats new.
       </para>
 
       <ssi-include-static page="/maintenance/message.shtml"/>
