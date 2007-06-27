@@ -22,7 +22,7 @@
         This is release 8.0 of FlyMine.  See the <ulink url="release-notes.xml">release notes</ulink> to find out whats new.
       </para>
 
-      <ssi-include-static page="/maintenance/message.shtml"/>
+      <!--ssi-include-static page="/maintenance/message.shtml"/-->
 
     </section>
   
