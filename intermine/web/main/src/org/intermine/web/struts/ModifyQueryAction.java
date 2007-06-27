@@ -10,6 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Map;
+
 import java.io.PrintStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -124,15 +126,24 @@ public class ModifyQueryAction extends InterMineAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyQueryForm mqf = (ModifyQueryForm) form;
+        String type = request.getParameter("type");
 
         response.setContentType("text/plain; charset=us-ascii");
         response.setHeader("Content-Disposition ", "inline; filename=saved-queries.xml");
+        
+        Map<String, SavedQuery> map;
+        
+        if ("history".equals(type)) {
+            map = profile.getHistory();
+        } else {
+            map = profile.getSavedQueries();
+        }
         
         PrintStream out = new PrintStream(response.getOutputStream());
         out.println("<queries>");
         for (int i = 0; i < mqf.getSelectedQueries().length; i++) {
             String name = mqf.getSelectedQueries()[i];
-            PathQuery query = ((SavedQuery) profile.getSavedQueries().get(name)).getPathQuery();
+            PathQuery query = map.get(name).getPathQuery();
             String modelName = query.getModel().getName();
             String xml = PathQueryBinding.marshal(query, name, modelName);
             xml = XmlUtil.indentXmlSimple(xml);
