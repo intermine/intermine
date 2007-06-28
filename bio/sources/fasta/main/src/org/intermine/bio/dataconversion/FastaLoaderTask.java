@@ -48,6 +48,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private String classAttribute = "identifier";
     private Organism org;
     private String className;
+    private int storeCount = 0;
     /**
      * Append this suffix to the identifier of the LocatedSequenceFeatures that are stored.
      */
@@ -55,8 +56,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     //Set this if we want to do some testing...
     private File[] files = null;
-
-
 
     /**
      * Set the Taxon Id of the Organism we are loading.
@@ -118,15 +117,22 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * Process and load all of the fasta files.
      */
     public void process() {
+        long start = System.currentTimeMillis();
         try {
             Class orgClass = Organism.class;
             org = (Organism) getDirectDataLoader().createObject(orgClass);
             org.setTaxonId(fastaTaxonId);
             getDirectDataLoader().store(org);
+            storeCount++;
+            super.process();
+            getIntegrationWriter().commitTransaction();
         } catch (ObjectStoreException e) {
-            throw new BuildException("failed to store Organism object", e);
+            throw new BuildException("failed to store object", e);
         }
-        super.process();
+        long now = System.currentTimeMillis();
+        LOG.info("Finished dataloading " + storeCount + " objects at " + ((60000L * storeCount)
+                    / (now - start)) + " objects per minute (" + (now - start)
+                + " ms total) for source " + sourceName);
     }
 
     /**
@@ -160,13 +166,13 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
 
-            System.err. println("reading " + sequenceType + " sequence from: " + file);
+            System.err .println("reading " + sequenceType + " sequence from: " + file);
 
             SequenceIterator iter =
                     (SequenceIterator) SeqIOTools.fileToBiojava("fasta", sequenceType, reader);
 
             if (!iter.hasNext()) {
-                System.err. println("no fasta sequences found - exiting");
+                System.err .println("no fasta sequences found - exiting");
                 return;
             }
 
@@ -222,6 +228,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         try {
             getDirectDataLoader().store(flymineSequence);
             getDirectDataLoader().store(imo);
+            storeCount += 2;
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
         }

@@ -128,11 +128,16 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         for (Class c : summaryTimes.keySet()) {
             summaryNames.put(DynamicUtil.getFriendlyName(c), c);
         }
+        int totalObjects = 0;
+        int totalNoPk = 0;
+        int totalQueried = 0;
         for (String summaryName : summaryNames.keySet()) {
             Class summaryClass = summaryNames.get(summaryName);
             Long summaryTime = summaryTimes.get(summaryClass);
             Integer summaryCount = summaryCounts.get(summaryClass);
             Integer summaryCallCount = summaryCallCounts.get(summaryClass);
+            totalObjects += summaryCallCount.intValue();
+            totalQueried += summaryCount.intValue();
             retval.append("\nPerformed equivalence query for " + summaryName + " " + summaryCount
                      + "/" + summaryCallCount + " times.");
             if (summaryCount.longValue() > 0) {
@@ -160,8 +165,11 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
             }
             if (noKeys) {
                 retval.append(" No primary keys for this class");
+                totalNoPk += summaryCallCount.intValue();
             }
         }
+        retval.append("\nSummary total for source " + source.getName() + ": " + totalObjects
+                + " objects, " + totalNoPk + " no pk, " + totalQueried + " queried");
         return retval;
     }
 

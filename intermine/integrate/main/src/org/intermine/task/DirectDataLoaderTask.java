@@ -28,7 +28,7 @@ import org.apache.tools.ant.Task;
 public abstract class DirectDataLoaderTask extends Task
 {
     private String integrationWriterAlias;
-    private String sourceName;
+    protected String sourceName;
     private boolean ignoreDuplicates = false;
     private DirectDataLoader directDataLoader;
     private IntegrationWriter iw;
@@ -66,7 +66,7 @@ public abstract class DirectDataLoaderTask extends Task
      * @return the IntegrationWriter
      * @throws ObjectStoreException 
      */
-    private  IntegrationWriter getIntegrationWriter() throws ObjectStoreException {
+    protected IntegrationWriter getIntegrationWriter() throws ObjectStoreException {
         if (iw == null) {
             if (integrationWriterAlias == null) {
                 throw new RuntimeException("integrationWriterAlias property is null while "

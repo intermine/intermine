@@ -44,6 +44,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
 
     EquivalentObjectHints hints;
     int savedDatabaseEmpty = 0;
+    long savedDatabaseEmptyFetch = -1;
     protected Map<String, Long> savedTimes = new TreeMap<String, Long>();
     protected Map<String, Integer> savedCounts = new TreeMap<String, Integer>();
     protected Map<Class, Boolean> allPkClassesEmptyForClass = new HashMap<Class, Boolean>();
@@ -75,8 +76,14 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
     protected StringBuffer getSummary(Source source) {
         StringBuffer retval = super.getSummary(source);
         if (savedDatabaseEmpty > 0) {
-            retval.append("\nSaved " + savedDatabaseEmpty + " queries on empty database");
+            retval.append("\nSaved " + savedDatabaseEmpty
+                    + " queries on empty database, hints took " + savedDatabaseEmptyFetch
+                    + " ms to fetch");
+        } else {
+            retval.append("\nDatabase empty hint took " + savedDatabaseEmptyFetch
+                    + " ms to fetch");
         }
+        long totalFetchTime = savedDatabaseEmptyFetch;
         for (String summaryName : savedTimes.keySet()) {
             long savedTime = savedTimes.get(summaryName).longValue();
             Integer savedCount = savedCounts.get(summaryName);
@@ -94,7 +101,10 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             if (queried != null) {
                 retval.append(". Queried values " + queried + " in database values " + values);
             }
+            totalFetchTime += savedTime;
         }
+        retval.append("\nTotal time to fetch hints for source " + source.getName() + ": "
+                + totalFetchTime + " ms");
         return retval;
     }
 
@@ -111,7 +121,11 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             summaryCounts.put(summaryName, new Integer(0));
             summaryCallCounts.put(summaryName, soFarCallCount);
         }
+        long time = System.currentTimeMillis();
         if (hints.databaseEmpty()) {
+            if (savedDatabaseEmptyFetch == -1) {
+                savedDatabaseEmptyFetch = System.currentTimeMillis() - time;
+            }
             savedDatabaseEmpty++;
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
             return Collections.EMPTY_SET;
@@ -125,7 +139,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
                 if (!primaryKeys.isEmpty()) {
-                    long time = System.currentTimeMillis();
+                    time = System.currentTimeMillis();
                     boolean classNotExists = hints.classNotExists(cld.getType());
                     String className = DynamicUtil.getFriendlyName(cld.getType());
                     if (!savedTimes.containsKey(className)) {
