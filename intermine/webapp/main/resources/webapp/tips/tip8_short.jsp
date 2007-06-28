@@ -1,0 +1,1 @@
+You can easily import and export queries and templates.
