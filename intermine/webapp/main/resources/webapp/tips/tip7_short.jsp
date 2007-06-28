@@ -1,0 +1,1 @@
+You can query for information about any BioEntity using the any name or identifier.
