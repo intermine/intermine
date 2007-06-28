@@ -45,6 +45,28 @@
 
   </column>
 
+  
+  <column width="50%">
+  <section>
+    <title>
+      Bags
+    </title>
+    <para>
+      <ssi-include page="bagFrontPage.tile"/>
+    </para>
+  </section>
+  </column>
+  <column width="50%">
+   <section>
+    <title>
+      Tips
+    </title>
+	<para>
+		<ssi-include page="tip.tile"/>
+    </para>
+   </section>
+  </column>
+
   <section clear="both">
     <title>
       Aspects
