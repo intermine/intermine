@@ -168,7 +168,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                 totalNoPk += summaryCallCount.intValue();
             }
         }
-        retval.append("\nSummary total for source " + source.getName() + ": " + totalObjects
+        retval.append("\nSummary total for source " + source + ": " + totalObjects
                 + " objects, " + totalNoPk + " no pk, " + totalQueried + " queried");
         return retval;
     }
