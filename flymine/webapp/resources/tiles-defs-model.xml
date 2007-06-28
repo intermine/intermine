@@ -14,3 +14,4 @@
   <definition name="goStatDisplayer.tile" path="/model/goStatDisplayer.jsp" 
   	controllerUrl="/initGoStatDisplayer.do"/>
   
+  <definition name="bagFrontPage.tile" path="/model/bagFrontPage.jsp" />
