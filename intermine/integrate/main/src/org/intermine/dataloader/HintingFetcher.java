@@ -123,12 +123,12 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
         }
         long time = System.currentTimeMillis();
         if (hints.databaseEmpty()) {
-            if (savedDatabaseEmptyFetch == -1) {
-                savedDatabaseEmptyFetch = System.currentTimeMillis() - time;
-            }
             savedDatabaseEmpty++;
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
             return Collections.EMPTY_SET;
+        }
+        if (savedDatabaseEmptyFetch == -1) {
+            savedDatabaseEmptyFetch = System.currentTimeMillis() - time;
         }
         Boolean allPkClassesEmpty = allPkClassesEmptyForClass.get(obj.getClass());
         if (allPkClassesEmpty == null) {
