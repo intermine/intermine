@@ -317,6 +317,9 @@
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
     </action>
+    <action path="/tip" type="org.intermine.web.struts.TipAction">
+	    <forward name="display" path="tip.page"/>
+    </action>
     <action path="/gotows" type="org.intermine.web.struts.GotoWebSearchableAction">
       <forward name="template" redirect="true" path="/template.do"/>
       <forward name="bag" redirect="true" path="/bagDetails.do"/>
@@ -380,7 +383,10 @@
     <action path="/initExternalLinks" type="org.intermine.web.struts.ExternalLinksController">
     </action>
     <action path="/initClassChooser" type="org.intermine.web.struts.ClassChooserController">
+    </action>    
+    <action path="/initTip" type="org.intermine.web.struts.TipController">
     </action>
+    
     <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
