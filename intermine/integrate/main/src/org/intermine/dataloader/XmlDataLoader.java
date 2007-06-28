@@ -23,7 +23,7 @@ import org.intermine.util.XmlBinding;
 import org.apache.log4j.Logger;
 
 /**
- * Provides a method for unmarshalling XML given source  into java
+ * Provides a method for unmarshalling XML given source into java
  * business objects then calls store on each.
  * store() is AbstractDataLoader.store().
  *
@@ -96,13 +96,17 @@ public class XmlDataLoader extends DataLoader
                     }
                     time = now;
                     times[(int) ((opCount / 1000) % 20)] = now;
-                    getIntegrationWriter().commitTransaction();
-                    getIntegrationWriter().beginTransaction();
+                    if (opCount % 500000 == 0) {
+                        getIntegrationWriter().commitTransaction();
+                        getIntegrationWriter().beginTransaction();
+                    }
                 }
             }
-            LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
-                        / ((new Date()).getTime() - startTime)) + " object per minute");
             getIntegrationWriter().commitTransaction();
+            long now = System.currentTimeMillis();
+            LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
+                        / (now - startTime)) + " objects per minute (" + (now - startTime)
+                    + " ms total) for source " + source.getName());
         } catch (ObjectStoreException e) {
             throw new InterMineException("Problem with store method", e);
         }

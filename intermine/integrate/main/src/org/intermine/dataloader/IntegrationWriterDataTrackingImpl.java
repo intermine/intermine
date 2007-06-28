@@ -452,8 +452,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             timeSpentDataTrackerWrite += time1 - time2;
             return newObj;
         } catch (RuntimeException e) {
+            LOG.error("IDMAP contents: " + idMap.toString());
+            LOG.error("Skeletons: " + skeletons.toString());
+            LOG.error("pureObjects: " + pureObjects.toString());
             throw new RuntimeException("Exception while loading object " + o, e);
         } catch (ObjectStoreException e) {
+            LOG.error("IDMAP contents: " + idMap.toString());
+            LOG.error("Skeletons: " + skeletons.toString());
+            LOG.error("pureObjects: " + pureObjects.toString());
             throw new ObjectStoreException("Exception while loading object " + o, e);
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
