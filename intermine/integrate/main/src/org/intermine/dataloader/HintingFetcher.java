@@ -103,7 +103,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             }
             totalFetchTime += savedTime;
         }
-        retval.append("\nTotal time to fetch hints for source " + source.getName() + ": "
+        retval.append("\nTotal time to fetch hints for source " + source + ": "
                 + totalFetchTime + " ms");
         return retval;
     }
