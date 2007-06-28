@@ -52,6 +52,11 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /** This is a list of the objects that did not merge with anything from a previous data
      * source */
     protected IntPresentSet pureObjects = new IntPresentSet();
+    /** This is a list of the objects in the destination database that we have written to as a
+     * non-skeleton. This is so that we can notice if we write to a given object twice, given
+     * ignoreDuplicates, so we can tell the user if ignoreDuplicates is necessary.
+     */
+    protected IntPresentSet writtenObjects = new IntPresentSet();
 
     /**
      * Creates a new instance of this class, given the properties defining it.
@@ -199,6 +204,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     newId = ((InterMineObject) equivObjects.iterator().next()).getId();
                 }
                 newObj.setId(newId);
+                if ((type == SOURCE) && (writtenObjects != null)) {
+                    if (writtenObjects.contains(newId)) {
+                        // There are duplicate objects
+                        writtenObjects = null;
+                    } else {
+                        writtenObjects.add(newId);
+                    }
+                }
                 time1 = System.currentTimeMillis();
                 timeSpentCreate += time1 - time2;
                 Map<String, FieldDescriptor> fields = getModel().getFieldDescriptorsForClass(newObj
@@ -272,6 +285,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 newObj.setId(getSerial());
             } else {
                 newObj.setId(newId);
+            }
+            if ((type == SOURCE) && (writtenObjects != null)) {
+                if (writtenObjects.contains(newObj.getId())) {
+                    // There are duplicate objects
+                    writtenObjects = null;
+                } else {
+                    writtenObjects.add(newObj.getId());
+                }
             }
             if (type != FROM_DB) {
                 assignMapping(o.getId(), newObj.getId());
@@ -498,5 +519,10 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 + ", Copy fields: " + timeSpentCopyFields + ", Store object: " + timeSpentStore
                 + ", Data tracker write: " + timeSpentDataTrackerWrite + ", recursing: "
                 + timeSpentRecursing);
+        if (writtenObjects == null) {
+            LOG.info("There were duplicate objects");
+        } else {
+            LOG.info("There were no duplicate objects");
+        }
     }
 }
