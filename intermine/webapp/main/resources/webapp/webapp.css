@@ -986,14 +986,21 @@ td.resBar {
   border: solid black 1px;
 }
 
-/* query ages */
-table.results tr.queryAgeYoung td{
+.queryAgeYoung {
   background-color: #faa;
 }
-
-table.results tr.queryAgeToday td{
+.queryAgeToday {
   background-color: #fdd;
 }
 .queryAgeOld {
   /* default */
+}
+
+/* query ages - duplicate for IE as it can't cope with class attribute on <tr>
+   elements */
+table.results tr.queryAgeYoung td {
+  background-color: #faa;
+}
+table.results tr.queryAgeToday td {
+  background-color: #fdd;
 }
