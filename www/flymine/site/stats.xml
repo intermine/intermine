@@ -5,7 +5,7 @@
   <section>
     <title>Current FlyMine statistics</title>
     <para>
-      <!--ssi-include-static page="/stats.html"/-->
+      <ssi-include-static page="/stats.html"/>
     </para>
   </section>
 </article>
