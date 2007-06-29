@@ -8,13 +8,13 @@
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/"/>
       <property name="src.data.dir.includes" value="fbgn_annotationID.tsv"/>
     </source>
-    <source name="flybase-dmel-gff" type="flybase-gff" dump="true">
+    <source name="flybase-dmel-gff" type="flybase-gff">
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="gff3.taxonId" value="7227"/>
     </source>
-    <source name="flybase-dpse-gff" type="flybase-gff" dump="true">
+    <source name="flybase-dpse-gff" type="flybase-gff">
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/gff"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
@@ -39,7 +39,7 @@
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/rnai/wormbase/current"/>
     </source>
-    <source name="mage" type="mage" dump="true">
+    <source name="mage" type="mage">
       <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
       <property name="quantitationtypes" value="Signal med ratio"/>
     </source>
@@ -51,7 +51,7 @@
       <property name="taxonId" value="7227"/>
       <property name="src.data.dir" location="/shared/data/DRSC/current"/>
     </source>
-    <source name="long_oligo" type="long_oligo" dump="true">
+    <source name="long_oligo" type="long_oligo">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
@@ -66,7 +66,7 @@
     <source name="ensembl-anopheles" type="ensembl" dump="true">
       <property name="organism" value="AGP"/>
     </source>
-    <source name="ensembl-apis-mellifera" type="ensembl" dump="true">
+    <source name="ensembl-apis-mellifera" type="ensembl">
       <property name="organism" value="AM"/>
     </source>
     <source name="flyreg" type="flyreg">
@@ -75,7 +75,7 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/flyreg"/>
     </source>
-    <source name="interpro" type="interpro" dump="true">
+    <source name="interpro" type="interpro">
       <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
     </source>
     <source name="homophila" type="homophila">
@@ -105,13 +105,13 @@
       <property name="gff3.seqDataSourceName" value="Sanger"/>
       <property name="src.data.dir" location="/shared/data/tiffin/tiffin1.2"/>
     </source>
-    <source name="anoest" type="anoest" dump="true">
+    <source name="anoest" type="anoest">
       <property name="source.db.name" value="anoest"/>
     </source>
-    <source name="protein_structure" type="protein_structure" dump="true">
+    <source name="protein_structure" type="protein_structure">
       <property name="src.data.dir" location="/shared/data/kenji/data/all/"/>
     </source>
-    <source name="psi-intact" type="psi" dump="true">
+    <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
       <property name="organisms" value="7227 6239 4932"/>
     </source>
@@ -169,7 +169,7 @@
       <property name="fasta.includes" value="dpse-all-transcript-r*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/fasta"/>
     </source>
-    <source name="flybase-dmel-transcript-fasta" type="fasta" dump="true">
+    <source name="flybase-dmel-transcript-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
       <property name="fasta.classAttribute" value="organismDbId"/>
