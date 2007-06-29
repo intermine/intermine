@@ -79,30 +79,37 @@ function roundToSignificantDecimal(n) {
     } else return 100;
 }
 
-function updateCountInColumnSummary(uniqueCountQid) {
+function updateCountInColumnSummary() {
     var countString = document.resultsCountText;
-    if (countString != null) {
-        document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
-
-        // only update the unique count once the row count is available
-        var count = parseInt(countString.match(/([\d]+)\s*$/g)[0]);
-
-        setTimeout("updateUniqueCountInColumnSummary(" + uniqueCountQid + "," + count + ")", 300);
+    if (countString == null) {
+        setTimeout("updateCountInColumnSummary()", 1000);
+        return;
     }
-    setTimeout("updateCountInColumnSummary()", 1000);
+
+    var est = document.getElementById('resultsCountEstimate');
+    if (est == null || est.style.display != 'none') {
+        setTimeout("updateCountInColumnSummary()", 500);
+        return;
+    }
+
+    document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
 }
 
-function resultsCountCallback(results, rowCount) {
+function updateUniqueCountInColumnSummary(uniqueCountQid) {
+    getResults(uniqueCountQid, 1000, resultsCountCallback, null);
+}
+
+function resultsCountCallback(results) {
     var size = results[0][0];
-    if (rowCount > 1 && size > 1) {
+
+    if (size > 1) {
         var summaryUniqueCountElement = document.getElementById('summary_unique_count');
         summaryUniqueCountElement.style.display='inline';
         summaryUniqueCountElement.innerHTML='Total unique values: ' + size;
+        return true;
+    } else {
+        return false;
     }
-}
-
-function updateUniqueCountInColumnSummary(qid, rowCount) {
-    getResults(qid, 1000, resultsCountCallback, rowCount);
 }
 
 function getColumnSummary(tableName, columnName, columnDisplayName) {
@@ -159,7 +166,8 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
         var summaryLoadedElement = document.getElementById('summary_loaded');
         summaryLoadedElement.innerHTML = html;
         var uniqueCountQid = str[1];
-        setTimeout("updateCountInColumnSummary(" + uniqueCountQid + ")", 200);
+        setTimeout("updateCountInColumnSummary()", 200);
+        setTimeout("updateUniqueCountInColumnSummary(" + uniqueCountQid + ")", 300);
     });
 }
 
@@ -169,7 +177,9 @@ function getResultsPoller(qid, timeout, userCallback, userData) {
             // try again
             getResults(qid, timeout, userCallback, userData);
         } else {
-            userCallback(results, userData);
+            if (!userCallback(results, userData)) {
+                getResults(qid, timeout, userCallback, userData);
+            }
         }
     }
 
@@ -177,6 +187,7 @@ function getResultsPoller(qid, timeout, userCallback, userData) {
 }
 
 function getResults(qid, timeout, userCallback, userData) {
-    setTimeout("getResultsPoller(" + qid + ", " + timeout + ", " + userCallback + "," 
+    setTimeout("getResultsPoller(" + qid + ", " + timeout + ", " + userCallback + ","
                + userData + ")", timeout);
 }
+
