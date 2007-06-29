@@ -36,6 +36,7 @@ function callback(results) {
     var size = results[0][0];
     document.getElementById('resultsCountExactSize').innerHTML=size;
     document.resultsCountText = "${exactMessage} " + size;
+    return true;
 }
 
 window.onload = function() {
