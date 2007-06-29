@@ -24,5 +24,19 @@ body
 
 
 /**************************************/
+table.dbstats {
+  border:1px solid black;
+  border-width:1px 0 0 1px;
+  border-collapse:collapse;
+}
+table.dbstats td {
+  border:1px solid black;
+  border-width:0 1px 1px 0;
+}
+table.dbstats th {
+  border:1px solid black;
+  border-width:0 1px 1px 0;
+  background: #eee;
+}
 
 #tipbox {width:70%;background-color:#F5F0FF;padding:20px;text-align:left;}
