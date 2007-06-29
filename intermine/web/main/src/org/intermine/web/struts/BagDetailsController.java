@@ -35,6 +35,9 @@ import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
@@ -81,7 +84,6 @@ public class BagDetailsController extends TilesAction
                     throws Exception {
 
             HttpSession session = request.getSession();
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             ServletContext servletContext = session.getServletContext();
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
@@ -89,11 +91,25 @@ public class BagDetailsController extends TilesAction
             if (bagName == null) {
                 bagName = request.getParameter("name");
             }
-            InterMineBag imBag = profile.getSavedBags().get(bagName);
+            
+            InterMineBag imBag;
+            if (request.getParameter("scope") != null && request.getParameter("scope").equals("global")) {
+                SearchRepository searchRepository =
+                    SearchRepository.getGlobalSearchRepository(servletContext);
+                Map<String, ? extends WebSearchable> publicBagMap = 
+                    searchRepository.getWebSearchableMap(TagTypes.BAG);
+                imBag = (InterMineBag) publicBagMap.get(bagName); 
+                
+            } else {
+                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+                imBag = profile.getSavedBags().get(bagName);
+            }
+            
             /* forward to bag page if this is an invalid bag */
             if (imBag == null) {
                 return null; 
             }
+
             Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
             Model model = os.getModel();
