@@ -122,6 +122,7 @@
       <fileset dir="${dist.www}" includes="**/*.html">
         <exclude name="internal/**"/>
         <exclude name="images/index.html"/>
+        <exclude name="stats.html"/>
         <exclude name="graphics/index.html"/>
       </fileset>
       <xmlcatalog>
