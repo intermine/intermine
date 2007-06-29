@@ -13,7 +13,7 @@ use Cwd;
 
 use XML::Parser::PerlSAX;
 
-my @ant_command = ("ant");
+my @ant_command = ("/software/noarch/ant/bin/ant");
 
 my $dump_file_prefix;
 my $dump_host;
