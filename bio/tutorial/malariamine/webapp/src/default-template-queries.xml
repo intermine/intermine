@@ -3,490 +3,500 @@
   <bags/>
   <queries>
   </queries>
-  <template-queries>
-    <template name="AAA_organismProteins1" description="Show all the proteins from a particular organism." important="false">
-      <query name="AAA_organismProteins1" model="genomic" view="Protein">
-        <node path="Protein" type="Protein">
-        </node>
-        <node path="Protein.organism" type="Organism">
-        </node>
-        <node path="Protein.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show all the proteins from the organism:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAB_Synonyms" description="Show all
-                                               names, symbols and identifiers (including synonyms) for a particular
-                                               database entry." important="false">
-      <query name="AAB_Synonyms" model="genomic" view="Synonym.subject.synonyms.value">
-        <node path="Synonym" type="Synonym">
-        </node>
-        <node path="Synonym.value" type="String">
-          <constraint op="=" value="PF11_0344" description="Enter a name or identifier (eg a gene or protein name or identifier):"
-                      identifier="" editable="true" code="A"> 
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAB_proteins2fasta" description="Output
-                                                     proteins from a particular organism in a format suitable for
-                                                     creating a fasta database." important="false">
-      <query name="AAB_proteins2fasta" model="genomic" view="Protein">
-        <node path="Protein" type="Protein">
-        </node>
-        <node path="Protein.organism" type="Organism">
-        </node>
-        <node path="Protein.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="Output proteins from the organism:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAC_organismGenes1" description="Show all the genes for a particular organism." important="false">
-      <query name="AAC_organismGenes1" model="genomic" view="Gene">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show all the genes from organism:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAC_protein2proteinInteraction" description="Show protein interactions for a particular protein." important="false">
-      <query name="AAC_protein2proteinInteraction" model="genomic" view="Protein Protein.interactingProteins Protein.interactingProteins.primaryAccession">
-        <node path="Protein" type="Protein">
-        </node>
-        <node path="Protein.primaryAccession" type="String">
-          <constraint op="=" value="P09089" description="Show interactions for protein primary accession:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAD_genes2fasta" description="Output
-                                                  genes from a particular organism in a format suitable for creating a
-                                                  fasta database." important="false">
-      <query name="AAD_genes2fasta" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.symbol">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="Output genes from the organism:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAE_gene2Transcripts2" description="Show
-                                                        the predicted transcripts, the number of exons and a link to the
-                                                        sequence for a particular gene of a particular organism."
-              important="false">
-      <query name="AAE_gene2Transcripts2" model="genomic" view="Gene Gene.transcripts.identifier Gene.transcripts.exonCount" constraintLogic="A and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.synonyms" type="Synonym">
-        </node>
-        <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="PF11_0344" description="Show the predicted
-                                                      transcripts, the number of exons and a link to the sequence
-                                                      for the following gene:" identifier="" editable="true"
-                      code="A"> </constraint>
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="from the following organism:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAF_gene2exonTranscript1" description="Show the predicted transcripts and exons for a particular gene." important="false">
-      <query name="AAF_gene2exonTranscript1" model="genomic"
-             view="Gene.organismDbId Gene.identifier Gene.name
-                   Gene.transcripts.identifier Gene.transcripts.exonCount
-                   Gene.exons.identifier" constraintLogic="A and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.synonyms" type="Synonym">
-        </node>
-        <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="zen" description="Show predicted transcripts and exons for gene:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="From:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAG_gene2protein" description="Show the proteins for a particular gene." important="false">
-      <query name="AAG_gene2protein" model="genomic" view="Gene
-                                                           Gene.organismDbId Gene.identifier Gene.name Gene.proteins
-                                                           Gene.proteins.primaryAccession" constraintLogic="A and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.synonyms" type="Synonym">
-        </node>
-        <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="PF11_0344" description="Show proteins for the gene:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="From:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAH_Genes2chromosome1" description="Show genes located on a particular chromosome." important="false">
-      <query name="AAH_Genes2chromosome1" model="genomic" view="Gene.name Gene.organismDbId Gene.chromosome.identifier" constraintLogic="A and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.chromosome" type="Chromosome">
-        </node>
-        <node path="Gene.chromosome.identifier" type="String">
-          <constraint op="=" value="2L" description="Show genes located on chromosome" identifier="c1" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="from" identifier="c2" editable="true" code="B">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAI_gene2ChromosomeLocation1" description="Show the chromosome and the chromosome location of a particular gene." important="false">
-      <query name="AAI_gene2ChromosomeLocation1" model="genomic"
-             view="Gene Gene.organismDbId Gene.identifier Gene.name
-                   Gene.chromosome.identifier Gene.objects.start Gene.objects.end
-                   Gene.objects.strand" constraintLogic="A and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.synonyms" type="Synonym">
-        </node>
-        <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="PF11_0344" description="Show the chromosome and the chromosome location for gene:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="From:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-        <node path="Gene.objects" type="Location">
-        </node>
-        <node path="Gene.objects.object" type="Chromosome">
-        </node>
-      </query>
-    </template>
-    <template name="AAK_chromosomeLocation2geneSequence1"
-              description="Show the chromosome location and sequence for all genes
-                           from a particular organism." important="false">
-      <query name="AAK_chromosomeLocation2geneSequence1" model="genomic"
-             view="Gene.objects.object.identifier Gene.objects.strand
-                   Gene.objects.start Gene.objects.end Gene.organismDbId
-                   Gene.identifier Gene.symbol Gene.sequence.residues">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.objects" type="Location">
-        </node>
-        <node path="Gene.objects.object" type="Chromosome">
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7"
-                      description="Show the chromosome location and gene sequences
-                                   for all genes from organism:" identifier="" editable="true"
-                      code="A"> </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAL_chromosomeLocation2genes2"
-              description="Show the genes, transcripts and exons located between
-                           two points on a chromosome.  Give the location of the exons."
-              important="false">
-      <query name="AAL_chromosomeLocation2genes2" model="genomic"
-             view="Chromosome.identifier Chromosome.exons.gene.organismDbId
-                   Chromosome.exons.gene.symbol Chromosome.exons.gene.identifier
-                   Chromosome.exons.transcripts.identifier
-                   Chromosome.exons.identifier Chromosome.exons.objects.start
-                   Chromosome.exons.objects.end Chromosome.exons.objects.strand"
-             constraintLogic="D and A and C and B">
-        <node path="Chromosome" type="Chromosome">
-        </node>
-        <node path="Chromosome.identifier" type="String">
-          <constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Chromosome.organism" type="Organism">
-        </node>
-        <node path="Chromosome.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="from:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-        <node path="Chromosome.exons" type="Exon">
-        </node>
-        <node path="Chromosome.exons.objects" type="Location">
-        </node>
-        <node path="Chromosome.exons.objects.object" type="Chromosome">
-        </node>
-        <node path="Chromosome.exons.objects.start" type="Integer">
-          <constraint op="&gt;" value="1" description="between base:" identifier="" editable="true" code="C">
-          </constraint>
-        </node>
-        <node path="Chromosome.exons.objects.end" type="Integer">
-          <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true" code="D">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAM_Gene2GO2NEW" description="Search for GO annotations for a particular gene." important="false">
-      <query name="AAM_Gene2GO2NEW" model="genomic"
-             view="Gene.organismDbId Gene.identifier Gene.symbol
-                   Gene.goAnnotation.name Gene.goAnnotation.identifier"
-             constraintLogic="A and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.synonyms" type="Synonym">
-        </node>
-        <node path="Gene.synonyms.value" type="String">
-          <constraint op="=" value="PF11_0344" description="Show the GO annotations for gene:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="from:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="AAN_Gene_GoTerms" description="Search for genes annotated with a particular GO term (or any of its children)." important="false">
-      <query name="AAN_Gene_GoTerms" model="genomic" view="Gene
-                                                           Gene.allGoAnnotation.actualGoTerm.identifier
-                                                           Gene.allGoAnnotation.actualGoTerm.name" constraintLogic="A and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="Search for genes from:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Gene.allGoAnnotation" type="GOAnnotation">
-        </node>
-        <node path="Gene.allGoAnnotation.property" type="GOTerm">
-        </node>
-        <node path="Gene.allGoAnnotation.property.identifier" type="String">
-          <constraint op="=" value="GO:0007568" description="that have
-                                                             been annotated with GO term (or any of its children):"
-                      identifier="GOTerm.identifier" editable="true" code="B">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="GOterm2GeneProteinInteraction" description="Show
-                                                                genes from a particular organism annotated with a particular GO term
-                                                                which has evidence code IPI (inferred from Protein
-                                                                Interaction). Show the gene from which the annotation was inferred
-                                                                (the 'with' field)." important="false">
-      <query name="GOterm2GeneProteinInteraction" model="genomic" view="Gene Gene.goAnnotation Gene.goAnnotation.with" constraintLogic="A and C and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show genes from organism:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Gene.goAnnotation" type="GOAnnotation">
-        </node>
-        <node path="Gene.goAnnotation.name" type="String">
-          <constraint op="=" value="protein binding" description="annotated with GO term (and evidence code IPI):" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-        <node path="Gene.goAnnotation.evidenceCode" type="String">
-          <constraint op="=" value="IPI" description="" identifier="" code="C">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="InteractionDataSets" description="Show all protein interactions from a particular dataset." important="false">
-      <query name="InteractionDataSets" model="genomic" view="ProteinInteraction">
-        <node path="ProteinInteraction" type="ProteinInteraction">
-        </node>
-        <node path="ProteinInteraction.evidence" type="ExperimentalResult">
-        </node>
-        <node path="ProteinInteraction.evidence.analysis" type="ProteinInteractionExperiment">
-        </node>
-        <node path="ProteinInteraction.evidence.analysis.publication" type="Publication">
-        </node>
-        <node path="ProteinInteraction.evidence.analysis.publication.firstAuthor" type="String">
-          <constraint op="LIKE" value="Giot%" description="Show all
-                                                           protein interactions from the dataset (leave as default or
-                                                           change to Stanyon* or Li*):" identifier="" editable="true"
-                      code="A"> </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="Object_Synonym" description="Find an entry in the database using any identifier or synonym." important="false">
-      <query name="Object_Synonym" model="genomic" view="Synonym.subject">
-        <node path="Synonym" type="Synonym">
-        </node>
-        <node path="Synonym.value" type="String">
-          <constraint op="=" value="timeout" description="" identifier="Synonym.value.1" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="gene2goTermwithEvidence"
-              description="Show genes from a particular organism annotated with a
-                           particular GO term with a particular evidence code."
-              important="false">
-      <query name="gene2goTermwithEvidence" model="genomic" view="Gene Gene.goAnnotation" constraintLogic="A and C and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7" description="Show genes from organism:" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-        <node path="Gene.goAnnotation" type="GOAnnotation">
-        </node>
-        <node path="Gene.goAnnotation.name" type="String">
-          <constraint op="=" value="protein binding" description="annotated with GO term:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-        <node path="Gene.goAnnotation.evidenceCode" type="String">
-          <constraint op="=" value="IPI" description="with evidence code:" identifier="" editable="true" code="C">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="geneTranscriptsExons" description="For a
-                                                       particular gene, list the transcripts and show the chromosome
-                                                       location and length of their exons." important="false">
-      <query name="geneTranscriptsExons" model="genomic"
-             view="Gene.identifier Gene.transcripts.identifier
-                   Gene.transcripts.exons.identifier
-                   Gene.transcripts.exons.chromosomeLocation.start
-                   Gene.transcripts.exons.chromosomeLocation.end
-                   Gene.transcripts.exons.length">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.identifier" type="String">
-          <constraint op="=" value="CG10016" description="Show transcripts and exons for gene:" identifier="Gene.identifier" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="geneTranscriptsIntrons" description="For
-                                                         a particular gene, list the transcripts and show the chromosome
-                                                         location and length of their introns." important="false">
-      <query name="geneTranscriptsIntrons" model="genomic"
-             view="Gene.identifier Gene.transcripts.identifier
-                   Gene.transcripts.introns
-                   Gene.transcripts.introns.chromosomeLocation.start
-                   Gene.transcripts.introns.chromosomeLocation.end
-                   Gene.transcripts.introns.length">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.identifier" type="String">
-          <constraint op="=" value="CG10016" description="Show transcripts and introns for gene:" identifier="Gene.identifier" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="goTerm2genesWithEvidenceandWith"
-              description="Show genes and the related 'with' annotations from a
-                           particular organism annotated with a particular GO term with a
-                           particular evidence code. (The 'with' field holds an additional
-                           identifier for annotations using certain evidence codes - see
-                           below)." important="false">
-      <query name="goTerm2genesWithEvidenceandWith" model="genomic" view="Gene Gene.goAnnotation Gene.goAnnotation.with" constraintLogic="A and C and B">
-        <node path="Gene" type="Gene">
-        </node>
-        <node path="Gene.organism" type="Organism">
-        </node>
-        <node path="Gene.organism.name" type="String">
-          <constraint op="=" value="Plasmodium falciparum 3D7"
-                      description="Show genes and 'with' annotations from organism:"
-                      identifier="" editable="true" code="A"> </constraint>
-        </node>
-        <node path="Gene.goAnnotation" type="GOAnnotation">
-        </node>
-        <node path="Gene.goAnnotation.name" type="String">
-          <constraint op="=" value="protein binding" description="Annotated with GO term:" identifier="" editable="true" code="B">
-          </constraint>
-        </node>
-        <node path="Gene.goAnnotation.evidenceCode" type="String">
-          <constraint op="=" value="IPI" description="with evidence
-                                                      code: (note: for 'with' annotations the evidence code should
-                                                      be IC, IEA, IGI, IPI OR ISS)" identifier="" editable="true"
-                      code="C"> </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="proteinToGeneIdentifiers"
-              description="For a particular UniProt protein show the identifiers
-                           and symbol of the corresponding gene." important="false">
-      <query name="proteinToGeneIdentifiers" model="genomic"
-             view="Protein.identifier Protein.primaryAccession Protein.name
-                   Protein.genes.identifier Protein.genes.symbol
-                   Protein.genes.organismDbId">
-        <node path="Protein" type="Protein">
-        </node>
-        <node path="Protein.synonyms" type="Synonym">
-        </node>
-        <node path="Protein.synonyms.value" type="String">
-          <constraint op="=" value="128UP_DROME" description="Enter the
-                                                              identifier or accession of a UniProt protein:" identifier=""
-                      editable="true" code="A"> </constraint>
-        </node>
-      </query>
-    </template>
-  </template-queries>
-
-  <tags>
-    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
-    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class" />
-    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class" />
-    <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionTerm" type="class" />
-    <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Transcript" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Exon" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TRNA" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.NcRNA" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.ChromosomeBand" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RepeatRegion" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TransposableElement" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Pseudogene" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RRNA" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnRNA" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnoRNA" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.UTR" type="class" />
-    <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.MRNA" type="class" />
-    <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class" />
-    <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOAnnotation" type="class" />
-    <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class" />
-    <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class" />
-    <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class" />
-    <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class" />
-  </tags>
+<template-queries>
+<template name="A_IdentifierSynonym_Object" title="Identifier or synonym --&gt; Database object." longDescription="Find an entry in the database using any identifier or synonym." comment="This is the template that the quick search runs.  If the name is changed it also has to be changed for the quick search configuration - Rachel.">
+  <query name="A_IdentifierSynonym_Object" model="genomic" view="Synonym.subject.identifier Synonym.value">
+    <node path="Synonym" type="Synonym">
+    </node>
+    <node path="Synonym.value" type="String">
+      <constraint op="=" value="timeout" description="" identifier="Synonym.value.1" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="AllGene_Chromosome" title="All genes organism X --&gt; All chromosomal locations." longDescription="Show the chromosome location and sequence for all genes from a particular organism" comment="">
+  <query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.identifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.organismDbId Gene.identifier Gene.symbol">
+    <pathDescription pathString="Gene.chromosomeLocation" description="Chromosome location">
+    </pathDescription>
+    <pathDescription pathString="Gene.chromosome" description="Chromosome">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.objects" type="Location">
+    </node>
+    <node path="Gene.objects.object" type="Chromosome">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show the chromosome location and gene sequences for all genes from organism:" identifier="Organism.name" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="ChromLocation_Gene" title="Chromosomal location --&gt; All genes." longDescription="Show the genes located between two points on a chromosome" comment="">
+  <query name="ChromLocation_Gene" model="genomic" view="Chromosome.genes.identifier Chromosome.genes.symbol Chromosome.identifier Chromosome.genes.chromosomeLocation.start Chromosome.genes.chromosomeLocation.end Chromosome.genes.chromosomeLocation.strand" constraintLogic="A and B and C and D">
+    <pathDescription pathString="Chromosome.genes.chromosomeLocation" description="Chromosome location">
+    </pathDescription>
+    <pathDescription pathString="Chromosome.genes" description="Gene">
+    </pathDescription>
+    <node path="Chromosome" type="Chromosome">
+    </node>
+    <node path="Chromosome.identifier" type="String">
+      <constraint op="=" value="2L" description="Show the genes located on chromosome:" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Chromosome.organism" type="Organism">
+    </node>
+    <node path="Chromosome.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="from organism:" identifier="from organism:" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Chromosome.genes" type="Gene">
+    </node>
+    <node path="Chromosome.genes.chromosomeLocation" type="Location">
+    </node>
+    <node path="Chromosome.genes.chromosomeLocation.start" type="Integer">
+      <constraint op="&gt;" value="1" description="between:" identifier="between:" editable="true" code="C">
+      </constraint>
+    </node>
+    <node path="Chromosome.genes.chromosomeLocation.end" type="Integer">
+      <constraint op="&lt;" value="50000" description="and:" identifier="and:" editable="true" code="D">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes, transcripts, exons." longDescription="Show the genes, transcripts and exons located between two points on a chromosome.  Give the location of the exons." comment="">
+  <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.organismDbId Chromosome.exons.gene.symbol Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand" constraintLogic="D and A and C and B">
+    <pathDescription pathString="Chromosome.exons.transcripts" description="Transcript">
+    </pathDescription>
+    <pathDescription pathString="Chromosome.exons" description="Exon">
+    </pathDescription>
+    <pathDescription pathString="Chromosome.exons.gene" description="Gene">
+    </pathDescription>
+    <pathDescription pathString="Chromosome.exons.objects" description="Exon &gt; Chromosome location">
+    </pathDescription>
+    <node path="Chromosome" type="Chromosome">
+    </node>
+    <node path="Chromosome.identifier" type="String">
+      <constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Chromosome.organism" type="Organism">
+    </node>
+    <node path="Chromosome.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Chromosome.exons" type="Exon">
+    </node>
+    <node path="Chromosome.exons.objects" type="Location">
+    </node>
+    <node path="Chromosome.exons.objects.object" type="Chromosome">
+    </node>
+    <node path="Chromosome.exons.objects.start" type="Integer">
+      <constraint op="&gt;" value="1" description="between base:" identifier="" editable="true" code="C">
+      </constraint>
+    </node>
+    <node path="Chromosome.exons.objects.end" type="Integer">
+      <constraint op="&lt;" value="10000" description="and:" identifier="" editable="true" code="D">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Chromosome_Gene" title="Chromosome --&gt; All genes." longDescription="Show genes located on a particular chromosome." comment="">
+  <query name="Chromosome_Gene" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand" constraintLogic="A and B">
+    <pathDescription pathString="Gene.chromosome" description="Chromosome">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.chromosome" type="Chromosome">
+    </node>
+    <node path="Gene.chromosome.identifier" type="String">
+      <constraint op="=" value="2L" description="Show genes located on chromosome" identifier="chromosome.identifier" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="from" identifier="organism.name" editable="true" code="B">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Chromosome_IntergenicSequence" title="Chromosome --&gt; All intergenic regions + start, end and length of intergenic regions." longDescription="For a particular chromosome show start, end and length of all intergenic regions." comment="">
+  <query name="Chromosome_IntergenicSequence" model="genomic" view="IntergenicRegion.chromosomeLocation.start IntergenicRegion.chromosomeLocation.end IntergenicRegion.chromosomeLocation.object.identifier IntergenicRegion.length IntergenicRegion.identifier" constraintLogic="A and B">
+    <pathDescription pathString="IntergenicRegion.chromosomeLocation.object" description="Chromosome">
+    </pathDescription>
+    <node path="IntergenicRegion" type="IntergenicRegion">
+    </node>
+    <node path="IntergenicRegion.organism" type="Organism">
+    </node>
+    <node path="IntergenicRegion.organism.shortName" type="String">
+      <constraint op="=" value="D. melanogaster" description="Select an organism:" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="IntergenicRegion.chromosomeLocation" type="Location">
+    </node>
+    <node path="IntergenicRegion.chromosomeLocation.object" type="Chromosome">
+    </node>
+    <node path="IntergenicRegion.chromosomeLocation.object.identifier" type="String">
+      <constraint op="=" value="2L" description="Show intergenic regions for chromosome:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Exon_To_Gene_Type_Converter" title="Exon to gene type converter" longDescription="" comment="">
+  <query name="Exon_To_Gene_Type_Converter" model="genomic" view="Exon.id Exon.gene.id">
+    <node path="Exon" type="Exon">
+    </node>
+    <node path="Exon.id" type="Integer">
+      <constraint op="=" value="0" description="Exon.id" identifier="Exon.id" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="GO_name_Gene" title="GO term name --&gt; Genes in one specific organism." longDescription="Search for genes in a one specific organism that have been asociated with the following GO annotation." comment="">
+  <query name="GO_name_Gene" model="genomic" view="Gene.identifier Gene.organismDbId Gene.goAnnotation.name" constraintLogic="B and C">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Search for genes in:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.name" type="String">
+      <constraint op="LIKE" value="%transcription factor activity%" description="" identifier="goAnnotation.name" editable="true" code="C">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="GOtermidentifier_name" title="GO term identifier --&gt; GO term name" longDescription="Give the GO term name for a particular GO term identifier." comment="">
+  <query name="GOtermidentifier_name" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.description">
+    <node path="GOTerm" type="GOTerm">
+    </node>
+    <node path="GOTerm.identifier" type="String">
+      <constraint op="=" value="GO:0007350" description="" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_Location" title="Gene --&gt; Chromosomal location." longDescription="Show the chromosome and the chromosome location of a particular gene." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_Location" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand" constraintLogic="A and B">
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG1046" description="Show the chromosome and the chromosome location for gene:" identifier="Gene.class" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.objects" type="Location">
+    </node>
+    <node path="Gene.objects.object" type="Chromosome">
+    </node>
+  </query>
+</template>
+<template name="Gene_OrthologueOrganism" title="Gene --&gt; Orthologues in one specific organism." longDescription="For a particular gene, show predicted orthologues in one particular organism." comment="Orthologues-&gt;subject-&gt;identifier removed for workshop (as dpse identifiers missing so made it confusing) (Rachel);  07.02.07: updated to run from gene identifier - Rachel. 13/03/07 added orthologue organismDbId. Philip 070607 updated to work from gene class - Philip">
+  <query name="Gene_OrthologueOrganism" model="genomic" view="Gene.identifier Gene.symbol Gene.organismDbId Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.organismDbId Gene.orthologues.orthologue.name" constraintLogic="B and D and A">
+    <pathDescription pathString="Gene.orthologues.orthologue" description="Orthologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.organism" description="Organism">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG3936" description="Show the predicted orthologues for gene;" identifier="Gene.class" editable="true" code="D">
+      </constraint>
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="From organism:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.orthologues" type="Orthologue">
+    </node>
+    <node path="Gene.orthologues.orthologue" type="Gene">
+    </node>
+    <node path="Gene.orthologues.orthologue.organism" type="Organism">
+    </node>
+    <node path="Gene.orthologues.orthologue.organism.name" type="String">
+      <constraint op="=" value="Anopheles gambiae str. PEST" description="In organism:" identifier="organism.name" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_OverlapppingGenes" title="Gene --&gt; Overlapping genes." longDescription="For a particular gene, search for overlapping genes." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_OverlapppingGenes" model="genomic" view="Gene.identifier Gene.symbol Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand Gene.overlappingFeatures.identifier Gene.overlappingFeatures.symbol Gene.overlappingFeatures.chromosome.identifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.chromosomeLocation.strand">
+    <pathDescription pathString="Gene.chromosomeLocation" description="Gene &gt; chromosome location">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Overlapping feature &gt; chromosome gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures" description="Overlapping gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures.chromosome" description="Overlapping gene  &gt; chromosome">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG11566" description="Search for any genes overlapping gene:" identifier="Gene.class" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.overlappingFeatures" type="Gene">
+    </node>
+  </query>
+</template>
+<template name="Gene_Protein" title="Gene --&gt; Proteins." longDescription="Show the proteins for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_Protein" model="genomic" view="Gene.identifier Gene.symbol Gene.proteins.identifier Gene.proteins.primaryAccession">
+    <pathDescription pathString="Gene.proteins" description="Protein">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG1046" description="" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_To_Exon_Type_Converter" title="Gene to exon type converter" longDescription="" comment="">
+  <query name="Gene_To_Exon_Type_Converter" model="genomic" view="Gene.id Gene.exons.id">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.id" type="Integer">
+      <constraint op="=" value="0" description="Gene.id" identifier="Gene.id" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_To_MRNA_Type_Converter" title="Gene to mRNA type converter" longDescription="" comment="">
+  <query name="Gene_To_MRNA_Type_Converter" model="genomic" view="Gene.id Gene.CDSs.MRNA.id">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.id" type="Integer">
+      <constraint op="=" value="0" description="Gene.id" identifier="Gene.id" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_To_Protein_Type_Converter" title="Gene to protein type converter" longDescription="" comment="">
+  <query name="Gene_To_Protein_Type_Converter" model="genomic" view="Gene.id Gene.proteins.id">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.id" type="Integer">
+      <constraint op="=" value="0" description="Gene.id" identifier="Gene.id" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_paralogues" title="Gene --&gt; paralogues" longDescription="For a particular gene, show its paralogues." comment="07.06.07 updated to work from transcript class - Philip">
+  <query name="Gene_paralogues" model="genomic" view="Gene.identifier Gene.symbol Gene.paralogues.paralogue.identifier Gene.paralogues.paralogue.symbol" constraintLogic="B and C">
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG1004" description="Gene:" identifier="Gene.class" editable="true" code="C">
+      </constraint>
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="from organism:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Organism_Gene" title="Organism --&gt; All genes." longDescription="Show all the genes for a particular organism." comment="">
+  <query name="Organism_Gene" model="genomic" view="Gene.identifier Gene.symbol Gene.organismDbId">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show all the genes from organism:" identifier="Organism.name" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Organism_Protein" title="Organism --&gt; All proteins." longDescription="Show all the proteins from a particular organism." comment="">
+  <query name="Organism_Protein" model="genomic" view="Protein.identifier Protein.primaryAccession">
+    <node path="Protein" type="Protein">
+    </node>
+    <node path="Protein.organism" type="Organism">
+    </node>
+    <node path="Protein.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show all the proteins from the organism:" identifier="Organism.name" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Organism_ProteinInteraction" title="Organism --&gt; All protein interactions." longDescription="For a particular organism, show all pairs of interacting proteins and the PubMed ID of the paper describing the experiment." comment="">
+  <query name="Organism_ProteinInteraction" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.proteinInteractions.interactingProteins.identifier Protein.proteinInteractions.interactingProteins.primaryAccession Protein.proteinInteractions.experiment.publication.pubMedId">
+    <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment">
+    </pathDescription>
+    <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
+    </pathDescription>
+    <node path="Protein" type="Protein">
+    </node>
+    <node path="Protein.organism" type="Organism">
+    </node>
+    <node path="Protein.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show all protein interactions for organism:" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Protein_Gene" title="Protein --&gt; Gene." longDescription="For a particular protein show the identifiers and symbol of the corresponding gene." comment="07:02:07:Updated to work from protein primary accession- Rachel. 06.06.07 updated to work using the protein class - Philip">
+  <query name="Protein_Gene" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.name Protein.genes.identifier Protein.genes.symbol Protein.genes.organismDbId">
+    <node path="Protein" type="Protein">
+      <constraint op="LOOKUP" value="P32234" description="Protein:" identifier="Protein.class" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Protein_ProteinInteraction" title="Protein --&gt; Interacting proteins." longDescription="Show protein interactions for a particular protein." comment="06.06.07 updated to work from protein class - Philip">
+  <query name="Protein_ProteinInteraction" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.proteinInteractions.interactingProteins.identifier Protein.proteinInteractions.interactingProteins.primaryAccession Protein.proteinInteractions.experiment.publication.pubMedId">
+    <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment &gt; publication">
+    </pathDescription>
+    <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
+    </pathDescription>
+    <node path="Protein" type="Protein">
+      <constraint op="LOOKUP" value="P19107" description="Show interactions for protein primary accession:" identifier="Protein.class" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+</template-queries>
+<tags>
+  <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class">
+  </tag>
+  <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  </tag>
+  <tag name="aspect:Comparative Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class">
+  </tag>
+  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_OrthologueOrganism" type="template">
+  </tag>
+  <tag name="aspect:Comparative Genomics" objectIdentifier="Gene_paralogues" type="template">
+  </tag>
+  <tag name="aspect:GO" objectIdentifier="GO_name_Gene" type="template">
+  </tag>
+  <tag name="aspect:GO" objectIdentifier="GOtermidentifier_name" type="template">
+  </tag>
+  <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  </tag>
+  <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOAnnotation" type="class">
+  </tag>
+  <tag name="aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Transcript" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TRNA" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnoRNA" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Orthologue" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Paralogue" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.NcRNA" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RepeatRegion" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnRNA" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.MRNA" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Pseudogene" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TransposableElement" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.UTR" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.RRNA" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Exon" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.ChromosomeBand" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="A_IdentifierSynonym_Object" type="template">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="AllGene_Chromosome" type="template">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="Gene_Protein" type="template">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="ChromLocation_GeneTranscriptExon" type="template">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="ChromLocation_Gene" type="template">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="Chromosome_Gene" type="template">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="Chromosome_IntergenicSequence" type="template">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="Gene_Location" type="template">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="Gene_OverlapppingGenes" type="template">
+  </tag>
+  <tag name="aspect:Genomics" objectIdentifier="Organism_Gene" type="template">
+  </tag>
+  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionTerm" type="class">
+  </tag>
+  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
+  </tag>
+  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class">
+  </tag>
+  <tag name="aspect:Protein Interactions" objectIdentifier="org.flymine.model.genomic.ProteinInteractionExperiment" type="class">
+  </tag>
+  <tag name="aspect:Protein Interactions" objectIdentifier="Organism_ProteinInteraction" type="template">
+  </tag>
+  <tag name="aspect:Protein Interactions" objectIdentifier="Protein_ProteinInteraction" type="template">
+  </tag>
+  <tag name="aspect:Protein Structure" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
+  </tag>
+  <tag name="aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
+  </tag>
+  <tag name="aspect:Proteins" objectIdentifier="Organism_Protein" type="template">
+  </tag>
+  <tag name="aspect:Proteins" objectIdentifier="Protein_Gene" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="A_IdentifierSynonym_Object" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="AllGene_Chromosome" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Gene_Protein" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="GO_name_Gene" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="GOtermidentifier_name" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Gene_Location" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Gene_OrthologueOrganism" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Gene_OverlapppingGenes" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Gene_paralogues" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Organism_Gene" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Organism_Protein" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Organism_ProteinInteraction" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Protein_Gene" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Protein_ProteinInteraction" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Chromosome_Gene" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="Chromosome_IntergenicSequence" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="ChromLocation_Gene" type="template">
+  </tag>
+  <tag name="im:public" objectIdentifier="ChromLocation_GeneTranscriptExon" type="template">
+  </tag>
+</tags>
 </userprofile>
