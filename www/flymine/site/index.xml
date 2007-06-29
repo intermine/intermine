@@ -22,12 +22,10 @@
         This is release 8.0 of FlyMine.  See the <ulink url="release-notes.xml">release notes</ulink> to find out whats new.
       </para>
 
-      <!--ssi-include-static page="/maintenance/message.shtml"/-->
-
-    </section>
-  
-  
-
+	  <para>
+ 		<ssi-include page="tip.tile"/>
+      </para>
+   </section>
   </column>
 
   <column width="39%">
@@ -45,27 +43,18 @@
 
   </column>
 
-  
-  <column width="50%">
-  <section>
-    <title>
-      Bags
-    </title>
-    <para>
-      <ssi-include page="bagFrontPage.tile"/>
-    </para>
-  </section>
-  </column>
-  <column width="50%">
-   <section>
-    <title>
-      Tips
-    </title>
-	<para>
-		<ssi-include page="tip.tile"/>
-    </para>
-   </section>
-  </column>
+  <column width="39%">
+    
+	  <section>
+	    <title>
+	      Bags
+	    </title>
+	    <para>
+	      <ssi-include page="bagFrontPage.tile"/>
+	    </para>
+	  </section>
+
+  </column>  
 
   <section clear="both">
     <title>
