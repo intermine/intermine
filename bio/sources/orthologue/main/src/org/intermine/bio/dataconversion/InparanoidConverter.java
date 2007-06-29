@@ -141,8 +141,14 @@ public class InparanoidConverter extends FileConverter
             String index = array[0];
             String code = null;
             String bootstrap = null;
-            if (array.length > 5) {
-                bootstrap = array[5].substring(0, array[5].indexOf('%'));
+            if (array.length > 5 && array[5] != null && !array[5].equals("")) {
+                try {
+                    bootstrap = array[5].substring(0, array[5].indexOf('%'));
+                } catch (Exception e) {
+                    throw new RuntimeException("Error getting bootstap score from line: " 
+                                               + lineNum + " of file: " 
+                                               + getCurrentFile().getName());
+                }
             }
             String score = array[3];
             
