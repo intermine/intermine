@@ -32,7 +32,10 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -78,9 +81,29 @@ public class QueryForGraphAction extends InterMineAction
         String bagName = request.getParameter("bagName");
         String queryString = request.getParameter("query");
 
-        Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        InterMineBag bag = (InterMineBag) currentProfile.getSavedBags().get(bagName);
+        //Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+        //InterMineBag bag = (InterMineBag) currentProfile.getSavedBags().get(bagName);
 
+        InterMineBag bag;
+        
+        /* get bag from user profile */
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        bag = profile.getSavedBags().get(bagName);
+        
+        /* public bag - since user doesn't have it */
+        if (bag == null) {
+            SearchRepository searchRepository =
+                SearchRepository.getGlobalSearchRepository(servletContext);
+            Map<String, ? extends WebSearchable> publicBagMap = 
+                searchRepository.getWebSearchableMap(TagTypes.BAG);
+            bag = (InterMineBag) publicBagMap.get(bagName); 
+        }
+
+        /* its all gone horribly wrong, no one has the bag! */
+        if (bag == null) {
+            return null;
+        }
+        
         IqlQuery iqlQuery = new IqlQuery(queryString, os.getModel().getPackageName());
         Query query = iqlQuery.toQuery();
         Set queryFrom = query.getFrom();
