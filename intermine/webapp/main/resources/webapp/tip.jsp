@@ -12,8 +12,7 @@ Nifty("div#tipbox","big");
 <div class="body" align="center">
 	<div id="tipbox">
 	<h3>Tips:</h3>
-	  <p><jsp:include page="tips/tip${randomTip}_short.jsp"/></p>
-	  <html:link action="/tip?id=${randomTip}"><img src="<html:rewrite page="/tips/images/tip${randomTip}a.png"/>" width="300"/></html:link>
+	  <p><img src="<html:rewrite page="/tips/images/tip${randomTip}.png"/>"/> <jsp:include page="tips/tip${randomTip}_short.jsp"/></p>	  
 	<p><html:link action="/tip?id=${randomTip}">Read more &gt;&gt;&gt;</html:link></p>
 	</div>
 </div>
