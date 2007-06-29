@@ -86,13 +86,13 @@ function updateCountInColumnSummary() {
         return;
     }
 
+    document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
+
     var est = document.getElementById('resultsCountEstimate');
     if (est == null || est.style.display != 'none') {
         setTimeout("updateCountInColumnSummary()", 500);
         return;
     }
-
-    document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
 }
 
 function updateUniqueCountInColumnSummary(uniqueCountQid) {
