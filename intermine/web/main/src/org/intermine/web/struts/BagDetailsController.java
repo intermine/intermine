@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,6 +62,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.urls.CategoryURLGenerator;
 
 /**
  * @author Xavier Watkins
@@ -183,7 +185,7 @@ public class BagDetailsController extends TilesAction
             PagedTable pagedColl = new PagedTable(webPathCollection);
 
             request.setAttribute("bag", imBag);
-            request.setAttribute("bagSize", imBag.size());
+            request.setAttribute("bagSize", new Integer(imBag.size()));
             request.setAttribute("pagedColl", pagedColl);
             request.setAttribute("graphDisplayerArray", graphDisplayerArray);
             request.setAttribute("tableDisplayerArray", tableDisplayerArray);
@@ -225,7 +227,28 @@ public class BagDetailsController extends TilesAction
         renderer.setItemLabelsVisible(true);
         renderer.setItemMargin(0);
         plot.setRenderer(renderer);
-                
+        CategoryURLGenerator categoryUrlGen = null;
+        // set series 0 to have URLgenerator specified in config file
+        // set series 1 to have no URL generator.
+        try {
+            Class clazz2 = TypeUtil.instantiate(graphDisplayer.getUrlGen());                    
+            Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
+                                                                            {
+                String.class
+                                                                            });
+            categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
+            .newInstance(new Object[]
+                                    {
+                bagName
+                                    });
+            
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        renderer.setItemURLGenerator(null);    
+        renderer.setSeriesItemURLGenerator(0, categoryUrlGen);
+        renderer.setSeriesItemURLGenerator(1, null);
+        
         // integers only
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -234,7 +257,7 @@ public class BagDetailsController extends TilesAction
                          graphDataSet.getCategoryArray(),
                          bagName,
                          graphDisplayer.getToolTipGen(),
-                         graphDisplayer.getUrlGen(), 
+                         null,
                          chart,
                          plot,
                          renderer);
