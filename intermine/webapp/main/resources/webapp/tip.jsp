@@ -11,7 +11,7 @@ Nifty("div#tipbox","big");
 </script>
 <div class="body" align="center">
 	<div id="tipbox">
-	<h3>Tips:</h3>
+	<h3>Did you know?</h3>
 	  <p>
 	  	<table>
 	  	<tr>
