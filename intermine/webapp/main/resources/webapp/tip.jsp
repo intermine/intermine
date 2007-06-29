@@ -15,12 +15,12 @@ Nifty("div#tipbox","big");
 	  <p>
 	  	<table>
 	  	<tr>
-	  		<td><img src="<html:rewrite page="/tips/images/tip${randomTip}.png"/>" height="64" width="64" /></td>
+	  		<td><html:link action="/tip?id=${randomTip}"><img src="<html:rewrite page="/tips/images/tip${randomTip}.png"/>" height="64" width="64" /></html:link></td>
 	  		<td><jsp:include page="tips/tip${randomTip}_short.jsp"/></td>
 	  	</tr>
 	  	</table>	  		
 	  </p>	  
-	<p><html:link action="/tip?id=${randomTip}">Read more &gt;&gt;&gt;</html:link></p>
+	<p><html:link action="/tip?id=${randomTip}">Read more &gt;&gt;</html:link></p>
 	</div>
 </div>
 
