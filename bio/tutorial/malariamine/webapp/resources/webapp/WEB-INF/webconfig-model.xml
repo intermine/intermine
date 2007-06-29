@@ -76,7 +76,6 @@
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
-    <tabledisplayer src="/model/locatedSequenceFeatureShort.jsp"/>
   </class>
 
   <class className="org.flymine.model.genomic.Exon">
