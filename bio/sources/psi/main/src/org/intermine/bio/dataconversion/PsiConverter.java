@@ -330,7 +330,7 @@ public class PsiConverter extends FileConverter
                         // TODO this should maybe create a data source for each db
                         
                         Item synonym = createItem("Synonym");
-                        synonym.setAttribute("id", id);
+                        synonym.setAttribute("value", id);
                         synonym.setAttribute("type", db.startsWith("uniprot") 
                                              ? "accession" : "identifier");
                         synonym.setReference("source", datasourceItemId);
@@ -340,7 +340,7 @@ public class PsiConverter extends FileConverter
                         // create an extra synonym for proteins that have an IntAct identifier
                         if (db.equals("intact")) {
                             synonym = createItem("Synonym");
-                            synonym.setAttribute("id", id);
+                            synonym.setAttribute("value", id);
                             synonym.setAttribute("type", "identifier");
                             synonym.setReference("source", datasourceItemId);
                             synonym.setReference("subject", proteinIdentifier);

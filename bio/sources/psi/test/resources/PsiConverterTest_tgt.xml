@@ -67,7 +67,7 @@
 <attribute name="pubMedId" value="11912189"/>
 </item>
 <item id="10_2" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="id" value="P14599"/>
+<attribute name="value" value="P14599"/>
 <attribute name="type" value="accession"/>
 <reference name="source" ref_id="3_1"/>
 <reference name="subject" ref_id="9_2"/>
@@ -82,7 +82,7 @@
 <collection name="interactingRegions"><reference ref_id="12_1"/></collection>
 </item>
 <item id="10_1" class="http://www.flymine.org/model/genomic#Synonym">
-<attribute name="id" value="Q9W0K0"/>
+<attribute name="value" value="Q9W0K0"/>
 <attribute name="type" value="accession"/>
 <reference name="source" ref_id="3_1"/>
 <reference name="subject" ref_id="9_1"/>
