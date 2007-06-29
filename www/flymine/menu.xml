@@ -9,6 +9,7 @@
 
   <item title="Release info">
     <item url="/sources.xml" title="Data sources"/>
+    <item url="/stats.xml" title="Release statistics"/>
     <item url="/release-notes.xml" title="Release notes"/>
     <item url="/archive.xml" title="Archived releases"/>
   </item>
