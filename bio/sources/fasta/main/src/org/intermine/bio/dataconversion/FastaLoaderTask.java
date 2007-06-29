@@ -126,6 +126,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             storeCount++;
             super.process();
             getIntegrationWriter().commitTransaction();
+            getIntegrationWriter().beginTransaction();
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store object", e);
         }
