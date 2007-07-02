@@ -4,7 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml"
   version="1.0">
-  
+
   <xsl:output
     method="xml"
     indent="yes"
@@ -30,7 +30,19 @@
           </xsl:attribute>
         </xsl:when>
       </xsl:choose>
-      
+
+      <xsl:if test="string-length(@target) > 0">
+        <xsl:attribute name="target">
+          <xsl:value-of select="@target"/>
+        </xsl:attribute>
+      </xsl:if>
+
+      <xsl:if test="string-length(@onclick) > 0">
+        <xsl:attribute name="onclick">
+          <xsl:value-of select="@onclick"/>
+        </xsl:attribute>
+      </xsl:if>
+
       <xsl:choose>
         <xsl:when test="count(child::node())=0">
           <xsl:value-of select="@url"/>
