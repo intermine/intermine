@@ -1,0 +1,7 @@
+<project name="Random data" default="default" basedir=".">
+  <description>build, test, package Random data</description>
+  
+  <import file="../../../../../imbuild/source.xml"/>
+  
+</project>
+

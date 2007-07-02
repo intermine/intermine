@@ -1,0 +1,126 @@
+<project type="test1">
+  <property name="target.model" value="performancetest1"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="intermine.performancetest1.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+
+  <sources>
+    <source name="OneAttribute1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="OneAttribute"/>
+    </source>
+    <source name="OneAttribute2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="OneAttribute"/>
+    </source>
+    <source name="NotInterface1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="NotInterface"/>
+    </source>
+    <source name="NotInterface2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="NotInterface"/>
+    </source>
+    <source name="ManyAttributes1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="ManyAttributes"/>
+    </source>
+    <source name="ManyAttributes2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="ManyAttributes"/>
+    </source>
+    <source name="AttributeString1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="AttributeString"/>
+    </source>
+    <source name="AttributeString2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="AttributeString"/>
+    </source>
+    <source name="AttributeDate1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="AttributeDate"/>
+    </source>
+    <source name="AttributeDate2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="AttributeDate"/>
+    </source>
+    <source name="AttributeBigDecimal1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="AttributeBigDecimal"/>
+    </source>
+    <source name="AttributeBigDecimal2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="AttributeBigDecimal"/>
+    </source>
+    <source name="AttributeLong1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="AttributeLong"/>
+    </source>
+    <source name="AttributeLong2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="AttributeLong"/>
+    </source>
+    <source name="DeepHeirarchy1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="DeepHeirarchy"/>
+    </source>
+    <source name="DeepHeirarchy2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="DeepHeirarchy"/>
+    </source>
+    <source name="OneReference1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="OneReference"/>
+    </source>
+    <source name="OneReference2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="OneReference"/>
+    </source>
+    <source name="OneCollection1" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="OneCollection"/>
+      <property name="collectionSize" value="20"/>
+    </source>
+    <source name="OneCollection2" type="random">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="OneCollection"/>
+      <property name="collectionSize" value="20"/>
+    </source>
+    <!--<source name="LargeString" type="random">
+      <property name="count" value="20000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="LargeString"/>
+      <property name="stringSize" value="10000"/>
+    </source>-->
+    <source name="ReferenceToFrom" type="tofrom">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+    </source>
+    <source name="ReferenceFromTo" type="fromto">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+    </source>
+  </sources>
+</project>
+

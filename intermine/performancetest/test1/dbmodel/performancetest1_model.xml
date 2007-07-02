@@ -1,0 +1,78 @@
+<model name="performancetest1" namespace="http://www.intermine.org/model/performancetest1#">
+    <class name="org.intermine.model.performancetest1.OneAttribute" is-interface="true">
+        <attribute name="att" type="int"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.NotInterface" is-interface="false">
+        <attribute name="att" type="int"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.ManyAttributes" is-interface="true">
+        <attribute name="att01" type="int"/>
+        <attribute name="att02" type="int"/>
+        <attribute name="att03" type="int"/>
+        <attribute name="att04" type="int"/>
+        <attribute name="att05" type="int"/>
+        <attribute name="att06" type="int"/>
+        <attribute name="att07" type="int"/>
+        <attribute name="att08" type="int"/>
+        <attribute name="att09" type="int"/>
+        <attribute name="att10" type="int"/>
+        <attribute name="att11" type="int"/>
+        <attribute name="att12" type="int"/>
+        <attribute name="att13" type="int"/>
+        <attribute name="att14" type="int"/>
+        <attribute name="att15" type="int"/>
+        <attribute name="att16" type="int"/>
+        <attribute name="att17" type="int"/>
+        <attribute name="att18" type="int"/>
+        <attribute name="att19" type="int"/>
+        <attribute name="att20" type="int"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.AttributeString" is-interface="true">
+        <attribute name="att" type="java.lang.String"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.AttributeDate" is-interface="true">
+        <attribute name="att" type="java.util.Date"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.AttributeBigDecimal" is-interface="true">
+        <attribute name="att" type="java.math.BigDecimal"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.AttributeLong" is-interface="true">
+        <attribute name="att" type="long"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.DeepHeirarchy" extends="org.intermine.model.performancetest1.Heirarchy1" is-interface="true"/>
+    <class name="org.intermine.model.performancetest1.Heirarchy1" extends="org.intermine.model.performancetest1.Heirarchy2" is-interface="true"/>
+    <class name="org.intermine.model.performancetest1.Heirarchy2" extends="org.intermine.model.performancetest1.Heirarchy3" is-interface="true"/>
+    <class name="org.intermine.model.performancetest1.Heirarchy3" extends="org.intermine.model.performancetest1.Heirarchy4" is-interface="true"/>
+    <class name="org.intermine.model.performancetest1.Heirarchy4" extends="org.intermine.model.performancetest1.Heirarchy5" is-interface="true"/>
+    <class name="org.intermine.model.performancetest1.Heirarchy5" extends="org.intermine.model.performancetest1.Heirarchy6" is-interface="true"/>
+    <class name="org.intermine.model.performancetest1.Heirarchy6" extends="org.intermine.model.performancetest1.Heirarchy7" is-interface="true"/>
+    <class name="org.intermine.model.performancetest1.Heirarchy7" extends="org.intermine.model.performancetest1.Heirarchy8" is-interface="true"/>
+    <class name="org.intermine.model.performancetest1.Heirarchy8" extends="org.intermine.model.performancetest1.Heirarchy9" is-interface="true"/>
+    <class name="org.intermine.model.performancetest1.Heirarchy9" is-interface="true">
+        <attribute name="att" type="int"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.OneReference" is-interface="true">
+        <attribute name="att" type="int"/>
+        <reference name="ref" referenced-type="org.intermine.model.performancetest1.OneReference"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.OneCollection" is-interface="true">
+        <attribute name="att" type="int"/>
+        <collection name="col" referenced-type="org.intermine.model.performancetest1.OneCollection"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.LargeString" is-interface="true">
+        <attribute name="att1" type="int"/>
+        <attribute name="att2" type="java.lang.String"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.ReferenceTo1" is-interface="true">
+        <attribute name="att" type="int"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.ReferenceFrom1" is-interface="true">
+        <reference name="ref" referenced-type="org.intermine.model.performancetest1.ReferenceTo1"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.ReferenceTo2" is-interface="true">
+        <attribute name="att" type="int"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.ReferenceFrom2" is-interface="true">
+        <reference name="ref" referenced-type="org.intermine.model.performancetest1.ReferenceTo2"/>
+    </class>
+</model>
