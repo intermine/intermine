@@ -141,12 +141,18 @@
     <put name="body" value="tipDisplayer.tile"/>
     <put name="pageName" value="tip"/>
   </definition>
+    <definition name="tips.page" extends="layout.template">
+    <put name="body" value="tips.tile"/>
+    <put name="pageName" value="tips"/>
+  </definition>
   <!--tiles-->
   <definition name="error.tile" path="/error.jsp"/>
   <definition name="begin.tile" path="/begin.jsp"/>
+  <definition name="tipWrapper.tile" path="/tipWrapper.jsp"/>
   <definition name="login.tile" path="/login.jsp" controllerUrl="/initLogin.do"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
   <definition name="tip.tile" path="/tip.jsp" controllerUrl="/initTip.do"/>
+  <definition name="tips.tile" path="/tips.jsp" />
   <definition name="tipDisplayer.tile" path="/tipDisplayer.jsp"/>
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
