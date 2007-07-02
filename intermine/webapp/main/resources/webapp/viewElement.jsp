@@ -10,7 +10,7 @@
 <!-- viewElement.jsp -->
 <html:xhtml/>
 
-<c:set var="iePre7" value='<%= request.getHeader("user-agent").matches(".*MSIE [123456].*") %>'/>
+<c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>'/>
 
 <im:viewableDiv path="${pathString}" viewPaths="${viewPaths}" idPrefix="showing" idPostfix="_${viewIndex}">
 
