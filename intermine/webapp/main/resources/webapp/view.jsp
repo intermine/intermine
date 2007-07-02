@@ -12,7 +12,7 @@
 
 <a name="showing"></a>
 
-<c:set var="iePre7" value='<%= request.getHeader("user-agent").matches(".*MSIE [123456].*") %>'/>
+<c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>'/>
 
 <div class="heading">
   <fmt:message key="view.notEmpty.description"/><im:manualLink section="manualPageQB.shtml#manualOutputListQB"/>
