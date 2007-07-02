@@ -70,6 +70,7 @@
     <copy todir="${dist.www}">
       <fileset dir="${build.www}">
         <exclude name="**/*.xml"/>
+        <exclude name="**/*.txt"/>
         <exclude name="**/*.xsl"/>
       </fileset>
     </copy>
@@ -124,6 +125,7 @@
         <exclude name="internal/**"/>
         <exclude name="images/index.html"/>
         <exclude name="stats.html"/>
+        <exclude name="tour*.html"/>
         <exclude name="graphics/index.html"/>
       </fileset>
       <xmlcatalog>

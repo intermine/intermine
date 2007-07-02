@@ -84,7 +84,11 @@ for my $page (@pages) {
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <div class="box">
+    <span style="float:right; padding: 3px; font-size: 70%;" onclick="window.close()">close
+      <img src="close.png" title="Close" onmouseout="this.style.cursor='normal';" 
+           onmouseover="this.style.cursor='pointer';"/>
+    </span> 
+    <div style="clear: all; padding-top: 20px" class="box">
       <div style="font-size: 130%" class="heading2">
         $title
       </div>

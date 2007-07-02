@@ -4,4 +4,140 @@ Data in FlyMine...
 
 <h2>2. Starting points</h2>
 
-...
+Webapp philosophy.
+<p/>
+Quick Search, Bags, Templates, QueryBuilder.
+
+<h2>3. Object details</h2>
+
+<p><b>Run a quick search for the Drosophila gene 'eve'.</b>  You can search for any identifier or symbol for genes, proteins, transcripts and so on.  You can use '*' as a wildcard.</p>
+
+<img alt="[Quick Search]" class="inlinegraphic" src="quick_search.png"/>
+
+
+<p>A report page for each gene shows information from many data sources in one place.  There are corresponding pages for all objects in FlyMine, use [details] links to browse.  Note that we can add template queries to this page at any time - it only takes a few minutes.  So if you have a suggestion, let us know.</p>
+
+<p/>
+[object details image]
+<p/>
+
+[viewers images]
+
+<h2>4. Templates</h2>
+
+<p>
+FlyMine includes a library of template queries, each encapsulates a query with simple web form.</p>
+
+<p>
+Find template queries or related aspect pages. [aspect image]
+</p>
+
+<p>
+Or use 'Search Templates' link that searches the titles and descriptions.
+</p>
+
+<img alt="[Click Search Templates]" class="inlinegraphic" src="click_search_templates.png"/>
+
+<p><b>Search for templates for 'orthologue' and select the template 'Gene --> Orthologues + GO terms of these orthologues'</b></p>
+
+<img alt="[Select template]" class="inlinegraphic" src="select_template.png"/>
+
+
+<h2>5. Run a template</h2>
+
+<p>Templates are a simple web form with one or more fields to fill in.  This query takes a particular gene as input and searches for orthologues that that have GO annotation.</p>
+
+<img alt="[Template form]" class="inlinegraphic" src="template_form.png"/>
+
+<p>Here you can enter any identifier and FlyMine will try to find the right gene, even if it is not a primary identifier.  For example for the D. melanogaster gene zen you could enter 'zen', 'CG1046', 'FBgn0004053' or 'zerknullt'.  You could even enter a transcript (CG1046-RA) or protein (ZEN1_DROME) identifier and it would convert it for you.</p>
+
+<b>Click 'Show Results' to run this template with the default value.</b>
+
+
+<h2>6. Results page</h2>
+
+<p>The results page lets you page through the results, follow links to report pages and export data.
+
+(Do we need to describe results?  Mention where orthologues come from and what main/secondary mean.)</p>
+
+<p>Note the summary buttons [icon] at the top of each column.  Click this to get some summary statistics about the column - for names and identifiers it will tell you how many unique values there are.  Numerical data gives a min, max, mean and standard deviation.</p>
+
+<p><b>Click the summary button for the column 'Orthologue > organism > shortName'</b>  </p>
+
+<p>The table shows the most commonly occurring GO terms applied to orthologues of the original gene.</p>
+
+<p>
+You can export results in a number of formats.
+
+more about export....</p>
+
+<h2>7. Query Builder</h2>
+
+<p><b>Click on 'Query' in the Trail to get back to the template form.</b></p>
+
+<p><b>Now click 'Edit Query' to bring up the QueryBuilder.</b></p>
+
+<p>[click edit query]</p>
+
+<p>The QueryBuilder allows you to edit queries or create new ones.  The pane on the left shows is a view of the data model starting at the class gene and showing all attributes (e.g. name, symbol) and related classes (e.g. organism, proteins).  (FlyMine uses an object based data model - biological types are termed 'classes' and individual entries are termed 'objects'.  For example the 'zen' and 'eve' genes are both objects of the class Gene.</p>
+
+<p>You can click to open related classes and see their attributes.  The [show image] and [constrain image] let you add fields to the output of a query and add contraints (filters).  <b>Scroll to the bottom of the page to see the output list of this query.</b></p>
+
+<p><b>Click the [red cross image] buttons to remove the last three columns from the query - the three that mention GO annotation, no run the query.</b></p>
+
+<p>Now we have run the query to show orthologues of the starting gene whether they have GO annotation or not.  Now if you click the [summary image] button for the column 'Othologue > organism > shortName' it will show you how many orthologues there are in each organism.</p>
+
+
+<h2>7. Bag Upload</h2>
+
+<p>You can save lists of data (bags) from the results of a query or by uploading lists of identifiers.  Bags can be used to run queries and compared to one another.  A bag details page provides 'widgets' to help analyse the contents of a bag.
+
+<i>Coming soon - we will create globally available bags with, for example, a list of genes identified as transcription factors.</i>
+
+<b>Click on 'bags' in the top menu bar to get to the bag upload page.</b>
+</p>
+<img alt="[Click bags in the menu bar]" class="inlinegraphic" src="click_bags.png"/>
+<p>
+
+FlyMine has a sophisticated bag creation tool that lets you upload lists of identifiers - they can be a mix of identifier types, it will even convert types for you if, for example, you enter a transcript identifier but want to create a bag of genes.
+</p>
+
+<p><b>Upload the example bag:</b></p>
+
+<img alt="[Create a new bag]" class="inlinegraphic" src="create_a_bag.png"/>
+
+
+<h2>8. Bag confirm page</h2>
+
+If some identifiers don't produce exact matches a confirmation page will let you resolve any issues.  Here two genes were found by synonym and a protein identifier from the original list has been converted to the corresponding gene.
+
+<b>Add these and save the bag.</b>
+
+[bag confirm screen shot]
+
+
+<h2>9. Bag details page</h2>
+
+
+
+Templates have run queries on the whole list at once.  For example, from this list of genes we could fetch all the protein sequences or GO annotation.
+
+<h2>10. Use bags in template queries</h2>
+
+We can use the bag we just created to run another template query.  Lets find all the D. pseudoobscura orthologues.
+
+[search templates]
+
+[select orthologues in one particular organism]
+
+[run template with demo bag]
+
+<h2>11. MyMine</h2>
+
+Save, export, share.
+
+Bag combination.
+
+<h2>12. InterMine</h2>
+
+</body>
