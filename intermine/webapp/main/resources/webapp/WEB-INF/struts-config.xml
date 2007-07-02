@@ -96,6 +96,8 @@
     </action>
     <action path="/loadTmpImg" type="org.intermine.web.struts.TempImageLoader">
     </action>
+    <action path="/tips" forward="tips.page">
+    </action>
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
@@ -320,6 +322,7 @@
     <action path="/tip" type="org.intermine.web.struts.TipAction">
 	    <forward name="display" path="tip.page"/>
     </action>
+
     <action path="/gotows" type="org.intermine.web.struts.GotoWebSearchableAction">
       <forward name="template" redirect="true" path="/template.do"/>
       <forward name="bag" redirect="true" path="/bagDetails.do"/>

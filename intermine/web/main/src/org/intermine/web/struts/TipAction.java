@@ -9,14 +9,14 @@ package org.intermine.web.struts;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
+import org.intermine.web.logic.Constants;
 /**
  * Action to forward to display full tip text
  * 
@@ -39,8 +39,13 @@ public class TipAction extends InterMineAction
                                  ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
-        throws Exception {      
+        throws Exception {   
+        HttpSession session = request.getSession();
+        String tipCount = (String) ((Map) session.getServletContext().
+                        getAttribute(Constants.WEB_PROPERTIES)).get("tips.size");
+        request.setAttribute("tipcount", tipCount);
         request.setAttribute("id", request.getParameter("id"));
+        
         return mapping.findForward("display");                                
     }
 }

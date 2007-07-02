@@ -45,6 +45,7 @@ public class TipController extends TilesAction
         HttpSession session = request.getSession();
         String tipCount = (String) ((Map) session.getServletContext().
                                     getAttribute(Constants.WEB_PROPERTIES)).get("tips.size");
+        
         try {
             Integer i = new Integer(tipCount);
             Random generator = new Random();
@@ -52,6 +53,10 @@ public class TipController extends TilesAction
         } catch (NumberFormatException e) {
 
         }
+        
+        request.setAttribute("tipCount", tipCount);
+        request.setAttribute("showall", request.getParameter("showall"));
+        
         return null;
     }
     
