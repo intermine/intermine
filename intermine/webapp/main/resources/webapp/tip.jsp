@@ -5,7 +5,7 @@
 <p>
 <table>
 <tr>
-	<td><html:link action="/tip?id=${randomTip}"><img src="<html:rewrite page="/tips/images/tip${randomTip}.png" />" border="0" height="8" width="8" /></html:link></td>
+	<td><html:link action="/tip?id=${randomTip}"><img src="<html:rewrite page="/tips/images/tip${randomTip}.png" />" border="0" height="16" width="16" /></html:link></td>
 	<td class="body"><jsp:include page="tips/tip${randomTip}_short.jsp"/></td>
 </tr>
 </table>
