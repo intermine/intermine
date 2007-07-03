@@ -325,7 +325,8 @@ public abstract class WebUtil
         specCharToText.put("'", new String("APOSTROPHE"));
         specCharToText.put("/", new String("FORWARD_SLASH"));
         specCharToText.put("\\", new String("BACK_SLASH"));
-
+        specCharToText.put("*", new String("STAR"));
+        
         return specCharToText;
     }
 

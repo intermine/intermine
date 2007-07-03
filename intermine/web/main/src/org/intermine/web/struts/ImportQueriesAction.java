@@ -73,6 +73,12 @@ public class ImportQueriesAction extends InterMineAction
                 StringBuffer sb = new StringBuffer();
                 while (iter.hasNext()) {
                     String queryName = (String) iter.next();
+                    
+                    /* this is probably too late */
+                    if (queryName.contains("&")) {
+                        queryName = queryName.replace("&", "_AND_");
+                    }
+                    
                     PathQuery query = (PathQuery) queries.get(queryName);
                     queryName = validateQueryName(queryName, profile);
                     SessionMethods.saveQuery(session, queryName, query);
@@ -99,6 +105,7 @@ public class ImportQueriesAction extends InterMineAction
      * @return a validated name for the query
      */
     private String validateQueryName(String queryName, Profile profile) {
+        
         String newQueryName = queryName;
 
         if (!WebUtil.isValidName(queryName)) {
