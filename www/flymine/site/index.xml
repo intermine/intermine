@@ -5,7 +5,7 @@
       <title>
         Introduction
       </title>
-      
+
       <para>
         FlyMine is an integrated database of genomic, expression and protein data for
         <emphasis>Drosophila</emphasis>, <emphasis>Anopheles</emphasis> and
@@ -13,29 +13,29 @@
         Integrating data makes it possible to run sophisticated data mining queries
         that span domains of biological knowledge.
       </para>
-      
+
       <para>
         <ulink url="what.xml">What can I do with FlyMine?</ulink>
       </para>
-      
-      <para style="color:#c00;"> 
+
+      <para style="color:#c00;">
         This is release 8.0 of FlyMine.  See the <ulink url="release-notes.xml">release notes</ulink> to find out whats new.
       </para>
 
-	  <para>
- 		<ssi-include page="tipWrapper.tile"/>
+      <para>
+        <ssi-include page="tipWrapper.tile"/>
       </para>
 
-          <para>
-            <ulink url="tour/tour_1.html" target="_blank"
-                   onclick="javascript:window.open('tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=950,height=700');return false">Take a tour</ulink>
-          </para>
-            
-   </section>
+      <para>
+        <ulink url="tour/tour_1.html" target="_blank"
+               onclick="javascript:window.open('tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=950,height=700');return false">Take a tour</ulink>
+      </para>
+
+    </section>
   </column>
 
   <column width="44%">
-    
+
     <section>
       <title>
         Quick Search
@@ -50,50 +50,50 @@
   </column>
 
   <column width="44%">
-    
-	  <section>
-	    <title>
-	      Bags
-	    </title>
-	    <para>
-	      <ssi-include page="bagFrontPage.tile"/>
-	    </para>
-	  </section>
 
-  </column>  
+    <section>
+      <title>
+        Bags
+      </title>
+      <para>
+        <ssi-include page="bagFrontPage.tile"/>
+      </para>
+    </section>
+
+  </column>
 
   <section clear="both">
     <title>
       Aspects
     </title>
-    
+
     <para>Choose an aspect to explore the different types of data in FlyMine and start queries.</para>
     <!--
-    <para>
-      FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>.
-      Release 3.1 of FlyMine incorporates the following data sources:
-    </para>
-      <sources sources="/sources.xml" version="3.0"/>
-    -->
+        <para>
+          FlyMine is an application of <ulink url="http://www.intermine.org">InterMine</ulink>.
+          Release 3.1 of FlyMine incorporates the following data sources:
+        </para>
+        <sources sources="/sources.xml" version="3.0"/>
+        -->
     <ssi-include page="/aspectIcons.jsp&amp;cols=3"/>
   </section>
 
-    
-  
+
+
   <section clear="both">
     <title>
       Template search
     </title>
     <para>Enter a keyword to find pre-defined template queries
-    relating to a certain type of data. Select 'Public templates' to
-    search pre-defined templates, 'My templates' to search templates
-    you have created yourself or 'Everything' to search all templates.</para>
+      relating to a certain type of data. Select 'Public templates' to
+      search pre-defined templates, 'My templates' to search templates
+      you have created yourself or 'Everything' to search all templates.</para>
     <para>
       <template-search/>
     </para>
     <ulink url="/templates.do">View all templates...</ulink>
   </section>
-  
+
   <section clear="both">
     <title>
       FlyMine QueryBuilder
@@ -105,5 +105,5 @@
       <things-to-do/>
     </para>
   </section>
-  
+
 </article>
