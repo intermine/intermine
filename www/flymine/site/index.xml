@@ -28,7 +28,7 @@
 
           <para>
             <ulink url="tour/tour_1.html" target="_blank"
-                   onclick="javascript:window.open('tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour</ulink>
+                   onclick="javascript:window.open('tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=950,height=700');return false">Take a tour</ulink>
           </para>
             
    </section>
