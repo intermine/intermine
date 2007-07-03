@@ -15,7 +15,7 @@ print "\nReady to download NCBI gene and pubmed Id...\n";
 my $ncbi_server = "ftp.ncbi.nlm.nih.gov";
 my $ncbi_dir = "gene/DATA";
 my $username = "anonymous";
-my $password = "philip\@flymine.org";
+my $password = "richard\@flymine.org";
 
 #files to download
 my $gene_info_file = "gene_info.gz";

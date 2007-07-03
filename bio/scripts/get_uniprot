@@ -2,7 +2,7 @@
 
 # script to download the latest uniprot release into a directory like uniprot/5.3
 # the version number is extracted from the relnotes.txt file on the FTP server
-# the script should be run in /shared/data
+# the script should be run in svn/data/bio/scripts/
 
 use strict;
 use warnings;

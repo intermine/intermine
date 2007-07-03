@@ -116,7 +116,7 @@
       <property name="organisms" value="7227 6239 4932"/>
     </source>
     <source name="psi-mi-ontology" type="psi-mi-ontology">
-      <property name="src.data.file" location="/shared/data/psi/ontology/psi-mi.obo"/>
+      <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
