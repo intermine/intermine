@@ -137,8 +137,11 @@
   </target>
 
   <target name="transform-site"
-          depends="validate-site-xml, style-site, validate-site-xhtml"
+          depends="style-site"
           description="Transform the website contents from XML to HTML"/>
+  <!--target name="transform-site"
+          depends="validate-site-xml, style-site, validate-site-xhtml"
+          description="Transform the website contents from XML to HTML"/-->
 
   <target name="release-www" depends="transform-site"
           description="releases the static website to the webserver">

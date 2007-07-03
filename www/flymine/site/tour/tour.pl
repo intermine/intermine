@@ -56,28 +56,18 @@ for my $page (@pages) {
 
   open my $f, '>', make_name($num) or die;
 
-  my $padding = 'padding-left:10px; padding-right:10px';
-
   my $prev_url = '';
   my $prev_link = '';
-  my $prev_title = '';
   if ($num > 1) {
     $prev_url = make_name($num - 1);
-    $prev_title = $pages[$num - 2]->{title};
-    $prev_link = <<"HTML";
-      <a href="$prev_url">previous</a>
-HTML
+    $prev_link = qq[<span style="float:left"><a href="$prev_url">previous</a></span>];
   }
 
   my $next_url = '';
   my $next_link = '';
-  my $next_title = '';
   if ($num < @pages) {
     $next_url = make_name($num + 1);
-    $next_title = $pages[$num]->{title};
-    $next_link = <<"HTML";
-      <a href="$next_url">next</a>
-HTML
+    $next_link = qq[<span style="float:right"><a href="$next_url">next</a></span>];
   }
 
   my $onclick = "";
@@ -94,33 +84,11 @@ HTML
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <table width="100%">
-      <tr>
-        <td align="left" valign="top" colspan="2">
-          <span style="float:right; padding: 3px; font-size: 70%;"
-                onmouseout="this.style.cursor='normal';"
-                onmouseover="this.style.cursor='pointer';" onclick="window.close()">close
-            <img src="images/close.png" title="Close" />
-          </span>
-        </td>
-      <tr>
-        <td align="left" valign="top" width="50%">
-          $prev_link
-        </td>
-        <td align="right" valign="top" width="50%">
-          $next_link
-        </td>
-      </tr>
-      <tr>
-        <td align="left" valign="top" width="50%" style="font-size: 60%">
-          $prev_title
-        </td>
-        <td align="right" valign="top" width="50%" style="font-size: 60%">
-          $next_title
-        </td>
-      </tr>
-    </table>
-    <div style="padding-top: 20px" class="box">
+    <span style="float:right; padding: 3px; font-size: 70%;" onclick="window.close()">close
+      <img src="close.png" title="Close" onmouseout="this.style.cursor='normal';" 
+           onmouseover="this.style.cursor='pointer';"/>
+    </span> 
+    <div style="clear: all; padding-top: 20px" class="box">
       <div style="font-size: 130%" class="heading2">
         $title
       </div>
@@ -128,6 +96,9 @@ HTML
         <div $onclick>
 $text
         </div>
+        <br style="clear: all"/>
+$prev_link
+$next_link
       </div>
     </div>
   </body>
