@@ -58,16 +58,20 @@ for my $page (@pages) {
 
   my $prev_url = '';
   my $prev_link = '';
+  my $prev_title = '';
   if ($num > 1) {
     $prev_url = make_name($num - 1);
-    $prev_link = qq[<span style="float:left"><a href="$prev_url">previous</a></span>];
+    $prev_link = qq[<a href="$prev_url">previous</a>];
+    $prev_title = $pages[$num - 2]{title};
   }
 
   my $next_url = '';
   my $next_link = '';
+  my $next_title = '';
   if ($num < @pages) {
     $next_url = make_name($num + 1);
-    $next_link = qq[<span style="float:right"><a href="$next_url">next</a></span>];
+    $next_link = qq[<a href="$next_url">next</a>];
+    $next_title = $pages[$num]{title};
   }
 
   my $onclick = "";
@@ -79,26 +83,51 @@ for my $page (@pages) {
 <html>
   <head>
     <title>FlyMine Tour page $num - $title</title>
-    <link media="screen,print" href="http://www.flymine.org/style/base.css" type="text/css" rel="stylesheet" />
-    <link media="screen,print" href="http://www.flymine.org/style/branding.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="../style/branding.css" type="text/css" rel="stylesheet" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <span style="float:right; padding: 3px; font-size: 70%;" onclick="window.close()">close
-      <img src="close.png" title="Close" onmouseout="this.style.cursor='normal';" 
-           onmouseover="this.style.cursor='pointer';"/>
-    </span> 
-    <div style="clear: all; padding-top: 20px" class="box">
-      <div style="font-size: 130%" class="heading2">
-        $title
-      </div>
-      <div style="font-size: 130%" class="body">
-        <div $onclick>
-$text
-        </div>
-        <br style="clear: all"/>
+    <div class="tour">
+      <table width="100%">
+        <tr>
+          <td colspan="2" align="right">
+            <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
+              <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';" 
+                   onmouseover="this.style.cursor='pointer';"/>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td align="left" valign="top">
 $prev_link
+          </td>
+          <td align="right" valign="top">
 $next_link
+          </td>
+        </tr>
+        <tr>
+          <td align="left" class="nextprev" valign="top">
+            <span class="title">
+$prev_title
+            </span>
+          </td>
+          <td align="right" class="nextprev" valign="top">
+            <span class="title">
+$next_title
+            </span>
+          </td>
+        </tr>
+      </table>
+      <div style="clear: all; padding-top: 20px" class="box">
+        <div style="font-size: 130%" class="heading2">
+$title
+        </div>
+        <div style="font-size: 130%" class="body">
+          <div $onclick>
+$text
+          </div>
+        </div>
       </div>
     </div>
   </body>

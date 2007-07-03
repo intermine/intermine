@@ -1,21 +1,48 @@
 <html>
   <head>
     <title>FlyMine Tour page 2 - Report Pages</title>
-    <link media="screen,print" href="http://www.flymine.org/style/base.css" type="text/css" rel="stylesheet" />
-    <link media="screen,print" href="http://www.flymine.org/style/branding.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="../style/branding.css" type="text/css" rel="stylesheet" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <span style="float:right; padding: 3px; font-size: 70%;" onclick="window.close()">close
-      <img src="close.png" title="Close" onmouseout="this.style.cursor='normal';" 
-           onmouseover="this.style.cursor='pointer';"/>
-    </span> 
-    <div style="clear: all; padding-top: 20px" class="box">
-      <div style="font-size: 130%" class="heading2">
-        Report Pages
-      </div>
-      <div style="font-size: 130%" class="body">
-        <div onclick="window.location.replace('tour_3.html');">
+    <div class="tour">
+      <table width="100%">
+        <tr>
+          <td colspan="2" align="right">
+            <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
+              <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';" 
+                   onmouseover="this.style.cursor='pointer';"/>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td align="left" valign="top">
+<a href="tour_1.html">previous</a>
+          </td>
+          <td align="right" valign="top">
+<a href="tour_3.html">next</a>
+          </td>
+        </tr>
+        <tr>
+          <td align="left" class="nextprev" valign="top">
+            <span class="title">
+What is FlyMine?
+            </span>
+          </td>
+          <td align="right" class="nextprev" valign="top">
+            <span class="title">
+Template Queries
+            </span>
+          </td>
+        </tr>
+      </table>
+      <div style="clear: all; padding-top: 20px" class="box">
+        <div style="font-size: 130%" class="heading2">
+Report Pages
+        </div>
+        <div style="font-size: 130%" class="body">
+          <div onclick="window.location.replace('tour_3.html');">
 
 <p>A quick search box appears on the front page and in the menu bar of all pages.  You can search for any identifier or symbol for genes, proteins, transcripts and so on.  You can use '*' as a wildcard.</p>
 
@@ -37,10 +64,8 @@ Template queries are executed for this gene when the page is loaded.  Note that 
 
 
 
+          </div>
         </div>
-        <br style="clear: all"/>
-<span style="float:left"><a href="tour_1.html">previous</a></span>
-<span style="float:right"><a href="tour_3.html">next</a></span>
       </div>
     </div>
   </body>

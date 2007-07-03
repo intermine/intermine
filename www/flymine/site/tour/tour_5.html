@@ -1,21 +1,48 @@
 <html>
   <head>
     <title>FlyMine Tour page 5 - Results page</title>
-    <link media="screen,print" href="http://www.flymine.org/style/base.css" type="text/css" rel="stylesheet" />
-    <link media="screen,print" href="http://www.flymine.org/style/branding.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="../style/branding.css" type="text/css" rel="stylesheet" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <span style="float:right; padding: 3px; font-size: 70%;" onclick="window.close()">close
-      <img src="close.png" title="Close" onmouseout="this.style.cursor='normal';" 
-           onmouseover="this.style.cursor='pointer';"/>
-    </span> 
-    <div style="clear: all; padding-top: 20px" class="box">
-      <div style="font-size: 130%" class="heading2">
-        Results page
-      </div>
-      <div style="font-size: 130%" class="body">
-        <div onclick="window.location.replace('tour_6.html');">
+    <div class="tour">
+      <table width="100%">
+        <tr>
+          <td colspan="2" align="right">
+            <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
+              <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';" 
+                   onmouseover="this.style.cursor='pointer';"/>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td align="left" valign="top">
+<a href="tour_4.html">previous</a>
+          </td>
+          <td align="right" valign="top">
+<a href="tour_6.html">next</a>
+          </td>
+        </tr>
+        <tr>
+          <td align="left" class="nextprev" valign="top">
+            <span class="title">
+Run a template
+            </span>
+          </td>
+          <td align="right" class="nextprev" valign="top">
+            <span class="title">
+Query Builder
+            </span>
+          </td>
+        </tr>
+      </table>
+      <div style="clear: all; padding-top: 20px" class="box">
+        <div style="font-size: 130%" class="heading2">
+Results page
+        </div>
+        <div style="font-size: 130%" class="body">
+          <div onclick="window.location.replace('tour_6.html');">
 
 <p>
 The results page lets you look through results, follow links to report pages and export data.  This table shows the starting gene, orthologous genes with the organism name and details of each GO term applied to the orthologous genes.  Orthologue data in FlyMine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a>.  Note that 'main' and 'secondary' denote the best hit in the other organism and paralogues of that gene respectively.
@@ -43,10 +70,8 @@ From a results table you can export results in a number of formats.
 
 
 
+          </div>
         </div>
-        <br style="clear: all"/>
-<span style="float:left"><a href="tour_4.html">previous</a></span>
-<span style="float:right"><a href="tour_6.html">next</a></span>
       </div>
     </div>
   </body>

@@ -1,21 +1,48 @@
 <html>
   <head>
     <title>FlyMine Tour page 1 - What is FlyMine?</title>
-    <link media="screen,print" href="http://www.flymine.org/style/base.css" type="text/css" rel="stylesheet" />
-    <link media="screen,print" href="http://www.flymine.org/style/branding.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="../style/branding.css" type="text/css" rel="stylesheet" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <span style="float:right; padding: 3px; font-size: 70%;" onclick="window.close()">close
-      <img src="close.png" title="Close" onmouseout="this.style.cursor='normal';" 
-           onmouseover="this.style.cursor='pointer';"/>
-    </span> 
-    <div style="clear: all; padding-top: 20px" class="box">
-      <div style="font-size: 130%" class="heading2">
-        What is FlyMine?
-      </div>
-      <div style="font-size: 130%" class="body">
-        <div onclick="window.location.replace('tour_2.html');">
+    <div class="tour">
+      <table width="100%">
+        <tr>
+          <td colspan="2" align="right">
+            <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
+              <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';" 
+                   onmouseover="this.style.cursor='pointer';"/>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td align="left" valign="top">
+
+          </td>
+          <td align="right" valign="top">
+<a href="tour_2.html">next</a>
+          </td>
+        </tr>
+        <tr>
+          <td align="left" class="nextprev" valign="top">
+            <span class="title">
+
+            </span>
+          </td>
+          <td align="right" class="nextprev" valign="top">
+            <span class="title">
+Report Pages
+            </span>
+          </td>
+        </tr>
+      </table>
+      <div style="clear: all; padding-top: 20px" class="box">
+        <div style="font-size: 130%" class="heading2">
+What is FlyMine?
+        </div>
+        <div style="font-size: 130%" class="body">
+          <div onclick="window.location.replace('tour_2.html');">
 
 <p>FlyMine is a data warehouse that addresses one of the important
 challenges of modern biology: how to integrate and make use of the
@@ -60,10 +87,8 @@ the home page (image).
 </p>
 
 
+          </div>
         </div>
-        <br style="clear: all"/>
-
-<span style="float:right"><a href="tour_2.html">next</a></span>
       </div>
     </div>
   </body>
