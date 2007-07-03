@@ -78,7 +78,8 @@ public class ImportQueriesForm extends ValidatorForm
      * @param xml query in xml format
      */
     public void setXml(String xml) {
-        this.xml = xml;
+        String s = xml.replace("&", "_AND_");
+        this.xml = s;
     }
     
     /**
