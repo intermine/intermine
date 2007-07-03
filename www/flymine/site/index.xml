@@ -1,6 +1,6 @@
 
 <article>
-  <column width="60%">
+  <column width="55%">
     <section>
       <title>
         Introduction
@@ -18,23 +18,23 @@
         <ulink url="what.xml">What can I do with FlyMine?</ulink>
       </para>
       
-      <para style="color:#e00;"> 
+      <para style="color:#c00;"> 
         This is release 8.0 of FlyMine.  See the <ulink url="release-notes.xml">release notes</ulink> to find out whats new.
       </para>
 
 	  <para>
- 		<ssi-include page="tip.tile"/>
+ 		<ssi-include page="tipWrapper.tile"/>
       </para>
 
           <para>
             <ulink url="tour_1.html" target="_blank"
-                   onclick="javascript:window.open('http://merry.flymine.org/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour</ulink>
+                   onclick="javascript:window.open('tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour</ulink>
           </para>
             
    </section>
   </column>
 
-  <column width="39%">
+  <column width="44%">
     
     <section>
       <title>
@@ -49,7 +49,7 @@
 
   </column>
 
-  <column width="39%">
+  <column width="44%">
     
 	  <section>
 	    <title>
