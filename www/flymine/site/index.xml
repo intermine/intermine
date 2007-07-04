@@ -23,7 +23,9 @@
       </para>
 
       <para>
-        <ssi-include page="tipWrapper.tile"/>
+        <webapp-iframe page="tipWrapper.tile" width="480" height="160" name="tips">
+          <ssi-include page="tipWrapper.tile"/>
+        </webapp-iframe>
       </para>
 
       <para>

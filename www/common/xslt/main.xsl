@@ -81,5 +81,27 @@
   <xsl:template match="ssi-include-static">
     <xsl:comment>#include virtual="<xsl:value-of select="@page"/>"</xsl:comment>
   </xsl:template>
-  
+
+  <xsl:template match="webapp-iframe">
+    <xsl:element name="iframe">
+      <xsl:attribute name="src">
+        <xsl:text>/</xsl:text><xsl:value-of select="$webapppath"/><xsl:text>/standalone.do?page=</xsl:text><xsl:value-of select='@page'/>
+        <xsl:copy-of select="@*"/>
+      </xsl:attribute>
+      <xsl:attribute name="width">
+        <xsl:value-of select="@width"/>
+      </xsl:attribute>
+      <xsl:attribute name="height">
+        <xsl:value-of select="@height"/>
+      </xsl:attribute>
+      
+      <xsl:attribute name="style">margin: 0px 10px 0px 0px;</xsl:attribute>
+      <xsl:attribute name="marginheight">0</xsl:attribute>
+      <xsl:attribute name="marginwidth">0</xsl:attribute>
+      <xsl:attribute name="frameborder">0</xsl:attribute> 
+      <xsl:attribute name="vspace">0</xsl:attribute> 
+      <xsl:attribute name="hspace">0</xsl:attribute> 
+      <xsl:apply-templates mode="copy-no-ns"/>
+    </xsl:element>
+  </xsl:template>
 </xsl:stylesheet>
