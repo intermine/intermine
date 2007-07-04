@@ -144,11 +144,11 @@
     
     <c:set var="googleAnalyticsId" value="${WEB_PROPERTIES['google.analytics.id']}"/>
     <c:if test="${!empty googleAnalyticsId}">
-      <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+      <script defer="true" src="http://www.google-analytics.com/urchin.js" type="text/javascript">
       </script>
-      <script type="text/javascript">
+      <script defer="true" type="text/javascript">
         _uacct = "${googleAnalyticsId}";
-        urchinTracker();
+        try {urchinTracker();} catch (e) {<%-- ignore - google is down --%>  }
       </script>
     </c:if>
 
