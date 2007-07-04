@@ -14,12 +14,14 @@
         that span domains of biological knowledge.
       </para>
 
-      <para>
-        <ulink url="what.xml">What can I do with FlyMine?</ulink>
-      </para>
-
       <para style="color:#c00;">
         This is release 8.0 of FlyMine.  See the <ulink url="release-notes.xml">release notes</ulink> to find out whats new.
+      </para>
+
+      <para>
+        <verbatim><span style="font-size:130%;"><a href="tour/tour_1.html" target="_blank"
+               onclick="javascript:window.open('tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=950,height=700');return false">Take a ten minute tour of FlyMine</a></span>
+        </verbatim>
       </para>
 
       <para>
@@ -28,10 +30,6 @@
         </webapp-iframe>
       </para>
 
-      <para>
-        <ulink url="tour/tour_1.html" target="_blank"
-               onclick="javascript:window.open('tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=950,height=700');return false">Take a tour</ulink>
-      </para>
 
     </section>
   </column>
