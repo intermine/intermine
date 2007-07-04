@@ -1,4 +1,4 @@
-<html>
+<html style="padding: 0px">
   <head>
     <title>FlyMine Tour page 5 - Results page</title>
     <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
@@ -9,40 +9,41 @@
     <div class="tour">
       <table width="100%">
         <tr>
-          <td colspan="2" align="right">
+          <td colspan="3" align="right">
             <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
               <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';" 
                    onmouseover="this.style.cursor='pointer';"/>
             </span>
           </td>
         </tr>
-        <tr>
-          <td align="left" valign="top">
-<a href="tour_4.html">previous</a>
-          </td>
-          <td align="right" valign="top">
-<a href="tour_6.html">next</a>
-          </td>
-        </tr>
-        <tr>
-          <td align="left" class="nextprev" valign="top">
-            <span class="title">
-Run a template
-            </span>
-          </td>
-          <td align="right" class="nextprev" valign="top">
-            <span class="title">
-Query Builder
-            </span>
-          </td>
-        </tr>
       </table>
-      <div style="clear: all; padding-top: 20px" class="box">
-        <div style="font-size: 130%" class="heading2">
+      <div class="heading">
+        <table width="100%">
+          <tr>
+            <td width="20%" align="left" valign="top">
+<a href="tour_4.html">previous</a>
+            </td>
+            <td width="60%" rowspan="2" align="center" valign="top">
+              <span class="title">
 Results page
-        </div>
-        <div style="font-size: 130%" class="body">
-          <div onclick="window.location.replace('tour_6.html');">
+              </span>
+            </td>
+            <td width="20%" align="right" valign="top">
+<a href="tour_6.html">next</a>
+            </td>
+          </tr>
+          <tr>
+            <td width="20%" align="left" class="nextprev" valign="top">
+Run a template
+            </td>
+            <td width="20%" align="right" class="nextprev" valign="top">
+Query Builder
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div style="padding-top: 20px" class="content">
+        <div onclick="window.location.replace('tour_6.html');">
 
 <p>
 The results table shows the starting gene, orthologous genes and organism names with details of each GO term applied to the orthologous genes.  Orthologue data in FlyMine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a>, note that 'main' means the best hit in the other organism, 'secondary' denotes paralogues of the best hit.
@@ -70,7 +71,6 @@ All results pages have a number of export options.
 
 
 
-          </div>
         </div>
       </div>
     </div>
