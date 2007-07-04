@@ -131,7 +131,7 @@ public class BagTableWidgetResults extends InterMineAction
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("table", identifier)
                         .addParameter("size", "10")
-                        .addParameter("trail", "").forward();
+                        .addParameter("trail", "|bag." + bagName).forward();
     }
 
 }
