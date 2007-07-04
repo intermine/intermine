@@ -1,4 +1,4 @@
-<html>
+<html style="padding: 0px">
   <head>
     <title>FlyMine Tour page 2 - Report Pages</title>
     <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
@@ -9,40 +9,41 @@
     <div class="tour">
       <table width="100%">
         <tr>
-          <td colspan="2" align="right">
+          <td colspan="3" align="right">
             <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
               <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';" 
                    onmouseover="this.style.cursor='pointer';"/>
             </span>
           </td>
         </tr>
-        <tr>
-          <td align="left" valign="top">
-<a href="tour_1.html">previous</a>
-          </td>
-          <td align="right" valign="top">
-<a href="tour_3.html">next</a>
-          </td>
-        </tr>
-        <tr>
-          <td align="left" class="nextprev" valign="top">
-            <span class="title">
-What is FlyMine?
-            </span>
-          </td>
-          <td align="right" class="nextprev" valign="top">
-            <span class="title">
-Template Queries
-            </span>
-          </td>
-        </tr>
       </table>
-      <div style="clear: all; padding-top: 20px" class="box">
-        <div style="font-size: 130%" class="heading2">
+      <div class="heading">
+        <table width="100%">
+          <tr>
+            <td width="20%" align="left" valign="top">
+<a href="tour_1.html">previous</a>
+            </td>
+            <td width="60%" rowspan="2" align="center" valign="top">
+              <span class="title">
 Report Pages
-        </div>
-        <div style="font-size: 130%" class="body">
-          <div onclick="window.location.replace('tour_3.html');">
+              </span>
+            </td>
+            <td width="20%" align="right" valign="top">
+<a href="tour_3.html">next</a>
+            </td>
+          </tr>
+          <tr>
+            <td width="20%" align="left" class="nextprev" valign="top">
+What is FlyMine?
+            </td>
+            <td width="20%" align="right" class="nextprev" valign="top">
+Template Queries
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div style="padding-top: 20px" class="content">
+        <div onclick="window.location.replace('tour_3.html');">
 
 <p>A quick search box appears on the front page and in the menu bar of all pages.  You can search for any identifier or symbol for genes, proteins, transcripts and so on.  You can use '*' as a wildcard.</p>
 
@@ -57,14 +58,13 @@ The report page shows information from many data sources in one place.  There ar
 <img alt="[object details summary]"  src="object_details_summary.png"/>
 
 <p>
-Template queries are executed when the page is loaded.  We can add templates to this page at any time - it only takes a few minutes - so if you have a suggestion, let us know.
+Template queries are run for this gene when the page is loaded.  We can add templates to this page at any time - it only takes a few minutes - so if you have a suggestion, let us know.
 </p>
 
 <img alt="[object details templates]"  src="object_details_templates.png"/>
 
 
 
-          </div>
         </div>
       </div>
     </div>

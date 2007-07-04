@@ -45,10 +45,34 @@ table.dbstats th {
 //   text-align:left;
 }
 
+.tour {
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
 .tour img {
   border: 0px;
 }
 
-.tour .nextprev .title {
-  font-size: 75%;
+.tour .nextprev {
+  font-size: 65%;
 }
+
+.tour .heading {
+  background-color: #eee;
+  border-bottom: 1px solid #000;
+  border-top: 1px solid #000;
+}
+
+.tour .title {
+  font-size: 190%;
+}
+
+.tour .content {
+  padding: 20px;
+  font-size: 130%;
+  margin: 30px
+  padding: 30px
+}
+

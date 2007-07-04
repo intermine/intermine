@@ -1,4 +1,4 @@
-<html>
+<html style="padding: 0px">
   <head>
     <title>FlyMine Tour page 10 - Use bags in template queries</title>
     <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
@@ -9,43 +9,44 @@
     <div class="tour">
       <table width="100%">
         <tr>
-          <td colspan="2" align="right">
+          <td colspan="3" align="right">
             <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
               <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';" 
                    onmouseover="this.style.cursor='pointer';"/>
             </span>
           </td>
         </tr>
-        <tr>
-          <td align="left" valign="top">
-<a href="tour_9.html">previous</a>
-          </td>
-          <td align="right" valign="top">
-<a href="tour_11.html">next</a>
-          </td>
-        </tr>
-        <tr>
-          <td align="left" class="nextprev" valign="top">
-            <span class="title">
-Bag details page
-            </span>
-          </td>
-          <td align="right" class="nextprev" valign="top">
-            <span class="title">
-MyMine
-            </span>
-          </td>
-        </tr>
       </table>
-      <div style="clear: all; padding-top: 20px" class="box">
-        <div style="font-size: 130%" class="heading2">
+      <div class="heading">
+        <table width="100%">
+          <tr>
+            <td width="20%" align="left" valign="top">
+<a href="tour_9.html">previous</a>
+            </td>
+            <td width="60%" rowspan="2" align="center" valign="top">
+              <span class="title">
 Use bags in template queries
-        </div>
-        <div style="font-size: 130%" class="body">
-          <div onclick="window.location.replace('tour_11.html');">
+              </span>
+            </td>
+            <td width="20%" align="right" valign="top">
+<a href="tour_11.html">next</a>
+            </td>
+          </tr>
+          <tr>
+            <td width="20%" align="left" class="nextprev" valign="top">
+Bag details page
+            </td>
+            <td width="20%" align="right" class="nextprev" valign="top">
+MyMine
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div style="padding-top: 20px" class="content">
+        <div onclick="window.location.replace('tour_11.html');">
 
 <p>
-You can use bags in any template query or queries you create yourelf in the QueryBuilder.  As the bag details page suggested many of the genes in our bag were transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNAse 1 binding site data set. 
+You can use bags in any template query or queries you create yourelf in the QueryBuilder.  As the bag details page suggested many of the genes in our bag are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNAse 1 binding site data set which we can query with another template. 
 </p>
 
 <p><b>Search the template queries for 'regulated genes'.</b></p>
@@ -62,9 +63,9 @@ You can use bags in any template query or queries you create yourelf in the Quer
 
 <img alt="[Run template with bag]"  src="template_bag.png"/>
 
-<p>The results table shows any genes from our original bag that, according to FlyReg, regulate a particular gene.>/p>
+<p>The results table shows any genes from our original bag that, according to FlyReg, regulate a particular gene.</p>
 
-<p>You can also create new bags from results tables.  We can save a bag of the regulated genes from this query to look at the bag etails page or use it in more templates.</p>
+<p>You can also create new bags from results tables.  We can save a bag of the regulated genes from this query to look at the bag details page or use it in more templates.</p>
 
 <p><b>Click on the checkbox by 'Regulated gene > identifier' and choose a name for the saved bag.</b></p>
 
@@ -84,7 +85,6 @@ You can use bags in any template query or queries you create yourelf in the Quer
 
 
 
-          </div>
         </div>
       </div>
     </div>

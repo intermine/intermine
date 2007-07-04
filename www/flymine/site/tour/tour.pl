@@ -80,7 +80,7 @@ for my $page (@pages) {
   }
 
   print $f <<"HTML";
-<html>
+<html style="padding: 0px">
   <head>
     <title>FlyMine Tour page $num - $title</title>
     <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
@@ -91,42 +91,42 @@ for my $page (@pages) {
     <div class="tour">
       <table width="100%">
         <tr>
-          <td colspan="2" align="right">
+          <td colspan="3" align="right">
             <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
               <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';" 
                    onmouseover="this.style.cursor='pointer';"/>
             </span>
           </td>
         </tr>
-        <tr>
-          <td align="left" valign="top">
-$prev_link
-          </td>
-          <td align="right" valign="top">
-$next_link
-          </td>
-        </tr>
-        <tr>
-          <td align="left" class="nextprev" valign="top">
-            <span class="title">
-$prev_title
-            </span>
-          </td>
-          <td align="right" class="nextprev" valign="top">
-            <span class="title">
-$next_title
-            </span>
-          </td>
-        </tr>
       </table>
-      <div style="clear: all; padding-top: 20px" class="box">
-        <div style="font-size: 130%" class="heading2">
+      <div class="heading">
+        <table width="100%">
+          <tr>
+            <td width="20%" align="left" valign="top">
+$prev_link
+            </td>
+            <td width="60%" rowspan="2" align="center" valign="top">
+              <span class="title">
 $title
-        </div>
-        <div style="font-size: 130%" class="body">
-          <div $onclick>
+              </span>
+            </td>
+            <td width="20%" align="right" valign="top">
+$next_link
+            </td>
+          </tr>
+          <tr>
+            <td width="20%" align="left" class="nextprev" valign="top">
+$prev_title
+            </td>
+            <td width="20%" align="right" class="nextprev" valign="top">
+$next_title
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div style="padding-top: 20px" class="content">
+        <div $onclick>
 $text
-          </div>
         </div>
       </div>
     </div>
