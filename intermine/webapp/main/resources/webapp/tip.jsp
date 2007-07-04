@@ -10,6 +10,6 @@
 </tr>
 </table>
 </p>
-<p><html:link action="/tip?id=${randomTip}">Read more &gt;&gt;</html:link></p>
+<p><html:link action="/tip?id=${randomTip}" target="_top">Read more &gt;&gt;</html:link></p>
 
 <!-- /tip.jsp -->

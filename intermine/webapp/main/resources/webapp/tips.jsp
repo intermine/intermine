@@ -6,9 +6,10 @@
 <c:set var='n' value='<%= request.getParameter("n") %>' />
 <div class="body">
 <c:forEach begin="1" end="${n}" var="tipno"> 
-	  <p>
-		<jsp:include page="tips/tip${tipno}_short.jsp"/><br/>	
-		<html:link action="/tip?id=${tipno}">Read more &gt;&gt;</html:link></p>
+  <p>
+    <jsp:include page="tips/tip${tipno}_short.jsp"/><br/>
+    <html:link action="/tip?id=${tipno}" target="_top">Read more &gt;&gt;</html:link>
+  </p>
 </c:forEach>
 </div>
 <!-- /tips.jsp -->

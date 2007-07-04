@@ -39,7 +39,11 @@ table.dbstats th {
   background: #eee;
 }
 
-#tipbox {width:50%;background-color:#F5F0FF;padding:3px;text-align:left;}
+#tipbox {
+   background-color:#F5F0FF;
+   padding:3px;
+//   text-align:left;
+}
 
 .tour img {
   border: 0px;
