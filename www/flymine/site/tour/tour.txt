@@ -143,7 +143,7 @@ All results pages have a number of export options.
 
 <p>The pane on the left is a view of the data model starting at the class gene and showing all attributes (e.g. name, symbol) and related classes (e.g. organism, proteins).  FlyMine uses an object based data model - biological types are termed 'classes' and individual entries are termed 'objects'.  For example the 'zen' and 'eve' genes are both objects of the class Gene.</p>
 
-<p>You can click to open related classes and see their attributes.  The <img alt="[show]"  src="show.gif"/> and <img alt="[constrain]"  src="constrain.gif"/> buttons let you add fields to the output of a query and add contraints (filters). </p> 
+<p>You can click to open related classes and see their attributes.  The <img alt="[show]"  src="show.gif"/> and <img alt="[constrain]"  src="constrain.gif"/> buttons let you add fields to the output of a query and add constraints (filters). </p> 
 
 <img alt="[query builder]"  src="query_builder.png"/>
 
@@ -157,7 +157,7 @@ All results pages have a number of export options.
 
 <img alt="[click show results]"  src="click_show_results.png"/>
 
-<p>Now we have run the query to show orthologues of the starting gene whether they have GO annotation or not.  Now if you click the <img alt="[summary icon]"  src="summary_maths.png" valign="center"/> button for the column 'Othologue > organism > shortName' it will show you how many orthologues there are in each organism.</p>
+<p>Now we have run the query to show orthologues of the starting gene whether they have GO annotation or not.  Now if you click the <img alt="[summary icon]"  src="summary_maths.png" valign="center"/> button for the column 'Orthologue > organism > shortName' it will show you how many orthologues there are in each organism.</p>
 
 
 <h2>7. Bag Upload</h2>
@@ -201,7 +201,7 @@ If some identifiers don't produce an exact match a confirmation page lets you re
 <h2>8. Bag details page</h2>
 
 <p>
-The bag details is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each catergory,
+The bag details is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each category,
 </p>
 
 <p><i>Coming soon - we plan to add more widgets and functionality to the bag details page.</i></p>
@@ -220,7 +220,7 @@ Template queries have been executed on the whole bag, just like on the gene repo
 <h2>9. Use bags in template queries</h2>
 
 <p>
-You can use bags in any template query or queries you create yourelf in the QueryBuilder.  As the bag details page suggested many of the genes in our bag are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNAse 1 binding site data set which we can query with another template. 
+You can use bags in any template query or queries you create yourself in the QueryBuilder.  As the bag details page suggested many of the genes in our bag are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase 1 binding site data set which we can query with another template. 
 </p>
 
 <p><b>Search the template queries for 'regulated genes'.</b></p>
@@ -250,7 +250,7 @@ You can use bags in any template query or queries you create yourelf in the Quer
 
 <p>Using bags is an excellent way to retrieve information about a whole list of data. For example we could also retrieve:
 <ul>
-<li>all the orthologues in another organsim, e.g. <i>D. pseuedoobscura</i></li>
+<li>all the orthologues in another organism, e.g. <i>D. pseudoobscura</i></li>
 <li>gene expression results from FlyAtlas</li>
 <li>protein-protein interactions for these genes</li>
 <li>and P-element insertions that overlap these genes</li>
