@@ -70,7 +70,7 @@
     <copy todir="${dist.www}">
       <fileset dir="${build.www}">
         <exclude name="**/*.xml"/>
-        <exclude name="**/*.txt"/>
+        <exclude name="**/tour.txt"/>
         <exclude name="**/*.xsl"/>
       </fileset>
     </copy>
