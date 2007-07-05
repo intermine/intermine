@@ -1,1 +1,1 @@
-You can query for information about any BioEntity using the any name or identifier.
+You can easily find the range of values stored under any attribute.
