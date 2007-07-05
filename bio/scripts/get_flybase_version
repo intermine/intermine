@@ -24,15 +24,16 @@ my $log_buffer = "\nFlyBase\n";
 my $connection = &ftp_connect($flybase_server,$username,$password);
 
 #get the last modification dates for one file in each directory	
+##dmel
 $connection->cwd("$dmel_dir/gff")
 	or die "Cannot change working directory ", $connection->message;
-$dates{dmel_gff} = &get_date($connection);
+$dates{dmel_gff_files} = &get_date($connection);
 
 $connection->cwd("../fasta")
 	or die "Cannot change working directory ", $connection->message;
-$dates{dmel_fasta} = &get_date($connection);
+$dates{dmel_fasta_files} = &get_date($connection);
 
-#the chado=xml directory is the only one where the files have different modification dates
+#the chado-xml directory is the only one where the files have different modification dates
 $connection->cwd("../chado-xml")
 	or die "Cannot change working directory ", $connection->message;
 my @chado_list = $connection->ls();
@@ -43,13 +44,14 @@ for my $file (@chado_list) {
 	}
 }
 
+##dpse - doesn't have a chado-xml directory
 $connection->cwd("../../../../$dpse_dir/gff")
 	or die "Cannot change working directory ", $connection->message;
-$dates{dpse_gff} = &get_date($connection);
+$dates{dpse_gff_files} = &get_date($connection);
 	
 $connection->cwd("../fasta")
 	or die "Cannot change working directory ", $connection->message;
-$dates{dpse_fasta}=	&get_date($connection);
+$dates{dpse_fasta_files}=	&get_date($connection);
 	
 $connection->quit;
 
@@ -57,25 +59,39 @@ $connection->quit;
 my $version_dir = "/shared/data/flybase/get_version_file";
 my $version_file = "$version_dir/VERSION";
 
-foreach my $date_key (sort keys %dates){
-	open(F,"<$version_file") or die "$!";
-	while(<F>){
-		my @f = split/\t/;
-		chomp $f[1];
-		#if the file has been downloaded before, check for an update
-		if($date_key eq $f[0]){
-			if($dates{$f[0]} eq $f[1]){
-				$version_buffer .= "$f[0]\t$f[1]\n";
-				$log_buffer .= "$f[0]\tUp to date ($f[1]).\n";
-			}elsif($dates{$f[0]} ne $f[1]){
-				$version_buffer .= "$f[0]\t$dates{$f[0]}\n";
-				$log_buffer .= "$f[0]\tNEW VERSION AVAILABLE ($dates{$f[0]}).\n";
+&checkdir_exists($version_dir);
+#check the VERSION file exists
+if(-e $version_file){
+	#for each file...
+	foreach my $date_key (sort keys %dates){
+		open(F,"<$version_file") or die "$!";
+		while(<F>){
+			my @f = split/\t/;
+			chomp $f[1];
+			#if the file has been downloaded before, check for an update
+			if($date_key eq $f[0]){
+				#if the date of the file matches that stored in the VERSION file
+				if($dates{$f[0]} eq $f[1]){
+					$version_buffer .= "$f[0]\t$f[1]\n";
+					$log_buffer .= "$f[0]\tUp to date ($f[1]).\n";
+				#if the date of the file doesn't match that stored in the VERSION file	
+				}elsif($dates{$f[0]} ne $f[1]){
+					$version_buffer .= "$f[0]\t$dates{$f[0]}\n";
+					$log_buffer .= "$f[0]\tNEW VERSION AVAILABLE ($dates{$f[0]}).\n";
+				}
+			#new file added to ftp site, the name hasn't been seen before
+			}elsif(!exists $dates{$f[0]}) {
+				#new file added to ftp site
+				$version_buffer .= "$date_key\t$dates{$f[0]}\n";
+				$log_buffer .= "$date_key\tNEW FILE ADDED TO ftp site ($dates{$f[0]}).\n";
 			}
-		}elsif(!exists $dates{$f[0]}) {
-			#new file added to ftp site
-			$version_buffer .= "$date_key\t$dates{$f[0]}\n";
-			$log_buffer .= "$date_key\tNEW FILE ADDED TO ftp site ($dates{$f[0]}).\n";
 		}
+	}
+}else{
+	#can't find VERSION file, report current files avaiable and create a new one.
+	foreach my $date_key (sort keys %dates){
+		$version_buffer .= "$date_key\t$dates{$date_key}\n";
+		$log_buffer .= "$date_key\tCURRENT VERSION AVAILABLE IS ($dates{$date_key}).\n";
 	}
 }
 

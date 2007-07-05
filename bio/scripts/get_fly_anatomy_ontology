@@ -50,7 +50,7 @@ sub update_files(){
 	my $new_dir = "$dir/$date";
 	my $newfile = "$new_dir/$new_name";
 	&checkdir_exists($new_dir);
-	system("mv $oldfile $newfile");
+	rename($oldfile, $newfile) or die "Cannot rename $oldfile: $!";
 	&make_link($date,$link);
 	
 	$log_buffer = "Fly Anatomy Ontology\nNew data available in $new_dir containing file $new_name\n\n"; 

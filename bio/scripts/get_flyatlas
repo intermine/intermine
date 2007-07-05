@@ -54,7 +54,7 @@ sub update_files(){
 	&checkdir_exists($new_dir);
 	&checkdir_exists("$new_dir/orig/");
 	&checkdir_exists("$new_dir/fixed/");
-	system("mv $oldfile $orig_file");
+	rename($oldfile, $orig_file) or die "Cannot rename $oldfile: $!";
 	&fix_file($orig_file,$fixed_file);
 	&make_link("$date/fixed",$link);
 	
@@ -67,8 +67,8 @@ sub update_files(){
 sub fix_file(){
 	my ($old_file,$fixed_file) = @_;
 
-	open(F,"<$old_file") or die "$!";
-	open(FH,">$fixed_file") or die "$!";
+	open(F,"<$old_file") or die "Cannot open $old_file: $!";
+	open(FH,">$fixed_file") or die "Cannot open $fixed_file: $!";
 	while(<F>){	
 		s/FakeCall/tubule vs whole fly - T-Test_Change Direction/g;
 		s/Grandmean/TubuleMean/g;
