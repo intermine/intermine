@@ -1,17 +1,30 @@
 פרט<h2>1. What is FlyMine?</h2>
 
+
 <p>FlyMine is a data warehouse that integrates many diverse biological data sets.
 The main focus is <i>Drosophila</i> and <i>Anopheles</i> genomics and proteomics.
 By integrating such data into one place it is possible to construct queries across
 domains of biological knowledge.</p>
 
-<b>See a list of all the data sources on the FlyMine home page:</b>
 
+
+<table class="inlinetable">
+<tr>
+<td valign="top" width="60%">
+<b>See a list of all the data sources from the FlyMine home page:</b>
+</td>
+<td padding="5px" valign="top">
 <img alt="[Release info]" src="release_info.png"/>
+</td>
+</tr>
+</table>
 
 <p>The FlyMine user interface is designed to go beyond simply looking
 up an identifier and viewing a report page.  This quick tour will
 introduce some of the features:</p>
+
+<p><b>Quick Search</b> is available just like on other sites, type in
+an identifier to see a report page.</p>
 
 <p><b>Template queries</b> are 'canned' queries that provide a simple
 form to perform a specific task.</p>
@@ -19,14 +32,11 @@ form to perform a specific task.</p>
 <p><b>Bags</b> let you operate on whole lists of data at once.  You can
 upload your own lists or save them from results tables.<p>
 
-<p><b>Quick Search</b> is available just like on other sites, type in
-an identifier to see a report page.</p>
-
-<p><b>A QueryBuilder</b> lets you create your own custom queries and
+<p><b>The QueryBuilder</b> lets you create your own custom queries and
 edit existing templates.</p>
 
 <p><b>Aspects</b> are a way to explore the data and template queries
-for a particular area of biology - for example Comparive Genomics or
+for a particular area of biology - for example Comparative Genomics or
 Protein Interactions.</p>
 
 <p><b>MyMine</b> lets you create an account to save your own queries
@@ -141,7 +151,7 @@ All results pages have a number of export options.
 
 <p><b>Click the <img alt="[red cross]"  src="cross.gif"/> buttons to remove the last three columns from the query - the three that mention GO annotation.</b></p>
 
-[remove boxes image?]
+<img alt="[remove columns]"  src="remove_columns.png"/>
 
 <p><b>Click 'Show results' to run the query.</b></p>
 
@@ -179,7 +189,7 @@ FlyMine's bag creation tool helps you upload a list of identifiers, the list can
 If some identifiers don't produce an exact match a confirmation page lets you resolve any issues.  Here, two genes were found by synonyms and a protein identifier has been converted to the corresponding gene.  You can check through each issue or just add all the matches to your bag.
 </p>
 
-<p><b>Click 'Add all' to include all issues in the bag.</b></p>
+<p><b>Click 'Add all' to include all suggested genes to the bag.</b></p>
 
 <img alt="[Add these bag]"  src="bag_confirm_add.png"/>
 
@@ -205,7 +215,7 @@ The bag details is a great way to find out more about a list of genes.  A number
 Template queries have been executed on the whole bag, just like on the gene report page.  This is a simple way to retrieve further information about the entire list.  For example, you could retrieve all the exons or protein sequences.
 </p>
 
-[bag templates image]
+<img alt="[Bag templates]"  src="bag_templates.png"/>
 
 <h2>9. Use bags in template queries</h2>
 
@@ -258,4 +268,6 @@ You can use bags in any template query or queries you create yourelf in the Quer
 
 <img alt="[MyMine tabs]"  src="mymine_tabs.png"/>
 
+<p/>
 
+<p>Please contact us if you have any questions or suggestions: <b>support@flymine.org</b></p>
