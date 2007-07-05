@@ -75,9 +75,11 @@ for my $page (@pages) {
   }
 
   my $onclick = "";
-  if (length $next_url > 0) {
-    $onclick = qq[onclick="window.location.replace('$next_url');"];
-  }
+#  if (length $next_url > 0) {
+#    $onclick = qq[onclick="window.location.replace('$next_url');"];
+#  }
+
+  my $x_of_y = "$num/" . scalar(@pages);
 
   print $f <<"HTML";
 <html style="padding: 0px">
@@ -107,7 +109,7 @@ $prev_link
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-$title
+$title &nbsp; &nbsp; ($x_of_y)
               </span>
             </td>
             <td width="20%" align="right" valign="top">
@@ -128,6 +130,31 @@ $next_title
         <div $onclick>
 $text
         </div>
+      </div>
+      <div class="heading">
+        <table width="100%">
+          <tr>
+            <td width="20%" align="left" valign="top">
+$prev_link
+            </td>
+            <td width="60%" rowspan="2" align="center" valign="top">
+              <span class="title">
+$x_of_y
+              </span>
+            </td>
+            <td width="20%" align="right" valign="top">
+$next_link
+            </td>
+          </tr>
+          <tr>
+            <td width="20%" align="left" class="nextprev" valign="top">
+$prev_title
+            </td>
+            <td width="20%" align="right" class="nextprev" valign="top">
+$next_title
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   </body>
