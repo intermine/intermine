@@ -71,8 +71,12 @@ table.dbstats th {
 
 .tour .content {
   padding: 20px;
-  font-size: 130%;
+  font-size: 120%;
   margin: 30px
   padding: 30px
+}
+
+.tour .inlinetable {
+  font-size: 100%;
 }
 
