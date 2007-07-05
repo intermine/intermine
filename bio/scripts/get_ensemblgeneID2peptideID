@@ -52,7 +52,7 @@ for my $species (keys %species_map) {
 	print "Getting $filename to $temp_dir\n";
 	my $io = io"$url";
 	my $contents = $io->slurp;
-	open FH, ">$temp_file";
+	open FH, ">$temp_file" or die "Cannot open $temp_file: $!";
 	print FH $contents;		
 	close FH;
 	
@@ -86,13 +86,13 @@ for my $species (keys %species_map) {
 sub update_files(){
 	my ($dir,$new_name,$tempfile) = @_;
 	
-	#for the first file, create archive and copy files to archive
+	#when the first updated file is found, create the archive and copy old files to it
 	if(&checkdir_exists($archive_dir)==1){
 		system("cp $dir/*mart_export.txt $archive_dir");
 	}
 	
 	my $orig_file = "$dir/$new_name";
-	system("mv $tempfile $orig_file");
+	rename($tempfile, $orig_file) or die "Cannot rename $tempfile: $!";
 }
 #==========================================================================================
 #creates the xml file (this part was ensemblgene2translation_xml.pl)
@@ -124,7 +124,11 @@ if($updated == 0){
 	
 	#add the existing xml file to the archive directory
 	my $archive_xml = "$archive_dir/geneId2peptideId.xml";
-	system("mv $outfile $archive_xml");
+	
+	#if there is an existing xml file, move it to the archive
+	if(-e $outfile){
+		rename($outfile, $archive_xml) or die "Cannot move $outfile to $archive_xml: $!";
+	}
 	
 	#create the DataSource object
 	my $source = 'Ensembl';
@@ -153,7 +157,7 @@ if($updated == 0){
 		my $file_date = &convert_date($mtime);
 		$version_buffer.= "$file was last updated on $file_date\n";
 		
-		open(F,"<$filepath") or die "$!";
+		open(F,"<$filepath") or die "Cannot open $filepath: $!";
 		
 		while(<F>){
 			my $gene_item;
@@ -200,7 +204,7 @@ if($updated == 0){
 				}
 			}#else{print"\n";}
 		}	
-		close(F) or die "$!";
+		close(F) or die "Problem closing $filepath: $!";
 	}#end foreach
 
 	#write xml file
