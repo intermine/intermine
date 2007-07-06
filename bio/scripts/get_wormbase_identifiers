@@ -30,9 +30,10 @@ my $tab_delim_file = "$download_dir/$wb_id_data_file";
 &http_download($file_to_get,$temp_file);
 
 #convert it from a space delimited to tab delimited file
-open(F,"<$temp_file") or die "$!";
-open(FH,">$tab_delim_file") or die "$!";
+open(F,"<$temp_file") or die "cannot open $temp_file: $!";
+open(FH,">$tab_delim_file") or die "cannot open $tab_delim_file: $!";
 while(<F>){
+	#substitute a space with a tab for each line
 	s/ /\t/g;
     print FH; 
 }
@@ -64,7 +65,7 @@ sub update_files(){
 	my $new_dir = "$dir/$date";
 	my $newfile = "$new_dir/$new_name";
 	&checkdir_exists($new_dir);
-	system("mv $oldfile $newfile");
+	rename($oldfile, $newfile) or die "Cannot rename $oldfile: $!";
 	&make_link($date,$link);
 	
 	$log_buffer = "WormBase Identifiers\nNew data available in $new_dir containing file $new_name\n\n"; 

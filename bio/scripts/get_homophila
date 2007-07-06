@@ -47,7 +47,7 @@ my $old_file = "$current_link/homophila_all.txt";
 if(&compare_files($old_file,$temp_file)==1){
 	print "Keeping downloaded files.\n";
 	&checkdir_exists($data_dir);
-	system("mv $temp_file $data_file");
+	rename($temp_file, $data_file) or die "Cannot rename $temp_file: $!";
 	&make_link($date,$current_link);
 	$updated = 1;
 	
@@ -70,6 +70,7 @@ my $matches = "$data_dir/$homophila_matches_file";
 my $diseases = "$data_dir/$homophila_diseases_file";
 my $prots = "$data_dir/$protein_ids_file";
 
+#check that the files are needed
 if( (-e $matches)&&(-e $diseases)&&(-e $prots) ){
 	warn "Homophila dieseases and matches files already generated\n";
 }else{
@@ -110,10 +111,10 @@ if( (-e $matches)&&(-e $diseases)&&(-e $prots) ){
 
 #print file
 sub print_hash2file{
-my ($file, %hash) = @_;
+my ($filename, %hash) = @_;
 
-open FH, ">$file"
-   or die "can't open $file\n";
+open FH, ">$filename"
+   or die "can't open $filename\n";
 for my $line (sort keys %hash) {
   print FH "$line\n";
 }
@@ -143,14 +144,16 @@ if(-e $sequences_file){
 	# URL for esearch
 	my $esearch = "$utils/esearch.fcgi?" .
 	              "db=$db&retmax=1&usehistory=y&term=";
-
+				  
+	#open file handle for writing
 	open SEQUENCES, ">$sequences_file"
 	   or die "can't open $sequences_file\n";
 	
+	#open protein Ids file
 	open(PROT, "<$prots") or die "$!";
 	while (my $queryID = <PROT>) {
 		chomp $queryID;
-		# id to be queried by esearch and final esearch URL
+		# join id to be queried by esearch and final esearch URL, get the result
 		#print "Query ID $queryID\n";
 		my $esearch_result = get($esearch . $queryID);
 	
@@ -197,23 +200,30 @@ if(-e $prot_gene_file){
 	warn "protein_gene.txt already generated\n";
 }else{
 	print "Writing protein_gene.txt\n";
-
+	
+	#write to...
 	open PROT_GENES, ">$prot_gene_file"
 	   or die "can't open $prot_gene_file\n";
-
+	
+	#read from the esearch results
 	open(FILE, "<$sequences_file") or die "$!";
 	while (<FILE>) {
+		#find the first LOCUS and set the $more flag
 		if (!$more && /LOCUS      /) {
 	    	$more = 1;
 	  	}
+		#save the next gene acession number after the more flag is set
+		#reset $more so that the identifier is ignored until another locus is found
 		if( $more && (/(NP_\d+)/ || /(XP_\d+)/) ){
 	    	print PROT_GENES "$1\t";
 	    	$more = 0;
 	    	$cds = 0;
 		}
+		#identify the CDS and set the $cds flag
 		if (!$cds && /CDS      /) {
 	    	$cds = 1;
   		}
+		#save the gene name, set the $more flag for the next gene
 		if ($cds && /gene="(.+)"/) {
     		print PROT_GENES "$1\n";
    			$more = 1;

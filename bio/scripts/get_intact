@@ -47,13 +47,14 @@ if(&checkdir_exists($download_dir)==1){
 	$connection->cwd($species_dir)
  	   or die "Cannot change working directory to $species_dir";
 	
-	my $date = &convert_date();
 	$log_buffer = "Intact\nNew data available in $download_dir containing file(s):\n";
 	my $int_version_buffer = "Protein Interactions - D. melanogaster, C. elegans, S. cerevisiae protein-protein interactions\n$date_string\nAll protein-protein interaction data from IntAct . See Protein Interactions aspect to retrieve full list of publcationsProtein interaction database\nhttp://www.ebi.ac.uk/intact";
 	
+	#get the list of files in /psi25/species
 	my @psi_files = $connection->ls();
 
 	for my $psi_file (@psi_files) {
+		#find what organism the file represents and check if we are interested in it
 	    my $start = substr($psi_file, 0, index($psi_file, "_"));
 		if (grep {$start eq $_} keys %organisms) {
 	        &ftp_download($connection,$download_dir,$psi_file);
@@ -112,7 +113,7 @@ sub update_files(){
 	my $new_dir = "$dir/$date";
 	my $newfile = "$new_dir/$new_name";
 	&checkdir_exists($new_dir);
-	system("mv $oldfile $newfile");
+	rename($oldfile, $newfile) or die "Cannot rename $oldfile: $!";
 	&make_link($date,$link);
 	
 	$log_buffer .= "\npsi-mi.obo\nNew data available in $new_dir containing file $new_name\n\n"; 

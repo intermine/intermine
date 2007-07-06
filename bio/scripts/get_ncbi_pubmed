@@ -35,7 +35,7 @@ my $ncbi_main_dir = "/shared/data/pubmed";
 my $download_dir = "$ncbi_main_dir/$date_string";
 my ($updated,$version_buffer,$log_buffer);
 
-#make sure that the necessary directories exist
+#make sure that the necessary directories exist and download new data if available
 my $current_link = "/shared/data/pubmed/current";
 &checkdir_exists($ncbi_main_dir);
 if(&checkdir_exists($download_dir)==1){
@@ -142,16 +142,18 @@ if(-e $outfile){
 			my $ncbigeneID = $f[1];
 		
 			#use taxonID to get correct type of data where available
+			#id 180454 uses the gene identifier, some are missing and are a "-" and should be ignored
 			if($current_ID==180454 && $f[3] ne "-"){
 				chomp $f[3];
 		  		$identifier = $f[3];
-				#remove excess characters
+				#remove excess characters from the identifier
 				if($identifier=~ /^AgaP_/){
 					$identifier=substr $identifier,5;
 				}
-				#check for duplicates
+				#check for duplicates - have we already processed this gene from this file?
 				if(exists $genes{$ncbigeneID}{$identifier}){
 					#print "$identifier already found\n"
+				#was it in gene2pubmed?	If so set the references in the gene object
 				}elsif(exists $genes{$ncbigeneID}->{'object'}){
 					#print "$identifier\t$ncbigeneID\tValid id\n";
 					$genes{$ncbigeneID}{$identifier}=$identifier;
@@ -159,16 +161,17 @@ if(-e $outfile){
 					my $org_item = $organism{$current_ID}->{'object'};
 					$gene_item->set('identifier', $identifier);
 					$gene_item->set('organism', $org_item);
-				
+				#some identifiers in gene_info are not in gene2pubmed and shouldn't be
+				#processed if found again
 				}else{
 					#print"$identifier\t$ncbigeneID\tInvalid ID\n";
 					delete $genes{$ncbigeneID};	
 				}
-			#use organismDbId where available	
+			#use organismDbId where available, but ignore missing data	
 			}elsif($f[5] ne "-"){
 				chomp $f[5];
 				$dbID = $f[5];
-		    	#remove excess characters
+		    	#remove excess characters from the organismDbId
 				if($dbID=~ /^SGD:/){
 					$dbID=substr $dbID,4;
 	      		}elsif($dbID=~/^WormBase:/){
@@ -177,9 +180,10 @@ if(-e $outfile){
 					$dbID=substr $dbID,8;
 	      		}
 			
-				#check for duplicates
+				#check for duplicates - have we already processed this gene from this file?
 				if(exists $genes{$ncbigeneID}{$dbID}){
 					#print "$dbID already found\n"
+				#was it in gene2pubmed?	If so set the references in the gene object
 				}elsif(exists $genes{$ncbigeneID}->{'object'}){
 					#print "$dbID\t$ncbigeneID\tValid id\n";
 					$genes{$ncbigeneID}{$dbID}=$dbID;
@@ -187,6 +191,8 @@ if(-e $outfile){
 					my $org_item = $organism{$current_ID}->{'object'};
 					$gene_item->set('organismDbId', $dbID);
 					$gene_item->set('organism', $org_item);
+				#some identifiers in gene_info are not in gene2pubmed and shouldn't be
+				#processed if found again
 				}else{
 					#print"$dbID\t$ncbigeneID\tInvalid ID\n";
 					delete $genes{$ncbigeneID};

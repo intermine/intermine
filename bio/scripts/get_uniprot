@@ -61,7 +61,6 @@ if(&checkdir_exists($download_dir)==1){
 	$connection->cwd("/$uniprot_full_path")
 		or die "Cannot change working directory ", $connection->message;
 	
-	my $date = &convert_date();
 	$log_buffer = "Uniprot\nNew data available (release $version) in $download_dir containing file(s):\n";
 	$version_buffer = "UniProt proteins\nRelease $version $date\nProteins for D. melanogaster, D. pseudoobscura, A. gambiae, A. mellifera, C. elegans and S. cerevisiae  from Uniprot (trembl and swissprot)\nhttp://www.ebi.uniprot.org/index.shtml\n";
 
@@ -134,24 +133,32 @@ if(&checkdir_exists($split_dir)==0){
 		$filename = $files{$file_type}->{'filename'};
 		$fname_end = $files{$file_type}->{'fname_end'};
 			
-		#read a line at a time and identify the start/stop/taxon id
+		#read a line at a time and identify the start (<entry), stop (</entry), and taxon id (type="NCBI Taxonomy)
 		open(F,"<$filename") or die "$! was expecting something like uniprot_sprot.xml or uniprot_trembl.xml";
 		while(my $newline = <F>){
+			#if a new entry is found we might want to keep it
 			if($newline && $newline =~ /$start/gi){
 				$keep = "true";
+			#is this a taxon Id line?	
 			}elsif($newline && $newline =~ /$trigger/gi){
+				#get the taxon Id if it is
 				if($newline=~/id="(\d+)"/){
 				$taxon = $1;
 				}
+			#is this the end of the entry?	
 			}elsif($newline && $newline =~ /$end/gi){
+				#add to the buffer
 				$buffer .= $newline;
+				#if we want this species, write the buffer to a file
 				if(exists $taxons{$taxon}){
 					&writefile($buffer,$taxon,$fname_end);
 				}
+				#reset everything ready for the next entry element.
 				$keep = "false";
 				$buffer = "";
 				$taxon = 0000;
-			}	
+			}
+			#while keep is true, build up the buffer until the element end is found	
 			if($keep eq "true"){
 				$buffer .= $newline;
 			}
@@ -159,12 +166,12 @@ if(&checkdir_exists($split_dir)==0){
 	close(F) or die "$!";
 	}
 
-	#identify the output files
+	#identify all the output files once the XML processing is finished 
 	opendir(DIR,$split_dir) || die("Cannot open directory !\n");
 	@new_contents=grep(!/^\.\.?$/,readdir DIR);
 	closedir(DIR);
 
-	#add the copyright and close the root element to the output files
+	#add the copyright and close the root element for each output file
 	foreach my $file (@new_contents){
 		$file = $split_dir.$file;
 		open( FILE, ">>$file") or die "cannot open $file: $!";
@@ -178,13 +185,16 @@ if(&checkdir_exists($split_dir)==0){
 sub writefile(){
 my ($xml,$species,$end) = @_;
 my $new_file = $split_dir.$species.$end;
-
+	
+	#if this is a new species file, create it and add the 
+	#xml declaration, open the root element and the species entry
 	if(!-e $new_file ){
 		open(FH, ">$new_file") || die "$!";
 		print FH "$prolog\n";
 		print FH "$xml";
 		close(FH);
 	}else{
+	#if the file already exists, append the species entry
 	open(FH, ">>$new_file") || die "$!";
 		print FH "$xml";
 		close(FH);
