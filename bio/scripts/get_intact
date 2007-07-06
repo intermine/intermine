@@ -10,6 +10,17 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home,$file);
+if(@ARGV!=4){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+	$file = $ARGV[3];
+}
+
 # EBI ftp server information
 my $ebi_server = "ftp.ebi.ac.uk";
 my $intact_dir = "pub/databases/intact/current/";
@@ -19,7 +30,6 @@ my $password = "-anonymous\@";
 
 # get the list of organisms from the config file - this is the five letter
 # abbreviation used as the start of intact filenames. 
-my $file = "resources/get_scripts.config";
 my %organisms = &config_species($file,"intact");
 
 #### Access EBI ftp server
@@ -34,7 +44,7 @@ my $check_file = "all.zip";
 my $date_string = &date_string_file($connection,$check_file);
 
 # check psi and intact directory exists
-my $psi_dir = "/shared/data/psi";
+my $psi_dir = "$home/psi";
 my $intact_main_dir = "$psi_dir/intact";
 my $download_dir = "$intact_main_dir/$date_string";
 
@@ -62,7 +72,7 @@ if(&checkdir_exists($download_dir)==1){
 	    }
 	}
 	
-	my $current_link = "/shared/data/psi/intact/current";
+	my $current_link = "$home/psi/intact/current";
 	&make_link($date_string,$current_link);
 	&write_version($intact_main_dir,$int_version_buffer);
 	system "chmod -R a+r,g+w $download_dir";
@@ -89,7 +99,7 @@ my $temp_file = "$psi_mi_download_dir/$psi_mi_file";
 &checkdir_exists($psi_mi_download_dir);
 &http_download($file_to_get,$temp_file);
 
-my $current_link = "/shared/data/psi/ontology/current";
+my $current_link = "$home/psi/ontology/current";
 my $old_file = "$current_link/psi-mi.obo";
 
 #compare the files, create version directory if it is a new version or
@@ -104,7 +114,7 @@ if($result == 1){
 	$log_buffer .= "\npsi-mi.obo\nCurrent data ok\n\n";
 }
 
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);
 
 #create data directory, move files, make link	
 sub update_files(){

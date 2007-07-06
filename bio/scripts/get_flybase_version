@@ -9,6 +9,16 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home);
+if(@ARGV!=3){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+}
+
 #for connecting to the ftp server
 my $flybase_server = "ftp.flybase.net";
 my $dmel_dir = "genomes/dmel/current";
@@ -56,7 +66,7 @@ $dates{dpse_fasta_files}= &get_date($connection);
 $connection->quit;
 
 # check for updates
-my $version_dir = "/shared/data/flybase/get_version_file";
+my $version_dir = "$home/flybase/get_version_file";
 my $version_file = "$version_dir/VERSION";
 
 &checkdir_exists($version_dir);
@@ -96,7 +106,8 @@ if(-e $version_file){
 }
 
 #write the report files
-&write_log($log_buffer);
+$log_buffer .= "\n";
+&write_log($log_buffer,$logdir,$logname);
 &write_version($version_dir,$version_buffer);
 
 # get the date string from a directory where all the files have the same modification date
