@@ -907,7 +907,7 @@ public class PsiConverter extends FileConverter
                 Item datasource = createItem("DataSource");
                 datasourceItemId = datasource.getIdentifier();
                 try {
-                    datasource.addAttribute(new Attribute("name", "IntAct"));
+                    datasource.addAttribute(new Attribute("name", "UniProt"));
                     writer.store(ItemHelper.convert(datasource));
                     masterList.put("datasource", datasourceItemId);
                 } catch (ObjectStoreException e) {
