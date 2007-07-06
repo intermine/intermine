@@ -120,13 +120,12 @@
 
   <target name="validate-site-xhtml"
           depends="validate-site-xml, style-site">
-<!--
     <xmlvalidate warn="yes">
       <fileset dir="${dist.www}" includes="**/*.html">
         <exclude name="internal/**"/>
         <exclude name="images/index.html"/>
         <exclude name="stats.html"/>
-        <exclude name="tour*.html"/>
+        <exclude name="**/tour*.html"/>
         <exclude name="graphics/index.html"/>
       </fileset>
       <xmlcatalog>
@@ -135,7 +134,6 @@
           location="${cache.dtd}/xhtml1-transitional.dtd"/>
         </xmlcatalog>
    </xmlvalidate>
--->
   </target>
 
   <target name="transform-site"
