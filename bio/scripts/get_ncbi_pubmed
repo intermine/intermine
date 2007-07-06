@@ -9,6 +9,17 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home,$config_file);
+if(@ARGV!=4){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+	$config_file = $ARGV[3];
+}
+
 print "\nReady to download NCBI gene and pubmed Id...\n";
 
 #for connecting to the ftp server
@@ -31,12 +42,12 @@ $connection->cwd($ncbi_dir)
 my $date_string = &date_string_file($connection,$pubmed_info_file);
 
 #destination directories
-my $ncbi_main_dir = "/shared/data/pubmed";
+my $ncbi_main_dir = "$home/pubmed";
 my $download_dir = "$ncbi_main_dir/$date_string";
 my ($updated,$version_buffer,$log_buffer);
 
 #make sure that the necessary directories exist and download new data if available
-my $current_link = "/shared/data/pubmed/current";
+my $current_link = "$home/pubmed/current";
 &checkdir_exists($ncbi_main_dir);
 if(&checkdir_exists($download_dir)==1){
 	&ftp_download($connection,$download_dir,$gene_info_file);
@@ -81,7 +92,6 @@ if(-e $outfile){
 	warn "XML already generated\n";
 }else{
 	#define organism ids to include
-	my $config_file = "resources/get_scripts.config";
 	my %ids=&config_species($config_file,"pubmed");
 
 
@@ -234,7 +244,7 @@ if($updated == 1){
 	&write_version($ncbi_main_dir,$version_buffer);
 	system "chmod -R a+r,g+w $download_dir";
 }
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);
 
 sub make_item
 {

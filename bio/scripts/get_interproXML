@@ -11,6 +11,16 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home);
+if(@ARGV!=3){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+}
+
 # EBI ftp server information
 my $ebi_server = "ftp.ebi.ac.uk";
 my $interpro_dir = "pub/databases/interpro/";
@@ -28,7 +38,7 @@ my $interpro_file = "interpro.xml";
 my $date_string = &date_string_file($connection,"$interpro_file.gz");
 
 # check interpro directory exists
-my $main_dir = "/shared/data/interpro";
+my $main_dir = "$home/interpro";
 my $download_dir = "$main_dir/$date_string";
 &checkdir_exists($main_dir);
 
@@ -37,7 +47,7 @@ my ($version,$version_buffer,$log_buffer);
 if(&checkdir_exists($download_dir)==1){
 	&ftp_download($connection,$download_dir,"$interpro_file.gz");
 	&unzip_dir($download_dir);	
-	my $current_link = "/shared/data/interpro/current";
+	my $current_link = "$home/interpro/current";
 	&make_link($date_string,$current_link);
 	
 	#get the interpro version from the downloaded file
@@ -57,4 +67,4 @@ if(&checkdir_exists($download_dir)==1){
 	warn " current version up to date - skipping download\n";
 	$log_buffer = "Interpro\nCurrent data ok\n\n";
 }
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);

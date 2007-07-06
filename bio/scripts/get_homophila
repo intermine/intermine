@@ -16,6 +16,16 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home);
+if(@ARGV!=3){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+}
+
 #homophila source directories and files
 my $homophila_server = "http://superfly.ucsd.edu/homophila";
 my $homophila_data_file = "homophila_all.txt";
@@ -24,7 +34,7 @@ my $homophila_diseases_file = "homophila_diseases.txt";
 my $protein_ids_file = "protein_ids.txt";
 
 #flymine destination directories and files
-my $homophila_main_dir = "/shared/data/homophila";
+my $homophila_main_dir = "$home/homophila";
 my $temp_dir = "$homophila_main_dir/temp";
 my $temp_file = "$temp_dir/temp.txt";
 my $file_to_get = "$homophila_server/$homophila_data_file.gz";
@@ -41,7 +51,7 @@ my ($updated,$version_buffer,$log_buffer);
 
 #compare the files, create version directory if it is a new version or
 #the current data link is missing
-my $current_link = "/shared/data/homophila/current";
+my $current_link = "$home/homophila/current";
 my $old_file = "$current_link/homophila_all.txt";
 
 if(&compare_files($old_file,$temp_file)==1){
@@ -237,6 +247,6 @@ if($updated == 1){
 	&write_version($homophila_main_dir,$version_buffer);
 	system "chmod -R a+r,g+w $data_dir";
 }
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);
 
 

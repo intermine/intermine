@@ -156,9 +156,9 @@ sub write_version(){
 
 #write the download log file
 sub write_log(){
-	my ($buffer) = @_;
+	my ($buffer,$logdir,$logname) = @_;
 	
-	my $log = "/shared/data/download_logs/temp_log.txt";
+	my $log = $logdir.$logname;
 	&checkdir_exists("/shared/data/download_logs");
 	&write_file($log,$buffer);
 }

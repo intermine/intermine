@@ -15,6 +15,16 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home);
+if(@ARGV!=3){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+}
+
 #for connecting to the ftp server
 my $kegg_server = "ftp.genome.jp";
 my $map_title_dir = "pub/kegg/pathway";
@@ -36,12 +46,12 @@ $connection->cwd($dme_map_dir)
 my $date_string = &date_string_file($connection,$dme_map_file);
 
 #destination directories
-my $kegg_main_dir = "/shared/data/kegg";
+my $kegg_main_dir = "$home/kegg";
 my $download_dir = "$kegg_main_dir/$date_string";
 my ($version_buffer,$log_buffer);
 
 #make sure that the necessary directories exist
-my $current_link = "/shared/data/kegg/current";
+my $current_link = "$home/kegg/current";
 &checkdir_exists($kegg_main_dir);
 
 #check if new data is available and download it
@@ -66,5 +76,5 @@ if(&checkdir_exists($download_dir)==1){
 	warn " current version up to date - skipping download\n";
 	$log_buffer = "KEGG\nCurrent data ok\n\n";
 }
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);
 $connection->quit;

@@ -12,13 +12,23 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home);
+if(@ARGV!=3){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+}
+
 #data source
 my $server = "http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly";
 my $file = "fly_anatomy.obo";
 my $file_to_get = "$server/$file";
 
 #data destination
-my $fly_ont_main_dir = "/shared/data/ontologies/fly_anatomy";
+my $fly_ont_main_dir = "$home/ontologies/fly_anatomy";
 my $download_dir = "$fly_ont_main_dir/temp";
 my $temp_file = "$download_dir/temp.txt";
 
@@ -26,7 +36,7 @@ my $temp_file = "$download_dir/temp.txt";
 &checkdir_exists($download_dir);
 &http_download($file_to_get,$temp_file);
 
-my $current_link = "/shared/data/ontologies/fly_anatomy/current";
+my $current_link = "$home/ontologies/fly_anatomy/current";
 my $old_file = "$current_link/fly_anatomy.obo";
 my ($version_buffer,$log_buffer);
 
@@ -41,7 +51,7 @@ if(&compare_files($old_file,$temp_file)==1){
 	$log_buffer = "Fly Anatomy Ontology\nCurrent data ok\n\n";
 }
 
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);
 
 #create data directory, move files, make link	
 sub update_files(){

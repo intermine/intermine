@@ -13,6 +13,15 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home);
+if(@ARGV!=3){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+}
 
 #for connecting to the ftp server
 my $wormbase_ftp = "caltech.wormbase.org";
@@ -46,7 +55,7 @@ foreach my $file (@files) {
 }
 
 # check download directory exists
-my $main_dir = "/shared/data/rnai/wormbase";
+my $main_dir = "$home/rnai/wormbase";
 my $download_dir = "$main_dir/$date_string";
 &checkdir_exists($main_dir);
 
@@ -62,7 +71,7 @@ if(&checkdir_exists($download_dir)==1){
 	#remove unnecessary files included in the archive
 	system "rm $download_dir/gene* $download_dir/anatomy* $download_dir/*.gz";
 	
-	my $current_link = "/shared/data/rnai/wormbase/current";
+	my $current_link = "$home/rnai/wormbase/current";
 	&make_link($date_string,$current_link);
 	
 	$version_buffer = "C. elegans RNAi phenotypes\n$version $date_string\n"
@@ -76,7 +85,7 @@ if(&checkdir_exists($download_dir)==1){
 	warn " current version up to date - skipping download\n";
 	$log_buffer = "Wormbase RNAi\nCurrent data ok\n\n";
 }
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);
 
 
 

@@ -14,15 +14,25 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home,$file);
+if(@ARGV!=4){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+	$file = $ARGV[3];
+}
+
 # get species from config file. Key code organisms must have orthologues with each other AND the
 # other code organisms. Other code organisms must ONLY have orthologues with the key code organisms.
-my $file = "resources/get_scripts.config";
 my %key_codes = &config_species($file,"key_inparanoid");
 my %other_codes = &config_species($file,"other_inparanoid");
 
 # data source and destination
 my $inparanoid_server = "http://inparanoid.sbc.su.se/download/current/sqltables";
-my $InP_main_dir = "/shared/data/orthologues/inparanoid";
+my $InP_main_dir = "$home/orthologues/inparanoid";
 my $download_dir = "$InP_main_dir/temp";
 my $temp_file = "$download_dir/temp.txt";
 
@@ -50,7 +60,7 @@ foreach (@page){
 my $date = &convert_date();
 my $updated = 0;
 my ($version_buffer,$log_buffer,$log_names,$log_start);
-my $current_link = "/shared/data/orthologues/inparanoid/current";
+my $current_link = "$home/orthologues/inparanoid/current";
 for my $file_to_get (sort keys %files) {
 	&http_download("$inparanoid_server/$file_to_get",$temp_file);
 	my $old_file = "$current_link/$file_to_get";
@@ -70,7 +80,7 @@ $version_buffer = "Orthologues and paralogues\n$date\nOrthologues and Paralogues
 $log_buffer = $log_start.$log_names."\n";
 &write_version($InP_main_dir,$version_buffer);
 }
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);
 
 sub update_files(){
 	my ($dir,$new_name,$oldfile,$link) = @_;

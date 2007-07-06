@@ -19,6 +19,17 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home,$file);
+if(@ARGV!=4){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+	$file = $ARGV[3];
+}
+
 #data source
 my $uniprot_go_server = "ftp.ebi.ac.uk";
 my $uniprot_go_dir = "pub/databases/GO/goa/UNIPROT";
@@ -27,7 +38,6 @@ my $goa_file_gz = "$goa_file.gz";
 
 # taxon IDs that should be grepped out of the $goa_file and the suffix to use
 # when creating the output file
-my $file = "resources/get_scripts.config";
 my %taxon_map = &config_species($file,"go_taxon");
 
 my $godatabase_server = "ftp.geneontology.org";
@@ -47,7 +57,7 @@ my $go_connection = &ftp_connect($godatabase_server,$username,$password);
 $go_connection->cwd($go_dir)
 	or die "Cannot change working directory ", $go_connection->message;
 
-my $go_download_dir = "/shared/data/go-annotation";
+my $go_download_dir = "$home/go-annotation";
 &ftp_download($go_connection,$go_download_dir,$go_file);
 $go_connection->quit;
 
@@ -64,9 +74,9 @@ $goa_connection->cwd($uniprot_go_dir)
 my $uniprot_date_string = &date_string_file($goa_connection,$goa_file_gz);
 
 # make uniprot directory if necessary and download file
-my $uniprot_dir = "/shared/data/go-annotation/uniprot";
+my $uniprot_dir = "$home/go-annotation/uniprot";
 my $uniprot_download_dir = "$uniprot_dir/$uniprot_date_string";
-my $uniprot_link = "/shared/data/go-annotation/uniprot/current";
+my $uniprot_link = "$home/go-annotation/uniprot/current";
 
 &checkdir_exists($uniprot_dir);
 if(&checkdir_exists($uniprot_download_dir)==1){
@@ -114,7 +124,7 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 	
 	#make links for the current data
 	&make_link($uniprot_date_string,$uniprot_link);
-	my $go_uniprot_link = "/shared/data/go-annotation/current/uniprot";
+	my $go_uniprot_link = "$home/go-annotation/current/uniprot";
 	my $go_link_dir = "../uniprot/$uniprot_date_string";
 	&make_link($go_link_dir,$go_uniprot_link);
 	system "chmod -R a+r,g+w $uniprot_download_dir";
@@ -138,7 +148,7 @@ for my $source_database (keys %gene_association_map) {
 	my $date_string = &date_string_file($assoc_connection,$gene_association_file_gz);
   
 	# create directory for source if necessary
-	my $source_dir = "/shared/data/go-annotation/$source_database";
+	my $source_dir = "$home/go-annotation/$source_database";
 	&checkdir_exists($source_dir);
 	my $source_dir_link = "$source_dir/current";
 	
@@ -159,7 +169,7 @@ for my $source_database (keys %gene_association_map) {
 		
 		#make links to current data
 		&make_link($date_string,$source_dir_link);
-		my $current_link = "/shared/data/go-annotation/current/$source_database";
+		my $current_link = "$home/go-annotation/current/$source_database";
 		my $current_link_dir = "../$source_database/$date_string";
 		&make_link($current_link_dir,$current_link);
 		
@@ -176,4 +186,4 @@ for my $source_database (keys %gene_association_map) {
 $assoc_connection->quit;
 
 $log_buffer .= "\n";
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);

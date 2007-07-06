@@ -13,13 +13,23 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home);
+if(@ARGV!=3){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+}
+
 #data source
 my $wb_id_server = "http://www.sanger.ac.uk/Projects/C_elegans/LOCI";
 my $wb_id_data_file = "genes2molecular_names.txt";
 my $file_to_get = "$wb_id_server/$wb_id_data_file";
 
 #data destination
-my $wb_main_dir = "/shared/data/wormbase";
+my $wb_main_dir = "$home/wormbase";
 my $download_dir = "$wb_main_dir/temp";
 my $temp_file = "$download_dir/temp.txt";
 my $tab_delim_file = "$download_dir/$wb_id_data_file";
@@ -41,7 +51,7 @@ close(F) or die "$!";
 close(FH) or die "$!";
 unlink $temp_file;
 
-my $current_link = "/shared/data/wormbase/current";
+my $current_link = "$wb_main_dir/current";
 my $old_file = "$current_link/genes2molecular_names.txt";
 my ($version_buffer,$log_buffer);
 
@@ -56,7 +66,7 @@ if(&compare_files($old_file,$tab_delim_file)==1){
 	$log_buffer = "WormBase Identifiers\nCurrent data ok\n\n";
 }
 
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);
 	
 #create data directory, move files, make link	
 sub update_files(){

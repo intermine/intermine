@@ -13,6 +13,17 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+#Define ARGVs
+my ($logdir,$logname,$home,$config_file);
+if(@ARGV!=4){
+	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+}else{
+	$logdir = $ARGV[0];
+	$logname= $ARGV[1];
+	$home = $ARGV[2];
+	$config_file = $ARGV[3];
+}
+
 #data source
 my $uniprot_address = "ftp.uniprot.org";
 my $username = "anonymous";
@@ -20,7 +31,7 @@ my $password = "-anonymous\@";
 my $uniprot_base_path = "pub/databases/uniprot/current_release";
 my $uniprot_full_path = "$uniprot_base_path/knowledgebase/complete";
 my $release_notes_file = "relnotes.txt";
-my $uniprot_main_dir = "/shared/data/uniprot";
+my $uniprot_main_dir = "$home/uniprot";
 my @files_to_get = qw(
                       uniprot.xsd.gz uniprot_sprot.xml.gz uniprot_trembl.xml.gz
                      );
@@ -61,6 +72,7 @@ if(&checkdir_exists($download_dir)==1){
 	$connection->cwd("/$uniprot_full_path")
 		or die "Cannot change working directory ", $connection->message;
 	
+	my $date = &convert_date();
 	$log_buffer = "Uniprot\nNew data available (release $version) in $download_dir containing file(s):\n";
 	$version_buffer = "UniProt proteins\nRelease $version $date\nProteins for D. melanogaster, D. pseudoobscura, A. gambiae, A. mellifera, C. elegans and S. cerevisiae  from Uniprot (trembl and swissprot)\nhttp://www.ebi.uniprot.org/index.shtml\n";
 
@@ -78,14 +90,14 @@ if(&checkdir_exists($download_dir)==1){
 	$log_buffer .= "keydef.xml\n\n";
 	&write_version($uniprot_main_dir,$version_buffer);
 	
-	my $uniprot_link = "/shared/data/uniprot/current";
+	my $uniprot_link = "$home/uniprot/current";
 	&make_link($version,$uniprot_link);	
 }else{ 
 	warn " current version up to date - skipping download\n";
 	$log_buffer = "Uniprot\nCurrent data ok\n\n";
 }
 
-&write_log($log_buffer);
+&write_log($log_buffer,$logdir,$logname);
 $connection->quit;
 
 #============================================================================
@@ -110,7 +122,7 @@ Distributed under the Creative Commons Attribution-NoDerivs License
 </copyright>
 </uniprot>';
 
-my $split_dir = "/shared/data/uniprot/$version/split/";
+my $split_dir = "$home/uniprot/$version/split/";
 if(&checkdir_exists($split_dir)==0){
 	warn "Data already split.\n";
 }else{
@@ -125,7 +137,6 @@ if(&checkdir_exists($split_dir)==0){
 	             );		
 
 	#open file to get taxonIDs from the config file
-	my $config_file = "resources/get_scripts.config";
 	my %taxons = &config_species($config_file,"uniprot");
 	
 	#open each uniprot file
