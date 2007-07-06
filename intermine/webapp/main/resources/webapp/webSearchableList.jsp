@@ -12,29 +12,31 @@
 
 <html:xhtml/>
 <div class="webSearchableList">
+<ul>
   <c:forEach items="${filteredWebSearchables}" var="webSearchableEntry">
-    <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${webSearchableEntry.key}">
-      <div class="webSearchableListElement">
-        ${webSearchableEntry.value.title}
-
-        <html:link action="/template?name=${webSearchableEntry.value.title}&amp;scope=global"
-                   title="${webSearchableEntry.value.title}">
-          <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
-        </html:link>
-
-        <tiles:insert name="starTemplate.tile">
-          <tiles:put name="templateName" value="${webSearchableEntry.value.title}"/>
-        </tiles:insert>
-
-      </div>
+<li/>
+    <div class="webSearchableListElement">
+    <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${webSearchableEntry.key}">${webSearchableEntry.value.title}
+    <c:choose>
+    <c:when test="${type=='template'}">
+    <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
+    </c:when>
+    <c:otherwise>
+        <img border="0" class="arrow" src="images/bag_ico.gif" alt="-&gt;"/>
+	</c:otherwise>
+	</c:choose>
     </html:link>
-    <c:if test="${showDescriptions}">
+  <tiles:insert name="starTemplate.tile" flush="false">
+    <tiles:put name="templateName" value="${webSearchableEntry.value.title}"/>
+  </tiles:insert>
+   </div>
+     <c:if test="${showDescriptions}">
       <div class="webSearchableListDescription">
         ${webSearchableEntry.value.description}
       </div>
     </c:if>
-
   </c:forEach>
+<ul>
 </div>
 
 <!-- /webSearchableList.jsp -->
