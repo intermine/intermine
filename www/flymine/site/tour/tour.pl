@@ -82,7 +82,9 @@ for my $page (@pages) {
   my $x_of_y = "$num/" . scalar(@pages);
 
   print $f <<"HTML";
-<html style="padding: 0px">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px">
   <head>
     <title>FlyMine Tour page $num - $title</title>
     <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
@@ -109,7 +111,7 @@ $prev_link
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-$title &nbsp; &nbsp; ($x_of_y)
+$title &#160; &#160; ($x_of_y)
               </span>
             </td>
             <td width="20%" align="right" valign="top">

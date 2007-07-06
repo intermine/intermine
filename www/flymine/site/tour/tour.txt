@@ -30,7 +30,7 @@ an identifier to see a report page.</p>
 form to perform a specific task.</p>
 
 <p><b>Bags</b> let you operate on whole lists of data at once.  You can
-upload your own lists or save them from results tables.<p>
+upload your own lists or save them from results tables.</p>
 
 <p><b>The QueryBuilder</b> lets you create your own custom queries and
 edit existing templates.</p>
