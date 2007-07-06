@@ -7,180 +7,98 @@
 <!-- begin.jsp -->
 <html:xhtml/>
 
-<%-- Build a query --%>
-<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualClasschooser.shtml"/>
-<im:box helpUrl="${helpUrl}"
-        titleKey="begin.heading.build">
-  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr>
-      <td width="99%">
-	<div class="body">
-      	  <c:choose>
-	    <c:when test="${!empty ASPECTS}">
-	      <p><fmt:message key="begin.aspect.intro"/></p>
-	      <tiles:insert page="/aspectIcons.jsp"/>
-	    </c:when>
-	    <c:otherwise>
-	      <c:forEach items="${CATEGORIES}" var="category">
-	        <c:if test="${!empty CATEGORY_CLASSES[category]}">
-	          <div class="heading"><c:out value="${category}"/></div>
-	          <div class="body">
-	            <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
-	            <c:forEach items="${classes}" var="classname" varStatus="status">
-	              <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
-	                ${classname}</a><c:if test="${!status.last}">,</c:if>
-	            </c:forEach>
-	            <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-	              <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
-	            </c:if>
-	          </div>
-	          <im:vspacer height="5"/>
-	        </c:if>
-	      </c:forEach>
-	    </c:otherwise>
-	  </c:choose>
-	</div>
-	<%--
-	    <c:forEach items="${CATEGORIES}" var="category">
-	      <c:if test="${!empty CATEGORY_CLASSES[category]}">
-	        <div class="heading"><c:out value="${category}"/></div>
-	        <div class="body">
-	          <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
-	          <c:forEach items="${classes}" var="classname" varStatus="status">
-	            <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
-	              ${classname}</a><c:if test="${!status.last}">,</c:if>
-	          </c:forEach>
-	          <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-	            <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
-	          </c:if>
-	        </div>
-	        <im:vspacer height="5"/>
-	      </c:if>
-	    </c:forEach>
-	    --%>
-
-      </td>
-      <td valign="top" align="right" nowrap="nowrap" width="1%" class="buildmenu">
-        <div class="body">
-          <html:link action="/mymine.do?page=bags">
-            <fmt:message key="begin.upload.identifiers"/>
-            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
-          </html:link><br/>
-          <html:link action="/classChooser">
-            <fmt:message key="begin.list.all.classes"/>
-            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
-          </html:link><br/>
-          <html:link action="/tree">
-            <fmt:message key="begin.browse.model"/>
-            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
-          </html:link><br/>
-          <html:link action="/importQueries?query_builder=yes">
-            <fmt:message key="begin.import.query"/>
-            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
-          </html:link><br/>
-        </div>
-      </td>
-    </tr>
-  </table>
-</im:box>
-<%-- /Build a query --%>
-
-
-
-<%-- Browse - only show if begin.browse.template has been defined in model web.properties --%>
-<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartBrowsing.shtml"/>
-<c:set var="browseTemplateName" value="${WEB_PROPERTIES['begin.browse.template']}"/>
-<c:if test="${!empty browseTemplateName && !empty GLOBAL_SEARCH_REPOSITORY.webSearchableMaps['template'][browseTemplateName]}">
-  <im:vspacer height="12"/>
-  <im:box helpUrl="${helpUrl}"
-          titleKey="begin.heading.browse">
-    <div class="body" align="center">
-      <tiles:insert name="browse.tile">
-        <%--<tiles:put name="prompt" value="${WEB_PROPERTIES['begin.browse.prompt']}"/>
-            <tiles:put name="templateName" value="${browseTemplateName}"/>--%>
+<div style="float:left;width:45%;">
+	<im:roundbox title="Templates" color="roundcorner">
+<p>Templates are predefined queries designed to perform a particular task. Each one has a description and a form to fill in. For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
+	   <tiles:insert name="webSearchableList.tile">
+      	    <!-- optional -->
+            <tiles:put name="limit" value="5"/>
+            <!-- bag or template? -->
+            <tiles:put name="type" value="template"/>
+            <!-- user or global -->
+            <tiles:put name="scope" value="global"/>
+            <tiles:put name="tags" value="im:public"/>
+            <tiles:put name="showDescriptions" value="false"/>
       </tiles:insert>
-      <br/>
-      <p class="smallnote">
-        <fmt:message key="begin.browse.help.message"/>
-        [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
-      </p>
-    </div>
-  </im:box>
-</c:if>
+	</im:roundbox>	
+
+	<im:roundbox title="Data Categories" color="roundcorner" >
+	      	  <c:choose>
+		    <c:when test="${!empty ASPECTS}">
+		      <p><fmt:message key="begin.aspect.intro"/></p>
+		      <tiles:insert page="/aspectIcons.jsp"/>
+		    </c:when>
+		    <c:otherwise>
+		      <c:forEach items="${CATEGORIES}" var="category">
+		        <c:if test="${!empty CATEGORY_CLASSES[category]}">
+		          <div class="heading"><c:out value="${category}"/></div>
+		          <div class="body">
+		            <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
+		            <c:forEach items="${classes}" var="classname" varStatus="status">
+		              <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
+		                ${classname}</a><c:if test="${!status.last}">,</c:if>
+		            </c:forEach>
+		            <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
+		              <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
+		            </c:if>
+		          </div>
+		          <im:vspacer height="5"/>
+		        </c:if>
+		      </c:forEach>
+		    </c:otherwise>
+		  </c:choose>
+	</im:roundbox>	
+	<im:roundbox title="Custom Queries" color="roundcorner">
+	        <div class="body">
+	          <html:link action="/mymine.do?page=bags">
+	            <fmt:message key="begin.upload.identifiers"/>
+	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
+	          </html:link><br/>
+	          <html:link action="/classChooser">
+	            <fmt:message key="begin.list.all.classes"/>
+	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
+	          </html:link><br/>
+	          <html:link action="/tree">
+	            <fmt:message key="begin.browse.model"/>
+	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
+	          </html:link><br/>
+	          <html:link action="/importQueries?query_builder=yes">
+	            <fmt:message key="begin.import.query"/>
+	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
+	          </html:link><br/>
+	        </div>   
+	</im:roundbox>
+</div>
 
 
 
+<div style="margin-left:50%;width:45%;">
+	<im:roundbox title="Bags" color="roundcorner" >
+	   <tiles:insert name="bagFrontPage.tile" />
+	</im:roundbox>
+	
+	<im:roundbox title="Welcome" color="roundcorner" >
+	<p>
+      FlyMine is an integrated database of genomic, expression and protein data for
+      <i>Drosophila</i>, <i>Anopheles</i> and
+      <i>C. elegans</i>.
+      Integrating data makes it possible to run sophisticated data mining queries
+      that span domains of biological knowledge.
+    </p>
+    
+    <p>
+      <a href="what.xml">What can I do with FlyMine?</a>
+    </p>
+    
+    <p style="color:#c00;"> 
+      This is release 8.0 of FlyMine.  See the <a href="release-notes.xml">release notes</a> to find out whats new.
+    </p>
 
-<c:if test="${IS_SUPERUSER && !empty browseTemplateName && empty GLOBAL_SEARCH_REPOSITORY.webSearchableMaps['template'][browseTemplateName]}">
-  <im:vspacer height="12"/>
-  <div class="altmessage">
-    <fmt:message key="begin.noBrowseTemplate">
-      <fmt:param value="${browseTemplateName}"/>
-    </fmt:message>
-  </div>
-</c:if>
-<%-- /Browse --%>
+  	<tiles:insert name="tipWrapper.tile"/>
+    <a href="tour_1.html" target="_blank"        onclick="javascript:window.open('tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour</a>
+    </im:roundbox>
+	
+</div>
 
-
-<%-- Search templates --%>
-<im:vspacer height="12"/>
-<im:box titleKey="begin.heading.searchtemplates">
-  <div class="body" align="center">
-    <html:form action="/search" method="get">
-      <fmt:message key="search.search.label"/>
-      <html:text property="queryString" size="40" styleId="queryString"/>
-      <html:hidden property="type" value="template"/>
-      <html:select property="scope">
-        <html:option key="search.form.global" value="global"/>
-        <html:option key="search.form.user" value="user"/>
-        <html:option key="search.form.all" value="ALL"/>
-      </html:select>
-      <html:submit><fmt:message key="search.form.submit"/></html:submit>
-      <br/>
-      <p class="smallnote">
-        <fmt:message key="search.help.message.template"/>
-      </p>
-    </html:form>
-  </div>
-</im:box>
-<%-- /Search templates --%>
-
-
-<%--
-<c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.shtml"/>
-
-<c:if test="${!IS_SUPERUSER}">
-  <im:vspacer height="12"/>
-  <im:box helpUrl="${helpUrl}" titleKey="begin.heading.templates">
-    <c:forEach items="${CATEGORIES}" var="category">
-      <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-        <im:heading id="globalTmpls${category}">${category}</im:heading>
-        <im:body id="globalTmpls${category}"><im:templateList scope="global" category="${category}"/></im:body>
-        <im:vspacer height="5"/>
-      </c:if>
-    </c:forEach>
-    <c:if test="${empty GLOBAL_TEMPLATE_QUERIES}">
-      <div class="altmessage"><fmt:message key="templateList.noTemplates"/></div>
-    </c:if>
-  </im:box>
-</c:if>
-
-<c:if test="${!empty PROFILE.categoryTemplates}">
-  <im:vspacer height="12"/>
-  <im:box helpUrl="${helpUrl}" titleKey="begin.heading.mytemplates">
-    <c:forEach items="${PROFILE.categoryTemplates}" var="entry">
-      <c:if test="${!empty entry.value && !empty entry.key}">
-        <im:heading id="userTmpls${entry.key}">${entry.key}</im:heading>
-        <im:body id="userTmpls${entry.key}"><im:templateList scope="user" category="${entry.key}"/></im:body>
-        <im:vspacer height="5"/>
-      </c:if>
-    </c:forEach>
-    <c:if test="${!empty PROFILE.categoryTemplates['']}">
-      <div class="heading"><fmt:message key="begin.noCategory"/></div>
-      <div class="body"><im:templateList scope="user" category=""/></div>
-    </c:if>
-  </im:box>
-</c:if>
- --%>
 
 <!-- /begin.jsp -->

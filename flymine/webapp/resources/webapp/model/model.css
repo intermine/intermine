@@ -1,19 +1,19 @@
 html, body 
 {
     color: #000000;
-    background-color: #F5F0FF;
+    background-color: #FFF;
 }
 
 /**************************************/
 
-#header h1 a
+div.title h1
 {
-    color: #5C0075;
+    color: #FFF;
 }
 
 #header p
 {
-    color: black;
+    /*color: black;*/
 }
 
 .box .title {
@@ -25,6 +25,7 @@ html, body
   background: #eee;
   border-top: 1px solid #888;
   border-bottom: 1px solid #888;
+  clear:both;
 }
 
 table.results tr td.highlightCell {

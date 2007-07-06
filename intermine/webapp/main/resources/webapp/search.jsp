@@ -14,28 +14,13 @@ window.onload = function() { document.getElementById("queryString").focus(); }
 </script>
 
 <div class="body">
-  <html:form action="/runSearch" method="get">
-    <fmt:message key="search.search.label"/>
-    <html:text property="queryString" size="40" styleId="queryString"/>
-    <html:hidden property="type"/>
-    <html:select property="scope">
-      <html:option key="search.form.global" value="global"/>
-      <html:option key="search.form.user" value="user"/>
-      <html:option key="search.form.all" value="ALL"/>
-    </html:select>
-    <html:submit><fmt:message key="search.form.submit"/></html:submit>
-  </html:form>
-  <p class="smallnote">
-    <fmt:message key="search.help.message.${searchForm.type}"/>
-  </p>
-  
   <c:if test="${!empty results}">
     <p>
       <b>${resultCount}</b> results for <b>${queryString}</b>. <span class="searchTime">(${querySeconds} seconds)</span>
       <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
         <br/><br/>
         <i>
-          <fmt:message key="${searchForm.type}.notlogged">
+          <fmt:message key="${type}.notlogged">
             <fmt:param>
               <im:login/>
             </fmt:param>
@@ -51,13 +36,13 @@ window.onload = function() { document.getElementById("queryString").focus(); }
       <img class="searchHeatImg" src="images/heat${heat}.gif" width="${heat*2}" height="10"
            style="margin-right:${24-(heat*2)}px"/>
       <c:choose>
-        <c:when test="${searchForm.type == 'template'}">
+        <c:when test="${type == 'template'}">
           <im:templateLine scope="${resultScopes[entry.key]}" 
                            templateQuery="${entry.key}" 
                            name="${highlighted[entry.key]}"
                            descr="${descriptions[entry.key]}" />
         </c:when>
-        <c:when test="${searchForm.type == 'bag'}">
+        <c:when test="${type == 'bag'}">
           <im:bagLine scope="${resultScopes[entry.key]}" 
                       interMineBag="${entry.key}" desc="${highlighted[entry.key]}"/>
         </c:when>

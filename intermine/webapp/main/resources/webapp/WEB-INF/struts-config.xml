@@ -7,7 +7,7 @@
   <form-beans>
     <form-bean name="loginForm" type="org.intermine.web.struts.LoginForm"/>
     <form-bean name="templateForm" type="org.intermine.web.struts.TemplateForm"/>
-    <form-bean name="browseForm" type="org.intermine.web.struts.TemplateForm"/>
+    <form-bean name="browseForm" type="org.intermine.web.struts.QuickSearchForm"/>
     <form-bean name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryForm"/>
     <form-bean name="modifyBagForm" type="org.intermine.web.struts.ModifyBagForm"/>
     <form-bean name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateForm"/>
@@ -64,8 +64,6 @@
     </action>
     <action path="/login" forward="login.page" name="loginForm" validate="false">
     </action>
-    <action path="/search" forward="search.page" name="searchForm" validate="false">
-    </action>
     <action path="/feedback" forward="feedback.page">
     </action>
     <action path="/contextHelp" forward="contextHelp.page">
@@ -85,6 +83,8 @@
     <action path="/createAccount" forward="createAccount.page">
     </action>
     <action path="/changePassword" forward="changePassword.page">
+    </action>
+    <action path="/bag" forward="bag.page">
     </action>
     <action path="/bagDetails" forward="bagDetails.page">
     </action>
@@ -244,9 +244,10 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
-    <action path="/browseAction" name="browseForm" type="org.intermine.web.struts.TemplateAction" input="begin">
+    <action path="/browseAction" name="browseForm" type="org.intermine.web.struts.QuickSearchAction" input="begin">
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
       <forward name="begin" redirect="true" path="/begin.do"/>
+      <forward name="search" path="search.page"/>
     </action>
     <action path="/feedbackAction" name="feedbackForm" type="org.intermine.web.struts.FeedbackAction" scope="request" input="feedback">
       <forward name="feedback" path="feedback.page"/>
@@ -277,9 +278,6 @@
       <forward name="back" path="mymine.page"/>
       <forward name="error" path="bagUploadConfirm.page"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
-    </action>
-    <action path="/runSearch" name="searchForm" type="org.intermine.web.struts.SearchAction" input="search">
-      <forward name="search" path="search.page"/>
     </action>
     <action path="/queryClassSelect" name="queryClassSelectForm" type="org.intermine.web.struts.QueryClassSelectAction" scope="request" input="query">
       <forward name="classChooser" path="classChooser.page"/>
@@ -344,8 +342,6 @@
     <action path="/initObjectDetailsTemplateTable" type="org.intermine.web.struts.ObjectDetailsTemplateController">
     </action>
     <action path="/initMymine" type="org.intermine.web.struts.MyMineController">
-    </action>
-    <action path="/initSearch" name="searchForm" type="org.intermine.web.struts.SearchController">
     </action>
     <action path="/initWebSearchableList" type="org.intermine.web.struts.WebSearchableListController">
     </action>

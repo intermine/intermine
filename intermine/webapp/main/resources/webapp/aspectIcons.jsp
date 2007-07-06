@@ -10,7 +10,7 @@
 
 <c:set var="numCols" value="${param.cols != null ? param.cols : 3}"/>
 
-  <table class="aspectIconsTable" border="0" cellspacing="0" cellpadding="0">
+  <table class="aspectIconsTable" border="0" cellspacing="0" cellpadding="0" >
     <tr>
       <td width="<fmt:formatNumber value="${100/numCols}" maxFractionDigits="0"/>%" valign="top">
         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
@@ -20,7 +20,7 @@
             <tr>
               <td>
                <html:link action="/aspect?name=${set.name}">
-                 <img src="<html:rewrite page="/${set.iconImage}"/>" class="dsIconImage"/>
+                 <img src="<html:rewrite page="/${set.iconImage}"/>" class="dsIconImage" width="30" height="30"/>
                </html:link>
              </td>
              <td class="aspectIconCell">
@@ -30,13 +30,6 @@
                  ${set.name}
                </html:link>
              </div>
-             <div class="dsIconDetail">
-               ${set.subTitle}
-               <%--<c:if test="${status.count % 3 != 0}">
-                 <im:hspacer width="82"/>
-               </c:if>--%>
-             </div>
-             
              </td>
            </tr>
           </table>
