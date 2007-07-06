@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px">
   <head>
-    <title>FlyMine Tour page 10 - Use bags in template queries</title>
+    <title>FlyMine Tour page 10 - Query Builder</title>
     <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
     <link media="screen,print" href="../style/branding.css" type="text/css" rel="stylesheet" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
@@ -27,7 +27,7 @@
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-Use bags in template queries &#160; &#160; (10/11)
+Query Builder &#160; &#160; (10/11)
               </span>
             </td>
             <td width="20%" align="right" valign="top">
@@ -36,7 +36,7 @@ Use bags in template queries &#160; &#160; (10/11)
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Bag details page
+Use bags in template queries
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
 MyMine
@@ -47,43 +47,37 @@ MyMine
       <div style="padding-top: 20px" class="content">
         <div >
 
-<p>
-You can use bags in any template query, or queries you create yourself in the QueryBuilder.  As the bag details page suggested many of the genes in our bag are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase 1 binding site data set which we can query with another template. 
-</p>
+<p>The QueryBuilder allows you to edit queries or create new ones.  It is aimed at advanced users but editing a template query to change the output or add a filter is easy.</p>
 
-<p><b>Search the template queries for 'regulated genes'.</b></p>
+<p><b>Click on 'Query' in the Trail to get back to the template form.</b></p>
 
-<img alt="[Click Search Templates]"  src="click_search_templates.png"/>
+<img alt="[Click on trail]"  src="click_on_trail.png"/>
 
-<p><b>Select the template 'Transcription factor --> TF binding sites + chromosomal locations + genes regulated'</b></p>
+<p><b>Now click 'Edit Query' to bring up the QueryBuilder.</b></p>
 
-<img alt="[Select template]"  src="select_template2.png"/>
-
-<p>Now that we have created a bag the template query gives us the option to use it instead of entering an identifier.</p>
-
-<p><b>Click the checkbox to select the demo bag you named earlier, and then run the query.</b></p>
-
-<img alt="[Run template with bag]"  src="template_bag.png"/>
-
-<p>The results table shows any genes from our original bag that, according to FlyReg, regulate a particular gene.</p>
-
-<p>You can also create new bags from results tables.  We can save a bag of the regulated genes from this query for analysis on the bag details page or to use in more templates.</p>
-
-<p><b>Click on the checkbox by 'Regulated gene > identifier' and choose a name for the saved bag.</b></p>
-
-<img alt="[Save column in a bag]"  src="results_bag.png"/>
-<br/>
-<img alt="[Save in a bag]"  src="save_in_bag.png"/>
+<p><img alt="[Click edit query]"  src="click_edit_query.png"/></p>
 
 
-<p>Using bags is an excellent way to retrieve information about a whole list of data. For example we could also retrieve:
-<ul>
-<li>all the orthologues in another organism, e.g. <i>D. pseudoobscura</i></li>
-<li>gene expression results from FlyAtlas</li>
-<li>protein-protein interactions for these genes</li>
-<li>P-element insertions insertions for these genes</li>
-</ul>
-</p>
+<p>The pane on the left is a view of the data model starting at the Gene class and showing all attributes (e.g. name, symbol) and related classes (e.g. organism, proteins).  FlyMine uses an object based data model - biological types are termed 'classes' and individual entries are termed 'objects'.  For example the 'zen' and 'eve' genes are both objects of the class Gene.</p>
+
+<p>You can click <img alt="[plus]" src="plus.gif"/> to open related classes and see their attributes.  Use the <img alt="[show]"  src="show.gif"/> button to add fields to the output.  The <img alt="[constrain]" src="constrain.gif"/> button lets you add constraints (filters). </p> 
+
+<img alt="[query builder]"  src="query_builder.png"/>
+
+<p>The query summary section shows the constraints applied to this query.  Notice that one of them says 'factor Gene' then 'IN demo bag'.  This shows us that the search is using just the transcription factors from the bag we saved earlier.</p> 
+
+<p>What if we want to search for <b>all</b> transcription factors in FlyMine and find the genes they regulate?  We can just remove this constraint and run the query again.</p> 
+
+<p><b>Click on the <img alt="[red cross]"  src="cross.gif"/> button next to 'IN demo bag' to remove the constraint.</b></p>
+
+<img alt="[remove constraint]"  src="remove_constraint.png"/>
+
+<p><b>Now click 'Show results' to run the query.</b></p>
+
+<img alt="[click show results]"  src="click_show_results.png"/>
+
+<p>The results table now shows all the transcription factors in FlyMine, the genes they regulate and the data set that provided this infomation.  You can use the summary buttons <img alt="[summary icon]"  src="summary_maths.png" valign="middle"/> on the 'Transcription factor > symbol' and 'Regulated gene > symbol' columns to find more information about the numbers of each.</p>
+
 
 
 
@@ -106,7 +100,7 @@ You can use bags in any template query, or queries you create yourself in the Qu
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Bag details page
+Use bags in template queries
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
 MyMine

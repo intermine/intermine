@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px">
   <head>
-    <title>FlyMine Tour page 9 - Bag details page</title>
+    <title>FlyMine Tour page 9 - Use bags in template queries</title>
     <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
     <link media="screen,print" href="../style/branding.css" type="text/css" rel="stylesheet" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
@@ -27,7 +27,7 @@
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-Bag details page &#160; &#160; (9/11)
+Use bags in template queries &#160; &#160; (9/11)
               </span>
             </td>
             <td width="20%" align="right" valign="top">
@@ -36,10 +36,10 @@ Bag details page &#160; &#160; (9/11)
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Bag confirm page
+Bag details page
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
-Use bags in template queries
+Query Builder
             </td>
           </tr>
         </table>
@@ -48,21 +48,42 @@ Use bags in template queries
         <div >
 
 <p>
-The bag details page is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each category.
+You can use bags in any template query, or queries you create yourself in the QueryBuilder.  As the bag details page suggested many of the genes in our bag are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase 1 binding site data set which we can query with another template. 
 </p>
 
-<p><i>Coming soon - we plan to add more widgets and functionality to the bag details page.</i></p>
+<p><b>Search the template queries for 'regulated genes'.</b></p>
+
+<img alt="[Click Search Templates]"  src="click_search_templates.png"/>
+
+<p><b>Select the template 'Transcription factor --> TF binding sites + chromosomal locations + genes regulated'</b></p>
+
+<img alt="[Select template]"  src="select_template2.png"/>
+
+<p>Now that we have created a bag the template query gives us the option to use it instead of entering an identifier.</p>
+
+<p><b>Click the checkbox to select the demo bag you named earlier, and then run the query.</b></p>
+
+<img alt="[Run template with bag]"  src="template_bag.png"/>
+
+<p>The results table shows any genes from our original bag that, according to FlyReg, regulate a particular gene.</p>
+
+<p>You can also create new bags from results tables.  We can save a bag of the regulated genes from this query for analysis on the bag details page or to use in more templates.</p>
+
+<p><b>Click on the checkbox by 'Regulated gene > identifier' and choose a name for the saved bag.</b></p>
+
+<img alt="[Save column in a bag]"  src="results_bag.png"/>
+<br/>
+<img alt="[Save in a bag]"  src="save_in_bag.png"/>
 
 
-<p>The GO enrichment and KEGG widgets suggest that this list of genes contains a high number of transcription factors.</p>
-
-<img alt="[Bag widgets]"  src="bag_widgets.png"/>
-
-<p>
-Template queries have been executed on the whole bag, just like on the gene report page.  This is a simple way to retrieve further information about the entire list.  For example, you could retrieve all the exons or protein sequences.
+<p>Using bags is an excellent way to retrieve information about a whole list of data. For example we could also retrieve:
+<ul>
+<li>all the orthologues in another organism, e.g. <i>D. pseudoobscura</i></li>
+<li>gene expression results from FlyAtlas</li>
+<li>protein-protein interactions for these genes</li>
+<li>P-element insertions insertions for these genes</li>
+</ul>
 </p>
-
-<img alt="[Bag templates]"  src="bag_templates.png"/>
 
 
         </div>
@@ -84,10 +105,10 @@ Template queries have been executed on the whole bag, just like on the gene repo
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Bag confirm page
+Bag details page
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
-Use bags in template queries
+Query Builder
             </td>
           </tr>
         </table>
