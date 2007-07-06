@@ -119,7 +119,8 @@
   </target>
 
   <target name="validate-site-xhtml"
-          depends="validate-site-xml, style-site, webapp-manual-html, webapp-help-html">
+          depends="validate-site-xml, style-site">
+<!--
     <xmlvalidate warn="yes">
       <fileset dir="${dist.www}" includes="**/*.html">
         <exclude name="internal/**"/>
@@ -134,14 +135,12 @@
           location="${cache.dtd}/xhtml1-transitional.dtd"/>
         </xmlcatalog>
    </xmlvalidate>
+-->
   </target>
 
   <target name="transform-site"
-          depends="style-site"
+          depends="validate-site-xml, style-site, validate-site-xhtml, webapp-manual-html, webapp-help-html"
           description="Transform the website contents from XML to HTML"/>
-  <!--target name="transform-site"
-          depends="validate-site-xml, style-site, validate-site-xhtml"
-          description="Transform the website contents from XML to HTML"/-->
 
   <target name="release-www" depends="transform-site"
           description="releases the static website to the webserver">
