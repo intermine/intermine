@@ -51,7 +51,7 @@ $dates{dpse_gff_files} = &get_date($connection);
 	
 $connection->cwd("../fasta")
 	or die "Cannot change working directory ", $connection->message;
-$dates{dpse_fasta_files}=	&get_date($connection);
+$dates{dpse_fasta_files}= &get_date($connection);
 	
 $connection->quit;
 

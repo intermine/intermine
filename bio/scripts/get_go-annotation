@@ -103,7 +103,7 @@ if(&checkdir_exists($uniprot_download_dir)==1){
     	}
 		close OUT_FILE or die;
 		
-		#sort the file based on the second column
+		#sort the file based on the second column (-k 2,2), output written to $sorted (-o)
 		system "sort -o $sorted -k 2,2 $unsorted";
 		unlink $unsorted;
 		
@@ -151,7 +151,9 @@ for my $source_database (keys %gene_association_map) {
 		#sort the file based on the second column
 		my $unsorted = "$gene_association_download_dir/unsorted.$suffix";
 		my $sorted = "$gene_association_download_dir/gene_association.$suffix";
-		system "mv $sorted $unsorted";
+		#create $unsorted
+		rename($sorted, $unsorted) or die "Cannot rename $sorted: $!";
+		#the sort command writes the output of sorting $unsorted to $sorted
 		system "sort -o $sorted -k 2,2 $unsorted";
 		unlink $unsorted;
 		

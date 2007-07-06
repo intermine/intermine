@@ -14,7 +14,8 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
-# get species from config file
+# get species from config file. Key code organisms must have orthologues with each other AND the
+# other code organisms. Other code organisms must ONLY have orthologues with the key code organisms.
 my $file = "resources/get_scripts.config";
 my %key_codes = &config_species($file,"key_inparanoid");
 my %other_codes = &config_species($file,"other_inparanoid");
@@ -25,13 +26,15 @@ my $InP_main_dir = "/shared/data/orthologues/inparanoid";
 my $download_dir = "$InP_main_dir/temp";
 my $temp_file = "$download_dir/temp.txt";
 
-# get a list of file names from paranoid, if they represent two species in flymine, add them 
+# get a list of file names from inparanoid, if they represent two species in flymine, add them 
 # to the hash of files to download 
 my %files;
 my @page = io($inparanoid_server)->slurp;
 foreach (@page){
 	#print "$_\n";
-	if ($_=~ /href="(sqltable\.\w{3}(\w{5})\.fa-\w{3}(\w{5}).fa)"/g) {
+	#if an orthologue file is found
+	if ($_=~ /href="(sqltable\.\w{3}(\w{5})\.fa-\w{3}(\w{5})\.fa)"/g) {
+		#if the right combination of key and other organisms is found, add the filename to the files hash
 		if( (exists $key_codes{$2} && (exists $other_codes{$3} || exists $key_codes{$3}) ) ||
 			(exists $other_codes{$2} && (exists $key_codes{$3}) ) ){
 			$files{$1}=$1;
@@ -51,7 +54,7 @@ my $current_link = "/shared/data/orthologues/inparanoid/current";
 for my $file_to_get (sort keys %files) {
 	&http_download("$inparanoid_server/$file_to_get",$temp_file);
 	my $old_file = "$current_link/$file_to_get";
-	
+	#compare new file to our current file
 	if(&compare_files($old_file,$temp_file)==1){
 		print "Keeping downloaded files.\n";
 		&update_files($InP_main_dir,$file_to_get,$temp_file,$current_link);
@@ -74,7 +77,7 @@ sub update_files(){
 	my $new_dir = "$dir/$date";
 	my $newfile = "$new_dir/$new_name";
 	&checkdir_exists($new_dir);
-	system("mv $oldfile $newfile");
+	rename($oldfile, $newfile) or die "Cannot rename $oldfile: $!";
 	&make_link($date,$link);
 	$log_start = "InParanoid\nNew data available in $new_dir containing file(s):\n";
 	$log_names .= "$new_name\n";

@@ -22,7 +22,6 @@ my $password = "-anonymous\@";
 
 #connect to the server and change to source directory
 my $connection = &ftp_connect($wormbase_ftp,$username,$password);
-	
 $connection->cwd($ftp_dir)
 		or die "Cannot change working directory ", $connection->message;	
 
@@ -31,10 +30,13 @@ my $date_string;
 my $ftp_file;
 my $version;
 
+#get the list of files
 my @files = $connection->ls();
 foreach my $file (@files) {
+	#identify the ontology files
 	if($file =~ /^ontology\.(WS\d+)\.tar\.gz/g){
 		my $date = &date_string_file($connection,$file);
+		#if this date is newer than the previous date, we want this file and it's version number
 		if($date gt $date_string){
 			$date_string = $date;
 			$ftp_file = $file;
@@ -53,7 +55,7 @@ my ($version_buffer,$log_buffer);
 if(&checkdir_exists($download_dir)==1){
 	&ftp_download($connection,$download_dir,$ftp_file);
 	
-	#extract the files from the archive
+	#extract the files from the tar archive
 	my $ae = Archive::Extract->new(archive => "$download_dir/$ftp_file");
 	$ae->extract( to => $download_dir );
 	

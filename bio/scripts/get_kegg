@@ -43,6 +43,8 @@ my ($version_buffer,$log_buffer);
 #make sure that the necessary directories exist
 my $current_link = "/shared/data/kegg/current";
 &checkdir_exists($kegg_main_dir);
+
+#check if new data is available and download it
 if(&checkdir_exists($download_dir)==1){
 	&ftp_download($connection,$download_dir,$dme_map_file);
 	$connection->cwd("../../")
