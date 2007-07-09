@@ -52,8 +52,8 @@ public class BagUploadConfirmForm extends ActionForm
     * Set the bag name.
     * @param name the bag name
     */
-   public void setBagName(String name) {
-       bagName = name;
+   public void setBagName(String name) {       
+       bagName = name.trim();
    }
    
    /**
