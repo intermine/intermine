@@ -191,12 +191,7 @@ table.history > tbody > tr > td {
 
 table.history input {
   font-size: 11px;
-}#tipbox {
-43 	   background-color:#F5F0FF;
-44 	   padding:3px;
-45 	//   text-align:left;
-46 	}
-47 	
+}
 
 .help {
   padding: 5px;
