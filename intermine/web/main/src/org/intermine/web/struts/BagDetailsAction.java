@@ -23,6 +23,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
@@ -73,7 +74,9 @@ public class BagDetailsAction extends Action
         if (bagName == null) {
             bagName = request.getParameter("name");
         }
-        InterMineBag bag = profile.getSavedBags().get(bagName);
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        InterMineBag bag = allBags.get(bagName);
 
         String identifier = "bag." + bagName;
         PagedTable pc = SessionMethods.getResultsTable(session, identifier);

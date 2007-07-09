@@ -28,6 +28,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
@@ -93,8 +94,10 @@ public class OrthologueAction extends InterMineAction
                 
         // rebuild query with IDs from bag
         IqlQuery iqlQuery = new IqlQuery(queryString, os.getModel().getPackageName());
-        Query query = iqlQuery.toQuery();        
-        InterMineBag bag = (InterMineBag) currentProfile.getSavedBags().get(bagName);
+        Query query = iqlQuery.toQuery();
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
+        InterMineBag bag = allBags.get(bagName);
         Set queryFrom = query.getFrom();
         QueryClass queryClass = null;
         if (bag != null && !(bag.size() == 0)) {

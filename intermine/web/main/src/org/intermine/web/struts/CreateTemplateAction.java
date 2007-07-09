@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
@@ -131,7 +133,9 @@ public class CreateTemplateAction extends InterMineAction
         if (!seenProblem) {
             try {
                 if (query.getInfo() == null) {
-                    query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags(),
+                    Map<String, InterMineBag> allBags =
+                        WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+                    query.setInfo(os.estimate(MainHelper.makeQuery(query, allBags,
                                     servletContext, null)));
                 }
             } catch (ObjectStoreException e) {

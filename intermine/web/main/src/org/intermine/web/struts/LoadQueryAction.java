@@ -10,8 +10,18 @@ package org.intermine.web.struts;
  *
  */
 
-import java.io.StringReader;
 import java.util.Map;
+
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.session.SessionMethods;
+
+import java.io.StringReader;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -25,12 +35,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.MessageResources;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that sets the current Query for
@@ -65,6 +69,8 @@ public class LoadQueryAction extends DispatchAction
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
                                                  profile.getSavedBags(),
                                                  servletContext);

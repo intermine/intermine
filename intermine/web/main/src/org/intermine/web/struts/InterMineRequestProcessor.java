@@ -13,6 +13,15 @@ package org.intermine.web.struts;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -27,11 +36,6 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.tiles.TilesRequestProcessor;
 import org.apache.struts.util.MessageResources;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * A RequestProcessor that sends you back to the start if your session isn't valid
@@ -88,8 +92,9 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                 String queryXml = (String) session.getAttribute("ser-query");
                 if (queryXml != null) {
-                    PathQuery pq = PathQuery.fromXml(queryXml, profile.getSavedBags(),
-                                                     sc);
+                    Map<String, InterMineBag> allBags =
+                        WebUtil.getAllBags(profile.getSavedBags(), sc);
+                    PathQuery pq = PathQuery.fromXml(queryXml, allBags, sc);
                     if (pq.isValid()) {
                         session.setAttribute(Constants.QUERY, 
                                              PathQuery.fromXml(queryXml, profile.getSavedBags(),

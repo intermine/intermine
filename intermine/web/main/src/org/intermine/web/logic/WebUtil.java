@@ -13,16 +13,27 @@ package org.intermine.web.logic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.intermine.objectstore.query.Results;
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.tagging.TagTypes;
 
 import java.io.File;
 import java.io.FileReader;
@@ -347,5 +358,57 @@ public abstract class WebUtil
             map.remove(keys.get(i++));
         }
         return map;
+    }
+
+    /**
+     * Returns all bags of a given type
+     * @param bagMap a Map from bag name to InterMineBag 
+     * @param type the type
+     * @param model the Model
+     * @return a Map of bag name to bag
+     */
+    public static Map getBagsOfType(Map<String, InterMineBag> bagMap, String type, Model model) {
+        type = model.getPackageName() + "." + type;
+        Set<String> classAndSubs = new HashSet<String>();
+        classAndSubs.add(type);
+        Iterator subIter = model.getAllSubs(model.getClassDescriptorByName(type)).iterator();
+        while (subIter.hasNext()) {
+            classAndSubs.add(((ClassDescriptor) subIter.next()).getType().getName());
+        }
+    
+        TreeMap map = new TreeMap();
+        for (Iterator iter = bagMap.entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            InterMineBag bag = (InterMineBag) entry.getValue();
+            if (classAndSubs.contains(model.getPackageName() + "." + bag.getType())) {
+                map.put(entry.getKey(), bag);
+            }
+        }
+        return map;
+    
+    }
+
+    /**
+     * @param servletContext
+     * @param userBags 
+     * @param profile
+     * @return
+     */
+    public static Map<String, InterMineBag> getAllBags(Map<String, InterMineBag> userBags,
+                                                       ServletContext servletContext) {        
+        Map<String, InterMineBag> searchBags = new HashMap<String, InterMineBag>();
+        
+        SearchRepository searchRepository =
+            SearchRepository.getGlobalSearchRepository(servletContext);
+        Map<String, InterMineBag> publicBagMap = 
+            (Map<String, InterMineBag>) searchRepository.getWebSearchableMap(TagTypes.BAG);
+        
+        if (publicBagMap != null) {
+            searchBags.putAll(publicBagMap);
+        }
+
+        // user bags override public ones
+        searchBags.putAll(userBags);
+        return searchBags;
     }    
 }

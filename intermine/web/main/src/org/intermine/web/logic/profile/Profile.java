@@ -12,15 +12,11 @@ package org.intermine.web.logic.profile;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -284,33 +280,6 @@ public class Profile
     public void saveBag(String name, InterMineBag bag) {
         savedBags.put(name, bag);
         reindex(TagTypes.BAG);
-    }
-
-    /**
-     * Returns all bags of a given type
-     * @param type the type
-     * @param model the Model
-     * @return a Map of bag name to bag
-     */
-    public Map getBagsOfType(String type, Model model) {
-        type = model.getPackageName() + "." + type;
-        Set<String> classAndSubs = new HashSet<String>();
-        classAndSubs.add(type);
-        Iterator subIter = model.getAllSubs(model.getClassDescriptorByName(type)).iterator();
-        while (subIter.hasNext()) {
-            classAndSubs.add(((ClassDescriptor) subIter.next()).getType().getName());
-        }
-
-        TreeMap map = new TreeMap();
-        for (Iterator iter = savedBags.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            InterMineBag bag = (InterMineBag) entry.getValue();
-            if (classAndSubs.contains(model.getPackageName() + "." + bag.getType())) {
-                map.put(entry.getKey(), bag);
-            }
-        }
-        return map;
-
     }
 
     /**
