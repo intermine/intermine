@@ -11,12 +11,37 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.ObjectStoreBagsForObject;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.results.DisplayCollection;
+import org.intermine.web.logic.results.DisplayField;
+import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.DisplayReference;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -26,21 +51,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.results.DisplayCollection;
-import org.intermine.web.logic.results.DisplayField;
-import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.DisplayReference;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an object.
@@ -141,8 +151,10 @@ public class ObjectDetailsController extends InterMineAction
                                       df, miscRefs, pm, superuser, placementRefsAndCollections);
             }
         }
-
         
+        String publicBagsWithThisObject = getBags(os, servletContext, id);
+        
+        request.setAttribute("publicBagsWithThisObject", publicBagsWithThisObject);
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
         
         return null;
@@ -233,5 +245,39 @@ public class ObjectDetailsController extends InterMineAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         return new DisplayObject(object, os.getModel(), webConfig,
                                  webPropertiesMap, classKeys);
+    }
+    
+    private String getBags(ObjectStore os, ServletContext servletContext, Integer id) {
+        
+        // get all of the user's bags with this object
+        
+        // get all of the public bags with this object
+        SearchRepository searchRepository = 
+            (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+        Map webSearchables = searchRepository.getWebSearchableMap(TagTypes.BAG);
+        Collection<WebSearchable> webSearchableColl = webSearchables.values();
+        Collection<ObjectStoreBag> objectStoreBags = new ArrayList();
+        
+        
+        // loop though and convert InterMineBag to ObjectStoreBag
+        for (WebSearchable o : webSearchableColl) {
+            InterMineBag bag = (InterMineBag) o;
+            ObjectStoreBag osb = bag.getOsb();
+            objectStoreBags.add(osb);
+        }
+        
+        // this searches bags for an object
+        ObjectStoreBagsForObject osbo = new ObjectStoreBagsForObject(id, objectStoreBags);
+        
+        // run query
+        Query q = new Query();       
+        q.addToSelect(osbo);
+        
+        // this should return all bags with that object
+        Results results = os.execute(q);
+        String s = results.asList().toString();     
+        s = s.replaceAll("\\[", "");
+        s = s.replaceAll("\\]", "");        
+        return s;
     }
 }
