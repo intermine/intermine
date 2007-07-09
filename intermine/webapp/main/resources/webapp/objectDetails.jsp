@@ -139,6 +139,28 @@
           </c:forEach>
 
         </im:body>
+        
+        <%-- bags that contain this object --%>
+        
+        <%-- my bags --%>
+        <div class="body" style="background-color:#eeddff; width:250px">
+      	 <tiles:insert name="webSearchableList.tile">
+            <tiles:put name="type" value="bag"/>
+            <tiles:put name="scope" value="user"/>
+            <tiles:put name="showDescriptions" value="true"/>
+     	 </tiles:insert>
+		</div>
+
+		<%-- public bags --%>
+        <div class="body" style="background-color:#ddddff; width:250px">
+    	  <tiles:insert name="webSearchableList.tile">
+         	<tiles:put name="list" value="${publicBagsWithThisObject}"/>
+            <tiles:put name="type" value="bag"/>
+            <tiles:put name="scope" value="global"/>
+            <tiles:put name="tags" value="im:public"/>
+            <tiles:put name="showDescriptions" value="true"/>
+	      </tiles:insert>
+		</div>
       </td>
 
       <td valign="top" width="66%">

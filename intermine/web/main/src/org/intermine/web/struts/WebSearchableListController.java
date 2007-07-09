@@ -12,12 +12,16 @@ package org.intermine.web.struts;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import org.intermine.objectstore.query.ObjectStoreBag;
 
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.Scope;
@@ -65,8 +69,6 @@ public class WebSearchableListController extends TilesAction
         Map<String, ? extends WebSearchable> filteredWebSearchables 
                                                 = new HashMap<String, WebSearchable>();
         
-        // TODO filter results on list
-        
         if (tags != null) {
             HttpSession session = request.getSession();
 
@@ -95,18 +97,42 @@ public class WebSearchableListController extends TilesAction
 
             filteredWebSearchables =
                 pm.filterByTags(webSearchables, tagList, type, profile.getUsername());
+            if (list != null) {
+                filteredWebSearchables = filterByList(filteredWebSearchables, list);
+            }
         }
-        
-        // if we already have a list, use that      
-//        if (list != null) {
-//            
-//        }
-        
+                
         // shorten list to be < limit
         if (limit != null) {
             filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables, new Integer(limit));
         }
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
         return null;
+    }
+    
+    // loops through the websearchables
+    // removes item if item is not on the list
+    private Map filterByList(Map filteredWebSearchables, String list) {
+
+        Map<String, ? extends WebSearchable> clone = new HashMap<String, WebSearchable>();
+        clone.putAll(filteredWebSearchables);
+        
+        String tmp = list.replaceAll(" ", "");
+        String[] s = tmp.split(",");
+        HashSet<String> set = new HashSet();
+        set.addAll(Arrays.asList(s));
+                
+        // iterate through map
+        for (Object o : filteredWebSearchables.values()) {
+            InterMineBag bag = (InterMineBag) o;
+            ObjectStoreBag osb = bag.getOsb();
+            Integer i = new Integer(osb.getBagId());
+           // check that this is in our list
+           if (!set.contains(i.toString())) {              
+              clone.remove(bag.getName()); 
+           }
+        }
+        
+        return clone;
     }
 }
