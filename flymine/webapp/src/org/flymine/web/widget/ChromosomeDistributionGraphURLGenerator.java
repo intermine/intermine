@@ -57,11 +57,12 @@ public class ChromosomeDistributionGraphURLGenerator implements CategoryURLGener
         Query q = new Query();
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);
         QueryClass geneQC = new QueryClass(Gene.class); 
-
+        
         q.addFrom(geneQC);
         q.addFrom(chromosomeQC);
         
         q.addToSelect(geneQC);
+        q.addToSelect(chromosomeQC);
         
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         
