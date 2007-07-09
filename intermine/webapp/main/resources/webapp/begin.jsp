@@ -70,13 +70,34 @@
 	</im:roundbox>
 </div>
 
+<div style="margin-left:50%;width:45%;">
 
+	<im:roundbox title="bag list test" color="roundcorner" >
+        
+        <tiles:insert name="wsBagTable.tile">
+          <tiles:put name="limit" value="5"/>
+          <tiles:put name="scope" value="global"/>
+          <tiles:put name="makeCheckBoxes" value="true"/>
+          <tiles:put name="showDescriptions" value="false"/>
+        </tiles:insert>
+        </im:roundbox>	
+
+	<im:roundbox title="template list test" color="roundcorner" >
+        
+        <tiles:insert name="wsTemplateTable.tile">
+          <tiles:put name="limit" value="5"/>
+          <tiles:put name="scope" value="global"/>
+          <tiles:put name="makeCheckBoxes" value="true"/>
+          <tiles:put name="showDescriptions" value="false"/>
+        </tiles:insert>
+        </im:roundbox>	
+</div>
 
 <div style="margin-left:50%;width:45%;">
 	<im:roundbox title="Bags" color="roundcorner" >
 	   <tiles:insert name="bagFrontPage.tile" />
 	</im:roundbox>
-	
+
 	<im:roundbox title="Welcome" color="roundcorner" >
 	<p>
       FlyMine is an integrated database of genomic, expression and protein data for

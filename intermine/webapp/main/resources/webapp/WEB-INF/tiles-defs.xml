@@ -196,6 +196,12 @@
   <definition name="search.tile" path="/search.jsp" controllerUrl="/initSearch.do"/>
   <definition name="webSearchableList.tile" path="/webSearchableList.jsp"
               controllerUrl="/initWebSearchableList.do"/>
+  <definition name="wsBagTable.tile" path="/wsBagTable.jsp"/>
+  <definition name="wsBagHeader.tile" path="/wsBagHeader.jsp"/>
+  <definition name="wsBagRow.tile" path="/wsBagRow.jsp"/>
+  <definition name="wsTemplateTable.tile" path="/wsTemplateTable.jsp"/>
+  <definition name="wsTemplateHeader.tile" path="/wsTemplateHeader.jsp"/>
+  <definition name="wsTemplateRow.tile" path="/wsTemplateRow.jsp"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
   <definition name="bagUploadConfirm.tile" path="/bagUploadConfirm.jsp" controllerUrl="/initBagUploadConfirm.do"/>
   <definition name="bagUploadConfirmIssue.tile" path="/bagUploadConfirmIssue.jsp" controllerUrl="/initBagUploadConfirmIssue.do"/>
