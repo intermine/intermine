@@ -66,45 +66,51 @@ public class WebSearchableListController extends TilesAction
         String tags = (String) context.getAttribute("tags");
         String list = (String) context.getAttribute("list");
         String limit = (String) context.getAttribute("limit");
-        Map<String, ? extends WebSearchable> filteredWebSearchables 
-                                                = new HashMap<String, WebSearchable>();
+        Map<String, ? extends WebSearchable> filteredWebSearchables =
+            new HashMap<String, WebSearchable>();
+        
+        HttpSession session = request.getSession();
+
+        ServletContext servletContext = session.getServletContext();
+
+        Profile profile;
+        if (scope.equals(Scope.GLOBAL)) {
+            profile = SessionMethods.getSuperUserProfile(servletContext);            
+        } else {
+            profile = (Profile) session.getAttribute(Constants.PROFILE);
+        }
+        SearchRepository searchRepository;
+        if (scope.equals(Scope.GLOBAL)) {
+            searchRepository = (SearchRepository) 
+            servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+        } else {
+            searchRepository = profile.getSearchRepository();
+        }
+        Map<String, ? extends WebSearchable> webSearchables =
+            searchRepository.getWebSearchableMap(type);
+
+        final ProfileManager pm = 
+            (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+
+        filteredWebSearchables = webSearchables;
         
         if (tags != null) {
-            HttpSession session = request.getSession();
-
-            ServletContext servletContext = session.getServletContext();
-
-            Profile profile;
-            if (scope.equals(Scope.GLOBAL)) {
-                profile = SessionMethods.getSuperUserProfile(servletContext);            
-            } else {
-                profile = (Profile) session.getAttribute(Constants.PROFILE);
-            }
-            SearchRepository searchRepository;
-            if (scope.equals(Scope.GLOBAL)) {
-                searchRepository = (SearchRepository) 
-                                    servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-            } else {
-                searchRepository = profile.getSearchRepository();
-            }
-            Map<String, ? extends WebSearchable> webSearchables =
-                                                        searchRepository.getWebSearchableMap(type);
-
-            final ProfileManager pm = 
-                (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-
-            final List<String> tagList = Arrays.asList(StringUtil.split(tags, " "));
-
-            filteredWebSearchables =
-                pm.filterByTags(webSearchables, tagList, type, profile.getUsername());
-            if (list != null) {
-                filteredWebSearchables = filterByList(filteredWebSearchables, list);
+            // filter by tag if there are any otherwise return all
+            if (tags.length() > 0) {
+                final List<String> tagList = Arrays.asList(StringUtil.split(tags.trim(), " "));
+                filteredWebSearchables =
+                    pm.filterByTags(filteredWebSearchables, tagList, type, profile.getUsername());
             }
         }
-                
+
+        if (list != null) {
+            filteredWebSearchables = filterByList(filteredWebSearchables, list);
+        }
+
         // shorten list to be < limit
         if (limit != null) {
-            filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables, new Integer(limit));
+            filteredWebSearchables =
+                WebUtil.shuffle(filteredWebSearchables, new Integer(limit).intValue());
         }
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
         return null;
@@ -119,7 +125,7 @@ public class WebSearchableListController extends TilesAction
         
         String tmp = list.replaceAll(" ", "");
         String[] s = tmp.split(",");
-        HashSet<String> set = new HashSet();
+        HashSet<String> set = new HashSet<String>();
         set.addAll(Arrays.asList(s));
                 
         // iterate through map
