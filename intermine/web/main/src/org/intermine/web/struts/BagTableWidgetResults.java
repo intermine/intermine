@@ -30,6 +30,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
@@ -81,7 +82,9 @@ public class BagTableWidgetResults extends InterMineAction
         
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        InterMineBag bag = (InterMineBag) currentProfile.getSavedBags().get(bagName);
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
+        InterMineBag bag = allBags.get(bagName);
 
         Query q = new Query();
         

@@ -12,6 +12,12 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.template.TemplateHelper;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,9 +26,6 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Form bean representing template import form.
@@ -104,7 +107,9 @@ public class TemplatesImportForm extends ValidatorForm
             return errors;
         }
         try {
-           TemplateHelper.xmlToTemplateMap(getXml(), profile.getSavedBags(), servletContext);
+            Map<String, InterMineBag> allBags =
+                WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+           TemplateHelper.xmlToTemplateMap(getXml(), allBags, servletContext);
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();

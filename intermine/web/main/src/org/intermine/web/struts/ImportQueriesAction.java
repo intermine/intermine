@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
@@ -50,7 +51,9 @@ public class ImportQueriesAction extends InterMineAction
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        Map queries = qif.getQueryMap(profile.getSavedBags(), servletContext);
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        Map queries = qif.getQueryMap(allBags, servletContext);
 
         if (queries.size() == 1
             && ((request.getParameter("query_builder") != null && request

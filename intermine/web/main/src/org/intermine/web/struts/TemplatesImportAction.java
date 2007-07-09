@@ -14,6 +14,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,14 +33,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Imports templates in XML format.
@@ -56,7 +58,9 @@ public class TemplatesImportAction extends InterMineAction
         int deleted = 0, imported = 0, renamed = 0;
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), profile.getSavedBags(),
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags,
                                                     servletContext);
 
         try {

@@ -10,6 +10,22 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Map;
+
+import org.intermine.objectstore.query.Query;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.util.XmlUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.PathQueryBinding;
+import org.intermine.web.logic.query.SavedQuery;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,16 +36,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.util.XmlUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.query.PathQueryBinding;
-import org.intermine.web.logic.query.SavedQuery;
 
 /**
  * Export the current query in XML format.
@@ -87,7 +93,9 @@ public class ExportQueryAction extends InterMineAction
             xml = XmlUtil.indentXmlSimple(xml);
             response.getWriter().write(xml);
         } else if (request.getParameter("as").toLowerCase().equals("iql")) {
-            Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags(), servletContext,
+            Map<String, InterMineBag> allBags =
+                WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+            Query osQuery = MainHelper.makeQuery(query, allBags, servletContext,
                     null);
             String iql = osQuery.toString();
             response.getWriter().println(iql);

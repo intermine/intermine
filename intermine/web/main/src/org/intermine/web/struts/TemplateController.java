@@ -17,6 +17,31 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.DisplayConstraint;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.template.TemplateBuildState;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,26 +52,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.Constraint;
-import org.intermine.web.logic.query.DisplayConstraint;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.template.TemplateBuildState;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for the template tile. This tile can be used for real template
@@ -157,6 +162,10 @@ public class TemplateController extends TilesAction
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
 
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
+        
+        Map<String, InterMineBag> searchBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             PathNode displayNode = (PathNode) displayTemplate.getNodes().get(node.getPathString());
@@ -206,7 +215,9 @@ public class TemplateController extends TilesAction
                 if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), displayNode
                         .getFieldName())) {
                     constraintBagTypes.put(c, parent.getType());
-                    Map constraintBags = profile.getBagsOfType(parent.getType(), os.getModel());
+                    Map constraintBags = 
+                        WebUtil.getBagsOfType(searchBags, parent.getType(),
+                                              os.getModel());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
                         if (bagName != null && constraintBags.containsKey(bagName)) {
@@ -217,7 +228,9 @@ public class TemplateController extends TilesAction
                 }
                 if (!node.isAttribute()) {
                     constraintBagTypes.put(c, node.getType());
-                    Map constraintBags = profile.getBagsOfType(node.getType(), os.getModel());
+                    Map constraintBags =
+                        WebUtil.getBagsOfType(searchBags, node.getType(),
+                                              os.getModel());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
                         if (bagName != null && constraintBags.containsKey(bagName)) {
@@ -250,7 +263,7 @@ public class TemplateController extends TilesAction
         request.setAttribute("constraintBagTypes", constraintBagTypes);
         request.setAttribute("selectedBagNames", selectedBagNames);
         
-        if (profile.getSavedBags().size() > 0) {
+        if (searchBags.size() > 0) {
             request.setAttribute("bagOps", MainHelper
                     .mapOps(BagConstraint.VALID_OPS));
         }

@@ -15,6 +15,24 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
+
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.DisplayConstraint;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,20 +43,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.DisplayConstraint;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
 
 /**
  * Controller for the main constraint editing tile
@@ -118,7 +122,9 @@ public class QueryBuilderConstraintController extends TilesAction
             }
             
             if (useBags) {
-                Map bags = profile.getBagsOfType(nodeType, os.getModel());
+                Map<String, InterMineBag> allBags =
+                    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+                Map bags = WebUtil.getBagsOfType(allBags, nodeType, os.getModel());
                 if (!bags.isEmpty()) {
                         request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
                         request.setAttribute("bags", bags);

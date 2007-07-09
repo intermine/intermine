@@ -272,9 +272,12 @@ public class AjaxServices
                                .getWebTable();
         PathQuery pathQuery = webTable.getPathQuery();
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Query distinctQuery = MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
-                                                  new HashMap<String, QueryNode>(), summaryPath
-                                                  , servletContext);
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
+        Query distinctQuery =
+            MainHelper.makeSummaryQuery(pathQuery, allBags,
+                                        new HashMap<String, QueryNode>(), summaryPath,
+                                        servletContext);
         
         Results results = os.execute(distinctQuery);
         WebResultsSimple webResults = new WebResultsSimple(results, 

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +48,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.SortableMap;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 
@@ -92,7 +94,9 @@ public class GoStatDisplayerController extends TilesAction
              }
              Double maxValue = new Double("0.10");
              String bagName = request.getParameter("bagName");
-             InterMineBag bag = profile.getSavedBags().get(bagName);
+             Map<String, InterMineBag> allBags =
+                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+            InterMineBag bag = allBags.get(bagName);
 
              // put all vars in request for getting on the .jsp page
              request.setAttribute("bagName", bagName);

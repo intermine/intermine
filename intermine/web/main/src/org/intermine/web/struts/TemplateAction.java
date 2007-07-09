@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
@@ -79,10 +80,11 @@ public class TemplateAction extends InterMineAction
 
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        String userName = profile.getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
-                templateName, templateType);
-        Map savedBags = ((Profile) session.getAttribute(Constants.PROFILE)).getSavedBags();
+                                                             templateName, templateType);
+        Map savedBags = WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
             TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template, 

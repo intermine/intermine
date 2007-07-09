@@ -10,6 +10,18 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Map;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,13 +34,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that saves a Query from a session.
@@ -70,7 +75,9 @@ public class SaveQueryAction extends InterMineAction
 
         try {
             if (query.getInfo() == null) {
-                query.setInfo(os.estimate(MainHelper.makeQuery(query, profile.getSavedBags(),
+                Map<String, InterMineBag> allBags =
+                    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+                query.setInfo(os.estimate(MainHelper.makeQuery(query, allBags,
                                 servletContext, null)));
             }
         } catch (ObjectStoreException e) {

@@ -28,6 +28,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
@@ -81,13 +82,12 @@ public class QueryForGraphAction extends InterMineAction
         String bagName = request.getParameter("bagName");
         String queryString = request.getParameter("query");
 
-        //Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        //InterMineBag bag = (InterMineBag) currentProfile.getSavedBags().get(bagName);
-
         InterMineBag bag;
         
         /* get bag from user profile */
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         bag = profile.getSavedBags().get(bagName);
         
         /* public bag - since user doesn't have it */

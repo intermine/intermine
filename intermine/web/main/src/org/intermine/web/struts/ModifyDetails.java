@@ -29,6 +29,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.DisplayObject;
@@ -70,7 +71,9 @@ public class ModifyDetails extends DispatchAction
         String scope = request.getParameter("scope");
         String bagName = request.getParameter("bagName");
         String idForLookup = request.getParameter("idForLookup");
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+        Profile profile = (Profile) session
+                        .getAttribute(Constants.PROFILE);
+        String userName = (profile).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              name, scope);
         String trail = request.getParameter("trail");
@@ -82,8 +85,9 @@ public class ModifyDetails extends DispatchAction
                 TemplateHelper.getInlineTemplateTable(servletContext, name,
                                                       objectId, userName);
         } else if (bagName != null && bagName.length() != 0) {
-            InterMineBag interMineBag = ((Profile) session
-                            .getAttribute(Constants.PROFILE)).getSavedBags().get(bagName);
+            Map<String, InterMineBag> allBags =
+                WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+            InterMineBag interMineBag = allBags.get(bagName);
             itt = TemplateHelper.getInlineTemplateTable(servletContext, name, 
                                                         interMineBag, userName);
         }
@@ -243,7 +247,8 @@ public class ModifyDetails extends DispatchAction
             return mapping.findForward("objectDetailsTemplateTable");
         } else {
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            InterMineBag interMineIdBag = (InterMineBag) profile.getSavedBags().get(id);
+            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), sc);
+            InterMineBag interMineIdBag = allBags.get(id);
             cc.putAttribute("interMineIdBag", interMineIdBag);
             cc.putAttribute("templateQuery", tq);
             cc.putAttribute("placement", request.getParameter("placement"));

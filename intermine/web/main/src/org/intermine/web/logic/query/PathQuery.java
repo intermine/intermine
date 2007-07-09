@@ -27,6 +27,7 @@ import org.intermine.metadata.Model;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
 import org.intermine.util.CollectionUtil;
+import org.intermine.web.logic.WebUtil;
 
 import java.io.StringReader;
 
@@ -543,7 +544,8 @@ public class PathQuery
      */
     protected void checkValidity(Map savedBags, ServletContext servletContext) {
         try {
-            MainHelper.makeQuery(this, savedBags, servletContext, null);
+            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext),
+                                 servletContext, null);
         } catch (Exception err) {
             addProblem(err);
         }

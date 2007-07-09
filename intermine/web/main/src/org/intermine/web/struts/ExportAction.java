@@ -98,7 +98,9 @@ public class ExportAction extends InterMineAction
                 Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                 ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
                 String bagName = request.getParameter("table");
-                InterMineBag imBag = (InterMineBag) profile.getSavedBags().get(bagName);
+                Map<String, InterMineBag> allBags =
+                    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+                InterMineBag imBag = allBags.get(bagName);
 
                 Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
                 WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
