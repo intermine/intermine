@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -93,7 +92,8 @@ public class BagDetailsController extends TilesAction
             }
             
             InterMineBag imBag;
-            if (request.getParameter("scope") != null && request.getParameter("scope").equals("global")) {
+            if (request.getParameter("scope") != null 
+                            && request.getParameter("scope").equals("global")) {
                 SearchRepository searchRepository =
                     SearchRepository.getGlobalSearchRepository(servletContext);
                 Map<String, ? extends WebSearchable> publicBagMap = 
