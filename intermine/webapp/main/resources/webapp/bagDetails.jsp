@@ -21,11 +21,17 @@
 </script>
 
 <div class="heading">
-  Bag Contents
+	<fmt:message key="bagDetails.title"/>
 </div>
 
 <div class="body" >
-  <p>The bag <b>${bag.name}</b> contains ${bag.size} elements of type: <b>${bag.type}</b>.</p>
+  <p>
+  <fmt:message key="bagDetails.intro">
+  <fmt:param value="${bag.name}"/>
+  <fmt:param value="${bag.size}"/>
+  <fmt:param value="${bag.type}"/>
+  </fmt:message>
+  </p>
   <c:if test="${!empty bag.dateCreated}">
     <p>Created: <im:dateDisplay date="${bag.dateCreated}" /></p>
   </c:if>
@@ -80,7 +86,12 @@
 
           <c:if test="${pagedColl.pageSize < pagedColl.size}">
             <p>
-              Only showing the first ${pagedColl.pageSize} elements of the bag.
+              
+              
+  <fmt:message key="bagDetails.showingFirst">
+  <fmt:param value="${pagedColl.pageSize}"/>
+  </fmt:message>
+              
             </p>
           </c:if>
           <html:submit property="showInResultsTable">
@@ -104,7 +115,7 @@
           <c:out value="${bag.description}" escapeXml="false" />
         </c:when>
         <c:otherwise>
-          <div id="emptyDesc">Click here to enter a bag description</div>
+          <div id="emptyDesc">Click here to enter a description for your list.</div>
         </c:otherwise>
       </c:choose>
     </div>

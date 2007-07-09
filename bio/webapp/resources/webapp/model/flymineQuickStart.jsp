@@ -96,7 +96,7 @@
         Operate on lists of data
       </div>
       <div class="body">
-        All queries in FlyMine can be performed on lists ('bags') of data.
+        All queries in FlyMine can be performed on lists of data.
         For example, templates that operate on a single gene identifier can be
         run with a list of gene identifiers you have created yourself.
     </td>
