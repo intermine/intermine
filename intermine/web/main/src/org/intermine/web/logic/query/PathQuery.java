@@ -275,17 +275,6 @@ public class PathQuery
         return viewPath;
     }
 
-//    private void addPathToSortOrder(Path sortOrderPath, String direction) {
-//        try {
-//            sortOrder.clear(); // there can only be one sort column
-//            if (sortOrderPath != null) {
-//                OrderBy o = new OrderBy(sortOrderPath, direction);
-//                sortOrder.add(o);
-//            }
-//        } catch (PathError e) {
-//            addProblem(e);
-//        }
-//    }
 
     /**
      * @param direction New sorting direction - asc or desc
@@ -317,7 +306,7 @@ public class PathQuery
   
     
     /**
-     * Remove a path from the sort order.  Replace with first item on select list.
+     * Clear the order by list and replace with first item on select list.
      */
     public void removePathStringFromSortOrder() {
         try {
@@ -332,6 +321,23 @@ public class PathQuery
         }
     }
 
+    /**
+     * Remove a path from the sort order.  If on the order by list, replace with first item 
+     * on select list.
+     * @param viewString The string being removed from the view list
+     */
+    public void removePathStringFromSortOrder(String viewString) {
+        Iterator<OrderBy> iter = sortOrder.iterator();
+        while (iter.hasNext()) {            
+            OrderBy sort = iter.next();
+            if (sort.getField().toString().equals(viewString)) {
+                // this is the field on the sort order, so clear and add first item on view list
+                removePathStringFromSortOrder();
+            }
+        }
+    }
+    
+    
     /**
      * Return true if and only if the view contains a Path that has pathString as its String
      * representation.
