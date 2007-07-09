@@ -5,6 +5,9 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
+<%-- TODO - remove this in favour of wsBagTable.jsp --%>
+
+
 <!-- bagView.jsp -->
 <script type="text/javascript">
 <!--//<![CDATA[

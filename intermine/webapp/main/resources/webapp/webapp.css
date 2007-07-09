@@ -1078,7 +1078,7 @@ table.results tr.queryAgeToday td {
 .roundcornerbox ul {
   	list-style-image: url('images/li.png');
 }
-.webSearchableListElement {
+.wsListElement {
    margin-bottom:10px;
 }
 #tipbox {
