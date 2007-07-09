@@ -109,9 +109,7 @@
       </c:choose>
     </div>
     <div id="bagDescriptionTextarea">
-      <textarea id="textarea">
-        <c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if>
-      </textarea>
+      <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
       <div align="right">
         <button onclick="swapDivs('bagDescriptionTextarea','bagDescriptionDiv'); return false;">Cancel</button>
         <button onclick="saveBagDescription('${bag.name}'); return false;">Save</button>
