@@ -21,7 +21,7 @@
         </c:when>
 	<c:when test="${item.type == 'bag'}">
       	  <html:link action="/bagDetails.do?bagName=${item.elementId}"
-                     styleClass="objectTrailLinkResults">Bag</html:link>
+                     styleClass="objectTrailLinkResults">List</html:link>
         </c:when>
         <c:otherwise>
           <html:link action="/objectDetails?id=${item.objectId}&amp;trail=${item.trail}"

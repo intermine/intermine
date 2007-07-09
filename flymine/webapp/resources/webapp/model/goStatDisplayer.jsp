@@ -44,7 +44,7 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
           name="description"/>
     <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
     
-    <title>FlyMine: Bag details page</title>
+    <title>FlyMine: List Analysis Page</title>
   </head>
 
   
@@ -66,7 +66,7 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
 
 <center><h2>Gene Ontology Enrichment</h2></center>
 
-GO terms that are enriched for genes in this bag compared to the reference population.  Smaller p-values show greater enrichment. Method: Hypergeometric test with Bonferroni error correction (using a significance value of 0.05).
+GO terms that are enriched for genes in this list compared to the reference population.  Smaller p-values show greater enrichment. Method: Hypergeometric test with Bonferroni error correction (using a significance value of 0.05).
 <br><br>
 Reference population: <c:out value='${goStatOrganisms}'/>.
 <br><br>

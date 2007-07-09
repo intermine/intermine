@@ -42,7 +42,7 @@
 //]]>-->
 </script>
 
-<h2>Create a new bag <im:manualLink section="manualMakingBags.shtml#manualNewBag"/> </h2>
+<h2><fmt:message key="bagBuild.makeNewBag"/> <im:manualLink section="manualMakingBags.shtml#manualNewBag"/> </h2>
 <div class="bagBuild">
   <html:form action="/buildBag" focus="text" method="post" enctype="multipart/form-data">
     <p>

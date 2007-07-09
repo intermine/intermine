@@ -28,7 +28,7 @@
 
 <html:xhtml/>
 
-<h2>My bags</h2>
+<h2><fmt:message key="history.savedbags.title"/></h2>
   <p>
     <fmt:message key="history.savedbags.help"/>
   </p>
@@ -130,7 +130,7 @@
         </table>
         <br/>
         <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
-          New bag name:
+          <fmt:message key="history.savedbags.newbag"/>
           <html:text property="newBagName" size="12"/><br/>
           <html:submit property="union">
             <fmt:message key="history.union"/>

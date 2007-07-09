@@ -33,7 +33,7 @@ function toggleForm(matchCount) {
       <strong>
         <span id="matchCount">${matchCount}</span> ${bagUploadConfirmForm.bagType}(s)
       </strong>
-      currently in your bag.<br/>
+      currently in your list.<br/>
       <c:if test="${matchCount<totalIdCount}">
           Also found&nbsp;
       </c:if>
@@ -69,7 +69,7 @@ function toggleForm(matchCount) {
           <p>
             <strong><span id="initialIdCount">${matchCount}</span></strong>
             of the <strong>${totalIdCount}</strong>
-            identifier(s) you provided will be saved in your bag.
+            identifier(s) you provided will be saved in your list.
           </p>
         </c:when>
         <c:otherwise>

@@ -30,7 +30,7 @@
   <select name="quickSearchType">
 	<option value="ids">Identifiers</option>
 	<option value="tpls">Templates</option>
-	<option value="bgs">Bags</option>
+	<option value="bgs">Lists</option>
   </select>
   <fmt:message key="header.search.mid"/>
   <html:text property="value" size="40"/>
