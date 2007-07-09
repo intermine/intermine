@@ -57,8 +57,8 @@ public class ViewChange extends DispatchAction
         
         query.removePathStringFromView(path);
 
-        // remove from sort list too
-        query.removePathStringFromSortOrder();
+        // remove from sort list too, only if this is the sorted field
+        query.removePathStringFromSortOrder(path);
         
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
@@ -131,11 +131,8 @@ public class ViewChange extends DispatchAction
                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        LOG.info(request.getParameterMap());
         String newOrder[] = request.getParameterValues("viewDivs[]");
         String oldOrder[] = request.getParameterValues("oldOrder[]");
-        LOG.info("Old: " + Arrays.asList(oldOrder));
-        LOG.info("New: " + Arrays.asList(newOrder));
         
         List view = SessionMethods.getEditingView(session);
         ArrayList newView = new ArrayList();
@@ -143,7 +140,6 @@ public class ViewChange extends DispatchAction
         for (int i = 0; i < view.size(); i++) {
             int newi = Integer.parseInt(newOrder[i]);
             int oldi = Arrays.asList(oldOrder).indexOf("" + newi);
-            LOG.info("adding " + view.get(oldi));
             newView.add(view.get(oldi));
         }
         
