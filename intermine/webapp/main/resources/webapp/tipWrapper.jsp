@@ -8,8 +8,7 @@
     <title>FlyMine Tips</title>
     <link rel="stylesheet" type="text/css" href="webapp.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
-    <link rel="stylesheet" type="text/css" href="/style/branding.css"/>
-    <script type="text/javascript" src="/style/niftycube.js"></script>
+    <script type="text/javascript" src="js/niftycube.js"></script>
   </head>
   <body style="background-color: #fff">
     <script type="text/javascript">
