@@ -45,10 +45,10 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 {
-    //private DefaultCategoryDataset dataSet;
     private Results results;
     private Object[] geneCategoryArray;
-    private LinkedHashMap dataSets = new LinkedHashMap();
+    private LinkedHashMap<String, GraphDataSet> dataSets 
+                                                        = new LinkedHashMap<String, GraphDataSet>();
     private ObjectStore os;
     
     /**
@@ -56,6 +56,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
      * and structure the data to create a graph
      * @param bag the bag
      * @param os the ObjectStore
+     * @throws Exception
      */
     
     public ChromosomeDistributionDataSetLdr(InterMineBag bag, ObjectStore os) 
@@ -70,8 +71,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         }
 
         // TODO this may not be necessary once chromosomes are sorted out in #1186.
-        organisms.remove("Drosophila pseudoobscura");
-        organisms.remove("Apis mellifera");
+        //organisms.remove("Drosophila pseudoobscura");
+        //organisms.remove("Apis mellifera");
         
         for (Iterator it = organisms.iterator(); it.hasNext();) {
             
@@ -81,7 +82,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             // chromosome, count of genes
             LinkedHashMap<String, int[]> resultsTable = new LinkedHashMap<String, int[]> (); 
             // chromosome --> list of genes
-            HashMap<String, ArrayList> geneMap = new HashMap<String, ArrayList>();
+            HashMap<String, ArrayList<String>> geneMap = new HashMap<String, ArrayList<String>>();
             
             // get all chromosomes for this organism 
             ArrayList<String> chromosomes 
@@ -126,7 +127,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             }
 
             // update results with expected results
-            addExpected(os, resultsTable, new Integer(totalWithLocation), organismName);
+            addExpected(resultsTable, totalWithLocation, organismName);
             
             // Build a map from chromosome to gene list
             geneCategoryArray = new Object[resultsTable.size()];
@@ -135,13 +136,11 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 String chromosome = (String) iterator.next();
                 dataSet.addValue((resultsTable.get(chromosome))[0], "Actual", chromosome);
                 dataSet.addValue((resultsTable.get(chromosome))[1], "Expected", chromosome);
-                Object[] geneSeriesArray = new Object[2];
-                /* why are there two? */
+                Object[] geneSeriesArray = new Object[2];              
                 geneSeriesArray[0] = geneMap.get(chromosome);   // actual
                 // expected shouldn't be a link
                 // geneSeriesArray[1] = geneMap.get(chromosome);   // expected
                 geneCategoryArray[i] = geneSeriesArray;
-
                 i++;
             }
 
@@ -160,19 +159,19 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     }
 
     /* select count(*) from genes where chromosomeLocation != null; */
-    private long getTotal(ObjectStore os, String organismName) {
+    private long getTotal(String organismName) {
 
         Query q = createQuery(organismName, "total", null);        
         results = os.execute(q);          
         Iterator iter = results.iterator();
         ResultsRow rr = (ResultsRow) iter.next();
-        return (Long) rr.get(0);
+        return ((Long) rr.get(0)).longValue();
     }
 
-    private void addExpected(ObjectStore os, HashMap resultsTable, 
+    private void addExpected(HashMap resultsTable, 
                              int bagSize, String organismName) {
         // totals
-        long total = getTotal(os, organismName);
+        long total = getTotal(organismName);
 
         // get expected results
         Query q = createQuery(organismName, "expected", null);
