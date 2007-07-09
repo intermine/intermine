@@ -102,7 +102,7 @@ public class SaveBagForm extends ActionForm
      * @param newBagName Value to assign to this.newBagName
      */
     public void setNewBagName(String newBagName) {
-        this.newBagName = newBagName;
+        this.newBagName = newBagName.trim();
     }
 
     /**
