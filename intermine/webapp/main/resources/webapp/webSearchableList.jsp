@@ -9,6 +9,11 @@
 <tiles:importAttribute name="type"/>
 <tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+
+<%-- if true this tile must be inside a <form> otherwise this tomcat error
+     will appear in the log:
+         Cannot find bean under name org.apache.struts.taglib.html.BEAN
+--%>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 <tiles:importAttribute name="makeTable" ignore="true"/>
 <tiles:importAttribute name="tableHeader" ignore="true"/>
@@ -32,18 +37,21 @@
                 <tiles:put name="scope" value="${scope}"/>
                 <tiles:put name="tags" value="${tags}"/>
                 <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
+                <tiles:put name="showDescriptions" value="false"/>
               </tiles:insert>
             </tr>
-            <c:forEach items="${filteredWebSearchables}" var="entry">
-              <c:set var="webSearchable" value="${entry.value}"/>
+            <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
+              <c:set var="webSearchable" value="${entry.value}" scope="request"/>
               <tr class="${ageClasses[entry.key]}">
                 <tiles:insert name="${tableRow}">
                   <tiles:put name="wsName" value="${entry.key}"/>
                   <tiles:put name="webSearchable" beanName="webSearchable"/>
                   <tiles:put name="statusIndex" value="${status.index}"/>
                   <tiles:put name="wsCheckBoxId" value="selected_${scope}_${type}_${status.index}"/>
+                  <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
                   <tiles:put name="scope" value="${scope}"/>
                   <tiles:put name="tags" value="${tags}"/>
+                  <tiles:put name="showDescriptions" value="false"/>
                 </tiles:insert>
               </tr>
             </c:forEach>

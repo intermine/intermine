@@ -73,6 +73,8 @@
 <div style="margin-left:50%;width:45%;">
 
 	<im:roundbox title="bag list test" color="roundcorner" >
+          
+      <html:form action="/modifyBag">
         
         <tiles:insert name="wsBagTable.tile">
           <tiles:put name="limit" value="5"/>
@@ -80,6 +82,8 @@
           <tiles:put name="makeCheckBoxes" value="true"/>
           <tiles:put name="showDescriptions" value="false"/>
         </tiles:insert>
+
+</html:form>
         </im:roundbox>	
 
 	<im:roundbox title="template list test" color="roundcorner" >
