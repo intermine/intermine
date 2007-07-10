@@ -8,6 +8,7 @@
 <tiles:importAttribute name="wsName"/>
 <tiles:useAttribute id="webSearchable" name="webSearchable"
                     classname="org.intermine.web.logic.search.WebSearchable"/>
+<tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
@@ -26,40 +27,42 @@
   </td>
 </c:if>
 
-<c:choose>
-  <c:when test="${!webSearchable.valid}">
-    <td align="left" nowrap>
-      <html:link action="/templateProblems?name=${wsName}&amp;scope=user" styleClass="brokenTmplLink">
-        <strike>${webSearchable.name}</strike>
-      </html:link>
-    </td>
-  </c:when>
-  <c:otherwise>
-    <td>
-      <c:if test="${showNames}">
+<c:if test="${showNames}">
+  <c:choose>
+    <c:when test="${!webSearchable.valid}">
+      <td align="left" nowrap>
+        <html:link action="/templateProblems?name=${wsName}&amp;scope=user" styleClass="brokenTmplLink">
+          <strike>${webSearchable.name}</strike>
+        </html:link>
+      </td>
+    </c:when>
+    <c:otherwise>
+      <td>
         <fmt:message var="linkTitle" key="templateList.run">
 	  <fmt:param value="${webSearchable.name}"/>
         </fmt:message>
         ${webSearchable.name}
-      </c:if>
-      <tiles:insert name="starTemplate.tile">
-        <tiles:put name="templateName" value="${webSearchable.name}"/>
-      </tiles:insert>
-      <c:if test="${IS_SUPERUSER}">
-        <c:set var="taggable" value="${webSearchable}"/>
-        <tiles:insert name="inlineTagEditor.tile">
-          <tiles:put name="taggable" beanName="taggable"/>
-          <tiles:put name="vertical" value="true"/>
-          <tiles:put name="show" value="true"/>
+        <tiles:insert name="starTemplate.tile">
+          <tiles:put name="templateName" value="${webSearchable.name}"/>
         </tiles:insert>
-      </c:if>
-    </td>
-  </c:otherwise>
-</c:choose>
+        <c:if test="${IS_SUPERUSER}">
+          <c:set var="taggable" value="${webSearchable}"/>
+          <tiles:insert name="inlineTagEditor.tile">
+            <tiles:put name="taggable" beanName="taggable"/>
+            <tiles:put name="vertical" value="true"/>
+            <tiles:put name="show" value="true"/>
+          </tiles:insert>
+        </c:if>
+      </td>
+    </c:otherwise>
+  </c:choose>
+</c:if>
 
-<td>
-  ${webSearchable.title}
-</td>
+<c:if test="${showTitles}">
+  <td>
+    ${webSearchable.title}
+  </td>
+</c:if>
 
 <c:if test="${showDescriptions}">
   <td>
@@ -87,15 +90,15 @@
 </c:if>
 
 <td align="center" nowrap>
-  <html:link action="/template?name=${webSearchable.name}&amp;scope=user"
+  <html:link action="/template?name=${webSearchable.name}&amp;scope=${scope}"
              titleKey="history.action.execute.hover">
     <fmt:message key="history.action.execute"/>
   </html:link> |
-  <html:link action="/editTemplate?name=${webSearchable.name}"
+  <html:link action="/editTemplate?name=${webSearchable.name}&amp;scope=${scope}"
              titleKey="history.action.edit.hover">
     <fmt:message key="history.action.edit"/>
   </html:link> |
-  <html:link action="/exportTemplates?scope=user&amp;name=${webSearchable.name}"
+  <html:link action="/exportTemplates?scope=${scope}&amp;name=${webSearchable.name}"
              titleKey="history.action.export.hover">
     <fmt:message key="history.action.export"/>
   </html:link>

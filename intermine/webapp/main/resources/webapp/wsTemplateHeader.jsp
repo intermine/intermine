@@ -5,6 +5,8 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
+<tiles:importAttribute name="showNames" ignore="true"/>
+<tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 
 <!-- wsTemplateHeader.jsp -->
@@ -34,12 +36,16 @@
            onclick="selectColumnCheckbox(this.form, 'template')"/>
   </th>
 </c:if>
-<th align="left" nowrap>
-  <fmt:message key="history.namecolumnheader"/>
-</th>
-<th align="left" nowrap>
-  <fmt:message key="history.titleheader"/>
-</th>
+<c:if test="${showNames}">
+  <th align="left" nowrap>
+    <fmt:message key="history.namecolumnheader"/>
+  </th>
+</c:if>
+<c:if test="${showTitles}">
+  <th align="left" nowrap>
+    <fmt:message key="history.titleheader"/>
+  </th>
+</c:if>
 <c:if test="${showDescriptions}">
   <th align="left" nowrap>
     <fmt:message key="history.descriptionheader"/>
@@ -51,7 +57,5 @@
 <th align="center" nowrap>
   <fmt:message key="history.actionscolumnheader"/>
 </th>
-
-
 
 <!-- /wsTemplateHeader.jsp -->
