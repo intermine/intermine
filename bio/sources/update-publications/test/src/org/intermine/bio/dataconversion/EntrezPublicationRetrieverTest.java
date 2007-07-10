@@ -55,7 +55,7 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         Set expected = readItemSet("EntrezPublicationsRetrieverTest_tgt.xml");
         Collection actual = FullParser.parse(new FileInputStream(temp));
 
-        Assert.assertEquals(expected, new HashSet(actual));
+        assertEquals(expected, new HashSet(actual));
     }
 
     class TestEntrezPublicationsRetriever extends EntrezPublicationsRetriever
