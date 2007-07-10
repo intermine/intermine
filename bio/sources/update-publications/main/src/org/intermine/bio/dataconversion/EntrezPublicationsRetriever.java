@@ -10,11 +10,11 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -314,7 +314,7 @@ public class EntrezPublicationsRetriever
             publication.setAttribute("year", (String) map.get("year"));
         }
 
-        Set<String> authors = (Set<String>) map.get("authors");
+        List<String> authors = (List<String>) map.get("authors");
         if (authors != null) {
             for (String authorString : authors) {
                 Item author = authorMap.get(authorString);
@@ -418,12 +418,12 @@ public class EntrezPublicationsRetriever
                 pubMap.put("pages", characters.toString());
             } else if ("Author".equals(name)) {
                 String authorString = characters.toString();
-                Set<String> authorSet = (Set<String>) pubMap.get("authors");
-                if (authorSet == null) {
-                    authorSet = new LinkedHashSet<String>();
-                    pubMap.put("authors", authorSet);
+                List<String> authorList = (List<String>) pubMap.get("authors");
+                if (authorList == null) {
+                    authorList = new ArrayList<String>();
+                    pubMap.put("authors", authorList);
                 }
-                authorSet.add(authorString);
+                authorList.add(authorString);
             }
             name = null;
         }
