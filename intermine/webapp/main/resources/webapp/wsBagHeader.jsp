@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
+<tiles:importAttribute name="showDescriptions" ignore="true"/>
 
 <!-- wsBagHeader.jsp -->
 <script type="text/javascript">
@@ -46,9 +47,11 @@
 <th nowrap="true">
   <fmt:message key="query.savedbags.typecolumnheader"/>
 </th>
-<th nowrap="true">
-  <fmt:message key="query.savedbags.descriptioncolumnheader"/>
-</th>
+<c:if test="${showDescriptions}">
+  <th nowrap="true">
+    <fmt:message key="query.savedbags.descriptioncolumnheader"/>
+  </th>
+</c:if>
 <th nowrap="true">
   <fmt:message key="query.savedbags.datecreatedcolumnheader"/>
 </th>

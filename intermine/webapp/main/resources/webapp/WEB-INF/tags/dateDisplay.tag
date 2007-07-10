@@ -5,7 +5,15 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <%@ attribute name="date" required="true" type="java.util.Date" %>
+<%@ attribute name="type" type="java.lang.Boolean" %>
 
 <span style="white-space: nowrap">
-  <fmt:formatDate value="${date}" type="both" pattern="yyyy-MM-dd K:mm a"/>
+  <c:choose>
+    <c:when test="${!empty type && type == 'short'}">
+      <fmt:formatDate value="${date}" type="both" pattern="yyyy-MM-dd"/>
+    </c:when>
+    <c:otherwise>
+      <fmt:formatDate value="${date}" type="both" pattern="yyyy-MM-dd K:mm a"/>
+    </c:otherwise>
+  </c:choose>
 </span>
