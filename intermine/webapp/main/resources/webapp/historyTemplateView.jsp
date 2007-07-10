@@ -5,6 +5,8 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
+<%-- replace this with wsTemplateTable --%>
+
 <!-- historyTemplates.jsp -->
 <html:xhtml/>
 

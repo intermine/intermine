@@ -16,10 +16,13 @@
   <tiles:put name="type" value="bag"/>
   <tiles:put name="scope" value="${scope}"/>
   <tiles:put name="tags" value="${tags}"/>
+  <tiles:put name="showNames" value="${showNames}"/>
+  <tiles:put name="showTitles" value="${showTitles}"/>
   <tiles:put name="showDescriptions" value="${showDescriptions}"/>
   <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
   <tiles:put name="makeTable" value="true"/>
   <tiles:put name="tableHeader" value="wsBagHeader.tile"/>
   <tiles:put name="tableRow" value="wsBagRow.tile"/>
+  <tiles:put name="limit" value="${limit}"/>
 </tiles:insert>
 <!-- /wsBagTable.jsp -->
