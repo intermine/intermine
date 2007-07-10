@@ -1082,9 +1082,13 @@ table.results tr.queryAgeToday td {
    margin-bottom:10px;
 }
 #tipbox {
- 	   background-color:#F5F0FF;
- 	   padding:3px;
- 	//   text-align:left;
- 	}
+ 	background-color:#F5F0FF;
+	padding:3px;
+}
+
+#tipbox {
+ 	background-color:#F5F0FF;
+	padding:3px;
+}
 
 

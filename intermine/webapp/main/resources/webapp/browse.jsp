@@ -32,9 +32,11 @@
 	<option value="tpls">Templates</option>
 	<option value="bgs">Lists</option>
   </select>
-  <fmt:message key="header.search.mid"/>
-  <html:text property="value" size="40"/>
-  <html:submit><fmt:message key="header.search.button"/></html:submit>
+  
+<fmt:message key="header.search.mid"/>  
+<input style="color:#666; font-style:italic;" type="text" name="value" size="40" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="this.value=''">  
+<html:submit><fmt:message key="header.search.button"/></html:submit>
+  
 </html:form>
 <%--  </c:otherwise>	 
 </c:choose>--%>
