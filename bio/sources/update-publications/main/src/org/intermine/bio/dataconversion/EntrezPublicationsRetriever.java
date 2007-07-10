@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -80,6 +81,7 @@ public class EntrezPublicationsRetriever
     private static final int MAX_TRIES = 5;
     private String osAlias = null, outputFile = null;
     private Set<String> seenPubMeds = new HashSet<String>();
+    private Map<String, Item> authorMap = new HashMap<String, Item>();
     private String cacheDirName;
     private ItemFactory itemFactory;
 
@@ -152,7 +154,6 @@ public class EntrezPublicationsRetriever
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
 
             Set<String> idsToFetch = new HashSet<String>();
-            Set<String> toStore = new HashSet<String>();
             itemFactory = new ItemFactory(os.getModel(), "-1_");
             writer.write(FullRenderer.getHeader() + ENDL);
             for (Iterator<Publication> iter = getPublications(os).iterator(); iter.hasNext();) {
@@ -204,7 +205,7 @@ public class EntrezPublicationsRetriever
                             Throwable throwable = null;
                             try {
                                 SAXParser.parse(new InputSource(new StringReader(buf.toString())),
-                                                new Handler(toStore, fromServerMap));
+                                                new Handler(fromServerMap));
                             } catch (Throwable e) {
                                 // try again or re-throw the Throwable
                                 throwable = e;
@@ -227,7 +228,6 @@ public class EntrezPublicationsRetriever
                             break;
                         }
                         thisBatch.clear();
-                        toStore.clear();
                     } finally {
                         txn.commit();
                         // start a new transaction incase there is an exception while parsing
@@ -235,6 +235,7 @@ public class EntrezPublicationsRetriever
                     }
                 }
             }
+            writeItems(writer, authorMap.values());
             writer.write(FullRenderer.getFooter() + ENDL);
             writer.flush();
             writer.close();
@@ -248,7 +249,7 @@ public class EntrezPublicationsRetriever
 
     }
 
-    private void writeItems(Writer writer, Set<Item> items) throws IOException {
+    private void writeItems(Writer writer, Collection<Item> items) throws IOException {
         for (Item item: items) {
             writer.write(FullRenderer.render(item));
         }
@@ -316,14 +317,17 @@ public class EntrezPublicationsRetriever
         Set<String> authors = (Set<String>) map.get("authors");
         if (authors != null) {
             for (String authorString : authors) {
-                Item author = itemFactory.makeItemForClass(TARGET_NS + "Author");
-                author.setAttribute("name", authorString);
+                Item author = authorMap.get(authorString);
+                if (author == null) {
+                    author = itemFactory.makeItemForClass(TARGET_NS + "Author");
+                    author.setAttribute("name", authorString);
+                    authorMap.put(authorString, author);
+                }
                 author.addToCollection("publications", publication);
                 publication.addToCollection("authors", author);
                 if (!publication.hasAttribute("firstAuthor")) {
                     publication.setAttribute("firstAuthor", authorString);
                 }
-                retSet.add(author);
             }
         }
         return retSet;
@@ -334,7 +338,6 @@ public class EntrezPublicationsRetriever
      */
     class Handler extends DefaultHandler
     {
-        Set<String> toStore;
         Map<String, Object> pubMap;
         String name;
         StringBuffer characters;
@@ -343,11 +346,9 @@ public class EntrezPublicationsRetriever
 
         /**
          * Constructor
-         * @param toStore a set in which the new publication items are stored
          * @param itemFactory the factory
          */
-        public Handler(Set<String> toStore, Map<String, Map<String, Object>> fromServerMap) {
-            this.toStore = toStore;
+        public Handler(Map<String, Map<String, Object>> fromServerMap) {
             this.cache = fromServerMap;
         }
 
@@ -395,7 +396,6 @@ public class EntrezPublicationsRetriever
                 }
                 pubMap = new HashMap<String, Object>();
                 pubMap.put("id", pubMedId);
-                toStore.add(pubMedId);
                 seenPubMeds.add(pubMedId);
                 cache.put(pubMedId, pubMap);
             } else if ("PubDate".equals(name)) {
@@ -418,7 +418,6 @@ public class EntrezPublicationsRetriever
                 pubMap.put("pages", characters.toString());
             } else if ("Author".equals(name)) {
                 String authorString = characters.toString();
-                toStore.add(authorString);
                 Set<String> authorSet = (Set<String>) pubMap.get("authors");
                 if (authorSet == null) {
                     authorSet = new LinkedHashSet<String>();

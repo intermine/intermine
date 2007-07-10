@@ -11,6 +11,7 @@
     <collection name="authors">
       <reference ref_id="-1_2"/>
       <reference ref_id="-1_3"/>
+      <reference ref_id="-1_4"/>
     </collection>
   </item>
   <item id="-1_2" class="http://www.flymine.org/model/genomic#Author">
@@ -25,7 +26,7 @@
       <reference ref_id="-1_1"/>
     </collection>
   </item>
-  <item id="-1_4" class="http://www.flymine.org/model/genomic#Publication">
+  <item id="-1_5" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="issue" value="6"/>
     <attribute name="journal" value="Development"/>
     <attribute name="pages" value="1337-47"/>
@@ -35,27 +36,28 @@
     <attribute name="year" value="1999"/>
     <attribute name="firstAuthor" value="Morita K"/>
     <collection name="authors">
-      <reference ref_id="-1_5"/>
       <reference ref_id="-1_6"/>
+      <reference ref_id="-1_4"/>
       <reference ref_id="-1_7"/>
     </collection>
   </item>
-  <item id="-1_5" class="http://www.flymine.org/model/genomic#Author">
+  <item id="-1_6" class="http://www.flymine.org/model/genomic#Author">
     <attribute name="name" value="Morita K"/>
     <collection name="publications">
-      <reference ref_id="-1_4"/>
+      <reference ref_id="-1_5"/>
     </collection>
   </item>
-  <item id="-1_6" class="http://www.flymine.org/model/genomic#Author">
+  <item id="-1_4" class="http://www.flymine.org/model/genomic#Author">
     <attribute name="name" value="Chow KL"/>
     <collection name="publications">
-      <reference ref_id="-1_4"/>
+      <reference ref_id="-1_1"/>
+      <reference ref_id="-1_5"/>
     </collection>
   </item>
   <item id="-1_7" class="http://www.flymine.org/model/genomic#Author">
     <attribute name="name" value="Ueno N"/>
     <collection name="publications">
-      <reference ref_id="-1_4"/>
+      <reference ref_id="-1_5"/>
     </collection>
   </item>
 </items>
