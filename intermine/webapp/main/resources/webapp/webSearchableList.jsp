@@ -8,6 +8,8 @@
 
 <tiles:importAttribute name="type"/>
 <tiles:importAttribute name="scope"/>
+<tiles:importAttribute name="showNames" ignore="true"/>
+<tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 
 <%-- if true this tile must be inside a <form> otherwise this tomcat error
@@ -20,6 +22,18 @@
 <tiles:importAttribute name="tableRow" ignore="true"/>
 
 <html:xhtml/>
+
+<%-- set default to true --%>
+<c:if test="${empty showNames}">
+  <c:set var="showNames" value="true" scope="request"/>
+</c:if>
+<c:if test="${empty showTitles}">
+  <c:set var="showTitles" value="true" scope="request"/>
+</c:if>
+<c:if test="${empty showDescriptions}">
+  <c:set var="showDescriptions" value="true" scope="request"/>
+</c:if>
+
 <c:choose>
   <c:when test="${empty filteredWebSearchables}">
     <div class="altmessage">
@@ -37,7 +51,11 @@
                 <tiles:put name="scope" value="${scope}"/>
                 <tiles:put name="tags" value="${tags}"/>
                 <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
-                <tiles:put name="showDescriptions" value="false"/>
+                <tiles:put name="showNames" value="false"/>
+                <tiles:put name="showTitles" value="false"/>
+                <tiles:put name="showNames" value="${showNames}"/>
+                <tiles:put name="showTitles" value="${showTitles}"/>
+                <tiles:put name="showDescriptions" value="${showDescriptions}"/>
               </tiles:insert>
             </tr>
             <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
@@ -51,7 +69,9 @@
                   <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
                   <tiles:put name="scope" value="${scope}"/>
                   <tiles:put name="tags" value="${tags}"/>
-                  <tiles:put name="showDescriptions" value="false"/>
+                  <tiles:put name="showNames" value="${showNames}"/>
+                  <tiles:put name="showTitles" value="${showTitles}"/>
+                  <tiles:put name="showDescriptions" value="${showDescriptions}"/>
                 </tiles:insert>
               </tr>
             </c:forEach>
@@ -75,7 +95,6 @@
                 </html:link>
                 <tiles:insert name="starTemplate.tile" flush="false">
                   <tiles:put name="templateName" value="${entry.value.title}"/>
-                  <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
                 </tiles:insert>
               </div>
               <c:if test="${showDescriptions}">

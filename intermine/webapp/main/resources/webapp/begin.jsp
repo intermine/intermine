@@ -73,27 +73,34 @@
 <div style="margin-left:50%;width:45%;">
 
 	<im:roundbox title="bag list test" color="roundcorner" >
-          
+
       <html:form action="/modifyBag">
-        
+        <div style="height: 200px; overflow: auto;">
+
         <tiles:insert name="wsBagTable.tile">
-          <tiles:put name="limit" value="5"/>
+          <tiles:put name="limit" value="15"/>
           <tiles:put name="scope" value="global"/>
           <tiles:put name="makeCheckBoxes" value="true"/>
           <tiles:put name="showDescriptions" value="false"/>
         </tiles:insert>
 
+        </div>
 </html:form>
         </im:roundbox>	
 
 	<im:roundbox title="template list test" color="roundcorner" >
-        
+<html:form action="/modifyTemplate">
+
+        <div style="height: 300px; overflow: auto;">
         <tiles:insert name="wsTemplateTable.tile">
-          <tiles:put name="limit" value="5"/>
+          <tiles:put name="limit" value="15"/>
           <tiles:put name="scope" value="global"/>
           <tiles:put name="makeCheckBoxes" value="true"/>
           <tiles:put name="showDescriptions" value="false"/>
+          <tiles:put name="showNames" value="false"/>
         </tiles:insert>
+        </div>
+</html:form>
         </im:roundbox>	
 </div>
 
