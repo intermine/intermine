@@ -344,20 +344,25 @@ public abstract class WebUtil
     /**
      * takes a map and puts it in random order
      * also shortens the list to be map.size() = max
-     * @param map The map to be randomised
+     * @param map The map to be randomised - the Map will be unchanged after the call
      * @param max the number of items to be in the final list
      * @return the newly randomised, shortened map
      */
     public static Map shuffle(Map map, int max) {
-        List keys = new ArrayList(map.keySet());
-        // randomise!
+        List<String> keys = new ArrayList(map.keySet());
+
         Collections.shuffle(keys);
-        // remove items from the list until short enough
-        int i = 0;
-        while (map.size() > max) {
-            map.remove(keys.get(i++));
+        
+        if (keys.size() > max) {
+            keys = keys.subList(0, max);
         }
-        return map;
+        
+        Map returnMap = new HashMap();
+
+        for (String key: keys) {
+            returnMap.put(key, map.get(key));
+        }
+        return returnMap;
     }
 
     /**
