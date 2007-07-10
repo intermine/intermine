@@ -149,7 +149,7 @@ public class EquivalentObjectHints
                 }
                 q.addToSelect(qs);
                 q.setDistinct(true);
-                List<List> results = os.execute(q, 0, SUMMARY_SIZE, false, false,
+                List<? extends List> results = os.execute(q, 0, SUMMARY_SIZE, false, false,
                         ObjectStore.SEQUENCE_IGNORE);
                 if (results.size() >= SUMMARY_SIZE) {
                     if (Integer.class.equals(qs.getType())) {
@@ -158,10 +158,10 @@ public class EquivalentObjectHints
                         q.addToSelect(new QueryFunction(qs, QueryFunction.MIN));
                         q.addToSelect(new QueryFunction(qs, QueryFunction.MAX));
                         q.setDistinct(false);
-                        List<List<Integer>> results2 = os.execute(q, 0, 2, false, false,
+                        List<? extends List> results2 = os.execute(q, 0, 2, false, false,
                                 ObjectStore.SEQUENCE_IGNORE);
-                        values = new IntegerRangeSet(results2.get(0).get(0).intValue(),
-                                results2.get(0).get(1).intValue());
+                        values = new IntegerRangeSet(((Integer) results2.get(0).get(0)).intValue(),
+                                ((Integer) results2.get(0).get(1)).intValue());
                     } else {
                         values = AlwaysSet.INSTANCE;
                     }
