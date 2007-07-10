@@ -98,6 +98,8 @@
     </action>
     <action path="/tips" forward="tips.page">
     </action>
+    <action path="/aspects" forward="aspects.page">
+    </action>
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
