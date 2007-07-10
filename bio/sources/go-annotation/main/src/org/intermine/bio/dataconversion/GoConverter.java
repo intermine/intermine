@@ -210,9 +210,7 @@ public class GoConverter extends FileConverter
                 }
                 productIds.add(productId);
                 
-                // and free up some memory
                 // Free up some memory
-                productWrapperMap = new LinkedHashMap();
                 holderMap = new LinkedHashMap();
                 goAnnoItems = new LinkedHashMap();
             }
@@ -608,7 +606,7 @@ public class GoConverter extends FileConverter
                                                         organism, dataSourceId, false, null);
                         } else if (prefix.equals("FB")) {
                             productWrapper = newProduct(value, wt.clsName, organism,
-                                                        dataSourceId, false, "organismDbId");
+                                                        dataSourceId, true, "organismDbId");
                         } else {
                             productWrapper = newProduct(value, wt.clsName,
                                                         organism, dataSourceId, true, null);

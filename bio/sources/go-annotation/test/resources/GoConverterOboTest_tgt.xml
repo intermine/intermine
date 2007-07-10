@@ -37,7 +37,6 @@
     <attribute name="identifier" value="GO:0000005"/>
     <attribute name="isPrimaryAssignment" value="true"/>
     <attribute name="name" value="child term b"/>
-    <attribute name="withText" value="FLYBASE:Grip85;"/>
     <reference name="property" ref_id="3_2"/>
     <reference name="subject" ref_id="5_1"/>
     <collection name="actualGoTerms">
@@ -64,7 +63,6 @@
     <attribute name="identifier" value="GO:0000001"/>
     <attribute name="isPrimaryAssignment" value="true"/>
     <attribute name="name" value="root term 1"/>
-    <attribute name="withText" value="FLYBASE:Grip86;"/>
     <reference name="property" ref_id="3_4"/>
     <reference name="subject" ref_id="5_2"/>
     <collection name="actualGoTerms">
@@ -87,7 +85,7 @@
     <attribute name="identifier" value="GO:0000011"/>
     <attribute name="isPrimaryAssignment" value="true"/>
     <attribute name="name" value="child term h"/>
-    <attribute name="withText" value="FLYBASE:Grip86;"/>
+    <attribute name="withText" value="FB:FBgn0020002"/>
     <reference name="property" ref_id="3_3"/>
     <reference name="subject" ref_id="5_1"/>
     <collection name="actualGoTerms">
@@ -98,6 +96,9 @@
     </collection>
     <collection name="goEvidenceCodes">
       <reference ref_id="2_1"/>
+    </collection>
+    <collection name="with">
+      <reference ref_id="5_2"/>
     </collection>
   </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
