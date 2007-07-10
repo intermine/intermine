@@ -23,10 +23,10 @@
 	</im:roundbox>	
 
 	<im:roundbox title="Data Categories" color="roundcorner" >
-	      	  <c:choose>
+	     <c:choose>
 		    <c:when test="${!empty ASPECTS}">
-		      <p><fmt:message key="begin.aspect.intro"/></p>
-		      <tiles:insert page="/aspectIcons.jsp"/>
+		       <tiles:insert name="aspects.tile"/>
+		      
 		    </c:when>
 		    <c:otherwise>
 		      <c:forEach items="${CATEGORIES}" var="category">

@@ -9,6 +9,8 @@
 <!-- aspectIcons -->
 
 <c:set var="numCols" value="${param.cols != null ? param.cols : 3}"/>
+<div class="body">
+<p><fmt:message key="aspects.intro"/></p>
 
   <table class="aspectIconsTable" border="0" cellspacing="0" cellpadding="0" >
     <tr>
@@ -46,5 +48,5 @@
       </td>
     </tr>
   </table>
-
+</div>
 <!-- /aspectIcons -->
