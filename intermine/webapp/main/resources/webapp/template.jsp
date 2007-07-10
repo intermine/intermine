@@ -79,9 +79,8 @@
   //-->
 </script>
 
-
-<div class="body">
 <tiles:get name="objectTrail.tile"/>
+<div class="body">
   <html:form action="/templateAction">
     <div class="templateTitle">${templateQuery.title}
       <tiles:insert name="starTemplate.tile">
