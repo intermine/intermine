@@ -64,7 +64,7 @@ public class LoadQueryAction extends DispatchAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
+        String trail = request.getParameter("trail");
         String queryXml = request.getParameter("query");
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
         
@@ -87,6 +87,7 @@ public class LoadQueryAction extends DispatchAction
             String qid = SessionMethods.startQuery(clientState, session, messages, false, query);
             Thread.sleep(200); // slight pause in the hope of avoiding holding page
             return new ForwardParameters(mapping.findForward("waiting"))
+                                .addParameter("trail", trail)
                                 .addParameter("qid", qid).forward();
         }
     }

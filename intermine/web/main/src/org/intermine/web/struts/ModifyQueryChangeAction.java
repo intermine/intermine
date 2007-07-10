@@ -57,6 +57,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
+        
         SavedQuery sq;
         
         if (request.getParameter("type").equals("history")) {
@@ -70,7 +71,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         if (sq.getPathQuery() instanceof TemplateQuery) {
             return new ForwardParameters(mapping.findForward("template"))
                         .addParameter("loadModifiedTemplate",
-                                      "true")
+                                      "true")                       
                         .addParameter("name", sq.getName())
                                       .forward();
         }        
@@ -95,6 +96,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
+        String trail = request.getParameter("trail");
         SavedQuery sq;
         
         if (request.getParameter("type").equals("history")) {
@@ -117,6 +119,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
                                                false, sq.getPathQuery());
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting"))
+                    .addParameter("trail", trail)
                     .addParameter("qid", qid).forward();
     }
     
