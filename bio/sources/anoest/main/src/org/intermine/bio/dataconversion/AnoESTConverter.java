@@ -35,7 +35,8 @@ public class AnoESTConverter extends BioDBConverter
     private static final String DATASET_TITLE = "AnoEST clusters";
     private static final String DATA_SOURCE_NAME = "VectorBase";
     private Map<String, Item> clusters = new HashMap<String, Item>();
-
+    private Map<String, Item> ests = new HashMap<String, Item>();
+    
     /**
      * Create a new AnoESTConverter object.
      * @param database the database to read from
@@ -83,7 +84,7 @@ public class AnoESTConverter extends BioDBConverter
             cluster.setReference("organism", getOrganism());
             cluster.addToCollection("evidence", getDataSet());
 
-            // some cluster have no location
+            // some clusters have no location
             if (chromosomeIdentifier != null && start > 0 && end > 0) {
                 makeLocation(chromosomeIdentifier, cluster, start, end, strand);
             }
@@ -113,7 +114,7 @@ public class AnoESTConverter extends BioDBConverter
             String clusterId = res.getString(2);
             String cloneId = res.getString(3);
             
-            Item est = makeItem("EST");
+            Item est = makeEST(accession);
             est.setAttribute("identifier", accession);
             Item accSynonym = createSynonym(est, "identifier", accession, true, getDataSet());
             getItemWriter().store(ItemHelper.convert(accSynonym));
@@ -128,6 +129,15 @@ public class AnoESTConverter extends BioDBConverter
             }
             getItemWriter().store(ItemHelper.convert(est));
         }
+    }
+
+    private Item makeEST(String identifier) {
+        Item est = ests.get(identifier);
+        if (est == null) {
+            est = makeItem("EST");
+            ests.put(identifier, est);
+        }
+        return est;
     }
 
     /**
