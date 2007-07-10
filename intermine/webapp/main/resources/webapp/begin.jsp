@@ -98,7 +98,7 @@
 </div>
 
 <div style="margin-left:50%;width:45%;">
-	<im:roundbox title="Bags" color="roundcorner" >
+	<im:roundbox title="Lists" color="roundcorner" >
 	   <tiles:insert name="bagFrontPage.tile" />
 	</im:roundbox>
 
