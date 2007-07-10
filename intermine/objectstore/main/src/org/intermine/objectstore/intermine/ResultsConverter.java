@@ -258,7 +258,7 @@ public class ResultsConverter
             String fieldName = (String) entry.getKey();
             FieldDescriptor fd = (FieldDescriptor) entry.getValue();
             if (fd instanceof AttributeDescriptor) {
-                TypeUtil.FieldInfo fieldInfo = TypeUtil.getFieldInfo(type, fieldName);
+                TypeUtil.FieldInfo fieldInfo = TypeUtil.getFieldInfo(retval.getClass(), fieldName);
                 //long time3 = System.currentTimeMillis();
                 Object value = sqlResults.getObject(alias + DatabaseUtil.getColumnName(fd));
                 //timeSpentSql += System.currentTimeMillis() - time3;
