@@ -28,6 +28,14 @@
       <fmt:message key="menu.querybuilder"/>
     </html:link>
   </li>
+  
+    <li id="category" <c:if test="${pageName=='category'}">class="activelink"</c:if>>
+    <html:link action="/aspects.do">
+      <fmt:message key="menu.category"/>
+    </html:link>
+  </li>
+  
+  
   <li id="mymine" <c:if test="${pageName=='mymine'}">class="activelink"</c:if>>
     <html:link action="/mymine.do">
       <fmt:message key="menu.mymine"/>
