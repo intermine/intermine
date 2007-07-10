@@ -106,10 +106,8 @@ function resultsCountCallback(results) {
         var summaryUniqueCountElement = document.getElementById('summary_unique_count');
         summaryUniqueCountElement.style.display='inline';
         summaryUniqueCountElement.innerHTML='Total unique values: ' + size;
-        return true;
-    } else {
-        return false;
     }
+    return true;
 }
 
 function getColumnSummary(tableName, columnName, columnDisplayName) {
