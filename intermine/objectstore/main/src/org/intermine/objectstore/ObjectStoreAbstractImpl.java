@@ -179,12 +179,12 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public List getObjectsByIds(Collection ids) throws ObjectStoreException {
+    public List<InterMineObject> getObjectsByIds(Collection ids) throws ObjectStoreException {
         Results results = execute(QueryCreator.createQueryForIds(ids, InterMineObject.class));
         results.setNoOptimise();
         results.setNoExplain();
 
-        return results;
+        return (List<InterMineObject>) results;
     }
     
     /**
