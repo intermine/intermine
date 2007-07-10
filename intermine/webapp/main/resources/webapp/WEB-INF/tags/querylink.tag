@@ -14,6 +14,7 @@
   <c:set target="${linkParams}" property="method" value="xml" />
   <c:set target="${linkParams}" property="query" value="${query}" />
   <c:set target="${linkParams}" property="skipBuilder" value="${skipBuilder}" />
+  <c:set target="${linkParams}" property="trail" value="|query" />
 </jsp:useBean>
 
 <html:link action="/loadQuery" name="linkParams">

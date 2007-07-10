@@ -140,7 +140,7 @@
                 <td align="center" nowrap>
                   <c:choose>
                     <c:when test="${validQuery}">
-                      <html:link action="/modifyQueryChange?method=run&amp;name=${savedQuery.key}&amp;type=${type}"
+                      <html:link action="/modifyQueryChange?method=run&amp;name=${savedQuery.key}&amp;type=${type}&trail=|query"
                                  titleKey="history.action.execute.hover">
                         <fmt:message key="history.action.execute"/>
                       </html:link>
