@@ -10,8 +10,6 @@
 
 <c:set var="numCols" value="${param.cols != null ? param.cols : 3}"/>
 
-<div style="float:left;width:45%;">
-<im:roundbox title="Data Categories" color="roundcorner">
 <div class="body">
 <p><fmt:message key="aspects.intro"/></p>
 
@@ -55,6 +53,4 @@
   </table>
 </div>
 
-</im:roundbox>
-</div>
 <!-- /aspectIcons -->
