@@ -111,7 +111,7 @@
         <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}${helplink}" 
                scope="request"/>
       </c:if>
-      <im:box titleKey="${pageName}.description" helpUrl="${helpUrl}">
+      <im:box titleKey="${pageName}.description" helpUrl="${helpUrl}" pageName="${pageName}">
         <tiles:get name="body"/>
       </im:box>
       

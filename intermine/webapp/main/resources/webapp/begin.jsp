@@ -8,7 +8,7 @@
 <html:xhtml/>
 
 <div style="float:left;width:45%;">
-	<im:roundbox title="Templates" color="roundcorner">
+	<im:roundbox title="Templates" stylename="templates">
 <p>Templates are predefined queries designed to perform a particular task. Each one has a description and a form to fill in. For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
 	   <tiles:insert name="webSearchableList.tile">
       	    <!-- optional -->
@@ -22,7 +22,7 @@
       </tiles:insert>
 	</im:roundbox>	
 
-	<im:roundbox title="Data Categories" color="roundcorner" >
+	<im:roundbox title="Data Categories" stylename="categories" >
 	     <c:choose>
 		    <c:when test="${!empty ASPECTS}">
 		       <tiles:insert name="aspects.tile"/>
@@ -48,7 +48,7 @@
 		    </c:otherwise>
 		  </c:choose>
 	</im:roundbox>	
-	<im:roundbox title="Custom Queries" color="roundcorner">
+	<im:roundbox title="Custom Queries" stylename="queries">
 	        <div class="body">
 	          <html:link action="/mymine.do?page=bags">
 	            <fmt:message key="begin.upload.identifiers"/>
@@ -72,11 +72,11 @@
 
 
 <div style="margin-left:50%;width:45%;">
-	<im:roundbox title="Lists" color="roundcorner" >
+	<im:roundbox title="Lists" stylename="lists" >
 	   <tiles:insert name="bagFrontPage.tile" />
 	</im:roundbox>
 
-	<im:roundbox title="Welcome" color="roundcorner" >
+	<im:roundbox title="Welcome" stylename="welcome" >
 	<p>
       FlyMine is an integrated database of genomic, expression and protein data for
       <i>Drosophila</i>, <i>Anopheles</i> and

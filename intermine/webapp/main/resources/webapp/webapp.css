@@ -108,14 +108,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
 	padding:0px;
 	margin:0px;
 }
-.boxcontent {
-    border-left: 1px solid #9D66AD;
-    border-right: 1px solid #9D66AD;
-}
-.boxbottom {
-	height:9px;
-    border-bottom: 1px solid #9D66AD;
-}
+
 /*menu with nifty corners*/
 div#menu{float:left;top:90px; background-color: #D0B5D7;width:100%;position:absolute;}
 ul#nav,ul#nav li{list-style-type:none;margin:0;padding:0}
@@ -124,17 +117,22 @@ ul#nav li{float:left;margin-right: 5px;text-align: center}
 ul#nav a{
 	height:25px; 
 	float:left;
-	width: 7em;
-	background: #E7F1F8;
 	text-decoration:none;
 	color: #5C0075;
 	font: 75% Arial,sans-serif;
-	padding:5px 5px 0px 5px;
-	font-weight:+1;
+	padding:5px 15px 0px 15px;
 	white-space:nowrap;
+    font-weight:bold;
 }
-ul#nav a:hover{background: #FFA826;color: #FFF}
-ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #003}
+ul#nav a:hover{color:#000;}
+ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #003;}
+li#home a{background:#9D66AD;color:white;}
+li#bags a{background:#AD8668;color:white;}
+li#templates a{background:#4A497B;color:white;}
+li#query a{background:#589100;color:white;}
+li#category a{background:#663366;color:white;}
+li#mymine a{background:#9D66AD;color:white;}
+
 /*--end of new styles 05-2007--*/
 
 #quicksearch{position:absolute;top:85px;right:5px;font-size: 0.8em;margin:0px 10px 0px 0px;color:white;}
