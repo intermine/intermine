@@ -17,9 +17,22 @@
          Cannot find bean under name org.apache.struts.taglib.html.BEAN
 --%>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
+
+<%-- if true, show the WebSearchables in a table - tableRow must be set too --%>
 <tiles:importAttribute name="makeTable" ignore="true"/>
+
+<%-- the tile to use for the header of a table - should contain <th> elements --%>
 <tiles:importAttribute name="tableHeader" ignore="true"/>
+
+<%-- the tile to use for showing a single row of a table - should contain <td>
+     elements as it will be wrapped in a <tr> --%>
 <tiles:importAttribute name="tableRow" ignore="true"/>
+
+<%-- setting height causes the tile to be wrapped in div of the given height
+     and with overflow: auto set --%>
+<tiles:importAttribute name="height" ignore="true"/>
+
+
 
 <html:xhtml/>
 
@@ -34,6 +47,11 @@
   <c:set var="showDescriptions" value="true" scope="request"/>
 </c:if>
 
+<c:if test="${!empty height}">
+  <div style="height: ${height}px; overflow: auto;">
+</c:if>
+
+
 <c:choose>
   <c:when test="${empty filteredWebSearchables}">
     <div class="altmessage">
@@ -46,35 +64,42 @@
         <c:when test="${!empty makeTable && makeTable}">
           <%-- make a table --%>
           <table>
-            <tr>
-              <tiles:insert name="${tableHeader}">
-                <tiles:put name="scope" value="${scope}"/>
-                <tiles:put name="tags" value="${tags}"/>
-                <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
-                <tiles:put name="showNames" value="false"/>
-                <tiles:put name="showTitles" value="false"/>
-                <tiles:put name="showNames" value="${showNames}"/>
-                <tiles:put name="showTitles" value="${showTitles}"/>
-                <tiles:put name="showDescriptions" value="${showDescriptions}"/>
-              </tiles:insert>
-            </tr>
-            <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
-              <c:set var="webSearchable" value="${entry.value}" scope="request"/>
-              <tr class="${ageClasses[entry.key]}">
-                <tiles:insert name="${tableRow}">
-                  <tiles:put name="wsName" value="${entry.key}"/>
-                  <tiles:put name="webSearchable" beanName="webSearchable"/>
-                  <tiles:put name="statusIndex" value="${status.index}"/>
-                  <tiles:put name="wsCheckBoxId" value="selected_${scope}_${type}_${status.index}"/>
-                  <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
-                  <tiles:put name="scope" value="${scope}"/>
-                  <tiles:put name="tags" value="${tags}"/>
-                  <tiles:put name="showNames" value="${showNames}"/>
-                  <tiles:put name="showTitles" value="${showTitles}"/>
-                  <tiles:put name="showDescriptions" value="${showDescriptions}"/>
-                </tiles:insert>
-              </tr>
-            </c:forEach>
+            <c:if test="${!empty tableHeader}">
+              <thead>
+                <tr>
+                  <tiles:insert name="${tableHeader}">
+                    <tiles:put name="scope" value="${scope}"/>
+                    <tiles:put name="tags" value="${tags}"/>
+                    <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
+                    <tiles:put name="showNames" value="false"/>
+                    <tiles:put name="showTitles" value="false"/>
+                    <tiles:put name="showNames" value="${showNames}"/>
+                    <tiles:put name="showTitles" value="${showTitles}"/>
+                    <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+                  </tiles:insert>
+                </tr>
+              </thead>
+            </c:if>
+            <tbody>
+              <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
+                <c:set var="webSearchable" value="${entry.value}" scope="request"/>
+                <tr class="${ageClasses[entry.key]}">
+                  <tiles:insert name="${tableRow}">
+                    <tiles:put name="wsName" value="${entry.key}"/>
+                    <tiles:put name="webSearchable" beanName="webSearchable"/>
+                    <tiles:put name="statusIndex" value="${status.index}"/>
+                    <tiles:put name="wsCheckBoxId"
+                               value="selected_${scope}_${type}_${status.index}"/>
+                    <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
+                    <tiles:put name="scope" value="${scope}"/>
+                    <tiles:put name="tags" value="${tags}"/>
+                    <tiles:put name="showNames" value="${showNames}"/>
+                    <tiles:put name="showTitles" value="${showTitles}"/>
+                    <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+                  </tiles:insert>
+                </tr>
+              </c:forEach>
+            </tbody>
           </table>
         </c:when>
         <c:otherwise>
@@ -109,4 +134,10 @@
     </div>
   </c:otherwise>
 </c:choose>
+
+
+<c:if test="${!empty height}">
+  </div>
+</c:if>
+
 <!-- /webSearchableList.jsp -->
