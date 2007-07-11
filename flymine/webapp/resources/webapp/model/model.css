@@ -22,11 +22,17 @@ div.title h1
   font-weight: normal;
   font-size: 14px;
   font-weight: bold;
-  background: #eee;
+  color:#FFF;
+  /*background: #eee;
   border-top: 1px solid #888;
-  border-bottom: 1px solid #888;
+  border-bottom: 1px solid #888;*/
   clear:both;
 }
+div#boxbag {background:#AD8668;}
+div#boxsearch {background:#4A497B;}
+div#boxcustomQuery {background:#589100;}
+div#boxaspects {background:#663366;}
+div#boxmymine {background:#9D66AD;}
 
 table.results tr td.highlightCell {
   background-color: #FFCBFF;
@@ -77,3 +83,45 @@ table.results tr td.highlightCell {
 	margin:20px;
 	width:350px;
 }
+
+.boxcontentwelcome {
+    border-left: 1px solid #9D66AD;
+    border-right: 1px solid #9D66AD;
+}
+.boxbottomwelcome {
+	height:9px;
+    border-bottom: 1px solid #9D66AD;
+}
+.boxcontentqueries {
+    border-left: 1px solid #589100;
+    border-right: 1px solid #589100;
+}
+.boxbottomqueries {
+	height:9px;
+    border-bottom: 1px solid #589100;
+}
+.boxcontentlists {
+    border-left: 1px solid #AD8668;
+    border-right: 1px solid #AD8668;
+}
+.boxbottomlists {
+	height:9px;
+    border-bottom: 1px solid #AD8668;
+}
+.boxcontenttemplates {
+    border-left: 1px solid #4A497B;
+    border-right: 1px solid #4A497B;
+}
+.boxbottomtemplates {
+	height:9px;
+    border-bottom: 1px solid #4A497B;
+}
+.boxcontentcategories {
+    border-left: 1px solid #663366;
+    border-right: 1px solid #663366;
+}
+.boxbottomcategories {
+	height:9px;
+    border-bottom: 1px solid #663366;
+}
+
