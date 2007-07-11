@@ -8,6 +8,7 @@
 <tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 <tiles:importAttribute name="limit" ignore="true"/>
+<tiles:importAttribute name="height" ignore="true"/>
 <tiles:importAttribute name="tags" ignore="true"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 
@@ -24,5 +25,6 @@
   <tiles:put name="tableHeader" value="wsBagHeader.tile"/>
   <tiles:put name="tableRow" value="wsBagRow.tile"/>
   <tiles:put name="limit" value="${limit}"/>
+  <tiles:put name="height" value="${height}"/>
 </tiles:insert>
 <!-- /wsBagTable.jsp -->
