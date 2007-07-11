@@ -155,7 +155,7 @@
   </definition>
   <definition name="customQuery.page" extends="layout.template">
     <put name="body" value="customQuery.jsp"/>
-    <put name="pageName" value="tip"/>
+    <put name="pageName" value="customQuery"/>
   </definition>
   
   <!--tiles-->
