@@ -23,13 +23,12 @@
       <fmt:message key="menu.templates"/>
     </html:link>
   </li>
-  <li <c:if test="${pageName=='customQuery'}">class="activelink"</c:if>>
+  <li id="query" <c:if test="${pageName=='customQuery'}">class="activelink"</c:if>>
     <html:link action="/customQuery">
       <fmt:message key="menu.querybuilder"/>&nbsp;
     </html:link>
   </li>
-  
-    <li id="category" <c:if test="${pageName=='aspects'}">class="activelink"</c:if>>
+  <li id="category" <c:if test="${pageName=='aspects'}">class="activelink"</c:if>>
     <html:link action="/aspects.do">
       <fmt:message key="menu.category"/>
     </html:link>
@@ -53,9 +52,9 @@
   </ul>
 </div>
 <script type="text/javascript">
-	Nifty("ul#split h3","top transparent");
+    // Nifty("ul#split h3","top transparent");
 	// Nifty("ul#split div","bottom");
-	Nifty("ul#nav a","small transparent top");
+	Nifty("ul#nav a","transparent top");
 </script>
 <div id="quicksearch"><tiles:insert name="browse.tile"> 
   <tiles:put name="menuItem" value="true"/> 

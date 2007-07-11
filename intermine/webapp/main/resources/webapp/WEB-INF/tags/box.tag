@@ -4,6 +4,7 @@
 <%@ attribute name="helpUrl" required="false" %>
 <%@ attribute name="topRightTile" required="false" %>
 <%@ attribute name="topLeftTile" required="false" %>
+<%@ attribute name="pageName" required="false" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -14,7 +15,7 @@
 </c:if>
 
 <c:if test="${!empty title || !empty topRightTile || !empty topLeftTile}">
-  <div class="box">
+  <div class="box" id="box${pageName}">
     <div class="title">
       <div class="boxTopRight" float="right" nowrap="nowrap">
         <c:choose>

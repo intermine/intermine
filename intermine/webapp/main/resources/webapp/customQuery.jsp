@@ -10,7 +10,7 @@
 <div style="float:left;width:45%;">
 
 	<%-- links --%>
-	<im:roundbox title="Custom Queries" color="roundcorner">
+	<im:roundbox title="Custom Queries" stylename="queries">
 	        <div class="body">
 	          <html:link action="/mymine.do?page=bags">
 	            <fmt:message key="begin.upload.identifiers"/>
@@ -28,7 +28,7 @@
 	</im:roundbox>
 
 	<%-- class chooser --%>	
-	<im:roundbox title="Start a New Query" color="roundcorner">	
+	<im:roundbox title="Start a New Query" stylename="queries">	
 		<jsp:include page="queryClassSelect.jsp"/>
 	</im:roundbox>	
 	
@@ -38,7 +38,7 @@
 <div style="margin-left:50%;width:45%;">
 
 	<%-- saved queries --%>
-	<im:roundbox title="Saved Queries" color="roundcorner" >
+	<im:roundbox title="Saved Queries" stylename="queries" >
 	  <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="saved"/>
       </tiles:insert>
