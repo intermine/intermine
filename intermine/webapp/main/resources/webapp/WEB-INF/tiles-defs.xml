@@ -153,6 +153,10 @@
     <put name="body" value="aspects.tile"/>
     <put name="pageName" value="aspects"/>
   </definition>
+  <definition name="customQuery.page" extends="layout.template">
+    <put name="body" value="customQuery.jsp"/>
+    <put name="pageName" value="tip"/>
+  </definition>
   
   <!--tiles-->
   <definition name="error.tile" path="/error.jsp"/>
