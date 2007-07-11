@@ -171,7 +171,7 @@ ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #003
 
 .boxbody {
   background-color: white;
-  border-bottom: 1px solid #888;
+  /*border-bottom: 1px solid #888;*/
   padding-top: 10px;
 }
 
