@@ -63,7 +63,7 @@
             <th align="center" nowrap>
               <fmt:message key="history.startcolumnheader"/>
             </th>
-            <th align="center">
+            <th align="center" nowrap>
               <fmt:message key="history.summarycolumnheader"/>
             </th>
             <th align="center" nowrap>
@@ -131,7 +131,7 @@
                     </c:if>
                   </c:forEach>
                 </td>
-                <td align="left" nowrap>
+                <td align="left">
                   <c:forEach items="${savedQuery.value.pathQuery.view}" var="item">
                     <im:unqualify className="${item}" var="text"/>
                     <span class="historySummaryShowing">${text}</span>
