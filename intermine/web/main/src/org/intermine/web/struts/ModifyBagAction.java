@@ -26,11 +26,14 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
+import javax.print.attribute.standard.Severity;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,23 +98,25 @@ public class ModifyBagAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-        Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        Map<String, InterMineBag> allBags = 
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext); 
+
         String[] selectedBags = mbf.getSelectedBags();
 
-        String type = getTypesMatch(savedBags, selectedBags, os);
+        String type = getTypesMatch(allBags, selectedBags, os);
         if (type == null) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
             return mapping.findForward("bag");
         }
 
         // Now combine
-        String name = BagHelper.findNewBagName(savedBags, mbf.getNewBagName());
+        String name = BagHelper.findNewBagName(allBags, mbf.getNewBagName());
         ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
         InterMineBag combined = new InterMineBag(name, type, null, new Date(), os, 
                                                  profile.getUserId(), uosw);
         ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(op);
         for (int i = 0; i < selectedBags.length; i++) {
-            osbc.addBag(savedBags.get(selectedBags[i]).getOsb());
+            osbc.addBag(allBags.get(selectedBags[i]).getOsb());
         }
         Query q = new Query();
         q.addToSelect(osbc);

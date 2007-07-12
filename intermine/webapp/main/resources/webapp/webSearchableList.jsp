@@ -33,7 +33,6 @@
 <tiles:importAttribute name="height" ignore="true"/>
 
 
-
 <html:xhtml/>
 
 <%-- set default to true --%>

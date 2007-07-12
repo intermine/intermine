@@ -4,36 +4,19 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
+<tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
+<tiles:importAttribute name="wsColumnCheckBoxId" ignore="true"/>
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 
 <!-- wsTemplateHeader.jsp -->
-<script type="text/javascript">
-<!--//<![CDATA[
-  function selectColumnCheckbox(form, type) {
-    var columnCheckBox = 'selected_' + type;
-    var checked = document.getElementById(columnCheckBox).checked;
-    with(form) {
-      for(i=0;i < elements.length;i++) {
-        thiselm = elements[i];
-        var testString = columnCheckBox + '_';
-        if(thiselm.id.indexOf(testString) != -1)
-          thiselm.checked = checked;
-      }
-    }
-  }
-  function noenter() {
-    return !(window.event && window.event.keyCode == 13);
-  }
-//]]>-->
-</script>
 
 <c:if test="${!empty makeCheckBoxes}">
   <th>
-    <input type="checkbox" id="selected_template"
-           onclick="selectColumnCheckbox(this.form, 'template')"/>
+    <input type="checkbox" id="selected_${scope}_template"
+           onclick="selectColumnCheckbox(this.form, 'template', '${scope}')"/>
   </th>
 </c:if>
 <c:if test="${showNames}">
