@@ -28,6 +28,9 @@ div.title h1
   border-bottom: 1px solid #888;*/
   clear:both;
 }
+.title a:link{
+	color:#FFF;
+}
 div#boxbag {background:#AD8668;}
 div#boxsearch {background:#4A497B;}
 div#boxcustomQuery {background:#589100;}

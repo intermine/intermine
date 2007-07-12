@@ -6,7 +6,7 @@
 
 <!-- menu.jsp -->
 <html:xhtml/>
-<div id="menu">
+<tr><td id="menu" colspan="2">
   <ul id="nav">
   <li id="home" <c:if test="${pageName=='begin'}">class="activelink"</c:if>>
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
@@ -33,8 +33,6 @@
       <fmt:message key="menu.category"/>
     </html:link>
   </li>
-  
-  
   <li id="mymine" <c:if test="${pageName=='mymine'}">class="activelink"</c:if>>
     <html:link action="/mymine.do">
       <fmt:message key="menu.mymine"/>
@@ -50,13 +48,12 @@
     </html:link>
   </li>--%>
   </ul>
-</div>
+</td></tr>
+<tr><td id="quicksearch" colspan="2"><tiles:insert name="browse.tile"> 
+  <tiles:put name="menuItem" value="true"/> 
+</tiles:insert></td></tr></table>
 <script type="text/javascript">
-    // Nifty("ul#split h3","top transparent");
-	// Nifty("ul#split div","bottom");
 	Nifty("ul#nav a","transparent top");
 </script>
-<div id="quicksearch"><tiles:insert name="browse.tile"> 
-  <tiles:put name="menuItem" value="true"/> 
-</tiles:insert></div>
+
 <!-- /menu.jsp -->
