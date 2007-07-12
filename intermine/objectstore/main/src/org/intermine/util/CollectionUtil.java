@@ -85,39 +85,44 @@ public class CollectionUtil
      * Object - the original Collection can be used in that case
      * @return a Map from Class to List of objects in that class
      */
-    public static <E> Map<Class, List<E>> groupByClass(Collection<E> objects, boolean inherit) {
-        Map<Class, List<E>> retval = new HashMap<Class, List<E>>();
-        for (E o : objects) {
-            Class c = o.getClass();
-            if (inherit) {
-                Set<Class> done = new HashSet<Class>();
-                done.add(Object.class);
-                Stack<Class> todo = new Stack<Class>();
-                todo.push(c);
-                while (!todo.empty()) {
-                    c = todo.pop();
-                    if ((c != null) && !done.contains(c)) {
-                        done.add(c);
-                        List<E> l = retval.get(c);
-                        if (l == null) {
-                            l = new ArrayList<E>();
-                            retval.put(c, l);
-                        }
-                        l.add(o);
-                        todo.push(c.getSuperclass());
-                        Class classes[] = c.getInterfaces();
-                        for (int i = 0; i < classes.length; i++) {
-                            todo.push(classes[i]);
+    public static Map groupByClass(Collection objects, boolean inherit) {
+        Map retval = new HashMap();
+        Iterator iter = objects.iterator();
+        while (iter.hasNext()) {
+            Object o = iter.next();
+            Iterator clsIter = DynamicUtil.decomposeClass(o.getClass()).iterator();
+            while (clsIter.hasNext()) {
+                Class c = (Class) clsIter.next();
+                if (inherit) {
+                    Set done = new HashSet();
+                    done.add(Object.class);
+                    Stack todo = new Stack();
+                    todo.push(c);
+                    while (!todo.empty()) {
+                        c = (Class) todo.pop();
+                        if ((c != null) && !done.contains(c)) {
+                            done.add(c);
+                            List l = (List) retval.get(c);
+                            if (l == null) {
+                                l = new ArrayList();
+                                retval.put(c, l);
+                            }
+                            l.add(o);
+                            todo.push(c.getSuperclass());
+                            Class classes[] = c.getInterfaces();
+                            for (int i = 0; i < classes.length; i++) {
+                                todo.push(classes[i]);
+                            }
                         }
                     }
+                } else {
+                    List l = (List) retval.get(c);
+                    if (l == null) {
+                        l = new ArrayList();
+                        retval.put(c, l);
+                    }
+                    l.add(o);
                 }
-            } else {
-                List<E> l = retval.get(c);
-                if (l == null) {
-                    l = new ArrayList<E>();
-                    retval.put(c, l);
-                }
-                l.add(o);
             }
         }
         return retval;

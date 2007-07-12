@@ -59,7 +59,6 @@ import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.ResultsInfo;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
@@ -624,15 +623,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * {@inheritDoc}
      */
-    public List<ResultsRow> execute(Query q, int start, int limit, boolean optimise,
-            boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
+    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
+            Map<Object, Integer> sequence) throws ObjectStoreException {
         Constraint where = q.getConstraint();
         if (where instanceof ConstraintSet) {
             ConstraintSet where2 = (ConstraintSet) where;
             if (where2.getConstraints().isEmpty()
                     && (ConstraintOp.NAND.equals(where2.getOp())
                         || ConstraintOp.OR.equals(where2.getOp()))) {
-                return Collections.emptyList();
+                return Collections.EMPTY_LIST;
             }
         }
         Connection c = null;
@@ -725,7 +724,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @return a List of ResultRow objects
      * @throws ObjectStoreException sometimes
      */
-    protected List<ResultsRow> executeWithConnection(Connection c, Query q, int start, int limit,
+    protected List executeWithConnection(Connection c, Query q, int start, int limit,
             boolean optimise, boolean explain, Map<Object, Integer> sequence)
     throws ObjectStoreException {
 
@@ -803,8 +802,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 deregisterStatement(s);
             }
             long postExecute = System.currentTimeMillis();
-            List<ResultsRow>  objResults = ResultsConverter.convert(sqlResults, q, this, c,
-                    sequence);
+            List objResults = ResultsConverter.convert(sqlResults, q, this, c, sequence);
             long postConvert = System.currentTimeMillis();
             long permittedTime = (objResults.size() * 2) + start + (150 * q.getFrom().size())
                     + (sql.length() / 20) - (q.getFrom().size() == 0 ? 0 : 100);

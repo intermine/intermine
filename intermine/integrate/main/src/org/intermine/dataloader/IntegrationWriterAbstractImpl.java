@@ -82,24 +82,6 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     }
 
     /**
-     * Returns the base equivalent object fetcher.
-     *
-     * @return a BaseEquivalentObjectFetcher
-     */
-    public BaseEquivalentObjectFetcher getBaseEof() {
-        return beof;
-    }
-
-    /**
-     * Sets the equivalent object fetcher.
-     *
-     * @param eof a HintingFetcher
-     */
-    public void setEof(HintingFetcher eof) {
-        this.eof = eof;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public void setIgnoreDuplicates(boolean ignoreDuplicates) {

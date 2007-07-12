@@ -70,12 +70,6 @@ public class ObjectStoreDataLoader extends DataLoader
     public void process(ObjectStore os, Source source, Source skelSource, Class queryClass)
         throws ObjectStoreException {
         try {
-            if (getIntegrationWriter() instanceof IntegrationWriterAbstractImpl) {
-                BatchingFetcher eof = new BatchingFetcher(((IntegrationWriterAbstractImpl)
-                            getIntegrationWriter()).getBaseEof(), source);
-                ((IntegrationWriterAbstractImpl) getIntegrationWriter()).setEof(eof);
-                os = eof.getNoseyObjectStore(os);
-            }
             long times[] = new long[20];
             for (int i = 0; i < 20; i++) {
                 times[i] = -1;
