@@ -6,10 +6,13 @@
 <html:xhtml/>
 
 <div class="body">
-<table id="bagTable">
+<table padding="0px" margin="0px">
   <tr>
-    <td style="border-right:1px solid #888" width="50%"><c:import url="bagView.jsp"/></td>
-    <td><c:import url="bagBuild.jsp"/></td>
+
+<%-- INSERT HELP TILE HERE - in a <td></td> --%> 
+
+    <td valign="top" width="40%"><c:import url="bagBuild.jsp"/></td>
+    <td valign="top" width="60%"><c:import url="bagView.jsp"/></td>
   </tr>
 </table>
 </div>

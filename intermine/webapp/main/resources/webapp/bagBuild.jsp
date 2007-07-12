@@ -42,12 +42,12 @@
 //]]>-->
 </script>
 
-<h2><fmt:message key="bagBuild.makeNewBag"/> <im:manualLink section="manualMakingBags.shtml#manualNewBag"/> </h2>
-<div class="bagBuild">
-  <html:form action="/buildBag" focus="text" method="post" enctype="multipart/form-data">
-    <p>
-      <fmt:message key="bagBuild.bagFromText1"/>
-      <p/>
+<im:roundbox titleKey="bagBuild.makeNewBag" color="roundcorner">
+  <div class="bagBuild">
+    <html:form action="/buildBag" focus="text" method="post" enctype="multipart/form-data">
+      <p>
+        <fmt:message key="bagBuild.bagFromText1"/>
+        <p/>
       <fmt:message key="bagBuild.bagFromText2"/>
       <br/>
       <fmt:message key="bagBuild.bagType"/>
@@ -138,4 +138,5 @@
     </tr></table>
   </html:form>
 </div>
+</im:roundbox>
 <!-- /bagBuild.jsp -->
