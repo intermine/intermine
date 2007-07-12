@@ -1,12 +1,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <tiles:importAttribute/>
 
 <!-- tree.jsp -->
 <html:xhtml/>
+
+<div class="body">
+  <p>
+    <fmt:message key="tree.intro"/>
+  </p>
+</div>
 <div class="body modelBrowser">
   <c:forEach var="node" items="${nodes}">
     <div>
