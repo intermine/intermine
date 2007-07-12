@@ -9,6 +9,8 @@
 <tiles:importAttribute name="browseOperator" ignore="false"/>
 --%>
 
+<script type="text/javascript" src="js/browse.js"></script>
+
 <tiles:importAttribute name="menuItem" ignore="true"/>
 
 <%--<c:choose>
@@ -34,7 +36,7 @@
   </select>
   
 <fmt:message key="header.search.mid"/>  
-<input style="color:#666; font-style:italic;" type="text" name="value" size="40" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="this.value=''">  
+<input style="color:#666; font-style:italic;" type="text" name="value" size="40" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearQS(this);">  
 <html:submit><fmt:message key="header.search.button"/></html:submit>
   
 </html:form>
