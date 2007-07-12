@@ -20,6 +20,7 @@
             <tiles:put name="tags" value="im:public"/>
             <tiles:put name="showDescriptions" value="false"/>
       </tiles:insert>
+      <p><html:link action="/templates">View all ${templateCount} templates...</html:link></p>
 	</im:roundbox>	
 
 	<im:roundbox title="Data Categories" stylename="categories" >
@@ -47,13 +48,11 @@
 		      </c:forEach>
 		    </c:otherwise>
 		  </c:choose>
+		  
+		  <p><a href="sources.shtml">View all 1,234 datasources...</a></p>
 	</im:roundbox>	
-	<im:roundbox title="Custom Queries" stylename="queries">
+	<im:roundbox title="QueryBuilder" stylename="queries">
 	        <div class="body">
-	          <html:link action="/mymine.do?page=bags">
-	            <fmt:message key="begin.upload.identifiers"/>
-	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
-	          </html:link><br/>
 	          <html:link action="/classChooser">
 	            <fmt:message key="begin.list.all.classes"/>
 	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
@@ -73,7 +72,8 @@
 
 <div style="margin-left:50%;width:45%;">
 	<im:roundbox title="Lists" stylename="lists" >
-	   <tiles:insert name="bagFrontPage.tile" />
+	   <tiles:insert name="bagFrontPage.tile" />	   
+	   <p><html:link action="/bag">View all ${bagCount} lists...</html:link></p>
 	</im:roundbox>
 
 	<im:roundbox title="Welcome" stylename="welcome" >
@@ -94,7 +94,7 @@
     </p>
 
   	<tiles:insert name="tipWrapper.tile"/>
-    <a href="tour_1.html" target="_blank"        onclick="javascript:window.open('tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour</a>
+    <a href="tour_1.html" target="_blank"  onclick="javascript:window.open('tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour</a>
     </im:roundbox>
 	
 </div>

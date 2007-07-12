@@ -10,13 +10,20 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Map;
+
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.web.logic.Constants;
 
 /**
  * Display the query builder (if there is a curernt query) or redirect to project.sitePrefix.
@@ -44,6 +51,23 @@ public class BeginAction extends InterMineAction
        throws Exception {
        Boolean archived = (Boolean) request.getSession().getServletContext()
            .getAttribute(Constants.ARCHIVED);
+       
+       HttpSession session = request.getSession();
+       ServletContext servletContext = session.getServletContext();
+       SearchRepository searchRepository = (SearchRepository) 
+                               servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+       
+       Map<String, ? extends WebSearchable> webSearchables =
+                                                       searchRepository.getWebSearchableMap("bag");
+       int bagCount = webSearchables.size();
+       webSearchables = searchRepository.getWebSearchableMap("template");
+       int templateCount = webSearchables.size();
+       
+       /* count number of templates and bags */       
+       request.setAttribute("bagCount", new Integer(bagCount));
+       request.setAttribute("templateCount", new Integer(templateCount));
+       
+       
        if (archived.booleanValue()) {
            return mapping.findForward("begin");
        } else {
