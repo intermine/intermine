@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <tiles:importAttribute name="wsName"/>
+<tiles:importAttribute name="scope"/>
 <tiles:useAttribute id="webSearchable" name="webSearchable" 
                     classname="org.intermine.web.logic.search.WebSearchable"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
@@ -22,11 +23,24 @@
   </td>
 </c:if>
 
-<tiles:insert name="renamableElement.jsp">
-  <tiles:put name="name" value="${webSearchable.name}"/>
-  <tiles:put name="type" value="bag"/>
-  <tiles:put name="index" value="${statusIndex}"/>
-</tiles:insert>
+  <c:choose>
+    <c:when test="${scope == 'user'}">
+      <tiles:insert name="renamableElement.jsp">
+        <tiles:put name="name" value="${webSearchable.name}"/>
+        <tiles:put name="type" value="bag"/>
+        <tiles:put name="index" value="${statusIndex}"/>
+      </tiles:insert>
+    </c:when>
+    <c:otherwise>
+      <td colspan="2">
+        <c:set var="nameForURL"/>
+        <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
+        <html:link action="/bagDetails?bagName=${nameForURL}">
+          <c:out value="${webSearchable.name}"/>
+        </html:link>
+      </td>
+    </c:otherwise>
+  </c:choose>
 
 <c:if test="${IS_SUPERUSER}">
   <td>
