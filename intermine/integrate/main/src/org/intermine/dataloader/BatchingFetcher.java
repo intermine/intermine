@@ -283,6 +283,13 @@ public class BatchingFetcher extends HintingFetcher
             getEquivalentsFor(retval);
             return retval;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public Set<Object> getComponentsForQuery(Query q) {
+            return Collections.emptySet();
+        }
     }
 }
 
