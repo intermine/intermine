@@ -2,8 +2,10 @@ html, body
 {
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
   font-size: 100%; /* NN4 */
-  margin: 0;
-  padding: 0;
+  margin: 0px;
+  padding: 0px;
+  background-image: url('model/top_gradient.png');
+  background-repeat: repeat-x;
 }
 
 a:link { color:#049; text-decoration:none }
@@ -19,12 +21,8 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   white-space: nowrap;
 }
 
-#header
-{
-  height: 90px;
-  padding: 10px;
-  background-image: url('model/top_gradient.png');
-}
+/* HEADING AND MENU STYLES*/
+
 #header h1
 {
   color:#FFF;
@@ -39,15 +37,6 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   font-weight: normal;
   margin: 0;
   margin-left: 2px;
-}
-#logo {
-  margin-left: 5px;
-  margin-right: 10px;
-  float: left;
-}
-
-#title {
-  margin-left: 80px;
 }
 
 .clear-both {
@@ -70,7 +59,6 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   font-weight: bold;
 }
 
-/*--start of new styles 05-2007--*/
 #infobar {
     position:absolute;
     right:0px;
@@ -80,6 +68,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
     padding:5px;
     font: 70% Arial,sans-serif
 }
+
 #loginbar {
     position:absolute;
     right:0px;
@@ -109,23 +98,27 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
 	margin:0px;
 }
 
+table#headertable{
+	width:100%;
+	margin:0px;
+	padding:0px;
+}
 /*menu with nifty corners*/
-div#menu{float:left;top:90px; background-color: #D0B5D7;width:100%;position:absolute;}
+td#menu{background-color: #D0B5D7;width:100%;}
 ul#nav,ul#nav li{list-style-type:none;margin:0;padding:0}
 ul#nav{margin-left: 30px;width:650px}
-ul#nav li{float:left;margin-right: 5px;text-align: center}
+ul#nav li{float:left;margin-right: 3px;text-align: center}
 ul#nav a{
-	height:25px; 
 	float:left;
+	width:8em;
 	text-decoration:none;
 	color: #5C0075;
-	font: 75% Arial,sans-serif;
-	padding:5px 15px 0px 15px;
-	white-space:nowrap;
+	font: Arial,sans-serif;
+	padding:5px 0;
     font-weight:bold;
 }
 ul#nav a:hover{color:#000;}
-ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #003;}
+ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #5C0075;color: #FFF;}
 li#home a{background:#9D66AD;color:white;}
 li#bags a{background:#AD8668;color:white;}
 li#templates a{background:#4A497B;color:white;}
@@ -133,9 +126,15 @@ li#query a{background:#589100;color:white;}
 li#category a{background:#663366;color:white;}
 li#mymine a{background:#9D66AD;color:white;}
 
-/*--end of new styles 05-2007--*/
-
-#quicksearch{position:absolute;top:85px;right:5px;font-size: 0.8em;margin:0px 10px 0px 0px;color:white;}
+td#quicksearch {
+	width:100%;
+	left:0px;
+	font-size: 0.8em;
+	margin:0px 0px 0px 0px;
+	color:white;
+	background:#5C0075;
+	padding:10px;
+}
 
 /* style for boxes with heading - used by the front page and the webapp */
 .box .heading, .heading2 {
