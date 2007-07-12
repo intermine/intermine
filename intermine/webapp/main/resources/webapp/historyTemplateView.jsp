@@ -50,10 +50,10 @@
             <th align="left" nowrap>
               <fmt:message key="history.titleheader"/>
             </th>
-            <th align="left" nowrap>
+            <th align="left">
               <fmt:message key="history.descriptionheader"/>
             </th>
-            <th align="left" nowrap>
+            <th align="left">
               <fmt:message key="history.commentheader"/>
             </th>
             <th align="center" nowrap>
