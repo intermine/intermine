@@ -9,11 +9,15 @@
 <!-- error.jsp -->
 <html:xhtml/>
 
+<c:set var="msg" value="I found this error on ${pageContext.request.requestURL}.%0D%0A%0D%0A---- Error Found ----%0D%0A%0D%0A${stacktrace}"/>
+<c:set var="subject" value="Error found on FlyMine.org"/>
 <div id="generic_error">
   <div id="errorApology">
     <p>
       There has been an internal error while processing your request.  The
-      problem has been logged and will be investigated.
+      problem has been logged and will be investigated.  You may also 
+      <html:link href="mailto:info@flymine.org?body=${msg}&subject=${subject}">send us an email</html:link>
+      describing how you encountered this error.
     </p>
     <p>
       The problem may be
@@ -23,7 +27,7 @@
       </html:link>
       and try your request again or you might want to go to the
       <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
-        home page
+        home page.
       </html:link>
     </p>
   </div>
