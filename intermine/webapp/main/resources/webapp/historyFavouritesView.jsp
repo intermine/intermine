@@ -27,7 +27,7 @@
             <th align="left" nowrap>
               <fmt:message key="history.namecolumnheader"/>
             </th>
-            <th align="left">
+            <th align="left" nowrap>
               <fmt:message key="history.descriptionheader"/>
             </th>
             <th align="center" nowrap>
@@ -69,7 +69,7 @@
                 </c:otherwise>
               </c:choose>
               
-              <td nowrap>
+              <td>
                 <c:choose>
                   <c:when test="${fn:length(favouriteTemplate.description) > 60}">
                     ${fn:substring(favouriteTemplate.description, 0, 60)}...
