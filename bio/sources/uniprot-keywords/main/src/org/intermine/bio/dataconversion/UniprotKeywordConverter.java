@@ -216,6 +216,7 @@ public class UniprotKeywordConverter extends FileConverter
                                 keyword.addCollection(synCollection);
                             }
                             keyword.addAttribute(new Attribute("description", descr));
+                            keyword.setReference("ontology", ontology.getIdentifier());
                             writer.store(ItemHelper.convert(keyword));
                         }
                         name = null;

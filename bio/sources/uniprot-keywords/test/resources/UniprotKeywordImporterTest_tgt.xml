@@ -1,33 +1,37 @@
 <items>
+<item id="2_4" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein involved in the synthesis of lignin, a polymer ofphenylpropanoid subunits found in the walls of plant cells such asxylem and sclerenchyma fibres. Lignin imparts strength to the wall andprotects against degradation by microorganisms."/>
+<attribute name="name" value="Lignin biosynthesis"/>
+<reference name="ontology" ref_id="0_1"/>
+</item>
 <item id="1_1" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
 <attribute name="name" value="LFS"/>
 </item>
 <item id="1_4" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
 <attribute name="name" value="Light-harvesting complex"/>
 </item>
-<item id="2_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Proteins which form part of the antenna complex, a light-harvestingsystem found in photosynthetic bacteria which absorb light radiation andtransfer the excitation energy to the reaction centres."/>
-<attribute name="name" value="Light-harvesting polypeptide"/>
-<collection name="synonyms"><reference ref_id="1_4"/></collection>
-</item>
-<item id="2_4" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Protein involved in the synthesis of lignin, a polymer ofphenylpropanoid subunits found in the walls of plant cells such asxylem and sclerenchyma fibres. Lignin imparts strength to the wall andprotects against degradation by microorganisms."/>
-<attribute name="name" value="Lignin biosynthesis"/>
-</item>
 <item id="2_2" class="http://www.flymine.org/model/genomic#OntologyTerm">
 <attribute name="description" value="Enzyme that catalyzes the joining of two molecules coupled with thebreakdown of a pyrophosphate bond in ATP or a similar triphosphate.Sometimes the terms &quot;synthase&quot;, &quot;synthetase&quot;or &quot;carboxylase&quot;are alsoused for this class of enzymes."/>
 <attribute name="name" value="Ligase"/>
+<reference name="ontology" ref_id="0_1"/>
 </item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
-<attribute name="description" value="Protein which, if defective, causes Li-Fraumeni syndrome (LFS), anautosomal dominant familial cancer predisposition syndrome associatedwith soft-tissue sarcoma, breast cancer, leukemia, osteosarcoma,melanoma, and cancer of the colon, pancreas, adrenal cortex and brain.Individuals with LFS are at increased risk for developing multipleprimary cancers."/>
-<attribute name="name" value="Li-Fraumeni syndrome"/>
-<collection name="synonyms"><reference ref_id="1_1"/><reference ref_id="1_2"/><reference ref_id="1_3"/></collection>
+<item id="2_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Proteins which form part of the antenna complex, a light-harvestingsystem found in photosynthetic bacteria which absorb light radiation andtransfer the excitation energy to the reaction centres."/>
+<attribute name="name" value="Light-harvesting polypeptide"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="synonyms"><reference ref_id="1_4"/></collection>
 </item>
 <item id="1_2" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
 <attribute name="name" value="Sarcoma family syndrome of Li and Fraumeni"/>
 </item>
 <item id="1_3" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
 <attribute name="name" value="SBLA syndrome"/>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value="Protein which, if defective, causes Li-Fraumeni syndrome (LFS), anautosomal dominant familial cancer predisposition syndrome associatedwith soft-tissue sarcoma, breast cancer, leukemia, osteosarcoma,melanoma, and cancer of the colon, pancreas, adrenal cortex and brain.Individuals with LFS are at increased risk for developing multipleprimary cancers."/>
+<attribute name="name" value="Li-Fraumeni syndrome"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="synonyms"><reference ref_id="1_1"/><reference ref_id="1_2"/><reference ref_id="1_3"/></collection>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#Ontology">
 <attribute name="title" value="UniProtKeyword"/>
