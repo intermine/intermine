@@ -105,9 +105,11 @@
       </tr>
       <tr>
         <td align="right">
+                 
           <html:submit styleId="pasteSubmit" property="paste">
             <fmt:message key="bagBuild.makeBag"/>
           </html:submit>
+          <input type="button" onClick="text.value='';" value="Reset">
         </td>
       </tr>
       <tr>
