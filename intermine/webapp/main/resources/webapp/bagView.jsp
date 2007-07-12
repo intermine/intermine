@@ -31,127 +31,66 @@
 
 <html:xhtml/>
 
-<h2><fmt:message key="history.savedbags.title"/></h2>
+<im:roundbox titleKey="bagspage.title" color="roundcorner" >
+<h2><fmt:message key="bagspage.mybags.title"/></h2>
+<p>
+  <fmt:message key="bagspage.mybags.help"/>
+</p>
+
+<html:form action="/modifyBag">
+  <tiles:insert name="wsBagTable.tile">
+    <tiles:put name="limit" value="15"/>
+    <tiles:put name="scope" value="user"/>
+    <tiles:put name="makeCheckBoxes" value="true"/>
+    <tiles:put name="showDescriptions" value="false"/>
+  </tiles:insert>
+
+  <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
+    <fmt:message key="history.savedbags.newbag"/>
+    <html:text property="newBagName" size="12"/><br/>
+    <html:submit property="union">
+      <fmt:message key="history.union"/>
+    </html:submit>
+    <html:submit property="intersect">
+      <fmt:message key="history.intersect"/>
+    </html:submit>
+    <html:submit property="subtract">
+      <fmt:message key="history.subtract"/>
+    </html:submit>
+  </c:if>
+  <c:if test="${fn:length(PROFILE.savedBags) > 0}">
+    <div width="100%" align="right">
+      <html:submit property="delete">
+        <fmt:message key="history.delete"/>
+      </html:submit>
+    </div>
+  </c:if>
+  <br/>
+
+  <h2><fmt:message key="bagspage.public.title"/></h2>
   <p>
-    <fmt:message key="history.savedbags.help"/>
+    <fmt:message key="bagspage.public.help"/>
   </p>
 
-  <c:choose>
-    <c:when test="${empty PROFILE.savedBags}">
-      <div class="altmessage">
-        None
-      </div>
-    </c:when>
-    <c:otherwise>
+  <tiles:insert name="wsBagTable.tile">
+    <tiles:put name="limit" value="15"/>
+    <tiles:put name="scope" value="global"/>
+    <tiles:put name="makeCheckBoxes" value="true"/>
+    <tiles:put name="showDescriptions" value="false"/>
+    <tiles:put name="height" value="300"/>
+  </tiles:insert>
 
-      <html:form action="/modifyBag">
-
-        <table class="results" cellspacing="0">
-          <tr>
-            <th>
-              <input type="checkbox" id="selected_bag"
-                     onclick="selectColumnCheckbox(this.form, 'bag')">
-            </th>
-            <c:choose>
-            <c:when test="${IS_SUPERUSER}">
-              <th align="left" colspan="3" nowrap>
-            </c:when>
-            <c:otherwise>
-            <th align="left" colspan="2" nowrap>
-			</c:otherwise>
-			</c:choose>
-              <fmt:message key="query.savedbags.namecolumnheader"/>
-            </th>
-            <th nowrap>
-              <fmt:message key="query.savedbags.typecolumnheader"/>
-            </th>
-            <th nowrap>
-              <fmt:message key="query.savedbags.descriptioncolumnheader"/>
-            </th>
-            <th nowrap>
-              <fmt:message key="query.savedbags.datecreatedcolumnheader"/>
-            </th>
-            <th align="right" nowrap>
-              <fmt:message key="query.savedbags.countcolumnheader"/>
-            </th>
-          </tr>
-          <c:forEach items="${PROFILE.savedBags}" var="savedBag" varStatus="status">
-            <tr class="${bagAgeClasses[savedBag.key]}">
-              <td>
-                <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
-                  <c:out value="${savedBag.key}" escapeXml="false"/>
-                </html:multibox>
-              </td>
-
-              <tiles:insert name="renamableElement.jsp">
-                <tiles:put name="name" value="${savedBag.key}"/>
-                <tiles:put name="type" value="bag"/>
-                <tiles:put name="index" value="${status.index}"/>
-              </tiles:insert>
-
-              <c:if test="${IS_SUPERUSER}">
-                <td>
-                  <c:set var="taggable" value="${savedBag.value}"/>
-                  <tiles:insert name="inlineTagEditor.tile">
-                    <tiles:put name="taggable" beanName="taggable"/>
-                    <tiles:put name="vertical" value="true"/>
-                    <tiles:put name="show" value="true"/>
-                  </tiles:insert>
-                </td>
-              </c:if>
-
-              <td><c:out value="${savedBag.value.type}" /></td>
-
-              <td>
-                <c:choose>
-                  <c:when test="${empty savedBag.value.description}">
-                    &nbsp;  <!-- so that IE 6 renders the cell borders -->
-                  </c:when>
-                  <c:otherwise>
-                    <c:out value="${savedBag.value.description}" />
-                  </c:otherwise>
-                </c:choose>
-              </td>
-
-              <td>
-                <c:if test="${!empty savedBag.value.dateCreated}">
-                  <im:dateDisplay date="${savedBag.value.dateCreated}"/>
-                </c:if>
-              </td>
-
-              <td align="right">
-                <c:out value="${savedBag.value.size}"/>
-                <c:if test="${savedBag.value.size == 1}">
-                  value
-                </c:if>
-                <c:if test="${savedBag.value.size != 1}">
-                  unique values
-                </c:if>
-              </td>
-            </tr>
-          </c:forEach>
-        </table>
-        <br/>
-        <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
-          <fmt:message key="history.savedbags.newbag"/>
-          <html:text property="newBagName" size="12"/><br/>
-          <html:submit property="union">
-            <fmt:message key="history.union"/>
-          </html:submit>
-          <html:submit property="intersect">
-            <fmt:message key="history.intersect"/>
-          </html:submit>
-          <html:submit property="subtract">
-            <fmt:message key="history.subtract"/>
-          </html:submit>
-        </c:if>
-        <html:submit property="delete">
-          <fmt:message key="history.delete"/>
-        </html:submit>
-      </html:form>
-      <br/>
-
-    </c:otherwise>
-  </c:choose>
-
+  <fmt:message key="history.savedbags.newbag"/>
+  <html:text property="newBagName" size="12"/><br/>
+  <html:submit property="union">
+    <fmt:message key="history.union"/>
+  </html:submit>
+  <html:submit property="intersect">
+    <fmt:message key="history.intersect"/>
+  </html:submit>
+  <html:submit property="subtract">
+    <fmt:message key="history.subtract"/>
+  </html:submit>
+</html:form>
+</im:roundbox>
 <!-- /bagView.jsp -->
