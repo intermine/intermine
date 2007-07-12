@@ -27,7 +27,7 @@
             <th align="left" nowrap>
               <fmt:message key="history.namecolumnheader"/>
             </th>
-            <th align="left" nowrap>
+            <th align="left">
               <fmt:message key="history.descriptionheader"/>
             </th>
             <th align="center" nowrap>

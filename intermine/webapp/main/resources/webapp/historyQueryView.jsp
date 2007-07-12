@@ -63,7 +63,7 @@
             <th align="center" nowrap>
               <fmt:message key="history.startcolumnheader"/>
             </th>
-            <th align="center" nowrap>
+            <th align="center">
               <fmt:message key="history.summarycolumnheader"/>
             </th>
             <th align="center" nowrap>
