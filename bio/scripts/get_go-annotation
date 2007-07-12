@@ -97,7 +97,9 @@ if(&checkdir_exists($uniprot_download_dir)==1){
     	}
 	}
 	close GOA_FILE or die;
-  
+
+        rename("$uniprot_download_dir/$goa_file", "$uniprot_download_dir/downloaded_$goa_file");
+
 	#print each buffer out to a file
 	print "writing files\n";
 	for my $taxon_id (keys %taxon_map) {
