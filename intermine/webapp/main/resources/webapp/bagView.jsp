@@ -31,7 +31,7 @@
 
 <html:xhtml/>
 
-<im:roundbox titleKey="bagspage.title" color="roundcorner" >
+<im:roundbox titleKey="bagspage.title" stylename="roundcorner" >
 <h2><fmt:message key="bagspage.mybags.title"/></h2>
 <p>
   <fmt:message key="bagspage.mybags.help"/>
