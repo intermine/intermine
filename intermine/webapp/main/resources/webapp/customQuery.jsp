@@ -8,41 +8,24 @@
 <html:xhtml/>
 
 <div style="float:left;width:45%;">
+	<%-- class chooser --%>	
+	<im:roundbox title="Select a Data Type" stylename="queries">	
+		<jsp:include page="queryClassSelect.jsp"/>
+	</im:roundbox>			
+</div>
 
-	<%-- links --%>
-	<im:roundbox title="Custom Queries" stylename="queries">
+<div style="margin-left:50%;width:45%;">
+	<%-- model browser --%>	
+	<im:roundbox title="Browse Model" stylename="queries">	
+		<tiles:insert name="tree.tile"/>		
+	</im:roundbox>	
+</div>
+
 	        <div class="body">
-	          <html:link action="/mymine.do?page=bags">
-	            <fmt:message key="begin.upload.identifiers"/>
-	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
-	          </html:link><br/>
-	          <html:link action="/tree">
-	            <fmt:message key="begin.browse.model"/>
-	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
-	          </html:link><br/>
 	          <html:link action="/importQueries?query_builder=yes">
 	            <fmt:message key="begin.import.query"/>
 	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
 	          </html:link><br/>
-	        </div>   
-	</im:roundbox>
+	        </div> 
 
-	<%-- class chooser --%>	
-	<im:roundbox title="Start a New Query" stylename="queries">	
-		<jsp:include page="queryClassSelect.jsp"/>
-	</im:roundbox>	
-	
-</div>
-
-
-<div style="margin-left:50%;width:45%;">
-
-	<%-- saved queries --%>
-	<im:roundbox title="Saved Queries" stylename="queries" >
-	  <tiles:insert name="historyQueryView.jsp">
-        <tiles:put name="type" value="saved"/>
-      </tiles:insert>
-	</im:roundbox>
-	
-</div>
 <!-- /customQuery.jsp -->
