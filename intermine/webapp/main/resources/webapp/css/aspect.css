@@ -1,0 +1,19 @@
+.aspectSources {
+background-color:#f5f5f5;
+border:1px solid #888;
+clear:right;
+float:right;
+font-size:75%;
+margin:10px 10px 10px 30px;
+padding:5px
+}
+
+.aspectIntro {
+font-size:larger;
+padding:5px;
+position:relative
+}
+
+.aspectStartingPoints,.aspectTile {
+padding-bottom:8px
+}
