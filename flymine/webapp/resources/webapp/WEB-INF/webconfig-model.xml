@@ -152,14 +152,13 @@
           
   	  <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
       toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
-      description="For each tissue in the adult fly, the number of genes from my bag for which the levels or expression are significantly high (Up) or low (Down) according to FlyAtlas AffyCall (see &lt;a href=&quot;http://www.flyatlas.org/&quot;&gt;here&lt;/a&gt;)."  
+      description="For each tissue in the adult fly, the number of genes from my bag for which the levels or expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas AffyCall&lt;/a&gt;."  
       graphType="StackedBarChart" />
    
       <!--<bagtabledisplayer title="Related Publications" type="Publication" collectionName="publications" fields="title,pubMedId"/>-->
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways"
-      description="Most common KEGG pathways for this bag (see &lt;a href=&quot;http://www.genome.jp/kegg/&quot;&gt;here&lt;/a&gt;)." />
+      description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this bag." />
       
-
     </bagdisplayers>
   </class>
 
