@@ -359,6 +359,11 @@ public class BagQueryRunner
                     }
                 }
 
+                // there was nothing to convert for this class
+                if (objs.isEmpty()) {
+                    continue;
+                }
+                
                 // try to convert objects to target type
                 Map convertedObjsMap = TypeConverter.convertObjects(context, fromClass, type, objs);
                 if (convertedObjsMap == null) {
