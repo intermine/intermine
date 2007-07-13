@@ -11,6 +11,7 @@
 
 <tiles:importAttribute name="vertical" ignore="true"/>
 <tiles:importAttribute name="show" ignore="true"/>
+<link rel="stylesheet" type="text/css" href="css/inlineTagEditor.css"/>
 
 <c:if test="${vertical}">
   <div style="margin-top: 5px">

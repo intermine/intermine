@@ -6,6 +6,7 @@
 <!-- objectTrail.jsp -->
 
 <html:xhtml/>
+<link rel="stylesheet" type="text/css" href="css/objectTrail.css"/>
 <c:if test="${!empty trailElements && templateQuery.name != WEB_PROPERTIES['begin.browse.template']}">
   <div class="body objectTrail">
     Trail: 

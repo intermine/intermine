@@ -7,3 +7,16 @@
   padding-right: 10px;
   padding-left: 10px;
 }
+
+#bagDescriptionTextarea{
+  display: none;
+  text-align: center;
+}
+
+#emptyDesc{
+  text-align:center;
+  width:100%;
+  margin-top: 70px;
+  font-style: italic;
+}
+
