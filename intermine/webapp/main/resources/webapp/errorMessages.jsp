@@ -4,6 +4,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!-- errorMessages.jsp -->
+<link rel="stylesheet" type="text/css" href="css/errorMessages.css"/>
+
 <logic:messagesPresent>
   <div class="topBar errors">
     <html:messages id="error">

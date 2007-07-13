@@ -5,7 +5,7 @@
 <!-- feedbackForm.jsp -->
 
 <html:xhtml/>
-
+<link rel="stylesheet" type="text/css" href="css/feedbackForm.css"/>
 <div class="body">
   <html:form action="/feedbackAction" styleId="feedbackForm">
   <table cellspacing="0" cellpadding="3" border="0">
