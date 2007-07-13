@@ -10,36 +10,40 @@
 
 <c:set var="numCols" value="${param.cols != null ? param.cols : 3}"/>
 
+<tiles:useAttribute id="iconSize" name="iconSize" ignore="true"/>
+
+<c:if test="${empty iconSize}">
+  <c:set var="iconSize" value="64"/>
+</c:if>
+
 <div class="body">
-<p><fmt:message key="aspects.intro"/></p>
-
-
+  <p><fmt:message key="aspects.intro"/></p>
 
   <table class="aspectIconsTable" border="0" cellspacing="0" cellpadding="0" >
     <tr>
       <td width="<fmt:formatNumber value="${100/numCols}" maxFractionDigits="0"/>%" valign="top">
         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
           <c:set var="set" value="${entry.value}"/>
-          
+
           <table border="0">
             <tr>
               <td>
-               <html:link action="/aspect?name=${set.name}">
-                 <img src="<html:rewrite page="/${set.iconImage}"/>" class="dsIconImage" width="30" height="30"/>
-               </html:link>
-             </td>
-             <td class="aspectIconCell">
-                       
-             <div class="dsIconLabel">
-               <html:link action="/aspect?name=${set.name}">
-                 ${set.name}
-               </html:link>
-             </div>
-             </td>
-           </tr>
+                <html:link action="/aspect?name=${set.name}">
+                  <img src="<html:rewrite page="/${set.iconImage}"/>" class="dsIconImage" width="${iconSize}" height="${iconSize}"/>
+                </html:link>
+              </td>
+              <td class="aspectIconCell">
+
+                <div class="dsIconLabel">
+                  <html:link action="/aspect?name=${set.name}">
+                    ${set.name}
+                  </html:link>
+                </div>
+              </td>
+            </tr>
           </table>
 
-          <c:if test="${fn:length(aspectS) != status.count}">
+          <c:if test="${fn:length(aspects) != status.count}">
             </td>
             <c:if test="${status.count % numCols == 0}">
               </tr>

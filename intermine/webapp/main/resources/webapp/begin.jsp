@@ -26,7 +26,9 @@
 	<im:roundbox title="Data Categories" stylename="categories" >
 	     <c:choose>
 		    <c:when test="${!empty ASPECTS}">
-		       <tiles:insert name="aspects.tile"/>
+		       <tiles:insert name="aspects.tile">
+                         <tiles:put name="iconSize" value="30"/>
+                       </tiles:insert>
 		      
 		    </c:when>
 		    <c:otherwise>
