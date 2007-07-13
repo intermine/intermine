@@ -6,3 +6,51 @@ img.objectDetailsAspectIcon {
   float: left;
   margin-bottom: 1px;
 }
+
+span.templateResCount {
+  color: #555;
+  white-space: nowrap;
+  font-size: 10px;
+}
+
+div.templateDetails {
+  margin-left: 15px;
+
+  /* needed to prevent the peekaboo bug on IE:
+     http://www.positioniseverything.net/explorer/peekaboo.html */
+  height: 0.01%;
+}
+
+div.templateIcon {
+  float: left;
+  padding-top: 2px;
+}
+
+div.templateLine {
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding-left: 3px;
+}
+
+table.refSummary {
+  border-top: 1px solid #888;
+  border-left: 1px solid #888;
+  width: 100%;
+}
+table.refSummary thead tr td {
+  background-color: #eee;
+  border-bottom: 1px solid #888;
+  border-right: 1px solid #888;
+}
+table.refSummary thead tr td.object {
+  background-color: #eee;
+  font-weight: bold;
+  border-bottom: 1px solid #888;
+  border-right: 1px solid #888;
+}
+table.refSummary tbody tr td {
+  padding: 3px;
+  background-color: #FAF8FF;
+  border-bottom: 1px solid #888;
+  border-right: 1px solid #888;
+}

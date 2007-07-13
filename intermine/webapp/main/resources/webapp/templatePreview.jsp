@@ -8,7 +8,7 @@
 <!-- templatePreview.jsp -->
 
 <c:if test="${TEMPLATE_BUILD_STATE != null}">
-
+	<link rel="stylesheet" type="text/css" href="css/templatePreview.css"/>
   <im:heading id="template-preview" initial="${true}">
     Template preview
   </im:heading>
