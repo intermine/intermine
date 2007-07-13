@@ -22,10 +22,6 @@
           <c:when test="${!empty topRightTile}">
             <tiles:insert name="${topRightTile}"/>
           </c:when>
-          <c:when test="${!shownAspectsPopup}">
-            <tiles:insert page="/aspectPopup.jsp"/>
-            <c:set scope="request" var="shownAspectsPopup" value="${true}"/>
-          </c:when>
           <c:otherwise>
             &nbsp;
           </c:otherwise>
