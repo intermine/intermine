@@ -19,7 +19,7 @@
      <img src="model/logo_grad.png" border="0" height="88px" width="88px"/>
    <!-- </html:link> -->
 </td>
-<td id="header" width="100%">
+<td width="100%">
   <!-- <div id="topright">
     <span class="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span><br/>
     <div class="contact">${WEB_PROPERTIES['project.contact']}</div>
@@ -27,15 +27,16 @@
   </div> -->
   
   <!-- <div id="title"> -->
-    
+   <div id="header">
       <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
-        <h1><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></h1>
+        <h1><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
+        <span class="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span></h1>
       </html:link>
 
     <p>
       <c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/>
     </p>
-  <!-- </div> -->
+   </div>
 </td></tr>
 
 <!-- /header.jsp -->
