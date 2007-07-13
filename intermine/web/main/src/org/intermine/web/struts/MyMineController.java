@@ -102,7 +102,7 @@ public class MyMineController extends TilesAction
         }
 
 
-        request.setAttribute("queryAgeClasses", getQueryAgeClasses(profile.getSavedQueries()));
+        request.setAttribute("ageClasses", getQueryAgeClasses(profile.getSavedQueries()));
 
         return null;
     }
