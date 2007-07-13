@@ -8,7 +8,7 @@
 <html>
   <head>
     <title><fmt:message key="waiting.title"/></title>
-    <link rel="stylesheet" type="text/css" href="webapp.css"/>
+    <link rel="stylesheet" type="text/css" href="css/webapp.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <noscript>
       <meta http-equiv="Refresh" content="${POLL_REFRESH_SECONDS}; URL=<html:rewrite action="${POLL_ACTION_NAME}?qid=${param.qid}"/>">

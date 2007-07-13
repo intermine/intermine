@@ -6,7 +6,7 @@
 <html style="background-color: #fff">
   <head>
     <title>FlyMine Tips</title>
-    <link rel="stylesheet" type="text/css" href="webapp.css"/>
+    <link rel="stylesheet" type="text/css" href="css/webapp.css"/>
     <link rel="stylesheet" type="text/css" href="model/model.css"/>
     <script type="text/javascript" src="js/niftycube.js"></script>
   </head>
