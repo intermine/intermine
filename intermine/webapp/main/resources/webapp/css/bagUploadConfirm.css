@@ -5,3 +5,7 @@
 	margin:20px;
 	width:350px;
 }
+#uploadConfirmMessage {
+  text-align:center;
+  font-size: 140%;
+}

@@ -26,7 +26,7 @@
 <form action="<html:rewrite action="/aspect"/>" name="aspectForm">
   <%-- Page size controls --%>
   <fmt:message key="aspect.starting.point"/>
-  <select name="name" onchange="changeaspect()" id="aspectSelector" class="aspectSelect">
+  <select name="name" onchange="changeaspect()" id="aspectSelector" style="font-size:11px">
     <c:if test="${aspect == null}">
       <option value="" selected>-- Choose aspect --</option>
     </c:if>
@@ -40,7 +40,7 @@
     </c:forEach>
   </select>
   <noscript>
-    <input type="submit" value="<fmt:message key="button.change"/>" class="aspectSelect"/>
+    <input type="submit" value="<fmt:message key="button.change"/>" style="font-size:11px" />
   </noscript>
 </form>
 
