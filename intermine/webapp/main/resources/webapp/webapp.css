@@ -103,7 +103,7 @@ ul#nav{margin-left: 30px;width:650px}
 ul#nav li{float:left;margin-right: 3px;text-align: center}
 ul#nav a{
 	float:left;
-	width:8em;
+	width:9em;
 	text-decoration:none;
 	color: #5C0075;
 	font: Arial,sans-serif;
@@ -116,7 +116,7 @@ li#home a{background:#9D66AD;color:white;}
 li#bags a{background:#AD8668;color:white;}
 li#templates a{background:#4A497B;color:white;}
 li#query a{background:#589100;color:white;}
-li#category a{background:#663366;color:white;}
+li#category a{background:#663366;color:white;white-space: nowrap;}
 li#mymine a{background:#9D66AD;color:white;}
 
 td#quicksearch {
