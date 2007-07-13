@@ -5,27 +5,7 @@
   <section>
 <title>Job Opportunities</title>
 
-<para>Vacancy Reference No: PC01862  Salary: £32,795-£41,544</para>
-
-<para>Limit of tenure applies*</para>
-
-<para>Over the next four years the $57m NIH modENCODE project will map, at high resolution, functional elements within essentially the entire DNA sequences of the two important model organisms D. melanogaster (fruit fly) and C. elegans (worm). These studies will generate an unprecented amount of data. The modENCODE Data Coordination Centre (DCC) will be responsible for integrating these data with existing knowledge and presenting them online in different ways to the worldwide research community. Providing a high-performance system will be challenging given the volume of data and the likely load from the community using the integrated database.</para>
-
-<para>InterMine (<ulink url="http://www.intermine.org">www.intermine.org</ulink>) is a data model independent, object-based data integration and query system built to enable FlyMine (<ulink url="http://www.flymine.org">www.flymine.org</ulink>) and now also used for other projects. It has a Struts/JSP Web interface that allows users to build and run complex queries and analyse lists of data. We work with Java in a Unix/Linux environment and use the PostgreSQL database. All of our code is freely available under an open source licence. InterMine will be used for data integration within the modENCODE Data Coordination Centre.</para>
-
-<para>We are looking for two senior software developers to work on the modENCODE project alongside the existing FlyMine/InterMine team. You will be educated to at least degree level (or equivalent) in Computing, Science, Engineering or a similar discipline. You should have at least five years professional experience working on significant software projects, with substantial recent experience in Java. Experience with database development is essential, web application development (especially with Java/JSP) would be an advantage. Systems administration experience may be beneficial.</para>
-
-<para>You must have an interest in working with biological data, and any experience working in this area would be an advantage. The post holders will be responsible for managing import of modENCODE data into an InterMine-based system, and dealing with associated data modelling, presentation and performance issues. They will work closely with DCC colleagues at several sites in the US, and this will be essential to the success of the overall project.</para>
-
-<para>Informal enquiries to Richard Smith: <email>richard@flymine.org</email></para>
-
-<para>No contact from agencies please.</para>
-
-<para>Applications, to include a <ulink url="http://www.admin.cam.ac.uk/offices/personnel/forms/pd18/">PD18</ulink> cover sheet, full CV and details of three referees, should be sent to Mrs Tracy Oakley, Department of Genetics, University of Cambridge,Downing Street, Cambridge, CB2 3EH or e-mail:<email>tno20@hermes.cam.ac.uk</email></para>
-
-<para>* Limit of tenure: 31 March 2011</para>
-
-<para>Closing date: 9 July 2007.</para>
+<para>We are not currently advertising any vacancies at FlyMine</para>
 
   </section>
 </article>

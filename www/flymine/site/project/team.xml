@@ -22,20 +22,20 @@
 
           <row>
             <entry>Richard Smith</entry>
-            <entry>Senior Software Developer</entry>
+            <entry>Software Team Leader</entry>
             <entry><email>richard [at] flymine.org</email></entry>
+          </row>
+
+          <row>
+            <entry>Kim Rutherford</entry>
+            <entry>Senior Software Developer</entry>
+            <entry><email>kmr [at] flymine.org</email></entry>
           </row>
 
           <row>
             <entry>Matthew Wakeling</entry>
             <entry>Software Developer</entry>
             <entry><email>matthew [at] flymine.org</email></entry>
-          </row>
-
-          <row>
-            <entry>Kim Rutherford</entry>
-            <entry>Software Developer</entry>
-            <entry><email>kmr [at] flymine.org</email></entry>
           </row>
 
           <row>
@@ -68,12 +68,6 @@
             <entry><email>hilde [at] flymine.org</email></entry>
           </row>
 
-          <row>
-            <entry>Philip North</entry>
-            <entry>Analysis/User support [Maternity cover]</entry>
-            <entry><email>philip [at] flymine.org</email></entry>
-          </row>
-
         </tbody>
       </tgroup>
     </table>
@@ -85,15 +79,18 @@
         <tbody>
 
           <row>
+            <entry>Philip North</entry>
+            <entry>Analysis/User support [Maternity cover]</entry>
+          </row>
+
+          <row>
             <entry>Wenyan Ji</entry>
             <entry>Software Developer</entry>
-            <entry><email>wenyan [at] flymine.org</email></entry>
           </row>
 
           <row>
             <entry>Peter Mclaren</entry>
             <entry>Software Developer</entry>
-            <entry><email>peter [at] flymine.org</email></entry>
           </row>
 
           <row>
