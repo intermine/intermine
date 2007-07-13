@@ -9,7 +9,7 @@
 <tr><td id="menu" colspan="2">
   <ul id="nav">
   <li id="home" <c:if test="${pageName=='begin'}">class="activelink"</c:if>>
-    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
+    <html:link action="/begin">
       <fmt:message key="menu.home"/>
     </html:link>
   </li>
