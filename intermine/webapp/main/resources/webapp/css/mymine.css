@@ -46,3 +46,10 @@
   padding-bottom: 1px;
   font-size: 10px;
 }
+
+table.history > tbody > tr > td {
+  font-size: 11px;
+  padding: 1px;
+  padding-left: 5px;
+  padding-right: 5px;
+}

@@ -175,12 +175,6 @@ td#quicksearch {
   color: #888;
 }
 
-table.history > tbody > tr > td {
-  font-size: 11px;
-  padding: 1px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
 
 table.history input {
   font-size: 11px;
@@ -203,35 +197,7 @@ img {
 form {
   margin: 0px
 }
-#feedbackForm textarea, #feedbackForm input[type=text] {
-  padding: 3px;
-  border-top: 1px solid #909090;
-  border-left: 1px solid #909090;
-  border-bottom: 1px solid #c0c0c0;
-  border-right: 1px solid #c0c0c0;
-}
-#feedbackForm {
-  white-space: nowrap;
-}
-#feedbackFormDivButton {
-	clear:both;
-}
-#topright {
-  float: right;
-  padding-top: 6px;
-  padding-right: 10px;
-  font-size: 12px;
-  text-align: right;
-  line-height: 125%;
-  margin-left: 10px;
-}
-#topright .wellcome {
-  font-size: 11px;
-}
-#topright .contact {
-  margin-top: 3px;
-  font-size: 11px;
-}
+
 table td {
   font-size: 12px;
 }
@@ -259,31 +225,9 @@ table td {
   border: 1px dashed #777;
 }
 .errors {
-  color: red;
-}
-.messages {
-  color: green;
-  background-color: #E6FFB3;
-}
-#errorApology {
-  -moz-border-radius: 8px;
-  border: 2px solid red;
-  font-weight: bold;
-  padding: 10px;
-  margin: 30px 50px 50px 50px;
-  background-color: #fff;
+  color: #c00;
 }
 
-.contextHelp {
-}
-.waitmsg {
-  background-color: white;
-  border-bottom: solid #888 1px;
-  padding-top: 13px;
-  padding-bottom: 13px;
-  font-size: 13px;
-  text-align: center;
-}
 .expandButton {
   border-top: 1px solid #888;
   border-bottom: 1px solid #888;
@@ -306,10 +250,6 @@ table td {
 }
 .heading sub, .heading sup {
   line-height: 0;
-}
-
-table.templateForm td {
-  padding: 5px;
 }
 
 table.query {

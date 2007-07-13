@@ -3,3 +3,6 @@
   color: #555;
   font-style: italic;
 }
+table.templateForm td {
+  padding: 5px;
+}
