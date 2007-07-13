@@ -28,7 +28,7 @@
 //]]>-->
 </script>
 
-<im:roundbox titleKey="bagspage.title" stylename="roundcorner" >
+<im:roundbox titleKey="bagspage.title" stylename="lists">
 
 <h2><fmt:message key="bagspage.mybags.title"/></h2>
 <p>

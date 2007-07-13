@@ -42,7 +42,7 @@
 //]]>-->
 </script>
 
-<im:roundbox titleKey="bagBuild.makeNewBag" stylename="roundcorner">
+<im:roundbox titleKey="bagBuild.makeNewBag" stylename="lists">
   <div class="bagBuild">
     <html:form action="/buildBag" focus="text" method="post" enctype="multipart/form-data">
       <p>
