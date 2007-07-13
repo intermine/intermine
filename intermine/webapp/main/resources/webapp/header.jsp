@@ -12,14 +12,13 @@
     </c:if>
     <im:login/>
 </div>
-<table id="headertable" cellspacing="0" cellpadding="0">
-<tr >
-<td>
+<tr>
+<td width="1%">
    <!-- <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/"> -->
      <img src="model/logo_grad.png" border="0" height="88px" width="88px"/>
    <!-- </html:link> -->
 </td>
-<td width="100%">
+<td width="50%">
   <!-- <div id="topright">
     <span class="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span><br/>
     <div class="contact">${WEB_PROPERTIES['project.contact']}</div>
@@ -37,6 +36,12 @@
       <c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/>
     </p>
    </div>
-</td></tr>
+</td>
+<td width="50%">
+  <%-- empty td for formatting purposes --%>
+  &nbsp;
+</td>
+</tr>
+
 
 <!-- /header.jsp -->

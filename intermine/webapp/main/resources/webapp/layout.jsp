@@ -96,8 +96,10 @@
   
   <body>
   
-    <tiles:get name="header"/>
-    <tiles:get name="menu"/>
+    <table id="headertable" cellspacing="0" cellpadding="0">
+      <tiles:get name="header"/>
+      <tiles:get name="menu"/>
+    </table>
     <div id="pagecontent">
     
       <%-- Render messages --%>
@@ -112,10 +114,9 @@
         <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}${helplink}" 
                scope="request"/>
       </c:if>
-      <im:box titleKey="${pageName}.description" helpUrl="${helpUrl}" pageName="${pageName}">
-        <tiles:get name="body"/>
-      </im:box>
-      
+
+      <tiles:get name="body"/>
+
       <c:if test="${pageName != 'feedback'}">
         <div id="feedbackFormDivButton">
           <im:vspacer height="11"/>
@@ -123,7 +124,7 @@
              <a href="#" onclick="showFeedbackForm();return false">
                <b>${WEB_PROPERTIES["feedback.title"]}</b>
              </a>
-        	</div>
+          </div>
         </div>
       
         <div id="feedbackFormDiv" style="display:none">
