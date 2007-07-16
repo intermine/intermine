@@ -341,7 +341,7 @@
                    value="Annotated EST clusters for Anopheles gambiae"/>
         <attribute name="version" value="8"/>
         <attribute name="url" 
-                   value="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php"/>
+                   value="http://agambiae.vectorbase.org/SequenceData/EST"/>
         <reference name="dataSource" ref_id="350"/>
     </item>
 </items>
