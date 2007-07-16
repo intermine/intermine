@@ -106,10 +106,10 @@
 
         <div id="hiddenDiv3" style="display:none;">
           <dl>
-            <dt><i>A. gambiae</i> EST data set</dt>
+            <dt><i>A. gambiae</i> EST data set version 8.0</dt>
             <dd>
               Clustered EST data set from the 
-              <a href="http://web.bioinformatics.ic.ac.uk/AnoEST/">Imperial College London Centre for Bioinformatics</a>.
+              <a href="http://agambiae.vectorbase.org/SequenceData/EST/">Imperial College London Centre for Bioinformatics</a>.
             </dd>
           </dl>
         </div>
