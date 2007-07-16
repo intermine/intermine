@@ -20,6 +20,14 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   white-space: nowrap;
 }
 
+
+.body {
+  font-size: 12px;
+  margin-top: 10px;
+  margin-right: 12px;
+  margin-left: 12px;
+  margin-bottom: 10px;
+}
 table.results {
   border-left: solid 1px #666;
   border-top: solid 1px #666;
@@ -42,4 +50,8 @@ table.results td td {
 }
 table.results {
   font-size: small;
+}
+
+table td {
+  font-size: 12px;
 }

@@ -72,7 +72,7 @@ Reference population: <c:out value='${goStatOrganisms}'/>.
 
 
 	
-<table class="results">	
+<table>	
 <tr>
 	<td valign="top" align="center">
 	
