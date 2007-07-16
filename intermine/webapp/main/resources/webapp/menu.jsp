@@ -56,7 +56,7 @@
     &nbsp;
   </td>
 <tr>
-  <td colspan="2" width="66%" align="left">
+  <td colspan="2" width="66%" align="left" nowrap>
     <div class="${pageName}_background">
       <tiles:insert name="browse.tile"> 
         <tiles:put name="menuItem" value="true"/> 
