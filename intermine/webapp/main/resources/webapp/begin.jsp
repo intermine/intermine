@@ -19,6 +19,7 @@
             <tiles:put name="scope" value="global"/>
             <tiles:put name="tags" value="im:public"/>
             <tiles:put name="showDescriptions" value="false"/>
+            <tiles:put name="showSearchBox" value="false"/>
       </tiles:insert>
       <p><html:link action="/templates">View all ${templateCount} templates...</html:link></p>
 	</im:roundbox>	
@@ -74,8 +75,21 @@
 
 <div style="margin-left:50%;width:45%;">
 	<im:roundbox title="Lists" stylename="welcome" >
-	   <tiles:insert name="bagFrontPage.tile" />	   
-	   <p><html:link action="/bag">View all ${bagCount} lists...</html:link></p>
+	   <p>Lists of identifiers can be used in queries and can also be analysed
+       (most frequent GO terms, expression data, etc...).</p>
+      <p><u>Have a look at some Lists we've made for you:</u></p>
+      <tiles:insert name="webSearchableList.tile">
+            <tiles:put name="limit" value="3"/>
+             <%-- bag or template? --%>
+            <tiles:put name="type" value="bag"/>
+            <%-- user or global --%>
+            <tiles:put name="scope" value="global"/>
+            <tiles:put name="tags" value="im:frontpage"/>
+            <tiles:put name="showSearchBox" value="false"/>
+      </tiles:insert> 
+
+      <p><u>...or create your own List:</u></p>
+      <html:link action="/mymine.do?page=bags"><img src="images/go_to_bag_page.png" align="center" width="317" height="80" alt="Go To Bag Page" border="0"></html:link>
 	</im:roundbox>
 
 	<im:roundbox title="Welcome" stylename="welcome" >
