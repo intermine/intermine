@@ -11,6 +11,7 @@
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <link rel="stylesheet" type="text/css" href="css/webSearchableList.css"/>
 
@@ -47,8 +48,13 @@
 <c:if test="${empty showDescriptions}">
   <c:set var="showDescriptions" value="true" scope="request"/>
 </c:if>
+<c:if test="${empty showSearchBox}">
+  <c:set var="showSearchBox" value="true" scope="request"/>
+</c:if>
 
-<p style="white-space:nowrap;">Search:&nbsp;<input type="text" name="" value="" style="width:150">&nbsp;&nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;<img src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites">&nbsp;<img src="images/asc.gif" width="17" height="16" alt="Sort alphabetically">&nbsp;<img src="images/sort_date_ico.gif" width="20" height="16" alt="Sort by Date"></p>
+<c:if test="${showSearchBox}">
+  <p style="white-space:nowrap;">Search:&nbsp;<input type="text" name="" value="" style="width:150">&nbsp;&nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;<img src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites">&nbsp;<img src="images/asc.gif" width="17" height="16" alt="Sort alphabetically">&nbsp;<img src="images/sort_date_ico.gif" width="20" height="16" alt="Sort by Date"></p>
+</c:if>
 
 <c:if test="${!empty height}">
   <div style="height: ${height}px; overflow: auto;">

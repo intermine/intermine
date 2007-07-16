@@ -13,6 +13,7 @@
 <tiles:importAttribute name="height" ignore="true"/>
 <tiles:importAttribute name="tags" ignore="true"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
+<tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <html:xhtml/>
 <div class="webSearchable">
@@ -39,6 +40,7 @@
   <tiles:put name="tableRow" value="wsTemplateRow.tile"/>
   <tiles:put name="limit" value="${limit}"/>
   <tiles:put name="height" value="${height}"/>
+  <tiles:put name="showSearchBox" value="${showSearchBox}"/>
 </tiles:insert>
 </div>
 <!-- /wsTemplateTable.jsp -->

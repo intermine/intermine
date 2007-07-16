@@ -12,6 +12,7 @@
 <tiles:importAttribute name="height" ignore="true"/>
 <tiles:importAttribute name="tags" ignore="true"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
+<tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <html:xhtml/>
 <div class="webSearchable">
@@ -43,6 +44,7 @@
   <tiles:put name="tableRow" value="wsBagRow.tile"/>
   <tiles:put name="limit" value="${limit}"/>
   <tiles:put name="height" value="${height}"/>
+  <tiles:put name="showSearchBox" value="${showSearchBox}"/>
 </tiles:insert>
 <c:if test="${(fn:length(PROFILE.savedBags) > 0) && (scope == 'user')}">
   <p width="100%" align="right">
