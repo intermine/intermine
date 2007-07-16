@@ -42,7 +42,12 @@
 //]]>-->
 </script>
 
-<im:roundbox titleKey="bagBuild.makeNewBag" stylename="lists">
+<div id="pageDesc"><p>Bags are holders for lists of data, e.g. a list of gene identifiers and allow you to analyse (exppression data, ...), identify common caracteristics (GO terms, ...) and to run templates directly on these lists.</p></div>
+<script type="text/javascript">
+	Nifty("div#pageDesc","big");
+</script>
+
+<im:roundbox titleKey="bagBuild.makeNewBag" stylename="welcome">
   <div class="bagBuild">
     <html:form action="/buildBag" focus="text" method="post" enctype="multipart/form-data">
       <p>

@@ -11,8 +11,8 @@
 
 <%-- INSERT HELP TILE HERE - in a <td></td> --%> 
 
-    <td valign="top" width="40%"><c:import url="bagBuild.jsp"/></td>
-    <td valign="top" width="60%"><c:import url="bagView.jsp"/></td>
+    <td valign="top" width="30%"><c:import url="bagBuild.jsp"/></td>
+    <td valign="top" width="70%"><c:import url="bagView.jsp"/></td>
   </tr>
 </table>
 </div>
