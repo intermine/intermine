@@ -28,13 +28,6 @@
 //]]>-->
 </script>
 
-<im:roundbox titleKey="bagspage.title" stylename="lists">
-
-<h2><fmt:message key="bagspage.mybags.title"/></h2>
-<p>
-  <fmt:message key="bagspage.mybags.help"/>
-</p>
-
 <html:form action="/modifyBag">
   <tiles:insert name="wsBagTable.tile">
     <tiles:put name="limit" value="15"/>
@@ -43,19 +36,7 @@
     <tiles:put name="showDescriptions" value="false"/>
   </tiles:insert>
 
-  <c:if test="${fn:length(PROFILE.savedBags) > 0}">
-    <div width="100%" align="right">
-      <html:submit property="delete">
-        <fmt:message key="history.delete"/>
-      </html:submit>
-    </div>
-  </c:if>
   <br/>
-
-  <h2><fmt:message key="bagspage.public.title"/></h2>
-  <p>
-    <fmt:message key="bagspage.public.help"/>
-  </p>
 
   <tiles:insert name="wsBagTable.tile">
     <tiles:put name="limit" value="15"/>
@@ -77,5 +58,4 @@
     <fmt:message key="history.subtract"/>
   </html:submit>
 </html:form>
-</im:roundbox>
 <!-- /bagView.jsp -->
