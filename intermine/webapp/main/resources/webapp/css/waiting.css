@@ -1,0 +1,8 @@
+.waitmsg {
+  background-color: white;
+  border-bottom: solid #888 1px;
+  padding-top: 13px;
+  padding-bottom: 13px;
+  font-size: 13px;
+  text-align: center;
+}
