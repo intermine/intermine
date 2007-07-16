@@ -18,7 +18,7 @@
     <html:base/>
     <link rel="stylesheet" type="text/css" href="css/webapp.css"/>
     <link rel="stylesheet" type="text/css" href="css/${pageName}.css"/>
-    <link rel="stylesheet" type="text/css" href="model/model.css"/>
+    <link rel="stylesheet" type="text/css" href="model/css/model.css"/>
     
     <script type="text/javascript" src="js/prototype.js"></script>
     <script type="text/javascript" src="js/scriptaculous.js"></script>

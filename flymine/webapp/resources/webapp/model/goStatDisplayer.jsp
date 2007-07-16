@@ -20,8 +20,7 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
   <head>
 
     <base href="<%=basePath%>" />
-    <link rel="stylesheet" type="text/css" href="css/webapp.css"/>
-    <link rel="stylesheet" type="text/css" href="model/model.css"/>
+    <link rel="stylesheet" type="text/css" href="model/css/gostat.css"/>
     
     <script type="text/javascript" src="js/prototype.js"></script>
     <script type="text/javascript" src="js/scriptaculous.js"></script>
@@ -73,7 +72,7 @@ Reference population: <c:out value='${goStatOrganisms}'/>.
 
 
 	
-<table>	
+<table class="results">	
 <tr>
 	<td valign="top" align="center">
 	
