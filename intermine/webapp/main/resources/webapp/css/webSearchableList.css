@@ -1,3 +1,12 @@
+.webSearchable {
+   background:#F5F0FF;
+   padding:10px 20px 20px 20px;
+   margin:0 20px 20px 20px;
+}
 .wsListElement {
    margin-bottom:10px;
+}
+.wsList {
+	background:#FFF;
+	padding:10px;
 }
