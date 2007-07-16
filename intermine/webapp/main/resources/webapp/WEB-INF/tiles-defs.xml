@@ -157,6 +157,10 @@
     <put name="body" value="customQuery.jsp"/>
     <put name="pageName" value="customQuery"/>
   </definition>
+  <definition name="showStatic.page" extends="layout.template">
+    <put name="body" value="showStatic.jsp"/>
+    <put name="pageName" value="showStatic"/>
+  </definition>
   
   <!--tiles-->
   <definition name="error.tile" path="/error.jsp"/>
