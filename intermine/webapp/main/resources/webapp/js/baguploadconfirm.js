@@ -1,8 +1,9 @@
 var duplicateArray = new Array();
 var tdColorArray = new Array();
 
-
+ 
 function addId2Bag(id,row,parentId,issueType){
+    document.getElementById('removeAllLink').className = "fakelink";
     if(document.getElementById('add_'+issueType+'_'+id).className=='fakelink'){
         document.getElementById('add_'+issueType+'_'+id).className = '';
         document.getElementById('rem_'+issueType+'_'+id).className = "fakelink";
@@ -34,9 +35,11 @@ function addId2Bag(id,row,parentId,issueType){
         }
         toggleForm(1);
     }    
+
 }
 
 function removeIdFromBag(id,row, parentId, issueType){
+	document.getElementById('addAllLink').className = "fakelink";
     if(document.getElementById('rem_'+issueType+'_'+id).className=='fakelink'){
         document.getElementById('rem_'+issueType+'_'+id).className = '';
         document.getElementById('add_'+issueType+'_'+id).className = "fakelink";
@@ -83,6 +86,8 @@ function addAll(flatArray){
 		var b = a[i].split(",");
 		addId2Bag(b[0],b[1],b[2],b[3]);
 	}
+	document.getElementById('addAllLink').className = "";
+	document.getElementById('removeAllLink').className = "fakelink";
 }
 
 function removeAll(flatArray){
@@ -95,4 +100,6 @@ function removeAll(flatArray){
 		var b = a[i].split(",");
 		removeIdFromBag(b[0],b[1],b[2],b[3]);
 	}
+	document.getElementById('addAllLink').className = "fakelink";
+	document.getElementById('removeAllLink').className = "";
 }

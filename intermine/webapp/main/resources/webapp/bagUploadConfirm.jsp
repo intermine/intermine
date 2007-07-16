@@ -89,8 +89,8 @@ function toggleForm(matchCount) {
 	</div>
     <div class="body">
     
-	<p><span onclick="addAll('${jsArray}');" class="fakelink">Add all</span> | 
-		<span onclick="removeAll('${jsArray}');" class="fakelink">Remove all</span></p>
+	<p><span id="addAllLink" onclick="addAll('${jsArray}');" class="fakelink">Add all</span> | 
+		<span id="removeAllLink" onclick="removeAll('${jsArray}');">Remove all</span></p>
         
     <p><fmt:message key="bagUploadConfirm.issuesHelp">
          <fmt:param value="${bagUploadConfirmForm.bagType}"/>
