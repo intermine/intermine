@@ -57,7 +57,7 @@ import org.apache.struts.tiles.actions.TilesAction;
  * @author Kim Rutherford
  */
 
-public class BagController extends TilesAction
+public class BagBuildController extends TilesAction
 {
     /**
      * Set up environment for the buildBag page.
