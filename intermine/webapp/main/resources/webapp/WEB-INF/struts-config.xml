@@ -101,8 +101,10 @@
     <action path="/aspects" forward="aspects.page">
     </action>
     <action path="/customQuery" forward="customQuery.page">
-    </action>    
-    
+    </action>
+    <action path="/showStatic" forward="showStatic.page">
+    </action>
+
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
@@ -387,10 +389,10 @@
     <action path="/initExternalLinks" type="org.intermine.web.struts.ExternalLinksController">
     </action>
     <action path="/initClassChooser" type="org.intermine.web.struts.ClassChooserController">
-    </action>    
+    </action>
     <action path="/initTip" type="org.intermine.web.struts.TipController">
     </action>
-    
+
     <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
     <!-- don't (re)move this - it's used for importing any model-specific actions -->

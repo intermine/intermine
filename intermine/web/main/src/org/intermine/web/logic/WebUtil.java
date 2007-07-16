@@ -18,10 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,13 +29,19 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.tagging.TagTypes;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -416,4 +420,23 @@ public abstract class WebUtil
         searchBags.putAll(userBags);
         return searchBags;
     }    
+    
+    public static String getStaticPage(String prefixURLString, String path) 
+        throws IOException {
+        StringBuffer buf = new StringBuffer();
+        
+        URL url = new URL(prefixURLString + '/' + path);
+        URLConnection connection = url.openConnection();
+        InputStream is = connection.getInputStream();
+        Reader reader = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(reader);
+        String line;
+        while ((line = br.readLine()) != null) {
+            // replace relative urls ie. href="manualExportfasta.shtml"
+            line = line.replaceAll("href=\"([^\"]+)\"",
+                                   "href=\"showStatic.do?path=$1\"");
+            buf.append(line + "\n");
+        }
+        return buf.toString();
+    }
 }
