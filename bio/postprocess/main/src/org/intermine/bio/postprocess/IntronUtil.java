@@ -93,12 +93,23 @@ public class IntronUtil
         dataSet.setUrl("http://www.flymine.org");
         dataSet.setDataSource(dataSource);
 
+        // Documented as an example of how to use the query API
+        
+        // This query finds all transcripts and their chromosome locations and exons
+        // for each transcript with the exon chromosome location.  This is then used
+        // to calculate intron locations.
+        
+       
+        // Construct a new query and a set to hold constraints that will be ANDed together
         Query q = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        
+        // Add Transcript to the from and select lists
         QueryClass qcTran = new QueryClass(Transcript.class);
         q.addFrom(qcTran);
         q.addToSelect(qcTran);
 
+        // Include the referenced chromosomeLocation of the Transcript
         QueryClass qcTranLoc = new QueryClass(Location.class);
         q.addFrom(qcTranLoc);
         q.addToSelect(qcTranLoc);
@@ -107,6 +118,7 @@ public class IntronUtil
             new ContainsConstraint(qorTranLoc, ConstraintOp.CONTAINS, qcTranLoc);
         cs.addConstraint(ccTranLoc);
 
+        // Include the Exon class from the Transcript.exons collection
         QueryClass qcExon = new QueryClass(Exon.class);
         q.addFrom(qcExon);
         QueryCollectionReference qcrExons = new QueryCollectionReference(qcTran, "exons");
@@ -114,6 +126,7 @@ public class IntronUtil
             new ContainsConstraint(qcrExons, ConstraintOp.CONTAINS, qcExon);
         cs.addConstraint(ccTranExons);
 
+        // Include the referenced chromosomeLocation of each Exon
         QueryClass qcExonLoc = new QueryClass(Location.class);
         q.addFrom(qcExonLoc);
         q.addToSelect(qcExonLoc);
@@ -122,13 +135,25 @@ public class IntronUtil
             new ContainsConstraint(qorExonLoc, ConstraintOp.CONTAINS, qcExonLoc);
         cs.addConstraint(ccExonLoc);
 
+        // Set the constraint of the query
         q.setConstraint(cs);
+        
+        // Force an order by transcripts to make processing easier
         q.addToOrderBy(qcTran);
 
+        // Precompute this query first, this will create a precomputed table holding
+        // all the results.  The will make all batches after the first faster to fetch
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
+        
+        // Set up the results, the query isn't actually executed until we begin
+        // iterating through the results
         Results results = os.execute(q);
+        
+        // Concerned about memory usage so set a small batch size
         results.setBatchSize(500);
+        
+        // When we start interating the query will be executed
         Iterator resultsIter = results.iterator();
 
         Set locationSet = new HashSet();
@@ -136,8 +161,12 @@ public class IntronUtil
         Location lastTranLoc = null;
         int tranCount = 0, exonCount = 0, intronCount = 0;
 
+        
         osw.beginTransaction();
         while (resultsIter.hasNext()) {
+            // Results is a list of ResultsRows, each ResultsRow contains the objects/fields
+            // that were added to the select list of the query.  The order of columns is
+            // as they were added to the select list.
             ResultsRow rr = (ResultsRow) resultsIter.next();
             Transcript thisTran = (Transcript) rr.get(0);
 

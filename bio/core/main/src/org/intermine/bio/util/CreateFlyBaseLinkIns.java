@@ -94,26 +94,57 @@ public class CreateFlyBaseLinkIns
     }
 
     private static Iterator getFlyBaseIds(ObjectStore os) {
+        // Documented as an example of how to use the query API
+        
+        // This query selects Gene.organismDbId where it has a non-null value
+        // for all Genes from D. melanogaster (taxon id 7227).
+        
+        // Create a new query
         Query q = new Query();
+                
+        // Create a set to hold constraints that will be ANDed together
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        
+        // Include Gene on the from list
         QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+        
+        // Select the Gene.organismDbId field
         QueryField qf = new QueryField(qcGene, "organismDbId");
         q.addToSelect(qf);
-        q.addFrom(qcGene);
+        
+        // Filter out any null Gene.organismDbId values
+        SimpleConstraint sc2 = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
+        cs.addConstraint(sc2);
+        
+        // Add organism to the from list
         QueryClass qcOrg = new QueryClass(Organism.class);
         q.addFrom(qcOrg);
+        
+        // Constrain Organism.taxonId to be D. melanogaster
         QueryField qfOrgTaxon = new QueryField(qcOrg, "taxonId");
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         SimpleConstraint sc1 = new SimpleConstraint(qfOrgTaxon, ConstraintOp.EQUALS,
                                                     new QueryValue(new Integer(7227)));
         cs.addConstraint(sc1);
+        
+        // Now relate the Gene to the Organism we have just constrained, link by Gene.organism
+        // refernece.
         QueryObjectReference ref1 = new QueryObjectReference(qcGene, "organism");
         ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcOrg);
         cs.addConstraint(cc1);
-        SimpleConstraint sc2 = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
-        cs.addConstraint(sc2);
+
+        // Set the constraint of the query
         q.setConstraint(cs);
+        
+        // Order the results by Gene.organismDbId
         q.addToOrderBy(qf);
+        
+        // Make the output distinct, just like SQL DISTINCT syntax
         q.setDistinct(true);
+        
+        // Execute the query and get an iterator over results. batch size controls
+        // how results are paged into memory.  High numbers mean better performace
+        // but more memory usage.
         SingletonResults res = os.executeSingleton(q);
         res.setBatchSize(10000);
         return res.iterator();
