@@ -200,7 +200,8 @@
   <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
   <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
-  <definition name="bag.tile" path="/bag.jsp" controllerUrl="/initBag.do"/>
+  <definition name="bag.tile" path="/bag.jsp"/>
+  <definition name="bagBuild.tile" path="/bagBuild.jsp" controllerUrl="/initBagBuild.do"/>
   <definition name="table.tile" path="/table.jsp" controllerUrl="/initTable.do"/>
   <definition name="singleResult.tile" path="/singleResult.jsp" 
               controllerUrl="/initSingleResult.do"/>
