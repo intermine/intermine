@@ -179,9 +179,10 @@
         </c:choose>
 
         <div class="widget">
+          <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
           <c:choose>
             <c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
-              <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
+             
               <div class="widget_slide" align="center">
                 <table class="results" cellspacing="0">
                   <tr>
