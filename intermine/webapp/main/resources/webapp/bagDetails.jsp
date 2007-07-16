@@ -258,11 +258,8 @@
     </c:choose>
 
     <%-- go stats --%>
-    <table cellpadding="0" cellspacing="10">
-      <tr>
-        <td><iframe src="goStatDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe></td>
-      </tr>
-    </table>
+ 	<iframe src="goStatDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe></td>
+    
     <br>
 
       <c:choose>
