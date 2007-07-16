@@ -1967,7 +1967,13 @@
           </description>
           <version>1.2</version>
         </source>
-        
+        <source>
+          <name>AnoEST</name>
+          <description>
+             &lt;i&gt;A. gambiae&lt;/i&gt; EST data set from Imperial College London Centre for Bioinformatics.
+          </description>
+          <version>8.0</version>
+        </source>
       </sources>
     </para>
   </section>
