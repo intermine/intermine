@@ -21,6 +21,10 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   white-space: nowrap;
 }
 
+h1, h2, h3 {
+   color:#5C0075;
+}
+
 /* HEADING AND MENU STYLES*/
 
 #header h1
@@ -102,19 +106,19 @@ table#headertable{
 /*menu with nifty corners*/
 td#menu{background-color: #D0B5D7;width:100%;}
 ul#nav,ul#nav li{list-style-type:none;margin:0;padding:0}
-ul#nav{margin-left: 30px;width:650px}
+ul#nav{margin-left: 30px;width:500px}
 ul#nav li{float:left;margin-right: 3px;text-align: center}
 ul#nav a{
 	float:left;
-	width:8em;
+	_width:9em;
 	text-decoration:none;
 	color: #5C0075;
 	font: Arial,sans-serif;
-	padding:5px 0;
+	padding:5px 10px 5px 10px;
     font-weight:bold;
 }
 ul#nav a:hover{color:#000;}
-ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #5C0075;color: #FFF;}
+ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #5C0075;}
 li#home a{background:#9D66AD;color:white;}
 li#bags a{background:#AD8668;color:white;}
 li#templates a{background:#4A497B;color:white;}
@@ -464,6 +468,14 @@ table.results tr.queryAgeToday td {
   padding: 5px;
   font-size: larger;
   position:relative
+}
+
+#pageDesc {
+  background:#F5F0FF;
+  padding:20px;
+}
+#actionsLeft {
+  margin:20px;
 }
 
 /* template results - used by object & bag details pages */

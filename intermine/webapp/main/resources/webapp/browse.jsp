@@ -14,7 +14,7 @@
 	<option value="bgs">Lists</option>
   </select>  
 <fmt:message key="header.search.mid"/>  
-<input style="color:#666; font-style:italic;" type="text" name="value" size="40" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearQS(this);">  
+<input style="color:#666; font-style:italic;" type="text" name="value" size="20" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearQS(this);">  
 <html:submit><fmt:message key="header.search.button"/></html:submit>
   
 </html:form>

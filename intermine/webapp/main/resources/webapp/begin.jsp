@@ -8,7 +8,7 @@
 <html:xhtml/>
 
 <div style="float:left;width:45%;">
-	<im:roundbox title="Templates" stylename="templates">
+	<im:roundbox title="Templates" stylename="welcome">
 <p>Templates are predefined queries designed to perform a particular task. Each one has a description and a form to fill in. For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
 	   <tiles:insert name="webSearchableList.tile">
       	    <!-- optional -->
@@ -23,7 +23,7 @@
       <p><html:link action="/templates">View all ${templateCount} templates...</html:link></p>
 	</im:roundbox>	
 
-	<im:roundbox title="Data Categories" stylename="categories" >
+	<im:roundbox title="Data Categories" stylename="welcome" >
 	     <c:choose>
 		    <c:when test="${!empty ASPECTS}">
 		       <tiles:insert name="aspects.tile">
@@ -53,7 +53,7 @@
 		  
 		  <p><a href="sources.shtml">View all 1,234 datasources...</a></p>
 	</im:roundbox>	
-	<im:roundbox title="QueryBuilder" stylename="queries">
+	<im:roundbox title="QueryBuilder" stylename="welcome">
 	        <div class="body">
 	          <html:link action="/classChooser">
 	            <fmt:message key="begin.list.all.classes"/>
@@ -73,7 +73,7 @@
 
 
 <div style="margin-left:50%;width:45%;">
-	<im:roundbox title="Lists" stylename="lists" >
+	<im:roundbox title="Lists" stylename="welcome" >
 	   <tiles:insert name="bagFrontPage.tile" />	   
 	   <p><html:link action="/bag">View all ${bagCount} lists...</html:link></p>
 	</im:roundbox>

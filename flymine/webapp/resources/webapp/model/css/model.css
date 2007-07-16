@@ -32,13 +32,6 @@ div.title h1
 	color:#FFF;
 }
 
-.bag_background {background:#AD8668;}
-.templates_background {background:#ff0000;}
-.search_background {background:#4A497B;}
-.customQuery_background {background:#589100;}
-.aspects_background {background:#663366;}
-.mymine_background {background:#9D66AD;}
-
 table.results tr td.highlightCell {
   background-color: #FFCBFF;
 }
