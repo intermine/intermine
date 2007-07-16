@@ -114,7 +114,25 @@
           </dl>
         </div>
       </div>
-    </td>
+
+        <h4>
+          <a href="javascript:toggleDiv('hiddenDiv3');">
+            <img id='hiddenDiv3Toggle' src="images/undisclosed.gif"/>
+            Pathway data ...
+          </a>
+        </h4>
+
+        <div id="hiddenDiv3" style="display:none;">
+          <dl>
+            <dt>Pathway data for <i>D. melanogaster</i></dt>
+            <dd>
+              Pathway data from <a href="http://www.genome.jp/kegg/">KEGG</a> for <i>D. melanogaster</i> genes.</dt>
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+   </td>
     <td width="40%" valign="top">
       <div class="body">
         <ul>
