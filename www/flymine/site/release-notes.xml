@@ -14,7 +14,7 @@
         <para>Data</para>
         <itemizedlist>
     <listitem><para>NEW - D. melanogaster predicted regulatory motifs and functional sites (motif instances) from the <ulink url="http://servlet.sanger.ac.uk/tiffin/">Tiffin database</ulink>. Note these have been mapped to the release 5.0 genome sequence.</para></listitem>
-    <listitem><para>NEW - A. gambiae EST and EST clusters from the <ulink url="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php">anoEST database</ulink>.</para></listitem>
+    <listitem><para>NEW - A. gambiae EST and EST clusters from the <ulink url="http://agambiae.vectorbase.org/SequenceData/EST">Imperial College London Centre for Bioinformatics</ulink>.</para></listitem>
     <listitem><para>NEW - A. gambiae protein domain 3-D structure predictions from <ulink url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Kenji Mizuguchi</ulink>.  This data provides structure predictions for regions of A. gambiae proteins that correspond to a Pfam domain.    </para></listitem>
     <listitem><para>NEW - H. sapiens and M. musculus protein information included from UniProt, we already include InParanoid orthologues to these organisms.</para></listitem>
        </itemizedlist>
