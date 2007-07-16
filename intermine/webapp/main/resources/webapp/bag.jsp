@@ -9,9 +9,6 @@
 <div class="body">
 <table padding="0px" margin="0px">
   <tr>
-
-<%-- INSERT HELP TILE HERE - in a <td></td> --%> 
-
     <td valign="top" width="30%"><tiles:insert name="bagBuild.tile"/></td>
     <td valign="top" width="70%"><c:import url="bagView.jsp"/></td>
   </tr>
