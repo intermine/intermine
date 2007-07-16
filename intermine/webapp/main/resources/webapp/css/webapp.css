@@ -466,6 +466,7 @@ table.results tr.queryAgeToday td {
   position:relative
 }
 
+/* template results - used by object & bag details pages */
 table.refSummary {
   border-top: 1px solid #888;
   border-left: 1px solid #888;
@@ -487,4 +488,20 @@ table.refSummary tbody tr td {
   background-color: #FAF8FF;
   border-bottom: 1px solid #888;
   border-right: 1px solid #888;
+}
+
+div.templateLine {
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding-left: 3px;
+}
+
+span.templateResCount {
+  color: #555;
+  white-space: nowrap;
+  font-size: 10px;
+}
+div.templateIcon {
+  float: left;
+  padding-top: 2px;
 }

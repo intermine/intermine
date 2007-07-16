@@ -7,12 +7,6 @@ img.objectDetailsAspectIcon {
   margin-bottom: 1px;
 }
 
-span.templateResCount {
-  color: #555;
-  white-space: nowrap;
-  font-size: 10px;
-}
-
 div.templateDetails {
   margin-left: 15px;
 
@@ -20,15 +14,3 @@ div.templateDetails {
      http://www.positioniseverything.net/explorer/peekaboo.html */
   height: 0.01%;
 }
-
-div.templateIcon {
-  float: left;
-  padding-top: 2px;
-}
-
-div.templateLine {
-  margin-bottom: 5px;
-  margin-top: 5px;
-  padding-left: 3px;
-}
-
