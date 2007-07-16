@@ -1,4 +1,10 @@
 <webconfig>
+  <class className="org.flymine.model.genomic.DataSet">
+    <fields>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
+    </fields>
+  </class>
 
   <class className="org.flymine.model.genomic.Disease">
     <fields>
@@ -70,6 +76,7 @@
   <class className="org.flymine.model.genomic.DataSource">
     <fields>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
     <longdisplayers>
       <displayer src="/model/dataSourceLong.jsp"/>
