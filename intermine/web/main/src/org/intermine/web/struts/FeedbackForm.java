@@ -209,7 +209,7 @@ public class FeedbackForm extends ValidatorForm
     protected String createDefaultFeedbackMsg(HttpServletRequest request) {
         HttpSession session = request.getSession();
         String msg = "\n\n\n\n---- Current page: ----\n\n";
-        msg += request.getAttribute("javax.servlet.forward.servlet_path");
+        msg += request.getAttribute("javax.servlet.forward.request_uri");
         if (request.getQueryString() != null) {
             msg += "?" + request.getQueryString();
         }
