@@ -268,6 +268,7 @@
         <b>My lists that contain this object:</b>
         <div class="webSearchable">
       	 <tiles:insert name="webSearchableList.tile">
+      	    <tiles:put name="list" value="${publicBagsWithThisObject}"/>
             <tiles:put name="type" value="bag"/>
             <tiles:put name="scope" value="user"/>
             <tiles:put name="showDescriptions" value="true"/>
