@@ -9,7 +9,7 @@
 
 <div style="float:left;width:45%;">
 	<im:roundbox title="Templates" stylename="welcome">
-<p>Templates are predefined queries designed to perform a particular task. Each one has a description and a form to fill in. For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
+<p>Templates are queries that have been made for you.  Have a look at some examples:</p>
 	   <tiles:insert name="webSearchableList.tile">
       	    <!-- optional -->
             <tiles:put name="limit" value="5"/>

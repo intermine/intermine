@@ -19,13 +19,6 @@
    <!-- </html:link> -->
 </td>
 <td colspan="2" width="100%">
-  <!-- <div id="topright">
-    <span class="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span><br/>
-    <div class="contact">${WEB_PROPERTIES['project.contact']}</div>
-    <div class="wellcome">${WEB_PROPERTIES['project.funded.by']}</div>
-  </div> -->
-  
-  <!-- <div id="title"> -->
    <div id="header">
       <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/">
         <h1><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
