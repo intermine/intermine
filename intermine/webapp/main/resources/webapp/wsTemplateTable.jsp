@@ -20,7 +20,7 @@
 <h2>
  <c:choose>
   <c:when test="${scope == 'global'}">
-   Public Templates
+   Example Templates
   </c:when>
   <c:otherwise>
    My Templates
