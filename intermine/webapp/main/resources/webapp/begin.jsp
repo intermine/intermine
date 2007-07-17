@@ -8,13 +8,13 @@
 <html:xhtml/>
 <link rel="stylesheet" type="text/css" href="css/begin.css"/>
 
-<table id="frontpagelayout" cellspacing="0" cellpadding="7" border=1>
+<table id="frontpagelayout" cellspacing="0" cellpadding="0">
    <tr><td>
     
     <div class="body">
       <span style="font-size:+2em;"><a href="what.xml">What is FlyMine?</a></span>&nbsp;&nbsp;<span style="font-size:+1.4em"><a href="tour_1.html" target="_blank"  onclick="javascript:window.open('tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour!</a></span>
     
-    <p style="color:#c00;"> 
+    <p class="errors"> 
       This is release 8.0 of FlyMine.  See the <a href="release-notes.xml">release notes</a> to find out what's new.
     </p>
     </div>
