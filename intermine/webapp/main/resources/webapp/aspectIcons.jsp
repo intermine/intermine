@@ -7,7 +7,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- aspectIcons -->
-
+<div class="body">
 <c:set var="numCols" value="${param.cols != null ? param.cols : 3}"/>
 
 <tiles:useAttribute id="iconSize" name="iconSize" ignore="true"/>
@@ -15,9 +15,6 @@
 <c:if test="${empty iconSize}">
   <c:set var="iconSize" value="64"/>
 </c:if>
-
-<div class="body">
-  <p><fmt:message key="aspects.intro"/></p>
 
   <table class="aspectIconsTable" border="0" cellspacing="0" cellpadding="0" >
     <tr>
@@ -56,5 +53,4 @@
     </tr>
   </table>
 </div>
-
 <!-- /aspectIcons -->

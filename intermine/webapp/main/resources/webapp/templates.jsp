@@ -5,7 +5,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 
-<!-- bag.jsp -->
+<!-- templates.jsp -->
 <html:xhtml/>
 
 <div class="body">
@@ -52,4 +52,4 @@
   </tr>
 </table>
 </div>
-<!-- /bag.jsp -->
+<!-- /templates.jsp -->
