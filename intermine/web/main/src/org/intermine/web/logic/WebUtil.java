@@ -421,6 +421,15 @@ public abstract class WebUtil
         return searchBags;
     }    
     
+    /**
+     * Return the contents of the page given by prefixURLString + '/' + path as a String.  Any
+     * relative links in the page will be modified to go via showStatic.do
+     * @param prefixURLString the prefix (including "http://...") of the web site to read from.
+     *    eg. http://www.flymine.org/doc/help
+     * @param path the page to retrieve eg. manualFlyMineHome.shtml
+     * @return the contents of the page
+     * @throws IOException if there is a problem while reading
+     */
     public static String getStaticPage(String prefixURLString, String path) 
         throws IOException {
         StringBuffer buf = new StringBuffer();
