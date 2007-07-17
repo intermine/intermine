@@ -17,8 +17,8 @@
         <fmt:param value="${TEMPLATE_BUILD_STATE.updatingTemplate.name}"/>
       </fmt:message>
     </c:when>
-    <c:otherwise>
-      Building a new template query
+    <c:otherwise>      
+      <fmt:message key="templateBuilder.new"/>
      <im:manualLink section="manualCreateTemplates.shtml"/>
     </c:otherwise>
   </c:choose>

@@ -11,11 +11,8 @@
 <div class="body">
 <table padding="0px" margin="0px" width="100%">
   <tr>
-
-<%-- INSERT HELP TILE HERE - in a <td></td> --%> 
-
     <td valign="top" width="30%">
-      <div id="pageDesc"><p>To enable users to quickly and easily carry out a range of queries, both simple and complex, FlyMine includes a growing library of predefined 'template' queries. Templates provide a description of a predefined query with a form to fill in a number of constraints.</p><br><img src="images/templates_desc.gif" width="328" height="67" alt="Templates Desc"></div>
+      <div id="pageDesc"><p><fmt:message key="begin.templates"/></p><br><img src="images/templates_desc.gif" width="328" height="67" alt="Templates Desc"></div>
       <script type="text/javascript">
       	Nifty("div#pageDesc","big");
       </script>
