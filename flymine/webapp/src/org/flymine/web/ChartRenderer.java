@@ -85,7 +85,7 @@ public class ChartRenderer extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Map graphImageCache = (Map) servletContext.getAttribute(Constants.GRAPH_CACHE);
         String filename = (String) graphImageCache.get(request.getQueryString());
-
+        
         if (filename != null) {
             ServletUtilities.sendTempFile(filename, response);
             return null;
@@ -167,7 +167,7 @@ public class ChartRenderer extends InterMineAction
         // make a copy because the temp file returned by saveChartAsPNG() will be deleted when the
         // session ends
         File oldFile = new File(System.getProperty("java.io.tmpdir"), filename);
-        File cacheFile = new File(System.getProperty("java.io.tmpdir"), filename + "_flymine");
+        File cacheFile = new File(System.getProperty("java.io.tmpdir"), "flymine_" + filename);
         FileChannel in = null;
         FileChannel out = null;
         try {          
@@ -175,6 +175,7 @@ public class ChartRenderer extends InterMineAction
             out = new FileOutputStream(cacheFile).getChannel();
             // note java bug #5056395
             out.transferFrom(in, 0, in.size()); 
+            //in.transferTo (0, in.size(), out); 
         } finally {
             if (in != null) {
                 in.close();
