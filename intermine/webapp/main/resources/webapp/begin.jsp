@@ -28,9 +28,8 @@
 	     <c:choose>
 		    <c:when test="${!empty ASPECTS}">
 		       <tiles:insert name="aspects.tile">
-                         <tiles:put name="iconSize" value="30"/>
-                       </tiles:insert>
-		      
+					<tiles:put name="iconSize" value="30"/>
+				</tiles:insert>		      
 		    </c:when>
 		    <c:otherwise>
 		      <c:forEach items="${CATEGORIES}" var="category">

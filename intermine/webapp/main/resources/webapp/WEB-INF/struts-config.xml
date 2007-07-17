@@ -100,6 +100,8 @@
     </action>
     <action path="/aspects" forward="aspects.page">
     </action>
+    <action path="/dataCategories" forward="dataCategories.page">
+    </action>
     <action path="/customQuery" forward="customQuery.page">
     </action>
     <action path="/showStatic" forward="showStatic.page">

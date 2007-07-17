@@ -28,8 +28,8 @@
       <fmt:message key="menu.querybuilder"/>&nbsp;
     </html:link>
   </li>
-  <li id="category"  <c:if test="${pageName=='aspects'}">class="activelink"</c:if>>
-    <html:link action="/aspects.do">
+  <li id="category"  <c:if test="${pageName=='dataCategories'}">class="activelink"</c:if>>
+    <html:link action="/dataCategories.do">
       <fmt:message key="menu.category"/>
     </html:link>
   </li>

@@ -153,6 +153,10 @@
     <put name="body" value="aspects.tile"/>
     <put name="pageName" value="aspects"/>
   </definition>
+  <definition name="dataCategories.page" extends="layout.template">
+    <put name="body" value="dataCategories.tile"/>
+    <put name="pageName" value="dataCategories"/>
+  </definition>
   <definition name="customQuery.page" extends="layout.template">
     <put name="body" value="customQuery.jsp"/>
     <put name="pageName" value="customQuery"/>
@@ -172,6 +176,7 @@
   <definition name="tips.tile" path="/tips.jsp" />
   <definition name="tipDisplayer.tile" path="/tipDisplayer.jsp"/>
   <definition name="aspects.tile" path="/aspectIcons.jsp" />
+  <definition name="dataCategories.tile" path="/dataCategories.jsp" />
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
     <put name="view" value="view.tile"/>
