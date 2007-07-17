@@ -258,7 +258,7 @@
     </c:choose>
 
     <%-- go stats --%>
- 	<iframe src="goStatDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe></td>
+ 	<iframe src="goStatDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
     
     <br>
 
