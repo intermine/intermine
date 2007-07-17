@@ -33,6 +33,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
@@ -152,9 +153,11 @@ public class ObjectDetailsController extends InterMineAction
             }
         }
         
-        String publicBagsWithThisObject = getBags(os, servletContext, id);
+        String publicBagsWithThisObject = getBags(os, session, servletContext, id, true);
+        String myBagsWithThisObject = getBags(os, session, servletContext, id, false);
         
         request.setAttribute("publicBagsWithThisObject", publicBagsWithThisObject);
+        request.setAttribute("myBagsWithThisObject", myBagsWithThisObject);
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
         
         return null;
@@ -247,14 +250,22 @@ public class ObjectDetailsController extends InterMineAction
                                  webPropertiesMap, classKeys);
     }
     
-    private String getBags(ObjectStore os, ServletContext servletContext, Integer id) {
+    private String getBags(ObjectStore os, 
+                           HttpSession session, 
+                           ServletContext servletContext, 
+                           Integer id, 
+                           boolean isGlobal) {
         
-        // get all of the user's bags with this object
-        
-        // get all of the public bags with this object
-        SearchRepository searchRepository = 
+        Map webSearchables = null;
+        // get all of the bags with this object
+        if (isGlobal) {
+            SearchRepository searchRepository = 
             (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-        Map webSearchables = searchRepository.getWebSearchableMap(TagTypes.BAG);
+            webSearchables = searchRepository.getWebSearchableMap(TagTypes.BAG);
+        } else {
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            webSearchables = profile.getSavedBags();
+        }
         Collection<WebSearchable> webSearchableColl = webSearchables.values();
         Collection<ObjectStoreBag> objectStoreBags = new ArrayList();
         
