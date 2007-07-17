@@ -19,11 +19,9 @@
       </script>
       <div id="actionsLeft">
          <h2>Actions:</h2>
-           <html:link action="/sources.html">
-             <fmt:message key="dataCategories.action1"/>
-           </html:link>
+           <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a>
          <BR/>
-           <html:link action="/search">
+           <html:link action="/templates">
              <fmt:message key="dataCategories.action2"/>
            </html:link>
       </div>
