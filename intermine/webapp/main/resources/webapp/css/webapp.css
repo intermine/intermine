@@ -94,6 +94,9 @@ h1, h2, h3 {
     padding:0px;
     background-color:#FFF;
 }
+table#frontpagelayout td table.roundcornerbox td {
+	vertical-align: middle;
+}
 .roundcornerbox h1 {
     margin:0px;
     padding:0px;
@@ -103,9 +106,6 @@ h1, h2, h3 {
 .roundcornerbox img{
 	padding:0px;
 	margin:0px;
-}
-roundcornerbox ul {
-  	list-style-image: url('../images/li.png');
 }
 
 table#headertable{

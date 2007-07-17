@@ -1,6 +1,7 @@
 <%@ tag body-content="scriptless"  %>
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="titleKey" required="false" %>
+<%@ attribute name="height" required="false" %>
 <%@ attribute name="stylename" required="true" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
@@ -38,7 +39,7 @@ if(new java.io.File(application.getRealPath("model")+"/"+stylename+"_L.gif").exi
 	</c:choose>
 	<tr>
 	<c:if test="${useImages}"><c:set var="bodyStyle" value="boxcontent${stylename}"/></c:if>
-	<td style="padding: 5px 15px 5px 15px;" class="${bodyStyle}" colspan="3"><jsp:doBody/></td>
+	<td style="vertical-align:top;padding: 5px 15px 5px 15px;<c:if test="${!empty height}">height:${height}px;</c:if>" class="${bodyStyle}" colspan="3"><jsp:doBody/></td>
 	</tr>
 	<c:if test="${useImages}">
 	<tr valign="bottom">
