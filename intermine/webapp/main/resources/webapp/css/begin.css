@@ -1,0 +1,6 @@
+table#frontpagelayout {
+	width:100%;
+}
+table#frontpagelayout td{
+	vertical-align: top;
+}

@@ -19,7 +19,6 @@
     </script>
     <div class="body">
       <div id="tipbox" >
-        <h3>Did you know?</h3>
         <tiles:insert name="tip.tile" />
       </div>
     </div>
