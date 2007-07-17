@@ -4,6 +4,6 @@
 <!-- tip.jsp -->
 	<h3>Did you know?</h3>
 	<html:link action="/tip?id=${randomTip}" target="_top"><img src="<html:rewrite page="/tips/images/tip${randomTip}.png" />" border="0" height="16" width="16" /></html:link>&nbsp;&nbsp;
-	<jsp:include page="tips/tip${randomTip}_short.jsp"/><html:link action="/tip?id=${randomTip}" target="_top">Read more ...</html:link>
+	<jsp:include page="tips/tip${randomTip}_short.jsp"/>&nbsp;<html:link action="/tip?id=${randomTip}" target="_top">Read more ...</html:link>
 
 <!-- /tip.jsp -->
