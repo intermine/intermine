@@ -42,7 +42,7 @@
 //]]>-->
 </script>
 
-<div id="pageDesc"><p>Bags are holders for lists of data, e.g. a list of gene identifiers and allow you to analyse (exppression data, ...), identify common caracteristics (GO terms, ...) and to run templates directly on these lists.</p></div>
+<div id="pageDesc"><p><fmt:message key="bagBuild.intro"/></p></div>
 <script type="text/javascript">
 	Nifty("div#pageDesc","big");
 </script>
