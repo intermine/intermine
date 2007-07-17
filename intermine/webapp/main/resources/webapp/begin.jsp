@@ -74,7 +74,7 @@
    <td>
       <im:roundbox title="Data" stylename="welcome" height="180">
       <p><em><fmt:message key="begin.data"/></em></p>
-   	<div align="center"><html:link action="/aspects.do"><img src="images/view_all_datasets.png" width="359" height="75" alt="View All Datasets"></html:link></div>
+   	<div align="center"><html:link action="/dataCategories.do"><img src="images/view_all_datasets.png" width="359" height="75" alt="View All Datasets"></html:link></div>
    	</im:roundbox>
    </td>
    <td>
