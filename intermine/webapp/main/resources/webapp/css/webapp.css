@@ -43,6 +43,16 @@ h1, h2, h3 {
   margin-left: 2px;
 }
 
+#logo {
+   margin-left: 5px;
+   margin-right: 10px;
+   float: left;
+}
+ 	
+#title {
+   margin-left: 80px;
+}
+
 .clear-both {
   content: ".";
   visibility: hidden;
@@ -136,7 +146,7 @@ td#quicksearch {
 	padding:10px;
 }
 
-/* style for boxes with heading - used by the front page and the webapp */
+/* style for gray boxes with heading */
 .box .heading, .heading2 {
   border: 1px solid #888;
   padding: 1px;
@@ -152,6 +162,25 @@ td#quicksearch {
   /* needed to prevent the peekaboo bug on IE:
      http://www.positioniseverything.net/explorer/peekaboo.html */
   height: 1.5em;
+}
+
+.heading a {
+  color: black;
+}
+/* The following two rules stop superscript/subscript changing
+   div height in headings. */
+.heading {
+  line-height: 1.4em;
+}
+.heading2, .heading {
+  background: url(../model/heading-bg.gif) top center repeat;
+}
+.heading sub, .heading sup {
+  line-height: 0;
+}
+
+table.query {
+  border: none;
 }
 
 .boxTopRight {
@@ -241,24 +270,7 @@ table td {
   font-size: 13px;
   white-space: nowrap;
 }
-.heading a {
-  color: black;
-}
-/* The following two rules stop superscript/subscript changing
-   div height in headings. */
-.heading {
-  line-height: 1.4em;
-}
-.heading2, .heading {
-  background: url('../model/heading-bg.gif') top center repeat;
-}
-.heading sub, .heading sup {
-  line-height: 0;
-}
 
-table.query {
-  border: none;
-}
 
 table.query td.modelbrowse {
   border-right: 1px solid #888;
