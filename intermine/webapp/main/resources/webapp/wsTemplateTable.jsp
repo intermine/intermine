@@ -20,10 +20,10 @@
 <h2>
  <c:choose>
   <c:when test="${scope == 'global'}">
-   Example Templates
+   <fmt:message key="wsTemplateTable.global"/>
   </c:when>
   <c:otherwise>
-   My Templates
+   <fmt:message key="wsTemplateTable.mine"/>
   </c:otherwise>
  </c:choose>
 </h2>

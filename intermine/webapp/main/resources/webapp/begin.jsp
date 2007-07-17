@@ -9,7 +9,7 @@
 
 <div style="float:left;width:45%;">
 	<im:roundbox title="Templates" stylename="welcome">
-<p>Templates are queries that have been made for you.  Have a look at some examples:</p>
+	<p><fmt:message key="begin.templates"/></p>
 	   <tiles:insert name="webSearchableList.tile">
       	    <!-- optional -->
             <tiles:put name="limit" value="5"/>
@@ -75,8 +75,7 @@
 
 <div style="margin-left:50%;width:45%;">
 	<im:roundbox title="Lists" stylename="welcome" >
-	   <p>Lists of identifiers can be used in queries and can also be analysed
-       (most frequent GO terms, expression data, etc...).</p>
+	   <p><fmt:message key="begin.bags"/></p>
       <p><u>Have a look at some Lists we've made for you:</u></p>
       <tiles:insert name="webSearchableList.tile">
             <tiles:put name="limit" value="3"/>

@@ -9,14 +9,14 @@
 
 <div style="float:left;width:45%;">
 	<%-- class chooser --%>	
-	<im:roundbox title="Select a Data Type" stylename="welcome">	
+	<im:roundbox title="<fmt:message key="customQuery.classChooser"/>" stylename="welcome">	
 		<jsp:include page="queryClassSelect.jsp"/>
 	</im:roundbox>			
 </div>
 
 <div style="margin-left:50%;width:45%;">
 	<%-- model browser --%>	
-	<im:roundbox title="Browse Model" stylename="welcome">	
+	<im:roundbox title="<fmt:message key="customQuery.modelBrowser"/>" stylename="welcome">	
 		<tiles:insert name="tree.tile"/>		
 	</im:roundbox>	
 </div>
