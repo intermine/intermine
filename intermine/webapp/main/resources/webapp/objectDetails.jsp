@@ -140,27 +140,9 @@
 
         </im:body>
         
-        <%-- bags that contain this object --%>
-        
-        <%-- my bags --%>
-        <div class="body" style="background-color:#eeddff; width:250px">
-      	 <tiles:insert name="webSearchableList.tile">
-            <tiles:put name="type" value="bag"/>
-            <tiles:put name="scope" value="user"/>
-            <tiles:put name="showDescriptions" value="true"/>
-     	 </tiles:insert>
-		</div>
 
-		<%-- public bags --%>
-        <div class="body" style="background-color:#ddddff; width:250px">
-    	  <tiles:insert name="webSearchableList.tile">
-         	<tiles:put name="list" value="${publicBagsWithThisObject}"/>
-            <tiles:put name="type" value="bag"/>
-            <tiles:put name="scope" value="global"/>
-            <tiles:put name="tags" value="im:public"/>
-            <tiles:put name="showDescriptions" value="true"/>
-	      </tiles:insert>
-		</div>
+
+
       </td>
 
       <td valign="top" width="66%">
@@ -267,8 +249,37 @@
         </form>
       </c:if>
     </div>
+    
+       <%-- bags that contain this object --%>
+    <div class="body" style="width:50%">
+        <%-- public bags --%>
+        <b>Example lists that contain this object:</b>  
+        <div class="webSearchable">
+    	  <tiles:insert name="webSearchableList.tile">
+         	<tiles:put name="list" value="${publicBagsWithThisObject}"/>
+            <tiles:put name="type" value="bag"/>
+            <tiles:put name="scope" value="global"/>
+            <tiles:put name="showDescriptions" value="true"/>
+            <tiles:put name="showSearchBox" value="false"/>
+	      </tiles:insert>
+		</div>
+        
+        <%-- my bags --%>
+        <b>My lists that contain this object:</b>
+        <div class="webSearchable">
+      	 <tiles:insert name="webSearchableList.tile">
+            <tiles:put name="type" value="bag"/>
+            <tiles:put name="scope" value="user"/>
+            <tiles:put name="showDescriptions" value="true"/>
+             <tiles:put name="showSearchBox" value="false"/>
+     	 </tiles:insert>
+		</div>
+     </div>
 
   </im:box>
+  
+  
+  
 </c:if>
 
 <!-- /objectDetails.jsp -->

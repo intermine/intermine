@@ -8,15 +8,8 @@
 <html:xhtml/>
 <link rel="stylesheet" type="text/css" href="css/begin.css"/>
 
-<table id="frontpagelayout" cellspacing="0" cellpadding="0" >
+<table id="frontpagelayout" cellspacing="0" cellpadding="7" border=1>
    <tr><td>
-   <!-- <p>
-      FlyMine is an integrated database of genomic, expression and protein data for
-      <i>Drosophila</i>, <i>Anopheles</i> and
-      <i>C. elegans</i>.
-      Integrating data makes it possible to run sophisticated data mining queries
-      that span domains of biological knowledge.
-    </p> -->
     
     <div class="body">
       <span style="font-size:+2em;"><a href="what.xml">What is FlyMine?</a></span>&nbsp;&nbsp;<span style="font-size:+1.4em"><a href="tour_1.html" target="_blank"  onclick="javascript:window.open('tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour!</a></span>
@@ -31,6 +24,7 @@
    </tr>
    <tr>
       <td>
+      
 	<im:roundbox title="Templates" stylename="welcome" height="350">
 <p><em><fmt:message key="begin.templates"/></em></p>
 <p><u>Here are some templates you can try:</u></p>
