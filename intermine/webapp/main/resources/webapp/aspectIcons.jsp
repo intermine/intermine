@@ -9,7 +9,7 @@
 <!-- aspectIcons -->
 <div class="body">
 <c:set var="numCols" value="${param.cols != null ? param.cols : 3}"/>
-
+<link rel="stylesheet" type="text/css" href="css/aspectIcons.css"/>
 <tiles:useAttribute id="iconSize" name="iconSize" ignore="true"/>
 
 <c:if test="${empty iconSize}">
