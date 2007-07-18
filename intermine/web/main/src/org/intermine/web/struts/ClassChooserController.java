@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
@@ -64,9 +63,7 @@ public class ClassChooserController extends TilesAction
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         
         Collection qualifiedTypes = os.getModel().getClassNames();
-        Map classCounts = (Map) servletContext.getAttribute("classCounts");
         Map classDescrs = (Map) servletContext.getAttribute("classDescriptions");
-        Map sortedClassDescrs = new TreeMap(classDescrs);
         StringBuffer sb = new StringBuffer();
 
         String superUserName = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
