@@ -51,13 +51,13 @@
       <td>
         <html:form styleId="queryClassForm" action="/queryClassSelect">
           <html:select styleId="queryClassSelector" property="className" size="20" onchange="showClassSelectHelp();">
-            <c:forEach items="${classes}" var="entry">
-              <c:if test="${classCounts[entry.key] > 0}">
-                <html:option value="${entry.key}">
-                  <c:out value="${entry.value}"/>
-                </html:option>
-              </c:if>
-            </c:forEach>
+        	<c:forEach items="${preferredTypeList}" var="type">
+         	 <html:option value="${type}" style="font-weight:bold">${type}</html:option>
+    		</c:forEach>
+       		<html:option value="" style="text-align:center">----------------</html:option>
+      		<c:forEach items="${typeList}" var="type">
+     	     <html:option value="${type}">${type}</html:option>
+     	 	</c:forEach>
           </html:select>
           <br/>
           <html:submit>

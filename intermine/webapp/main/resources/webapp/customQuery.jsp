@@ -10,7 +10,7 @@
 <div style="float:left;width:45%;">
 	<%-- class chooser --%>	
 	<im:roundbox title="Select a Data Type" stylename="welcome">	
-		<jsp:include page="queryClassSelect.jsp"/>
+		<tiles:insert name="classChooser.tile"/>	
 	</im:roundbox>			
 </div>
 

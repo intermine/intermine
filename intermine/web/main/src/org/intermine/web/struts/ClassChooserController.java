@@ -10,12 +10,22 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +37,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+
 
 /**
  * Gets list of help text blurbs for each class, and passes them on to the display page.
@@ -47,29 +58,66 @@ public class ClassChooserController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStoreSummary oss =
+            (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
         String model = os.getModel().getPackageName();
-
+        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+        
+        Collection qualifiedTypes = os.getModel().getClassNames();
         Map classCounts = (Map) servletContext.getAttribute("classCounts");
         Map classDescrs = (Map) servletContext.getAttribute("classDescriptions");
-        Map sortedClassDescrs = new TreeMap (classDescrs);
+        Map sortedClassDescrs = new TreeMap(classDescrs);
         StringBuffer sb = new StringBuffer();
 
-        for (Iterator it = sortedClassDescrs.keySet().iterator(); it.hasNext();) {
-            String helpKey = (String) it.next();
-            String helpText = (String) sortedClassDescrs.get(helpKey);
-            Integer n = (Integer) classCounts.get(model + "." + helpKey);
+        String superUserName = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
 
-            // if this class has objects, add help text to array
-            // for javascript to use on display page
-            if (helpText != null && n != null && n.intValue() > 0) {
-                String escaped = helpText.replaceAll("'", "\\\\'");
-                sb.append("'" + helpKey + "': '" + escaped + "', ");
+        List preferredBagTypeTags = pm.getTags("im:preferredBagType", null, "class", superUserName);
+        
+        ArrayList typeList = new ArrayList();
+        ArrayList preferedTypeList = new ArrayList();
+        
+        // loop through preferred list, add classes to map
+        for (Iterator iter = preferredBagTypeTags.iterator(); iter.hasNext();) {
+            Tag tag = (Tag) iter.next();
+            preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
+        }
+        
+        // loop through all classes, add to map if not one of preferred classes
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
+           
+            String className = (String) iter.next();
+            String unqualifiedName = TypeUtil.unqualifiedName(className);
+
+            if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
+                            && oss.getClassCount(className) > 0) {
+             
+                String helpKey = (String) unqualifiedName;
+                String helpText = (String) classDescrs.get(helpKey);
+                
+                // add to help map.  always 
+                if (helpText != null) {                                 
+                    String escaped = helpText.replaceAll("'", "\\\\'");
+                    sb.append("'" + helpKey + "': '" + escaped + "', ");
+                }
+                // add to map if not on preferred map
+                if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
+                                && oss.getClassCount(className) > 0
+                                && !preferedTypeList.contains(unqualifiedName)) {
+
+                    typeList.add(unqualifiedName);
+
+                }
             }
         }
-        if (sortedClassDescrs.size() > 0) {
-            // remove last comma
-            sb.deleteCharAt(sb.length() - 2);
-        }
+
+
+        Collections.sort(preferedTypeList);
+        Collections.sort(typeList);
+        request.setAttribute("typeList", typeList);
+        request.setAttribute("preferredTypeList", preferedTypeList);
+
+        sb.deleteCharAt(sb.length() - 2);    
         request.setAttribute("helpMap", sb);
         return null;
     }
