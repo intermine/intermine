@@ -12,20 +12,34 @@
 	<im:roundbox title="Select a Data Type" stylename="welcome">	
 		<tiles:insert name="classChooser.tile"/>	
 	</im:roundbox>			
-</div>
 
-<div style="margin-left:50%;width:45%;">
-	<%-- model browser --%>	
-	<im:roundbox title="Browse Data Model" stylename="welcome">	
-		<tiles:insert name="tree.tile"/>		
-	</im:roundbox>	
-</div>
-
-	        <div class="body">
+	<%--  actions --%>
+      <div id="actionsLeft" class="body">
+         <h2>Actions:</h2>
 	          <html:link action="/importQueries?query_builder=yes">
 	            <fmt:message key="begin.import.query"/>
 	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
-	          </html:link><br/>
-	        </div> 
+	          </html:link>
+      </div>
+      
+</div>
+<div style="margin-left:50%;width:45%;">
+	<%-- query history --%>	
+	<im:roundbox title="Query History" stylename="welcome">	
+	 <tiles:insert name="historyQueryView.jsp">
+        <tiles:put name="type" value="history"/>
+      </tiles:insert>
+	</im:roundbox>	
+	
+	<%-- saved queries --%>	
+	<im:roundbox title="Saved Queries" stylename="welcome">	
+	 <tiles:insert name="historyQueryView.jsp">
+        <tiles:put name="type" value="saved"/>
+      </tiles:insert>
+	</im:roundbox>	
+	
+</div>
+
+
 
 <!-- /customQuery.jsp -->

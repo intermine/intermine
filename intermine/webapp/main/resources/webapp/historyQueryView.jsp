@@ -187,13 +187,6 @@
       </c:otherwise>
     </c:choose>
 
-    <c:if test="${type == 'saved'}">
-      <span class="smallnote">
-        <html:link action="/importQueries" titleKey="begin.import.query">
-          <fmt:message key="begin.import.query"/>
-        </html:link>
-      </span>
-    </c:if>
   </im:body>
 
   <c:if test="${empty PROFILE.username}">
