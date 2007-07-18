@@ -58,7 +58,7 @@
             <tiles:put name="showSearchBox" value="false"/>
             <tiles:put name="height" value="100"/>
       </tiles:insert> 
-	<p><html:link action="/bags">View all ${bagCount} bags...</html:link></p>
+	<p><html:link action="/bag">View all ${bagCount} bags...</html:link></p>
       <p><u>...or create your own List:</u></p>
       <div align="center"><html:link action="/bag.do"><img src="images/go_to_bag_page.png" align="center" width="317" height="80" alt="Go To Bag Page" border="0"></html:link></div>
 	</im:roundbox>
