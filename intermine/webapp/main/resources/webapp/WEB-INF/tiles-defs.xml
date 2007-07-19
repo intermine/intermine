@@ -222,6 +222,7 @@
   <definition name="wsTemplateTable.tile" path="/wsTemplateTable.jsp"/>
   <definition name="wsTemplateHeader.tile" path="/wsTemplateHeader.jsp"/>
   <definition name="wsTemplateRow.tile" path="/wsTemplateRow.jsp"/>
+  <definition name="wsTemplateLine.tile" path="/wsTemplateLine.jsp"/>
   <definition name="template.tile" path="/template.jsp" controllerUrl="/initTemplate.do"/>
   <definition name="bagUploadConfirm.tile" path="/bagUploadConfirm.jsp" controllerUrl="/initBagUploadConfirm.do"/>
   <definition name="bagUploadConfirmIssue.tile" path="/bagUploadConfirmIssue.jsp" controllerUrl="/initBagUploadConfirmIssue.do"/>

@@ -21,15 +21,18 @@
 --%>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 
-<%-- if true, show the WebSearchables in a table - tableRow must be set too --%>
+<%-- if true, show the WebSearchables in a table - row must be set too --%>
 <tiles:importAttribute name="makeTable" ignore="true"/>
 
+<%-- if true, show the WebSearchables in a line - row must be set too --%>
+<tiles:importAttribute name="makeLine" ignore="true"/>
+
 <%-- the tile to use for the header of a table - should contain <th> elements --%>
-<tiles:importAttribute name="tableHeader" ignore="true"/>
+<tiles:importAttribute name="header" ignore="true"/>
 
 <%-- the tile to use for showing a single row of a table - should contain <td>
-     elements as it will be wrapped in a <tr> --%>
-<tiles:importAttribute name="tableRow" ignore="true"/>
+     elements as it will be wrapped in a <tr> if makeTable is true--%>
+<tiles:importAttribute name="row" ignore="true"/>
 
 <%-- setting height causes the tile to be wrapped in div of the given height
      and with overflow: auto set --%>
@@ -52,7 +55,7 @@
   <c:set var="showSearchBox" value="true" scope="request"/>
 </c:if>
 
-<c:if test="${showSearchBox}">
+<c:if test="${showSearchBox == 'true'}">
   <p style="white-space:nowrap;">Search:&nbsp;<input type="text" name="" value="" style="width:150">&nbsp;&nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;<img src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites">&nbsp;<img src="images/asc.gif" width="17" height="16" alt="Sort alphabetically">&nbsp;<img src="images/sort_date_ico.gif" width="20" height="16" alt="Sort by Date"></p>
 </c:if>
 
@@ -73,10 +76,10 @@
         <c:when test="${!empty makeTable && makeTable}">
           <%-- make a table --%>
           <table>
-            <c:if test="${!empty tableHeader}">
+            <c:if test="${!empty header}">
               <thead>
                 <tr>
-                  <tiles:insert name="${tableHeader}">
+                  <tiles:insert name="${header}">
                     <tiles:put name="scope" value="${scope}"/>
                     <tiles:put name="tags" value="${tags}"/>
                     <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
@@ -93,7 +96,7 @@
               <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
                 <c:set var="webSearchable" value="${entry.value}" scope="request"/>
                 <tr class="${ageClasses[entry.key]}">
-                  <tiles:insert name="${tableRow}">
+                  <tiles:insert name="${row}">
                     <tiles:put name="wsName" value="${entry.key}"/>
                     <tiles:put name="webSearchable" beanName="webSearchable"/>
                     <tiles:put name="statusIndex" value="${status.index}"/>
@@ -110,6 +113,25 @@
               </c:forEach>
             </tbody>
           </table>
+        </c:when>
+        <c:when test="${!empty makeLine && makeLine}">
+        <%-- make a line --%>
+        <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
+          <c:set var="webSearchable" value="${entry.value}" scope="request"/>
+            <tiles:insert name="${row}">
+              <tiles:put name="wsName" value="${entry.key}"/>
+              <tiles:put name="webSearchable" beanName="webSearchable"/>
+              <tiles:put name="statusIndex" value="${status.index}"/>
+              <tiles:put name="wsCheckBoxId"
+                         value="selected_${scope}_${type}_${status.index}"/>
+              <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
+              <tiles:put name="scope" value="${scope}"/>
+              <tiles:put name="tags" value="${tags}"/>
+              <tiles:put name="showNames" value="${showNames}"/>
+              <tiles:put name="showTitles" value="${showTitles}"/>
+              <tiles:put name="showDescriptions" value="${showDescriptions}"/>
+            </tiles:insert>
+        </c:forEach>
         </c:when>
         <c:otherwise>
           <%-- make a list --%>

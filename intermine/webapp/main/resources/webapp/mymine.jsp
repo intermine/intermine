@@ -22,7 +22,7 @@
       <td width="1%" class="topLeft" nowrap>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       </td>
-      <td width="1%" class="tab ${(MYMINE_PAGE=='bags'||MYMINE_PAGE == null)?'selected':'not-selected'}"
+      <%--<td width="1%" class="tab ${(MYMINE_PAGE=='bags'||MYMINE_PAGE == null)?'selected':'not-selected'}"
         nowrap>
         <c:choose>
           <c:when test="${MYMINE_PAGE=='bags'||MYMINE_PAGE == null}">
@@ -35,9 +35,9 @@
           </c:otherwise>
         </c:choose>
         <im:manualLink section="manualMyMineTabs.shtml#manualBagsMyMine"/>
-      </td>
+      </td>--%>
 
-      <td width="1%" class="tab ${MYMINE_PAGE=='saved'?'selected':'not-selected'}" nowrap="true">
+      <td width="1%" class="tab ${(MYMINE_PAGE=='saved' || MYMINE_PAGE==null)?'selected':'not-selected'}" nowrap="true">
         <c:choose>
           <c:when test="${!loggedin}">
             <span onclick="alert('You need to log in to save queries'); return false;">
@@ -119,10 +119,10 @@
   </table>
 
   <c:choose>
-    <c:when test="${MYMINE_PAGE=='bags'||MYMINE_PAGE==null}">
+    <%--<c:when test="${MYMINE_PAGE=='bags'||MYMINE_PAGE==null}">
       <tiles:insert name="bag.jsp"/>
-    </c:when>
-    <c:when test="${MYMINE_PAGE=='saved'}">
+    </c:when>--%>
+    <c:when test="${MYMINE_PAGE=='saved'  || MYMINE_PAGE==null }">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="saved"/>
       </tiles:insert>

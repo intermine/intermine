@@ -10,10 +10,10 @@
 	
 	<c:choose>
 		<c:when test="${isFavourite == 'true'}">
-	&nbsp;<img class="arrow" id="favourite_${templateName}" src="images/star_active.gif" title="Favourite"/>
+	<img id="favourite_${templateName}" src="images/star_active.gif" title="Favourite"/>
 		</c:when>
 		<c:otherwise>
-	&nbsp;<img class="arrow" id="favourite_${templateName}" style="cursor:pointer;" onclick="setFavouriteTemplate('${templateName}',this)" src="images/star_unactive.gif" title="Set as favourite"/>
+	<img id="favourite_${templateName}" style="cursor:pointer;" onclick="setFavouriteTemplate('${templateName}',this)" src="images/star_unactive.gif" title="Set as favourite"/>
 		</c:otherwise>
 	</c:choose>
 </c:if>
