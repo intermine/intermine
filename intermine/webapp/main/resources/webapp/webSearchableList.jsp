@@ -21,18 +21,18 @@
 --%>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 
-<%-- if true, show the WebSearchables in a table - row must be set too --%>
+<%-- if true, show the WebSearchables in a table - wsRow must be set too --%>
 <tiles:importAttribute name="makeTable" ignore="true"/>
 
-<%-- if true, show the WebSearchables in a line - row must be set too --%>
+<%-- if true, show the WebSearchables in a line - wsRow must be set too --%>
 <tiles:importAttribute name="makeLine" ignore="true"/>
 
 <%-- the tile to use for the header of a table - should contain <th> elements --%>
-<tiles:importAttribute name="header" ignore="true"/>
+<tiles:importAttribute name="wsHeader" ignore="true"/>
 
 <%-- the tile to use for showing a single row of a table - should contain <td>
      elements as it will be wrapped in a <tr> if makeTable is true--%>
-<tiles:importAttribute name="row" ignore="true"/>
+<tiles:importAttribute name="wsRow" ignore="true"/>
 
 <%-- setting height causes the tile to be wrapped in div of the given height
      and with overflow: auto set --%>
@@ -76,10 +76,10 @@
         <c:when test="${!empty makeTable && makeTable}">
           <%-- make a table --%>
           <table>
-            <c:if test="${!empty header}">
+            <c:if test="${!empty wsHeader}">
               <thead>
                 <tr>
-                  <tiles:insert name="${header}">
+                  <tiles:insert name="${wsHeader}">
                     <tiles:put name="scope" value="${scope}"/>
                     <tiles:put name="tags" value="${tags}"/>
                     <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
@@ -96,7 +96,7 @@
               <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
                 <c:set var="webSearchable" value="${entry.value}" scope="request"/>
                 <tr class="${ageClasses[entry.key]}">
-                  <tiles:insert name="${row}">
+                  <tiles:insert name="${wsRow}">
                     <tiles:put name="wsName" value="${entry.key}"/>
                     <tiles:put name="webSearchable" beanName="webSearchable"/>
                     <tiles:put name="statusIndex" value="${status.index}"/>
@@ -118,7 +118,7 @@
         <%-- make a line --%>
         <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
           <c:set var="webSearchable" value="${entry.value}" scope="request"/>
-            <tiles:insert name="${row}">
+            <tiles:insert name="${wsRow}">
               <tiles:put name="wsName" value="${entry.key}"/>
               <tiles:put name="webSearchable" beanName="webSearchable"/>
               <tiles:put name="statusIndex" value="${status.index}"/>
