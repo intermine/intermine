@@ -31,7 +31,7 @@
    </c:otherwise>
 </c:choose>
 
-<tiles:insert name="webSearchableList.tile">
+<tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="bag"/>
   <tiles:put name="scope" value="${scope}"/>
   <tiles:put name="tags" value="${tags}"/>

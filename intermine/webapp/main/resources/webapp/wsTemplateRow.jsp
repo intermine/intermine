@@ -20,7 +20,7 @@
 
 <c:if test="${!empty makeCheckBoxes}">
   <td>
-    <html:multibox property="selected" styleId="selected_template_${statusIndex}"
+    <html:multibox property="selected" styleId="${wsCheckBoxId}"
                    onclick="setDeleteDisabledness(this.form, '${type}')">
       <c:out value="${wsName}"/>
     </html:multibox>

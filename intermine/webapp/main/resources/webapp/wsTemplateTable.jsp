@@ -27,7 +27,7 @@
   </c:otherwise>
  </c:choose>
 </h2>
-<tiles:insert name="webSearchableList.tile">
+<tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="template"/>
   <tiles:put name="scope" value="${scope}"/>
   <tiles:put name="tags" value="${tags}"/>

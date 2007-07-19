@@ -189,3 +189,35 @@ function getResults(qid, timeout, userCallback, userData) {
                + userData + ")", timeout);
 }
 
+// call AjaxServices.filterWebSearchables() then hide those WebSearchables in
+// the webSearchableList that don't match
+function filterWebSearchables(object, scope, type) {
+    var value = object.value;
+    var inputArray = document.getElementsByTagName("div");
+    if (value.length > 2) {
+        function filterCallBack(filteredList) {
+            var filteredHash = new Array();
+            for (var el in filteredList) {
+                var wsName = filteredList[el][0];
+                filteredHash[scope + '_' + type + '_item_' + wsName] = 1;
+            }
+
+            for(var i=0; i<inputArray.length; i++) {
+                if (inputArray[i].id.match(new RegExp('^' + scope + '_' + type))) {
+                    if (filteredHash[inputArray[i].id]) {
+                        inputArray[i].style.display='block';
+                    } else {
+                        inputArray[i].style.display='none';
+                    }
+                }
+            }
+        }
+        AjaxServices.filterWebSearchables(scope, type, null, object.value, filterCallBack);
+    } else {
+        for(var i=0; i<inputArray.length; i++) {
+            if (inputArray[i].id.match(new RegExp('^' + scope + '_' + type))) {
+                inputArray[i].style.display='block';
+            }
+        }
+    }
+}

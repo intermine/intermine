@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- webSearchableList.jsp -->
 
@@ -11,14 +12,13 @@
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
-<tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <link rel="stylesheet" type="text/css" href="css/webSearchableList.css"/>
 
 <%-- if true this tile must be inside a <form> otherwise this tomcat error
      will appear in the log:
-         Cannot find bean under name org.apache.struts.taglib.html.BEAN
---%>
+     Cannot find bean under name org.apache.struts.taglib.html.BEAN
+  --%>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 
 <%-- if true, show the WebSearchables in a table - wsRow must be set too --%>
@@ -51,15 +51,8 @@
 <c:if test="${empty showDescriptions}">
   <c:set var="showDescriptions" value="true" scope="request"/>
 </c:if>
-<c:if test="${empty showSearchBox}">
-  <c:set var="showSearchBox" value="true" scope="request"/>
-</c:if>
 
-<c:if test="${showSearchBox == 'true'}">
-  <p style="white-space:nowrap;">Search:&nbsp;<input type="text" name="" value="" style="width:150">&nbsp;&nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;<img src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites">&nbsp;<img src="images/asc.gif" width="17" height="16" alt="Sort alphabetically">&nbsp;<img src="images/sort_date_ico.gif" width="20" height="16" alt="Sort by Date"></p>
-</c:if>
-
-<c:if test="${!empty height}">
+<c:if test="${!empty height && fn:length(filteredWebSearchables) > 2}">
   <div style="height: ${height}px; overflow: auto;">
 </c:if>
 
@@ -95,13 +88,13 @@
             <tbody>
               <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
                 <c:set var="webSearchable" value="${entry.value}" scope="request"/>
-                <tr class="${ageClasses[entry.key]}">
+                <tr id='${scope}_${type}_item_${entry.value.name}' class="${ageClasses[entry.key]}">
                   <tiles:insert name="${wsRow}">
                     <tiles:put name="wsName" value="${entry.key}"/>
                     <tiles:put name="webSearchable" beanName="webSearchable"/>
                     <tiles:put name="statusIndex" value="${status.index}"/>
                     <tiles:put name="wsCheckBoxId"
-                               value="selected_${scope}_${type}_${status.index}"/>
+                               value="selected_${scope}_${type}_${wsName}"/>
                     <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
                     <tiles:put name="scope" value="${scope}"/>
                     <tiles:put name="tags" value="${tags}"/>
@@ -131,33 +124,34 @@
               <tiles:put name="showTitles" value="${showTitles}"/>
               <tiles:put name="showDescriptions" value="${showDescriptions}"/>
             </tiles:insert>
-        </c:forEach>
+          </c:forEach>
         </c:when>
         <c:otherwise>
           <%-- make a list --%>
           <ul>
             <c:forEach items="${filteredWebSearchables}" var="entry">
-              <li/>
-              <div class="wsListElement">
-                <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${entry.key}">${entry.value.title}
-                  <c:choose>
-                    <c:when test="${type=='template'}">
-                      <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
-                    </c:when>
-                    <c:otherwise>
-                      <img border="0" class="arrow" src="images/bag_ico.gif" alt="-&gt;"/>
-	            </c:otherwise>
-	          </c:choose>
-                </html:link>
-                <tiles:insert name="starTemplate.tile" flush="false">
-                  <tiles:put name="templateName" value="${entry.value.title}"/>
-                </tiles:insert>
-              </div>
-              <c:if test="${showDescriptions}">
-                <div class="wsListDescription">
-                  ${entry.value.description}
+              <li id='${scope}_${type}_item_${entry.value.name}'>
+                <div class="wsListElement">
+                  <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${entry.key}">${entry.value.title}
+                    <c:choose>
+                      <c:when test="${type=='template'}">
+                        <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
+                      </c:when>
+                      <c:otherwise>
+                        <img border="0" class="arrow" src="images/bag_ico.gif" alt="-&gt;"/>
+	              </c:otherwise>
+	            </c:choose>
+                  </html:link>
+                  <tiles:insert name="starTemplate.tile" flush="false">
+                    <tiles:put name="templateName" value="${entry.value.title}"/>
+                  </tiles:insert>
                 </div>
-              </c:if>
+                <c:if test="${showDescriptions}">
+                  <div class="wsListDescription">
+                    ${entry.value.description}
+                  </div>
+                </c:if>
+              </li>
             </c:forEach>
           </ul>
         </c:otherwise>
@@ -168,7 +162,7 @@
 
 
 <c:if test="${!empty height}">
-  </div>
+</div>
 </c:if>
 
 <!-- /webSearchableList.jsp -->
