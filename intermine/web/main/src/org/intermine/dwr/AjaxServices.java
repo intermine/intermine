@@ -12,7 +12,9 @@ package org.intermine.dwr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.path.Path;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -38,10 +41,13 @@ import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResultsSimple;
 import org.intermine.web.logic.results.WebTable;
+import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
+
+import java.io.IOException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +55,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.lucene.queryParser.ParseException;
 import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 
@@ -339,5 +346,66 @@ public class AjaxServices
             LOG.debug("query qid " + qid + " still running, making client wait");
             return null;
         }
+    }
+    
+    /**
+     * Given a scope, type, tags and some filter text, produce a list of matching WebSearchable, in
+     * a format useful in JavaScript.  Each element of the returned List is a List containing a
+     * WebSearchable name, a score (from Lucene) and a string with the matching parts of the
+     * description highlighted. 
+     * @param scope the scope (from TemplateHelper.GLOBAL_TEMPLATE or TemplateHelper.USER_TEMPLATE,
+     * even though not all WebSearchables are templates)
+     * @param type the type (from TagTypes)
+     * @param tags the tags to filter on
+     * @param filterText the text to pass to Lucene
+     * @return a List of Lists
+     */
+    public static List<String> filterWebSearchables(String scope, String type,
+                                                    List<String> tags, String filterText) {
+        WebContext ctx = WebContextFactory.get();        
+        ServletContext servletContext = ctx.getServletContext();
+        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+        HttpSession session = ctx.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+
+        Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
+        Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
+        Map<WebSearchable, String> highlightedMap = new HashMap<WebSearchable, String>();
+        Map<WebSearchable, String> descrMap = new HashMap<WebSearchable, String>();
+        try {
+            TemplateHelper.runLeuceneSearch(filterText, scope, type, profile, servletContext,
+                                            hitMap, scopeMap, highlightedMap, descrMap);
+        } catch (ParseException e) {
+            LOG.error("couldn't run lucene filter", e);
+            return Collections.EMPTY_LIST;
+        } catch (IOException e) {
+            LOG.error("couldn't run lucene filter", e);
+            return Collections.EMPTY_LIST;
+        }
+
+        Map<String, WebSearchable> wsMap = new LinkedHashMap<String, WebSearchable>();
+        
+        for (WebSearchable ws: hitMap.keySet()) {
+            wsMap.put(ws.getName(), ws);
+        }
+        
+        Map<String, ? extends WebSearchable> filteredWsMap;
+        if (profile.getUsername() != null && tags.size() > 0) {
+            filteredWsMap = pm.filterByTags(wsMap, tags, type, profile.getUsername());
+        } else {
+            filteredWsMap = wsMap;
+        }
+
+        List returnList = new ArrayList<String>();
+        
+        for (WebSearchable ws: filteredWsMap.values()) {
+            List row = new ArrayList();
+            row.add(ws.getName());
+            row.add(hitMap.get(ws));
+            row.add(highlightedMap.get(ws));
+            returnList.add(row);
+        }
+        
+        return returnList;
     }
 }

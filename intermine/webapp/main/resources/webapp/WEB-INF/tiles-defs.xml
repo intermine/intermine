@@ -216,6 +216,7 @@
   <definition name="search.tile" path="/search.jsp" controllerUrl="/initSearch.do"/>
   <definition name="webSearchableList.tile" path="/webSearchableList.jsp"
               controllerUrl="/initWebSearchableList.do"/>
+  <definition name="wsFilterList.tile" path="/wsFilterList.jsp"/>
   <definition name="wsBagTable.tile" path="/wsBagTable.jsp"/>
   <definition name="wsBagHeader.tile" path="/wsBagHeader.jsp"/>
   <definition name="wsBagRow.tile" path="/wsBagRow.jsp"/>
