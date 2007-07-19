@@ -26,7 +26,8 @@ public class BuildBagForm extends ActionForm
     private String text;
     private String type;
     private String extraFieldValue;
-
+    private String whichInput;
+    
     /**
      * Get the bag type
      * @return the bag type string
@@ -99,4 +100,23 @@ public class BuildBagForm extends ActionForm
     public void setExtraFieldValue(String extraFieldValue) {
         this.extraFieldValue = extraFieldValue;
     }
+    
+    /**
+     * Set the method the user used to upload her bag.  
+     * @param whichInput Which method the user used: paste or file
+     */
+    public void setWhichInput(String whichInput) {
+        this.whichInput = whichInput;
+    }
+
+    /**
+     * Get the method the user used to upload the bag.  Will be either 'paste' or 'file'.  Paste if
+     * they typed in the entries via the form.  File if they uploaded a file from their computer.
+     * @return which method the user used to upload her bag: paste or file
+     */
+    public String getWhichInput() {
+        return whichInput;
+    }
+
+    
 }

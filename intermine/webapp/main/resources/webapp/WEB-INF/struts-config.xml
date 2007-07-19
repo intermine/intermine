@@ -372,8 +372,8 @@
     </action>
     <action path="/initAspect" type="org.intermine.web.struts.AspectController">
     </action>
-    <action path="/initBagBuild" name="buildBagForm" type="org.intermine.web.struts.BagController">
-    </action>
+    <action path="/initBagBuild" name="buildBagForm" type="org.intermine.web.struts.BagBuildController">
+    </action>  
     <action path="/initBagUploadConfirm" name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmController" validate="false">
     </action>
     <action path="/initBagUploadConfirmIssue" type="org.intermine.web.struts.BagUploadConfirmIssueController">
