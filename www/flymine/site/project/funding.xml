@@ -5,50 +5,21 @@
   <section>
     <title>FlyMine funding</title>
 
-    <para>The FlyMine project has been generously supported by the Wellcome
-    Trust (Grant no. 067205) for 5 years, subject to a review in year 3,
-    awarded to M. Ashburner, G. Micklem, S. Russell, K. Lilley and K.
-    Mizuguchi.</para>
-
-    <para>Dr. G Micklem was supported by the BBSRC and the Isaac Newton Trust
-    until March 2004.</para>
-
-    <para>Wenyan Ji is supported by The Cambridge-MIT Institute.</para>
-
     <table>
-      <title></title>
-
-      <tgroup cols="2">
-        <tbody>
-          <row>
-            <entry><ulink url="http://www.wellcome.ac.uk"> <inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../images/wellcome_large.gif" />
-                </imageobject>
-              </inlinemediaobject> </ulink></entry>
-
-            <entry><ulink url="http://www.bbsrc.ac.uk"> <inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../images/bbsrc.gif" />
-                </imageobject>
-              </inlinemediaobject> </ulink></entry>
-            </row>
-            <row>
-            <entry><ulink url="http://www.trin.cam.ac.uk"> <inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../images/trinity.gif" />
-                </imageobject>
-              </inlinemediaobject> </ulink></entry>
-
-            <entry><ulink url="http://www.cambridge-mit.org">
-            <inlinemediaobject>
-                <imageobject>
-                  <imagedata fileref="../images/cmi.gif" />
-                </imageobject>
-              </inlinemediaobject> </ulink></entry>
-          </row>
-        </tbody>
-      </tgroup>
+    <title></title>
+    <tgroup cols="2">
+    <tbody>
+    <row>
+    <entry>We gratefully acknowledge the support of the Wellcome Trust for the FlyMine/InterMine project through grants awarded to M. Ashburner (PI 2002-2007), G. Micklem (PI 2008 onwards), S. Russell, K. Lilley and K. Mizuguchi.</entry>
+    <entry> 
+    <ulink url="http://www.wellcome.ac.uk"> <inlinemediaobject>
+    <imageobject>
+    <imagedata fileref="../images/wellcome_logo.png" />
+    </imageobject>
+    </inlinemediaobject> </ulink></entry>
+    </row>
+    </tbody>
+    </tgroup>
     </table>
   </section>
 </article>
