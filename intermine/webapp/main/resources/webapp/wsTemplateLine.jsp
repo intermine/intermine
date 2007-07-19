@@ -16,8 +16,13 @@
 <tiles:importAttribute name="wsCheckBoxId" ignore="true"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 
+<c:set var="type" value="template"/>
+
 <!-- wsTemplateLine.jsp -->
 <div class="wsTempateLine" id="${scope}_template_item_${webSearchable.name}">
+<div style="float: right">
+  <span id="${scope}_${type}_item_${webSearchable.name}_score"/>
+</div>
 <c:if test="${!empty makeCheckBoxes}">
     <html:multibox property="selected" styleId="${scope}_template_chck_${webSearchable.name}"
                    onclick="setDeleteDisabledness(this.form, '${type}')">

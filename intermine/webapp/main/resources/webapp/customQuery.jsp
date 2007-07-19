@@ -8,10 +8,10 @@
 <html:xhtml/>
 
 <div style="float:left;width:45%;">
-	<%-- class chooser --%>	
-	<im:roundbox title="Select a Data Type" stylename="welcome">	
-		<tiles:insert name="classChooser.tile"/>	
-	</im:roundbox>			
+	<%-- class chooser --%>
+	<im:roundbox title="Select a Data Type" stylename="welcome">
+		<tiles:insert name="classChooser.tile"/>
+	</im:roundbox>
 
 	<%--  actions --%>
       <div id="actionsLeft" class="body">
@@ -21,23 +21,23 @@
 	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
 	          </html:link>
       </div>
-      
+
 </div>
 <div style="margin-left:50%;width:45%;">
-	<%-- query history --%>	
-	<im:roundbox title="Query History" stylename="welcome">	
+	<%-- query history --%>
+	<im:roundbox title="Query History" stylename="welcome">
 	 <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="history"/>
       </tiles:insert>
-	</im:roundbox>	
-	
-	<%-- saved queries --%>	
-	<im:roundbox title="Saved Queries" stylename="welcome">	
+	</im:roundbox>
+
+	<%-- saved queries --%>
+	<im:roundbox title="Saved Queries" stylename="welcome">
 	 <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="saved"/>
       </tiles:insert>
-	</im:roundbox>	
-	
+	</im:roundbox>
+
 </div>
 
 
