@@ -89,7 +89,7 @@ public class BuildBagAction extends InterMineAction
 
         BufferedReader reader = null;
 
-        if (request.getParameter("paste") != null) {
+        if (request.getParameter("whichInput").equals("paste")) {
             String trimmedText = buildBagForm.getText().trim();
             if (trimmedText.length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagPaste"), request);
@@ -97,7 +97,7 @@ public class BuildBagAction extends InterMineAction
             }
             reader = new BufferedReader(new StringReader(trimmedText));
         } else {
-            if (request.getParameter("file") != null) {
+            if (request.getParameter("whichInput").equals("file")) {
                 FormFile formFile = buildBagForm.getFormFile();
                 if (formFile == null || formFile.getFileName() == null
                                 || formFile.getFileName().length() == 0) {

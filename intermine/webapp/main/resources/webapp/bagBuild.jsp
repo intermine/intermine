@@ -12,13 +12,20 @@
 <!--//<![CDATA[
    function switchInputs(open, close) {
       document.getElementById(open + 'Input').disabled = false;
-      document.getElementById(open + 'Submit').disabled = false;
-      document.getElementById(open + 'Toggle').src = 'images/disclosed.gif';
-
       document.getElementById(close + 'Input').disabled = true;
-      document.getElementById(close + 'Submit').disabled = true;
-      document.getElementById(close + 'Toggle').src = 'images/undisclosed.gif';
-   }
+      
+      document.getElementById(open + 'Div').style.backgroundColor = '#F5F0FF';
+      document.getElementById(close + 'Div').style.backgroundColor = '#fff';
+      
+      document.getElementById('whichInput').value = open;
+      
+      document.getElementById('submitBag').disabled = false;
+    }
+    
+    function loadExample(example) {
+    	document.getElementById('pasteInput').value = example;    
+    }
+
 
    var typeToEnable = new Array();
    <c:forEach items="${typesWithConnectingField}" var="type">
@@ -50,11 +57,7 @@
 <im:roundbox titleKey="bagBuild.makeNewBag" stylename="welcome">
   <div class="bagBuild">
     <html:form action="/buildBag" focus="text" method="post" enctype="multipart/form-data">
-      <p>
-        <fmt:message key="bagBuild.bagFromText1"/>
-        <p/>
-      <fmt:message key="bagBuild.bagFromText2"/>
-      <br/>
+      <p><fmt:message key="bagBuild.bagFromText1"/></p>
       <fmt:message key="bagBuild.bagType"/>
       <html:select styleId="typeSelector" property="type" onchange="typeChanged()">
     	<c:forEach items="${preferredTypeList}" var="type">
@@ -78,71 +81,54 @@
           </html:select>
         </p>
       </c:if>
-    </p>
-    <h4>
-      <a href="javascript:switchInputs('paste', 'file');">
-        <img id='pasteToggle' src="images/disclosed.gif"/>
-        <fmt:message key="bagBuild.bagPaste"/>
-      </a>
-    </h4>
-    <table>
-      <tr>
-        <td>
-          <html:textarea styleId="pasteInput" disabled="false" property="text" rows="10" cols="40"/>
-        </td>
+
+    
+    <%-- paste header --%>
+    <div id="pasteDiv" onclick="switchInputs('paste','file');">
+    
+     <%-- paste header --%>
+    <h4><img src="images/disclosed.gif"/><fmt:message key="bagBuild.bagPaste"/></h4>
+    
+    <%-- textarea --%>
+    <div align="center"><html:textarea styleId="pasteInput" property="text" rows="10" cols="40" /></div>
+       
+    <%-- example bag --%>
         <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
         <c:set var="bagExampleIdentifiers" value="${WEB_PROPERTIES['bag.example.identifiers']}"/>
-        <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">
-          <td rowspan="5">
+        <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">          
             <div>
               <html:link href=""
                          onmouseover="javascript:$('bagExampleCommentDiv').style.visibility = 'visible'"
                          onmouseout="javascript:$('bagExampleCommentDiv').style.visibility = 'hidden'"
-                         onclick="javascript:$('pasteInput').value='${bagExampleIdentifiers}'; return false;">
-                &lt;- example
+                         onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
+                (click here to see an example)
               </html:link>
             </div>
             <div id="bagExampleCommentDiv" style="visibility: hidden">
               ${bagExampleComment}
-            </div>
-          </td>
-        </c:if>
-      </tr>
-      <tr>
-        <td align="right">
-                 
-          <html:submit styleId="pasteSubmit" property="paste">
-            <fmt:message key="bagBuild.makeBag"/>
-          </html:submit>
-          <input type="button" onClick="text.value='';" value="Reset">
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>
-            <fmt:message key="bagBuild.or"/>
-          </p>
+            </div>         
+        </c:if>       
 
-          <h4>
-            <a href="javascript:switchInputs('file', 'paste');">
-              <img id='fileToggle' src="images/undisclosed.gif"/>
-              <fmt:message key="bagBuild.bagFromFile"/>
-            </a>
-          </h4>
-        </td>
-      </tr>
-      <tr><td>
-          <fmt:message key="bagBuild.bagFromFile"/>:
-          <br/>
-          <html:file styleId="fileInput" property="formFile" disabled="true"/>
-      </td></tr>
-      <tr>
-        <td align="right">
-          <html:submit styleId="fileSubmit" property="file" disabled="true">
-            <fmt:message key="bagBuild.makeBag"/>
-          </html:submit>
-        </td>
-    </tr></table>
+    <%-- reset button --%>
+    <div align="right"><input type="button" onClick="text.value='';" value="Reset" /></div>
+    </div>
+    
+    <p><fmt:message key="bagBuild.or"/></p>
+      
+    <%-- file header --%>
+   <div id="fileDiv"  onclick="switchInputs('file','paste');">	
+	 
+	 <%-- file header --%>
+     <h4><img src="images/disclosed.gif"/><fmt:message key="bagBuild.bagFromFile"/></h4>
+      	
+     <%-- file input --%>
+     <div align="center"><html:file styleId="fileInput" property="formFile" /></div>
+     <br/><br/>
+    </div>
+      
+    <div align="center"><html:submit disabled="true" styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit></div>    
+
+    <html:hidden styleId="whichInput" property="whichInput" />
   </html:form>
 </div>
 </im:roundbox>
