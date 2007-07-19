@@ -1,7 +1,9 @@
-<%@ tag body-content="empty" %>
+<%@ tag body-content="scriptless" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@ attribute name="loginMessage" required="false" %>
 
 <% 
 String returnToPath = "/" + (String) request.getAttribute("pageName") + ".do";
@@ -21,7 +23,10 @@ if (returnToPath != null) {
 <c:choose>
   <c:when test="${!empty PROFILE_MANAGER && empty PROFILE.username}">
     <html:link action="/login.do${returnToString}">
-      <fmt:message key="menu.login"/>
+      <c:if test="${empty loginMessage}">
+        <fmt:message var="loginMessage" key="menu.login"/>
+      </c:if>
+      ${loginMessage}
     </html:link>
   </c:when>
   <c:otherwise>

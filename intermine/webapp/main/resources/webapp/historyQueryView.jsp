@@ -191,7 +191,9 @@
 
   <c:if test="${empty PROFILE.username}">
     <div class="body">
-      <html:link action="/login"><fmt:message key="menu.login"/>...</html:link>&nbsp;&nbsp;
+      <fmt:message var="loginMessage" key="menu.login"/>
+      <c:set var="loginMessage" value="${loginMessage}..."/>
+      <im:login loginMessage="${loginMessage}"/> &nbsp;&nbsp;
       <fmt:message key="history.login.help"/>
     </div>
   </c:if>
