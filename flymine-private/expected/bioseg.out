@@ -1,0 +1,438 @@
+--
+--  Test bioseg datatype
+--
+--
+-- first, define the datatype.  Turn off echoing so that expected file
+-- does not depend on contents of bioseg.sql.
+--
+SET client_min_messages = warning;
+\set ECHO none
+RESET client_min_messages;
+--
+-- testing the input and output functions
+--
+-- Any number
+SELECT '1'::bioseg AS bioseg;
+ bioseg 
+--------
+ 1
+(1 row)
+
+SELECT '99999999'::bioseg AS bioseg;
+  bioseg  
+----------
+ 99999999
+(1 row)
+
+-- Finite intervals
+SELECT '1..2'::bioseg AS bioseg;
+ bioseg 
+--------
+ 1..2
+(1 row)
+
+SELECT '10000000..20000000'::bioseg AS bioseg;
+       bioseg       
+--------------------
+ 10000000..20000000
+(1 row)
+
+-- invalid input
+SELECT ''::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  end of string found when expecting an integer
+SELECT '..10'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  no integer found at: ..10
+SELECT '0..10'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  integer 0 at: 0..10 is out of range - must be >= 1
+SELECT '0'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  integer 0 at: 0 is out of range - must be >= 1
+SELECT '-10'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  integer -10 at: -10 is out of range - must be >= 1
+SELECT '-10..-1'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  integer -10 at: -10..-1 is out of range - must be >= 1
+SELECT '-10..0'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  integer -10 at: -10..0 is out of range - must be >= 1
+SELECT '-10..1'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  integer -10 at: -10..1 is out of range - must be >= 1
+SELECT 'ABC'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  no integer found at: ABC
+SELECT '1ABC'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  number followed by something other than ..: ABC
+SELECT '1.'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  number followed by something other than ..: 
+SELECT '1.....'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  no integer found at: ..
+SELECT '.1'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  no integer found at: .1
+SELECT '1..2.'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  garbage at end of string: .
+SELECT '1 e7'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  number followed by something other than ..:  e7
+SELECT '1e700'::bioseg AS bioseg;
+ERROR:  bad bioseg representation
+DETAIL:  number followed by something other than ..: e700
+--
+-- testing the  operators
+--
+-- equality/inequality:
+--
+SELECT '24..33'::bioseg = '24..33'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '24..50'::bioseg != '24..33'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+-- overlap
+--
+SELECT '2'::bioseg && '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2'::bioseg && '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2..2'::bioseg && '2..2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2..2'::bioseg && '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2..2'::bioseg && '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2..2'::bioseg && '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2'::bioseg && '2..2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2'::bioseg && '2..2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2'::bioseg && '2..3'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+-- overlap on the left
+--
+SELECT '2'::bioseg &< '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2'::bioseg &< '3'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '1..2'::bioseg &< '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '1..2'::bioseg &< '3'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '1..2'::bioseg &< '1..2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '1..2'::bioseg &< '1..3'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '1..2'::bioseg &< '2..3'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '1..2'::bioseg &< '3..4'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+-- overlap on the right
+--
+SELECT '2'::bioseg &> '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '3'::bioseg &> '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2'::bioseg &> '1..2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '3'::bioseg &> '1..2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '1..2'::bioseg &> '1..2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '1..3'::bioseg &> '1..3'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2..3'::bioseg &> '1..2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '3..4'::bioseg &> '1..2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+-- left
+--
+SELECT '2'::bioseg << '2'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '2'::bioseg << '3'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2..2'::bioseg << '2'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '2..3'::bioseg << '3'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '2..3'::bioseg << '3'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '2..3'::bioseg << '2..3'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '2..3'::bioseg << '2..4'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '2..3'::bioseg << '3..4'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '2..3'::bioseg << '3..5'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+-- right
+--
+SELECT '2'::bioseg >> '2'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '3'::bioseg >> '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2'::bioseg >> '2..2'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '3'::bioseg >> '2..3'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '2..3'::bioseg >> '2..3'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '3..4'::bioseg >> '2..3'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+-- "contained in" (the left value belongs within the interval specified in the right value):
+--
+SELECT '2'::bioseg        <@ '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2'::bioseg        <@ '2..3'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '3'::bioseg        <@ '2..3'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '3..4'::bioseg  <@ '2..5'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2..5'::bioseg  <@ '2..5'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+-- "contains" (the left value contains the interval specified in the right value):
+--
+SELECT '2'::bioseg @> '2'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+SELECT '2..4'::bioseg <@ '3'::bioseg AS bool;
+ bool 
+------
+ f
+(1 row)
+
+SELECT '3'::bioseg <@ '2..4'::bioseg AS bool;
+ bool 
+------
+ t
+(1 row)
+
+-- Load some example data and build the index
+-- 
+CREATE TABLE test_bioseg (s bioseg);
+\copy test_bioseg from 'data/test_bioseg.data'
+CREATE INDEX test_bioseg_ix ON test_bioseg USING gist (s);
+SELECT count(*) FROM test_bioseg WHERE s @> '11..11';
+ count 
+-------
+    14
+(1 row)
+
+-- Test sorting 
+SELECT * FROM test_bioseg WHERE s @> '11..20' GROUP BY s;
+    s    
+---------
+ 4..65
+ 5..60
+ 6..95
+ 6..105
+ 7..75
+ 7..92
+ 7..95
+ 9..105
+ 10..35
+ 10..37
+ 10..40
+ 10..55
+ 10..130
+(13 rows)
+
+DROP TABLE test_bioseg;
