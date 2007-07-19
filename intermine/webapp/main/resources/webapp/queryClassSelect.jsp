@@ -19,13 +19,14 @@
       var fullSelectedClassName = document.queryClassSelectForm.className[i].value;
       var selectedClassName =
           fullSelectedClassName.substring(fullSelectedClassName.lastIndexOf('.')+1);
-      var helpText = helpMap[selectedClassName];
-      if (!helpText) {
-          helpText = "no description available";
+      if (selectedClassName.length > 0) {
+          var helpText = helpMap[selectedClassName];
+          document.getElementById('queryClassSelect').innerHTML =
+              selectedClassName + ":  " + helpText;
+          document.getElementById('classSelectDiv').style.display = 'block';
+      } else {
+          $('classSelectDiv').style.display='none';
       }
-      document.getElementById('queryClassSelect').innerHTML =
-          selectedClassName + ":  " + helpText;
-      document.getElementById('classSelectDiv').style.display = 'block';
   }
 
   function handleClassClick(e) {
