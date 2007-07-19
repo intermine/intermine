@@ -189,21 +189,36 @@ function getResults(qid, timeout, userCallback, userData) {
                + userData + ")", timeout);
 }
 
+var callId = 0;
+var currentFilterCallbacks = new Array();
+
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
 // the webSearchableList that don't match
 function filterWebSearchables(object, scope, type) {
     var value = object.value;
     var inputArray = document.getElementsByTagName("div");
+    var pattern = new RegExp('^' + scope + '_' + type + '_item_(.*)');
+
     function showAll() {
         for(var i=0; i<inputArray.length; i++) {
-            if (inputArray[i].id.match(new RegExp('^' + scope + '_' + type))) {
+            var result;
+            if ((result = pattern.exec(inputArray[i].id)) != null) {
                 inputArray[i].style.display='block';
+                var scoreId = scope + '_' + type + '_item_' + result[1] + '_score';
+                $(scoreId).innerHTML = '';
             }
         }
         $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
     }
-    if (value.length > 2) {
-        function filterCallBack(filteredList) {
+    if (value.length > 1) {
+        function filterCallBack(cbResult) {
+            var callId = cbResult[0];
+            var filteredList = cbResult.slice(1);
+
+            if (currentFilterCallbacks[scope + "_" + type] != callId) {
+                return;
+            }
+
             if (filteredList.length == 0) {
                 showAll();
             } else {
@@ -215,20 +230,24 @@ function filterWebSearchables(object, scope, type) {
                 }
 
                 for(var i=0; i<inputArray.length; i++) {
-                    if (inputArray[i].id.match(new RegExp('^' + scope + '_' + type + '_item'))) {
+                    if ((result = pattern.exec(inputArray[i].id)) != null) {
                         if (scoreHash[inputArray[i].id]) {
                             inputArray[i].style.display='block';
+                            var scoreId = scope + '_' + type + '_item_' + result[1] + '_score';
+                            $(scoreId).innerHTML = scoreHash[inputArray[i].id];
                         } else {
                             inputArray[i].style.display='none';
                         }
                     }
                 }
 
-                function sortWsFilter(line1, line2) {
-                    if (scoreHash[line1.id] > scoreHash[line2.id]) {
+                function sortWsFilter(el1, el2) {
+                    var el1score = scoreHash[el1.id];
+                    var el2score = scoreHash[el2.id]
+                    if (el1score > el2score) {
                         return -1;
                     } else {
-                        if (scoreHash[line1.id] < scoreHash[line2.id]) {
+                        if (el1score < el2score) {
                             return 1;
                         } else {
                             return 0;
@@ -236,34 +255,31 @@ function filterWebSearchables(object, scope, type) {
                     }
                 }
 
-                sortDivs($(scope + '_' + type + '_ws_list'), sortWsFilter);
+                var parent = $(scope + '_' + type + '_ws_list');
+                var divs = new Array();
+
+                for (var i in parent.childNodes) {
+                    var child = parent.childNodes[i];
+                    if (child.tagName == 'DIV' && scoreHash[child.id]) {
+                        divs.push(child);
+                    }
+                }
+
+                divs.sort(sortWsFilter);
+
+                for (var i = 0; i < divs.length; i++) {
+                    parent.appendChild(divs[i]);
+                }
+
                 $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
             }
         }
 
         $(scope + '_' + type + '_spinner').style.visibility = 'visible';
-        AjaxServices.filterWebSearchables(scope, type, null, object.value, filterCallBack);
+        currentFilterCallbacks[scope + "_" + type] = callId;
+        AjaxServices.filterWebSearchables(scope, type, null, object.value, callId++,
+                                          filterCallBack);
     } else {
         showAll();
-    }
-}
-
-
-function sortDivs(parent, sorterFunc) {
-    /* bubble sort */
-    for (var i in parent.childNodes) {
-        var child1 = parent.childNodes[i];
-        if (child1.tagType == 'DIV') {
-            for (var j in parent.childNodes) {
-                var child2 = parent.childNodes[j];
-                if (child2.tagType == 'DIV') {
-                    if (sorterFunc(child1, child2) > 0) {
-                        if (parent.firstChild != child1) {
-                            parent.insertBefore(child2, child1);
-                        }
-                    }
-                }
-            }
-        }
     }
 }

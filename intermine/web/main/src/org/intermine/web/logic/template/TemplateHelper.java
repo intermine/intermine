@@ -872,12 +872,14 @@ public class TemplateHelper
 
             String highlightString = webSearchable.getTitle();
             descrMap.put(webSearchable, webSearchable.getDescription());
-            TokenStream tokenStream
-                = analyzer.tokenStream("", new StringReader(highlightString));
-            highlighter.setTextFragmenter(new NullFragmenter());
-            highlightedMap.put(webSearchable,
-                               highlighter.getBestFragment(tokenStream, highlightString));
 
+            if (highlightedMap != null) {
+                TokenStream tokenStream =
+                    analyzer.tokenStream("", new StringReader(highlightString));
+                highlighter.setTextFragmenter(new NullFragmenter());
+                highlightedMap.put(webSearchable,
+                                   highlighter.getBestFragment(tokenStream, highlightString));
+            }
         }
         return time;
     }

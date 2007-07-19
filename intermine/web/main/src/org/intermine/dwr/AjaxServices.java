@@ -361,7 +361,8 @@ public class AjaxServices
      * @return a List of Lists
      */
     public static List<String> filterWebSearchables(String scope, String type,
-                                                    List<String> tags, String filterText) {
+                                                    List<String> tags, String filterText,
+                                                    String callId) {
         WebContext ctx = WebContextFactory.get();        
         ServletContext servletContext = ctx.getServletContext();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
@@ -374,7 +375,7 @@ public class AjaxServices
         Map<WebSearchable, String> descrMap = new HashMap<WebSearchable, String>();
         try {
             TemplateHelper.runLeuceneSearch(filterText, scope, type, profile, servletContext,
-                                            hitMap, scopeMap, highlightedMap, descrMap);
+                                            hitMap, scopeMap, null, descrMap);
         } catch (ParseException e) {
             LOG.error("couldn't run lucene filter", e);
             return Collections.EMPTY_LIST;
@@ -397,6 +398,8 @@ public class AjaxServices
         }
 
         List returnList = new ArrayList<String>();
+        
+        returnList.add(callId);
         
         for (WebSearchable ws: filteredWsMap.values()) {
             List row = new ArrayList();
