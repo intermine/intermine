@@ -16,11 +16,6 @@
 
 #include "biosegdata.h"
 
-/*
-  #define GIST_DEBUG
-  #define GIST_QUERY_DEBUG
-*/
-
 PG_MODULE_MAGIC;
 
 extern int  bioseg_yyparse();
@@ -29,18 +24,14 @@ extern void bioseg_scanner_init(const char *str);
 extern void bioseg_scanner_finish(void);
 
 /*
-  extern int       bioseg_yydebug;
-*/
-
-/*
 ** Input/Output routines
 */
-SEG        *bioseg_in(char *str);
-char       *bioseg_out(SEG * seg);
-SEG        *bioseg_create(int32 lower, int32 upper);
-int32       bioseg_lower(SEG * seg);
-int32       bioseg_upper(SEG * seg);
-int32       bioseg_center(SEG * seg);
+SEG   *bioseg_in(char *str);
+char  *bioseg_out(SEG * seg);
+SEG   *bioseg_create(int32 lower, int32 upper);
+int32  bioseg_lower(SEG * seg);
+int32  bioseg_upper(SEG * seg);
+int32  bioseg_center(SEG * seg);
 
 /*
 ** GiST support methods
@@ -72,7 +63,7 @@ bool   bioseg_over_right(SEG * a, SEG * b);
 SEG   *bioseg_union(SEG * a, SEG * b);
 SEG   *bioseg_inter(SEG * a, SEG * b);
 void   rt_bioseg_size(SEG * a, int32 *sz);
-int32 bioseg_size(SEG * a);
+int32  bioseg_size(SEG * a);
 
 /*
 ** Various operators
@@ -212,7 +203,9 @@ int get_int(char **strp, int32 *result) {
   return 1;
 }
 
-int get_dots(char **strp) {
+int
+  get_dots(char **strp)
+{
   if ((*strp)[0] == '.') {
     (*strp)++;
     if ((*strp)[0] == '.') {
@@ -256,7 +249,8 @@ char *
   return (result);
 }
 
-SEG * bioseg_create(int32 lower, int32 upper)
+SEG *
+  bioseg_create(int32 lower, int32 upper)
 {
   SEG *result = palloc(sizeof(SEG));
 
@@ -288,7 +282,7 @@ int32
 
 
 /*****************************************************************************
- *                                                 GiST functions
+ * GiST functions
  *****************************************************************************/
 
 /*
@@ -319,10 +313,10 @@ bool
 SEG *
   gbioseg_union(GistEntryVector *entryvec, int *sizep)
 {
-  int                     numranges,
-    i;
-  SEG                *out = (SEG *) NULL;
-  SEG                *tmp;
+  int  numranges;
+  int  i;
+  SEG *out = (SEG *) NULL;
+  SEG *tmp;
 
 #ifdef GIST_DEBUG
   fprintf(stderr, "union\n");
@@ -366,8 +360,9 @@ GISTENTRY *
 float *
   gbioseg_penalty(GISTENTRY *origentry, GISTENTRY *newentry, float *result)
 {
-  SEG                *ud;
-  int32           tmp1, tmp2;
+  SEG   *ud;
+  int32 tmp1;
+  int32 tmp2;
 
   ud = bioseg_union((SEG *) DatumGetPointer(origentry->key),
                     (SEG *) DatumGetPointer(newentry->key));
@@ -393,30 +388,31 @@ GIST_SPLITVEC *
   gbioseg_picksplit(GistEntryVector *entryvec,
                     GIST_SPLITVEC *v)
 {
-  OffsetNumber i,
-    j;
-  SEG                *datum_alpha,
-    *datum_beta;
-  SEG                *datum_l,
-    *datum_r;
-  SEG                *union_d,
-    *union_dl,
-    *union_dr;
-  SEG                *inter_d;
-  bool            firsttime;
-  int32           size_alpha,
-    size_beta,
-    size_union,
-    size_inter;
-  int32           size_waste,
-    waste;
-  int32           size_l, size_r;
-  int                     nbytes;
-  OffsetNumber seed_1 = 1,
-    seed_2 = 2;
-  OffsetNumber *left,
-    *right;
-  OffsetNumber maxoff;
+  OffsetNumber  i;
+  OffsetNumber  j;
+  SEG          *datum_alpha;
+  SEG          *datum_beta;
+  SEG          *datum_l;
+  SEG          *datum_r;
+  SEG          *union_d;
+  SEG          *union_dl;
+  SEG          *union_dr;
+  SEG          *inter_d;
+  bool          firsttime;
+  int32         size_alpha;
+  int32         size_beta;
+  int32         size_union;
+  int32         size_inter;
+  int32         size_waste;
+  int32         waste;
+  int32         size_l;
+  int32         size_r;
+  int           nbytes;
+  OffsetNumber  seed_1 = 1;
+  OffsetNumber  seed_2 = 2;
+  OffsetNumber *left;
+  OffsetNumber *right;
+  OffsetNumber  maxoff;
 
 #ifdef GIST_DEBUG
   fprintf(stderr, "picksplit\n");
@@ -561,7 +557,7 @@ bool
                           SEG * query,
                           StrategyNumber strategy)
 {
-  bool            retval;
+  bool retval;
 
 #ifdef GIST_QUERY_DEBUG
   fprintf(stderr, "leaf_consistent, %d\n", strategy);
@@ -606,7 +602,7 @@ bool
                               SEG * query,
                               StrategyNumber strategy)
 {
-  bool            retval;
+  bool retval;
 
 #ifdef GIST_QUERY_DEBUG
   fprintf(stderr, "internal_consistent, %d\n", strategy);
@@ -647,7 +643,7 @@ bool
 SEG *
   gbioseg_binary_union(SEG * r1, SEG * r2, int *sizep)
 {
-  SEG                *retval;
+  SEG *retval;
 
   retval = bioseg_union(r1, r2);
   *sizep = sizeof(SEG);
@@ -726,7 +722,7 @@ bool
 SEG *
   bioseg_union(SEG * a, SEG * b)
 {
-  SEG                *n;
+  SEG *n;
 
   n = (SEG *) palloc(sizeof(*n));
 
@@ -757,7 +753,7 @@ SEG *
 SEG *
   bioseg_inter(SEG * a, SEG * b)
 {
-  SEG                *n;
+  SEG *n;
 
   n = (SEG *) palloc(sizeof(*n));
 
