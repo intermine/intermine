@@ -804,9 +804,12 @@ public class TemplateHelper
      */
     public static long runLeuceneSearch (String origQueryString, String scope, String type, 
                                          Profile profile,
-                                        ServletContext context,
-                                        Map hitMap, Map scopeMap, Map highlightedMap, Map descrMap) 
-                                        throws ParseException, IOException {
+                                         ServletContext context,
+                                         Map<WebSearchable, Float> hitMap, 
+                                         Map<WebSearchable, String> scopeMap,
+                                         Map<WebSearchable, String> highlightedMap,
+                                         Map<WebSearchable, String> descrMap) 
+        throws ParseException, IOException {
         // special case for word ending in "log" eg. "ortholog" - add "orthologue" to the search
         String queryString = origQueryString.replaceAll("(\\w+log\\b)", "$1ue $1");
         LOG.info("Searching " + scope + " for \""

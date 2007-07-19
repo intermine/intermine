@@ -10,22 +10,30 @@ package org.intermine.web.logic.profile;
  *
  */
 
-import java.io.StringReader;
-
-import javax.servlet.ServletContext;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import net.sourceforge.iharder.Base64;
+
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -40,17 +48,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -62,7 +59,13 @@ import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
 
-import net.sourceforge.iharder.Base64;
+import java.io.StringReader;
+
+import javax.servlet.ServletContext;
+
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Class to manage and persist user profile data such as saved bags
@@ -562,7 +565,8 @@ public class ProfileManager
     public Map<String, WebSearchable>
         filterByTags(Map<String, ? extends WebSearchable> webSearchables, 
                      List<String> tagNames, String tagType, String userName) {
-        Map<String, WebSearchable> returnMap = new HashMap<String, WebSearchable>(webSearchables);
+        Map<String, WebSearchable> returnMap = 
+            new LinkedHashMap<String, WebSearchable>(webSearchables);
 
         // prime the cache
         for (String tagName: tagNames) {
