@@ -64,7 +64,7 @@
     </div>
   </c:when>
   <c:otherwise>
-    <div class="wsList">
+    <div id='${scope}_${type}_ws_list' class="wsList">
       <c:choose>
         <c:when test="${!empty makeTable && makeTable}">
           <%-- make a table --%>

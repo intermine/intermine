@@ -194,29 +194,75 @@ function getResults(qid, timeout, userCallback, userData) {
 function filterWebSearchables(object, scope, type) {
     var value = object.value;
     var inputArray = document.getElementsByTagName("div");
-    if (value.length > 2) {
-        function filterCallBack(filteredList) {
-            var filteredHash = new Array();
-            for (var el in filteredList) {
-                var wsName = filteredList[el][0];
-                filteredHash[scope + '_' + type + '_item_' + wsName] = 1;
-            }
-
-            for(var i=0; i<inputArray.length; i++) {
-                if (inputArray[i].id.match(new RegExp('^' + scope + '_' + type))) {
-                    if (filteredHash[inputArray[i].id]) {
-                        inputArray[i].style.display='block';
-                    } else {
-                        inputArray[i].style.display='none';
-                    }
-                }
-            }
-        }
-        AjaxServices.filterWebSearchables(scope, type, null, object.value, filterCallBack);
-    } else {
+    function showAll() {
         for(var i=0; i<inputArray.length; i++) {
             if (inputArray[i].id.match(new RegExp('^' + scope + '_' + type))) {
                 inputArray[i].style.display='block';
+            }
+        }
+        $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
+    }
+    if (value.length > 2) {
+        function filterCallBack(filteredList) {
+            if (filteredList.length == 0) {
+                showAll();
+            } else {
+                var scoreHash = new Array();
+                for (var el in filteredList) {
+                    var wsName = filteredList[el][0];
+                    var wsScore = filteredList[el][1];
+                    scoreHash[scope + '_' + type + '_item_' + wsName] = wsScore;
+                }
+
+                for(var i=0; i<inputArray.length; i++) {
+                    if (inputArray[i].id.match(new RegExp('^' + scope + '_' + type + '_item'))) {
+                        if (scoreHash[inputArray[i].id]) {
+                            inputArray[i].style.display='block';
+                        } else {
+                            inputArray[i].style.display='none';
+                        }
+                    }
+                }
+
+                function sortWsFilter(line1, line2) {
+                    if (scoreHash[line1.id] > scoreHash[line2.id]) {
+                        return -1;
+                    } else {
+                        if (scoreHash[line1.id] < scoreHash[line2.id]) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                }
+
+                sortDivs($(scope + '_' + type + '_ws_list'), sortWsFilter);
+                $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
+            }
+        }
+
+        $(scope + '_' + type + '_spinner').style.visibility = 'visible';
+        AjaxServices.filterWebSearchables(scope, type, null, object.value, filterCallBack);
+    } else {
+        showAll();
+    }
+}
+
+
+function sortDivs(parent, sorterFunc) {
+    /* bubble sort */
+    for (var i in parent.childNodes) {
+        var child1 = parent.childNodes[i];
+        if (child1.tagType == 'DIV') {
+            for (var j in parent.childNodes) {
+                var child2 = parent.childNodes[j];
+                if (child2.tagType == 'DIV') {
+                    if (sorterFunc(child1, child2) > 0) {
+                        if (parent.firstChild != child1) {
+                            parent.insertBefore(child2, child1);
+                        }
+                    }
+                }
             }
         }
     }

@@ -30,7 +30,6 @@
     <td valign="top" width="70%">
        <html:form action="/modifyTemplate">
        <tiles:insert name="wsTemplateTable.tile">
-         <tiles:put name="limit" value="15"/>
          <tiles:put name="scope" value="global"/>
          <tiles:put name="makeCheckBoxes" value="true"/>
          <tiles:put name="showNames" value="false"/>
@@ -40,7 +39,6 @@
          <tiles:put name="height" value="300"/>
        </tiles:insert>
        <tiles:insert name="wsTemplateTable.tile">
-         <tiles:put name="limit" value="15"/>
          <tiles:put name="scope" value="user"/>
          <tiles:put name="makeCheckBoxes" value="true"/>
          <tiles:put name="showNames" value="false"/>
