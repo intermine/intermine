@@ -41,6 +41,7 @@ grep -v " /scripts/..%255" | \
 grep -v "CONNECT 1.3.3.7" | \
 grep -v "SEARCH /" | 
 grep -v "GET http" | 
+grep -v "GET /~" | 
 grep -v "HEAD /" > FL4
 
 grep -v "internal dummy connection" FL4 > FL5
