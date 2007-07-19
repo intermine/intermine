@@ -25,10 +25,15 @@
 
 <html:xhtml/>
 
+<c:set var="ws_input_id" value="${scope}_${type}_filter_text"/>
+
 <p style="white-space:nowrap;">Filter:&nbsp;
-  <input type="text" id="${scope}_${type}_filter_text" name="newName_${name}" size="20" 
-         onkeyup="return filterWebSearchables(this, '${scope}', '${type}');" />
-  &nbsp;&nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;
+  <input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
+         onkeyup="return filterWebSearchables(this, '${scope}', '${type}');"
+         disabled="true"/>
+  &nbsp; <img id='${scope}_${type}_spinner' style='visibility: hidden' 
+             src='images/wait_spinner.gif'/>
+  &nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;
   <img src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites"/>
   &nbsp;
   <img src="images/asc.gif" width="17" height="16" alt="Sort alphabetically"/>
@@ -60,4 +65,12 @@
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
 </tiles:insert>
+
+  <script type="text/javascript">
+<%-- enable filter only after the list is populated --%>
+<!--//<![CDATA[
+    $('${ws_input_id}').disabled = false;
+//]]>-->
+  </script>
+
 <!-- /wsFilterList.jsp -->
