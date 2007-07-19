@@ -33,18 +33,20 @@
          <tiles:put name="limit" value="15"/>
          <tiles:put name="scope" value="global"/>
          <tiles:put name="makeCheckBoxes" value="true"/>
-         <tiles:put name="showNames" value="true"/>
+         <tiles:put name="showNames" value="false"/>
          <tiles:put name="showTitles" value="true"/>
-         <tiles:put name="showDescriptions" value="false"/>
+         <tiles:put name="showDescriptions" value="true"/>
+         <tiles:put name="showSearchBox" value="true"/>
          <tiles:put name="height" value="300"/>
        </tiles:insert>
        <tiles:insert name="wsTemplateTable.tile">
          <tiles:put name="limit" value="15"/>
          <tiles:put name="scope" value="user"/>
          <tiles:put name="makeCheckBoxes" value="true"/>
-         <tiles:put name="showNames" value="true"/>
+         <tiles:put name="showNames" value="false"/>
          <tiles:put name="showTitles" value="true"/>
-         <tiles:put name="showDescriptions" value="false"/>
+         <tiles:put name="showDescriptions" value="true"/>
+         <tiles:put name="showSearchBox" value="true"/>
          <tiles:put name="height" value="300"/>
        </tiles:insert>
        </html:form>

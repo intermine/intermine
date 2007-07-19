@@ -6,3 +6,16 @@
 	background:#FFF;
 	padding:10px;
 }
+.wsTempateLine {
+	padding:10px;
+	border-bottom: #F5F0FF solid 1px;
+}
+
+div.wsTempateLine p.description, div.wsTempateLine div.description {
+	font-style:italic;
+	margin:5px 5px 5px 30px;
+	padding:0px;
+}
+div.wsTempateLine p.description a{
+	font-style: normal;
+}

@@ -31,13 +31,13 @@
   <tiles:put name="type" value="template"/>
   <tiles:put name="scope" value="${scope}"/>
   <tiles:put name="tags" value="${tags}"/>
-  <tiles:put name="showNames" value="${showName}"/>
+  <tiles:put name="showNames" value="${showNames}"/>
   <tiles:put name="showTitles" value="${showTitles}"/>
   <tiles:put name="showDescriptions" value="${showDescriptions}"/>
   <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
-  <tiles:put name="makeTable" value="true"/>
-  <tiles:put name="tableHeader" value="wsTemplateHeader.tile"/>
-  <tiles:put name="tableRow" value="wsTemplateRow.tile"/>
+  <tiles:put name="makeLine" value="true"/>
+  <!-- <tiles:put name="header" value="wsTemplateHeader.tile"/> -->
+  <tiles:put name="row" value="wsTemplateLine.tile"/>
   <tiles:put name="limit" value="${limit}"/>
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
