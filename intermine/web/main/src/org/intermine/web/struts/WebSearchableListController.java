@@ -109,8 +109,15 @@ public class WebSearchableListController extends TilesAction
 
         // shorten list to be < limit
         if (limit != null) {
-            filteredWebSearchables =
-                WebUtil.shuffle(filteredWebSearchables, new Integer(limit).intValue());
+            limit = limit.trim();
+            if (limit.length() > 0) {
+                try {
+                    filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables,
+                                                             new Integer(limit).intValue());
+                } catch (NumberFormatException e) {
+                    // ignore - don't shuffle 
+                }
+            }
         }
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
         return null;
