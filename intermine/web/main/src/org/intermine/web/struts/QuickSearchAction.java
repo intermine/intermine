@@ -11,7 +11,18 @@ package org.intermine.web.struts;
  */
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -23,14 +34,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * @author Xavier Watkins
@@ -93,8 +96,8 @@ public class QuickSearchAction extends InterMineAction
             .addParameter("trail", "")
             .forward();
         } else {
-            Map hitMap = new HashMap();
-            Map scopeMap = new HashMap();
+            Map hitMap = new LinkedHashMap();
+            Map scopeMap = new LinkedHashMap();
             Map highlightedMap = new HashMap();
             Map descrMap = new HashMap();
             long time;
