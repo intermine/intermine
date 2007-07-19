@@ -36,8 +36,8 @@
   <tiles:put name="showDescriptions" value="${showDescriptions}"/>
   <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
   <tiles:put name="makeLine" value="true"/>
-  <!-- <tiles:put name="header" value="wsTemplateHeader.tile"/> -->
-  <tiles:put name="row" value="wsTemplateLine.tile"/>
+  <!-- <tiles:put name="wsHeader" value="wsTemplateHeader.tile"/> -->
+  <tiles:put name="wsRow" value="wsTemplateLine.tile"/>
   <tiles:put name="limit" value="${limit}"/>
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
