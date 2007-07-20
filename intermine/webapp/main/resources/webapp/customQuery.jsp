@@ -24,7 +24,7 @@
 	</td>
 	<td valign="top" width="70%">
 	<%-- class chooser --%>	
-	<div class="webSearchable">		
+	<div class="webSearchable" id="classChooser">		
 	  <h2><fmt:message key="customQuery.classChooser"/></h2>
 	  <tiles:insert name="classChooser.tile"/>
 	</div>
@@ -53,4 +53,8 @@
   </tr>
 </table>
 </div>
+
+<script type="text/javascript">
+	Nifty("div#classChooser","big");
+</script>
 <!-- /customQuery.jsp -->
