@@ -23,3 +23,8 @@ function removeEvent( obj, type, fn )
 		obj["e"+type+fn] = null;
 	}
 }
+
+function toggleDivs(source,destination){
+   document.getElementById(source).style.display = 'none';
+   document.getElementById(destination).style.display = 'block';
+}

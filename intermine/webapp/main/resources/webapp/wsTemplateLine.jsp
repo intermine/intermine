@@ -75,12 +75,6 @@
 </tiles:insert>
 
 <c:if test="${showDescriptions}">
-   <script type="text/javascript" charset="utf-8">
-      function toggleDivs(source,destination){
-         document.getElementById(source).style.display = 'none';
-         document.getElementById(destination).style.display = 'block';
-      }
-   </script>
    <c:choose>
       <c:when test="${fn:length(webSearchable.description) > 60}">
         <div id="temp_desc_${webSearchable.name}_s" class="description">
