@@ -9,11 +9,11 @@
 	<c:set var="MYMINE_PAGE" value="<%=request.getParameter("MYMINE_PAGE")%>"/>
 	<c:set var="loggedin" value="<%=request.getParameter("loggedin")%>"/>
 
-	<div align="center" style="font-size:+1.2em;color:#36c">
+	<div align="left" style="font-size:+1.2em;color:#36c;top:-10px;">
 	
 	<table cellspacing="0" cellpadding="2">
 	<tr>
-	<td valign="top"><b>MyMine Menu</b>&nbsp;</td>
+	<td valign="top" nowrap><b>MyMine Menu</b>&nbsp;</td>
 	<td style="border-bottom: #36c dashed 1.3px;">
 	
 	
@@ -127,11 +127,7 @@
       
       </td>     
       </tr>
-      <!--<tr><td><hr style="width:60%;align:center;background-color:#36c;color:#36c;height:5px;border: 0;"/></td></tr>-->
       </table>
 	</div>
-	
-	
-	<br/>
-	
+	<br/>	
 <!-- /mymineMenu.jsp -->
