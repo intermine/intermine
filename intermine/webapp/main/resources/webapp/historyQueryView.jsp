@@ -9,9 +9,6 @@
 <html:xhtml/>
 
 <tiles:useAttribute id="type" name="type"/>
-
-  <script type="text/javascript" src="js/tablesort.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 	
 <c:choose>
   <c:when test="${type == 'saved'}">
@@ -46,6 +43,9 @@
       </c:when>
       <c:otherwise>
 
+
+
+
         <html:form action="/modifyQuery">
         <input type="hidden" name="type" value="${type}"/>
         <table class="sortable-onload-3-reverse rowstyle-alt no-arrow" cellspacing="0">
@@ -58,19 +58,19 @@
             <th align="left" colspan="2" nowrap class="sortable">
               <fmt:message key="history.namecolumnheader"/>
             </th>
-            <th align="center" nowrap class="sortable-ymd">
+            <th align="center" class="sortable-ymd">
               <fmt:message key="history.datecreatedcolumnheader"/>
             </th>
-            <th align="center" nowrap>
+            <th align="center" class="sortable">
               <fmt:message key="history.countcolumnheader"/>
             </th>
-            <th align="center" nowrap>
+            <th align="center" class="sortable">
               <fmt:message key="history.startcolumnheader"/>
             </th>
-            <th align="center" nowrap class="sortable">
+            <th align="center" class="sortable">
               <fmt:message key="history.summarycolumnheader"/>
             </th>
-            <th align="center" nowrap>
+            <th align="center">
               <fmt:message key="history.actionscolumnheader"/>
             </th>
           </tr>

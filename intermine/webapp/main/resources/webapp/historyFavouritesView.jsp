@@ -3,9 +3,6 @@
 <!-- historyFavouritesView.jsp -->
 <html:xhtml/>
 
-  <script type="text/javascript" src="js/tablesort.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
-
   <im:body id="favourites">
 
     <p>
