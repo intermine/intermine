@@ -460,22 +460,6 @@ td.resBar {
   border: solid black 1px;
 }
 
-.queryAgeYoung {
-  background-color: #faa;
-}
-.queryAgeToday {
-  background-color: #fdd;
-}
-
-/* query ages - duplicate for IE as it can't cope with class attribute on <tr>
-   elements */
-table.results tr.queryAgeYoung td {
-  background-color: #faa;
-}
-table.results tr.queryAgeToday td {
-  background-color: #fdd;
-}
-
 
 .aspectPageIcon {
   float: left;

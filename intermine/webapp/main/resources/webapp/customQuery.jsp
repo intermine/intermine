@@ -6,31 +6,33 @@
 
 <!-- customQuery.jsp -->
 <html:xhtml/>
-<div class="body">
-<div style="float:left;width:35%;">
-	<%-- class chooser --%>
-	<im:roundbox title="Select a Data Type" stylename="welcome">
-		<tiles:insert name="classChooser.tile"/>
-	</im:roundbox>
 
-	<%--  actions --%>
-      <div id="actionsLeft" class="body">
-         <h2>Actions:</h2>
+<div class="body">
+<table padding="0px" margin="0px" width="100%">
+  <tr>
+    <td valign="top" width="30%">
+      <div id="pageDesc" class="queryStyle"><p><fmt:message key="begin.querybuilder"/></p></div>
+      <script type="text/javascript">
+      	Nifty("div#pageDesc","big");
+      </script>
+      <im:roundbox title="Actions" stylename="welcome">
 	          <html:link action="/importQueries?query_builder=yes">
 	            <fmt:message key="begin.import.query"/>
 	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
 	          </html:link>
-      </div>
+      </im:roundbox>
+	</td>
+	<td valign="top" width="70%">
+	<%-- class chooser --%>	
+	<div class="webSearchable">		
+	  <h2><fmt:message key="customQuery.classChooser"/></h2>
+	  <tiles:insert name="classChooser.tile"/>
+	</div>
 
-</div>
-<div style="margin-left:40%;width:60%;">
+</td>
+</tr><tr>
+<td colspan=2 valign="top">
 
-	<%-- saved queries --%>
-	<im:roundbox title="Saved Queries" stylename="welcome">
-	 <tiles:insert name="historyQueryView.jsp">
-        <tiles:put name="type" value="saved"/>
-      </tiles:insert>
-	</im:roundbox>
 
 	<%-- query history --%>
 	<im:roundbox title="Query History" stylename="welcome">
@@ -38,6 +40,17 @@
         <tiles:put name="type" value="history"/>
       </tiles:insert>
 	</im:roundbox>
-	</div>
+	
+	<%-- saved queries --%>
+	<im:roundbox title="Saved Queries" stylename="welcome">
+	 <tiles:insert name="historyQueryView.jsp">
+        <tiles:put name="type" value="saved"/>
+      </tiles:insert>
+	</im:roundbox> 
+
+
+    </td>
+  </tr>
+</table>
 </div>
 <!-- /customQuery.jsp -->

@@ -1,21 +1,4 @@
-.historySummaryRoot {
-  background-color: #e7F1E7;
-  border: 1px solid #bbb;
-  padding-left: 2px;
-  padding-right: 2px;
-  padding-bottom: 1px;
-  font-size: 10px;
-  font-weight: bold;
-}
 
-.historySummaryShowing {
-  background-color: #E7F1FB;
-  border: 1px solid #bbb;
-  padding-left: 2px;
-  padding-right: 2px;
-  padding-bottom: 1px;
-  font-size: 10px;
-}
 
 table.history > tbody > tr > td {
   font-size: 11px;
