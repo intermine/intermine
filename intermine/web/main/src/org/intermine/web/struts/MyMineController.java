@@ -10,33 +10,13 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.SavedQuery;
@@ -48,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.iterators.IteratorChain;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -76,14 +55,16 @@ public class MyMineController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         String page = request.getParameter("page");
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
-        if (page != null && !profile.isLoggedIn()) {
-            page = "bags";
+        /* if the user is on a restricted page and they are not logged in, send them to the bags
+         * page.  query history is not a restricted page.
+         */
+        if (page != null && !page.equals("history") && !profile.isLoggedIn()) {
+            page = "lists";
         }
         
         if (!StringUtils.isEmpty(page)) {
@@ -100,7 +81,6 @@ public class MyMineController extends TilesAction
                 }
             }
         }
-
 
         request.setAttribute("ageClasses", getQueryAgeClasses(profile.getSavedQueries()));
 
