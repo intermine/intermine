@@ -1,0 +1,116 @@
+
+th
+        {
+        font: bold 10px/22px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+        color: #4f6b72;
+        border-right: 1px solid #C1DAD7;
+        border-bottom: 1px solid #C1DAD7;
+        border-top: 1px solid #C1DAD7;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-align: left;
+        padding: 8px 12px 4px 12px;
+        background: #CAE8EA url(../images/bg_header.jpg) no-repeat;
+        vertical-align:middle;
+        }
+
+th.sortable,
+th.sortable-text,
+th.sortable-date,
+th.sortable-keep,
+th.sortable-date-dmy,
+th.sortable-numeric,
+th.sortable-currency,
+th.sortable-sortByTwelveHourTimestamp,
+th.sortable-sortIPAddress,
+th.sortable-sortEnglishLonghandDateFormat,
+th.sortable-sortScientificNotation,
+th.sortable-sortImage,
+th.sortable-sortFileSize
+
+        {
+        cursor:pointer;
+        background: #CAE8EA url(../images/bg_header_sortable.jpg) no-repeat;
+        padding: 8px 12px 4px 16px;
+        }
+th.forwardSort
+        {
+        background:#CAE8EA url(../images/bg_header_down.jpg) no-repeat 0 0;
+        }
+th.reverseSort
+        {
+        background:#CAE8EA url(../images/bg_header_up.jpg) no-repeat 0 0;
+        }
+th.forwardSort a,
+th.reverseSort a
+        {
+        color:#000;
+        outline:0 none;
+        }
+/*
+These styles should be added when very long tables are expected
+th.sort-active
+        {
+        background:#CAE8EA url(../media/bg_header_sorting.jpg) no-repeat 0 0;
+        cursor:wait;
+        }
+th.sort-active a
+        {
+        color:#a80000 !important;
+        cursor:wait;
+        }
+*/
+th a
+        {
+        text-decoration:none;
+        color: #4f6b72;
+        }
+td a
+        {
+        text-decoration:none;
+        color:#239;
+        }
+
+td a:hover
+        {
+        color:#a84444;
+        border-bottom:1px dotted #a80000;
+        }
+td
+        {
+        font: normal 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+        border-right: 1px solid #C1DAD7;
+        border-bottom: 1px solid #C1DAD7;
+        padding: 6px 12px 6px 12px;
+        color: #4f6b72;
+        }
+td.lft
+        {
+        text-align:left;
+        }
+tr.alt
+        {
+        background: #F5FAFA;
+        color: #797268;
+        }
+/* Poor old Internet Explorer has a bug that means we can't use background images for the table rows
+   as it trys to download the image each and every time that it is used... */
+tr[class="alt"] td
+        {
+        background: #F5FAFA url(../images/td_alt.jpg) no-repeat;
+        }
+td[class~="alt"]
+        {
+        background: #fff url(../images/col_alt.jpg) no-repeat !important;
+        }
+/* Poor old Internet Explorer won't see the next two rules either */
+tbody tr.alt td:first-child
+        {
+        background: #F5FAFA url(../images/bullet2.gif) no-repeat;
+        font-weight:bold;
+        }
+tbody tr td:first-child
+        {
+        background: #fff url(../images/bullet1.gif) no-repeat;
+        font-weight:bold;
+        }

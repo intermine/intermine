@@ -10,6 +10,9 @@
 
 <tiles:useAttribute id="type" name="type"/>
 
+  <script type="text/javascript" src="js/tablesort.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
+	
 <c:choose>
   <c:when test="${type == 'saved'}">
     <c:set var="queryMap" value="${PROFILE.savedQueries}"/>
@@ -45,16 +48,17 @@
 
         <html:form action="/modifyQuery">
         <input type="hidden" name="type" value="${type}"/>
-        <table class="history" cellspacing="0">
+        <table class="sortable-onload-3-reverse rowstyle-alt no-arrow" cellspacing="0">
+        <thead>
           <tr>
             <th>
               <input type="checkbox" id="selected_${type}"
                      onclick="selectColumnCheckbox(this.form, '${type}')">
             </th>
-            <th align="left" colspan="2" nowrap>
+            <th align="left" colspan="2" nowrap class="sortable">
               <fmt:message key="history.namecolumnheader"/>
             </th>
-            <th align="center" nowrap>
+            <th align="center" nowrap class="sortable-ymd">
               <fmt:message key="history.datecreatedcolumnheader"/>
             </th>
             <th align="center" nowrap>
@@ -63,17 +67,19 @@
             <th align="center" nowrap>
               <fmt:message key="history.startcolumnheader"/>
             </th>
-            <th align="center" nowrap>
+            <th align="center" nowrap class="sortable">
               <fmt:message key="history.summarycolumnheader"/>
             </th>
             <th align="center" nowrap>
               <fmt:message key="history.actionscolumnheader"/>
             </th>
           </tr>
+          </thead>
+          <tbody>
           <c:forEach items="${queryMap}" var="savedQuery" varStatus="status">
             <c:if test="${!empty savedQuery.key && !empty savedQuery.value}">
               <c:set var="validQuery" value="${savedQuery.value.pathQuery.valid}"/>
-              <tr class="${queryAgeClasses[savedQuery.key]}">
+              <tr>
                 <td>
                   <html:multibox property="selectedQueries"
                                  styleId="selected_${type}_${status.index}"
@@ -172,6 +178,7 @@
               </tr>
             </c:if>
           </c:forEach>
+          </tbody>
         </table>
         <br/>
         <html:submit property="delete" disabled="true" styleId="delete_button"

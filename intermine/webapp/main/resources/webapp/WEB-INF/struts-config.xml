@@ -52,8 +52,6 @@
     </action>
     <action path="/mymine" forward="mymine.page">
     </action>
-    <action path="/history" forward="history.page">
-    </action>
     <action path="/classChooser" forward="classChooser.page">
     </action>
     <action path="/help" forward="help.page">
@@ -263,7 +261,6 @@
     </action>
     <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
-      <forward name="history" redirect="true" path="/history.do"/>
     </action>
     <action path="/modifyBag" name="modifyBagForm" type="org.intermine.web.struts.ModifyBagAction" scope="request" input="bag" parameter="action">
       <forward name="bag" redirect="true" path="/mymine.do?page=bags"/>
