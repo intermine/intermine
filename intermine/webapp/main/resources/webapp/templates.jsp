@@ -12,12 +12,11 @@
 <table padding="0px" margin="0px" width="100%">
   <tr>
     <td valign="top" width="30%">
-      <div id="pageDesc"><p><fmt:message key="begin.templates"/></p><br><img src="images/templates_desc.gif" width="328" height="67" alt="Templates Desc"></div>
+      <div id="pageDesc" class="templateStyle"><p><fmt:message key="begin.templates"/></p></div>
       <script type="text/javascript">
       	Nifty("div#pageDesc","big");
       </script>
-      <div id="actionsLeft">
-         <h2>Actions:</h2>
+      <im:roundbox title="Actions" stylename="welcome">
            <html:link action="/summariseAllTemplates" titleKey="begin.summariseAllTemplatesDesc">
              <fmt:message key="begin.summariseAllTemplates"/>
            </html:link>
@@ -25,7 +24,7 @@
            <html:link action="/import" titleKey="begin.importTemplatesDesc">
              <fmt:message key="begin.importTemplates"/>
            </html:link>
-      </div>
+      </im:roundbox>
     </td>
     <td valign="top" width="70%">
        <html:form action="/modifyTemplate">

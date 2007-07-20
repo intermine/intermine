@@ -1,10 +1,14 @@
-
 .wsListElement {
    margin-bottom:10px;
 }
 .wsList {
 	background:#FFF;
-	padding:10px;
+	padding:5px;
+}
+.wsList li,.wsList ul {
+	list-style-type:none;
+	padding:0px;
+	margin:0px;
 }
 .wsTempateLine {
 	padding:10px;

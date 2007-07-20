@@ -16,7 +16,7 @@
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <html:xhtml/>
-<div class="webSearchable">
+<div class="webSearchable" id="ws_${scope}_template">
 <h2>
  <c:choose>
   <c:when test="${scope == 'global'}">
@@ -43,4 +43,7 @@
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
 </tiles:insert>
 </div>
+<script type="text/javascript">
+	Nifty("div#ws_${scope}_template","big");
+</script>
 <!-- /wsTemplateTable.jsp -->

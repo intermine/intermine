@@ -156,10 +156,19 @@
           </ul>
         </c:otherwise>
       </c:choose>
+      <c:if test="${! empty bagCount || ! empty templateCount}">
+      <c:choose>
+        <c:when test="${type == 'bag'}">
+          <p><u><html:link action="/bag">View all ${bagCount} bags...</html:link></u></p>
+        </c:when>
+        <c:otherwise>
+          <p><u><html:link action="/templates">View all ${templateCount} templates...</html:link></u></p><br>
+        </c:otherwise>
+      </c:choose>
+      </c:if>
     </div>
   </c:otherwise>
 </c:choose>
-
 
 <c:if test="${!empty height}">
 </div>

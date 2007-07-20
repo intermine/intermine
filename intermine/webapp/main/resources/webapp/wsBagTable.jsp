@@ -15,7 +15,7 @@
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <html:xhtml/>
-<div class="webSearchable">
+<div class="webSearchable" id="ws_${scope}_bag">
 <c:choose>
    <c:when test="${scope == 'global'}">
    <h2><fmt:message key="bagspage.public.title"/></h2>
@@ -54,4 +54,7 @@
   </p>
 </c:if>
 </div>
+<script type="text/javascript">
+	Nifty("div#ws_${scope}_bag","big");
+</script>
 <!-- /wsBagTable.jsp -->
