@@ -53,3 +53,6 @@ table.history > tbody > tr > td {
   padding-left: 5px;
   padding-right: 5px;
 }
+.mymineMenu td {
+    border-bottom: #36c dashed 1.3px;
+}
