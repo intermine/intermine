@@ -3,6 +3,9 @@
 <!-- historyFavouritesView.jsp -->
 <html:xhtml/>
 
+  <script type="text/javascript" src="js/tablesort.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
+
   <im:body id="favourites">
 
     <p>
@@ -18,7 +21,7 @@
       <c:otherwise>
 
         <html:form action="/modifyTemplate">
-        <table class="sortable-onload-3-reverse rowstyle-alt no-arrow" cellspacing="0">
+        <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0">
           <tr>
             <th>
               <input type="checkbox" id="selected_template"

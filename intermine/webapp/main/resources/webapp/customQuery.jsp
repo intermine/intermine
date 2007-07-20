@@ -6,8 +6,8 @@
 
 <!-- customQuery.jsp -->
 <html:xhtml/>
-
-<div style="float:left;width:30%;">
+<div class="body">
+<div style="float:left;width:35%;">
 	<%-- class chooser --%>
 	<im:roundbox title="Select a Data Type" stylename="welcome">
 		<tiles:insert name="classChooser.tile"/>
@@ -23,7 +23,7 @@
       </div>
 
 </div>
-<div style="margin-left:35%;width:60%;">
+<div style="margin-left:40%;width:60%;">
 
 	<%-- saved queries --%>
 	<im:roundbox title="Saved Queries" stylename="welcome">
@@ -38,6 +38,6 @@
         <tiles:put name="type" value="history"/>
       </tiles:insert>
 	</im:roundbox>
-	
+	</div>
 </div>
 <!-- /customQuery.jsp -->
