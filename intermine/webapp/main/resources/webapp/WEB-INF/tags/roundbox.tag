@@ -33,7 +33,7 @@ if(new java.io.File(application.getRealPath("model")+"/"+stylename+"_L.gif").exi
 	</c:when>
 	<c:otherwise>
 	<tr>
-	  <td width="100%" style="background-color: #EEE;padding-left:20px;height:40px;"><h1 style="color:black;"><c:out value="${title}"/></h1></td>
+	  <td width="100%" style="background-color: #EEE;padding-left:20px;height:40px;"><h1 style="color:black;"><c:out value="${title}"/></h1><img src="../../images/help.png" width="20" height="20" alt="Help" style="float:right;"><td>
 	</tr>
 	</c:otherwise>
 	</c:choose>
