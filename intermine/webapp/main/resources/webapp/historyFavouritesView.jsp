@@ -18,7 +18,7 @@
       <c:otherwise>
 
         <html:form action="/modifyTemplate">
-        <table class="results history" cellspacing="0">
+        <table class="history" cellspacing="0">
           <tr>
             <th>
               <input type="checkbox" id="selected_template"

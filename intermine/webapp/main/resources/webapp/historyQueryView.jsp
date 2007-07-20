@@ -45,7 +45,7 @@
 
         <html:form action="/modifyQuery">
         <input type="hidden" name="type" value="${type}"/>
-        <table class="results history" cellspacing="0">
+        <table class="history" cellspacing="0">
           <tr>
             <th>
               <input type="checkbox" id="selected_${type}"
@@ -186,16 +186,7 @@
 
       </c:otherwise>
     </c:choose>
-
   </im:body>
 
-  <c:if test="${empty PROFILE.username}">
-    <div class="body">
-      <fmt:message var="loginMessage" key="menu.login"/>
-      <c:set var="loginMessage" value="${loginMessage}..."/>
-      <im:login loginMessage="${loginMessage}"/> &nbsp;&nbsp;
-      <fmt:message key="history.login.help"/>
-    </div>
-  </c:if>
 
 <!-- /historyQueryView.jsp -->

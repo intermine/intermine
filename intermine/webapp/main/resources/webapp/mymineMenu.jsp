@@ -11,7 +11,7 @@
 
 	<div align="center" style="font-size:+1.2em;color:#36c">
 	
-	<table>
+	<table cellspacing="0" cellpadding="2">
 	<tr>
 	<td valign="top"><b>MyMine Menu</b>&nbsp;</td>
 	<td style="border-bottom: #36c dashed 1.3px;">
@@ -19,7 +19,7 @@
 	
 	<%-- bags --%>
         <c:choose>
-          <c:when test="${MYMINE_PAGE=='lists'||MYMINE_PAGE == null}">
+          <c:when test="${MYMINE_PAGE=='lists'||MYMINE_PAGE == ''}">
             <b><fmt:message key="mymine.bags.tab.title"/></b>
           </c:when>
           <c:otherwise>
