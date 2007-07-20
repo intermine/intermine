@@ -4,12 +4,25 @@ use strict;
 
 my @pages = ();
 
-open my $tour_file, '<', 'tour.txt' or die;
+if (@ARGV != 3) {
+  die <<USAGE;
+Wrong number of argument
+
+usage:
+  $0 input_file "Some title" output_file_prefix
+USAGE
+}
+
+my $help_file_name = $ARGV[0];
+my $help_title = $ARGV[1];
+my $prefix = $ARGV[2];
+
+open my $help_file, '<', $help_file_name or die;
 
 my $title;
 my $text = "";
 
-while (my $line = <$tour_file>) {
+while (my $line = <$help_file>) {
   if ($line =~ m:<h2>(.*)</h2>:i) {
     if (defined $title) {
       save($title, $text);
@@ -33,7 +46,7 @@ sub save
 
 #  warn "$title, $text\n";
 
-  if ($title =~ m:\d+\.\s+(.*):i) {
+  if ($title =~ m[(?:\d+\.\s+)?(.*)]i) {
     push @pages, {
                   title => $1,
                   text => $text,
@@ -46,7 +59,7 @@ sub save
 sub make_name
 {
   my $num = shift;
-  return "tour_$num.html";
+  return "${prefix}_$num.html";
 }
 
 for my $page (@pages) {
@@ -79,6 +92,15 @@ for my $page (@pages) {
 #    $onclick = qq[onclick="window.location.replace('$next_url');"];
 #  }
 
+  my $style_path = 'style';
+
+  if (!-d "$style_path") {
+    $style_path = "../$style_path";
+    if (!-d "$style_path") {
+      $style_path = "../$style_path";
+    }
+  }
+
   my $x_of_y = "$num/" . scalar(@pages);
 
   print $f <<"HTML";
@@ -86,9 +108,9 @@ for my $page (@pages) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px">
   <head>
-    <title>FlyMine Tour page $num - $title</title>
-    <link media="screen,print" href="../style/base.css" type="text/css" rel="stylesheet" />
-    <link media="screen,print" href="../style/branding.css" type="text/css" rel="stylesheet" />
+    <title>$help_title page $num - $title</title>
+    <link media="screen,print" href="$style_path/base.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="$style_path/branding.css" type="text/css" rel="stylesheet" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
   </head>
   <body>
