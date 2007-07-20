@@ -26,9 +26,9 @@ if(new java.io.File(application.getRealPath("model")+"/"+stylename+"_L.gif").exi
 	<c:choose>
 	<c:when test="${useImages}">
 	<tr>
-	  <td width="20"><img src="model/${stylename}_L.gif" width="20" height="41" alt="Roundcorner L"></td>
+	  <td width="20"><img src="model/${stylename}_L.gif" width="20" height="35" alt="Roundcorner L"></td>
 	  <td width="100%" style="background-image: url('model/${stylename}_M.gif');"><h1><c:out value="${title}"/></h1></td>
-	  <td width="20"><img src="model/${stylename}_R.gif" width="20" height="41" alt="Roundcorner R"></td>
+	  <td width="20"><img src="model/${stylename}_R.gif" width="20" height="35" alt="Roundcorner R"></td>
 	</tr>
 	</c:when>
 	<c:otherwise>

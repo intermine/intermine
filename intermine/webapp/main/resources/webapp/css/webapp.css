@@ -101,13 +101,12 @@ table#frontpagelayout td table.roundcornerbox td {
     margin:0px;
     padding:0px;
     color:white;
-	font-size:20px;
+	font-size:1.5em;
 }
 .roundcornerbox img{
 	padding:0px;
 	margin:0px;
 }
-
 table#headertable{
 	width:100%;
 	margin:0px;
@@ -130,11 +129,11 @@ ul#nav a{
 ul#nav a:hover{color:#000;}
 ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #5C0075;}
 li#home a{background:#9D66AD;color:white;}
-li#bags a{background:#AD8668;color:white;}
-li#templates a{background:#4A497B;color:white;}
-li#query a{background:#589100;color:white;}
+li#bags a{background:#FF9900;color:white;}
+li#templates a{background:#712839;color:white;}
+li#query a{background:#4A497B;color:white;}
 li#category a{background:#663366;color:white;white-space: nowrap;}
-li#mymine a{background:#9D66AD;color:white;}
+li#mymine a{background:#9B89A7;color:white;}
 
 td#quicksearch {
 	width:100%;
@@ -145,6 +144,12 @@ td#quicksearch {
 	background:#5C0075;
 	padding:10px;
 }
+
+.bagStyle{background:#FF9900;color:black;}
+.templateStyle{background:#712839;color:white;}
+.queryStyle{background:#4A497B;color:white;}
+.categoryStyle{background:#663366;color:white;}
+.mymineStyle{background:#9B89A7;color:white;}
 
 /* style for gray boxes with heading */
 .box .heading, .heading2 {
@@ -484,8 +489,9 @@ table.results tr.queryAgeToday td {
 }
 
 #pageDesc {
-  background:#F5F0FF;
-  padding:20px;
+/*  background:#F5F0FF;*/
+  padding:5px 10px 5px 10px;
+  margin:0px 15px 0px 15px;
 }
 #actionsLeft {
   margin:20px;

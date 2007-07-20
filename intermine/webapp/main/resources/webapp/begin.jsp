@@ -27,7 +27,7 @@
       
 	<im:roundbox title="Templates" stylename="welcome" height="350">
 <p><em><fmt:message key="begin.templates"/></em></p>
-<p><u>Here are some templates you can try:</u></p>
+<p><u><fmt:message key="begin.trytemplates"/></u></p>
 	   <tiles:insert name="webSearchableList.tile">
       	    <!-- optional -->
             <tiles:put name="limit" value="5"/>
@@ -38,16 +38,21 @@
             <tiles:put name="tags" value="im:public"/>
             <tiles:put name="showDescriptions" value="false"/>
             <tiles:put name="showSearchBox" value="false"/>
-            <tiles:put name="height" value="100"/>
+            <%--<tiles:put name="height" value="100"/>--%>
       </tiles:insert>
-      <p><html:link action="/templates">View all ${templateCount} templates...</html:link></p>
-      <div align="center"><html:link action="/templates.do"><img src="images/go_to_template_page.png" width="385" height="76" alt="Go To Template Page"></html:link></div>
+      <div align="center"><table><tr>
+      <td><html:link action="/templates.do"><img src="images/gotoTemplates.png" alt="Go To Template Page" style="float:left;"  ></html:link></td>
+      <td style="white-space:nowrap;"><ul>
+         <li>run templates</li>
+         <li>edit templates</li>
+         <li>import and export</li>
+      </ul></td></tr></table>
 	</im:roundbox>	
 </td>
 <td>
 	<im:roundbox title="Lists" stylename="welcome" height="350">
 	   <p><em><fmt:message key="begin.bags"/></em></p>
-      <p><u>Have a look at some Lists we've made for you:</u></p>
+      <p><u><fmt:message key="begin.trybags"/></u></p>
       <tiles:insert name="webSearchableList.tile">
             <tiles:put name="limit" value="3"/>
              <%-- bag or template? --%>
@@ -56,11 +61,18 @@
             <tiles:put name="scope" value="global"/>
             <tiles:put name="tags" value="im:frontpage"/>
             <tiles:put name="showSearchBox" value="false"/>
-            <tiles:put name="height" value="100"/>
+            <%--<tiles:put name="height" value="100"/>--%>
       </tiles:insert> 
-	<p><html:link action="/bag">View all ${bagCount} bags...</html:link></p>
-      <p><u>...or create your own List:</u></p>
-      <div align="center"><html:link action="/bag.do"><img src="images/go_to_bag_page.png" align="center" width="317" height="80" alt="Go To Bag Page" border="0"></html:link></div>
+      <p><u><fmt:message key="begin.createbags"/></u></p>
+      <div align="center"><table><tr>
+      <td><html:link action="/bag.do"><img  src="images/gotoLists.png" align="center" alt="Go To Bag Page" border="0"></html:link></td>
+      <td style="white-space:nowrap;"><ul style="text-align:left" >
+         <li>analyse list contents</li>
+         <li>create new lists</li>
+         <li>run operations on lists</li>
+         <li>import and export</li>
+      </ul></td></tr>
+      </table></div>
 	</im:roundbox>
 </td>
 </tr>
@@ -68,13 +80,13 @@
    <td>
       <im:roundbox title="Data" stylename="welcome" height="180">
       <p><em><fmt:message key="begin.data"/></em></p>
-   	<div align="center"><html:link action="/dataCategories.do"><img src="images/view_all_datasets.png" width="359" height="75" alt="View All Datasets"></html:link></div>
+   	<div align="center"><html:link action="/dataCategories.do"><img src="images/gotoData.png" alt="View All Datasets"></html:link></div>
    	</im:roundbox>
    </td>
    <td>
 	<im:roundbox title="Query Builder" stylename="welcome" height="180">
 	<p><em><fmt:message key="begin.querybuilder"/></em></p>
-    <div align="center"><html:link action="/customQuery.do"><img src="images/go_to_query_builder.png" width="305" height="75" alt="Go To Query Builder"></html:link></div>
+    <div align="center"><html:link action="/customQuery.do"><img src="images/gotoQB.png" alt="Go To Query Builder"></html:link></div>
    </im:roundbox>
    </td>
    </tr>
