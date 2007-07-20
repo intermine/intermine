@@ -60,30 +60,7 @@ th.sort-active a
         cursor:wait;
         }
 */
-th a
-        {
-        text-decoration:none;
-        color: #4f6b72;
-        }
-td a
-        {
-        text-decoration:none;
-        color:#239;
-        }
 
-td a:hover
-        {
-        color:#a84444;
-        border-bottom:1px dotted #a80000;
-        }
-td
-        {
-        font: normal 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-        border-right: 1px solid #C1DAD7;
-        border-bottom: 1px solid #C1DAD7;
-        padding: 6px 12px 6px 12px;
-        color: #4f6b72;
-        }
 td.lft
         {
         text-align:left;

@@ -10,9 +10,6 @@
 <!-- historyTemplates.jsp -->
 <html:xhtml/>
 
-  <script type="text/javascript" src="js/tablesort.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
-
   <tiles:useAttribute id="type" name="type"/>
 
   <im:body id="savedTemplates">
