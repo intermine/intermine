@@ -26,7 +26,7 @@
       <td>
       
 	<im:roundbox title="Templates" stylename="welcome" height="350">
-<p><em><fmt:message key="begin.templates"/></em></p>
+
 <p><u><fmt:message key="begin.trytemplates"/></u></p>
 	   <tiles:insert name="webSearchableList.tile">
       	    <!-- optional -->

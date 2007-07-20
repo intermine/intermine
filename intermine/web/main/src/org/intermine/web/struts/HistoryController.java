@@ -44,8 +44,6 @@ public class HistoryController extends TilesAction
         HttpSession session = request.getSession();
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        request.setAttribute("queryAgeClasses", 
-                             MyMineController.getQueryAgeClasses(profile.getHistory()));
 
         return null;
     }

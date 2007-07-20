@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.session.SessionMethods;
@@ -139,9 +137,6 @@ public class BagBuildController extends TilesAction
         }
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
-        request.setAttribute("ageClasses", getBagAgeClasses(profile.getSavedBags()));
-
         return null;
     }
 
@@ -170,18 +165,5 @@ public class BagBuildController extends TilesAction
         return fieldValues;
     }
     
-    /**
-     * Return a Map from bag name to css class to use on the div/tr/td displaying the bag.
-     * @param bags a Map from bag name to InterMineBag
-     * @return a Map from query name to CSS class
-     */
-    static Map<String, String> getBagAgeClasses(Map<String, InterMineBag> bags) {
-        Map<String, String> ageClassMap = new HashMap<String, String>();
-        for (Map.Entry<String, InterMineBag> entry: bags.entrySet()) {
-            String bagName = entry.getKey();
-            ageClassMap.put(bagName, 
-                            MyMineController.getCSSClassForAge(entry.getValue().getDateCreated()));
-        }
-        return ageClassMap;
-    }
+
 }

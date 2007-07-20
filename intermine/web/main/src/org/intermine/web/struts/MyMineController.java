@@ -81,49 +81,6 @@ public class MyMineController extends TilesAction
                 }
             }
         }
-
-        request.setAttribute("ageClasses", getQueryAgeClasses(profile.getSavedQueries()));
-
         return null;
     }
-
-    /**
-     * Return a Map from query name to css class to use on the div/tr/td displaying the query.
-     * @param queries a Map from query name to SavedQuery
-     * @return a Map from query name to CSS class
-     */
-    static Map<String, String> getQueryAgeClasses(Map<String, SavedQuery> queries) {
-        Map<String, String> ageClassMap = new HashMap<String, String>();
-        for (Map.Entry<String, SavedQuery> entry: queries.entrySet()) {
-            String queryName = entry.getKey();
-            ageClassMap.put(queryName, getCSSClassForAge(entry.getValue().getDateCreated()));
-        }
-        return ageClassMap;
-    }
-
-    /**
-     * For a given Date, return a CSS class to when displaying objects of that age.
-     * @param date the Date
-     * @return a css class
-     */
-    static String getCSSClassForAge(Date date) {
-        if (date == null) {
-            // give up
-            return "queryAgeOld";
-        }
-        Date currentDate = new Date();
-        long age = (currentDate.getTime() - date.getTime()) / 1000;
-        if (age < 10 * 60) {
-            // 10 minutes
-            return "queryAgeYoung";
-        } else {
-            if (age < 60 * 60 * 12) {
-                // today (-ish)
-                return "queryAgeToday";                    
-            } else {
-                return "queryAgeOld";
-            }
-        }
-    }
-
 }

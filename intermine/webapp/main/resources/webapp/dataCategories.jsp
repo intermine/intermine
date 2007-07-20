@@ -13,21 +13,19 @@
 <table padding="0px" margin="0px" width="100%">
   <tr>
     <td valign="top" width="30%">
-      <div id="pageDesc"><p><fmt:message key="dataCategories.intro"/></p></div>
-      <script type="text/javascript">
-      	Nifty("div#pageDesc","big");
-      </script>
-      <div id="actionsLeft">
-         <h2>Actions:</h2>
+      <div id="pageDesc" class="categoryStyle"><p><fmt:message key="dataCategories.intro"/></p></div>
+
+  <im:roundbox title="Actions" stylename="welcome">
            <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a>
          <BR/>
            <html:link action="/templates">
              <fmt:message key="dataCategories.action2"/>
            </html:link>
-      </div>
+  </im:roundbox>
+      
     </td>
     <td valign="top" width="70%">
-<div class="webSearchable" style="width:70%">
+<div class="webSearchable" id="dataCategories" style="width:70%">
 		<h2><fmt:message key="dataCategories.title"/></h2>
     
 		<c:choose>
@@ -58,6 +56,10 @@
   </tr>
 </table>
 
-
+      <script type="text/javascript">
+      	Nifty("div#pageDesc","big");
+      	Nifty("div#dataCategories","big");
+      </script>
+  
 
 <!-- /dataCategories -->

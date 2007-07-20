@@ -12,9 +12,6 @@
   <tr>
     <td valign="top" width="30%">
       <div id="pageDesc" class="queryStyle"><p><fmt:message key="begin.querybuilder"/></p></div>
-      <script type="text/javascript">
-      	Nifty("div#pageDesc","big");
-      </script>
       <im:roundbox title="Actions" stylename="welcome">
 	          <html:link action="/importQueries?query_builder=yes">
 	            <fmt:message key="begin.import.query"/>
@@ -56,5 +53,6 @@
 
 <script type="text/javascript">
 	Nifty("div#classChooser","big");
+	Nifty("div#pageDesc","big");
 </script>
 <!-- /customQuery.jsp -->

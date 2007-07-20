@@ -10,6 +10,7 @@
 <div class="body">
 
 <%-- top nav --%>
+
 <jsp:include page="mymineMenu.jsp" flush="true">
     <jsp:param name="loggedin" value="${loggedin}"/>
     <jsp:param name="MYMINE_PAGE" value="${MYMINE_PAGE}" />
