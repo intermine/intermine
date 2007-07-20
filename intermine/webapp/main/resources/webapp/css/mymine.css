@@ -1,33 +1,3 @@
-.histTabTable td.topLeft {
-  border-right: 1px solid #888;
-  border-bottom: 1px solid #888;
-}
-
-.histTabTable td.tab {
-  border-top: 1px solid #888;
-  border-right: 1px solid #888;
-}
-
-.histTabTable td.selected {
-  font-weight: bold;
-  border-right: 1px solid #888;
-  border-top: 1px solid #888;
-}
-
-.histTabTable td.not-selected {
-  border-bottom: 1px solid #888;
-  background-color: #f5f5f5;
-}
-
-.histTabTable td.tab-space {
-  border-bottom: 1px solid #888;
-}
-
-.histTabTable td.not-selected a:hover {
-  color: #000;
-  text-decoration: underline;
-}
-
 .historySummaryRoot {
   background-color: #e7F1E7;
   border: 1px solid #bbb;
@@ -52,5 +22,16 @@ table.history > tbody > tr > td {
   padding: 1px;
   padding-left: 5px;
   padding-right: 5px;
+  background-color: #f5f0ff;
+  color:#333;
+  border-bottom: #fff solid 1.3px;
 }
 
+table.history > tbody > tr {
+  font-size: 11px;
+  padding: 1px;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #5c0075;
+  color:#fff;
+}
