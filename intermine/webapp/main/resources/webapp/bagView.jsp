@@ -33,7 +33,7 @@
     <tiles:put name="limit" value="15"/>
     <tiles:put name="scope" value="user"/>
     <tiles:put name="makeCheckBoxes" value="true"/>
-    <tiles:put name="showDescriptions" value="false"/>
+    <tiles:put name="showDescriptions" value="true"/>
   </tiles:insert>
 
   <br/>
@@ -42,7 +42,7 @@
     <tiles:put name="limit" value="15"/>
     <tiles:put name="scope" value="global"/>
     <tiles:put name="makeCheckBoxes" value="true"/>
-    <tiles:put name="showDescriptions" value="false"/>
+    <tiles:put name="showDescriptions" value="true"/>
     <tiles:put name="height" value="300"/>
   </tiles:insert>
 
