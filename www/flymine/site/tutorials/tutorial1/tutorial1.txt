@@ -1,0 +1,68 @@
+<h2>Tutorial 1: Browsing FlyMine - Running a Quick Search</h2>
+
+ <p>
+Quick Search allows you to access all the information that is
+available for a particular database entry and provides a good way to
+browse the database. The Quick Search box is found on the top right of
+the FlyMine home page as well as in the top menu bar of evey FlyMine
+page. You can use this to search for anything with an identifier,
+symbol or synonym; for example genes, proteins, transcripts, binding
+sites... Wild cards (*) can be added to increase the range of a quick
+search.
+</p>
+
+<p>Some example identifiers:</p>
+<ul>
+        <li>for <i>Drosophila</i> genes, use the symbol,
+         <a href="http://www.flybase.org">FlyBase</a> ID or any synonym (eg. zen, FBgn0004053, 
+         CG1046, z1, zen1, BG:DS00276.9, l(3)84Ad).<br /></li>
+
+        <li>for <i>A. gambiae</i> genes, use
+         <a href="http://www.ensembl.org/Anopheles_gambiae/index.html">Ensembl</a> 
+         identifiers (eg. ENSANGG00000001499).<br /></li>
+
+        <li>for <i>Apis mellifera</i> genes, use
+         <a href="http://www.ensembl.org/Apis_mellifera/index.html">Ensembl</a> 
+         identifiers (eg. ENSAPMG00000012500).<br /></li>
+
+        <li>for <i>C. elegans</i> genes, use the 
+         <a href="http://www.wormbase.org/">WormBase</a>
+         identifiers or symbols (eg. WBGene00003920, par-5, ftt-1).<br /></li>
+
+        <li>for proteins, use <a href="http://www.uniprot.org">UniProt</a> 
+         identifiers or primary accessions (eg. 18C_DROME, P16909).<br /></li>
+
+        <li>for protein domains or families, use 
+         <a href="http://www.ebi.ac.uk/interpro">InterPro</a> 
+         (eg. IPR001254, IPR001804).<br /></li>
+</ul>
+
+<p>
+This tutorial will guide you through running a Quick Search. As an
+example, we will run a Quick Search for the <i>zen</i> gene. Enter the
+gene symbol 'zen' into the search box and press 'Search'. Since only
+one item in the database matches the term 'zen', you will be taken
+straight to the 'Object details page' for the <i>zen</i>
+gene. Navigating the object details page is described in more detail
+in <a href="tutorial2-ObjectDetailPage.shtml">Tutorial 2</
+</p>
+          
+            <img alt="[quickSearchBox.png]" src="quickSearchBox.png"/>
+
+<p>
+Since only one item in the database matches the term 'zen', you will
+be taken straight to the 'Object details page' for the <i>zen</i>
+gene. Navigating the object details page is described in more detail
+in <a href="tutorial2-ObjectDetailPage.shtml">Tutorial 2</a>.
+</p>
+
+<p>
+Wild cards (*) can be added to increase the range of a quick
+search. Enter 'zen*' into the search box and press 'Search'. This time
+the search term matches several items in the database and a summary
+list of these will be returned as your results. Each summary includes
+links to the object details page for that item (see <a
+href="tutorial2-ObjectDetailPage.shtml">Tutorial 2</a>):
+</p>
+          
+            <img alt="[quickSearchResults.png]" src="quickSearchResults.png" />
