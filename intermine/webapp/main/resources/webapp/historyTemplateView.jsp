@@ -10,6 +10,9 @@
 <!-- historyTemplates.jsp -->
 <html:xhtml/>
 
+  <script type="text/javascript" src="js/tablesort.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
+
   <tiles:useAttribute id="type" name="type"/>
 
   <im:body id="savedTemplates">
@@ -38,22 +41,22 @@
       <c:otherwise>
         
         <html:form action="/modifyTemplate">
-        <table class="history" cellspacing="0">
+        <table class="sortable-onload-3-reverse rowstyle-alt no-arrow" cellspacing="0">
           <tr>
             <th>
               <input type="checkbox" id="selected_template"
                      onclick="selectColumnCheckbox(this.form, 'template')"/>
             </th>
-            <th align="left" nowrap>
+            <th align="left" nowrap class="sortable">
               <fmt:message key="history.namecolumnheader"/>
             </th>
-            <th align="left" nowrap>
+            <th align="left" nowrap class="sortable">
               <fmt:message key="history.titleheader"/>
             </th>
-            <th align="left" nowrap>
+            <th align="left" nowrap class="sortable">
               <fmt:message key="history.descriptionheader"/>
             </th>
-            <th align="left" nowrap>
+            <th align="left" nowrap class="sortable">
               <fmt:message key="history.commentheader"/>
             </th>
             <th align="center" nowrap>
