@@ -190,6 +190,8 @@ function getResults(qid, timeout, userCallback, userData) {
 }
 
 var callId = 0;
+
+// Give each call an id and remember what our current pending id is
 var currentFilterCallbacks = new Array();
 
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
@@ -216,6 +218,8 @@ function filterWebSearchables(object, scope, type) {
             var filteredList = cbResult.slice(1);
 
             if (currentFilterCallbacks[scope + "_" + type] != callId) {
+                // we've started another call since this one started, so
+                // ignore this one
                 return;
             }
 
