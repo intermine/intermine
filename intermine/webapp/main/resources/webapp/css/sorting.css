@@ -80,17 +80,7 @@ td[class~="alt"]
         {
         background: #fff url(../images/col_alt.jpg) no-repeat !important;
         }
-/* Poor old Internet Explorer won't see the next two rules either */
-tbody tr.alt td:first-child
-        {
-        background: #F5FAFA url(../images/bullet2.gif) no-repeat;
-        font-weight:bold;
-        }
-tbody tr td:first-child
-        {
-        background: #fff url(../images/bullet1.gif) no-repeat;
-        font-weight:bold;
-        }
+
         
         
 /* blue and green boxes surrounding class names in the query history table */ 
