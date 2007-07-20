@@ -8,6 +8,9 @@
 <!-- historyQueryView.jsp -->
 <html:xhtml/>
 
+  <script type="text/javascript" src="js/tablesort.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
+
 <tiles:useAttribute id="type" name="type"/>
 	
 <c:choose>
@@ -43,9 +46,6 @@
       </c:when>
       <c:otherwise>
 
-
-
-
         <html:form action="/modifyQuery">
         <input type="hidden" name="type" value="${type}"/>
         <table class="sortable-onload-3-reverse rowstyle-alt no-arrow" cellspacing="0">
@@ -55,7 +55,7 @@
               <input type="checkbox" id="selected_${type}"
                      onclick="selectColumnCheckbox(this.form, '${type}')">
             </th>
-            <th align="left" colspan="2" nowrap class="sortable">
+            <th align="left" nowrap class="sortable">
               <fmt:message key="history.namecolumnheader"/>
             </th>
             <th align="center" class="sortable-ymd">
@@ -87,13 +87,15 @@
                     <c:out value="${savedQuery.key}" escapeXml="false"/>
                   </html:multibox>
                 </td>
+                
+                <td>
                 <c:choose>
                   <c:when test="${!validQuery}">
-                    <td align="left" colspan="2" nowrap>
+                   
                       <html:link action="/templateProblems?name=${savedQuery.key}&amp;type=saved" styleClass="brokenTmplLink">
                       <strike>${savedQuery.value.name}</strike>
                       </html:link>
-                    </td>
+                    
                   </c:when>
                   <c:otherwise>
                     <tiles:insert name="renamableElement.jsp">
@@ -103,6 +105,8 @@
                     </tiles:insert>
                   </c:otherwise>
                 </c:choose>
+                
+                </td>
                 <td align="center" nowrap>
                   <c:choose>
                     <c:when test="${savedQuery.value.dateCreated != null}">
@@ -194,6 +198,5 @@
       </c:otherwise>
     </c:choose>
   </im:body>
-
 
 <!-- /historyQueryView.jsp -->

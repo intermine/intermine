@@ -6,11 +6,7 @@
 
 <!-- mymine.jsp -->
 <c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
-  
-  
-  <script type="text/javascript" src="js/tablesort.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
-  
+    
 <div class="body">
 
 <%-- top nav --%>
@@ -18,8 +14,6 @@
     <jsp:param name="loggedin" value="${loggedin}"/>
     <jsp:param name="MYMINE_PAGE" value="${MYMINE_PAGE}" />
 </jsp:include>
-
-
 
   <c:choose>
   <%-- bags --%>
