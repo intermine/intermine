@@ -74,6 +74,10 @@ bool  bioseg_le(SEG * a, SEG * b);
 bool  bioseg_gt(SEG * a, SEG * b);
 bool  bioseg_ge(SEG * a, SEG * b);
 bool  bioseg_different(SEG * a, SEG * b);
+Datum bioseg_joinsel(PG_FUNCTION_ARGS);
+Datum bioseg_sel(PG_FUNCTION_ARGS);
+Datum bioseg_contsel(PG_FUNCTION_ARGS)
+Datum bioseg_contjoinsel(PG_FUNCTION_ARGS)
 
 
 static int get_dots(char **str);
@@ -856,4 +860,31 @@ bool
   bioseg_contains_int(SEG * a, int *b)
 {
   return ((a->lower <= *b) && (a->upper >= *b));
+}
+
+/*
+** These are lower than those in geo_selfuncs.c - found by trail and error.
+*/
+Datum
+  bioseg_sel(PG_FUNCTION_ARGS)
+{
+  PG_RETURN_FLOAT8(2.0e-4);
+}
+
+Datum
+  bioseg_joinsel(PG_FUNCTION_ARGS)
+{
+  PG_RETURN_FLOAT8(1.0e-5);
+}
+
+Datum
+  contsel(PG_FUNCTION_ARGS)
+{
+  PG_RETURN_FLOAT8(1.0e-4);
+}
+
+Datum
+  contjoinsel(PG_FUNCTION_ARGS)
+{
+  PG_RETURN_FLOAT8(5e-6);
 }
