@@ -199,14 +199,14 @@ var currentFilterCallbacks = new Array();
 function filterWebSearchables(object, scope, type) {
     var value = object.value;
     var inputArray = document.getElementsByTagName("div");
-    var pattern = new RegExp('^' + scope + '_' + type + '_item_(.*)');
+    var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
 
     function showAll() {
         for(var i=0; i<inputArray.length; i++) {
             var result;
             if ((result = pattern.exec(inputArray[i].id)) != null) {
                 inputArray[i].style.display='block';
-                var scoreId = scope + '_' + type + '_item_' + result[1] + '_score';
+                var scoreId = scope + '_' + type + '_item_score_' + result[1];
                 $(scoreId).innerHTML = '';
             }
         }
@@ -227,18 +227,24 @@ function filterWebSearchables(object, scope, type) {
                 showAll();
             } else {
                 var scoreHash = new Array();
+                var descHash = new Array();
                 for (var el in filteredList) {
                     var wsName = filteredList[el][0];
                     var wsScore = filteredList[el][1];
-                    scoreHash[scope + '_' + type + '_item_' + wsName] = wsScore;
+                    scoreHash[scope + '_' + type + '_item_line_' + wsName] = wsScore;
+                    var wsDesc = filteredList[el][2];
+                    descHash[scope + '_' + type + '_item_line_' + wsName] = wsDesc;
                 }
 
                 for(var i=0; i<inputArray.length; i++) {
                     if ((result = pattern.exec(inputArray[i].id)) != null) {
                         if (scoreHash[inputArray[i].id]) {
                             inputArray[i].style.display='block';
-                            var scoreId = scope + '_' + type + '_item_' + result[1] + '_score';
+                            var scoreId = scope + '_' + type + '_item_score_' + result[1];
                             $(scoreId).innerHTML = scoreHash[inputArray[i].id];
+                            var descId = scope + '_' + type + '_item_description_' + result[1];
+                            var highlightText = descHash[inputArray[i].id];
+                            $(descId).innerHTML = '<p class="description">' + highlightText + '</p>';
                         } else {
                             inputArray[i].style.display='none';
                         }

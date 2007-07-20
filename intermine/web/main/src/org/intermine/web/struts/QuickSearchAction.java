@@ -104,12 +104,12 @@ public class QuickSearchAction extends InterMineAction
             if (qsType.equals("tpls")) {
                 time = TemplateHelper.runLeuceneSearch(qsf.getValue(), "ALL", "template", 
                               ((Profile) session.getAttribute(Constants.PROFILE)), 
-                              context, hitMap, scopeMap, highlightedMap, descrMap);
+                              context, hitMap, scopeMap, highlightedMap, null, descrMap);
                 request.setAttribute("type", "template");
             } else if (qsType.equals("bgs")) {
                 time = TemplateHelper.runLeuceneSearch(qsf.getValue(), "ALL", "bag", 
                               ((Profile) session.getAttribute(Constants.PROFILE)), 
-                              context, hitMap, scopeMap, highlightedMap, descrMap);
+                              context, hitMap, scopeMap, highlightedMap, null, descrMap);
                 request.setAttribute("type", "bag");
             } else {
                 throw new RuntimeException("Quick search type not valid");

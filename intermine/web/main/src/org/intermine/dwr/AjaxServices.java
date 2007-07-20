@@ -371,11 +371,14 @@ public class AjaxServices
 
         Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
         Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
-        Map<WebSearchable, String> highlightedMap = new HashMap<WebSearchable, String>();
+        Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
         Map<WebSearchable, String> descrMap = new HashMap<WebSearchable, String>();
         try {
-            TemplateHelper.runLeuceneSearch(filterText, scope, type, profile, servletContext,
-                                            hitMap, scopeMap, null, descrMap);
+            long time =
+                TemplateHelper.runLeuceneSearch(filterText, scope, type, profile, servletContext,
+                                                hitMap, scopeMap, null, highlightedDescMap, 
+                                                descrMap);
+            LOG.info("Lucene search took " + time + " milliseconds");
         } catch (ParseException e) {
             LOG.error("couldn't run lucene filter", e);
             return Collections.EMPTY_LIST;
@@ -384,6 +387,8 @@ public class AjaxServices
             return Collections.EMPTY_LIST;
         }
 
+        long time = System.currentTimeMillis();
+        
         Map<String, WebSearchable> wsMap = new LinkedHashMap<String, WebSearchable>();
         
         for (WebSearchable ws: hitMap.keySet()) {
@@ -405,10 +410,13 @@ public class AjaxServices
             List row = new ArrayList();
             row.add(ws.getName());
             row.add(hitMap.get(ws));
-            row.add(highlightedMap.get(ws));
+            row.add(highlightedDescMap.get(ws));
             returnList.add(row);
         }
         
+        time = System.currentTimeMillis() - time;
+        LOG.info("processing in filterWebSearchables() took: " + time + " milliseconds:");
+
         return returnList;
     }
 }

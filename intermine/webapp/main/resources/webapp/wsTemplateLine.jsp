@@ -19,9 +19,9 @@
 <c:set var="type" value="template"/>
 
 <!-- wsTemplateLine.jsp -->
-<div class="wsTempateLine" id="${scope}_template_item_${webSearchable.name}">
+<div class="wsTempateLine" id="${scope}_${type}_item_line_${webSearchable.name}">
 <div style="float: right">
-  <span id="${scope}_${type}_item_${webSearchable.name}_score"/>
+  <span id="${scope}_${type}_item_score_${webSearchable.name}"/>
 </div>
 <c:if test="${!empty makeCheckBoxes}">
     <html:multibox property="selected" styleId="${scope}_template_chck_${webSearchable.name}"
@@ -75,19 +75,21 @@
 </tiles:insert>
 
 <c:if test="${showDescriptions}">
-   <c:choose>
-      <c:when test="${fn:length(webSearchable.description) > 60}">
-        <div id="temp_desc_${webSearchable.name}_s" class="description">
-        ${fn:substring(webSearchable.description, 0, 60)}...&nbsp;&nbsp;<a href="javascript:toggleDivs('temp_desc_${webSearchable.name}_s','temp_desc_${webSearchable.name}_l')">more</a>
-        </div>
-        <div id="temp_desc_${webSearchable.name}_l" style="display:none" class="description">
-        ${webSearchable.description}&nbsp;&nbsp;<a href="javascript:toggleDivs('temp_desc_${webSearchable.name}_l','temp_desc_${webSearchable.name}_s')">less</a>
-        </div>
-      </c:when>
-      <c:otherwise>
-        <p class="description">${webSearchable.description}</p>
-      </c:otherwise>
-    </c:choose>
+   <div id="${scope}_${type}_item_description_${webSearchable.name}">
+     <c:choose>
+       <c:when test="${fn:length(webSearchable.description) > 60}">
+         <div id="temp_desc_${webSearchable.name}_s" class="description">
+           ${fn:substring(webSearchable.description, 0, 60)}...&nbsp;&nbsp;<a href="javascript:toggleDivs('temp_desc_${webSearchable.name}_s','temp_desc_${webSearchable.name}_l')">more</a>
+         </div>
+         <div id="temp_desc_${webSearchable.name}_l" style="display:none" class="description">
+           ${webSearchable.description}&nbsp;&nbsp;<a href="javascript:toggleDivs('temp_desc_${webSearchable.name}_l','temp_desc_${webSearchable.name}_s')">less</a>
+         </div>
+       </c:when>
+       <c:otherwise>
+         <p class="description">${webSearchable.description}</p>
+       </c:otherwise>
+     </c:choose>
+   </div>
     <%--<c:choose>
       <c:when test="${fn:length(webSearchable.comment) > 60}">
         ${fn:substring(webSearchable.comment, 0, 60)}...

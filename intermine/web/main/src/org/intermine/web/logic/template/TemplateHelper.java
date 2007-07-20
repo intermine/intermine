@@ -798,6 +798,7 @@ public class TemplateHelper
      * @param scopeMap
      * @param highlightedMap
      * @param descrMap
+     * @param highlightedDescMap 
      * @return
      * @throws ParseException
      * @throws IOException
@@ -808,6 +809,7 @@ public class TemplateHelper
                                          Map<WebSearchable, Float> hitMap, 
                                          Map<WebSearchable, String> scopeMap,
                                          Map<WebSearchable, String> highlightedMap,
+                                         Map<WebSearchable, String> highlightedDescMap,
                                          Map<WebSearchable, String> descrMap) 
         throws ParseException, IOException {
         // special case for word ending in "log" eg. "ortholog" - add "orthologue" to the search
@@ -870,15 +872,26 @@ public class TemplateHelper
             hitMap.put(webSearchable, new Float(hits.score(i)));
             scopeMap.put(webSearchable, docScope);
 
-            String highlightString = webSearchable.getTitle();
-            descrMap.put(webSearchable, webSearchable.getDescription());
+            if (descrMap != null) {
+                descrMap.put(webSearchable, webSearchable.getDescription());
+            }
 
             if (highlightedMap != null) {
+                String highlightString = webSearchable.getTitle();
                 TokenStream tokenStream =
                     analyzer.tokenStream("", new StringReader(highlightString));
                 highlighter.setTextFragmenter(new NullFragmenter());
                 highlightedMap.put(webSearchable,
                                    highlighter.getBestFragment(tokenStream, highlightString));
+            }
+            
+            if (highlightedDescMap != null) {
+                String highlightString = webSearchable.getDescription();
+                TokenStream tokenStream =
+                    analyzer.tokenStream("", new StringReader(highlightString));
+                highlighter.setTextFragmenter(new NullFragmenter());
+                highlightedDescMap.put(webSearchable,
+                                       highlighter.getBestFragment(tokenStream, highlightString));
             }
         }
         return time;
