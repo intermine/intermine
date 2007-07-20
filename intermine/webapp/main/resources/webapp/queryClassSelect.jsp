@@ -51,7 +51,7 @@
     <tr>
       <td>
         <html:form styleId="queryClassForm" action="/queryClassSelect">
-          <html:select styleId="queryClassSelector" property="className" size="20" onchange="showClassSelectHelp();">
+          <html:select styleId="queryClassSelector" property="className" size="10" onchange="showClassSelectHelp();">
         	<c:forEach items="${preferredTypeList}" var="type">
          	 <html:option value="${type}" style="font-weight:bold">${type}</html:option>
     		</c:forEach>
