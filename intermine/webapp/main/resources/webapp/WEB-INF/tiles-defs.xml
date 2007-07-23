@@ -228,7 +228,7 @@
     <put name="preview" value="template.tile"/>
   </definition>
   <definition name="favourites.tile" path="/historyFavouritesView.jsp" controllerUrl="/initFavourites.do"/>
-  <definition name="starTemplate.tile" path="/shared/starTemplate.jsp" controllerUrl="/starTemplate.do" />
+  <definition name="setFavourite.tile" path="setFavourite.jsp" controllerUrl="/setFavourite.do" />
   <definition name="precomputeTemplate.tile" path="precompute.jsp" controllerUrl="/precomputeTemplate.do" />
   <definition name="summariseTemplate.tile" path="summarise.jsp" controllerUrl="/precomputeTemplate.do" />
   <definition name="externalLinks.tile" path="/externalLinks.jsp"

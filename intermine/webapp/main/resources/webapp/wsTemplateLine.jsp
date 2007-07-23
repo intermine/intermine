@@ -42,8 +42,9 @@
 	  <fmt:param value="${webSearchable.name}"/>
         </fmt:message>
         ${webSearchable.name}
-        <tiles:insert name="starTemplate.tile">
-          <tiles:put name="templateName" value="${webSearchable.name}"/>
+        <tiles:insert name="setFavourite.tile">
+          <tiles:put name="name" value="${webSearchable.name}"/>
+          <tiles:put name="type" value="template"/>
         </tiles:insert>
         <c:if test="${IS_SUPERUSER}">
           <c:set var="taggable" value="${webSearchable}"/>
@@ -70,8 +71,9 @@
            titleKey="history.action.export.hover">
   <img src="images/export.png" width="16" height="13" alt="Export">
 </html:link>
-<tiles:insert name="starTemplate.tile" >
-  <tiles:put name="templateName" value="${webSearchable.name}"/>
+<tiles:insert name="setFavourite.tile">
+  <tiles:put name="name" value="${webSearchable.name}"/>
+  <tiles:put name="type" value="template"/>
 </tiles:insert>
 
 <c:if test="${showDescriptions}">

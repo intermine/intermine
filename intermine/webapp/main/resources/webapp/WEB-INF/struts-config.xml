@@ -379,7 +379,7 @@
     </action>
     <action path="/initFavourites" type="org.intermine.web.struts.FavouritesController">
     </action>
-    <action path="/starTemplate" type="org.intermine.web.struts.StarTemplateController">
+    <action path="/setFavourite" type="org.intermine.web.struts.SetFavouriteController">
     </action>
     <action path="/precomputeTemplate" type="org.intermine.web.struts.PrecomputeTemplateController">
     </action>

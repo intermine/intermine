@@ -37,7 +37,7 @@
     <c:otherwise>
         <c:set var="nameForURL"/>
         <str:encodeUrl var="nameForURL">${webSearchable.name}</str:encodeUrl>
-        <html:link action="/bagDetails?bagName=${nameForURL}">
+        <html:link action="/bagDetails?scope=${scope}&amp;bagName=${nameForURL}">
           <c:out value="${webSearchable.name}"/>
           <img src="images/bag_ico.png" width="13" height="13" alt="View Bag">
         </html:link>
@@ -48,8 +48,9 @@
            titleKey="history.action.export.hover">
   <img src="images/export.png" width="16" height="13" alt="Export">
 </html:link>
-<tiles:insert name="starTemplate.tile" >
-  <tiles:put name="templateName" value="${webSearchable.name}"/>
+<tiles:insert name="setFavourite.tile" >
+  <tiles:put name="name" value="${webSearchable.name}"/>
+  <tiles:put name="type" value="bag"/>
 </tiles:insert>
 
 

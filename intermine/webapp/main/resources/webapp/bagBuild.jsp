@@ -133,7 +133,7 @@
       	
      <%-- file input --%>
      <div align="left"><html:file styleId="fileInput" property="formFile" onkeypress="switchInputs('file','paste');"  onfocus="switchInputs('file','paste');" /></div>
-    <br>  
+    <br>
     <div align="right">
        <%-- reset button --%>
        <input type="button" onClick="resetInputs()" value="Reset" />
