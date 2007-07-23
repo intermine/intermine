@@ -35,7 +35,7 @@ import org.intermine.web.logic.tagging.TagTypes;
  * @author Xavier Watkins
  * 
  */
-public class StarTemplateController extends TilesAction
+public class SetFavouriteController extends TilesAction
 {
 
     /**
@@ -43,12 +43,20 @@ public class StarTemplateController extends TilesAction
      */
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String templateName = (String) context.getAttribute("templateName");
+        String name = (String) context.getAttribute("name");
+        String type = (String) context.getAttribute("type");
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ProfileManager pm = (ProfileManager) request.getSession().getServletContext().getAttribute(
                 Constants.PROFILE_MANAGER);
-        List userTags = pm.getTags(null, templateName, TagTypes.TEMPLATE, profile.getUsername());
+        List userTags = null;
+        if (type.equals(TagTypes.TEMPLATE)) {
+            userTags = pm.getTags(null, name, TagTypes.TEMPLATE, profile.getUsername());
+        } else if (type.equals(TagTypes.BAG)) {
+            userTags = pm.getTags(null, name, TagTypes.BAG, profile.getUsername());
+        } else {
+            throw new RuntimeException("Wrong tag type:" + type);
+        }
         String isFavourite = "false";
         for (Iterator iter = userTags.iterator(); iter.hasNext();) {
             Tag tag = (Tag) iter.next();

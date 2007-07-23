@@ -86,8 +86,9 @@
 					  <fmt:param value="${savedTemplate.value.name}"/>
     			    </fmt:message>
 					  ${savedTemplate.value.name}
-                    <tiles:insert name="starTemplate.tile">
-                      <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
+                    <tiles:insert name="setFavourite.tile">
+                      <tiles:put name="name" value="${savedTemplate.value.name}"/>
+                      <tiles:put name="type" value="template"/>
                     </tiles:insert>
                     <c:if test="${IS_SUPERUSER}">
                       <c:set var="taggable" value="${savedTemplate.value}"/>

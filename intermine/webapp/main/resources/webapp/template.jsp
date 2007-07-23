@@ -83,8 +83,9 @@
 <div class="body">
   <html:form action="/templateAction">
     <div class="templateTitle">${templateQuery.title}
-      <tiles:insert name="starTemplate.tile">
-        <tiles:put name="templateName" value="${templateQuery.name}"/>
+    <tiles:insert name="setFavourite.tile">
+        <tiles:put name="name" value="${templateQuery.name}"/>
+        <tiles:put name="type" value="template"/>
     </tiles:insert></div>
     <div class="templateDescription">${templateQuery.description}</div>
     <table border="0" class="templateForm">

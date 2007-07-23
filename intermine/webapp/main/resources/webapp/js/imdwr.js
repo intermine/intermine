@@ -1,9 +1,9 @@
-function setFavouriteTemplate(templateName, image){
-    AjaxServices.setFavouriteTemplate(templateName);
+function setFavourite(name, type, image){
+    AjaxServices.setFavourite(name, type);
     image.src='images/star_active.gif';
     image.onclick='';
     image.style.cursor='';
-    image.title='This template is a favourite';
+    image.title='This is a favourite';
 }
 
 function precomputeTemplate(templateName){

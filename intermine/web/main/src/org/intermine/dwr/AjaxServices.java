@@ -75,18 +75,24 @@ public class AjaxServices
     /**
      * Creates a favourite Tag for the given templateName
      *
-     * @param templateName
+     * @param name
      *            the name of the template we want to set as a favourite
      */
-    public void setFavouriteTemplate(String templateName) {
+    public void setFavourite(String name, String type) {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         HttpServletRequest request = ctx.getHttpServletRequest();
-        String templateNameCopy = templateName.replaceAll("#039;", "'");
+        String templateNameCopy = name.replaceAll("#039;", "'");
         ProfileManager pm = (ProfileManager) request.getSession().getServletContext().getAttribute(
                 Constants.PROFILE_MANAGER);
-        pm.addTag("favourite", templateNameCopy, TagTypes.TEMPLATE, profile.getUsername());
+        if (type.equals(TagTypes.TEMPLATE)) {
+            pm.addTag("favourite", templateNameCopy, TagTypes.TEMPLATE, profile.getUsername());
+        } else if (type.equals(TagTypes.BAG)) {
+            pm.addTag("favourite", templateNameCopy, TagTypes.BAG, profile.getUsername());
+        } else {
+            throw new RuntimeException("Unknown tag type.");
+        }
     }
 
     /**

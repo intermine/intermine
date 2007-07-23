@@ -44,8 +44,9 @@
   </fmt:message>
  
   <%-- favourites star --%>
-  <tiles:insert name="starTemplate.tile">
-    <tiles:put name="templateName" value="${templateQuery.name}"/>
+  <tiles:insert name="setFavourite.tile">
+    <tiles:put name="name" value="${templateQuery.name}"/>
+    <tiles:put name="type" value="template"/>
   </tiles:insert>
   
   <%-- (t) img.  trail isn't used here because queries always reset the trail --%>
