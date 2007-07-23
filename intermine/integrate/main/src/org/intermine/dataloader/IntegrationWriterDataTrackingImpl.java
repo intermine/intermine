@@ -57,6 +57,11 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * ignoreDuplicates, so we can tell the user if ignoreDuplicates is necessary.
      */
     protected IntPresentSet writtenObjects = new IntPresentSet();
+    /** This is a list of the objects in the destination database that we have written to as a
+     * non-skeleton more than once.
+     */
+    protected IntPresentSet duplicateObjects = new IntPresentSet();
+    protected boolean isDuplicates = false;
 
     /**
      * Creates a new instance of this class, given the properties defining it.
@@ -204,10 +209,11 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     newId = ((InterMineObject) equivObjects.iterator().next()).getId();
                 }
                 newObj.setId(newId);
-                if ((type == SOURCE) && (writtenObjects != null)) {
+                if (type == SOURCE) {
                     if (writtenObjects.contains(newId)) {
                         // There are duplicate objects
-                        writtenObjects = null;
+                        duplicateObjects.add(newId);
+                        isDuplicates = true;
                     } else {
                         writtenObjects.add(newId);
                     }
@@ -286,10 +292,11 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             } else {
                 newObj.setId(newId);
             }
-            if ((type == SOURCE) && (writtenObjects != null)) {
+            if (type == SOURCE) {
                 if (writtenObjects.contains(newObj.getId())) {
                     // There are duplicate objects
-                    writtenObjects = null;
+                    duplicateObjects.add(newObj.getId());
+                    isDuplicates = true;
                 } else {
                     writtenObjects.add(newObj.getId());
                 }
@@ -519,8 +526,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 + ", Copy fields: " + timeSpentCopyFields + ", Store object: " + timeSpentStore
                 + ", Data tracker write: " + timeSpentDataTrackerWrite + ", recursing: "
                 + timeSpentRecursing);
-        if (writtenObjects == null) {
-            LOG.info("There were duplicate objects");
+        if (isDuplicates) {
+            LOG.info("There were duplicate objects, with destination IDs " + duplicateObjects);
         } else {
             LOG.info("There were no duplicate objects");
         }

@@ -22,6 +22,7 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 
 /**
@@ -69,8 +70,8 @@ public interface ObjectStore
      * @return a List of ResultRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
-            Map<Object, Integer> sequence) throws ObjectStoreException;
+    public List<ResultsRow> execute(Query q, int start, int limit, boolean optimise,
+            boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException;
 
     /**
      * Get an object from the ObjectStore by giving an ID.
@@ -101,7 +102,7 @@ public interface ObjectStore
      * @return the objects from the ObjectStore or cache
      * @throws ObjectStoreException if an error occurs during retrieval of the object
      */
-    public List getObjectsByIds(Collection ids) throws ObjectStoreException;
+    public List<InterMineObject> getObjectsByIds(Collection ids) throws ObjectStoreException;
 
     /**
      * Prefetches an object into the objectstore getObjectById cache. This method doesn't
