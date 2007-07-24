@@ -6,8 +6,6 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-
-
 <tiles:importAttribute name="wsName"/>
 <tiles:importAttribute name="scope"/>
 <tiles:useAttribute id="webSearchable" name="webSearchable" 
@@ -17,8 +15,13 @@
 <tiles:importAttribute name="wsCheckBoxId" ignore="true"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 
+<c:set var="type" value="bag"/>
+
 <!-- wsBagLine.jsp -->
-<div class="wsTempateLine" id="${scope}_bag_item_${webSearchable.name}">
+<div class="wsTempateLine" id="${scope}_${type}_item_line_${webSearchable.name}">
+<div style="float: right" id="${scope}_${type}_item_score_${webSearchable.name}">
+  &nbsp;
+</div>
 
 <c:if test="${!empty makeCheckBoxes}">
     <html:multibox property="selectedBags" styleId="${wsCheckBoxId}">
@@ -68,7 +71,8 @@
 </c:if></em>
 
 <c:if test="${showDescriptions}">
-<c:choose>
+  <div id="${scope}_${type}_item_description_${webSearchable.name}">
+  <c:choose>
    <c:when test="${fn:length(webSearchable.description) > 60}">
      <div id="bag_desc_${webSearchable.name}_s" class="description">
      ${fn:substring(webSearchable.description, 0, 60)}...&nbsp;&nbsp;<a href="javascript:toggleDivs('bag_desc_${webSearchable.name}_s','bag_desc_${webSearchable.name}_l')">more</a>
@@ -81,6 +85,7 @@
      <p class="description">${webSearchable.description}</p>
    </c:otherwise>
  </c:choose>
+  </div>
 </c:if>
 
 <c:if test="${IS_SUPERUSER}">
