@@ -255,12 +255,16 @@ function filterWebSearchables(object, scope, type) {
                         if (scoreHash[inputArray[i].id] != null) {
                             inputArray[i].style.display='block';
 
-                            var scoreId = scope + '_' + type + '_item_score_' + result[1];
-                            var score = $(scoreId);
-                            // we do this instead of score.innerHTML = "stuff"
+                            var scoreWsName = result[1];
+                            var score = scoreHash[inputArray[i].id];
+                            var intScore = parseInt(score * 10);
+                            var scoreId = scope + '_' + type + '_item_score_' + scoreWsName;
+                            var scoreSpan = $(scoreId);
+                            // we do this instead of scoreSpan.innerHTML = "stuff"
                             // because it's buggy in Internet Explorer
-                            var scoretext = scoreHash[inputArray[i].id];
-                            setChild(score, scoretext, 'span');
+                            var heatImage = 'heat' + intScore + '.gif';
+                            var heatText = '<img height="10" width="' + (intScore * 3) + '" src="images/' + heatImage + '"/>';
+                            setChild(scoreSpan, heatText, 'span');
 
                             var descId = scope + '_' + type + '_item_description_' + result[1];
                             var highlightText = descHash[inputArray[i].id];
