@@ -378,11 +378,12 @@ public class AjaxServices
         Map<String, WebSearchable> wsMap = null;
         Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
         Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
+
         if (filterText != null && filterText.length() > 1) {
             Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
             try {
                 long time =
-                    TemplateHelper.runLeuceneSearch(filterText, scope, type, profile, 
+                    SearchRepository.runLeuceneSearch(filterText, scope, type, profile, 
                                                     servletContext,
                                                     hitMap, scopeMap, null, highlightedDescMap);
                 LOG.info("Lucene search took " + time + " milliseconds");

@@ -20,6 +20,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -102,12 +103,12 @@ public class QuickSearchAction extends InterMineAction
             Map highlightedMap = new HashMap();
             long time;
             if (qsType.equals("tpls")) {
-                time = TemplateHelper.runLeuceneSearch(qsf.getValue(), "ALL", "template", 
+                time = SearchRepository.runLeuceneSearch(qsf.getValue(), "ALL", "template", 
                               ((Profile) session.getAttribute(Constants.PROFILE)), 
                               context, hitMap, scopeMap, highlightedMap, null);
                 request.setAttribute("type", "template");
             } else if (qsType.equals("bgs")) {
-                time = TemplateHelper.runLeuceneSearch(qsf.getValue(), "ALL", "bag", 
+                time = SearchRepository.runLeuceneSearch(qsf.getValue(), "ALL", "bag", 
                               ((Profile) session.getAttribute(Constants.PROFILE)), 
                               context, hitMap, scopeMap, highlightedMap, null);
                 request.setAttribute("type", "bag");
