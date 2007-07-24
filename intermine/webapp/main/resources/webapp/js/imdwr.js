@@ -206,8 +206,6 @@ function filterWebSearchables(object, scope, type) {
             var result;
             if ((result = pattern.exec(inputArray[i].id)) != null) {
                 inputArray[i].style.display='block';
-                var scoreId = scope + '_' + type + '_item_score_' + result[1];
-                $(scoreId).innerHTML = '';
             }
         }
         $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
@@ -238,13 +236,38 @@ function filterWebSearchables(object, scope, type) {
 
                 for(var i=0; i<inputArray.length; i++) {
                     if ((result = pattern.exec(inputArray[i].id)) != null) {
-                        if (scoreHash[inputArray[i].id]) {
+                        if (scoreHash[inputArray[i].id] != null) {
                             inputArray[i].style.display='block';
+
                             var scoreId = scope + '_' + type + '_item_score_' + result[1];
-                            $(scoreId).innerHTML = scoreHash[inputArray[i].id];
+                            var score = $(scoreId);
+                            // we do this instead of score.innerHTML = "stuff"
+                            // because it's buggy in Internet Explorer
+                            var scoretext = scoreHash[inputArray[i].id];
+                            var scoreP = document.createElement('span');
+                            scoreP.innerHTML = scoretext;
+                            if (score.firstChild != null) {
+                                while (score.hasChildNodes()) {
+                                    score.removeChild(score.firstChild);
+                                }
+                            }
+                            score.appendChild(scoreP);
+
                             var descId = scope + '_' + type + '_item_description_' + result[1];
                             var highlightText = descHash[inputArray[i].id];
-                            $(descId).innerHTML = '<p class="description">' + highlightText + '</p>';
+                            var desc = $(descId);
+                            var descP = document.createElement('p');
+                            descP.className = 'description';
+                            descP.innerHTML = highlightText;
+                            if (highlightText == null) {
+                                alert('highlightText for ' + scoreId);
+                            } else {
+                                while (desc.hasChildNodes()) {
+                                    desc.removeChild(desc.firstChild);
+                                }
+                                desc.appendChild(descP);
+
+                            }
                         } else {
                             inputArray[i].style.display='none';
                         }
