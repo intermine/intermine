@@ -887,6 +887,9 @@ public class TemplateHelper
             
             if (highlightedDescMap != null) {
                 String highlightString = webSearchable.getDescription();
+                if (highlightString == null) {
+                    highlightString = "";
+                }
                 TokenStream tokenStream =
                     analyzer.tokenStream("", new StringReader(highlightString));
                 highlighter.setTextFragmenter(new NullFragmenter());
