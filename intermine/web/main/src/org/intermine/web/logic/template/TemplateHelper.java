@@ -789,28 +789,31 @@ public class TemplateHelper
     }
     
     /**
-     * @param origQueryString
-     * @param scope
-     * @param type
-     * @param profile
-     * @param context
-     * @param hitMap
-     * @param scopeMap
-     * @param highlightedMap
+     * Search a Lucene index and return maps of the results.
+     * @param origQueryString the query string from the user
+     * @param scope "global", "user" or "both" - which scope to search
+     * @param type the type of object to search ("bag", "template" ...)
+     * @param profile the user profile
+     * @param context the ServletContext used to get the global SearchRepository
+     * @param hitMap set to be a Map from WebSearchable name to score in the search
+     * @param scopeMap set to be a Map from WebSearchable name to scope of the WebSearchable we
+     *    match
+     * @param highlightedTitleMap set to be a Map from WebSearchable name to the title of the
+     *    WebSearchable, marked up in HTML to highlight the matching parts
      * @param descrMap
-     * @param highlightedDescMap 
-     * @return
-     * @throws ParseException
-     * @throws IOException
+     * @param highlightedDescMap highlightedTitleMap set to be a Map from WebSearchable name to
+     *    the description of the WebSearchable, marked up in HTML to highlight the matching parts
+     * @return the number of milliseconds the search took
+     * @throws ParseException if the origQueryString has a syntax error for a lucene string
+     * @throws IOException if there is a problem creating the Lucene IndexSearcher  
      */
-    public static long runLeuceneSearch (String origQueryString, String scope, String type, 
-                                         Profile profile,
-                                         ServletContext context,
-                                         Map<WebSearchable, Float> hitMap, 
-                                         Map<WebSearchable, String> scopeMap,
-                                         Map<WebSearchable, String> highlightedMap,
-                                         Map<WebSearchable, String> highlightedDescMap,
-                                         Map<WebSearchable, String> descrMap) 
+    public static long runLeuceneSearch(String origQueryString, String scope, String type, 
+                                        Profile profile,
+                                        ServletContext context,
+                                        Map<WebSearchable, Float> hitMap, 
+                                        Map<WebSearchable, String> scopeMap,
+                                        Map<WebSearchable, String> highlightedTitleMap,
+                                        Map<WebSearchable, String> highlightedDescMap) 
         throws ParseException, IOException {
         // special case for word ending in "log" eg. "ortholog" - add "orthologue" to the search
         String queryString = origQueryString.replaceAll("(\\w+log\\b)", "$1ue $1");
@@ -872,16 +875,12 @@ public class TemplateHelper
             hitMap.put(webSearchable, new Float(hits.score(i)));
             scopeMap.put(webSearchable, docScope);
 
-            if (descrMap != null) {
-                descrMap.put(webSearchable, webSearchable.getDescription());
-            }
-
-            if (highlightedMap != null) {
+            if (highlightedTitleMap != null) {
                 String highlightString = webSearchable.getTitle();
                 TokenStream tokenStream =
                     analyzer.tokenStream("", new StringReader(highlightString));
                 highlighter.setTextFragmenter(new NullFragmenter());
-                highlightedMap.put(webSearchable,
+                highlightedTitleMap.put(webSearchable,
                                    highlighter.getBestFragment(tokenStream, highlightString));
             }
             

@@ -20,6 +20,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -72,11 +73,11 @@ public class QuickSearchAction extends InterMineAction
             SessionMethods.logTemplateQueryUse(session, templateType, templateName);
             String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
             TemplateQuery template = TemplateHelper.findTemplate(context, session, userName,
-                    templateName, templateType);
+                                                                 templateName, templateType);
             QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.
                                                                       QUERY_TIMEOUT_SECONDS * 1000);
-            MessageResources messages = (MessageResources) request.getAttribute(
-                                                                   Globals.MESSAGES_KEY);
+            MessageResources messages =
+                (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
             
             Map<String, Object> valuesMap = new HashMap <String, Object> ();
             Map <String, ConstraintOp> constraintOpsMap = new HashMap <String, ConstraintOp> ();
@@ -92,24 +93,23 @@ public class QuickSearchAction extends InterMineAction
                                                    false, queryCopy);
             Thread.sleep(200);
             return new ForwardParameters(mapping.findForward("waiting"))
-            .addParameter("qid", qid)
-            .addParameter("trail", "")
-            .forward();
+                .addParameter("qid", qid)
+                .addParameter("trail", "")
+                .forward();
         } else {
-            Map hitMap = new LinkedHashMap();
+            Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
             Map scopeMap = new LinkedHashMap();
             Map highlightedMap = new HashMap();
-            Map descrMap = new HashMap();
             long time;
             if (qsType.equals("tpls")) {
                 time = TemplateHelper.runLeuceneSearch(qsf.getValue(), "ALL", "template", 
                               ((Profile) session.getAttribute(Constants.PROFILE)), 
-                              context, hitMap, scopeMap, highlightedMap, null, descrMap);
+                              context, hitMap, scopeMap, highlightedMap, null);
                 request.setAttribute("type", "template");
             } else if (qsType.equals("bgs")) {
                 time = TemplateHelper.runLeuceneSearch(qsf.getValue(), "ALL", "bag", 
                               ((Profile) session.getAttribute(Constants.PROFILE)), 
-                              context, hitMap, scopeMap, highlightedMap, null, descrMap);
+                              context, hitMap, scopeMap, highlightedMap, null);
                 request.setAttribute("type", "bag");
             } else {
                 throw new RuntimeException("Quick search type not valid");
@@ -120,7 +120,12 @@ public class QuickSearchAction extends InterMineAction
             request.setAttribute("querySeconds", new Float(time / 1000f));
             request.setAttribute("queryString", qsf.getValue());
             request.setAttribute("resultCount", new Integer(hitMap.size()));
-            request.setAttribute("descriptions", descrMap);
+            Map descriptionsMap = new HashMap();
+            for (WebSearchable ws: hitMap.keySet()) {
+                descriptionsMap.put(ws, ws.getDescription());
+            }
+            
+            request.setAttribute("descriptions", descriptionsMap);
             return mapping.findForward("search");
         }
     }
