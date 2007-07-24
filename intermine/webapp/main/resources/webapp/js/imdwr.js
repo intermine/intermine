@@ -215,6 +215,7 @@ function filterWebSearchables(object, scope, type) {
     var value = object.value;
     var inputArray = document.getElementsByTagName("div");
     var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
+    var filterAction = document.getElementById('filterAction' + '_' + scope + '_' + type).value;
 
     function showAll() {
         for(var i=0; i<inputArray.length; i++) {
@@ -226,7 +227,7 @@ function filterWebSearchables(object, scope, type) {
         $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
     }
 
-    if (value.length > 1) {
+    if ((value!= null && value.length > 1) || filterAction == 'favourites') {
         function filterCallBack(cbResult) {
             var callId = cbResult[0];
             var filteredList = cbResult.slice(1);
@@ -244,34 +245,34 @@ function filterWebSearchables(object, scope, type) {
                 var descHash = new Array();
                 for (var el in filteredList) {
                     var wsName = filteredList[el][0];
-                    var wsScore = filteredList[el][1];
-                    scoreHash[scope + '_' + type + '_item_line_' + wsName] = wsScore;
-                    var wsDesc = filteredList[el][2];
+                    var wsDesc = filteredList[el][1];
                     descHash[scope + '_' + type + '_item_line_' + wsName] = wsDesc;
+					var wsScore = filteredList[el][2];
+                    scoreHash[scope + '_' + type + '_item_line_' + wsName] = wsScore;
                 }
 
                 for(var i=0; i<inputArray.length; i++) {
                     if ((result = pattern.exec(inputArray[i].id)) != null) {
-                        if (scoreHash[inputArray[i].id] != null) {
+                        if (descHash[inputArray[i].id]) {
                             inputArray[i].style.display='block';
-
-                            var scoreWsName = result[1];
-                            var score = scoreHash[inputArray[i].id];
-                            var intScore = parseInt(score * 10);
-                            var scoreId = scope + '_' + type + '_item_score_' + scoreWsName;
-                            var scoreSpan = $(scoreId);
-                            // we do this instead of scoreSpan.innerHTML = "stuff"
-                            // because it's buggy in Internet Explorer
-                            var heatImage = 'heat' + intScore + '.gif';
-                            var heatText = '<img height="10" width="' + (intScore * 3) + '" src="images/' + heatImage + '"/>';
-                            setChild(scoreSpan, heatText, 'span');
-
                             var descId = scope + '_' + type + '_item_description_' + result[1];
                             var highlightText = descHash[inputArray[i].id];
                             var desc = $(descId);
 
                             var descChild = setChild(desc, highlightText, 'p');
                             descChild.className = 'description';
+                            if (scoreHash[inputArray[i].id]) {
+	                            var scoreWsName = result[1];
+	                            var score = scoreHash[inputArray[i].id];
+	                            var intScore = parseInt(score * 10);
+	                            var scoreId = scope + '_' + type + '_item_score_' + scoreWsName;
+	                            var scoreSpan = $(scoreId);
+	                            // we do this instead of scoreSpan.innerHTML = "stuff"
+	                            // because it's buggy in Internet Explorer
+	                            var heatImage = 'heat' + intScore + '.gif';
+	                            var heatText = '<img height="10" width="' + (intScore * 3) + '" src="images/' + heatImage + '"/>';
+	                            setChild(scoreSpan, heatText, 'span');
+                            }
                         } else {
                             inputArray[i].style.display='none';
                         }
@@ -314,9 +315,25 @@ function filterWebSearchables(object, scope, type) {
 
         $(scope + '_' + type + '_spinner').style.visibility = 'visible';
         currentFilterCallbacks[scope + "_" + type] = callId;
-        AjaxServices.filterWebSearchables(scope, type, null, object.value, callId++,
+        var tags = new Array();
+        if(filterAction == 'favourites') {
+        	tags[0] = 'favourite';
+        }
+        AjaxServices.filterWebSearchables(scope, type, tags, object.value, filterAction, callId++,
                                           filterCallBack);
     } else {
         showAll();
     }
+}
+
+function filterFavourites(scope,type) {
+  var id = 'filterAction_'+scope+'_'+type;
+  if(document.getElementById(id).value == "favourites") {
+    document.getElementById(id).value = "";
+    document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_ico.gif';
+  } else {
+    document.getElementById(id).value = "favourites";
+    document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_act_ico.gif';
+  }
+  return filterWebSearchables(document.getElementById(scope+'_'+type+'_filter_text'), scope, type);
 }

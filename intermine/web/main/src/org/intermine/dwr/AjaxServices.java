@@ -41,6 +41,7 @@ import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResultsSimple;
 import org.intermine.web.logic.results.WebTable;
+import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -368,36 +369,41 @@ public class AjaxServices
      */
     public static List<String> filterWebSearchables(String scope, String type,
                                                     List<String> tags, String filterText,
-                                                    String callId) {
+                                                    String filterAction, String callId) {
         WebContext ctx = WebContextFactory.get();        
         ServletContext servletContext = ctx.getServletContext();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
+        Map<String, WebSearchable> wsMap = null;
         Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
-        Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
         Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
-
-        try {
-            long time =
-                TemplateHelper.runLeuceneSearch(filterText, scope, type, profile, servletContext,
-                                                hitMap, scopeMap, null, highlightedDescMap);
-            LOG.info("Lucene search took " + time + " milliseconds");
-        } catch (ParseException e) {
-            LOG.error("couldn't run lucene filter", e);
-            return Collections.EMPTY_LIST;
-        } catch (IOException e) {
-            LOG.error("couldn't run lucene filter", e);
-            return Collections.EMPTY_LIST;
-        }
-
-        long time = System.currentTimeMillis();
-        
-        Map<String, WebSearchable> wsMap = new LinkedHashMap<String, WebSearchable>();
-        
-        for (WebSearchable ws: hitMap.keySet()) {
-            wsMap.put(ws.getName(), ws);
+        if (filterText != null && filterText.length() > 1) {
+            Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
+            try {
+                long time =
+                    TemplateHelper.runLeuceneSearch(filterText, scope, type, profile, 
+                                                    servletContext,
+                                                    hitMap, scopeMap, null, highlightedDescMap);
+                LOG.info("Lucene search took " + time + " milliseconds");
+            } catch (ParseException e) {
+                LOG.error("couldn't run lucene filter", e);
+                return Collections.EMPTY_LIST;
+            } catch (IOException e) {
+                LOG.error("couldn't run lucene filter", e);
+                return Collections.EMPTY_LIST;
+            }
+    
+            long time = System.currentTimeMillis();
+            
+            wsMap = new LinkedHashMap<String, WebSearchable>();
+            
+            for (WebSearchable ws: hitMap.keySet()) {
+                wsMap.put(ws.getName(), ws);
+            }
+        } else if (filterAction != null && filterAction.equals("favourites")) {
+            SearchRepository userSearchRepository = profile.getSearchRepository();
+            wsMap =  (Map<String, WebSearchable>) userSearchRepository.getWebSearchableMap(type);
         }
         
         Map<String, ? extends WebSearchable> filteredWsMap;
@@ -414,14 +420,20 @@ public class AjaxServices
         for (WebSearchable ws: filteredWsMap.values()) {
             List row = new ArrayList();
             row.add(ws.getName());
-            row.add(hitMap.get(ws));
-            row.add(highlightedDescMap.get(ws));
+            if (filterText != null && filterText.length() > 1) {
+                row.add(highlightedDescMap.get(ws));
+                row.add(hitMap.get(ws));
+            } else {
+                row.add(ws.getDescription());
+            }
             returnList.add(row);
         }
         
-        time = System.currentTimeMillis() - time;
-        LOG.info("processing in filterWebSearchables() took: " + time + " milliseconds:");
-
+//        if(searching) {
+//            time = System.currentTimeMillis() - time;
+//            LOG.info("processing in filterWebSearchables() took: " + time + " milliseconds:");
+//        }
+ 
         return returnList;
     }
 }
