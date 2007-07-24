@@ -20,8 +20,8 @@
 
 <!-- wsTemplateLine.jsp -->
 <div class="wsTempateLine" id="${scope}_${type}_item_line_${webSearchable.name}">
-<div style="float: right">
-  <span id="${scope}_${type}_item_score_${webSearchable.name}"/>
+<div style="float: right" id="${scope}_${type}_item_score_${webSearchable.name}">
+  &nbsp;
 </div>
 <c:if test="${!empty makeCheckBoxes}">
     <html:multibox property="selected" styleId="${scope}_template_chck_${webSearchable.name}"
