@@ -189,6 +189,21 @@ function getResults(qid, timeout, userCallback, userData) {
                + userData + ")", timeout);
 }
 
+// delete all the child nodes of the node given by parentElement and create a child
+// element of type childTag, setting the text in the new child element to be
+// childText
+function setChild(parentElement, childText, childTag) {
+    var newChild = document.createElement(childTag);
+    newChild.innerHTML = childText;
+    if (parentElement.firstChild != null) {
+        while (parentElement.hasChildNodes()) {
+            parentElement.removeChild(parentElement.firstChild);
+        }
+    }
+    parentElement.appendChild(newChild);
+    return newChild;
+}
+
 var callId = 0;
 
 // Give each call an id and remember what our current pending id is
@@ -210,6 +225,7 @@ function filterWebSearchables(object, scope, type) {
         }
         $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
     }
+
     if (value.length > 1) {
         function filterCallBack(cbResult) {
             var callId = cbResult[0];
@@ -244,30 +260,14 @@ function filterWebSearchables(object, scope, type) {
                             // we do this instead of score.innerHTML = "stuff"
                             // because it's buggy in Internet Explorer
                             var scoretext = scoreHash[inputArray[i].id];
-                            var scoreP = document.createElement('span');
-                            scoreP.innerHTML = scoretext;
-                            if (score.firstChild != null) {
-                                while (score.hasChildNodes()) {
-                                    score.removeChild(score.firstChild);
-                                }
-                            }
-                            score.appendChild(scoreP);
+                            setChild(score, scoretext, 'span');
 
                             var descId = scope + '_' + type + '_item_description_' + result[1];
                             var highlightText = descHash[inputArray[i].id];
                             var desc = $(descId);
-                            var descP = document.createElement('p');
-                            descP.className = 'description';
-                            descP.innerHTML = highlightText;
-                            if (highlightText == null) {
-                                alert('highlightText for ' + scoreId);
-                            } else {
-                                while (desc.hasChildNodes()) {
-                                    desc.removeChild(desc.firstChild);
-                                }
-                                desc.appendChild(descP);
 
-                            }
+                            var descChild = setChild(desc, highlightText, 'p');
+                            descChild.className = 'description';
                         } else {
                             inputArray[i].style.display='none';
                         }
