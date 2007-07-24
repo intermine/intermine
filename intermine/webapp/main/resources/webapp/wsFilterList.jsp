@@ -34,11 +34,14 @@
   &nbsp; <img id='${scope}_${type}_spinner' style='visibility: hidden' 
              src='images/wait_spinner.gif'/>
   &nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;
-  <img src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites"/>
+<c:if test="${! empty PROFILE.username}">
+  <a href="javascript:filterFavourites('${scope}','${type}');"><img id="filter_favourites_${scope}_${type}" src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites" title="Show Only Favourites"/></a>
   &nbsp;
+</c:if>
   <img src="images/asc.gif" width="17" height="16" alt="Sort alphabetically"/>
   &nbsp;
   <img src="images/sort_date_ico.gif" width="20" height="16" alt="Sort by Date"/>
+  <input type="hidden" name="filterAction_${scope}_${type}" id="filterAction_${scope}_${type}"/>
 </p>
 
 <script type="text/javascript">
