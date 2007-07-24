@@ -17,19 +17,37 @@ import java.util.Map;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
 import java.io.IOException;
+import java.io.StringReader;
 
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MultiSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Searchable;
+import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.NullFragmenter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.TokenGroup;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 
@@ -49,7 +67,6 @@ public class SearchRepository
         new HashMap<String, Map<String, ? extends WebSearchable>>();
     private Map<String, Directory> directoryMap = new HashMap<String, Directory>();
     private final String scope;
-
 
     /**
      * Construct a new instance of SearchRepository.
@@ -251,6 +268,126 @@ public class SearchRepository
     public void addWebSearchables(String type, Map<String, ? extends WebSearchable> map) {
         webSearchablesMap.put(type, map);
         reindex(type);
+    }
+
+    private static Formatter formatter = new Formatter() {
+        public String highlightTerm(String term, TokenGroup group) {
+            if (group.getTotalScore() > 0) {
+                return "<span style=\"background: #ffff77\">" + term + "</span>";
+            }
+            return term;
+        }
+    };
+
+    /**
+     * Search a Lucene index and return maps of the results.
+     * @param origQueryString the query string from the user
+     * @param scope "global", "user" or "both" - which scope to search
+     * @param type the type of object to search ("bag", "template" ...)
+     * @param profile the user profile
+     * @param context the ServletContext used to get the global SearchRepository
+     * @param hitMap set to be a Map from WebSearchable name to score in the search
+     * @param scopeMap set to be a Map from WebSearchable name to scope of the WebSearchable we
+     *    match
+     * @param highlightedTitleMap set to be a Map from WebSearchable name to the title of the
+     *    WebSearchable, marked up in HTML to highlight the matching parts
+     * @param descrMap
+     * @param highlightedDescMap highlightedTitleMap set to be a Map from WebSearchable name to
+     *    the description of the WebSearchable, marked up in HTML to highlight the matching parts
+     * @return the number of milliseconds the search took
+     * @throws ParseException if the origQueryString has a syntax error for a lucene string
+     * @throws IOException if there is a problem creating the Lucene IndexSearcher  
+     */
+    public static long runLeuceneSearch(String origQueryString, String scope, String type, 
+                                        Profile profile,
+                                        ServletContext context,
+                                        Map<WebSearchable, Float> hitMap, 
+                                        Map<WebSearchable, String> scopeMap,
+                                        Map<WebSearchable, String> highlightedTitleMap,
+                                        Map<WebSearchable, String> highlightedDescMap) 
+        throws ParseException, IOException {
+        // special case for word ending in "log" eg. "ortholog" - add "orthologue" to the search
+        String queryString = origQueryString.replaceAll("(\\w+log\\b)", "$1ue $1");
+        SearchRepository.LOG.info("Searching " + scope + " for \""
+                + origQueryString + "\"    - type: " + type);
+        long time = System.currentTimeMillis();
+        SearchRepository globalSearchRepository =
+            (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+        Map<String, ? extends WebSearchable> globalWebSearchables =
+            globalSearchRepository.getWebSearchableMap(type);
+        Directory globalDirectory = globalSearchRepository.getDirectory(type);
+        SearchRepository userSearchRepository = profile.getSearchRepository();
+        Map<String, ? extends WebSearchable> userWebSearchables =
+            userSearchRepository.getWebSearchableMap(type);
+        Directory userDirectory = userSearchRepository.getDirectory(type);
+        IndexSearcher userIndexSearcher = new IndexSearcher(userDirectory);
+        IndexSearcher globalIndexSearcher = new IndexSearcher(globalDirectory);
+        Searchable[] searchables;
+        if (scope.equals("user")) {
+            searchables = new Searchable[]{userIndexSearcher};
+        } else if (scope.equals("global")) {
+            searchables = new Searchable[]{globalIndexSearcher};
+        } else {
+            searchables = new Searchable[]{userIndexSearcher, globalIndexSearcher};
+        }
+        MultiSearcher searcher = new MultiSearcher(searchables);
+    
+        Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
+    
+        org.apache.lucene.search.Query query;
+        QueryParser queryParser = new QueryParser("content", analyzer);
+        query = queryParser.parse(queryString);
+    
+        // required to expand search terms
+        query = query.rewrite(IndexReader.open(globalDirectory));
+        Hits hits = searcher.search(query);
+    
+        time = System.currentTimeMillis() - time;
+        SearchRepository.LOG.info("Found " + hits.length() + " document(s) that matched query '"
+                + queryString + "' in " + time + " milliseconds:");
+    
+        QueryScorer scorer = new QueryScorer(query);
+        Highlighter highlighter = new Highlighter(SearchRepository.formatter, scorer);
+    
+        for (int i = 0; i < hits.length(); i++) {
+            WebSearchable webSearchable = null;
+            Document doc = hits.doc(i);
+            String docScope = doc.get("scope");
+            String name = doc.get("name");
+    
+            webSearchable = userWebSearchables.get(name);
+            if (webSearchable == null) {
+                webSearchable = globalWebSearchables.get(name);
+            }
+            if (webSearchable == null) {
+                throw new RuntimeException("unknown WebSearchable: " + name);
+            }
+    
+            hitMap.put(webSearchable, new Float(hits.score(i)));
+            scopeMap.put(webSearchable, docScope);
+    
+            if (highlightedTitleMap != null) {
+                String highlightString = webSearchable.getTitle();
+                TokenStream tokenStream =
+                    analyzer.tokenStream("", new StringReader(highlightString));
+                highlighter.setTextFragmenter(new NullFragmenter());
+                highlightedTitleMap.put(webSearchable,
+                                   highlighter.getBestFragment(tokenStream, highlightString));
+            }
+            
+            if (highlightedDescMap != null) {
+                String highlightString = webSearchable.getDescription();
+                if (highlightString == null) {
+                    highlightString = "";
+                }
+                TokenStream tokenStream =
+                    analyzer.tokenStream("", new StringReader(highlightString));
+                highlighter.setTextFragmenter(new NullFragmenter());
+                highlightedDescMap.put(webSearchable,
+                                       highlighter.getBestFragment(tokenStream, highlightString));
+            }
+        }
+        return time;
     }
 
 }
