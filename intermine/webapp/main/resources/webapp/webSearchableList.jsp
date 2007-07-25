@@ -52,7 +52,7 @@
   <c:set var="showDescriptions" value="true" scope="request"/>
 </c:if>
 
-<c:if test="${!empty height && fn:length(filteredWebSearchables) > 2}">
+<c:if test="${!empty height && fn:length(filteredWebSearchables) > 5}">
   <div style="height: ${height}px; overflow: auto;">
 </c:if>
 
