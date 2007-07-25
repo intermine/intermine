@@ -554,7 +554,7 @@ public class SessionMethods
                         Query q =
                             MainHelper.makeQuery(pathQuery,allBags,
                                                  pathToQueryNode, servletContext,
-                                                 pathToBagQueryResult);
+                                                 pathToBagQueryResult, false);
                         Results results = TableHelper.makeResults(os, q);
                         results.setNoPrefetch();
 
