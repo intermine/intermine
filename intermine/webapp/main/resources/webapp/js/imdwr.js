@@ -212,7 +212,18 @@ var currentFilterCallbacks = new Array();
 // Give each setTimeout call an id and remember what our current pending id is
 var futureFilterCalls = new Array();
 
-function filterWebSearchablesHandler(object, scope, type) {
+function filterWebSearchablesHandler(event, object, scope, type) {
+    if (window.event) {
+        event = window.event;
+    }
+    if (event.keyCode == 27) {
+        object.value = '';
+        return;
+    }
+    if (event.keyCode == 13) {
+        return;
+    }
+
     futureFilterCalls[scope + "_" + type] = callId;
     setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '",' +
                callId + ")", 500);
