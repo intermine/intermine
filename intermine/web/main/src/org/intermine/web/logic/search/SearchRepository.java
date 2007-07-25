@@ -12,15 +12,18 @@ package org.intermine.web.logic.search;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.struts.AspectController;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -67,12 +70,14 @@ public class SearchRepository
         new HashMap<String, Map<String, ? extends WebSearchable>>();
     private Map<String, Directory> directoryMap = new HashMap<String, Directory>();
     private final String scope;
+    private final Profile profile;
 
     /**
      * Construct a new instance of SearchRepository.
      * @param scope USER_TEMPLATE or GLOBAL_TEMPLATE from TemplateHelper
      */
-    public SearchRepository(String scope) {
+    public SearchRepository(Profile profile, String scope) {
+        this.profile = profile;
         this.scope = scope;
     }
 
@@ -171,7 +176,7 @@ public class SearchRepository
      */
     private void reindex(String type) {
         Map<String, ? extends WebSearchable> webSearchables = webSearchablesMap.get(type);
-        RAMDirectory ram = indexWebSearchables(webSearchables, scope);
+        RAMDirectory ram = indexWebSearchables(webSearchables, type);
         directoryMap.put(type, ram);
     }
 
@@ -191,10 +196,10 @@ public class SearchRepository
      * @param scope webSearchable type (see TemplateHelper)
      * @return a RAMDirectory containing the index
      */
-    private static RAMDirectory indexWebSearchables(Map webSearchableMap, String scope) {
+    private RAMDirectory indexWebSearchables(Map webSearchableMap, String type) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing webSearchable queries");
-
+    
         RAMDirectory ram = new RAMDirectory();
         IndexWriter writer;
         try {
@@ -204,22 +209,34 @@ public class SearchRepository
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
-
+    
         // step global webSearchables, indexing a Document for each webSearchable
         Iterator iter = webSearchableMap.values().iterator();
         int indexed = 0;
-
+    
+        ProfileManager pm = profile.getProfileManager();
+        
         while (iter.hasNext()) {
             WebSearchable webSearchable = (WebSearchable) iter.next();
-
+    
             Document doc = new Document();
             doc.add(new Field("name", webSearchable.getName(), Field.Store.YES, 
                               Field.Index.TOKENIZED));
-            doc.add(new Field("content", webSearchable.getTitle() + " : "
-                              + webSearchable.getDescription(),
-                              Field.Store.NO, Field.Index.TOKENIZED));
+            StringBuffer contentBuffer = new StringBuffer(webSearchable.getTitle() + " : "
+                                               + webSearchable.getDescription());
+            List<Tag> tags = pm.getTags(null, webSearchable.getName(), type, profile.getUsername());
+            for (Tag tag: tags) {
+                String tagName = tag.getTagName();
+                if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
+                    String aspect = tagName.substring(AspectController.ASPECT_PREFIX.length());
+                    contentBuffer.append(' ').append(aspect);
+                }
+            }
+    
+            doc.add(new Field("content", contentBuffer.toString(), Field.Store.NO,
+                              Field.Index.TOKENIZED));
             doc.add(new Field("scope", scope, Field.Store.YES, Field.Index.NO));
-
+    
             try {
                 writer.addDocument(doc);
                 indexed++;
@@ -228,17 +245,17 @@ public class SearchRepository
                         + " to the index", e);
             }
         }
-
+    
         try {
             writer.close();
         } catch (IOException e) {
             LOG.error("IOException while closing IndexWriter", e);
         }
-
+    
         time = System.currentTimeMillis() - time;
         LOG.info("Indexed " + indexed + " out of " + webSearchableMap.size() + " webSearchables in "
                 + time + " milliseconds");
-
+    
         return ram;
     }
 

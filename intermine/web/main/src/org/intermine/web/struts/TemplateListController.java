@@ -49,7 +49,7 @@ public class TemplateListController extends TilesAction
         String scope = (String) context.getAttribute("scope");
         String aspect = (String) context.getAttribute("placement");
 
-        if (aspect.startsWith("aspect:")) {
+        if (aspect.startsWith(AspectController.ASPECT_PREFIX)) {
             aspect = aspect.substring(7).trim();
         }
 

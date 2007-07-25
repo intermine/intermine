@@ -40,6 +40,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class AspectController extends TilesAction
 {
+    public static final String ASPECT_PREFIX = "aspect:";
+
     private static final Logger LOG = Logger.getLogger(AspectController.class);
     
     /**
@@ -63,7 +65,7 @@ public class AspectController extends TilesAction
         // look up the classes for this aspect
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
         List tags = new ArrayList(SessionMethods.getProfileManager(servletContext)
-            .getTags("aspect:" + request.getParameter("name"), null, "class", superuser));
+            .getTags(ASPECT_PREFIX + request.getParameter("name"), null, "class", superuser));
         CollectionUtils.transform(tags,
                 TransformerUtils.invokerTransformer("getObjectIdentifier"));
         context.putAttribute("startingPoints", tags);

@@ -58,6 +58,7 @@ import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
+import org.intermine.web.struts.AspectController;
 
 import java.io.StringReader;
 
@@ -296,7 +297,7 @@ public class ProfileManager
                 String aspects[] = keywords.split(",");
                 for (int i = 0; i < aspects.length; i++) {
                     String aspect = aspects[i].trim();
-                    String tag = "aspect:" + aspect;
+                    String tag = AspectController.ASPECT_PREFIX + aspect;
                     if (getTags(tag, tq.getName(), TagTypes.TEMPLATE, username).size() == 0) {
                         addTag(tag, tq.getName(), TagTypes.TEMPLATE, username);
                     }

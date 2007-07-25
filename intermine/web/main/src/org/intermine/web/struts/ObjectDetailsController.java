@@ -133,7 +133,7 @@ public class ObjectDetailsController extends InterMineAction
 
         for (Iterator i = aspects.iterator(); i.hasNext(); ) {
             String aspect = (String) i.next();
-            placementRefsAndCollections.put("aspect:" + aspect,
+            placementRefsAndCollections.put(AspectController.ASPECT_PREFIX + aspect,
                                             new TreeMap(String.CASE_INSENSITIVE_ORDER));
         }
 
@@ -188,7 +188,7 @@ public class ObjectDetailsController extends InterMineAction
         for (Iterator ti = tags.iterator(); ti.hasNext(); ) {
             Tag tag = (Tag) ti.next();
             String tagName = tag.getTagName();
-            if (tagName.startsWith("aspect:")) {
+            if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
                 Map refs = (Map) placementRefsAndCollections.get(tagName);
                 if (refs != null) {
                     refs.put(fd.getName(), dispRef);
