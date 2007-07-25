@@ -216,14 +216,15 @@ function filterWebSearchablesHandler(event, object, scope, type) {
     if (window.event) {
         event = window.event;
     }
-    if (event.keyCode == 27) {
-        object.value = '';
-        return;
-    }
-    if (event.keyCode == 13) {
-        return;
-    }
-
+    if (event) {
+	    if (event.keyCode == 27) {
+	        object.value = '';
+	        return;
+	    }
+	    if (event.keyCode == 13) {
+	        return;
+	    }
+	}
     futureFilterCalls[scope + "_" + type] = callId;
     setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '",' +
                callId + ")", 500);
@@ -374,5 +375,5 @@ function filterFavourites(scope,type) {
         document.getElementById(id).value = "favourites";
         document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_act_ico.gif';
     }
-    return filterWebSearchables(document.getElementById(scope+'_'+type+'_filter_text'), scope, type);
+    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'), scope, type);
 }
