@@ -57,6 +57,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.Searchable;
 import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 
@@ -403,8 +404,15 @@ public class AjaxServices
                 wsMap.put(ws.getName(), ws);
             }
         } else if (filterAction != null && filterAction.equals("favourites")) {
-            SearchRepository userSearchRepository = profile.getSearchRepository();
-            wsMap =  (Map<String, WebSearchable>) userSearchRepository.getWebSearchableMap(type);
+            SearchRepository searchRepository = null;
+            if (scope.equals("user")) {
+                searchRepository = profile.getSearchRepository();
+            } else if (scope.equals("global")) {
+                searchRepository =
+                    (SearchRepository) servletContext.getAttribute(Constants.
+                                                                   GLOBAL_SEARCH_REPOSITORY);
+            }
+            wsMap =  (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
         }
         
         Map<String, ? extends WebSearchable> filteredWsMap;

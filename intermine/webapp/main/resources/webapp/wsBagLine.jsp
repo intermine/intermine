@@ -47,10 +47,10 @@
     </c:otherwise>
   </c:choose>
 
-<html:link action="/exportTemplates?scope=${scope}&amp;name=${webSearchable.name}"
+<%--<html:link action="/exportTemplates?scope=${scope}&amp;name=${webSearchable.name}"
            titleKey="history.action.export.hover">
   <img src="images/export.png" width="16" height="13" alt="Export">
-</html:link>
+</html:link>--%>
 <tiles:insert name="setFavourite.tile" >
   <tiles:put name="name" value="${webSearchable.name}"/>
   <tiles:put name="type" value="bag"/>
