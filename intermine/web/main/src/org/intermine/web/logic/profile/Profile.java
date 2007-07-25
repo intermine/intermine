@@ -49,7 +49,8 @@ public class Profile
     //protected Map categoryTemplates;
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
-    private SearchRepository searchRepository = new SearchRepository(TemplateHelper.USER_TEMPLATE);
+    private SearchRepository searchRepository =
+        new SearchRepository(this, TemplateHelper.USER_TEMPLATE);
 
     /**
      * Construct a Profile

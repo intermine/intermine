@@ -45,6 +45,7 @@ import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.struts.AspectController;
 
 /**
  * Helper methods for template lists.
@@ -71,7 +72,7 @@ public class TemplateListHelper
         
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
-            if (tag.getTagName().startsWith("aspect:")) {
+            if (tag.getTagName().startsWith(AspectController.ASPECT_PREFIX)) {
                 String aspectFromTagName = tag.getTagName().substring(7).trim();
 
                 if (StringUtils.equals(aspect, aspectFromTagName)) {
@@ -101,7 +102,7 @@ public class TemplateListHelper
                                                  ServletContext context,
                                                  InterMineObject object,
                                                  Map<TemplateQuery, List<String>> fieldExprsOut) {
-        if (aspect.startsWith("aspect:")) {
+        if (aspect.startsWith(AspectController.ASPECT_PREFIX)) {
             aspect = aspect.substring(7).trim();
         }
             
@@ -238,7 +239,7 @@ public class TemplateListHelper
     public static List<TemplateQuery> getAspectTemplatesForType(String aspect, 
                               ServletContext context, InterMineBag bag, Map<TemplateQuery, 
                               List<String>> fieldExprsOut) {
-        if (aspect.startsWith("aspect:")) {
+        if (aspect.startsWith(AspectController.ASPECT_PREFIX)) {
             aspect = aspect.substring(7).trim();
         }
         String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
@@ -263,7 +264,7 @@ public class TemplateListHelper
       TAGS:
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
-            if (tag.getTagName().startsWith("aspect:")) {
+            if (tag.getTagName().startsWith(AspectController.ASPECT_PREFIX)) {
                 String aspectFromTagName = tag.getTagName().substring(7).trim();
 
                 if (StringUtils.equals(aspect, aspectFromTagName)) {

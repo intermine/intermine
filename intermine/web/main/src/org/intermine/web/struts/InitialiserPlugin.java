@@ -126,9 +126,10 @@ public class InitialiserPlugin implements PlugIn
         loadSuperUserDetails(servletContext);
 
         // index global webSearchables
-        SearchRepository searchRepository = new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
-        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
         final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
+        SearchRepository searchRepository =
+            new SearchRepository(superProfile, TemplateHelper.GLOBAL_TEMPLATE);
+        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
         
         AbstractMap<String, WebSearchable> templateSearchableMap =
             new AbstractMap<String, WebSearchable>() {
