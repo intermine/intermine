@@ -247,7 +247,7 @@ function filterWebSearchables(object, scope, type) {
                     var wsName = filteredList[el][0];
                     var wsDesc = filteredList[el][1];
                     descHash[scope + '_' + type + '_item_line_' + wsName] = wsDesc;
-					var wsScore = filteredList[el][2];
+                    var wsScore = filteredList[el][2];
                     scoreHash[scope + '_' + type + '_item_line_' + wsName] = wsScore;
                 }
 
@@ -262,16 +262,16 @@ function filterWebSearchables(object, scope, type) {
                             var descChild = setChild(desc, highlightText, 'p');
                             descChild.className = 'description';
                             if (scoreHash[inputArray[i].id]) {
-	                            var scoreWsName = result[1];
-	                            var score = scoreHash[inputArray[i].id];
-	                            var intScore = parseInt(score * 10);
-	                            var scoreId = scope + '_' + type + '_item_score_' + scoreWsName;
-	                            var scoreSpan = $(scoreId);
-	                            // we do this instead of scoreSpan.innerHTML = "stuff"
-	                            // because it's buggy in Internet Explorer
-	                            var heatImage = 'heat' + intScore + '.gif';
-	                            var heatText = '<img height="10" width="' + (intScore * 3) + '" src="images/' + heatImage + '"/>';
-	                            setChild(scoreSpan, heatText, 'span');
+                                var scoreWsName = result[1];
+                                var score = scoreHash[inputArray[i].id];
+                                var intScore = parseInt(score * 10);
+                                var scoreId = scope + '_' + type + '_item_score_' + scoreWsName;
+                                var scoreSpan = $(scoreId);
+                                // we do this instead of scoreSpan.innerHTML = "stuff"
+                                // because it's buggy in Internet Explorer
+                                var heatImage = 'heat' + intScore + '.gif';
+                                var heatText = '<img height="10" width="' + (intScore * 3) + '" src="images/' + heatImage + '"/>';
+                                setChild(scoreSpan, heatText, 'span');
                             }
                         } else {
                             inputArray[i].style.display='none';
@@ -282,15 +282,15 @@ function filterWebSearchables(object, scope, type) {
                 function sortWsFilter(el1, el2) {
                     var el1score = scoreHash[el1.id];
                     var el2score = scoreHash[el2.id]
-                    if (el1score > el2score) {
-                        return -1;
-                    } else {
-                        if (el1score < el2score) {
-                            return 1;
+                        if (el1score > el2score) {
+                            return -1;
                         } else {
-                            return 0;
+                            if (el1score < el2score) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
                         }
-                    }
                 }
 
                 var parent = $(scope + '_' + type + '_ws_list');
@@ -317,7 +317,7 @@ function filterWebSearchables(object, scope, type) {
         currentFilterCallbacks[scope + "_" + type] = callId;
         var tags = new Array();
         if(filterAction == 'favourites') {
-        	tags[0] = 'favourite';
+            tags[0] = 'favourite';
         }
         AjaxServices.filterWebSearchables(scope, type, tags, object.value, filterAction, callId++,
                                           filterCallBack);
@@ -327,13 +327,13 @@ function filterWebSearchables(object, scope, type) {
 }
 
 function filterFavourites(scope,type) {
-  var id = 'filterAction_'+scope+'_'+type;
-  if(document.getElementById(id).value == "favourites") {
-    document.getElementById(id).value = "";
-    document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_ico.gif';
-  } else {
-    document.getElementById(id).value = "favourites";
-    document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_act_ico.gif';
-  }
-  return filterWebSearchables(document.getElementById(scope+'_'+type+'_filter_text'), scope, type);
+    var id = 'filterAction_'+scope+'_'+type;
+    if(document.getElementById(id).value == "favourites") {
+        document.getElementById(id).value = "";
+        document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_ico.gif';
+    } else {
+        document.getElementById(id).value = "favourites";
+        document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_act_ico.gif';
+    }
+    return filterWebSearchables(document.getElementById(scope+'_'+type+'_filter_text'), scope, type);
 }
