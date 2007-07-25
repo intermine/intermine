@@ -497,7 +497,7 @@ public class TemplateHelper
             
             Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
             Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode,
-                    servletContext, null);
+                    servletContext, null, false);
             Results results = os.execute(query);
             Model model = os.getModel();
             WebResults webResults =
@@ -744,7 +744,8 @@ public class TemplateHelper
         HashMap<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
         Query query = null;
         try {
-            query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null, null);
+            query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null, 
+                                         null, false);
         } catch (ObjectStoreException e) {
             // Not possible if last argument is null
         }

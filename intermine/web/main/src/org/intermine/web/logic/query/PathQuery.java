@@ -544,8 +544,9 @@ public class PathQuery
      */
     protected void checkValidity(Map savedBags, ServletContext servletContext) {
         try {
-            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext),
-                                 servletContext, null);
+//            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext),
+//                                 servletContext, null);
+            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext), null, servletContext, null, true);
         } catch (Exception err) {
             addProblem(err);
         }

@@ -204,9 +204,9 @@ public class MainHelper
      */
     public static Query makeQuery(PathQuery query, Map savedBags, ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
-        return makeQuery(query, savedBags, null, servletContext, returnBagQueryResults);
+        return makeQuery(query, savedBags, null, servletContext, returnBagQueryResults, false);
     }
-
+    
     /**
      * Make an InterMine query from a path query
      * @param pathQueryOrig the PathQuery
@@ -214,13 +214,14 @@ public class MainHelper
      * @param pathToQueryNode optional parameter in which path to QueryNode map can be returned
      * @param servletContext the current servlet context
      * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
+     * @param checkOnly we're only checking the validity of the query, optimised to take less time
      * returned
      * @return an InterMine Query
      * @throws ObjectStoreException if something goes wrong
      */
     public static Query makeQuery(PathQuery pathQueryOrig, Map savedBags,
             Map<String, QueryNode> pathToQueryNode, ServletContext servletContext,
-            Map returnBagQueryResults) throws ObjectStoreException {
+            Map returnBagQueryResults, boolean checkOnly) throws ObjectStoreException {
         PathQuery pathQuery = pathQueryOrig.clone();
         Map qNodes = pathQuery.getNodes();
         List<Path> view = pathQuery.getView();
@@ -388,6 +389,14 @@ public class MainHelper
                     cs.addConstraint(new ContainsConstraint((QueryObjectReference) qr, c.getOp()));
                 } else if (c.getOp() == ConstraintOp.LOOKUP) {
                     QueryClass qc = (QueryClass) qn;
+                    if (checkOnly) {
+                        try {
+                            Class.forName(qc.getType().getName());
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                        continue;
+                    }
                     String identifiers = (String) c.getValue();
                     ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants
                             .OBJECTSTORE);
@@ -957,7 +966,7 @@ public class MainHelper
         Map<String, QueryNode> origPathToQueryNode = new HashMap<String, QueryNode>();
         Query q = null;
         try {
-            q = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null);
+            q = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null,false);
         } catch (ObjectStoreException e) {
             // Not possible if last argument is null
         }

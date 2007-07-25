@@ -576,7 +576,8 @@ public class ProfileManager
         for (String tagName: tagNames) {
             for (Map.Entry<String, ? extends WebSearchable> entry: webSearchables.entrySet()) {
                 String webSearchableName = entry.getKey();
-                if (getTags(tagName, webSearchableName, tagType, userName).size() == 0) {
+                List tags = getTags(tagName, webSearchableName, tagType, userName);
+                if (tags.size() == 0) {
                     returnMap.remove(webSearchableName);
                 }
             }
