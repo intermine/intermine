@@ -88,7 +88,7 @@
           <tiles:put name="type" value="bag"/>
           <%-- user or global --%>
           <tiles:put name="scope" value="global"/>
-          <tiles:put name="tags" value="im:frontpage"/>
+          <tiles:put name="tags" value="im:public"/>
           <tiles:put name="showSearchBox" value="false"/>
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
