@@ -29,7 +29,8 @@
 
 <p style="white-space:nowrap;">Filter:&nbsp;
   <input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
-         onkeyup="return filterWebSearchables(this, '${scope}', '${type}');"
+         onkeyup="return filterWebSearchablesHandler(this, '${scope}', '${type}');"
+         onmouseup="return filterWebSearchablesHandler(this, '${scope}', '${type}');"
          disabled="true"/>
   &nbsp; <img id='${scope}_${type}_spinner' style='visibility: hidden' 
              src='images/wait_spinner.gif'/>
