@@ -204,14 +204,32 @@ function setChild(parentElement, childText, childTag) {
     return newChild;
 }
 
-var callId = 0;
+var callId = 1;
 
-// Give each call an id and remember what our current pending id is
+// Give each ajax call an id and remember what our current pending id is
 var currentFilterCallbacks = new Array();
+
+// Give each setTimeout call an id and remember what our current pending id is
+var futureFilterCalls = new Array();
+
+function filterWebSearchablesHandler(object, scope, type) {
+    futureFilterCalls[scope + "_" + type] = callId;
+    setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '",' +
+               callId + ")", 500);
+    callId++;
+}
 
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
 // the webSearchableList that don't match
-function filterWebSearchables(object, scope, type) {
+function filterWebSearchables(objectId, scope, type, callId) {
+    if (futureFilterCalls[scope + "_" + type] != callId) {
+        // filterWebSearchablesHandler() has been called again since this
+        // timeout was set, so ignore as another timeout will be along
+        // shortly
+        return;
+    }
+
+    var object = document.getElementById(objectId);
     var value = object.value;
     var inputArray = document.getElementsByTagName("div");
     var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
@@ -243,24 +261,31 @@ function filterWebSearchables(object, scope, type) {
             } else {
                 var scoreHash = new Array();
                 var descHash = new Array();
+                var hitHash = new Array();
+
                 for (var el in filteredList) {
                     var wsName = filteredList[el][0];
                     var wsDesc = filteredList[el][1];
                     descHash[scope + '_' + type + '_item_line_' + wsName] = wsDesc;
                     var wsScore = filteredList[el][2];
                     scoreHash[scope + '_' + type + '_item_line_' + wsName] = wsScore;
+                    hitHash[scope + '_' + type + '_item_line_' + wsName] = 1;
                 }
 
                 for(var i=0; i<inputArray.length; i++) {
                     if ((result = pattern.exec(inputArray[i].id)) != null) {
-                        if (descHash[inputArray[i].id]) {
+                        if (hitHash[inputArray[i].id]) {
                             inputArray[i].style.display='block';
-                            var descId = scope + '_' + type + '_item_description_' + result[1];
                             var highlightText = descHash[inputArray[i].id];
-                            var desc = $(descId);
 
-                            var descChild = setChild(desc, highlightText, 'p');
-                            descChild.className = 'description';
+                            if (highlightText) {
+                                var descId = scope + '_' + type + '_item_description_' + result[1];
+                                var desc = $(descId);
+
+                                var descChild = setChild(desc, highlightText, 'p');
+                                descChild.className = 'description';
+                            }
+
                             if (scoreHash[inputArray[i].id]) {
                                 var scoreWsName = result[1];
                                 var score = scoreHash[inputArray[i].id];
@@ -270,7 +295,8 @@ function filterWebSearchables(object, scope, type) {
                                 // we do this instead of scoreSpan.innerHTML = "stuff"
                                 // because it's buggy in Internet Explorer
                                 var heatImage = 'heat' + intScore + '.gif';
-                                var heatText = '<img height="10" width="' + (intScore * 3) + '" src="images/' + heatImage + '"/>';
+                                var heatText = '<img height="10" width="' +
+                                    (intScore * 3) + '" src="images/' + heatImage + '"/>';
                                 setChild(scoreSpan, heatText, 'span');
                             }
                         } else {
@@ -324,6 +350,8 @@ function filterWebSearchables(object, scope, type) {
     } else {
         showAll();
     }
+
+    futureFilterCalls[scope + "_" + type] = 0;
 }
 
 function filterFavourites(scope,type) {
