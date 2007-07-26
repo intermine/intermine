@@ -57,7 +57,7 @@ public class CreateAccountAction extends LoginHandler
         pm.createProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
                 new HashMap()));
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        RequestPasswordAction.email(username, password, webProperties);
+        MailUtils.email(username, password, webProperties);
         /*
          * This code generates an MD5 key for the given username which is then
          * encoded in Hexadecimal. This could later be used for account

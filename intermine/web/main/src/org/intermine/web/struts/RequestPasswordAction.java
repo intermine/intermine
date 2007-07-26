@@ -10,16 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
-import java.text.MessageFormat;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
 
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +52,7 @@ public class RequestPasswordAction extends InterMineAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
@@ -67,15 +61,16 @@ public class RequestPasswordAction extends InterMineAction
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String username = ((RequestPasswordForm) form).getUsername();
 
-        boolean successful = false;
         if (pm.hasProfile(username)) {
-            successful = email(username, pm.getPassword(username), webProperties);
+            try {
+                MailUtils.email(username, pm.getPassword(username), webProperties);
+                recordMessage(new ActionMessage("login.emailed", username), request);
+            } catch (Exception e) {
+                RequestPasswordAction.LOG.warn(e);
+                recordError(new ActionMessage("login.invalidemail"), request);
+            }
         }
-        if (successful) {
-            recordMessage(new ActionMessage("login.emailed", username), request);
-        } else {
-            recordError(new ActionMessage("login.invalidemail"), request);
-        }
+
         return mapping.findForward("login");
     }
 
@@ -90,39 +85,5 @@ public class RequestPasswordAction extends InterMineAction
             s += (char) ('a' + random.nextInt(26));
         }
         return s;
-    }
-
-    /**
-     * Email a password to an email address
-     * 
-     * @param to
-     *            the address to send to
-     * @param password
-     *            the password to send
-     * @param webProperties
-     *            properties such as the from address
-     * @return true if sending was successful
-     */
-    public static boolean email(String to, String password, Map webProperties) {
-        try {
-            String host = (String) webProperties.get("mail.host");
-            String from = (String) webProperties.get("mail.from");
-            String subject = (String) webProperties.get("mail.subject");
-            String text = (String) webProperties.get("mail.text");
-            text = MessageFormat.format(text, new Object[] { 
-                       password });
-            Properties properties = System.getProperties();
-            properties.put("mail.smtp.host", host);
-            MimeMessage message = new MimeMessage(Session.getDefaultInstance(properties, null));
-            message.setFrom(new InternetAddress(from));
-            message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(to, true)[0]);
-            message.setSubject(subject);
-            message.setText(text);
-            Transport.send(message);
-            return true;
-        } catch (Exception e) {
-            LOG.warn(e);
-            return false;
-        }
     }
 }
