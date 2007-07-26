@@ -38,7 +38,7 @@ function renameElement(name, type, index){
 }
 
 function changeViewPathDescription(pathName){
-    var pathString = pathName.replace(/\_/g,".");
+    var pathString = pathName.replace(/\@sep\@/g,".");
     var pathEnd = pathString.substring(pathString.lastIndexOf('.') + 1);
     document.getElementById('form_'+pathName).style.display = "none";
     document.getElementById('name_'+pathName+'_inner').innerHTML = "<i>saving...</i>";

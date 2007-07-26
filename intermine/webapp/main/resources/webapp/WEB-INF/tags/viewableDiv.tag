@@ -31,8 +31,11 @@
   </c:when>
   <c:otherwise>
     <c:if test="${viewPaths[path] && (empty test || test)}">
-      <div class="viewpath" id="${idPrefix}${fn:replace(path,".","")}${idPostfix}"
-           name="${idPrefix}${fn:replace(path,".","")}"
+      <c:set var="pathClean" >
+        ${fn:replace(path, "_", "@und@")}
+      </c:set>
+      <div class="viewpath" id="${idPrefix}${fn:replace(pathClean,".","")}${idPostfix}"
+           name="${idPrefix}${fn:replace(pathClean,".","")}"
         <c:if test="${(empty disabled || !disabled)}">
               onmouseover="enterPath('${fn:replace(path,".","")}')"
               onmouseout="exitPath('${fn:replace(path,".","")}')"

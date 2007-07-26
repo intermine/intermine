@@ -9,7 +9,7 @@
 <tiles:useAttribute id="pathString" name="pathString"/>
 <tiles:useAttribute id="description" name="description"/>
 
-<c:set var="pathName" value="${fn:replace(pathString,'.','_')}"/>
+<c:set var="pathName" value="${fn:replace(pathString,'.','@sep@')}"/>
 
 <script type="text/javascript">
 <!--//<![CDATA[
