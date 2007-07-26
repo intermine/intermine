@@ -13,6 +13,19 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.tagging.TagTypes;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -23,14 +36,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Action class for saving a bag from the bagUploadConfirm page into the user profile.
@@ -65,6 +70,15 @@ public class BagUploadConfirmAction extends InterMineAction
         String bagName = confirmForm.getBagName();
         if (profile.getSavedBags().get(bagName) != null) {
             recordError(new ActionMessage("errors.savebag.existing"), request);
+            return mapping.findForward("error");
+        }
+
+        SearchRepository searchRepository =
+            SearchRepository.getGlobalSearchRepository(servletContext);
+        Map<String, ? extends WebSearchable> publicBagMap = 
+            searchRepository.getWebSearchableMap(TagTypes.BAG);
+        if (publicBagMap.get(bagName) != null) {
+            recordError(new ActionMessage("errors.savebag.existing.public", bagName), request);
             return mapping.findForward("error");
         }
         
