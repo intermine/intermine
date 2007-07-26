@@ -58,7 +58,7 @@ public class TemplateHelperTest extends MockStrutsTestCase
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
         MainHelper.makeQuery(PathQuery.fromXml(queryXml, new HashMap(), getActionServlet().getServletContext()),
-                new HashMap(), pathToQueryNode, null, null);
+                new HashMap(), pathToQueryNode, null, null, false);
         List indexes = new ArrayList();
         String precomputeQuery = TemplateHelper.getPrecomputeQuery(t, indexes).toString();
         assertEquals(expIql, precomputeQuery);
