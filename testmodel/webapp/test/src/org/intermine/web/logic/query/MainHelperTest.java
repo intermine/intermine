@@ -207,7 +207,7 @@ public class MainHelperTest extends MockStrutsTestCase {
         q.addFrom(qc1);
         q.addToOrderBy(new QueryField(qc1, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false).toString());
     }
 
      // Select Employee.name, Employee.departments.name, Employee.departments.company.name
@@ -242,7 +242,7 @@ public class MainHelperTest extends MockStrutsTestCase {
         q.addToOrderBy(qf1);
         q.addToOrderBy(new QueryField(qc3, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false).toString());
     }
 
     // As above but add a wildcard in the constraint which makes a MATCHES constraint
@@ -278,7 +278,7 @@ public class MainHelperTest extends MockStrutsTestCase {
         q.addToOrderBy(qf1);
         q.addToOrderBy(new QueryField(qc3, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false).toString());
     }
 
 
@@ -313,7 +313,7 @@ public class MainHelperTest extends MockStrutsTestCase {
         q.addToOrderBy(new QueryField(qc1, "name"));
         q.addToOrderBy(new QueryField(qc3, "name"));
 
-        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null).toString());
+        assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, null, false).toString());
     }
 
     private Map readQueries() throws Exception {
