@@ -12,6 +12,14 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.tagging.TagTypes;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -20,9 +28,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.profile.Profile;
 
 /**
  * Form bean for the results table and bag creation form.
@@ -136,6 +141,17 @@ public class SaveBagForm extends ActionForm
                 errors = new ActionErrors();
                 errors.add(ActionMessages.GLOBAL_MESSAGE,
                            new ActionMessage("errors.savebag.existing", newBagName));
+            } else {
+                ServletContext servletContext = request.getSession().getServletContext();
+                SearchRepository searchRepository =
+                    SearchRepository.getGlobalSearchRepository(servletContext);
+                Map<String, ? extends WebSearchable> publicBagMap = 
+                    searchRepository.getWebSearchableMap(TagTypes.BAG);
+                if (publicBagMap.get(newBagName) != null) {
+                    errors = new ActionErrors();
+                    errors.add(ActionMessages.GLOBAL_MESSAGE,
+                               new ActionMessage("errors.savebag.existing.public", newBagName));
+                }
             }
         }
 
