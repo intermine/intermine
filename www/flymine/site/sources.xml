@@ -1,4 +1,6 @@
 <?xml version="1.0" standalone="yes" ?> 
+
+
 <article>
   <section>
     <title>
@@ -1950,6 +1952,7 @@
           </description>
           <version></version>
         </source>
+
         <source>
           <name>Whole genome tiling path</name>
           <description>
@@ -1958,12 +1961,15 @@
           </description>
           <version>4.0</version>
         </source>
+
+
         <source>
           <name>Tiffin</name>
           <description>
             Predicted regulatory motifs and predicted functional sites
             ("motif instances") on &lt;i&gt;D. melanogaster&lt;/i&gt;
-            genome sequence 5.0.
+            genome sequence 5.0. From &lt;a
+            href="http://servlet.sanger.ac.uk/tiffin/"&gt;Tiffin&lt;/a&gt;
           </description>
           <version>1.2</version>
         </source>
