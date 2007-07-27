@@ -66,9 +66,9 @@
   <c:out value="${webSearchable.type}" />
 </c:otherwise>
 </c:choose></b>
-<em><c:if test="${!empty webSearchable.dateCreated}">
+<!-- <em><c:if test="${!empty webSearchable.dateCreated}">
   <im:dateDisplay type="short" date="${webSearchable.dateCreated}"/>
-</c:if></em>
+</c:if></em> -->
 
 <c:if test="${showDescriptions}">
   <div id="${scope}_${type}_item_description_${webSearchable.name}">
