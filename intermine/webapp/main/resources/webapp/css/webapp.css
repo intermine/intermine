@@ -152,17 +152,15 @@ td#quicksearch {
 .mymineStyle{background:#9B89A7;color:white;}
 
 /* style for gray boxes with heading */
-.box .heading, .heading2 {
+.heading, .heading2 {
   border: 1px solid #888;
-  padding: 1px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding: 5px;
   margin-top: 0px;
   margin-right: 8px;
   margin-left: 8px;
   margin-bottom: 4px;
   font-size: 14px;
-  color: #333;
+  color: #000;
   white-space: nowrap;
   /* needed to prevent the peekaboo bug on IE:
      http://www.positioniseverything.net/explorer/peekaboo.html */
@@ -174,9 +172,12 @@ td#quicksearch {
 }
 /* The following two rules stop superscript/subscript changing
    div height in headings. */
-.heading {
+/*.heading {
   line-height: 1.4em;
+  margin:5px;
+  font-size:14px;
 }
+*/
 .heading2, .heading {
   background: url(../model/heading-bg.gif) top center repeat;
 }
