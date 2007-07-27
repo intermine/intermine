@@ -65,6 +65,7 @@ public class QuickSearchAction extends InterMineAction
         ServletContext context = session.getServletContext();
         QuickSearchForm qsf = (QuickSearchForm) form;
         String qsType = qsf.getQuickSearchType();
+        session.setAttribute("quickSearchType", qsType);
         if (qsType.equals("ids")) {
             Map webPropertiesMap = (Map) context.getAttribute(Constants.WEB_PROPERTIES);
             
