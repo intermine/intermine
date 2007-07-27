@@ -1,7 +1,11 @@
 package org.intermine.web.aspects;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+
+import org.xml.sax.SAXException;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -14,7 +18,7 @@ import junit.framework.TestCase;
 
 public class AspectBindingTest extends TestCase
 {
-    public void testUnmarshal() {
+    public void testUnmarshal() throws Exception {
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                 .getResourceAsStream("AspectBindingTest.xml"));
         Map sets = AspectBinding.unmarshal(reader);
