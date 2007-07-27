@@ -28,8 +28,3 @@ function toggleDivs(source,destination){
    document.getElementById(source).style.display = 'none';
    document.getElementById(destination).style.display = 'block';
 }
-
-function clearElement(e) {
-	e.value = "";
-	e.style.cssText = "";
-}

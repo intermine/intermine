@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -37,7 +38,9 @@ public class BrowseController extends TilesAction
 
         // might want to make the operator a model web.properties property
         //context.putAttribute("browseOperator", ConstraintOp.MATCHES.getIndex());
-
+        HttpSession session = request.getSession();
+        String selectedQuickSearch = (String) session.getAttribute("quickSearchType");
+        request.setAttribute("quickSearchType", selectedQuickSearch);
         return null;
     }
 }
