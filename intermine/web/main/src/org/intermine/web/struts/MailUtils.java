@@ -45,24 +45,30 @@ public abstract class MailUtils
         final String user = (String) webProperties.get("mail.smtp.user");
         String text = (String) webProperties.get("mail.text");
         String authFlag = (String) webProperties.get("mail.smtp.auth");
-
+        String starttlsFlag = (String) webProperties.get("mail.smtp.starttls.enable");
+        
         text = MessageFormat.format(text, new Object[] { imPassword });
         Properties properties = System.getProperties();
 
         properties.put("mail.smtp.host", webProperties.get("mail.host"));
         properties.put("mail.smtp.user", user);
-        properties.put("mail.smtp.starttls.enable", webProperties.get("mail.smtp.starttls.enable"));
-        properties.put("mail.smtp.auth", authFlag);
+        
+        if (starttlsFlag != null) {
+            properties.put("mail.smtp.starttls.enable", starttlsFlag);
+        }
+        if (authFlag != null) {
+            properties.put("mail.smtp.auth", authFlag);
+        }
 
-        Authenticator authenticator = new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                String password = (String) webProperties.get("mail.server.password");
-                return new PasswordAuthentication(user, password);
-            }
-        };
         Session session;
         if (authFlag != null && (authFlag.equals("true") || authFlag.equals("t"))) {
+            Authenticator authenticator = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    String password = (String) webProperties.get("mail.server.password");
+                    return new PasswordAuthentication(user, password);
+                }
+            };
             session = Session.getDefaultInstance(properties, authenticator);
         } else {
             session = Session.getDefaultInstance(properties);
