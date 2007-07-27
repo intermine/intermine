@@ -4,7 +4,7 @@
 <article>
 
   <section>
-    <title>FlyMine version 8.0 - release notes</title>
+    <title>FlyMine version 8.0 - release notes (27th June 2007)</title>
     <para>
       In release 8.0 we have updated the data model for protein interactions, protein structure and orthologues to make them easier and faster to query.  We also include three new data sets: Tiffin (predicted regulatory motifs), anoEST (A. gambiae EST clusters) and predicted 3-D protein structures for A. gambiae domains. A new type of constraint is used in template queries which now allows you to enter any identifier or symbol.
     </para> 
@@ -30,7 +30,7 @@
   </section> 
 
   <section>
-    <title>FlyMine version 7.1 - release notes</title>
+    <title>FlyMine version 7.1 - release notes (10th May 2007)</title>
     <para>
       Release 7.1 includes a number of new user interface features.  Results of queries can be ordered by a selected column and results tables have a new summary button which brings up statistics on the values in that column.  Many template queries now have more descriptive column titles in results tables.
     </para>
@@ -70,7 +70,7 @@
   </section>
 
   <section>
-    <title>FlyMine version 7.0 - release notes</title>
+    <title>FlyMine version 7.0 - release notes (3rd April 2007)</title>
     <para>
       Release 7.0 updates the <emphasis>D. melanogaster</emphasis> genome to 5.1 annotation and other genome annotation sources have been re-mapped.  GO enrichment and KEGG pathway viewers have been added to the gene Bag Details page.
     </para>
@@ -108,7 +108,7 @@
   </section>
 
   <section>
-    <title>FlyMine version 6.1 - release notes</title>
+    <title>FlyMine version 6.1 - release notes (15th February 2007)</title>
 
     <para>
 FlyMine 6.1 contains a major overhaul of the way bags are handled.  Bags can now only contain actual objects rather than identifiers or symbols.  This means that any object in a bag has already been found in FlyMine which should reduce confusion.  A sophisticated bag upload system has been added to aid in creating bags from external lists of identifiers.
@@ -138,7 +138,7 @@ Also new are bag details pages.  These are accessible for any of your saved bags
 
 
   <section>
-    <title>FlyMine version 6.0 - release notes</title>
+    <title>FlyMine version 6.0 - release notes (24th November 2006)</title>
 
     <para>FlyMine 6.0 adds data from seven <emphasis>Dropsophila</emphasis> RNAi screens from the DRSC,
           microarray-based gene expression data from FlyAtlas and Transcriptional cis-regulatory modules 
@@ -216,7 +216,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
 
 
   <section>
-    <title>FlyMine version 5.0 - release notes</title>
+    <title>FlyMine version 5.0 - release notes (1st June 2006)</title>
     
       <para>FlyMine 5.0 adds genome annotation for <emphasis>D. pseudoobscura</emphasis> (release 2.0 from FlyBase) and <emphasis>A. mellifera</emphasis> (release 2.0 from Ensembl) with InParanoid orthologues to the other genomes in FlyMine.  Also added are InParanoid orthologues to many other species and GO annotation for some of them.  Interface improvements include the ability for users to tag favourite templates and to change their password.</para>
 
@@ -264,7 +264,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
 
   </section>
   <section>
-    <title>FlyMine version 4.0 - release notes</title>
+    <title>FlyMine version 4.0 - release notes (13th March 2006)</title>
     
         <para>Major changes to layout and content of summary pages. These pages can now display the results of template queries inline to give immediate access to data. The www.flymine.org home page now shows aspect icons and query options. Many other interface improvements. Addition of Arbeitman et al, 2002 Drosophila time course microarray data and human disease gene matches from Homophila.</para>
 
@@ -322,7 +322,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
   </section>
 
   <section>
-    <title>FlyMine version 3.1 - release notes</title>
+    <title>FlyMine version 3.1 - release notes (7nd November 2005)</title>
     
     <itemizedlist>
       <listitem>
@@ -336,7 +336,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
   </section>
 
   <section>
-    <title>FlyMine version 3.0 - release notes</title>
+    <title>FlyMine version 3.0 - release notes (1st September 2005)</title>
     
     <itemizedlist>
       <listitem>
@@ -408,7 +408,7 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
 
   </section>
   <section>
-    <title>FlyMine version 2.1 - release notes</title>
+    <title>FlyMine version 2.1 - release notes (1st June 2005)</title>
     
     <itemizedlist>
       <listitem>
