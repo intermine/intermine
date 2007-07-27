@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
+import org.xml.sax.SAXException;
+
 import org.intermine.cache.InterMineCache;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -172,7 +175,12 @@ public class InitialiserPlugin implements PlugIn
             servletContext.setAttribute(Constants.ASPECTS, Collections.EMPTY_MAP);
             servletContext.setAttribute(Constants.CATEGORIES, Collections.EMPTY_SET);
         } else {
-            Map sets = AspectBinding.unmarhsal(is);
+            Map sets;
+            try {
+                sets = AspectBinding.unmarhsal(is);
+            } catch (Exception e) {
+                throw new RuntimeException("problem while reading aspect configuration file", e);
+            }
             servletContext.setAttribute(Constants.ASPECTS, sets);
             servletContext.setAttribute(Constants.CATEGORIES,
                     Collections.unmodifiableSet(sets.keySet()));

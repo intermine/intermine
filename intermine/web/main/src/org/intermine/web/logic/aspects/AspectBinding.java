@@ -40,8 +40,10 @@ public class AspectBinding
      * 
      * @param reader data set xml reader
      * @return Map from set name to Aspect object
+     * @throws SAXException if there is a problem parsing XML
+     * @throws IOException if there is a IO problem
      */
-    public static Map unmarshal(Reader reader) {
+    public static Map unmarshal(Reader reader) throws IOException, SAXException {
         Digester digester = new Digester();
         digester.addObjectCreate("aspects", "java.util.ArrayList");
         digester.addObjectCreate("aspects/aspect", "org.intermine.web.logic.aspects.Aspect");
@@ -58,26 +60,20 @@ public class AspectBinding
         digester.addSetNext("aspects/aspect/aspect-source", "addAspectSource",
                 "org.intermine.web.logic.aspects.AspectSource");
         digester.addSetNext("aspects/aspect", "add", "java.lang.Object");
-        try {
-            List list = (List) digester.parse(reader);
-            if (list == null) {
-                LOG.error("Failed to unmashal aspects (digester returned null)");
-                return Collections.EMPTY_MAP;
-            }
-            Map map = new LinkedHashMap();
-            Iterator iter = list.iterator();
-            while (iter.hasNext()) {
-                Aspect set = (Aspect) iter.next();
-                map.put(set.getName(), set);
-            }
-            return map;
-        } catch (IOException e) {
-            LOG.error(e);
-            return null;
-        } catch (SAXException e) {
-            LOG.error(e);
-            return null;
+
+        List list = (List) digester.parse(reader);
+        if (list == null) {
+            LOG.error("Failed to unmashal aspects (digester returned null)");
+            return Collections.EMPTY_MAP;
         }
+        Map map = new LinkedHashMap();
+        Iterator iter = list.iterator();
+        while (iter.hasNext()) {
+            Aspect set = (Aspect) iter.next();
+            map.put(set.getName(), set);
+        }
+        return map;
+
     }
     
     /**
@@ -85,9 +81,11 @@ public class AspectBinding
      * 
      * @param is an InputStream to the XML document
      * @return Map from data set name to Aspect object
+     * @throws SAXException if there is a problem parsing XML
+     * @throws IOException if there is a IO problem
      * @see #unmarshal(Reader)
      */
-    public static Map unmarhsal(InputStream is) {
+    public static Map unmarhsal(InputStream is) throws IOException, SAXException {
         return unmarshal(new InputStreamReader(is));
     }
 }
