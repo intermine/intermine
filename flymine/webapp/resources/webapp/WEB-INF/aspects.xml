@@ -42,6 +42,7 @@
     <aspect-source name="FlyReg" url="http://www.flyreg.org/"/>
     <aspect-source name="REDfly" url="http://redfly.ccr.buffalo.edu/"/>
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="Tiffin" url="http://http://servlet.sanger.ac.uk/tiffin/"/>
   </aspect>
 
   <aspect name="DrosDel">
@@ -169,6 +170,20 @@
     <tile-name>model/GO.jsp</tile-name>
     <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
   </aspect>
+
+
+
+  <aspect name="Pathways">
+    <subtitle></subtitle>
+    <icon-image>model/pathways.png</icon-image>
+    <large-image>model/pathways.png</large-image>
+    <intro-text>
+      KEGG pathway data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;
+    </intro-text>
+    <tile-name>model/pathways.jsp</tile-name>
+    <aspect-source name="Kegg pathway database" url="http://www.genome.jp/kegg/pathway.html/"/>
+  </aspect>
+
 
   <!--
       <aspect name="Anopheles">
