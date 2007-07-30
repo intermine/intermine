@@ -49,7 +49,7 @@
               <c:choose>
                 <c:when test="${!favouriteTemplate.valid}">
                   <td align="left" nowrap>
-                    <html:link action="/templateProblems?name=${favouriteTemplate.key}&amp;scope=user" styleClass="brokenTmplLink">
+                    <html:link action="/templateProblems?name=${favouriteTemplate.name}&amp;scope=user" styleClass="brokenTmplLink">
                     <strike>${favouriteTemplate.name}</strike>
                     </html:link>
                   </td>
