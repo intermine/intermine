@@ -108,17 +108,6 @@
         <br/>
         </c:otherwise>
 	</c:choose>
-<!--    <c:if test="${IS_SUPERUSER}">
-      <span class="smallnote">
-        <c:if test="${!empty PROFILE.savedTemplates}">
-          <html:link action="/exportTemplates?scope=user" titleKey="begin.exportTemplatesDesc">
-            <fmt:message key="begin.exportTemplates"/>
-          </html:link><br/>
-        </c:if>
-        <html:link action="/import" titleKey="begin.importTemplatesDesc">
-          <fmt:message key="begin.importTemplates"/>
-        </html:link>
-      </span>
-    </c:if> -->
+
   </im:body>
 <!-- /historyFavouritesView.jsp -->

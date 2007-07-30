@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -244,7 +243,7 @@ public abstract class WebUtil
 
     /**
      * Verifies names (bags, queries, etc) only contain A-Z, a-z, 0-9, underscores and
-     * dashes.
+     * dashes.  And spaces.  And dots.
      * @param name Name of bag/query/template to be validated
      * @return isValid Returns true if this name is correct, false if this name contains a bad char
      */
@@ -252,7 +251,7 @@ public abstract class WebUtil
 
         boolean isValid = false;
         if (name != null) {
-            Pattern p = Pattern.compile("[^\\w\\s]");
+            Pattern p = Pattern.compile("[^\\w\\s\\.]");
             //Pattern p = Pattern.compile("\\W");
             Matcher m = p.matcher(name);
             isValid = !m.find();
