@@ -70,17 +70,34 @@ public class SearchRepository
         new HashMap<String, Map<String, ? extends WebSearchable>>();
     private Map<String, Directory> directoryMap = new HashMap<String, Directory>();
     private final String scope;
-    private final Profile profile;
+    private Profile profile;
+
+    /**
+     * Construct a new instance of SearchRepository.
+     * @param profile the Profile to use for getting aspect tags
+     * @param scope USER_TEMPLATE or GLOBAL_TEMPLATE from TemplateHelper
+     */
+    public SearchRepository(Profile profile, String scope) {
+        this(scope);
+        setProfile(profile);
+    }
 
     /**
      * Construct a new instance of SearchRepository.
      * @param scope USER_TEMPLATE or GLOBAL_TEMPLATE from TemplateHelper
      */
-    public SearchRepository(Profile profile, String scope) {
-        this.profile = profile;
+    public SearchRepository(String scope) {
         this.scope = scope;
     }
 
+    /**
+     * Set the Profile to use for getting aspect tags
+     * @param profile
+     */
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+    
     /**
      * Get the SearchRepository for global (public) objects.
      *
@@ -175,9 +192,7 @@ public class SearchRepository
      * @param servletContext the servlet context
      */
     private void reindex(String type) {
-        Map<String, ? extends WebSearchable> webSearchables = webSearchablesMap.get(type);
-        RAMDirectory ram = indexWebSearchables(webSearchables, type);
-        directoryMap.put(type, ram);
+        directoryMap.put(type, null);
     }
 
     /**
@@ -186,7 +201,14 @@ public class SearchRepository
      * @return the Directory
      */
     public Directory getDirectory(String type) {
-        return directoryMap.get(type);
+        if (directoryMap.containsKey(type) && directoryMap.get(type) != null) {
+            return directoryMap.get(type);
+        } else {
+            Map<String, ? extends WebSearchable> webSearchables = webSearchablesMap.get(type);
+            RAMDirectory ram = indexWebSearchables(webSearchables, type);
+            directoryMap.put(type, ram);
+            return ram;
+        }
     }
 
     /**
