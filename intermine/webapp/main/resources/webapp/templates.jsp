@@ -12,7 +12,7 @@
 <table padding="0px" margin="0px" width="100%">
   <tr>
     <td valign="top" width="30%">
-      <div id="pageDesc" class="templateStyle"><p><fmt:message key="begin.templates"/></p></div>
+      <div id="pageDesc" class="pageDesc"><p><fmt:message key="begin.templates"/></p></div>
       <script type="text/javascript">
       	Nifty("div#pageDesc","big");
       </script>
