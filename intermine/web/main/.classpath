@@ -7,7 +7,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/standard-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/snowball-1.1-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-2.5-final-20040302.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mail.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jstl-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-validator.jar"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-integrate-main"/>
@@ -22,5 +21,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jcommon-1.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/stringtree-json-2.0.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/strutstest-2.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/javamail-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
