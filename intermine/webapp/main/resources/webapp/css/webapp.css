@@ -126,14 +126,16 @@ ul#nav a{
 	padding:5px 10px 5px 10px;
     font-weight:bold;
 }
-ul#nav a:hover{color:#000;}
+ul#nav a:hover,ul#nav li#mymine a:hover{color:#000;}
 ul#nav li.activelink a,ul#nav li.activelink a:hover{background: #FFF;color: #5C0075;}
-li#home a{background:#9D66AD;color:white;}
+ul#nav li a{background:#9F67AD;color:white;}
+/*li#home a{background:#9D66AD;color:white;}
 li#bags a{background:#FF9900;color:white;}
 li#templates a{background:#712839;color:white;}
 li#query a{background:#4A497B;color:white;}
 li#category a{background:#663366;color:white;white-space: nowrap;}
-li#mymine a{background:#9B89A7;color:white;}
+*/
+ul#nav li#mymine a{background:#9B89A7;color:white;}
 
 td#quicksearch {
 	width:100%;
@@ -145,12 +147,13 @@ td#quicksearch {
 	padding:10px;
 }
 
-.bagStyle{background:#FF9900;color:black;}
+.pageDesc{background:#F5F0FF;}
+/*.bagStyle{background:#FF9900;color:black;}
 .templateStyle{background:#712839;color:white;}
 .queryStyle{background:#4A497B;color:white;}
 .categoryStyle{background:#663366;color:white;}
 .mymineStyle{background:#9B89A7;color:white;}
-
+*/
 /* style for gray boxes with heading */
 .heading, .heading2 {
   border: 1px solid #888;
