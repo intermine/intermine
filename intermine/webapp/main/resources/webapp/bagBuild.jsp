@@ -64,7 +64,7 @@
 //]]>-->
 </script>
 
-<div id="pageDesc" class="bagStyle"><p><fmt:message key="bagBuild.intro"/></p></div>
+<div id="pageDesc" class="pageDesc"><p><fmt:message key="bagBuild.intro"/></p></div>
 <script type="text/javascript">
 	Nifty("div#pageDesc","big");
 </script>

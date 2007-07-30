@@ -39,6 +39,7 @@ public class ModifyBagForm extends ActionForm
 {
     protected String[] selectedBags;
     protected String newBagName;
+    protected String pageName;
 
     /**
      * Constructor
@@ -87,6 +88,20 @@ public class ModifyBagForm extends ActionForm
      */
     public String getNewBagName() {
         return newBagName;
+    }
+
+    /**
+     * @return the pageName
+     */
+    public String getPageName() {
+        return pageName;
+    }
+
+    /**
+     * @param pageName the pageName to set
+     */
+    public void setPageName(String pageName) {
+        this.pageName = pageName;
     }
 
     /**

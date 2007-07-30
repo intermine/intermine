@@ -11,7 +11,7 @@
 <table padding="0px" margin="0px" width="100%">
   <tr>
     <td valign="top" width="30%">
-      <div id="pageDesc" class="queryStyle"><p><fmt:message key="begin.querybuilder"/></p></div>
+      <div id="pageDesc" class="pageDesc"><p><fmt:message key="begin.querybuilder"/></p></div>
       <im:roundbox title="Actions" stylename="welcome">
 	          <html:link action="/importQueries?query_builder=yes">
 	            <fmt:message key="begin.import.query"/>

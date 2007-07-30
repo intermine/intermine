@@ -13,7 +13,7 @@
 <table padding="0px" margin="0px" width="100%">
   <tr>
     <td valign="top" width="30%">
-      <div id="pageDesc" class="categoryStyle"><p><fmt:message key="dataCategories.intro"/></p></div>
+      <div id="pageDesc" class="pageDesc"><p><fmt:message key="dataCategories.intro"/></p></div>
 
   <im:roundbox title="Actions" stylename="welcome">
            <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a>

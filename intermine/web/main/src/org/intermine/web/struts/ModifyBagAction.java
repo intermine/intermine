@@ -77,7 +77,8 @@ public class ModifyBagAction extends InterMineAction
         } else if (request.getParameter("delete") != null) {
             delete(mapping, form, request);
         }
-        return mapping.findForward("bag");
+        ModifyBagForm mbf = (ModifyBagForm) form;
+        return getReturn(mbf.getPageName(), mapping);
     }
 
     /**
@@ -106,7 +107,7 @@ public class ModifyBagAction extends InterMineAction
         String type = getTypesMatch(allBags, selectedBags, os);
         if (type == null) {
             recordError(new ActionMessage("bag.typesDontMatch"), request);
-            return mapping.findForward("bag");
+            return getReturn(mbf.getPageName(), mapping);
         }
 
         // Now combine
@@ -130,7 +131,7 @@ public class ModifyBagAction extends InterMineAction
             ActionMessage actionMessage = new ActionMessage(
                     "An error occurred while saving the bag");
             recordError(actionMessage, request);
-            return mapping.findForward("bag");
+            return getReturn(mbf.getPageName(), mapping);
         } finally {
             try {
                 if (osw != null) {
@@ -157,7 +158,7 @@ public class ModifyBagAction extends InterMineAction
         profile.saveBag(name, combined, maxNotLoggedSize);
 */
         profile.saveBag(name, combined);
-        return mapping.findForward("bag");
+        return getReturn(mbf.getPageName(), mapping);
     }
 
     /**
@@ -223,6 +224,14 @@ public class ModifyBagAction extends InterMineAction
             profile.deleteBag(mbf.getSelectedBags()[i]);
         }
 
-        return mapping.findForward("bag");
+        return getReturn(mbf.getPageName(), mapping);
+    }
+    
+    private ActionForward getReturn(String pageName, ActionMapping mapping) {
+        if(pageName != null && pageName.equals("MyMine")) {
+            return mapping.findForward("mymine");
+        } else {
+            return mapping.findForward("bag");
+        }
     }
 }

@@ -40,7 +40,7 @@
 //]]>-->
 </script>
 
-<html:form action="/modifyBag">
+<%-- <html:form action="/modifyBag">
   <tiles:insert name="wsBagTable.tile">
     <tiles:put name="scope" value="user"/>
     <tiles:put name="makeCheckBoxes" value="true"/>
@@ -60,8 +60,10 @@
   <html:submit property="subtract">
     <fmt:message key="history.subtract"/>
   </html:submit>
-</html:form>
-
+</html:form> --%>
+<tiles:insert name="historyBagView.jsp">
+  <tiles:put name="type" value="bag"/>
+</tiles:insert>
     </c:when>
     
     <%-- saved queries --%>
