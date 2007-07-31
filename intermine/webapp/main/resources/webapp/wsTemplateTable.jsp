@@ -17,16 +17,7 @@
 
 <html:xhtml/>
 <div class="webSearchable" id="ws_${scope}_template">
-<h2>
- <c:choose>
-  <c:when test="${scope == 'global'}">
-   <fmt:message key="wsTemplateTable.global"/>
-  </c:when>
-  <c:otherwise>
-   <fmt:message key="wsTemplateTable.mine"/>
-  </c:otherwise>
- </c:choose>
-</h2>
+<h2><fmt:message key="wsTemplateTable.heading"/></h2>
 <tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="template"/>
   <tiles:put name="scope" value="${scope}"/>
