@@ -23,3 +23,7 @@ div.wsTempateLine p.description, div.wsTempateLine div.description {
 div.wsTempateLine p.description a{
 	font-style: normal;
 }
+
+.aspectSelect {
+  font-size: small;
+}

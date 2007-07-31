@@ -67,7 +67,7 @@
             <th align="center" class="sortable">
               <fmt:message key="history.startcolumnheader"/>
             </th>
-            <th align="center" class="sortable">
+            <th align="center">
               <fmt:message key="history.summarycolumnheader"/>
             </th>
             <th align="center">

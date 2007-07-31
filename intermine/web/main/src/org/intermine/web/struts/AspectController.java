@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.aspects.Aspect;
+import org.intermine.web.logic.session.SessionMethods;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,9 +31,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.aspects.Aspect;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Contoller for a single data set tile embedded in a page. Expects the request parameter
