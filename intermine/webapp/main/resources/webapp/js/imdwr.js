@@ -258,7 +258,7 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
         $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
     }
 
-    if ((value && value.length > 1) || (tags && tags.length > 1)) {
+    if ((value != null && value.length > 1) || (tags != null && tags.length > 1)) {
         function filterCallBack(cbResult) {
             var callId = cbResult[0];
             var filteredList = cbResult.slice(1);
@@ -363,7 +363,7 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
         4. null
          */
         
-        if(tags && tags.length > 1) {
+        if(tags != null && tags.length > 1) {
 	        tagList = new Array();
 			if (tags.match("|")) {			
 	        	var a = new Array();

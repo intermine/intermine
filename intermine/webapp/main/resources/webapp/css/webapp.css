@@ -147,7 +147,15 @@ td#quicksearch {
 	padding:10px;
 }
 
-.pageDesc{background:#F5F0FF;}
+
+
+      .pageDesc { 
+        background-color: #F5F0FF; 
+        margin: 12px 12px 12px 12px;
+        padding: 3px 3px 3px 3px;       
+      }
+
+
 /*.bagStyle{background:#FF9900;color:black;}
 .templateStyle{background:#712839;color:white;}
 .queryStyle{background:#4A497B;color:white;}
