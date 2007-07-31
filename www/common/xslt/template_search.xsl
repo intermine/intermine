@@ -5,7 +5,7 @@
   xmlns="http://www.w3.org/1999/xhtml">
   
   <xsl:template match="template-search">
-    <form name="searchForm" method="get" action="{xsl:concat($webappprefix,'/search.do')}">
+    <form name="searchForm" method="get" action="{xsl:concat($webappprefix,'/runSearch.do')}">
         Search:
         <input type="hidden" name="type" value="template"/>
         <input type="text" name="queryString" size="20" value="" id="queryString" />
