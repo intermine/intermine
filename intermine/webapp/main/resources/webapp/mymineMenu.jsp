@@ -9,18 +9,14 @@
 	<c:set var="MYMINE_PAGE" value="<%=request.getParameter("MYMINE_PAGE")%>"/>
 	<c:set var="loggedin" value="<%=request.getParameter("loggedin")%>"/>
 
-	<div align="left" style="font-size:+1.2em;color:#36c;top:-10px;">
+	<div id="mymineMenu">
 	
-	<table cellspacing="0" cellpadding="2">
-	<tr>
-	<td valign="top" nowrap><b>MyMine Menu</b>&nbsp;</td>
-	<td style="border-bottom: #36c dashed 1.3px;">
-	
-	
+	<ul id="mymineList">
+	<li>
 	<%-- bags --%>
         <c:choose>
           <c:when test="${MYMINE_PAGE=='lists'||MYMINE_PAGE == ''}">
-            <b><fmt:message key="mymine.bags.tab.title"/></b>
+            <span class="active"><fmt:message key="mymine.bags.tab.title"/></span>
           </c:when>
           <c:otherwise>
             <html:link action="/mymine?page=lists">
@@ -28,13 +24,14 @@
             </html:link>
           </c:otherwise>
         </c:choose>
-    
-    &nbsp;|&nbsp;
+    </li>
+    <li>&nbsp;|&nbsp;</li>
 	
+    <li>
 	<%-- query history --%>
 	 <c:choose>
           <c:when test="${MYMINE_PAGE=='history'}">
-            <b><fmt:message key="mymine.history.tab.title"/></b>
+            <span class="active"><fmt:message key="mymine.history.tab.title"/></span>
           </c:when>
           <c:otherwise>
             <html:link action="/mymine?page=history">
@@ -42,9 +39,9 @@
             </html:link>
           </c:otherwise>
         </c:choose>
-        
-	&nbsp;|&nbsp;
-
+   </li>     
+   <li>&nbsp;|&nbsp;</li>
+   <li>
 	<%-- saved queries --%>
         <c:choose>
           <c:when test="${!loggedin}">
@@ -53,7 +50,7 @@
             </span>
           </c:when>
           <c:when test="${MYMINE_PAGE=='saved' || !loggedin}">
-            <b><fmt:message key="mymine.savedqueries.tab.title"/></b>
+            <span class="active"><fmt:message key="mymine.savedqueries.tab.title"/></span>
           </c:when>
           <c:otherwise>
             <html:link action="/mymine?page=saved">
@@ -61,9 +58,10 @@
             </html:link>
           </c:otherwise>
         </c:choose>
-       	
-	&nbsp;|&nbsp;
+   </li>
+   <li>&nbsp;|&nbsp;</li>
 
+   <li>
 	<%-- saved templates --%>
         <c:choose>
           <c:when test="${!loggedin}">
@@ -72,7 +70,7 @@
             </span>
           </c:when>
           <c:when test="${MYMINE_PAGE=='templates'}">
-            <b><fmt:message key="mymine.savedtemplates.tab.title"/></b>
+            <span class="active"><fmt:message key="mymine.savedtemplates.tab.title"/></span>
           </c:when>
           <c:otherwise>
             <html:link action="/mymine?page=templates">
@@ -80,10 +78,11 @@
             </html:link>
           </c:otherwise>
         </c:choose>
-
+  </li>
     
-    &nbsp;|&nbsp;
-
+  <li>&nbsp;|&nbsp;</li>
+   
+   <li>
 	<%-- favourites --%>
     
         <c:choose>
@@ -93,7 +92,7 @@
             </span>
           </c:when>
           <c:when test="${MYMINE_PAGE=='favourites'}">
-             <b><fmt:message key="mymine.favourites.tab.title"/></b>
+             <span class="active"><fmt:message key="mymine.favourites.tab.title"/></span>
           </c:when>
           <c:otherwise>
             <html:link action="/mymine?page=favourites">
@@ -103,18 +102,17 @@
           
         </c:choose>
  &nbsp;<img src="images/star_active.gif" title="Favourites"/>
-
-
+    </li>
 
 	<%-- change password --%>
 
       <c:if test="${loggedin}">
      
-          &nbsp;|&nbsp;
-          
+      <li>&nbsp;|&nbsp;</li>
+          <li>
           <c:choose>
             <c:when test="${MYMINE_PAGE=='password'}">
-              <b><fmt:message key="mymine.password.tab.title"/></b>
+              <span class="active"><fmt:message key="mymine.password.tab.title"/></span>
             </c:when>
             <c:otherwise>
               <html:link action="/mymine?page=password">
@@ -122,12 +120,9 @@
               </html:link>
             </c:otherwise>
           </c:choose>
-
+         </li>
       </c:if>
       
-      </td>     
-      </tr>
-      </table>
 	</div>
-	<br/>	
+	<div style="clear:both;"></div>
 <!-- /mymineMenu.jsp -->
