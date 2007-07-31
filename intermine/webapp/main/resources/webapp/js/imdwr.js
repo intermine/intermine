@@ -356,23 +356,21 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
         currentFilterCallbacks[scope + "_" + type] = callId;
         var tagList = null;
         
-        /*  can only be one of these three options:
+        /*  can only be one of these options:
         1. favourite
         2. aspect:<aspect>
         3. aspect:<aspect>|favourite
+        4. null
          */
         
         if(tags && tags.length > 1) {
-
 	        tagList = new Array();
-			if (tags.match("|")) {
-			
+			if (tags.match("|")) {			
 	        	var a = new Array();
-    	    	a = tags.split('|');
-        		
+	        	
+    	    	a = tags.split('|');        		
         		for (var i=0, l=a.length; i<l; ++i) {
-        			tagList[i] = a[i];  
-        			
+        			tagList[i] = a[i]; 
         		}
         	} else {
         		tagList[0] = tags;
@@ -396,7 +394,6 @@ function filterFavourites(scope,type) {
     // aspect selected
     if (document.getElementById(scope+'_'+type+'_filter_aspect').value != '') {
     	tags = 'aspect:'+document.getElementById(scope+'_'+type+'_filter_aspect').value;
-    	
     }
     // favourites OFF
     if(document.getElementById(id).value == "favourites") {
@@ -414,14 +411,15 @@ function filterFavourites(scope,type) {
 function filterAspect(scope,type) {
 	var tags = null;
 	var id = 'filterAction_'+scope+'_'+type;
-	var aspect = document.getElementById(scope+'_'+type+'_filter_aspect').value;
+	var aspect = document.getElementById(scope+'_'+type+'_filter_aspect').value; 
 	
 	// filter by favourites 
     if(document.getElementById(id).value == "favourites") {
     	tags = 'favourite';
     }
+    
     // aspects ON
-    if(aspect != null) {        
+    if(aspect != null && aspect.length > 1) {        
         aspect = 'aspect:'+ aspect;
         tags = (tags == 'favourite' ? tags + '|' + aspect : aspect);
     }
