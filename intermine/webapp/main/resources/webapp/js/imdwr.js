@@ -212,7 +212,7 @@ var currentFilterCallbacks = new Array();
 // Give each setTimeout call an id and remember what our current pending id is
 var futureFilterCalls = new Array();
 
-function filterWebSearchablesHandler(event, object, scope, type) {
+function filterWebSearchablesHandler(event, object, scope, type, tags) {
     if (window.event) {
         event = window.event;
     }
@@ -227,13 +227,14 @@ function filterWebSearchablesHandler(event, object, scope, type) {
 	}
     futureFilterCalls[scope + "_" + type] = callId;
     setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '",' +
-               callId + ")", 500);
+               callId + ",'" + tags + "')", 500);
     callId++;
 }
 
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
 // the webSearchableList that don't match
-function filterWebSearchables(objectId, scope, type, callId) {
+function filterWebSearchables(objectId, scope, type, callId, tags) {
+
     if (futureFilterCalls[scope + "_" + type] != callId) {
         // filterWebSearchablesHandler() has been called again since this
         // timeout was set, so ignore as another timeout will be along
@@ -257,7 +258,7 @@ function filterWebSearchables(objectId, scope, type, callId) {
         $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
     }
 
-    if ((value!= null && value.length > 1) || filterAction == 'favourites') {
+    if ((value && value.length > 1) || (tags && tags.length > 1)) {
         function filterCallBack(cbResult) {
             var callId = cbResult[0];
             var filteredList = cbResult.slice(1);
@@ -353,11 +354,33 @@ function filterWebSearchables(objectId, scope, type, callId) {
 
         $(scope + '_' + type + '_spinner').style.visibility = 'visible';
         currentFilterCallbacks[scope + "_" + type] = callId;
-        var tags = new Array();
-        if(filterAction == 'favourites') {
-            tags[0] = 'favourite';
+        var tagList = null;
+        
+        /*  can only be one of these three options:
+        1. favourite
+        2. aspect:<aspect>
+        3. aspect:<aspect>|favourite
+         */
+        
+        if(tags && tags.length > 1) {
+
+	        tagList = new Array();
+			if (tags.match("|")) {
+			
+	        	var a = new Array();
+    	    	a = tags.split('|');
+        		
+        		for (var i=0, l=a.length; i<l; ++i) {
+        			tagList[i] = a[i];  
+        			
+        		}
+        	} else {
+        		tagList[0] = tags;
+        	}
         }
-        AjaxServices.filterWebSearchables(scope, type, tags, object.value, filterAction, callId++,
+        
+        /*  filterAction toggles favourites off and on */
+        AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction, callId++,
                                           filterCallBack);
     } else {
         showAll();
@@ -368,12 +391,41 @@ function filterWebSearchables(objectId, scope, type, callId) {
 
 function filterFavourites(scope,type) {
     var id = 'filterAction_'+scope+'_'+type;
+    var tags = '';
+
+    // aspect selected
+    if (document.getElementById(scope+'_'+type+'_filter_aspect').value != '') {
+    	tags = 'aspect:'+document.getElementById(scope+'_'+type+'_filter_aspect').value;
+    	
+    }
+    // favourites OFF
     if(document.getElementById(id).value == "favourites") {
         document.getElementById(id).value = "";
         document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_ico.gif';
+    // favourites ON    
     } else {
         document.getElementById(id).value = "favourites";
         document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_act_ico.gif';
-    }
-    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'), scope, type);
+        tags = (tags == '' ? 'favourite' : tags + '|favourite');
+    }        
+    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'), scope, type, tags);
 }
+
+function filterAspect(scope,type) {
+	var tags = null;
+	var id = 'filterAction_'+scope+'_'+type;
+	var aspect = document.getElementById(scope+'_'+type+'_filter_aspect').value;
+	
+	// filter by favourites 
+    if(document.getElementById(id).value == "favourites") {
+    	tags = 'favourite';
+    }
+    // aspects ON
+    if(aspect != null) {        
+        aspect = 'aspect:'+ aspect;
+        tags = (tags == 'favourite' ? tags + '|' + aspect : aspect);
+    }
+       
+    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'), scope, type, tags);
+}
+

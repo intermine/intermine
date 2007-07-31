@@ -28,7 +28,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.path.Path;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -57,7 +56,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.Searchable;
 import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 
@@ -77,8 +75,8 @@ public class AjaxServices
     /**
      * Creates a favourite Tag for the given templateName
      *
-     * @param name
-     *            the name of the template we want to set as a favourite
+     * @param name the name of the template we want to set as a favourite
+     * @param type type of tag (bag or template)
      */
     public void setFavourite(String name, String type) {
         WebContext ctx = WebContextFactory.get();
@@ -366,6 +364,8 @@ public class AjaxServices
      * @param type the type (from TagTypes)
      * @param tags the tags to filter on
      * @param filterText the text to pass to Lucene
+     * @param filterAction toggles favourites filter off an on; will be blank or 'favourites'
+     * @param callId unique id
      * @return a List of Lists
      */
     public static List<String> filterWebSearchables(String scope, String type,
@@ -376,7 +376,7 @@ public class AjaxServices
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, WebSearchable> wsMap = null;
+        Map<String, WebSearchable> wsMap = new LinkedHashMap<String, WebSearchable>();
         Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
         Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
 
@@ -396,14 +396,15 @@ public class AjaxServices
                 return Collections.EMPTY_LIST;
             }
     
-            long time = System.currentTimeMillis();
-            
-            wsMap = new LinkedHashMap<String, WebSearchable>();
+            //long time = System.currentTimeMillis();
             
             for (WebSearchable ws: hitMap.keySet()) {
                 wsMap.put(ws.getName(), ws);
             }
-        } else if (filterAction != null && filterAction.equals("favourites")) {
+        } 
+        
+        /* can search for string AND filter by favourites */
+        if (filterAction != null && filterAction.equals("favourites")) {
             SearchRepository searchRepository = null;
             if (scope.equals("user")) {
                 searchRepository = profile.getSearchRepository();
@@ -412,10 +413,26 @@ public class AjaxServices
                     (SearchRepository) servletContext.getAttribute(Constants.
                                                                    GLOBAL_SEARCH_REPOSITORY);
             }
-            wsMap =  (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
+            Map<String, ? extends  WebSearchable> faves 
+                                                    = new LinkedHashMap<String, WebSearchable>();
+            faves =  searchRepository.getWebSearchableMap(type);
+
+            // nothing in the filter, so put all favourites in our map
+            if (wsMap.isEmpty()) {
+                  wsMap.putAll(faves);
+            } else {
+                // we have search results
+                for (Map.Entry e : faves.entrySet()) {
+                    // remove search result if it isn't a favourite
+                    if (!wsMap.containsKey(e.getKey())) {
+                        wsMap.remove(e.getKey());
+                    }                  
+                }                
+            }
         }
         
-        Map<String, ? extends WebSearchable> filteredWsMap;
+        Map<String, ? extends WebSearchable> filteredWsMap 
+                                = new LinkedHashMap<String, WebSearchable>();
         if (profile.getUsername() != null && tags != null && tags.size() > 0) {
             filteredWsMap = pm.filterByTags(wsMap, tags, type, profile.getUsername());
         } else {
