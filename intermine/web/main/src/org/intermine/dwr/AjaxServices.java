@@ -401,10 +401,7 @@ public class AjaxServices
             for (WebSearchable ws: hitMap.keySet()) {
                 wsMap.put(ws.getName(), ws);
             }
-        } 
-        
-        /* can search for string AND filter by favourites */
-        if (filterAction != null && filterAction.equals("favourites")) {
+        } else {
             SearchRepository searchRepository = null;
             if (scope.equals("user")) {
                 searchRepository = profile.getSearchRepository();
@@ -413,22 +410,7 @@ public class AjaxServices
                     (SearchRepository) servletContext.getAttribute(Constants.
                                                                    GLOBAL_SEARCH_REPOSITORY);
             }
-            Map<String, ? extends  WebSearchable> faves 
-                                                    = new LinkedHashMap<String, WebSearchable>();
-            faves =  searchRepository.getWebSearchableMap(type);
-
-            // nothing in the filter, so put all favourites in our map
-            if (wsMap.isEmpty()) {
-                  wsMap.putAll(faves);
-            } else {
-                // we have search results
-                for (Map.Entry e : faves.entrySet()) {
-                    // remove search result if it isn't a favourite
-                    if (!wsMap.containsKey(e.getKey())) {
-                        wsMap.remove(e.getKey());
-                    }                  
-                }                
-            }
+            wsMap =  (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);      
         }
         
         Map<String, ? extends WebSearchable> filteredWsMap 
