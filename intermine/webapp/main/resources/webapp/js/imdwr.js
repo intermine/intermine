@@ -231,6 +231,94 @@ function filterWebSearchablesHandler(event, object, scope, type, tags) {
     callId++;
 }
 
+// given a list of WebSearchables names,scores and descriptions, filter the
+// wsFilterList given by the scope and type parameters
+function do_filtering(filteredList, scope, type) {
+    if (filteredList.length == 0) {
+        showAll();
+    } else {
+        var scoreHash = new Array();
+        var descHash = new Array();
+        var hitHash = new Array();
+
+        for (var el in filteredList) {
+            var wsName = filteredList[el][0];
+            var wsDesc = filteredList[el][1];
+            descHash[scope + '_' + type + '_item_line_' + wsName] = wsDesc;
+            var wsScore = filteredList[el][2];
+            scoreHash[scope + '_' + type + '_item_line_' + wsName] = wsScore;
+            hitHash[scope + '_' + type + '_item_line_' + wsName] = 1;
+        }
+
+        var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
+        var inputArray = document.getElementsByTagName("div");
+        for(var i=0; i<inputArray.length; i++) {
+            if ((result = pattern.exec(inputArray[i].id)) != null) {
+                if (hitHash[inputArray[i].id]) {
+                    inputArray[i].style.display='block';
+                    var highlightText = descHash[inputArray[i].id];
+
+                    if (highlightText) {
+                        var descId = scope + '_' + type + '_item_description_' + result[1];
+                        var desc = $(descId);
+
+                        var descChild = setChild(desc, highlightText, 'p');
+                        descChild.className = 'description';
+                    }
+
+                    if (scoreHash[inputArray[i].id]) {
+                        var scoreWsName = result[1];
+                        var score = scoreHash[inputArray[i].id];
+                        var intScore = parseInt(score * 10);
+                        var scoreId = scope + '_' + type + '_item_score_' + scoreWsName;
+                        var scoreSpan = $(scoreId);
+                        // we do this instead of scoreSpan.innerHTML = "stuff"
+                        // because it's buggy in Internet Explorer
+                        var heatImage = 'heat' + intScore + '.gif';
+                        var heatText = '<img height="10" width="' +
+                            (intScore * 3) + '" src="images/' + heatImage + '"/>';
+                        setChild(scoreSpan, heatText, 'span');
+                    }
+                } else {
+                    inputArray[i].style.display='none';
+                }
+            }
+        }
+
+        function sortWsFilter(el1, el2) {
+            var el1score = scoreHash[el1.id];
+            var el2score = scoreHash[el2.id]
+                if (el1score > el2score) {
+                    return -1;
+                } else {
+                    if (el1score < el2score) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+        }
+
+        var parent = $(scope + '_' + type + '_ws_list');
+        var divs = new Array();
+
+        for (var i in parent.childNodes) {
+            var child = parent.childNodes[i];
+            if (child.tagName == 'DIV' && scoreHash[child.id]) {
+                divs.push(child);
+            }
+        }
+
+        divs.sort(sortWsFilter);
+
+        for (var i = 0; i < divs.length; i++) {
+            parent.appendChild(divs[i]);
+        }
+
+        $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
+    }
+}
+
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
 // the webSearchableList that don't match
 function filterWebSearchables(objectId, scope, type, callId, tags) {
@@ -244,11 +332,11 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
 
     var object = document.getElementById(objectId);
     var value = object.value;
-    var inputArray = document.getElementsByTagName("div");
-    var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
     var filterAction = document.getElementById('filterAction' + '_' + scope + '_' + type).value;
 
     function showAll() {
+        var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
+        var inputArray = document.getElementsByTagName("div");
         for(var i=0; i<inputArray.length; i++) {
             var result;
             if ((result = pattern.exec(inputArray[i].id)) != null) {
@@ -269,87 +357,7 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
                 return;
             }
 
-            if (filteredList.length == 0) {
-                showAll();
-            } else {
-                var scoreHash = new Array();
-                var descHash = new Array();
-                var hitHash = new Array();
-
-                for (var el in filteredList) {
-                    var wsName = filteredList[el][0];
-                    var wsDesc = filteredList[el][1];
-                    descHash[scope + '_' + type + '_item_line_' + wsName] = wsDesc;
-                    var wsScore = filteredList[el][2];
-                    scoreHash[scope + '_' + type + '_item_line_' + wsName] = wsScore;
-                    hitHash[scope + '_' + type + '_item_line_' + wsName] = 1;
-                }
-
-                for(var i=0; i<inputArray.length; i++) {
-                    if ((result = pattern.exec(inputArray[i].id)) != null) {
-                        if (hitHash[inputArray[i].id]) {
-                            inputArray[i].style.display='block';
-                            var highlightText = descHash[inputArray[i].id];
-
-                            if (highlightText) {
-                                var descId = scope + '_' + type + '_item_description_' + result[1];
-                                var desc = $(descId);
-
-                                var descChild = setChild(desc, highlightText, 'p');
-                                descChild.className = 'description';
-                            }
-
-                            if (scoreHash[inputArray[i].id]) {
-                                var scoreWsName = result[1];
-                                var score = scoreHash[inputArray[i].id];
-                                var intScore = parseInt(score * 10);
-                                var scoreId = scope + '_' + type + '_item_score_' + scoreWsName;
-                                var scoreSpan = $(scoreId);
-                                // we do this instead of scoreSpan.innerHTML = "stuff"
-                                // because it's buggy in Internet Explorer
-                                var heatImage = 'heat' + intScore + '.gif';
-                                var heatText = '<img height="10" width="' +
-                                    (intScore * 3) + '" src="images/' + heatImage + '"/>';
-                                setChild(scoreSpan, heatText, 'span');
-                            }
-                        } else {
-                            inputArray[i].style.display='none';
-                        }
-                    }
-                }
-
-                function sortWsFilter(el1, el2) {
-                    var el1score = scoreHash[el1.id];
-                    var el2score = scoreHash[el2.id]
-                        if (el1score > el2score) {
-                            return -1;
-                        } else {
-                            if (el1score < el2score) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                }
-
-                var parent = $(scope + '_' + type + '_ws_list');
-                var divs = new Array();
-
-                for (var i in parent.childNodes) {
-                    var child = parent.childNodes[i];
-                    if (child.tagName == 'DIV' && scoreHash[child.id]) {
-                        divs.push(child);
-                    }
-                }
-
-                divs.sort(sortWsFilter);
-
-                for (var i = 0; i < divs.length; i++) {
-                    parent.appendChild(divs[i]);
-                }
-
-                $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
-            }
+            do_filtering(filteredList, scope, type);
         }
 
         $(scope + '_' + type + '_spinner').style.visibility = 'visible';
