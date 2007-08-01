@@ -10,22 +10,34 @@
 <html:xhtml/>
 
 
-<table padding="0px" margin="0px" width="100%">
-  <tr>
-    <td valign="top" width="30%">
-      <div id="pageDesc" class="pageDesc"><p><fmt:message key="dataCategories.intro"/></p></div>
+<div class="body">
+<table border="0">
+<tr>
+<td valign="top" width="50%">
+    
+      <div id="pageDesc" class="pageDesc"><fmt:message key="dataCategories.intro"/></div>
 
-  <im:roundbox title="Actions" stylename="welcome">
+</td>
+<td valign="top" width="50%">
+
+
+	<div style=" width:75%">
+	     <h2>Actions:</h2>
            <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a>
-         <BR/>
+  <BR/> 
            <html:link action="/templates">
              <fmt:message key="dataCategories.action2"/>
            </html:link>
-  </im:roundbox>
-      
-    </td>
-    <td valign="top" width="70%">
-<div class="webSearchable" id="dataCategories" style="width:70%">
+            <BR/><BR/>         
+       </div>
+           
+</td>
+</tr>
+</table>
+
+
+<div class="pageDesc" id="pageDesc" style="width:70%">
+
 		<h2><fmt:message key="dataCategories.title"/></h2>
     
 		<c:choose>
@@ -51,15 +63,9 @@
 		      </c:forEach>
 		    </c:otherwise>
 		  </c:choose>
-		 </div>
-    </td>
-  </tr>
-</table>
+</div>
 
-      <script type="text/javascript">
-      	Nifty("div#pageDesc","big");
-      	Nifty("div#dataCategories","big");
-      </script>
-  
+</div>
+
 
 <!-- /dataCategories -->
