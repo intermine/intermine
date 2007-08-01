@@ -225,6 +225,7 @@ function filterWebSearchablesHandler(event, object, scope, type, tags) {
 	        return;
 	    }
 	}
+
     futureFilterCalls[scope + "_" + type] = callId;
     setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '",' +
                callId + ",'" + tags + "')", 500);
@@ -235,7 +236,7 @@ function filterWebSearchablesHandler(event, object, scope, type, tags) {
 // wsFilterList given by the scope and type parameters
 function do_filtering(filteredList, scope, type) {
     if (filteredList.length == 0) {
-        showAll();
+        showAll(scope, type);
     } else {
         var scoreHash = new Array();
         var descHash = new Array();
@@ -319,6 +320,19 @@ function do_filtering(filteredList, scope, type) {
     }
 }
 
+// un-hide all the rows in the webSearchableList
+function showAll(scope, type) {
+    var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
+    var inputArray = document.getElementsByTagName("div");
+    for(var i=0; i<inputArray.length; i++) {
+        var result;
+        if ((result = pattern.exec(inputArray[i].id)) != null) {
+            inputArray[i].style.display='block';
+        }
+    }
+    $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
+}
+
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
 // the webSearchableList that don't match
 function filterWebSearchables(objectId, scope, type, callId, tags) {
@@ -333,18 +347,6 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
     var object = document.getElementById(objectId);
     var value = object.value;
     var filterAction = document.getElementById('filterAction' + '_' + scope + '_' + type).value;
-
-    function showAll() {
-        var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
-        var inputArray = document.getElementsByTagName("div");
-        for(var i=0; i<inputArray.length; i++) {
-            var result;
-            if ((result = pattern.exec(inputArray[i].id)) != null) {
-                inputArray[i].style.display='block';
-            }
-        }
-        $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
-    }
 
     if ((value != null && value.length > 1) || (tags != null && tags.length > 1)) {
         function filterCallBack(cbResult) {
@@ -389,7 +391,7 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
         AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction, callId++,
                                           filterCallBack);
     } else {
-        showAll();
+        showAll(scope, type);
     }
 
     futureFilterCalls[scope + "_" + type] = 0;
