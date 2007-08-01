@@ -9,15 +9,17 @@
 <html:xhtml/>
 
 <div class="body">
-<table border=0>
+<table border="0">
 <tr>
-<td width="50%" valign="top">
+<td valign="top" width="50%">
     
       <div id="pageDesc" class="pageDesc"><fmt:message key="begin.templates"/></div>
 
 </td>
-<td width="50%" valign="top">
+<td valign="top" width="50%">
 
+
+	<div style=" width:75%">
 	     <h2>Actions:</h2>
            <html:link action="/summariseAllTemplates" titleKey="begin.summariseAllTemplatesDesc">
              <fmt:message key="begin.summariseAllTemplates"/>
@@ -26,13 +28,13 @@
            <html:link action="/import" titleKey="begin.importTemplatesDesc">
              <fmt:message key="begin.importTemplates"/>
            </html:link>
-    </td>
-    </tr>
-    </table>
-    
-    
-    <br/>    <br/>
-     
+            <BR/><BR/>         
+       </div>
+           
+</td>
+</tr>
+</table>
+     <BR/><BR/>
        <html:form action="/modifyTemplate">
        <tiles:insert name="wsTemplateTable.tile">
          <tiles:put name="scope" value="all"/>
