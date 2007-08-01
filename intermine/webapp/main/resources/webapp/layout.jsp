@@ -118,7 +118,7 @@
 
       <tiles:get name="body"/>
       
-      <%-- footer (welcome logo, bottom nav, and feedback link --%>
+      <%-- footer (welcome logo, bottom nav, and feedback link) --%>
 	  <c:import url="footer.jsp"/>
       
       <c:if test="${param.debug != null}">
