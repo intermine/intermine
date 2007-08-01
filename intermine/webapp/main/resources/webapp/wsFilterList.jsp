@@ -22,17 +22,23 @@
 <tiles:importAttribute name="wsRow" ignore="true"/>
 <tiles:importAttribute name="height" ignore="true"/>
 <tiles:importAttribute name="limit" ignore="true"/>
+<tiles:importAttribute name="initialFilterText" ignore="true"/>
 
 <html:xhtml/>
 
 <c:set var="ws_input_id" value="${scope}_${type}_filter_text"/>
 <c:set var="ws_input_aspect" value="${scope}_${type}_filter_aspect"/>
 
+<c:if test="${empty initialFilterText}">
+  <c:set var="initialFilterText" value=""/>
+</c:if>
+
 <p style="white-space:nowrap;">Filter:&nbsp;
   <input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
          onkeyup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', null);"
          onmouseup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', null);"
-         disabled="true"/>
+         disabled="true"
+         value="${initialFilterText}"/>
   &nbsp; <img id='${scope}_${type}_spinner' style='visibility: hidden' 
              src='images/wait_spinner.gif'/>
   &nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;
@@ -85,6 +91,7 @@
   <tiles:put name="limit" value="${limit}"/>
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
+  <tiles:put name="initialFilterText" value="${initialFilterText}"/>
 </tiles:insert>
 
   <script type="text/javascript">
@@ -94,4 +101,11 @@
 //]]>-->
   </script>
 
+<c:if test="${initialFilterText != ''}">
+  <script type="text/javascript">
+<!--//<![CDATA[
+    filterWebSearchablesHandler(null, $('${ws_input_id}'), '${scope}', '${type}', null);
+//]]>-->
+  </script>
+</c:if>
 <!-- /wsFilterList.jsp -->

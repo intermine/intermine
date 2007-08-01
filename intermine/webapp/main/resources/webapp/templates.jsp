@@ -35,17 +35,17 @@
 </tr>
 </table>
      <BR/>
-       <html:form action="/modifyTemplate">
-       <tiles:insert name="wsTemplateTable.tile">
-         <tiles:put name="scope" value="all"/>
-         <tiles:put name="makeCheckBoxes" value="true"/>
-         <tiles:put name="showNames" value="false"/>
-         <tiles:put name="showTitles" value="true"/>
-         <tiles:put name="showDescriptions" value="true"/>
-         <tiles:put name="showSearchBox" value="true"/>
-         <tiles:put name="height" value="300"/>
-       </tiles:insert>
-       </html:form>
-   
+      <html:form action="/modifyTemplate">
+        <tiles:insert name="wsTemplateTable.tile">
+          <tiles:put name="scope" value="global"/>
+          <tiles:put name="makeCheckBoxes" value="true"/>
+          <tiles:put name="showNames" value="false"/>
+          <tiles:put name="showTitles" value="true"/>
+          <tiles:put name="showDescriptions" value="true"/>
+          <tiles:put name="showSearchBox" value="true"/>
+          <tiles:put name="height" value="550"/>
+          <tiles:put name="initialFilterText" value="${initialFilterText}"/>
+        </tiles:insert>
+      </html:form>
 </div>
 <!-- /templates.jsp -->
