@@ -227,6 +227,11 @@ function filterWebSearchablesHandler(event, object, scope, type, tags) {
 	}
 
     futureFilterCalls[scope + "_" + type] = callId;
+
+    if (tags == null) {
+        tags = [];
+    }
+
     setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '",' +
                callId + ",'" + tags + "')", 500);
     callId++;
@@ -337,7 +342,6 @@ function showAll(scope, type) {
 // the webSearchableList that don't match
 function filterWebSearchables(objectId, scope, type, callId, tags) {
 
-    if (futureFilterCalls[scope + "_" + type] != callId) {
         // filterWebSearchablesHandler() has been called again since this
         // timeout was set, so ignore as another timeout will be along
         // shortly
@@ -388,8 +392,8 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
         }
         
         /*  filterAction toggles favourites off and on */
-        AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction, callId++,
-                                          filterCallBack);
+        AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction, 
+                                          callId++, filterCallBack);
     } else {
         showAll(scope, type);
     }
@@ -415,7 +419,8 @@ function filterFavourites(scope,type) {
         document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_act_ico.gif';
         tags = (tags == '' ? 'favourite' : tags + '|favourite');
     }        
-    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'), scope, type, tags);
+    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'),
+    								   scope, type, tags);
 }
 
 function filterAspect(scope,type) {
@@ -434,6 +439,7 @@ function filterAspect(scope,type) {
         tags = (tags == 'favourite' ? tags + '|' + aspect : aspect);
     }
        
-    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'), scope, type, tags);
+    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'),
+                                       scope, type, tags);
 }
 
