@@ -16,22 +16,25 @@
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <html:xhtml/>
-<div class="webSearchable" id="ws_${wsListId}_bag">
+<c:set var="titleKey">
 <c:choose>
    <c:when test="${scope == 'global'}">
-   <h2><fmt:message key="bagspage.public.title"/></h2>
-   <p>
-     <fmt:message key="bagspage.public.help"/>
-   </p>
+     <fmt:message key="bagspage.public.title"/>
    </c:when>
    <c:otherwise>
-   <h2><fmt:message key="bagspage.mybags.title"/></h2>
-   <p>
-     <fmt:message key="bagspage.mybags.help"/>
-   </p>
+     <fmt:message key="bagspage.mybags.title"/>
    </c:otherwise>
 </c:choose>
+</c:set>
+<!-- <p>
+  <fmt:message key="bagspage.public.help"/>
+</p> -->
+<!-- <p>
+  <fmt:message key="bagspage.mybags.help"/>
+</p> -->
 
+<im:roundbox title="${titleKey}" stylename="welcome">
+<div class="" id="ws_${wsListId}_bag">
 <tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="bag"/>
   <tiles:put name="scope" value="${scope}"/>
@@ -56,7 +59,5 @@
   </p>
 </c:if>
 </div>
-<script type="text/javascript">
-	Nifty("div#ws_${wsListId}_bag","big");
-</script>
+</im:roundbox>
 <!-- /wsBagTable.jsp -->

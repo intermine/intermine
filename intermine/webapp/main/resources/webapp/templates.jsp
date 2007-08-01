@@ -9,17 +9,9 @@
 <html:xhtml/>
 
 <div class="body">
-<table border="0">
-<tr>
-<td valign="top" width="50%">
-    
-      <div id="pageDesc" class="pageDesc"><fmt:message key="begin.templates"/></div>
-
-</td>
-<td valign="top" width="50%">
-
-
-	<div style=" width:75%">
+<div id="leftCol">
+   <div id="pageDesc" class="pageDesc"><p><fmt:message key="begin.templates"/></p></div>
+	 <div class="actionArea">
 	     <h2>Actions:</h2>
            <html:link action="/summariseAllTemplates" titleKey="begin.summariseAllTemplatesDesc">
              <fmt:message key="begin.summariseAllTemplates"/>
@@ -29,12 +21,9 @@
              <fmt:message key="begin.importTemplates"/>
            </html:link>
             <BR/><BR/>         
-       </div>
-           
-</td>
-</tr>
-</table>
-     <BR/>
+    </div>
+</div>
+<div id="rightCol">           
       <html:form action="/modifyTemplate">
         <tiles:insert name="wsTemplateTable.tile">
           <tiles:put name="wsListId" value="all_templates"/>
@@ -49,4 +38,8 @@
         </tiles:insert>
       </html:form>
 </div>
+</div>
+<script type="text/javascript">
+	Nifty("div#pageDesc","big");
+</script>
 <!-- /templates.jsp -->

@@ -17,8 +17,8 @@
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <html:xhtml/>
-<div class="webSearchable" id="ws_${wsListId}_template">
-<h2><fmt:message key="wsTemplateTable.heading"/></h2>
+<im:roundbox titleKey="wsTemplateTable.heading" stylename="welcome">
+<div class="" id="ws_${wsListId}_template">
 <tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="template"/>
   <tiles:put name="wsListId" value="${wsListId}"/>
@@ -36,7 +36,5 @@
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
 </tiles:insert>
 </div>
-<script type="text/javascript">
-	Nifty("div#ws_{wsListId}_template","big");
-</script>
+</im:roundbox>
 <!-- /wsTemplateTable.jsp -->

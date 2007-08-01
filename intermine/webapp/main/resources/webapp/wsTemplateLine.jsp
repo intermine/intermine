@@ -20,7 +20,7 @@
 <c:set var="type" value="template"/>
 
 <!-- wsTemplateLine.jsp -->
-<div class="wsTempateLine" id="${wsListId}_${type}_item_line_${webSearchable.name}">
+<div class="wsTempateLine" id="${wsListId}_${type}_item_line_${webSearchable.name}" onmouseover="this.style.backgroundColor='#EEE'" onmouseout="this.style.backgroundColor=''">
 <div style="float: right" id="${wsListId}_${type}_item_score_${webSearchable.name}">
   &nbsp;
 </div>

@@ -94,19 +94,17 @@ h1, h2, h3 {
     color:#FFF;    
 }
 .roundcornerbox {
-    width:100%;
-	/*min-width:450px;*/
     margin:15px;
-    padding:0px;
-    background-color:#FFF;
-}
-table#frontpagelayout td table.roundcornerbox td {
-	vertical-align: middle;
+	padding:10px;
+    font-size: 12px;
+	border:1px solid #9E68AE;
+	background-image: url('../images/blue_grad.gif');
+	background-repeat: repeat-x;
 }
 .roundcornerbox h1 {
     margin:0px;
     padding:0px;
-    color:white;
+    color:#5C0075;
 	font-size:1.5em;
 }
 .roundcornerbox img{
@@ -153,17 +151,28 @@ td#quicksearch {
 	padding:10px;
 }
 
+.pageDesc { 
+    padding: 10px;
+	margin: 0 15px 15px 15px ;
+	background-color: #F5F0FF;
+	vertical-align: middle;
+	text-align: left;
+}
 
-	.pageDesc {
-		background-color: #F5F0FF; 
-		vertical-align: middle;
-		align: left;
-		width:75%;
-		/* firefox */
-             -moz-border-radius: 5px;
-        /* safari */
-             -webkit-border-radius: 5px;
-	}
+#leftCol{width:400px;float:left;}
+#rightCol{margin-left:390px;}
+#clearLine{clear:both;}
+
+div.actionArea{
+	margin:15px;
+	padding:10px;
+	border:1px solid #9E68AE;
+	background: #F5F0FF;
+}
+div.actionArea h2{
+	margin:0px;
+	padding:0px;
+}
 
 .feedbackButton {
   background-color: white;
@@ -171,6 +180,7 @@ td#quicksearch {
   text-align: center;
   font-size: 13px;
   white-space: nowrap;
+  clear:both;
 }
 
 /*.bagStyle{background:#FF9900;color:black;}
@@ -489,13 +499,6 @@ td.resBar {
   font-size: larger;
   position:relative
 }
-
-#pageDesc {
-/*  background:#F5F0FF;*/
-  padding:5px 10px 5px 10px;
-  margin:0px 15px 0px 15px;
-}
-
 
 /* template results - used by object & bag details pages */
 table.refSummary {

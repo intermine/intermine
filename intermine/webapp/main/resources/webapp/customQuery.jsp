@@ -8,37 +8,44 @@
 <html:xhtml/>
 
 <div class="body">
-
-<table border="0">
-<tr>
-<td valign="top" width="50%">
-    
-      <div id="pageDesc" class="pageDesc"><fmt:message key="begin.querybuilder"/></div>
-
-</td>
-<td valign="top" width="50%">
-
-
-	<div style=" width:75%">
+   <div id="leftCol">
+      <div id="pageDesc" class="pageDesc"><p><fmt:message key="begin.querybuilder"/></p></div>
+	   <div class="actionArea">
 	     <h2>Actions:</h2>
 	          <html:link action="/importQueries?query_builder=yes">
 	            <fmt:message key="begin.import.query"/>
 	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
 	          </html:link>
-            <BR/><BR/>         
-       </div>
-           
-</td>
-</tr>
-</table>
+          </div>
+   </div>
 
-
+   <div id="rightCol">
 	<%-- class chooser --%>	
-	<div class="pageDesc" id="pageDesc" style="width:70%">		
-	  <h2><fmt:message key="customQuery.classChooser"/></h2>
+	<im:roundbox titleKey="customQuery.classChooser" stylename="welcome">
 	  <tiles:insert name="classChooser.tile"/>
-	</div>
+	</im:roundbox>
+   </div>
+   
+<div id="clearLine">
+	<%-- query history --%>
+	<im:roundbox title="Query History" stylename="welcome">
+	 <tiles:insert name="historyQueryView.jsp">
+        <tiles:put name="type" value="history"/>
+      </tiles:insert>
+	</im:roundbox>
+	
+	<%-- saved queries --%>
+	<im:roundbox title="Saved Queries" stylename="welcome">
+	 <tiles:insert name="historyQueryView.jsp">
+        <tiles:put name="type" value="saved"/>
+      </tiles:insert>
+	</im:roundbox> 
 
 
+</div>
+</div>
 
+<script type="text/javascript">
+	Nifty("div#pageDesc","big");
+</script>
 <!-- /customQuery.jsp -->
