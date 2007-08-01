@@ -4,15 +4,15 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
-<tiles:importAttribute name="scope"/>
+<tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 
 <!-- wsBagHeader.jsp -->
 <c:if test="${!empty makeCheckBoxes}">
   <th>
-    <input type="checkbox" id="selected_${scope}_bag"
-           onclick="selectColumnCheckbox(this.form, 'bag', '${scope}')">
+    <input type="checkbox" id="selected_${wsListId}_bag"
+           onclick="selectColumnCheckbox(this.form, 'bag', '${wsListId}')">
   </th>
 </c:if>
 <c:choose>

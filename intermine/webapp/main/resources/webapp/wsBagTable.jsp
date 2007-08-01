@@ -7,6 +7,7 @@
 
 <!-- wsBagTable.jsp -->
 <tiles:importAttribute name="scope"/>
+<tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 <tiles:importAttribute name="limit" ignore="true"/>
 <tiles:importAttribute name="height" ignore="true"/>
@@ -15,7 +16,7 @@
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <html:xhtml/>
-<div class="webSearchable" id="ws_${scope}_bag">
+<div class="webSearchable" id="ws_${wsListId}_bag">
 <c:choose>
    <c:when test="${scope == 'global'}">
    <h2><fmt:message key="bagspage.public.title"/></h2>
@@ -34,6 +35,7 @@
 <tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="bag"/>
   <tiles:put name="scope" value="${scope}"/>
+  <tiles:put name="wsListId" value="${wsListId}"/>
   <tiles:put name="tags" value="${tags}"/>
   <tiles:put name="showNames" value="${showNames}"/>
   <tiles:put name="showTitles" value="${showTitles}"/>
@@ -55,6 +57,6 @@
 </c:if>
 </div>
 <script type="text/javascript">
-	Nifty("div#ws_${scope}_bag","big");
+	Nifty("div#ws_${wsListId}_bag","big");
 </script>
 <!-- /wsBagTable.jsp -->

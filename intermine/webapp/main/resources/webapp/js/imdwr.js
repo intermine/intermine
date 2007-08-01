@@ -212,7 +212,7 @@ var currentFilterCallbacks = new Array();
 // Give each setTimeout call an id and remember what our current pending id is
 var futureFilterCalls = new Array();
 
-function filterWebSearchablesHandler(event, object, scope, type, tags) {
+function filterWebSearchablesHandler(event, object, scope, type, tags, wsListId) {
     if (window.event) {
         event = window.event;
     }
@@ -226,22 +226,22 @@ function filterWebSearchablesHandler(event, object, scope, type, tags) {
 	    }
 	}
 
-    futureFilterCalls[scope + "_" + type] = callId;
+    futureFilterCalls[wsListId + "_" + type] = callId;
 
     if (tags == null) {
         tags = [];
     }
 
     setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '",' +
-               callId + ",'" + tags + "')", 500);
+               callId + ",'" + tags + "','" + wsListId + "')", 500);
     callId++;
 }
 
 // given a list of WebSearchables names,scores and descriptions, filter the
-// wsFilterList given by the scope and type parameters
-function do_filtering(filteredList, scope, type) {
+// wsFilterList given by the wsListId and type parameters
+function do_filtering(filteredList, type, wsListId) {
     if (filteredList.length == 0) {
-        showAll(scope, type);
+        showAll(wsListId, type);
     } else {
         var scoreHash = new Array();
         var descHash = new Array();
@@ -250,13 +250,13 @@ function do_filtering(filteredList, scope, type) {
         for (var el in filteredList) {
             var wsName = filteredList[el][0];
             var wsDesc = filteredList[el][1];
-            descHash[scope + '_' + type + '_item_line_' + wsName] = wsDesc;
+            descHash[wsListId + '_' + type + '_item_line_' + wsName] = wsDesc;
             var wsScore = filteredList[el][2];
-            scoreHash[scope + '_' + type + '_item_line_' + wsName] = wsScore;
-            hitHash[scope + '_' + type + '_item_line_' + wsName] = 1;
+            scoreHash[wsListId + '_' + type + '_item_line_' + wsName] = wsScore;
+            hitHash[wsListId + '_' + type + '_item_line_' + wsName] = 1;
         }
 
-        var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
+        var pattern = new RegExp('^' + wsListId + '_' + type + '_item_line_(.*)');
         var inputArray = document.getElementsByTagName("div");
         for(var i=0; i<inputArray.length; i++) {
             if ((result = pattern.exec(inputArray[i].id)) != null) {
@@ -265,7 +265,7 @@ function do_filtering(filteredList, scope, type) {
                     var highlightText = descHash[inputArray[i].id];
 
                     if (highlightText) {
-                        var descId = scope + '_' + type + '_item_description_' + result[1];
+                        var descId = wsListId + '_' + type + '_item_description_' + result[1];
                         var desc = $(descId);
 
                         var descChild = setChild(desc, highlightText, 'p');
@@ -276,7 +276,7 @@ function do_filtering(filteredList, scope, type) {
                         var scoreWsName = result[1];
                         var score = scoreHash[inputArray[i].id];
                         var intScore = parseInt(score * 10);
-                        var scoreId = scope + '_' + type + '_item_score_' + scoreWsName;
+                        var scoreId = wsListId + '_' + type + '_item_score_' + scoreWsName;
                         var scoreSpan = $(scoreId);
                         // we do this instead of scoreSpan.innerHTML = "stuff"
                         // because it's buggy in Internet Explorer
@@ -305,7 +305,7 @@ function do_filtering(filteredList, scope, type) {
                 }
         }
 
-        var parent = $(scope + '_' + type + '_ws_list');
+        var parent = $(wsListId + '_' + type + '_ws_list');
         var divs = new Array();
 
         for (var i in parent.childNodes) {
@@ -321,13 +321,13 @@ function do_filtering(filteredList, scope, type) {
             parent.appendChild(divs[i]);
         }
 
-        $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
+        $(wsListId + '_' + type + '_spinner').style.visibility = 'hidden';
     }
 }
 
 // un-hide all the rows in the webSearchableList
-function showAll(scope, type) {
-    var pattern = new RegExp('^' + scope + '_' + type + '_item_line_(.*)');
+function showAll(wsListId, type) {
+    var pattern = new RegExp('^' + wsListId + '_' + type + '_item_line_(.*)');
     var inputArray = document.getElementsByTagName("div");
     for(var i=0; i<inputArray.length; i++) {
         var result;
@@ -335,13 +335,13 @@ function showAll(scope, type) {
             inputArray[i].style.display='block';
         }
     }
-    $(scope + '_' + type + '_spinner').style.visibility = 'hidden';
+    $(wsListId + '_' + type + '_spinner').style.visibility = 'hidden';
 }
 
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
 // the webSearchableList that don't match
-function filterWebSearchables(objectId, scope, type, callId, tags) {
-    if (futureFilterCalls[scope + "_" + type] != callId) {
+function filterWebSearchables(objectId, scope, type, callId, tags, wsListId) {
+    if (futureFilterCalls[wsListId + "_" + type] != callId) {
         // filterWebSearchablesHandler() has been called again since this
         // timeout was set, so ignore as another timeout will be along
         // shortly
@@ -350,24 +350,24 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
 
     var object = document.getElementById(objectId);
     var value = object.value;
-    var filterAction = document.getElementById('filterAction' + '_' + scope + '_' + type).value;
+    var filterAction = document.getElementById('filterAction' + '_' + wsListId + '_' + type).value;
 
     if ((value != null && value.length > 1) || (tags != null && tags.length > 1)) {
         function filterCallBack(cbResult) {
             var callId = cbResult[0];
             var filteredList = cbResult.slice(1);
 
-            if (currentFilterCallbacks[scope + "_" + type] != callId) {
+            if (currentFilterCallbacks[wsListId + "_" + type] != callId) {
                 // we've started another call since this one started, so
                 // ignore this one
                 return;
             }
 
-            do_filtering(filteredList, scope, type);
+            do_filtering(filteredList, type, wsListId);
         }
 
-        $(scope + '_' + type + '_spinner').style.visibility = 'visible';
-        currentFilterCallbacks[scope + "_" + type] = callId;
+        $(wsListId + '_' + type + '_spinner').style.visibility = 'visible';
+        currentFilterCallbacks[wsListId + "_" + type] = callId;
         var tagList = null;
         
         /*  can only be one of these options:
@@ -395,38 +395,38 @@ function filterWebSearchables(objectId, scope, type, callId, tags) {
         AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction, 
                                           callId++, filterCallBack);
     } else {
-        showAll(scope, type);
+        showAll(wsListId, type);
     }
 
-    futureFilterCalls[scope + "_" + type] = 0;
+    futureFilterCalls[wsListId + "_" + type] = 0;
 }
 
-function filterFavourites(scope,type) {
-    var id = 'filterAction_'+scope+'_'+type;
+function filterFavourites(scope, type, wsListId) {
+    var id = 'filterAction_'+wsListId+'_'+type;
     var tags = '';
 
     // aspect selected
-    if (document.getElementById(scope+'_'+type+'_filter_aspect').value != '') {
-    	tags = 'aspect:'+document.getElementById(scope+'_'+type+'_filter_aspect').value;
+    if (document.getElementById(wsListId+'_'+type+'_filter_aspect').value != '') {
+    	tags = 'aspect:'+document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
     }
     // favourites OFF
     if(document.getElementById(id).value == "favourites") {
         document.getElementById(id).value = "";
-        document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_ico.gif';
+        document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_ico.gif';
     // favourites ON    
     } else {
         document.getElementById(id).value = "favourites";
-        document.getElementById('filter_favourites_'+scope+'_'+type).src = 'images/filter_favourites_act_ico.gif';
+        document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_act_ico.gif';
         tags = (tags == '' ? 'favourite' : tags + '|favourite');
     }        
-    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'),
-    								   scope, type, tags);
+    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    return filterWebSearchablesHandler(null, filterTextElement, scope, type, tags, wsListId);
 }
 
-function filterAspect(scope,type) {
+function filterAspect(scope, type, wsListId) {
 	var tags = null;
-	var id = 'filterAction_'+scope+'_'+type;
-	var aspect = document.getElementById(scope+'_'+type+'_filter_aspect').value; 
+	var id = 'filterAction_'+wsListId+'_'+type;
+	var aspect = document.getElementById(wsListId+'_'+type+'_filter_aspect').value; 
 	
 	// filter by favourites 
     if(document.getElementById(id).value == "favourites") {
@@ -439,7 +439,7 @@ function filterAspect(scope,type) {
         tags = (tags == 'favourite' ? tags + '|' + aspect : aspect);
     }
        
-    return filterWebSearchablesHandler(null,document.getElementById(scope+'_'+type+'_filter_text'),
-                                       scope, type, tags);
+    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    return filterWebSearchablesHandler(null, filterTextElement, scope, type, tags, wsListId);
 }
 
