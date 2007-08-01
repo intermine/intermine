@@ -5,7 +5,14 @@
 
 <!-- header.jsp -->
 
-<div id="infobar">Help | About | Data | Download | Citation</div>
+<div id="topnav">
+
+<a href="#" onClick="return clickreturnvalue()" onMouseover="dropdownmenu(this, event, helpMenu, '150px')" onMouseout="delayhidemenu()">Help</a> | 
+<a href="#" onClick="return clickreturnvalue()" onMouseover="dropdownmenu(this, event, aboutMenu, '150px')" onMouseout="delayhidemenu()">About</a> | 
+<a href="#" onClick="return clickreturnvalue()" onMouseover="dropdownmenu(this, event, dataMenu, '150px')" onMouseout="delayhidemenu()">Data</a> | 
+<a href="#" onClick="return clickreturnvalue()" onMouseover="dropdownmenu(this, event, softwareMenu, '150px')" onMouseout="delayhidemenu()">Software</a>
+
+</div>
 <div id="loginbar">
     <c:if test="${!empty PROFILE.username}">
         ${PROFILE.username}&nbsp;|&nbsp;<html:link action="/changePassword.do" title="Change Password">Manage</html:link>&nbsp;|&nbsp;

@@ -10,7 +10,6 @@
 <div>Help | About | Data | Download | Citation</div>
 
 
-
       <c:if test="${pageName != 'feedback'}">
         <div id="feedbackFormDivButton">
           <im:vspacer height="11"/>
