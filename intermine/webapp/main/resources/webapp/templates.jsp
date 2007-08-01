@@ -34,7 +34,7 @@
 </td>
 </tr>
 </table>
-     <BR/><BR/>
+     <BR/>
        <html:form action="/modifyTemplate">
        <tiles:insert name="wsTemplateTable.tile">
          <tiles:put name="scope" value="all"/>
