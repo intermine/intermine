@@ -341,7 +341,7 @@ function showAll(scope, type) {
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
 // the webSearchableList that don't match
 function filterWebSearchables(objectId, scope, type, callId, tags) {
-
+    if (futureFilterCalls[scope + "_" + type] != callId) {
         // filterWebSearchablesHandler() has been called again since this
         // timeout was set, so ignore as another timeout will be along
         // shortly
