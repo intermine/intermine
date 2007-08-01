@@ -351,8 +351,8 @@ public abstract class WebUtil
      * @param max the number of items to be in the final list
      * @return the newly randomised, shortened map
      */
-    public static Map shuffle(Map map, int max) {
-        List<String> keys = new ArrayList(map.keySet());
+    public static <V> Map<String, V> shuffle(Map<String,V> map, int max) {
+        List<String> keys = new ArrayList<String>(map.keySet());
 
         Collections.shuffle(keys);
         
@@ -360,7 +360,7 @@ public abstract class WebUtil
             keys = keys.subList(0, max);
         }
         
-        Map returnMap = new HashMap();
+        Map<String, V> returnMap = new HashMap<String, V>();
 
         for (String key: keys) {
             returnMap.put(key, map.get(key));
