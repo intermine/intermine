@@ -10,12 +10,16 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
+import org.intermine.dwr.AjaxServices;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathNode;
@@ -36,6 +40,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.json.JSONArray;
 
 /**
  * @author Xavier Watkins
@@ -66,6 +71,7 @@ public class QuickSearchAction extends InterMineAction
         QuickSearchForm qsf = (QuickSearchForm) form;
         String qsType = qsf.getQuickSearchType();
         session.setAttribute("quickSearchType", qsType);
+        Profile profile = ((Profile) session.getAttribute(Constants.PROFILE));
         if (qsType.equals("ids")) {
             Map webPropertiesMap = (Map) context.getAttribute(Constants.WEB_PROPERTIES);
             
@@ -73,7 +79,7 @@ public class QuickSearchAction extends InterMineAction
             String templateType = "global";
             
             SessionMethods.logTemplateQueryUse(session, templateType, templateName);
-            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+            String userName = profile.getUsername();
             TemplateQuery template = TemplateHelper.findTemplate(context, session, userName,
                                                                  templateName, templateType);
             QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.
@@ -99,36 +105,45 @@ public class QuickSearchAction extends InterMineAction
                 .addParameter("trail", "")
                 .forward();
         } else {
-            Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
-            Map scopeMap = new LinkedHashMap();
-            Map highlightedMap = new HashMap();
-            long time;
-            if (qsType.equals("tpls")) {
-                time = SearchRepository.runLeuceneSearch(qsf.getValue(), "ALL", "template", 
-                              ((Profile) session.getAttribute(Constants.PROFILE)), 
-                              context, hitMap, scopeMap, highlightedMap, null);
-                request.setAttribute("type", "template");
-            } else if (qsType.equals("bgs")) {
-                time = SearchRepository.runLeuceneSearch(qsf.getValue(), "ALL", "bag", 
-                              ((Profile) session.getAttribute(Constants.PROFILE)), 
-                              context, hitMap, scopeMap, highlightedMap, null);
+            if (qsType.equals("bgs")) {
+                Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
+                Map scopeMap = new LinkedHashMap();
+                Map highlightedMap = new HashMap();
+                long time = SearchRepository.runLeuceneSearch(qsf.getValue(), "ALL", "bag", 
+                                                              profile, context, hitMap, scopeMap,
+                                                              highlightedMap, null);
                 request.setAttribute("type", "bag");
+
+                request.setAttribute("results", hitMap);
+                request.setAttribute("resultScopes", scopeMap);
+                request.setAttribute("highlighted", highlightedMap);
+                request.setAttribute("querySeconds", new Float(time / 1000f));
+                request.setAttribute("queryString", qsf.getValue());
+                request.setAttribute("resultCount", new Integer(hitMap.size()));
+                Map descriptionsMap = new HashMap();
+                for (WebSearchable ws: hitMap.keySet()) {
+                    descriptionsMap.put(ws, ws.getDescription());
+                }
+
+                request.setAttribute("descriptions", descriptionsMap);
+                return mapping.findForward("search");
             } else {
-                throw new RuntimeException("Quick search type not valid");
+                if (qsType.equals("tpls")) {
+                    request.setAttribute("type", "template");
+//                    List filteredList =
+//                        AjaxServices.filterWebSearchableHelper("ALL", "template",
+//                                                               Collections.EMPTY_LIST, qsf.getValue(),
+ //                                                              null);
+//                    for (List line: filteredList) {
+//                        JSONArray jsonLine = new JSONArray(line);
+//                    }
+//                    request.setAttribute("filterMatches", json.toString());
+                    request.setAttribute("initialFilterText", qsf.getValue());
+                    return mapping.findForward("templates");
+                } else {
+                    throw new RuntimeException("Quick search type not valid");
+                }
             }
-            request.setAttribute("results", hitMap);
-            request.setAttribute("resultScopes", scopeMap);
-            request.setAttribute("highlighted", highlightedMap);
-            request.setAttribute("querySeconds", new Float(time / 1000f));
-            request.setAttribute("queryString", qsf.getValue());
-            request.setAttribute("resultCount", new Integer(hitMap.size()));
-            Map descriptionsMap = new HashMap();
-            for (WebSearchable ws: hitMap.keySet()) {
-                descriptionsMap.put(ws, ws.getDescription());
-            }
-            
-            request.setAttribute("descriptions", descriptionsMap);
-            return mapping.findForward("search");
         }
     }
     
