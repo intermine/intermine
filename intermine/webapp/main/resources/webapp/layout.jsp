@@ -116,25 +116,9 @@
       </c:if>
 
       <tiles:get name="body"/>
-
-      <c:if test="${pageName != 'feedback'}">
-        <div id="feedbackFormDivButton">
-          <im:vspacer height="11"/>
-          <div class="expandButton">
-             <a href="#" onclick="showFeedbackForm();return false">
-               <b>${WEB_PROPERTIES["feedback.title"]}</b>
-             </a>
-          </div>
-        </div>
       
-        <div id="feedbackFormDiv" style="display:none">
-            <im:vspacer height="11"/>
-            <im:box title="${WEB_PROPERTIES['feedback.title']}"
-                    helpUrl="${WEB_PROPERTIES['project.helpLocation']}/manualFeedback.shtml">
-              <tiles:get name="feedbackForm"/>
-            </im:box>
-        </div>
-      </c:if>
+      <%-- footer (welcome logo, bottom nav, and feedback link --%>
+	  <c:import url="footer.jsp"/>
       
       <c:if test="${param.debug != null}">
         <im:vspacer height="11"/>

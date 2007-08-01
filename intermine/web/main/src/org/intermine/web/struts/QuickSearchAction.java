@@ -10,16 +10,12 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
-import org.intermine.dwr.AjaxServices;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathNode;
@@ -40,7 +36,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
-import org.json.JSONArray;
 
 /**
  * @author Xavier Watkins
