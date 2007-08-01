@@ -159,7 +159,13 @@ td#quicksearch {
              -webkit-border-radius: 5px;
 	}
 
-
+.feedbackButton {
+  background-color: white;
+  padding: 4px;
+  text-align: center;
+  font-size: 13px;
+  white-space: nowrap;
+}
 
 /*.bagStyle{background:#FF9900;color:black;}
 .templateStyle{background:#712839;color:white;}
@@ -221,7 +227,7 @@ table.query {
 .boxbody {
   background-color: white;
   /*border-bottom: 1px solid #888;*/
-  padding-top: 10px;
+  padding-top: 10px;<br/>
 }
 
 .altmessage {
@@ -319,7 +325,7 @@ table.collection {
   border-top: solid 1px #666;
 }
 table.collection th, table.collection td {
-  padding: 4px;
+  padding: 4px;<br/>
   border-right: solid 1px #666;
   border-bottom: solid 1px #666;
   background-color: #fff;
@@ -529,3 +535,4 @@ div.templateIcon {
    padding:10px 20px 20px 20px;
    margin:0 20px 20px 20px;
 }
+
