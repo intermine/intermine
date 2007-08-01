@@ -66,7 +66,7 @@ h1, h2, h3 {
   font-weight: bold;
 }
 
-#infobar {
+#topnav {
     position:absolute;
     right:0px;
     top:0px;
@@ -76,12 +76,18 @@ h1, h2, h3 {
     font: 70% Arial,sans-serif
 }
 
+#topnav  a:link, #topnav a:visited, #topnav{
+	
+    color:#FFF;    
+}
+
 #loginbar {
     position:absolute;
     right:0px;
     top:25px;
     padding:5px;
 }
+
 #loginbar  a:link, #loginbar a:visited, #loginbar{
     font-size:12px;
 	font-weight: bold;
@@ -536,3 +542,25 @@ div.templateIcon {
    margin:0 20px 20px 20px;
 }
 
+#dropmenudiv{
+position:absolute;
+border:1px solid black;
+border-bottom-width: 0;
+font:normal 12px Verdana;
+line-height:18px;
+z-index:100;
+}
+
+#dropmenudiv a{
+width: 100%;
+display: block;
+text-indent: 3px;
+border-bottom: 1px solid black;
+padding: 1px 0;
+text-decoration: none;
+font-weight: bold;
+}
+
+#dropmenudiv a:hover{ /*hover background color*/
+background-color: #ccc;
+}
