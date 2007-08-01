@@ -69,7 +69,8 @@
 	Nifty("div#pageDesc","big");
 </script>
 
-<im:roundbox titleKey="bagBuild.makeNewBag" stylename="welcome">
+<div class="actionArea">
+  <h2><fmt:message key="bagBuild.makeNewBag"/></h2>
   <div class="bagBuild">
     <html:form action="/buildBag" method="post" enctype="multipart/form-data">
       <p><fmt:message key="bagBuild.bagFromText1"/></p>
@@ -143,5 +144,5 @@
     <html:hidden styleId="whichInput" property="whichInput" />
   </html:form>
 </div>
-</im:roundbox>
+</div>
 <!-- /bagBuild.jsp -->

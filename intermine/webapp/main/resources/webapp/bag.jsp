@@ -7,11 +7,7 @@
 <html:xhtml/>
 
 <div class="body">
-<table padding="0px" margin="0px">
-  <tr>
-    <td valign="top" width="30%"><tiles:insert name="bagBuild.tile"/></td>
-    <td valign="top" width="70%"><c:import url="bagView.jsp"/></td>
-  </tr>
-</table>
+    <div id="leftCol"><tiles:insert name="bagBuild.tile"/></div>
+    <div id="rightCol"><c:import url="bagView.jsp"/></div>
 </div>
 <!-- /bag.jsp -->

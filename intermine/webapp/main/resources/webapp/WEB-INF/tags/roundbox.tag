@@ -22,29 +22,13 @@ if(new java.io.File(application.getRealPath("model")+"/"+stylename+"_L.gif").exi
 
 <c:if test="${!empty title}">
 	<c:if test="${useImages != 'true'}"><c:set var="tableStyle" value="${tableStyle};border: 1px solid #888;" /></c:if>
-	<table class="roundcornerbox" cellpadding="0" cellspacing="0">
+	<div class="roundcornerbox" >
 	<c:choose>
 	<c:when test="${useImages}">
-	<tr>
-	  <td width="20"><img src="model/${stylename}_L.gif" width="20" height="35" alt="Roundcorner L"></td>
-	  <td width="100%" style="background-image: url('model/${stylename}_M.gif');"><h1><c:out value="${title}"/></h1></td>
-	  <td width="20"><img src="model/${stylename}_R.gif" width="20" height="35" alt="Roundcorner R"></td>
-	</tr>
+	  <h1><c:out value="${title}"/></h1>
 	</c:when>
-	<c:otherwise>
-	<tr>
-	  <td width="100%" style="background-color: #EEE;padding-left:20px;height:40px;"><h1 style="color:black;"><c:out value="${title}"/></h1><img src="../../images/help.png" width="20" height="20" alt="Help" style="float:right;"><td>
-	</tr>
-	</c:otherwise>
 	</c:choose>
-	<tr>
 	<c:if test="${useImages}"><c:set var="bodyStyle" value="boxcontent${stylename}"/></c:if>
-	<td style="vertical-align:top;padding: 5px 15px 5px 15px;<c:if test="${!empty height}">height:${height}px;</c:if>" class="${bodyStyle}" colspan="3"><jsp:doBody/></td>
-	</tr>
-	<c:if test="${useImages}">
-	<tr valign="bottom">
-	<td width="20"><img src="model/${stylename}_BL.gif" width="20" height="20" alt="Roundcorner BL"></td><td class="boxbottom${stylename}">&nbsp;</td><td width="20"><img src="model/${stylename}_BR.gif" width="20" height="20" alt="Roundcorner BR"></td>
-    </tr>
-    </c:if>
-	</table>
+      <jsp:doBody/>
+	</div>
 </c:if>

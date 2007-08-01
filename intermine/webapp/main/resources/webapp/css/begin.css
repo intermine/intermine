@@ -1,6 +1,23 @@
-table#frontpagelayout {
-	width:100%;
+div#leftColumn{float:left;width:60%;}
+div#rightColumn{margin-left:65%;width:350px;margin-top:25px;}
+div#rightColumn h1 {
+    margin:0px;
+    color:#5C0075;
+	font-size:1.5em;
 }
-table#frontpagelayout td{
-	vertical-align: top;
+div.aspectOverview{
+	padding:5px;
+	margin:5px 5px 10px 5px;
+}
+.aspectIcon{
+	border:1px solid #222;
+	margin-bottom:5px;
+}
+p.aspectLabel{
+	font-size:10px;
+	font-style: italic;
+}
+p.aspectLabel a:link{
+	font-size:13px;
+	font-style: normal;
 }

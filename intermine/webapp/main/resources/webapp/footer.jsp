@@ -5,7 +5,7 @@
 
 <br/><br/><br/>
 
-<div class="body" align="center">
+<div class="body" align="center" style="clear:both">
 
 <div>Help | About | Data | Download | Citation</div>
 

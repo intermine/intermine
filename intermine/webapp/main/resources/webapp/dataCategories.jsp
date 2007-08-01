@@ -1,4 +1,3 @@
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
@@ -9,37 +8,19 @@
 <!-- dataCategories -->
 <html:xhtml/>
 
-
 <div class="body">
-<table border="0">
-<tr>
-<td valign="top" width="50%">
-    
-      <div id="pageDesc" class="pageDesc"><fmt:message key="dataCategories.intro"/></div>
-
-</td>
-<td valign="top" width="50%">
-
-
-	<div style=" width:75%">
+  <div id="leftCol">
+      <div id="pageDesc" class="pageDesc"><p><fmt:message key="dataCategories.intro"/></p></div>
+	     <div class="actionArea">
 	     <h2>Actions:</h2>
-           <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a>
-  <BR/> 
+           <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a><BR/> 
            <html:link action="/templates">
              <fmt:message key="dataCategories.action2"/>
            </html:link>
-            <BR/><BR/>         
-       </div>
-           
-</td>
-</tr>
-</table>
-
-
-<div class="pageDesc" id="pageDesc" style="width:70%">
-
-		<h2><fmt:message key="dataCategories.title"/></h2>
-    
+        </div>
+   </div>
+<div id="rightCol">
+   <im:roundbox titleKey="dataCategories.title" stylename="welcome">
 		<c:choose>
 		    <c:when test="${!empty ASPECTS}">
 		       <tiles:insert name="aspects.tile"/>
@@ -63,9 +44,11 @@
 		      </c:forEach>
 		    </c:otherwise>
 		  </c:choose>
+		 </im:roundbox>
 </div>
-
 </div>
-
-
+</div>
+<script type="text/javascript">
+	Nifty("div#pageDesc","big");
+</script>
 <!-- /dataCategories -->
