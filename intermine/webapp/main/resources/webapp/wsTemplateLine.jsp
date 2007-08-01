@@ -5,6 +5,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
+<tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="wsName"/>
 <tiles:useAttribute id="webSearchable" name="webSearchable"
                     classname="org.intermine.web.logic.search.WebSearchable"/>
@@ -19,12 +20,12 @@
 <c:set var="type" value="template"/>
 
 <!-- wsTemplateLine.jsp -->
-<div class="wsTempateLine" id="${scope}_${type}_item_line_${webSearchable.name}">
-<div style="float: right" id="${scope}_${type}_item_score_${webSearchable.name}">
+<div class="wsTempateLine" id="${wsListId}_${type}_item_line_${webSearchable.name}">
+<div style="float: right" id="${wsListId}_${type}_item_score_${webSearchable.name}">
   &nbsp;
 </div>
 <c:if test="${!empty makeCheckBoxes}">
-    <html:multibox property="selected" styleId="${scope}_template_chck_${webSearchable.name}"
+    <html:multibox property="selected" styleId="${wsListId}_template_chck_${webSearchable.name}"
                    onclick="setDeleteDisabledness(this.form, '${type}')">
       <c:out value="${wsName}"/>
     </html:multibox>
@@ -77,7 +78,7 @@
 </tiles:insert>
 
 <c:if test="${showDescriptions}">
-   <div id="${scope}_${type}_item_description_${webSearchable.name}">
+   <div id="${wsListId}_${type}_item_description_${webSearchable.name}">
      <c:choose>
        <c:when test="${fn:length(webSearchable.description) > 60}">
          <div id="temp_desc_${webSearchable.name}_s" class="description">

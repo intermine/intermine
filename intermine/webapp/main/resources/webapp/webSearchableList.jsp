@@ -9,6 +9,7 @@
 
 <tiles:importAttribute name="type"/>
 <tiles:importAttribute name="scope"/>
+<tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
@@ -64,7 +65,7 @@
     </div>
   </c:when>
   <c:otherwise>
-    <div id='${scope}_${type}_ws_list' class="wsList">
+    <div id='${wsListId}_${type}_ws_list' class="wsList">
       <c:choose>
         <c:when test="${!empty makeTable && makeTable}">
           <%-- make a table --%>
@@ -74,6 +75,7 @@
                 <tr>
                   <tiles:insert name="${wsHeader}">
                     <tiles:put name="scope" value="${scope}"/>
+                    <tiles:put name="wsListId" value="${wsListId}"/>
                     <tiles:put name="tags" value="${tags}"/>
                     <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
                     <tiles:put name="showNames" value="false"/>
@@ -88,13 +90,14 @@
             <tbody>
               <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
                 <c:set var="webSearchable" value="${entry.value}" scope="request"/>
-                <tr id='${scope}_${type}_item_${entry.value.name}' class="${ageClasses[entry.key]}">
+                <tr id='${wsListId}_${type}_item_${entry.value.name}' class="${ageClasses[entry.key]}">
                   <tiles:insert name="${wsRow}">
+                    <tiles:put name="wsListId" value="${wsListId}"/>
                     <tiles:put name="wsName" value="${entry.key}"/>
                     <tiles:put name="webSearchable" beanName="webSearchable"/>
                     <tiles:put name="statusIndex" value="${status.index}"/>
                     <tiles:put name="wsCheckBoxId"
-                               value="selected_${scope}_${type}_${wsName}"/>
+                               value="selected_${wsListId}_${type}_${wsName}"/>
                     <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
                     <tiles:put name="scope" value="${scope}"/>
                     <tiles:put name="tags" value="${tags}"/>
@@ -112,11 +115,12 @@
         <c:forEach items="${filteredWebSearchables}" var="entry" varStatus="status">
           <c:set var="webSearchable" value="${entry.value}" scope="request"/>
             <tiles:insert name="${wsRow}">
+              <tiles:put name="wsListId" value="${wsListId}"/>
               <tiles:put name="wsName" value="${entry.key}"/>
               <tiles:put name="webSearchable" beanName="webSearchable"/>
               <tiles:put name="statusIndex" value="${status.index}"/>
               <tiles:put name="wsCheckBoxId"
-                         value="selected_${scope}_${type}_${status.index}"/>
+                         value="selected_${wsListId}_${type}_${status.index}"/>
               <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
               <tiles:put name="scope" value="${scope}"/>
               <tiles:put name="tags" value="${tags}"/>
@@ -130,7 +134,7 @@
           <%-- make a list --%>
           <ul>
             <c:forEach items="${filteredWebSearchables}" var="entry">
-              <li id='${scope}_${type}_item_${entry.value.name}'>
+              <li id='${wsListId}_${type}_item_${entry.value.name}'>
                 <div class="wsListElement">
                   <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${entry.key}">${entry.value.title}
                     <c:choose>

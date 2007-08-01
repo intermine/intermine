@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="css/webSearchableList.css"/>
 
 <tiles:importAttribute name="type"/>
+<tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
@@ -26,8 +27,8 @@
 
 <html:xhtml/>
 
-<c:set var="ws_input_id" value="${scope}_${type}_filter_text"/>
-<c:set var="ws_input_aspect" value="${scope}_${type}_filter_aspect"/>
+<c:set var="ws_input_id" value="${wsListId}_${type}_filter_text"/>
+<c:set var="ws_input_aspect" value="${wsListId}_${type}_filter_aspect"/>
 
 <c:if test="${empty initialFilterText}">
   <c:set var="initialFilterText" value=""/>
@@ -35,24 +36,24 @@
 
 <p style="white-space:nowrap;">Filter:&nbsp;
   <input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
-         onkeyup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', null);"
-         onmouseup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', null);"
+         onkeyup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', [], '${wsListId}');"
+         onmouseup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', [], '${wsListId}');"
          disabled="true"
          value="${initialFilterText}"/>
-  &nbsp; <img id='${scope}_${type}_spinner' style='visibility: hidden' 
+  &nbsp; <img id='${wsListId}_${type}_spinner' style='visibility: hidden' 
              src='images/wait_spinner.gif'/>
   &nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;
 <c:if test="${! empty PROFILE.username}">
-  <a href="javascript:filterFavourites('${scope}','${type}');"><img id="filter_favourites_${scope}_${type}" src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites" title="Show Only Favourites"/></a>
+  <a href="javascript:filterFavourites('${scope}','${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites" title="Show Only Favourites"/></a>
   &nbsp;
 </c:if>
   <img src="images/asc.gif" width="17" height="16" alt="Sort by name"/>
   &nbsp;
   <img src="images/sort_date_ico.gif" width="20" height="16" alt="Sort by Date"/>
-  <input type="hidden" name="filterAction_${scope}_${type}" id="filterAction_${scope}_${type}"/>
+  <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
  
   <%-- aspects --%>
-    <select onchange="javascript:filterAspect('${scope}','${type}')" id="${ws_input_aspect}" class="aspectSelect">
+    <select onchange="javascript:filterAspect('${scope}', '${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect">
     <c:if test="${aspect == null}">
       <option value="" selected>-- Choose aspect --</option>
     </c:if>
@@ -72,12 +73,13 @@
   <%-- turn off autocomplete because of a Gecko bug:
        http://geekswithblogs.net/shahedul/archive/2006/08/14/87910.aspx --%>
   <!--
-      $('${scope}_${type}_filter_text').setAttribute('autocomplete','off');
+      $('${wsListId}_${type}_filter_text').setAttribute('autocomplete','off');
     -->
 </script>
 
 <tiles:insert name="webSearchableList.tile">
   <tiles:put name="type" value="${type}"/>
+  <tiles:put name="wsListId" value="${wsListId}"/>
   <tiles:put name="scope" value="${scope}"/>
   <tiles:put name="tags" value="${tags}"/>
   <tiles:put name="showNames" value="${showNames}"/>
@@ -104,7 +106,7 @@
 <c:if test="${initialFilterText != ''}">
   <script type="text/javascript">
 <!--//<![CDATA[
-    filterWebSearchablesHandler(null, $('${ws_input_id}'), '${scope}', '${type}', []);
+    filterWebSearchablesHandler(null, $('${ws_input_id}'), '${scope}', '${type}', [], ${wsListId});
 //]]>-->
   </script>
 </c:if>

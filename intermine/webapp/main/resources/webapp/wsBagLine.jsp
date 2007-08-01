@@ -8,6 +8,7 @@
 
 <tiles:importAttribute name="wsName"/>
 <tiles:importAttribute name="scope"/>
+<tiles:importAttribute name="wsListId"/>
 <tiles:useAttribute id="webSearchable" name="webSearchable" 
                     classname="org.intermine.web.logic.search.WebSearchable"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
@@ -18,8 +19,8 @@
 <c:set var="type" value="bag"/>
 
 <!-- wsBagLine.jsp -->
-<div class="wsTempateLine" id="${scope}_${type}_item_line_${webSearchable.name}">
-<div style="float: right" id="${scope}_${type}_item_score_${webSearchable.name}">
+<div class="wsTempateLine" id="${wsListId}_${type}_item_line_${webSearchable.name}">
+<div style="float: right" id="${wsListId}_${type}_item_score_${webSearchable.name}">
   &nbsp;
 </div>
 
@@ -71,7 +72,7 @@
 </c:if></em> -->
 
 <c:if test="${showDescriptions}">
-  <div id="${scope}_${type}_item_description_${webSearchable.name}">
+  <div id="${wsListId}_${type}_item_description_${webSearchable.name}">
   <c:choose>
    <c:when test="${fn:length(webSearchable.description) > 60}">
      <div id="bag_desc_${webSearchable.name}_s" class="description">
