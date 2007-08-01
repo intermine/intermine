@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!-- footer.jsp -->
 
 <br/><br/><br/>
@@ -28,8 +28,8 @@
             </im:box>
         </div>
       </c:if>
-      
-      FlyMine is funded by <a href="http://www.wellcome.ac.uk/" target="_new"><img src="images/wellcome_logo.png" height="17px" width="120px" border="0" /></a>
+      <fmt:message key="funding"/>
+
             
 </div>
 
