@@ -11,3 +11,11 @@
 #feedbackFormDivButton {
 	clear:both;
 }
+
+.expandButton {
+  background-color: white;
+  padding: 4px;
+  text-align: center;
+  font-size: 13px;
+  white-space: nowrap;
+}

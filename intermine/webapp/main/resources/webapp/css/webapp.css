@@ -148,12 +148,16 @@ td#quicksearch {
 }
 
 
-
-      .pageDesc { 
-        background-color: #F5F0FF; 
-        margin: 12px 12px 12px 12px;
-        padding: 3px 3px 3px 3px;       
-      }
+	.pageDesc {
+		background-color: #F5F0FF; 
+		vertical-align: middle;
+		align: left;
+		width:75%;
+		/* firefox */
+             -moz-border-radius: 5px;
+        /* safari */
+             -webkit-border-radius: 5px;
+	}
 
 
 /*.bagStyle{background:#FF9900;color:black;}
@@ -278,17 +282,6 @@ table td {
 .errors {
   color: #c00;
 }
-
-.expandButton {
-  border-top: 1px solid #888;
-  border-bottom: 1px solid #888;
-  background-color: white;
-  padding: 4px;
-  text-align: center;
-  font-size: 13px;
-  white-space: nowrap;
-}
-
 
 table.query td.modelbrowse {
   border-right: 1px solid #888;
@@ -489,9 +482,7 @@ td.resBar {
   padding:5px 10px 5px 10px;
   margin:0px 15px 0px 15px;
 }
-#actionsLeft {
-  margin:20px;
-}
+
 
 /* template results - used by object & bag details pages */
 table.refSummary {
