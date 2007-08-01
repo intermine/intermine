@@ -487,7 +487,7 @@ public class GenericCompositeMap<K,V> implements Map<K,V> {
      * mutators in a CompositeMap, as well as providing a hook for
      * callbacks on key collisions.
      */
-    public static interface MapMutator {
+    public static interface MapMutator<K,V> {
         /**
          * Called when adding a new Composited Map results in a
          * key collision.
@@ -498,8 +498,8 @@ public class GenericCompositeMap<K,V> implements Map<K,V> {
          * @param added  the Map being added
          * @param intersect  the intersection of the keysets of the existing and added maps
          */
-        public void resolveCollision(
-            GenericCompositeMap composite, Map existing, Map added, Collection intersect);
+        public void resolveCollision(GenericCompositeMap<K,V> composite, Map<K,V> existing,
+                                     Map<K,V> added, Collection<K> intersect);
         
         /**
          * Called when the CompositeMap.put() method is invoked.
@@ -523,7 +523,7 @@ public class GenericCompositeMap<K,V> implements Map<K,V> {
          *            keys or values, and the specified key or value is
          *            <tt>null</tt>.
          */
-        public Object put(GenericCompositeMap map, Map[] composited, Object key, Object value);
+        public Object put(GenericCompositeMap<K,V> map, Map<K,V>[] composited, K key, V value);
         
         /**
          * Called when the CompositeMap.putAll() method is invoked.
@@ -541,7 +541,46 @@ public class GenericCompositeMap<K,V> implements Map<K,V> {
          *            keys or values, and the specified key or value is
          *            <tt>null</tt>.
          */
-        public void putAll(GenericCompositeMap map, Map[] composited, Map mapToAdd);
+        public void putAll(GenericCompositeMap<K,V> map, Map<K,V>[] composited, Map<K,V> mapToAdd);
+    }
+
+    /**
+     * A MapMutator that resolves collisions when adding Maps by taking the first matching key
+     * when get() is called.  ie.  if GenericCompositeMap is constructed with map1 and map2 and the
+     * Maps have a key in common, genericCompositeMap.get(some_key) will return map1.get(some_key),
+     * genericCompositeMap.put(some_key, some_value) will call map1.put(...)
+     */
+    public static class PriorityOrderMapMutator<K,V> implements MapMutator<K,V> {
+
+        /**
+         * {@inheritDoc}
+         */
+        public Object put(@SuppressWarnings("unused") GenericCompositeMap<K, V> map,
+                          Map<K, V>[] composited, K key, V value) {
+            return composited[0].put(key, value);
+        }
+
+        /** 
+         * {@inheritDoc} 
+         */
+        public void putAll(@SuppressWarnings("unused") GenericCompositeMap<K, V> map,
+                           Map<K, V>[] composited, Map<K, V> mapToAdd) {
+            composited[0].putAll(mapToAdd);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void resolveCollision(@SuppressWarnings("unused") GenericCompositeMap<K, V> comp, 
+                                     @SuppressWarnings("unused") Map<K, V> existing,
+                                     @SuppressWarnings("unused") Map<K, V> added,
+                                     @SuppressWarnings("unused") Collection<K> intersect) {
+            // ignore
+            return;
+        }
+
+  
+        
     }
 }
 

@@ -421,7 +421,10 @@ public class AjaxServices
                         userSearchRepository.getWebSearchableMap(type);
                     Map<String, ? extends WebSearchable> globalWsMap =
                         globalRepository.getWebSearchableMap(type);
-                    wsMap = new GenericCompositeMap<String, WebSearchable>(globalWsMap, userWsMap);
+                    GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable> mutator =
+                        new GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable>();
+                    wsMap = new GenericCompositeMap<String, WebSearchable>(globalWsMap, userWsMap,
+                                                                           mutator);
                 }
             }
         }

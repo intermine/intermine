@@ -75,9 +75,11 @@ public class WebSearchableListController extends TilesAction
                 filterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags);
             Map<String, ? extends WebSearchable> userWebSearchables =
                 filterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
+            GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable> mutator =
+                new GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable>();
             filteredWebSearchables = 
                 new GenericCompositeMap<String, WebSearchable>(globalWebSearchables, 
-                                                               userWebSearchables);
+                                                               userWebSearchables, mutator);
         } else {
             filteredWebSearchables = filterWebSearchables(request, type, scope, tags);
         }
