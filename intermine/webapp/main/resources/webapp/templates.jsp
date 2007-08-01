@@ -37,7 +37,7 @@
      <BR/>
       <html:form action="/modifyTemplate">
         <tiles:insert name="wsTemplateTable.tile">
-          <tiles:put name="scope" value="global"/>
+          <tiles:put name="scope" value="all"/>
           <tiles:put name="makeCheckBoxes" value="true"/>
           <tiles:put name="showNames" value="false"/>
           <tiles:put name="showTitles" value="true"/>

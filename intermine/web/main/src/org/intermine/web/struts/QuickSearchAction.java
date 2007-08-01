@@ -104,7 +104,8 @@ public class QuickSearchAction extends InterMineAction
                 Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
                 Map scopeMap = new LinkedHashMap();
                 Map highlightedMap = new HashMap();
-                long time = SearchRepository.runLeuceneSearch(qsf.getValue(), "ALL", "bag", 
+                long time = SearchRepository.runLeuceneSearch(qsf.getValue(), 
+                                                              TemplateHelper.ALL_TEMPLATE, "bag", 
                                                               profile, context, hitMap, scopeMap,
                                                               highlightedMap, null);
                 request.setAttribute("type", "bag");
@@ -125,14 +126,6 @@ public class QuickSearchAction extends InterMineAction
             } else {
                 if (qsType.equals("tpls")) {
                     request.setAttribute("type", "template");
-//                    List filteredList =
-//                        AjaxServices.filterWebSearchableHelper("ALL", "template",
-//                                                               Collections.EMPTY_LIST, qsf.getValue(),
- //                                                              null);
-//                    for (List line: filteredList) {
-//                        JSONArray jsonLine = new JSONArray(line);
-//                    }
-//                    request.setAttribute("filterMatches", json.toString());
                     request.setAttribute("initialFilterText", qsf.getValue());
                     return mapping.findForward("templates");
                 } else {
