@@ -28,6 +28,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.path.Path;
+import org.intermine.util.GenericCompositeMap;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -376,11 +377,12 @@ public class AjaxServices
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, WebSearchable> wsMap = new LinkedHashMap<String, WebSearchable>();
+        Map<String, WebSearchable> wsMap;
         Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
         Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
 
         if (filterText != null && filterText.length() > 1) {
+            wsMap = new LinkedHashMap<String, WebSearchable>();
             Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
             try {
                 long time =
@@ -402,17 +404,29 @@ public class AjaxServices
                 wsMap.put(ws.getName(), ws);
             }
         } else {
-            SearchRepository searchRepository = null;
+            
             if (scope.equals("user")) {
-                searchRepository = profile.getSearchRepository();
-            } else if (scope.equals("global")) {
-                searchRepository =
+                SearchRepository searchRepository = profile.getSearchRepository();
+                wsMap = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
+            } else {
+                SearchRepository globalRepository =
                     (SearchRepository) servletContext.getAttribute(Constants.
                                                                    GLOBAL_SEARCH_REPOSITORY);
+                if (scope.equals("global")) {
+                    wsMap = (Map<String, WebSearchable>) globalRepository.getWebSearchableMap(type);
+                } else {
+                    // must be "all"
+                    SearchRepository userSearchRepository = profile.getSearchRepository();
+                    Map<String, ? extends WebSearchable> userWsMap = 
+                        userSearchRepository.getWebSearchableMap(type);
+                    Map<String, ? extends WebSearchable> globalWsMap =
+                        globalRepository.getWebSearchableMap(type);
+                    wsMap = new GenericCompositeMap<String, WebSearchable>(globalWsMap, userWsMap);
+                }
             }
-            wsMap =  (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);      
         }
         
+
         Map<String, ? extends WebSearchable> filteredWsMap 
                                 = new LinkedHashMap<String, WebSearchable>();
         if (profile.getUsername() != null && tags != null && tags.size() > 0) {

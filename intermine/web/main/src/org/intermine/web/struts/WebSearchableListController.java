@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.intermine.objectstore.query.ObjectStoreBag;
 
+import org.intermine.util.GenericCompositeMap;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -28,6 +29,7 @@ import org.intermine.web.logic.search.Scope;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -66,9 +68,47 @@ public class WebSearchableListController extends TilesAction
         String tags = (String) context.getAttribute("tags");
         String list = (String) context.getAttribute("list");
         String limit = (String) context.getAttribute("limit");
-        Map<String, ? extends WebSearchable> filteredWebSearchables =
-            new HashMap<String, WebSearchable>();
+        Map<String, ? extends WebSearchable> filteredWebSearchables;
         
+        if (scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+            Map<String, ? extends WebSearchable> globalWebSearchables =
+                filterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags);
+            Map<String, ? extends WebSearchable> userWebSearchables =
+                filterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
+            filteredWebSearchables = 
+                new GenericCompositeMap<String, WebSearchable>(globalWebSearchables, 
+                                                               userWebSearchables);
+        } else {
+            filteredWebSearchables = filterWebSearchables(request, type, scope, tags);
+        }
+
+        if (list != null) {
+            filteredWebSearchables = filterByList(filteredWebSearchables, list);
+        }
+
+        // shorten list to be < limit
+        if (limit != null) {
+            limit = limit.trim();
+            if (limit.length() > 0) {
+                try {
+                    filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables,
+                                                             new Integer(limit).intValue());
+                } catch (NumberFormatException e) {
+                    // ignore - don't shuffle 
+                }
+            }
+        }
+        request.setAttribute("filteredWebSearchables", filteredWebSearchables);
+        return null;
+    }
+
+    /**
+     * Get all the WebSearchables in the given scope and of the given type. 
+     */
+    private Map<String, ? extends WebSearchable> filterWebSearchables(HttpServletRequest request,
+                                                                      String type, String scope,
+                                                                      String tags) {
+        Map<String, ? extends WebSearchable> filteredWebSearchables;
         HttpSession session = request.getSession();
 
         ServletContext servletContext = session.getServletContext();
@@ -103,31 +143,15 @@ public class WebSearchableListController extends TilesAction
             }
         }
 
-        if (list != null) {
-            filteredWebSearchables = filterByList(filteredWebSearchables, list);
-        }
-
-        // shorten list to be < limit
-        if (limit != null) {
-            limit = limit.trim();
-            if (limit.length() > 0) {
-                try {
-                    filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables,
-                                                             new Integer(limit).intValue());
-                } catch (NumberFormatException e) {
-                    // ignore - don't shuffle 
-                }
-            }
-        }
-        request.setAttribute("filteredWebSearchables", filteredWebSearchables);
-        return null;
+        return filteredWebSearchables;
     }
     
     // loops through the websearchables
     // removes item if item is not on the list
-    private Map filterByList(Map filteredWebSearchables, String list) {
+    private Map<String, ? extends WebSearchable>
+    filterByList(Map<String, ? extends WebSearchable> filteredWebSearchables, String list) {
 
-        Map<String, ? extends WebSearchable> clone = new HashMap<String, WebSearchable>();
+        Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();
         clone.putAll(filteredWebSearchables);
         
         String tmp = list.replaceAll(" ", "");
