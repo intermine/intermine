@@ -104,7 +104,7 @@
 <c:if test="${initialFilterText != ''}">
   <script type="text/javascript">
 <!--//<![CDATA[
-    filterWebSearchablesHandler(null, $('${ws_input_id}'), '${scope}', '${type}', null);
+    filterWebSearchablesHandler(null, $('${ws_input_id}'), '${scope}', '${type}', []);
 //]]>-->
   </script>
 </c:if>
