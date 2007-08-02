@@ -15,13 +15,7 @@
     
 <div class="body">
 
-<%-- top nav --%>
 
-
-  <c:choose>
-  <%-- bags --%>
-    <c:when test="${MYMINE_PAGE=='lists'||MYMINE_PAGE==null}">
-    
 <script type="text/javascript">
 <!--//<![CDATA[
   function selectColumnCheckbox(form, type, scope) {
@@ -42,31 +36,22 @@
 //]]>-->
 </script>
 
-<%-- <html:form action="/modifyBag">
-  <tiles:insert name="wsBagTable.tile">
-    <tiles:put name="scope" value="user"/>
-    <tiles:put name="makeCheckBoxes" value="true"/>
-    <tiles:put name="showDescriptions" value="true"/>
-  </tiles:insert>
-
-  <br/>
-
-  <fmt:message key="history.savedbags.newbag"/>
-  <html:text property="newBagName" size="12"/><br/>
-  <html:submit property="union">
-    <fmt:message key="history.union"/>
-  </html:submit>
-  <html:submit property="intersect">
-    <fmt:message key="history.intersect"/>
-  </html:submit>
-  <html:submit property="subtract">
-    <fmt:message key="history.subtract"/>
-  </html:submit>
-</html:form> --%>
-<tiles:insert name="historyBagView.jsp">
-  <tiles:put name="type" value="bag"/>
-</tiles:insert>
-    </c:when>
+ 
+<c:choose>
+  <%-- bags --%>
+  <c:when test="${MYMINE_PAGE=='lists'||MYMINE_PAGE==null}">
+    <tiles:insert name="historyBagView.jsp">
+	  <tiles:put name="type" value="bag"/>
+	</tiles:insert>
+  </c:when>
+    
+  <%-- favourite bags --%>
+  <c:when test="${MYMINE_PAGE=='favouriteLists'}">
+    <tiles:insert name="historyBagView.jsp">
+	  <tiles:put name="type" value="favourite"/>
+	</tiles:insert>
+  </c:when>
+    
     
     <%-- saved queries --%>
     <c:when test="${MYMINE_PAGE=='saved'}">
