@@ -97,7 +97,7 @@
                     <tiles:put name="webSearchable" beanName="webSearchable"/>
                     <tiles:put name="statusIndex" value="${status.index}"/>
                     <tiles:put name="wsCheckBoxId"
-                               value="selected_${wsListId}_${type}_${wsName}"/>
+                               value="selected_${wsListId}_${type}_${status.index}"/>
                     <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
                     <tiles:put name="scope" value="${scope}"/>
                     <tiles:put name="tags" value="${tags}"/>

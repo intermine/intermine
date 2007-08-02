@@ -74,8 +74,8 @@
               
               <td>
                 <c:choose>
-                  <c:when test="${fn:length(favouriteTemplate.description) > 60}">
-                    ${fn:substring(favouriteTemplate.description, 0, 60)}...
+                  <c:when test="${fn:length(favouriteTemplate.description) > 100}">
+                    ${fn:substring(favouriteTemplate.description, 0, 100)}...
                   </c:when>
                   <c:otherwise>
                     ${favouriteTemplate.description}
