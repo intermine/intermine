@@ -70,19 +70,27 @@ public class WebSearchableListController extends TilesAction
         String limit = (String) context.getAttribute("limit");
         Map<String, ? extends WebSearchable> filteredWebSearchables;
         
-        if (scope.equals(TemplateHelper.ALL_TEMPLATE)) {
-            Map<String, ? extends WebSearchable> globalWebSearchables =
-                filterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags);
-            Map<String, ? extends WebSearchable> userWebSearchables =
-                filterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
-            GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable> mutator =
-                new GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable>();
-            filteredWebSearchables = 
-                new GenericCompositeMap<String, WebSearchable>(globalWebSearchables, 
+        HttpSession session = request.getSession();
+     
+        if (session.getAttribute("IS_SUPERUSER") != null 
+                        && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
+                filteredWebSearchables = filterWebSearchables(request, type, 
+                                                              TemplateHelper.GLOBAL_TEMPLATE, tags);
+        
+        } else if (scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+                Map<String, ? extends WebSearchable> globalWebSearchables =
+                    filterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags); 
+                Map<String, ? extends WebSearchable> userWebSearchables =
+                    filterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
+                GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable> mutator =
+                    new GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable>();
+                filteredWebSearchables = 
+                    new GenericCompositeMap<String, WebSearchable>(globalWebSearchables, 
                                                                userWebSearchables, mutator);
+
         } else {
             filteredWebSearchables = filterWebSearchables(request, type, scope, tags);
-        }
+       }
 
         if (list != null) {
             filteredWebSearchables = filterByList(filteredWebSearchables, list);
@@ -123,8 +131,7 @@ public class WebSearchableListController extends TilesAction
         }
         SearchRepository searchRepository;
         if (scope.equals(Scope.GLOBAL)) {
-            searchRepository = (SearchRepository) 
-            servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+            searchRepository = (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
         } else {
             searchRepository = profile.getSearchRepository();
         }
