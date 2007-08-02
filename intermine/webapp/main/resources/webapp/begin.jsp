@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" href="css/begin.css"/>
 
       <div class="body">
-         <div style="float:left;margin-left:20px">
+         <div style="float:left;margin-left:20px;width:400px">
         <span style="font-size:+2em;">
           <a href="what.xml">What is FlyMine?</a>
         </span>&nbsp;&nbsp;<span style="font-size:+1.4em">
@@ -21,7 +21,7 @@
           This is release 8.0 of FlyMine.  See the <a href="release-notes.xml">release notes</a> to find out what's new.
         </p>
         </div>
-      <div style="margin-left:65%;width:350px;">
+      <div style="margin-left:420px;width:600px;">
         <tiles:insert name="tipWrapper.tile"/>
       </div>
       <div style="clear:both;"></div>
@@ -46,23 +46,8 @@
           <tiles:put name="showSearchBox" value="false"/>
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
-        <style>
-        div.gototemplates {background:url('images/go_to_template_page.png') no-repeat; height:76px; width:385px}
-        </style>
         
-        <%-- <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>'/> --%>
-        <c:if test="${! empty iePre7}">
-        <style type="text/css">
-        div.gototemplates {
-        background:none;
-        filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src=’images/go_to_template_page.png’ ,sizingMethod=’crop’);
-        }
-        </style>
-        </c:if>
-
-        <html:link action="/templates.do">
-        <div class="gototemplates">&nbsp</div>
-        </html:link>
+        <im:useTransparentImage src="images/go_to_template_page.png" id="gototemplates" link="/templates.do" width="385px" height="76px" />
       </im:roundbox>
 
       <im:roundbox title="Lists" stylename="welcome" height="350">
@@ -92,9 +77,8 @@
             <fmt:message key="begin.createbags"/>
           </u>
         </p>
-                <html:link action="/bag.do">
-                  <img  src="images/go_to_list_page.png" align="center" alt="Go To Bag Page" border="0">
-                </html:link>
+
+        <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="294px" height="76px" />
       </im:roundbox>
 
       <im:roundbox title="Query Builder" stylename="welcome" height="180">
@@ -103,14 +87,13 @@
             <fmt:message key="begin.querybuilder"/>
           </em>
         </p>
-          <html:link action="/customQuery.do">
-            <img src="images/go_to_query_builder.png" alt="Go To Query Builder">
-          </html:link>
+        
+        <im:useTransparentImage src="images/go_to_query_builder.png" id="gotoqb" link="/customQuery.do" width="305px" height="77px" />
+        
       </im:roundbox>
 </div>
 
-<div id="rightColumn">
-  <div id="aspectsFront" class="actionArea">
+<div id="aspectsFront" class="actionArea">
      <h1>Data</h1>
         <!-- <p>
           <em>
@@ -119,11 +102,9 @@
         </p> -->
         <c:choose>
 		    <c:when test="${!empty ASPECTS}">
-		    <c:set var="colItemLength" value="${fn:length(ASPECTS) / 2}"/>
-          <div style="float:left;width:150px">
+          <ul>
 		       <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
-                <c:if test="${status.count == colItemLength}"></div><div style="margin-left:150px;width:150px;"></c:if>
-                   <div class="aspectOverview">
+                   <li class="aspectOverview">
                      <c:set var="set" value="${entry.value}"/>
                      <html:link action="/aspect?name=${set.name}">
                        <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon" />
@@ -134,10 +115,9 @@
                        </html:link><br>
                        ${set.subTitle}
                      </p>
-                  </div>
+                  </li>
              </c:forEach>
-          </div>
-          <div style="clear:both;"></div>
+          </ul>
 		    </c:when>
 		    <c:otherwise>
 		      <c:forEach items="${CATEGORIES}" var="category">
@@ -156,8 +136,8 @@
 		      </c:forEach>
 		    </c:otherwise>
 		  </c:choose>
+		  <div class="clear-both"></div>
   </div>
-</div>
 </div>
 
 <!-- /begin.jsp -->
