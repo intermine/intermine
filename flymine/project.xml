@@ -125,6 +125,7 @@
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
       <property name="src.data.dir" location="/shared/data/go-annotation/current/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
+      <property name="ignore.duplicates" value="true"/>
     </source>
     <source name="geneid-translationid" type="intermine-items-large-xml-file">
       <property name="src.data.file" location="/shared/data/orthologues/inparanoid/geneid2peptideid/current/geneId2peptideId.xml"/>
