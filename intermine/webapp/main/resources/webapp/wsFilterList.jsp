@@ -52,6 +52,7 @@
   <img src="images/sort_date_ico.gif" width="20" height="16" alt="Sort by Date"/>
   <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
  
+  <c:if test="${type == 'template'}">
   <%-- aspects --%>
     <select onchange="javascript:filterAspect('${scope}', '${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect">
     <c:if test="${aspect == null}">
@@ -66,6 +67,7 @@
       >${set.name}</option>
     </c:forEach>
   </select>
+  </c:if>
   
 </p>
 
