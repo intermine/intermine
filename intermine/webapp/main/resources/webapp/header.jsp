@@ -15,7 +15,7 @@
 </div>
 <div id="loginbar">
     <c:if test="${!empty PROFILE.username}">
-        ${PROFILE.username}&nbsp;|&nbsp;<html:link action="/changePassword.do" title="Change Password">Manage</html:link>&nbsp;|&nbsp;
+        ${PROFILE.username}&nbsp;|&nbsp;
     </c:if>
     <im:login/>
 </div>
