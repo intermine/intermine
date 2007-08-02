@@ -243,7 +243,7 @@ table.query {
 .boxbody {
   background-color: white;
   /*border-bottom: 1px solid #888;*/
-  padding-top: 10px;<br/>
+  padding-top: 10px;
 }
 
 .altmessage {
@@ -341,7 +341,7 @@ table.collection {
   border-top: solid 1px #666;
 }
 table.collection th, table.collection td {
-  padding: 4px;<br/>
+  padding: 4px;
   border-right: solid 1px #666;
   border-bottom: solid 1px #666;
   background-color: #fff;
