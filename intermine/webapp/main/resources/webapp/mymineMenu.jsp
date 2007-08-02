@@ -27,6 +27,21 @@
     </li>
     <li>&nbsp;|&nbsp;</li>
 	
+	<li>
+	<%-- favourite bags --%>
+        <c:choose>
+          <c:when test="${MYMINE_PAGE=='favouriteLists'||MYMINE_PAGE == ''}">
+            <span class="active"><fmt:message key="mymine.favouriteBags.tab.title"/></span>
+          </c:when>
+          <c:otherwise>
+            <html:link action="/mymine?page=favouriteLists">
+              <fmt:message key="mymine.favouriteBags.tab.title"/>
+            </html:link>
+          </c:otherwise>
+        </c:choose>
+    </li>
+    <li>&nbsp;|&nbsp;</li>
+	
     <li>
 	<%-- query history --%>
 	 <c:choose>
