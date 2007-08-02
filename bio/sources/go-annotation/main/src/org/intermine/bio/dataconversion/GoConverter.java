@@ -211,6 +211,7 @@ public class GoConverter extends FileConverter
                 productIds.add(productId);
                 
                 // Free up some memory
+                productWrapperMap = new LinkedHashMap();
                 holderMap = new LinkedHashMap();
                 goAnnoItems = new LinkedHashMap();
             }
