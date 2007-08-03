@@ -159,7 +159,7 @@
                   </html:link>
                   <tiles:insert name="setFavourite.tile" flush="false">
                     <tiles:put name="name" value="${entry.value.title}"/>
-                    <tiles:put name="type" value="template"/>
+                    <tiles:put name="type" value="${type}"/>
                   </tiles:insert>
                 </div>
                 <c:if test="${showDescriptions}">
