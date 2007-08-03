@@ -2,16 +2,12 @@ function setFavourite(name, type, image){
    
     var img = image.src;
     var isFavourite;
-    alert(img.substring(img.length-12, img.length));
     if (img.substring(img.length-12, img.length) == 'unactive.gif') {
     	isFavourite = false;
     } else {
     	isFavourite = true;
     }
-    
     AjaxServices.setFavourite(name, type, isFavourite);
-    alert(image.src);
-    
     // already a favourite.  turning off.
     if (isFavourite) {
 	    image.src='images/star_unactive.gif';
