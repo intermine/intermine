@@ -10,6 +10,7 @@
 
 <script type="text/javascript" src="js/tablesort.js"></script>
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
+<c:set var="type" value="bag"/>
 
 <im:body id="bagHistory">
 
@@ -42,7 +43,7 @@
             <th align="left" nowrap class="sortable">
               <fmt:message key="query.savedbags.typecolumnheader"/>
             </th>
-            <th align="right" nowrap class="sortable">
+            <th align="right" nowrap class="sortable-numeric">
               <fmt:message key="query.savedbags.countcolumnheader"/>
             </th>
             <th align="left" nowrap class="sortable">
@@ -51,13 +52,35 @@
           </tr>
           <c:forEach items="${PROFILE.savedBags}" var="savedBag" varStatus="status">
             <tr>
-              <td>
+              <td align="center">
                 <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
                   <c:out value="${savedBag.key}"/>
                 </html:multibox>
               </td>
-              <td><c:out value="${savedBag.value.name}"/></td>
-              <td><c:out value="${savedBag.value.description}"/></td>
+              <td>
+                    <tiles:insert name="renamableElement.jsp">
+                      <tiles:put name="name" value="${savedBag.value.name}"/>
+                      <tiles:put name="type" value="${type}"/>
+                      <tiles:put name="index" value="${status.count-1}"/>
+                    </tiles:insert>
+                    
+                    <tiles:insert name="setFavourite.tile">
+                      <tiles:put name="name" value="${savedBag.value.name}"/>
+                      <tiles:put name="type" value="${type}"/>
+                    </tiles:insert>
+                    
+              <td>
+                <c:choose>
+                  <c:when test="${fn:length(savedBag.value.description) > 100}">
+                    ${fn:substring(savedBag.value.description, 0, 100)}...
+                  </c:when>
+                  <c:otherwise>
+                    ${savedBag.value.description}
+                  </c:otherwise>
+                </c:choose>                
+                &nbsp;
+              </td>
+              
               <td><c:out value="${savedBag.value.type}"/></td>
               <td align="right">
                 <c:out value="${savedBag.value.size}"/>
@@ -66,7 +89,7 @@
                   <c:otherwise>values</c:otherwise>
                 </c:choose>
               </td>
-              <td><em><c:out value="${savedBag.value.dateCreated}"/></em></td>
+              <td><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
             </tr>
           </c:forEach>
         </table>
