@@ -69,6 +69,16 @@
                       <tiles:put name="type" value="${type}"/>
                     </tiles:insert>
                     
+                    <c:if test="${IS_SUPERUSER}">
+                      <c:set var="taggable" value="${savedBag.value.name}"/>
+                      <tiles:insert name="inlineTagEditor.tile">
+                        <tiles:put name="taggable" beanName="taggable"/>
+                        <tiles:put name="vertical" value="true"/>
+                        <tiles:put name="show" value="true"/>
+                      </tiles:insert>
+                    </c:if>
+                    
+              </td>     
               <td>
                 <c:choose>
                   <c:when test="${fn:length(savedBag.value.description) > 100}">
