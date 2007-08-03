@@ -8,7 +8,7 @@
 <html:xhtml/>
 
 <div class="body">
-   <div id="leftCol">
+    <div id="leftCol">  
       <div id="pageDesc" class="pageDesc"><p><fmt:message key="customQuery.intro"/></p></div>
 	   <div class="actionArea">
 	     <h2>Actions:</h2>
@@ -16,6 +16,12 @@
 	            <fmt:message key="begin.import.query"/>
 	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
 	          </html:link>
+	          <br/>
+	          <html:link action="/mymine.do?page=history">
+	            View query history
+	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
+	          </html:link>
+	          
           </div>
    </div>
 
@@ -25,24 +31,8 @@
 	  <tiles:insert name="classChooser.tile"/>
 	</im:roundbox>
    </div>
-   
-<div id="clearLine">
-	<%-- query history --%>
-	<im:roundbox title="Query History" stylename="welcome">
-	 <tiles:insert name="historyQueryView.jsp">
-        <tiles:put name="type" value="history"/>
-      </tiles:insert>
-	</im:roundbox>
-	
-	<%-- saved queries --%>
-	<im:roundbox title="Saved Queries" stylename="welcome">
-	 <tiles:insert name="historyQueryView.jsp">
-        <tiles:put name="type" value="saved"/>
-      </tiles:insert>
-	</im:roundbox> 
 
 
-</div>
 </div>
 
 <script type="text/javascript">
