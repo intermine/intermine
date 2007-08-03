@@ -6,6 +6,7 @@
 <%@ attribute name="width" required="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>'/>
 
@@ -16,7 +17,8 @@
         background:none;
         height:${height}; 
         width:${width};
-        filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${src}' ,sizingMethod=â'crop');
+        cursor:pointer;
+        filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${src}' ,sizingMethod='crop');
       }
     </style>
   </c:when>
@@ -26,11 +28,13 @@
         background:url('${src}') no-repeat;
         height:${height};
         width:${width};
+        cursor:pointer;
       }
     </style>
   </c:otherwise>
 </c:choose>
 
-<html:link action="${link}">
-  <div class="${id}">&nbsp</div>
+<html:link action="${link}" >
+  <div class="${id}" style="float:right">&nbsp</div>
 </html:link>
+<div class="clear-both"></div>

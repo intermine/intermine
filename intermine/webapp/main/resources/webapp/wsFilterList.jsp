@@ -34,27 +34,27 @@
   <c:set var="initialFilterText" value=""/>
 </c:if>
 
-<p style="white-space:nowrap;">Filter:&nbsp;
-  <input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
+<div class="filterBar">
+<ul class="filterActions">
+  <li>Filter:&nbsp;</li>
+  <li><input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
          onkeyup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', [], '${wsListId}');"
          onmouseup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', [], '${wsListId}');"
          disabled="true"
-         value="${initialFilterText}"/>
-  &nbsp; <img id='${wsListId}_${type}_spinner' style='visibility: hidden' 
-             src='images/wait_spinner.gif'/>
-  &nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;
+         value="${initialFilterText}"/></li>
+  <li>&nbsp; <img id='${wsListId}_${type}_spinner' style='visibility: hidden' 
+             src='images/wait_spinner.gif'/></li>
+  <li>&nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;</li>
+  
 <c:if test="${! empty PROFILE.username}">
-  <a href="javascript:filterFavourites('${scope}','${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites_ico.gif" width="16" height="16" alt="Show Only Favourites" title="Show Only Favourites"/></a>
-  &nbsp;
+  <li ><a href="javascript:filterFavourites('${scope}','${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" alt="Show Only Favourites" title="Show Only Favourites"/></a></li>
 </c:if>
-  <img src="images/asc.gif" width="17" height="16" alt="Sort by name"/>
-  &nbsp;
-  <img src="images/sort_date_ico.gif" width="20" height="16" alt="Sort by Date"/>
-  <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
- 
+  <li><img src="images/filter_sort_desc.png" width="20" height="20" alt="Sort by name"/></li>
+  <li><img src="images/filter_date_desc.png" width="20" height="20" alt="Sort by Date"/></li>
+  <li><img src="images/filter_my.png" width="20" height="20" alt="Sort by Date"/>&nbsp;</li>
   <c:if test="${type == 'template'}">
   <%-- aspects --%>
-    <select onchange="javascript:filterAspect('${scope}', '${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect">
+    <li><select onchange="javascript:filterAspect('${scope}', '${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect">
     <c:if test="${aspect == null}">
       <option value="" selected>-- Choose aspect --</option>
     </c:if>
@@ -66,10 +66,11 @@
         </c:if>
       >${set.name}</option>
     </c:forEach>
-  </select>
-  </c:if>
-  
-</p>
+  </select></li>
+  <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
+</ul>
+<br>
+</div>
 
 <script type="text/javascript">
   <%-- turn off autocomplete because of a Gecko bug:

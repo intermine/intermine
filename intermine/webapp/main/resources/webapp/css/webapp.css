@@ -98,8 +98,10 @@ h1, h2, h3 {
 	padding:10px;
     font-size: 12px;
 	border:1px solid #9E68AE;
-	background-image: url('../images/blue_grad.gif');
+	background-image: url('../images/blue_grad.png');
 	background-repeat: repeat-x;
+	background-color: #EEF2FE;
+	min-width:700px;
 }
 .roundcornerbox h1 {
     margin:0px;
@@ -116,6 +118,7 @@ table#headertable{
 	margin:0px;
 	padding:0px;
 }
+
 /*menu with nifty corners*/
 td#menu{background-color: #D0B5D7;width:100%;}
 ul#nav,ul#nav li{list-style-type:none;margin:0;padding:0}

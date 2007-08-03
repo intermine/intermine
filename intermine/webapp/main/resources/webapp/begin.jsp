@@ -48,7 +48,7 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         
-        <im:useTransparentImage src="images/go_to_template_page.png" id="gototemplates" link="/templates.do" width="385px" height="76px" />
+        <im:useTransparentImage src="images/go_to_template_page.png" id="gototemplates" link="/templates.do" width="239px" height="78px" />
       </im:roundbox>
 
       <im:roundbox title="Lists" stylename="welcome" height="350">
@@ -70,7 +70,7 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
 
-        <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="294px" height="76px" />
+        <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="239px" height="78px" />
       </im:roundbox>
 
       <im:roundbox title="Query Builder" stylename="welcome" height="180">
@@ -80,7 +80,7 @@
           </em>
         </p>
         
-        <im:useTransparentImage src="images/go_to_query_builder.png" id="gotoqb" link="/customQuery.do" width="305px" height="77px" />
+        <im:useTransparentImage src="images/go_to_query_builder.png" id="gotoqb" link="/customQuery.do" width="239px" height="78px" />
         
       </im:roundbox>
 </div>

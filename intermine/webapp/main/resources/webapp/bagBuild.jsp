@@ -121,7 +121,7 @@
 
     
     <%-- textarea --%>
-    <div align="center"><html:textarea styleId="pasteInput" property="text" rows="10" cols="40" onfocus="switchInputs('paste','file');" /></div>
+    <div align="center"><html:textarea styleId="pasteInput" property="text" rows="10" cols="30" onfocus="switchInputs('paste','file');" /></div>
     <script type="text/javascript" charset="utf-8">
       initPasteInput();
     </script>
