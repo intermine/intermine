@@ -30,10 +30,8 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
-import javax.print.attribute.standard.Severity;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -124,12 +122,12 @@ public class ModifyBagAction extends InterMineAction
         ObjectStoreWriter osw = null;
         try {
             osw = new ObjectStoreWriterInterMineImpl(os);
-            LOG.error("Combining bags with query: " + q);
+            LOG.error("Combining lists with query: " + q);
             osw.addToBagFromQuery(combined.getOsb(), q);
         } catch (ObjectStoreException e) {
             LOG.error(e);
             ActionMessage actionMessage = new ActionMessage(
-                    "An error occurred while saving the bag");
+                    "An error occurred while saving the list");
             recordError(actionMessage, request);
             return getReturn(mbf.getPageName(), mapping);
         } finally {
@@ -228,7 +226,7 @@ public class ModifyBagAction extends InterMineAction
     }
     
     private ActionForward getReturn(String pageName, ActionMapping mapping) {
-        if(pageName != null && pageName.equals("MyMine")) {
+        if (pageName != null && pageName.equals("MyMine")) {
             return mapping.findForward("mymine");
         } else {
             return mapping.findForward("bag");
