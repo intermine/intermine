@@ -75,7 +75,7 @@ public class WebSearchableListController extends TilesAction
         if (session.getAttribute("IS_SUPERUSER") != null 
                         && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
                 filteredWebSearchables = filterWebSearchables(request, type, 
-                                                              TemplateHelper.GLOBAL_TEMPLATE, tags);
+                                                              TemplateHelper.USER_TEMPLATE, tags);
         
         } else if (scope.equals(TemplateHelper.ALL_TEMPLATE)) {
                 Map<String, ? extends WebSearchable> globalWebSearchables =
