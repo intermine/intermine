@@ -23,6 +23,7 @@ import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.Results;
 
 import org.intermine.InterMineException;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -78,21 +79,44 @@ public class AjaxServices
      *
      * @param name the name of the template we want to set as a favourite
      * @param type type of tag (bag or template)
+     * @param isFavourite whether or not this item is currently a favourite
      */
-    public void setFavourite(String name, String type) {
+    public void setFavourite(String name, String type, boolean isFavourite) {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         HttpServletRequest request = ctx.getHttpServletRequest();
-        String templateNameCopy = name.replaceAll("#039;", "'");
+        String nameCopy = name.replaceAll("#039;", "'");
         ProfileManager pm = (ProfileManager) request.getSession().getServletContext().getAttribute(
                 Constants.PROFILE_MANAGER);
-        if (type.equals(TagTypes.TEMPLATE)) {
-            pm.addTag("favourite", templateNameCopy, TagTypes.TEMPLATE, profile.getUsername());
-        } else if (type.equals(TagTypes.BAG)) {
-            pm.addTag("favourite", templateNameCopy, TagTypes.BAG, profile.getUsername());
+        
+        // already a favourite.  turning off.
+        if (isFavourite) {
+            
+            List<Tag> tags;
+            Tag tag;
+            if (type.equals(TagTypes.TEMPLATE)) {                
+                tags = pm.getTags("favourite", nameCopy, TagTypes.TEMPLATE, profile.getUsername());
+            } else if (type.equals(TagTypes.BAG)) {
+                tags = pm.getTags("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
+            } else {
+                throw new RuntimeException("Unknown tag type.");
+            }
+            if (tags.isEmpty()) {
+                throw new RuntimeException("User error!  You tried to mark a " 
+                        + "template as favourite that doesn't seem to exist. Well done.");
+            }
+            tag = tags.get(0);
+            pm.deleteTag(tag);
+        // not a favourite.  turning on.
         } else {
-            throw new RuntimeException("Unknown tag type.");
+            if (type.equals(TagTypes.TEMPLATE)) {
+                pm.addTag("favourite", nameCopy, TagTypes.TEMPLATE, profile.getUsername());
+            } else if (type.equals(TagTypes.BAG)) {
+                pm.addTag("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
+            } else {
+                throw new RuntimeException("Unknown tag type.");
+            }
         }
     }
 

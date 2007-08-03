@@ -1,6 +1,6 @@
 <%@ include file="/shared/taglibs.jsp" %>
 
-<!--starTemplate.jsp-->
+<!--setFavourite.jsp-->
 
 <c:if test="${! empty PROFILE.username}">
 
@@ -11,12 +11,12 @@
 	
 	<c:choose>
 		<c:when test="${isFavourite == 'true'}">
-	<img id="favourite_${name}" src="images/star_active.gif" title="Favourite"/>
+	<img id="favourite_${name}" src="images/star_active.gif" style="cursor:pointer;" onclick="setFavourite('${name}','${type}',this, ${isFavourite})" title="Favourite"/>
 		</c:when>
 		<c:otherwise>
-	<img id="favourite_${name}" style="cursor:pointer;" onclick="setFavourite('${name}','${type}',this)" src="images/star_unactive.gif" title="Set as favourite"/>
+	<img id="favourite_${name}" src="images/star_unactive.gif" style="cursor:pointer;" onclick="setFavourite('${name}','${type}',this, ${isFavourite})"  title="Set as favourite"/>
 		</c:otherwise>
 	</c:choose>
 </c:if>
 
-<!--/starTemplate.jsp-->
+<!--/setFavourite.jsp-->
