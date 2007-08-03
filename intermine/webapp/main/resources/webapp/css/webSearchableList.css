@@ -24,7 +24,21 @@ div.wsTempateLine p.description a{
 	font-style: normal;
     font-size: small;
 }
-
 .aspectSelect {
   font-size: small;
+}
+div.filterBar {
+	margin:10px;
+	background:#9F67AD;
+	color:white;
+	font-weight: bold;
+	padding:15px;
+}
+ul.filterActions ,ul.filterActions li{
+	list-style: none;
+	margin:0px;
+	padding:0px;
+}
+ul.filterActions li{
+	float:left;
 }

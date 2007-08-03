@@ -426,11 +426,11 @@ function filterFavourites(scope, type, wsListId) {
     // favourites OFF
     if(document.getElementById(id).value == "favourites") {
         document.getElementById(id).value = "";
-        document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_ico.gif';
+        document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites.png';
     // favourites ON    
     } else {
         document.getElementById(id).value = "favourites";
-        document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_act_ico.gif';
+        document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_active.png';
         tags = (tags == '' ? 'favourite' : tags + '|favourite');
     }        
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
