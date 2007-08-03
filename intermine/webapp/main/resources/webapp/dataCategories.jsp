@@ -13,9 +13,10 @@
       <div id="pageDesc" class="pageDesc"><p><fmt:message key="dataCategories.intro"/></p></div>
 	     <div class="actionArea">
 	     <h2>Actions:</h2>
-           <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a><BR/> 
+           <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a> <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/><BR/> 
            <html:link action="/templates">
              <fmt:message key="dataCategories.action2"/>
+             <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
            </html:link>
         </div>
    </div>
