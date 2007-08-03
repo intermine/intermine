@@ -28,13 +28,14 @@
 
 <div id="leftColumn">
       <im:roundbox title="Templates" stylename="welcome" height="350">
-        <p>
-          <u>
-            <fmt:message key="begin.trytemplates"/>
-          </u>
-        </p>
+        <em>
+          <p>
+            <fmt:message key="begin.templates"/>
+          </p>
+        </em>
         <tiles:insert name="webSearchableList.tile">
           <!-- optional -->
+          <tiles:put name="showTitle" value="true"/>
           <tiles:put name="limit" value="3"/>
           <!-- bag or template? -->
           <tiles:put name="type" value="template"/>
@@ -43,7 +44,7 @@
           <tiles:put name="scope" value="global"/>
           <tiles:put name="tags" value="im:public"/>
           <tiles:put name="showDescriptions" value="false"/>
-          <tiles:put name="showSearchBox" value="false"/>
+          <tiles:put name="showSearchBox" value="true"/>
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         
@@ -56,12 +57,8 @@
             <fmt:message key="begin.bags"/>
           </em>
         </p>
-        <p>
-          <u>
-            <fmt:message key="begin.trybags"/>
-          </u>
-        </p>
         <tiles:insert name="webSearchableList.tile">
+          <tiles:put name="showTitle" value="true"/>
           <tiles:put name="limit" value="3"/>
           <tiles:put name="wsListId" value="global_bag"/>
           <%-- bag or template? --%>
@@ -72,11 +69,6 @@
           <tiles:put name="showSearchBox" value="false"/>
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
-        <p>
-          <u>
-            <fmt:message key="begin.createbags"/>
-          </u>
-        </p>
 
         <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="294px" height="76px" />
       </im:roundbox>
@@ -95,11 +87,11 @@
 
 <div id="aspectsFront" class="actionArea">
      <h1>Data</h1>
-        <!-- <p>
-          <em>
-            <fmt:message key="begin.data"/>
-          </em>
-        </p> -->
+       <em>
+         <p>
+           <fmt:message key="begin.data"/>
+         </p>
+       </em>
         <c:choose>
 		    <c:when test="${!empty ASPECTS}">
           <ul>

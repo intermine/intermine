@@ -10,7 +10,7 @@
 
 <div class="body">
 <div id="leftCol">
-   <div id="pageDesc" class="pageDesc"><p><fmt:message key="begin.templates"/></p></div>
+   <div id="pageDesc" class="pageDesc"><p><fmt:message key="templates.intro"/></p></div>
 	 <div class="actionArea">
 	     <h2>Actions:</h2>
            <html:link action="/summariseAllTemplates" titleKey="begin.summariseAllTemplatesDesc">
