@@ -101,7 +101,6 @@ h1, h2, h3 {
 	background-image: url('../images/blue_grad.png');
 	background-repeat: repeat-x;
 	background-color: #EEF2FE;
-	min-width:700px;
 }
 .roundcornerbox h1 {
     margin:0px;
