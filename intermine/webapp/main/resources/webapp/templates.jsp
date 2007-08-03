@@ -15,10 +15,12 @@
 	     <h2>Actions:</h2>
            <html:link action="/summariseAllTemplates" titleKey="begin.summariseAllTemplatesDesc">
              <fmt:message key="begin.summariseAllTemplates"/>
+             <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
            </html:link>
          <BR/>
            <html:link action="/import" titleKey="begin.importTemplatesDesc">
              <fmt:message key="begin.importTemplates"/>
+             <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
            </html:link>
             <BR/><BR/>         
     </div>
