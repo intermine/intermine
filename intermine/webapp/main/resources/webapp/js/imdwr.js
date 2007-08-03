@@ -1,9 +1,17 @@
-function setFavourite(name, type, image){
-    AjaxServices.setFavourite(name, type);
-    image.src='images/star_active.gif';
-    image.onclick='';
-    image.style.cursor='';
-    image.title='This is a favourite';
+function setFavourite(name, type, image, isFavourite){
+    AjaxServices.setFavourite(name, type, isFavourite);
+        
+    // already a favourite.  turning off.
+    if (isFavourite) {
+	    image.src='images/star_unactive.gif';
+	    image.title='Set as favourite';
+	    image.onclick='setFavourite(name, type, image, false)';
+	// not a favourite.  turn on.
+	} else {
+	    image.src='images/star_active.gif';
+	   	image.title='This is a favourite';
+	   	image.onclick='setFavourite(name, type, image, true)';
+	}
 }
 
 function precomputeTemplate(templateName){
