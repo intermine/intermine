@@ -28,7 +28,7 @@
     <li>&nbsp;|&nbsp;</li>
 	
 	<li>
-	<%-- favourite bags --%>
+	<%-- favourite bags
         <c:choose>
           <c:when test="${MYMINE_PAGE=='favouriteLists'||MYMINE_PAGE == ''}">
             <span class="active"><fmt:message key="mymine.favouriteBags.tab.title"/></span>
@@ -41,7 +41,7 @@
         </c:choose>
     </li>
     <li>&nbsp;|&nbsp;</li>
-	
+	 --%>
     <li>
 	<%-- query history --%>
 	 <c:choose>
@@ -95,10 +95,10 @@
         </c:choose>
   </li>
     
-  <li>&nbsp;|&nbsp;</li>
+ <%-- <li>&nbsp;|&nbsp;</li>
    
    <li>
-	<%-- favourites --%>
+	 favourites 
     
         <c:choose>
           <c:when test="${!loggedin}">
@@ -118,7 +118,7 @@
         </c:choose>
  &nbsp;<img src="images/star_active.gif" title="Favourites"/>
     </li>
-
+--%>
 	<%-- change password --%>
 
       <c:if test="${loggedin}">

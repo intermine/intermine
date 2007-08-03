@@ -48,7 +48,7 @@
 
         <html:form action="/modifyQuery">
         <input type="hidden" name="type" value="${type}"/>
-        <table class="sortable-onload-3-reverse rowstyle-alt no-arrow" cellspacing="0">
+        <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0">
         <thead>
           <tr>
             <th>
@@ -58,7 +58,7 @@
             <th align="left" nowrap class="sortable">
               <fmt:message key="history.namecolumnheader"/>
             </th>
-            <th align="center" class="sortable-ymd">
+            <th align="center" class="sortable">
               <fmt:message key="history.datecreatedcolumnheader"/>
             </th>
             <th align="center" class="sortable">
@@ -80,7 +80,7 @@
             <c:if test="${!empty savedQuery.key && !empty savedQuery.value}">
               <c:set var="validQuery" value="${savedQuery.value.pathQuery.valid}"/>
               <tr>
-                <td>
+                <td align="center">
                   <html:multibox property="selectedQueries"
                                  styleId="selected_${type}_${status.index}"
                                  onclick="setDeleteDisabledness(this.form, '${type}')">
