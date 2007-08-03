@@ -67,6 +67,7 @@
       >${set.name}</option>
     </c:forEach>
   </select></li>
+  </c:if>
   <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
 </ul>
 <br>
