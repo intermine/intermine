@@ -66,6 +66,17 @@
   </c:when>
   <c:otherwise>
     <div id='${wsListId}_${type}_ws_list' class="wsList">
+      
+      <c:if test="${showTitle && (! empty bagCount || ! empty templateCount)}">
+      <c:choose>
+        <c:when test="${type == 'bag'}">
+          <p>Some example lists (<html:link action="/bag.do">${bagCount} total</html:link>):</p>
+        </c:when>
+        <c:otherwise>
+          <p>Some example templates (<html:link action="/templates.do">${templateCount} total</html:link>):</p>
+        </c:otherwise>
+      </c:choose>
+      </c:if>
       <c:choose>
         <c:when test="${!empty makeTable && makeTable}">
           <%-- make a table --%>
@@ -136,15 +147,15 @@
             <c:forEach items="${filteredWebSearchables}" var="entry">
               <li id='${wsListId}_${type}_item_${entry.value.name}'>
                 <div class="wsListElement">
-                  <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${entry.key}">${entry.value.title}
-                    <c:choose>
-                      <c:when test="${type=='template'}">
-                        <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
-                      </c:when>
-                      <c:otherwise>
-                        <img border="0" class="arrow" src="images/bag_ico.gif" alt="-&gt;"/>
-	              </c:otherwise>
-	            </c:choose>
+                  <c:choose>
+                    <c:when test="${type=='template'}">
+                      <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
+                    </c:when>
+                    <c:otherwise>
+                      <img border="0" class="arrow" src="images/bag_ico.png" alt="-&gt;"/>
+	                </c:otherwise>
+    	          </c:choose>
+                  <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${entry.key}">${entry.value.title} 
                   </html:link>
                   <tiles:insert name="setFavourite.tile" flush="false">
                     <tiles:put name="name" value="${entry.value.title}"/>
@@ -161,16 +172,6 @@
           </ul>
         </c:otherwise>
       </c:choose>
-      <c:if test="${! empty bagCount || ! empty templateCount}">
-      <c:choose>
-        <c:when test="${type == 'bag'}">
-          <p><u><html:link action="/bag">View all ${bagCount} bags...</html:link></u></p>
-        </c:when>
-        <c:otherwise>
-          <p><u><html:link action="/templates">View all ${templateCount} templates...</html:link></u></p><br>
-        </c:otherwise>
-      </c:choose>
-      </c:if>
     </div>
   </c:otherwise>
 </c:choose>
