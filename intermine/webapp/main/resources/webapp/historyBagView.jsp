@@ -70,7 +70,7 @@
                     </tiles:insert>
                     
                     <c:if test="${IS_SUPERUSER}">
-                      <c:set var="taggable" value="${savedBag.value.name}"/>
+                      <c:set var="taggable" value="${savedBag.value}"/>
                       <tiles:insert name="inlineTagEditor.tile">
                         <tiles:put name="taggable" beanName="taggable"/>
                         <tiles:put name="vertical" value="true"/>
