@@ -68,11 +68,11 @@ bool   BIOSEG_PREFIX(_left)(SEG * a, SEG * b);
 bool   BIOSEG_PREFIX(_over_left)(SEG * a, SEG * b);
 bool   BIOSEG_PREFIX(_right)(SEG * a, SEG * b);
 bool   BIOSEG_PREFIX(_over_right)(SEG * a, SEG * b);
-SEG   *BIOSEG_PREFIX(_union)(SEG * a, SEG * b);
 void   BIOSEG_PREFIX(_rt_size)(SEG * a, int32 *sz);
 int32  BIOSEG_PREFIX(_size)(SEG * a);
 
 static SEG *BIOSEG_PREFIX(_inter)(SEG * a, SEG * b);
+static SEG *BIOSEG_PREFIX(_union)(SEG * a, SEG * b);
 
 /*
 ** Various operators
@@ -739,7 +739,7 @@ bool
 }
 
 
-SEG *
+static SEG *
   BIOSEG_PREFIX(_union)(SEG * a, SEG * b)
 {
   SEG *n;

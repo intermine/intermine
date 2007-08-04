@@ -150,16 +150,6 @@ LANGUAGE C STRICT IMMUTABLE;
 
 COMMENT ON FUNCTION bioseg_cmp(bioseg, bioseg) IS 'btree comparison function';
 
-CREATE FUNCTION bioseg_union(bioseg, bioseg)
-RETURNS bioseg
-AS '$libdir/bioseg'
-LANGUAGE C STRICT IMMUTABLE;
-
-CREATE FUNCTION bioseg_inter(bioseg, bioseg)
-RETURNS bioseg
-AS '$libdir/bioseg'
-LANGUAGE C STRICT IMMUTABLE;
-
 CREATE FUNCTION bioseg_size(bioseg)
 RETURNS int4
 AS '$libdir/bioseg'
