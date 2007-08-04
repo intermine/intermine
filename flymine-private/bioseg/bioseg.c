@@ -16,6 +16,14 @@
 
 #include "biosegdata.h"
 
+#ifdef INTERBASE_COORDS
+#define BIOSEG bioseg0
+#define BIOSEG_PREFIX(x) bioseg0 ## x
+#else
+#define BIOSEG bioseg
+#define BIOSEG_PREFIX(x) bioseg ## x
+#endif
+
 PG_MODULE_MAGIC;
 
 extern int  bioseg_yyparse();
@@ -62,7 +70,7 @@ bool   bioseg_right(SEG * a, SEG * b);
 bool   bioseg_over_right(SEG * a, SEG * b);
 SEG   *bioseg_union(SEG * a, SEG * b);
 SEG   *bioseg_inter(SEG * a, SEG * b);
-void   rt_bioseg_size(SEG * a, int32 *sz);
+void   bioseg_rt_size(SEG * a, int32 *sz);
 int32  bioseg_size(SEG * a);
 
 /*
@@ -370,8 +378,8 @@ float *
 
   ud = bioseg_union((SEG *) DatumGetPointer(origentry->key),
                     (SEG *) DatumGetPointer(newentry->key));
-  rt_bioseg_size(ud, &tmp1);
-  rt_bioseg_size((SEG *) DatumGetPointer(origentry->key), &tmp2);
+  bioseg_rt_size(ud, &tmp1);
+  bioseg_rt_size((SEG *) DatumGetPointer(origentry->key), &tmp2);
   *result = tmp1 - tmp2;
 
 #ifdef GIST_DEBUG
@@ -440,9 +448,9 @@ GIST_SPLITVEC *
           /* compute the wasted space by unioning these guys */
           /* size_waste = size_union - size_inter; */
           union_d = bioseg_union(datum_alpha, datum_beta);
-          rt_bioseg_size(union_d, &size_union);
+          bioseg_rt_size(union_d, &size_union);
           inter_d = bioseg_inter(datum_alpha, datum_beta);
-          rt_bioseg_size(inter_d, &size_inter);
+          bioseg_rt_size(inter_d, &size_inter);
           size_waste = size_union - size_inter;
 
           /*
@@ -465,10 +473,10 @@ GIST_SPLITVEC *
 
   datum_alpha = (SEG *) DatumGetPointer(entryvec->vector[seed_1].key);
   datum_l = bioseg_union(datum_alpha, datum_alpha);
-  rt_bioseg_size(datum_l, &size_l);
+  bioseg_rt_size(datum_l, &size_l);
   datum_beta = (SEG *) DatumGetPointer(entryvec->vector[seed_2].key);
   datum_r = bioseg_union(datum_beta, datum_beta);
-  rt_bioseg_size(datum_r, &size_r);
+  bioseg_rt_size(datum_r, &size_r);
 
   /*
    * Now split up the regions between the two seeds.      An important property
@@ -508,8 +516,8 @@ GIST_SPLITVEC *
       datum_alpha = (SEG *) DatumGetPointer(entryvec->vector[i].key);
       union_dl = bioseg_union(datum_l, datum_alpha);
       union_dr = bioseg_union(datum_r, datum_alpha);
-      rt_bioseg_size(union_dl, &size_alpha);
-      rt_bioseg_size(union_dr, &size_beta);
+      bioseg_rt_size(union_dl, &size_alpha);
+      bioseg_rt_size(union_dr, &size_beta);
 
       /* pick which page to add it to */
       if (size_alpha - size_l < size_beta - size_r)
@@ -785,7 +793,7 @@ SEG *
 }
 
 void
-  rt_bioseg_size(SEG * a, int32 *size)
+  bioseg_rt_size(SEG * a, int32 *size)
 {
   if (a == (SEG *) NULL || a->upper <= a->lower)
     *size = 0;
