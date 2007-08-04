@@ -36,16 +36,16 @@ int32  bioseg_center(SEG * seg);
 /*
 ** GiST support methods
 */
-bool           gbioseg_consistent(GISTENTRY *entry, SEG * query, StrategyNumber strategy);
-GISTENTRY     *gbioseg_compress(GISTENTRY *entry);
-GISTENTRY     *gbioseg_decompress(GISTENTRY *entry);
-float         *gbioseg_penalty(GISTENTRY *origentry, GISTENTRY *newentry, float *result);
-GIST_SPLITVEC *gbioseg_picksplit(GistEntryVector *entryvec, GIST_SPLITVEC *v);
-bool           gbioseg_leaf_consistent(SEG * key, SEG * query, StrategyNumber strategy);
-bool           gbioseg_internal_consistent(SEG * key, SEG * query, StrategyNumber strategy);
-SEG           *gbioseg_union(GistEntryVector *entryvec, int *sizep);
-SEG           *gbioseg_binary_union(SEG * r1, SEG * r2, int *sizep);
-bool          *gbioseg_same(SEG * b1, SEG * b2, bool *result);
+bool           bioseg_gist_consistent(GISTENTRY *entry, SEG * query, StrategyNumber strategy);
+GISTENTRY     *bioseg_gist_compress(GISTENTRY *entry);
+GISTENTRY     *bioseg_gist_decompress(GISTENTRY *entry);
+float         *bioseg_gist_penalty(GISTENTRY *origentry, GISTENTRY *newentry, float *result);
+GIST_SPLITVEC *bioseg_gist_picksplit(GistEntryVector *entryvec, GIST_SPLITVEC *v);
+bool           bioseg_gist_leaf_consistent(SEG * key, SEG * query, StrategyNumber strategy);
+bool           bioseg_gist_internal_consistent(SEG * key, SEG * query, StrategyNumber strategy);
+SEG           *bioseg_gist_union(GistEntryVector *entryvec, int *sizep);
+SEG           *bioseg_gist_binary_union(SEG * r1, SEG * r2, int *sizep);
+bool          *bioseg_gist_same(SEG * b1, SEG * b2, bool *result);
 
 
 /*
@@ -76,8 +76,8 @@ bool  bioseg_ge(SEG * a, SEG * b);
 bool  bioseg_different(SEG * a, SEG * b);
 Datum bioseg_joinsel(PG_FUNCTION_ARGS);
 Datum bioseg_sel(PG_FUNCTION_ARGS);
-Datum bioseg_contsel(PG_FUNCTION_ARGS)
-Datum bioseg_contjoinsel(PG_FUNCTION_ARGS)
+Datum bioseg_contsel(PG_FUNCTION_ARGS);
+Datum bioseg_contjoinsel(PG_FUNCTION_ARGS);
 
 
 static int get_dots(char **str);
@@ -296,18 +296,18 @@ int32
 ** corresponding to strategy in the pg_amop table.
 */
 bool
-  gbioseg_consistent(GISTENTRY *entry,
+  bioseg_gist_consistent(GISTENTRY *entry,
                      SEG * query,
                      StrategyNumber strategy)
 {
   /*
-   * if entry is not leaf, use gbioseg_internal_consistent, else use
-   * gbioseg_leaf_consistent
+   * if entry is not leaf, use bioseg_gist_internal_consistent, else use
+   * bioseg_gist_leaf_consistent
    */
   if (GIST_LEAF(entry))
-    return (gbioseg_leaf_consistent((SEG *) DatumGetPointer(entry->key), query, strategy));
+    return (bioseg_gist_leaf_consistent((SEG *) DatumGetPointer(entry->key), query, strategy));
   else
-    return (gbioseg_internal_consistent((SEG *) DatumGetPointer(entry->key), query, strategy));
+    return (bioseg_gist_internal_consistent((SEG *) DatumGetPointer(entry->key), query, strategy));
 }
 
 /*
@@ -315,7 +315,7 @@ bool
 ** returns the minimal bounding bioseg that encloses all the entries in entryvec
 */
 SEG *
-  gbioseg_union(GistEntryVector *entryvec, int *sizep)
+  bioseg_gist_union(GistEntryVector *entryvec, int *sizep)
 {
   int  numranges;
   int  i;
@@ -332,7 +332,7 @@ SEG *
 
   for (i = 1; i < numranges; i++)
     {
-      out = gbioseg_binary_union(tmp, (SEG *)
+      out = bioseg_gist_binary_union(tmp, (SEG *)
                                  DatumGetPointer(entryvec->vector[i].key),
                                  sizep);
       tmp = out;
@@ -346,13 +346,13 @@ SEG *
 ** do not do anything.
 */
 GISTENTRY *
-  gbioseg_compress(GISTENTRY *entry)
+  bioseg_gist_compress(GISTENTRY *entry)
 {
   return (entry);
 }
 
 GISTENTRY *
-  gbioseg_decompress(GISTENTRY *entry)
+  bioseg_gist_decompress(GISTENTRY *entry)
 {
   return (entry);
 }
@@ -362,7 +362,7 @@ GISTENTRY *
 ** As in the R-tree paper, we use change in area as our penalty metric
 */
 float *
-  gbioseg_penalty(GISTENTRY *origentry, GISTENTRY *newentry, float *result)
+  bioseg_gist_penalty(GISTENTRY *origentry, GISTENTRY *newentry, float *result)
 {
   SEG   *ud;
   int32 tmp1;
@@ -389,7 +389,7 @@ float *
 ** We use Guttman's poly time split algorithm
 */
 GIST_SPLITVEC *
-  gbioseg_picksplit(GistEntryVector *entryvec,
+  bioseg_gist_picksplit(GistEntryVector *entryvec,
                     GIST_SPLITVEC *v)
 {
   OffsetNumber  i;
@@ -539,7 +539,7 @@ GIST_SPLITVEC *
 ** Equality methods
 */
 bool *
-  gbioseg_same(SEG * b1, SEG * b2, bool *result)
+  bioseg_gist_same(SEG * b1, SEG * b2, bool *result)
 {
   if (bioseg_same(b1, b2))
     *result = TRUE;
@@ -557,7 +557,7 @@ bool *
 ** SUPPORT ROUTINES
 */
 bool
-  gbioseg_leaf_consistent(SEG * key,
+  bioseg_gist_leaf_consistent(SEG * key,
                           SEG * query,
                           StrategyNumber strategy)
 {
@@ -602,7 +602,7 @@ bool
 }
 
 bool
-  gbioseg_internal_consistent(SEG * key,
+  bioseg_gist_internal_consistent(SEG * key,
                               SEG * query,
                               StrategyNumber strategy)
 {
@@ -645,7 +645,7 @@ bool
 }
 
 SEG *
-  gbioseg_binary_union(SEG * r1, SEG * r2, int *sizep)
+  bioseg_gist_binary_union(SEG * r1, SEG * r2, int *sizep)
 {
   SEG *retval;
 
@@ -878,13 +878,13 @@ Datum
 }
 
 Datum
-  contsel(PG_FUNCTION_ARGS)
+  bioseg_contsel(PG_FUNCTION_ARGS)
 {
   PG_RETURN_FLOAT8(1.0e-4);
 }
 
 Datum
-  contjoinsel(PG_FUNCTION_ARGS)
+  bioseg_contjoinsel(PG_FUNCTION_ARGS)
 {
   PG_RETURN_FLOAT8(5e-6);
 }
