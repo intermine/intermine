@@ -699,11 +699,10 @@ bool
 bool
   BIOSEG_PREFIX(_overlap)(SEG * a, SEG * b)
 {
-  return (
-          ((a->upper >= b->upper) && (a->lower <= b->upper))
-          ||
-          ((b->upper >= a->upper) && (b->lower <= a->upper))
-          );
+  return
+    ((a->upper >= b->upper) && (a->lower <= b->upper))
+      ||
+    ((b->upper >= a->upper) && (b->lower <= a->upper));
 }
 
 /*      bioseg_overleft -- is the right edge of (a) located at or left of the right edge of (b)?
