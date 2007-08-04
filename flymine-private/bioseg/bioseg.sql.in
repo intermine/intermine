@@ -1,31 +1,31 @@
 -- Create the user-defined type for 1-D integer intervals (bioseg)
--- 
+--
 
 -- Adjust this setting to control where the objects get created.
 SET search_path = public;
 
-CREATE FUNCTION bioseg_in(cstring)
-RETURNS bioseg
+CREATE FUNCTION $BIOSEG_TYPE_in(cstring)
+RETURNS $BIOSEG_TYPE
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION bioseg_out(bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_out($BIOSEG_TYPE)
 RETURNS cstring
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION bioseg_create(int4, int4)
-RETURNS bioseg
+CREATE FUNCTION $BIOSEG_TYPE_create(int4, int4)
+RETURNS $BIOSEG_TYPE
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE TYPE bioseg (
+CREATE TYPE $BIOSEG_TYPE (
         INTERNALLENGTH = 8,
-        INPUT = bioseg_in,
-        OUTPUT = bioseg_out
+        INPUT = $BIOSEG_TYPE_in,
+        OUTPUT = $BIOSEG_TYPE_out
 );
 
-COMMENT ON TYPE bioseg IS
+COMMENT ON TYPE $BIOSEG_TYPE IS
 'integer point interval ''INT..INT'' or ''INT''';
 
 --
@@ -34,165 +34,165 @@ COMMENT ON TYPE bioseg IS
 
 -- Left/Right methods
 
-CREATE FUNCTION bioseg_over_left(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_over_left($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_over_left(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_over_left($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'overlaps or is left of';
 
-CREATE FUNCTION bioseg_over_right(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_over_right($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_over_right(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_over_right($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'overlaps or is right of';
 
-CREATE FUNCTION bioseg_left(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_left($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_left(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_left($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'is left of';
 
-CREATE FUNCTION bioseg_right(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_right($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_right(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_right($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'is right of';
 
 
 -- Scalar comparison methods
 
-CREATE FUNCTION bioseg_lt(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_lt($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_lt(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_lt($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'less than';
 
-CREATE FUNCTION bioseg_le(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_le($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_le(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_le($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'less than or equal';
 
-CREATE FUNCTION bioseg_gt(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_gt($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_gt(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_gt($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'greater than';
 
-CREATE FUNCTION bioseg_ge(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_ge($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_ge(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_ge($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'greater than or equal';
 
-CREATE FUNCTION bioseg_contains(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_contains($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_contains(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_contains($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'contains';
 
-CREATE FUNCTION bioseg_contained(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_contained($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_contained(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_contained($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'contained in';
 
-CREATE FUNCTION bioseg_overlap(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_overlap($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_overlap(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_overlap($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'overlaps';
 
-CREATE FUNCTION bioseg_same(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_same($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_same(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_same($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'same as';
 
-CREATE FUNCTION bioseg_different(bioseg, bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_different($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_different(bioseg, bioseg) IS
+COMMENT ON FUNCTION $BIOSEG_TYPE_different($BIOSEG_TYPE, $BIOSEG_TYPE) IS
 'different';
 
 -- support routines for indexing
 
-CREATE OR REPLACE FUNCTION bioseg_cmp(bioseg, bioseg)
+CREATE OR REPLACE FUNCTION $BIOSEG_TYPE_cmp($BIOSEG_TYPE, $BIOSEG_TYPE)
 RETURNS int4
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-COMMENT ON FUNCTION bioseg_cmp(bioseg, bioseg) IS 'btree comparison function';
+COMMENT ON FUNCTION $BIOSEG_TYPE_cmp($BIOSEG_TYPE, $BIOSEG_TYPE) IS 'btree comparison function';
 
-CREATE FUNCTION bioseg_union(bioseg, bioseg)
-RETURNS bioseg
+CREATE FUNCTION $BIOSEG_TYPE_union($BIOSEG_TYPE, $BIOSEG_TYPE)
+RETURNS $BIOSEG_TYPE
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION bioseg_inter(bioseg, bioseg)
-RETURNS bioseg
+CREATE FUNCTION $BIOSEG_TYPE_inter($BIOSEG_TYPE, $BIOSEG_TYPE)
+RETURNS $BIOSEG_TYPE
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION bioseg_size(bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_size($BIOSEG_TYPE)
 RETURNS int4
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
 -- miscellaneous
 
-CREATE FUNCTION bioseg_upper(bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_upper($BIOSEG_TYPE)
 RETURNS int4
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION bioseg_lower(bioseg)
+CREATE FUNCTION $BIOSEG_TYPE_lower($BIOSEG_TYPE)
 RETURNS int4
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION bioseg_sel(internal, oid, internal, integer)
+CREATE FUNCTION $BIOSEG_TYPE_sel(internal, oid, internal, integer)
 RETURNS float
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION bioseg_joinsel(internal, oid, internal, smallint)
+CREATE FUNCTION $BIOSEG_TYPE_joinsel(internal, oid, internal, smallint)
 RETURNS FLOAT
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION bioseg_contsel(internal, oid, internal, integer)
+CREATE FUNCTION $BIOSEG_TYPE_contsel(internal, oid, internal, integer)
 RETURNS float
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
-CREATE FUNCTION bioseg_contjoinsel(internal, oid, internal, smallint)
+CREATE FUNCTION $BIOSEG_TYPE_contjoinsel(internal, oid, internal, smallint)
 RETURNS FLOAT
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
@@ -203,9 +203,9 @@ LANGUAGE C STRICT IMMUTABLE;
 --
 
 CREATE OPERATOR < (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_lt,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_lt,
         COMMUTATOR = '>',
         NEGATOR = '>=',
         RESTRICT = scalarltsel,
@@ -213,9 +213,9 @@ CREATE OPERATOR < (
 );
 
 CREATE OPERATOR <= (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_le,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_le,
         COMMUTATOR = '>=',
         NEGATOR = '>',
         RESTRICT = scalarltsel,
@@ -223,9 +223,9 @@ CREATE OPERATOR <= (
 );
 
 CREATE OPERATOR > (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_gt,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_gt,
         COMMUTATOR = '<',
         NEGATOR = '<=',
         RESTRICT = scalargtsel,
@@ -233,9 +233,9 @@ CREATE OPERATOR > (
 );
 
 CREATE OPERATOR >= (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_ge,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_ge,
         COMMUTATOR = '<=',
         NEGATOR = '<',
         RESTRICT = scalargtsel,
@@ -243,52 +243,52 @@ CREATE OPERATOR >= (
 );
 
 CREATE OPERATOR << (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_left,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_left,
         COMMUTATOR = '>>',
         RESTRICT = positionsel,
         JOIN = positionjoinsel
 );
 
 CREATE OPERATOR &< (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_over_left,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_over_left,
         RESTRICT = positionsel,
         JOIN = positionjoinsel
 );
 
 CREATE OPERATOR && (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_overlap,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_overlap,
         COMMUTATOR = '&&',
-        RESTRICT = bioseg_sel,
-        JOIN = bioseg_joinsel
+        RESTRICT = $BIOSEG_TYPE_sel,
+        JOIN = $BIOSEG_TYPE_joinsel
 );
 
 CREATE OPERATOR &> (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_over_right,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_over_right,
         RESTRICT = positionsel,
         JOIN = positionjoinsel
 );
 
 CREATE OPERATOR >> (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_right,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_right,
         COMMUTATOR = '<<',
         RESTRICT = positionsel,
         JOIN = positionjoinsel
 );
 
 CREATE OPERATOR = (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_same,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_same,
         COMMUTATOR = '=',
         NEGATOR = '<>',
         RESTRICT = eqsel,
@@ -297,9 +297,9 @@ CREATE OPERATOR = (
 );
 
 CREATE OPERATOR <> (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_different,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_different,
         COMMUTATOR = '<>',
         NEGATOR = '=',
         RESTRICT = neqsel,
@@ -307,75 +307,75 @@ CREATE OPERATOR <> (
 );
 
 CREATE OPERATOR @> (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_contains,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_contains,
         COMMUTATOR = '<@',
-        RESTRICT = bioseg_contsel,
-        JOIN = bioseg_contjoinsel
+        RESTRICT = $BIOSEG_TYPE_contsel,
+        JOIN = $BIOSEG_TYPE_contjoinsel
 );
 
 CREATE OPERATOR <@ (
-        LEFTARG = bioseg,
-        RIGHTARG = bioseg,
-        PROCEDURE = bioseg_contained,
+        LEFTARG = $BIOSEG_TYPE,
+        RIGHTARG = $BIOSEG_TYPE,
+        PROCEDURE = $BIOSEG_TYPE_contained,
         COMMUTATOR = '@>',
-        RESTRICT = bioseg_contsel,
-        JOIN = bioseg_contjoinsel
+        RESTRICT = $BIOSEG_TYPE_contsel,
+        JOIN = $BIOSEG_TYPE_contjoinsel
 );
 
 
 
 -- define the GiST support methods
-CREATE FUNCTION bioseg_gist_consistent(internal,bioseg,int4)
+CREATE FUNCTION $BIOSEG_TYPE_gist_consistent(internal,$BIOSEG_TYPE,int4)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION bioseg_gist_compress(internal)
-RETURNS internal 
+CREATE FUNCTION $BIOSEG_TYPE_gist_compress(internal)
+RETURNS internal
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION bioseg_gist_decompress(internal)
-RETURNS internal 
+CREATE FUNCTION $BIOSEG_TYPE_gist_decompress(internal)
+RETURNS internal
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION bioseg_gist_penalty(internal,internal,internal)
+CREATE FUNCTION $BIOSEG_TYPE_gist_penalty(internal,internal,internal)
 RETURNS internal
 AS '$libdir/bioseg'
 LANGUAGE C STRICT;
 
-CREATE FUNCTION bioseg_gist_picksplit(internal, internal)
+CREATE FUNCTION $BIOSEG_TYPE_gist_picksplit(internal, internal)
 RETURNS internal
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION bioseg_gist_union(internal, internal)
-RETURNS bioseg 
+CREATE FUNCTION $BIOSEG_TYPE_gist_union(internal, internal)
+RETURNS $BIOSEG_TYPE
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION bioseg_gist_same(bioseg, bioseg, internal)
-RETURNS internal 
-AS '$libdir/bioseg'
+CREATE FUNCTION $BIOSEG_TYPE_gist_same($BIOSEG_TYPE, $BIOSEG_TYPE, internal)
+RETURNS internal
+AS '$libdir/$BIOSEG_TYPE'
 LANGUAGE C;
 
 
 -- Create the operator classes for indexing
 
-CREATE OPERATOR CLASS bioseg_ops
-    DEFAULT FOR TYPE bioseg USING btree AS
+CREATE OPERATOR CLASS $BIOSEG_TYPE_ops
+    DEFAULT FOR TYPE $BIOSEG_TYPE USING btree AS
         OPERATOR        1       < ,
         OPERATOR        2       <= ,
         OPERATOR        3       = ,
         OPERATOR        4       >= ,
         OPERATOR        5       > ,
-        FUNCTION        1       bioseg_cmp(bioseg, bioseg);
+        FUNCTION        1       $BIOSEG_TYPE_cmp($BIOSEG_TYPE, $BIOSEG_TYPE);
 
-CREATE OPERATOR CLASS gist_bioseg_ops
-DEFAULT FOR TYPE bioseg USING gist 
+CREATE OPERATOR CLASS gist_$BIOSEG_TYPE_ops
+DEFAULT FOR TYPE $BIOSEG_TYPE USING gist
 AS
         OPERATOR        1       << ,
         OPERATOR        2       &< ,
@@ -385,10 +385,10 @@ AS
         OPERATOR        6       = ,
         OPERATOR        7       @> ,
         OPERATOR        8       <@ ,
-        FUNCTION        1       bioseg_gist_consistent (internal, bioseg, int4),
-        FUNCTION        2       bioseg_gist_union (internal, internal),
-        FUNCTION        3       bioseg_gist_compress (internal),
-        FUNCTION        4       bioseg_gist_decompress (internal),
-        FUNCTION        5       bioseg_gist_penalty (internal, internal, internal),
-        FUNCTION        6       bioseg_gist_picksplit (internal, internal),
-        FUNCTION        7       bioseg_gist_same (bioseg, bioseg, internal);
+        FUNCTION        1       $BIOSEG_TYPE_gist_consistent (internal, $BIOSEG_TYPE, int4),
+        FUNCTION        2       $BIOSEG_TYPE_gist_union (internal, internal),
+        FUNCTION        3       $BIOSEG_TYPE_gist_compress (internal),
+        FUNCTION        4       $BIOSEG_TYPE_gist_decompress (internal),
+        FUNCTION        5       $BIOSEG_TYPE_gist_penalty (internal, internal, internal),
+        FUNCTION        6       $BIOSEG_TYPE_gist_picksplit (internal, internal),
+        FUNCTION        7       $BIOSEG_TYPE_gist_same ($BIOSEG_TYPE, $BIOSEG_TYPE, internal);

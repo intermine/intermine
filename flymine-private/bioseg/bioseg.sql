@@ -1,5 +1,5 @@
 -- Create the user-defined type for 1-D integer intervals (bioseg)
--- 
+--
 
 -- Adjust this setting to control where the objects get created.
 SET search_path = public;
@@ -333,12 +333,12 @@ AS '$libdir/bioseg'
 LANGUAGE C;
 
 CREATE FUNCTION bioseg_gist_compress(internal)
-RETURNS internal 
+RETURNS internal
 AS '$libdir/bioseg'
 LANGUAGE C;
 
 CREATE FUNCTION bioseg_gist_decompress(internal)
-RETURNS internal 
+RETURNS internal
 AS '$libdir/bioseg'
 LANGUAGE C;
 
@@ -353,12 +353,12 @@ AS '$libdir/bioseg'
 LANGUAGE C;
 
 CREATE FUNCTION bioseg_gist_union(internal, internal)
-RETURNS bioseg 
+RETURNS bioseg
 AS '$libdir/bioseg'
 LANGUAGE C;
 
 CREATE FUNCTION bioseg_gist_same(bioseg, bioseg, internal)
-RETURNS internal 
+RETURNS internal
 AS '$libdir/bioseg'
 LANGUAGE C;
 
@@ -375,7 +375,7 @@ CREATE OPERATOR CLASS bioseg_ops
         FUNCTION        1       bioseg_cmp(bioseg, bioseg);
 
 CREATE OPERATOR CLASS gist_bioseg_ops
-DEFAULT FOR TYPE bioseg USING gist 
+DEFAULT FOR TYPE bioseg USING gist
 AS
         OPERATOR        1       << ,
         OPERATOR        2       &< ,
