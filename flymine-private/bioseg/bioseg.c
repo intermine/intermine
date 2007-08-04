@@ -675,7 +675,12 @@ SEG *
 bool
   BIOSEG_PREFIX(_contains)(SEG * a, SEG * b)
 {
+#ifdef INTERBASE_COORDS
+  return ((a->lower <= b->lower) && (a->upper >= b->upper) &&
+          a->lower != b->upper && a->upper != b->lower);
+#else
   return ((a->lower <= b->lower) && (a->upper >= b->upper));
+#endif
 }
 
 bool
@@ -699,10 +704,25 @@ bool
 bool
   BIOSEG_PREFIX(_overlap)(SEG * a, SEG * b)
 {
+#ifdef INTERBASE_COORDS
+  if (0 && (BIOSEG_PREFIX(_size)(a) == 0 || BIOSEG_PREFIX(_size)(b) == 0)) {
+    // zero width ranges _never_ overlap
+    return 0;
+  } else {
+    return (
+            ((a->upper >= b->upper) && (a->lower < b->upper) &&
+             b->lower != a->upper)
+            ||
+            ((b->upper >= a->upper) && (b->lower < a->upper) &&
+             a->lower != b->upper)
+            );
+  }
+#else
   return
     ((a->upper >= b->upper) && (a->lower <= b->upper))
       ||
     ((b->upper >= a->upper) && (b->lower <= a->upper));
+#endif
 }
 
 /*      bioseg_overleft -- is the right edge of (a) located at or left of the right edge of (b)?
@@ -808,7 +828,7 @@ void
 #ifdef INTERBASE_COORDS
     *size = (int32) (a->upper - a->lower);
 #else
-  *size = (int32) (a->upper - a->lower + 1);
+    *size = (int32) (a->upper - a->lower + 1);
 #endif
 }
 
@@ -875,7 +895,11 @@ bool
 bool
   BIOSEG_PREFIX(_contains_int)(SEG * a, int *b)
 {
+#ifdef INTERBASE_COORDS
+  return ((a->lower < *b) && (a->upper > *b));
+#else
   return ((a->lower <= *b) && (a->upper >= *b));
+#endif
 }
 
 /*
