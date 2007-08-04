@@ -266,6 +266,14 @@ SEG *
 {
   SEG *result = palloc(sizeof(SEG));
 
+  if (lower > upper) {
+    ereport(ERROR,
+            (errcode(ERRCODE_SYNTAX_ERROR),
+             errmsg("bad bioseg representation"),
+             errdetail("lower limit of range greater than upper")));
+    return NULL;
+  }
+
   result->lower = lower;
   result->upper = upper;
 
