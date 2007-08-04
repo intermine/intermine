@@ -705,18 +705,13 @@ bool
   BIOSEG_PREFIX(_overlap)(SEG * a, SEG * b)
 {
 #ifdef INTERBASE_COORDS
-  if (0 && (BIOSEG_PREFIX(_size)(a) == 0 || BIOSEG_PREFIX(_size)(b) == 0)) {
-    // zero width ranges _never_ overlap
-    return 0;
-  } else {
-    return (
-            ((a->upper >= b->upper) && (a->lower < b->upper) &&
-             b->lower != a->upper)
-            ||
-            ((b->upper >= a->upper) && (b->lower < a->upper) &&
-             a->lower != b->upper)
-            );
-  }
+  return (
+          ((a->upper >= b->upper) && (a->lower < b->upper) &&
+           b->lower != a->upper)
+          ||
+          ((b->upper >= a->upper) && (b->lower < a->upper) &&
+           a->lower != b->upper)
+          );
 #else
   return
     ((a->upper >= b->upper) && (a->lower <= b->upper))
