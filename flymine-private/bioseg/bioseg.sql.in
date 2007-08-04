@@ -307,37 +307,37 @@ CREATE OPERATOR <@ (
 
 
 -- define the GiST support methods
-CREATE FUNCTION gbioseg_consistent(internal,bioseg,int4)
+CREATE FUNCTION bioseg_gist_consistent(internal,bioseg,int4)
 RETURNS bool
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION gbioseg_compress(internal)
+CREATE FUNCTION bioseg_gist_compress(internal)
 RETURNS internal 
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION gbioseg_decompress(internal)
+CREATE FUNCTION bioseg_gist_decompress(internal)
 RETURNS internal 
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION gbioseg_penalty(internal,internal,internal)
+CREATE FUNCTION bioseg_gist_penalty(internal,internal,internal)
 RETURNS internal
 AS '$libdir/bioseg'
 LANGUAGE C STRICT;
 
-CREATE FUNCTION gbioseg_picksplit(internal, internal)
+CREATE FUNCTION bioseg_gist_picksplit(internal, internal)
 RETURNS internal
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION gbioseg_union(internal, internal)
+CREATE FUNCTION bioseg_gist_union(internal, internal)
 RETURNS bioseg 
 AS '$libdir/bioseg'
 LANGUAGE C;
 
-CREATE FUNCTION gbioseg_same(bioseg, bioseg, internal)
+CREATE FUNCTION bioseg_gist_same(bioseg, bioseg, internal)
 RETURNS internal 
 AS '$libdir/bioseg'
 LANGUAGE C;
@@ -365,10 +365,10 @@ AS
         OPERATOR        6       = ,
         OPERATOR        7       @> ,
         OPERATOR        8       <@ ,
-        FUNCTION        1       gbioseg_consistent (internal, bioseg, int4),
-        FUNCTION        2       gbioseg_union (internal, internal),
-        FUNCTION        3       gbioseg_compress (internal),
-        FUNCTION        4       gbioseg_decompress (internal),
-        FUNCTION        5       gbioseg_penalty (internal, internal, internal),
-        FUNCTION        6       gbioseg_picksplit (internal, internal),
-        FUNCTION        7       gbioseg_same (bioseg, bioseg, internal);
+        FUNCTION        1       bioseg_gist_consistent (internal, bioseg, int4),
+        FUNCTION        2       bioseg_gist_union (internal, internal),
+        FUNCTION        3       bioseg_gist_compress (internal),
+        FUNCTION        4       bioseg_gist_decompress (internal),
+        FUNCTION        5       bioseg_gist_penalty (internal, internal, internal),
+        FUNCTION        6       bioseg_gist_picksplit (internal, internal),
+        FUNCTION        7       bioseg_gist_same (bioseg, bioseg, internal);
