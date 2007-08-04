@@ -1,7 +1,9 @@
 ifdef INTERBASE_COORDS
 BIOSEG := bioseg0
+PG_CPPFLAGS = -I. -DINTERBASE_COORDS
 else
 BIOSEG := bioseg
+PG_CPPFLAGS = -I.
 endif
 
 MODULE_big = $(BIOSEG)
@@ -10,7 +12,7 @@ DATA_built = bioseg.sql
 DATA = uninstall_bioseg.sql
 REGRESS = $(BIOSEG)
 
-PG_CPPFLAGS = -I.
+
 
 ifdef USE_PGXS
 PGXS := $(shell pg_config --pgxs)
