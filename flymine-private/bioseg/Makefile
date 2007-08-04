@@ -1,8 +1,14 @@
-MODULE_big = bioseg
+ifdef INTERBASE_COORDS
+BIOSEG := bioseg0
+else
+BIOSEG := bioseg
+endif
+
+MODULE_big = $(BIOSEG)
 OBJS = bioseg.o
 DATA_built = bioseg.sql
 DATA = uninstall_bioseg.sql
-REGRESS = bioseg
+REGRESS = $(BIOSEG)
 
 PG_CPPFLAGS = -I.
 
@@ -15,3 +21,6 @@ top_builddir = ../..
 include $(top_builddir)/src/Makefile.global
 include $(top_srcdir)/contrib/contrib-global.mk
 endif
+
+%.sql: %.sql.in
+	sed 's,MODULE_PATHNAME,$$libdir/$*,g' $< | sed 's,$$BIOSEG_TYPE,$(BIOSEG),g' >$@

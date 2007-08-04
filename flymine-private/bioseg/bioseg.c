@@ -26,66 +26,66 @@
 
 PG_MODULE_MAGIC;
 
-extern int  bioseg_yyparse();
-extern void bioseg_yyerror(const char *message);
-extern void bioseg_scanner_init(const char *str);
-extern void bioseg_scanner_finish(void);
+extern int  BIOSEG_PREFIX(_yyparse)();
+extern void BIOSEG_PREFIX(_yyerror)(const char *message);
+extern void BIOSEG_PREFIX(_scanner_init)(const char *str);
+extern void BIOSEG_PREFIX(_scanner_finish)(void);
 
 /*
 ** Input/Output routines
 */
-SEG   *bioseg_in(char *str);
-char  *bioseg_out(SEG * seg);
-SEG   *bioseg_create(int32 lower, int32 upper);
-int32  bioseg_lower(SEG * seg);
-int32  bioseg_upper(SEG * seg);
-int32  bioseg_center(SEG * seg);
+SEG   *BIOSEG_PREFIX(_in)(char *str);
+char  *BIOSEG_PREFIX(_out)(SEG * seg);
+SEG   *BIOSEG_PREFIX(_create)(int32 lower, int32 upper);
+int32  BIOSEG_PREFIX(_lower)(SEG * seg);
+int32  BIOSEG_PREFIX(_upper)(SEG * seg);
+int32  BIOSEG_PREFIX(_center)(SEG * seg);
 
 /*
 ** GiST support methods
 */
-bool           bioseg_gist_consistent(GISTENTRY *entry, SEG * query, StrategyNumber strategy);
-GISTENTRY     *bioseg_gist_compress(GISTENTRY *entry);
-GISTENTRY     *bioseg_gist_decompress(GISTENTRY *entry);
-float         *bioseg_gist_penalty(GISTENTRY *origentry, GISTENTRY *newentry, float *result);
-GIST_SPLITVEC *bioseg_gist_picksplit(GistEntryVector *entryvec, GIST_SPLITVEC *v);
-bool           bioseg_gist_leaf_consistent(SEG * key, SEG * query, StrategyNumber strategy);
-bool           bioseg_gist_internal_consistent(SEG * key, SEG * query, StrategyNumber strategy);
-SEG           *bioseg_gist_union(GistEntryVector *entryvec, int *sizep);
-SEG           *bioseg_gist_binary_union(SEG * r1, SEG * r2, int *sizep);
-bool          *bioseg_gist_same(SEG * b1, SEG * b2, bool *result);
+bool           BIOSEG_PREFIX(_gist_consistent)(GISTENTRY *entry, SEG * query, StrategyNumber strategy);
+GISTENTRY     *BIOSEG_PREFIX(_gist_compress)(GISTENTRY *entry);
+GISTENTRY     *BIOSEG_PREFIX(_gist_decompress)(GISTENTRY *entry);
+float         *BIOSEG_PREFIX(_gist_penalty)(GISTENTRY *origentry, GISTENTRY *newentry, float *result);
+GIST_SPLITVEC *BIOSEG_PREFIX(_gist_picksplit)(GistEntryVector *entryvec, GIST_SPLITVEC *v);
+bool           BIOSEG_PREFIX(_gist_leaf_consistent)(SEG * key, SEG * query, StrategyNumber strategy);
+bool           BIOSEG_PREFIX(_gist_internal_consistent)(SEG * key, SEG * query, StrategyNumber strategy);
+SEG           *BIOSEG_PREFIX(_gist_union)(GistEntryVector *entryvec, int *sizep);
+SEG           *BIOSEG_PREFIX(_gist_binary_union)(SEG * r1, SEG * r2, int *sizep);
+bool          *BIOSEG_PREFIX(_gist_same)(SEG * b1, SEG * b2, bool *result);
 
 
 /*
 ** R-tree support functions
 */
-bool   bioseg_same(SEG * a, SEG * b);
-bool   bioseg_contains_int(SEG * a, int *b);
-bool   bioseg_contains(SEG * a, SEG * b);
-bool   bioseg_contained(SEG * a, SEG * b);
-bool   bioseg_overlap(SEG * a, SEG * b);
-bool   bioseg_left(SEG * a, SEG * b);
-bool   bioseg_over_left(SEG * a, SEG * b);
-bool   bioseg_right(SEG * a, SEG * b);
-bool   bioseg_over_right(SEG * a, SEG * b);
-SEG   *bioseg_union(SEG * a, SEG * b);
-SEG   *bioseg_inter(SEG * a, SEG * b);
-void   bioseg_rt_size(SEG * a, int32 *sz);
-int32  bioseg_size(SEG * a);
+bool   BIOSEG_PREFIX(_same)(SEG * a, SEG * b);
+bool   BIOSEG_PREFIX(_contains_int)(SEG * a, int *b);
+bool   BIOSEG_PREFIX(_contains)(SEG * a, SEG * b);
+bool   BIOSEG_PREFIX(_contained)(SEG * a, SEG * b);
+bool   BIOSEG_PREFIX(_overlap)(SEG * a, SEG * b);
+bool   BIOSEG_PREFIX(_left)(SEG * a, SEG * b);
+bool   BIOSEG_PREFIX(_over_left)(SEG * a, SEG * b);
+bool   BIOSEG_PREFIX(_right)(SEG * a, SEG * b);
+bool   BIOSEG_PREFIX(_over_right)(SEG * a, SEG * b);
+SEG   *BIOSEG_PREFIX(_union)(SEG * a, SEG * b);
+SEG   *BIOSEG_PREFIX(_inter)(SEG * a, SEG * b);
+void   BIOSEG_PREFIX(_rt_size)(SEG * a, int32 *sz);
+int32  BIOSEG_PREFIX(_size)(SEG * a);
 
 /*
 ** Various operators
 */
-int32 bioseg_cmp(SEG * a, SEG * b);
-bool  bioseg_lt(SEG * a, SEG * b);
-bool  bioseg_le(SEG * a, SEG * b);
-bool  bioseg_gt(SEG * a, SEG * b);
-bool  bioseg_ge(SEG * a, SEG * b);
-bool  bioseg_different(SEG * a, SEG * b);
-Datum bioseg_joinsel(PG_FUNCTION_ARGS);
-Datum bioseg_sel(PG_FUNCTION_ARGS);
-Datum bioseg_contsel(PG_FUNCTION_ARGS);
-Datum bioseg_contjoinsel(PG_FUNCTION_ARGS);
+int32 BIOSEG_PREFIX(_cmp)(SEG * a, SEG * b);
+bool  BIOSEG_PREFIX(_lt)(SEG * a, SEG * b);
+bool  BIOSEG_PREFIX(_le)(SEG * a, SEG * b);
+bool  BIOSEG_PREFIX(_gt)(SEG * a, SEG * b);
+bool  BIOSEG_PREFIX(_ge)(SEG * a, SEG * b);
+bool  BIOSEG_PREFIX(_different)(SEG * a, SEG * b);
+Datum BIOSEG_PREFIX(_joinsel)(PG_FUNCTION_ARGS);
+Datum BIOSEG_PREFIX(_sel)(PG_FUNCTION_ARGS);
+Datum BIOSEG_PREFIX(_contsel)(PG_FUNCTION_ARGS);
+Datum BIOSEG_PREFIX(_contjoinsel)(PG_FUNCTION_ARGS);
 
 
 static int get_dots(char **str);
@@ -99,7 +99,7 @@ static int get_int(char **str, int32 *result);
 int MAX_DIGITS = 10;
 
 SEG *
-  bioseg_in(char *str)
+  BIOSEG_PREFIX(_in)(char *str)
 {
   int32 lower;
   int32 upper;
@@ -236,7 +236,7 @@ int
 }
 
 char *
-  bioseg_out(SEG * bioseg)
+  BIOSEG_PREFIX(_out)(SEG * bioseg)
 {
   char *result;
   char *p;
@@ -262,7 +262,7 @@ char *
 }
 
 SEG *
-  bioseg_create(int32 lower, int32 upper)
+  BIOSEG_PREFIX(_create)(int32 lower, int32 upper)
 {
   SEG *result = palloc(sizeof(SEG));
 
@@ -275,19 +275,19 @@ SEG *
 
 
 int32
-  bioseg_center(SEG * bioseg)
+  BIOSEG_PREFIX(_center)(SEG * bioseg)
 {
   return ((int32) bioseg->lower + (int32) bioseg->upper) / 2;
 }
 
 int32
-  bioseg_lower(SEG * bioseg)
+  BIOSEG_PREFIX(_lower)(SEG * bioseg)
 {
   return bioseg->lower;
 }
 
 int32
-  bioseg_upper(SEG * bioseg)
+  BIOSEG_PREFIX(_upper)(SEG * bioseg)
 {
   return bioseg->upper;
 }
@@ -304,7 +304,7 @@ int32
 ** corresponding to strategy in the pg_amop table.
 */
 bool
-  bioseg_gist_consistent(GISTENTRY *entry,
+  BIOSEG_PREFIX(_gist_consistent)(GISTENTRY *entry,
                      SEG * query,
                      StrategyNumber strategy)
 {
@@ -313,9 +313,9 @@ bool
    * bioseg_gist_leaf_consistent
    */
   if (GIST_LEAF(entry))
-    return (bioseg_gist_leaf_consistent((SEG *) DatumGetPointer(entry->key), query, strategy));
+    return (BIOSEG_PREFIX(_gist_leaf_consistent)((SEG *) DatumGetPointer(entry->key), query, strategy));
   else
-    return (bioseg_gist_internal_consistent((SEG *) DatumGetPointer(entry->key), query, strategy));
+    return (BIOSEG_PREFIX(_gist_internal_consistent)((SEG *) DatumGetPointer(entry->key), query, strategy));
 }
 
 /*
@@ -323,7 +323,7 @@ bool
 ** returns the minimal bounding bioseg that encloses all the entries in entryvec
 */
 SEG *
-  bioseg_gist_union(GistEntryVector *entryvec, int *sizep)
+  BIOSEG_PREFIX(_gist_union)(GistEntryVector *entryvec, int *sizep)
 {
   int  numranges;
   int  i;
@@ -340,7 +340,7 @@ SEG *
 
   for (i = 1; i < numranges; i++)
     {
-      out = bioseg_gist_binary_union(tmp, (SEG *)
+      out = BIOSEG_PREFIX(_gist_binary_union)(tmp, (SEG *)
                                  DatumGetPointer(entryvec->vector[i].key),
                                  sizep);
       tmp = out;
@@ -354,13 +354,13 @@ SEG *
 ** do not do anything.
 */
 GISTENTRY *
-  bioseg_gist_compress(GISTENTRY *entry)
+  BIOSEG_PREFIX(_gist_compress)(GISTENTRY *entry)
 {
   return (entry);
 }
 
 GISTENTRY *
-  bioseg_gist_decompress(GISTENTRY *entry)
+  BIOSEG_PREFIX(_gist_decompress)(GISTENTRY *entry)
 {
   return (entry);
 }
@@ -370,16 +370,16 @@ GISTENTRY *
 ** As in the R-tree paper, we use change in area as our penalty metric
 */
 float *
-  bioseg_gist_penalty(GISTENTRY *origentry, GISTENTRY *newentry, float *result)
+  BIOSEG_PREFIX(_gist_penalty)(GISTENTRY *origentry, GISTENTRY *newentry, float *result)
 {
   SEG   *ud;
   int32 tmp1;
   int32 tmp2;
 
-  ud = bioseg_union((SEG *) DatumGetPointer(origentry->key),
+  ud = BIOSEG_PREFIX(_union)((SEG *) DatumGetPointer(origentry->key),
                     (SEG *) DatumGetPointer(newentry->key));
-  bioseg_rt_size(ud, &tmp1);
-  bioseg_rt_size((SEG *) DatumGetPointer(origentry->key), &tmp2);
+  BIOSEG_PREFIX(_rt_size)(ud, &tmp1);
+  BIOSEG_PREFIX(_rt_size)((SEG *) DatumGetPointer(origentry->key), &tmp2);
   *result = tmp1 - tmp2;
 
 #ifdef GIST_DEBUG
@@ -397,7 +397,7 @@ float *
 ** We use Guttman's poly time split algorithm
 */
 GIST_SPLITVEC *
-  bioseg_gist_picksplit(GistEntryVector *entryvec,
+  BIOSEG_PREFIX(_gist_picksplit)(GistEntryVector *entryvec,
                     GIST_SPLITVEC *v)
 {
   OffsetNumber  i;
@@ -447,10 +447,10 @@ GIST_SPLITVEC *
 
           /* compute the wasted space by unioning these guys */
           /* size_waste = size_union - size_inter; */
-          union_d = bioseg_union(datum_alpha, datum_beta);
-          bioseg_rt_size(union_d, &size_union);
-          inter_d = bioseg_inter(datum_alpha, datum_beta);
-          bioseg_rt_size(inter_d, &size_inter);
+          union_d = BIOSEG_PREFIX(_union)(datum_alpha, datum_beta);
+          BIOSEG_PREFIX(_rt_size)(union_d, &size_union);
+          inter_d = BIOSEG_PREFIX(_inter)(datum_alpha, datum_beta);
+          BIOSEG_PREFIX(_rt_size)(inter_d, &size_inter);
           size_waste = size_union - size_inter;
 
           /*
@@ -472,11 +472,11 @@ GIST_SPLITVEC *
   v->spl_nright = 0;
 
   datum_alpha = (SEG *) DatumGetPointer(entryvec->vector[seed_1].key);
-  datum_l = bioseg_union(datum_alpha, datum_alpha);
-  bioseg_rt_size(datum_l, &size_l);
+  datum_l = BIOSEG_PREFIX(_union)(datum_alpha, datum_alpha);
+  BIOSEG_PREFIX(_rt_size)(datum_l, &size_l);
   datum_beta = (SEG *) DatumGetPointer(entryvec->vector[seed_2].key);
-  datum_r = bioseg_union(datum_beta, datum_beta);
-  bioseg_rt_size(datum_r, &size_r);
+  datum_r = BIOSEG_PREFIX(_union)(datum_beta, datum_beta);
+  BIOSEG_PREFIX(_rt_size)(datum_r, &size_r);
 
   /*
    * Now split up the regions between the two seeds.      An important property
@@ -514,10 +514,10 @@ GIST_SPLITVEC *
 
       /* okay, which page needs least enlargement? */
       datum_alpha = (SEG *) DatumGetPointer(entryvec->vector[i].key);
-      union_dl = bioseg_union(datum_l, datum_alpha);
-      union_dr = bioseg_union(datum_r, datum_alpha);
-      bioseg_rt_size(union_dl, &size_alpha);
-      bioseg_rt_size(union_dr, &size_beta);
+      union_dl = BIOSEG_PREFIX(_union)(datum_l, datum_alpha);
+      union_dr = BIOSEG_PREFIX(_union)(datum_r, datum_alpha);
+      BIOSEG_PREFIX(_rt_size)(union_dl, &size_alpha);
+      BIOSEG_PREFIX(_rt_size)(union_dr, &size_beta);
 
       /* pick which page to add it to */
       if (size_alpha - size_l < size_beta - size_r)
@@ -547,9 +547,9 @@ GIST_SPLITVEC *
 ** Equality methods
 */
 bool *
-  bioseg_gist_same(SEG * b1, SEG * b2, bool *result)
+  BIOSEG_PREFIX(_gist_same)(SEG * b1, SEG * b2, bool *result)
 {
-  if (bioseg_same(b1, b2))
+  if (BIOSEG_PREFIX(_same)(b1, b2))
     *result = TRUE;
   else
     *result = FALSE;
@@ -565,7 +565,7 @@ bool *
 ** SUPPORT ROUTINES
 */
 bool
-  bioseg_gist_leaf_consistent(SEG * key,
+  BIOSEG_PREFIX(_gist_leaf_consistent)(SEG * key,
                           SEG * query,
                           StrategyNumber strategy)
 {
@@ -578,30 +578,30 @@ bool
   switch (strategy)
     {
     case RTLeftStrategyNumber:
-      retval = (bool) bioseg_left(key, query);
+      retval = (bool) BIOSEG_PREFIX(_left)(key, query);
       break;
     case RTOverLeftStrategyNumber:
-      retval = (bool) bioseg_over_left(key, query);
+      retval = (bool) BIOSEG_PREFIX(_over_left)(key, query);
       break;
     case RTOverlapStrategyNumber:
-      retval = (bool) bioseg_overlap(key, query);
+      retval = (bool) BIOSEG_PREFIX(_overlap)(key, query);
       break;
     case RTOverRightStrategyNumber:
-      retval = (bool) bioseg_over_right(key, query);
+      retval = (bool) BIOSEG_PREFIX(_over_right)(key, query);
       break;
     case RTRightStrategyNumber:
-      retval = (bool) bioseg_right(key, query);
+      retval = (bool) BIOSEG_PREFIX(_right)(key, query);
       break;
     case RTSameStrategyNumber:
-      retval = (bool) bioseg_same(key, query);
+      retval = (bool) BIOSEG_PREFIX(_same)(key, query);
       break;
     case RTContainsStrategyNumber:
     case RTOldContainsStrategyNumber:
-      retval = (bool) bioseg_contains(key, query);
+      retval = (bool) BIOSEG_PREFIX(_contains)(key, query);
       break;
     case RTContainedByStrategyNumber:
     case RTOldContainedByStrategyNumber:
-      retval = (bool) bioseg_contained(key, query);
+      retval = (bool) BIOSEG_PREFIX(_contained)(key, query);
       break;
     default:
       retval = FALSE;
@@ -610,7 +610,7 @@ bool
 }
 
 bool
-  bioseg_gist_internal_consistent(SEG * key,
+  BIOSEG_PREFIX(_gist_internal_consistent)(SEG * key,
                               SEG * query,
                               StrategyNumber strategy)
 {
@@ -623,28 +623,28 @@ bool
   switch (strategy)
     {
     case RTLeftStrategyNumber:
-      retval = (bool) !bioseg_over_right(key, query);
+      retval = (bool) !BIOSEG_PREFIX(_over_right)(key, query);
       break;
     case RTOverLeftStrategyNumber:
-      retval = (bool) !bioseg_right(key, query);
+      retval = (bool) !BIOSEG_PREFIX(_right)(key, query);
       break;
     case RTOverlapStrategyNumber:
-      retval = (bool) bioseg_overlap(key, query);
+      retval = (bool) BIOSEG_PREFIX(_overlap)(key, query);
       break;
     case RTOverRightStrategyNumber:
-      retval = (bool) !bioseg_left(key, query);
+      retval = (bool) !BIOSEG_PREFIX(_left)(key, query);
       break;
     case RTRightStrategyNumber:
-      retval = (bool) !bioseg_over_left(key, query);
+      retval = (bool) !BIOSEG_PREFIX(_over_left)(key, query);
       break;
     case RTSameStrategyNumber:
     case RTContainsStrategyNumber:
     case RTOldContainsStrategyNumber:
-      retval = (bool) bioseg_contains(key, query);
+      retval = (bool) BIOSEG_PREFIX(_contains)(key, query);
       break;
     case RTContainedByStrategyNumber:
     case RTOldContainedByStrategyNumber:
-      retval = (bool) bioseg_overlap(key, query);
+      retval = (bool) BIOSEG_PREFIX(_overlap)(key, query);
       break;
     default:
       retval = FALSE;
@@ -653,11 +653,11 @@ bool
 }
 
 SEG *
-  bioseg_gist_binary_union(SEG * r1, SEG * r2, int *sizep)
+  BIOSEG_PREFIX(_gist_binary_union)(SEG * r1, SEG * r2, int *sizep)
 {
   SEG *retval;
 
-  retval = bioseg_union(r1, r2);
+  retval = BIOSEG_PREFIX(_union)(r1, r2);
   *sizep = sizeof(SEG);
 
   return (retval);
@@ -665,15 +665,15 @@ SEG *
 
 
 bool
-  bioseg_contains(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_contains)(SEG * a, SEG * b)
 {
   return ((a->lower <= b->lower) && (a->upper >= b->upper));
 }
 
 bool
-  bioseg_contained(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_contained)(SEG * a, SEG * b)
 {
-  return (bioseg_contains(b, a));
+  return (BIOSEG_PREFIX(_contains)(b, a));
 }
 
 /*****************************************************************************
@@ -681,15 +681,15 @@ bool
  *****************************************************************************/
 
 bool
-  bioseg_same(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_same)(SEG * a, SEG * b)
 {
-  return bioseg_cmp(a, b) == 0;
+  return BIOSEG_PREFIX(_cmp)(a, b) == 0;
 }
 
 /*      bioseg_overlap -- does a overlap b?
  */
 bool
-  bioseg_overlap(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_overlap)(SEG * a, SEG * b)
 {
   return (
           ((a->upper >= b->upper) && (a->lower <= b->upper))
@@ -701,7 +701,7 @@ bool
 /*      bioseg_overleft -- is the right edge of (a) located at or left of the right edge of (b)?
  */
 bool
-  bioseg_over_left(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_over_left)(SEG * a, SEG * b)
 {
   return (a->upper <= b->upper);
 }
@@ -709,7 +709,7 @@ bool
 /*      bioseg_left -- is (a) entirely on the left of (b)?
  */
 bool
-  bioseg_left(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_left)(SEG * a, SEG * b)
 {
   return (a->upper < b->lower);
 }
@@ -717,7 +717,7 @@ bool
 /*      bioseg_right -- is (a) entirely on the right of (b)?
  */
 bool
-  bioseg_right(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_right)(SEG * a, SEG * b)
 {
   return (a->lower > b->upper);
 }
@@ -725,14 +725,14 @@ bool
 /*      bioseg_overright -- is the left edge of (a) located at or right of the left edge of (b)?
  */
 bool
-  bioseg_over_right(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_over_right)(SEG * a, SEG * b)
 {
   return (a->lower >= b->lower);
 }
 
 
 SEG *
-  bioseg_union(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_union)(SEG * a, SEG * b)
 {
   SEG *n;
 
@@ -763,7 +763,7 @@ SEG *
 
 
 SEG *
-  bioseg_inter(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_inter)(SEG * a, SEG * b)
 {
   SEG *n;
 
@@ -793,7 +793,7 @@ SEG *
 }
 
 void
-  bioseg_rt_size(SEG * a, int32 *size)
+  BIOSEG_PREFIX(_rt_size)(SEG * a, int32 *size)
 {
   if (a == (SEG *) NULL || a->upper <= a->lower)
     *size = 0;
@@ -804,7 +804,7 @@ void
 }
 
 int32
-  bioseg_size(SEG * a)
+  BIOSEG_PREFIX(_size)(SEG * a)
 {
   if (a->lower < a->upper) {
     return a->upper - a->lower + 1;
@@ -818,7 +818,7 @@ int32
  *                                 Miscellaneous operators
  *****************************************************************************/
 int32
-  bioseg_cmp(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_cmp)(SEG * a, SEG * b)
 {
   if (a->lower < b->lower)
     return -1;
@@ -835,37 +835,37 @@ int32
 }
 
 bool
-  bioseg_lt(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_lt)(SEG * a, SEG * b)
 {
-  return bioseg_cmp(a, b) < 0;
+  return BIOSEG_PREFIX(_cmp)(a, b) < 0;
 }
 
 bool
-  bioseg_le(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_le)(SEG * a, SEG * b)
 {
-  return bioseg_cmp(a, b) <= 0;
+  return BIOSEG_PREFIX(_cmp)(a, b) <= 0;
 }
 
 bool
-  bioseg_gt(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_gt)(SEG * a, SEG * b)
 {
-  return bioseg_cmp(a, b) > 0;
+  return BIOSEG_PREFIX(_cmp)(a, b) > 0;
 }
 
 bool
-  bioseg_ge(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_ge)(SEG * a, SEG * b)
 {
-  return bioseg_cmp(a, b) >= 0;
+  return BIOSEG_PREFIX(_cmp)(a, b) >= 0;
 }
 
 bool
-  bioseg_different(SEG * a, SEG * b)
+  BIOSEG_PREFIX(_different)(SEG * a, SEG * b)
 {
-  return bioseg_cmp(a, b) != 0;
+  return BIOSEG_PREFIX(_cmp)(a, b) != 0;
 }
 
 bool
-  bioseg_contains_int(SEG * a, int *b)
+  BIOSEG_PREFIX(_contains_int)(SEG * a, int *b)
 {
   return ((a->lower <= *b) && (a->upper >= *b));
 }
@@ -874,19 +874,19 @@ bool
 ** These are lower than those in geo_selfuncs.c - found by trail and error.
 */
 Datum
-  bioseg_sel(PG_FUNCTION_ARGS)
+  BIOSEG_PREFIX(_sel)(PG_FUNCTION_ARGS)
 {
   PG_RETURN_FLOAT8(2.0e-4);
 }
 
 Datum
-  bioseg_joinsel(PG_FUNCTION_ARGS)
+  BIOSEG_PREFIX(_joinsel)(PG_FUNCTION_ARGS)
 {
   PG_RETURN_FLOAT8(1.0e-5);
 }
 
 Datum
-  bioseg_contsel(PG_FUNCTION_ARGS)
+  BIOSEG_PREFIX(_contsel)(PG_FUNCTION_ARGS)
 {
   PG_RETURN_FLOAT8(1.0e-4);
 }
