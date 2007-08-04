@@ -803,22 +803,16 @@ SEG *
 void
   BIOSEG_PREFIX(_rt_size)(SEG * a, int32 *size)
 {
-  if (a == (SEG *) NULL || a->upper <= a->lower)
+  if (a == (SEG *) NULL)
     *size = 0;
   else
     *size = (int32) (a->upper - a->lower + 1);
-
-  return;
 }
 
 int32
   BIOSEG_PREFIX(_size)(SEG * a)
 {
-  if (a->lower < a->upper) {
-    return a->upper - a->lower + 1;
-  } else {
-    return a->lower - a->upper + 1;
-  }
+  return a->upper - a->lower + 1;
 }
 
 
