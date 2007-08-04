@@ -177,6 +177,26 @@ RETURNS int4
 AS '$libdir/bioseg'
 LANGUAGE C STRICT IMMUTABLE;
 
+CREATE FUNCTION bioseg_sel(internal, oid, internal, integer)
+RETURNS float
+AS '$libdir/bioseg'
+LANGUAGE C STRICT IMMUTABLE;
+
+CREATE FUNCTION bioseg_joinsel(internal, oid, internal, smallint)
+RETURNS FLOAT
+AS '$libdir/bioseg'
+LANGUAGE C STRICT IMMUTABLE;
+
+CREATE FUNCTION bioseg_contsel(internal, oid, internal, integer)
+RETURNS float
+AS '$libdir/bioseg'
+LANGUAGE C STRICT IMMUTABLE;
+
+CREATE FUNCTION bioseg_contjoinsel(internal, oid, internal, smallint)
+RETURNS FLOAT
+AS '$libdir/bioseg'
+LANGUAGE C STRICT IMMUTABLE;
+
 
 --
 -- OPERATORS
@@ -244,8 +264,8 @@ CREATE OPERATOR && (
         RIGHTARG = bioseg,
         PROCEDURE = bioseg_overlap,
         COMMUTATOR = '&&',
-        RESTRICT = areasel,
-        JOIN = areajoinsel
+        RESTRICT = bioseg_sel,
+        JOIN = bioseg_joinsel
 );
 
 CREATE OPERATOR &> (
@@ -291,8 +311,8 @@ CREATE OPERATOR @> (
         RIGHTARG = bioseg,
         PROCEDURE = bioseg_contains,
         COMMUTATOR = '<@',
-        RESTRICT = contsel,
-        JOIN = contjoinsel
+        RESTRICT = bioseg_contsel,
+        JOIN = bioseg_contjoinsel
 );
 
 CREATE OPERATOR <@ (
@@ -300,8 +320,8 @@ CREATE OPERATOR <@ (
         RIGHTARG = bioseg,
         PROCEDURE = bioseg_contained,
         COMMUTATOR = '@>',
-        RESTRICT = contsel,
-        JOIN = contjoinsel
+        RESTRICT = bioseg_contsel,
+        JOIN = bioseg_contjoinsel
 );
 
 
