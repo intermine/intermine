@@ -399,7 +399,6 @@ float *
 }
 
 
-
 /*
 ** The GiST PickSplit method for segments
 ** We use Guttman's poly time split algorithm
@@ -806,13 +805,21 @@ void
   if (a == (SEG *) NULL)
     *size = 0;
   else
-    *size = (int32) (a->upper - a->lower + 1);
+#ifdef INTERBASE_COORDS
+    *size = (int32) (a->upper - a->lower);
+#else
+  *size = (int32) (a->upper - a->lower + 1);
+#endif
 }
 
 int32
   BIOSEG_PREFIX(_size)(SEG * a)
 {
+#ifdef INTERBASE_COORDS
+  return a->upper - a->lower;
+#else
   return a->upper - a->lower + 1;
+#endif
 }
 
 
@@ -831,7 +838,6 @@ int32
     return -1;
   if (a->upper > b->upper)
     return 1;
-
 
   return 0;
 }
@@ -894,7 +900,7 @@ Datum
 }
 
 Datum
-  bioseg_contjoinsel(PG_FUNCTION_ARGS)
+  BIOSEG_PREFIX(_contjoinsel)(PG_FUNCTION_ARGS)
 {
   PG_RETURN_FLOAT8(5e-6);
 }
