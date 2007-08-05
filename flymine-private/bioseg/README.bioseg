@@ -1,8 +1,8 @@
 This directory contains the code for the user-defined type,
 BIOSEG, representing contiguous intervals in biological sequence.
 
-(Most of this documentation is copied from contrib/seg/README.seg in
-the PostgreSQL source).
+(Most of this documentation is copied from contrib/seg/README.seg in the
+PostgreSQL source).
 
 
 FILES
@@ -53,6 +53,10 @@ program, bioseg can be unpacked anywhere and built like:
 
      make USE_PGXS=t
      make install USE_PGXS=t
+
+and the type can then be installed in a particular database by any user with:
+
+    psql -d databasename < `pg_config --sharedir`/contrib/bioseg.sql
 
 
 SYNTAX
@@ -156,16 +160,22 @@ in make, ie.:
     make INTERBASE_COORDS=t
     make install INTERBASE_COORDS=t
 
-This will create a bioseg0 type.  The "0" in the name being a mnemonic for
-"0-based".  The bioseg0 type is identical to the bioseg type except for the 
+This will compile and install the implementation for the "bioseg0" type.
+The "0" in the name being a mnemonic for "0-based".
 
-Note that in the interbase system '1..10'::bioseg0 and '10..20'::bioseg0
-don't overlap, whereas in the 1-based system '1..10'::bioseg and
-'10..20'::bioseg have a one base overlap.  Also note that the length of
-'1..10'::bioseg0 is 9, whereas the length of '1..10'::bioseg is 10.
+Then restart PostgreSQL and run:
+    psql -d databasename < bioseg.sql
+as usual to install the type in the database.
+
+Note
+----
+In the interbase system '1..10'::bioseg0 and '10..20'::bioseg0 don't overlap,
+whereas in the 1-based system '1..10'::bioseg and '10..20'::bioseg have a one
+base overlap.  Also note that the length of '1..10'::bioseg0 is 9, whereas the
+length of '1..10'::bioseg is 10.
 
 See:
-http://www.gmod.org/wiki/index.php/Introduction_to_Chado#Interbase_Coordinates
+ http://www.gmod.org/wiki/index.php/Introduction_to_Chado#Interbase_Coordinates
 for a longer discussion of the differences between the coordinate systems.
 
 
@@ -180,9 +190,9 @@ The installation of bioseg can be checked by running:
 CREDITS
 =======
 
-Note from the author: Most of the code and all of the hard work involved in
-creating BIOSEG was by Gene Selkov, Jr, author of the SEG type (contrib/seg in
-the PostgreSQL source).  All bugs are due to me.
+Note from the author: Most of the code and all of the hard work needed to
+implement BIOSEG was by Gene Selkov, Jr, author of the SEG type (contrib/seg
+in the PostgreSQL source).  All bugs are due to me.
 
 
 AUTHOR
