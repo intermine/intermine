@@ -161,9 +161,9 @@ SEG *
 }
 
 #ifdef INTERBASE_COORDS
-const int MIN_LOWER = 0;
+#define MIN_LOWER 0l
 #else
-const int MIN_LOWER = 1;
+#define MIN_LOWER 1l
 #endif
 
 int get_int(char **strp, int32 *result) {
@@ -210,7 +210,7 @@ int get_int(char **strp, int32 *result) {
     ereport(ERROR,
             (errcode(ERRCODE_SYNTAX_ERROR),
              errmsg("bad bioseg representation"),
-             errdetail("integer %ld at: %s is out of range - must be >= %d", long_result, *strp, MIN_LOWER)));
+             errdetail("integer %ld at: %s is out of range - must be >= %ld", long_result, *strp, MIN_LOWER)));
     return 0;
   }
 
