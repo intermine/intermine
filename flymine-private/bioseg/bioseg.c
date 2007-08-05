@@ -160,6 +160,12 @@ SEG *
   }
 }
 
+#ifdef INTERBASE_COORDS
+const int MIN_LOWER = 0;
+#else
+const int MIN_LOWER = 1;
+#endif
+
 int get_int(char **strp, int32 *result) {
   char *return_pos;
   long int long_result = -1;
@@ -200,11 +206,11 @@ int get_int(char **strp, int32 *result) {
     return 0;
   }
 
-  if (long_result < 1) {
+  if (long_result < MIN_LOWER) {
     ereport(ERROR,
             (errcode(ERRCODE_SYNTAX_ERROR),
              errmsg("bad bioseg representation"),
-             errdetail("integer %ld at: %s is out of range - must be >= 1", long_result, *strp)));
+             errdetail("integer %ld at: %s is out of range - must be >= %d", long_result, *strp, MIN_LOWER)));
     return 0;
   }
 
