@@ -1,8 +1,14 @@
-/******************************************************************************
-  This file contains routines that can be bound to a Postgres backend and
-  called by the backend in the process of processing queries.  The calling
-  format for these routines is dictated by Postgres architecture.
-******************************************************************************/
+/*
+  This file contains the implementation of the BIOSEG PostgreSQL type.  The
+  implementation is a copy of the SEG type from the contrib directory in the
+  PostgreSQL source, which has been changed to represent ranges of integers.
+  The anticipated use of this type is to represent contiguous intervals of a
+  biological sequence.
+
+  SEG code written Gene Selkov, Jr.
+
+  Changes for BIOSEG written by Kim Rutherford <kmr@flymine.org>.
+*/
 
 #include "postgres.h"
 
