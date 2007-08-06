@@ -415,7 +415,7 @@ function filterWebSearchables(objectId, scope, type, callId, tags, wsListId) {
         		tagList[0] = tags;
         	}
         }
-        
+
         /*  filterAction toggles favourites off and on */
         AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction, 
                                           callId++, filterCallBack);
@@ -431,7 +431,7 @@ function filterFavourites(scope, type, wsListId) {
     var tags = '';
 
     // aspect selected
-    if (document.getElementById(wsListId+'_'+type+'_filter_aspect').value != '') {
+    if (document.getElementById(wsListId+'_'+type+'_filter_aspect') && document.getElementById(wsListId+'_'+type+'_filter_aspect').value != '') {
     	tags = 'aspect:'+document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
     }
     // favourites OFF
@@ -476,7 +476,10 @@ function buildTags(scope, type, wsListId) {
     	tags = 'favourite';
     }
     // filter by aspect
-    var aspect = document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
+    var aspect = null;
+    if (document.getElementById(wsListId+'_'+type+'_filter_aspect')) {
+	    aspect = document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
+	}
     if(aspect != null && aspect.length > 1) {             
         aspect = 'aspect:'+ aspect;
         tags = (tags == 'favourite' ? tags + '|' + aspect : aspect);
