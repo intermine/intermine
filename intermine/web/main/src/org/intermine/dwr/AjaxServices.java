@@ -42,7 +42,6 @@ import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResultsSimple;
 import org.intermine.web.logic.results.WebTable;
-import org.intermine.web.logic.search.Scope;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -405,9 +404,7 @@ public class AjaxServices
         Map<String, WebSearchable> wsMap;
         Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
         Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
-        Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
-        
-        // get all items filtered by search words
+
         if (filterText != null && filterText.length() > 1) {
             wsMap = new LinkedHashMap<String, WebSearchable>();
             Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
@@ -431,18 +428,11 @@ public class AjaxServices
                 wsMap.put(ws.getName(), ws);
             }
         } else {
-            // get all user's items
+            
             if (scope.equals("user")) {
                 SearchRepository searchRepository = profile.getSearchRepository();
                 wsMap = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
-                
-            // union all items (user & global)
             } else {
-                
-                Map<String, ? extends WebSearchable> filteredUserMap
-                                                    = new LinkedHashMap<String, WebSearchable>();
-                Map<String, ? extends WebSearchable> filteredGlobalMap
-                                                    = new LinkedHashMap<String, WebSearchable>();
                 SearchRepository globalRepository =
                     (SearchRepository) servletContext.getAttribute(Constants.
                                                                    GLOBAL_SEARCH_REPOSITORY);
@@ -455,46 +445,42 @@ public class AjaxServices
                         userSearchRepository.getWebSearchableMap(type);
                     Map<String, ? extends WebSearchable> globalWsMap =
                         globalRepository.getWebSearchableMap(type);
-                    // filter 
-                    if (tags != null && !tags.isEmpty()) {
-                        filteredUserMap 
-                            = pm.filterByTags(userWsMap, tags, type, profile.getUsername());
-                        filteredGlobalMap 
-                            = pm.filterByTags(globalWsMap, tags, type, superProfile.getUsername());
-                    } else {
-                        filteredUserMap = userWsMap;
-                        filteredGlobalMap = globalWsMap;
-                    }
                     GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable> mutator =
                         new GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable>();
-                    wsMap = new GenericCompositeMap<String, WebSearchable>(
-                                    filteredGlobalMap, filteredUserMap, mutator);
-                    
-                    // reset tags so we don't have to filter again.
-                    tags = null;
+                    wsMap = new GenericCompositeMap<String, WebSearchable>(globalWsMap, userWsMap,
+                                                                           mutator);
                 }
             }
         }
         
-        // filter by tags
+
         Map<String, ? extends WebSearchable> filteredWsMap 
                                 = new LinkedHashMap<String, WebSearchable>();
-        if (tags != null && !tags.isEmpty()) {
-            // if user isn't logged in, use super user profile
-            // because we want to filter on favourites, etc
-            if (profile == null || profile.getUsername() == null) {
-                profile = superProfile;
+        //Filter by aspects (defined in superuser account)
+        List<String> aspectTags = new ArrayList<String>();
+        List<String> userTags = new ArrayList<String>();
+        for (String tag :tags) {
+            if (tag.startsWith("aspect:")) {
+                aspectTags.add(tag);
+            } else {
+                userTags.add(tag);
             }
-            filteredWsMap = pm.filterByTags(wsMap, tags, type, profile.getUsername());
+        }
+        if (aspectTags.size() > 0) {
+            wsMap = pm.filterByTags(wsMap, aspectTags, type, 
+                    (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT));
+        }
+
+        if (profile.getUsername() != null && userTags != null && userTags.size() > 0) {
+            filteredWsMap = pm.filterByTags(wsMap, userTags, type, profile.getUsername());
         } else {
             filteredWsMap = wsMap;
         }
-
+        
         List returnList = new ArrayList<String>();
         
         returnList.add(callId);
         
-        // highlight search terms
         for (WebSearchable ws: filteredWsMap.values()) {
             List row = new ArrayList();
             row.add(ws.getName());

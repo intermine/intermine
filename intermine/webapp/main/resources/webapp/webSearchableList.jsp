@@ -161,12 +161,12 @@
                     <tiles:put name="name" value="${entry.value.title}"/>
                     <tiles:put name="type" value="${type}"/>
                   </tiles:insert>
-                </div>
                 <c:if test="${showDescriptions}">
                   <div class="wsListDescription">
                     ${entry.value.description}
                   </div>
                 </c:if>
+               </div>
               </li>
             </c:forEach>
           </ul>

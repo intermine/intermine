@@ -38,8 +38,8 @@
 <ul class="filterActions">
   <li>Filter:&nbsp;</li>
   <li><input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
-         onkeyup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', [], '${wsListId}');"
-         onmouseup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', [], '${wsListId}');"
+         onkeyup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');}"
+         onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');}"
          disabled="true"
          value="${initialFilterText}"/></li>
   <li>&nbsp; <img id='${wsListId}_${type}_spinner' style='visibility: hidden' 
@@ -47,18 +47,18 @@
   <li>&nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;</li>
   
 <c:if test="${! empty PROFILE.username}">
-  <li ><a href="javascript:filterFavourites('${scope}','${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" alt="Show Only Favourites" title="Show Only Favourites"/></a></li>
+  <li ><a href="javascript:filterFavourites('${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" alt="Show Only Favourites" title="Show Only Favourites"/></a></li>
+  <c:if test="${type == 'template'}">
+     <li><a href="javascript:changeScope('${type}', '${wsListId}');"><img id="filter_scope_${wsListId}_${type}" src="images/filter_all.png" width="20" height="20" alt="Show all or mine"/></a></li>
+  </c:if>
 </c:if>
   <li><img src="images/filter_sort_desc.png" width="20" height="20" alt="Sort by name"/></li>
-  <li><img src="images/filter_date_desc.png" width="20" height="20" alt="Sort by Date"/></li>
-  <li><img src="images/filter_my.png" width="20" height="20" alt="Sort by Date"/>&nbsp;</li>
-</ul>
-
+  <li><img src="images/filter_date_desc.png" width="20" height="20" alt="Sort by Date"/>&nbsp;</li>
   <c:if test="${type == 'template'}">
   <%-- aspects --%>
-    <li><select onchange="javascript:filterAspect('${scope}', '${type}', '${wsListId}');" id="${ws_input_aspect}" class="aspectSelect">
+    <li><select onchange="javascript:filterAspect('${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect">
     <c:if test="${aspect == null}">
-      <option value="" selected>-- choose category --</option>
+      <option value="" selected>-- Choose aspect --</option>
     </c:if>
     <c:forEach items="${ASPECTS}" var="entry">
       <c:set var="set" value="${entry.value}"/>
@@ -71,7 +71,8 @@
   </select></li>
   </c:if>
   <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
-
+  <input type="hidden" name="filterScope_${wsListId}_${type}" id="filterScope_${wsListId}_${type}" value="${scope}"/>
+</ul>
 <br>
 </div>
 
