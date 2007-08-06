@@ -52,11 +52,13 @@
   <li><img src="images/filter_sort_desc.png" width="20" height="20" alt="Sort by name"/></li>
   <li><img src="images/filter_date_desc.png" width="20" height="20" alt="Sort by Date"/></li>
   <li><img src="images/filter_my.png" width="20" height="20" alt="Sort by Date"/>&nbsp;</li>
+</ul>
+
   <c:if test="${type == 'template'}">
   <%-- aspects --%>
-    <li><select onchange="javascript:filterAspect('${scope}', '${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect">
+    <li><select onchange="javascript:filterAspect('${scope}', '${type}', '${wsListId}');" id="${ws_input_aspect}" class="aspectSelect">
     <c:if test="${aspect == null}">
-      <option value="" selected>-- Choose aspect --</option>
+      <option value="" selected>-- choose category --</option>
     </c:if>
     <c:forEach items="${ASPECTS}" var="entry">
       <c:set var="set" value="${entry.value}"/>
@@ -69,7 +71,7 @@
   </select></li>
   </c:if>
   <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
-</ul>
+
 <br>
 </div>
 
