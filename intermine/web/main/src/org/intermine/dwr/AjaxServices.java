@@ -456,7 +456,7 @@ public class AjaxServices
 
         Map<String, ? extends WebSearchable> filteredWsMap 
                                 = new LinkedHashMap<String, WebSearchable>();
-        if (profile.getUsername() != null && tags != null && tags.size() > 0) {
+        if (tags != null && tags.size() > 0) {
             filteredWsMap = pm.filterByTags(wsMap, tags, type, profile.getUsername());
         } else {
             filteredWsMap = wsMap;
