@@ -264,7 +264,7 @@
     <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
-    <action path="/modifyBag" name="modifyBagForm" type="org.intermine.web.struts.ModifyBagAction" scope="request" input="bag" parameter="action">
+    <action path="/modifyBag" name="modifyBagForm" type="org.intermine.web.struts.ModifyBagAction" scope="request" input="bag" parameter="action" validate="false">
       <forward name="bag" redirect="true" path="/bag.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do?page=lists"/>
     </action>

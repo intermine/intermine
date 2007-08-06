@@ -38,10 +38,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
@@ -66,16 +68,20 @@ public class ModifyBagAction extends InterMineAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        if (request.getParameter("union") != null) {
-            combine(mapping, form, request, ObjectStoreBagCombination.UNION);
-        } else if (request.getParameter("intersect") != null) {
-            combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT);
-        } else if (request.getParameter("subtract") != null) {
-            combine(mapping, form, request, ObjectStoreBagCombination.EXCEPT);
-        } else if (request.getParameter("delete") != null) {
-            delete(mapping, form, request);
-        }
         ModifyBagForm mbf = (ModifyBagForm) form;
+        ActionErrors errors = mbf.validate(mapping, request);
+        if (errors.isEmpty()) {       
+            if (request.getParameter("union") != null) {
+                combine(mapping, form, request, ObjectStoreBagCombination.UNION);
+            } else if (request.getParameter("intersect") != null) {
+                combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT);
+            } else if (request.getParameter("subtract") != null) {
+                combine(mapping, form, request, ObjectStoreBagCombination.EXCEPT);
+            } else if (request.getParameter("delete") != null) {
+                delete(mapping, form, request);
+            }
+        }
+        saveErrors(request, (ActionMessages) errors);
         return getReturn(mbf.getPageName(), mapping);
     }
 
