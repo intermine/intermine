@@ -124,6 +124,7 @@ public class WebSearchableListController extends TilesAction
         ServletContext servletContext = session.getServletContext();
 
         Profile profile;
+        // TODO what about "all" scopes?  
         if (scope.equals(Scope.GLOBAL)) {
             profile = SessionMethods.getSuperUserProfile(servletContext);            
         } else {
@@ -131,7 +132,8 @@ public class WebSearchableListController extends TilesAction
         }
         SearchRepository searchRepository;
         if (scope.equals(Scope.GLOBAL)) {
-            searchRepository = (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+            searchRepository 
+               = (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
         } else {
             searchRepository = profile.getSearchRepository();
         }

@@ -133,7 +133,8 @@ public class GenericCompositeMap<K,V> implements Map<K,V> {
      */
     public synchronized void addComposited(Map map) throws IllegalArgumentException {
         for (int i = composite.length - 1; i >= 0; --i) {
-            Collection intersect = CollectionUtils.intersection(this.composite[i].keySet(), map.keySet());
+            Collection intersect 
+                        = CollectionUtils.intersection(this.composite[i].keySet(), map.keySet());
             if (intersect.size() != 0) {
                 if (this.mutator == null) {
                     throw new IllegalArgumentException("Key collision adding Map to CompositeMap");
