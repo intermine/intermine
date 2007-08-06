@@ -453,13 +453,18 @@ public class AjaxServices
                     SearchRepository userSearchRepository = profile.getSearchRepository();
                     Map<String, ? extends WebSearchable> userWsMap = 
                         userSearchRepository.getWebSearchableMap(type);
-                    // filter 
-                    filteredUserMap = pm.filterByTags(userWsMap, tags, type, profile.getUsername());
                     Map<String, ? extends WebSearchable> globalWsMap =
                         globalRepository.getWebSearchableMap(type);
                     // filter 
-                    filteredGlobalMap 
-                        = pm.filterByTags(globalWsMap, tags, type, superProfile.getUsername());
+                    if (tags != null && !tags.isEmpty()) {
+                        filteredUserMap 
+                            = pm.filterByTags(userWsMap, tags, type, profile.getUsername());
+                        filteredGlobalMap 
+                            = pm.filterByTags(globalWsMap, tags, type, superProfile.getUsername());
+                    } else {
+                        filteredUserMap = userWsMap;
+                        filteredGlobalMap = globalWsMap;
+                    }
                     GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable> mutator =
                         new GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable>();
                     wsMap = new GenericCompositeMap<String, WebSearchable>(
