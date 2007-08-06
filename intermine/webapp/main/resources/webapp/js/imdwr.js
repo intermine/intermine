@@ -231,7 +231,7 @@ var currentFilterCallbacks = new Array();
 // Give each setTimeout call an id and remember what our current pending id is
 var futureFilterCalls = new Array();
 
-function filterWebSearchablesHandler(event, object, scope, type, tags, wsListId) {
+function filterWebSearchablesHandler(event, object, scope, type, wsListId) {
     if (window.event) {
         event = window.event;
     }
@@ -247,18 +247,11 @@ function filterWebSearchablesHandler(event, object, scope, type, tags, wsListId)
 
     futureFilterCalls[wsListId + "_" + type] = callId;
 
-    // check for sorting and filtering
-    if (tags == null || tags == '') {
-        tags = buildTags(scope, type, wsListId);        
-    }
-
-	// nope.  
-    if (tags == null || tags == '') {
+    if (tags == null) {
         tags = [];
     }
 
-    setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '",' +
-               callId + ",'" + tags + "','" + wsListId + "')", 500);
+    setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '","' + callId + '","' + wsListId + '")', 500);
     callId++;
 }
 
@@ -363,9 +356,10 @@ function showAll(wsListId, type) {
     $(wsListId + '_' + type + '_spinner').style.visibility = 'hidden';
 }
 
+
 // call AjaxServices.filterWebSearchables() then hide those WebSearchables in
 // the webSearchableList that don't match
-function filterWebSearchables(objectId, scope, type, callId, tags, wsListId) {
+function filterWebSearchables(objectId, scope, type, callId, wsListId) {
     if (futureFilterCalls[wsListId + "_" + type] != callId) {
         // filterWebSearchablesHandler() has been called again since this
         // timeout was set, so ignore as another timeout will be along
@@ -376,8 +370,9 @@ function filterWebSearchables(objectId, scope, type, callId, tags, wsListId) {
     var object = document.getElementById(objectId);
     var value = object.value;
     var filterAction = document.getElementById('filterAction' + '_' + wsListId + '_' + type).value;
+    
 
-    if ((value != null && value.length > 1) || (tags != null && tags.length > 1)) {
+    if ( (value != null) || (tags != null && tags.length > 1)) {
         function filterCallBack(cbResult) {
             var callId = cbResult[0];
             var filteredList = cbResult.slice(1);
@@ -395,27 +390,16 @@ function filterWebSearchables(objectId, scope, type, callId, tags, wsListId) {
         currentFilterCallbacks[wsListId + "_" + type] = callId;
         var tagList = null;
         
-        /*  can only be one of these options:
-        1. favourite
-        2. aspect:<aspect>
-        3. aspect:<aspect>|favourite
-        4. null
+        /*  
+			We need to transform our map into a proper Array
          */
-        
-        if(tags != null && tags.length > 1) {
-	        tagList = new Array();
-			if (tags.match("|")) {			
-	        	var a = new Array();
-	        	
-    	    	a = tags.split('|');        		
-        		for (var i=0, l=a.length; i<l; ++i) {
-        			tagList[i] = a[i]; 
-        		}
-        	} else {
-        		tagList[0] = tags;
-        	}
-        }
-
+        tagList = new Array();
+        if(tags['favourites_' + wsListId] != null && tags['favourites_' + wsListId] != '') {
+			tagList[tagList.length]=tags['favourites_' + wsListId];
+		} if(tags['aspects_' + wsListId] != null && tags['aspect_' + wsListId] != '') {
+			tagList[tagList.length]=tags['aspects_' + wsListId];
+		}
+		
         /*  filterAction toggles favourites off and on */
         AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction, 
                                           callId++, filterCallBack);
@@ -426,64 +410,57 @@ function filterWebSearchables(objectId, scope, type, callId, tags, wsListId) {
     futureFilterCalls[wsListId + "_" + type] = 0;
 }
 
-function filterFavourites(scope, type, wsListId) {
-    var id = 'filterAction_'+wsListId+'_'+type;
-    var tags = '';
+var tags = new Array();
 
-    // aspect selected
-    if (document.getElementById(wsListId+'_'+type+'_filter_aspect') && document.getElementById(wsListId+'_'+type+'_filter_aspect').value != '') {
-    	tags = 'aspect:'+document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
-    }
+function filterFavourites(type, wsListId) {
+    var id = 'filterAction_'+wsListId+'_'+type;
+    // var tags = '';
+    var scope = document.getElementById('filterScope_'+wsListId+'_'+type).value;
+
     // favourites OFF
     if(document.getElementById(id).value == "favourites") {
         document.getElementById(id).value = "";
         document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites.png';
+		tags['favourites_' + wsListId] = '';
     // favourites ON    
     } else {
         document.getElementById(id).value = "favourites";
         document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_active.png';
-        tags = (tags == '' ? 'favourite' : tags + '|favourite');
-    }        
+        // tags = (tags == '' ? 'favourite' : tags + '|favourite');
+		tags['favourites_' + wsListId] = 'favourite';
+    }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
-    return filterWebSearchablesHandler(null, filterTextElement, scope, type, tags, wsListId);
+    return filterWebSearchablesHandler(null, filterTextElement, scope, type, wsListId);
 }
 
-function filterAspect(scope, type, wsListId) {
-	var tags = null;
+function filterAspect(type, wsListId) {
 	var id = 'filterAction_'+wsListId+'_'+type;
-	var aspect = document.getElementById(wsListId+'_'+type+'_filter_aspect').value; 
+	var aspect = document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
+    var scope = document.getElementById('filterScope_'+wsListId+'_'+type).value;
 	
-	// filter by favourites 
-    if(document.getElementById(id).value == "favourites") {
-    	tags = 'favourite';
-    }
-    
     // aspects ON
     if(aspect != null && aspect.length > 1) {        
         aspect = 'aspect:'+ aspect;
-        tags = (tags == 'favourite' ? tags + '|' + aspect : aspect);
+		tags['aspects_' + wsListId] = aspect;
+    } else {
+		tags['aspects_' + wsListId] = '';
     }
        
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
-    return filterWebSearchablesHandler(null, filterTextElement, scope, type, tags, wsListId);
+    return filterWebSearchablesHandler(null, filterTextElement, scope, type, wsListId);
 }
 
-function buildTags(scope, type, wsListId) {
-	var tags = null;
-	// filter by favourites 
-	var id = 'filterAction_'+wsListId+'_'+type;
-    if(document.getElementById(id).value == "favourites") {
-    	tags = 'favourite';
-    }
-    // filter by aspect
-    var aspect = null;
-    if (document.getElementById(wsListId+'_'+type+'_filter_aspect')) {
-	    aspect = document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
-	}
-    if(aspect != null && aspect.length > 1) {             
-        aspect = 'aspect:'+ aspect;
-        tags = (tags == 'favourite' ? tags + '|' + aspect : aspect);
-    }
-	return tags;
-}
+function changeScope(type, wsListId) {
+    var id = 'filterScope_'+wsListId+'_'+type;
+    var scope = document.getElementById(id).value;
 
+    if(scope == 'all') {
+      document.getElementById(id).value = 'user';
+      document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_my_active.png';
+    } else if(scope == 'user') {
+      document.getElementById(id).value = 'all';    
+      document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_all.png';
+    }
+    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    return filterWebSearchablesHandler(null, filterTextElement, document.getElementById(id).value, type, wsListId);
+}

@@ -68,8 +68,8 @@
 <c:if test="${showDescriptions}">
   <td>
     <c:choose>
-      <c:when test="${fn:length(webSearchable.description) > 60}">
-        ${fn:substring(webSearchable.description, 0, 60)}...
+      <c:when test="${fn:length(webSearchable.description) > 100}">
+        ${fn:substring(webSearchable.description, 0, 100)}...
       </c:when>
       <c:otherwise>
         ${webSearchable.description}
@@ -79,8 +79,8 @@
   </td>
   <td>
     <c:choose>
-      <c:when test="${fn:length(webSearchable.comment) > 60}">
-        ${fn:substring(webSearchable.comment, 0, 60)}...
+      <c:when test="${fn:length(webSearchable.comment) > 100}">
+        ${fn:substring(webSearchable.comment, 0, 100)}...
       </c:when>
       <c:otherwise>
         ${webSearchable.comment}

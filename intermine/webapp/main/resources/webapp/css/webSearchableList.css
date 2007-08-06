@@ -1,6 +1,11 @@
 .wsListElement {
-   margin-bottom:5px;
+   margin-bottom:10px;
+   padding-bottom:10px;
    border-bottom: #F5F0FF solid 1px;
+}
+.wsListDescription {
+	font-style: italic;
+	margin-left:15px;
 }
 .wsList {
 	padding:5px;
