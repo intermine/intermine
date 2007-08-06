@@ -10,16 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
 
