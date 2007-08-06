@@ -247,7 +247,13 @@ function filterWebSearchablesHandler(event, object, scope, type, tags, wsListId)
 
     futureFilterCalls[wsListId + "_" + type] = callId;
 
-    if (tags == null) {
+    // check for sorting and filtering
+    if (tags == null || tags == '') {
+        tags = buildTags(scope, type, wsListId);        
+    }
+
+	// nope.  
+    if (tags == null || tags == '') {
         tags = [];
     }
 
@@ -460,5 +466,21 @@ function filterAspect(scope, type, wsListId) {
        
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     return filterWebSearchablesHandler(null, filterTextElement, scope, type, tags, wsListId);
+}
+
+function buildTags(scope, type, wsListId) {
+	var tags = null;
+	// filter by favourites 
+	var id = 'filterAction_'+wsListId+'_'+type;
+    if(document.getElementById(id).value == "favourites") {
+    	tags = 'favourite';
+    }
+    // filter by aspect
+    var aspect = document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
+    if(aspect != null && aspect.length > 1) {             
+        aspect = 'aspect:'+ aspect;
+        tags = (tags == 'favourite' ? tags + '|' + aspect : aspect);
+    }
+	return tags;
 }
 
