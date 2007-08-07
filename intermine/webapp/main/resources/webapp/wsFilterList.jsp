@@ -52,8 +52,8 @@
      <li><a href="javascript:changeScope('${type}', '${wsListId}');"><img id="filter_scope_${wsListId}_${type}" src="images/filter_all.png" width="20" height="20" alt="Show all or mine"/></a></li>
   </c:if>
 </c:if>
-  <li><img src="images/filter_sort_desc.png" width="20" height="20" alt="Sort by name"/></li>
-  <li><img src="images/filter_date_desc.png" width="20" height="20" alt="Sort by Date"/>&nbsp;</li>
+  <!-- <li><img src="images/filter_sort_desc.png" width="20" height="20" alt="Sort by name"/></li>
+  <li><img src="images/filter_date_desc.png" width="20" height="20" alt="Sort by Date"/>&nbsp;</li> -->
   <c:if test="${type == 'template'}">
   <%-- aspects --%>
     <li><select onchange="javascript:filterAspect('${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect">
