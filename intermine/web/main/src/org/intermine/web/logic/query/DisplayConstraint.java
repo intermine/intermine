@@ -78,6 +78,11 @@ public class DisplayConstraint
             if (String.class.equals(nodeType)) {
                 simpleConstraintOps.remove(ConstraintOp.MATCHES);
                 simpleConstraintOps.remove(ConstraintOp.DOES_NOT_MATCH);
+                // We're slightly abusing "CONTAINS" here because in the object store it only
+                // means "contained in a bag".  Here we're using it to mean "contained as a
+                // substring" 
+                int notEqualsIndex = simpleConstraintOps.indexOf(ConstraintOp.NOT_EQUALS);
+                simpleConstraintOps.add(notEqualsIndex + 1, ConstraintOp.CONTAINS);
             }
             validOps = MainHelper.mapOps(simpleConstraintOps);
         } else {

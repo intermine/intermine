@@ -507,7 +507,6 @@ public class MainHelper
     private static SimpleConstraint makeQueryStringConstraint(QueryNode qn, Constraint c) {
         QueryExpression qf = new QueryExpression(QueryExpression.LOWER, (QueryField) qn);
         String lowerCaseValue = ((String) c.getValue()).toLowerCase();
-        SimpleConstraint stringConstraint;
         if (lowerCaseValue.indexOf('%') != -1 || lowerCaseValue.indexOf('_') != -1) {
             if (c.getOp().equals(ConstraintOp.EQUALS)) {
                 return new SimpleConstraint(qf, ConstraintOp.MATCHES, 
@@ -520,6 +519,10 @@ public class MainHelper
                     // fail through
                 }
             }
+        }
+        if (c.getOp().equals(ConstraintOp.CONTAINS)) {
+            return new SimpleConstraint(qf, ConstraintOp.MATCHES,
+                                        new QueryValue("%" + lowerCaseValue + "%"));
         }
         return new SimpleConstraint(qf, c.getOp(), new QueryValue(lowerCaseValue));
     }
