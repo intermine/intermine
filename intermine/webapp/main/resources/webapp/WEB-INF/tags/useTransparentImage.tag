@@ -4,11 +4,17 @@
 <%@ attribute name="link" required="true" %>
 <%@ attribute name="height" required="true" %>
 <%@ attribute name="width" required="true" %>
+<%@ attribute name="floatValue" required="false" %>
+<%@ attribute name="breakFloat" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>'/>
+
+<c:if test="${! empty floatValue}">
+  <c:set var="floatValue" value="left"/>
+</c:if>
 
 <c:choose>
   <c:when test="${iePre7}">
@@ -35,6 +41,8 @@
 </c:choose>
 
 <html:link action="${link}" >
-  <div class="${id}" style="float:right">&nbsp</div>
+  <div class="${id}" style="float:${floatValue}">&nbsp</div>
 </html:link>
-<div class="clear-both"></div>
+<c:if test="${! empty breakFloat && breakFloat == 'true'}">
+  <div class="clear-both"></div>
+</c:if>

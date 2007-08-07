@@ -6,7 +6,6 @@
 
 <!-- menu.jsp -->
 <html:xhtml/>
-<tr><td id="menu" colspan="4">
   <ul id="nav">
   <li id="home" <c:if test="${pageName=='begin'}">class="activelink"</c:if>>
     <html:link action="/begin">
@@ -48,26 +47,9 @@
     </html:link>
   </li>--%>
   </ul>
-  </td>
-  <td width="100%" align="right" nowrap style="background:#D0B5D7;padding:0px 10px 2px 0px;">
-    <div>
-      <tiles:insert name="browse.tile"> 
-        <tiles:put name="menuItem" value="true"/> 
-      </tiles:insert>
-    </div>
-  </td>
-</tr>
-<%-- <tr>
-  <td colspan="10" align="right" style="padding-top:20px;">
-    <c:if test="${!shownAspectsPopup}">
-      <tiles:insert page="/aspectPopup.jsp"/>
-      <c:set scope="request" var="shownAspectsPopup" value="${true}"/>
-    </c:if>
-  </td>  
-</tr> --%>
-
-<script type="text/javascript">
-	Nifty("ul#nav a","transparent top");
-</script>
-
+  <div style="background:#D0B5D7;top:90px;position:absolute;right:10px">
+    <tiles:insert name="browse.tile"> 
+      <tiles:put name="menuItem" value="true"/> 
+    </tiles:insert>
+  </div>
 <!-- /menu.jsp -->
