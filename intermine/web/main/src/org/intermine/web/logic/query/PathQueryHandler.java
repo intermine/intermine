@@ -47,7 +47,8 @@ public class PathQueryHandler extends DefaultHandler
     private Model model = null;
     private Map savedBags;
     private List<String> viewStrings = new ArrayList<String>();
-    private List<String> sortOrderStrings = new ArrayList<String>();
+    private String sortOrderString = new String();
+    private String directionString = new String(); // will be asc or desc
     private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
     private final ServletContext servletContext;
     
@@ -85,8 +86,9 @@ public class PathQueryHandler extends DefaultHandler
                 
             }
             if (attrs.getValue("sortField") != null) {
-                sortOrderStrings = StringUtil.tokenize(attrs.getValue("sortField"));
-                
+               String[] s = (attrs.getValue("sortField")).split(" ");
+               sortOrderString = s[0];
+               directionString = s[1];
             }
             if (attrs.getValue("constraintLogic") != null) {
                 query.setConstraintLogic(attrs.getValue("constraintLogic"));
@@ -179,15 +181,14 @@ public class PathQueryHandler extends DefaultHandler
             for (String viewElement: viewStrings) {
                 query.addPathStringToView(viewElement);
             }
-            for (String sortOrderElement: sortOrderStrings) {
-                query.addPathStringToSortOrder(sortOrderElement, "asc");
-            }
+            query.addPathStringToSortOrder(sortOrderString, directionString);
+
             for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
                 query.addPathStringDescription(entry.getKey(), entry.getValue());
             }
             queries.put(queryName, query);
             viewStrings = new ArrayList<String>();
-            sortOrderStrings = new ArrayList<String>();
+           
             pathStringDescriptions = new HashMap<String, String>();
         }
     }

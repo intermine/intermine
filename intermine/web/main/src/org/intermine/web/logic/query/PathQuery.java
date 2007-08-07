@@ -227,7 +227,18 @@ public class PathQuery
         return sortOrder;
     }
 
-
+    /**
+     * Return the sort order as a List of Strings.
+     * @return the sort order as Strings
+     */
+    public List<String> getSortOrderStrings() {
+        List<String> retList = new ArrayList<String>();
+        for (OrderBy orderBy: sortOrder) {
+            retList.add(orderBy.getField().toStringNoConstraints() + " " + orderBy.getDirection());
+        }
+        return retList;
+    }
+    
     /**
      * Add a path to the view
      * @param viewString the String version of the path to add - should not include any class
