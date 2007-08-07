@@ -32,6 +32,18 @@
 	</im:roundbox>
    </div>
 
+	<div id="clearLine"> 
+	 	    <%-- query history --%> 
+	 	    <im:roundbox title="Query History" stylename="welcome"> 
+	 	     <tiles:insert name="historyQueryView.jsp"> 
+	 	        <tiles:put name="type" value="history"/> 
+	 	      </tiles:insert> 	 	    
+	 	     </im:roundbox> 
+ 	     
+
+
+	</div> 
+
 
 </div>
 
