@@ -16,21 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.ObjectStoreBag;
-
-import org.intermine.util.GenericCompositeMap;
-import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.search.Scope;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +27,20 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.util.GenericCompositeMap;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.search.Scope;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Controller for webSearchableList.tile
@@ -108,6 +107,11 @@ public class WebSearchableListController extends TilesAction
                 }
             }
         }
+        
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        request.setAttribute("userWebSearchables", 
+                             profile.getWebSearchablesByType(TagTypes.TEMPLATE));
+        
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
         return null;
     }

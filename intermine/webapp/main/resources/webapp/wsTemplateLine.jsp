@@ -20,7 +20,8 @@
 <c:set var="type" value="template"/>
 
 <!-- wsTemplateLine.jsp -->
-<div class="wsTempateLine" id="${wsListId}_${type}_item_line_${webSearchable.name}" onmouseover="this.style.backgroundColor='#EEE'" onmouseout="this.style.backgroundColor=''">
+<div id="${wsListId}_${type}_item_line_${webSearchable.name}" <c:choose><c:when test="${! empty userWebSearchables[wsName]}">class="wsTempateLine_my" onmouseout="this.className='wsTempateLine_my'"</c:when>
+<c:otherwise> class="wsTempateLine" onmouseout="this.className='wsTempateLine'"</c:otherwise></c:choose> onmouseover="this.className='wsTempateLine_act'">
 <div style="float: right" id="${wsListId}_${type}_item_score_${webSearchable.name}">
   &nbsp;
 </div>

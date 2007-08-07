@@ -19,8 +19,23 @@
 	padding:10px;
 	border-bottom: #F5F0FF solid 1px;
 }
-
-div.wsTempateLine p.description, div.wsTempateLine div.description {
+.wsTempateLine_act {
+	padding:10px;
+	border-bottom: #F5F0FF solid 1px;
+    background:#EEE;
+}
+.wsTempateLine_my {
+	padding:10px;
+	border-bottom: #F5F0FF solid 1px;
+	background:#9B87A7;
+	color:white;    
+}
+.wsTempateLine_my a:link,.wsTempateLine_my a:visited{
+	color:white;    
+}
+div.wsTempateLine p.description, div.wsTempateLine div.description
+,.wsTempateLine_act p.description,.wsTempateLine_act div.description
+,.wsTempateLine_my p.description,.wsTempateLine_my div.description{
 	font-style:italic;
 	margin:5px 5px 5px 30px;
 	padding:0px;
