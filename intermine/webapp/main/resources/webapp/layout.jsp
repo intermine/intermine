@@ -39,14 +39,7 @@
       <tiles:get name="title"/>
     </title>
     
-   	<script type="text/javascript" src="js/niftycube.js"></script>
-	<script type="text/javascript">
-	window.onload=function(){
-		Nifty("ul#split h3","top transparent");
-		// Nifty("ul#split div","bottom");
-		Nifty("ul#nav a","small transparent top");
-	}
-	</script>
+ 	 <script type="text/javascript" src="js/niftycube.js"></script>
     
     <script type="text/javascript">
     <!--
@@ -97,11 +90,11 @@
   
   <body>
   
-    <table id="headertable" cellspacing="0" cellpadding="0">
-      <tiles:get name="header"/>
-      <tiles:get name="menu"/>
-    </table>
-    <div id="pagecontent">
+  <div id="header">
+   <tiles:get name="header"/>
+   <tiles:get name="menu"/>
+  </div>
+  <div id="pagecontent">
     
       <%-- Render messages --%>
       <tiles:get name="errorMessages"/>
