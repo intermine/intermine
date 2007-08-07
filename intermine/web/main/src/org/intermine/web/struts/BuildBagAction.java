@@ -70,7 +70,7 @@ public class BuildBagAction extends InterMineAction
 
         if (StringUtils.isEmpty(type)) {
             recordError(new ActionMessage("bagBuild.typeNotSet"), request);
-            return mapping.findForward("mymine");
+            return mapping.findForward("errors");
         }
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
@@ -93,7 +93,7 @@ public class BuildBagAction extends InterMineAction
             String trimmedText = buildBagForm.getText().trim();
             if (trimmedText.length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagPaste"), request);
-                return mapping.findForward("mymine");
+                return mapping.findForward("errors");
             }
             reader = new BufferedReader(new StringReader(trimmedText));
         } else {
@@ -102,7 +102,7 @@ public class BuildBagAction extends InterMineAction
                 if (formFile == null || formFile.getFileName() == null
                                 || formFile.getFileName().length() == 0) {
                     recordError(new ActionMessage("bagBuild.noBagFile"), request);
-                    return mapping.findForward("mymine");
+                    return mapping.findForward("errors");
                 }
                 reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
             } else {
@@ -129,7 +129,7 @@ public class BuildBagAction extends InterMineAction
                     }
                     recordError(actionMessage, request);
 
-                    return mapping.findForward("mymine");
+                    return mapping.findForward("errors");
                 }
             }
         }
