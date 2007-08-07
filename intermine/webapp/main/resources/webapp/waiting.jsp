@@ -16,9 +16,7 @@
     </noscript>
   </head>
   <body>
-  <table>
-    <tiles:insert page="/header.jsp"/>
-    </table>
+  <div id="header"><tiles:insert page="/header.jsp"/></header>
     <div class="waitmsg">
       <fmt:message key="waiting.message"/>
       <p>
