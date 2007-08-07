@@ -112,7 +112,21 @@ public abstract class ReferenceMap implements Map
      */
     public boolean containsKey(Object key) {
         expungeStaleEntries();
-        return subMap.containsKey(key);
+        // Note - expungeEntries is NOT guaranteed to remove everything from the subMap that has
+        // been cleared. The garbage collector may insert a gap between clearing a Reference and
+        // enqueueing it.
+        if (subMap.containsKey(key)) {
+            Reference ref = (Reference) subMap.get(key);
+            if (ref != null) {
+                Object value = ref.get();
+                if (value == null) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 
     /**
