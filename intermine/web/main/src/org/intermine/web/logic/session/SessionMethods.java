@@ -242,6 +242,15 @@ public class SessionMethods
             pathString = pathString.substring(0, pathString.indexOf("."));
         }
         session.setAttribute("path", pathString);
+        // it's possible to not have a sort order
+        if (query.getSortOrder() != null) {
+            OrderBy sortOrder = query.getSortOrder().iterator().next();
+            String sortOrderString = sortOrder.getField().toStringNoConstraints();
+            if (sortOrderString.indexOf(".") != -1) {
+                sortOrderString  = sortOrderString.substring(0, sortOrderString.indexOf("."));
+            }
+            session.setAttribute("sortOrder", sortOrderString);
+        }
         session.removeAttribute("prefix");
 
         setHasQueryCookie(session, response, true);
