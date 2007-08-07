@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,16 +23,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionServlet;
-import org.apache.struts.action.PlugIn;
-import org.apache.struts.config.ModuleConfig;
-import org.xml.sax.SAXException;
 
 import org.intermine.cache.InterMineCache;
 import org.intermine.metadata.ClassDescriptor;
@@ -64,6 +52,17 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
+
+import java.io.InputStream;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionServlet;
+import org.apache.struts.action.PlugIn;
+import org.apache.struts.config.ModuleConfig;
 
 /**
  * Initialiser for the InterMine web application.

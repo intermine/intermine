@@ -280,7 +280,7 @@
       <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/buildBag" name="buildBagForm" type="org.intermine.web.struts.BuildBagAction" input="mymine" parameter="action">
-      <forward name="mymine" path="mymine.page"/>
+      <forward name="errors" path="bag.jsp"/>
       <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
     <action path="/bagUploadConfirm" name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmAction" validate="true" input="error" parameter="action">
