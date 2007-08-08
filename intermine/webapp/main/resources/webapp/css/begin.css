@@ -8,13 +8,7 @@ div.aspectOverview{
 	margin-bottom:5px;
 	float:left;
 }
-p.aspectLabel{
-	font-size:10px;
-	font-style: italic;
-	margin-left:70px;
-	margin-top:0px;
-	background:none;
-}
+
 p.aspectLabel a:link{
 	font-size:13px;
 	font-style: normal;
@@ -36,4 +30,8 @@ div#aspectsFront ul li{
 	height:90px;
 	margin:10px;
 	padding:0px;
+}
+
+div.aspectDescr{
+	visibility:hidden;
 }

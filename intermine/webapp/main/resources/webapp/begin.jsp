@@ -107,7 +107,7 @@
                        <html:link action="/aspect?name=${set.name}">
                          ${set.name}
                        </html:link><br/>
-                       <div id="aspectDescr_${status.index}">${set.subTitle}</div>
+                       <div id="aspectDescr_${status.index}" class="aspectDescr">${set.subTitle}</div>
                      </p>
                   </li>
              </c:forEach>
