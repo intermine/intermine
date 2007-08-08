@@ -1,0 +1,63 @@
+
+<project name="modmine-integration" default="default" basedir=".">
+  <description>perform integration</description>
+  
+  <!-- To load just one data source, run "ant -Dsource=<whatever>" -->
+  <!-- To empty the production database, go to modmine/dbmodel, and type "ant clean" and then "ant build-db" -->
+
+  <import file="../../imbuild/integrate.xml"/>
+
+  <target name="test" depends="init, -init-deps">
+    <!-- ensembl-anoph
+    <ant inheritAll="false" antfile="../../sources/ensembl/build.xml" target="translate">
+      <property name="intermine.properties.file" value="${intermine.properties.file}"/>
+      <property name="default.intermine.properties.file" location="${default.intermine.properties.file}"/>
+      <property name="source.name" value="ensembl-anoph"/>
+      <property name="target.model" value="genomic"/>
+      <property name="path.to.production.model.jar" location="../production/dist/genomic.jar"/>
+    </ant>
+
+    <ant inheritAll="false" antfile="../../sources/uniprot/build.xml" target="retrieve">
+      <property name="intermine.properties.file" value="${intermine.properties.file}"/>
+      <property name="default.intermine.properties.file" location="${default.intermine.properties.file}"/>
+      <property name="source.name" value="uniprot"/>
+      <property name="target.model" value="genomic"/>
+      <property name="uniprot.organisms" value="6239 7165 180454"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/6.8"/>
+      <property name="path.to.production.model.jar" location="../production/dist/genomic.jar"/>
+    </ant>
+
+    <ant inheritAll="false" antfile="../../sources/chado/build.xml" target="retrieve">
+      <property name="intermine.properties.file" value="${intermine.properties.file}"/>
+      <property name="default.intermine.properties.file" location="${default.intermine.properties.file}"/>
+      <property name="source.name" value="chado"/>
+      <property name="target.model" value="genomic"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_4_2_1/gff"/>
+      <property name="path.to.production.model.jar" location="../production/dist/genomic.jar"/>
+    </ant>
+
+    -->
+
+      <ant inheritAll="false" antfile="../../sources/uniprot/build.xml" target="retrieve">
+        <property name="intermine.properties.file" value="${intermine.properties.file}"/>
+        <property name="default.intermine.properties.file" location="${default.intermine.properties.file}"/>
+        <property name="source.name" value="uniprot-dros"/>
+        <property name="target.model" value="genomic"/>
+        <property name="uniprot.organisms" value="7227"/>
+        <property name="src.data.dir" location="/shared/data/uniprot/6.8"/>
+        <property name="path.to.production.model.jar" location="../production/dist/genomic.jar"/>
+      </ant>
+
+  </target>
+
+  <target name="test-task" depends="init">
+    <integrate projectXml="../project.xml" basedir="../.." source="uniprot" action="retrieve"/>
+  </target>
+
+  <target name="acceptance-tests" depends="-init-properties, -init-integrate, -init-deps">
+    <acceptance-tests configFile="../../bio/core/test/resources/modmine_acceptance_test.conf"
+                      outputFile="build/acceptance_test.html"
+                      database="db.production"/>
+  </target>
+</project>
+

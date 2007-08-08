@@ -1,0 +1,11 @@
+
+<project name="modmine-dbmodel" default="default" basedir=".">
+  
+  <description>represents the production objectstore and the model therein</description>
+  <import file="../../imbuild/objectstore.xml"/>
+
+  <target name="-merge-models" if="doing.build.db">
+    <merge-additions file="bio/core/genomic_additions.xml"/>
+    <merge-additions file="bio/sources/so/so_additions.xml"/>
+  </target>
+</project>
