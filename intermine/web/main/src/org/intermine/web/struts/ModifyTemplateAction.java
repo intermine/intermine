@@ -32,9 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * Action that results from a button press on the user profile page.
@@ -61,20 +64,21 @@ public class ModifyTemplateAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        if (request.getParameter("delete") != null) {
-            return delete(mapping, form, request, response);
-        } else {
-            if (request.getParameter("export") != null) {
-                return export(mapping, form, request, response);
-            } else {
-                if (request.getParameter("remove_favourite") != null) {
-                    return removeFavourite(mapping, form, request, response);
-                } else {
-                    LOG.error("Don't know what to do");
-                    return null;
-                }
-            }
+        
+        
+        ModifyTemplateForm mtf = (ModifyTemplateForm) form;
+        ActionErrors errors = mtf.validate(mapping, request);
+        if (errors == null || errors.isEmpty()) {  
+            if (request.getParameter("delete") != null) {
+                errors = delete(mapping, form, request, response);
+            } else if (request.getParameter("export") != null) {
+                 export(mapping, form, request, response);
+            } else if (request.getParameter("remove_favourite") != null) {
+                 removeFavourite(mapping, form, request, response);
+            } 
         }
+        saveErrors(request, (ActionMessages) errors);
+        return getReturn(mtf.getPageName(), mapping);
     }
 
     /**
@@ -83,11 +87,11 @@ public class ModifyTemplateAction extends InterMineAction
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
+     * @return errors The errors, if any, encountered whilst attempting to delete templates
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward delete(ActionMapping mapping,
+    public ActionErrors delete(@SuppressWarnings("unused") ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
                                 @SuppressWarnings("unused") HttpServletResponse response)
@@ -96,11 +100,17 @@ public class ModifyTemplateAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
-
+        ActionErrors errors = new ActionErrors();
         try {
             profile.disableSaving();
             for (int i = 0; i < mqf.getSelected().length; i++) {
-                profile.deleteTemplate(mqf.getSelected()[i]);
+                String template = mqf.getSelected()[i];
+                // if this template is not one of theirs
+                if (profile.getTemplate(template) == null) {                    
+                    errors.add(ActionMessages.GLOBAL_MESSAGE,
+                               new ActionMessage("errors.modifyTemplate.delete"));
+                }
+                profile.deleteTemplate(template);
             }
         } finally {
             profile.enableSaving();
@@ -112,8 +122,7 @@ public class ModifyTemplateAction extends InterMineAction
             SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
             tr.globalChange(TagTypes.TEMPLATE);
         }
-
-        return mapping.findForward("mymine");
+        return errors;
     }
 
     /**
@@ -122,11 +131,10 @@ public class ModifyTemplateAction extends InterMineAction
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward export(ActionMapping mapping,
+    public void export(@SuppressWarnings("unused") ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
                                 HttpServletResponse response)
@@ -160,8 +168,6 @@ public class ModifyTemplateAction extends InterMineAction
         }
         out.println("</template-list>");
         out.flush();
-
-        return null;
     }
 
     /**
@@ -175,8 +181,8 @@ public class ModifyTemplateAction extends InterMineAction
      *  an exception
      */
     private ActionForward removeFavourite(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request,
-                                          HttpServletResponse response) {
+                          HttpServletRequest request,
+                          @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = request.getSession().getServletContext();
@@ -194,5 +200,12 @@ public class ModifyTemplateAction extends InterMineAction
         }
         return mapping.findForward("mymine");
     }
-
+    
+    private ActionForward getReturn(String pageName, ActionMapping mapping) {
+        if (pageName != null && pageName.equals("MyMine")) {
+            return mapping.findForward("mymine");
+        } else {
+            return mapping.findForward("templates");
+        }
+    }
 }

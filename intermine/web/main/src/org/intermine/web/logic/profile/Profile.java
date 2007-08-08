@@ -171,6 +171,15 @@ public class Profile
     }
 
     /**
+     * get a template
+     * @param name the template
+     * @return template
+     */
+    public TemplateQuery getTemplate(String name) {
+        return savedTemplates.get(name);
+    }
+    
+    /**
      * Delete a template
      * @param name the template name
      */

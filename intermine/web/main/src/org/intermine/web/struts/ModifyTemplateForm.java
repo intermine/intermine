@@ -25,7 +25,8 @@ import org.apache.struts.action.ActionMessages;
 public class ModifyTemplateForm extends ActionForm
 {
     protected String[] selected;
-
+    protected String pageName; // can modify template from templates and mymine pages
+    
     /**
      * Constructor
      */
@@ -58,6 +59,20 @@ public class ModifyTemplateForm extends ActionForm
         return selected;
     }
 
+    /**
+     * @return the pageName
+     */
+    public String getPageName() {
+        return pageName;
+    }
+
+    /**
+     * @param pageName the pageName to set
+     */
+    public void setPageName(String pageName) {
+        this.pageName = pageName;
+    }
+    
     /**
      * {@inheritDoc}
      */

@@ -160,6 +160,7 @@
         <html:submit property="export" disabled="true" styleId="export_button">
           <fmt:message key="history.exportSelected"/>
         </html:submit>
+        <html:hidden property="pageName" value="MyMine"/>
         </html:form>
         <br/>
       </c:otherwise>

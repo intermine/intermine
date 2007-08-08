@@ -268,8 +268,9 @@
       <forward name="bag" redirect="true" path="/bag.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do?page=lists"/>
     </action>
-    <action path="/modifyTemplate" name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateAction" scope="request" input="mymine" parameter="action">
+    <action path="/modifyTemplate" name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateAction" scope="request" input="mymine" parameter="action" validate="false">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
+      <forward name="templates" redirect="true" path="/templates.do"/>
     </action>
     <action path="/saveBag" name="saveBagForm" type="org.intermine.web.struts.SaveBagAction" input="results">
       <forward name="results" redirect="true" path="/results.do"/>
