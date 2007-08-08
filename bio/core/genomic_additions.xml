@@ -59,7 +59,7 @@
                     reverse-reference="protein" ordered="true"/>
     </class>
 
-    <class name="org.flymine.model.genomic.Translation" is-interface="true">
+    <class name="org.flymine.model.genomic.Translation"  extends="org.flymine.model.genomic.BioEntity" is-interface="true">
         <attribute name="symbol" type="java.lang.String"/>
         <attribute name="organismDbId" type="java.lang.String"/>
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
