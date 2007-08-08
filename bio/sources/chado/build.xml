@@ -1,0 +1,11 @@
+
+<project name="chado" default="default" basedir=".">
+  <description>build, test, package chado</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+  
+</project>
+
+
+
+
