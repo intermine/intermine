@@ -6,8 +6,10 @@
 	
 <!-- mymineMenu.jsp -->
 	
-	<c:set var="MYMINE_PAGE" value="<%=request.getParameter("MYMINE_PAGE")%>"/>
+	<c:set var="MYMINE_PAGE" value="<%=request.getParameter("page")%>"/>
 	<c:set var="loggedin" value="<%=request.getParameter("loggedin")%>"/>
+	
+
 
 	<div id="mymineMenu">
 	
@@ -15,7 +17,7 @@
 	<li>
 	<%-- bags --%>
         <c:choose>
-          <c:when test="${MYMINE_PAGE=='lists'||MYMINE_PAGE == ''}">
+          <c:when test="${MYMINE_PAGE=='lists'||MYMINE_PAGE == null}">
             <span class="active"><fmt:message key="mymine.bags.tab.title"/></span>
           </c:when>
           <c:otherwise>
@@ -26,22 +28,6 @@
         </c:choose>
     </li>
     <li>&nbsp;|&nbsp;</li>
-	
-	<li>
-	<%-- favourite bags
-        <c:choose>
-          <c:when test="${MYMINE_PAGE=='favouriteLists'||MYMINE_PAGE == ''}">
-            <span class="active"><fmt:message key="mymine.favouriteBags.tab.title"/></span>
-          </c:when>
-          <c:otherwise>
-            <html:link action="/mymine?page=favouriteLists">
-              <fmt:message key="mymine.favouriteBags.tab.title"/>
-            </html:link>
-          </c:otherwise>
-        </c:choose>
-    </li>
-    <li>&nbsp;|&nbsp;</li>
-	 --%>
     <li>
 	<%-- query history --%>
 	 <c:choose>
@@ -94,31 +80,6 @@
           </c:otherwise>
         </c:choose>
   </li>
-    
- <%-- <li>&nbsp;|&nbsp;</li>
-   
-   <li>
-	 favourites 
-    
-        <c:choose>
-          <c:when test="${!loggedin}">
-            <span onclick="alert('You need to log in to save favourites'); return false;">
-              <fmt:message key="mymine.favourites.tab.title"/>
-            </span>
-          </c:when>
-          <c:when test="${MYMINE_PAGE=='favourites'}">
-             <span class="active"><fmt:message key="mymine.favourites.tab.title"/></span>
-          </c:when>
-          <c:otherwise>
-            <html:link action="/mymine?page=favourites">
-              <fmt:message key="mymine.favourites.tab.title"/>
-            </html:link>
-          </c:otherwise>
-          
-        </c:choose>
- &nbsp;<img src="images/star_active.gif" title="Favourites"/>
-    </li>
---%>
 	<%-- change password --%>
 
       <c:if test="${loggedin}">
@@ -137,7 +98,10 @@
           </c:choose>
          </li>
       </c:if>
-      
+</ul>
 	</div>
 	<div style="clear:both;"></div>
+
+
+	
 <!-- /mymineMenu.jsp -->

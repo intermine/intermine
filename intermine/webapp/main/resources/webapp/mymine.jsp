@@ -5,14 +5,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- mymine.jsp -->
-<link rel="stylesheet" type="text/css" href="css/mymine.css"/>
 
-<c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
-<jsp:include page="mymineMenu.jsp" flush="true">
-    <jsp:param name="loggedin" value="${loggedin}"/>
-    <jsp:param name="MYMINE_PAGE" value="${MYMINE_PAGE}" />
-</jsp:include>
-    
 <div class="body">
 
 

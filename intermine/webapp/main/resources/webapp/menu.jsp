@@ -40,19 +40,20 @@
       <fmt:message key="menu.mymine"/>
     </html:link>
   </li>
-  <%--<li>
-    <im:login/>
-    &nbsp;
-  </li>
-  <li>
-    <html:link href="${WEB_PROPERTIES['project.sitePrefix']}/doc/manual/">
-      <fmt:message key="menu.help"/>
-    </html:link>
-  </li>--%>
   </ul>
   <div style="background:#D0B5D7;top:90px;position:absolute;right:10px">
     <tiles:insert name="browse.tile"> 
       <tiles:put name="menuItem" value="true"/> 
     </tiles:insert>
   </div>
+  
+<div style="clear:both;"></div>
+
+<c:if test="${tab == 'mymine'}">
+
+	<c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
+	<jsp:include page="mymineMenu.jsp" flush="true">
+    	<jsp:param name="loggedin" value="${loggedin}"/>  
+	</jsp:include>
+</c:if>
 <!-- /menu.jsp -->
