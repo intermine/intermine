@@ -16,6 +16,14 @@
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
+    <script LANGUAGE="JavaScript">
+      <!--//<![CDATA[
+          function confirmAction() {
+          return confirm("Do you really want to delete the selected templates?")
+          }
+          //]]>-->
+    </script>
+
 <html:xhtml/>
 <im:roundbox titleKey="wsTemplateTable.heading" stylename="welcome">
 <div class="" id="ws_${wsListId}_template">
@@ -37,4 +45,19 @@
 </tiles:insert>
 </div>
 </im:roundbox>
+
+
+
+  <p width="100%" align="right">
+          <html:submit property="delete" styleId="delete_button" 
+                     onclick="return confirmAction()">
+          <fmt:message key="history.delete"/>
+        </html:submit>
+        <html:submit property="export" styleId="export_button">
+          <fmt:message key="history.exportSelected"/>
+        </html:submit>
+         <html:hidden property="pageName" value="templates"/>
+  </p>
+
+
 <!-- /wsTemplateTable.jsp -->
