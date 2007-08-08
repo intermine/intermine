@@ -67,6 +67,9 @@ h1, h2, h3 {
    padding:0px;
    margin:0px;
 }
+#title p{
+   background:none;
+}
 
 .clear-both {
   content: ".";
@@ -127,6 +130,9 @@ h1, h2, h3 {
 	padding:0px;
 	margin:0px;
 }
+.roundcornerbox p {
+	background:none;
+}
 table#headertable{
 	width:100%;
 	margin:0px;
@@ -173,6 +179,9 @@ td#quicksearch {
 	vertical-align: middle;
 	text-align: left;
 }
+.pageDesc p {
+	background:none;
+}
 
 #leftCol{width:400px;float:left;}
 #rightCol{margin-left:390px;}
@@ -187,6 +196,8 @@ div.actionArea{
 div.actionArea h2{
 	margin:0px;
 	padding:0px;
+	background:#F5F0FF;
+	color:#5C0075;;
 }
 
 .feedbackButton {

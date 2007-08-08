@@ -93,7 +93,7 @@
       
      <p>
       <label><fmt:message key="bagBuild.bagType"/></label><br>
-      <html:select styleId="typeSelector" property="type" onchange="typeChanged()" style="width:100%">
+      <html:select styleId="typeSelector" property="type" onchange="typeChanged()" style="width:300px">
     	<c:forEach items="${preferredTypeList}" var="type">
           <html:option value="${type}" style="font-weight:bold">${type}</html:option>
     	</c:forEach>
@@ -104,13 +104,13 @@
       </html:select>
      </p>
       <c:if test="${!empty extraBagQueryClass}">
-     <p>
+     <p><br>
        <label> 
          <fmt:message key="bagBuild.extraConstraint">
             <fmt:param value="${extraBagQueryClass}"/>
           </fmt:message>
        </label><br>
-          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" style="width:100%">
+          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" style="width:300px">
             <html:option value="" style="text-align:center">----------------</html:option>
       	    <c:forEach items="${extraClassFieldValues}" var="value">
               <html:option value="${value}">${value}</html:option>
@@ -118,14 +118,13 @@
           </html:select>
       </p>
       </c:if>
-
-    
+<br>
     <%-- textarea --%>
-    <div align="center"><html:textarea styleId="pasteInput" property="text" rows="10" cols="30" onfocus="switchInputs('paste','file');" /></div>
-    <script type="text/javascript" charset="utf-8">
+   <html:textarea styleId="pasteInput" property="text" rows="10" cols="35" onfocus="switchInputs('paste','file');" />
+   <script type="text/javascript" charset="utf-8">
       initPasteInput();
     </script>
-       
+<br><br>       
     <p><fmt:message key="bagBuild.or"/></p>
       
 	 

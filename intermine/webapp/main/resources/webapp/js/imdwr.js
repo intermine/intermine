@@ -456,10 +456,10 @@ function changeScope(type, wsListId) {
 
     if(scope == 'all') {
       document.getElementById(id).value = 'user';
-      document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_my_active.png';
+      document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_all.png';
     } else if(scope == 'user') {
       document.getElementById(id).value = 'all';    
-      document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_all.png';
+      document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_my_active.png';
     }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     return filterWebSearchablesHandler(null, filterTextElement, document.getElementById(id).value, type, wsListId);
