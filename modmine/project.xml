@@ -1,0 +1,44 @@
+<project type="bio">
+  <property name="target.model" value="genomic"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="modmine.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+  <sources>
+    <source name="chado" type="chado" dump="true">
+      <property name="src.data.dir" location="/dumps/flyminebuild/rns/chado/"/>
+      <property name="src.data.dir.includes" value="*.xml"/>
+    </source>
+  </sources>
+
+  <post-processing>
+    <post-process name="create-utr-references"/>
+    <post-process name="calculate-locations"/>
+    <post-process name="create-references" dump="true"/>
+    <post-process name="make-spanning-locations"/>
+    <post-process name="create-chromosome-locations-and-lengths"/>
+    <post-process name="create-intergenic-region-features"/>
+    <post-process name="transfer-sequences" dump="true"/>
+    <post-process name="create-overlap-relations-flymine" dump="true"/>
+    <post-process name="do-sources"/>
+
+    <post-process name="set-collection-counts" dump="true"/>
+    <post-process name="create-intron-features"/>
+    <post-process name="synonym-update"/>
+    <post-process name="create-attribute-indexes"/>
+
+    <!-- grant-db-production/
+    TODO: Not really post processing but just has to be done sometime...
+  <target name="grant-db-production" depends="prepare" - ->
+    <!- - grant 'public' user select permission on production db - ->
+    <taskdef name="grant" classname="org.intermine.task.GrantTask">
+      <classpath refid="models.class.path"/>
+    </taskdef>
+
+    <grant database="db.production" user="PUBLIC" perm="SELECT"/>
+
+  </target>
+    -->
+  </post-processing>
+
+</project>
+
