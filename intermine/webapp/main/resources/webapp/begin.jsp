@@ -96,16 +96,18 @@
 		    <c:when test="${!empty ASPECTS}">
           <ul>
 		       <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
-                   <li class="aspectOverview">
-                     <c:set var="set" value="${entry.value}"/>
+			       <c:set var="set" value="${entry.value}"/>
+                   <li class="aspectOverview"                            
+                   		onmouseover="javascript:$('aspectDescr_${status.index}').style.visibility = 'visible'"
+                         onmouseout="javascript:$('aspectDescr_${status.index}').style.visibility = 'hidden'">                     
                      <html:link action="/aspect?name=${set.name}">
                        <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon" />
                      </html:link>
                      <p class="aspectLabel">
                        <html:link action="/aspect?name=${set.name}">
                          ${set.name}
-                       </html:link><br>
-                       ${set.subTitle}
+                       </html:link><br/>
+                       <div id="aspectDescr_${status.index}">${set.subTitle}</div>
                      </p>
                   </li>
              </c:forEach>
