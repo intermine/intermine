@@ -1,0 +1,5 @@
+<project name="chado-tasks" default="default" basedir=".">
+  <description>build chado tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
+
