@@ -22,16 +22,16 @@
 .wsTempateLine_act {
 	padding:10px;
 	border-bottom: #F5F0FF solid 1px;
-    background:#EEE;
+    background:#CCC;
 }
 .wsTempateLine_my {
 	padding:10px;
 	border-bottom: #F5F0FF solid 1px;
 	background:#9B87A7;
-	color:white;    
+/*	background: url('../images/my_grad.png') repeat-x;*/
 }
 .wsTempateLine_my a:link,.wsTempateLine_my a:visited{
-	color:white;    
+	color:white;
 }
 div.wsTempateLine p.description, div.wsTempateLine div.description
 ,.wsTempateLine_act p.description,.wsTempateLine_act div.description
@@ -46,19 +46,29 @@ div.wsTempateLine p.description a{
 }
 .aspectSelect {
   font-size: small;
+  float:left;
+  display: inline;
+  padding:0px;
+  margin:0px;
 }
 div.filterBar {
-	margin:10px;
+	margin:10px 0px 10px 0px;
 	background:#9F67AD;
 	color:white;
 	font-weight: bold;
 	padding:15px;
+	height:20px;
+}
+ul.filterActions{
+	width:600px;
 }
 ul.filterActions ,ul.filterActions li{
 	list-style: none;
 	margin:0px;
 	padding:0px;
+	white-space: nowrap;
 }
 ul.filterActions li{
 	float:left;
+	vertical-align: baseline;
 }
