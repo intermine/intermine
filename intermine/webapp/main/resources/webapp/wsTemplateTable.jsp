@@ -49,10 +49,6 @@
 
 
   <p width="100%" align="right">
-          <html:submit property="delete" styleId="delete_button" 
-                     onclick="return confirmAction()">
-          <fmt:message key="history.delete"/>
-        </html:submit>
         <html:submit property="export" styleId="export_button">
           <fmt:message key="history.exportSelected"/>
         </html:submit>
