@@ -48,7 +48,7 @@
 
         <html:form action="/modifyQuery">
         <input type="hidden" name="type" value="${type}"/>
-        <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0">
+        <table class="sortable-onload-3-reverse rowstyle-alt no-arrow" cellspacing="0">
         <thead>
           <tr>
             <th>

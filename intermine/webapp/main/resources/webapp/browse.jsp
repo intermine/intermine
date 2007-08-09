@@ -9,11 +9,13 @@
 function updateExample(value) {
 	if (value=='tpls') {
 	   document.getElementById('quickSearchInput').value = '<fmt:bundle basename="model"><fmt:message key="model.template.example"/></fmt:bundle>';
+	   
 	} else if (value='bgs') {
 	   document.getElementById('quickSearchInput').value = '<fmt:bundle basename="model"><fmt:message key="model.bag.example"/></fmt:bundle>';
 	} else {
 	   document.getElementById('quickSearchInput').value = '<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>';
 	}
+	document.getElementById('quickSearchInput').className = 'quicksearch';
 }
 </script>
 <tiles:importAttribute name="menuItem" ignore="true"/>
@@ -25,7 +27,7 @@ function updateExample(value) {
 	<option value="bgs" <c:if test="${quickSearchType=='bgs'}">selected</c:if>>Lists</option>
   </select>
 <fmt:message key="header.search.mid"/>
-<input style="color:#666; font-style:italic;" type="text" id="quickSearchInput" name="value" size="20" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearElement(this);">  
+<input class="quicksearch"  type="text" id="quickSearchInput" name="value" size="20" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearElement(this);">  
 <html:submit><fmt:message key="header.search.button"/></html:submit>
 
 </html:form>
