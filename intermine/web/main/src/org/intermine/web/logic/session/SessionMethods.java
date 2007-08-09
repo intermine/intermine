@@ -243,8 +243,8 @@ public class SessionMethods
         }
         session.setAttribute("path", pathString);
         // it's possible to not have a sort order
-        if (query.getSortOrder() != null) {
-            OrderBy sortOrder = query.getSortOrder().iterator().next();
+        if (query.getSortOrder() != null && !query.getSortOrder().isEmpty()) {
+            OrderBy sortOrder = query.getSortOrder().get(0);
             String sortOrderString = sortOrder.getField().toStringNoConstraints();
             if (sortOrderString.indexOf(".") != -1) {
                 sortOrderString  = sortOrderString.substring(0, sortOrderString.indexOf("."));
