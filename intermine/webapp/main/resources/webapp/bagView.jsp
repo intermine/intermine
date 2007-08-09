@@ -30,22 +30,12 @@
 
 <html:form action="/modifyBag">
   <tiles:insert name="wsBagTable.tile">
-    <tiles:put name="wsListId" value="user_bag"/>
+    <tiles:put name="wsListId" value="all_bag"/>
     <tiles:put name="limit" value="15"/>
-    <tiles:put name="scope" value="user"/>
+    <tiles:put name="scope" value="all"/>
     <tiles:put name="makeCheckBoxes" value="true"/>
     <tiles:put name="showDescriptions" value="true"/>
-  </tiles:insert>
-
-  <br/>
-
-  <tiles:insert name="wsBagTable.tile">
-    <tiles:put name="wsListId" value="global_bag"/>
-    <tiles:put name="limit" value="15"/>
-    <tiles:put name="scope" value="global"/>
-    <tiles:put name="makeCheckBoxes" value="true"/>
-    <tiles:put name="showDescriptions" value="true"/>
-    <tiles:put name="height" value="300"/>
+    <tiles:put name="height" value="470"/>
   </tiles:insert>
 
 <div style="margin-left:420px">

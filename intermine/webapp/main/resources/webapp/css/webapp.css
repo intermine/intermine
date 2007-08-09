@@ -266,6 +266,9 @@ table.query {
   color: #333;
 }
 
+.box div.title{
+	color:#CCCC;
+}
 .boxbody {
   background-color: white;
   /*border-bottom: 1px solid #888;*/

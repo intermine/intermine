@@ -14,19 +14,18 @@
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 <tiles:importAttribute name="statusIndex"/>
-<tiles:importAttribute name="wsCheckBoxId" ignore="true"/>
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 
 <c:set var="type" value="template"/>
 
 <!-- wsTemplateLine.jsp -->
-<div id="${wsListId}_${type}_item_line_${webSearchable.name}" <c:choose><c:when test="${! empty userWebSearchables[wsName]}">class="wsTempateLine_my" onmouseout="this.className='wsTempateLine_my'"</c:when>
-<c:otherwise> class="wsTempateLine" onmouseout="this.className='wsTempateLine'"</c:otherwise></c:choose> onmouseover="this.className='wsTempateLine_act'">
+<div id="${wsListId}_${type}_item_line_${webSearchable.name}" <c:choose><c:when test="${! empty userWebSearchables[wsName]}">class="wsLine_my" onmouseout="this.className='wsLine_my'" onmouseover="this.className='wsLine_my_act'"</c:when>
+<c:otherwise> class="wsLine" onmouseout="this.className='wsLine'" onmouseover="this.className='wsLine_act'"</c:otherwise></c:choose> >
 <div style="float: right" id="${wsListId}_${type}_item_score_${webSearchable.name}">
   &nbsp;
 </div>
 <c:if test="${!empty makeCheckBoxes}">
-    <html:multibox property="selected" styleId="${wsListId}_template_chck_${webSearchable.name}"
+    <html:multibox property="selected" styleId="${wsListId}_${type}_chck_${webSearchable.name}"
                    onclick="setDeleteDisabledness(this.form, '${type}')">
       <c:out value="${wsName}"/>
     </html:multibox>
