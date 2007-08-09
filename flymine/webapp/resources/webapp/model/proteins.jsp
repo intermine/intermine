@@ -23,7 +23,7 @@
           <p>
             All proteins from the <a
             href="http://www.ebi.uniprot.org/index.shtml">UniProt
-            Knowledgebase</a> (version 7.5) for the following organisms have
+            Knowledgebase</a> - Version 11.0 - for the following organisms have
             been loaded:</p>
 
           <ul>             
@@ -59,7 +59,7 @@
           <p>
             Protein family and domain assignments to proteins in UniProt have
             been loaded from <a
-            href="http://www.ebi.ac.uk/interpro">InterPro</a> (version 12.1)
+            href="http://www.ebi.ac.uk/interpro">InterPro</a> - Version 12.0 -
             for the following organisms:</p>
           <ul> 
               <li><i>D. melanogaster</i></li>

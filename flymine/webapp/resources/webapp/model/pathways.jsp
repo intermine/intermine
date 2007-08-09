@@ -10,13 +10,12 @@
         Current data
       </div>
       <div class="body">
-        <dt>
 
-         The pathway data in the KEGG database have been manually entered from published materials. Current KEGG data in FlyMine are from Release41 and only include KEGG pathway names with their IDs and the genes involved.  
-        </dt>
+        <dt>The pathway data in the KEGG database have been manually
+        entered from published materials. Current KEGG data in FlyMine are
+        from Release 41 and only include KEGG pathway names with their IDs and
+        the genes involved.</dt>
 
-        <dd>Kanehisa et al (2006) Nucleic Acids Res. 34, D354-357  (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381885">PubMed: 16381885</a>) - From genomics to chemical genomics: new developments in KEGG. 
-        </dt>
        </div>
     </td>
 

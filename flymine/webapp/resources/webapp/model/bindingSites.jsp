@@ -21,22 +21,22 @@
 
           <div id="hiddenDiv1" style="display:none;">
 
-            <dt>
-              - Transcriptional  <i>cis</i>-regulatory modules (CRMs) for <i>D. melanogaster</i>
+
+            <ul><li><dt>
+              Transcriptional  <i>cis</i>-regulatory modules (CRMs) for <i>D. melanogaster</i>
               from the <a href="http://redfly.ccr.buffalo.edu"> REDfly database </a>.
             </dt>
-            <dd>Gallo et al (2006) Bioinformatics 22:381-383 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16303794">PubMed: 16303794 </a>) - REDfly: a Regulatory Element Database for <i>Drosophila</i>.
-            </dd>
+
 
             <dt>
               Note: The REDfly data has been re-mapped to
               genome sequence release 5.0 as of FlyMine release 7.0.
-            </dt>
+            </dt></li></ul>
 
-            <dt>
-              - Regulatory elements for <i>D. melanogaster</i> annotated by
+            <ul><li><dt>
+              Regulatory elements for <i>D. melanogaster</i> annotated by
               <a href="http://flybase.bio.indiana.edu">FlyBase</a>.
-            </dt>
+            </dt></li></ul>
 
           </div>
 
@@ -49,31 +49,14 @@
 
           <div id="hiddenDiv2" style="display:none;">
 
-            <dt>
-              - DNase I footprints for <i>D. melanogaster</i> from the
-              <a href="http://www.flyreg.org"> DNase I footprint database (V2.0)</a>.
-            </dt>
-            <dd>
-              Bergman et al (2005) Bioinformatics 21:1747-1749 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468">PubMed: 15572468</a>) - <i>Drosophila</i> DNase I footprint database: a systematic genome annotation of transcription factor binding sites in the fruitfly, <i>Drosophila melanogaster</i>.
-            </dd>
+          <ul><li>
+            <dt>DNase I footprints for <i>D. melanogaster</i> from the
+              <a href="http://www.flyreg.org"> DNase I footprint database (V2.0)</a>.</dt>
+             <dt>Note: The FlyReg data has been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0.</dt></li></ul>
 
-            <dt>
-              Note: The FlyReg data has been re-mapped to
-              genome sequence release 5.0 as of FlyMine release 7.0.
-            </dt>
-
-
-            <dt>
-              - Tiffin is a database of predicted regulatory motifs and predicted functional sites ("motif instances") on genome sequences.
-            </dt>
-            <dd>
-              <a href="http://servlet.sanger.ac.uk/tiffin/">Tiffin page at The Sanger Insitute</a>
-            </dd>
-
-            <dt>
-              Note: The Tiffin-1.2 data has been re-mapped to
-              genome sequence release 5.0 as of FlyMine release 7.0.
-            </dt>
+          <ul><li>
+            <dt><a href="http://servlet.sanger.ac.uk/tiffin/">Tiffin</a> is a database of predicted regulatory motifs and predicted functional sites ("motif instances") on genome sequences.</dt>
+            <dt>Note: The Tiffin-1.2 data has been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0.</dt></li></ul>
 
 
           </div>

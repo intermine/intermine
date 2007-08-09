@@ -32,43 +32,33 @@
             <a href="/">FlyMine</a> is a resource aimed at the <i>Drosophila</i> and
             <i>Anopheles</i> research communities hence the focus is on those organisms.
           </p>
-          <dl>
+         <ul>
+         <li>
             <dt>
-              <i>Drosophila melanogaster</i>
-            </dt>
-            <dd>
-              Release 5.1 genome annotation from <a href="http://www.flybase.org">
+              <i>Drosophila melanogaster</i> - Genome annotation release 5.1 from <a href="http://www.flybase.org">
                 <html:img src="model/FlyBase_logo_mini.png"/> </a>.
-            </dd>
+            </dt></dl>
+          <li>
             <dt>
-              <i>Drosophila pseudoobscura</i>
-            </dt>
-            <dd>
-              Release 2.0 genome annotations from
+              <i>Drosophila pseudoobscura</i> - Genome annotation release 2.0 from
               <a href="http://www.flybase.org">
-                <html:img src="model/FlyBase_logo_mini.png"/>
-              </a>.
-            </dd>
-          </dl>
+                <html:img src="model/FlyBase_logo_mini.png"/></a>.
+            </dt></li>
+        <li>
           <dt>
-            <i>Anopheles gambiae</i> str. PEST
-          </dt> 
-          <dd>
-            Release 37.3 genome annotations from
+            <i>Anopheles gambiae</i> str. PEST -  Genome annotation release AgamP3 from
             <a href="http://www.ensembl.org/Anopheles_gambiae">
               <html:img src="model/ensembl_logo_mini.png"/>
             </a>.
-          </dd>
+          </dt></li>
+         <li>
           <dt>
-            <i>Apis mellifera</i>
-          </dt>
-          <dd>
-            Release 37.2d genome annotations from
+            <i>Apis mellifera</i> - Genome annotation release 2 from
             <a href="http://www.ensembl.org/Apis_mellifera">
               <html:img src="model/ensembl_logo_mini.png"/>
             </a>.
-          </dd>
-
+          </dt></li>
+        </ul>
         </div>
 
         <h4>
@@ -85,16 +75,10 @@
             for <i>C. elegans</i>, <i>S. cerevisiae</i> and others for
             comparison purposes.
           </p>
-          <dl>
-            <dt><i>Caenorhabditis elegans</i></dt>
-            <dd>
-              Genome information from <a href="http://www.wormbase.org">WormBase</a>,
-              protein interaction data from 
-              <a href="http://www.ebi.ac.uk/intact/">IntAct</a>, orthologues and
-              paralogues from <a href="http://inparanoid.cgb.ki.se">Inparanoid</a>, GO
-              terms, Uniprot and Interpro data.
-            </dd>
-          </dl>
+
+            <ul><li><i>Caenorhabditis elegans</i> - Genome information from <a href="http://www.wormbase.org">WormBase</a>,
+            </li></ul>
+
         </div>
 
         <h4>
@@ -106,31 +90,13 @@
 
         <div id="hiddenDiv3" style="display:none;">
           <dl>
-            <dt><i>A. gambiae</i> EST data set version 8.0</dt>
-            <dd>
-              Clustered EST data set from the 
-              <a href="http://agambiae.vectorbase.org/SequenceData/EST/">Imperial College London Centre for Bioinformatics</a>.
-            </dd>
-          </dl>
+            <ul><li><i>Anopheles gambiae</i> - Clustered EST data set version 8.0 from the 
+              <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php/">Imperial College London Centre for Bioinformatics</a>.
+            </dt>
+          </li></ul>
         </div>
       </div>
 
-        <h4>
-          <a href="javascript:toggleDiv('hiddenDiv3');">
-            <img id='hiddenDiv3Toggle' src="images/undisclosed.gif"/>
-            Pathway data ...
-          </a>
-        </h4>
-
-        <div id="hiddenDiv3" style="display:none;">
-          <dl>
-            <dt>Pathway data for <i>D. melanogaster</i></dt>
-            <dd>
-              Pathway data from <a href="http://www.genome.jp/kegg/">KEGG</a> for <i>D. melanogaster</i> genes.</dt>
-            </dd>
-          </dl>
-        </div>
-      </div>
 
    </td>
     <td width="40%" valign="top">
