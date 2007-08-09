@@ -99,40 +99,18 @@ public class QuickSearchAction extends InterMineAction
                 .addParameter("qid", qid)
                 .addParameter("trail", "")
                 .forward();
+        } else if (qsType.equals("bgs")) {
+            request.setAttribute("type", "bag");
+            request.setAttribute("initialFilterText", qsf.getValue());
+            return mapping.findForward("bags");
+        } else if (qsType.equals("tpls")) {
+            request.setAttribute("type", "template");
+            request.setAttribute("initialFilterText", qsf.getValue());
+            return mapping.findForward("templates");
         } else {
-            if (qsType.equals("bgs")) {
-                Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
-                Map scopeMap = new LinkedHashMap();
-                Map highlightedMap = new HashMap();
-                long time = SearchRepository.runLeuceneSearch(qsf.getValue(), 
-                                                              TemplateHelper.ALL_TEMPLATE, "bag", 
-                                                              profile, context, hitMap, scopeMap,
-                                                              highlightedMap, null);
-                request.setAttribute("type", "bag");
-
-                request.setAttribute("results", hitMap);
-                request.setAttribute("resultScopes", scopeMap);
-                request.setAttribute("highlighted", highlightedMap);
-                request.setAttribute("querySeconds", new Float(time / 1000f));
-                request.setAttribute("queryString", qsf.getValue());
-                request.setAttribute("resultCount", new Integer(hitMap.size()));
-                Map descriptionsMap = new HashMap();
-                for (WebSearchable ws: hitMap.keySet()) {
-                    descriptionsMap.put(ws, ws.getDescription());
-                }
-
-                request.setAttribute("descriptions", descriptionsMap);
-                return mapping.findForward("search");
-            } else {
-                if (qsType.equals("tpls")) {
-                    request.setAttribute("type", "template");
-                    request.setAttribute("initialFilterText", qsf.getValue());
-                    return mapping.findForward("templates");
-                } else {
-                    throw new RuntimeException("Quick search type not valid");
-                }
-            }
+            throw new RuntimeException("Quick search type not valid");
         }
+
     }
     
 }
