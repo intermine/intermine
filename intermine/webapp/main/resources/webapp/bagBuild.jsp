@@ -17,7 +17,8 @@
       document.getElementById('whichInput').value = open;
       
       document.getElementById('submitBag').disabled = false;
-      if(open == 'paste') {
+      // only clear contents if contents equals our help text
+      if(open == 'paste' && document.getElementById('pasteInput').value == "<fmt:message key="bagBuild.bagPaste"/>") {
          document.getElementById('pasteInput').value = "";
          document.getElementById('pasteInput').style.color = "#000";
          document.getElementById('pasteInput').style.fontStyle = "normal";
@@ -39,6 +40,8 @@
     
     function loadExample(example) {
     	document.getElementById('pasteInput').value = example;    
+    	document.getElementById('pasteInput').focus();
+    	return false;
     }
 
 
@@ -72,7 +75,7 @@
 <div class="actionArea">
   <h2><fmt:message key="bagBuild.makeNewBag"/></h2>
   <div class="bagBuild">
-    <html:form action="/buildBag" method="post" enctype="multipart/form-data">
+    <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
       <p><fmt:message key="bagBuild.bagFromText1"/></p>
       <%-- example bag --%>
           <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
