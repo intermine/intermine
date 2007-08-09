@@ -15,27 +15,12 @@
 
 <h4>
   <a href="javascript:toggleDiv('hiddenDiv1');">
-    <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
-     <i>D. melanogaster</i>  - Probe set data from Affymetrix ...
-  </a>
-</h4>
-
-<div id="hiddenDiv1" style="display:none;">
-
-<dt> Probe sets from the <a href="http://www.affymetrix.com/">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 2.0 Array, a microarray tool for studying expression of <i>D. melanogaster</i> transcripts.</dt>
-<dd> Comprised of 18,880 probe sets for the analysis of over 18,500 transcripts. </dd>
-<dd> Sequences used in the design of the GeneChip <i>Drosophila</i> Genome 2.0 Array were selected from Flybase version 3.1.</dd>
-
-</div>
-
-<h4>
-  <a href="javascript:toggleDiv('hiddenDiv2');">
     <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
      <i>D. melanogaster</i>  - Microarray-based gene expression data from FlyAtlas ...
   </a>
 </h4>
 
-<div id="hiddenDiv2" style="display:none;">
+<div id="hiddenDiv1" style="display:none;">
 
 <dt>An affymetrix microarray-based atlas of gene expression in the adult <i>Drosophila</i> fly from <a href="http://www.flyatlas.org/">FlyAtlas</a>.</dt>
 
@@ -55,22 +40,20 @@ tissue, the following data are given:
 
 </dd>
 
-<dd>
-The approach has proven valuable in understanding the function of the Malpighian tubule and was reported in Wang et al (2004) Genome Biol 5(9):R69 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15345053">PubMed: 15345053</a>) - Function-informed transcriptome analysis of <i>Drosophila</i> renal tubule.
-</dd>
+
 
 <br/> 
 
 </div>
 
 <h4>
-  <a href="javascript:toggleDiv('hiddenDiv3');">
+  <a href="javascript:toggleDiv('hiddenDiv2');">
     <img id='hiddenDiv3Toggle' src="images/undisclosed.gif"/>
      <i>D. melanogaster</i>  - Gene expression data from ArrayExpress ...
    </a>
 </h4>
 
-<div id="hiddenDiv3" style="display:none;"> 
+<div id="hiddenDiv2" style="display:none;"> 
 
 <dt>
 Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-6">E-FLYC-6</a>
@@ -95,13 +78,6 @@ Arbeitman et al reported gene expression patterns for nearly one third of all <i
       <div class="body">
           
           <ul>
-            <li>
-             <im:querylink text="All Affymetrix probes from the GeneChip <i>Drosophila</i> Genome 2.0 Array " skipBuilder="true">
-              <query name="" model="genomic" view="ProbeSet.identifier ProbeSet.length ProbeSet.isControl">
-               </query>
-             </im:querylink>
-            </li>
-
             <li>
              <im:querylink text="All FlyAtlas results for <i>D. melanogaster genes</i> " skipBuilder="true">
              <query name="" model="genomic" view="FlyAtlasResult.genes.identifier FlyAtlasResult.material.identifier FlyAtlasResult.MRNASignal FlyAtlasResult.MRNASignalSEM FlyAtlasResult.enrichment FlyAtlasResult.presentCall FlyAtlasResult.affyCall FlyAtlasResult.assays.name">

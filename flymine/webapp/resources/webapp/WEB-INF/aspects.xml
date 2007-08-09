@@ -10,7 +10,7 @@
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
-    <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae"/>
+    <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae/"/>
   </aspect>
 
   <aspect name="Gene Expression">
@@ -20,13 +20,9 @@
     <intro-text>
       &lt;p&gt;
       Microarray-based gene expression data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyAtlas, as well as from selected data sets.
-      &lt;/p&gt;
-      &lt;p&gt;
-      Probe set data from Affymetrix.
-      &lt;/p&gt;
+      &lt;/p&gt;    
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
-    <aspect-source name="Affymetrix" url="http://www.affymetrix.com/"/>
     <aspect-source name="ArrayExpress" url="http://www.ebi.ac.uk/arrayexpress/"/>
     <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
   </aspect>
@@ -42,39 +38,20 @@
     <aspect-source name="FlyReg" url="http://www.flyreg.org/"/>
     <aspect-source name="REDfly" url="http://redfly.ccr.buffalo.edu/"/>
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
-    <aspect-source name="Tiffin" url="http://http://servlet.sanger.ac.uk/tiffin/"/>
+    <aspect-source name="Tiffin" url="http://servlet.sanger.ac.uk/tiffin/"/>
   </aspect>
 
-  <aspect name="DrosDel">
-    <subtitle>P-element insertions&lt;br/&gt;and deletions</subtitle>
+  <aspect name="Resources">
+    <subtitle></subtitle>
     <icon-image>model/drosdel.gif</icon-image>
     <large-image>model/drosdel.gif</large-image>
-    <intro-text>
-      DrosDel P-element insertion and deletion locations.
+    <intro-text>Material and literature resources.
     </intro-text>
     <tile-name>model/drosdel.jsp</tile-name>
     <aspect-source name="DrosDel" url="http://www.drosdel.org.uk/"/>
-  </aspect>
-
-  <aspect name="Tiling Path">
-    <subtitle>Microarray Tiling Primers</subtitle>
-    <icon-image>model/tilingPath.png</icon-image>
-    <large-image>model/tilingPath.png</large-image>
-    <intro-text>
-      Primers designed to tile across whole genomes or regions of genomes.
-    </intro-text>
-    <tile-name>model/tilingPath.jsp</tile-name>
-  </aspect>
-
-  <aspect name="INDAC">
-    <subtitle>Long oligos from the&lt;br/&gt;International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium</subtitle>
-    <icon-image>model/indac.png</icon-image>
-    <large-image>model/indac.png</large-image>
-    <intro-text>
-      Long oligos from the International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium.
-    </intro-text>
-    <tile-name>model/indac.jsp</tile-name>
+    <aspect-source name="Affymetrix" url="http://www.affymetrix.com/"/>
     <aspect-source name="International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium" url="http://www.indac.net/"/>
+    <aspect-source name="NCBI" url="http://www.ncbi.nlm.nih.gov/"/>
   </aspect>
 
   <aspect name="RNAi">
