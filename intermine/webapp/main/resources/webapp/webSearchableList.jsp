@@ -13,6 +13,8 @@
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<%-- display the total number before the list --%>
+<tiles:importAttribute name="showTotal" ignore="true"/>
 
 <link rel="stylesheet" type="text/css" href="css/webSearchableList.css"/>
 
@@ -38,6 +40,7 @@
 <%-- setting height causes the tile to be wrapped in div of the given height
      and with overflow: auto set --%>
 <tiles:importAttribute name="height" ignore="true"/>
+
 
 
 <html:xhtml/>
@@ -66,17 +69,19 @@
   </c:when>
   <c:otherwise>
     <div id='${wsListId}_${type}_ws_list' class="wsList">
-      
-      <c:if test="${showTitle && (! empty bagCount || ! empty templateCount)}">
-      <c:choose>
-        <c:when test="${type == 'bag'}">
-          <p>Some example lists (<html:link action="/bag.do">${bagCount} total</html:link>):</p>
-        </c:when>
-        <c:otherwise>
-          <p>Some example templates (<html:link action="/templates.do">${templateCount} total</html:link>):</p>
-        </c:otherwise>
-      </c:choose>
-      </c:if>
+      <div class="wsListTotal">
+        <c:if test="${showTotal && (totalCount > 0)}">
+          <c:choose>
+            <c:when test="${type == 'bag'}">
+              <p>Some example lists (<html:link action="/bag.do">${totalCount} total</html:link>):</p>
+            </c:when>
+            <c:otherwise>
+              <p>Some example templates (<html:link action="/templates.do">${totalCount} total</html:link>):</p>
+            </c:otherwise>
+          </c:choose>
+        </c:if>
+      </div>
+      <div class="wsListMain">
       <c:choose>
         <c:when test="${!empty makeTable && makeTable}">
           <%-- make a table --%>
@@ -170,6 +175,7 @@
           </ul>
         </c:otherwise>
       </c:choose>
+      </div>
     </div>
   </c:otherwise>
 </c:choose>

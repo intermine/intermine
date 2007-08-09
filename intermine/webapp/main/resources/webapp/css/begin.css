@@ -35,3 +35,11 @@ div#aspectsFront ul li{
 div.aspectDescr{
 	visibility:hidden;
 }
+
+div.wsList {
+   padding-top:10px;
+}
+
+div.wsListMain {
+   margin-left:20px;
+}
