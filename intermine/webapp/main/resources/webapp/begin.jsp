@@ -33,16 +33,17 @@
             <fmt:message key="begin.templates"/>
           </p>
         </em>
+        <br/>
+        <p>Some example lists (<html:link action="/templates.do">${templateCount} total</html:link>):</p>
         <tiles:insert name="webSearchableList.tile">
           <!-- optional -->
-          <tiles:put name="showTotal" value="true"/>
           <tiles:put name="limit" value="3"/>
           <!-- bag or template? -->
           <tiles:put name="type" value="template"/>
           <!-- user or global -->
           <tiles:put name="wsListId" value="global_template"/>
           <tiles:put name="scope" value="global"/>
-          <tiles:put name="tags" value="im:public"/>
+          <tiles:put name="tags" value="im:frontpage"/>
           <tiles:put name="showDescriptions" value="false"/>
           <tiles:put name="showSearchBox" value="true"/>
           <%--<tiles:put name="height" value="100"/>--%>
@@ -57,15 +58,16 @@
             <fmt:message key="begin.bags"/>
           </em>
         </p>
+        <br/>
+        <p>Some example lists (<html:link action="/bag.do">${bagCount} total</html:link>):</p>
         <tiles:insert name="webSearchableList.tile">
-          <tiles:put name="showTotal" value="true"/>
           <tiles:put name="limit" value="3"/>
           <tiles:put name="wsListId" value="global_bag"/>
           <%-- bag or template? --%>
           <tiles:put name="type" value="bag"/>
           <%-- user or global --%>
           <tiles:put name="scope" value="global"/>
-          <tiles:put name="tags" value="im:public"/>
+          <tiles:put name="tags" value="im:frontpage"/>
           <tiles:put name="showSearchBox" value="false"/>
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
