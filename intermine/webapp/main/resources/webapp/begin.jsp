@@ -35,7 +35,7 @@
         </em>
         <tiles:insert name="webSearchableList.tile">
           <!-- optional -->
-          <tiles:put name="showTitle" value="true"/>
+          <tiles:put name="showTotal" value="true"/>
           <tiles:put name="limit" value="3"/>
           <!-- bag or template? -->
           <tiles:put name="type" value="template"/>
@@ -58,7 +58,7 @@
           </em>
         </p>
         <tiles:insert name="webSearchableList.tile">
-          <tiles:put name="showTitle" value="true"/>
+          <tiles:put name="showTotal" value="true"/>
           <tiles:put name="limit" value="3"/>
           <tiles:put name="wsListId" value="global_bag"/>
           <%-- bag or template? --%>
