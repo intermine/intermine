@@ -10,7 +10,13 @@ package org.intermine.web.struts;
  *
  */
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.upload.FormFile;
 
 /**
@@ -65,7 +71,7 @@ public class BuildBagForm extends ActionForm
      * @param formFile the FormFile
      */
     public void setFormFile(FormFile formFile) {
-        this.formFile = formFile;
+        this.formFile = formFile;   
     }
 
     /**
@@ -118,5 +124,26 @@ public class BuildBagForm extends ActionForm
         return whichInput;
     }
 
-    
+    /**
+     * {@inheritDoc}
+     */
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+        ActionErrors errors = null;
+        if (type == null) {
+            errors = new ActionErrors();
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("Please select a type."));
+        } else if (formFile + text == null) {
+            errors = new ActionErrors();
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("Please enter identifiers."));
+        } else if (!formFile.getContentType().equals("text")) {
+            errors = new ActionErrors();
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("Please upload a text file."));
+        }
+
+        return errors;
+    }
+
 }
