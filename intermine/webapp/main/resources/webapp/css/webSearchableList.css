@@ -15,32 +15,35 @@
 	padding:0px;
 	margin:0px;
 }
-.wsTempateLine {
+.wsLine {
 	padding:10px;
 	border-bottom: #F5F0FF solid 1px;
 }
-.wsTempateLine_act {
+.wsLine_act {
 	padding:10px;
 	border-bottom: #F5F0FF solid 1px;
     background:#CCC;
 }
-.wsTempateLine_my {
+.wsLine_my {
 	padding:10px;
 	border-bottom: #F5F0FF solid 1px;
-	background:#9B87A7;
-/*	background: url('../images/my_grad.png') repeat-x;*/
+	background: #D9D2E0 url('../images/my_tr.png') no-repeat bottom left;
 }
-.wsTempateLine_my a:link,.wsTempateLine_my a:visited{
-	color:white;
+.wsLine_my_act {
+	padding:10px;
+	border-bottom: #F5F0FF solid 1px;
+	background: #CCC url('../images/my_tr.png') no-repeat bottom left;
 }
-div.wsTempateLine p.description, div.wsTempateLine div.description
-,.wsTempateLine_act p.description,.wsTempateLine_act div.description
-,.wsTempateLine_my p.description,.wsTempateLine_my div.description{
+
+div.wsLine p.description, div.wsLine div.description
+,.wsLine_act p.description,.wsLine_act div.description
+,.wsLine_my p.description,.wsLine_my div.description
+,.wsLine_my_act p.description,.wsLine_my_act div.description{
 	font-style:italic;
 	margin:5px 5px 5px 30px;
 	padding:0px;
 }
-div.wsTempateLine p.description a{
+div.wsLine p.description a{
 	font-style: normal;
     font-size: small;
 }

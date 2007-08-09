@@ -277,7 +277,8 @@ function do_filtering(filteredList, type, wsListId) {
         var pattern = new RegExp('^' + wsListId + '_' + type + '_item_line_(.*)');
         var inputArray = document.getElementsByTagName("div");
         for(var i=0; i<inputArray.length; i++) {
-            if ((result = pattern.exec(inputArray[i].id)) != null) {
+	        result = pattern.exec(inputArray[i].id);
+            if (result != null ) {
                 if (hitHash[inputArray[i].id]) {
                     inputArray[i].style.display='block';
                     var highlightText = descHash[inputArray[i].id];
@@ -303,7 +304,7 @@ function do_filtering(filteredList, type, wsListId) {
                             (intScore * 3) + '" src="images/' + heatImage + '"/>';
                         setChild(scoreSpan, heatText, 'span');
                     }
-                } else {
+                } else if(document.getElementById(wsListId + '_' + type + '_chck_' + result[1]).checked != true){
                     inputArray[i].style.display='none';
                 }
             }

@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -109,8 +110,10 @@ public class WebSearchableListController extends TilesAction
         }
         
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ArrayList userWebSearchables = new ArrayList();
+        
         request.setAttribute("userWebSearchables", 
-                             profile.getWebSearchablesByType(TagTypes.TEMPLATE));
+                             profile.getWebSearchablesByType(type));
         
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
         return null;
