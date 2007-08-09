@@ -69,10 +69,6 @@
            titleKey="history.action.execute.hover">
   <img src="images/template_t.gif" width="13" height="13" alt="Run Template">
 </html:link>
-<html:link action="/exportTemplates?scope=${scope}&amp;name=${webSearchable.name}"
-           titleKey="history.action.export.hover">
-  <img src="images/export.png" width="16" height="13" alt="Export">
-</html:link>
 <tiles:insert name="setFavourite.tile">
   <tiles:put name="name" value="${webSearchable.name}"/>
   <tiles:put name="type" value="template"/>
