@@ -47,8 +47,8 @@ public class PathQueryHandler extends DefaultHandler
     private Model model = null;
     private Map savedBags;
     private List<String> viewStrings = new ArrayList<String>();
-    private String sortOrderString = new String();
-    private String directionString = new String(); // will be asc or desc
+    private String sortOrderString = "";
+    private String directionString = ""; // will be asc or desc
     private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
     private final ServletContext servletContext;
     
