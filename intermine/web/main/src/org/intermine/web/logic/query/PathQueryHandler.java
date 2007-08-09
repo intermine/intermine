@@ -181,7 +181,9 @@ public class PathQueryHandler extends DefaultHandler
             for (String viewElement: viewStrings) {
                 query.addPathStringToView(viewElement);
             }
-            query.addPathStringToSortOrder(sortOrderString, directionString);
+            if (sortOrderString.length() > 0 && directionString.length() > 0) {
+                query.addPathStringToSortOrder(sortOrderString, directionString);
+            }
 
             for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
                 query.addPathStringDescription(entry.getKey(), entry.getValue());
