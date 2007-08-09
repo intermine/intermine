@@ -38,10 +38,11 @@
 <ul class="filterActions">
   <li>Filter:&nbsp;</li>
   <li><input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
-         onkeyup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');}"
-         onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');}"
-         disabled="true"
-         value="${initialFilterText}"/></li>
+           onkeyup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');"
+           onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');}"
+           onKeyPress="return disableEnterKey(event);"
+           disabled="true"
+           value="${initialFilterText}"/></li>
   <li>&nbsp; <img id='${wsListId}_${type}_spinner' style='visibility: hidden' 
              src='images/wait_spinner.gif'/></li>
   <li>&nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;</li>

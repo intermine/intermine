@@ -28,3 +28,17 @@ function toggleDivs(source,destination){
    document.getElementById(source).style.display = 'none';
    document.getElementById(destination).style.display = 'block';
 }
+
+function disableEnterKey(e)
+{
+    var keyCode;
+
+    if(window.event) {
+        keyCode = window.event.keyCode;     //IE
+    } else {
+        keyCode = e.which;     //firefox
+
+    }
+
+    return (keyCode != 13);
+}
