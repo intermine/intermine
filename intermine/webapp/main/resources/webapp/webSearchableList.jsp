@@ -54,9 +54,7 @@
   <c:set var="showDescriptions" value="true" scope="request"/>
 </c:if>
 
-<c:if test="${!empty height && fn:length(filteredWebSearchables) > 5}">
-  <div style="height: ${height}px; overflow: auto;">
-</c:if>
+<div style="<c:if test="${!empty height && fn:length(filteredWebSearchables) > 5}"> height: ${height}px; overflow: auto;</c:if>" id="${wsListId}_${type}_container" class="wsListContainer">
 
 
 <c:choose>
@@ -164,8 +162,7 @@
   </c:otherwise>
 </c:choose>
 
-<c:if test="${!empty height}">
 </div>
-</c:if>
+<div id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" alt="Searching..."></div>
 
 <!-- /webSearchableList.jsp -->
