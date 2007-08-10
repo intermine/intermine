@@ -44,7 +44,8 @@
   <tiles:put name="showTitles" value="${showTitles}"/>
   <tiles:put name="showDescriptions" value="${showDescriptions}"/>
   <tiles:put name="makeCheckBoxes" value="${makeCheckBoxes}"/>
-  <tiles:put name="makeTable" value="true"/>
+  <tiles:put name="makeTable" value="false"/>
+  <tiles:put name="makeLine" value="true"/>
   <%--<tiles:put name="wsHeader" value="wsBagHeader.tile"/>--%>
   <tiles:put name="wsRow" value="wsBagLine.tile"/>
   <tiles:put name="limit" value="${limit}"/>
