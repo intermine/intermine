@@ -6,13 +6,10 @@ div.aspectOverview{
 .aspectIcon{
 	border:1px solid #222;
 	margin-bottom:5px;
+	margin-right:5px;
 	float:left;
 }
 
-p.aspectLabel a:link{
-	font-size:13px;
-	font-style: normal;
-}
 div#aspectsFront {margin-left:65%;width:400px;margin-top:25px;_margin-top:15px;}
 div#aspectsFront h1 {
     margin:0px;
@@ -34,6 +31,7 @@ div#aspectsFront ul li{
 
 div.aspectDescr{
 	visibility:hidden;
+	font-style: italic;
 }
 
 div.wsList {
