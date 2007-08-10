@@ -124,26 +124,6 @@ public class BuildBagForm extends ActionForm
         return whichInput;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
-        ActionErrors errors = null;
-        if (type == null) {
-            errors = new ActionErrors();
-            errors.add(ActionMessages.GLOBAL_MESSAGE,
-                       new ActionMessage("Please select a type."));
-        } else if (formFile + text == null) {
-            errors = new ActionErrors();
-            errors.add(ActionMessages.GLOBAL_MESSAGE,
-                       new ActionMessage("Please enter identifiers."));
-        } else if (!formFile.getContentType().equals("text")) {
-            errors = new ActionErrors();
-            errors.add(ActionMessages.GLOBAL_MESSAGE,
-                       new ActionMessage("Please upload a text file."));
-        }
 
-        return errors;
-    }
 
 }
