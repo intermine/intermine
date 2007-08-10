@@ -51,7 +51,7 @@
       <im:roundbox title="Templates" stylename="welcome" height="350">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
-        <p>Some example lists (<html:link action="/templates.do">${templateCount} total</html:link>):</p>
+        <p>Some example templates (<html:link action="/templates.do">${templateCount} total</html:link>):</p>
         <tiles:insert name="webSearchableList.tile">
           <!-- optional -->
           <tiles:put name="limit" value="3"/>
