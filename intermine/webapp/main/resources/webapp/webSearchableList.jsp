@@ -39,6 +39,8 @@
      and with overflow: auto set --%>
 <tiles:importAttribute name="height" ignore="true"/>
 
+<%-- if true, keep the spinner visible until showWSList() is called --%>
+<tiles:importAttribute name="delayDisplay" ignore="true"/>
 
 
 <html:xhtml/>
@@ -54,7 +56,19 @@
   <c:set var="showDescriptions" value="true" scope="request"/>
 </c:if>
 
-<div style="<c:if test="${!empty height && fn:length(filteredWebSearchables) > 5}"> height: ${height}px; overflow: auto;</c:if>" id="${wsListId}_${type}_container" class="wsListContainer">
+<c:set var="heightStyle" value=""/>
+<c:set var="spinnerPaddingStyle" value=""/>
+
+<c:if test="${!empty height && fn:length(filteredWebSearchables) > 5}">
+  <c:set var="heightStyle" value="height: ${height}px; "/>
+  <c:set var="spinnerPaddingStyle" value="padding-top: ${height / 2 - 20}px"/>
+</c:if>
+
+<div style="${heightStyle} overflow: auto; background-color: white">
+
+<div style="${spinnerPaddingStyle}" id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" alt="Searching..."></div>
+
+<div id="${wsListId}_${type}_container" class="wsListContainer">
 
 
 <c:choose>
@@ -163,6 +177,23 @@
 </c:choose>
 
 </div>
-<div id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" alt="Searching..."></div>
 
+<script type="text/javascript">
+<!--//<![CDATA[
+function showWSList(wsListId, type) {
+    $(wsListId + '_' + type + '_spinner').style.display = 'none';
+    $(wsListId + '_' + type + '_container').style.display = 'block';
+}
+//]]>-->
+</script>
+
+<c:if test="${empty delayDisplay || !delayDisplay}">
+  <script type="text/javascript">
+<!--//<![CDATA[
+    showWSList('${wsListId}', '${type}');
+//]]>-->
+  </script>
+</c:if>
+
+</div>
 <!-- /webSearchableList.jsp -->

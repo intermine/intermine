@@ -384,6 +384,8 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
             }
 
             do_filtering(filteredList, type, wsListId);
+
+            showWSList(wsListId, type);
         }
 
         $(wsListId + '_' + type + '_spinner').style.display = 'block';
