@@ -385,7 +385,7 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
 
             do_filtering(filteredList, type, wsListId);
         }
-		
+
         $(wsListId + '_' + type + '_spinner').style.display = 'block';
         $(wsListId + '_' + type + '_container').style.display = 'none';
         currentFilterCallbacks[wsListId + "_" + type] = callId;
@@ -422,7 +422,7 @@ function filterFavourites(type, wsListId) {
     if(document.getElementById(id).value == "favourites") {
         document.getElementById(id).value = "";
         document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites.png';
-        tags['favourites_' + wsListId] = '';
+        delete tags['favourites_' + wsListId];
     // favourites ON
     } else {
         document.getElementById(id).value = "favourites";
@@ -444,7 +444,7 @@ function filterAspect(type, wsListId) {
         aspect = 'aspect:'+ aspect;
         tags['aspects_' + wsListId] = aspect;
     } else {
-        tags['aspects_' + wsListId] = '';
+        delete tags['aspects_' + wsListId]
     }
 
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
@@ -464,4 +464,33 @@ function changeScope(type, wsListId) {
     }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     return filterWebSearchablesHandler(null, filterTextElement, document.getElementById(id).value, type, wsListId);
+}
+
+function clearFilter(type, wsListId) {
+    var scopeId = 'filterScope_'+wsListId+'_'+type;
+    var favId = 'filterAction_'+wsListId+'_'+type;
+    var aspectId = wsListId+'_'+type+'_filter_aspect';
+
+    document.getElementById(scopeId).value = 'all';
+    var scopeElement = document.getElementById('filter_scope_'+wsListId+'_'+type);
+    if (scopeElement != null) {
+        scopeElement.src = 'images/filter_my_active.png';
+    }
+    delete tags['favourites_' + wsListId];
+
+    document.getElementById(favId).value = "";
+    var favElement = document.getElementById('filter_favourites_'+wsListId+'_'+type);
+    if (favElement != null) {
+        favElement.src = 'images/filter_favourites.png';
+    }
+
+    delete tags['aspects_' + wsListId];
+
+    $(aspectId).value = '';
+
+    var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
+    filterTextElement.value = '';
+
+    showAll(wsListId, type);
+    return false;
 }

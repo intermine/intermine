@@ -70,6 +70,11 @@
     </c:forEach>
   </select></li>
   </c:if>
+  <li>
+    &nbsp;&nbsp;<a href="#" onclick="javascript:return clearFilter('${type}', '${wsListId}')">
+      <img src="images/reset_megatile.png" width="50" height="20" alt="Reset search"/>
+    </a>
+  </li>
 </ul>
 <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
 <input type="hidden" name="filterScope_${wsListId}_${type}" id="filterScope_${wsListId}_${type}" value="${scope}"/>
