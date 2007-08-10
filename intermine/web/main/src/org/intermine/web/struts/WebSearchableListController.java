@@ -29,7 +29,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.util.GenericCompositeMap;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -68,25 +67,22 @@ public class WebSearchableListController extends TilesAction
         String tags = (String) context.getAttribute("tags");
         String list = (String) context.getAttribute("list");
         String limit = (String) context.getAttribute("limit");
-        Map<String, ? extends WebSearchable> filteredWebSearchables;
+        Map filteredWebSearchables;
         
         HttpSession session = request.getSession();
      
         if (session.getAttribute("IS_SUPERUSER") != null 
                         && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
-                filteredWebSearchables = filterWebSearchables(request, type, 
-                                                              TemplateHelper.USER_TEMPLATE, tags);
+            filteredWebSearchables = filterWebSearchables(request, type, 
+                                                          TemplateHelper.USER_TEMPLATE, tags);
         
         } else if (scope.equals(TemplateHelper.ALL_TEMPLATE)) {
-                Map<String, ? extends WebSearchable> globalWebSearchables =
-                    filterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags); 
-                Map<String, ? extends WebSearchable> userWebSearchables =
-                    filterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
-                GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable> mutator =
-                    new GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable>();
-                filteredWebSearchables = 
-                    new GenericCompositeMap<String, WebSearchable>(globalWebSearchables, 
-                                                               userWebSearchables, mutator);
+            Map globalWebSearchables =
+                filterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags); 
+            Map userWebSearchables =
+                filterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
+            filteredWebSearchables = new HashMap<String, WebSearchable>(userWebSearchables);
+            filteredWebSearchables.putAll(globalWebSearchables);
 
         } else {
             filteredWebSearchables = filterWebSearchables(request, type, scope, tags);
