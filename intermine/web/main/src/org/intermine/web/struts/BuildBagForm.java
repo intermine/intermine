@@ -132,19 +132,19 @@ public class BuildBagForm extends ActionForm
         return whichInput;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        ActionErrors errors = new ActionErrors();
-        if (StringUtils.isEmpty(type)) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, 
-                       new ActionMessage("bagBuild.typeNotSet", request)); 
-        }
-        return errors;
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+//        HttpSession session = request.getSession();
+//        ServletContext servletContext = session.getServletContext();
+//        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+//        ActionErrors errors = new ActionErrors();
+//        if (StringUtils.isEmpty(type)) {
+//            errors.add(ActionMessages.GLOBAL_MESSAGE, 
+//                       new ActionMessage("bagBuild.typeNotSet", request)); 
+//        }
+//        return errors;
+//    }
 
 }
