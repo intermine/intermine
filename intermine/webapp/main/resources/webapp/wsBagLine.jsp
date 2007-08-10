@@ -87,6 +87,7 @@
    </c:otherwise>
  </c:choose>
   </div>
+   <div id="${wsListId}_${type}_item_description_${webSearchable.name}_highlight" style="display:none" class="description"></div>
 </c:if>
 
 <c:if test="${IS_SUPERUSER}">
