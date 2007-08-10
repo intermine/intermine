@@ -476,7 +476,7 @@ function clearFilter(type, wsListId) {
     document.getElementById(scopeId).value = 'all';
     var scopeElement = document.getElementById('filter_scope_'+wsListId+'_'+type);
     if (scopeElement != null) {
-        scopeElement.src = 'images/filter_my_active.png';
+        scopeElement.src = 'images/filter_all.png';
     }
     delete tags['favourites_' + wsListId];
 
@@ -488,8 +488,9 @@ function clearFilter(type, wsListId) {
 
     delete tags['aspects_' + wsListId];
 
-    $(aspectId).value = '';
-
+    if ($(aspectId) != null) {
+        $(aspectId).value = '';
+    }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     filterTextElement.value = '';
 
