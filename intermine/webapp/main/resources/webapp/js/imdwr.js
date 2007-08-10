@@ -338,8 +338,8 @@ function do_filtering(filteredList, type, wsListId) {
         for (var i = 0; i < divs.length; i++) {
             parent.appendChild(divs[i]);
         }
-
-        $(wsListId + '_' + type + '_spinner').style.visibility = 'hidden';
+        $(wsListId + '_' + type + '_spinner').style.display = 'none';
+        $(wsListId + '_' + type + '_container').style.display = 'block';
     }
 }
 
@@ -385,8 +385,9 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
 
             do_filtering(filteredList, type, wsListId);
         }
-
-        $(wsListId + '_' + type + '_spinner').style.visibility = 'visible';
+		
+        $(wsListId + '_' + type + '_spinner').style.display = 'block';
+        $(wsListId + '_' + type + '_container').style.display = 'none';
         currentFilterCallbacks[wsListId + "_" + type] = callId;
         var tagList = null;
 

@@ -1,3 +1,14 @@
+div.wsListContainer{
+	background-color:white;
+	margin:10px 0px 10px 0px
+}
+div.wsListSpinner{
+	height: 50px;
+	text-align:center;
+	background-color:white;
+	display:none;
+	padding-top:10px
+}
 .wsListElement {
    margin-bottom:5px;
    padding-top:5px;
