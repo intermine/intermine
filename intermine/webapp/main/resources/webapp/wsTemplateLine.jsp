@@ -77,11 +77,11 @@
    <div id="${wsListId}_${type}_item_description_${webSearchable.name}">
      <c:choose>
        <c:when test="${fn:length(webSearchable.description) > 100}">
-         <div id="temp_desc_${webSearchable.name}_s" class="description">
-           ${fn:substring(webSearchable.description, 0, 100)}...&nbsp;&nbsp;<a href="javascript:toggleDivs('temp_desc_${webSearchable.name}_s','temp_desc_${webSearchable.name}_l')">more</a>
+         <div id="${wsListId}_${type}_temp_desc_${webSearchable.name}_s" class="description">
+           ${fn:substring(webSearchable.description, 0, 100)}...&nbsp;&nbsp;<a href="javascript:toggleDivs('${wsListId}_${type}_temp_desc_${webSearchable.name}_s','${wsListId}_${type}_temp_desc_${webSearchable.name}_l')">more</a>
          </div>
-         <div id="temp_desc_${webSearchable.name}_l" style="display:none" class="description">
-           ${webSearchable.description}&nbsp;&nbsp;<a href="javascript:toggleDivs('temp_desc_${webSearchable.name}_l','temp_desc_${webSearchable.name}_s')">less</a>
+         <div id="${wsListId}_${type}_temp_desc_${webSearchable.name}_l" style="display:none" class="description">
+           ${webSearchable.description}&nbsp;&nbsp;<a href="javascript:toggleDivs('${wsListId}_${type}_temp_desc_${webSearchable.name}_l','${wsListId}_${type}_temp_desc_${webSearchable.name}_s')">less</a>
          </div>
        </c:when>
        <c:otherwise>
@@ -89,6 +89,7 @@
        </c:otherwise>
      </c:choose>
    </div>
+   <div id="${wsListId}_${type}_item_description_${webSearchable.name}_highlight" style="display:none" class="description"></div>
     <%--<c:choose>
       <c:when test="${fn:length(webSearchable.comment) > 60}">
         ${fn:substring(webSearchable.comment, 0, 60)}...

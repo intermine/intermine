@@ -285,9 +285,13 @@ function do_filtering(filteredList, type, wsListId) {
                     if (highlightText) {
                         var descId = wsListId + '_' + type + '_item_description_' + result[1];
                         var desc = $(descId);
+                        desc.style.display = 'none';
 
-                        var descChild = setChild(desc, highlightText, 'p');
-                        descChild.className = 'description';
+                        var descHighlightId = wsListId + '_' + type + '_item_description_' + result[1] + '_highlight';
+                        var descHighlight = $(descHighlightId);
+                        descHighlight.style.display = 'block';
+
+                        var descChild = setChild(descHighlight, highlightText, 'p');
                     }
 
                     if (scoreHash[inputArray[i].id]) {
@@ -351,6 +355,28 @@ function showAll(wsListId, type) {
         var result;
         if ((result = pattern.exec(inputArray[i].id)) != null) {
             inputArray[i].style.display='block';
+            var scoreId = wsListId + '_' + type + '_item_score_' + result[1];
+            var scoreSpan = $(scoreId);
+            // we do this instead of scoreSpan.innerHTML = "stuff"
+            // because it's buggy in Internet Explorer
+            setChild(scoreSpan, '', 'span');
+
+            var descId = wsListId + '_' + type + '_item_description_' + result[1];
+            var desc = $(descId);
+            desc.style.display = 'block';
+
+            var descHighlightId = wsListId + '_' + type + '_item_description_' + result[1] + '_highlight';
+            var descHighlight = $(descHighlightId);
+            descHighlight.style.display = 'none';
+        }
+    }
+
+    // reset descriptions
+    var descPattern = new RegExp('^' + wsListId + '_' + type + '_item_description_(.*)_highlight');
+    var inputArray = document.getElementsByTagName("div");
+    for(var i=0; i<inputArray.length; i++) {
+        var result;
+        if ((result = descPattern.exec(inputArray[i].id)) != null) {
         }
     }
     $(wsListId + '_' + type + '_spinner').style.visibility = 'hidden';
