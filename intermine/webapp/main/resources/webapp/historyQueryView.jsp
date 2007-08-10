@@ -80,7 +80,7 @@
             <c:if test="${!empty savedQuery.key && !empty savedQuery.value}">
               <c:set var="validQuery" value="${savedQuery.value.pathQuery.valid}"/>
               <tr>
-                <td align="center">
+                <td class="sorting" align="center">
                   <html:multibox property="selectedQueries"
                                  styleId="selected_${type}_${status.index}"
                                  onclick="setDeleteDisabledness(this.form, '${type}')">
@@ -88,7 +88,7 @@
                   </html:multibox>
                 </td>
                 
-                <td>
+                <td class="sorting">
                 <c:choose>
                   <c:when test="${!validQuery}">
                    
@@ -107,7 +107,7 @@
                 </c:choose>
                 
                 </td>
-                <td align="center" nowrap>
+                <td class="sorting" align="center" nowrap>
                   <c:choose>
                     <c:when test="${savedQuery.value.dateCreated != null}">
                       <im:dateDisplay date="${savedQuery.value.dateCreated}"/>
@@ -117,7 +117,7 @@
                     </c:otherwise>
                   </c:choose>
                 </td>
-                <td align="right">
+                <td class="sorting" align="right">
                   <c:choose>
                     <c:when test="${savedQuery.value.pathQuery.info != null}">
                       <c:out value="${savedQuery.value.pathQuery.info.rows}"/>
@@ -127,7 +127,7 @@
                     </c:otherwise>
                   </c:choose>
                 </td>
-                <td align="left" nowrap>
+                <td class="sorting" align="left" nowrap>
                   <c:forEach items="${savedQuery.value.pathQuery.view}" var="item" varStatus="status">
                     <c:if test="${status.first}">
                       <c:choose>
@@ -141,13 +141,13 @@
                     </c:if>
                   </c:forEach>
                 </td>
-                <td align="left">
+                <td class="sorting" align="left">
                   <c:forEach items="${savedQuery.value.pathQuery.view}" var="item">
                     <im:unqualify className="${item}" var="text"/>
                     <span class="historySummaryShowing">${text}</span>
                   </c:forEach>
                 </td>
-                <td align="center" nowrap>
+                <td class="sorting" align="center" nowrap>
                   <c:choose>
                     <c:when test="${validQuery}">
                       <html:link action="/modifyQueryChange?method=run&amp;name=${savedQuery.key}&amp;type=${type}&trail=|query"

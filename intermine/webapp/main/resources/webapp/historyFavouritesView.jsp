@@ -39,7 +39,7 @@
           </tr>    
           <c:forEach items="${favouriteTemplates}" var="favouriteTemplate" varStatus="status">
             <tr>
-              <td align="center">
+              <td class="sorting" align="center">
                 <html:multibox property="selected" styleId="selected_template_${status.index}"
                                onclick="setDeleteDisabledness(this.form, 'template')">
                   <c:out value="${favouriteTemplate.name}"/>
@@ -48,14 +48,14 @@
               
               <c:choose>
                 <c:when test="${!favouriteTemplate.valid}">
-                  <td align="left" nowrap>
+                  <td class="sorting" align="left" nowrap>
                     <html:link action="/templateProblems?name=${favouriteTemplate.name}&amp;scope=user" styleClass="brokenTmplLink">
                     <strike>${favouriteTemplate.name}</strike>
                     </html:link>
                   </td>
                 </c:when>
                 <c:otherwise>
-                  <td>
+                  <td class="sorting">
                     <fmt:message var="linkTitle" key="templateList.run">
                       <fmt:param value="${favouriteTemplate.name}"/>
                     </fmt:message>
@@ -72,7 +72,7 @@
                 </c:otherwise>
               </c:choose>
               
-              <td>
+              <td class="sorting">
                 <c:choose>
                   <c:when test="${fn:length(favouriteTemplate.description) > 100}">
                     ${fn:substring(favouriteTemplate.description, 0, 100)}...
@@ -83,7 +83,7 @@
                 </c:choose>
                 &nbsp;
               </td>
-              <td align="center" nowrap>
+              <td class="sorting" align="center" nowrap>
                 <html:link action="/template?name=${favouriteTemplate.name}&amp;scope=all" 
                 				titleKey="history.action.execute.hover">
                   <fmt:message key="history.action.execute"/>

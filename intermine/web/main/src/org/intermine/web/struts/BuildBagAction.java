@@ -10,25 +10,11 @@ package org.intermine.web.struts;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.upload.FormFile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -36,6 +22,21 @@ import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.profile.Profile;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.upload.FormFile;
 
 /**
  * An action that makes a bag from text.
@@ -68,10 +69,7 @@ public class BuildBagAction extends InterMineAction
         String newBagName = buildBagForm.getBagName();
         String type = buildBagForm.getType();
 
-        if (StringUtils.isEmpty(type)) {
-            recordError(new ActionMessage("bagBuild.typeNotSet"), request);
-            return mapping.findForward("errors");
-        }
+
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         BagQueryConfig bagQueryConfig = 
