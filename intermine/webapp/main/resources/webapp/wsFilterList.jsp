@@ -31,7 +31,16 @@
 <c:set var="ws_input_aspect" value="${wsListId}_${type}_filter_aspect"/>
 
 <c:if test="${empty initialFilterText}">
-  <c:set var="initialFilterText" value=""/>
+
+    <c:choose>
+    <c:when test="${type == 'template'}">
+		<fmt:bundle basename="model"><fmt:message key="model.template.example" var="exampleText" /></fmt:bundle>
+    </c:when>
+    <c:otherwise>
+		<fmt:bundle basename="model"><fmt:message key="model.bag.example" var="exampleText" /></fmt:bundle>
+    </c:otherwise>
+  </c:choose>
+  <c:set var="initialFilterText" value="${exampleText}" />
 </c:if>
 
 <div class="filterBar">
