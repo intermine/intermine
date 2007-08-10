@@ -49,7 +49,7 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         
-        <im:useTransparentImage src="images/go_to_template_page.png" id="gototemplates" link="/templates.do" width="239px" height="78px" />
+        <im:useTransparentImage src="images/go_to_template_page.png" id="gototemplates" link="/templates.do" width="156px" height="51px" floatValue="right" breakFloat="true" />
       </im:roundbox>
 
       <im:roundbox title="Lists" stylename="welcome" height="350">
@@ -72,7 +72,7 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
 
-        <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="239px" height="78px" />
+        <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="156px" height="51px" floatValue="right" breakFloat="true" />
       </im:roundbox>
 
       <im:roundbox title="Query Builder" stylename="welcome" height="180">
@@ -82,7 +82,7 @@
           </em>
         </p>
         
-        <im:useTransparentImage src="images/go_to_query_builder.png" id="gotoqb" link="/customQuery.do" width="239px" height="78px" />
+        <im:useTransparentImage src="images/go_to_query_builder.png" id="gotoqb" link="/customQuery.do" width="156px" height="51px" floatValue="right" breakFloat="true" />
         
       </im:roundbox>
 </div>

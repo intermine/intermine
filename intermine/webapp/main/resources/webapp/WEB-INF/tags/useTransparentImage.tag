@@ -12,7 +12,7 @@
 
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>'/>
 
-<c:if test="${! empty floatValue}">
+<c:if test="${empty floatValue}">
   <c:set var="floatValue" value="left"/>
 </c:if>
 
