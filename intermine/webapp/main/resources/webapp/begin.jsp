@@ -94,8 +94,7 @@
            <fmt:message key="begin.data"/>
          </p>
        </em>
-        <c:choose>
-		    <c:when test="${!empty ASPECTS}">
+
           <ul>
 		       <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
 			       <c:set var="set" value="${entry.value}"/>
@@ -105,33 +104,17 @@
                      <html:link action="/aspect?name=${set.name}">
                        <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon" />
                      </html:link>
-                     <p class="aspectLabel">
+                     <p>
                        <html:link action="/aspect?name=${set.name}">
                          ${set.name}
                        </html:link><br/>
+                       
                        <div id="aspectDescr_${status.index}" class="aspectDescr">${set.subTitle}</div>
                      </p>
                   </li>
              </c:forEach>
           </ul>
-		    </c:when>
-		    <c:otherwise>
-		      <c:forEach items="${CATEGORIES}" var="category">
-		        <c:if test="${!empty CATEGORY_CLASSES[category]}">
-		          <div class="heading"><c:out value="${category}"/></div>
-		            <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
-		            <c:forEach items="${classes}" var="classname" varStatus="status">
-		              <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">
-		                ${classname}</a><c:if test="${!status.last}">,</c:if>
-		            </c:forEach>
-		            <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
-		              <br/><span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
-		            </c:if>
-		          <im:vspacer height="5"/>
-		        </c:if>
-		      </c:forEach>
-		    </c:otherwise>
-		  </c:choose>
+
 		  <div class="clear-both"></div>
   </div>
 </div>
