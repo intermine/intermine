@@ -258,7 +258,10 @@ function filterWebSearchablesHandler(event, object, scope, type, wsListId) {
 // wsFilterList given by the wsListId and type parameters
 function do_filtering(filteredList, type, wsListId) {
     if (filteredList.length == 0) {
-        showAll(wsListId, type);
+        // showAll(wsListId, type);
+		document.getElementById(wsListId+'_'+type+'_no_matches').style.display='block';
+		$(wsListId + '_' + type + '_spinner').style.display = 'none';
+        $(wsListId + '_' + type + '_container').style.display = 'none';
     } else {
         var scoreHash = new Array();
         var descHash = new Array();
@@ -310,6 +313,7 @@ function do_filtering(filteredList, type, wsListId) {
                 } else if(document.getElementById(wsListId + '_' + type + '_chck_' + result[1]).checked != true){
                     inputArray[i].style.display='none';
                 }
+            	showWSList(wsListId, type);
             }
         }
 
@@ -410,10 +414,8 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
             }
 
             do_filtering(filteredList, type, wsListId);
-
-            showWSList(wsListId, type);
         }
-
+		$(wsListId+'_'+type+'_no_matches').style.display='none';
         $(wsListId + '_' + type + '_spinner').style.display = 'block';
         $(wsListId + '_' + type + '_container').style.display = 'none';
         currentFilterCallbacks[wsListId + "_" + type] = callId;
