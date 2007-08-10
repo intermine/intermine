@@ -1,22 +1,21 @@
 function setFavourite(name, type, image){
-   
     var img = image.src;
     var isFavourite;
     if (img.substring(img.length-12, img.length) == 'unactive.gif') {
-    	isFavourite = false;
+        isFavourite = false;
     } else {
-    	isFavourite = true;
+        isFavourite = true;
     }
     AjaxServices.setFavourite(name, type, isFavourite);
     // already a favourite.  turning off.
     if (isFavourite) {
-	    image.src='images/star_unactive.gif';
-	    image.title='Set as favourite';
-	// not a favourite.  turn on.
-	} else {
-	    image.src='images/star_active.gif';
-	   	image.title='This is a favourite';
-	}
+        image.src='images/star_unactive.gif';
+        image.title='Set as favourite';
+        // not a favourite.  turn on.
+    } else {
+        image.src='images/star_active.gif';
+        image.title='This is a favourite';
+    }
 }
 
 function precomputeTemplate(templateName){
@@ -48,11 +47,11 @@ function renameElement(name, type, index){
         document.getElementById('name_'+name).innerHTML=str;
         // coming from mymine
         if (document.getElementById('selected_' + type + '_' + index) != null) {
-	       	document.getElementById('selected_' + type + '_' + index).value=str;
-	    // coming from bags/templates pages
-       	} else {
-       		document.getElementById('selected_user_' + type + '_' + index).value=str;
-       	}
+            document.getElementById('selected_' + type + '_' + index).value=str;
+            // coming from bags/templates pages
+        } else {
+            document.getElementById('selected_user_' + type + '_' + index).value=str;
+        }
     });
 }
 
@@ -79,8 +78,8 @@ function saveBagDescription(bagName){
     textarea = textarea.replace(/[\n\r]+/g, "\n\r<br/>");
     document.getElementById('bagDescriptionDiv').innerHTML = '<i>Saving...</i>';
     AjaxServices.saveBagDescription(bagName,textarea, function(str){
-        document.getElementById('bagDescriptionDiv').innerHTML = str;
-    });
+                                        document.getElementById('bagDescriptionDiv').innerHTML = str;
+                                    });
     swapDivs('bagDescriptionTextarea','bagDescriptionDiv');
 }
 
@@ -185,7 +184,7 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
         var uniqueCountQid = str[1];
         setTimeout("updateCountInColumnSummary()", 200);
         setTimeout("updateUniqueCountInColumnSummary(" + uniqueCountQid + ")", 300);
-    });
+                                  });
 }
 
 function getResultsPoller(qid, timeout, userCallback, userData) {
@@ -236,14 +235,14 @@ function filterWebSearchablesHandler(event, object, scope, type, wsListId) {
         event = window.event;
     }
     if (event) {
-	    if (event.keyCode == 27) {
-	        object.value = '';
-	        return;
-	    }
-	    if (event.keyCode == 13) {
-	        return;
-	    }
-	}
+        if (event.keyCode == 27) {
+            object.value = '';
+            return;
+        }
+        if (event.keyCode == 13) {
+            return;
+        }
+    }
 
     futureFilterCalls[wsListId + "_" + type] = callId;
 
@@ -371,7 +370,7 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
     var object = document.getElementById(objectId);
     var value = object.value;
     var filterAction = document.getElementById('filterAction' + '_' + wsListId + '_' + type).value;
-    
+
 
     if ( (value != null) || (tags != null && tags.length > 1)) {
         function filterCallBack(cbResult) {
@@ -390,19 +389,19 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
         $(wsListId + '_' + type + '_spinner').style.visibility = 'visible';
         currentFilterCallbacks[wsListId + "_" + type] = callId;
         var tagList = null;
-        
-        /*  
-			We need to transform our map into a proper Array
-         */
+
+        /*
+          We need to transform our map into a proper Array
+        */
         tagList = new Array();
         if(tags['favourites_' + wsListId] != null && tags['favourites_' + wsListId] != '') {
-			tagList[tagList.length]=tags['favourites_' + wsListId];
-		} if(tags['aspects_' + wsListId] != null && tags['aspect_' + wsListId] != '') {
-			tagList[tagList.length]=tags['aspects_' + wsListId];
-		}
-		
+            tagList[tagList.length]=tags['favourites_' + wsListId];
+        } if(tags['aspects_' + wsListId] != null && tags['aspect_' + wsListId] != '') {
+            tagList[tagList.length]=tags['aspects_' + wsListId];
+        }
+
         /*  filterAction toggles favourites off and on */
-        AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction, 
+        AjaxServices.filterWebSearchables(scope, type, tagList, object.value, filterAction,
                                           callId++, filterCallBack);
     } else {
         showAll(wsListId, type);
@@ -422,31 +421,31 @@ function filterFavourites(type, wsListId) {
     if(document.getElementById(id).value == "favourites") {
         document.getElementById(id).value = "";
         document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites.png';
-		tags['favourites_' + wsListId] = '';
-    // favourites ON    
+        tags['favourites_' + wsListId] = '';
+    // favourites ON
     } else {
         document.getElementById(id).value = "favourites";
         document.getElementById('filter_favourites_'+wsListId+'_'+type).src = 'images/filter_favourites_active.png';
         // tags = (tags == '' ? 'favourite' : tags + '|favourite');
-		tags['favourites_' + wsListId] = 'favourite';
+        tags['favourites_' + wsListId] = 'favourite';
     }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     return filterWebSearchablesHandler(null, filterTextElement, scope, type, wsListId);
 }
 
 function filterAspect(type, wsListId) {
-	var id = 'filterAction_'+wsListId+'_'+type;
-	var aspect = document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
+    var id = 'filterAction_'+wsListId+'_'+type;
+    var aspect = document.getElementById(wsListId+'_'+type+'_filter_aspect').value;
     var scope = document.getElementById('filterScope_'+wsListId+'_'+type).value;
-	
+
     // aspects ON
-    if(aspect != null && aspect.length > 1) {        
+    if(aspect != null && aspect.length > 1) {
         aspect = 'aspect:'+ aspect;
-		tags['aspects_' + wsListId] = aspect;
+        tags['aspects_' + wsListId] = aspect;
     } else {
-		tags['aspects_' + wsListId] = '';
+        tags['aspects_' + wsListId] = '';
     }
-       
+
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     return filterWebSearchablesHandler(null, filterTextElement, scope, type, wsListId);
 }
@@ -456,11 +455,11 @@ function changeScope(type, wsListId) {
     var scope = document.getElementById(id).value;
 
     if(scope == 'all') {
-      document.getElementById(id).value = 'user';
-      document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_all.png';
+        document.getElementById(id).value = 'user';
+        document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_all.png';
     } else if(scope == 'user') {
-      document.getElementById(id).value = 'all';    
-      document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_my_active.png';
+        document.getElementById(id).value = 'all';
+        document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_my_active.png';
     }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     return filterWebSearchablesHandler(null, filterTextElement, document.getElementById(id).value, type, wsListId);
