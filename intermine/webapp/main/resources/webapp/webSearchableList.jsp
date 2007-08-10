@@ -68,16 +68,22 @@
 
 <div style="${spinnerPaddingStyle}" id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" alt="Searching..."></div>
 
-<div id="${wsListId}_${type}_container" class="wsListContainer">
-
-
 <c:choose>
   <c:when test="${empty filteredWebSearchables}">
-    <div class="altmessage">
-      [nothing to display]
+    <div class="altmessage" id="${wsListId}_${type}_no_matches" >
+      [no matches found]
     </div>
   </c:when>
   <c:otherwise>
+    <div class="altmessage" id="${wsListId}_${type}_no_matches" style="${spinnerPaddingStyle};display:none">
+      [no matches found]
+    </div>
+  </c:otherwise>
+</c:choose>
+
+<div id="${wsListId}_${type}_container" class="wsListContainer">
+
+
     <div id='${wsListId}_${type}_ws_list' class="wsList">
       <c:choose>
         <c:when test="${!empty makeTable && makeTable}">
@@ -173,8 +179,6 @@
         </c:otherwise>
       </c:choose>
     </div>
-  </c:otherwise>
-</c:choose>
 
 </div>
 
