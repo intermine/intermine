@@ -1,4 +1,4 @@
-div#leftColumn{float:left;width:65%;}
+div#leftColumn{margin-left:450px;margin-top:25px;_margin-top:15px;}
 div.aspectOverview{
 	padding:5px;
 	margin:5px 5px 10px 5px;
@@ -10,7 +10,7 @@ div.aspectOverview{
 	float:left;
 }
 
-div#aspectsFront {margin-left:65%;width:400px;margin-top:25px;_margin-top:15px;}
+div#aspectsFront {float:left;width:400px;}
 div#aspectsFront h1 {
     margin:0px;
     color:#5C0075;
