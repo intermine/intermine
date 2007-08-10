@@ -574,6 +574,9 @@ public class ProfileManager
             getTags(tagName, null, tagType, userName);
         }
         for (String tagName: tagNames) {
+            if (StringUtils.isEmpty(tagName)) {
+                continue;
+            }
             for (Map.Entry<String, ? extends WebSearchable> entry: webSearchables.entrySet()) {
                 String webSearchableName = entry.getKey();
                 List tags = getTags(tagName, webSearchableName, tagType, userName);
