@@ -59,15 +59,16 @@
   </c:choose>
 </c:if>
 
+<html:link action="/template?name=${webSearchable.name}&amp;scope=${scope}"
+           titleKey="history.action.execute.hover">
+  <img src="images/template_t.gif" width="13" height="13" alt="Run Template">
+</html:link>
+
 <c:if test="${showTitles}">
     <html:link action="/template?name=${webSearchable.name}&amp;scope=${scope}"
                  titleKey="history.action.execute.hover">${webSearchable.title}</html:link>
 </c:if>
 
-<html:link action="/template?name=${webSearchable.name}&amp;scope=${scope}"
-           titleKey="history.action.execute.hover">
-  <img src="images/template_t.gif" width="13" height="13" alt="Run Template">
-</html:link>
 <tiles:insert name="setFavourite.tile">
   <tiles:put name="name" value="${webSearchable.name}"/>
   <tiles:put name="type" value="template"/>
