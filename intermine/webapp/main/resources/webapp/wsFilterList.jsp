@@ -58,7 +58,7 @@
   <%-- aspects --%>
     <li><select onchange="javascript:filterAspect('${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect">
     <c:if test="${aspect == null}">
-      <option value="" selected>-- Choose aspect --</option>
+      <option value="" selected>-- view all aspects --</option>
     </c:if>
     <c:forEach items="${ASPECTS}" var="entry">
       <c:set var="set" value="${entry.value}"/>
