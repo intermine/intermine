@@ -29,7 +29,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.path.Path;
-import org.intermine.util.GenericCompositeMap;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -445,10 +444,8 @@ public class AjaxServices
                         userSearchRepository.getWebSearchableMap(type);
                     Map<String, ? extends WebSearchable> globalWsMap =
                         globalRepository.getWebSearchableMap(type);
-                    GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable> mutator =
-                        new GenericCompositeMap.PriorityOrderMapMutator<String, WebSearchable>();
-                    wsMap = new GenericCompositeMap<String, WebSearchable>(globalWsMap, userWsMap,
-                                                                           mutator);
+                    wsMap = new HashMap<String, WebSearchable>(userWsMap);
+                    wsMap.putAll(globalWsMap);
                 }
             }
         }
