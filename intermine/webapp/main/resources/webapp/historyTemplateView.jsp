@@ -65,7 +65,7 @@
           </tr>    
           <c:forEach items="${PROFILE.savedTemplates}" var="savedTemplate" varStatus="status">
             <tr>
-              <td align="center">
+              <td class="sorting" align="center">
                 <html:multibox property="selected" styleId="selected_template_${status.index}"
                                onclick="setDeleteDisabledness(this.form, '${type}')">
                   <c:out value="${savedTemplate.key}"/>
@@ -74,14 +74,14 @@
               
               <c:choose>
                 <c:when test="${!savedTemplate.value.valid}">
-                  <td align="left" nowrap>
+                  <td class="sorting" align="left" nowrap>
                     <html:link action="/templateProblems?name=${savedTemplate.key}&amp;scope=user" styleClass="brokenTmplLink">
                     <strike>${savedTemplate.value.name}</strike>
                     </html:link>
                   </td>
                 </c:when>
                 <c:otherwise>
-                  <td>
+                  <td class="sorting">
                     <fmt:message var="linkTitle" key="templateList.run">
 					  <fmt:param value="${savedTemplate.value.name}"/>
     			    </fmt:message>
@@ -102,10 +102,10 @@
                 </c:otherwise>
               </c:choose>
               
-              <td>
+              <td class="sorting">
                 ${savedTemplate.value.title}
               </td>
-              <td>
+              <td class="sorting">
                 <c:choose>
                   <c:when test="${fn:length(savedTemplate.value.description) > 60}">
                     ${fn:substring(savedTemplate.value.description, 0, 60)}...
@@ -116,7 +116,7 @@
                 </c:choose>
                 &nbsp;
               </td>
-              <td>
+              <td class="sorting">
                 <c:choose>
                   <c:when test="${fn:length(savedTemplate.value.comment) > 60}">
                     ${fn:substring(savedTemplate.value.comment, 0, 60)}...
@@ -127,7 +127,7 @@
                 </c:choose>                
                 &nbsp;
               </td>
-              <td align="center" nowrap>
+              <td class="sorting" align="center" nowrap>
                <html:link action="/template?name=${savedTemplate.value.name}&amp;scope=user" 
                					titleKey="history.action.execute.hover">
                   <fmt:message key="history.action.execute"/>

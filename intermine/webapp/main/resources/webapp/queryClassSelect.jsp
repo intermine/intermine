@@ -49,7 +49,7 @@
 
   <table border=0>
     <tr>
-      <td>
+      <td class="body">
         <html:form styleId="queryClassForm" action="/queryClassSelect">
           <html:select styleId="queryClassSelector" property="className" size="10" onchange="showClassSelectHelp();">
         	<c:forEach items="${preferredTypeList}" var="type">
@@ -67,7 +67,7 @@
         </html:form>
 
       </td>
-      <td valign="top" width="100%"align=right>
+      <td class="body" valign="top" width="100%" align="right">
         <div id="classSelectDiv" style="display:none;">
           <div class="topBar contextHelp"> <%-- IE table width bug --%>
             <table width="98%" cellspacing="0" border="0" cellpadding="0">

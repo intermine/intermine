@@ -52,12 +52,12 @@
           </tr>
           <c:forEach items="${PROFILE.savedBags}" var="savedBag" varStatus="status">
             <tr>
-              <td align="center">
+              <td class="sorting" align="center">
                 <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
                   <c:out value="${savedBag.key}"/>
                 </html:multibox>
               </td>
-              <td>
+              <td class="sorting">
                     <tiles:insert name="renamableElement.jsp">
                       <tiles:put name="name" value="${savedBag.value.name}"/>
                       <tiles:put name="type" value="${type}"/>
@@ -79,7 +79,7 @@
                     </c:if>
                     
               </td>     
-              <td>
+              <td class="sorting">
                 <c:choose>
                   <c:when test="${fn:length(savedBag.value.description) > 100}">
                     ${fn:substring(savedBag.value.description, 0, 100)}...
@@ -91,15 +91,15 @@
                 &nbsp;
               </td>
               
-              <td><c:out value="${savedBag.value.type}"/></td>
-              <td align="right">
+              <td class="sorting"><c:out value="${savedBag.value.type}"/></td>
+              <td class="sorting" align="right">
                 <c:out value="${savedBag.value.size}"/>
                 <c:choose>
                   <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">objects</c:when>
                   <c:otherwise>values</c:otherwise>
                 </c:choose>
               </td>
-              <td><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
+              <td class="sorting"><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
             </tr>
           </c:forEach>
         </table>

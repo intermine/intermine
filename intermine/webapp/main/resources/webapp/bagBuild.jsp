@@ -39,8 +39,9 @@
     }
     
     function loadExample(example) {
-    	document.getElementById('pasteInput').value = example;    
     	document.getElementById('pasteInput').focus();
+    	document.getElementById('pasteInput').value = example;    
+    	
     	return false;
     }
 

@@ -10,8 +10,14 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.ProfileManager;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
@@ -33,6 +39,8 @@ public class BuildBagForm extends ActionForm
     private String type;
     private String extraFieldValue;
     private String whichInput;
+    
+    
     
     /**
      * Get the bag type
@@ -124,6 +132,19 @@ public class BuildBagForm extends ActionForm
         return whichInput;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        ActionErrors errors = new ActionErrors();
+        if (StringUtils.isEmpty(type)) {
+            errors.add(ActionMessages.GLOBAL_MESSAGE, 
+                       new ActionMessage("bagBuild.typeNotSet", request)); 
+        }
+        return errors;
+    }
 
 }

@@ -64,24 +64,40 @@ th.sort-active a
 td.lft
         {
         text-align:left;
+        background: #F5FAFA url(../images/td_alt.jpg) no-repeat;
+        border-width: 1px 1px 1px 1px;
+
         }
 tr.alt
         {
         background: #F5FAFA;
         color: #797268;
+        border-width: 1px 1px 1px 1px;
+
         }
 /* Poor old Internet Explorer has a bug that means we can't use background images for the table rows
    as it trys to download the image each and every time that it is used... */
 tr[class="alt"] td
         {
         background: #F5FAFA url(../images/td_alt.jpg) no-repeat;
+       	border-width: 1px 1px 1px 1px;
+
         }
 td[class~="alt"]
         {
         background: #fff url(../images/col_alt.jpg) no-repeat !important;
+        border-width: 1px 1px 1px 1px;
         }
 
         
+.sorting
+        {
+        font: normal 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+        border-right: 1px solid #C1DAD7;
+        border-bottom: 1px solid #C1DAD7;
+        padding: 6px 12px 6px 12px;
+        color: #4f6b72;
+        }
         
 /* blue and green boxes surrounding class names in the query history table */ 
 .historySummaryRoot {
