@@ -37,6 +37,7 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
@@ -91,18 +92,28 @@ public class BagDetailsController extends TilesAction
                 bagName = request.getParameter("name");
             }
             
-            InterMineBag imBag;
-            if (request.getParameter("scope") != null 
-                            && request.getParameter("scope").equals("global")) {
+            InterMineBag imBag = null;
+            String scope = request.getParameter("scope");
+            if (scope == null) {
+                scope = TemplateHelper.USER_TEMPLATE;
+            }
+            
+            if (scope.equals(TemplateHelper.USER_TEMPLATE)
+                || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+                imBag = profile.getSavedBags().get(bagName);
+            }
+            
+            if (scope.equals(TemplateHelper.GLOBAL_TEMPLATE)
+                || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+                // scope == all or global
                 SearchRepository searchRepository =
                     SearchRepository.getGlobalSearchRepository(servletContext);
                 Map<String, ? extends WebSearchable> publicBagMap = 
                     searchRepository.getWebSearchableMap(TagTypes.BAG);
-                imBag = (InterMineBag) publicBagMap.get(bagName); 
-                
-            } else {
-                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-                imBag = profile.getSavedBags().get(bagName);
+                if (publicBagMap.get(bagName) != null) {
+                    imBag = (InterMineBag) publicBagMap.get(bagName);
+                }
             }
             
             /* forward to bag page if this is an invalid bag */
