@@ -50,10 +50,6 @@
     <put name="body" value="templateBuilder.tile"/>
     <put name="pageName" value="templateBuilder"/>
   </definition>
-  <definition name="bag.page" extends="layout.template">
-    <put name="body" value="bag.tile"/>
-    <put name="pageName" value="bag"/>
-  </definition>
   <definition name="bagUploadConfirm.page" extends="layout.template">
     <put name="body" value="bagUploadConfirm.tile"/>
     <put name="pageName" value="bagUploadConfirm"/>

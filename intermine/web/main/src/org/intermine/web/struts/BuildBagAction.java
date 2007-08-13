@@ -37,7 +37,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
-
+import org.apache.commons.lang.StringUtils;
 /**
  * An action that makes a bag from text.
  *
@@ -69,7 +69,10 @@ public class BuildBagAction extends InterMineAction
         String newBagName = buildBagForm.getBagName();
         String type = buildBagForm.getType();
 
-
+        if (StringUtils.isEmpty(type)) {
+            recordError(new ActionMessage("bagBuild.noBagPaste"), request);
+            return mapping.findForward("bags");
+        }
         
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         BagQueryConfig bagQueryConfig = 
@@ -91,7 +94,7 @@ public class BuildBagAction extends InterMineAction
             String trimmedText = buildBagForm.getText().trim();
             if (trimmedText.length() == 0) {
                 recordError(new ActionMessage("bagBuild.noBagPaste"), request);
-                return mapping.findForward("errors");
+                return mapping.findForward("bags");
             }
             reader = new BufferedReader(new StringReader(trimmedText));
         } else {
@@ -100,8 +103,12 @@ public class BuildBagAction extends InterMineAction
                 if (formFile == null || formFile.getFileName() == null
                                 || formFile.getFileName().length() == 0) {
                     recordError(new ActionMessage("bagBuild.noBagFile"), request);
-                    return mapping.findForward("errors");
+                    return mapping.findForward("bags");
                 }
+                if (!formFile.getContentType().equals("text/plain")) {
+                    recordError(new ActionMessage("bagBuild.notText"), request);
+                    return mapping.findForward("bags");
+                } 
                 reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
             } else {
                 throw new RuntimeException("unknown action type in BuildBagAction");
