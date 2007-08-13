@@ -10,6 +10,18 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>Service interruption on Thursday</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        The &lt;a href="http://www.flymine.org"&gt;FlyMine&lt;/a&gt; website
+        will be unavailable from 8:00 GMT (9am BST) for aproximately 2 hours
+        due to building maintenance work.  We hope to have the site back online
+        soon after 10:00 GMT (11am BST).
+      </description>
+      <pubDate>Mon, 13th August 2007</pubDate>
+    </item>
+
+    <item>
       <title>FlyMine 8.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
@@ -18,7 +30,7 @@
         &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
         release notes&lt;/a&gt;.  FlyMine 8.0 includes three new data sets: Tiffin (predicted regulatory motifs), anoEST (A. gambiae EST clusters) and predicted 3-D protein structures for A. gambiae domains. A new type of constraint is used in template queries which now allows you to enter any identifier or symbol.
       </description>
-      <pubDate>Weds, 27th June 2007</pubDate>
+      <pubDate>Wed, 27th June 2007</pubDate>
     </item>
 
     <item>
