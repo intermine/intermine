@@ -259,8 +259,8 @@ function filterWebSearchablesHandler(event, object, scope, type, wsListId) {
 function do_filtering(filteredList, type, wsListId) {
     if (filteredList.length == 0) {
         // showAll(wsListId, type);
-		document.getElementById(wsListId+'_'+type+'_no_matches').style.display='block';
-		$(wsListId + '_' + type + '_spinner').style.display = 'none';
+        document.getElementById(wsListId+'_'+type+'_no_matches').style.display='block';
+        $(wsListId + '_' + type + '_spinner').style.display = 'none';
         $(wsListId + '_' + type + '_container').style.display = 'none';
     } else {
         var scoreHash = new Array();
@@ -279,7 +279,7 @@ function do_filtering(filteredList, type, wsListId) {
         var pattern = new RegExp('^' + wsListId + '_' + type + '_item_line_(.*)');
         var inputArray = document.getElementsByTagName("div");
         for(var i=0; i<inputArray.length; i++) {
-	        result = pattern.exec(inputArray[i].id);
+            result = pattern.exec(inputArray[i].id);
             if (result != null ) {
                 if (hitHash[inputArray[i].id]) {
                     inputArray[i].style.display='block';
@@ -313,7 +313,7 @@ function do_filtering(filteredList, type, wsListId) {
                 } else if(document.getElementById(wsListId + '_' + type + '_chck_' + result[1]).checked != true){
                     inputArray[i].style.display='none';
                 }
-            	showWSList(wsListId, type);
+                showWSList(wsListId, type);
             }
         }
 
@@ -415,7 +415,7 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
 
             do_filtering(filteredList, type, wsListId);
         }
-		$(wsListId+'_'+type+'_no_matches').style.display='none';
+        $(wsListId+'_'+type+'_no_matches').style.display='none';
         $(wsListId + '_' + type + '_spinner').style.display = 'block';
         $(wsListId + '_' + type + '_container').style.display = 'none';
         currentFilterCallbacks[wsListId + "_" + type] = callId;
