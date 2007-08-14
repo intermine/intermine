@@ -248,16 +248,13 @@ public abstract class WebUtil
      * @return isValid Returns true if this name is correct, false if this name contains a bad char
      */
     public static boolean isValidName(String name) {
-
-        boolean isValid = false;
-        if (name != null) {
-            Pattern p = Pattern.compile("[^\\w\\s\\.]");
-            //Pattern p = Pattern.compile("\\W");
+        if (name == null) {
+            return false;
+        } else { 
+            Pattern p = Pattern.compile("[^\\w\\s\\.:]");
             Matcher m = p.matcher(name);
-            isValid = !m.find();
-
+            return !m.find();
         }
-        return isValid;
     }
 
     /**
