@@ -12,10 +12,13 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.intermine.objectstore.query.ObjectStoreBag;
 
@@ -92,28 +95,52 @@ public class WebSearchableListController extends TilesAction
         if (list != null) {
             filteredWebSearchables = filterByList(filteredWebSearchables, list);
         }
-
+        
         // shorten list to be < limit
+        int limitInt = 0;
         if (limit != null) {
-            limit = limit.trim();
-            if (limit.length() > 0) {
-                try {
-                    filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables,
-                                                             new Integer(limit).intValue());
-                } catch (NumberFormatException e) {
-                    // ignore - don't shuffle 
-                }
+            try {
+                limitInt = new Integer(limit.trim()).intValue();
+            } catch (NumberFormatException e) {
+                // ignore - don't shuffle 
             }
+        }
+        if (limitInt > 0) {
+            filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables,
+                                                     limitInt);
+        } else {
+            filteredWebSearchables = sortList(filteredWebSearchables);
         }
         
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ArrayList userWebSearchables = new ArrayList();
-        
-        request.setAttribute("userWebSearchables", 
-                             profile.getWebSearchablesByType(type));
+        request.setAttribute("userWebSearchables", profile.getWebSearchablesByType(type));
         
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
         return null;
+    }
+
+    /**
+     * Return a copy of the given Map sorted by creation date, then by name. 
+     */
+    private Map sortList(final Map filteredWebSearchables) {
+        Map sortedMap = new TreeMap<String, WebSearchable>(new Comparator<String>() {
+            public int compare(String o1, String o2) {
+                WebSearchable ws1 = (WebSearchable) filteredWebSearchables.get(o1);
+                WebSearchable ws2 = (WebSearchable) filteredWebSearchables.get(o2);
+                if (ws1 instanceof InterMineBag) {
+                    InterMineBag bag1 = (InterMineBag) ws1;
+                    if (ws2 instanceof InterMineBag) {
+                        InterMineBag bag2 = (InterMineBag) ws2;
+                        return bag2.getDateCreated().compareTo(bag1.getDateCreated());
+                    }
+                }
+                
+                return ((Comparable) o1).compareTo(o2);
+            }
+            
+        });
+        sortedMap.putAll(filteredWebSearchables);
+        return sortedMap;
     }
 
     /**
