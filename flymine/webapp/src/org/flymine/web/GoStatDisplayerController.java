@@ -86,8 +86,7 @@ public class GoStatDisplayerController extends TilesAction
              
              // TODO get these from request form
              Double maxValue = new Double("0.10");
-             String significanceValue = (request.getParameter("significanceValue") != null 
-                                       ? request.getParameter("significanceValue") : "0.05");
+
              
              // TODO get these from properties files
              String namespace = (request.getParameter("ontology") != null
