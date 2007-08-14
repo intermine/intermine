@@ -199,6 +199,9 @@ div.actionArea h2{
 	background:#F5F0FF;
 	color:#5C0075;;
 }
+textarea#pasteInput {
+  width: 345px;
+}
 
 .feedbackButton {
   background-color: white;
