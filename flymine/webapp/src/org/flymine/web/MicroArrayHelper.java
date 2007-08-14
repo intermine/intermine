@@ -10,15 +10,6 @@ package org.flymine.web;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayExperiment;
-import org.flymine.model.genomic.MicroArrayResult;
-import org.flymine.model.genomic.MicroArrayAssay;
-
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -31,6 +22,13 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 
+import org.intermine.objectstore.ObjectStore;
+
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.MicroArrayAssay;
+import org.flymine.model.genomic.MicroArrayExperiment;
+import org.flymine.model.genomic.MicroArrayResult;
+
 /**
  * Some static methods that query microarray data.
  *
@@ -39,7 +37,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
  */
 public class MicroArrayHelper
 {
-    private static Map queries = new HashMap();
+    //private static Map queries = new HashMap();
 
     /**
      * For a given gene and experiment retrieve results and assays and displayOrder attribute.
@@ -100,7 +98,11 @@ public class MicroArrayHelper
         return results;
     }
 
-
+/**
+ * @param gene
+ * @param os
+ * @return results
+ */
     public static Results queryExperimentsInvolvingGene(String gene, ObjectStore os) {
         Query q = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -125,7 +127,7 @@ public class MicroArrayHelper
 
         QueryObjectReference experiment = new QueryObjectReference(qcMar, "experiment");
         ContainsConstraint cc2 = new ContainsConstraint(experiment, ConstraintOp.CONTAINS, qcExpt);
-        QueryField qfExptIdentifier = new QueryField(qcExpt, "identifier");
+        //QueryField qfExptIdentifier = new QueryField(qcExpt, "identifier");
 
         cs.addConstraint(cc2);
 

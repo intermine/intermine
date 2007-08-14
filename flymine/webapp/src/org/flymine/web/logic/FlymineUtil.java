@@ -55,6 +55,7 @@ public abstract class FlymineUtil
      * @param os ObjectStore
      * @param bag InterMineBag
      * @return collection of organism names
+     * @exception No bag
      */
     public static Collection getOrganisms(ObjectStore os, InterMineBag bag) 
     throws Exception {
@@ -91,11 +92,11 @@ public abstract class FlymineUtil
         
         Results r = os.execute(q);
         Iterator it = r.iterator();
-        Collection organismNames = new ArrayList();
+        Collection<String> organismNames = new ArrayList<String>();
         
         while (it.hasNext()) {
             ResultsRow rr =  (ResultsRow) it.next();
-            organismNames.add(rr.get(0));
+            organismNames.add((String) rr.get(0));
         }
         return organismNames;
     }   
@@ -183,8 +184,7 @@ public abstract class FlymineUtil
                          Query querySample, 
                          InterMineBag bag,
                          Collection organisms,
-                         Double maxValue,
-                         String significanceValue)      
+                         Double maxValue)      
     throws Exception {
       
         
@@ -252,7 +252,7 @@ public abstract class FlymineUtil
             }
         }
         
-        Bonferroni b = new Bonferroni(resultsMap, significanceValue);
+        Bonferroni b = new Bonferroni(resultsMap);
         b.calculate(maxValue);
         HashMap adjustedResultsMap = b.getAdjustedMap();
 

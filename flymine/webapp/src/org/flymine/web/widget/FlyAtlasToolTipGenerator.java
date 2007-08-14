@@ -39,7 +39,8 @@ public class FlyAtlasToolTipGenerator implements CategoryToolTipGenerator
      *      org.jfree.data.category.CategoryDataset,
      *      int, int)
      */
-    public String generateToolTip(CategoryDataset dataset, int series, int category) {
+    public String generateToolTip(@SuppressWarnings("unused") CategoryDataset dataset, 
+                                  int series, int category) {
         ArrayList geneList = (ArrayList) ((Object[]) geneMap[category])[series];
         StringBuffer sb = new StringBuffer();
         for (Iterator iter = geneList.iterator(); iter.hasNext();) {

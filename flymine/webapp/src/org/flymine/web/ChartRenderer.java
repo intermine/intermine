@@ -113,8 +113,8 @@ public class ChartRenderer extends InterMineAction
      *  an exception
      */
     public ActionForward microarray(
-            ActionMapping mapping,
-            ActionForm form,
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();

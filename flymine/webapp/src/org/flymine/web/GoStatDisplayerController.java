@@ -12,7 +12,6 @@ package org.flymine.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.intermine.objectstore.query.BagConstraint;
@@ -26,11 +25,8 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -70,10 +66,10 @@ public class GoStatDisplayerController extends TilesAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-     public ActionForward execute(ActionMapping mapping,
-                                  ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response)
+     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+                                  @SuppressWarnings("unused") ActionForm form,
+                                  @SuppressWarnings("unused") HttpServletRequest request,
+                                  @SuppressWarnings("unused") HttpServletResponse response)
      throws Exception {
 
          try {
