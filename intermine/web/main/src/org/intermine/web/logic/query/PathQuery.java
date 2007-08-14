@@ -340,12 +340,16 @@ public class PathQuery
      */
     public void removePathStringFromSortOrder(String viewString) {
         Iterator<OrderBy> iter = sortOrder.iterator();
-        while (iter.hasNext()) {            
+        boolean inSortOrder = false;
+        while (iter.hasNext() && !inSortOrder) {            
             OrderBy sort = iter.next();
             if (sort.getField().toString().equals(viewString)) {
                 // this is the field on the sort order, so clear and add first item on view list
-                removePathStringFromSortOrder();
+                inSortOrder = true;
             }
+        }
+        if (inSortOrder) {
+            removePathStringFromSortOrder();
         }
     }
     
@@ -557,7 +561,8 @@ public class PathQuery
         try {
 //            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext),
 //                                 servletContext, null);
-            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext), null, servletContext, null, true);
+            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext), 
+                                 null, servletContext, null, true);
         } catch (Exception err) {
             addProblem(err);
         }
