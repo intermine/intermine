@@ -14,3 +14,7 @@ div.templateDetails {
      http://www.positioniseverything.net/explorer/peekaboo.html */
   height: 0.01%;
 }
+
+table.objSummary td{
+	padding:5px;
+}

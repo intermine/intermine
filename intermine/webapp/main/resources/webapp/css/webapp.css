@@ -209,22 +209,19 @@ div.actionArea h2{
   clear:both;
 }
 
-/*.bagStyle{background:#FF9900;color:black;}
-.templateStyle{background:#712839;color:white;}
-.queryStyle{background:#4A497B;color:white;}
-.categoryStyle{background:#663366;color:white;}
-.mymineStyle{background:#9B89A7;color:white;}
-*/
-/* style for gray boxes with heading */
+/* style for boxes with heading */
 .heading, .heading2 {
   border: 1px solid #888;
-  padding: 5px;
   margin-top: 0px;
   margin-right: 8px;
   margin-left: 8px;
   margin-bottom: 4px;
+  padding:5px 0px 0px 10px;
   font-size: 14px;
-  color: #000;
+  font-weight:bold;
+  background: url(../model/heading-bg.gif) top center repeat;
+/*  color:#5C0075;*/
+color:white;
   white-space: nowrap;
   /* needed to prevent the peekaboo bug on IE:
      http://www.positioniseverything.net/explorer/peekaboo.html */
@@ -232,7 +229,7 @@ div.actionArea h2{
 }
 
 .heading a {
-  color: #333;
+	color:white;
 }
 /* The following two rules stop superscript/subscript changing
    div height in headings. */
@@ -242,9 +239,6 @@ div.actionArea h2{
   font-size:14px;
 }
 */
-.heading2, .heading {
-  background: url(../model/heading-bg.gif) top center repeat;
-}
 .heading sub, .heading sup {
   line-height: 0;
 }
@@ -256,6 +250,21 @@ table.query {
 .boxTopRight {
   float: right;
 }
+
+.imbox {
+	background:#9F67AD;
+	color:white;
+/*	background:#D0B5D7;*/
+/*	background:#F5F0FF;
+*/	padding:5px 5px 10px 5px;
+	border-top:solid 1px #888;
+	border-bottom:solid 1px #888;
+	height:1.2em;
+	font-size:0.8em;
+}
+.imbox a{color:white;}
+.imbox a:hover{color:white;text-decoration: underline;}
+.imbox h3{float:left;font-size:1.4em;color:white;}
 
 .body {
   font-size: 12px;
@@ -610,6 +619,12 @@ background-color: #ccc;
 	width:100%;
 	top:-20px;
 }
+
+li {
+	list-style: none;
+	margin-left:10px;
+}
+
 ul#mymineList, ul#mymineList li {
 	list-style: none;
 	padding: 0px;
