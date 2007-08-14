@@ -41,11 +41,11 @@ public class GeneMicroArrayDisplayerController extends TilesAction
      * @see TilesAction#execute(ComponentContext, ActionMapping, ActionForm, HttpServletRequest,
      *                          HttpServletResponse)
      */
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
-                                 ActionForm form,
+    public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         try {
             HttpSession session = request.getSession();
