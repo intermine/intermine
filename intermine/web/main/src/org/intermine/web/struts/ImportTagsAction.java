@@ -51,7 +51,7 @@ public class ImportTagsAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         ImportTagsForm f = (ImportTagsForm) form;
         HttpSession session = request.getSession();

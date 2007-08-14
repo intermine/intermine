@@ -46,7 +46,7 @@ public class CurrentQueryAction extends InterMineAction
     *  an exception
     */
    public ActionForward execute(ActionMapping mapping,
-                                ActionForm form,
+                                @SuppressWarnings("unused") ActionForm form,
                                 HttpServletRequest request,
                                 HttpServletResponse response)
        throws Exception {

@@ -36,9 +36,9 @@ public class TipAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {   
         HttpSession session = request.getSession();
         String tipCount = (String) ((Map) session.getServletContext().

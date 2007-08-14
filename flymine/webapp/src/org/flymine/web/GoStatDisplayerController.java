@@ -12,7 +12,6 @@ package org.flymine.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -209,13 +208,10 @@ public class GoStatDisplayerController extends TilesAction
              queryPopulation.setConstraint(cs);
 
              queryPopulation.addToGroupBy(qfGoTermId);
-
-             // total number of genes for all organisms of interest 
-             int geneCountAll = getGeneTotal(os, organisms);
              
              // run both queries and compare the results 
              ArrayList results = FlymineUtil.statsCalc(os, queryPopulation, querySample, bag, 
-                                       geneCountAll, maxValue, significanceValue);
+                                       organisms, maxValue, significanceValue);
              if (results.isEmpty()) {
                  return null;
              }
@@ -229,47 +225,6 @@ public class GoStatDisplayerController extends TilesAction
              return null;
          }
      }
-
-     /* gets total number of genes */
-     private int getGeneTotal(ObjectStore os, Collection organisms) {
-
-            Query q = new Query();
-            q.setDistinct(false);
-            QueryClass qcGene = new QueryClass(Gene.class);
-            QueryClass qcOrganism = new QueryClass(Organism.class);
-
-            QueryField qfOrganism = new QueryField(qcOrganism, "name");
-            QueryFunction geneCount = new QueryFunction();
-
-            q.addFrom(qcGene);
-
-            q.addFrom(qcOrganism);
-
-            q.addToSelect(geneCount);
-
-            ConstraintSet cs;
-            cs = new ConstraintSet(ConstraintOp.AND);
-
-            /* organism is in bag */
-            BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
-            cs.addConstraint(bc2);
-
-            /* gene is from organism */
-            QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
-            ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
-            cs.addConstraint(cc2);
-
-            q.setConstraint(cs);
-
-            Results r = os.execute(q);
-            Iterator it = r.iterator();
-            ResultsRow rr =  (ResultsRow) it.next();
-            Long l = (java.lang.Long) rr.get(0);
-            int n = l.intValue();
-            return n;
-        }
-
-
 
         // adds 3 main ontologies to array.  these 3 will be excluded from the query
         private Collection getOntologies() {
