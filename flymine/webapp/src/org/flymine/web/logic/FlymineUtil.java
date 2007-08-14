@@ -24,6 +24,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
@@ -165,12 +166,23 @@ public abstract class FlymineUtil
         return chromosomes;
     }   
     
-
+/**
+ * Takes two queries.  Runs both and compares the results.
+ * @param os
+ * @param queryPopulation The query to get the entire population, ie all genes in the database
+ * @param querySample The query to get the sample, ie all genes in the bag
+ * @param bag the bag we are analysing
+ * @param organisms organisms of interest
+ * @param maxValue maximum value to return
+ * @param significanceValue significance value
+ * @return array of three results maps
+ * @throws Exception
+ */
     public static ArrayList statsCalc(ObjectStoreInterMineImpl os, 
                          Query queryPopulation, 
                          Query querySample, 
                          InterMineBag bag,
-                         int total,
+                         Collection organisms,
                          Double maxValue,
                          String significanceValue)      
     throws Exception {
@@ -216,13 +228,16 @@ public abstract class FlymineUtil
 
         Iterator itAll = rAll.iterator();
 
+        // total number of genes for all organisms of interest 
+        int total = getGeneTotal(os, organisms);
+        
         Hypergeometric h = new Hypergeometric(total);
         HashMap<String, Double> resultsMap = new HashMap<String, Double>();
 
         while (itAll.hasNext()) {
 
             ResultsRow rrAll =  (ResultsRow) itAll.next();
-            // goterm identifier (ie GO:0000001, etc)
+
             String id = (String) rrAll.get(0);
 
             if (countMap.containsKey(id)) {
@@ -236,7 +251,7 @@ public abstract class FlymineUtil
                 resultsMap.put(id, new Double(p));
             }
         }
-
+        
         Bonferroni b = new Bonferroni(resultsMap, significanceValue);
         b.calculate(maxValue);
         HashMap adjustedResultsMap = b.getAdjustedMap();
@@ -249,4 +264,44 @@ public abstract class FlymineUtil
         maps.add(2, idMap);   
         return maps;
     }
+    
+    /* gets total number of genes */
+    private static int getGeneTotal(ObjectStore os, Collection organisms) {
+
+           Query q = new Query();
+           q.setDistinct(false);
+           QueryClass qcGene = new QueryClass(Gene.class);
+           QueryClass qcOrganism = new QueryClass(Organism.class);
+
+           QueryField qfOrganism = new QueryField(qcOrganism, "name");
+           QueryFunction geneCount = new QueryFunction();
+
+           q.addFrom(qcGene);
+
+           q.addFrom(qcOrganism);
+
+           q.addToSelect(geneCount);
+
+           ConstraintSet cs;
+           cs = new ConstraintSet(ConstraintOp.AND);
+
+           /* organism is in bag */
+           BagConstraint bc2 = new BagConstraint(qfOrganism, ConstraintOp.IN, organisms);
+           cs.addConstraint(bc2);
+
+           /* gene is from organism */
+           QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
+           ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
+           cs.addConstraint(cc2);
+
+           q.setConstraint(cs);
+
+           Results r = os.execute(q);
+           Iterator it = r.iterator();
+           ResultsRow rr =  (ResultsRow) it.next();
+           Long l = (java.lang.Long) rr.get(0);
+           int n = l.intValue();
+           return n;
+       }
+    
 }
