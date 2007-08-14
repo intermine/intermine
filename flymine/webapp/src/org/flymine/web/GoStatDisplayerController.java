@@ -207,7 +207,7 @@ public class GoStatDisplayerController extends TilesAction
              
              // run both queries and compare the results 
              ArrayList results = FlymineUtil.statsCalc(os, queryPopulation, querySample, bag, 
-                                       organisms, maxValue, significanceValue);
+                                       organisms, maxValue);
              if (results.isEmpty()) {
                  return null;
              }
