@@ -256,6 +256,7 @@
         <b>Example lists that contain this object:</b>  
         <div class="webSearchable">
     	  <tiles:insert name="webSearchableList.tile">
+           <tiles:put name="wsListId" value="public_lists_with_object"/>
          	<tiles:put name="list" value="${publicBagsWithThisObject}"/>
             <tiles:put name="type" value="bag"/>
             <tiles:put name="scope" value="global"/>
@@ -268,6 +269,7 @@
         <b>My lists that contain this object:</b>
         <div class="webSearchable">
       	 <tiles:insert name="webSearchableList.tile">
+           <tiles:put name="wsListId" value="my_lists_with_object"/>
       	    <tiles:put name="list" value="${myBagsWithThisObject}"/>
             <tiles:put name="type" value="bag"/>
             <tiles:put name="scope" value="user"/>
