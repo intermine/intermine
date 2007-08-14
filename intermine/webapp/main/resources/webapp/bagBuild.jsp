@@ -13,9 +13,9 @@
    function switchInputs(open, close) {
       document.getElementById(open + 'Input').disabled = false;
       document.getElementById(close + 'Input').disabled = true;
-      
+
       document.getElementById('whichInput').value = open;
-      
+
       document.getElementById('submitBag').disabled = false;
       // only clear contents if contents equals our help text
       if(open == 'paste' && document.getElementById('pasteInput').value == "<fmt:message key="bagBuild.bagPaste"/>") {
@@ -24,24 +24,23 @@
          document.getElementById('pasteInput').style.fontStyle = "normal";
       }
     }
-    
+
     function resetInputs() {
        document.getElementById('fileInput').disabled = false;
        document.getElementById('pasteInput').disabled = false;
        document.getElementById('fileInput').value='';
        initPasteInput();
     }
-    
+
     function initPasteInput() {
        document.getElementById('pasteInput').value = "<fmt:message key="bagBuild.bagPaste"/>";
        document.getElementById('pasteInput').style.color = "#666";
        document.getElementById('pasteInput').style.fontStyle = "italic";
     }
-    
+
     function loadExample(example) {
     	document.getElementById('pasteInput').focus();
-    	document.getElementById('pasteInput').value = example;    
-    	
+    	document.getElementById('pasteInput').value = example;
     	return false;
     }
 
@@ -81,20 +80,15 @@
       <%-- example bag --%>
           <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
           <c:set var="bagExampleIdentifiers" value="${WEB_PROPERTIES['bag.example.identifiers']}"/>
-          <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">          
-              <div>
+          <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">
+              <div style="align: right">
                 <html:link href=""
-                           onmouseover="javascript:$('bagExampleCommentDiv').style.visibility = 'visible'"
-                           onmouseout="javascript:$('bagExampleCommentDiv').style.visibility = 'hidden'"
                            onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
-                  (click here to see an example)
+                  (click to see an example)
                 </html:link>
               </div>
-              <div id="bagExampleCommentDiv" style="visibility: hidden">
-                ${bagExampleComment}
-              </div>         
-          </c:if>       
-      
+          </c:if>
+          <br/>
      <p>
       <label><fmt:message key="bagBuild.bagType"/></label><br>
       <html:select styleId="typeSelector" property="type" onchange="typeChanged()" style="width:300px">
@@ -109,7 +103,7 @@
      </p>
       <c:if test="${!empty extraBagQueryClass}">
      <p><br>
-       <label> 
+       <label>
          <fmt:message key="bagBuild.extraConstraint">
             <fmt:param value="${extraBagQueryClass}"/>
           </fmt:message>
@@ -128,13 +122,13 @@
    <script type="text/javascript" charset="utf-8">
       initPasteInput();
     </script>
-<br><br>       
+<br><br>
     <p><fmt:message key="bagBuild.or"/></p>
-      
-	 
+
+
 	 <%-- file header --%>
      <!-- <h4><img src="images/disclosed.gif"/><fmt:message key="bagBuild.bagFromFile"/></h4> -->
-      	
+
      <%-- file input --%>
      <div align="left"><html:file styleId="fileInput" property="formFile" onkeypress="switchInputs('file','paste');"  onfocus="switchInputs('file','paste');" /></div>
     <br>
@@ -142,7 +136,7 @@
        <%-- reset button --%>
        <input type="button" onClick="resetInputs()" value="Reset" />
        <html:submit disabled="true" styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit>
-    </div>    
+    </div>
 
     <html:hidden styleId="whichInput" property="whichInput" />
   </html:form>
