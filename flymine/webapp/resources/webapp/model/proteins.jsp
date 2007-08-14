@@ -59,7 +59,7 @@
           <p>
             Protein family and domain assignments to proteins in UniProt have
             been loaded from <a
-            href="http://www.ebi.ac.uk/interpro">InterPro</a> - Version 12.0 -
+            href="http://www.ebi.ac.uk/interpro">InterPro</a> - Version 15.1 -
             for the following organisms:</p>
           <ul> 
               <li><i>D. melanogaster</i></li>
