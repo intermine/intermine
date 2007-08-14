@@ -15,8 +15,8 @@
 </c:if>
 
 <c:if test="${!empty title || !empty topRightTile || !empty topLeftTile}">
-  <div class="box" id="box${pageName}">
-    <div class="title">
+  <div  id="box${pageName}">
+    <div class="imbox">
       <div class="boxTopRight" float="right" nowrap="nowrap">
         <c:choose>
           <c:when test="${!empty topRightTile}">
@@ -31,7 +31,7 @@
         <c:if test="${empty title && !empty topLeftTile}">
           <tiles:insert name="${topLeftTile}"/>
         </c:if>
-        ${title}
+        <h3>${title}</h3>
         <c:if test="${!empty helpUrl}">
           <span class="help">
             [<html:link href="${helpUrl}" onclick="javascript:window.open('${helpUrl}','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
