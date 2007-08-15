@@ -1,4 +1,9 @@
-div#leftColumn{margin-left:450px;margin-top:25px;_margin-top:15px;}
+div#rightColumn{
+	margin-left:340px;
+	padding-top:80px;
+	_margin-top:15px;
+	margin-right:180px;
+}
 div.aspectOverview{
 	padding:5px;
 	margin:5px 5px 10px 5px;
@@ -10,7 +15,7 @@ div.aspectOverview{
 	float:left;
 }
 
-div#aspectsFront {float:left;width:400px;}
+div#aspectsFront {float:left;width:300px;height:550px;}
 div#aspectsFront h1 {
     margin:0px;
     color:#5C0075;
@@ -23,9 +28,9 @@ div#aspectsFront ul {list-style: none;margin:0px;padding:0px;}
 div#aspectsFront ul li{
 	display:inline;
 	float:left;
-	width:180px;
-	height:90px;
-	margin:10px;
+/*	width:180px;
+*//*	height:0px;
+*/	margin:10px;
 	padding:0px;
 }
 
@@ -37,4 +42,7 @@ div.aspectDescr{
 div.wsList {
    padding-top:10px;
    margin-left:30px;
+}
+div#frontBox {
+	height:151px;
 }

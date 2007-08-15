@@ -26,7 +26,7 @@ function updateExample(i) {
 	<option value="bgs" <c:if test="${quickSearchType=='bgs'}">selected</c:if>>Lists</option>
   </select>
 <fmt:message key="header.search.mid"/>
-<input class="quicksearch"  type="text" id="quickSearchInput" name="value" size="20" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearElement(this);" />  
+<input class="quicksearch" style="width:300px" type="text" id="quickSearchInput" name="value" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearElement(this);" />  
 <html:submit><fmt:message key="header.search.button"/></html:submit>
 
 </html:form>

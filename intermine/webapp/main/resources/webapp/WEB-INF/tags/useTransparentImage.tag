@@ -4,6 +4,7 @@
 <%@ attribute name="link" required="true" %>
 <%@ attribute name="height" required="true" %>
 <%@ attribute name="width" required="true" %>
+<%@ attribute name="marginTop" required="false" %>
 <%@ attribute name="floatValue" required="false" %>
 <%@ attribute name="breakFloat" required="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -12,10 +13,6 @@
 
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>'/>
 
-<c:if test="${empty floatValue}">
-  <c:set var="floatValue" value="left"/>
-</c:if>
-
 <c:choose>
   <c:when test="${iePre7}">
     <style type="text/css">
@@ -23,6 +20,7 @@
         background:none;
         height:${height}; 
         width:${width};
+        margin-top:${marginTop};
         cursor:pointer;
         filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${src}' ,sizingMethod='crop');
       }
@@ -33,6 +31,7 @@
       div.${id} {
         background:url('${src}') no-repeat;
         height:${height};
+        margin-top:${marginTop};
         width:${width};
         cursor:pointer;
       }
