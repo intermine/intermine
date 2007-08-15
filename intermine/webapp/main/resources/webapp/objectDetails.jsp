@@ -233,50 +233,40 @@
       </tiles:insert>
     </im:body>
 
-    <%-- Add to bag --%>
-    <div class="body">
-      <c:if test="${!empty PROFILE.savedBags}">
-        <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
-          <fmt:message key="objectDetails.addToBag"/>
-          <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
-          <select name="bag">
-            <c:forEach items="${PROFILE.savedBags}" var="entry">
-              <option name="${entry.key}">${entry.key}</option>
-            </c:forEach>
-          </select>
-          <input type="hidden" name="object" value="${object.id}"/>
-          <input type="submit" value="<fmt:message key="button.add"/>"/>
-        </form>
-      </c:if>
-    </div>
     
        <%-- bags that contain this object --%>
-    <div class="body" style="width:50%">
-        <%-- public bags --%>
-        <b>Example lists that contain this object:</b>  
-        <div class="webSearchable">
-    	  <tiles:insert name="webSearchableList.tile">
-           <tiles:put name="wsListId" value="public_lists_with_object"/>
-         	<tiles:put name="list" value="${publicBagsWithThisObject}"/>
+       <im:heading id="Lists">
+         Lists
+       </im:heading>
+       <im:body id="Misc">
+       <c:if test="${! empty bagsWithThisObject}">
+        <div style="width:50%;float:left; border:1px solid #CCC;padding:10px;margin:0px 10px 10px 10px">
+        Lists in which this can be found:
+ 	  <tiles:insert name="webSearchableList.tile">
+            <tiles:put name="wsListId" value="lists_with_object"/>
+            <tiles:put name="list" value="${bagsWithThisObject}"/>
             <tiles:put name="type" value="bag"/>
-            <tiles:put name="scope" value="global"/>
+            <tiles:put name="scope" value="all"/>
             <tiles:put name="showDescriptions" value="true"/>
             <tiles:put name="showSearchBox" value="false"/>
-	      </tiles:insert>
-		</div>
-        
-        <%-- my bags --%>
-        <b>My lists that contain this object:</b>
-        <div class="webSearchable">
-      	 <tiles:insert name="webSearchableList.tile">
-           <tiles:put name="wsListId" value="my_lists_with_object"/>
-      	    <tiles:put name="list" value="${myBagsWithThisObject}"/>
-            <tiles:put name="type" value="bag"/>
-            <tiles:put name="scope" value="user"/>
-            <tiles:put name="showDescriptions" value="true"/>
-             <tiles:put name="showSearchBox" value="false"/>
-     	 </tiles:insert>
-		</div>
+          </tiles:insert>
+  	</div>
+  	</c:if>
+	   <%-- Add to bag --%>
+             <c:if test="${!empty PROFILE.savedBags}">
+               <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
+                 <fmt:message key="objectDetails.addToBag"/>
+                 <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
+                 <select name="bag">
+                   <c:forEach items="${PROFILE.savedBags}" var="entry">
+                     <option name="${entry.key}">${entry.key}</option>
+                   </c:forEach>
+                 </select>
+                 <input type="hidden" name="object" value="${object.id}"/>
+                 <input type="submit" value="<fmt:message key="button.add"/>"/>
+               </form>
+             </c:if>
+        </im:body>
      </div>
 
   </im:box>
