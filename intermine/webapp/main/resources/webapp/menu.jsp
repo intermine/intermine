@@ -41,7 +41,7 @@
     </html:link>
   </li>
   </ul>
-  <div style="background:#D0B5D7;top:90px;position:absolute;right:10px">
+  <div id="quicksearch">
     <tiles:insert name="browse.tile"> 
       <tiles:put name="menuItem" value="true"/> 
     </tiles:insert>

@@ -9,41 +9,50 @@
 <html:xhtml/>
 
 <div class="body">
+        
+<!-- First column -->
      <div id="aspectsFront" class="actionArea">
      <h1>Data</h1>
      <em><p><fmt:message key="begin.data"/></p></em>
-
-          <ul>
+     <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
+          <table cellpadding="0" cellspacing="0" border="0"><tr>
 	       <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
-			       <c:set var="set" value="${entry.value}"/>
-                   <li class="aspectOverview"                            
-                   		onmouseover="javascript:$('aspectDescr_${status.index}').style.visibility = 'visible'"
-                         onmouseout="javascript:$('aspectDescr_${status.index}').style.visibility = 'hidden'">                     
+	         <c:set var="set" value="${entry.value}"/>
+	         <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
+                   <td style="height:80px;padding:10px">
                      <html:link action="/aspect?name=${set.name}">
-                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon" />
+                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon" width="40px" height="40px" />
                      </html:link>
                      <p>
                        <html:link action="/aspect?name=${set.name}">
                          ${set.name}
                        </html:link><br/>
-                       
-                       <div id="aspectDescr_${status.index}" class="aspectDescr">${set.subTitle}</div>
                      </p>
-                  </li>
+                  </td>
              </c:forEach>
-          </ul>
-	<div class="clear-both"></div>
+          </tr></table>
      </div>
 
-	<div id="leftColumn">
-                <div style="float:right"><tiles:insert name="tipWrapper.tile"/></div>
-	        <div style="width:400px;margin-left:20px">
-	    	<span style="font-size:+2em;"><a href="http://www.flymine.org/what.shtml">What is FlyMine?</a></span><br>
-            	<span style="font-size:+1.4em"><a href="http://www.flymine.org/tour/tour_1.html" target="_blank"  onclick="javascript:window.open('http://www.flymine.org/tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour!</a></span>
-        		<p class="errors">This is release 8.0 of FlyMine.  See the <a href="http://www.flymine.org/release-notes.shtml">release notes</a> to find out what's new.</p></div>
-       <div style="clear:right"></div>
-        
-      <im:roundbox title="Templates" stylename="welcome" height="350">
+<div style="float:right;margin-left:340px;position:absolute">
+<div style="float:right"><tiles:insert name="tipWrapper.tile"/></div>
+   <div style="width:400px;margin-left:20px">
+ 	<span style="font-size:+2em;"><a href="http://www.flymine.org/what.shtml">What is FlyMine?</a></span><br>
+ 	<span style="font-size:+1.4em"><a href="http://www.flymine.org/tour/tour_1.html" target="_blank"  onclick="javascript:window.open('http://www.flymine.org/tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour!</a></span>
+		<p class="errors">This is release 8.0 of FlyMine.  See the <a href="http://www.flymine.org/release-notes.shtml">release notes</a> to find out what's new.</p>
+  </div>
+</div>	
+<div style="clear:right"></div>
+
+     <!-- Third column Right   -->
+     <div style="float:right;width:180px;margin-top:95px">
+       <im:useTransparentImage src="images/go_to_template_page.png" id="gototemplates" link="/templates.do" width="158px" height="151px" />
+       <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="158px" height="151px" marginTop="38px" />
+       <im:useTransparentImage src="images/go_to_query_builder.png" id="gotoqb" link="/customQuery.do" width="158px" height="151px" marginTop="38px" />
+     </div>
+
+<!-- Second column - elastic -->
+<div id="rightColumn">
+      <im:roundbox title="Templates" stylename="frontBox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
         <a href="javascript:toggleHidden('templatesList');">
@@ -65,12 +74,9 @@
             <tiles:put name="showSearchBox" value="true"/>
           </tiles:insert>
         </div>
-
-        <im:useTransparentImage src="images/go_to_template_page.png" id="gototemplates" link="/templates.do" width="156px" height="51px"  floatValue="right"/>
-        <br/><br/><br/>
       </im:roundbox>
-
-      <im:roundbox title="Lists" stylename="welcome" height="350">
+     
+      <im:roundbox title="Lists" stylename="frontBox">
         <p><em><fmt:message key="begin.bags"/></em></p>
         <br/>
         <a href="javascript:toggleHidden('bagsList');">
@@ -91,16 +97,15 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         </div>
-        <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="156px" height="51px"  floatValue="right"/>
-		<br/><br/><br/>
       </im:roundbox>
 
-      <im:roundbox title="Query Builder" stylename="welcome" height="180">
-        <p><em><fmt:message key="begin.querybuilder"/></em></p>        
-        <im:useTransparentImage src="images/go_to_query_builder.png" id="gotoqb" link="/customQuery.do" width="156px" height="51px"  floatValue="right"/>    
-		<br/><br/><br/>
+      <im:roundbox title="Query Builder" stylename="frontBox">
+        <p><em><fmt:message key="begin.querybuilder"/></em></p>
       </im:roundbox>
-	</div>
+</div>
+
+
+
 </div>
 
 <!-- /begin.jsp -->

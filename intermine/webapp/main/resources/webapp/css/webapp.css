@@ -162,14 +162,15 @@ ul#nav li.activelink a,ul#nav li.activelink a:hover{color: #5C0075;background:ur
 ul#nav li#mymine {background:#9B89A7 url('../images/corner_my_t_l.png') no-repeat;}
 ul#nav li#mymine a{color:white;background:url('../images/corner_my_t_r.png') no-repeat right;}
 
-td#quicksearch {
-	width:100%;
-	left:0px;
-	font-size: 0.8em;
-	margin:0px 0px 0px 0px;
+div#quicksearch {
+	background:#9F67AD url('../images/corner_t_l.png') no-repeat;
+	font-weight:bold;
 	color:white;
-	background:#5C0075;
-	padding:10px;
+	position:absolute;
+	right:0px;
+	top:82px;
+	_top:80px;
+	padding:5px 15px 5px 10px;
 }
 
 .pageDesc { 
@@ -188,7 +189,7 @@ td#quicksearch {
 #clearLine{clear:both;}
 
 div.actionArea{
-	margin:15px;
+	margin:0px 15px 15px 15px;
 	padding:10px;
 	border:1px solid #9E68AE;
 	background: #F5F0FF;
