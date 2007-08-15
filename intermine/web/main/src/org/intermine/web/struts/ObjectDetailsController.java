@@ -29,6 +29,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -156,8 +157,10 @@ public class ObjectDetailsController extends InterMineAction
         String publicBagsWithThisObject = getBags(os, session, servletContext, id, true);
         String myBagsWithThisObject = getBags(os, session, servletContext, id, false);
         
-        request.setAttribute("publicBagsWithThisObject", publicBagsWithThisObject);
-        request.setAttribute("myBagsWithThisObject", myBagsWithThisObject);
+        request.setAttribute("bagsWithThisObject", publicBagsWithThisObject 
+                             + ((publicBagsWithThisObject.length() !=0 
+                               && myBagsWithThisObject.length() != 0) ? "," :"") 
+                             + myBagsWithThisObject);
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
         
         return null;
@@ -286,9 +289,12 @@ public class ObjectDetailsController extends InterMineAction
         
         // this should return all bags with that object
         Results results = os.execute(q);
-        String s = results.asList().toString();     
-        s = s.replaceAll("\\[", "");
-        s = s.replaceAll("\\]", "");        
-        return s;
-    }
+        StringBuffer sb = new StringBuffer();
+        for (Object object : results) {
+            List list = (List) object;
+            if(sb.length() != 0) { sb.append(","); }
+            sb.append(list.get(0));
+        }
+        return sb.toString();
+   }
 }
