@@ -46,20 +46,26 @@
       <im:roundbox title="Templates" stylename="welcome" height="350">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
-        <p>Some example templates (<html:link action="/templates.do">${templateCount} total</html:link>):</p>
-        <tiles:insert name="webSearchableList.tile">
-          <!-- optional -->
-          <tiles:put name="limit" value="3"/>
-          <!-- bag or template? -->
-          <tiles:put name="type" value="template"/>
-          <!-- user or global -->
-          <tiles:put name="wsListId" value="global_template"/>
-          <tiles:put name="scope" value="global"/>
-          <tiles:put name="tags" value="im:frontpage"/>
-          <tiles:put name="showDescriptions" value="false"/>
-          <tiles:put name="showSearchBox" value="true"/>
-        </tiles:insert>
-        
+        <a href="javascript:toggleHidden('templatesList');">
+          <img id='templatesListToggle' src="images/undisclosed.gif"/>
+          Show example templates
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;<html:link action="/templates.do">View all ${templateCount} templates</html:link>
+        <div id="templatesList" style="display:none;">
+          <tiles:insert name="webSearchableList.tile">
+            <!-- optional -->
+            <tiles:put name="limit" value="5"/>
+            <!-- bag or template? -->
+            <tiles:put name="type" value="template"/>
+            <!-- user or global -->
+            <tiles:put name="wsListId" value="global_template"/>
+            <tiles:put name="scope" value="global"/>
+            <tiles:put name="tags" value="im:frontpage"/>
+            <tiles:put name="showDescriptions" value="false"/>
+            <tiles:put name="showSearchBox" value="true"/>
+          </tiles:insert>
+        </div>
+
         <im:useTransparentImage src="images/go_to_template_page.png" id="gototemplates" link="/templates.do" width="156px" height="51px"  floatValue="right"/>
         <br/><br/><br/>
       </im:roundbox>
@@ -67,7 +73,12 @@
       <im:roundbox title="Lists" stylename="welcome" height="350">
         <p><em><fmt:message key="begin.bags"/></em></p>
         <br/>
-        <p>Some example lists (<html:link action="/bag.do">${bagCount} total</html:link>):</p>
+        <a href="javascript:toggleHidden('bagsList');">
+          <img id='bagsListToggle' src="images/undisclosed.gif"/>
+          Some example lists
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;<html:link action="/bag.do">View all ${bagCount} bags ...</html:link>
+        <div id="bagsList" style="display:none;">
         <tiles:insert name="webSearchableList.tile">
           <tiles:put name="limit" value="3"/>
           <tiles:put name="wsListId" value="global_bag"/>
@@ -79,6 +90,7 @@
           <tiles:put name="showSearchBox" value="false"/>
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
+        </div>
         <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="156px" height="51px"  floatValue="right"/>
 		<br/><br/><br/>
       </im:roundbox>

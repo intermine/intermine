@@ -42,3 +42,15 @@ function disableEnterKey(e)
 
     return (keyCode != 13);
 }
+
+function toggleHidden(elementId) {
+    var element = document.getElementById(elementId);
+    var display = element.style.display;
+    if(display=='block') {
+        element.style.display='none';
+        document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
+    } else {
+        element.style.display='block';
+        document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
+    }
+}
