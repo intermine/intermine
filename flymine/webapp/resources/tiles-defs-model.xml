@@ -13,3 +13,6 @@
   	
   <definition name="goStatDisplayer.tile" path="/model/goStatDisplayer.jsp" 
   	controllerUrl="/initGoStatDisplayer.do"/>
+
+<definition name="proteinDomainDisplayer.tile" path="/model/proteinDomainDisplayer.jsp" 
+  	controllerUrl="/initProteinDomainDisplayer.do"/>

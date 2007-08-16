@@ -36,3 +36,13 @@
       <forward name="results" path="/results.do" redirect="true"/>    
     </action>
     
+    <action path="/initProteinDomainDisplayer" 
+		type="org.flymine.web.ProteinDomainDisplayerController" />
+    
+    <action path="/proteinDomainDisplayer" 
+		forward="proteinDomainDisplayer.tile" />
+    
+    <action path="/proteinDomainAction"
+            type="org.flymine.web.ProteinDomainAction">
+      <forward name="results" path="/results.do" redirect="true"/>    
+    </action>

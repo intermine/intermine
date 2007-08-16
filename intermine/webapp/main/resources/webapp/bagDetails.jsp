@@ -248,29 +248,21 @@
 
   <c:if test="${bag.type == 'Gene'}">
 
-    <c:choose>
-      <c:when test="${widgetCount % 2 == 0}">
-        <tr valign="top"><td>
-      </c:when>
-      <c:otherwise>
-        <td>
-      </c:otherwise>
-    </c:choose>
+<tr>
+	<td>
 
     <%-- go stats --%>
  	<iframe src="goStatDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
-    
-    <br>
-
-      <c:choose>
-        <c:when test="${widgetCount % 2 == 0}">
+ 	
+	</td><td>
+  
+    <%-- protein domains 
+ 	<iframe src="proteinDomainDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
+ 	--%>
     </td>
-    </c:when>
-    <c:otherwise>
-    </td></tr>
-    </c:otherwise>
-    </c:choose>
-    <c:set var="widgetCount" value="${widgetCount+1}" />
+</tr>
+
+    <c:set var="widgetCount" value="${widgetCount+2}" />
   </c:if>
 
 </table>

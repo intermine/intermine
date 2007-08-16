@@ -162,7 +162,7 @@
       description="For each tissue in the adult fly, the number of genes from my bag for which the levels or expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas AffyCall&lt;/a&gt;."  
       graphType="StackedBarChart" />
    
-      <!--<bagtabledisplayer title="Related Publications" type="Publication" collectionName="publications" fields="title,pubMedId"/>-->
+      <bagtabledisplayer title="Related Publications" type="Publication" collectionName="publications" fields="title,pubMedId"/>
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways"
       description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this bag." />
       
