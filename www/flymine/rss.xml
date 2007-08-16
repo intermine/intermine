@@ -10,18 +10,6 @@
 
     <!-- Add new news at the top here -->
     <item>
-      <title>Service interruption on Thursday</title>
-      <link>http://www.flymine.org/</link>
-      <description>
-        The &lt;a href="http://www.flymine.org"&gt;FlyMine&lt;/a&gt; website
-        will be unavailable from 8:00 GMT (9am BST) for aproximately 2 hours
-        due to building maintenance work.  We hope to have the site back online
-        soon after 10:00 GMT (11am BST).
-      </description>
-      <pubDate>Mon, 13th August 2007</pubDate>
-    </item>
-
-    <item>
       <title>FlyMine 8.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
