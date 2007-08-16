@@ -4,17 +4,38 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- browse.jsp -->
+<c:set var="ids">
+  <fmt:bundle basename="model"><fmt:message key="model.template.example"/></fmt:bundle>
+</c:set>
+<c:set var="tpls">
+  <fmt:bundle basename="model"><fmt:message key="model.bag.example"/></fmt:bundle>
+</c:set>
+<c:set var="bgs">
+  <fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>
+</c:set>
+
 <script type="text/javascript" src="js/browse.js"></script>
 <script type="text/javascript">
 function updateExample(i) {
 	if (i==1) {
-	   document.getElementById('quickSearchInput').value = '<fmt:bundle basename="model"><fmt:message key="model.template.example"/></fmt:bundle>';	   
+	   document.getElementById('quickSearchInput').value = '<c:out value="${ids}"/>';	   
 	} else if (i==2) {
-	   document.getElementById('quickSearchInput').value = '<fmt:bundle basename="model"><fmt:message key="model.bag.example"/></fmt:bundle>';
+	   document.getElementById('quickSearchInput').value = '<c:out value="${tpls}"/>';
 	} else {
-	   document.getElementById('quickSearchInput').value = '<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>';
+	   document.getElementById('quickSearchInput').value = '<c:out value="${bgs}"/>';
 	}
-	document.getElementById('quickSearchInput').className = 'quicksearch';
+	document.getElementById('quickSearchInput').style.color = '#666';
+	document.getElementById('quickSearchInput').style.fontStyle = 'italic';
+}
+function clearElement(e) {
+   var value =document.getElementById('quickSearchInput').value;
+   if( value == '<c:out value="${ids}"/>'
+   || value == '<c:out value="${tpls}"/>'
+   || value == '<c:out value="${bgs}"/>') {
+	e.value = "";
+	document.getElementById('quickSearchInput').style.color = '#000';
+	document.getElementById('quickSearchInput').style.fontStyle = 'normal';
+   }
 }
 </script>
 <tiles:importAttribute name="menuItem" ignore="true"/>
@@ -26,7 +47,7 @@ function updateExample(i) {
 	<option value="bgs" <c:if test="${quickSearchType=='bgs'}">selected</c:if>>Lists</option>
   </select>
 <fmt:message key="header.search.mid"/>
-<input class="quicksearch" style="width:300px" type="text" id="quickSearchInput" name="value" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearElement(this);" />  
+<input style="width:300px;color:#666;font-style:italic" type="text" id="quickSearchInput" name="value" value="<fmt:bundle basename="model"><fmt:message key="model.quickSearch.example"/></fmt:bundle>" onFocus="clearElement(this);" />  
 <html:submit><fmt:message key="header.search.button"/></html:submit>
 
 </html:form>

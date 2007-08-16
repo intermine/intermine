@@ -639,8 +639,3 @@ ul#mymineList li {float:left;}
 ul#mymineList li span.active {font-weight:bold;color:#FFF;}
 
 ul#mymineList li a {color:#FFF;text-decoration: underline;font-weight: bold;float:left;}
-
-.quicksearch {
-	color:#666; 
-	font-style:italic;
-}
