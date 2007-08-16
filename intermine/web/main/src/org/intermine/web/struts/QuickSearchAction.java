@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.intermine.objectstore.query.ConstraintOp;
@@ -20,8 +19,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
