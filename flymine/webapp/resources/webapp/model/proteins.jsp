@@ -23,13 +23,15 @@
           <p>
             All proteins from the <a
             href="http://www.ebi.uniprot.org/index.shtml">UniProt
-            Knowledgebase</a> - Version 11.0 - for the following organisms have
+            Knowledgebase</a> for the following organisms have
             been loaded:</p>
 
           <ul>             
               <li><i>D. melanogaster</i></li>
               <li><i>A. gambiae</i></li>
               <li><i>C. elegans</i></li>
+              <li><i>H. sapiens</i></li>
+              <li><i>M. musculus</i></li>
           </ul>
           <p>           
             For each protein record in UniProt for each species the following
@@ -59,8 +61,7 @@
           <p>
             Protein family and domain assignments to proteins in UniProt have
             been loaded from <a
-            href="http://www.ebi.ac.uk/interpro">InterPro</a> - Version 15.1 -
-            for the following organisms:</p>
+            href="http://www.ebi.ac.uk/interpro">InterPro</a> for the following organisms:</p>
           <ul> 
               <li><i>D. melanogaster</i></li>
               <li><i>A. gambiae</i></li>

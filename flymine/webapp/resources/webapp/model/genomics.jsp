@@ -76,7 +76,7 @@
             comparison purposes.
           </p>
 
-            <ul><li><i>Caenorhabditis elegans</i> - Genome information from <a href="http://www.wormbase.org">WormBase</a>,
+            <ul><li><i>Caenorhabditis elegans</i> - Genome information from <a href="http://www.wormbase.org">WormBase</a>
             </li></ul>
 
         </div>
