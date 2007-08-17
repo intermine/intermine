@@ -525,7 +525,10 @@ public class CreateIndexesTask extends Task
 
                 String indexName = tableName + "__"  + att.getName();
                 if (att.getType().equals("java.lang.String")) {
-                    addStatement(statements, indexName, tableName, "lower(" + fieldName + ")",
+                    // we add 'text_pattern_ops' so that LIKE queries will use the index.  see:
+                    // http://www.postgresql.org/docs/8.2/static/indexes-opclass.html
+                    addStatement(statements, indexName, tableName,
+                                 "lower(" + fieldName + ") text_pattern_ops",
                                  cld, null);
                 } else {
                     addStatement(statements, indexName, tableName, fieldName, cld, null);
