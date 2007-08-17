@@ -80,7 +80,7 @@ Available operators include:
 
 [a, b] && [c, d]        Overlaps
 
-        The segments [a, b] and [c, d] overlap.
+        Returns true if and only if segments [a, b] and [c, d] overlap
 
 [a, b] << [c, d]        Is left of
 
@@ -163,9 +163,9 @@ in make, ie.:
 This will compile and install the implementation for the "bioseg0" type.
 The "0" in the name being a mnemonic for "0-based".
 
-Then restart PostgreSQL and run:
-    psql -d databasename < bioseg.sql
-as usual to install the type in the database.
+Then restart PostgreSQL and read "bioseg0.sql":
+    psql -d databasename < bioseg0.sql
+as to install the type in a database.
 
 Note
 ----
