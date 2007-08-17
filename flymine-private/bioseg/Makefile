@@ -8,8 +8,8 @@ endif
 
 MODULE_big = $(BIOSEG)
 OBJS = bioseg.o
-DATA_built = bioseg.sql
-DATA = uninstall_bioseg.sql
+DATA_built = $(BIOSEG).sql
+DATA = uninstall_$(BIOSEG).sql
 REGRESS = $(BIOSEG)
 
 
@@ -24,5 +24,5 @@ include $(top_builddir)/src/Makefile.global
 include $(top_srcdir)/contrib/contrib-global.mk
 endif
 
-%.sql: %.sql.in
+$(BIOSEG).sql: bioseg.sql.in
 	sed 's,MODULE_PATHNAME,$$libdir/$*,g' $< | sed 's,$$BIOSEG_TYPE,$(BIOSEG),g' >$@
