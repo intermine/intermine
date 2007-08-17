@@ -24,23 +24,6 @@
         </blockquote>
 
         <p>
-          Homophila is described in these papers:
-        </p>
-        <ul>
-          <li>
-            Reiter LT, Potocki L, Chien S, Gribskov M, Bier E. Genome Res. 2001
-            Jun;11(6):1114-25. "A Systematic Analysis of Human Disease-Associated
-            Gene Sequences In Drosophila melanogaster" (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=11381037&query_hl=2">PubMed:
-              11381037</A>)
-          </li>
-          <li>
-            Chien S, Reiter LT, Bier E, Gribskov M., Nucleic Acids Res. 2002 Jan
-            1;30(1):149-51.
-            "Homophila: human disease gene cognates in Drosophila" (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=11752278&query_hl=2">PubMed:
-              11752278</A>)
-          </li>
-        </ul>
-        <p>
           See also:
           <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM">Online
           Mendelian Inheritance in Man<sup><font size="-2">TM</font></sup></a>

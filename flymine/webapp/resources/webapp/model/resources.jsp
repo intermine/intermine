@@ -149,19 +149,6 @@
      </div>
       </dl>
 
-       <dl>
-          <h4>
-            <a href="javascript:toggleDiv('hiddenDiv5');">
-              <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
-              Literature
-            </a>
-          </h4>
-
-          <div id="hiddenDiv5" style="display:none;">
-          <p>A mapping between genes and publications which mention them for <i>D. melanogaster</i>, <i>C. elegans</i> and <i>S. cerevisiae</i> from NCBI (till 14th December 2006)</p>
-
-      </div>
-    </dl>
 
 </div>
 
