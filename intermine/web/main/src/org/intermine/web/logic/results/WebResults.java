@@ -47,9 +47,8 @@ import org.intermine.web.logic.query.PathQuery;
 public class WebResults extends AbstractList implements WebTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
-    private List columnPaths;
+    private List<Path> columnPaths;
     protected LinkedHashMap pathToIndex;
-    protected LinkedHashMap pathToType = new LinkedHashMap();
     protected Model model;
     private final List<Column> columns = new ArrayList<Column>();
     private Results osResults;
@@ -80,6 +79,7 @@ public class WebResults extends AbstractList implements WebTable
         this.pathToBagQueryResult = pathToBagQueryResult;
         this.pathQuery = pathQuery;
         pathToIndex = getPathToIndex(pathToQueryNode);
+        
         setColumns(columnPaths);
     }
  
@@ -113,42 +113,42 @@ public class WebResults extends AbstractList implements WebTable
         return columnNames;
     }
     
-    private void setColumns(List columnPaths) {
-        List types = new ArrayList();
+    private void setColumns(List<Path> columnPaths) {
+        List<String> types = new ArrayList<String>();
         int i = 0;
-        for (Iterator iter = columnPaths.iterator(); iter.hasNext();) {
+        for (Iterator<Path> iter = columnPaths.iterator(); iter.hasNext();) {
             Object columnPathObject = iter.next();
-            if (columnPathObject instanceof Path) {
-                Path columnPath = (Path) columnPathObject;
-                String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor()
-                    .getName());
-                Class typeCls = columnPath.getLastClassDescriptor().getType();
-                // if (columnPath.getElements().size() >= 2) {
-                // Object pathElement = columnPath.getElements().get(columnPath.getElements()
-                // .size() - 2);
-                // if (pathElement instanceof ReferenceDescriptor) {
-                // ReferenceDescriptor refdesc = (ReferenceDescriptor) pathElement;
-                // type = TypeUtil.unqualifiedName(refdesc.getReferencedClassName());
-                // }
-                // } else {
-                // type = TypeUtil.unqualifiedName(columnPath.getStartClassDescriptor().getName());
-                //                }
-                pathToType.put(columnPath.toStringNoConstraints(), type);
-                Column column = new Column(columnPath, i, typeCls);
-                if (!types.contains(column.getColumnId())) {
-                    String fieldName = columnPath.getEndFieldDescriptor().getName();
-                    boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
-                    if (isKeyField) {
-                        column.setSelectable(true);
-                        types.add(column.getColumnId());
-                    }
-                }
-                columns.add(column);
-            } else if (columnPathObject instanceof String) {
-                String columnPath = (String) columnPathObject;
-                Column column = new Column(columnPath, i, null);
-                columns.add(column);
+
+            Path columnPath = (Path) columnPathObject;
+            String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor()
+                                                   .getName());
+            Class typeCls = columnPath.getLastClassDescriptor().getType();
+
+            String columnString = columnPath.toString();
+            int dotIndex = columnString.lastIndexOf('.');
+            String columnPrefix = columnString.substring(0, dotIndex);
+            String columnPathEnd = columnString.substring(dotIndex + 1);
+
+            String columnDescription = pathQuery.getPathDescription(columnPrefix);
+            Column column;
+            
+            if (columnDescription == null) {
+                column = new Column(columnString, i, typeCls);
+            } else {
+                column = new Column(columnDescription + '.' + columnPathEnd, i, typeCls);
             }
+            
+            if (!types.contains(column.getColumnId())) {
+                String fieldName = columnPath.getEndFieldDescriptor().getName();
+                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
+                if (isKeyField) {
+                    column.setSelectable(true);
+                    types.add(column.getColumnId());
+                }
+            }
+
+            columns.add(column);
+
             i++;
         }
     }
