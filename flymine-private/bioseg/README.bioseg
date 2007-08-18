@@ -62,21 +62,33 @@ and the type can then be installed in a particular database by any user with:
 SYNTAX
 ======
 
-The external representation of an interval is formed using one or two
+The user visible representation of an interval is formed using one or two
 integers greater than 0 joined by the range operator ('..' or '...'). 
 The first integer must be less than or equal to the second.
 
-11..22        An interval from 10 to 20 inclusive - length 11 (= 22-11+1)
+  11..22        An interval from 10 to 20 inclusive - length 11 (= 22-11+1)
 
-1...2         The same as 1..2
+  1...2         The same as 1..2
 
-50            The same as 50..50
+  50            The same as 50..50
+
+In a statement, bioseg values have the form:
+  '<start>..<end>'::bioseg
+or can be created with:
+  bioseg_create(start, end)
+
+For example:
+  CREATE TABLE test_bioseg (id integer, seg bioseg);
+  insert into test_bioseg values (1, '1000..2000'::bioseg);
+or, equivalently
+  insert into test_bioseg values (1, bioseg_create(1000, 2000));
 
 
 USAGE
 =====
 
-Available operators include:
+The following is a list of the available operators.  The [a, b] should be
+replace in a statement with 'a..b'::bioseg or bioseg_create(a, b).
 
 [a, b] && [c, d]        Overlaps
 
@@ -192,10 +204,13 @@ CREDITS
 
 Note from the author: Most of the code and all of the hard work needed to
 implement BIOSEG was by Gene Selkov, Jr, author of the SEG type (contrib/seg
-in the PostgreSQL source).  All bugs are due to me.
+in the PostgreSQL source).  All bugs are due to me (kmr).
 
 
 AUTHOR
 ======
 
 Kim Rutherford <kmr@flymine.org>
+
+SEG code by Gene Selkov, Jr.
+
