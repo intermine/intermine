@@ -318,6 +318,7 @@
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
       <forward name="bagResultsTable" redirect="true" path="/bagResultsTable.do"/>
       <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="errors" redirect="true" path="/bag.do"/>
     </action>
     <action path="/bagResultsTable" type="org.intermine.web.struts.BagDetailsAction">
       <forward name="results" redirect="true" path="/results.do"/>

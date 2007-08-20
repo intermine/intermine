@@ -8,8 +8,6 @@
 <!-- bagDetails.jsp -->
 <html:xhtml/>
 
-
-
 <script type="text/javascript">
   <!--//<![CDATA[
       var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
@@ -21,27 +19,43 @@
 </script>
 
 <div class="heading">
-	<fmt:message key="bagDetails.title"/>
+	<html:link action="bag.page">All Lists</html:link> > <fmt:message key="bagDetails.title"/>
 </div>
 
 <div class="body" >
-  <p>
-  <fmt:message key="bagDetails.intro">
-  <fmt:param value="${bag.name}"/>
-  <fmt:param value="${bag.size}"/>
-  <fmt:param value="${bag.type}"/>
-  </fmt:message>
-  </p>
-  <c:if test="${!empty bag.dateCreated}">
-    <p>Created: <im:dateDisplay date="${bag.dateCreated}" /></p>
-  </c:if>
 
-  <html:form action="/modifyBagDetailsAction">
-    <html:hidden property="bagName" value="${bag.name}"/>
+	    <table border=0 cellpadding=0 cellspacing=5>
+    	  <tr>
+        	<td width="50%">
+        	
+        	
+        	<table width="100%">
+        	<tr>
+        	<td>
+        	<b>${bag.name}</b> (${bag.size} ${bag.type}s)
+        	</td>
+        	<td align="right">
+              <%-- Page size controls --%>
+			</td>
+		</tr>
+		</table>
 
-    <table>
-      <tr>
-        <td width="50%">
+
+           
+        	
+        	</td>
+        	<td width="50%" align="right" valign="middle">
+			  <c:if test="${!empty bag.dateCreated}">
+			    <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
+			  </c:if>
+						</td>
+</tr>
+<tr>
+	<td width="50%" valign="top">        
+	
+	<html:form action="/modifyBagDetailsAction">
+    	<html:hidden property="bagName" value="${bag.name}"/>
+	
           <table class="results" cellspacing="0">
             <tr>
               <c:forEach var="column" items="${pagedColl.columns}" varStatus="status">
@@ -83,50 +97,87 @@
             </c:forEach>
           </table>
           <br/>
-
-          <c:if test="${pagedColl.pageSize < pagedColl.size}">
-            <p>
-              
-              
-  <fmt:message key="bagDetails.showingFirst">
-  <fmt:param value="${pagedColl.pageSize}"/>
-  </fmt:message>
-              
-            </p>
-          </c:if>
-          <html:submit property="showInResultsTable">
-            <fmt:message key="bagDetails.viewBag"/>
-          </html:submit>
-<%-- See #1290 - disable in 8.0
-          <html:submit property="useBagInQuery">
-            <fmt:message key="bagDetails.useBagInQuery"/>
-          </html:submit>
---%>
-          <br/>
-          <i>
-            <fmt:message key="bagDetails.viewBagHelp"/>
-          </i>
+          <div align="right">
+         <html:submit property="showInResultsTable">
+			View all ${bag.size} records >>
+        </html:submit>
+        </div>
+	
+		
   </td>
-
   <td valign="top" width="50%" align="center">
-    <div id="bagDescriptionDiv" onclick="swapDivs('bagDescriptionDiv','bagDescriptionTextarea')">
-      <c:choose>
-        <c:when test="${! empty bag.description}">
-          <c:out value="${bag.description}" escapeXml="false" />
-        </c:when>
-        <c:otherwise>
-          <div id="emptyDesc">Click here to enter a description for your list.</div>
-        </c:otherwise>
-      </c:choose>
-    </div>
-    <div id="bagDescriptionTextarea">
-      <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
-      <div align="right">
-        <button onclick="swapDivs('bagDescriptionTextarea','bagDescriptionDiv'); return false;">Cancel</button>
-        <button onclick="saveBagDescription('${bag.name}'); return false;">Save</button>
-      </div>
-    </div>
+  
+  <table width="90%" border=0 align="center">
+  <tr>
+  
+	  <c:choose>
+	  <c:when test="${myBag == 'true'}">
+	  <td align="center">
+	  <div id="clear-both"/>
+	    <div id="bagDescriptionDiv" onclick="swapDivs('bagDescriptionDiv','bagDescriptionTextarea')">
+	      <c:choose>
+	        <c:when test="${! empty bag.description}">
+	          <c:out value="${bag.description}" escapeXml="false" />
+	        </c:when>
+	        <c:otherwise>
+	          <div id="emptyDesc">Click here to enter a description for your list.</div>
+	        </c:otherwise>
+	      </c:choose>
+	    </div>
+	    <div id="bagDescriptionTextarea">
+	      <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
+	      <div align="right">
+	        <button onclick="swapDivs('bagDescriptionTextarea','bagDescriptionDiv'); return false;">Cancel</button>
+	        <button onclick="saveBagDescription('${bag.name}'); return false;">Save</button>
+	      </div>
+	    </div>
+
+	</c:when>
+	<c:otherwise>	
+	<td>
+		 <b>Description:</b> ${bag.description}
+	</c:otherwise>
+	</c:choose>
   </td>
+  </tr>
+  <tr>
+  <td>
+  
+  <br/>  <br/>  <br/>
+
+  <span style="font-size:+2em;">View</span>
+  	<li>  	
+  	    <html:submit property="showInResultsTable">
+			all records in this list
+        </html:submit>
+  	</li>
+  	<li><html:link action="/bag">all lists</html:link></li>
+  	<li><html:link action="#templates">related templates</html:link></li>
+  	
+  <span style="font-size:+2em;">Export</span>
+
+		<li>tab-separated</li>
+		<li>comma-separated</li>
+		<li>excel</li>
+		<li>gff3</li>
+		
+		
+  <span style="font-size:+2em;">Use</span>
+  	
+		
+	<li>  	
+  	    <html:submit property="useBagInQuery">
+			in a query
+        </html:submit>
+  	</li>
+		<li><html:link action="/templates">in a template</html:link></li>
+</td>
+</tr>
+</table>
+	
+  </td>
+  
+  
   </tr>
   </table>
   </html:form>
@@ -270,7 +321,7 @@
 
 
 <div class="heading">
-  Templates
+  <a name="templates">Templates</a>
 </div>
 
 <div class="body">

@@ -24,20 +24,25 @@ import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.profile.Profile;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.FileNameMap;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
-import org.apache.commons.lang.StringUtils;
+
+
 /**
  * An action that makes a bag from text.
  *
@@ -105,8 +110,14 @@ public class BuildBagAction extends InterMineAction
                     recordError(new ActionMessage("bagBuild.noBagFile"), request);
                     return mapping.findForward("bags");
                 }
-                if (!formFile.getContentType().equals("text/plain")) {
-                    recordError(new ActionMessage("bagBuild.notText"), request);
+        
+                //MimetypesFileTypeMap mimeMap = new MimetypesFileTypeMap();
+                //String mimetype = mimeMap.getContentType(formFile.getFileName());
+                String mimetype = formFile.getContentType();
+             
+                if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
+                    recordError(new ActionMessage("bagBuild.notText", 
+                                                  mimetype), request);
                     return mapping.findForward("bags");
                 } 
                 reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
@@ -134,7 +145,7 @@ public class BuildBagAction extends InterMineAction
                     }
                     recordError(actionMessage, request);
 
-                    return mapping.findForward("errors");
+                    return mapping.findForward("bags");
                 }
             }
         }

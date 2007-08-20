@@ -88,6 +88,7 @@ public class BagDetailsController extends TilesAction
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
             String bagName = request.getParameter("bagName");
+            Boolean myBag = Boolean.FALSE;
             if (bagName == null) {
                 bagName = request.getParameter("name");
             }
@@ -102,6 +103,9 @@ public class BagDetailsController extends TilesAction
                 || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
                 Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                 imBag = profile.getSavedBags().get(bagName);
+                if (imBag != null) {
+                    myBag = Boolean.TRUE;
+                }
             }
             
             if (scope.equals(TemplateHelper.GLOBAL_TEMPLATE)
@@ -210,7 +214,7 @@ public class BagDetailsController extends TilesAction
                                       classKeys);
 
             PagedTable pagedColl = new PagedTable(webPathCollection);
-
+            request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);
             request.setAttribute("bagSize", new Integer(imBag.size()));
             request.setAttribute("pagedColl", pagedColl);
