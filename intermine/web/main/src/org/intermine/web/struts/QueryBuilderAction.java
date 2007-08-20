@@ -64,7 +64,7 @@ public class QueryBuilderAction extends InterMineAction
 
         if (cindex != null) {
             // We're updating an existing constraint, just remove the old one
-            Constraint c = (Constraint) node.getConstraints().get(cindex.intValue());
+            Constraint c = node.getConstraints().get(cindex.intValue());
             node.removeConstraint(c);
             label = c.getDescription();
             id = c.getIdentifier();

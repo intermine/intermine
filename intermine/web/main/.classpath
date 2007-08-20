@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="lib/stringtree-json-2.0.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/strutstest-2.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/javamail-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
