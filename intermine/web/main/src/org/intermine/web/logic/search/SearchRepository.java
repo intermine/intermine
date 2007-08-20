@@ -254,8 +254,10 @@ public class SearchRepository
                     contentBuffer.append(' ').append(aspect);
                 }
             }
-    
-            doc.add(new Field("content", contentBuffer.toString(), Field.Store.NO,
+            
+            // normalise the text
+            String content = contentBuffer.toString().replaceAll("[^a-zA-Z0-9]", " ");
+            doc.add(new Field("content", content, Field.Store.NO,
                               Field.Index.TOKENIZED));
             doc.add(new Field("scope", scope, Field.Store.YES, Field.Index.NO));
     
@@ -347,6 +349,7 @@ public class SearchRepository
         throws ParseException, IOException {
         // special case for word ending in "log" eg. "ortholog" - add "orthologue" to the search
         String queryString = origQueryString.replaceAll("(\\w+log\\b)", "$1ue $1");
+        queryString = queryString.replaceAll("[^a-zA-Z0-9]", " ");
         SearchRepository.LOG.info("Searching " + scope + " for \""
                 + origQueryString + "\"    - type: " + type);
         long time = System.currentTimeMillis();
