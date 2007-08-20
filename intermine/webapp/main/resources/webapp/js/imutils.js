@@ -46,11 +46,11 @@ function disableEnterKey(e)
 function toggleHidden(elementId) {
     var element = document.getElementById(elementId);
     var display = element.style.display;
-    if(display=='block') {
-        element.style.display='none';
-        document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
-    } else {
-        element.style.display='block';
+     if(display=='none') {
+	    Effect.SlideDown(elementId);
+         document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
+     } else {
+     	Effect.SlideUp(elementId);
         document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
-    }
+     }
 }

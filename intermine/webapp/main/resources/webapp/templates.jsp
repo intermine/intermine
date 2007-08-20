@@ -9,13 +9,11 @@
 <html:xhtml/>
 
 <div class="body">
-<div id="leftCol">
+<%--<div id="leftCol">
    <div id="pageDesc" class="pageDesc"><p><fmt:message key="templates.intro"/></p></div>
 	 <div class="actionArea">
 	     <h2>Actions:</h2>
-          
-           	<%-- TODO this should be done elsewhere --%>	
-	        <c:choose>  
+  	        <c:choose>  
             <c:when test="${empty PROFILE.username}">
             	<c:set var="linky" value="login.do?returnto=%2Fmymine.do%3Fpage%3Dtemplates"/>
             	<html:link action="${linky}">
@@ -43,7 +41,7 @@
     
     
 </div>
-<div id="rightCol">           
+<div id="rightCol">--%>
       <html:form action="/modifyTemplate">
         <tiles:insert name="wsTemplateTable.tile">
           <tiles:put name="wsListId" value="all_templates"/>
@@ -53,12 +51,11 @@
           <tiles:put name="showTitles" value="true"/>
           <tiles:put name="showDescriptions" value="true"/>
           <tiles:put name="showSearchBox" value="true"/>
-          <tiles:put name="height" value="550"/>
           <tiles:put name="initialFilterText" value="${initialFilterText}"/>
         </tiles:insert>
       </html:form>
 </div>
-</div>
+<!-- </div> -->
 <script type="text/javascript">
 	Nifty("div#pageDesc","big");
 </script>

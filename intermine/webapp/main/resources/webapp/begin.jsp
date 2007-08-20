@@ -60,7 +60,9 @@
           Show example templates
         </a>
         &nbsp;&nbsp;&nbsp;&nbsp;<html:link action="/templates.do">View all ${templateCount} templates</html:link>
-        <div id="templatesList" style="display:none;">
+        <div>
+        <div id="templatesList" style="display:none;border:1px solid;border-top:none">
+        <div>
           <tiles:insert name="webSearchableList.tile">
             <!-- optional -->
             <tiles:put name="limit" value="5"/>
@@ -74,6 +76,8 @@
             <tiles:put name="showSearchBox" value="true"/>
           </tiles:insert>
         </div>
+        </div>
+        </div>
       </im:roundbox>
      
       <im:roundbox title="Lists" stylename="frontBox">
@@ -84,7 +88,9 @@
           Some example lists
         </a>
         &nbsp;&nbsp;&nbsp;&nbsp;<html:link action="/bag.do">View all ${bagCount} bags ...</html:link>
-        <div id="bagsList" style="display:none;">
+        <div>
+        <div id="bagsList" style="display:none;border:1px solid;border-top:none">
+        <div>
         <tiles:insert name="webSearchableList.tile">
           <tiles:put name="limit" value="3"/>
           <tiles:put name="wsListId" value="global_bag"/>
@@ -96,6 +102,8 @@
           <tiles:put name="showSearchBox" value="false"/>
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
+        </div>
+        </div>
         </div>
       </im:roundbox>
 
