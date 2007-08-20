@@ -79,6 +79,7 @@
   //-->
 </script>
 
+<im:box title="Template">
 <tiles:get name="objectTrail.tile"/>
 <div class="body">
   <html:form action="/templateAction">
@@ -276,3 +277,4 @@
     </p>
   </c:if>
 </div>
+</im:box>

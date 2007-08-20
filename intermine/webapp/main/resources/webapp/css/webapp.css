@@ -162,6 +162,8 @@ ul#nav li.activelink{background: #FFF url('../images/corner_white_t_l.png') no-r
 ul#nav li.activelink a,ul#nav li.activelink a:hover{color: #5C0075;background:url('../images/corner_white_t_r.png') no-repeat right;}
 ul#nav li#mymine {background:#9B89A7 url('../images/corner_my_t_l.png') no-repeat;}
 ul#nav li#mymine a{color:white;background:url('../images/corner_my_t_r.png') no-repeat right;}
+/*ul#nav li#bags.activelink {background:#A42F2D url('../images/corner_t_l.png') no-repeat;}
+ul#nav li#bags.activelink a{color:white;background:url('../images/corner_t_r.png') no-repeat right;}*/
 
 div#quicksearch {
 	background:#9F67AD url('../images/corner_t_l.png') no-repeat;

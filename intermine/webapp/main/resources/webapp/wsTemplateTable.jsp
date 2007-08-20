@@ -26,6 +26,7 @@
 
 <html:xhtml/>
 <im:roundbox titleKey="wsTemplateTable.heading" stylename="welcome">
+<div style=""><fmt:message key="templates.intro"/></div>
 <div class="" id="ws_${wsListId}_template">
 <tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="template"/>
