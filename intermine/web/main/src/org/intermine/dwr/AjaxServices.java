@@ -260,7 +260,7 @@ public class AjaxServices
                     Constants.PROFILE_MANAGER)).getUserProfileObjectStore();
         InterMineBag bag = profile.getSavedBags().get(bagName);
         if (bag == null) {
-            throw new InterMineException("Bag \"" + bagName + "\" not found.");
+            throw new InterMineException("List \"" + bagName + "\" not found.");
         }
         bag.setDescription(description, uosw);
         profile.getSearchRepository().descriptionChanged(bag);
