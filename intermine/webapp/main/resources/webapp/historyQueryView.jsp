@@ -30,6 +30,11 @@
     function confirmAction() {
       return confirm("Do you really want to delete the selected queries?")
     }
+
+    function doBagAction(name, url){
+        location.href = url + document.getElementById('name_'+name).innerHTML.replace(/[ \t\n]/g, '');
+        return false;
+    }
     //]]>-->
   </script>
 
@@ -150,34 +155,40 @@
                 <td class="sorting" align="center" nowrap>
                   <c:choose>
                     <c:when test="${validQuery}">
-                      <html:link action="/modifyQueryChange?method=run&amp;name=${savedQuery.key}&amp;type=${type}&trail=|query"
-                                 titleKey="history.action.execute.hover">
+                      <a href="<html:rewrite action='/modifyQueryChange'/>?method=run&amp;type=${type}&trail=|query&amp;name=${savedQuery.key}"
+                         onclick="return doBagAction('${savedQuery.key}', '<html:rewrite action='/modifyQueryChange'/>?method=run&amp;type=${type}&trail=|query&amp;name=')"
+                         titleKey="history.action.execute.hover">
                         <fmt:message key="history.action.execute"/>
-                      </html:link>
+                      </a>
                     </c:when>
                     <c:otherwise>
                       <fmt:message key="history.action.execute"/>
                     </c:otherwise>
                   </c:choose>
                   |
-                          <html:link action="/modifyQueryChange?method=load&amp;name=${savedQuery.key}&type=${type}"
-                             titleKey="history.action.edit.hover">
+                  <a href="<html:rewrite action='/modifyQueryChange'/>?method=load&type=${type}&amp;name=${savedQuery.key}"
+                     onclick="return doBagAction('${savedQuery.key}', '<html:rewrite action='/modifyQueryChange'/>?method=load&type=${type}&amp;name=')"
+                     titleKey="history.action.edit.hover">
                     <fmt:message key="history.action.edit"/>
-                  </html:link>
+                  </a>
                   |
                   <c:if test="${type == 'history'}">
                     <c:if test="${!empty PROFILE.username}">
-                      <html:link action="/modifyQueryChange?method=save&amp;name=${savedQuery.key}"
-                                 titleKey="history.action.save.hover">
+                      <c:set var="urlPrefix" value=""/>
+                      <a href="<html:rewrite action='/modifyQueryChange'/>?method=save&amp;name=${savedQuery.key}"
+                         onclick="return doBagAction('${savedQuery.key}', '<html:rewrite action='/modifyQueryChange'/>?method=save&amp;name=')"
+                         titleKey="history.action.save.hover">
                         <fmt:message key="history.action.save"/>
-                      </html:link>
+                      </a>
                       |
                     </c:if>
                   </c:if>
-                  <html:link action="/exportQuery?name=${savedQuery.key}&amp;type=${type}"
-                             titleKey="history.action.export.hover">
+
+                  <a href="<html:rewrite action='/exportQuery'/>?type=${type}&amp;name=${savedQuery.key}"
+                     onclick="return doBagAction('${savedQuery.key}', '<html:rewrite action='/exportQuery'/>?type=${type}&amp;name=')"
+                     titleKey="history.action.export.hover">
                     <fmt:message key="history.action.export"/>
-                  </html:link>
+                  </a>
                 </td>
               </tr>
             </c:if>
