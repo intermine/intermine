@@ -1,0 +1,38 @@
+<article>
+  <column width="55%">
+    <section>
+      <title>
+        Introduction
+      </title>
+
+      <para>
+        FlyMine is an integrated database of genomic, expression and protein data for
+        <emphasis>Drosophila</emphasis>, <emphasis>Anopheles</emphasis> and
+        <emphasis>C. elegans</emphasis>.
+        Integrating data makes it possible to run sophisticated data mining queries
+        that span domains of biological knowledge.
+      </para>
+
+      <para style="color:#c00;">
+        This is release 8.0 of FlyMine.  See the <ulink url="release-notes.xml">release notes</ulink> to find out whats new.
+      </para>
+
+      <para style="color:#c00; border: 2px solid red; margin: 5px; padding: 5px; font-size: 120%">
+        The FlyMine database is temporarily off line.  We are working to
+        restore service as soon as possible.
+      </para>
+
+      <para>
+        <verbatim>
+          <span style="font-size:130%;">
+            <a href="tour/tour_1.html" target="_blank"
+               onclick="javascript:window.open('tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=950,height=700');return false"
+               title="Take a ten minute tour of FlyMine">
+              <img src="/images/go_to_tour.png" style="border: 0px; padding: 0px 12px 0px 12px"/>
+            </a>
+          </span>
+        </verbatim>
+      </para>
+    </section>
+  </column>
+</article>
