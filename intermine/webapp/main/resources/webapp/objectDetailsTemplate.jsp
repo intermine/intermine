@@ -75,6 +75,9 @@
 
   <%--results table--%>
   <div id="table_${uid}" style="${verbose?'':'display: none'}">
+    <div class="templateDescription" style="width 90%">
+      ${templateQuery.description}
+    </div>
     <div id="table_${uid}_int">
       <c:if test="${verbose}">
         <tiles:insert name="objectDetailsTemplateTable.tile">
