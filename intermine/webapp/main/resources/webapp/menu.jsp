@@ -55,7 +55,7 @@
     <jsp:param name="loggedin" value="${loggedin}"/>  
   </jsp:include>
 </c:if>
-<c:if test="${tab == 'bags'}">
+<c:if test="${pageName == 'bag'}">
 <div id="submenu" style="background:#A42F2D">
   <c:set var="page" value="<%=request.getParameter("page")%>"/>
   <ul id="submenulist">
