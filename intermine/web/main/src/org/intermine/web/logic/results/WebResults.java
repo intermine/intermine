@@ -133,9 +133,10 @@ public class WebResults extends AbstractList implements WebTable
             Column column;
             
             if (columnDescription == null) {
-                column = new Column(columnString, i, typeCls);
+                column = new Column(columnPath, i, typeCls);
             } else {
-                column = new Column(columnDescription + '.' + columnPathEnd, i, typeCls);
+                column = new Column(columnPath, columnDescription + '.' + columnPathEnd, i,
+                                    typeCls);
             }
             
             if (!types.contains(column.getColumnId())) {

@@ -46,6 +46,26 @@ public class Column
      * Constructor that takes a Path object.
      *
      * @param path a Path object
+     * @param name an optional, more human readable description of the Column that will be
+     * returned by getName() - can be null in which case the column name (given by
+     * path.toStringNoConstraints()) will be used
+     * @param index the number of the column
+     * @param type the type of the column (ClassDescriptor or Class)
+     */
+    public Column(Path path, String name, int index, Class type) {
+        this.path = path;
+        this.name = name;
+        this.index = index;
+        this.type = type;
+        setColumnId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
+                    + TypeUtil.unqualifiedName(type.getName()));
+    }
+    
+    /**
+     * Constructor that takes a Path object.  The human readable name for getName() will be
+     * generated from the path.
+     *
+     * @param path a Path object
      * @param index the number of the column
      * @param type the type of the column (ClassDescriptor or Class)
      */
