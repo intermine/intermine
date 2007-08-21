@@ -79,15 +79,20 @@
   //-->
 </script>
 
-<im:box title="Template">
 <tiles:get name="objectTrail.tile"/>
-<div class="body">
+<div class="body" align="center">
+<div class="actionArea" style="width:60%;clear:both;text-align:left">
   <html:form action="/templateAction">
-    <div class="templateTitle">${templateQuery.title}
+    <h2>
+    <c:set var="titleArray" value="${fn:split(templateQuery.title,'-->')}" />
+    <c:forEach items="${titleArray}" var="titleItem" varStatus="status">
+      <c:if test="${status.count > 1 }">&nbsp;<img src="images/tmpl_arrow.png" style="vertical-align:bottom">&nbsp;</c:if>
+      ${titleItem}
+    </c:forEach>
     <tiles:insert name="setFavourite.tile">
         <tiles:put name="name" value="${templateQuery.name}"/>
         <tiles:put name="type" value="template"/>
-    </tiles:insert></div>
+    </tiles:insert></h2>
     <div class="templateDescription">${templateQuery.description}</div>
     <table border="0" class="templateForm">
       <c:set var="index" value="${0}"/>
@@ -277,4 +282,3 @@
     </p>
   </c:if>
 </div>
-</im:box>
