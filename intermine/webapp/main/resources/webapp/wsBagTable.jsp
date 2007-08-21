@@ -34,7 +34,7 @@
 </p> -->
 
 <im:roundbox title="${titleKey}" stylename="welcome">
-<div class="" id="ws_${wsListId}_bag">
+<div class="" id="ws_${wsListId}_bag"><fmt:message key="bagBuild.intro"/>
 <tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="bag"/>
   <tiles:put name="scope" value="${scope}"/>

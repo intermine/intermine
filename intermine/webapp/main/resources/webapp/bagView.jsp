@@ -37,7 +37,7 @@
     <tiles:put name="height" value="470"/>
   </tiles:insert>
 
-<div style="margin-left:420px">
+<!-- <div style="margin-left:420px"> -->
   <fmt:message key="history.savedbags.newbag"/>
   <html:text property="newBagName" size="12"/><br/>
   <html:submit property="union">
@@ -49,6 +49,6 @@
   <html:submit property="subtract">
     <fmt:message key="history.subtract"/>
   </html:submit>
-</div>
+<!-- </div> -->
 </html:form>
 <!-- /bagView.jsp -->

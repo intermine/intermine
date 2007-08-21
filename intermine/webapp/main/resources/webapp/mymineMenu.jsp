@@ -6,102 +6,84 @@
 	
 <!-- mymineMenu.jsp -->
 	
-	<c:set var="MYMINE_PAGE" value="<%=request.getParameter("page")%>"/>
-	<c:set var="loggedin" value="<%=request.getParameter("loggedin")%>"/>
-	
+<c:set var="MYMINE_PAGE" value="<%=request.getParameter("page")%>"/>
+<c:set var="loggedin" value="<%=request.getParameter("loggedin")%>"/>
 
-
-	<div id="mymineMenu">
-	
-	<ul id="mymineList">
-	<li>
-	<%-- bags --%>
-        <c:choose>
-          <c:when test="${MYMINE_PAGE=='lists'||MYMINE_PAGE == null}">
-            <span class="active"><fmt:message key="mymine.bags.tab.title"/></span>
-          </c:when>
-          <c:otherwise>
-            <html:link action="/mymine?page=lists">
-              <fmt:message key="mymine.bags.tab.title"/>
-            </html:link>
-          </c:otherwise>
-        </c:choose>
-    </li>
+<div id="submenu" style="background:#9B89A7;">
+  <ul id="submenulist">
+    <%-- bags --%>
+    <c:choose>
+      <c:when test="${MYMINE_PAGE=='lists'||MYMINE_PAGE == null}">
+        <li id="activemy"><fmt:message key="mymine.bags.tab.title"/></li>
+      </c:when>
+      <c:otherwise>
+        <li><html:link action="/mymine?page=lists">
+          <fmt:message key="mymine.bags.tab.title"/>
+        </html:link></li>
+      </c:otherwise>
+    </c:choose>
     <li>&nbsp;|&nbsp;</li>
-    <li>
-	<%-- query history --%>
-	 <c:choose>
-          <c:when test="${MYMINE_PAGE=='history'}">
-            <span class="active"><fmt:message key="mymine.history.tab.title"/></span>
-          </c:when>
-          <c:otherwise>
-            <html:link action="/mymine?page=history">
-              <fmt:message key="mymine.history.tab.title"/>
-            </html:link>
-          </c:otherwise>
-        </c:choose>
-   </li>     
-   <li>&nbsp;|&nbsp;</li>
-   <li>
-	<%-- saved queries --%>
-        <c:choose>
-          <c:when test="${!loggedin}">
-            <span onclick="alert('You need to log in to save queries'); return false;">
-              <fmt:message key="mymine.savedqueries.tab.title"/>
-            </span>
-          </c:when>
-          <c:when test="${MYMINE_PAGE=='saved' || !loggedin}">
-            <span class="active"><fmt:message key="mymine.savedqueries.tab.title"/></span>
-          </c:when>
-          <c:otherwise>
-            <html:link action="/mymine?page=saved">
-              <fmt:message key="mymine.savedqueries.tab.title"/>
-            </html:link>
-          </c:otherwise>
-        </c:choose>
-   </li>
-   <li>&nbsp;|&nbsp;</li>
+    <%-- query history --%>
+    <c:choose>
+      <c:when test="${MYMINE_PAGE=='history'}">
+        <li id="activemy"><fmt:message key="mymine.history.tab.title"/></li>
+      </c:when>
+      <c:otherwise>
+        <li><html:link action="/mymine?page=history">
+          <fmt:message key="mymine.history.tab.title"/>
+        </html:link></li>
+      </c:otherwise>
+    </c:choose>
+    <li>&nbsp;|&nbsp;</li>
+    <%-- saved queries --%>
+    <c:choose>
+      <c:when test="${!loggedin}">
+        <li><span onclick="alert('You need to log in to save queries'); return false;">
+          <fmt:message key="mymine.savedqueries.tab.title"/>
+        </span></li>
+      </c:when>
+      <c:when test="${MYMINE_PAGE=='saved' || !loggedin}">
+        <li id="activemy"><fmt:message key="mymine.savedqueries.tab.title"/></li>
+      </c:when>
+      <c:otherwise>
+        <li><html:link action="/mymine?page=saved">
+          <fmt:message key="mymine.savedqueries.tab.title"/>
+        </html:link></li>
+      </c:otherwise>
+    </c:choose>
+    <li>&nbsp;|&nbsp;</li>
+    <%-- saved templates --%>
+    <c:choose>
+      <c:when test="${!loggedin}">
+        <li><span onclick="alert('You need to log in to save templates'); return false;">
+          <fmt:message key="mymine.savedtemplates.tab.title"/>
+        </span></li>
+      </c:when>
+      <c:when test="${MYMINE_PAGE=='templates'}">
+        <li id="activemy"><fmt:message key="mymine.savedtemplates.tab.title"/></li>
+      </c:when>
+      <c:otherwise>
+        <li><html:link action="/mymine?page=templates">
+          <fmt:message key="mymine.savedtemplates.tab.title"/>
+        </html:link></li>
+      </c:otherwise>
+    </c:choose>
+   <%-- change password --%>
+   <c:if test="${loggedin}">
+     <li>&nbsp;|&nbsp;</li>
+       <c:choose>
+         <c:when test="${MYMINE_PAGE=='password'}">
+           <li id="activemy"><fmt:message key="mymine.password.tab.title"/></li>
+         </c:when>
+         <c:otherwise>
+           <li><html:link action="/mymine?page=password">
+             <fmt:message key="mymine.password.tab.title"/>
+           </html:link></li>
+         </c:otherwise>
+       </c:choose>
+     </c:if>
+ </ul>
+</div>
+<div style="clear:both;"></div>
 
-   <li>
-	<%-- saved templates --%>
-        <c:choose>
-          <c:when test="${!loggedin}">
-            <span onclick="alert('You need to log in to save templates'); return false;">
-              <fmt:message key="mymine.savedtemplates.tab.title"/>
-            </span>
-          </c:when>
-          <c:when test="${MYMINE_PAGE=='templates'}">
-            <span class="active"><fmt:message key="mymine.savedtemplates.tab.title"/></span>
-          </c:when>
-          <c:otherwise>
-            <html:link action="/mymine?page=templates">
-              <fmt:message key="mymine.savedtemplates.tab.title"/>
-            </html:link>
-          </c:otherwise>
-        </c:choose>
-  </li>
-	<%-- change password --%>
-
-      <c:if test="${loggedin}">
-     
-      <li>&nbsp;|&nbsp;</li>
-          <li>
-          <c:choose>
-            <c:when test="${MYMINE_PAGE=='password'}">
-              <span class="active"><fmt:message key="mymine.password.tab.title"/></span>
-            </c:when>
-            <c:otherwise>
-              <html:link action="/mymine?page=password">
-                <fmt:message key="mymine.password.tab.title"/>
-              </html:link>
-            </c:otherwise>
-          </c:choose>
-         </li>
-      </c:if>
-</ul>
-	</div>
-	<div style="clear:both;"></div>
-
-
-	
 <!-- /mymineMenu.jsp -->
