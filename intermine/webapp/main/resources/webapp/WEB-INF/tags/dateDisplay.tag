@@ -13,7 +13,7 @@
       <fmt:formatDate value="${date}" type="both" pattern="yyyy-MM-dd"/>
     </c:when>
     <c:otherwise>
-      <fmt:formatDate value="${date}" type="both" pattern="yyyy-MM-dd K:mm a"/>
+      <fmt:formatDate value="${date}" type="both" pattern="yyyy-MM-dd HH:mm z"/>
     </c:otherwise>
   </c:choose>
 </span>
