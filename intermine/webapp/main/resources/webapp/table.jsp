@@ -60,18 +60,17 @@
       </c:if>
     </c:if>
 
+    <c:set var="reportStarted" value="false"/>
 	<c:set var="lookupCount" value="${fn:length(lookupResults)}"/>
+
 	<c:forEach var="bagQueryResultEntry" items="${lookupResults}">
-  	  <c:if test="${bagQueryResultEntry.value.issues || resultsTable.size == 0}">
-  	    <div class="lookupReport">
+      <c:if test="${!reportStarted}">
+        <c:if test="${bagQueryResultEntry.value.issues || resultsTable.size == 0}">
+          <div class="lookupReport">
+          <c:set var="reportStarted" value="true"/>
+        </c:if>
       </c:if>
-  
- 	  <c:if test="${lookupCount > 1}">
-        <fmt:message key="results.lookup.title"/> <c:out value="${bagQueryResultEntry.key}" escapeXml="false"/>:<BR/>
-      </c:if>
-       
-     
-    <c:if test="${resultsTable.size == 0}">
+      <c:if test="${resultsTable.size == 0}">
       <c:set var="matchesCount" value="${bagQueryResultEntry.value.matches}"/>
       <c:if test="${matchesCount > 0}">
         <div class="lookupError">
@@ -190,12 +189,12 @@
       </c:forEach>
     </div>
   </c:if>
-  
-  <c:if test="${bagQueryResultEntry.value.issues || resultsTable.size == 0}">
-    </div> <%-- lookupReport --%>
-  </c:if>
-  
+
 </c:forEach>
+<c:if test="${reportStarted}">
+  </div> <%-- lookupReport --%>
+</c:if>
+
 <c:choose>
   <c:when test="${resultsTable.size == 0}">
     <div class="body">

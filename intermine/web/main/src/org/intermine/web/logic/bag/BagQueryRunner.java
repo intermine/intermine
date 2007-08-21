@@ -183,7 +183,7 @@ public class BagQueryRunner
                         os.releaseGoFaster(q);
                     }
                 }
-                addResults(resMap, unresolved, bqr, bq, typeCls);
+                addResults(resMap, unresolved, bqr, bq, typeCls, false);
             }
             if (!wildcardInput.isEmpty()) {
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
@@ -213,8 +213,10 @@ public class BagQueryRunner
                     }
                 }
                 for (Map.Entry<String, Set<Integer>> entry : resMap.entrySet()) {
+                    // This is a dummy issue just to give a message when running queries
                     bqr.addIssue(BagQueryResult.WILDCARD, bq.getMessage(),
                             entry.getKey(), new ArrayList(entry.getValue()));
+                    addResults(resMap, wildcardUnresolved, bqr, bq, typeCls, true);
                 }
             }
         }
@@ -236,7 +238,7 @@ public class BagQueryRunner
      * @throws InterMineException
      */
     private void addResults(Map<String, Set<Integer>> resMap, Set<String> unresolved, 
-                            BagQueryResult bqr, BagQuery bq, Class<?> type)
+                            BagQueryResult bqr, BagQuery bq, Class<?> type, boolean areWildcards)
     throws InterMineException {
         Map<String, Set<Object>> objsOfWrongType = new HashMap<String, Set<Object>>();
         Iterator mapIter = resMap.entrySet().iterator();
@@ -251,7 +253,7 @@ public class BagQueryRunner
                 // if matches are not issues then each entry will be a match or a duplicate
                 if (ids.size() == 1) {
                     bqr.addMatch(input, (Integer) ids.iterator().next());
-                } else {
+                } else if (!areWildcards) {
                     List<Object> objs = new ArrayList<Object>();
                     Iterator objIter;
                     try {
@@ -294,7 +296,7 @@ public class BagQueryRunner
                     // discard objects that matched a different type
                     if (objs.size() == 1) {
                         bqr.addIssue(BagQueryResult.OTHER, bq.getMessage(), input, objs);
-                    } else {
+                    } else if (!areWildcards) {
                         bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(), input, objs);
                     }
                 } else {

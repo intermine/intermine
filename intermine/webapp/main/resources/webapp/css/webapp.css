@@ -380,6 +380,25 @@ table.results {
   font-size: small;
 }
 
+.lookupReport
+{
+  margin-left: 10px;
+  margin-right: 10px; 
+  background-color: white;
+  padding: 6px;
+  font-size: 14px;
+  border: 1px dashed #777;
+}
+
+.lookupWarn
+{
+  color: green;
+}
+
+.lookupError {
+  color: red;
+}
+
 /* for displaying a collection in a table */
 table.collection {
   border-left: solid 1px #666;
