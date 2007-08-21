@@ -81,7 +81,7 @@ public class ProteinDomainDisplayerController extends TilesAction
              InterMineBag bag = allBags.get(bagName);
              
              // TODO get these from request form
-             Double maxValue = new Double("100");
+             Double maxValue = new Double("0.10");
              
             
              // put in request for display on the .jsp page
