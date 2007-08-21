@@ -34,8 +34,8 @@
   </c:if>
   
   <c:set var="extra" value="${extra}&trail=${trail}" />
-  
-  <html:link action="/template?name=${templateQuery.name}&amp;scope=${scope}${extra}" 
+
+  <html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=${scope}${extra}" 
              title="${linkTitle}">
     <span class="templateTitle">${!empty name ? name : templateQuery.title}</span>
   </html:link>

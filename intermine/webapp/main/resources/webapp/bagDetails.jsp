@@ -12,6 +12,11 @@
   <!--//<![CDATA[
       var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
       var detailsType = 'bag';
+      function jump() {
+      	window.location.hash = "templates";
+      	return false;
+      }
+
       //]]>-->
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js">
@@ -39,9 +44,7 @@
 			</td>
 		</tr>
 		</table>
-
-
-           
+          
         	
         	</td>
         	<td width="50%" align="right" valign="middle">
@@ -146,29 +149,32 @@
   <br/>  <br/>  <br/>
 
   <span style="font-size:+2em;">View</span>
-  	<li>  	
-  	    <html:submit property="showInResultsTable">
+  	<li>all records in this list
+  	   <!--  <html:submit property="showInResultsTable">
 			all records in this list
-        </html:submit>
+        </html:submit>  -->
   	</li>
+  	<li><a href="#templates">related templates</a></li>
   	<li><html:link action="/bag">all lists</html:link></li>
-  	<li><html:link action="#templates">related templates</html:link></li>
+  	
   	
   <span style="font-size:+2em;">Export</span>
 
-		<li>tab-separated</li>
-		<li>comma-separated</li>
-		<li>excel</li>
-		<li>gff3</li>
+		<li><a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a></li>
+		<li><a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a></li>
+		<li><a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a></li>
+		<li><a href="exportAction.do?table=${bag.name}&type=gff3Exporter&tableType=bag">gff3</a></li>
 		
+  <span style="font-size:+2em;">Upload</span>
+		<li><html:link action="/bag">your data</html:link></li>
 		
   <span style="font-size:+2em;">Use</span>
   	
 		
-	<li>  	
-  	    <html:submit property="useBagInQuery">
+	<li>in a query
+  	    <!-- <html:submit property="useBagInQuery">
 			in a query
-        </html:submit>
+        </html:submit> -->
   	</li>
 		<li><html:link action="/templates">in a template</html:link></li>
 </td>

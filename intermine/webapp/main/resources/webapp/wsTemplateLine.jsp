@@ -39,9 +39,11 @@
         </html:link>
     </c:when>
     <c:otherwise>
+  
         <fmt:message var="linkTitle" key="templateList.run">
 	  <fmt:param value="${webSearchable.name}"/>
-        </fmt:message>
+        </fmt:message> 
+        
         ${webSearchable.name}
         <tiles:insert name="setFavourite.tile">
           <tiles:put name="name" value="${webSearchable.name}"/>
@@ -58,11 +60,11 @@
     </c:otherwise>
   </c:choose>
 </c:if>
-
+  <%-- 
 <html:link action="/template?name=${webSearchable.name}&amp;scope=${scope}"
            titleKey="history.action.execute.hover">
   <img src="images/template_t.gif" width="13" height="13" alt="Run Template">
-</html:link>
+</html:link> --%>
 
 <c:if test="${showTitles}">
     <html:link action="/template?name=${webSearchable.name}&amp;scope=${scope}"
