@@ -157,7 +157,14 @@
   	<li><a href="#templates">related templates</a></li>
   	<li><html:link action="/bag">all lists</html:link></li>
   	
-  	
+  <span style="font-size:+2em;">Use</span>		
+	<li>in a query
+  	    <!-- <html:submit property="useBagInQuery">
+			in a query
+        </html:submit> -->
+  	</li>
+		<li><html:link action="/templates">in a template</html:link></li>
+		
   <span style="font-size:+2em;">Export</span>
 
 		<li><a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a></li>
@@ -168,15 +175,7 @@
   <span style="font-size:+2em;">Upload</span>
 		<li><html:link action="/bag">your data</html:link></li>
 		
-  <span style="font-size:+2em;">Use</span>
-  	
-		
-	<li>in a query
-  	    <!-- <html:submit property="useBagInQuery">
-			in a query
-        </html:submit> -->
-  	</li>
-		<li><html:link action="/templates">in a template</html:link></li>
+
 </td>
 </tr>
 </table>
@@ -313,9 +312,9 @@
  	
 	</td><td>
   
-    <%-- protein domains 
+    <%-- protein domains --%>
  	<iframe src="proteinDomainDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
- 	--%>
+ 	
     </td>
 </tr>
 
@@ -327,7 +326,7 @@
 
 
 <div class="heading">
-  <a name="templates">Templates</a>
+  <a name="templates">Templates</a>&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">(collapse all - / expand all +)</span>
 </div>
 
 <div class="body">
