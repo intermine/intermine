@@ -7,6 +7,7 @@
 
 <!-- bagBuild.jsp -->
 <html:xhtml/>
+<c:set var="bagExampleIdentifiers" value="${WEB_PROPERTIES['bag.example.identifiers']}"/>
 
 <script language="javascript">
 <!--//<![CDATA[
@@ -18,7 +19,8 @@
 
       document.getElementById('submitBag').disabled = false;
       // only clear contents if contents equals our help text
-      if(open == 'paste' && document.getElementById('pasteInput').value == "<fmt:message key="bagBuild.bagPaste"/>") {
+      
+      if(open == 'paste' && document.getElementById('pasteInput').value == "e.g.: ${bagExampleIdentifiers}") {
          document.getElementById('pasteInput').value = "";
          document.getElementById('pasteInput').style.color = "#000";
          document.getElementById('pasteInput').style.fontStyle = "normal";
@@ -33,7 +35,7 @@
     }
 
     function initPasteInput() {
-       document.getElementById('pasteInput').value = "<fmt:message key="bagBuild.bagPaste"/>";
+       document.getElementById('pasteInput').value = "e.g.: ${bagExampleIdentifiers}";
        document.getElementById('pasteInput').style.color = "#666";
        document.getElementById('pasteInput').style.fontStyle = "italic";
     }
@@ -67,19 +69,18 @@
 //]]>-->
 </script>
 
-<div id="pageDesc" class="pageDesc"><p><fmt:message key="bagBuild.intro"/></p></div>
+<!-- <div id="pageDesc" class="pageDesc"><p><fmt:message key="bagBuild.intro"/></p></div>
 <script type="text/javascript">
-	Nifty("div#pageDesc","big");
-</script>
+        Nifty("div#pageDesc","big");
+</script> -->
 
-<div class="actionArea">
+<div class="actionArea" style="width:60%;clear:both;text-align:left">
   <h2><fmt:message key="bagBuild.makeNewBag"/></h2>
   <div class="bagBuild">
     <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
       <p><fmt:message key="bagBuild.bagFromText1"/></p>
       <%-- example bag --%>
           <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
-          <c:set var="bagExampleIdentifiers" value="${WEB_PROPERTIES['bag.example.identifiers']}"/>
           <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">
               <div style="align: right">
                 <html:link href=""
@@ -89,9 +90,10 @@
               </div>
           </c:if>
           <br/>
-     <p>
-      <label><fmt:message key="bagBuild.bagType"/></label><br>
-      <html:select styleId="typeSelector" property="type" onchange="typeChanged()" style="width:300px">
+<ol id="buildbaglist">
+  <li>
+      <label><fmt:message key="bagBuild.bagType"/></label>
+      <html:select styleId="typeSelector" property="type" onchange="typeChanged()">
     	<c:forEach items="${preferredTypeList}" var="type">
           <html:option value="${type}" style="font-weight:bold">${type}</html:option>
     	</c:forEach>
@@ -100,38 +102,39 @@
           <html:option value="${type}">${type}</html:option>
       	</c:forEach>
       </html:select>
-     </p>
+  </li>
+  <li>
       <c:if test="${!empty extraBagQueryClass}">
-     <p><br>
        <label>
          <fmt:message key="bagBuild.extraConstraint">
             <fmt:param value="${extraBagQueryClass}"/>
           </fmt:message>
-       </label><br>
-          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" style="width:300px">
-            <html:option value="" style="text-align:center">----------------</html:option>
+       </label>
+          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
+            <html:option value="">All</html:option>
       	    <c:forEach items="${extraClassFieldValues}" var="value">
               <html:option value="${value}">${value}</html:option>
       	    </c:forEach>
           </html:select>
-      </p>
       </c:if>
-<br>
-    <%-- textarea --%>
+   </li>
+   <li>
+   <%-- textarea --%>
+   <label><fmt:message key="bagBuild.bagPaste"/></label>
    <html:textarea styleId="pasteInput" property="text" rows="10" cols="35" onfocus="switchInputs('paste','file');" />
    <script type="text/javascript" charset="utf-8">
       initPasteInput();
     </script>
-<br><br>
-    <p><fmt:message key="bagBuild.or"/></p>
-
-
+   </li>
 	 <%-- file header --%>
      <!-- <h4><img src="images/disclosed.gif"/><fmt:message key="bagBuild.bagFromFile"/></h4> -->
 
      <%-- file input --%>
-     <div align="left"><html:file styleId="fileInput" property="formFile" onkeypress="switchInputs('file','paste');"  onfocus="switchInputs('file','paste');" /></div>
-    <br>
+    <li>
+      <label><fmt:message key="bagBuild.or"/></label>
+      <html:file styleId="fileInput" property="formFile" onkeypress="switchInputs('file','paste');"  onfocus="switchInputs('file','paste');" />
+    </li>
+    </ol>
     <div align="right">
        <%-- reset button --%>
        <input type="button" onClick="resetInputs()" value="Reset" />

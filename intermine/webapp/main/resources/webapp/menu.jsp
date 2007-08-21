@@ -50,10 +50,35 @@
 <div style="clear:both;"></div>
 
 <c:if test="${tab == 'mymine'}">
-
-	<c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
-	<jsp:include page="mymineMenu.jsp" flush="true">
-    	<jsp:param name="loggedin" value="${loggedin}"/>  
-	</jsp:include>
+ <c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
+  <jsp:include page="mymineMenu.jsp" flush="true">
+    <jsp:param name="loggedin" value="${loggedin}"/>  
+  </jsp:include>
+</c:if>
+<c:if test="${tab == 'bags'}">
+<div id="submenu" style="background:#A42F2D">
+  <c:set var="page" value="<%=request.getParameter("page")%>"/>
+  <ul id="submenulist">
+      <c:choose>
+      <c:when test="${empty page || page == 'create'}">
+        <li id="activelist">Create</li>
+      </c:when>
+      <c:otherwise>
+        <li><html:link action="bag.do?page=create">Create</html:link></li>
+      </c:otherwise>
+      </c:choose>
+    <li>&nbsp;|&nbsp;</li>
+    <li>
+    <c:choose>
+    <c:when test="${page == 'view'}">
+      <li id="activelist">View</li>
+    </c:when>
+    <c:otherwise>
+      <li><html:link action="bag.do?page=view">View</html:link></li>
+    </c:otherwise>
+    </c:choose>
+  </ul>
+</div>
+<div style="clear:both"></div>
 </c:if>
 <!-- /menu.jsp -->

@@ -7,7 +7,22 @@
 <html:xhtml/>
 
 <div class="body">
-    <div id="leftCol"><tiles:insert name="bagBuild.tile"/></div>
-    <div id="rightCol"><c:import url="bagView.jsp"/></div>
+  <c:set var="page" value="<%=request.getParameter("page")%>"/>
+  <c:choose>
+    <c:when test="${empty page || page == 'create'}">
+      <!-- <div id="leftCol"> -->
+            <div align="center">
+              <tiles:insert name="bagBuild.tile"/>
+            </div>
+      <!-- </div> -->
+    </c:when>
+    <c:otherwise>
+      <!-- <div id="rightCol"> -->
+              <div style="clear:both">
+              <c:import url="bagView.jsp"/>
+              </div>
+      <!-- </div> -->
+    </c:otherwise>
+  </c:choose>
 </div>
 <!-- /bag.jsp -->

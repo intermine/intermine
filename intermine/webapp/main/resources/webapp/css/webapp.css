@@ -154,16 +154,16 @@ ul#nav a{
     font-weight:bold;
 	background-image:url('../images/corner_t_r.png');
 	background-repeat: no-repeat;
-	background-position: right;
+	background-position: right top;
 	color:white;
 }
 ul#nav a:hover,ul#nav li#mymine a:hover{color:#000;}
 ul#nav li.activelink{background: #FFF url('../images/corner_white_t_l.png') no-repeat}
-ul#nav li.activelink a,ul#nav li.activelink a:hover{color: #5C0075;background:url('../images/corner_white_t_r.png') no-repeat right;}
+ul#nav li.activelink a,ul#nav li.activelink a:hover{color: #5C0075;background:url('../images/corner_white_t_r.png') no-repeat top right;}
 ul#nav li#mymine {background:#9B89A7 url('../images/corner_my_t_l.png') no-repeat;}
-ul#nav li#mymine a{color:white;background:url('../images/corner_my_t_r.png') no-repeat right;}
-/*ul#nav li#bags.activelink {background:#A42F2D url('../images/corner_t_l.png') no-repeat;}
-ul#nav li#bags.activelink a{color:white;background:url('../images/corner_t_r.png') no-repeat right;}*/
+ul#nav li#mymine a{color:white;background:url('../images/corner_my_t_r.png') no-repeat top right;}
+ul#nav li#bags.activelink {background:#A42F2D url('../images/corner_bags_t_l.png') no-repeat;}
+ul#nav li#bags.activelink a{color:white;background:url('../images/corner_bags_t_r.png') no-repeat top right;}
 
 div#quicksearch {
 	background:#9F67AD url('../images/corner_t_l.png') no-repeat;
@@ -632,32 +632,33 @@ background-color: #ccc;
 }
 
 
-#mymineMenu {
-	color:#CCC;
-	background:#9B89A7;
-	padding:10px;
-	margin-top:0px;
-/*	position:absolute;
-	left:0px;
-	top:113px;
-*/	float:left;
-	/*font-size:0.7em;*/
-	width:100%;
-	top:-20px;
-}
-
 li {
 	list-style: none;
 	margin-left:10px;
 }
 
-ul#mymineList, ul#mymineList li {
+#submenu {
+	color:#CCC;
+	padding:0px;
+	margin-top:0px;
+	padding-left:15px;
+	float:left;
+	width:100%;
+/*	top:-20px;*/
+	margin-bottom:25px;
+}
+
+ul#submenulist, ul#submenulist li {
 	list-style: none;
 	padding: 0px;
 	margin:0px;
+	line-height:3;
 }
-ul#mymineList li {float:left;}
+ul#submenulist li {float:left;}
 
-ul#mymineList li span.active {font-weight:bold;color:#FFF;}
+ul#submenulist li#activelist {font-weight:bold;color:#FFF;background:url('../images/submenu_lists.png') no-repeat bottom center;}
 
-ul#mymineList li a {color:#FFF;text-decoration: underline;font-weight: bold;float:left;}
+ul#submenulist li#activemy {font-weight:bold;color:#FFF;background:url('../images/submenu_my.png') no-repeat bottom center;}
+
+ul#submenulist li a {color:#FFF;text-decoration: none;font-weight: bold;float:left;}
+ul#submenulist li a:hover {color:#000;text-decoration: underline;font-weight: bold;float:left;}
