@@ -29,7 +29,7 @@
       <c:out value="${webSearchable.name}" escapeXml="false"/>
     </html:multibox>
 </c:if>
-
+ 
   <c:choose>
     <c:when test="${scope == 'user'}">
       <tiles:insert name="renamableElement.jsp">
@@ -41,8 +41,8 @@
     <c:otherwise>
         <c:set var="nameForURL"/>
         <str:encodeUrl var="nameForURL">${webSearchable.name}</str:encodeUrl>
-        <html:link action="/bagDetails?scope=${scope}&amp;bagName=${nameForURL}">
-          <img src="images/bag_ico.png" width="13" height="13" alt="View Bag">
+       <html:link action="/bagDetails?scope=${scope}&amp;bagName=${nameForURL}">
+         <%--  <img src="images/bag_ico.png" width="13" height="13" alt="View Bag"> --%>
           <c:out value="${webSearchable.name}"/>
         </html:link>
     </c:otherwise>

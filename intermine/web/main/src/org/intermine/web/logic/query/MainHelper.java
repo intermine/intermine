@@ -1030,27 +1030,14 @@ public class MainHelper
             view.add((Path) column.getPath());
         }
         pathQuery.setView(view);
-     
-   
-        
+         
         String bagType = bag.getType();
-        //Constraint c = new Constraint (ConstraintOp.IN, bag.getName());
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue,
                                       false, label, code, id);
-        
-        
         pathQuery.addNode(bagType).getConstraints().add(c);
-        
-        
-        
-        
-        //pathQuery.addNode(bag.getType()).getConstraints().add(new Constraint(ConstraintOp.IN, bag
-               //  .getName()));
-        
-        return pathQuery;
-    
+        return pathQuery;    
     }
 }
