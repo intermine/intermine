@@ -3,11 +3,10 @@
 
 <!-- createAccount.jsp -->
 <html:xhtml/>
-<div class="body">
+<div class="body" align="center">
+  <div class="actionArea" style="width:60%;clear:both;text-align:left">
   <html:form action="/createAccountAction">
-    <div style="width:70%">
       <b><i><fmt:message key="createAccount.privacy"/></i></b>
-    </div>
     <p/>
     <table>
       <tr>
@@ -25,5 +24,6 @@
       </tr>
     </table>
   </html:form>
+  </div>
 </div>
 <!-- /createAccount.jsp -->

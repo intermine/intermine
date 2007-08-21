@@ -5,7 +5,8 @@
 
 <!-- login.jsp -->
 <html:xhtml/>
-<div class="body">
+<div class="body" align="center">
+<div class="actionArea" style="width:60%;clear:both;text-align:left">
   <html:form action="/loginAction" focus="username" method="post" enctype="multipart/form-data">
     <fmt:message key="login.haspassword"/><br/><br/>
     <html:hidden property="returnToString"/>
@@ -34,11 +35,7 @@
 </script>
   <br/>
 <a href="javascript:toggleDiv();" >Forgotten password</a>
-</div>
-
-<div id="passwordDiv" style="display:none;">
-  <im:box titleKey="login.passwordrequest">
-  <div class="body">
+<div id="passwordDiv" style="display:none;padding-top:20px">
   <html:form action="/requestPasswordAction">  
     <fmt:message key="login.needspassword"/><br/><br/>
     <table>
@@ -49,9 +46,8 @@
       </tr>
     </table>
   </html:form>
-  </div>
-  </im:box>
   <br/>
   
+</div>
 </div>
 <!-- /login.jsp -->
