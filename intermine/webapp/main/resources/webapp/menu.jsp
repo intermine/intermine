@@ -60,11 +60,11 @@
   <c:set var="page" value="<%=request.getParameter("page")%>"/>
   <ul id="submenulist">
       <c:choose>
-      <c:when test="${empty page || page == 'create'}">
+      <c:when test="${empty page || page == 'upload'}">
         <li id="activelist">Create</li>
       </c:when>
       <c:otherwise>
-        <li><html:link action="bag.do?page=create">Create</html:link></li>
+        <li><html:link action="bag.do?page=upload">Upload</html:link></li>
       </c:otherwise>
       </c:choose>
     <li>&nbsp;|&nbsp;</li>
