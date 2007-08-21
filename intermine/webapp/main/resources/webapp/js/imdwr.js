@@ -134,6 +134,8 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
     Effect.Appear('summary', { duration: 0.30 });
     AjaxServices.getColumnSummary(tableName, columnName, function(str){
         var rows = str[0];
+        var uniqueCountQid = str[1];
+        var summaryRowsCount = str[2];
         function rounder(cell) {
             if (cell==null) {
                 return "[no value]" ;
@@ -179,12 +181,15 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
                       </table>                                                \
                     </div>';
 
+        if (summaryRowsCount > 10) {
+            html += '<div>(Note: showing only the first 10 rows of summary)</div>';
+        }
+
         var summaryLoadedElement = document.getElementById('summary_loaded');
         summaryLoadedElement.innerHTML = html;
-        var uniqueCountQid = str[1];
         setTimeout("updateCountInColumnSummary()", 200);
         setTimeout("updateUniqueCountInColumnSummary(" + uniqueCountQid + ")", 300);
-                                  });
+    });
 }
 
 function getResultsPoller(qid, timeout, userCallback, userData) {
