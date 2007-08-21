@@ -331,7 +331,9 @@ public class AjaxServices
                                         new HashMap<String, QueryNode>(), summaryPath
                                         , servletContext);
         String qid = SessionMethods.startQueryCount(clientState, session, messages, countQuery);
-        return Arrays.asList(new Object[] {pagedTable.getRows(), qid});
+        return Arrays.asList(new Object[] {
+                    pagedTable.getRows(), qid, new Integer(pagedTable.getExactSize())
+                });
     }
     
     /**
