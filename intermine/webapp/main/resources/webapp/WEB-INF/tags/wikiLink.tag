@@ -4,10 +4,15 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ attribute name="pageName" required="true" %>
+<%@ attribute name="text" required="false" %>
 
 <%-- outputs a superscript question mark which, when clicked, pops up a
-     section in the manual --%>
+     section in the wiki pages --%>
+
+<c:if test="${empty text}">
+  <c:set var="text" value="?"/>
+</c:if>
 
 <c:set var="url" value="${WEB_PROPERTIES['project.wikiLocation']}/${pageName}"/>
 
-<sup><html:link href="${url}" onclick="javascript:window.open('${url}','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">?</html:link></sup>
+<html:link href="${url}" onclick="javascript:window.open('${url}','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">${text}</html:link>
