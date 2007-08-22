@@ -53,8 +53,8 @@ public class PrimaryKeyUtilTest extends TestCase
     public void testGetPrimaryKeysCld() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         Map expected = new HashMap();
-        expected.put("key1", new PrimaryKey("key1", "name, address"));
-        expected.put("key2", new PrimaryKey("key2", "vatNumber"));
+        expected.put("key1", new PrimaryKey("key1", "name, address", cld));
+        expected.put("key2", new PrimaryKey("key2", "vatNumber", cld));
         assertEquals(expected, PrimaryKeyUtil.getPrimaryKeys(cld));
     }
 

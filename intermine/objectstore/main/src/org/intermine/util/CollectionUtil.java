@@ -12,6 +12,7 @@ package org.intermine.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -121,5 +122,35 @@ public class CollectionUtil
             }
         }
         return retval;
+    }
+
+    /**
+     * Returns a collection containing all possible combinations of the input values.
+     * 
+     * @param values a List of collections of values
+     * @return a collection of Lists, all the same size as the input List, containing all possible
+     * combinations of the values in the collections, in their respective indexes in the List.
+     */
+    public static <E> Collection<List<E>> fanOutCombinations(List<Collection<E>> values) {
+        Collection<List<E>> retval = new ArrayList();
+        fanOutCombinations(values, retval, Collections.EMPTY_LIST, 0);
+        return retval;
+    }
+
+    private static <E> void fanOutCombinations(List<Collection<E>> values,
+            Collection<List<E>> retval, List<E> soFar, int index) {
+        if (index == values.size() - 1) {
+            for (E value : values.get(index)) {
+                List<E> solution = new ArrayList(soFar);
+                solution.add(value);
+                retval.add(solution);
+            }
+        } else {
+            for (E value : values.get(index)) {
+                List<E> solution = new ArrayList(soFar);
+                solution.add(value);
+                fanOutCombinations(values, retval, solution, index + 1);
+            }
+        }
     }
 }

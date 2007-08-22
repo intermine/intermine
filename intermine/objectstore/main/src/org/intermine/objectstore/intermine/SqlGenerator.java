@@ -1468,13 +1468,22 @@ public class SqlGenerator
             }
         } else {
             Iterator bagIter = bagColl.iterator();
+            //int lowest = Integer.MAX_VALUE;
+            //int highest = Integer.MIN_VALUE;
             while (bagIter.hasNext()) {
                 Object bagItem = bagIter.next();
                 if (type.isInstance(bagItem)) {
                     if (bagItem instanceof InterMineObject) {
-                        filteredBag.add(((InterMineObject) bagItem).getId());
+                        Integer bagValue = ((InterMineObject) bagItem).getId();
+                        filteredBag.add(bagValue);
+                    //    lowest = Math.min(bagValue.intValue(), lowest);
+                    //    highest = Math.max(bagValue.intValue(), highest);
                     } else {
                         filteredBag.add(bagItem);
+                    //    if (bagItem instanceof Integer) {
+                    //        lowest = Math.min(((Integer) bagItem).intValue(), lowest);
+                    //        highest = Math.max(((Integer) bagItem).intValue(), highest);
+                    //    }
                     }
                 }
             }
@@ -1484,12 +1493,20 @@ public class SqlGenerator
                 String bagTableName = (String) state.getBagTableNames().get(c);
                 if (filteredBag.size() < MAX_BAG_INLINE_SIZE || bagTableName == null) {
                     int needComma = 0;
+                    buffer.append(c.getOp() == ConstraintOp.IN ? "" : "(NOT (");
+                    boolean limitRange = false;
+                    //boolean limitRange = (lowest < highest) && (filteredBag.size() > 10);
+                    //if (limitRange) {
+                    //    buffer.append("(" + leftHandSide + " >= " + lowest + " AND " + leftHandSide
+                    //            + " <= " + highest + " AND ");
+                    //}
+                    boolean parenthesesForGroups = (filteredBag.size() > 9000)
+                        && ((c.getOp() == ConstraintOp.IN) || limitRange);
                     Iterator orIter = filteredBag.iterator();
                     while (orIter.hasNext()) {
                         if (needComma == 0) {
-                            buffer.append((c.getOp() == ConstraintOp.IN
-                                        ? (filteredBag.size() > 9000 ? "(" : "")
-                                        : "(NOT (") + leftHandSide + " IN (");
+                            buffer.append((parenthesesForGroups ? "(" : "") + leftHandSide
+                                    + " IN (");
                         } else if (needComma % 9000 == 0) {
                             buffer.append(") OR " + leftHandSide + " IN (");
                         } else {
@@ -1499,8 +1516,16 @@ public class SqlGenerator
                         StringBuffer constraint = new StringBuffer();
                         objectToString(buffer, orIter.next());
                     }
-                    buffer.append(c.getOp() == ConstraintOp.IN ? (filteredBag.size() > 9000
-                                ? "))" : ")") : ")))");
+                    buffer.append(")");
+                    //if (limitRange) {
+                    //    buffer.append(")");
+                    //}
+                    if (parenthesesForGroups) {
+                        buffer.append(")");
+                    }
+                    if (c.getOp() != ConstraintOp.IN) {
+                        buffer.append("))");
+                    }
                 } else {
                     if (c.getOp() == ConstraintOp.IN) {
                         buffer.append(leftHandSide);

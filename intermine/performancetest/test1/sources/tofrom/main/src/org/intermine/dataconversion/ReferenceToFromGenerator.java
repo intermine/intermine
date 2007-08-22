@@ -89,6 +89,7 @@ public class ReferenceToFromGenerator extends FileConverter
             do {
                 firstInt = new Integer(random.nextInt());
             } while (doneValues.contains(firstInt));
+            doneValues.add(firstInt);
             itemTo.setAttribute("att", "" + firstInt);
             itemFrom.setReference("ref", itemTo.getIdentifier());
             getItemWriter().store(ItemHelper.convert(itemTo));

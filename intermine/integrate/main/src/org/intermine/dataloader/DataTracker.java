@@ -19,9 +19,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.sql.Database;
 
@@ -60,6 +62,7 @@ public class DataTracker
     private HashMap sourceToName = new HashMap();
     private Connection conn;
     private Connection storeConn;
+    private Connection prefetchConn;
     protected Exception broken = null;
     private CacheStorer cacheStorer;
     private int version = 0;
@@ -68,6 +71,9 @@ public class DataTracker
 
     private int ops = 0;
     private int misses = 0;
+    private int batched = 0;
+    private long timeSpentReading = 0;
+    private long timeSpentPrefetching = 0;
 
     /**
      * Constructor for DataTracker.
@@ -86,12 +92,15 @@ public class DataTracker
             conn.setAutoCommit(true);
             storeConn = db.getConnection();
             storeConn.setAutoCommit(false);
+            prefetchConn = db.getConnection();
+            prefetchConn.setAutoCommit(true);
             Statement s = conn.createStatement();
             try {
                 s.executeQuery("SELECT * FROM tracker LIMIT 1");
             } catch (SQLException e2) {
                 clear();
             }
+            prefetchConn.createStatement().execute("SET enable_seqscan = off;");
         } catch (SQLException e) {
             IllegalArgumentException e2 = new IllegalArgumentException(
                     "Could not access SQL database");
@@ -124,6 +133,67 @@ public class DataTracker
     }
 
     /**
+     * Prefetches data for a specified set of object ids.
+     *
+     * @param ids a Set of Integers
+     */
+    public void prefetchIds(Set<Integer> ids) {
+        long startTime = System.currentTimeMillis();
+        Set<Integer> toFetch = new HashSet();
+        synchronized (this) {
+            if (broken != null) {
+                IllegalArgumentException e = new IllegalArgumentException();
+                e.initCause(broken);
+                throw e;
+            }
+            for (Integer id : ids) {
+                ObjectDescription desc = (ObjectDescription) cache.get(id);
+                if (desc == null) {
+                    desc = (ObjectDescription) writeBack.get(id);
+                    cache.put(id, desc);
+                }
+                if (desc == null) {
+                    toFetch.add(id);
+                }
+            }
+        }
+        Map<Integer, ObjectDescription> idsFetched = new HashMap();
+        if (!toFetch.isEmpty()) {
+            StringBuffer sql = new StringBuffer("SELECT objectid, fieldname, sourcename, version"
+                    + " FROM tracker WHERE objectid IN (");
+            boolean needComma = false;
+            for (Integer id : toFetch) {
+                if (needComma) {
+                    sql.append(", ");
+                }
+                needComma = true;
+                sql.append("" + id);
+                idsFetched.put(id, new ObjectDescription());
+            }
+            sql.append(") ORDER BY version");
+            try {
+                Statement s = prefetchConn.createStatement();
+                ResultSet r = s.executeQuery(sql.toString());
+                while (r.next()) {
+                    idsFetched.get(new Integer(r.getInt(1))).putClean(r.getString(2).intern(),
+                            stringToSource(r.getString(3)));
+                }
+            } catch (SQLException e) {
+                broken = e;
+                IllegalArgumentException e2 = new IllegalArgumentException();
+                e2.initCause(broken);
+                throw e2;
+            }
+        }
+        synchronized (this) {
+            cache.putAll(idsFetched);
+            maybePoke();
+            batched += idsFetched.size();
+        }
+        timeSpentPrefetching += System.currentTimeMillis() - startTime;
+    }
+
+    /**
      * Retrieve the Source for a specified field of an Object stored in the database.
      *
      * @param id the ID of the object
@@ -151,6 +221,7 @@ public class DataTracker
      * @return an ObjectDescriptor
      */
     private ObjectDescription getDesc(Integer id, boolean forWrite) {
+        long startTime = System.currentTimeMillis();
         ObjectDescription desc = (ObjectDescription) cache.get(id);
         if (desc == null) {
             desc = (ObjectDescription) writeBack.get(id);
@@ -181,9 +252,11 @@ public class DataTracker
             maybePoke();
             misses++;
         }
+        timeSpentReading += System.currentTimeMillis() - startTime;
         ops++;
         if (ops % 1000000 == 0) {
-            LOG.info("Operations: " + ops + ", cache misses: " + misses);
+            LOG.info("Operations: " + ops + ", cache misses: " + misses + ", time spent reading: "
+                    + timeSpentReading);
         }
         return desc;
     }
@@ -299,6 +372,9 @@ public class DataTracker
      * can be performed on the tracker.
      */
     public void close() {
+        LOG.info("Closing DataTracker. Operations: " + ops + ", cache misses: " + misses
+                + ", time spent reading: " + timeSpentReading + ", prefetched: " + batched
+                + ", time spent prefetching: " + timeSpentPrefetching);
         cacheStorer.die();
         flush();
         synchronized (this) {

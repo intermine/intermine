@@ -55,7 +55,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         Source source = new Source();
         source.setName("testsource");
-        assertEquals(Collections.singleton(new PrimaryKey("key1", "name, address")), DataLoaderHelper.getPrimaryKeys(cld, source));
+        assertEquals(Collections.singleton(new PrimaryKey("key1", "name, address", cld)), DataLoaderHelper.getPrimaryKeys(cld, source));
 
         source = new Source();
         source.setName("testsource5");
@@ -71,8 +71,8 @@ public class DataLoaderHelperTest extends QueryTestCase
         Source source = new Source();
         source.setName("testsource4");
         Set expected = new HashSet();
-        expected.add(new PrimaryKey("key1", "name,address"));
-        expected.add(new PrimaryKey("key2", "vatNumber"));
+        expected.add(new PrimaryKey("key1", "name,address", cld));
+        expected.add(new PrimaryKey("key2", "vatNumber", cld));
         assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld, source));
     }
 
@@ -142,13 +142,13 @@ public class DataLoaderHelperTest extends QueryTestCase
         Iterator pkIter = primaryKeys.iterator();
         PrimaryKey pk1 = (PrimaryKey) pkIter.next();
 
-        // Company.key1=name, address
-        assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk1, source, new IntToIntMap()));
+        // Company.key2=vatNumber
+        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk1, source, new IntToIntMap()));
 
         PrimaryKey pk2 = (PrimaryKey) pkIter.next();
 
-        // Company.key2=vatNumber
-        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk2, source, new IntToIntMap()));
+        // Company.key1=name, address
+        assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk2, source, new IntToIntMap()));
     }
 
     public void testObjectPrimaryKeyIsNullNullField3() throws Exception {

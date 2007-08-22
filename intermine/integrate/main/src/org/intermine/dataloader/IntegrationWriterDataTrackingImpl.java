@@ -252,24 +252,18 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 timeSpentDataTrackerWrite += time2 - time1;
                 return newObj;
             }
-            if ((equivObjects.size() == 1) && (type == SKELETON)) {
+            if ((equivObjects.size() >= 1) && (type == SKELETON)) {
                 InterMineObject onlyEquivalent = (InterMineObject) equivObjects.iterator().next();
-                if (onlyEquivalent instanceof ProxyReference) {
+//                if (onlyEquivalent instanceof ProxyReference) {
                     //LOG.debug("store() finished trivially for object " + oText);
                     // This onlyEquivalent object MUST have come from the ID map.
-                    if (idMap.get(o.getId()) == null) {
-                        LOG.error("Got a ProxyReference as the only equivalent object, but not from"
-                                + " the ID map! o = " + o);
-                    } else {
+                    //if (idMap.get(o.getId()) == null) {
+                    //    LOG.error("Got a ProxyReference as the only equivalent object, but not from"
+                    //            + " the ID map! o = " + o);
+                    //} else {
                         return onlyEquivalent;
-                    }
-                }
-            }
-            Integer newId = null;
-            // if multiple equivalent objects in database just use id of first one
-            Iterator equivalentIter = equivObjects.iterator();
-            if (equivalentIter.hasNext()) {
-                newId = ((InterMineObject) equivalentIter.next()).getId();
+                    //}
+//                }
             }
             Set classes = new HashSet();
             classes.addAll(DynamicUtil.decomposeClass(o.getClass()));
@@ -287,10 +281,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 }
             }
             InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(classes);
-            if (newId == null) {
-                newObj.setId(getSerial());
-            } else {
+            Integer newId = null;
+            // if multiple equivalent objects in database just use id of first one
+            Iterator equivalentIter = equivObjects.iterator();
+            if (equivalentIter.hasNext()) {
+                newId = ((InterMineObject) equivalentIter.next()).getId();
                 newObj.setId(newId);
+            } else {
+                newObj.setId(getSerial());
             }
             if (type == SOURCE) {
                 if (writtenObjects.contains(newObj.getId())) {

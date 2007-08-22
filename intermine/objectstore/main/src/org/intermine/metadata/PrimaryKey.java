@@ -24,14 +24,17 @@ public class PrimaryKey
 {
     String name;
     Set<String> fieldNames = new LinkedHashSet<String>();
+    ClassDescriptor cld;
 
     /**
      * Constructor
      * @param name the name to use for the primary key
      * @param fields a comma-delimited list of field names
+     * @param cld the ClassDescriptor that this PrimaryKey refers to
      */
-    public PrimaryKey(String name, String fields) {
+    public PrimaryKey(String name, String fields, ClassDescriptor cld) {
         this.name = name;
+        this.cld = cld;
         if (fields == null) {
             throw new NullPointerException("fields parameter cannot be null");
         }
@@ -67,7 +70,8 @@ public class PrimaryKey
      */
     public boolean equals(Object o) {
         if (o instanceof PrimaryKey) {
-            return fieldNames.equals(((PrimaryKey) o).fieldNames);
+            return fieldNames.equals(((PrimaryKey) o).fieldNames)
+                && cld.equals(((PrimaryKey) o).cld);
         }
         return false;
     }
@@ -76,7 +80,7 @@ public class PrimaryKey
      * {@inheritDoc}
      */
     public int hashCode() {
-        return fieldNames.hashCode();
+        return fieldNames.hashCode() + cld.hashCode();
     }
 
     /**

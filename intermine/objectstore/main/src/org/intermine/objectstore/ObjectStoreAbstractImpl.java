@@ -101,10 +101,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     }
 
     /**
-     * Returns a Set of independent components that affect the results of the given Query.
-     *
-     * @param q a Query
-     * @return a Set of objects
+     * {@inheritDoc}
      */
     public abstract Set<Object> getComponentsForQuery(Query q);
 

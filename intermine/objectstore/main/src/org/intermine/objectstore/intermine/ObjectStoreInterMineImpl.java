@@ -809,16 +809,16 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long permittedTime = (objResults.size() * 2) + start + (150 * q.getFrom().size())
                     + (sql.length() / 20) - (q.getFrom().size() == 0 ? 0 : 100);
             if (postExecute - preExecute > permittedTime) {
-                if (postExecute - preExecute > sql.length()) {
+                //if (postExecute - preExecute > sql.length()) {
                     LOG.info(getModel().getName() + ": Executed SQL (time = "
                             + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
                             + objResults.size() + "): " + sql);
-                } else {
-                    LOG.info(getModel().getName() + ": Executed SQL (time = "
-                            + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
-                            + objResults.size() + "): " + (sql.length() > 1000
-                            ? sql.substring(0, 1000) : sql));
-                }
+                //} else {
+                //    LOG.info(getModel().getName() + ": Executed SQL (time = "
+                //            + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
+                //            + objResults.size() + "): " + (sql.length() > 1000
+                //            ? sql.substring(0, 1000) : sql));
+                //}
             }
             if ((estimatedTime > 0) || getLogEverything()) {
                 Writer executeLog = getLog();

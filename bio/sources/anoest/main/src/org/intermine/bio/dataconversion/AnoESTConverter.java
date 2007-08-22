@@ -114,30 +114,25 @@ public class AnoESTConverter extends BioDBConverter
             String clusterId = res.getString(2);
             String cloneId = res.getString(3);
             
-            Item est = makeEST(accession);
-            est.setAttribute("identifier", accession);
-            Item accSynonym = createSynonym(est, "identifier", accession, true, getDataSet());
-            getItemWriter().store(ItemHelper.convert(accSynonym));
-            est.setAttribute("curated", "false");
-            est.setReference("organism", getOrganism());
-            est.addToCollection("evidence", getDataSet());
-            Item cloneSynonym = createSynonym(est, "identifier", cloneId, false, getDataSet());
-            getItemWriter().store(ItemHelper.convert(cloneSynonym));
-            Item cluster = clusters.get(clusterId);
-            if (cluster != null) {
-                est.addToCollection("ESTClusters", cluster);
+            Item est = ests.get(accession);
+            if (est == null) {
+                est = makeItem("EST");
+                ests.put(accession, est);
+                est.setAttribute("identifier", accession);
+                Item accSynonym = createSynonym(est, "identifier", accession, true, getDataSet());
+                getItemWriter().store(ItemHelper.convert(accSynonym));
+                est.setAttribute("curated", "false");
+                est.setReference("organism", getOrganism());
+                est.addToCollection("evidence", getDataSet());
+                Item cloneSynonym = createSynonym(est, "identifier", cloneId, false, getDataSet());
+                getItemWriter().store(ItemHelper.convert(cloneSynonym));
+                Item cluster = clusters.get(clusterId);
+                if (cluster != null) {
+                    est.addToCollection("ESTClusters", cluster);
+                }
+                getItemWriter().store(ItemHelper.convert(est));
             }
-            getItemWriter().store(ItemHelper.convert(est));
         }
-    }
-
-    private Item makeEST(String identifier) {
-        Item est = ests.get(identifier);
-        if (est == null) {
-            est = makeItem("EST");
-            ests.put(identifier, est);
-        }
-        return est;
     }
 
     /**

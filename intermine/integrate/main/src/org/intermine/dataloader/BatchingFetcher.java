@@ -11,6 +11,7 @@ package org.intermine.dataloader;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,16 +35,21 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryForeignKey;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.Shutdownable;
+import org.intermine.util.ShutdownHook;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -59,15 +65,24 @@ public class BatchingFetcher extends HintingFetcher
     private static final Logger LOG = Logger.getLogger(BatchingFetcher.class);
     protected Map<InterMineObject, Set<InterMineObject>> equivalents = Collections
         .synchronizedMap(new WeakHashMap<InterMineObject, Set<InterMineObject>>());
+    protected DataTracker dataTracker;
     protected Source source;
+    protected int batchQueried = 0;
+    protected long timeSpentExecute = 0;
+    protected long timeSpentPrefetchEquiv = 0;
+    protected long timeSpentPrefetchTracker = 0;
 
     /**
      * Constructor
      *
      * @param fetcher another EquivalentObjectFetcher
+     * @param dataTracker a DataTracker object to pass prefetch instructions to
+     * @param source the data Source that is being loaded
      */
-    public BatchingFetcher(BaseEquivalentObjectFetcher fetcher, Source source) {
+    public BatchingFetcher(BaseEquivalentObjectFetcher fetcher, DataTracker dataTracker,
+            Source source) {
         super(fetcher);
+        this.dataTracker = dataTracker;
         this.source = source;
     }
 
@@ -86,7 +101,8 @@ public class BatchingFetcher extends HintingFetcher
      */
     public void close(Source source) {
         LOG.info("Batching equivalent object query summary for source " + source + " :"
-                + getSummary(source).toString());
+                + getSummary(source).toString() + "\nQueried " + batchQueried
+                + " objects by batch");
     }
 
     /**
@@ -97,11 +113,18 @@ public class BatchingFetcher extends HintingFetcher
         if (source == this.source) {
             Set retval = equivalents.get(obj);
             if (retval != null) {
-                equivalents.remove(obj);
+                //Set expected = super.queryEquivalentObjects(obj, source);
+                //if (!retval.equals(expected)) {
+                //    throw new RuntimeException("BatchingFetcher produced incorrect result."
+                //            + " Expected " + expected + ", but got " + retval);
+                //}
+                return retval;
+            } else {
+                retval = super.queryEquivalentObjects(obj, source);
+                //equivalents.put(obj, retval);
                 return retval;
             }
         }
-        LOG.warn("Queried equivalent objects for " + obj + " - possible performance problem");
         return super.queryEquivalentObjects(obj, source);
     }
 
@@ -109,16 +132,53 @@ public class BatchingFetcher extends HintingFetcher
      * Fetches the equivalent object information for a whole batch of objects.
      *
      * @param batch the objects
+     * @throws ObjectStoreException if something goes wrong
      */
-    protected void getEquivalentsFor(List<ResultsRow> batch) {
+    protected void getEquivalentsFor(List<ResultsRow> batch) throws ObjectStoreException {
+        long time = System.currentTimeMillis();
+        long time1 = time;
+        boolean databaseEmpty = hints.databaseEmpty();
+        if (savedDatabaseEmptyFetch == -1) {
+            savedDatabaseEmptyFetch = System.currentTimeMillis() - time;
+        }
+        if (databaseEmpty) {
+            savedDatabaseEmpty++;
+            return;
+        }
+        // TODO: add all the objects that are referenced by these objects, and follow primary keys
+        // We can make use of the ObjectStoreFastCollectionsForTranslatorImpl's ability to work this
+        // all out for us.
         Set<InterMineObject> objects = new HashSet<InterMineObject>();
         for (ResultsRow row : batch) {
             for (Object object : row) {
                 if (object instanceof InterMineObject) {
-                    objects.add((InterMineObject) object);
+                    InterMineObject imo = (InterMineObject) object;
+                    if (idMap.get(imo.getId()) == null) {
+                        objects.add(imo);
+                        for (String fieldName : TypeUtil.getFieldInfos(imo.getClass()).keySet()) {
+                            Object fieldValue;
+                            try {
+                                fieldValue = TypeUtil.getFieldProxy(imo, fieldName);
+                            } catch (IllegalAccessException e) {
+                                throw new RuntimeException(e);
+                            }
+                            if ((fieldValue instanceof InterMineObject)
+                                    && (!(fieldValue instanceof ProxyReference))) {
+                                objects.add((InterMineObject) fieldValue);
+                            } else if (fieldValue instanceof Collection) {
+                                for (Object collectionElement : ((Collection) fieldValue)) {
+                                    if ((collectionElement instanceof InterMineObject)
+                                            && (!(collectionElement instanceof ProxyReference))) {
+                                        objects.add((InterMineObject) collectionElement);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
+        objects.removeAll(equivalents.keySet());
         // Now objects contains all the objects we need to fetch data for.
         Map<InterMineObject, Set<InterMineObject>> results = new HashMap<InterMineObject,
             Set<InterMineObject>>();
@@ -126,91 +186,279 @@ public class BatchingFetcher extends HintingFetcher
             results.put(object, new HashSet<InterMineObject>());
         }
 
+        Map<PrimaryKey, ClassDescriptor> pksToDo = new HashMap();
+        Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld = new HashMap();
         Map<Class, List<InterMineObject>> categorised = CollectionUtil.groupByClass(objects, false);
-        Set<PrimaryKey> pksDone = new HashSet<PrimaryKey>();
+        Set<ClassDescriptor> cldsDone = new HashSet<ClassDescriptor>();
         for (Class c : categorised.keySet()) {
             Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(c);
             for (ClassDescriptor cld : classDescriptors) {
-                Set<PrimaryKey> keysForClass;
-                if (source == null) {
-                    keysForClass = new HashSet<PrimaryKey>(PrimaryKeyUtil.getPrimaryKeys(cld)
-                            .values());
-                } else {
-                    keysForClass = DataLoaderHelper.getPrimaryKeys(cld, source);
-                }
-                for (PrimaryKey pk : keysForClass) {
-                    if (!pksDone.contains(pk)) {
-                        pksDone.add(pk);
-                        List<InterMineObject> objectsForPk = new ArrayList<InterMineObject>();
-                        for (Map.Entry<Class, List<InterMineObject>> category : categorised
-                                .entrySet()) {
-                            if (cld.getType().isAssignableFrom(category.getKey())) {
-                                objectsForPk.addAll(category.getValue());
-                            }
+                if (!cldsDone.contains(cld)) {
+                    cldsDone.add(cld);
+                    Set<PrimaryKey> keysForClass;
+                    if (source == null) {
+                        keysForClass = new HashSet<PrimaryKey>(PrimaryKeyUtil.getPrimaryKeys(cld)
+                                .values());
+                    } else {
+                        keysForClass = DataLoaderHelper.getPrimaryKeys(cld, source);
+                    }
+                    if (!keysForClass.isEmpty()) {
+                        time = System.currentTimeMillis();
+                        boolean classNotExists = hints.classNotExists(cld.getType());
+                        String className = DynamicUtil.getFriendlyName(cld.getType());
+                        if (!savedTimes.containsKey(className)) {
+                            savedTimes.put(className, new Long(System.currentTimeMillis() - time));
                         }
-                        // So now we have a list of objects for this Primary Key.
-                        Query q = new Query();
-                        QueryClass qc = new QueryClass(cld.getType());
-                        q.addFrom(qc);
-                        q.addToSelect(qc);
-                        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                        q.setConstraint(cs);
-                        for (String fieldName : pk.getFieldNames()) {
-                            QueryField qf = new QueryField(qc, fieldName);
-                            q.addToSelect(qf);
-                            Set values = new HashSet();
-                            for (InterMineObject object : objectsForPk) {
-                                try {
-                                    values.add(TypeUtil.getFieldValue(object, fieldName));
-                                } catch (IllegalAccessException e) {
-                                    throw new RuntimeException(e);
+                        if (!classNotExists) {
+                            //LOG.error("Inspecting class " + className);
+                            List<InterMineObject> objectsForCld = new ArrayList<InterMineObject>();
+                            for (Map.Entry<Class, List<InterMineObject>> category :
+                                    categorised.entrySet()) {
+                                if (cld.getType().isAssignableFrom(category.getKey())) {
+                                    objectsForCld.addAll(category.getValue());
                                 }
                             }
-                            cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, values));
-                        }
-                        // Now make a map from the primary key values to source objects
-                        Map<List, InterMineObject> keysToSourceObjects = new HashMap<List,
-                            InterMineObject>();
-                        for (InterMineObject object : objectsForPk) {
-                            List values = new ArrayList();
-                            for (String fieldName : pk.getFieldNames()) {
-                                try {
-                                    values.add(TypeUtil.getFieldValue(object, fieldName));
-                                } catch (IllegalAccessException e) {
-                                    throw new RuntimeException(e);
-                                }
+                            cldToObjectsForCld.put(cld, objectsForCld);
+                            // So now we have a list of objects for this CLD.
+                            for (PrimaryKey pk : keysForClass) {
+                                //LOG.error("Adding pk " + cld.getName() + "." + pk.getName());
+                                pksToDo.put(pk, cld);
                             }
-                            keysToSourceObjects.put(values, object);
-                        }
-                        // Iterate through query, and add objects to results
-                        Results res = lookupOs.execute(q);
-                        res.setNoExplain();
-                        res.setNoOptimise();
-                        res.setBatchSize(2000);
-                        for (ResultsRow row : ((List<ResultsRow>) res)) {
-                            List values = new ArrayList();
-                            for (int i = 1; i <= pk.getFieldNames().size(); i++) {
-                                values.add(row.get(i));
-                            }
-                            results.get(keysToSourceObjects.get(values)).add((InterMineObject) row
-                                    .get(0));
+                        } else {
+                            //LOG.error("Empty class " + className);
                         }
                     }
                 }
             }
         }
+        Set<Integer> fetchedObjectIds = new HashSet();
+        while (!pksToDo.isEmpty()) {
+            int startPksToDoSize = pksToDo.size();
+            Iterator<PrimaryKey> pkIter = pksToDo.keySet().iterator();
+            while (pkIter.hasNext()) {
+                PrimaryKey pk = pkIter.next();
+                ClassDescriptor cld = pksToDo.get(pk);
+                boolean canDoPkNow = true;
+                Iterator<String> fieldNameIter = pk.getFieldNames().iterator();
+                while (fieldNameIter.hasNext() && canDoPkNow) {
+                    String fieldName = fieldNameIter.next();
+                    FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+                    if (fd.isReference()) {
+                        Iterator<ClassDescriptor> otherCldIter = pksToDo.values().iterator();
+                        while (otherCldIter.hasNext() && canDoPkNow) {
+                            ClassDescriptor otherCld = otherCldIter.next();
+                            Class fieldClass = ((ReferenceDescriptor) fd)
+                                .getReferencedClassDescriptor().getType();
+                            if (otherCld.getType().isAssignableFrom(fieldClass)
+                                    || fieldClass.isAssignableFrom(otherCld.getType())) {
+                                canDoPkNow = false;
+                            }
+                        }
+                    }
+                }
+                if (canDoPkNow) {
+                    //LOG.error("Running pk " + cld.getName() + "." + pk.getName());
+                    doPk(pk, categorised, cld, results, cldToObjectsForCld.get(cld),
+                            fetchedObjectIds);
+                    pkIter.remove();
+                } else {
+                    //LOG.error("Cannot do pk " + cld.getName() + "." + pk.getName() + " yet");
+                }
+            }
+            if (pksToDo.size() == startPksToDoSize) {
+                throw new RuntimeException("Error - cannot fetch any pks: " + pksToDo.keySet());
+            }
+        }
+        batchQueried += results.size();
         equivalents.putAll(results);
+        LOG.info("fetchedObjectIds.size = " + fetchedObjectIds.size());
+        long time2 = System.currentTimeMillis();
+        timeSpentPrefetchEquiv += time2 - time1;
+        dataTracker.prefetchIds(fetchedObjectIds);
+        time1 = System.currentTimeMillis();
+        timeSpentPrefetchTracker += time1 - time2;
     }
 
-    private class NoseyObjectStore extends ObjectStorePassthruImpl
+    protected void doPk(PrimaryKey pk, Map<Class, List<InterMineObject>> categorised,
+            ClassDescriptor cld, Map<InterMineObject, Set<InterMineObject>> results,
+            List<InterMineObject> objectsForCld, Set<Integer> fetchedObjectIds)
+    throws ObjectStoreException {
+        Iterator<InterMineObject> objectsForCldIter = objectsForCld.iterator();
+        while (objectsForCldIter.hasNext()) {
+            int objCount = 0;
+            int origObjCount = 0;
+            Query q = new Query();
+            QueryClass qc = new QueryClass(cld.getType());
+            q.addFrom(qc);
+            q.addToSelect(qc);
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            q.setConstraint(cs);
+            Map<String, Set> fieldNameToValues = new HashMap<String, Set>();
+            for (String fieldName : pk.getFieldNames()) {
+                try {
+                    QueryField qf = new QueryField(qc, fieldName);
+                    q.addToSelect(qf);
+                    Set values = new HashSet();
+                    fieldNameToValues.put(fieldName, values);
+                    cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, values));
+                } catch (IllegalArgumentException e) {
+                    QueryForeignKey qf = new QueryForeignKey(qc, fieldName);
+                    q.addToSelect(qf);
+                    Set values = new HashSet();
+                    fieldNameToValues.put(fieldName, values);
+                    cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, values));
+                }
+            }
+            // Now make a map from the primary key values to source objects
+            Map<List, InterMineObject> keysToSourceObjects = new HashMap<List, InterMineObject>();
+            while (objectsForCldIter.hasNext() && (objCount < 500)) {
+                InterMineObject object = objectsForCldIter.next();
+                origObjCount++;
+                try {
+                    if (DataLoaderHelper.objectPrimaryKeyNotNull(model, object, cld, pk, source,
+                                idMap)) {
+                        List<Collection<Object>> values = new ArrayList();
+                        boolean skipObject = false;
+                        Map<String, Set> fieldsValues = new HashMap();
+                        for (String fieldName : pk.getFieldNames()) {
+                            try {
+                                Object value = TypeUtil.getFieldValue(object, fieldName);
+                                Set fieldValues;
+                                if (value instanceof InterMineObject) {
+                                    Integer id = idMap.get(((InterMineObject) value).getId());
+                                    if (id == null) {
+                                        Set<InterMineObject> eqs = results.get((InterMineObject) value);
+                                        if (eqs == null) {
+                                            eqs = queryEquivalentObjects((InterMineObject) value,
+                                                    source);
+                                        }
+                                        fieldValues = new HashSet();
+                                        for (InterMineObject obj : eqs) {
+                                            fieldValues.add(obj.getId());
+                                        }
+                                    } else {
+                                        fieldValues = Collections.singleton(id);
+                                    }
+                                } else {
+                                    fieldValues = Collections.singleton(value);
+                                }
+                                values.add(fieldValues);
+                                fieldsValues.put(fieldName, fieldValues);
+                                for (Object fieldValue : fieldValues) {
+                                    long time = System.currentTimeMillis();
+                                    boolean pkQueryFruitless = hints.pkQueryFruitless(cld
+                                            .getType(), fieldName, fieldValue);
+                                    String summaryName = DynamicUtil.getFriendlyName(cld
+                                            .getType()) + "." + fieldName;
+                                    if (!savedTimes.containsKey(summaryName)) {
+                                        savedTimes.put(summaryName, new Long(System
+                                                    .currentTimeMillis() - time));
+                                        savedCounts.put(summaryName, new Integer(0));
+                                    }
+                                    if (pkQueryFruitless) {
+                                        skipObject = true;
+                                    }
+                                }
+                            } catch (IllegalAccessException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        if (!skipObject) {
+                            objCount++;
+                            for (String fieldName : pk.getFieldNames()) {
+                                fieldNameToValues.get(fieldName).addAll(fieldsValues
+                                        .get(fieldName));
+                            }
+                            for (List valueSet : CollectionUtil.fanOutCombinations(values)) {
+                                if (keysToSourceObjects.containsKey(valueSet)) {
+                                    throw new ObjectStoreException("Duplicate objects found for pk "
+                                            + cld.getName() + "." + pk.getName() + ": " + object);
+                                }
+                                keysToSourceObjects.put(valueSet, object);
+                            }
+                        }
+                    }
+                } catch (MetaDataException e) {
+                    throw new ObjectStoreException(e);
+                }
+            }
+            // Prune BagConstraints using the hints system.
+            //boolean emptyQuery = false;
+            //Iterator<String> fieldNameIter = pk.getFieldNames().iterator();
+            //while (fieldNameIter.hasNext() && (!emptyQuery)) {
+            //    String fieldName = fieldNameIter.next();
+            //    Set values = fieldNameToValues.get(fieldName);
+                //Iterator valueIter = values.iterator();
+                //while (valueIter.hasNext()) {
+                //    if (hints.pkQueryFruitless(cld.getType(), fieldName, valueIter.next())) {
+                //        valueIter.remove();
+                //    }
+                //}
+            //    if (values.isEmpty()) {
+            //        emptyQuery = true;
+            //    }
+            //}
+            if (objCount > 0) {
+                // Iterate through query, and add objects to results
+                long time = System.currentTimeMillis();
+                int matches = 0;
+                Results res = lookupOs.execute(q);
+                res.setNoExplain();
+                res.setNoOptimise();
+                res.setBatchSize(2000);
+                for (ResultsRow row : ((List<ResultsRow>) res)) {
+                    List values = new ArrayList();
+                    for (int i = 1; i <= pk.getFieldNames().size(); i++) {
+                        values.add(row.get(i));
+                    }
+                    Set<InterMineObject> set = results.get(keysToSourceObjects.get(values));
+                    if (set != null) {
+                        set.add((InterMineObject) row.get(0));
+                        matches++;
+                    }
+                    fetchedObjectIds.add(((InterMineObject) row.get(0)).getId());
+                }
+                LOG.info("Ran pk " + DynamicUtil.getFriendlyName(cld.getType()) + "." + pk.getName() + " for " + objCount + "/" + origObjCount + " objects, got " + matches + " matches, took " + (System.currentTimeMillis() - time) + " ms");
+            } else {
+                LOG.info("Not running query for pk " + DynamicUtil.getFriendlyName(cld.getType()) + "." + pk.getName() + " for " + origObjCount + " objects");
+            }
+        }
+    }
+ 
+    private class NoseyObjectStore extends ObjectStorePassthruImpl implements Shutdownable
     {
         public NoseyObjectStore(ObjectStore os) {
             super(os);
+            ShutdownHook.registerObject(this);
+        }
+
+        /**
+         * Called by the ShutdownHook on shutdown.
+         */
+        public void shutdown() {
+            LOG.info("Time spent: Execute: " + timeSpentExecute + ", Prefetch equivalent objects: "
+                    + timeSpentPrefetchEquiv + ", Prefetch tracker data: " + timeSpentPrefetchTracker);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Results execute(Query q) {
+            return new Results(q, this, getSequence(getComponentsForQuery(q)));
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public SingletonResults executeSingleton(Query q) {
+            return new SingletonResults(q, this, getSequence(getComponentsForQuery(q)));
         }
 
         public List<ResultsRow> execute(Query q, int start, int limit, boolean optimise,
                 boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
+            long time = System.currentTimeMillis();
             List<ResultsRow> retval = os.execute(q, start, limit, optimise, explain, sequence);
+            timeSpentExecute += System.currentTimeMillis() - time;
             getEquivalentsFor(retval);
             return retval;
         }

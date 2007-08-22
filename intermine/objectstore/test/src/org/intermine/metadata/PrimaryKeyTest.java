@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 public class PrimaryKeyTest extends TestCase {
     public void testConstructorNull() throws Exception {
         try {
-            new PrimaryKey("key", null);
+            new PrimaryKey("key", null, null);
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }
@@ -28,6 +28,6 @@ public class PrimaryKeyTest extends TestCase {
         Set expected = new HashSet();
         expected.add("field1");
         expected.add("field2");
-        assertEquals(expected, new PrimaryKey("key1", "field1, field2").getFieldNames());
+        assertEquals(expected, new PrimaryKey("key1", "field1, field2", null).getFieldNames());
     }
 }

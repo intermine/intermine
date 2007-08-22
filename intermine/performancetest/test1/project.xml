@@ -113,11 +113,27 @@
       <property name="className" value="LargeString"/>
       <property name="stringSize" value="10000"/>
     </source>-->
-    <source name="ReferenceToFrom" type="tofrom">
+    <source name="ReferenceToFrom1" type="tofrom">
       <property name="count" value="1000000"/>
       <property name="src.data.dir" location="data"/>
     </source>
-    <source name="ReferenceFromTo" type="fromto">
+    <source name="ReferenceToFrom2" type="tofrom">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+    </source>
+    <source name="ReferenceFromTo1" type="fromto">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+    </source>
+    <source name="ReferenceFromTo2" type="fromto">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+    </source>
+    <source name="Complex1" type="complex">
+      <property name="count" value="1000000"/>
+      <property name="src.data.dir" location="data"/>
+    </source>
+    <source name="Complex2" type="complex">
       <property name="count" value="1000000"/>
       <property name="src.data.dir" location="data"/>
     </source>
