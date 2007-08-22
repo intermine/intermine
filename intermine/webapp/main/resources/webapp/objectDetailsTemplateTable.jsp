@@ -37,11 +37,9 @@
                     <c:if test="${!empty LEAF_DESCRIPTORS_MAP[object]}">
                       <c:set var="displayObject2" value="${DISPLAY_OBJECT_CACHE[object]}"/>
                       <c:forEach items="${displayObject2.fieldExprs}" var="expr">
-                        <c:if test="${displayObject2.fieldConfigMap[expr].showInResults}">
                           <td class="attrib">
                             <span class="attributeField">${fn:replace(expr, '.', '&nbsp;> ')}</span>
                           </td>
-                        </c:if>
                       </c:forEach>
                     </c:if>
                   </c:if>
@@ -82,7 +80,6 @@
                               <c:forEach items="${displayObject2.fieldExprs}" var="expr">
                                 <c:set var="object2" value="${object}" scope="request"/>
                                 <im:eval evalExpression="object2.${expr}" evalVariable="outVal"/>
-                                <c:if test="${displayObject2.fieldConfigMap[expr].showInResults}">
                                   <td class="attrib">
                                   <c:set var="style" value="white-space:nowrap"/>
                                   <c:if test="${outVal.class.name == 'java.lang.String'}">
@@ -98,7 +95,6 @@
                                     <im:value>${outVal}</im:value>
                                   </div>
                                   </td>
-                                </c:if>
                               </c:forEach>
                             </c:otherwise>
                           </c:choose>

@@ -198,7 +198,7 @@ public class InlineResultsTable
             while (objectFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) objectFieldConfigIter.next();
 
-                if (!fieldConfigs.contains(fc)) {
+                if (!fieldConfigs.contains(fc) && fc.getShowInResults()) {
                     fieldConfigs.add(fc);
 
                     String expr = fc.getFieldExpr();
