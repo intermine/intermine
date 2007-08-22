@@ -253,13 +253,13 @@ public class ItemToObjectTranslator extends Translator
         Item item = (Item) o;
         int itemSize = 100;
         Iterator iter = item.getAttributes().iterator();
-        try {
-            while (iter.hasNext()) {
-                itemSize += ((Attribute) iter.next()).getValue().length() + 50;
+        while (iter.hasNext()) {
+            String value = ((Attribute) iter.next()).getValue();
+            if (value != null) {
+                itemSize += value.length() + 50;
+            } else {
+                itemSize += 50;
             }
-        } catch (NullPointerException e) {
-            LOG.error("An Attribute caused a NullPointerException!", e);
-            throw e;
         }
         iter = item.getCollections().iterator();
         while (iter.hasNext()) {
@@ -304,6 +304,10 @@ public class ItemToObjectTranslator extends Translator
                 Class attrClass = info.getType();
                 if (!attr.getName().equalsIgnoreCase("id")) {
                     Object value = TypeUtil.stringToObject(attrClass, attr.getValue());
+                    if (value == null) {
+                        throw new IllegalArgumentException("An attribute (name " + attr.getName()
+                                + ") for item with id " + item.getIdentifier() + " was null");
+                    }
                     TypeUtil.setFieldValue(obj, attr.getName(), value);
                 }
             }
