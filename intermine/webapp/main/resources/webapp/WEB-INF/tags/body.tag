@@ -6,12 +6,7 @@
 
 
 <div class="body">
-  <c:choose>
-    <c:when test="${empty id || !COLLAPSED[id]}">
+    <c:if test="${empty id || !COLLAPSED[id]}">
       <jsp:doBody/>
-    </c:when>
-    <c:otherwise>
-      <div class="altmessage"><fmt:message key="tag.body.hidden"/></div>
-    </c:otherwise>
-  </c:choose>
+    </c:if>
 </div>

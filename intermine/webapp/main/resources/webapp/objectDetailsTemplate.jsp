@@ -34,16 +34,7 @@
     <c:when test="${empty displayObject && empty interMineIdBag}">
       <%-- no icon at all --%>
     </c:when>
-    <%--
-      <c:when test="${!empty templateCounts[templateName] &&
-                  templateCounts[templateName] == 0}">
-      <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
-      <c:set var="cssClass" value="nullStrike"/>
-    </c:when>
-    <c:when test="${empty table}">
-      <img border="0" src="images/blank.gif" alt=" " width="11" height="11"/>
-    </c:when>
-    --%>
+
     <c:when test="${verbose}">
       <div class="templateIcon">
         <html:link action="/modifyDetails?method=unverbosify&amp;field=${templateName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${trail}"

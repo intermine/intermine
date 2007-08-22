@@ -47,10 +47,11 @@ function toggleHidden(elementId) {
     var element = document.getElementById(elementId);
     var display = element.style.display;
      if(display=='none') {
-	    Effect.SlideDown(elementId);
-         document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
+		element.style.display = 'block';
+         document.getElementById(elementId + 'Toggle').src = 'images/minus.gif';
      } else {
-     	Effect.SlideUp(elementId);
-        document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
+		element.style.display = 'none';
+        document.getElementById(elementId + 'Toggle').src = 'images/plus.gif';
      }
 }
+
