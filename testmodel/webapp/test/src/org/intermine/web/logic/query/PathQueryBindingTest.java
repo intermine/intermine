@@ -41,6 +41,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
     Map savedQueries, expected, classKeys;
     
     public void setUp() throws Exception {
+        super.setUp();
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
         Model model = Model.getInstanceByName("testmodel");
         Properties classKeyProps = new Properties();

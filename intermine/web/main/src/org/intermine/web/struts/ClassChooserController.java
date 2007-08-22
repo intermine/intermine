@@ -114,7 +114,9 @@ public class ClassChooserController extends TilesAction
         request.setAttribute("typeList", typeList);
         request.setAttribute("preferredTypeList", preferedTypeList);
 
-        sb.deleteCharAt(sb.length() - 2);    
+        if (sb.length() >= 2) {
+            sb.deleteCharAt(sb.length() - 2);    
+        }
         request.setAttribute("helpMap", sb);
         return null;
     }
