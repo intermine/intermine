@@ -42,27 +42,15 @@ function disableEnterKey(e)
 
     return (keyCode != 13);
 }
-// used by home & object details
+
 function toggleHidden(elementId) {
     var element = document.getElementById(elementId);
     var display = element.style.display;
      if(display=='none') {
 		element.style.display = 'block';
-         document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
+         document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
      } else {
 		element.style.display = 'none';
-        document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
-     }
-}
-// used by object & bag details
-function togglePlus(elementId) {
-    var element = document.getElementById(elementId);
-    var display = element.style.display;
-     if(display=='none') {
-		element.style.display = 'block';
-         document.getElementById(elementId + 'Toggle').src = 'images/minus.gif';
-     } else {
-		element.style.display = 'none';
-        document.getElementById(elementId + 'Toggle').src = 'images/plus.gif';
+        document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
      }
 }
