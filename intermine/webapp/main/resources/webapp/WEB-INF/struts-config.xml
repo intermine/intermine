@@ -78,6 +78,8 @@
     </action>
     <action path="/standalone" forward="standalone.page">
     </action>
+    <action path="/headMenu" forward="headMenu.page">
+    </action>
     <action path="/createAccount" forward="createAccount.page">
     </action>
     <action path="/changePassword" forward="changePassword.page">
