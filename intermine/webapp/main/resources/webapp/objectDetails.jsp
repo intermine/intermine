@@ -210,7 +210,7 @@
   <im:vspacer height="12"/>
 
 
-<div class="heading">Related Templates</div>
+<div class="heading">Further Information by Category&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">(collapse all - / expand all +)</span></div>
 
     <%-- Each aspect --%>
     <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
