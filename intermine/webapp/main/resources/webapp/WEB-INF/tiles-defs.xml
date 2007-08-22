@@ -153,6 +153,10 @@
     <put name="body" value="showStatic.jsp"/>
     <put name="pageName" value="showStatic"/>
   </definition>
+  <definition name="headMenu.page" path="/headMenu.jsp">
+    <put name="header" value="/header.jsp"/>
+    <put name="menu" value="/menu.jsp"/>
+  </definition>
   
   <!--tiles-->
   <definition name="error.tile" path="/error.jsp"/>
@@ -228,7 +232,7 @@
   <definition name="bagDetails.tile" path="bagDetails.jsp" controllerUrl="/initBagDetails.do" />
   <definition name="bagView.tile" path="bagView.jsp" controllerUrl="/initBagView.do" />
   <definition name="bagFrontPage.tile" path="/model/bagFrontPage.jsp" />  
-  
+
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
   
