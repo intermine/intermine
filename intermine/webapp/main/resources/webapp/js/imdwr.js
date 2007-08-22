@@ -242,9 +242,18 @@ function filterWebSearchablesHandler(event, object, scope, type, wsListId) {
     if (event) {
         if (event.keyCode == 27) {
             object.value = '';
+			clearFilter(type, wsListId);
             return;
         }
-        if (event.keyCode == 13) {
+        if (event.keyCode == 13 
+			|| event.keyCode == 33 
+			|| event.keyCode == 34 
+			|| event.keyCode == 35 
+			|| event.keyCode == 36 
+			|| event.keyCode == 37 
+			|| event.keyCode == 38 
+			|| event.keyCode == 39
+			||event.keyCode ==  40) {
             return;
         }
     }
