@@ -326,7 +326,8 @@
 
 
 <div class="heading">
-  <a name="templates">Related Templates</a>&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">(collapse all - / expand all +)</span>
+  <a name="templates">Related Templates</a>&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;"> 
+  (<a href="javascript:toggleAll(20, 'template', 'collapse', false);">collapse all -</a>  /  <a href="javascript:toggleAll(20, 'template', 'expand', false);">expand all +</a>)</span></div>
 </div>
 
 <div class="body">
