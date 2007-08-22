@@ -61,7 +61,7 @@
   <ul id="submenulist">
       <c:choose>
       <c:when test="${empty page || page == 'upload'}">
-        <li id="activelist">Create</li>
+        <li id="activelist">Upload</li>
       </c:when>
       <c:otherwise>
         <li><html:link action="bag.do?page=upload">Upload</html:link></li>
