@@ -14,7 +14,9 @@
   <%-- from the tiles config file for description.jsp --%>
   <tiles:importAttribute name="pageName" scope="request"/>
 
-  <tiles:insert page="/htmlHead.jsp"/>
+  <tiles:insert page="/htmlHead.jsp">
+    <tiles:put name="title" value="${title}"/>
+  </tiles:insert>
 
   <body>
   

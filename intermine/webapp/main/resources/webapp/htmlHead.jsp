@@ -1,3 +1,8 @@
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <head>
   <html:base/>
   <link rel="stylesheet" type="text/css" href="css/webapp.css"/>
@@ -20,7 +25,15 @@
   <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
 
   <title>
-    <tiles:get name="title"/>
+    <c:choose>
+      <c:when test="${empty pageName}">
+        <c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
+      </c:when>
+      <c:otherwise>
+        <fmt:message key="${pageName}.title" var="pageTitle"/>
+        <c:out value="${WEB_PROPERTIES['project.title']}: ${pageTitle}" escapeXml="false"/>
+      </c:otherwise>
+    </c:choose>
   </title>
 
        <script type="text/javascript" src="js/niftycube.js"></script>
