@@ -326,7 +326,7 @@
 
 
 <div class="heading">
-  <a name="templates">Templates</a>&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">(collapse all - / expand all +)</span>
+  <a name="templates">Related Templates</a>&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">(collapse all - / expand all +)</span>
 </div>
 
 <div class="body">
