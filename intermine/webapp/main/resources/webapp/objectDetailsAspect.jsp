@@ -27,12 +27,13 @@
     <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}" scope="request"/>
 
     <im:heading id="${placement}" index="${index}">    
-      <html:link action="/aspect?name=${aspect}">
-        ${aspect}<%--<im:manualLink section="manualObjectDetails.shtml"/>--%>
-      </html:link>      
+
+        <a href="javascript:toggleHidden('template${index}');">${aspect}</a>
+
     </im:heading>
 	<div class="body">
-    <div id="template${index}" style="display:none;">
+    <div id="template${index}" style="display:none;margin-left:20px;">
+    
     
       <c:if test="${!empty displayObject}">
         <tiles:insert page="/objectDetailsRefsCols.jsp">
@@ -40,6 +41,8 @@
           <tiles:put name="placement" value="${placement}"/>      
         </tiles:insert>
       </c:if>
+      
+      
       <%-- the controller of this tile should have already called the controller
         for the template list so just insert the jsp page --%>
       <c:if test="${!empty templates && !empty placementRefsAndCollections[placement]}">
