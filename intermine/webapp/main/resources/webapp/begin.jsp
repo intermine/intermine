@@ -109,6 +109,13 @@
 
       <im:roundbox title="Query Builder" stylename="frontBox">
         <p><em><fmt:message key="begin.querybuilder"/></em></p>
+        <br/>Start a query:
+      <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Gene">
+        genes, 
+      </html:link>
+      <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Protein">
+        proteins 
+      </html:link>
       </im:roundbox>
 </div>
 
