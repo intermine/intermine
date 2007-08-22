@@ -57,12 +57,14 @@ public class MainHelperTest extends MockStrutsTestCase {
     }
 
     public void setUp() throws Exception {
+        super.setUp();
         Properties classKeyProps = new Properties();
         classKeyProps.load(getClass().getClassLoader()
                            .getResourceAsStream("class_keys.properties"));
         Model model = Model.getInstanceByName("testmodel");
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
     }
+
     public void testGetQualifiedTypeName() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         assertEquals("org.intermine.model.testmodel.Employee",

@@ -48,6 +48,7 @@ public class ProfileTest extends MockStrutsTestCase
     }
 
     public void setUp() throws Exception {
+        super.setUp();
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         userprofileOS = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         objectstoreOS = ObjectStoreFactory.getObjectStore("os.unittest");

@@ -967,19 +967,22 @@ public class MainHelper
     public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags,
             Map<String, QueryNode> pathToQueryNode, String summaryPath, ServletContext servletContext) {
         Map<String, QueryNode> origPathToQueryNode = new HashMap<String, QueryNode>();
-        Query q = null;
+        Query subQ = null;
         try {
-            q = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null,false);
+            subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null, false);
         } catch (ObjectStoreException e) {
-            // Not possible if last argument is null
+            // Not possible if second-last argument is null
         }
-        q.clearSelect();
-        q.clearOrderBy();
+        subQ.clearOrderBy();
         QueryField qf = (QueryField) origPathToQueryNode.get(summaryPath);
         if (qf == null) {
             throw new NullPointerException("Error - path " + summaryPath + " is not in map "
                     + origPathToQueryNode);
         }
+        Query q = new Query();
+        q.addFrom(subQ);
+        subQ.addToSelect(qf);
+        qf = new QueryField(subQ, qf);
         Class summaryType = qf.getType();
         if ((summaryType == Long.class) || (summaryType == Integer.class)
                 || (summaryType == Short.class) || (summaryType == Byte.class)
