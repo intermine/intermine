@@ -7,6 +7,7 @@
 
 <tiles:importAttribute name="displayObject" ignore="true"/>
 <tiles:importAttribute name="interMineIdBag" ignore="true"/>
+<tiles:importAttribute name="index" ignore="true"/>
 <tiles:importAttribute name="placement"/>
 <tiles:importAttribute name="trail"/>
 
@@ -25,13 +26,15 @@
 
     <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}" scope="request"/>
 
-    <im:heading id="${placement}" topLeftTile="/objectDetailsAspectIcon.jsp">
+    <im:heading id="${placement}" index="${index}">    
       <html:link action="/aspect?name=${aspect}">
         ${aspect}<%--<im:manualLink section="manualObjectDetails.shtml"/>--%>
-      </html:link>
+      </html:link>      
     </im:heading>
-    <im:body id="${placement}">
-      <c:if test="${! empty displayObject}">
+	<div class="body">
+    <div id="template${index}" style="display:none;">
+    
+      <c:if test="${!empty displayObject}">
         <tiles:insert page="/objectDetailsRefsCols.jsp">
           <tiles:put name="object" beanName="displayObject"/>
           <tiles:put name="placement" value="${placement}"/>      
@@ -55,13 +58,13 @@
       </c:if>
       <c:if test="${! empty displayObject}">
         <tiles:insert page="/objectDetailsDisplayers.jsp">
-          <tiles:put name="placement" value="${placement}"/>
-                  
+          <tiles:put name="placement" value="${placement}"/>                  
           <tiles:put name="displayObject" beanName="displayObject"/>
         </tiles:insert>
       </c:if>
       <im:vspacer height="5"/>
-    </im:body>
+</div>
+    </div>
   </c:when>
   <c:otherwise>
     <!-- nothing to display for placement ${placement} -->

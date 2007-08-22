@@ -332,11 +332,12 @@
 <div class="body">
 
   <%-- Each aspect --%>
-  <c:forEach items="${CATEGORIES}" var="aspect">
+  <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
     <tiles:insert name="objectDetailsAspect.tile">
       <tiles:put name="placement" value="aspect:${aspect}"/>
       <tiles:put name="trail" value="|bag.${bag.name}"/>
       <tiles:put name="interMineIdBag" beanName="bag"/>
+      <tiles:put name="index" value="${status.index}" />
     </tiles:insert>
   </c:forEach>
 </div>
