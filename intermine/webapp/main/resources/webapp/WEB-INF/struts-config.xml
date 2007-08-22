@@ -262,14 +262,14 @@
       <forward name="feedback" path="feedback.page"/>
     </action>
     <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
-      <forward name="mymine" redirect="true" path="/mymine.do"/>
+      <forward name="mymine" redirect="true" path="/mymine.do?page=saved"/>
     </action>
     <action path="/modifyBag" name="modifyBagForm" type="org.intermine.web.struts.ModifyBagAction" scope="request" input="bag" parameter="action" validate="false">
       <forward name="bag" redirect="true" path="/bag.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do?page=lists"/>
     </action>
     <action path="/modifyTemplate" name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateAction" scope="request" input="mymine" parameter="action" validate="false">
-      <forward name="mymine" redirect="true" path="/mymine.do"/>
+      <forward name="mymine" redirect="true" path="/mymine.do?page=templates"/>
       <forward name="templates" redirect="true" path="/templates.do"/>
     </action>
     <action path="/saveBag" name="saveBagForm" type="org.intermine.web.struts.SaveBagAction" input="results">
