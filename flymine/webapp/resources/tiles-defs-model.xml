@@ -14,5 +14,7 @@
   <definition name="goStatDisplayer.tile" path="/model/goStatDisplayer.jsp" 
   	controllerUrl="/initGoStatDisplayer.do"/>
 
-<definition name="proteinDomainDisplayer.tile" path="/model/proteinDomainDisplayer.jsp" 
+  <definition name="proteinDomainDisplayer.tile" path="/model/proteinDomainDisplayer.jsp" 
   	controllerUrl="/initProteinDomainDisplayer.do"/>
+  	
+  <definition name="dataCategories.tile" path="/model/dataCategories.jsp" />
