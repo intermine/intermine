@@ -611,7 +611,7 @@ table.refSummary tbody tr td {
 div.templateLine {
   margin-bottom: 5px;
   margin-top: 5px;
-  padding-left: 3px;
+  padding-left: 20px;
 }
 
 span.templateResCount {

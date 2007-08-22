@@ -22,7 +22,7 @@
       <c:set target="${linkParams}" property="id" value="${id}" />
       <c:set target="${linkParams}" property="forward" value="${uri}" />
     </jsp:useBean>
-    <a href="javascript:toggleHidden('template${index}');">
+    <a href="javascript:togglePlus('template${index}');">
   	<c:choose>
       <c:when test="${COLLAPSED[index]}">
         <img border="0" src="images/minus.gif" alt="-" id="template${index}Toggle" height="11" width="11"/>

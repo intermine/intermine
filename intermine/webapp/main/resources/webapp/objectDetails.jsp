@@ -23,8 +23,6 @@
 <%-- figure out whether we should show templates or not --%>
 <c:set var="showTemplatesFlag" value="false"/>
 
-<im:box helpUrl="${helpUrl}"
-        titleKey="objectDetails.heading.details">
 
 <tiles:get name="objectTrail.tile"/>
 
@@ -34,12 +32,13 @@
     <tr>
       <td valign="top" width="30%">
 
-        <im:heading id="summary">
-          Summary for selected
+
+          <div class="heading">Summary for selected
           <c:forEach items="${object.clds}" var="cld">
             ${cld.unqualifiedName}
           </c:forEach>
-        </im:heading>
+          </div>
+
 
         <im:body id="summary">
           <table cellpadding="5" border="0" cellspacing="0" class="objSummary">
@@ -206,19 +205,20 @@
   <im:vspacer height="12"/>
 </c:if>
 
-</im:box>
 
 <c:if test="${!empty object}">
   <im:vspacer height="12"/>
-  <im:box helpUrl="${helpUrl}"
-          titleKey="objectDetails.heading.byaspect">
+
+
+<div class="heading">Related Templates</div>
 
     <%-- Each aspect --%>
-    <c:forEach items="${CATEGORIES}" var="aspect">
+    <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
       <tiles:insert name="objectDetailsAspect.tile">
         <tiles:put name="placement" value="aspect:${aspect}"/>
         <tiles:put name="displayObject" beanName="object"/>
         <tiles:put name="trail" value="${request.trail}"/>
+        <tiles:put name="index" value="${status.index}" />
       </tiles:insert>
     </c:forEach>
 
@@ -233,11 +233,12 @@
       </tiles:insert>
     </im:body>
 
-    
        <%-- bags that contain this object --%>
-       <im:heading id="Lists">
-         Lists
-       </im:heading>
+<div class="heading">
+	Lists
+</div>
+         
+
        <im:body id="Misc">
        <c:if test="${! empty bagsWithThisObject}">
         <div style="width:50%;float:left; border:1px solid #CCC;padding:10px;margin:0px 10px 10px 10px">
@@ -269,8 +270,6 @@
         </im:body>
      </div>
 
-  </im:box>
-  
   
   
 </c:if>
