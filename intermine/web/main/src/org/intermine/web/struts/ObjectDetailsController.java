@@ -29,7 +29,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -158,7 +157,7 @@ public class ObjectDetailsController extends InterMineAction
         String myBagsWithThisObject = getBags(os, session, servletContext, id, false);
         
         request.setAttribute("bagsWithThisObject", publicBagsWithThisObject 
-                             + ((publicBagsWithThisObject.length() !=0 
+                             + ((publicBagsWithThisObject.length() != 0 
                                && myBagsWithThisObject.length() != 0) ? "," :"") 
                              + myBagsWithThisObject);
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);

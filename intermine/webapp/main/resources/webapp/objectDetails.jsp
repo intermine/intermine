@@ -210,7 +210,8 @@
   <im:vspacer height="12"/>
 
 
-<div class="heading">Further Information by Category&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">(collapse all - / expand all +)</span></div>
+<div class="heading">Further Information by Category&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">
+ (<a href="javascript:toggleAll(20, 'template', 'collapse', true);">collapse all -</a> /  <a href="javascript:toggleAll(20, 'template', 'expand', true);">expand all +</a>)</span></div>
 
     <%-- Each aspect --%>
     <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
@@ -223,15 +224,17 @@
     </c:forEach>
 
     <%-- All other references and collections --%>
-    <im:heading id="Misc">
-      Miscellaneous
+    <im:heading id="misc">
+      <a href="javascript:toggleHidden('misc');">Miscellaneous</a>
     </im:heading>
-    <im:body id="Misc">
+	<div class="body">
+    <div id="misc" style="display:none;margin-left:25px;">
       <tiles:insert page="/objectDetailsRefsCols.jsp">
         <tiles:put name="object" beanName="object"/>
         <tiles:put name="placement" value="aspect:Miscellaneous"/>
       </tiles:insert>
-    </im:body>
+</div>
+</div>
 
        <%-- bags that contain this object --%>
 <div class="heading">

@@ -54,3 +54,33 @@ function toggleHidden(elementId) {
         document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
      }
 }
+
+function toggleAll(count, prefix, display, showMisc) {
+	for (i = 0; i < count; i++) {
+		var elementId = prefix + i;
+		if (document.getElementById(elementId) != null) {
+    	var element = document.getElementById(elementId);
+	     if(display=='expand') {
+			element.style.display = 'block';
+        	document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
+    	 } else {
+			element.style.display = 'none';
+        	document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
+     	}
+     	}
+     }
+     if (showMisc == 'true') {
+
+	   	var element = document.getElementById('misc');
+     
+     	 if(display=='expand') {
+			element.style.display = 'block';
+        	document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
+    	 } else {
+			element.style.display = 'none';
+        	document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
+     	}
+     }
+}
+
+

@@ -26,7 +26,7 @@
 
     <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}" scope="request"/>
 
-    <im:heading id="${placement}" index="${index}">    
+    <im:heading id="template${index}">    
 
         <a href="javascript:toggleHidden('template${index}');">${aspect}</a>
 
