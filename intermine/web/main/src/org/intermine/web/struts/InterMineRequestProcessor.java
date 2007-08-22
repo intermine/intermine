@@ -57,7 +57,8 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                           "/objectDetails", "/examples", "/browseAction",
                           "/collectionDetails", "/iqlQuery", "/login", "/feedback", "/portal",
                           "/templates", "/templateSearch", "/template", "/aspect",
-                          "/ping", "/standalone", "/quickStart", "/importQuery", "/tree"
+                          "/ping", "/standalone", "/quickStart", "/importQuery", "/tree",
+                          "/headMenu"
                       });
     
     /**
