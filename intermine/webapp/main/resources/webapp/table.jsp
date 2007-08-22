@@ -40,7 +40,7 @@
 
     <c:if test="${!empty templateQuery}">
 
-      <%-- show the description only if we've run a query (rather than viewing
+      <%-- show the description only if we ve run a query (rather than viewing
            a bag) - see #1031 --%>
       <c:if test="${isWebResults
                   && (pathQuery.name != WEB_PROPERTIES['begin.browse.template'])}">
@@ -197,7 +197,7 @@
 
 <c:choose>
   <c:when test="${resultsTable.size == 0}">
-    <div class="body">
+    <div class="altmessage">
       <fmt:message key="results.pageinfo.empty"/><br/>
     </div>
   </c:when>

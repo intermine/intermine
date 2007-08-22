@@ -123,3 +123,30 @@ table.results tr td.highlightCell {
     border-bottom: 1px solid #663366;
 }
 
+table.dbsources {margin:10px 20px 10px 20px;}
+
+table.dbsources th  {
+	font-weight: bold;
+	font-size: 0.7em;
+	color: white;
+	border-right: 1px solid #C1DAD7;
+	border-bottom: 1px solid #C1DAD7;
+	border-top: 1px solid #C1DAD7;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	text-align: left;
+	padding: 6px 6px 6px 12px;
+	background: url('../heading-bg.gif') repeat-x;
+}
+
+table.dbsources td {
+	border-right: 1px solid #C1DAD7;
+	border-bottom: 1px solid #C1DAD7;
+	background: #fff;
+	padding: 6px 6px 6px 12px;
+/*	color: #6D929B;*/
+}
+
+table.dbsources td.leftcol {
+	border-left: 1px solid #C1DAD7;
+}

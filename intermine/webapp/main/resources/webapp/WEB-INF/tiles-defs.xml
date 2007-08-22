@@ -168,7 +168,6 @@
   <definition name="tips.tile" path="/tips.jsp" />
   <definition name="tipDisplayer.tile" path="/tipDisplayer.jsp"/>
   <definition name="aspects.tile" path="/aspectIcons.jsp" />
-  <definition name="dataCategories.tile" path="/dataCategories.jsp" />
   <definition name="query.tile" path="/query.jsp">
     <put name="main" value="main.tile"/>
     <put name="view" value="view.tile"/>
