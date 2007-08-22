@@ -9,7 +9,7 @@
 <div class="body">
   <c:set var="page" value="<%=request.getParameter("page")%>"/>
   <c:choose>
-    <c:when test="${empty page || page == 'create'}">
+    <c:when test="${empty page || page == 'upload'}">
       <!-- <div id="leftCol"> -->
             <div align="center">
               <tiles:insert name="bagBuild.tile"/>
