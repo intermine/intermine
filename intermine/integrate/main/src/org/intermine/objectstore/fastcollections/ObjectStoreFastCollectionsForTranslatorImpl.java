@@ -23,6 +23,7 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemToObjectTranslator;
+import org.intermine.dataloader.Source;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -59,6 +60,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
     private static final Logger LOG = Logger.getLogger(
             ObjectStoreFastCollectionsForTranslatorImpl.class);
     private IntPresentSet doneAlready = new IntPresentSet();
+    private Source source = null;
 
     /**
      * Creates an instance, from another ObjectStore instance.
@@ -100,6 +102,16 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
             }
         }
         return new ObjectStoreFastCollectionsForTranslatorImpl(objectStore);
+    }
+
+    /**
+     * Sets the source of the data, so we know what the primary keys are, and can fetch that extra
+     * data.
+     *
+     * @param source a Source object
+     */
+    public void setSource(Source source) {
+        this.source = source;
     }
 
     /**
@@ -212,14 +224,14 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         // handled. That includes basically everything we have seen ever.
 
                         HashSet idsToProxy = new HashSet();
-                        toIdIter = toIds.iterator();
-                        while (toIdIter.hasNext()) {
-                            Integer toId = (Integer) toIdIter.next();
-                            if (doneAlready.contains(toId)) {
-                                toIdIter.remove();
-                                idsToProxy.add(toId);
-                            }
-                        }
+                        //toIdIter = toIds.iterator();
+                        //while (toIdIter.hasNext()) {
+                        //    Integer toId = (Integer) toIdIter.next();
+                        //    if (doneAlready.contains(toId)) {
+                        //        toIdIter.remove();
+                        //        idsToProxy.add(toId);
+                        //    }
+                        //}
 
                         while (!toIds.isEmpty()) {
                             Set bag = new HashSet();

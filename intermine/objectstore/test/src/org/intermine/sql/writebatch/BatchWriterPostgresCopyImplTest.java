@@ -37,6 +37,9 @@ public class BatchWriterPostgresCopyImplTest extends BatchWriterTestCase
         return bw;
     }
 
+    /*
+     * This test no longer works because we throttle analyses to once every ten minutes at most.
+     *
     public void testAnalyseLargeTable() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
         Connection con = db.getConnection();
@@ -92,4 +95,5 @@ public class BatchWriterPostgresCopyImplTest extends BatchWriterTestCase
             }
         }
     }
+    */
 }

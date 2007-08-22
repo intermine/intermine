@@ -257,6 +257,9 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Source skelSource = iw.getSkeletonSource("testsource");
 
         iw.store(c, source, skelSource);  // method we are testing
+        iw.store(a, source, skelSource);
+        iw.store(ceo, source, skelSource);
+        iw.store(a2, source, skelSource);
 
         Company rc = (Company) iw.getObjectByExample(c, Collections.singleton("name"));
         assertNotNull("Object from db should not be null", rc);
@@ -367,6 +370,9 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             iw.reset();
             iw.beginTransaction();
             iw.store(c, source2, skelSource2); // method we are testing
+            iw.store(a, source2, skelSource2);
+            iw.store(ceo, source2, skelSource2);
+            iw.store(a2, source2, skelSource2);
             //          CompanyA ------- CEOA            CompanyA --.   - CEOA
             // Change                             to                 \
             //          CompanyB ------- CEOB            CompanyB -   `-- CEOB
@@ -736,6 +742,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         iw.reset();
         iw.beginTransaction();
         iw.store(con, source2, skelSource2); // method we are testing
+        iw.store(companyAAddress, source2, skelSource2);
+        iw.store(companyA, source2, skelSource2);
 
         // Get objects (and test that there is only one copy of everything).
         Company rca = (Company) iw.getObjectByExample(companyA, Collections.singleton("name"));

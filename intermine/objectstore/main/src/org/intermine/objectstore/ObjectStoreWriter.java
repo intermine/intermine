@@ -160,6 +160,16 @@ public interface ObjectStoreWriter extends ObjectStore
     public void abortTransaction() throws ObjectStoreException;
 
     /**
+     * Request that the ObjectStoreWriter commits and closes the transaction and then opens a new
+     * one, without guaranteeing that the operation is finished before this method returns. Note
+     * that writes that are made AFTER this method may be treated as if they were BEFORE this method
+     * and be committed in the transaction.
+     *
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void batchCommitTransaction() throws ObjectStoreException;
+
+    /**
      * Closes the connection associated with this ObjectStoreWriter
      *
      * @throws ObjectStoreException if something goes wrong

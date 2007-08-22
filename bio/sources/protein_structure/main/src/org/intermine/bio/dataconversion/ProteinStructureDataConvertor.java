@@ -52,6 +52,7 @@ public class ProteinStructureDataConvertor extends FileConverter
     private String dataLocation;
     protected static final String ENDL = System.getProperty("line.separator");
     private Item proteinStructureExperiment;
+    private Item dataSet;
     private final Map<String, Item> featureMap = new HashMap<String, Item>();
     private final Map<String, String> proteinMap = new HashMap<String, String>();
     private String parentDir;
@@ -66,8 +67,12 @@ public class ProteinStructureDataConvertor extends FileConverter
         itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         proteinStructureExperiment = createItem("ProteinStructureExperiment");
         proteinStructureExperiment.setAttribute("type", "Computer prediction");
+        dataSet = createItem("DataSet");
+        dataSet.setAttribute("title", "Kenji Mizuguchi - NIBIO, Japan");
+        dataSet.setAttribute("url", "http://www.nibio.go.jp");
         try {
             writer.store(ItemHelper.convert(proteinStructureExperiment));
+            writer.store(ItemHelper.convert(dataSet));
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -162,7 +167,6 @@ public class ProteinStructureDataConvertor extends FileConverter
         private Item proteinStructure;
         private String proteinItemIdentifier;
         private Item proteinFeature;
-        private Item dataSet;
         private String attName = null;
         private StringBuffer attValue = null;
         private ItemWriter writer;
@@ -179,10 +183,6 @@ public class ProteinStructureDataConvertor extends FileConverter
         public ProteinStructureHandler (ItemWriter writer, Map proteinMap, Map featureMap)
             throws ObjectStoreException {
             this.writer = writer;
-            dataSet = createItem("DataSet");
-            dataSet.setAttribute("title", "Kenji Mizuguchi - NIBIO, Japan");
-            dataSet.setAttribute("url", "http://www.nibio.go.jp");
-            writer.store(ItemHelper.convert(dataSet));
             this.proteinMap = proteinMap;
             this.featureMap = featureMap;
         }

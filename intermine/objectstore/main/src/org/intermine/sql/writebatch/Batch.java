@@ -13,6 +13,7 @@ package org.intermine.sql.writebatch;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,11 +37,14 @@ import org.apache.log4j.Logger;
 public class Batch
 {
     private static final Logger LOG = Logger.getLogger(Batch.class);
-    private static final int MAX_BATCH_SIZE = 20000000;
+    private static final int OPP_BATCH_SIZE = 10000000;
+    private static final int MAX_BATCH_SIZE = 100000000;
 
     private Map tables = new HashMap();
     private BatchWriter batchWriter;
     private int batchSize = 0;
+    private int lastCheckBatchSize = 0;
+    private boolean needBatchCommit = false;
 
     private List flushJobs = Collections.EMPTY_LIST;
     private SQLException problem = null;
@@ -91,9 +95,7 @@ public class Batch
             tables.put(name, table);
         }
         batchSize += table.addRow(idValue, colNames, values);
-        if (batchSize > MAX_BATCH_SIZE) {
-            backgroundFlush(con, null);
-        }
+        maybeBackgroundFlush(con);
     }
 
     /**
@@ -118,9 +120,7 @@ public class Batch
             tables.put(name, table);
         }
         batchSize += table.addRow(left, right);
-        if (batchSize > MAX_BATCH_SIZE) {
-            backgroundFlush(con, null);
-        }
+        maybeBackgroundFlush(con);
     }
 
     /**
@@ -151,9 +151,7 @@ public class Batch
             tables.put(name, table);
         }
         batchSize += table.deleteRow(idField, idValue);
-        if (batchSize > MAX_BATCH_SIZE) {
-            backgroundFlush(con, null);
-        }
+        maybeBackgroundFlush(con);
     }
 
     /**
@@ -178,8 +176,18 @@ public class Batch
             tables.put(name, table);
         }
         batchSize += table.deleteRow(left, right);
+        maybeBackgroundFlush(con);
+    }
+
+    private void maybeBackgroundFlush(Connection con) throws SQLException {
         if (batchSize > MAX_BATCH_SIZE) {
             backgroundFlush(con, null);
+        } else if (batchSize - lastCheckBatchSize > OPP_BATCH_SIZE) {
+            if (isFreeConnection()) {
+                backgroundFlush(con, null);
+            } else {
+                lastCheckBatchSize = batchSize;
+            }
         }
     }
 
@@ -203,8 +211,21 @@ public class Batch
      * @throws SQLException if an error occurs while flushing
      */
     public void flush(Connection con, Set filter) throws SQLException {
+        //Exception e = new Exception();
+        //e.fillInStackTrace();
+        //LOG.error("Flushed", e);
         backgroundFlush(con, filter);
         putFlushJobs(Collections.EMPTY_LIST);
+    }
+
+    /**
+     * Marks the next batch flush as having a BatchCommitFlushJob at the end of it. This means that
+     * the connection will have its transaction committed and re-opened, without ever waiting for a
+     * batch flush. Note that stuff added to this batch AFTER this method is called may make it into
+     * the commit!
+     */
+    public void batchCommit() throws SQLException {
+        needBatchCommit = true;
     }
 
     /**
@@ -221,7 +242,7 @@ public class Batch
         if (closed) {
             throw new SQLException("Batch is closed");
         }
-        long start = System.currentTimeMillis();
+        //long start = System.currentTimeMillis();
         List jobs = batchWriter.write(con, tables, filter);
         int oldBatchSize = batchSize;
         batchSize = 0;
@@ -231,15 +252,24 @@ public class Batch
             Table table = (Table) tableEntry.getValue();
             batchSize += table.getSize();
         }
-        long middle = System.currentTimeMillis();
+        lastCheckBatchSize = batchSize;
+        if (needBatchCommit) {
+            jobs.add(new FlushJobBatchCommit(con));
+            needBatchCommit = false;
+        }
+        //long middle = System.currentTimeMillis();
         putFlushJobs(jobs);
-        long end = System.currentTimeMillis();
-        if ((end > middle + 10) && (lastDutyCycle < 75)) {
+        //long end = System.currentTimeMillis();
+        //if ((end > middle + 10) && (lastDutyCycle < 75)) {
+        //    LOG.info("Enqueued " + (oldBatchSize - batchSize) + " of " + oldBatchSize
+        //            + " byte batch - took " + (middle - start) + " + " + (end - middle) + " ms");
+        //} else {
+        //    LOG.debug("Enqueued " + (oldBatchSize - batchSize) + " of " + oldBatchSize
+        //            + " byte batch - took " + (middle - start) + " + " + (end - middle) + " ms");
+        //}
+        if (oldBatchSize - batchSize > OPP_BATCH_SIZE / 2) {
             LOG.info("Enqueued " + (oldBatchSize - batchSize) + " of " + oldBatchSize
-                    + " byte batch - took " + (middle - start) + " + " + (end - middle) + " ms");
-        } else {
-            LOG.debug("Enqueued " + (oldBatchSize - batchSize) + " of " + oldBatchSize
-                    + " byte batch - took " + (middle - start) + " + " + (end - middle) + " ms");
+                    + " byte batch.");
         }
     }
 
@@ -281,6 +311,7 @@ public class Batch
             table.clear();
         }
         batchSize = 0;
+        lastCheckBatchSize = 0;
         waitForFreeConnection();
         clearProblem();
     }
@@ -332,6 +363,13 @@ public class Batch
     }
 
     /**
+     * Returns true if the flushJobs variable is empty - that is, the connection is idle.
+     */
+    private synchronized boolean isFreeConnection() {
+        return flushJobs == null;
+    }
+
+    /**
      * Puts a List of flush jobs into the flushJobs variable, and tells the writer thread to write
      * it.
      *
@@ -341,11 +379,16 @@ public class Batch
      * because the transaction will be invalid).
      */
     private synchronized void putFlushJobs(List jobs) throws SQLException {
+        long startTime = System.currentTimeMillis();
         while (flushJobs != null) {
             try {
                 wait();
             } catch (InterruptedException e) {
             }
+        }
+        long endTime = System.currentTimeMillis();
+        if (endTime > startTime + 100) {
+            LOG.info("Waited " + (endTime - startTime) + " ms for batch flusher");
         }
         if ((!jobs.isEmpty()) || (jobs == CLOSE_DOWN_COMMAND)) {
             flushJobs = jobs;

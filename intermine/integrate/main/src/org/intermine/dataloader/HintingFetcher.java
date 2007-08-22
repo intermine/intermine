@@ -125,6 +125,9 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
         if (hints.databaseEmpty()) {
             savedDatabaseEmpty++;
             summaryCallCounts.put(summaryName, new Integer(soFarCallCount.intValue() + 1));
+            if (savedDatabaseEmptyFetch == -1) {
+                savedDatabaseEmptyFetch = System.currentTimeMillis() - time;
+            }
             return Collections.EMPTY_SET;
         }
         if (savedDatabaseEmptyFetch == -1) {

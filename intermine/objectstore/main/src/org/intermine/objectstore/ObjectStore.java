@@ -213,6 +213,14 @@ public interface ObjectStore
     public boolean isMultiConnection();
 
     /**
+     * Returns a Set of independent components that affect the results of the given Query.
+     *
+     * @param q a Query
+     * @return a Set of objects
+     */
+    public Set<Object> getComponentsForQuery(Query q);
+
+    /**
      * Return the sequence number representing the state of the ObjectStore. This number is
      * incremented each time the data in the ObjectStore is changed.
      *

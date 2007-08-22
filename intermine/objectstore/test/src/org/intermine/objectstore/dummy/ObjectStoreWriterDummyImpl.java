@@ -12,6 +12,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.SingletonResults;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,9 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         savedObjects = null;
     }
 
+    public void batchCommitTransaction() throws ObjectStoreException {
+    }
+
     public void close() throws ObjectStoreException {
        // do nothing
     }
@@ -170,6 +174,13 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
 
     public boolean isMultiConnection() {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<Object> getComponentsForQuery(Query q) {
+        return Collections.emptySet();
     }
 
     public Map<Object, Integer> getSequence(Set<Object> tables) {

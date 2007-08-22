@@ -139,6 +139,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         //}
         long time1 = System.currentTimeMillis();
         Query q2 = translateQuery(q);
+        //LOG.error("Translated query " + q + " to " + q2);
         long time2 = System.currentTimeMillis();
         timeSpentQuery += time2 - time1;
         List results = new ArrayList();

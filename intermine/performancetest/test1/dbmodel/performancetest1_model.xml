@@ -75,4 +75,12 @@
     <class name="org.intermine.model.performancetest1.ReferenceFrom2" is-interface="true">
         <reference name="ref" referenced-type="org.intermine.model.performancetest1.ReferenceTo2"/>
     </class>
+    <class name="org.intermine.model.performancetest1.ComplexMaster" is-interface="true">
+        <reference name="ref1" referenced-type="org.intermine.model.performancetest1.ComplexAttribute"/>
+        <reference name="ref2" referenced-type="org.intermine.model.performancetest1.ComplexAttribute"/>
+        <collection name="col" referenced-type="org.intermine.model.performancetest1.ComplexAttribute"/>
+    </class>
+    <class name="org.intermine.model.performancetest1.ComplexAttribute" is-interface="true">
+        <attribute name="att" type="int"/>
+    </class>
 </model>

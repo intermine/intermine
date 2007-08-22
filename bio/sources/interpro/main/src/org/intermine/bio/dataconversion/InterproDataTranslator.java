@@ -77,8 +77,6 @@ public class InterproDataTranslator extends DataTranslator
 
     protected static final Logger LOG = Logger.getLogger(InterproDataTranslator.class);
 
-    //Maintains a map of any organisms that we have had to create indexed by the ncbi tax id
-    private TreeMap organisms;
     //little evidence tag item...
     private org.intermine.xml.full.Item interproDataSet = null;
 
@@ -87,6 +85,7 @@ public class InterproDataTranslator extends DataTranslator
 
     private Item interproDataSource = null;
     private org.intermine.xml.full.Reference interproDataSourceReference = null;
+    private String org180454Identifier;
 
     /**
      * Typical constructor
@@ -99,7 +98,6 @@ public class InterproDataTranslator extends DataTranslator
     public InterproDataTranslator(ItemReader itemReader, Properties properties,
                                   Model sourceModel, Model targetModel) {
         super(itemReader, properties, sourceModel, targetModel);
-        organisms = new TreeMap();
         interproDataSource = createItem("DataSource");
         interproDataSource.addAttribute(new Attribute("name", "InterPro"));
         interproDataSourceReference =
@@ -121,18 +119,10 @@ public class InterproDataTranslator extends DataTranslator
      * @see DataTranslator#translate
      */
     public void translate(ItemWriter tgtItemWriter)
-            throws ObjectStoreException, InterMineException {
+    throws ObjectStoreException, InterMineException {
+        org180454Identifier = itemFactory.makeItem().getIdentifier();
 
         super.translate(tgtItemWriter);
-
-        //Store any organism items we may have had to create...
-        if (organisms != null && organisms.values() != null && (!organisms.values().isEmpty())) {
-
-            for (Iterator orgIt = organisms.values().iterator(); orgIt.hasNext();) {
-
-                tgtItemWriter.store(ItemHelper.convert((org.intermine.xml.full.Item) orgIt.next()));
-            }
-        }
 
         for (Iterator dsIt = dbNameToDbSourceItemMap.values().iterator(); dsIt.hasNext();) {
 
@@ -207,7 +197,10 @@ public class InterproDataTranslator extends DataTranslator
                 } else {
                     Item organism = translated.iterator().next();
                     if (organism.getAttribute("taxonId").getValue().equals("7165")) {
-                        organism.setAttribute("taxonId", "180454");
+                        result = Collections.EMPTY_SET;
+                    }
+                    if (organism.getAttribute("taxonId").getValue().equals("180454")) {
+                        organism.setIdentifier(org180454Identifier);
                     }
                 }
             } else {
@@ -261,8 +254,12 @@ public class InterproDataTranslator extends DataTranslator
                 = getItemViaItemPath(srcItem, TAXONOMY_FROM_PROTEIN, srcItemReader);
 
         if (taxItem != null) {
-
-            tgtItem.setReference("organism", taxItem.getIdentifier());
+            String taxonId = taxItem.getAttribute("taxa_id").getValue();
+            if ("180454".equals(taxonId) || "7165".equals(taxonId)) {
+                tgtItem.setReference("organism", org180454Identifier);
+            } else {
+                tgtItem.setReference("organism", taxItem.getIdentifier());
+            }
             LOG.debug("PROTEIN.PROTEIN_AC:"
                     + srcItem.getAttribute("protein_ac").getValue()
                     + " has tax_id:" + taxItem.getAttribute("taxa_id").getValue());

@@ -269,7 +269,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             target = (InterMineObject) TypeUtil.getFieldValue(srcObj,
                                     fieldName);
                         }
-                        if (target != null) {
+                        /*if (target != null) {
                             if (target instanceof ProxyReference) {
                                 LOG.debug("Reifying object for modification in place");
                                 target = ((ProxyReference) target).getObject();
@@ -283,7 +283,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             }
                             TypeUtil.setFieldValue(target, reverseRef.getName(), dest);
                             store(target);
-                        }
+                        }*/
                         TypeUtil.setFieldValue(dest, fieldName, target);
                     }
                     break;
@@ -564,6 +564,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
+    public void batchCommitTransaction() throws ObjectStoreException {
+        osw.batchCommitTransaction();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public ObjectStore getObjectStore() {
         return osw.getObjectStore();
     }
@@ -668,6 +675,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public boolean isMultiConnection() {
         return osw.isMultiConnection();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<Object> getComponentsForQuery(Query q) {
+        return osw.getComponentsForQuery(q);
     }
 
     /**

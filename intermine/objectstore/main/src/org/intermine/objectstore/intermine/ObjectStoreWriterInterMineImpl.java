@@ -1207,6 +1207,38 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
 
     /**
      * {@inheritDoc}
+     */
+    public void batchCommitTransaction() throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            batchCommitTransactionWithConnection(c);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Commits a transaction and opens a new one, without guaranteeing the operation is finished
+     * before this method returns.
+     *
+     * @param c the Connection
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void batchCommitTransactionWithConnection(Connection c) throws ObjectStoreException {
+        try {
+            batch.batchCommit();
+            os.databaseAltered(tablesAltered);
+            tablesAltered.clear();
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Error batch-committing transaction", e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * This method is overridden in order to flush batches properly before the read.
      */

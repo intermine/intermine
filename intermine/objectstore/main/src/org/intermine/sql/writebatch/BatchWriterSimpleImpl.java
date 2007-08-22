@@ -467,6 +467,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
     {
         private String name;
         private int tableSize, totalActivity;
+        private long lastResizeTime = 0;
 
         public Statistic(String name, int tableSize, int activity) {
             this.name = name;
@@ -483,7 +484,8 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     + this.totalActivity + " --> tableSize = " + tableSize + ", activity = "
                     + (this.totalActivity + activity) + "    - Activity of " + activity + " rows");
             this.totalActivity += activity;
-            return (this.totalActivity > (tableSize / 2) + 1000) || (this.totalActivity > 100000);
+            return (this.totalActivity > (tableSize / 2) + 1000) || ((this.totalActivity > 100000)
+                && (System.currentTimeMillis() - lastResizeTime > 600000));
         }
 
         public void setTableSize(int tableSize) {
@@ -492,6 +494,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     + ", activity = 0   - New table size");
             this.tableSize = tableSize;
             this.totalActivity = 0;
+            this.lastResizeTime = System.currentTimeMillis();
         }
     }
 }

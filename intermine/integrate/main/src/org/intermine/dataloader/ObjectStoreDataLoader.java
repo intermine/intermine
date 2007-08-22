@@ -69,13 +69,19 @@ public class ObjectStoreDataLoader extends DataLoader
      */
     public void process(ObjectStore os, Source source, Source skelSource, Class queryClass)
         throws ObjectStoreException {
+        ObjectStore origOs = os;
         try {
-            //if (getIntegrationWriter() instanceof IntegrationWriterAbstractImpl) {
-            //    BatchingFetcher eof = new BatchingFetcher(((IntegrationWriterAbstractImpl)
-            //                getIntegrationWriter()).getBaseEof(), source);
-            //    ((IntegrationWriterAbstractImpl) getIntegrationWriter()).setEof(eof);
-            //    os = eof.getNoseyObjectStore(os);
-            //}
+            if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
+                ((ObjectStoreFastCollectionsForTranslatorImpl) os).setSource(source);
+            }
+            if (getIntegrationWriter() instanceof IntegrationWriterDataTrackingImpl) {
+                BatchingFetcher eof = new BatchingFetcher(((IntegrationWriterAbstractImpl)
+                            getIntegrationWriter()).getBaseEof(),
+                        ((IntegrationWriterDataTrackingImpl) getIntegrationWriter())
+                        .getDataTracker(), source);
+                ((IntegrationWriterAbstractImpl) getIntegrationWriter()).setEof(eof);
+                os = eof.getNoseyObjectStore(os);
+            }
             long times[] = new long[20];
             for (int i = 0; i < 20; i++) {
                 times[i] = -1;
@@ -123,37 +129,39 @@ public class ObjectStoreDataLoader extends DataLoader
                                 + (60000000 / (now - time)) + " (avg "
                                 + ((60000L * opCount) / (now - startTime))
                                 + ") objects per minute -- now on "
-                                + DynamicUtil.decomposeClass(obj.getClass()));
+                                + DynamicUtil.getFriendlyName(obj.getClass()));
                     } else {
                         LOG.info("Dataloaded " + opCount + " objects - running at "
                                 + (60000000 / (now - time)) + " (20000 avg "
                                 + (1200000000 / (now - times[(int) ((opCount / 1000) % 20)]))
                                 + ") (avg = " + ((60000L * opCount) / (now - startTime))
                                 + ") objects per minute -- now on "
-                                + DynamicUtil.decomposeClass(obj.getClass()));
+                                + DynamicUtil.getFriendlyName(obj.getClass()));
                     }
                     time = now;
                     times[(int) ((opCount / 1000) % 20)] = now;
                     if (opCount % 500000 == 0) {
-                        getIntegrationWriter().commitTransaction();
-                        getIntegrationWriter().beginTransaction();
+                        getIntegrationWriter().batchCommitTransaction();
                     }
                 }
                 time4 = System.currentTimeMillis();
                 timeSpentCommit += time4 - time3;
             }
+            time3 = System.currentTimeMillis();
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().close();
             long now = System.currentTimeMillis();
+            timeSpentCommit += now - time3;
             LOG.info("Finished dataloading " + opCount + " objects at " + ((60000L * opCount)
                         / (now - startTime)) + " objects per minute (" + (now - startTime)
                     + " ms total) for source " + source.getName());
             LOG.info("Time spent: Reading: " + (timeSpentRead + timeSpentLoop) + ", Writing: "
                     + timeSpentWrite + ", Committing: " + timeSpentCommit);
         } catch (RuntimeException e) {
-            if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
+            if (origOs instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
                 LOG.error("Exception while dataloading - doneAlreadyMap = "
-                        + ((ObjectStoreFastCollectionsForTranslatorImpl) os).getDoneAlready(), e);
+                        + ((ObjectStoreFastCollectionsForTranslatorImpl) origOs).getDoneAlready(),
+                        e);
             }
             throw e;
         }

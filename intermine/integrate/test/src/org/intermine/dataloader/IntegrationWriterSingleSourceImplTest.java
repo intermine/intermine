@@ -124,6 +124,9 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         skelSource.setSkeleton(true);
 
         iw.store(c, source, skelSource); // method we are testing
+        iw.store(a, source, skelSource);
+        iw.store(ceo, source, skelSource);
+        iw.store(a2, source, skelSource);
 
         Company rc = (Company) iw.getObjectByExample(c, Collections.singleton("name"));
         assertNotNull("Object from db should not be null", rc);
@@ -171,7 +174,9 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
             ceoA.setCompany(companyA);
 
             iw.store(companyA, source, skelSource);
+            iw.store(companyAAddress, source, skelSource);
             iw.store(ceoA, source, skelSource);
+            iw.store(ceoAAddress, source, skelSource);
         }
 
         Company exampleCompanyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -218,6 +223,9 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
 
 
             iw.store(c, source, skelSource); // method we are testing
+            iw.store(a, source, skelSource);
+            iw.store(ceo, source, skelSource);
+            iw.store(a2, source, skelSource);
             //          CompanyA ------- CEOA            CompanyA --.   - CEOA
             // Change                             to                 \
             //          CompanyB ------- CEOB            CompanyB -   `-- CEOB

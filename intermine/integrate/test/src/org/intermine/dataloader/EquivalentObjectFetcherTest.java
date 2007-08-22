@@ -273,6 +273,16 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         q.addToSelect(qc);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
 
+        Query qD = new Query();
+        QueryClass qcD = new QueryClass(Company.class);
+        qD.addFrom(qcD);
+        qD.addToSelect(qcD);
+        ConstraintSet csD = new ConstraintSet(ConstraintOp.AND);
+        csD.addConstraint(new SimpleConstraint(new QueryField(qcD, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(765213))));
+        qD.setConstraint(csD);
+        qD.setDistinct(false);
+        cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, qD));
+
         Query qB = new Query();
         QueryClass qcB = new QueryClass(Company.class);
         qB.addFrom(qcB);
@@ -294,16 +304,6 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         qB.setConstraint(csB);
         qB.setDistinct(false);
         cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, qB));
-
-        Query qD = new Query();
-        QueryClass qcD = new QueryClass(Company.class);
-        qD.addFrom(qcD);
-        qD.addToSelect(qcD);
-        ConstraintSet csD = new ConstraintSet(ConstraintOp.AND);
-        csD.addConstraint(new SimpleConstraint(new QueryField(qcD, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(765213))));
-        qD.setConstraint(csD);
-        qD.setDistinct(false);
-        cs.addConstraint(new SubqueryConstraint(qc, ConstraintOp.IN, qD));
 
         q.setConstraint(cs);
         q.setDistinct(false);

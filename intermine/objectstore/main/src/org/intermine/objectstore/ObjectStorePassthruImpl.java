@@ -159,6 +159,13 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
+    public Set<Object> getComponentsForQuery(Query q) {
+        return os.getComponentsForQuery(q);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Map<Object, Integer> getSequence(Set<Object> tables) {
         return os.getSequence(tables);
     }

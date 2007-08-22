@@ -54,7 +54,7 @@ public abstract class PrimaryKeyUtil
         }
         Collections.sort(keyNames);
         for (String keyName : keyNames) {
-            PrimaryKey key = new PrimaryKey(keyName, (String) cldKeys.get(keyName));
+            PrimaryKey key = new PrimaryKey(keyName, (String) cldKeys.get(keyName), cld);
             keyMap.put(keyName, key);
         }
         return keyMap;

@@ -410,7 +410,9 @@ public abstract class BatchWriterTestCase extends TestCase
         }
     }
 
-    //*
+    /*
+     * This test no longer works because we throttle analyses to only happen every ten minutes at most.
+     *
     public void testPerformanceAndAnalyse() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
         Connection con = db.getConnection();
@@ -820,6 +822,7 @@ public abstract class BatchWriterTestCase extends TestCase
             }
         }
     }
+
 /*     --------This test works, and is important, but takes a huge amount of time to run.-------
     public void testPartialFlushAccounting() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
