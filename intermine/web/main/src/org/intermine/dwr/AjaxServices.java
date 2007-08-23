@@ -422,7 +422,9 @@ public class AjaxServices
                 return emptyList;
             } catch (IOException e) {
                 LOG.error("couldn't run lucene filter", e);
-                return Collections.EMPTY_LIST;
+                ArrayList emptyList = new ArrayList();
+                emptyList.add(callId);
+                return emptyList;
             }
     
             //long time = System.currentTimeMillis();
