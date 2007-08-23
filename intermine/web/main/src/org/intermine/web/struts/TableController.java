@@ -283,6 +283,9 @@ public class TableController extends TilesAction
         String sortBy, direction = null;
         List<OrderBy> sortOrderList = q.getSortOrder();
         List<String> selectList = q.getViewStrings();
+        if (selectList.isEmpty()) {
+            return null;
+        }
         if (sortOrderList.isEmpty()) {
             // do something if nothing selected
             sortBy = selectList.get(0);

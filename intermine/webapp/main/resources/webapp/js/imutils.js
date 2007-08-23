@@ -47,23 +47,40 @@ function toggleHidden(elementId) {
     var element = document.getElementById(elementId);
     var display = element.style.display;
      if(display=='none') {
-		element.style.display = 'block';
-         document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
+		toggleOpen(element, elementId);
      } else {
-		element.style.display = 'none';
-        document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
+		toggleClose(element, elementId);
      }
+}
+
+function toggleClose(element, elementId) {
+	element.style.display = 'none';
+    document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
+}
+
+function toggleOpen(element, elementId) {
+	element.style.display = 'block';
+	document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
 }
 
 function toggleAll(count, prefix, display, extraField) {
 	for (i = 0; i < count; i++) {
 		var elementId = prefix + i;
-		if (document.getElementById(elementId) != null) {    		
-	    	toggleHidden(elementId);
+		var element = document.getElementById(elementId);
+		if (element != null) {    		
+			if(display=='expand') {
+				toggleOpen(element, elementId);
+			} else {
+				toggleClose(element, elementId);
+			}
      	}
      }
-     if (extraField != null) {
-		toggleHidden(extraField);
+     if (extraField != null  && (element = document.getElementById(extraField)) != null) {
+      		if(display=='expand') {
+				toggleOpen(element, extraField);
+			} else {
+				toggleClose(element, extraField);
+			}		
      }
 }
 
