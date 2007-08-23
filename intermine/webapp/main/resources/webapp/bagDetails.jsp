@@ -154,7 +154,8 @@
 			all records in this list
         </html:submit>  -->
   	</li>
-  	<li><a href="#templates">related templates</a></li>
+  	<li><html:link action="/bagDetails?scope=${scope}&bagName=${bag.name}"
+          onclick="return jump();">related templates</html:link></li>
   	<li><html:link action="/bag">all lists</html:link></li>
   	
   <span style="font-size:+2em;">Use</span>		
@@ -170,11 +171,9 @@
 		<li><a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a></li>
 		<li><a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a></li>
 		<li><a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a></li>
-		<li><a href="exportAction.do?table=${bag.name}&type=gff3Exporter&tableType=bag">gff3</a></li>
 		
   <span style="font-size:+2em;">Upload</span>
 		<li><html:link action="/bag">your data</html:link></li>
-		
 
 </td>
 </tr>
