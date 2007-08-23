@@ -349,7 +349,8 @@ public class SearchRepository
         throws ParseException, IOException {
         // special case for word ending in "log" eg. "ortholog" - add "orthologue" to the search
         String queryString = origQueryString.replaceAll("(\\w+log\\b)", "$1ue $1");
-        queryString = queryString.replaceAll("[^a-zA-Z0-9]", " ");
+        queryString = queryString.replaceAll("[^a-zA-Z0-9]", " ").trim();
+        queryString += "*";
         SearchRepository.LOG.info("Searching " + scope + " for \""
                 + origQueryString + "\"    - type: " + type);
         long time = System.currentTimeMillis();

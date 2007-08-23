@@ -33,7 +33,7 @@
 
 <div class="filterBar">
 <ul class="filterActions">
-  <li>Filter:&nbsp;</li>
+  <li>Search:&nbsp;</li>
   <li><input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
            onkeyup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');"
            onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');}"
@@ -43,7 +43,7 @@
   <!-- <li>&nbsp; <img id='${wsListId}_${type}_spinner' style='visibility: hidden' 
              src='images/wait20trans.gif'/></li> -->
 <c:if test="${! empty PROFILE.username || type == 'template'}">
-  <li>&nbsp;&nbsp;&nbsp;Sort/Filter:&nbsp;</li>
+  <li>&nbsp;&nbsp;&nbsp;Filter:&nbsp;</li>
 </c:if>  
 <c:if test="${! empty PROFILE.username}">
   <li ><a href="javascript:filterFavourites('${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" alt="Show Only Favourites" title="Show Only Favourites"/></a></li>
