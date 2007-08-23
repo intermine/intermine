@@ -1,3 +1,6 @@
+// This line keeps the nasty error message away (FireFox Bug)
+DWREngine.setMethod(DWREngine.IFrame);
+
 function setFavourite(name, type, image){
     var img = image.src;
     var isFavourite;
