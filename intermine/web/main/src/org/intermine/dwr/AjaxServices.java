@@ -417,7 +417,9 @@ public class AjaxServices
                 LOG.info("Lucene search took " + time + " milliseconds");
             } catch (ParseException e) {
                 LOG.error("couldn't run lucene filter", e);
-                return Collections.EMPTY_LIST;
+                ArrayList emptyList = new ArrayList();
+                emptyList.add(callId);
+                return emptyList;
             } catch (IOException e) {
                 LOG.error("couldn't run lucene filter", e);
                 return Collections.EMPTY_LIST;
