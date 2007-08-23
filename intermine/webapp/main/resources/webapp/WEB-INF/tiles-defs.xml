@@ -9,8 +9,6 @@
   <definition name="layout.template" path="/layout.jsp">
     <put name="pageName" value=""/>
     <put name="title" value="/title.jsp" />
-    <put name="header" value="/header.jsp"/>
-    <put name="menu" value="/menu.jsp"/>
     <put name="errorMessages" value="/errorMessages.jsp"/>
     <put name="footer" value="/footer.jsp"/>
     <put name="body" value=""/>
@@ -153,11 +151,8 @@
     <put name="body" value="showStatic.jsp"/>
     <put name="pageName" value="showStatic"/>
   </definition>
-  <definition name="headMenu.page" path="/headMenu.jsp">
-    <put name="header" value="/header.jsp"/>
-    <put name="menu" value="/menu.jsp"/>
-  </definition>
-  
+  <definition name="htmlHead.page" path="/htmlHead.jsp"/>
+  <definition name="headMenu.page" path="/headMenu.jsp"/>  
   <!--tiles-->
   <definition name="error.tile" path="/error.jsp"/>
   <definition name="begin.tile" path="/begin.jsp"/>

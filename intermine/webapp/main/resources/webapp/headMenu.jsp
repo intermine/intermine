@@ -11,9 +11,7 @@
 <!-- headMenu.jsp -->
 <html:xhtml/>
 
-<tiles:insert page="/htmlHead.jsp"/>
-
 <div id="header">
-  <tiles:get name="header"/>
-  <tiles:get name="menu"/>
+  <tiles:insert name="/header.jsp"/>
+  <tiles:insert name="/menu.jsp"/>
 </div>

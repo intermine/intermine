@@ -14,16 +14,20 @@
   <%-- from the tiles config file for description.jsp --%>
   <tiles:importAttribute name="pageName" scope="request"/>
 
-  <tiles:insert page="/htmlHead.jsp">
-    <tiles:put name="title" value="${title}"/>
-  </tiles:insert>
+  <head>
+    <html:base/>
+    <tiles:insert name="htmlHead.jsp">
+      <tiles:put name="title" value="${title}"/>
+    </tiles:insert>
+  </head>
 
   <body>
   
-  <div id="header">
-   <tiles:get name="header"/>
-   <tiles:get name="menu"/>
-  </div>
+  <tiles:insert name="headMenu.jsp">
+    <tiles:put name="header"/>
+    <tiles:put name="menu"/>
+  </tiles:insert>
+
   <div id="pagecontent">
     
       <%-- Render messages --%>
