@@ -209,9 +209,10 @@
 <c:if test="${!empty object}">
   <im:vspacer height="12"/>
 
+<c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 
 <div class="heading">Further Information by Category&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">
- (<a href="javascript:toggleAll(20, 'template', 'collapse', true);">collapse all -</a> /  <a href="javascript:toggleAll(20, 'template', 'expand', true);">expand all +</a>)</span></div>
+ (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', 'misc');">expand all +</a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', 'misc');">collapse all -</a>)</span></div>
 
     <%-- Each aspect --%>
     <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">

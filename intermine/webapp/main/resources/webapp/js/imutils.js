@@ -55,31 +55,15 @@ function toggleHidden(elementId) {
      }
 }
 
-function toggleAll(count, prefix, display, showMisc) {
+function toggleAll(count, prefix, display, extraField) {
 	for (i = 0; i < count; i++) {
 		var elementId = prefix + i;
-		if (document.getElementById(elementId) != null) {
-    	var element = document.getElementById(elementId);
-	     if(display=='expand') {
-			element.style.display = 'block';
-        	document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
-    	 } else {
-			element.style.display = 'none';
-        	document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
-     	}
+		if (document.getElementById(elementId) != null) {    		
+	    	toggleHidden(elementId);
      	}
      }
-     if (showMisc == 'true') {
-
-	   	var element = document.getElementById('misc');
-     
-     	 if(display=='expand') {
-			element.style.display = 'block';
-        	document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
-    	 } else {
-			element.style.display = 'none';
-        	document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
-     	}
+     if (extraField != null) {
+		toggleHidden(extraField);
      }
 }
 
