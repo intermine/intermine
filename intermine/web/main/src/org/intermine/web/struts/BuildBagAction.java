@@ -130,10 +130,10 @@ public class BuildBagAction extends InterMineAction
         List list = new ArrayList();
         int elementCount = 0;
         while ((thisLine = reader.readLine()) != null) {
-            StringTokenizer st = new StringTokenizer(thisLine, " \n\t,");
+            StringTokenizer st = new StringTokenizer(thisLine, "\n\t,");
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
-                list.add(token);
+                list.add(token.trim());
                 elementCount++;
                 if (elementCount > maxBagSize) {
                     ActionMessage actionMessage = null;
