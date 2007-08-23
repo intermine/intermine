@@ -15,3 +15,4 @@
   <tiles:insert name="/header.jsp"/>
   <tiles:insert name="/menu.jsp"/>
 </div>
+<!-- /headMenu.jsp -->
