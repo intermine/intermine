@@ -258,7 +258,7 @@
       <forward name="begin" redirect="true" path="/begin.do"/>
       <forward name="search" path="search.page"/>
       <forward name="templates" path="templates.page"/>
-      <forward name="bags" path="bag.page"/>
+      <forward name="bags" path="bag.page?page=view"/>
     </action>
     <action path="/feedbackAction" name="feedbackForm" type="org.intermine.web.struts.FeedbackAction" scope="request" input="feedback">
       <forward name="feedback" path="feedback.page"/>
