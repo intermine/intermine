@@ -16,6 +16,18 @@
       	window.location.hash = "templates";
       	return false;
       }
+	function go(where) {
+		switch (where){
+			case "show":
+				document.forms[1].showInResultsTable.value = 'true';
+				break;
+			case "query":
+				document.forms[1].useBagInQuery.value = 'true';
+				break;
+		}		
+    	document.forms[1].submit();
+   	}
+
 
       //]]>-->
 </script>
@@ -56,7 +68,7 @@
 <tr>
 	<td width="50%" valign="top">        
 	
-	<html:form action="/modifyBagDetailsAction">
+	<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
     	<html:hidden property="bagName" value="${bag.name}"/>
 	
           <table class="results" cellspacing="0">
@@ -149,20 +161,13 @@
   <br/>  <br/>  <br/>
 
   <span style="font-size:+2em;">View</span>
-  	<li>all records in this list
-  	   <!--  <html:submit property="showInResultsTable">
-			all records in this list
-        </html:submit>  -->
-  	</li>
   	<li><html:link action="/bagDetails?scope=${scope}&bagName=${bag.name}"
           onclick="return jump();">related templates</html:link></li>
   	<li><html:link action="/bag">all lists</html:link></li>
-  	
+  	<li><html:link action="/mymine">your lists</html:link></li>
   <span style="font-size:+2em;">Use</span>		
-	<li>in a query
-  	    <!-- <html:submit property="useBagInQuery">
-			in a query
-        </html:submit> -->
+	<li><a href="javascript:go('query');">in a query</a>
+	<input type="hidden" name="useBagInQuery" />
   	</li>
 		<li><html:link action="/templates">in a template</html:link></li>
 		
