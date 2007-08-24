@@ -14,14 +14,17 @@
 
 <im:body id="bagHistory">
 
-	<p>
-    <fmt:message key="history.savedbags.help"/>
+  <p>
+    <fmt:message key="history.savedbags.intro"/>
+    <c:if test="${empty PROFILE.username}">
+        <fmt:message key="history.savedbags.login"/>
+    </c:if>
   </p>
-
+<br/>
   <c:choose>
     <c:when test="${empty PROFILE.savedBags}">
       <div class="altmessage">
-        None
+        <fmt:message key="msgs.noResults"/>
       </div>
     </c:when>
     <c:otherwise>

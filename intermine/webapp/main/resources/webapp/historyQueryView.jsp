@@ -16,11 +16,12 @@
 <c:choose>
   <c:when test="${type == 'saved'}">
     <c:set var="queryMap" value="${PROFILE.savedQueries}"/>
-    <c:set var="messageKey" value="history.savedQueries.help"/>
+    <c:set var="messageKey" value="history.savedQueries.intro"/>
   </c:when>
   <c:otherwise>
     <c:set var="queryMap" value="${PROFILE.history}"/>
-    <c:set var="messageKey" value="history.history.help"/>
+    <c:set var="messageKey" value="history.history.intro"/>
+
   </c:otherwise>
 </c:choose>
 
@@ -40,13 +41,16 @@
 
   <p>
     <fmt:message key="${messageKey}"/>
+        <c:if test="${empty PROFILE.username && queryMap == '${PROFILE.history}'}">
+        	<fmt:message key="history.history.login"/>
+    	</c:if>
   </p>
-
+<br/>
     <%-- Choose the queries to display --%>
     <c:choose>
       <c:when test="${empty queryMap}">
         <div class="altmessage">
-          None
+          <fmt:message key="msgs.noResults"/>
         </div>
       </c:when>
       <c:otherwise>

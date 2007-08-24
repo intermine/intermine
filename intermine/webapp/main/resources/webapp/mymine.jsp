@@ -83,7 +83,7 @@
   <%-- login msg --%>
   <c:if test="${empty PROFILE.username}">
     <div class="body">
-      <html:link action="/login"><fmt:message key="menu.login"/>...</html:link>&nbsp;&nbsp;
+      <html:link action="/login"><fmt:message key="menu.login"/></html:link>&nbsp;&nbsp;
       <fmt:message key="mymine.login.help"/>
     </div>
   </c:if>
