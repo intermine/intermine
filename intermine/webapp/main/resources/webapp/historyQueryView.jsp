@@ -21,7 +21,6 @@
   <c:otherwise>
     <c:set var="queryMap" value="${PROFILE.history}"/>
     <c:set var="messageKey" value="history.history.intro"/>
-
   </c:otherwise>
 </c:choose>
 
