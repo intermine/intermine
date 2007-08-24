@@ -1,16 +1,28 @@
 
 <h1>The FlyMine Homepage</h1>
 
-
-
 <h1>Templates</h1>
-פרט<h2>The basics</h2>
 
-<p> This page shows all public templates, as well as your own (marked with 'my') - if you are logged in. Templates are predefined queries, each has a simple form and a description. Clicking on a template will display the template form allowing you to run or edit the query. We can add templates to this page at any time - it only takes a few
-minutes - so if you have a suggestion, let us know.</p> 
+<ul class="tabset_tabs">
+   <li><a href="#tab1" class="active">The basics</a></li>
+   <li><a href="#tab2">Searching Templates</a></li>
+</ul>
 
 
-<h2>Searching Templates</h2>
+<div id="tab1" class="tabset_content">
+   <h2 class="tabset_label">The basics</h2>
+
+<p> This page shows all public templates, as well as your own (marked
+with 'my') - if you are logged in. Templates are predefined queries,
+each has a simple form and a description. Clicking on a template will
+display the template form allowing you to run or edit the query. We
+can add templates to this page at any time - it only takes a few
+minutes - so if you have a suggestion, let us know.</p>
+
+</div>
+
+<div id="tab2" class="tabset_content">
+   <h2 class="tabset_label">Searching Templates</h2>
 
 <p> You can search templates by keywords (eg gene, orthologue, FlyAtlas). By default, templates from all data categories will be searched. Optionally, you can restrict your search to a certain data type. If you are logged in, public templates as well as your own templates will be searched, by default.</p>
 
@@ -20,14 +32,14 @@ minutes - so if you have a suggestion, let us know.</p>
 
 <img alt="[Templates]"  src="templates_filter.png"/>
 
-
+</div>
 
 
 <h1>Lists</h1>
 
-פרט<h2>Upload</h2>
+<h2>Upload</h2>
 
-פרט<h2>View</h2>
+<h2>View</h2>
 
 
 
@@ -35,7 +47,7 @@ minutes - so if you have a suggestion, let us know.</p>
 
 
 <h1>Aspect Page</h1>
-פרט
+
 
 <p>The FlyMine website presents the principle data types grouped
 together as different 'aspects', such as protein interactions or gene
@@ -59,7 +71,7 @@ expression. </p>
 
 
 <h1>Report Page</h1>
-פרט
+
 
 <p>For every object in the FlyMine database there is a report page
 which provides all the data that Flymine has available for that object
@@ -86,7 +98,15 @@ minutes - so if you have a suggestion, let us know.  </p>
 
 
 <h1>Results Page</h1>
-פרט<h2>The basics</h2>
+
+<ul class="tabset_tabs">
+   <li><a href="#tab1" class="active">The basics</a></li>
+   <li><a href="#tab2">Export and saving results<</a></li>
+   <li><a href="#tab3">Changing the output<</a></li>
+</ul>
+
+
+<div id="tab1" class="tabset_content"><h2 class="tabset_label">The basics</h2>
 
 
 <p> The results table for the template 'Gene --> Orthologues + GO
@@ -98,14 +118,14 @@ minutes - so if you have a suggestion, let us know.  </p>
     denotes paralogues of the best hit.</p>
 
 <p>
-<img alt="[Result Page]"  src="results.png"/>
+<img alt="[Results Page]"  src="results.png"/>
 </p>
 
 
 <table class="inlinetable">
 <tr>
 
-<td padding="5px" valign="center"><img alt="[Result page]" src="results_summary.png"/></td>
+<td padding="5px" valign="center"><img alt="[Results page]" src="results_summary.png"/></td>
 
 <td valign="center" width="60%">
 
@@ -119,12 +139,15 @@ original gene. (Note: it only shows the first 10 rows of summary).</td>
 </tr> 
 </table>
 
-פרט<h2>Export and saving results</h2>
+</div>
+
+
+<div id="tab2" class="tabset_content"><h2 class="tabset_label">Export and saving results</h2>
 
 <p> - All results pages have a number of <b>export options</b>:</p>
 
 <p>
-<img alt="[Result Page]"  src="export.png"/>
+<img alt="[Results Page]"  src="results_export.png"/>
 </p>
 
 
@@ -134,7 +157,7 @@ exported. If you do not wish to export certain columns these can be
 hidden using the small double arrow in the column header.</p>
 
 <p>
-<img alt="[Result Page]"  src="results_export.png"/>
+<img alt="[Results Page]"  src="results_select_export.png"/>
 </p>
 
 </p> If the results table contains a column with objects that have a
@@ -151,7 +174,7 @@ exported once.</p>
 add them to an existing list</b>:</p>
 
 <p>
-<img alt="[Result Page]"  src="save.png"/>
+<img alt="[Results Page]"  src="results_list.png"/>
 </p>
 
 
@@ -167,14 +190,16 @@ you are saving the actual item (eg the gene) to a list, not just the
 identifier.</p>
 
 <p>
-<img alt="[Result Page]"  src="results_list.png"/>
+<img alt="[Results Page]"  src="results_select_list.png"/>
 </p>
 
-פרט<h2>Changing the output</h2>
+</div>
+
+<div id="tab2" class="tabset_content"><h2 class="tabset_label">Changing the output</h2>
 
 <p>To change the output of the results table, click on 'query' at the top of the results page: </p>
 
-<img alt="[Result Page]" src="results_trail.png"/>.
+<img alt="[Results Page]" src="results_trail.png"/>.
 
 
 <p>This will display the template form again, and </p>
@@ -182,38 +207,42 @@ identifier.</p>
 <table class="inlinetable">
 <tr>
 
-<td padding="5px" valign="center"><img alt="[Template form]" src="editquery.png"/></td>
+<td padding="5px" valign="center"><img alt="[Template form]" src="templform_editquery.png"/></td>
 <td valign="center" width="80%"> will display the template query in the FlyMine Query Builder.</td> 
 
 </tr> 
 </table>
+</div>
 
 
+<h1>List Analysis Page</h1>
 
-<h1>Bag Details Page</h1>
 
-
-<p>A bag details page provides the following information:</p>
+<p>A list analysis page provides the following information:</p>
    
-<p>1.Bag contents: A table providing information summarising the
-contents of your bag. If your bag contains more than ten items, only
-the first ten are shown in this table. A button 'View whole bag'
-underneath the table allows you to view the entire bag. To the right
-of the summary table is a box allowing you to enter a description for
-your bag. This is particularly useful if you are logged in and may
-come back to use your bag again at a later point.</p>
+<p>1. List contents: A table summarising the contents of your
+list. Only up to ten items are shown. You can enter a description for
+your list, which might be useful if you want to use your list again at
+a later point.</p>
+
+<img alt="[List Analysis Page]" src="listpage_list.png"/>.
+
+<p>2. Links to actions you can do with your list:</p>
+
+<img alt="[List Analysis Page]" src="listpage_actions.png"/>.
    
-<p>2.Widgets: Widgets provide additional information about the
-contents of your bag. Widgets are currently only available for bags of
-genes. Widgets giving a summary of gene expression in the adult fly
-(according to the FlyAtlas data), a summary of pathways in which any
-genes in your bag are involved (according to KEGG) and statistical
-anlysis of the GO enrichment of the set of genes in your bag, are
-shown where the data is available. The types of data shown through
-widgets will increase in future releases of FlyMine.</p>
+<p>2. Widgets: Widgets provide additional information about the
+contents of your list. Widgets are currently only available for lists
+of genes. The types of data shown through widgets will increase in
+future releases of FlyMine.</p>
+
+
+<img alt="[List Analysis Page]" src="listpage_widgets.png"/>.
   
-<p>3.Templates: A set of template queries which have been
-automatically run on all the items in your bag. </p>
+<p>3. Templates: A set of template queries which have been
+automatically run on all the items in your list. </p>
+
+<img alt="[List Analysis Page]" src="listpage_templates.png"/>.
 
 
 
@@ -234,7 +263,7 @@ FlyMine will convert it for you. Alternatively, you can leave the
 default value.</p>
 
 <p>
-<img  alt="[Template form]"  src="tem_form.png"/>
+<img  alt="[Template form]"  src="templform.png"/>
 </p>
 
 <p><b>OR</b></p> 
@@ -246,14 +275,14 @@ bag, select the checkbox underneath the variable box and choose the
 bag from the drop-down list.</p>
 
 <p>
-<img  alt="[Template form]"  src="tem_form_list.png"/>
+<img  alt="[Template form]"  src="templform_list.png"/>
 </p>
 
 
 
 <table class="inlinetable">
 <tr>
-<td padding="5px" valign="center"><img alt="[Template form]" src="showresults.png"/></td>
+<td padding="5px" valign="center"><img alt="[Template form]" src="templform_showresults.png"/></td>
 <td valign="center" width="80%"> will take you directly to the results page.</td> 
 </tr> 
 </table>
@@ -261,7 +290,7 @@ bag from the drop-down list.</p>
 
 <table class="inlinetable">
 <tr>
-<td padding="5px" valign="center"><img alt="[Template form]" src="editquery.png"/></td>
+<td padding="5px" valign="center"><img alt="[Template form]" src="templform_editquery.png"/></td>
 <td valign="center" width="80%">will display the template query in the FlyMine Query Builder. Here you can change the output of the query or add a filter to build a different query.</td> 
 </tr> 
 </table>
