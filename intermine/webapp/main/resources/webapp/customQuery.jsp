@@ -7,6 +7,8 @@
 <!-- customQuery.jsp -->
 <html:xhtml/>
 
+<script type="text/javascript" src="js/niftycube.js"></script>
+
 <div class="body">
     <div id="leftCol">  
       <div id="pageDesc" class="pageDesc"><p><fmt:message key="customQuery.intro"/></p></div>

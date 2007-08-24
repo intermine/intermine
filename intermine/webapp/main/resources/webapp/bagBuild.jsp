@@ -69,10 +69,6 @@
 //]]>-->
 </script>
 
-<!-- <div id="pageDesc" class="pageDesc"><p><fmt:message key="bagBuild.intro"/></p></div>
-<script type="text/javascript">
-        Nifty("div#pageDesc","big");
-</script> -->
 
 <div class="actionArea" style="width:60%;clear:both;text-align:left">
   <h2><fmt:message key="bagBuild.makeNewBag"/></h2>

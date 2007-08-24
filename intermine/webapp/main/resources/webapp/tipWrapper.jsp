@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- tipWrapper.jsp -->
+  <script type="text/javascript" src="js/niftycube.js"></script>
   <link rel="stylesheet" type="text/css" href="css/tips.css"/>
     <script type="text/javascript">
       window.onload=function(){
