@@ -8,15 +8,15 @@
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/model/css/model.css'/>"/>
 
-<script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"/>
-<script type="text/javascript" src="<html:rewrite page='/js/scriptaculous.js'/>"/>
+<script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/scriptaculous.js'/>"></script>
 
-<script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"/>
-<script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"/>
-<script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"/>
-<script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"/>
-<script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"/>
-<script type="text/javascript" src="<html:rewrite page='/js/dropdown.js'/>"/>
+<script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/dropdown.js'/>"></script>
 
 <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
 <meta content="Integrated queryable database for Drosophila and Anopheles genomics"
