@@ -1,0 +1,70 @@
+
+@import url(branding.css);
+
+.whiteboxwithborder {
+  padding: 6px;
+  border: 1px solid #888;
+  background: white;
+}
+
+.links {
+  border-bottom: solid 1px #888; 
+}
+
+table td, table th {
+  padding: 6px;
+}
+
+table td, table th, .whiteboxwithborder {
+  font-size: 13px;
+}
+
+* {
+  font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
+}
+
+.datatitle        {
+                    background-color: #FFFFFF;
+                    border: solid 1px #888; 
+                  }
+.databody         {
+                    border: solid 1px #888; 
+                  }
+.searchtitle      {
+                    background-color: white;
+                    border: solid 1px #888;
+                  }
+/*.searchbody       {
+	            font-size: small;
+                  }
+.settingstitle    {
+	            font-size: small;
+                  }
+.settingsbody     {                     
+	            font-size: small;
+                  }
+.uploadtitle      {
+	            font-size: small;
+                  }*/
+.uploadbody       {
+                    background-color: #FFFFFF;
+                    border: solid 1px #888; 
+                  }
+.technicalinfo    { background-color: #FFFFFF; }
+.toggle           { color: #3366FF; }
+.error            { color: red; }
+.note             { color: red; }
+.pre              { font-family: monospace; }
+.popup            { COLOR: #9F141A;
+                    CURSOR: help;
+                    TEXT-DECORATION: none
+                  }
+
+A.bblue           { color: #FFFFFF;
+                    background-color: #9999FF;
+                    text-align: center;
+                  }
+A.bred            { color: #FFFFFF;
+                    background-color: #FF6666;
+                    text-align: center;
+                  }
