@@ -289,7 +289,7 @@
       <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
     <action path="/bagUploadConfirm" name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmAction" validate="true" input="error" parameter="action">
-      <forward name="back" path="bags.page"/>
+      <forward name="back" path="bag.page"/>
       <forward name="error" path="bagUploadConfirm.page"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>

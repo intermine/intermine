@@ -24,12 +24,9 @@ import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.profile.Profile;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.FileNameMap;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
