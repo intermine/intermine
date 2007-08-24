@@ -7,7 +7,6 @@
 
 <div class="body" align="center" style="clear:both">
 
-<div>Help | About | Data | Download | Citation</div>
 
 
       <c:if test="${pageName != 'feedback'}">
@@ -20,7 +19,7 @@
           </div>
         </div>
       
-      <div id="feedbackFormDiv" style="display:none">
+      <div id="feedbackFormDiv" style="display:none;">
             <im:vspacer height="11"/>
             <im:box title="${WEB_PROPERTIES['feedback.title']}"
                     helpUrl="${WEB_PROPERTIES['project.helpLocation']}/manualFeedback.shtml">
@@ -28,8 +27,14 @@
             </im:box>
         </div>
       </c:if>
-      <fmt:message key="funding"/>
+           
+<br/>
 
+<font size="0.8em">Home | Lists | Templates | Data | MyMine | Help | About | Software | Login</font>
+
+<br/>
+
+<div><fmt:message key="funding"/></div>
             
 </div>
 
