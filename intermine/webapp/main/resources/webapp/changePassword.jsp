@@ -3,7 +3,7 @@
 
 <!-- changePassword.jsp -->
 <html:xhtml/>
-<div class="body">
+&nbsp;
   <html:form action="/changePasswordAction">
     <html:hidden property="username" value="${PROFILE.username}"/>
     <table>
@@ -22,5 +22,4 @@
       </tr>
     </table>
   </html:form>
-</div>
 <!-- /changePassword.jsp -->

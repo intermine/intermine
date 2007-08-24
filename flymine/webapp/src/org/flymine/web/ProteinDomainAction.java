@@ -91,10 +91,11 @@ public class ProteinDomainAction extends InterMineAction
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
         InterMineBag bag = allBags.get(bagName);
-
+        
+        // select * from gene where protein.proteinFeature = proteinFeature & gene in bag
          
         Query querySample = new Query();
-        querySample.setDistinct(false);
+        querySample.setDistinct(true);
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -114,9 +115,8 @@ public class ProteinDomainAction extends InterMineAction
         querySample.addFrom(qcOrganism);
         querySample.addFrom(qcProteinFeature);
 
-        querySample.addToSelect(qfId);
-        querySample.addToSelect(geneCount);
-        querySample.addToSelect(qfName);
+        querySample.addToSelect(qcGene);
+        
 
         ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
 
@@ -163,8 +163,7 @@ public class ProteinDomainAction extends InterMineAction
         cs1.addConstraint(sc);
         
         querySample.setConstraint(cs1);
-        querySample.addToGroupBy(qfId);
-        querySample.addToGroupBy(qfName);
+
         
 
         Results results = os.execute(querySample);

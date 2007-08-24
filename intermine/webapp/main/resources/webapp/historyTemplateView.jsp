@@ -20,22 +20,22 @@
     <script LANGUAGE="JavaScript">
       <!--//<![CDATA[
           function confirmAction() {
-          return confirm("Do you really want to delete the selected queries?")
+          return confirm("Do you really want to delete the selected templates?")
           }
           //]]>-->
     </script>
 
     <p>
-      <fmt:message key="history.savedtemplates.help"/>
-      <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}/manual/manualQuickStartTemplates.shtml"/>
-      [<html:link href="${helpUrl}"><fmt:message key="begin.link.help"/></html:link>]
+      <fmt:message key="history.savedtemplates.intro"/>
     </p>
+    
+    <br/>
     
     <%-- Choose the queries to display --%>
     <c:choose>
       <c:when test="${empty PROFILE.savedTemplates}">
         <div class="altmessage">
-          None
+          <fmt:message key="msgs.noResults"/>
         </div>
       </c:when>
       <c:otherwise>
