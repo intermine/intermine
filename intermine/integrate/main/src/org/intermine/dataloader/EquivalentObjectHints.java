@@ -196,8 +196,18 @@ public class EquivalentObjectHints
         if (queried instanceof HashSet) {
             queried.add(value);
             if (queried.size() >= SUMMARY_SIZE) {
-                classAndFieldNameQueried.put(cafn, AlwaysSet.INSTANCE);
+                if (value instanceof Integer) {
+                    IntegerRangeSet newQueried = new IntegerRangeSet();
+                    for (Object oldValue : queried) {
+                        newQueried.add(oldValue);
+                    }
+                    classAndFieldNameQueried.put(cafn, newQueried);
+                } else {
+                    classAndFieldNameQueried.put(cafn, AlwaysSet.INSTANCE);
+                }
             }
+        } else if (queried instanceof IntegerRangeSet) {
+            queried.add(value);
         }
         return !values.contains(value);
     }
@@ -249,6 +259,11 @@ public class EquivalentObjectHints
     {
         private int low, high;
 
+        public IntegerRangeSet() {
+            this.low = Integer.MAX_VALUE;
+            this.high = Integer.MIN_VALUE;
+        }
+
         public IntegerRangeSet(int low, int high) {
             this.low = low;
             this.high = high;
@@ -257,6 +272,13 @@ public class EquivalentObjectHints
         public boolean contains(Object o) {
             int i = ((Integer) o).intValue();
             return (i >= low) && (i <= high);
+        }
+
+        public boolean add(Object o) {
+            int i = ((Integer) o).intValue();
+            low = Math.min(low, i);
+            high = Math.max(high, i);
+            return false;
         }
 
         public String toString() {
