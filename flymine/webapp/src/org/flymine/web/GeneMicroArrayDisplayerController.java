@@ -54,12 +54,14 @@ public class GeneMicroArrayDisplayerController extends TilesAction
             Gene gene = (Gene) request.getAttribute("object");
             Results results =
                 MicroArrayHelper.queryExperimentsInvolvingGene(gene.getIdentifier(), os);
-            ArrayList experiments = new ArrayList();
-            for (Iterator iter = results.iterator(); iter.hasNext(); ) {
-                ResultsRow row = (ResultsRow) iter.next();
-                experiments.add(row.get(0));
+            if (results != null) { 
+                ArrayList experiments = new ArrayList();
+                for (Iterator iter = results.iterator(); iter.hasNext(); ) {
+                    ResultsRow row = (ResultsRow) iter.next();
+                    experiments.add(row.get(0));
+                }
+                request.setAttribute("experiments", experiments);
             }
-            request.setAttribute("experiments", experiments);
         } catch (Exception err) {
             err.printStackTrace();
         }
