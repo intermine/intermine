@@ -67,6 +67,7 @@
       <include name="**/*.html"/>
       <exclude name="tour/*"/>
       <exclude name="tutorials/*"/>
+      <exclude name="whatcanidoonthispage/*"/>
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
