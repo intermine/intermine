@@ -16,22 +16,8 @@
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
 <html:xhtml/>
-<c:set var="titleKey">
-<c:choose>
-   <c:when test="${scope == 'global'}">
-     <fmt:message key="bagspage.public.title"/>
-   </c:when>
-   <c:otherwise>
-     <fmt:message key="bagspage.mybags.title"/>
-   </c:otherwise>
-</c:choose>
-</c:set>
-<!-- <p>
-  <fmt:message key="bagspage.public.help"/>
-</p> -->
-<!-- <p>
-  <fmt:message key="bagspage.mybags.help"/>
-</p> -->
+
+<fmt:message key="bags.title" var="titleKey" />
 
 <im:roundbox title="${titleKey}" stylename="welcome">
 <div class="" id="ws_${wsListId}_bag"><fmt:message key="bagBuild.intro"/>
