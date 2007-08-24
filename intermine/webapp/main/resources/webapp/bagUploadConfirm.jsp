@@ -89,14 +89,19 @@ function toggleForm(matchCount) {
 	</div>
     <div class="body">
     
-	<p><span id="addAllLink" onclick="addAll('${jsArray}');" class="fakelink">Add all</span> | 
-		<span id="removeAllLink" onclick="removeAll('${jsArray}');">Remove all</span></p>
+	<p><b><span id="addAllLink" onclick="addAll('${jsArray}');" class="fakelink">Add all</span> | 
+		<span id="removeAllLink" onclick="removeAll('${jsArray}');">Remove all</span></b></p>
+        
+        <br/>
         
     <p><fmt:message key="bagUploadConfirm.issuesHelp">
          <fmt:param value="${bagUploadConfirmForm.bagType}"/>
        </fmt:message></p>
 
+<br/>
+
     <c:if test="${! empty lowQualityMatches}">
+    <br/>
       <p> 
         <h3>
           Low quality matches
@@ -113,6 +118,7 @@ function toggleForm(matchCount) {
     </p>
     </c:if>
     <c:if test="${! empty duplicates}">
+    	<br/>
       <p> 
         <h3>
           Duplicates
@@ -130,6 +136,7 @@ function toggleForm(matchCount) {
     </c:if>
 
     <c:if test="${!empty convertedObjects}">
+    <br/>
       <p>
         <h3>
           <fmt:message key="bagUploadConfirm.convertedHeader"/>
