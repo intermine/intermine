@@ -7,27 +7,41 @@
 
 <!-- importTemplates.jsp -->
 <html:xhtml/>
-<im:body>
-  <fmt:message key="importTemplates.message"/><p>
+
+<div class="body" align="center">
+<div class="actionArea" style="width:60%;clear:both;text-align:left">
+
+<p><fmt:message key="importTemplates.intro"/></p>
+
+<br/>
+
+<p>
   <html:form action="/importTemplates">
-    <table cellspacing="0" cellpadding="3" border="0">
+	<div align="center">
+    <table cellspacing="0" cellpadding="0" border="0">
     <tr>
-      <td align="right" valign="top"><fmt:message key="importTemplates.xml"/></td>
-      <td><html:textarea property="xml" cols="60" rows="20"/></td>
+      <td align="center"><html:textarea property="xml" cols="60" rows="20"/></td>
     </tr>
     <c:if test="${IS_SUPERUSER}">
       <tr>
-        <td align="right" valign="top"><fmt:message key="importTemplates.overwriting"/></td>
-        <td><html:checkbox property="overwriting"/>
+        <td align="right" valign="top"><fmt:message key="importTemplates.overwriting"/> <html:checkbox property="overwriting"/></td>
       </tr>
     </c:if>
     <tr>
-      <td>&nbsp;</td>
       <td align="center">
+	      <br/>
         <html:submit><fmt:message key="importTemplates.submit"/></html:submit>
       </td>
     </tr>
     </table>
+    </div>
   </html:form>
-</im:body>
+  
+  <br/>
+  <br/>
+  
+  <font size="0.8em"><fmt:message key="importTemplates.message"/></font>
+  
+  
+</div></div>
 <!-- /importTemplates.jsp -->

@@ -7,22 +7,36 @@
 
 <!-- importQueries.jsp -->
 <html:xhtml/>
-<im:body>
-  <fmt:message key="importQuery.message"/><p>
+<div class="body" align="center">
+<div class="actionArea" style="width:60%;clear:both;text-align:left">
+  
+<p><fmt:message key="importQuery.intro"/></p>
+
+<br/>
+
+<p>
   <html:form action="/importQueriesAction?query_build=${param.query_builder}">
+  
     <html:hidden property="query_builder" value="${param.query_builder}"/>
-    <table cellspacing="0" cellpadding="3" border="0">
+    
+    <div align="center">
+    <table cellspacing="0" cellpadding="0" border="0">
     <tr>
-      <td align="right" valign="top"><fmt:message key="importQuery.xml"/></td>
       <td><html:textarea property="xml" cols="60" rows="20"/></td>
     </tr>
     <tr>
-      <td>&nbsp;</td>
       <td align="center">
+      <br/>
         <html:submit><fmt:message key="importQuery.submit"/></html:submit>
       </td>
     </tr>
     </table>
+    </div>
   </html:form>
-</im:body>
+  
+  <br/>
+  <br/>
+  
+  <p><font size="0.8em"><fmt:message key="importQuery.message"/></font></p>
+</div></div>
 <!-- /importQueries.jsp -->
