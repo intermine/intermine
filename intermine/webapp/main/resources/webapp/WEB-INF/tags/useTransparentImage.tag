@@ -22,14 +22,14 @@
         width:${width};
         margin-top:${marginTop};
         cursor:pointer;
-        filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='${src}' ,sizingMethod='crop');
+        filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<html:rewrite page="${src}"/> ,sizingMethod='crop');
       }
     </style>
   </c:when>
   <c:otherwise>
     <style type="text/css">
       div.${id} {
-        background:url('${src}') no-repeat;
+        background:url('<html:rewrite page="${src}"/>') no-repeat;
         height:${height};
         margin-top:${marginTop};
         width:${width};
