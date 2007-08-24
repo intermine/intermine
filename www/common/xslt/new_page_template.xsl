@@ -17,10 +17,12 @@
   <xsl:template match="/">
 
     <html>
-      <xsl:comment>#include virtual="/<xsl:value-of select="$webapppath"/>/headMenu.do"</xsl:comment>
-
-  
+      <head>
+        <xsl:comment>#include virtual="/<xsl:value-of select="$webapppath"/>/htmlHead.do"</xsl:comment>
+      </head>
+   
       <body>
+        <xsl:comment>#include virtual="/<xsl:value-of select="$webapppath"/>/headMenu.do"</xsl:comment>
         
         <div id="pagecontent">
           <table id="static-table" width="100%" cellspacing="0">

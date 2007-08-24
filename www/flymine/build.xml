@@ -52,9 +52,16 @@
 
     <copy file="rss.xml" todir="${dist.www}"/>
     <copy file="${src.www}/robots.txt" todir="${dist.www}"/>
+
     <copy todir="${dist.www}">
       <fileset dir="${src.www}">
         <include name="images/*"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist.www}">
+      <fileset dir="${src.www}">
+        <include name="style/*"/>
       </fileset>
     </copy>
   </target>
@@ -80,13 +87,16 @@
 
   <target name="generate-tour" depends="prepare" 
           description="Generate html for tour and copy images to build directory">
+     <mkdir dir="${dist.www}/tour"/>
+
      <exec executable="${common.scripts}/process_help.pl">
-       <arg value="site/tour/tour.txt"/>
+       <arg value="${src.www}/tour/tour.txt"/>
        <arg value="FlyMine Tour"/>
-       <arg value="${build.www}/tour-test/tour"/>
+       <arg value="tour"/>
+       <arg value="${dist.www}/tour/"/>
      </exec>
 
-     <copy todir="${build.www}/tour-test">
+     <copy todir="${dist.www}/tour">
        <fileset dir="${src.www}/tour">
          <include name="*.png"/>
        </fileset>
@@ -120,7 +130,7 @@
           description="Transform the website contents from XML to HTML"/>
 
 
-  <target name="release-www" depends="style-site"
+  <target name="release-www" depends="style-site, generate-tour"
           description="releases the static website to the webserver">
     <fixcrlf srcdir="${dist.www}"
        eol="crlf"
