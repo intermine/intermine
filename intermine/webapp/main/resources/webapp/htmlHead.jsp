@@ -35,7 +35,7 @@
   </c:choose>
 </title>
 
-     <script type="text/javascript" src="js/niftycube.js"></script>
+     
 
 <script type="text/javascript">
 <!--
