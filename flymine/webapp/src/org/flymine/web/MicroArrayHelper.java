@@ -104,6 +104,11 @@ public class MicroArrayHelper
  * @return results
  */
     public static Results queryExperimentsInvolvingGene(String gene, ObjectStore os) {
+        
+        if (gene == null) {
+            return null;
+        }
+        
         Query q = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         q.setConstraint(cs);
