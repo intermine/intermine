@@ -24,6 +24,7 @@ import org.intermine.dataconversion.ObjectStoreItemReader;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.metadata.Model;
 
 /**
@@ -182,12 +183,13 @@ public class DataTranslatorTask extends DynamicAttributeTask
                 args = new Object[] {reader, mappingProps, src, tgt};
             }
             DataTranslator dt = (DataTranslator) cls.getConstructor(types).newInstance(args);
-            ItemWriter writer = new ObjectStoreItemWriter(ObjectStoreWriterFactory
-                                                          .getObjectStoreWriter(targetAlias));
+            ObjectStoreWriter osWriter = ObjectStoreWriterFactory.getObjectStoreWriter(targetAlias);
+            ItemWriter writer = new ObjectStoreItemWriter(osWriter);
             configureDynamicAttributes(dt);
 
             dt.translate(writer);
             writer.close();
+            osWriter.close();
         } catch (BuildException e) {
             throw e;
         } catch (Exception e) {
