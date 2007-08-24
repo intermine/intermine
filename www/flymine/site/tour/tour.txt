@@ -1,4 +1,4 @@
-<h2>1. What is FlyMine?</h2>
+<h1>1. What is FlyMine?</h1>
 
 
 <p>FlyMine is a data warehouse that integrates many diverse biological data sets.
@@ -43,7 +43,7 @@ Protein Interactions.</p>
 <p><b>MyMine</b> lets you create an account to save your own queries, bags and templates, as well as marking public templates as favourites.</p>
 
 
-<h2>2. Report Pages</h2>
+<h1>2. Report Pages</h1>
 
 <p>A quick search box appears on the front page and in the menu bar of all pages.  You can search for any identifier or symbol for genes, proteins, transcripts and so on.  You can use '*' as a wildcard.</p>
 
@@ -64,7 +64,7 @@ Template queries are run for this gene when the page is loaded.  We can add temp
 <img alt="[object details templates]"  src="object_details_templates.png"/>
 
 
-<h2>3. Template Queries</h2>
+<h1>3. Template Queries</h1>
 
 <p>
 FlyMine includes a library of <b>template queries</b> - predefined queries designed to perform a particular task.  Each one has a description and a form to fill in.  For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
@@ -86,7 +86,7 @@ Or use the 'Search templates' menu link that searches the titles and description
 <img alt="[Select template]"  src="select_template1.png"/>
 
 
-<h2>4. Run a template</h2>
+<h1>4. Run a template</h1>
 
 <p>The template we found in our previous search takes a particular gene as input and searches for orthologues that have GO annotation.</p>
 
@@ -101,7 +101,7 @@ Or use the 'Search templates' menu link that searches the titles and description
 <img alt="[Template form]"  src="template_form.png"/>
 </p>
 
-<h2>5. Results page</h2>
+<h1>5. Results page</h1>
 
 <p>
 The results table shows the starting gene, orthologous genes and organism names with details of each GO term applied to the orthologous genes.  Orthologue data in FlyMine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a>, note that 'main' means the best hit in the other organism, 'secondary' denotes paralogues of the best hit.
@@ -128,7 +128,7 @@ All results pages have a number of export options.
 <img alt="[Export]"  src="export.png"/>
 
 
-<h2>6. Bag Upload</h2>
+<h1>6. Bag Upload</h1>
 
 <p>FlyMine can operate on custom lists of data, we call them <b>bags</b>.  You can save bags from results pages or create them by uploading lists of identifiers.  Bags can be used when running template queries and analysed by a series of <b>widgets</b> on a bag details page.  You can merge, subtract and find common members if you have more than one bag.</p>
 </p>
@@ -151,7 +151,7 @@ FlyMine's bag creation tool helps you upload a list of identifiers, the list can
 <img alt="[Create a new bag]"  src="create_a_bag.png"/>
 
 
-<h2>7. Bag confirm page</h2>
+<h1>7. Bag confirm page</h1>
 
 <p>
 If some identifiers don't produce an exact match a confirmation page lets you resolve any issues.  Here, two genes were found by synonyms and a protein identifier has been converted to the corresponding gene.  You can check through each issue or just add all the matches to your bag.
@@ -166,7 +166,7 @@ If some identifiers don't produce an exact match a confirmation page lets you re
 <img alt="[Save bag]"  src="bag_confirm_save.png"/>
 
 
-<h2>8. Bag details page</h2>
+<h1>8. Bag details page</h1>
 
 <p>
 The bag details page is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each category.
@@ -185,7 +185,7 @@ Template queries have been executed on the whole bag, just like on the gene repo
 
 <img alt="[Bag templates]"  src="bag_templates.png"/>
 
-<h2>9. Use bags in template queries</h2>
+<h1>9. Use bags in template queries</h1>
 
 <p>
 You can use bags in any template query, or in queries you create yourself in the QueryBuilder.  As the bag details page suggested many of the genes in our bag are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase 1 binding site data set which we can query with another template. 
@@ -225,7 +225,7 @@ You can use bags in any template query, or in queries you create yourself in the
 </ul>
 </p>
 
-<h2>10. Query Builder</h2>
+<h1>10. Query Builder</h1>
 
 <p>The QueryBuilder allows you to edit queries or create new ones.  It is aimed at advanced users but editing a template query to change the output or add a filter is easy.</p>
 
@@ -262,7 +262,7 @@ You can use bags in any template query, or in queries you create yourself in the
 
 
 
-<h2>11. MyMine</h2>
+<h1>11. MyMine</h1>
 
 <p>The bags that we have created will be saved temporarily for the current session. To save them permanently in FlyMine you can create a MyMine account.</p>
 

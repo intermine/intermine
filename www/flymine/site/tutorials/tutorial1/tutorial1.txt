@@ -1,4 +1,4 @@
-<h2>Tutorial 1: Browsing FlyMine - Running a Quick Search</h2>
+<h1>Tutorial 1: Browsing FlyMine - Running a Quick Search</h1>
 
  <p>
 Quick Search allows you to access all the information that is
