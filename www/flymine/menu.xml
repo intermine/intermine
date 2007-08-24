@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu>
-  <item title="Main">
-    <item url="/index.xml" title="Home"/>
+  <item title="About">
+    <item url="/about.xml" title="About FlyMine"/>
+    <item url="/contact.xml" title="Contact us"/>
+    <item url="/link.xml" title="Link to FlyMine"/>
+    <item url="/cite.xml" title="Cite FlyMine"/>
     <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
-    <item url="/doc/links.xml" title="Links"/>
-    <item url="/contact/index.xml" title="Contact us"/>
   </item>
 
   <item title="Release info">
-    <item url="/sources-table.xml" title="Data sources"/>
-    <item url="/stats.xml" title="Release statistics"/>
+    <item url="/dataCategories.do" title="Data sources"/>
     <item url="/release-notes.xml" title="Release notes"/>
     <item url="/archive.xml" title="Archived releases"/>
   </item>
@@ -20,34 +20,14 @@
   </item>
 
   <item title="Documentation">
-    <item url="/what.xml" title="Get Started"/>
-    <item url="/doc/tutorials/index.xml" title="Tutorials"/>
-    <item url="/doc/manual/index.xml" title="User Manual"/>
-    <item url="/doc/presentations/index.xml" title="Presentations"/>
-    <item url="/link.xml" title="Link to FlyMine"/>
-    <item url="/cite.xml" title="Cite FlyMine"/>
-  </item>
-  
-  <item url="/download/index.xml" title="Download software">
-    <item url="/download/index.xml" title="SVN checkout"/>
-    <item url="http://subversion.flymine.org/" title="Browse source"/>
+    <item url="/doc/software.xml" title="SOFTWARE"/>
+    <item url="/doc/links.xml" title="Links"/>
   </item>
   
   <item title="Project">
-    <item url="/project/index.xml" title="About"/>
     <item url="/project/team.xml" title="Team"/>
-    <item url="/project/funding.xml" title="Funding"/>
     <item url="/project/jobs.xml" title="Jobs"/>
-    <item url="/contact/index.xml" title="Contact"/>
-  </item>
-  
-  <item title="Related Projects">
-    <item url="http://www.intermine.org" title="InterMine"/>
-    <item url="http://preview.stemcellmine.org" title="StemCellMine"/>
-  </item>
-  
-  <item title="Internal">
-    <item url="/internal/index.xml" title="Menu"/>
+    <item url="/project/funding.xml" title="Funding"/>
   </item>
 </menu>
 
