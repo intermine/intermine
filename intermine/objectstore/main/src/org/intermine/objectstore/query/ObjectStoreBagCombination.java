@@ -28,6 +28,8 @@ public class ObjectStoreBagCombination implements QuerySelectable
     public static final int INTERSECT = 519552;
     /** Constant representing an EXCEPT operation */
     public static final int EXCEPT = 281056;
+    /** Constant representing an all but intersect operation */
+    public static final int ALLBUTINTERSECT = 853915;
 
     /**
      * Constructs a new ObjectStoreBagCombination.
@@ -35,7 +37,7 @@ public class ObjectStoreBagCombination implements QuerySelectable
      * @param op the type of combination, out of UNION, INTERSECT, and EXCEPT
      */
     public ObjectStoreBagCombination(int op) {
-        if ((op != UNION) && (op != INTERSECT) && (op != EXCEPT)) {
+        if ((op != UNION) && (op != INTERSECT) && (op != EXCEPT) && (op != ALLBUTINTERSECT)) {
             throw new IllegalArgumentException("Illegal type: " + op);
         }
         this.op = op;

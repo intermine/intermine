@@ -275,6 +275,7 @@ public class IqlQueryParser
                                            String modelPackage, Iterator iterator) {
         AST subquery = null;
         String tableAlias = null;
+        int limit = Integer.MAX_VALUE;
         do {
             switch (ast.getType()) {
                 case IqlTokenTypes.IQL_STATEMENT:
@@ -284,6 +285,9 @@ public class IqlQueryParser
                     break;
                 case IqlTokenTypes.TABLE_ALIAS:
                     tableAlias = unescape(ast.getFirstChild().getText());
+                    break;
+                case IqlTokenTypes.SUBQUERY_LIMIT:
+                    limit = Integer.parseInt(ast.getFirstChild().getText());
                     break;
                 default:
                     throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -295,6 +299,7 @@ public class IqlQueryParser
         Query sq = new Query();
         sq.setDistinct(false);
         processIqlStatementAST(subquery, sq, modelPackage, iterator);
+        sq.setLimit(limit);
         if (tableAlias == null) {
             throw new IllegalArgumentException("No alias for subquery");
         }
@@ -367,8 +372,8 @@ public class IqlQueryParser
                     } else if (node instanceof ObjectStoreBagCombination) {
                         if (((ObjectStoreBagCombination) node).getOp()
                                 != ObjectStoreBagCombination.UNION) {
-                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, and "
-                                    + "EXCEPT in a bag fetch query");
+                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, "
+                                    + "EXCEPT, and ALLBUTINTERSECT in a bag fetch query");
                         }
                     } else {
                         throw new IllegalArgumentException("UNION can only apply to bag fetches");
@@ -383,8 +388,8 @@ public class IqlQueryParser
                     } else if (node instanceof ObjectStoreBagCombination) {
                         if (((ObjectStoreBagCombination) node).getOp()
                                 != ObjectStoreBagCombination.INTERSECT) {
-                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, and "
-                                    + "EXCEPT in a bag fetch query");
+                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, "
+                                    + "EXCEPT, and ALLBUTINTERSECT in a bag fetch query");
                         }
                     } else {
                         throw new IllegalArgumentException(
@@ -400,11 +405,28 @@ public class IqlQueryParser
                     } else if (node instanceof ObjectStoreBagCombination) {
                         if (((ObjectStoreBagCombination) node).getOp()
                                 != ObjectStoreBagCombination.EXCEPT) {
-                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, and "
-                                    + "EXCEPT in a bag fetch query");
+                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, "
+                                    + "EXCEPT, and ALLBUTINTERSECT in a bag fetch query");
                         }
                     } else {
                         throw new IllegalArgumentException("EXCEPT can only apply to bag fetches");
+                    }
+                    break;
+                case IqlTokenTypes.LITERAL_allbutintersect:
+                    if (node instanceof ObjectStoreBag) {
+                        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(
+                                ObjectStoreBagCombination.ALLBUTINTERSECT);
+                        osbc.addBag((ObjectStoreBag) node);
+                        node = osbc;
+                    } else if (node instanceof ObjectStoreBagCombination) {
+                        if (((ObjectStoreBagCombination) node).getOp()
+                                != ObjectStoreBagCombination.ALLBUTINTERSECT) {
+                            throw new IllegalArgumentException("Cannot mix UNION, INTERSECT, "
+                                    + "EXCEPT, and ALLBUTINTERSECT in a bag fetch query");
+                        }
+                    } else {
+                        throw new IllegalArgumentException("ALLBUTINTERSECT can only apply to bag"
+                                + " fetches");
                     }
                     break;
                 case IqlTokenTypes.BAGS_FOR:

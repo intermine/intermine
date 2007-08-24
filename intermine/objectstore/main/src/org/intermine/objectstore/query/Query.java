@@ -40,6 +40,7 @@ public class Query implements FromElement
     private Set groupBy = new LinkedHashSet(); // @element-type QueryNode
     private Map aliases = new HashMap();
     private Map reverseAliases = new HashMap();
+    private int limit = Integer.MAX_VALUE;
 
     private int aliasNo = 1;
 
@@ -47,7 +48,25 @@ public class Query implements FromElement
      * Empty constructor.
      */
     public Query() {
-        // rmpty
+        // empty
+    }
+
+    /**
+     * Sets the LIMIT parameter for this query - not that this is only honoured in a subquery.
+     *
+     * @param limit the new limit parameter - the results will be truncated to this many rows
+     */
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    /**
+     * Returns the LIMIT parameter for this query.
+     *
+     * @return the limit parameter
+     */
+    public int getLimit() {
+        return limit;
     }
 
     /**

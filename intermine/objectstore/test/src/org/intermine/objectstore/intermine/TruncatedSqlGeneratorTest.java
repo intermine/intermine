@@ -282,6 +282,8 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectForeignKey", Collections.singleton("InterMineObject"));
         results.put("WhereCount", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.class = 'org.intermine.model.testmodel.Department' AND a2_.class = 'org.intermine.model.testmodel.Employee' AND a1_.id = a2_.departmentId GROUP BY a1_.OBJECT, a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
         results2.put("WhereCount", Collections.singleton("InterMineObject"));
+        results.put("LimitedSubquery", "SELECT DISTINCT a1_.a2_ AS a2_ FROM (SELECT a1_.name AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' LIMIT 3) AS a1_ ORDER BY a1_.a2_");
+        results2.put("LimitedSubquery", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {

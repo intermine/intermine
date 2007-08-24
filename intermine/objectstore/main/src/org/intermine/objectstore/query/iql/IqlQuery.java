@@ -153,6 +153,9 @@ public class IqlQuery
             needComma = true;
             retval.append(nodeToString(q, qn, parameters));
         }
+        if (q.getLimit() != Integer.MAX_VALUE) {
+            retval.append(" LIMIT " + q.getLimit());
+        }
         queryString = retval.toString();
     }
 
@@ -293,6 +296,9 @@ public class IqlQuery
                             break;
                         case ObjectStoreBagCombination.EXCEPT:
                             retval.append(" EXCEPT ");
+                            break;
+                        case ObjectStoreBagCombination.ALLBUTINTERSECT:
+                            retval.append(" ALLBUTINTERSECT ");
                             break;
                         default:
                             throw new IllegalStateException("Illegal op: " + osbc.getOp());

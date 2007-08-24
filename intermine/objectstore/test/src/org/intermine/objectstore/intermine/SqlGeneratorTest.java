@@ -359,6 +359,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("SelectForeignKey", Collections.singleton("Employee"));
         results.put("WhereCount", "SELECT a1_.id AS a1_id, COUNT(*) AS a3_ FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId GROUP BY a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
         results2.put("WhereCount", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Department", "Employee"})));
+        results.put("LimitedSubquery", "SELECT DISTINCT a1_.a2_ AS a2_ FROM (SELECT a1_.name AS a2_ FROM Employee AS a1_ LIMIT 3) AS a1_ ORDER BY a1_.a2_");
+        results2.put("LimitedSubquery", Collections.singleton("Employee"));
+        results.put("ObjectStoreBagCombination3", "SELECT value AS a1_ FROM osbag_int WHERE bagid IN (5, 6) GROUP BY value HAVING COUNT(*) < 2 ORDER BY value");
+        results2.put("ObjectStoreBagCombination3", Collections.singleton("osbag_int"));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

@@ -81,6 +81,7 @@ public class QueryCloner
             }
             newQuery.setConstraint((Constraint) cloneThing(query.getConstraint(), fromElementMap));
             newQuery.setDistinct(query.isDistinct());
+            newQuery.setLimit(query.getLimit());
         } catch (NoSuchFieldException e) {
             throw new IllegalArgumentException("No such field: " + e.getMessage());
         }

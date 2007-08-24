@@ -46,6 +46,7 @@ public class QueryTestCase extends OneTimeTestCase
             checkConstraints(msg + ": CONSTRAINTS not the same", q1.getConstraint(), q2.getConstraint(), q1, q2);
             // Are the ORDER BY lists equal?
             checkQueryClassLists(msg + ": ORDER BY lists are not equal", q1.getOrderBy(), q2.getOrderBy(), q1, q2);
+            assertEquals(msg + ": LIMIT is the not the same", q1.getLimit(), q2.getLimit());
             // Do the toString methods return the same thing?
             checkToString(msg + ": toString does not return the same String", q1, q2);
         } else if ((q1 == null) && (q2 == null)) {
