@@ -91,11 +91,14 @@ for my $page (@pages) {
 #  }
 
   my $style_path = 'style';
+  my $js_path = 'js';
 
   if (!-d "$style_path") {
     $style_path = "../$style_path";
+    $js_path = "../$js_path";
     if (!-d "$style_path") {
       $style_path = "../$style_path";
+      $js_path = "../$js_path";
     }
   }
 
@@ -108,6 +111,11 @@ for my $page (@pages) {
   <head>
     <title>$help_title page $num - $title</title>
     <link media="screen,print" href="$style_path/genhelp.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="$style_path/tabtastic.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="$js_path/addclasskillclass.js"></script>
+    <script type="text/javascript" src="$js_path/attachevent.js"></script>
+    <script type="text/javascript" src="$js_path/addcss.js"></script>
+    <script type="text/javascript" src="$js_path/tabtastic.js"></script>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
   </head>
   <body>
