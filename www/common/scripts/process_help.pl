@@ -23,7 +23,7 @@ my $title;
 my $text = "";
 
 while (my $line = <$help_file>) {
-  if ($line =~ m:<h2>(.*)</h2>:i) {
+  if ($line =~ m:<h1>(.*)</h1>:i) {
     if (defined $title) {
       save($title, $text);
       $text = "";
@@ -43,8 +43,6 @@ for (my $i = 0; $i < @pages; $i++) {
 sub save
 {
   my ($title, $text) = @_;
-
-#  warn "$title, $text\n";
 
   if ($title =~ m[(?:\d+\.\s+)?(.*)]i) {
     push @pages, {
@@ -109,12 +107,11 @@ for my $page (@pages) {
 <html xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px">
   <head>
     <title>$help_title page $num - $title</title>
-    <link media="screen,print" href="$style_path/base.css" type="text/css" rel="stylesheet" />
-    <link media="screen,print" href="$style_path/branding.css" type="text/css" rel="stylesheet" />
+    <link media="screen,print" href="$style_path/genhelp.css" type="text/css" rel="stylesheet" />
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
   </head>
   <body>
-    <div class="tour">
+    <div class="genhelp">
       <table width="100%">
         <tr>
           <td colspan="3" align="right">

@@ -1,0 +1,45 @@
+/*
+    CSS for generated help HTML
+ */
+
+body {
+  padding: 0px;
+  margin: 0px;
+  background-color: #f4f4ff;
+}
+
+.genhelp {
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.genhelp img {
+  border: 0px;
+}
+
+.genhelp .nextprev {
+  font-size: 65%;
+}
+
+.genhelp .heading {
+  background-color: #eee;
+  border-bottom: 1px solid #000;
+  border-top: 1px solid #000;
+}
+
+.genhelp .title {
+  font-size: 190%;
+}
+
+.genhelp .content {
+  padding: 20px;
+  font-size: 120%;
+  margin: 30px
+  padding: 30px
+}
+
+.genhelp .inlinetable {
+  font-size: 100%;
+}
+
