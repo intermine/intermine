@@ -1,4 +1,3 @@
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
@@ -7,8 +6,6 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- dataCategories -->
-<html:xhtml/>
-
 
 <table padding="0px" margin="0px" width="100%">
   <tr>
