@@ -23,6 +23,8 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
@@ -110,7 +112,8 @@ public class ProteinDomainDisplayerController extends TilesAction
              QueryField qfName = new QueryField(qcProteinFeature, "name");
              QueryField qfId = new QueryField(qcProteinFeature, "interproId");
              QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-
+             QueryField qfInterpro = new QueryField(qcProteinFeature, "identifier");
+             
              QueryFunction geneCount = new QueryFunction();
 
              querySample.addFrom(qcGene);
@@ -162,6 +165,10 @@ public class ProteinDomainDisplayerController extends TilesAction
                  new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcProteinFeature);
              cs1.addConstraint(cc3);
 
+             SimpleConstraint sc = 
+                 new SimpleConstraint(qfInterpro, ConstraintOp.MATCHES, new QueryValue("IPR%"));
+             cs1.addConstraint(sc);
+             
              querySample.setConstraint(cs1);
              querySample.addToGroupBy(qfId);
              querySample.addToGroupBy(qfName);
@@ -183,11 +190,10 @@ public class ProteinDomainDisplayerController extends TilesAction
              cs2.addConstraint(cc2);
              cs2.addConstraint(cc3);
              cs2.addConstraint(bc2);
+             cs2.addConstraint(sc);
              queryPopulation.setConstraint(cs2);
 
              queryPopulation.addToGroupBy(qfId);
-
-
              
              // run both queries and compare the results 
              ArrayList results = FlymineUtil.statsCalc(os, queryPopulation, querySample, bag, 
