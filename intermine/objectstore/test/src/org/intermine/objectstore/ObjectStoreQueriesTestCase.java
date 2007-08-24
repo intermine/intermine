@@ -247,6 +247,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ObjectStoreBagsForObject2", objectStoreBagsForObject2());
         queries.put("SelectForeignKey", selectForeignKey());
         queries.put("WhereCount", whereCount());
+        queries.put("LimitedSubquery", limitedSubquery());
+        queries.put("ObjectStoreBagCombination3", objectStoreBagCombination3());
     }
 
     /*
@@ -1765,6 +1767,39 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qc1, "employees"), ConstraintOp.CONTAINS, qc2));
         cs.addConstraint(new SimpleConstraint(count, ConstraintOp.GREATER_THAN, new QueryValue(new Long(1))));
         q.addToGroupBy(qc1);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT DISTINCT a3_.a2_ FROM (SELECT a1_.name AS a2_ FROM Employee AS a1_ LIMIT 3) AS a3_
+     */
+    public static Query limitedSubquery() throws Exception {
+        Query subQ = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        subQ.addFrom(qc);
+        QueryField qf = new QueryField(qc, "name");
+        subQ.addToSelect(qf);
+        subQ.setDistinct(false);
+        subQ.setLimit(3);
+        Query q = new Query();
+        q.addFrom(subQ);
+        q.addToSelect(new QueryField(subQ, qf));
+        q.setDistinct(true);
+        return q;
+    }
+
+    /*
+     * SELECT BAG(5) ALLBUTINTERSECT BAG(6)
+     */
+    public static Query objectStoreBagCombination3() throws Exception {
+        Query q = new Query();
+        ObjectStoreBag osb1 = new ObjectStoreBag(5);
+        ObjectStoreBag osb2 = new ObjectStoreBag(6);
+        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(ObjectStoreBagCombination.ALLBUTINTERSECT);
+        osbc.addBag(osb1);
+        osbc.addBag(osb2);
+        q.addToSelect(osbc);
         q.setDistinct(false);
         return q;
     }

@@ -21,6 +21,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryForeignKey;
@@ -138,6 +139,7 @@ public class EquivalentObjectHints
         Set values = classAndFieldNameValues.get(cafn);
         if (values == null) {
             try {
+                Query testQuery = new Query();
                 Query q = new Query();
                 QueryClass qc = new QueryClass(clazz);
                 q.addFrom(qc);
@@ -148,9 +150,20 @@ public class EquivalentObjectHints
                     qs = new QueryForeignKey(qc, fieldName);
                 }
                 q.addToSelect(qs);
-                q.setDistinct(true);
-                List<? extends List> results = os.execute(q, 0, SUMMARY_SIZE, false, false,
+                q.setDistinct(false);
+                testQuery.addFrom(q);
+                testQuery.addToSelect(new QueryField(q, qs));
+                testQuery.setDistinct(true);
+                q.setLimit(SUMMARY_SIZE * 10);
+                List<? extends List> results = os.execute(testQuery, 0, SUMMARY_SIZE, false, false,
                         ObjectStore.SEQUENCE_IGNORE);
+                if (results.size() < SUMMARY_SIZE) {
+                    q = QueryCloner.cloneQuery(q);
+                    q.setLimit(Integer.MAX_VALUE);
+                    q.setDistinct(true);
+                    results = os.execute(q, 0, SUMMARY_SIZE, false, false,
+                            ObjectStore.SEQUENCE_IGNORE);
+                }
                 if (results.size() >= SUMMARY_SIZE) {
                     if (Integer.class.equals(qs.getType())) {
                         q = new Query();

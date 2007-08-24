@@ -426,6 +426,21 @@ public class SqlGenerator
                 }
                 retval.append(") ORDER BY " + BAGVAL_COLUMN);
                 return retval.toString();
+            } else if (osbc.getOp() == ObjectStoreBagCombination.ALLBUTINTERSECT) {
+                StringBuffer retval = new StringBuffer("SELECT " + BAGVAL_COLUMN
+                        + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
+                        + " IN (");
+                boolean needComma = false;
+                for (ObjectStoreBag osb : osbc.getBags()) {
+                    if (needComma) {
+                        retval.append(", ");
+                    }
+                    needComma = true;
+                    retval.append(osb.getBagId() + "");
+                }
+                retval.append(") GROUP BY " + BAGVAL_COLUMN + " HAVING COUNT(*) < "
+                        + osbc.getBags().size() + " ORDER BY " + BAGVAL_COLUMN);
+                return retval.toString();
             } else {
                 StringBuffer retval = new StringBuffer();
                 boolean needComma = false;
@@ -478,6 +493,9 @@ public class SqlGenerator
             .append(buildGroupBy(q, schema, state))
             .append(state.getHaving())
             .append(orderBy);
+        if ((q.getLimit() != Integer.MAX_VALUE) && (kind == QUERY_SUBQUERY_FROM)) {
+            retval.append(" LIMIT " + q.getLimit());
+        }
 
         return retval.toString();
     }

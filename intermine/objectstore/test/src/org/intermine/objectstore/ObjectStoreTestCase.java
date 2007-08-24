@@ -503,6 +503,12 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("DepartmentA1"), new Long(3) },
                              { data.get("DepartmentB1"), new Long(2) } };
         results.put("WhereCount", toList(r));
+        //r = new Object[][] { { "EmployeeA1" },
+        //                     { "EmployeeA2" },
+        //                     { "EmployeeA3" } };
+        //results.put("LimitedSubquery", toList(r));
+        results.put("LimitedSubquery", NO_RESULT); // Gives a random selection of the Employees
+        results.put("ObjectStoreBagCombination3", Collections.EMPTY_LIST);
     }
 
     /**

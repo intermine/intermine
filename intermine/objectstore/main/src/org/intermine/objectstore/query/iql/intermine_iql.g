@@ -26,6 +26,7 @@ tokens {
     TABLE;
     TABLE_NAME;
     SUBQUERY;
+    SUBQUERY_LIMIT;
     CONSTANT;
     FIELD;
     FIELD_NAME;
@@ -95,7 +96,7 @@ select_value:
             | constant "as"! field_alias
             | safe_function "as"! field_alias
             | paren_value "as"! field_alias
-            | objectstorebag (( "union" | "intersect" | "except" ) objectstorebag )*
+            | objectstorebag (( "union" | "intersect" | "except" | "allbutintersect" ) objectstorebag )*
             | bags_for
         )
         { #select_value = #([SELECT_VALUE, "SELECT_VALUE"], #select_value); }
@@ -173,8 +174,13 @@ query_class_bag_multi:
     ;
 
 subquery:
-        OPEN_PAREN! iql_statement CLOSE_PAREN! ( "as"! )? table_alias
+        OPEN_PAREN! iql_statement ( subquery_limit )? CLOSE_PAREN! ( "as"! )? table_alias
         { #subquery = #([SUBQUERY, "SUBQUERY"], #subquery); }
+    ;
+
+subquery_limit:
+        "limit"! INTEGER
+        { #subquery_limit = #([SUBQUERY_LIMIT, "SUBQUERY_LIMIT"], #subquery_limit); }
     ;
 
 constant:

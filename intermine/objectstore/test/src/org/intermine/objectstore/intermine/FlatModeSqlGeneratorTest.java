@@ -230,6 +230,7 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results.put("SelectForeignKey", "SELECT a1_.departmentId AS a2_ FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.departmentId");
         results.put("WhereCount", "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, COUNT(*) AS a3_ FROM Department AS a1_, Employee AS a2_ WHERE a2_.class = 'org.intermine.model.testmodel.Employee' AND a1_.id = a2_.departmentId GROUP BY a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
         results2.put("WhereCount", new HashSet(Arrays.asList("Employee", "Department")));
+        results.put("LimitedSubquery", "SELECT DISTINCT a1_.a2_ AS a2_ FROM (SELECT a1_.name AS a2_ FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' LIMIT 3) AS a1_ ORDER BY a1_.a2_");
     }
 
     protected DatabaseSchema getSchema() throws Exception {

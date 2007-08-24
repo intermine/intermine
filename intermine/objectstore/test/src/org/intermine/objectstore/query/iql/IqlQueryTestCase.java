@@ -270,5 +270,7 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("ObjectStoreBagsForObject2", fq);
         results.put("SelectForeignKey", new IqlQuery("SELECT a1_.department.id AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
         results.put("WhereCount", new IqlQuery("SELECT a1_, COUNT(*) AS a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE (a1_.employees CONTAINS a2_ AND COUNT(*) > 1) GROUP BY a1_", null));
+        results.put("LimitedSubquery", new IqlQuery("SELECT DISTINCT a1_.a2_ AS a2_ FROM (SELECT a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ LIMIT 3) AS a1_", null));
+        results.put("ObjectStoreBagCombination3", new IqlQuery("SELECT BAG(5) ALLBUTINTERSECT BAG(6)", null));
     }
 }

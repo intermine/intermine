@@ -76,7 +76,7 @@ public class ModifyBagAction extends InterMineAction
             } else if (request.getParameter("intersect") != null) {
                 combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT);
             } else if (request.getParameter("subtract") != null) {
-                combine(mapping, form, request, ObjectStoreBagCombination.EXCEPT);
+                combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT);
             } else if (request.getParameter("delete") != null) {
                 delete(mapping, form, request);
             }
