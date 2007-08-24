@@ -4,19 +4,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!-- htmlHead.jsp -->
-<link rel="stylesheet" type="text/css" href="css/webapp.css"/>
-<link rel="stylesheet" type="text/css" href="css/${pageName}.css"/>
-<link rel="stylesheet" type="text/css" href="model/css/model.css"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/model/css/model.css'/>"/>
 
-<script type="text/javascript" src="js/prototype.js"></script>
-<script type="text/javascript" src="js/scriptaculous.js"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"/>
+<script type="text/javascript" src="<html:rewrite page='/js/scriptaculous.js'/>"/>
 
-    <script type='text/javascript' src='dwr/interface/AjaxServices.js'></script>
-    <script type='text/javascript' src='dwr/engine.js'></script>
-    <script type='text/javascript' src='dwr/util.js'></script>
-<script type="text/javascript" src="js/imdwr.js"></script>
-<script type="text/javascript" src="js/imutils.js" ></script>
-<script type="text/javascript" src="js/dropdown.js" ></script>
+<script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"/>
+<script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"/>
+<script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"/>
+<script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"/>
+<script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"/>
+<script type="text/javascript" src="<html:rewrite page='/js/dropdown.js'/>"/>
 
 <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
 <meta content="Integrated queryable database for Drosophila and Anopheles genomics"
