@@ -1,0 +1,267 @@
+
+<h1>The FlyMine Homepage</h1>
+
+
+
+<h1>Templates</h1>
+פרט<h2>The basics</h2>
+
+<p> This page shows all public templates, as well as your own (marked with 'my') - if you are logged in. Templates are predefined queries, each has a simple form and a description. Clicking on a template will display the template form allowing you to run or edit the query. We can add templates to this page at any time - it only takes a few
+minutes - so if you have a suggestion, let us know.</p> 
+
+
+<h2>Searching Templates</h2>
+
+<p> You can search templates by keywords (eg gene, orthologue, FlyAtlas). By default, templates from all data categories will be searched. Optionally, you can restrict your search to a certain data type. If you are logged in, public templates as well as your own templates will be searched, by default.</p>
+
+<img alt="[Templates]"  src="templates_search.png"/>
+
+<p>In the example below, only 'My templates' will be searched (not the public ones), and only templates that I have marked as 'My Favourites'.</p>
+
+<img alt="[Templates]"  src="templates_filter.png"/>
+
+
+
+
+<h1>Lists</h1>
+
+פרט<h2>Upload</h2>
+
+פרט<h2>View</h2>
+
+
+
+
+
+
+<h1>Aspect Page</h1>
+פרט
+
+<p>The FlyMine website presents the principle data types grouped
+together as different 'aspects', such as protein interactions or gene
+expression. </p>
+
+<p> Each aspect page lists:</p>
+
+    <p>1. Current data - background information on the origin of particular source datasets:</p>
+    <p>2. Bulk download - access to convenient derivative bulk datasets for browsing or export in standard format:</p>
+
+<img alt="[Aspect Page]"  src="aspect_top.png"/>
+
+    <p>3. Relevant predefined template queries:</p>
+
+<img alt="[Aspect Page]"  src="aspect_templates.png"/>
+
+
+    <p>4. Query starting points - classes for use as starting points in the Query Builder:</p>
+
+<img alt="[Aspect Page]"  src="aspect_querystart.png"/>
+
+
+<h1>Report Page</h1>
+פרט
+
+<p>For every object in the FlyMine database there is a report page
+which provides all the data that Flymine has available for that object
+along with additional information such as the GBrowse genome viewer
+for sequence features.</p>
+
+
+<p>All report pages have the same basic structure: The top part
+provides summary information for every object, whereas the lower part,
+'Other details by aspect' has more detailed information divided into
+'aspects'. The aspects correspond to categories of data shown on the
+FlyMine homepage.</p>
+
+<img alt="[Report Page]"  src="report_top.png"/>
+
+<p> Template queries are run for this gene when the page is loaded. We
+can add templates to this page at any time - it only takes a few
+minutes - so if you have a suggestion, let us know.  </p>
+
+<img alt="[Report Page]"  src="report_bottom.png"/>
+
+
+<p> See also Tutotial 2: Navigating report pages. </p>
+
+
+<h1>Results Page</h1>
+פרט<h2>The basics</h2>
+
+
+<p> The results table for the template 'Gene --> Orthologues + GO
+    terms of these orthologues' shows the starting gene, orthologous
+    genes and organism names with details of each GO term applied to
+    the orthologous genes. Orthologue data in FlyMine come from <a
+    href="http://inparanoid.sbc.su.se/">InParanoid</a>. Note that
+    'main' means the best hit in the other organism, 'secondary'
+    denotes paralogues of the best hit.</p>
+
+<p>
+<img alt="[Result Page]"  src="results.png"/>
+</p>
+
+
+<table class="inlinetable">
+<tr>
+
+<td padding="5px" valign="center"><img alt="[Result page]" src="results_summary.png"/></td>
+
+<td valign="center" width="60%">
+
+Summary buttons <img alt="[icon]" src="sigma.png" valign="center"/> at
+the top of each column allow you to view some summary statistics. For
+names and identifiers it will tell you about unique values, numerical
+data gives the min, max, mean and standard deviation. The summary
+button for the column 'Orthologue > GO annotation > name' shows you
+the most commonly occurring GO terms applied to orthologues of the
+original gene. (Note: it only shows the first 10 rows of summary).</td> 
+</tr> 
+</table>
+
+פרט<h2>Export and saving results</h2>
+
+<p> - All results pages have a number of <b>export options</b>:</p>
+
+<p>
+<img alt="[Result Page]"  src="export.png"/>
+</p>
+
+
+<p>Currently, either the entire results table or specific columns can be
+exported. If nothing is selected, the entire data set will be
+exported. If you do not wish to export certain columns these can be
+hidden using the small double arrow in the column header.</p>
+
+<p>
+<img alt="[Result Page]"  src="results_export.png"/>
+</p>
+
+</p> If the results table contains a column with objects that have a
+nucleotide or amino acid sequence, it is possible to export all
+sequences from that column in FASTA format. Currently, the FASTA
+export option will export the sequences belonging to objects in the
+first visible (i.e. not hidden) column only. Columns can be moved to
+the first position by using the arrows in the header. If objects
+appear more than once in the column, the sequence will only be
+exported once.</p>
+
+
+<p> - Results pages also allow you to <b>save your data to a new list or
+add them to an existing list</b>:</p>
+
+<p>
+<img alt="[Result Page]"  src="save.png"/>
+</p>
+
+
+<p>Select the required data and either add it to an existing list or
+save it to a new list. Selecting the check boxes next to the column
+headings will select the entire column for saving. Alternatively,
+individual items can be saved by selecting check-boxes next to the
+items. Currently, a list can only contain one column. However, if you
+have multiple columns for the same item (eg a column for gene
+identifier and one for gene symbol), all related columns become
+highlighted when you select the checkbox next to one. This is because
+you are saving the actual item (eg the gene) to a list, not just the
+identifier.</p>
+
+<p>
+<img alt="[Result Page]"  src="results_list.png"/>
+</p>
+
+פרט<h2>Changing the output</h2>
+
+<p>To change the output of the results table, click on 'query' at the top of the results page: </p>
+
+<img alt="[Result Page]" src="results_trail.png"/>.
+
+
+<p>This will display the template form again, and </p>
+
+<table class="inlinetable">
+<tr>
+
+<td padding="5px" valign="center"><img alt="[Template form]" src="editquery.png"/></td>
+<td valign="center" width="80%"> will display the template query in the FlyMine Query Builder.</td> 
+
+</tr> 
+</table>
+
+
+
+<h1>Bag Details Page</h1>
+
+
+<p>A bag details page provides the following information:</p>
+   
+<p>1.Bag contents: A table providing information summarising the
+contents of your bag. If your bag contains more than ten items, only
+the first ten are shown in this table. A button 'View whole bag'
+underneath the table allows you to view the entire bag. To the right
+of the summary table is a box allowing you to enter a description for
+your bag. This is particularly useful if you are logged in and may
+come back to use your bag again at a later point.</p>
+   
+<p>2.Widgets: Widgets provide additional information about the
+contents of your bag. Widgets are currently only available for bags of
+genes. Widgets giving a summary of gene expression in the adult fly
+(according to the FlyAtlas data), a summary of pathways in which any
+genes in your bag are involved (according to KEGG) and statistical
+anlysis of the GO enrichment of the set of genes in your bag, are
+shown where the data is available. The types of data shown through
+widgets will increase in future releases of FlyMine.</p>
+  
+<p>3.Templates: A set of template queries which have been
+automatically run on all the items in your bag. </p>
+
+
+
+<h1>The Template Form</h1>
+
+<p>As an example, the form is shown for the template 'Gene -->
+Orthologues + GO terms of these orthologues'. This template takes a
+particular gene as input and searches for orthologues that have GO
+annotation.</p>
+
+
+<p>You can leave the box with the default value shown or you can enter
+any identifier and FlyMine will try to find the right gene. For
+example, for the <i>D. melanogaster</i> gene zen you can enter 'zen',
+'CG1046', 'FBgn0004053', 'zerknullt' or any synonym.  You can even
+enter a transcript (CG1046-RA) or protein (ZEN1_DROME) identifier and
+FlyMine will convert it for you. Alternatively, you can leave the
+default value.</p>
+
+<p>
+<img  alt="[Template form]"  src="tem_form.png"/>
+</p>
+
+<p><b>OR</b></p> 
+
+<p>Any variable (box) in a template query can be constrained to a bag
+(or 'not in' a bag) rather than to a single value, provided you have a
+bag of the correct type saved in 'MyMine'. To constrain a query to a
+bag, select the checkbox underneath the variable box and choose the
+bag from the drop-down list.</p>
+
+<p>
+<img  alt="[Template form]"  src="tem_form_list.png"/>
+</p>
+
+
+
+<table class="inlinetable">
+<tr>
+<td padding="5px" valign="center"><img alt="[Template form]" src="showresults.png"/></td>
+<td valign="center" width="80%"> will take you directly to the results page.</td> 
+</tr> 
+</table>
+
+
+<table class="inlinetable">
+<tr>
+<td padding="5px" valign="center"><img alt="[Template form]" src="editquery.png"/></td>
+<td valign="center" width="80%">will display the template query in the FlyMine Query Builder. Here you can change the output of the query or add a filter to build a different query.</td> 
+</tr> 
+</table>
