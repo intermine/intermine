@@ -4,18 +4,19 @@ use strict;
 
 my @pages = ();
 
-if (@ARGV != 3) {
+if (@ARGV != 4) {
   die <<USAGE;
 Wrong number of argument
 
 usage:
-  $0 input_file "Some title" output_file_prefix
+  $0 input_file "Some title" output_file_prefix destination_directory
 USAGE
 }
 
 my $help_file_name = $ARGV[0];
 my $help_title = $ARGV[1];
 my $prefix = $ARGV[2];
+my $dest_dir = $ARGV[3];
 
 open my $help_file, '<', $help_file_name or die;
 
@@ -65,7 +66,8 @@ for my $page (@pages) {
   my $title = $page->{title};
   my $text = $page->{text};
 
-  open my $f, '>', make_name($num) or die;
+  my $filename = "$dest_dir/" . make_name($num);
+  open my $f, '>', $filename or die "Failed to create file: $filename";
 
   my $prev_url = '';
   my $prev_link = '';
@@ -93,10 +95,10 @@ for my $page (@pages) {
   my $style_path = 'style';
   my $js_path = 'js';
 
-  if (!-d "$style_path") {
+  if (!-d "$dest_dir/$style_path") {
     $style_path = "../$style_path";
     $js_path = "../$js_path";
-    if (!-d "$style_path") {
+    if (!-d "$dest_dir/$style_path") {
       $style_path = "../$style_path";
       $js_path = "../$js_path";
     }
