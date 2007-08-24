@@ -65,7 +65,7 @@
           </tr>    
           <c:forEach items="${PROFILE.savedTemplates}" var="savedTemplate" varStatus="status">
             <tr>
-              <td class="sorting" align="center">
+              <td align="center" style="border-right: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7;">
                 <html:multibox property="selected" styleId="selected_template_${status.index}"
                                onclick="setDeleteDisabledness(this.form, '${type}')">
                   <c:out value="${savedTemplate.key}"/>
