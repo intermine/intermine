@@ -1,0 +1,621 @@
+<div id="static-content">
+<div class="docbook-page">
+
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 8.0 - release notes (27th June 2007)</div>
+<div class="body">
+<p style="">
+      In release 8.0 we have updated the data model for protein interactions, protein structure and orthologues to make them easier and faster to query.  We also include three new data sets: Tiffin (predicted regulatory motifs), anoEST (A. gambiae EST clusters) and predicted 3-D protein structures for A. gambiae domains. A new type of constraint is used in template queries which now allows you to enter any identifier or symbol.
+    </p>
+<ul>
+      <li>
+        Data<br />
+        <ul>
+    <li>NEW - D. melanogaster predicted regulatory motifs and functional sites (motif instances) from the <a href="http://servlet.sanger.ac.uk/tiffin/">Tiffin database</a>. Note these have been mapped to the release 5.0 genome sequence.<br />
+</li>
+    <li>NEW - A. gambiae EST and EST clusters from the <a href="http://agambiae.vectorbase.org/SequenceData/EST">Imperial College London Centre for Bioinformatics</a>.<br />
+</li>
+    <li>NEW - A. gambiae protein domain 3-D structure predictions from <a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Kenji Mizuguchi</a>.  This data provides structure predictions for regions of A. gambiae proteins that correspond to a Pfam domain.    <br />
+</li>
+    <li>NEW - H. sapiens and M. musculus protein information included from UniProt, we already include InParanoid orthologues to these organisms.<br />
+</li>
+       </ul>
+      </li>
+
+      <li>
+        User Interface<br />
+        <ul>
+    <li>NEW - LOOKUP constraints.  Most template queries are now updated to use a new type of constraint.  Now you don't need to enter a specific type of identifier - for example for the D. melanogaster gene zen you could enter 'zen', 'CG1046', 'FBgn0004053' or 'zerknullt' and get the same result.  You could even enter a protein and or transcript identifier and it would find the gene.<br />
+</li>    
+       </ul>
+      </li>
+    </ul>
+</div>
+</div> 
+
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 7.1 - release notes (10th May 2007)</div>
+<div class="body">
+<p style="">
+      Release 7.1 includes a number of new user interface features.  Results of queries can be ordered by a selected column and results tables have a new summary button which brings up statistics on the values in that column.  Many template queries now have more descriptive column titles in results tables.
+    </p>
+<ul>
+      <li>
+        User Interface<br />
+        <ul>
+    <li>NEW - Column summaries in results tables.  Each column of a results table now has a summary icon, clicking this will bring up a box with more information about data in the column.  For numerical data it will show the minimum value, maximum value, mean and standard deviation.  For text it will display the number of unique values and the most commonly occuring values with their frequency.<br />
+</li>
+    <li>NEW - Sorting query results.  The QueryBuilder allows you to select an element from the output to sort results by.  A sort button lets you choose ascending or descending order, for example to display results with the highest confience score or most recent publication first.<br />
+</li>
+    <li>NEW - Results column titles.  Many template queries are now configured to have more descriptive column headings in results tables.  The full path can be seen by hovering the mouse pointer over the description.<br />
+</li>
+    <li>NEW - Chromosome distribution viewer. The gene details page for <i>D. melanogaster</i> and <i>A. gambiae</i> now includes a chromosome distribution viewer.  This shows how many genes from the bag are found on each chromosome, click on a bar to see a list of the genes.  The graph also shows an expected number of genes for each chromosome based on the distribution of all genes between chromosomes and the size of the bag.<br />
+</li>
+    <li>NEW - Accurate counts on the results page.  The results page used to show only an approximate number of rows returned from a query (unless the 'Last' link was clicked).  The estimate is now updated to give an accurate 'Total rows' figure once it has been calculated. <br />
+</li>
+    <li>UPDATE - The trail (e.g. Query -&gt; Results -&gt; Gene -&gt; Protein) is now more complete to allow easy navigation back to recently viewed queries, results, object details or bag pages.<br />
+</li>
+    <li>FIX - Performace has been improved when saving and viewing large bags of objects.<br />
+</li>
+    <li>FIX - Renaming bags now works correctly. <br />
+</li>
+    <li>FIX - Missing export options from results pages have been fixed.  Genome features can be exported as FASTA or GFF3, protein interactions can be exported in Cytoscape SIF format.<br />
+</li>
+    <li>FIX - Sequences from Translation objects can now be exported as FASTA.<br />
+</li>
+    <li>FIX - Some minor issues with display on Internet Explorer have been fixed..<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Tools<br />
+          <ul>
+    <li>FIX - TFModules from REDfly are now shown in GBrowse and have a GBrowse image on their details pages.<br />
+</li>
+         </ul>
+      </li>
+
+      <li>
+        Known issues<br />
+        <ul>
+    <li>There are currently no known problems with release 7.1.<br />
+</li>
+        </ul>
+      </li>
+    </ul>
+</div>
+</div>
+
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 7.0 - release notes (3rd April 2007)</div>
+<div class="body">
+<p style="">
+      Release 7.0 updates the <i>D. melanogaster</i> genome to 5.1 annotation and other genome annotation sources have been re-mapped.  GO enrichment and KEGG pathway viewers have been added to the gene Bag Details page.
+    </p>
+<ul>
+      <li>
+        Data<br />
+        <ul>
+    <li>UPDATE - The <i>D. melanogaster</i> genome has been updated to annotation version 5.1.  Data from DrosDel, FlyReg, REDfly and the microarray tiling path have been re-mapped using <a href="http://genome.ucsc.edu/cgi-bin/hgLiftOver">USCS LiftOver</a>.<br />
+</li>
+    <li> NEW - UniProt keywords (e.g. Acetylation, Sulfate transport) and protein features (e.g. HELIX, DNA_BIND) have been added.<br />
+</li>
+    <li>NEW - KEGG pathway information added for <i>D. melanogaster</i>.<br />
+</li>
+    <li>NEW - FlyAtlas now has data for three more tissues - larval fat body, larval tubule and male accessory gland.<br />
+</li>
+    <li>UPDATE - InParanoid orthologues have been updated to a release from January 2007.<br />
+</li>
+    <li>UPDATE - Four more D. melanogaster RNAi screens added from the DRSC (see <a href="aspect.do?name=RNAi">RNAi aspect</a>)<br />
+</li>
+    <li>UPDATE GO annotation, protein-protein interactions and UniProt protein data are all updated to recent releases.<br />
+</li>
+    <li>FIX -  Missing protein structure data has been added, protein structures can now be viewed with JMol again.<br />
+</li>
+    <li>FIX - Missing protein interaction detection method has been replaced.<br />
+</li>
+    <li>FIX - Missing INDAC oligo sequences added.<br />
+</li>
+       </ul>
+      </li>
+
+      <li>
+        User Interface<br />
+        <ul>
+    <li>FIX -Drosophila gene names now work in the quick search box, a number of minor problems with quick search have been fixed.<br />
+</li>
+    <li>NEW - The trail (e.g. Query -&gt; Results -&gt; Gene) has been improved for easy navigation between queries, results, and details pages.<br />
+</li>
+    <li>NEW - GO enrichment widget on the gene Bag Details page.  For the genes in the bag this lists the number of genes with a particular GO term and a p-value which is the probability that this number of genes were annotated with the GO term by chance, given the abundance of the GO term in a reference population.<br />
+</li>
+    <li>NEW - KEGG pathway widget on the gene Bag Details page.  This shows the number of genes in the bag that are associated with a particular KEGG pathway, links give the list of genes and more information about the pathway.<br />
+</li>
+    <li>UPDATE - The constraint editor pane of the QueryBuilder has been made clearer.<br />
+</li>
+    <li>NEW - import query from XML link added to the FlyMine home page.<br />
+</li>
+       </ul>
+      </li>
+    </ul>
+</div>
+</div>
+
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 6.1 - release notes (15th February 2007)</div>
+<div class="body">
+<p style="">
+FlyMine 6.1 contains a major overhaul of the way bags are handled.  Bags can now only contain actual objects rather than identifiers or symbols.  This means that any object in a bag has already been found in FlyMine which should reduce confusion.  A sophisticated bag upload system has been added to aid in creating bags from external lists of identifiers.
+    </p>
+<p style="">
+PLEASE NOTE - most saved user content is automatically upgraded between FlyMine releases.  In this case it was not possible to port some types of bags.  These are still available in the 6.0 archive, please contact support@flymine.org if you have any queries about transferring bags.
+    </p>
+<p style="">
+Bags also now have a type (class) assigned to them - for example Gene, Protein, GOTerm.  This means that when editing a constraint in a template query only bags of the correct type will be listed - so if the template requires you to enter a Gene identifier the bags dropdown will list any Gene bags in your profile.    The same is true when creating/editing a query in the QueryBuilder, just add a constraint on the identifier, name, etc of a class and you will see available bags.
+    </p>
+<p style="">
+The 'Bags' page in MyMine (select 'Bags' or 'MyMine' from the top menu bar) now allows you to paste in a list of identifiers and select a type for the new bag.  The input can be a mixture of different identifier types, for example if you wish to create a bag of <i>Drosophila</i> genes if can be a mixture of CGxx, FBgnxx and symbols.  In the case where an object can't be found to that matches a particular input identifier, FlyMine will attempt to help.  For example if the input list contains a UniProt protein identifier, but you choose to make a gene bag, the website will attempt to find a related gene.  Any matches found in this way will be reported for you to choose which are added to your bag.
+    </p>
+<p style="">
+As an example, when creating a Gene bag from these identifiers:  zen CG2328 FBgn0015379 Q8IML9_DROME unknown_name FlyMine will find a gene for each of the first three identifiers and find the gene for the Q8IML9_DROME protein.  The "unknown_name" will be reported as not found.
+    </p>
+<p style="">
+Also new are bag details pages.  These are accessible for any of your saved bags in the 'Bags' tab of MyMine.  They have a similar layout to object details pages but run templates for all objects in your page.  On the page for gene bags is the first of many 'widgets' we plan to add for a viewing and analysis of data in bags.  Currently there a widget that graphs the genes from a bag that are over/under expressed in different tissues according to the FlyAtlas data set (www.flyatlas.org).  Note that clicking on any of the bars in this graph allows you to create a new bag of genes in that category.  More functionality will be available on these pages in release 7.0/
+    </p>
+</div>
+</div>
+
+
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 6.0 - release notes (24th November 2006)</div>
+<div class="body">
+<p style="">FlyMine 6.0 adds data from seven <i>Dropsophila</i> RNAi screens from the DRSC,
+          microarray-based gene expression data from FlyAtlas and Transcriptional cis-regulatory modules 
+          (CRMs) from REDfly.  Template queries have a new, succinct naming scheme and identifiers/names
+          in results tables are now links to object details pages.  Other data sources have been
+          updated/added and there are numerous interface improvements.</p>
+<p style="">
+NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's object bags have not been ported to release 6.0 but can still be retrieved from the release 5.0 archive.  If any user wishes to use information from old object bags we recommend exporting from 5.0 as a list of appropriate identifiers and uploading to release 6.0.  Please contact us if you require any help with this.   All other saved information has been transferred to release 6.0.
+    </p>
+<p style="">
+   An upcoming release of FlyMine will introduce a new system for uploading and managing bags of data.
+    </p>
+<ul>
+      <li>
+        Data<br />
+        <ul>
+    <li>NEW - Microarray-based gene expression data for <i>D. melanogaster</i> from FlyAtlas.<br />
+</li>
+    <li>NEW - High-throughput cell-based RNAi screens from the <i>Drosophila</i> RNAi Screening Center.<br />
+</li>
+    <li>NEW - Transcriptional cis-regulatory modules (CRMs) for <i>D. melanogaster</i> from REDfly.<br />
+</li>
+    <li>NEW - Probe sets from the Affymetrix GeneChip Drosophila Genome 2.0 Array.<br />
+</li>
+    <li>NEW - Syntenic regions between <i>D. melanogaster</i> and <i>D. pseudoobscura.</i>
+<br />
+</li>
+    <li>NEW - Orthologues and GO annotation for <i>S. pombe</i> and <i>P. falciparum.</i>
+<br />
+</li>
+    <li>NEW - Anatomy ontology for <i>Drosophila</i>.<br />
+</li>
+    <li>UPDATE - <i>D. melanogaster</i> genome annotation updated to version 4.3.<br />
+</li>
+    <li>UPDATE - UniProt protein data is now at version 8.9.<br />
+</li>
+    <li>UPDATE - Worm RNAi data from WormBase 30th September 2006.<br />
+</li>
+    <li>UPDATE - <i>D. melanogaster</i> BACs are now loaded.<br />
+</li>
+    <li>UPDATE - Protein fragments from UniProt are now identified by an isFragment true/false attribute.<br />
+</li>
+    <li>UPDATE - Proteins now have a length (in amino acids) and molecularWeight (in Daltons).<br />
+</li>
+    <li>FIX - Protein interaction confidence scores restored.<br />
+</li>
+    <li>FIX - PCRProducts now reference the TilingPathSpan they create.<br />
+</li>
+    <li>FIX - Some unpublished microarray experiments have been removed.<br />
+</li>
+       </ul>
+      </li>
+
+      <li>
+        User Interface<br />
+        <ul>
+    <li>NEW - Names and identifiers in results tables now link to object details pages.<br />
+</li>
+    <li>NEW - Template names have been changed so that they now have a short name and a longer description. The short name is the main name and is displayed on the aspect pages, template search results and the object details pages. This shorter name has the format 'query starting point(s)' --&gt; 'query output' and allows easier scanning of templates to find the one required. The longer description can be viewed when the template form is accessed.<br />
+</li>
+    <li>NEW - When running a template query the title and description is displayed above the results.<br />
+</li>
+    <li>NEW - The trail now includes a 'Query' link back to the template or Query Builder, i.e. now 'Query -&gt; Results'.<br />
+</li>
+    <li>UPDATE - It is no longer possible to create bags of objects from results or upload.<br />
+</li>
+    <li>UPDATE - Chromosomal locations are displayed in a more compact format (e.g. 2R:1598168-1676472).<br />
+</li>
+    <li>UPDATE - 'History' has been renamed to 'My Mine' and the layout improved.<br />
+        <ul>
+          <li>improved query and template XML import/export options.<br />
+</li>
+          <li>added a 'Change Password' tab.<br />
+</li>
+          <li>bag listing and upload pages have been combined.<br />
+</li>
+        </ul>
+</li>
+    <li>FIX - Searches in bags of strings are no longer case sensitive.<br />
+</li>
+    <li>FIX - After running a template query 'Current Query' will now return to the template form instead of the Query Builder page.<br />
+</li>
+    <li>FIX - To address a performance issue bag size is limited to 100 entries unless you are logged in (when the limit is much higher). <br />
+</li>
+       </ul>
+      </li>
+
+      <li>
+        Tools<br />
+        <ul>
+          <li>There are no changes to tools available in release 6.0.<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Known issues<br />
+        <ul>
+          <li>There are currently no known issues with data in release 6.0.<br />
+</li>
+        </ul>
+      </li>
+    </ul>
+</div>
+</div>
+
+
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 5.0 - release notes (1st June 2006)</div>
+<div class="body">
+<p style="">FlyMine 5.0 adds genome annotation for <i>D. pseudoobscura</i> (release 2.0 from FlyBase) and <i>A. mellifera</i> (release 2.0 from Ensembl) with InParanoid orthologues to the other genomes in FlyMine.  Also added are InParanoid orthologues to many other species and GO annotation for some of them.  Interface improvements include the ability for users to tag favourite templates and to change their password.</p>
+<ul>
+      <li>
+        Data<br />
+        <ul>
+          <li>NEW: Genome annotation for <i>D. pseudoobscura</i> version 2.0 from FlyBase.<br />
+</li>
+          <li>NEW: Genome annotation for <i>A. Meillifera</i> release 2.0 from Ensembl version 37.<br />
+</li>
+          <li>NEW: InParanoid orthologues from <i>D. melanogaster, D. pseudoobscura, A. gambiae, C. elegans</i> and <i>A. mellifera</i> to many other organisms.<br />
+</li>
+          <li>NEW: GO annotation (accessible via orthologues) for <i>M. Musculus, R. Ratticus, S. cerevisiae</i> and <i>A. mellifera</i>.<br />
+</li>
+          <li>NEW: Protein interaction and UniProt data for S. cerevisiae.<br />
+</li>
+          <li>NEW: IntergenicRegion class - objects to describe intergenic regions on chromosomes, sequence and overlapping features available. Genes now have references to upstream and downstream intergenic regions.<br />
+</li>
+          <li>UPDATE: Genome annotation for <i>A. gambiae</i> updated to build AgamP3 from Ensembl version 37.<br />
+</li>
+          <li>FIX: INDAC microarray oligos now have sequences.<br />
+</li>
+          <li>FIX: OMIM disease names are no longer duplicated, new templates added to the Disease aspect.<br />
+</li>
+          <li>FIX: mRNA sequences no longer include intron sequences.<br />
+</li>
+          <li>FIX: Protein Interactions - some interactions referenced isoform ids so data didn't merge correctly with other protein information. Now have correct UniProt accession.<br />
+</li>
+          <li>FIX: Protein interactions are now correctly assigned to Formstecher et al, 2005 - was fixed in IntAct.<br />
+</li>
+      </ul> 
+      </li>
+      <li>
+        User Interface<br />
+        <ul>
+          <li>NEW: Favourite templates - logged in users can see a * beside template query names to select then as favourites. They are listed in a new 'Favourites' tab on the History page.<br />
+</li>
+          <li>NEW: Change password - users can now choose there own password when creating an account. Passwords can be changed when logged in by clicking on the username in the top menu bar.<br />
+</li>
+          <li>FIX: Missing class descriptions completed.<br />
+</li>
+          <li>NEW: Boolean fields are now constrained by a true/false dropdown.<br />
+</li>
+      </ul> 
+      </li>
+      <li>
+        Tools<br />
+        <ul>
+          <li>FIX: GBrowse images on object details pages are now oriented correctly for features on reverse strand. Also now show absolute coordinates.<br />
+</li>
+      </ul> 
+      </li>
+      <li>
+        Known Issues<br />
+        <ul>
+          <li>Due to a change in format of XML from IntAct there are no confidence scores for protein interaction experiments, we will release a fixed version as soon as possible.<br />
+</li>
+          <li>Gene.goAnnotation collection not filled in for A. Gambiae genes, need to use Gene.annotations instead.<br />
+</li>
+        </ul> 
+      </li>
+    </ul>
+</div>
+</div>
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 4.0 - release notes (13th March 2006)</div>
+<div class="body">
+<p style="">Major changes to layout and content of summary pages. These pages can now display the results of template queries inline to give immediate access to data. The www.flymine.org home page now shows aspect icons and query options. Many other interface improvements. Addition of Arbeitman et al, 2002 Drosophila time course microarray data and human disease gene matches from Homophila.</p>
+<ul>
+      <li>
+        Data<br />
+        <ul>
+          <li>NEW: microarray data from "Gene Expression During the Life Cycle of <i>Drosophila melanogaster</i>", Arbeitman et al 2002.<br />
+</li>
+          <li>NEW: added data human disease gene matches from Homophila (http://superfly.ucsd.edu/homophila/).<br />
+</li>
+          <li>NEW: more protein interaction experiments from IntAct - see Protein Interaction aspect.<br />
+</li>
+          <li>NEW: Gene now has an "allGoAnnotation" collection that contains the term assigned to a gene plus all the parents of the term. Using this collection to find genes with a particular term will find all genes with that term *and* any with a more specific term.<br />
+</li>
+          <li>ENHANCEMENT: MRNA now references threePrimeUTR and fivePrimeUTR.<br />
+</li>
+          <li>ENHANCEMENT: <i>D. melanogaster</i> translation symbols now set from FlyBase.<br />
+</li>
+          <li>ENHANCEMENT: <i>D. melanogaster</i> chromosome bands now loaded from FlyBase.<br />
+</li>
+          <li>UPDATE: <i>D. melanogaster</i> genome annotation updated from 4.2 to 4.2.1.<br />
+</li>
+          <li>UPDATE: GO annotation and UniProt proteins updated.<br />
+</li>
+          <li>FIX: <i>D. melanogaster</i> regulatory regions from FlyBase now have chromosome location.<br />
+</li>
+          <li>FIX: <i>D. melanogaster</i> insertion sites and point mutations from FlyBase reference genes correctly.<br />
+</li>
+          <li>FIX: <i>A. gambiae</i> genes from Ensembl and InParanoid orthologues now merged correctly.<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Tools<br />
+        <ul>
+          <li>NEW: a graph of interacting proteins on protein summary pages.<br />
+</li>
+          <li>NEW: graphs of <i>D. melanogaster</i> time course expression on gene details pages (Arbeitman et al, 2002).<br />
+</li>
+          <li>NEW: FASTA retrieval icon to access sequence of all features with sequence.<br />
+</li>
+          <li>FIX: insertion sites now displayed correctly on GBrowse.<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        User Interface<br />
+        <ul>
+          <li>NEW: Template queries are now viewable inline on object summary pages.<br />
+</li>
+          <li>NEW: bags saved in history can now be subtracted from one another.<br />
+</li>
+          <li>NEW: Query constraint logic can now be manipulated within the query builder - can constrain A AND B/A OR B.<br />
+</li>
+          <li>NEW: Added Run query link to run a query directly from the History page.<br />
+</li>
+          <li>NEW: Template queries can now include a choice of several different output formats.<br />
+</li>
+          <li>ENHANCEMENT: Template search terms are highlighted in results lists.<br />
+</li>
+          <li>ENHANCEMENT: Template building integrated into query builder interface.<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Known issues<br />
+        <ul>
+          <li>DATA: Protein interactions from Formstecher et al, 2005 (PubMed: 15710747) are incorrectly assigned to Rain et al, 2001 (PubMed: 11196647) which in IntAct is a secondary reference.<br />
+</li>
+          <li>DATA: OMIM disease names contain the same text repeated multiple times.<br />
+</li>
+        </ul>
+      </li>
+
+    </ul>
+</div>
+</div>
+
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 3.1 - release notes (7nd November 2005)</div>
+<div class="body">
+<ul>
+      <li>
+        Data - fixes<br />
+        <ul>
+          <li>FIX: <i>D. melanogaster</i> genes from FlyBase and UniProt are now merged correctly.<br />
+</li>
+          <li>FIX: Missing orthologues from <i>D. melanogaster</i> to <i>A. gambiae</i> are now loaded.<br />
+</li>
+        </ul>
+      </li>
+    </ul>
+</div>
+</div>
+
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 3.0 - release notes (1st September 2005)</div>
+<div class="body">
+<ul>
+      <li>
+        Data - new and updated<br />
+        <ul>
+          <li>UPDATE: FlyBase <i>D. melanogaster</i> genome annotation updated to release 4.2.<br />
+</li>
+          <li>NEW: Microarray gene expression data - currently five experiments run at the FlyChip facility are available.<br />
+</li>
+          <li>NEW: Protein domain and family information from InterPro.<br />
+</li>
+          <li>NEW: DrosDel deletion data added.<br />
+</li>
+          <li>NEW: <i>D. melanogaster</i> genes now have full name and wild type function set.<br />
+</li>
+          <li>UPDATE: GO annotation changes:<br />
+            <ul>
+              <li>
+<i>D. melanogaster</i> and <i>C. elegans</i> gene associations are now taken from FlyBase and WormBase respectively.<br />
+</li>
+              <li>Gene now has a collection of GOAnnotations, an object which contains the GO term id, name, evidence code and text from 'with' reference if present. If 'with' is a Gene or Protein a reference to the object is added.<br />
+</li>
+              <li>GOTerm entries now have a description, namespace ('biological_process', 'cellular_component' or 'molecular_function') and a collection of synonyms.<br />
+</li>
+            </ul>
+          </li>
+        </ul>
+        NOTE - this list does not include all updates to the versions of existing data sources - for a full list of versions see the Datasources section on the <a href="/">FlyMine home page</a>.<br />
+        <br />
+      </li>
+      <li>
+        Data - fixes<br />
+         <ul>
+          <li>FIX: Gene.name is now Gene.symbol, added Gene.name which has a longer text name.<br />
+</li>
+          <li>FIX: Transcript.exonCount is now set for all Transcripts.<br />
+</li>
+          <li>FIX: Only RepeatRegions predicted by TRF are retrieved for <i>A. gambiae</i> from Ensembl.<br />
+</li>
+          <li>FIX: There are no longer links to UniProt with BDGP identifiers.<br />
+</li>
+          <li>FIX: Incorrect start and end fields removed from RepeatRegion.<br />
+</li>
+          <li>FIX: Removed duplicate synonyms for some Proteins.<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Data - known issues<br />
+         <ul>
+           <li>Five genes are annotated incorrectly in the FlyBase release 4.2 annotation. These are eys, Dimp, cp309, Nev3 and kay. It is a known problem with FlyBase and a fix is progress. In FlyMine the symbols(names) are modified so that they are unique and indicate that there is a problem. Examples are: Dimp-duplicate-symbol-1, Dimp-duplicate-symbol-2 instead of Dimp.<br />
+</li>
+           <li>The latest version of InterPro (11.0) is not yet available as a mysql dump so we still have version 10.0.<br />
+</li>
+           <li>INDAC microarray oligos were designed to FlyBase version 4.0 transcripts. This means a number now map to old transcripts. These oligos can be queried in FlyMine, however the transcript they are designed to will not have merged with a Gene.<br />
+</li>
+           <li>A number of proteins from Uniprot have not merged with FlyBase genes.  This means that for certain genes there are two objects - one from Uniprot with no other information.<br />
+</li>
+           <li>Orthologues for <i>A. gambiae</i> did not load.<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Interface - new features<br />
+        <ul>
+          <li>NEW: The start page of FlyMine now has links to a series of 'aspects' which are convenient starting points for the different types of data in FlyMine - such as genomics, protein interactions and gene expression. Each aspect lists relevant data sets in FlyMine, template queries and suggested starting points for queries.<br />
+</li>
+          <li>NEW: Template search box added to the front page.<br />
+</li>
+          <li>NEW: User templates are now listed on the user's History page.<br />
+</li>
+          <li>NEW: Saved bags and saved queries can be renamed from the History page.<br />
+</li>
+          <li>NEW: Executed queries are now automatically saved to a 'session history'. The user can permanently save a query from the session history from the History page.<br />
+</li>
+          <li>NEW: Saved queries and queries in the session history are now displayed with the date and time at which they were created.<br />
+</li>
+          <li>NEW: Saved queries and queries in the session history are now displayed with their starting point and a summary of the fields selected for output.<br />
+</li>
+          <li>NEW: You can now edit an existing constraint in the query builder by clicking the blue edit icon next to the constraint.<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Interface - fixes<br />
+        <ul>
+          <li>FIX: History page is now viewable to anonymous users.<br />
+</li>
+          <li>FIX: Characters from the Greek alphabet within identifier names should now display correctly.<br />
+</li>
+          <li>FIX: Users can now run separate queries in separate browser windows and view results simultaneously.<br />
+</li>
+          <li>FIX: Exported results on Windows Internet Explorer now download with the correct file name.<br />
+</li>
+        </ul>
+      </li>
+    </ul>
+</div>
+</div>
+  <div style="clear:" class="box">
+<div class="heading2">FlyMine version 2.1 - release notes (1st June 2005)</div>
+<div class="body">
+<ul>
+      <li>
+        Data - new sources<br />
+        <ul>
+          <li>Added <i>D. melanogaster</i> whole genome amplimer tiling path (Genetics Department, Cambridge, UK)<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Data - fixes<br />
+         <ul>
+          <li>Fixed an off by one error with chromosome locations of FlyReg binding sites<br />
+</li>
+          <li>GBrowse images now appear on Transcript details page<br />
+</li>
+          <li>Removed duplicate GO (Gene Ontology) Ontology object<br />
+</li>
+          <li>Sequences are no longer a mix of upper and lower case - now all lower case<br />
+</li>
+          <li>Added CDS and Translation objects for each <i>A. gambiae</i> Transcript<br />
+</li>
+          <li>INDAC oligos - Transcripts now correctly merged with other <i>D. melanogaster</i> annotation<br />
+</li>
+          <li>All genome annotation features now have a chromosomeLocation field<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Data - known issues<br />
+         <ul>
+          <li>Information from FlyBase missing for some <i>D. melanogaster</i> genes due to problems reading FlyBase gff3 (fixed in FlyBase release 4.1)<br />
+</li>
+          <li>INDAC, FlyReg and Genetics Dept (Cambridge) InfoSource objects are duplicated<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Interface - new features<br />
+        <ul>
+          <li>Template queries now work with bags - an attribute can be constrained to be in/not-in a bag<br />
+</li>
+          <li>Template search facility added. Users can search public and private templates<br />
+</li>
+          <li>All string matches in FlyMine queries are now case insensitive<br />
+</li>
+          <li>Performance improvements while paging through results/collection tables<br />
+</li>
+          <li>Collection/bag table pages are now bookmarkable<br />
+</li>
+          <li>Keywords can be attached to template queries<br />
+</li>
+        </ul>
+      </li>
+
+      <li>
+        Interface - fixes<br />
+        <ul>
+          <li>Users with javascript disabled can now run queries<br />
+</li>
+          <li>Fixed bug that stopped the user from creating certain loop-queries<br />
+</li> 
+        </ul>
+      </li>
+    </ul>
+</div>
+</div>
+</div>
+</div>

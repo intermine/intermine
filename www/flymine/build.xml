@@ -19,10 +19,10 @@
   
   <property name="common" location="../common"/>
   <property name="common.lib" location="${common}/lib"/>
+  <property name="common.scripts" location="${common}/scripts"/>
   <property name="src.www" location="site"/>
   <property name="common.src.www" location="${common}/site"/>
   <property name="src.doc" location="../../flymine/doc"/>
-  <property name="src.internal" location="../../flymine-private/doc"/>
   <property name="library.xml.basedir" location="../../imbuild"/>
   <property name="build.www" location="build"/>
   <property name="build.webapp.manual.html" location="dist/doc/manual"/>
@@ -40,7 +40,8 @@
   <target name="prepare">
     <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
     <property file="${build.properties.local}"/>
-    <copy todir="${build.www}">
+
+   <copy todir="${build.www}">
       <fileset dir="${src.www}">
         <include name="**/*"/>
       </fileset>
@@ -49,43 +50,23 @@
       </fileset>
     </copy>
 
-    <copy todir="${build.www}/doc">
-      <fileset dir="${src.doc}">
-        <include name="**/*"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${build.www}" filtering="true">
-      <fileset dir="${xslt}">
-        <include name="**/*"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${build.www}/internal">
-      <fileset dir="${src.internal}">
-        <include name="**/*"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${dist.www}">
-      <fileset dir="${build.www}">
-        <exclude name="**/*.xml"/>
-        <exclude name="**/tour.txt"/>
-        <exclude name="**/*.xsl"/>
-      </fileset>
-    </copy>
-    
     <copy file="rss.xml" todir="${dist.www}"/>
-
-    <mkdir dir="${build.www}/tmp"/>
+    <copy file="${src.www}/robots.txt" todir="${dist.www}"/>
+    <copy todir="${dist.www}">
+      <fileset dir="${src.www}">
+        <include name="images/*"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="style-site" depends="prepare">
-    <xslt basedir="${build.www}" destdir="${dist.www}" extension=".${output.extension}"
-           style="${common.xslt}/main.xsl" includes="**/*.xml"
+    <xslt basedir="${src.www}/" destdir="${dist.www}" extension=".${output.extension}"
+           style="${common.xslt}/new.xsl" 
            force="false">
       <classpath refid="xslt.class.path"/>
-      <exclude name="doc/manual/webapp_manual.xml"/>
+      <include name="**/*.html"/>
+      <exclude name="tour/*"/>
+      <exclude name="tutorials/*"/>
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
@@ -96,37 +77,34 @@
     </xslt>
   </target>
 
-  <target name="validate-site-xml" depends="prepare">
-    <xmlvalidate>
-      <fileset dir="${build.www}" includes="**/*.xml">
-        <exclude name="internal/**"/>
-        <!-- necessary until we can accommodate "presentation" within docbook -->
-        <exclude name="doc/presentations/index.xml"/>
-        <exclude name="index.xml"/>
-        <exclude name="what.xml"/>
-        <exclude name="stats.xml"/>
-        <exclude name="link.xml"/>
-        <exclude name="cite.xml"/>
-        <exclude name="news.xml"/>
-        <exclude name="sources.xml"/>
-      </fileset>
-      <xmlcatalog>
-        <dtd 
-          publicId="-//OASIS//DTD Simplified DocBook XML V1.0//EN"
-          location="${cache.dtd}/sdocbook-1.0.dtd"/>
-      </xmlcatalog>
-   </xmlvalidate>
+  <target name="generate-tour" depends="prepare" 
+          description="Generate html for tour and copy images to build directory">
+     <exec executable="${common.scripts}/process_help.pl">
+       <arg value="site/tour/tour.txt"/>
+       <arg value="FlyMine Tour"/>
+       <arg value="${build.www}/tour-test/tour"/>
+     </exec>
+
+     <copy todir="${build.www}/tour-test">
+       <fileset dir="${src.www}/tour">
+         <include name="*.png"/>
+       </fileset>
+     </copy>
   </target>
 
+  <!-- site isn't currently validated - the webapp header includes the <head> element
+       and this is read by SSI, so files in dist don't validate. -->
   <target name="validate-site-xhtml"
-          depends="validate-site-xml, style-site">
+          depends="style-site">
     <xmlvalidate warn="yes">
-      <fileset dir="${dist.www}" includes="**/*.html">
-        <exclude name="internal/**"/>
+      <fileset dir="${dist.www}" includes="**/*.shtml">
         <exclude name="images/index.html"/>
         <exclude name="stats.html"/>
+        <exclude name="what.shtml"/>
         <exclude name="**/tour*.html"/>
         <exclude name="graphics/index.html"/>
+        <exclude name="sources-table.html"/>
+        <exclude name="html/**/*"/>
       </fileset>
       <xmlcatalog>
         <dtd 
@@ -137,10 +115,11 @@
   </target>
 
   <target name="transform-site"
-          depends="validate-site-xml, style-site, validate-site-xhtml, webapp-manual-html, webapp-help-html"
+          depends="style-site, validate-site-xhtml"
           description="Transform the website contents from XML to HTML"/>
 
-  <target name="release-www" depends="transform-site"
+
+  <target name="release-www" depends="style-site"
           description="releases the static website to the webserver">
     <fixcrlf srcdir="${dist.www}"
        eol="crlf"
@@ -158,163 +137,6 @@
     <exec executable="rsync">
       <arg line="-e ssh -Cavz --exclude api --exclude tmp --exclude gbrowse --delete ${dist.www}/ ${www.serverlocation}/" />
     </exec>
-  </target>
-
-  <target name="remove-production-webapp">
-    <ant dir="../../flymine" target="remove-webapp" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine/dist"/>
-    </ant>
-  </target>
-
-  <target name="release-production-webapp">
-    <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
-    <ant dir="../../intermine" target="build-webapp" inheritRefs="true"/>
-    <ant dir="../../intermine" target="jar" inheritRefs="true"/>
-    <ant dir="../../flymine" target="distclean" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine/dist"/>
-    </ant>
-    <ant dir="../../flymine" target="build-production-webapp" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine/dist"/>
-    </ant>
-    <ant dir="../../flymine" target="release-webapp" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine/dist"/>
-    </ant>
-  </target>
-
-  <target name="release-production-webapp-nobuild">
-    <ant dir="../../flymine" target="release-webapp" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine/dist"/>
-    </ant>
-  </target>
-
-  <target name="release-production-webservice">
-    <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
-    <ant dir="../../intermine" target="build-webservice" inheritRefs="true"/>
-    <ant dir="../../intermine" target="jar" inheritRefs="true"/>
-
-    <ant dir="../../flymine" target="distclean" inheritRefs="true"/>
-    <ant dir="../../flymine" target="build-production-webservice" inheritRefs="true"/>
-    <ant dir="../../flymine" target="release-webservice" inheritRefs="true"/>
-  </target>
-
-  <target name="create-indexes-production-attribute" depends="prepare">
-    <ant dir="../../flymine" target="create-indexes-production-attribute" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine/dist"/>
-    </ant>
-  </target>
-
-  <target name="dump-userprofile" depends="prepare">
-    <ant dir="../../flymine" target="write-production-userprofile-xml" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine/dist"/>
-    </ant>
-  </target>
-
-  <target name="load-userprofile" depends="prepare">
-    <ant dir="../../flymine" target="read-production-userprofile-xml" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine/dist"/>
-    </ant>
-  </target>
-
-  <target name="setup-userprofile" depends="prepare">
-    <ant dir="../../flymine" target="build-db-userprofile" inheritRefs="true">
-      <property name="intermine.dist.path" location="../../intermine/dist"/>
-    </ant>
-  </target>
-
-  <target name="webapp-manual-html" depends="prepare">
-    <property name="cp" refid="xslt.class.path"/>
-    <echo message="xslt.path classpath is ${cp}"/>
-
-    <xslt basedir="${dist.www}/doc/manual/"
-          in="${build.www}/doc/manual/webapp_manual.xml"
-          out="${dist.www}/doc/manual/webapp_manual.log"
-          style="xslt/webapp_manual.xsl"
-          force="false">
-      <classpath refid="xslt.class.path"/>
-      <param name="branding" expression="${branding}" />
-      <param name="basedir" expression="${project.sitePrefix}" />
-      <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
-      <param name="projectcontact" expression="${project.contact}"/>
-      <param name="releaseversion" expression="${project.releaseVersion}"/>
-      <param name="webapppath" expression="${webapp.path}"/>
-      <param name="outputext" expression="${output.extension}" />
-      
-      <!-- This sets the extension for HTML files to ".html".     -->
-      <param name="html.ext" expression=".shtml"/>
-
-      <!-- This sets the filename based on the ID.                -->
-      <param name="use.id.as.filename" expression="1"/>
-
-      <param name="css.decoration" expression="0"/>
-    </xslt>
-  </target>
-
-  <target name="webapp-manual-html-onepage" depends="prepare">
-    <xslt basedir="${dist.www}/doc/manual/"
-          in="${build.www}/doc/manual/webapp_manual.xml"
-          out="${dist.www}/doc/manual/webapp_manual.html"
-          style="xslt/webapp_manual_one_page.xsl"
-          force="false">
-      <classpath refid="xslt.class.path"/>
-      <param name="branding" expression="${branding}" />
-      <param name="basedir" expression="${project.sitePrefix}" />
-      <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
-      <param name="projectcontact" expression="${project.contact}"/>
-      <param name="releaseversion" expression="${project.releaseVersion}"/>
-      <param name="webapppath" expression="${webapp.path}"/>
-      <param name="outputext" expression="${output.extension}" />
-      
-      <!-- This sets the extension for HTML files to ".html".     -->
-      <param name="html.ext" expression=".shtml"/>
-
-      <param name="html.nochunks" expression="1"/>
-      <param name="onechunk" expression="1"/>
-      <!-- This sets the filename based on the ID.                -->
-      <param name="use.id.as.filename" expression="1"/>
-
-      <param name="css.decoration" expression="0"/>
-    </xslt>
-  </target>
-
-  <target name="webapp-help-html" depends="prepare">
-    <xslt basedir="${dist.www}/doc/help/"
-          in="${build.www}/doc/manual/webapp_manual.xml"
-          out="${dist.www}/doc/help/webapp_manual.log"
-          style="xslt/webapp_help.xsl"
-          force="false">
-      <classpath refid="xslt.class.path"/>
-      <param name="branding" expression="${branding}" />
-      <param name="basedir" expression="${project.sitePrefix}" />
-      <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
-      <param name="projectcontact" expression="${project.contact}"/>
-      <param name="releaseversion" expression="${project.releaseVersion}"/>
-      <param name="webapppath" expression="${webapp.path}"/>
-      <param name="outputext" expression="${output.extension}" />
-      
-      <!-- This sets the extension for HTML files to ".html".     -->
-      <param name="html.ext" expression=".shtml"/>
-
-      <!-- This sets the filename based on the ID.                -->
-      <param name="use.id.as.filename" expression="1"/>
-
-      <param name="css.decoration" expression="0"/>
-    </xslt>
-  </target>
-
-  <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop"/>
-
-  <target name="webapp-manual-pdf" depends="prepare">
-    <style basedir="${build.www}/doc/manual"
-           in="${build.www}/doc/manual/webapp_manual.xml"
-           out="${build.www}/doc/manual/webapp_manual.fo"
-           style="xslt/webapp_manual.xsl"
-           force="false">
-      <param name="paper.type" expression="A4" />
-      <param name="fop.extensions" expression="1" />
-    </style>
-    <fop basedir="${build.www}/doc/manual"
-         fofile="${build.www}/doc/manual/webapp_manual.fo"
-         outfile="${dist.www}/doc/manual/webapp_manual.pdf"/>
   </target>
 
   <target name="clean">
