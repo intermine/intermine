@@ -16,5 +16,3 @@
 
   <definition name="proteinDomainDisplayer.tile" path="/model/proteinDomainDisplayer.jsp" 
   	controllerUrl="/initProteinDomainDisplayer.do"/>
-  	
-  <definition name="dataCategories.tile" path="/model/dataCategories.jsp" />
