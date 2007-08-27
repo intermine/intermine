@@ -35,8 +35,19 @@
   
   <c:set var="extra" value="${extra}&trail=${trail}" />
 
-  <html:link action="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=${scope}${extra}" 
-             title="${linkTitle}">
+  <c:set var="runTemplateActionLink" value="/template?name=${templateQuery.name}&amp;scope=${scope}${extra}"/>
+
+  <c:choose>
+    <c:when test="${empty bagName && empty interMineObject}">
+      <%-- for aspect pages --%>
+      <c:set var="actionLink" value="${runTemplateActionLink}"/>
+    </c:when>
+    <c:otherwise>
+      <%-- for object details pages --%>
+      <c:set var="actionLink" value="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=${scope}${extra}"/>
+    </c:otherwise>
+  </c:choose>
+  <html:link action="${actionLink}" title="${linkTitle}">
     <span class="templateTitle">${!empty name ? name : templateQuery.title}</span>
   </html:link>
   <fmt:message var="linkTitle" key="templateList.run">
@@ -50,8 +61,7 @@
   </tiles:insert>
   
   <%-- (t) img.  trail isn't used here because queries always reset the trail --%>
-  <html:link action="/template?name=${templateQuery.name}&amp;scope=${scope}${extra}" 
-             title="${linkTitle}">
+  <html:link action="${runTemplateActionLink}" title="${linkTitle}">
     <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
   </html:link>
   <%-- description --%>
