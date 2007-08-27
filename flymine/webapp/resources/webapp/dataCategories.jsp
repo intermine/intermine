@@ -1,3 +1,4 @@
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
@@ -6,6 +7,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- dataCategories -->
+<html:xhtml/>
+
 
 <table padding="0px" margin="0px" width="100%">
   <tr>
@@ -23,11 +26,8 @@
  </tr>
 
 
-
-<table padding="0px" margin="0px" width="100%" table border="1" class='dbsources'>
-  <thead>
+<table cellpadding="0" cellpadding="0" border="0" class="dbsources">
   <tr>
-
     <th>Data Category</th>
     <th>Organism</th>
     <th>Data</th>
@@ -36,13 +36,10 @@
     <th>Note</th>
 
   </tr>
-  </thead>
 
- <tbody>
-
-  <tr><th rowspan="5">  
+  <tr><td rowspan="5" class="leftcol">  
         <html:link action="/aspect?name=Genomics"> <p><img src="model/genomics.gif" /></p>
-        <p> Genomics </p></html:link></th>
+        <p> Genomics </p></html:link></td>
     <td> D. melanogaster </td>
     <td> Genome annotation - Release 5.1</td>
     <td><a href="http://www.flybase.org">Flybase</a></td>
@@ -84,10 +81,10 @@
     <td> &nbsp; </td>
   </tr>
 
-  <tr><th rowspan="1">
+  <tr><td rowspan="1"  class="leftcol">
         <html:link action="/aspect?name=Comparative%20Genomics">
           <p>  <img src="model/comparativeGenomics.png" /></p>
-          <p> Comparative Genomics </p></html:link></th>
+          <p> Comparative Genomics </p></html:link></td>
     <td>
        <p>D. melanogaster</p>
        <p>D. pseudoobscura</p>
@@ -102,10 +99,10 @@
   </tr>
 
 
-  <tr><th rowspan="8">
+  <tr><td rowspan="8"  class="leftcol">
         <html:link action="/aspect?name=Proteins">
         <p> <img src="model/proteins.png" /></p>
-        <p> Proteins </p></html:link></th>
+        <p> Proteins </p></html:link></td>
     <td> D. melanogaster </td>
     <td> Protein annotation</td>
     <td> <a href="http://www.ebi.uniprot.org/index.shtml">UniProt</a> - Release 12.2</td>
@@ -170,10 +167,10 @@
   </tr>
 
 
-  <tr><th rowspan="2">
+  <tr><td rowspan="2"  class="leftcol">
         <html:link action="/aspect?name=Protein%20Structure">
         <p> <img src="model/pstructure.gif" /></p>
-        <p> Protein Structure</p></html:link></th>
+        <p> Protein Structure</p></html:link></td>
     <td> D. melanogaster </td>
     <td> 3-D structure predictions for protein domains</td>
     <td> <a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm">Kenji Mizuguchi</a> - 9th April 2006</td>
@@ -190,10 +187,10 @@
   </tr>
 
 
-  <tr><th rowspan="3">
+  <tr><td rowspan="3"  class="leftcol">
         <html:link action="/aspect?name=Protein%20Interactions">
          <p> <img src="model/proteinInteraction.gif" /></p>
-        <p> Protein Interactions</p></html:link></th>
+        <p> Protein Interactions</p></html:link></td>
     <td> D. melanogaster </td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
     <td> <a href="http://www.ebi.ac.uk/intact">IntAct</a> - 25th May 2007</td>
@@ -218,11 +215,11 @@
   </tr>
 
 
-  <tr><th rowspan="8">
+  <tr><td rowspan="8"  class="leftcol">
 
         <html:link action="/aspect?name=Gene%20Ontology">
          <p> <img src="model/geneOntology.png" /></p>
-        <p> Gene Ontology </p></html:link></th>
+        <p> Gene Ontology </p></html:link></td>
     <td> D. melanogaster </td>
     <td> GO annotations </td>
     <td> <a href="http://www.geneontology.org">Gene Ontology Site</a> - 21th May 2007</td>
@@ -287,10 +284,10 @@
   </tr> 
 
 
-  <tr><th rowspan="2">
+  <tr><td rowspan="2" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
         <p> <img src="model/marray.gif" /></p>
-        <p> Gene Expression</p></html:link></th>
+        <p> Gene Expression</p></html:link></td>
     <td> D. melanogaster </td>
     <td> Microarray-based gene expression data for the life cycle of D. melanogaster</a></td>
     <td> <a href="http://www.ebi.ac.uk/arrayexpress/"> ArrayExpress </a> - Experiment E-FLYC-6</td>
@@ -308,10 +305,10 @@
 
 
 
-  <tr><th rowspan="4">
+  <tr><td rowspan="4" class="leftcol">
        <html:link action="/aspect?name=Transcriptional%20Regulation">
         <p> <img src="model/bindingSites.png" /></p>
-        <p> Transcriptional Regulation</p></html:link></th>
+        <p> Transcriptional Regulation</p></html:link></td>
     <td> D. melanogaster </td>
     <td> Transcriptional cis-regulatory modules (CRMs)</td>
     <td> <a href="http://redfly.ccr.buffalo.edu/">REDfly</a> - 25th June 2006</td>
@@ -343,10 +340,10 @@
     <td> (2)</td>
   </tr>
 
-  <tr><th rowspan="2">
+  <tr><td rowspan="2" class="leftcol">
        <html:link action="/aspect?name=RNAi">
         <p> <img src="model/rnai.png" /></p>
-        <p> RNAi</p></html:link></th>
+        <p> RNAi</p></html:link></td>
     <td> D. melanogaster </td>
     <td> High-throughput cell-based RNAi screens</td>
     <td> <a href="http://flyrnai.org/">Drosophila RNAi Screening Center</a></td>
@@ -362,10 +359,10 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><th rowspan="1">
+  <tr><td rowspan="1" class="leftcol">
        <html:link action="/aspect?name=Pathways">
         <p> <img src="model/pathways.png" /></p>
-        <p> Pathways</p></html:link></th>
+        <p> Pathways</p></html:link></td>
     <td> D. melanogaster</td>
     <td> Pathway information and the genes involved in them</td>
     <td> <a href="http://www.genome.jp/kegg/">KEGG</a> - Release 41</td>
@@ -373,10 +370,10 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><th rowspan="1">
+  <tr><td rowspan="1" class="leftcol">
        <html:link action="/aspect?name=Disease">
         <p> <img src="model/disease.png" /></p>
-        <p> Diseases</p></html:link></th>
+        <p> Diseases</p></html:link></td>
     <td> D. melanogaster </td>
     <td> Human disease to Drosophila gene data set</td>
     <td> <a href="http://superfly.ucsd.edu/homophila/">Homophila</a> - Version 2.0</td>
@@ -384,10 +381,10 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><th rowspan="6">
+  <tr><td rowspan="6" class="leftcol">
        <html:link action="/aspect?name=Resources">
         <p> <img src="model/drosdel.gif" /></p>
-        <p> Resources</p></html:link></th>
+        <p> Resources</p></html:link></td>
     <td> D. melanogaster </td>
     <td> Insertions and deletions</td>
     <td> <a href="http://www.drosdel.org.uk/">DrosDel</a></td>
@@ -435,10 +432,10 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><th rowspan="3">
+  <tr><td rowspan="3" class="leftcol">
        <html:link action="/aspect?name=Literature">
         <p> <img src="model/book.png" /></p>
-        <p> Literature</p></html:link></th>
+        <p> Literature</p></html:link></td>
     <td> D. melanogaster </td>
     <td> Gene versus publications</td>
     <td> <a href="http://www.ncbi.nlm.nih.gov">NCBI</a> - 14th December 2006</td>
@@ -462,9 +459,9 @@
     <td> &nbsp;</td>
   </tr>
 
- </tbody>
 </table>
 
+<div class="body">
 <p>
 (1) Also orthologues from these 5 organisms to C. familiaris, D. discoideum, D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, R. norvegicus, S. cerevisiae, S. pombe
 </p>
@@ -476,8 +473,7 @@
 <p>
 (3) Coordinates for the Exelixis set are still to genomce sequence release 4.0. These will be updated to release 5.0 in the next release of FlyMine
 </p>
-
-
+</div>
 
 
 
