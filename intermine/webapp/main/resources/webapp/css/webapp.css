@@ -572,18 +572,6 @@ td.resBar {
   border: solid black 1px;
 }
 
-
-.aspectPageIcon {
-  float: left;
-  margin: 15px;
-}
-
-.aspectIntro {
-  padding: 5px;
-  font-size: larger;
-  position:relative
-}
-
 /* template results - used by object & bag details pages */
 table.refSummary {
   border-top: 1px solid #888;
