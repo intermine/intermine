@@ -19,7 +19,7 @@
    </a>
   </h4>
 
-<div id="hiddenDiv1" style="display:none;">
+<div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
 
         <dl>
 
@@ -101,7 +101,7 @@
       </a>
     </h4>
 
-<div id="hiddenDiv2" style="display:none;">
+<div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
 
         <dl>
           <dt>

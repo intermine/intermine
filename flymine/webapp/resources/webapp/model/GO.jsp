@@ -18,7 +18,7 @@
    </a>
  </h4>
 
-<div id="hiddenDiv1" style="display:none;">
+<div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
       <p>
       The Gene Ontology project provides a controlled vocabulary to describe 
       gene and gene product attributes in any organism.  The GO collaborators 
@@ -48,7 +48,7 @@
    </a>
  </h4>
 
-<div id="hiddenDiv2" style="display:none;">
+<div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
 
       <p> Every GO annotation indicates the type of evidence that
       supports it; these evidence codes correspond to broad categories
@@ -79,7 +79,7 @@
    </a>
  </h4>
 
-<div id="hiddenDiv3" style="display:none;">
+<div id="hiddenDiv3" style="display:none;" class="dataSetDescription">
 
       <p> The Qualifier column is used for flags that modify the
       interpretation of an annotation. Allowable values are

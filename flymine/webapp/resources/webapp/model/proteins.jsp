@@ -19,7 +19,7 @@
   </a>
  </h4>
 
-<div id="hiddenDiv1" style="display:none;">
+<div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
           <p>
             All proteins from the <a
             href="http://www.ebi.uniprot.org/index.shtml">UniProt
@@ -56,7 +56,7 @@
     </a>
    </h4>
 
-<div id="hiddenDiv2" style="display:none;">
+<div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
 
           <p>
             Protein family and domain assignments to proteins in UniProt have

@@ -19,7 +19,7 @@
             </a>
           </h4>
 
-          <div id="hiddenDiv1" style="display:none;">
+          <div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
 
 
             <ul><li><dt>
@@ -47,7 +47,7 @@
             </a>
           </h4>
 
-          <div id="hiddenDiv2" style="display:none;">
+          <div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
 
           <ul><li>
             <dt>DNase I footprints for <i>D. melanogaster</i> from the

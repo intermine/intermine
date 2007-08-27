@@ -17,7 +17,7 @@
         </a>
        </h4>
 
-<div id="hiddenDiv1" style="display:none;">
+<div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
        
        <dl>
          <dt>Giot et al (2003) Science 302: 1727-1736 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14605208">PubMed: 14605208</a>) 
@@ -69,7 +69,7 @@
       </a>
      </h4>
 
-<div id="hiddenDiv2" style="display:none;">
+<div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
 
        <dl>
          <dt>
@@ -103,7 +103,7 @@
       </a>
      </h4>
 
-<div id="hiddenDiv3" style="display:none;">
+<div id="hiddenDiv3" style="display:none;" class="dataSetDescription">
 
        <dl>
          <dt>
