@@ -22,3 +22,8 @@
 .aspectStartingPoints,.aspectTile {
   padding-bottom:8px
 }
+
+.aspectPageIcon {
+  float: left;
+  margin: 15px;
+}
