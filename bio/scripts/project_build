@@ -94,8 +94,8 @@ if (defined $release) {
   $properties_file .= ".$release";
 }
 
-my @dump_command = qw[pg_dump -c];
-my @psql_command = qw[psql -q];
+my @dump_command = qw[pg_dump -c -F c -i];
+my @load_command = qw[pg_restore -c -i];
 
 sub log_message
 {
@@ -231,17 +231,17 @@ sub load_db
   my $port = shift;
   my $in_file = shift;
 
-  my @params = ('-U', $user, '-h', $host, '-f', $in_file, $db);
+  my @params = ('-U', $user, '-h', $host, '-d', $db, $in_file);
 
   if (defined $port) {
     unshift @params, "-p", $port;
   }
 
   log_and_print `date`, "\n\n";
-  log_and_print "\nrunning: @psql_command @params\n";
+  log_and_print "\nrunning: @load_command @params\n";
   warn "(ignore password prompt)\n";
 
-  my @spawn_args = ("@psql_command @params; echo __LOAD_FINISHED__");
+  my @spawn_args = ("@load_command @params; echo __LOAD_FINISHED__");
 
   if ($dump_host eq 'localhost') {
     $ENV{PAGER} = "/bin/cat";
@@ -258,7 +258,7 @@ sub load_db
     $exp->raw_pty(1);
 
     $exp->spawn(@spawn_args)
-      or die "Cannot spawn @psql_command @params: $!\n";
+      or die "Cannot spawn @load_command @params: $!\n";
 
     $exp->expect(10, 'Password: ');
     $exp->send("$pass\n");
