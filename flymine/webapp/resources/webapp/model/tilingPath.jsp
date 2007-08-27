@@ -18,7 +18,7 @@
      </a>
    </h4>
 
-<div id="hiddenDiv1" style="display:none;">
+<div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
 	
 		<p>
 		Note: In release 7.0 of FlyMine the format for the tiling path

@@ -27,7 +27,7 @@
           </a>
         </h4>
 
-        <div id="hiddenDiv1" style="display:none;">
+        <div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
           <p>
             <a href="/">FlyMine</a> is a resource aimed at the <i>Drosophila</i> and
             <i>Anopheles</i> research communities hence the focus is on those organisms.
@@ -68,7 +68,7 @@
           </a>
         </h4>
 
-        <div id="hiddenDiv2" style="display:none;">
+        <div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
 
           <p>
             More limited information is available
@@ -88,7 +88,7 @@
           </a>
         </h4>
 
-        <div id="hiddenDiv3" style="display:none;">
+        <div id="hiddenDiv3" style="display:none;" class="dataSetDescription">
           <dl>
             <ul><li><i>Anopheles gambiae</i> - Clustered EST data set version 8.0 from the 
               <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php/">Imperial College London Centre for Bioinformatics</a>.

@@ -23,7 +23,7 @@
             </a>
           </h4>
 
-          <div id="hiddenDiv1" style="display:none;">
+          <div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
 
 
          <ul>
@@ -56,7 +56,7 @@
             </a>
           </h4>
 
-          <div id="hiddenDiv2" style="display:none;">
+          <div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
 
           <dt> Probe sets from the <a href="http://www.affymetrix.com/">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 2.0 Array, a
            microarray tool for studying expression of <i>D. melanogaster</i> transcripts.Comprised of 18,880 probe sets for the analysis 
@@ -75,7 +75,7 @@
             </a>
           </h4>
 
-          <div id="hiddenDiv3" style="display:none;">
+          <div id="hiddenDiv3" style="display:none;" class="dataSetDescription">
 
             <dt>The aim of INDAC is to produce a widely available and uniform set of array reagents so that microarray data collected from 
             different studies may be more easily compared. On behalf of INDAC, the FlyChip group has designed a set of 65-69mer long
@@ -97,7 +97,7 @@
             </a>
           </h4>
 
-          <div id="hiddenDiv4" style="display:none;">
+          <div id="hiddenDiv4" style="display:none;" class="dataSetDescription">
 
 
         <p>Note: In release 7.0 of FlyMine the format for the tiling path

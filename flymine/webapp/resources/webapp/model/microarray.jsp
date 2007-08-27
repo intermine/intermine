@@ -20,7 +20,7 @@
   </a>
 </h4>
 
-<div id="hiddenDiv1" style="display:none;">
+<div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
 
 <dt>An affymetrix microarray-based atlas of gene expression in the adult <i>Drosophila</i> fly from <a href="http://www.flyatlas.org/">FlyAtlas</a>.</dt>
 
@@ -53,7 +53,7 @@ tissue, the following data are given:
    </a>
 </h4>
 
-<div id="hiddenDiv2" style="display:none;"> 
+<div id="hiddenDiv2" style="display:none;" class="dataSetDescription"> 
 
 <dt>
 Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-6">E-FLYC-6</a>
