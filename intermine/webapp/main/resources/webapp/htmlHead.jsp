@@ -29,7 +29,9 @@
       <c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
     </c:when>
     <c:otherwise>
-      <fmt:message key="${pageName}.title" var="pageTitle"/>
+      <fmt:message key="${pageName}.title" var="pageTitle">
+        <fmt:param value="${param.name}"/>
+      </fmt:message>
       <c:out value="${WEB_PROPERTIES['project.title']}: ${pageTitle}" escapeXml="false"/>
     </c:otherwise>
   </c:choose>
