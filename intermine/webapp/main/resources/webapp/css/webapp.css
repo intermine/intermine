@@ -267,8 +267,20 @@ table.query {
 }
 
 .box div.title{
-	color:#CCCC;
+  color: black;
+  padding: 5px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: bold;
+  background: #eee;
+  border-top: 1px solid #888;
+  border-bottom: 1px solid #888;
 }
+
+.box p {
+  padding-top: 5px;
+}
+
 .boxbody {
   background-color: white;
   /*border-bottom: 1px solid #888;*/
@@ -606,8 +618,7 @@ background-color: #ccc;
 
 
 li {
-	list-style: none;
-	margin-left:10px;
+	margin-left: 30px;
 }
 
 /**********************
