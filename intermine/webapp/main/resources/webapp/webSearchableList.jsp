@@ -184,10 +184,12 @@
 
 <script type="text/javascript">
 <!--//<![CDATA[
-function showWSList(wsListId, type) {
-    $(wsListId + '_' + type + '_spinner').style.display = 'none';
-    $(wsListId + '_' + type + '_container').style.display = 'block';
-}
+    function showWSList(wsListId, type) {
+        $(wsListId + '_' + type + '_spinner').style.display = 'none';
+        $(wsListId + '_' + type + '_container').style.display = 'block';
+    }
+
+    setWsNamesMap(${wsNames}, '${wsListId}', '${type}');
 //]]>-->
 </script>
 

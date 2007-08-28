@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.intermine.objectstore.query.ObjectStoreBag;
@@ -45,6 +46,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.stringtree.json.JSONWriter;
 
 /**
  * Controller for webSearchableList.tile
@@ -112,10 +114,19 @@ public class WebSearchableListController extends TilesAction
             filteredWebSearchables = sortList(filteredWebSearchables);
         }
         
+        Map<String, Object> wsMapForJS = new HashMap<String, Object>();
+        
+        for (String wsName: (Set<String>) filteredWebSearchables.keySet()) {
+            wsMapForJS.put(wsName, new Integer(1));
+        }
+        
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         request.setAttribute("userWebSearchables", profile.getWebSearchablesByType(type));
         
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
+        
+        JSONWriter jsonWriter = new JSONWriter();
+        request.setAttribute("wsNames", jsonWriter.write(wsMapForJS));
         return null;
     }
 
