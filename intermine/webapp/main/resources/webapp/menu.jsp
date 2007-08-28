@@ -42,13 +42,14 @@
   </li>
   </ul>
 
+<c:set var="subtab" value="<%= request.getParameter("subtab") %>" />
 <c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
 <c:set var="itemList" value="bags:lists.upload.tab.title:upload:0 bags:lists.view.tab.title:view:0 mymine:mymine.bags.tab.title:lists:0 mymine:mymine.history.tab.title:history:1 mymine:mymine.savedqueries.tab.title:saved:1 mymine:mymine.savedtemplates.tab.title:templates:1 mymine:mymine.password.tab.title:password:1" />
-<jsp:include page="subMenu.jsp" flush="true">
-  <jsp:param name="loggedin" value="${loggedin}"/>
-  <jsp:param name="tab" value="${tab}"/>
-  <jsp:param name="page" value="${page}"/>
-  <jsp:param name="itemList" value="${itemList}"/>
-</jsp:include>
+<tiles:insert name="subMenu.jsp" >
+  <tiles:put name="loggedin" value="${loggedin}"/>
+  <tiles:put name="tab" value="${tab}"/>
+  <tiles:put name="subtab" value="${subtab}"/>
+  <tiles:put name="itemList" value="${itemList}"/>
+</tiles:insert>
 
 <!-- /menu.jsp -->
