@@ -1,6 +1,8 @@
 // This line keeps the nasty error message away (FireFox Bug)
 DWREngine.setMethod(DWREngine.IFrame);
 
+var wsNamesMap = {};
+
 function setFavourite(name, type, image){
     var img = image.src;
     var isFavourite;
@@ -248,13 +250,13 @@ function filterWebSearchablesHandler(event, object, scope, type, wsListId) {
 			clearFilter(type, wsListId);
             return;
         }
-        if (event.keyCode == 13 
-			|| event.keyCode == 33 
-			|| event.keyCode == 34 
-			|| event.keyCode == 35 
-			|| event.keyCode == 36 
-			|| event.keyCode == 37 
-			|| event.keyCode == 38 
+        if (event.keyCode == 13
+			|| event.keyCode == 33
+			|| event.keyCode == 34
+			|| event.keyCode == 35
+			|| event.keyCode == 36
+			|| event.keyCode == 37
+			|| event.keyCode == 38
 			|| event.keyCode == 39
 			||event.keyCode ==  40) {
             return;
@@ -293,45 +295,41 @@ function do_filtering(filteredList, type, wsListId) {
             hitHash[wsListId + '_' + type + '_item_line_' + wsName] = 1;
         }
 
-        var pattern = new RegExp('^' + wsListId + '_' + type + '_item_line_(.*)');
-        var inputArray = document.getElementsByTagName("div");
-        for(var i=0; i<inputArray.length; i++) {
-            result = pattern.exec(inputArray[i].id);
-            if (result != null ) {
-                if (hitHash[inputArray[i].id]) {
-                    inputArray[i].style.display='block';
-                    var highlightText = descHash[inputArray[i].id];
+        for(var name in wsNamesMap) {
+            var div = wsNamesMap[name];
+            if (hitHash[div.id]) {
+                div.style.display='block';
+                var highlightText = descHash[div.id];
 
-                    if (highlightText) {
-                        var descId = wsListId + '_' + type + '_item_description_' + result[1];
-                        var desc = $(descId);
-                        desc.style.display = 'none';
+                if (highlightText) {
+                    var descId = wsListId + '_' + type + '_item_description_' + name;
+                    var desc = $(descId);
+                    desc.style.display = 'none';
 
-                        var descHighlightId = wsListId + '_' + type + '_item_description_' + result[1] + '_highlight';
-                        var descHighlight = $(descHighlightId);
-                        descHighlight.style.display = 'block';
+                    var descHighlightId = wsListId + '_' + type + '_item_description_' + name + '_highlight';
+                    var descHighlight = $(descHighlightId);
+                    descHighlight.style.display = 'block';
 
-                        var descChild = setChild(descHighlight, highlightText, 'p');
-                    }
-
-                    if (scoreHash[inputArray[i].id]) {
-                        var scoreWsName = result[1];
-                        var score = scoreHash[inputArray[i].id];
-                        var intScore = parseInt(score * 10);
-                        var scoreId = wsListId + '_' + type + '_item_score_' + scoreWsName;
-                        var scoreSpan = $(scoreId);
-                        // we do this instead of scoreSpan.innerHTML = "stuff"
-                        // because it's buggy in Internet Explorer
-                        var heatImage = 'heat' + intScore + '.gif';
-                        var heatText = '<img height="10" width="' +
-                            (intScore * 3) + '" src="images/' + heatImage + '"/>';
-                        setChild(scoreSpan, heatText, 'span');
-                    }
-                } else if(document.getElementById(wsListId + '_' + type + '_chck_' + result[1]).checked != true){
-                    inputArray[i].style.display='none';
+                    var descChild = setChild(descHighlight, highlightText, 'p');
                 }
-                showWSList(wsListId, type);
+
+                if (scoreHash[div.id]) {
+                    var scoreWsName = name;
+                    var score = scoreHash[div.id];
+                    var intScore = parseInt(score * 10);
+                    var scoreId = wsListId + '_' + type + '_item_score_' + scoreWsName;
+                    var scoreSpan = $(scoreId);
+                    // we do this instead of scoreSpan.innerHTML = "stuff"
+                    // because it's buggy in Internet Explorer
+                    var heatImage = 'heat' + intScore + '.gif';
+                    var heatText = '<img height="10" width="' +
+                        (intScore * 3) + '" src="images/' + heatImage + '"/>';
+                    setChild(scoreSpan, heatText, 'span');
+                }
+            } else if (document.getElementById(wsListId + '_' + type + '_chck_' + name).checked != true){
+               div.style.display='none';
             }
+            showWSList(wsListId, type);
         }
 
         function sortWsFilter(el1, el2) {
@@ -541,4 +539,15 @@ function clearFilter(type, wsListId) {
 
     showAll(wsListId, type);
     return false;
+}
+
+function setWsNamesMap(wsNames, wsListId, type) {
+   // initialise wsNamesMap so that the values are the corresponding DIV
+   // elements
+   for (var name in wsNames) {
+     wsNamesMap[name] = $(wsListId + '_' + type + '_item_line_' + name);
+   }
+
+   1;
+   
 }
