@@ -9,17 +9,16 @@
 <div class="body">
 <script type="text/javascript" src="js/mymine.js"></script>
 
-<c:set var="subtab" value="<%=request.getParameter("subtab")%>"/>
 <c:choose>
   <%-- bags --%>
-  <c:when test="${subtab=='lists'||subtab==null}">
+  <c:when test="${userOptionMap[subtabName]  =='lists'||userOptionMap[subtabName]  ==null}">
     <tiles:insert name="historyBagView.jsp">
 	  <tiles:put name="type" value="bag"/>
 	</tiles:insert>
   </c:when>
     
   <%-- favourite bags --%>
-  <c:when test="${subtab=='favouriteLists'}">
+  <c:when test="${userOptionMap[subtabName]  =='favouriteLists'}">
     <tiles:insert name="historyBagView.jsp">
 	  <tiles:put name="type" value="favourite"/>
 	</tiles:insert>
@@ -27,7 +26,7 @@
     
     
     <%-- saved queries --%>
-    <c:when test="${subtab=='saved'}">
+    <c:when test="${userOptionMap[subtabName]  =='saved'}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="saved"/>
       </tiles:insert>
@@ -35,26 +34,26 @@
     
     
     <%-- query history --%>
-    <c:when test="${subtab=='history'}">
+    <c:when test="${userOptionMap[subtabName]  =='history'}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="history"/>
       </tiles:insert>
     </c:when>
     
     <%-- saved templates --%>    
-    <c:when test="${subtab=='templates'}">
+    <c:when test="${userOptionMap[subtabName]  =='templates'}">
       <tiles:insert name="historyTemplateView.jsp">
         <tiles:put name="type" value="template"/>
       </tiles:insert>
     </c:when>
     
     <%-- favourites --%> 
-    <c:when test="${subtab=='favourites'}">
+    <c:when test="${userOptionMap[subtabName]  =='favourites'}">
       <tiles:insert name="favourites.tile" />
     </c:when>
     
     <%-- password --%> 
-    <c:when test="${subtab=='password'}">
+    <c:when test="${userOptionMap[subtabName]  =='password'}">
       <tiles:insert name="changePassword.jsp" />
     </c:when>
   </c:choose>
