@@ -124,11 +124,10 @@ function updateUniqueCountInColumnSummary(uniqueCountQid) {
 
 function resultsCountCallback(results) {
     var size = results[0][0];
-
     if (size > 1) {
         var summaryUniqueCountElement = document.getElementById('summary_unique_count');
         summaryUniqueCountElement.style.display='inline';
-        summaryUniqueCountElement.innerHTML='Total unique values: ' + size;
+        summaryUniqueCountElement.innerHTML='<p>Total unique values: ' + size + "</p>";
     }
     return true;
 }
@@ -183,11 +182,12 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
                       <table class="results" cellpadding="0" cellspacing="0"> \
                         <thead id="summary_head">' + headerText +'</thead>    \
                         <tbody id="summary_table">' + bodyText + '</tbody>    \
-                      </table>                                                \
-                    </div>';
+                      </table>'; 
 
         if (summaryRowsCount > 10) {
-            html += '<div>(Note: showing only the first 10 rows of summary)</div>';
+            html += '<div><p>(Note: showing only the first 10 rows of summary)</p></div></div>';
+        } else {
+        	html += '</div>';
         }
 
         var summaryLoadedElement = document.getElementById('summary_loaded');
