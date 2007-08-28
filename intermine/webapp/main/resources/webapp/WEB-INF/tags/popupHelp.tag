@@ -13,6 +13,6 @@
   <c:set var="text" value="?"/>
 </c:if>
 
-<c:set var="url" value="${WEB_PROPERTIES['project.wikiLocation']}/${pageName}"/>
+<c:set var="url" value="${WEB_PROPERTIES['project.helpLocation']}/${pageName}"/>
 
 <html:link href="${url}" onclick="javascript:window.open('${url}','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">${text}</html:link>
