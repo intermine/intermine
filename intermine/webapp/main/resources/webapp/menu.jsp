@@ -9,7 +9,7 @@
 
   <fmt:message key="${pageName}.tab" var="tab" />
 
-  <ul id="nav">
+<ul id="nav">
   <li id="home" <c:if test="${tab == 'home'}">class="activelink"</c:if>>
     <html:link action="/begin">
       <fmt:message key="menu.home"/>
@@ -41,44 +41,14 @@
     </html:link>
   </li>
   </ul>
-  <div id="quicksearch">
-    <tiles:insert name="browse.tile"> 
-      <tiles:put name="menuItem" value="true"/> 
-    </tiles:insert>
-  </div>
-  
-<div style="clear:both;"></div>
 
-<c:if test="${tab == 'mymine'}">
- <c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
-  <jsp:include page="mymineMenu.jsp" flush="true">
-    <jsp:param name="loggedin" value="${loggedin}"/>  
-  </jsp:include>
-</c:if>
-<c:if test="${pageName == 'bag'}">
-<div id="submenu" style="background:#A42F2D">
-  <c:set var="page" value="<%=request.getParameter("page")%>"/>
-  <ul id="submenulist">
-      <c:choose>
-      <c:when test="${empty page || page == 'upload'}">
-        <li id="activelist">Upload</li>
-      </c:when>
-      <c:otherwise>
-        <li><html:link action="bag.do?page=upload">Upload</html:link></li>
-      </c:otherwise>
-      </c:choose>
-    <li>&nbsp;|&nbsp;</li>
-    <li>
-    <c:choose>
-    <c:when test="${page == 'view'}">
-      <li id="activelist">View</li>
-    </c:when>
-    <c:otherwise>
-      <li><html:link action="bag.do?page=view">View</html:link></li>
-    </c:otherwise>
-    </c:choose>
-  </ul>
-</div>
-<div style="clear:both"></div>
-</c:if>
+<c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
+<c:set var="itemList" value="bags:lists.upload.tab.title:upload:0 bags:lists.view.tab.title:view:0 mymine:mymine.bags.tab.title:lists:0 mymine:mymine.history.tab.title:history:1 mymine:mymine.savedqueries.tab.title:saved:1 mymine:mymine.savedtemplates.tab.title:templates:1 mymine:mymine.password.tab.title:password:1" />
+<jsp:include page="subMenu.jsp" flush="true">
+  <jsp:param name="loggedin" value="${loggedin}"/>
+  <jsp:param name="tab" value="${tab}"/>
+  <jsp:param name="page" value="${page}"/>
+  <jsp:param name="itemList" value="${itemList}"/>
+</jsp:include>
+
 <!-- /menu.jsp -->
