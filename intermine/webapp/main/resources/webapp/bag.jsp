@@ -7,9 +7,9 @@
 <html:xhtml/>
 
 <div class="body">
-  <c:set var="page" value="<%=request.getParameter("page")%>"/>
+  <c:set var="subtab" value="<%=request.getParameter("subtab")%>"/>
   <c:choose>
-    <c:when test="${empty page || page == 'upload'}">
+    <c:when test="${empty subtab || subtab == 'upload'}">
       <!-- <div id="leftCol"> -->
             <div align="center">
               <tiles:insert name="bagBuild.tile"/>

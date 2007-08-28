@@ -13,7 +13,6 @@
 <html:html locale="true" xhtml="true">
   <%-- from the tiles config file for description.jsp --%>
   <tiles:importAttribute name="pageName" scope="request"/>
-
   <head>
     <html:base/>
     <tiles:insert name="htmlHead.jsp">

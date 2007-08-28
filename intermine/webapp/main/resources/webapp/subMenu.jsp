@@ -5,15 +5,12 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-	
-<!-- mymineMenu.jsp -->
-	
-<c:set var="MYMINE_PAGE" value="<%=request.getParameter("page")%>"/>
-<c:set var="loggedin" value="<%=request.getParameter("loggedin")%>"/>
-<c:set var="tab" value="<%=request.getParameter("tab")%>"/>
-<c:set var="page" value="<%=request.getParameter("page")%>"/>
-<c:set var="itemList" value="<%=request.getParameter("itemList")%>"/>
+<tiles:useAttribute name="subtab" id="subtab"/>
+<tiles:useAttribute name="tab" id="tab"/>
+<tiles:useAttribute name="loggedin" id="loggedin"/>
+<tiles:useAttribute name="itemList" id="itemList"/>
 
+<!-- mymineMenu.jsp -->
 <div style="clear:both;"></div>
 <c:choose>
   <c:when test="${tab == 'mymine'}">
@@ -40,7 +37,7 @@
     <li>&nbsp;|&nbsp;</li>
   </c:if>
   <c:choose>
-    <c:when test="${page == $tabArray[2]}">
+    <c:when test="${(empty subtab && count == 0)||(subtab == tabArray[2])}">
       <li id="subactive_${tab}"><fmt:message key="${tabArray[1]}" /></li>
     </c:when>
     <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
@@ -49,7 +46,7 @@
       </li>
     </c:when>
     <c:otherwise>
-      <li><html:link action="${pageName}?page=${tabArray[2]}"><fmt:message key="${tabArray[1]}"/></html:link></li>
+      <li><html:link action="${pageName}?subtab=${tabArray[2]}"><fmt:message key="${tabArray[1]}"/></html:link></li>
     </c:otherwise>
   </c:choose>
   <c:set var="count" value="${count+1}"/>
