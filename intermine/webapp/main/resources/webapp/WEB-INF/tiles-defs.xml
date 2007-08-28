@@ -226,6 +226,7 @@
   <definition name="bagDetails.tile" path="bagDetails.jsp" controllerUrl="/initBagDetails.do" />
   <definition name="bagView.tile" path="bagView.jsp" controllerUrl="/initBagView.do" />
   <definition name="dataCategories.tile" path="/dataCategories.jsp" />  
+  <definition name="subMenu.tile" path="subMenu.jsp" controllerUrl="/initSubMenu.do" />  
 
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->

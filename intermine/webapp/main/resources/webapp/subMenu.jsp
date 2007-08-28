@@ -5,7 +5,6 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<tiles:useAttribute name="subtab" id="subtab"/>
 <tiles:useAttribute name="tab" id="tab"/>
 <tiles:useAttribute name="loggedin" id="loggedin"/>
 <tiles:useAttribute name="itemList" id="itemList"/>
@@ -30,6 +29,7 @@
 
 <ul id="submenulist">
 <c:set var="count" value="0"/>
+<c:set var="subtabName" value="subtab${pageName}" scope="request" />
 <c:forTokens items="${itemList}" delims=" " var="item" varStatus="counter">
   <c:set var="tabArray" value="${fn:split(item, ':')}" />
   <c:if test="${tabArray[0] == tab}">
@@ -37,7 +37,7 @@
     <li>&nbsp;|&nbsp;</li>
   </c:if>
   <c:choose>
-    <c:when test="${(empty subtab && count == 0)||(subtab == tabArray[2])}">
+    <c:when test="${(empty userOptionMap[subtabName] && count == 0)||(userOptionMap[subtabName] == tabArray[2])}">
       <li id="subactive_${tab}"><fmt:message key="${tabArray[1]}" /></li>
     </c:when>
     <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">

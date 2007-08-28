@@ -400,6 +400,8 @@
     </action>
     <action path="/initTip" type="org.intermine.web.struts.TipController">
     </action>
+    <action path="/initSubMenu" type="org.intermine.web.struts.SubMenuController">
+    </action>
 
     <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>

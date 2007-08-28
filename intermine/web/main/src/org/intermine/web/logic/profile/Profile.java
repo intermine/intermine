@@ -46,6 +46,7 @@ public class Profile
     protected Map<String, SavedQuery> savedQueries = new TreeMap<String, SavedQuery>();
     protected Map<String, InterMineBag> savedBags = new TreeMap<String, InterMineBag>();
     protected Map<String, TemplateQuery> savedTemplates = new TreeMap<String, TemplateQuery>();
+    protected Map<String, String> userOptions = new TreeMap<String, String>();
     //protected Map categoryTemplates;
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
@@ -350,5 +351,29 @@ public class Profile
      */
     public SearchRepository getSearchRepository() {
         return searchRepository;
+    }
+
+    /**
+     * Return the userOption
+     * @return the value
+     */
+    public String getUserOption(String name) {
+        return userOptions.get(name);
+    }
+
+    /**
+     * Set the userOption
+     * @param name the userOption name
+     * @param value the userOption value
+     */
+    public void setUserOption(String name, String value) {
+        userOptions.put(name, value);
+    }
+
+    /**
+     * @return the userOptions
+     */
+    public Map<String, String> getUserOptionsMap() {
+        return userOptions;
     }
 }
