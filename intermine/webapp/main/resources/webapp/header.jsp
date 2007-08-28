@@ -6,10 +6,10 @@
 <!-- header.jsp -->
 
 <div id="topnav">
-<a href="#" onClick="return clickreturnvalue()" onMouseover="dropdownmenu(this, event, helpMenu, '150px')" onMouseout="delayhidemenu()">Help</a> | 
-<a href="#" onClick="return clickreturnvalue()" onMouseover="dropdownmenu(this, event, aboutMenu, '150px')" onMouseout="delayhidemenu()">About</a> | 
-<a href="#" onClick="return clickreturnvalue()" onMouseover="dropdownmenu(this, event, dataMenu, '150px')" onMouseout="delayhidemenu()">Data</a> | 
-<a href="#" onClick="return clickreturnvalue()" onMouseover="dropdownmenu(this, event, softwareMenu, '150px')" onMouseout="delayhidemenu()">Software</a>
+  <a href="${WEB_PROPERTIES['project.sitePrefix']}/help.shtml">Help</a> |
+  <a href="${WEB_PROPERTIES['project.sitePrefix']}/about.shtml">About</a> |
+  <a href="${WEB_PROPERTIES['project.sitePrefix']}/cite.shtml">Citation</a> |
+  <a href="${WEB_PROPERTIES['project.sitePrefix']}/software.shtml">Software</a>
 </div>
 
 <div id="loginbar">
@@ -20,7 +20,7 @@
 </div>
 <div id="title">
    <span id="logo"><im:useTransparentImage src="/model/logo.png" id="heading_logo" link="begin.do" width="68px" height="65px" /></span>
-   <h1><html:link href="${WEB_PROPERTIES['project.sitePrefix']}/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
+   <h1><html:link href="s/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
    <span class="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span></h1>
     <p>
       <c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/>
