@@ -12,15 +12,9 @@
   <!--//<![CDATA[
       var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
       var detailsType = 'bag';
-      function jump() {
-      	window.location.hash = "templates";
-      	return false;
-      }
+
 	function go(where) {
 		switch (where){
-			case "show":
-				document.forms[1].showInResultsTable.value = 'true';
-				break;
 			case "query":
 				document.forms[1].useBagInQuery.value = 'true';
 				break;
@@ -158,11 +152,9 @@
   <tr>
   <td>
   
-  <br/>  <br/>  <br/>
+  <br/>  <br/>
 
   <span style="font-size:+2em;">View</span>
-  	<li><html:link action="/bagDetails?scope=${scope}&bagName=${bag.name}"
-          onclick="return jump();">related templates</html:link></li>
   	<li><html:link action="/bag">all lists</html:link></li>
   	<li><html:link action="/mymine">your lists</html:link></li>
   <span style="font-size:+2em;">Use</span>		

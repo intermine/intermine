@@ -74,12 +74,12 @@ public class ModifyBagDetailsAction extends InterMineAction
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
-        String xxx = request.getParameter("showInResultsTable");
+        String yyy = request.getParameter("useBagInQuery");
         if (request.getParameter("remove") != null) {
             removeFromBag(mbdf.getBagName(), profile, mbdf, pm.getUserProfileObjectStore(), os,
                     session);
         } else {
-            if (request.getParameter("showInResultsTable").equals("true")) {
+            if (request.getParameter("showInResultsTable") != null) {
                 return showBagInResultsTable(mbdf.getBagName(), mapping, session);
             } else if (request.getParameter("useBagInQuery").equals("true")) {
                 
