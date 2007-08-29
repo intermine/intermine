@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.util.SensibleByteArrayOutputStream;
+import org.intermine.util.StringConstructor;
 
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
@@ -135,6 +136,18 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
             byte bytes[] = ((String) o).getBytes("UTF-8");
             dos.writeInt(bytes.length);
             dos.write(bytes);
+        } else if (o instanceof StringConstructor) {
+            ArrayList<byte []> byteArrays = new ArrayList();
+            int totalLength = 0;
+            for (String string : ((StringConstructor) o).getStrings()) {
+                byte bytes[] = ((String) string).getBytes("UTF-8");
+                totalLength += bytes.length;
+                byteArrays.add(bytes);
+            }
+            dos.writeInt(totalLength);
+            for (byte bytes[] : byteArrays) {
+                dos.write(bytes);
+            }
         } else if (o instanceof BigDecimal) {
             BigInteger unscaledValue = ((BigDecimal) o).unscaledValue();
             int signum = ((BigDecimal) o).signum();

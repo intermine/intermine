@@ -67,13 +67,21 @@ public class NotXmlParser
             if (a[i].startsWith("a")) {
                 String fieldName = a[i].substring(1);
                 Class fieldClass = TypeUtil.getFieldInfo(retval.getClass(), fieldName).getType();
-                StringBuffer string = new StringBuffer(i + 1 == a.length ? "" : a[i + 1]);
+                String firstString = (i + 1 == a.length ? "" : a[i + 1]);
+                StringBuffer string = null;
+                if (firstString.length() * 10 < xml.length() * 9) {
+                    string = new StringBuffer(firstString);
+                }
                 while ((i + 2 < a.length) && (a[i + 2].startsWith(ENCODED_DELIM))) {
                     i++;
+                    if (string == null) {
+                        string = new StringBuffer(firstString);
+                    }
                     string.append(DELIM).append(a[i + 1].substring(1));
                 }
                 TypeUtil.setFieldValue(retval, fieldName,
-                        TypeUtil.stringToObject(fieldClass, string.toString()));
+                        TypeUtil.stringToObject(fieldClass, (string == null ? firstString
+                                : string.toString())));
             } else if (a[i].startsWith("r")) {
                 String fieldName = a[i].substring(1);
                 Integer id = Integer.valueOf(a[i + 1]);

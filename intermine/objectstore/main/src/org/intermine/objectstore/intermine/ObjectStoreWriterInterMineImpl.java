@@ -53,6 +53,7 @@ import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
+import org.intermine.util.StringConstructor;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -389,7 +390,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         }
         try {
             boolean doDeletes = populateIds(c, o);
-            String xml = null;
+            StringConstructor xml = null;
             String objectClass = null;
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 

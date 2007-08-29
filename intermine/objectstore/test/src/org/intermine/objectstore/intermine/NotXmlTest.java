@@ -45,7 +45,7 @@ public class NotXmlTest extends TestCase
             + NotXmlRenderer.DELIM + "aid" + NotXmlRenderer.DELIM + "1234"
             + NotXmlRenderer.DELIM + "aname" + NotXmlRenderer.DELIM + "Employee1";
 
-        String got = NotXmlRenderer.render(e);
+        String got = NotXmlRenderer.render(e).toString();
         assertEquals(got, expected, got);
     }
 
@@ -91,7 +91,7 @@ public class NotXmlTest extends TestCase
         e.setId(new Integer(2874));
         e.setName("Flibble $_^ Wotsit");
 
-        String notXml = NotXmlRenderer.render(e);
+        String notXml = NotXmlRenderer.render(e).toString();
 
         Employee reparsed = (Employee) NotXmlParser.parse(notXml, os);
 

@@ -189,7 +189,7 @@ public class ResultsConverter
                             obj = fetched.get(id);
                             if (obj == null) {
                                 throw new ObjectStoreException("Error - could not fetch object"
-                                        + " with ID of " + id);
+                                        + " with ID of " + id + " for query " + q);
                             }
                             row.set(i, obj);
                         }

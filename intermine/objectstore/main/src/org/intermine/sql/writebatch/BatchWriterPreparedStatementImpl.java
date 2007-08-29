@@ -58,7 +58,11 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
                 if (inserts instanceof Object[]) {
                     Object values[] = (Object[]) inserts;
                     for (int i = 0; i < colNames.length; i++) {
-                        prepS.setObject(i + 1, values[i]);
+                        Object value = values[i];
+                        if (value instanceof CharSequence) {
+                            value = ((CharSequence) value).toString();
+                        }
+                        prepS.setObject(i + 1, value);
                     }
                     prepS.addBatch();
                 } else {
@@ -66,7 +70,11 @@ public class BatchWriterPreparedStatementImpl extends BatchWriterSimpleImpl
                     while (iter.hasNext()) {
                         Object values[] = (Object[]) iter.next();
                         for (int i = 0; i < colNames.length; i++) {
-                            prepS.setObject(i + 1, values[i]);
+                            Object value = values[i];
+                            if (value instanceof CharSequence) {
+                                value = ((CharSequence) value).toString();
+                            }
+                            prepS.setObject(i + 1, value);
                         }
                         prepS.addBatch();
                     }

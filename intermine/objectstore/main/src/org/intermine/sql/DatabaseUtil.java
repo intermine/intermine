@@ -615,6 +615,8 @@ public class DatabaseUtil
             return o.toString();
         } else if (o instanceof String) {
             return "'" + StringUtil.duplicateQuotes((String) o) + "'";
+        } else if (o instanceof CharSequence) {
+            return "'" + StringUtil.duplicateQuotes(((CharSequence) o).toString()) + "'";
         } else if (o instanceof Boolean) {
             return ((Boolean) o).booleanValue() ? "'true'" : "'false'";
         } else if (o == null) {
