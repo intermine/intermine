@@ -101,7 +101,7 @@
   <tiles:put name="limit" value="${limit}"/>
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
-  <tiles:put name="delayDisplay" value="${initialFilterText != ''}"/>
+  <tiles:put name="delayDisplay" value="${!empty initialFilterText}"/>
 </tiles:insert>
 
   <script type="text/javascript">
@@ -111,7 +111,7 @@
 //]]>-->
   </script>
 
-<c:if test="${initialFilterText != ''}">
+<c:if test="${!empty initialFilterText}">
   <script type="text/javascript">
 <!--//<![CDATA[
     filterWebSearchablesHandler(null, $('${ws_input_id}'), '${scope}', '${type}', '${wsListId}');
