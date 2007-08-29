@@ -21,6 +21,7 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.util.NullFirstComparator;
+import org.intermine.util.StringConstructor;
 
 /**
  * A class representing all changes to be made to an SQL table.
@@ -212,7 +213,9 @@ public class TableBatch implements Table
         int retval = 0;
         for (int i = 0; i < array.length; i++) {
             if (array[i] instanceof String) {
-                retval += ((String) array[i]).length() * 2;
+                retval += ((String) array[i]).length() * 2 + 12;
+            } else if (array[i] instanceof StringConstructor) {
+                retval += ((StringConstructor) array[i]).length() * 2 + 12;
             } else if ((array[i] instanceof Long) || (array[i] instanceof Double)) {
                 retval += 8;
             } else if (array[i] instanceof BigDecimal) {

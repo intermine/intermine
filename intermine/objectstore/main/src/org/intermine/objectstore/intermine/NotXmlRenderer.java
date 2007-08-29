@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringConstructor;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -38,9 +39,9 @@ public class NotXmlRenderer
      * @param obj the object to render
      * @return the NotXml String
      */
-    public static String render(InterMineObject obj) {
+    public static StringConstructor render(InterMineObject obj) {
         try {
-            StringBuffer sb = new StringBuffer();
+            StringConstructor sb = new StringConstructor();
             sb.append(DELIM);
             boolean needComma = false;
             Iterator classIter = DynamicUtil.decomposeClass(obj.getClass()).iterator();
@@ -68,28 +69,31 @@ public class NotXmlRenderer
                     if (value instanceof InterMineObject) {
                         // Dereference ID of reference, and use that instead.
                         Integer id = ((InterMineObject) value).getId();
-                        sb.append(DELIM)
-                            .append("r")
-                            .append(fieldName)
-                            .append(DELIM)
-                            .append(id.toString());
+                        sb.append(DELIM);
+                        sb.append("r");
+                        sb.append(fieldName);
+                        sb.append(DELIM);
+                        sb.append(id.toString());
                     } else {
-                        sb.append(DELIM)
-                            .append("a")
-                            .append(fieldName)
-                            .append(DELIM);
+                        sb.append(DELIM);
+                        sb.append("a");
+                        sb.append(fieldName);
+                        sb.append(DELIM);
                         if (value instanceof Date) {
                             sb.append(Long.toString(((Date) value).getTime()));
                         } else if (value instanceof String) {
                             String string = (String) value;
+                            //if (string.length() > 10000000) {
+                            //    sb.ensureCapacity(sb.length() + string.length() + 1000000);
+                            //}
                             while (string != null) {
                                 int delimPosition = string.indexOf(DELIM);
                                 if (delimPosition == -1) {
                                     sb.append(string);
                                     string = null;
                                 } else {
-                                    sb.append(string.substring(0, delimPosition + 3))
-                                        .append(ENCODED_DELIM);
+                                    sb.append(string.substring(0, delimPosition + 3));
+                                    sb.append(ENCODED_DELIM);
                                     string = string.substring(delimPosition + 3);
                                 }
                             }
@@ -99,16 +103,16 @@ public class NotXmlRenderer
                     }
                 }
             }
-            if (((sb.length() > 1000000) && ((1.3 * sb.length()) < sb.capacity()))
-                    || ((2 * sb.length()) < sb.capacity())) {
-                // Yes, this looks silly, but it prevents the String holding a reference to a char
-                // array that is up to twice the size of the String. We throw away the larger char
-                // array immediately anyway.
-                LOG.info("Converting StringBuffer (size = " + (sb.length() / 512)
-                        + " kB, capacity = " + (sb.capacity() / 512) + " kb) to String");
-                return new String(sb.toString());
-            }
-            return sb.toString();
+            //if (((sb.length() > 1000000) && ((1.3 * sb.length()) < sb.capacity()))
+            //        || ((2 * sb.length()) < sb.capacity())) {
+            //    // Yes, this looks silly, but it prevents the String holding a reference to a char
+            //    // array that is up to twice the size of the String. We throw away the larger char
+            //    // array immediately anyway.
+            //    LOG.info("Converting StringBuffer (size = " + (sb.length() / 512)
+            //            + " kB, capacity = " + (sb.capacity() / 512) + " kb) to String");
+            //    return new String(sb.toString());
+            //}
+            return sb;
         } catch (IllegalAccessException e) {
             IllegalArgumentException e2 = new IllegalArgumentException();
             e2.initCause(e);
