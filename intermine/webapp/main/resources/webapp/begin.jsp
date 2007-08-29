@@ -36,9 +36,9 @@
 <div style="float:right;margin-left:340px;position:absolute">
 <div style="float:right"><tiles:insert name="tipWrapper.tile"/></div>
    <div style="width:400px;margin-left:20px">
- 	<span style="font-size:+2em;"><a href="http://www.flymine.org/what.shtml">What is FlyMine?</a></span><br>
- 	<span style="font-size:+1.4em"><a href="http://www.flymine.org/tour/tour_1.html" target="_blank"  onclick="javascript:window.open('http://www.flymine.org/tour/tour_1.html','_manual','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour!</a></span>
-		<p class="errors">This is release 8.0 of FlyMine.  See the <a href="http://www.flymine.org/release-notes.shtml">release notes</a> to find out what's new.</p>
+ 	<span style="font-size:+2em;"><a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is FlyMine?</a></span><br>
+ 	<span style="font-size:+1.4em"><a href="${WEB_PROPERTIES['project.sitePrefix']}/tour/start.html" target="_help"  onclick="javascript:window.open('${WEB_PROPERTIES['project.sitePrefix']}/tour/start.html','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour!</a></span>
+		<p class="errors">This is release 8.0 of FlyMine.  See the <a href="${WEB_PROPERTIES['project.sitePrefix']}/release-notes.shtml">release notes</a> to find out what's new.</p>
   </div>
 </div>	
 <div style="clear:right"></div>
