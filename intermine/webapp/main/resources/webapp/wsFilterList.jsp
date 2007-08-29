@@ -40,7 +40,7 @@
            onKeyPress="return disableEnterKey(event);"
            disabled="true"
            value="${initialFilterText}"/></li>
-  <!-- <li>&nbsp; <img id='${wsListId}_${type}_spinner' style='visibility: hidden' 
+  <!-- <li>&nbsp; <img id='${wsListId}_${type}_spinner' style='display: none' 
              src='images/wait20trans.gif'/></li> -->
 <c:if test="${! empty PROFILE.username || type == 'template'}">
   <li>&nbsp;&nbsp;&nbsp;Filter:&nbsp;</li>
