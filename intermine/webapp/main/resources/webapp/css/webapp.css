@@ -30,10 +30,10 @@ h1, h2, h3 {
 #header {
 	background-image: url('../model/top_gradient.png');
     background-repeat: repeat-x;
-	padding:0px;
+	padding:0;
 	padding-top:90px;
 	height:24px;
-	margin:0px;
+	margin:0;
 	font-size: 12px;
 	background-color: #D0B5D7;
 }
@@ -497,7 +497,7 @@ hr.seperator {
   text-align: center;
 }
 #pagecontent {
-  margin: 15px 0 0 0;
+  margin: 10px 0 0 0;
   padding: 0px;
   clear:both;
 }
@@ -651,7 +651,8 @@ div#quicksearch {
 	float:right;
 	color:white;
 	white-space: nowrap;
-	margin-right:15px;
+	padding-right:15px;
+	margin-top:0.6em;
 }
 
 
@@ -660,8 +661,10 @@ div#quicksearch {
 	padding:0px;
 	margin:0 0 25px 0;
 	padding-left:15px;
-	float:left;
-	line-height:3em;
+	height:3em;
+	font-size: 12px;
+	clear:both;
+	display:block;
 }
 
 .submenu{

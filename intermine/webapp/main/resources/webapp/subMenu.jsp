@@ -10,7 +10,6 @@
 <tiles:useAttribute name="itemList" id="itemList"/>
 
 <!-- mymineMenu.jsp -->
-<div style="clear:both;"></div>
 <c:choose>
   <c:when test="${tab == 'mymine'}">
     <c:set var="styleClass" value="submenu_mymine" />
@@ -20,7 +19,6 @@
   </c:otherwise>
 </c:choose>
 <div id="submenu" class="${styleClass}">
-
 <div id="quicksearch">
   <tiles:insert name="browse.tile"> 
     <tiles:put name="menuItem" value="true"/> 
@@ -54,8 +52,5 @@
 </c:forTokens>
   
 </ul>
-
 </div>
-<div style="clear:both;"></div>
-
 <!-- /mymineMenu.jsp -->
