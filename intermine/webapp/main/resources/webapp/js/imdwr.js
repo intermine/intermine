@@ -329,8 +329,9 @@ function do_filtering(filteredList, type, wsListId) {
             } else if (document.getElementById(wsListId + '_' + type + '_chck_' + name).checked != true){
                div.style.display='none';
             }
-            showWSList(wsListId, type);
         }
+
+        showWSList(wsListId, type);
 
         function sortWsFilter(el1, el2) {
             var el1score = scoreHash[el1.id];
