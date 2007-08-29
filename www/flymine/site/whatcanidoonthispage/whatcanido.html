@@ -14,7 +14,6 @@
 <ul class="tabset_tabs">
    <li><a href="#basics" class="active">The basics</a></li>
    <li><a href="#searching">Searching Templates</a></li>
-   <li><a href="#running">Running Templates</a></li>
 
 </ul>
 
@@ -34,29 +33,13 @@ minutes - so if you have a suggestion, let us know.</p>
 
 <p> You can search templates by keywords (eg gene, orthologue, FlyAtlas). By default, templates from all data categories will be searched. Optionally, you can restrict your search to a certain data type. If you are logged in, public templates as well as your own templates will be searched, by default.</p>
 
-<img alt="[Templates]"  src="templates_search2.png"/>
+<img alt="[Templates]"  src="templates_search.png"/>
 
 <p> In the example below, only 'My templates' will be searched (not the public ones), and only templates that I have marked as 'My Favourites'. </p>
 
 <img alt="[Templates]"  src="templates_filter.png"/>
 
 </div>
-
-
-<div id="running" class="tabset_content"><h2 class="tabset_label">Running Templates</h2>
-
-<p> Templates provide a simple form to an underlying predefined query in which one or more variables need to be specified. As an example the template Gene + Transcription factor --> Gene + binding sites + transcription factor is shown below.</p>
-
-<img alt="[Templates]"  src="templates_run.png"/>
-
-
-</div>
-
-
-
-
-
-
 
 
 <h1 id="bag">Lists</h1>
@@ -73,10 +56,10 @@ minutes - so if you have a suggestion, let us know.</p>
 
 <p>FlyMine can operate on lists of data.  Lists can then be analysed
 on a list analysis page, or can be used in (template) queries. The
-Upload page allows you to create a list from an external source. The
-list can contain a mix of identifier types (eg symbols, names,
-organism database id,) but it cannot contain different object types
-(eg a list of genes and proteins is currently not possible).</p>
+Upload page allows you to create a list. The list can contain a mix of
+identifier types (eg symbols, names, organism database id,) but it
+cannot contain different object types (eg a list of genes and proteins
+is currently not possible).</p>
 
 <p>To create a list, follow these steps:</p> 
 
@@ -105,12 +88,19 @@ on a List name will show the List analysis page for this list. We can
 add new public lists at any time - it only takes a few minutes - so if
 you have a suggestion, let us know.</p>
 
-<img alt="[Lists]"  src="xxxx.png"/>
+<img alt="[Lists]"  src="lists_view.png"/>
 
 <p>You can merge, subtract and find common members if you
 have more than one list.</p>
 
-<img alt="[Lists]"  src="xxxx.png"/>
+
+<p><i>As an example, an interszection of 2 lists is shown:</i></p>
+
+
+<img alt="[Lists]"  src="lists_view_intersect.png"/>
+
+
+
 
 </div>
 
@@ -135,6 +125,16 @@ have more than one list.</p>
 
 <div id="basics" class="tabset_content"><h2 class="tabset_label">The basics</h2>
 
+<p> The data page gives an overview of all the data in FlyMine as well
+as their source. To have a better overview, FlyMine groups data
+together in 'data categories'. The icons (or their title) will bring
+you to the corresponding data category page, where you can run a
+predefined template query, build your own query (see below), and have
+access to bulk download. Certain template queries, as well as the
+QueryBuilder itself, allow you to perform searches that span more than
+one data category.</p>
+
+
 </div>
 
 
@@ -151,7 +151,7 @@ have more than one list.</p>
 
 
 
-<h1 id="aspect">Aspect Page</h1>
+<h1 id="aspect">Data Category Page</h1>
 
 <ul class="tabset_tabs">
    <li><a href="#basics" class="active">The basics</a></li>
@@ -161,12 +161,12 @@ have more than one list.</p>
 
 
 <p>The FlyMine website presents the principle data types grouped
-together as different 'aspects', such as protein interactions or gene
+together as different 'data categories', such as protein interactions or gene
 expression.</p>
 
-<p><i>As an example, the transcriptional regulation aspect is shown.</i></p>
+<p><i>As an example, 'the transcriptional regulation' category is shown.</i></p>
 
-<p> Each aspect page lists:</p>
+<p> Each data category page lists:</p>
 
     <p>1. <b>Current data</b> - background information on the origin of particular source datasets</p>
     <p>2. <b>Bulk download</b> - access to convenient derivative bulk datasets for browsing or export in standard format:</p>
@@ -202,9 +202,8 @@ for sequence features.</p>
 
 <p>All report pages have the same basic structure: The top part
 provides <b>summary information</b> for every object, whereas the lower part,
-<b>Other details by aspect</b> has more detailed information divided into
-aspects. The aspects correspond to categories of data shown on the
-FlyMine homepage.</p>
+<b>Further Information by category</b> has more detailed information
+divided into different data types or categories</p>
 
 <p><i>As an example the report page for the </i>even-skipped<i> gene is shown.</i></p>
 
