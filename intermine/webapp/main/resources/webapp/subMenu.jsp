@@ -35,7 +35,7 @@
     <li>&nbsp;|&nbsp;</li>
   </c:if>
   <c:choose>
-    <c:when test="${(empty userOptionMap[subtabName] && count == 0)||(userOptionMap[subtabName] == tabArray[2])}">
+    <c:when test="${((empty userOptionMap[subtabName] && count == 0)||(userOptionMap[subtabName] == tabArray[2])) && (tab == pageName)}">
       <li id="subactive_${tab}"><fmt:message key="${tabArray[1]}" /></li>
     </c:when>
     <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
@@ -44,7 +44,7 @@
       </li>
     </c:when>
     <c:otherwise>
-      <li><html:link action="${pageName}?subtab=${tabArray[2]}"><fmt:message key="${tabArray[1]}"/></html:link></li>
+      <li><html:link action="${tab}?subtab=${tabArray[2]}"><fmt:message key="${tabArray[1]}"/></html:link></li>
     </c:otherwise>
   </c:choose>
   <c:set var="count" value="${count+1}"/>
@@ -53,4 +53,5 @@
   
 </ul>
 </div>
+
 <!-- /mymineMenu.jsp -->

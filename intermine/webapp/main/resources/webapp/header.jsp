@@ -20,7 +20,7 @@
 </div>
 <div id="title">
    <span id="logo"><im:useTransparentImage src="/model/logo.png" id="heading_logo" link="begin.do" width="68px" height="65px" /></span>
-   <h1><html:link href="s/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
+   <h1><html:link href="${WEB_PROPERTIES['project.sitePrefix']}/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
    <span class="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span></h1>
     <p>
       <c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/>
