@@ -60,8 +60,8 @@ table.results tr td.highlightCell {
 
 #bagDescriptionDiv{
 	background-color: #F5F0FF;
-	min-height:150px;
-	width:70%;
+	min-height:100px;
+	width:90%;
 	text-align:left;
 	padding:10px;
 }
@@ -70,10 +70,10 @@ table.results tr td.highlightCell {
 }
 
 #textarea {
-	width:70%;
-	height:150px;
+	width:90%;
+	height:100px;
 	background-color: #F5F0FF;
-	padding:10px;
+	padding:5px;
 }
 
 .blueBg {
