@@ -182,7 +182,7 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
                       <table class="results" cellpadding="0" cellspacing="0"> \
                         <thead id="summary_head">' + headerText +'</thead>    \
                         <tbody id="summary_table">' + bodyText + '</tbody>    \
-                      </table>'; 
+                      </table>';
 
         if (summaryRowsCount > 10) {
             html += '<div><p>(Note: showing only the first 10 rows of summary)</p></div></div>';
@@ -277,7 +277,6 @@ function filterWebSearchablesHandler(event, object, scope, type, wsListId) {
 // wsFilterList given by the wsListId and type parameters
 function do_filtering(filteredList, type, wsListId) {
     if (filteredList.length == 0) {
-        // showAll(wsListId, type);
         document.getElementById(wsListId+'_'+type+'_no_matches').style.display='block';
         $(wsListId + '_' + type + '_spinner').style.display = 'none';
         $(wsListId + '_' + type + '_container').style.display = 'none';
@@ -369,26 +368,23 @@ function do_filtering(filteredList, type, wsListId) {
 
 // un-hide all the rows in the webSearchableList
 function showAll(wsListId, type) {
-    var pattern = new RegExp('^' + wsListId + '_' + type + '_item_line_(.*)');
-    var inputArray = document.getElementsByTagName("div");
-    for(var i=0; i<inputArray.length; i++) {
-        var result;
-        if ((result = pattern.exec(inputArray[i].id)) != null) {
-            inputArray[i].style.display='block';
-            var scoreId = wsListId + '_' + type + '_item_score_' + result[1];
-            var scoreSpan = $(scoreId);
-            // we do this instead of scoreSpan.innerHTML = "stuff"
-            // because it's buggy in Internet Explorer
-            setChild(scoreSpan, '', 'span');
+    for(var name in wsNamesMap) {
+        var div = wsNamesMap[name];
 
-            var descId = wsListId + '_' + type + '_item_description_' + result[1];
-            var desc = $(descId);
-            desc.style.display = 'block';
+        div.style.display='block';
+        var scoreId = wsListId + '_' + type + '_item_score_' + name;
+        var scoreSpan = $(scoreId);
+        // we do this instead of scoreSpan.innerHTML = "stuff"
+        // because it's buggy in Internet Explorer
+        setChild(scoreSpan, '', 'span');
 
-            var descHighlightId = wsListId + '_' + type + '_item_description_' + result[1] + '_highlight';
-            var descHighlight = $(descHighlightId);
-            descHighlight.style.display = 'none';
-        }
+        var descId = wsListId + '_' + type + '_item_description_' + name;
+        var desc = $(descId);
+        desc.style.display = 'block';
+
+        var descHighlightId = wsListId + '_' + type + '_item_description_' + name + '_highlight';
+        var descHighlight = $(descHighlightId);
+        descHighlight.style.display = 'none';
     }
 
     // reset descriptions
@@ -399,7 +395,9 @@ function showAll(wsListId, type) {
         if ((result = descPattern.exec(inputArray[i].id)) != null) {
         }
     }
-    $(wsListId + '_' + type + '_spinner').style.visibility = 'hidden';
+    $(wsListId + '_' + type + '_spinner').style.display = 'none';
+    $(wsListId + '_' + type + '_container').style.display = 'block';
+    $(wsListId + '_' + type + '_no_matches').style.display='none';
 }
 
 
@@ -550,5 +548,5 @@ function setWsNamesMap(wsNames, wsListId, type) {
    }
 
    1;
-   
+
 }
