@@ -102,7 +102,7 @@ h1, h2, h3 {
 #loginbar {
     position:absolute;
     right:0px;
-    top:25px;
+    top:75px;
     padding:5px;
 }
 
@@ -659,7 +659,7 @@ div#quicksearch {
 #submenu {
 	color:#CCC;
 	padding:0px;
-	margin:0 0 25px 0;
+	margin:0 0 5px 0;
 	padding-left:15px;
 	height:3em;
 	font-size: 12px;
@@ -682,9 +682,15 @@ ul#submenulist, ul#submenulist li {
 }
 ul#submenulist li {float:left;}
 
-ul#submenulist li#subactive_bags {font-weight:bold;color:#FFF;background:url('../images/submenu_indent.png') no-repeat bottom center;}
+ul#submenulist li#subactive_bag {font-weight:bold;color:#FFF;background:url('../images/submenu_indent.png') no-repeat bottom center;}
 
 ul#submenulist li#subactive_mymine {font-weight:bold;color:#FFF;background:url('../images/submenu_my.png') no-repeat bottom center;}
 
 ul#submenulist li a {color:#FFF;text-decoration: none;font-weight: bold;float:left;}
 ul#submenulist li a:hover {color:#000;text-decoration: underline;font-weight: bold;float:left;}
+div#navtrail{
+	font-size:0.7em;
+	padding-right:15px;
+	margin:0;
+	text-align:right
+}

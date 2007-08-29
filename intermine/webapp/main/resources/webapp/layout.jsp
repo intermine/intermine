@@ -42,8 +42,6 @@
                scope="request"/>
       </c:if>
 
-      <im:contextHelp/>
-
       <tiles:get name="body"/>
       
       <%-- footer (welcome logo, bottom nav, and feedback link) --%>

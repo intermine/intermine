@@ -10,9 +10,9 @@
   <fmt:message key="${pageName}.tab" var="tab" />
 
 <ul id="nav">
-  <li id="home" <c:if test="${tab == 'home'}">class="activelink"</c:if>>
+  <li id="home" <c:if test="${tab == 'begin'}">class="activelink"</c:if>>
     <html:link action="/begin">
-      <fmt:message key="menu.home"/>
+      <fmt:message key="menu.begin"/>
     </html:link>
   </li>
   <li id="templates"  <c:if test="${tab == 'templates'}">class="activelink"</c:if>>
@@ -20,19 +20,19 @@
       <fmt:message key="menu.templates"/>
     </html:link>
   </li>
-  <li id="bags" <c:if test="${tab == 'bags'}">class="activelink"</c:if>>
+  <li id="bags" <c:if test="${tab == 'bag'}">class="activelink"</c:if>>
     <html:link action="/bag">
-      <fmt:message key="menu.bags"/>
+      <fmt:message key="menu.bag"/>
     </html:link>
   </li>
-  <li id="query"  <c:if test="${tab == 'query'}">class="activelink"</c:if>>
+  <li id="query"  <c:if test="${tab == 'customQuery'}">class="activelink"</c:if>>
     <html:link action="/customQuery">
-      <fmt:message key="menu.querybuilder"/>&nbsp;
+      <fmt:message key="menu.customQuery"/>&nbsp;
     </html:link>
   </li>
-  <li id="category"  <c:if test="${tab == 'data'}">class="activelink"</c:if>>
+  <li id="category"  <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
     <html:link action="/dataCategories.do">
-      <fmt:message key="menu.category"/>
+      <fmt:message key="menu.dataCategories"/>
     </html:link>
   </li>
   <li id="mymine"  <c:if test="${tab == 'mymine'}">class="activelink"</c:if>>
