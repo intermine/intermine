@@ -4,51 +4,50 @@ use strict;
 
 my @pages = ();
 
-if (@ARGV != 4) {
+if (@ARGV != 3) {
   die <<USAGE;
 Wrong number of argument
 
 usage:
-  $0 input_file "Some title" output_file_prefix destination_directory
+  $0 input_file "Some title" destination_directory
 USAGE
 }
 
-my $help_file_name = $ARGV[0];
-my $help_title = $ARGV[1];
-my $prefix = $ARGV[2];
-my $dest_dir = $ARGV[3];
+my $help_file_name = shift;
+my $help_title = shift;
+my $dest_dir = shift;
 
 open my $help_file, '<', $help_file_name or die;
 
 my $title;
+my $id;
 my $text = "";
 
 while (my $line = <$help_file>) {
-  if ($line =~ m:<h1>(.*)</h1>:i) {
+  if ($line =~ m@<h1(?:\s+id=['"](\S+)['"])?>(.*)</h1>@i) {
     if (defined $title) {
-      save($title, $text);
+      save($id, $title, $text);
       $text = "";
+      $id = undef;
     }
-    $title = $1;
+    $id = $1;
+    $title = $2;
   } else {
     $text .= $line;
   }
 }
 
-save($title, $text);
-
-for (my $i = 0; $i < @pages; $i++) {
-  $pages[$i]{num} = $i + 1;
-}
+save($id, $title, $text);
 
 sub save
 {
-  my ($title, $text) = @_;
+  my ($id, $title, $text) = @_;
 
   if ($title =~ m[(?:\d+\.\s+)?(.*)]i) {
     push @pages, {
                   title => $1,
                   text => $text,
+                  id => $id,
                  }
   } else {
     die $title;
@@ -57,23 +56,34 @@ sub save
 
 sub make_name
 {
-  my $num = shift;
-  return "${prefix}_$num.html";
+  my $page = shift;
+  my $suffix = $page->{title};
+  my $id = $page->{id};
+
+  if (defined $id) {
+    $suffix = $id;
+  }
+  my $name = "$suffix.html";
+  $name =~ s/\s/_/g;
+  return $name;
 }
 
-for my $page (@pages) {
-  my $num = $page->{num};
+for (my $num = 0; $num < @pages; $num++) {
+  my $page = $pages[$num];
   my $title = $page->{title};
   my $text = $page->{text};
+  my $id = $page->{id};
 
-  my $filename = "$dest_dir/" . make_name($num);
+  my $filename = "$dest_dir/" . make_name($page);
   open my $f, '>', $filename or die "Failed to create file: $filename";
+
+  warn "generating: $filename\n";
 
   my $prev_url = '';
   my $prev_link = '';
   my $prev_title = '';
-  if ($num > 1) {
-    $prev_url = make_name($num - 1);
+  if ($num > 0) {
+    $prev_url = make_name($pages[$num - 1]);
     $prev_link = qq[<a href="$prev_url">previous</a>];
     $prev_title = $pages[$num - 2]{title};
   }
@@ -81,8 +91,8 @@ for my $page (@pages) {
   my $next_url = '';
   my $next_link = '';
   my $next_title = '';
-  if ($num < @pages) {
-    $next_url = make_name($num + 1);
+  if ($num < @pages - 1) {
+    $next_url = make_name($pages[$num + 1]);
     $next_link = qq[<a href="$next_url">next</a>];
     $next_title = $pages[$num]{title};
   }
@@ -104,14 +114,16 @@ for my $page (@pages) {
     }
   }
 
-  my $x_of_y = "$num/" . scalar(@pages);
+  my $display_page_num = $num + 1;
+
+  my $x_of_y = $display_page_num . "/" . scalar(@pages);
 
   print $f <<"HTML";
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px">
   <head>
-    <title>$help_title page $num - $title</title>
+    <title>$help_title page $display_page_num - $title</title>
     <link media="screen,print" href="$style_path/genhelp.css" type="text/css" rel="stylesheet" />
     <link media="screen,print" href="$style_path/tabtastic.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript" src="$js_path/addclasskillclass.js"></script>

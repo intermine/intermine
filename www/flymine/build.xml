@@ -98,7 +98,6 @@
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/tour/tour.txt"/>
        <arg value="FlyMine Tour"/>
-       <arg value="tour"/>
        <arg value="${dist.www}/tour/"/>
      </exec>
 
@@ -117,7 +116,6 @@
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/whatcanidoonthispage/whatcanido.html"/>
        <arg value="FlyMine Help"/>
-       <arg value="help"/>
        <arg value="${dist.www}/help/"/>
      </exec>
 
@@ -154,7 +152,6 @@
   <target name="transform-site"
           depends="style-site, validate-site-xhtml"
           description="Transform the website contents from XML to HTML"/>
-
 
   <target name="release-www" depends="style-site, generate-tour, generate-help"
           description="releases the static website to the webserver">
