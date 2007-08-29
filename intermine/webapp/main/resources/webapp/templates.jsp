@@ -8,7 +8,6 @@
 <!-- templates.jsp -->
 <html:xhtml/>
 
-<div class="body">
 <%--<div id="leftCol">
    <div id="pageDesc" class="pageDesc"><p><fmt:message key="templates.intro"/></p></div>
 	 <div class="actionArea">
@@ -42,6 +41,7 @@
     
 </div>
 <div id="rightCol">--%>
+<div class="body">
       <html:form action="/modifyTemplate">
         <tiles:insert name="wsTemplateTable.tile">
           <tiles:put name="wsListId" value="all_templates"/>

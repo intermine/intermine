@@ -16,6 +16,8 @@
 <tiles:importAttribute name="makeCheckBoxes" ignore="true"/>
 <tiles:importAttribute name="showSearchBox" ignore="true"/>
 
+<html:xhtml/>
+
     <script LANGUAGE="JavaScript">
       <!--//<![CDATA[
           function confirmAction() {
@@ -24,7 +26,6 @@
           //]]>-->
     </script>
 
-<html:xhtml/>
 <im:roundbox titleKey="wsTemplateTable.heading" stylename="welcome">
 <div style=""><fmt:message key="templates.intro"/></div>
 <div class="" id="ws_${wsListId}_template">
