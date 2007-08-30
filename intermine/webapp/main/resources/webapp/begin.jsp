@@ -32,26 +32,20 @@
              </c:forEach>
           </tr></table>
      </div>
-
-<div style="float:right;margin-left:340px;position:absolute">
-<div style="float:right"><tiles:insert name="tipWrapper.tile"/></div>
-   <div style="width:400px;margin-left:20px">
- 	<span style="font-size:+2em;"><a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is FlyMine?</a></span><br>
- 	<span style="font-size:+1.4em"><a href="${WEB_PROPERTIES['project.sitePrefix']}/tour/start.html" target="_help"  onclick="javascript:window.open('${WEB_PROPERTIES['project.sitePrefix']}/tour/start.html','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour!</a></span>
-		<p class="errors">This is release 8.0 of FlyMine.  See the <a href="${WEB_PROPERTIES['project.sitePrefix']}/release-notes.shtml">release notes</a> to find out what's new.</p>
-  </div>
-</div>	
-<div style="clear:right"></div>
-
-     <!-- Third column Right   -->
-     <div style="float:right;width:180px;margin-top:95px">
-       <im:useTransparentImage src="images/go_to_template_page.png" id="gototemplates" link="/templates.do" width="158px" height="151px" />
-       <im:useTransparentImage src="images/go_to_list_page.png" id="gotolists" link="/bag.do" width="158px" height="151px" marginTop="38px" />
-       <im:useTransparentImage src="images/go_to_query_builder.png" id="gotoqb" link="/customQuery.do" width="158px" height="151px" marginTop="38px" />
-     </div>
+	
 
 <!-- Second column - elastic -->
 <div id="rightColumn">
+
+  <div>
+    <div style="float:right"><tiles:insert name="tipWrapper.tile"/></div>
+    <div style="width:400px;margin-left:20px">
+ 	  <span style="font-size:+2em;"><a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is FlyMine?</a></span><br>
+ 	  <span style="font-size:+1.4em"><a href="${WEB_PROPERTIES['project.sitePrefix']}/tour/start.html" target="_help"  onclick="javascript:window.open('${WEB_PROPERTIES['project.sitePrefix']}/tour/start.html','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour!</a></span>
+      <p class="errors">This is release 8.0 of FlyMine.  See the <a href="${WEB_PROPERTIES['project.sitePrefix']}/release-notes.shtml">release notes</a> to find out what's new.</p>
+    </div>
+  </div>	
+
       <im:roundbox title="Templates" stylename="frontBox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
