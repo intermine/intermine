@@ -37,18 +37,5 @@
     <tiles:put name="height" value="470"/>
   </tiles:insert>
 
-<!-- <div style="margin-left:420px"> -->
-  <fmt:message key="history.savedbags.newbag"/>
-  <html:text property="newBagName" size="12"/><br/>
-  <html:submit property="union">
-    <fmt:message key="history.union"/>
-  </html:submit>
-  <html:submit property="intersect">
-    <fmt:message key="history.intersect"/>
-  </html:submit>
-  <html:submit property="subtract">
-    <fmt:message key="history.subtract"/>
-  </html:submit>
-<!-- </div> -->
 </html:form>
 <!-- /bagView.jsp -->

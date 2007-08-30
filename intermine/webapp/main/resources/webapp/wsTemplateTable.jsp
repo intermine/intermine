@@ -18,14 +18,6 @@
 
 <html:xhtml/>
 
-    <script LANGUAGE="JavaScript">
-      <!--//<![CDATA[
-          function confirmAction() {
-          return confirm("Do you really want to delete the selected templates?")
-          }
-          //]]>-->
-    </script>
-
 <im:roundbox titleKey="wsTemplateTable.heading" stylename="welcome">
 <div style=""><fmt:message key="templates.intro"/></div>
 <div class="" id="ws_${wsListId}_template">
@@ -48,15 +40,5 @@
 </tiles:insert>
 </div>
 </im:roundbox>
-
-
-
-  <p width="100%" align="right">
-        <html:submit property="export" styleId="export_button">
-          <fmt:message key="history.exportSelected"/>
-        </html:submit>
-         <html:hidden property="pageName" value="templates"/>
-  </p>
-
 
 <!-- /wsTemplateTable.jsp -->
