@@ -69,12 +69,48 @@
   </c:if>
   <li>
     &nbsp;&nbsp;<a href="#" onclick="javascript:return clearFilter('${type}', '${wsListId}')">
-      <img src="images/reset_megatile.png" width="50" height="20" alt="Reset search"/>
+      <img src="images/reset.png" width="45" height="20" alt="Reset search"/>
     </a>
   </li>
 </ul>
 <input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
 <input type="hidden" name="filterScope_${wsListId}_${type}" id="filterScope_${wsListId}_${type}" value="${scope}"/>
+
+<div style="float:right">
+        <span style="vertical-align:top;">Actions:&nbsp;</span>
+<c:choose>
+<c:when test="${type == 'template'}">
+  <html:image property="export" value="export" styleId="export_button" src="images/export.png" alt="Export selected Templates" title="Export selected Templates"/>
+  <html:hidden property="pageName" value="templates"/>
+</c:when>
+<c:otherwise>
+<c:set var="textForBox">
+  <fmt:message key="history.savedbags.newbag" />
+</c:set>
+<script language="javascript">
+  function clearBagName(element) {
+     if(element.value == '${textForBox}'){
+             element.value='';
+             element.style.fontStyle = 'normal';
+             element.style.color = '';
+     }
+  }
+
+</script>
+<html:text property="newBagName" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
+<html:image property="union" value="union" src="images/union.png">
+  <fmt:message key="history.union"/>
+</html:image>
+<html:image property="intersect" value="intersect" src="images/intersect.png">
+  <fmt:message key="history.intersect"/>
+</html:image>
+<html:image property="subtract" value="subtract" src="images/substract.png">
+  <fmt:message key="history.subtract"/>
+</html:image>
+</c:otherwise>
+</c:choose>
+</div>
+
 </div>
 
 <script type="text/javascript">
