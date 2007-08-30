@@ -229,7 +229,7 @@
       <a href="javascript:toggleHidden('misc');">Miscellaneous</a>
     </im:heading>
 	<div class="body">
-    <div id="misc" style="display:none;margin-left:25px;">
+    <div id="misc" style="display:block;margin-left:25px;">
       <tiles:insert page="/objectDetailsRefsCols.jsp">
         <tiles:put name="object" beanName="object"/>
         <tiles:put name="placement" value="aspect:Miscellaneous"/>
