@@ -82,4 +82,17 @@
     </filter-name>
     <url-pattern>*.js</url-pattern>
   </filter-mapping>
+
+  <error-page>
+    <error-code>500</error-code>
+    <location>/static/offline.shtml</location>
+  </error-page>
+  <error-page>
+    <error-code>502</error-code>
+    <location>/static/offline.shtml</location>
+  </error-page>
+  <error-page>
+    <error-code>503</error-code>
+    <location>/static/offline.shtml</location>
+  </error-page>
 </web-app>
