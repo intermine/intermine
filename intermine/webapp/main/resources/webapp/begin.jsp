@@ -12,7 +12,7 @@
         
 <!-- First column -->
      <div id="aspectsFront" class="actionArea">
-     <h1>Data</h1>
+     <h1><html:link action="/dataCategories.do">Data</html:link></h1>
      <em><p><fmt:message key="begin.data"/></p></em>
      <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
           <table cellpadding="0" cellspacing="0" border="0"><tr>
@@ -46,7 +46,7 @@
     </div>
   </div>	
 
-      <im:roundbox title="Templates" stylename="frontBox">
+      <im:roundbox title="Templates" titleLink="/templates.do" stylename="frontBox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
         <div>
@@ -68,7 +68,7 @@
         </div>
       </im:roundbox>
      
-      <im:roundbox title="Lists" stylename="frontBox">
+      <im:roundbox title="Lists" titleLink="/bag.do" stylename="frontBox">
         <p><em><fmt:message key="begin.bags"/></em></p>
         <br/>
         <div>
@@ -89,7 +89,7 @@
         </div>
       </im:roundbox>
 
-      <im:roundbox title="Query Builder" stylename="frontBox">
+      <im:roundbox title="Query Builder" titleLink="/customQuery.do" stylename="frontBox">
         <p><em><fmt:message key="begin.querybuilder"/></em></p>
         <br/>Start a query:
       <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Gene">

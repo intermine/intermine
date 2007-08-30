@@ -1,6 +1,7 @@
 <%@ tag body-content="scriptless"  %>
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="titleKey" required="false" %>
+<%@ attribute name="titleLink" required="false" %>
 <%@ attribute name="stylename" required="true" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
@@ -20,7 +21,16 @@ if(new java.io.File(application.getRealPath("model")+"/"+stylename+"_L.gif").exi
 
 <c:if test="${!empty title}">
  <div class="roundcornerbox" id="${stylename}" >
-    <h1><c:out value="${title}"/></h1>
+    <h1>
+      <c:choose>
+        <c:when test="${!empty titleLink}">
+          <html:link action="${titleLink}">${title}</html:link>
+        </c:when>
+        <c:otherwise>
+          <c:out value="${title}"/>
+        </c:otherwise>
+      </c:choose>
+    </h1>
     <jsp:doBody/>
  </div>
 </c:if>
