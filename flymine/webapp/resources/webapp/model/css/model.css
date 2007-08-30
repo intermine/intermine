@@ -138,7 +138,7 @@ table.dbsources th  {
 	text-transform: uppercase;
 	text-align: left;
 	padding: 6px 6px 6px 12px;
-	background: url('../heading-bg.gif') repeat-x;
+	background: url('../table-heading-bg.gif') repeat-x;
 }
 
 table.dbsources td {
