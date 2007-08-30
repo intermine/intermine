@@ -192,7 +192,6 @@ textarea#pasteInput {
   font-weight:bold;
   background: url(../model/heading-bg.gif) top center repeat;
 /*  color:#5C0075;*/
-color:white;
   white-space: nowrap;
   /* needed to prevent the peekaboo bug on IE:
      http://www.positioniseverything.net/explorer/peekaboo.html */
