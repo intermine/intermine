@@ -25,8 +25,7 @@
   &nbsp;
 </div>
 <c:if test="${!empty makeCheckBoxes}">
-    <html:multibox property="selected" styleId="${wsListId}_${type}_chck_${webSearchable.name}"
-                   onclick="setDeleteDisabledness(this.form, '${type}')">
+    <html:multibox property="selected" styleId="${wsListId}_${type}_chck_${webSearchable.name}">
       <c:out value="${wsName}"/>
     </html:multibox>
 </c:if>

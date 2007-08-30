@@ -34,7 +34,6 @@
     <tiles:put name="scope" value="all"/>
     <tiles:put name="makeCheckBoxes" value="true"/>
     <tiles:put name="showDescriptions" value="true"/>
-    <tiles:put name="height" value="470"/>
   </tiles:insert>
 
 </html:form>
