@@ -41,9 +41,10 @@ div.aspectDescr{
 
 div.wsList {
    font-size: 0.95em;
-   padding-left: 25px;
+   padding-left: 15px;
 }
 
 div.frontBoxList {
    margin-top: 5px;
+   margin-left: 10px;	
 }

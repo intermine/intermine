@@ -19,9 +19,10 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   white-space: nowrap;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h1 a, h1 a:visited {
    color:#5C0075;
 }
+
 *{
 	padding:0px;
 	margin:0px;
