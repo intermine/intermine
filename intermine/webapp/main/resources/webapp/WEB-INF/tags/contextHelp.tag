@@ -9,7 +9,7 @@
    if (results.length > 0) {
       request.setAttribute("helpPage", results[0]);
       if (results.length > 1 && results[1] != null) {
-         request.setAttribute("anchor", results[1]);
+         request.setAttribute("helpPageSubSection", results[1]);
       }
    }
 %>
@@ -18,11 +18,11 @@
   <c:when test="${empty helpPage}">
     <%-- do nothing --%>
   </c:when>
-  <c:when test="${empty anchor}">
+  <c:when test="${empty helpPageSubSection}">
     <im:popupHelp pageName="${helpPage}" helpimg="images/help.png"/>
   </c:when>
   <c:otherwise>
-    <im:popupHelp pageName="${helpPage}" anchor="${anchor}" helpimg="images/help.png"/>
+    <im:popupHelp pageName="${helpPage}-${helpPageSubSection}" helpimg="images/help.png"/>
   </c:otherwise>
 </c:choose>
 

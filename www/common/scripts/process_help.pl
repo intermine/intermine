@@ -24,7 +24,7 @@ my $id;
 my $text = "";
 
 while (my $line = <$help_file>) {
-  if ($line =~ m@<h1(?:\s+id=['"](\S+)['"])?>(.*)</h1>@i) {
+  if ($line =~ m@<h1(?:\s+id=[\'\"](\S+)[\'\"])?>(.*)</h1>@i) {
     if (defined $title) {
       save($id, $title, $text);
       $text = "";
@@ -39,15 +39,49 @@ while (my $line = <$help_file>) {
 
 save($id, $title, $text);
 
+# split the text of a page into tabs
+sub split_text
+{
+  my $re = qr/
+     <div
+     \s+
+     id="([^\"]+)"
+     \s+
+     class="tabset_content">
+     \s*
+     <h2\s+class="tabset_label">(.*?)<\/h2>
+     \s+
+     (.*?)
+     <\/div>
+     \s*
+     (?=<div
+     \s+
+     id="[^\"]+"
+     \s+
+     class="tabset_content">|\Z)
+   /xs;
+
+  my @tabs = ();
+
+  while ($text =~ /$re/g) {
+    push @tabs, { id => $1, title => $2, text => $3 };
+  }
+
+  return @tabs;
+}
+
 sub save
 {
   my ($id, $title, $text) = @_;
 
   if ($title =~ m[(?:\d+\.\s+)?(.*)]i) {
+    my @tabs = split_text $text;
+
     push @pages, {
                   title => $1,
                   text => $text,
                   id => $id,
+                  tabs => \@tabs,
                  }
   } else {
     die $title;
@@ -57,24 +91,34 @@ sub save
 sub make_name
 {
   my $page = shift;
+  my $active_tab = shift;
   my $suffix = $page->{title};
   my $id = $page->{id};
 
   if (defined $id) {
     $suffix = $id;
   }
+
+  if (defined $active_tab) {
+    $suffix .= '-' . $active_tab->{id};
+  }
+
   my $name = "$suffix.html";
   $name =~ s/\s/_/g;
   return $name;
 }
 
-for (my $num = 0; $num < @pages; $num++) {
-  my $page = $pages[$num];
+sub make_html
+{
+  my $page = shift;
+  my $num = shift;
+  my $active_tab = shift;
+
   my $title = $page->{title};
   my $text = $page->{text};
   my $id = $page->{id};
 
-  my $filename = "$dest_dir/" . make_name($page);
+  my $filename = "$dest_dir/" . make_name($page, $active_tab);
   open my $f, '>', $filename or die "Failed to create file: $filename";
 
   warn "generating: $filename\n";
@@ -98,9 +142,9 @@ for (my $num = 0; $num < @pages; $num++) {
   }
 
   my $onclick = "";
-#  if (length $next_url > 0) {
-#    $onclick = qq[onclick="window.location.replace('$next_url');"];
-#  }
+  #  if (length $next_url > 0) {
+  #    $onclick = qq[onclick="window.location.replace('$next_url');"];
+  #  }
 
   my $style_path = 'style';
   my $js_path = 'js';
@@ -117,6 +161,45 @@ for (my $num = 0; $num < @pages; $num++) {
   my $display_page_num = $num + 1;
 
   my $x_of_y = $display_page_num . "/" . scalar(@pages);
+
+  my @tabs = ();
+
+  if ($page->{tabs}) {
+    @tabs = @{$page->{tabs}};
+  }
+
+  my $tab_list = "";
+
+  if (@tabs) {
+    $tab_list = qq|<ul class="tabset_tabs">\n|;
+    for (my $tab_idx = 0; $tab_idx < @tabs; $tab_idx++) {
+      my $tab = $tabs[$tab_idx];
+      my $tab_title = $tab->{title};
+      my $tab_id = $tab->{id};
+      if (!defined $active_tab && $tab_idx == 0 ||
+          defined $active_tab && $tab_id eq $active_tab->{id} ) {
+        $tab_list .= qq|<li><a href="#$tab_id" class="active">$tab_title</a></li>\n|;
+      } else {
+        $tab_list .= qq|<li><a href="#$tab_id">$tab_title</a></li>\n|;
+      }
+    }
+    $tab_list .= "</ul>\n";
+
+    $text = '';
+
+    for my $tab (@tabs) {
+      my $tab_title = $tab->{title};
+      my $tab_id = $tab->{id};
+      my $tab_text = $tab->{text};
+
+      $text .= <<"TEXT";
+<div id="$tab_id" class="tabset_content">
+<h2 class="tabset_label">$tab_title</h2>
+$tab_text
+</div>
+TEXT
+    }
+  }
 
   print $f <<"HTML";
 <?xml version="1.0" encoding="utf-8"?>
@@ -138,7 +221,7 @@ for (my $num = 0; $num < @pages; $num++) {
         <tr>
           <td colspan="3" align="right">
             <span style="padding: 3px; font-size: 70%;" onclick="window.close()">close
-              <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';" 
+              <img src="../images/close.png" title="Close" onmouseout="this.style.cursor='normal';"
                    onmouseover="this.style.cursor='pointer';"/>
             </span>
           </td>
@@ -171,6 +254,7 @@ $next_title
       </div>
       <div style="padding-top: 20px" class="content">
         <div $onclick>
+$tab_list
 $text
         </div>
       </div>
@@ -206,4 +290,17 @@ HTML
 
   close $f;
 
+}
+
+for (my $num = 0; $num < @pages; $num++) {
+  my $page = $pages[$num];
+
+  make_html($page, $num);
+
+  if (exists $page->{tabs}) {
+    my @tabs = @{$page->{tabs}};
+    for my $tab (@tabs) {
+      make_html($page, $num, $tab);
+    }
+  }
 }
