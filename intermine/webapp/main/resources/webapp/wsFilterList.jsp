@@ -6,8 +6,6 @@
 
 <!-- wsFilterList.jsp -->
 
-<link rel="stylesheet" type="text/css" href="css/webSearchableList.css"/>
-
 <tiles:importAttribute name="type"/>
 <tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="scope"/>
