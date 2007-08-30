@@ -84,11 +84,8 @@
 <div class="actionArea" style="width:60%;clear:both;text-align:left">
   <html:form action="/templateAction">
     <h2>
-    <c:set var="titleArray" value="${fn:split(templateQuery.title,'-->')}" />
-    <c:forEach items="${titleArray}" var="titleItem" varStatus="status">
-      <c:if test="${status.count > 1 }">&nbsp;<img src="images/tmpl_arrow.png" style="vertical-align:bottom">&nbsp;</c:if>
-      ${titleItem}
-    </c:forEach>
+    <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
+	${templateTitle}
     <tiles:insert name="setFavourite.tile">
         <tiles:put name="name" value="${templateQuery.name}"/>
         <tiles:put name="type" value="template"/>
