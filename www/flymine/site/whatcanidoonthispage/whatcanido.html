@@ -1,6 +1,6 @@
 
 <h1 id="begin">The FlyMine Homepage</h1>
-
+				   
 <ul class="tabset_tabs">
    <li><a href="#basics" class="active">The basics</a></li>
 </ul>
@@ -31,7 +31,11 @@ minutes - so if you have a suggestion, let us know.</p>
 
 <div id="searching" class="tabset_content"><h2 class="tabset_label">Searching Templates</h2>
 
-<p> You can search templates by keywords (eg gene, orthologue, FlyAtlas). By default, templates from all data categories will be searched. Optionally, you can restrict your search to a certain data type. If you are logged in, public templates as well as your own templates will be searched, by default.</p>
+<p> You can search templates by keywords (eg gene, orthologue,
+FlyAtlas). By default, templates from all data categories will be
+searched. Optionally, you can restrict your search to a certain data
+type. If you are logged in, public templates as well as your own
+templates will be searched, by default.</p>
 
 <img alt="[Templates]"  src="templates_search.png"/>
 
@@ -94,7 +98,7 @@ you have a suggestion, let us know.</p>
 have more than one list.</p>
 
 
-<p><i>As an example, an interszection of 2 lists is shown:</i></p>
+<p><i>As an example, an intersection of 2 lists is shown:</i></p>
 
 
 <img alt="[Lists]"  src="lists_view_intersect.png"/>
@@ -104,12 +108,35 @@ have more than one list.</p>
 
 </div>
 
+<h1 id="tree">The Data Model</h1>
+
+
+<p>The FlyMine data tree shows all the classes in FlyMine, some of
+which do not yet have data associated with them. In this browse mode,
+the number on the right shows the number of objects associated with
+that class. You can use this page to select a starting class to make
+your query.</p>
+
+<img alt="[Tree page]"  src="datamodel.png"/>
 
 <h1 id="customQuery">QueryBuilder</h1>
 
 <ul class="tabset_tabs">
    <li><a href="#basics" class="active">The basics</a></li>
 </ul>
+
+<p> Advanced users can use a flexible query interface to construct
+their own data mining queries. This page gives access to the QueryBuilder. </p>
+
+<img alt="[QueryBuilder page]"  src="querybuilder_select.png"/>
+
+
+<img alt="[QueryBuilder page]"  src="querybuilder_actions.png"/>
+
+<p>All the queries you have run during this session are also listed
+on this page under 'Query History'. Your Query History can also be found
+under MyMine.</p>
+
 
 
 <div id="basics" class="tabset_content"><h2 class="tabset_label">The basics</h2>
@@ -141,13 +168,64 @@ one data category.</p>
 <h1 id="mymine">MyMine</h1>
 
 <ul class="tabset_tabs">
-   <li><a href="#basics" class="active">The basics</a></li>
+   <li><a href="#Lists" class="active">Lists</a></li>
+   <li><a href="#QueryHistory">Query History</a></li>
+   <li><a href="#SavedQueries">Saved Queries</a></li>
+   <li><a href="#SavedTemplates">Saved Templates</a></li>
+   <li><a href="#ChangePassword">Change Password</a></li>
+
 </ul>
 
 
-<div id="basics" class="tabset_content"><h2 class="tabset_label">The basics</h2>
+<div id="Lists" class="tabset_content"><h2 class="tabset_label">Lists</h2>
 
 </div>
+
+<div id="QueryHistory" class="tabset_content"><h2 class="tabset_label">Query History</h2>
+
+
+<p>All queries that you run are saved in your Query History with the
+default name 'query_x' (where x increments for each query run). These
+queries will only be saved during the time of the current session. To
+save queries permanently and to import queries, you need to be
+logged-in. Exporting and saving a query will will not delete it from
+your query history during that session.</p>
+
+<img alt="[Mymine Page]"  src="Mymine_history.png"/>
+
+
+</div>
+<div id="SavedQueries" class="tabset_content"><h2 class="tabset_label">Saved Queries</h2>
+
+
+<p>This page lists all queries that you have saved before. They will
+be saved permanently. Queries with names identical to existing queries
+will get an automatic extension to make it unique,
+e.g. dmel-proteins-1, dmel-proteins-2.</p>
+
+<img alt="[Mymine Page]"  src="Mymine_savedqueries.png"/>
+
+</div>
+<div id="SavedTemplates" class="tabset_content"><h2 class="tabset_label">Saved Templates</h2>
+
+ <p>The 'Saved Templates' page provides a list of all templates that
+ you created yourself or have imported. They will be saved
+ permanently. Template queries with names identical to existing
+ queries will get an automatic extension to make it unique,
+ e.g. dmel-proteins-1, dmel-proteins-2.</p>
+
+
+<img alt="[Mymine Page]"  src="Mymine_savedtemplates.png"/>
+
+
+
+</div>
+<div id="ChangePassword" class="tabset_content"><h2 class="tabset_label">Change Password</h2>
+
+<p> This page allows you to change your FlyMine password.</p>
+
+</div>
+
 
 
 
@@ -247,11 +325,11 @@ default value.</p>
 
 <p><b>OR</b></p> 
 
-<p>Any variable (box) in a template query can be constrained to a bag
-(or 'not in' a bag) rather than to a single value, provided you have a
-bag of the correct type saved in 'MyMine'. To constrain a query to a
-bag, select the checkbox underneath the variable box and choose the
-bag from the drop-down list.</p>
+<p>Any variable (box) in a template query can be constrained to a list
+(or 'not in' a list) rather than to a single value, provided you have a
+list of the correct type saved in 'MyMine'. To constrain a query to a
+list, select the checkbox underneath the variable box and choose the
+list from the drop-down list.</p>
 
 <p>
 <img  alt="[Template form]"  src="templform_list.png"/>
@@ -428,7 +506,7 @@ future releases of FlyMine.</p>
 <p>3. Templates: A set of template queries which have been
 automatically run on all the items in your list. </p>
 
-<img alt="[List Analysis Page]" src="listpage_templates.png"/>.
+<img alt="[List Analysis Page]" src="listpage_templates.png"/>
 
 </div>
 
@@ -440,6 +518,54 @@ automatically run on all the items in your list. </p>
 
 
 <div id="basics" class="tabset_content"><h2 class="tabset_label">The basics</h2>
+
+<p>The list that you upload is checked against the FlyMine database to
+ensure that everything in your list can be found in FlyMine. 
+
+
+<p>In the example, only 22 out of 28 items were immediately recognized and added to the new list:</p>
+
+<img alt="[List Confirm Page]" src="listconfirm_.png"/>
+
+
+<p>Any discrepancies are reported as follows:<p>
+
+<p>1. <b>Low quality matches</b>: These are items in your list that do not
+match a key (main) identifier in FlyMine but were found as
+synonyms. This may mean you have a secondary (old) identifier or are
+using a gene symbol that is not the official symbol for that gene. If
+you are happy that the item identified is the correct one, you can add
+it to your list by clicking on 'Add' in the last column.</p>
+
+<p>2. <b>Duplicates</b>: These are items in your list that match more than
+one entry in the database.</p>
+
+ <p>3. <b>Converted types</b>: These are items in your list that matched
+ something in FlyMine, but not of the type you selected. (For example,
+ if you selected type=gene, but had a protein identifier in your
+ list). FlyMine can convert these into the type you selected so that
+ you can add the item to your list - click on 'Add' in the last column.</p>
+
+
+ <p>4. <b>Unresolved identifiers</b>: These are items in your list that were
+ either not found in FlyMine, could not be converted to the type you
+ selected or matched objects from an organism other than the one you
+ selected.</p>
+
+<p><i>An example of Duplicated items is shown below.</i></p>
+
+<img alt="[List Confirm Page]" src="listconfirm_duplicates.png"/>
+
+
+table class="inlinetable">
+<tr>
+
+<td padding="5px" valign="center"><img alt="[List Confirm Page]" src="listconfirm_save.png"/></td>
+
+<td valign="center" width="60%">
+This will save your list in MyMine and take you to the corresponding List Analysis Page for this new list.</td> 
+</tr> 
+</table>
 
 </div>
 
@@ -454,3 +580,7 @@ automatically run on all the items in your list. </p>
 <div id="basics" class="tabset_content"><h2 class="tabset_label">The basics</h2>
 
 </div>
+
+<h1 id="import">Import Template Query</h1>
+
+<h1 id="importQueries">Import Queries</h1>
