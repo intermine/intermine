@@ -38,7 +38,11 @@ AttachEvent(window,'load',function(){
     }
     function SetTabFromAnchor(evt){
         //setTimeout('document.body.scrollTop='+document.body.scrollTop,1);
+        // hack - sometime a timeout of 1 happens before the page is rendered
+        setTimeout('scroll(0,0)',1);
+        setTimeout('scroll(0,0)',2);
         SetTabActive(FindEl('a',evt).semanticTab);
+        scroll(0,0);
     }
 
 
@@ -90,3 +94,4 @@ AttachEvent(window,'load',function(){
     }
     Init();
 
+},false);
