@@ -387,14 +387,6 @@ function showAll(wsListId, type) {
         descHighlight.style.display = 'none';
     }
 
-    // reset descriptions
-    var descPattern = new RegExp('^' + wsListId + '_' + type + '_item_description_(.*)_highlight');
-    var inputArray = document.getElementsByTagName("div");
-    for(var i=0; i<inputArray.length; i++) {
-        var result;
-        if ((result = descPattern.exec(inputArray[i].id)) != null) {
-        }
-    }
     $(wsListId + '_' + type + '_spinner').style.display = 'none';
     $(wsListId + '_' + type + '_container').style.display = 'block';
     $(wsListId + '_' + type + '_no_matches').style.display='none';
