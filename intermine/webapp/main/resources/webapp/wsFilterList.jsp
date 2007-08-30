@@ -33,8 +33,8 @@
 <ul class="filterActions">
   <li>Search:&nbsp;</li>
   <li><input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
-           onkeyup="return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');"
-           onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${scope}', '${type}', '${wsListId}');}"
+           onkeyup="return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');"
+           onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');}"
            onKeyPress="return disableEnterKey(event);"
            disabled="true"
            value="${initialFilterText}"/></li>
@@ -148,7 +148,7 @@
 <c:if test="${!empty initialFilterText}">
   <script type="text/javascript">
 <!--//<![CDATA[
-    filterWebSearchablesHandler(null, $('${ws_input_id}'), '${scope}', '${type}', '${wsListId}');
+    filterWebSearchablesHandler(null, $('${ws_input_id}'), '${type}', '${wsListId}');
 //]]>-->
   </script>
 </c:if>

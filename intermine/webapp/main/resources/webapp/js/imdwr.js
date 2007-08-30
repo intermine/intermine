@@ -240,7 +240,8 @@ var currentFilterCallbacks = new Array();
 // Give each setTimeout call an id and remember what our current pending id is
 var futureFilterCalls = new Array();
 
-function filterWebSearchablesHandler(event, object, scope, type, wsListId) {
+function filterWebSearchablesHandler(event, object, type, wsListId) {
+	var scope = document.getElementById('filterScope_'+wsListId+'_'+type).value;
     if (window.event) {
         event = window.event;
     }
@@ -467,7 +468,7 @@ function filterFavourites(type, wsListId) {
         tags['favourites_' + wsListId] = 'favourite';
     }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
-    return filterWebSearchablesHandler(null, filterTextElement, scope, type, wsListId);
+    return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
 function filterAspect(type, wsListId) {
@@ -484,7 +485,7 @@ function filterAspect(type, wsListId) {
     }
 
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
-    return filterWebSearchablesHandler(null, filterTextElement, scope, type, wsListId);
+    return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
 function changeScope(type, wsListId) {
@@ -499,7 +500,7 @@ function changeScope(type, wsListId) {
         document.getElementById('filter_scope_'+wsListId+'_'+type).src = 'images/filter_all.png';
     }
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
-    return filterWebSearchablesHandler(null, filterTextElement, document.getElementById(id).value, type, wsListId);
+    return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
 }
 
 function clearFilter(type, wsListId) {
