@@ -40,9 +40,10 @@ div.aspectDescr{
 }
 
 div.wsList {
-   padding-top:10px;
-   margin-left:30px;
+   font-size: 0.95em;
+   padding-left: 25px;
 }
-div#frontBox {
-	height:151px;
+
+div.frontBoxList {
+   margin-top: 5px;
 }

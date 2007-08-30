@@ -49,17 +49,13 @@
       <im:roundbox title="Templates" stylename="frontBox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
-        <a href="javascript:toggleHidden('templatesList');">
-          <img id='templatesListToggle' src="images/undisclosed.gif"/>
-          Show example templates
-        </a>
-        &nbsp;&nbsp;&nbsp;&nbsp;<html:link action="/templates.do">View all ${templateCount} templates</html:link>
         <div>
-        <div id="templatesList" style="display:none;border:1px solid;border-top:none">
-        <div>
+          Example templates (<html:link action="/templates.do">${templateCount} total</html:link>):
+        </div>
+        <div id="templatesList" class="frontBoxList">
           <tiles:insert name="webSearchableList.tile">
             <!-- optional -->
-            <tiles:put name="limit" value="5"/>
+            <tiles:put name="limit" value="3"/>
             <!-- bag or template? -->
             <tiles:put name="type" value="template"/>
             <!-- user or global -->
@@ -67,26 +63,20 @@
             <tiles:put name="scope" value="global"/>
             <tiles:put name="tags" value="im:frontpage"/>
             <tiles:put name="showDescriptions" value="false"/>
-            <tiles:put name="showSearchBox" value="true"/>
+            <tiles:put name="showSearchBox" value="false"/>
           </tiles:insert>
-        </div>
-        </div>
         </div>
       </im:roundbox>
      
       <im:roundbox title="Lists" stylename="frontBox">
         <p><em><fmt:message key="begin.bags"/></em></p>
         <br/>
-        <a href="javascript:toggleHidden('bagsList');">
-          <img id='bagsListToggle' src="images/undisclosed.gif"/>
-          Some example lists
-        </a>
-        &nbsp;&nbsp;&nbsp;&nbsp;<html:link action="/bag.do">View all ${bagCount} bags ...</html:link>
         <div>
-        <div id="bagsList" style="display:none;border:1px solid;border-top:none">
-        <div>
+          Example lists (<html:link action="/bag.do?subtab=view">${bagCount} total</html:link>):
+        </div>
+        <div id="bagsList" class="frontBoxList">
         <tiles:insert name="webSearchableList.tile">
-          <tiles:put name="limit" value="3"/>
+          <tiles:put name="limit" value="2"/>
           <tiles:put name="wsListId" value="global_bag"/>
           <%-- bag or template? --%>
           <tiles:put name="type" value="bag"/>
@@ -96,8 +86,6 @@
           <tiles:put name="showSearchBox" value="false"/>
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
-        </div>
-        </div>
         </div>
       </im:roundbox>
 
