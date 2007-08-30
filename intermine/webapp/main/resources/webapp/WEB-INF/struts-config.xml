@@ -340,6 +340,7 @@
       <forward name="template" redirect="true" path="/template.do"/>
       <forward name="bag" redirect="true" path="/bagDetails.do"/>
     </action>
+    <!-- These should all start with /init for session handling purposes -->
     <action path="/initLogin" name="loginForm" validate="false" type="org.intermine.web.struts.LoginController">
     </action>
     <action path="/initMain" type="org.intermine.web.struts.QueryBuilderController">
@@ -388,9 +389,9 @@
     </action>
     <action path="/initFavourites" type="org.intermine.web.struts.FavouritesController">
     </action>
-    <action path="/setFavourite" type="org.intermine.web.struts.SetFavouriteController">
+    <action path="/initSetFavourite" type="org.intermine.web.struts.SetFavouriteController">
     </action>
-    <action path="/precomputeTemplate" type="org.intermine.web.struts.PrecomputeTemplateController">
+    <action path="/initPrecomputeTemplate" type="org.intermine.web.struts.PrecomputeTemplateController">
     </action>
     <action path="/initBagDetails" type="org.intermine.web.struts.BagDetailsController">
     </action>

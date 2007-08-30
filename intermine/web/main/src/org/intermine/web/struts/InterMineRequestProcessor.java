@@ -62,13 +62,15 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                       });
     
     /**
+     * This is called during the processing of every controller
      * {@inheritDoc}
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
         
         try {
+            String processPath = processPath(request, response);
             // Avoid creating a session for each page accessed via SSI
-            if (processPath(request, response).startsWith("/standalone")) {
+            if (processPath.startsWith("/standalone")) {
                 return true;
             }
             
@@ -113,8 +115,8 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             
             if (!request.isRequestedSessionIdValid()
                 && request.getAttribute(Globals.MESSAGE_KEY) == null
-                && !START_PATHS.contains(processPath(request, response))
-                && !processPath(request, response).startsWith("/init")) {
+                && !START_PATHS.contains(processPath)
+                && !processPath.startsWith("/init")) {
                 ActionMessages messages = new ActionMessages();
                 messages.add(ActionMessages.GLOBAL_MESSAGE,
                              new ActionMessage("errors.session.nosession"));
