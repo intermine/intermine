@@ -121,14 +121,16 @@ public class DisplayConstraint
                 Class parentClass = MainHelper.getClass(node.getType());
                 Iterator iter = SimpleConstraint.fixedEnumOps(parentClass).iterator();
 
-                if (!String.class.equals(parentClass)) {
+                // This is commented out so that no edit box appears next to the dropdown
+                // for string constraints.  A proper solution is needed - see #1398.
+                //if (!String.class.equals(parentClass)) {
                     // for Strings always allow the user to type in a pattern because EQUALS
                     // constraints are automatically converted to MATCHES constraints if the
                     // pattern contains a wildcard
                     while (iter.hasNext()) {
                         fixedOps.add(((ConstraintOp) iter.next()).getIndex());
                     }
-                }
+                //}
 
             }
         }
