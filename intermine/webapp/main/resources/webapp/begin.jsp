@@ -91,17 +91,25 @@
 
       <im:roundbox title="Query Builder" titleLink="/customQuery.do" stylename="frontBox">
         <p><em><fmt:message key="begin.querybuilder"/></em></p>
-        <br/>Start a query:
-      <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Gene">
-        genes, 
-      </html:link>
-      <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Protein">
-        proteins 
-      </html:link>
+        <br/>
+        <div>
+                  <div id="qbImport">
+            <html:link action="/importQueries.do?query_builder=yes">
+              Import query XML
+            </html:link>
+          </div>
+          <div id="qbStartQuery">
+            Start a query from:
+            <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Gene">
+              Gene 
+            </html:link>,
+            <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Protein">
+              Protein
+            </html:link>
+          </div>
+        </div>
       </im:roundbox>
 </div>
-
-
 
 </div>
 
