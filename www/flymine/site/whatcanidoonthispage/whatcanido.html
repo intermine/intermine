@@ -70,7 +70,7 @@ and then click on </td>
 </tr> 
 </table>
 
-Note that the identifiers must be separated by commas, eg:
+Note that the identifiers must be separated by commas (or by lines), eg:
 <pre>
   eve, zen, Enhancer of zeste, CG32211
 </pre>
@@ -106,16 +106,7 @@ minutes - so if you have a suggestion, let us know!</b></p>
 
 </div>
 
-<h1 id="tree">The Data Model</h1>
 
-
-<p>The FlyMine data tree shows all the classes in FlyMine, some of
-which do not yet have data associated with them. In this browse mode,
-the number on the right shows the number of objects associated with
-that class. You can use this page to select a starting class to make
-your query.</p>
-
-<img alt="[Tree page]"  src="datamodel.png"/>
 
 <h1 id="customQuery">QueryBuilder</h1>
 
@@ -141,14 +132,14 @@ under MyMine.</p>
 <div id="basics" class="tabset_content">
 <h2 class="tabset_label">The basics</h2>
 
-<p> The data page gives an overview of all the data in FlyMine as well
+<p> The Data page gives an overview of all the data in FlyMine as well
 as their source. To have a better overview, FlyMine groups data
-together in 'data categories'. The icons (or their title) will bring
-you to the corresponding data category page, where you can run a
-predefined template query, build your own query (see below), and have
-access to bulk download. Certain template queries, as well as the
-QueryBuilder itself, allow you to perform searches that span more than
-one data category.</p>
+together in '<b>data categories</b>'. The icons (or their title) will
+bring you to the corresponding data category page, where you can run a
+predefined template query, build your own query , and have access to
+bulk download. Certain template queries, as well as the QueryBuilder
+itself, allow you to perform searches that span more than one data
+category.</p>
 
 
 </div>
@@ -283,7 +274,7 @@ minutes - so if you have a suggestion, let us know.  </p>
 <p><i>As an example, the form is shown for the template 'Gene --&gt;
 Orthologues + GO terms of these orthologues'</i>. This template takes a
 particular gene as input and searches for orthologues that have GO
-annotation.-</p>
+annotation.</p>
 
 
 <p>You can leave the box with the default value shown or you can enter
@@ -483,9 +474,9 @@ automatically run on all the items in your list. </p>
 ensure that everything in your list can be found in FlyMine. 
 
 
-<p>In the example, only 22 out of 28 items were immediately recognized and added to the new list:</p>
+<p><i>In the example below, only 22 out of 28 items were immediately recognized and added to the new list</i>:</p>
 
-<img alt="[List Confirm Page]" src="listconfirm_.png"/>
+<img alt="[List Confirm Page]" src="listconfirm_summary.png"/>
 
 
 <p>Any discrepancies are reported as follows:<p>
@@ -512,20 +503,26 @@ one entry in the database.</p>
  selected or matched objects from an organism other than the one you
  selected.</p>
 
-<p><i>An example of Duplicated items is shown below.</i></p>
+
+
+<p><i>An example of 'Duplicate items' is shown below.</i></p>
 
 <img alt="[List Confirm Page]" src="listconfirm_duplicates.png"/>
 
 
-<table class="inlinetable">
-<tr>
+<p> You can go over the list of 'Additional matches' and decide which
+one you want to include in your list. Alternatively, you can select
+all of them at once as follows:</p>
 
-<td padding="5px" valign="center"><img alt="[List Confirm Page]" src="listconfirm_save.png"/></td>
+<img alt="[List Confirm Page]" src="listconfirm_saveall.png"/></p>
 
-<td valign="center" width="60%">
-This will save your list in MyMine and take you to the corresponding List Analysis Page for this new list.</td> 
-</tr> 
-</table>
+<p>You can then give a name for your new list and click save:</p>
+
+<img alt="[List Confirm Page]" src="listconfirm_save.png"/>
+
+
+<p>This will save your list in MyMine and take you to the corresponding List Analysis Page for this new list.</p>
+
 
 </div>
 
@@ -536,6 +533,21 @@ This will save your list in MyMine and take you to the corresponding List Analys
 <h2 class="tabset_label">The basics</h2>
 
 </div>
+
+
+<h1 id="tree">The Data Model</h1>
+
+<div id="basics" class="tabset_content">
+<h2 class="tabset_label">The basics</h2>
+
+
+<p>The FlyMine data tree shows all the classes in FlyMine, some of
+which do not yet have data associated with them. You can use this page
+to browse the data structure in FlyMine and to select a starting class to make your query.</p>
+
+<img alt="[Tree page]"  src="tree.png"/>
+</div>
+
 
 <h1 id="importTemplates">Import Template Query</h1>
 
