@@ -13,6 +13,7 @@
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
+<tiles:importAttribute name="loginMessageKey" ignore="true"/>
 
 <link rel="stylesheet" type="text/css" href="css/webSearchableList.css"/>
 
@@ -83,8 +84,22 @@
 
 <div id="${wsListId}_${type}_container" class="wsListContainer">
 
-
     <div id='${wsListId}_${type}_ws_list' class="wsList">
+
+<c:if test="${!empty loginMessageKey}">
+  <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
+    <div class="notLogged">
+      <em>
+        <fmt:message key="${loginMessageKey}">
+          <fmt:param>
+            <im:login/>
+          </fmt:param>
+        </fmt:message>
+      </em>
+    </div>
+  </c:if>
+</c:if>
+      
       <c:choose>
         <c:when test="${!empty makeTable && makeTable}">
           <%-- make a table --%>

@@ -22,6 +22,7 @@
 <tiles:importAttribute name="height" ignore="true"/>
 <tiles:importAttribute name="limit" ignore="true"/>
 <tiles:importAttribute name="initialFilterText" ignore="true"/>
+<tiles:importAttribute name="loginMessageKey" ignore="true"/>
 
 <html:xhtml/>
 
@@ -136,6 +137,7 @@
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
   <tiles:put name="delayDisplay" value="${!empty initialFilterText}"/>
+  <tiles:put name="loginMessageKey" value="${loginMessageKey}"/>
 </tiles:insert>
 
   <script type="text/javascript">
