@@ -37,6 +37,7 @@
   <tiles:put name="limit" value="${limit}"/>
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
+  <tiles:put name="loginMessageKey" value="template.notlogged"/>
 </tiles:insert>
 </div>
 </im:roundbox>

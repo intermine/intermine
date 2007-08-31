@@ -20,7 +20,8 @@
 <fmt:message key="bags.title" var="titleKey" />
 
 <im:roundbox title="${titleKey}" stylename="welcome">
-<div class="" id="ws_${wsListId}_bag"><fmt:message key="bagBuild.intro"/>
+<div class="" id="ws_${wsListId}_bag"><fmt:message key="lists.intro"/>
+ 
 <tiles:insert name="wsFilterList.tile">
   <tiles:put name="type" value="bag"/>
   <tiles:put name="scope" value="${scope}"/>
@@ -37,6 +38,7 @@
   <tiles:put name="limit" value="${limit}"/>
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
+  <tiles:put name="loginMessageKey" value="lists.notlogged"/>
 </tiles:insert>
 <c:if test="${(fn:length(PROFILE.savedBags) > 0) && (scope == 'user')}">
   <p width="100%" align="right">

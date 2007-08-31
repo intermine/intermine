@@ -95,7 +95,7 @@
         <div>
                   <div id="qbImport">
             <html:link action="/importQueries.do?query_builder=yes">
-              Import query XML
+              <fmt:message key="begin.importQuery"/>
             </html:link>
           </div>
           <div id="qbStartQuery">
