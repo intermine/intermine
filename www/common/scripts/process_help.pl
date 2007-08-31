@@ -129,7 +129,7 @@ sub make_html
   if ($num > 0) {
     $prev_url = make_name($pages[$num - 1]);
     $prev_link = qq[<a href="$prev_url">previous</a>];
-    $prev_title = $pages[$num - 2]{title};
+    $prev_title = $pages[$num - 1]{title};
   }
 
   my $next_url = '';
@@ -138,7 +138,7 @@ sub make_html
   if ($num < @pages - 1) {
     $next_url = make_name($pages[$num + 1]);
     $next_link = qq[<a href="$next_url">next</a>];
-    $next_title = $pages[$num]{title};
+    $next_title = $pages[$num + 1]{title};
   }
 
   my $onclick = "";
