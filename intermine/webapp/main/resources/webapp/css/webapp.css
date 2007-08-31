@@ -198,9 +198,6 @@ textarea#pasteInput {
   height: 1.5em;
 }
 
-.heading a {
-	color:white;
-}
 
 
 .listHeading {
@@ -212,9 +209,8 @@ textarea#pasteInput {
   padding:5px 0px 0px 10px;
   font-size: 14px;
   font-weight:bold;
-  
   white-space: nowrap;
-  
+  background-color: #eee;
   /* needed to prevent the peekaboo bug on IE:
      http://www.positioniseverything.net/explorer/peekaboo.html */
   height: 1.5em;
