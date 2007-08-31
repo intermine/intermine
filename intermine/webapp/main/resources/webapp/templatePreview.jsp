@@ -13,8 +13,7 @@
     Template preview
   </im:heading>
 
-  <im:body id="template-preview">
-    <div align="center">
+  <div class="body" id="template-preview" align="center">
       <div id="tmplPreview">
         <div class="previewTitle">
           <fmt:message key="templateBuilder.previewtitle"/>
@@ -23,8 +22,7 @@
           <tiles:put name="builder" value="yes"/>
         </tiles:insert>
       </div>
-    </div>
-  </im:body>
+  </div>
   
     <div align="center">
       <table border="0">
