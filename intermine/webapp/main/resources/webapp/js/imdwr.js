@@ -350,7 +350,7 @@ function do_filtering(filteredList, type, wsListId) {
         var parent = $(wsListId + '_' + type + '_ws_list');
         var divs = new Array();
 
-        for (var i in parent.childNodes) {
+        for (var i = 0; i < parent.childNodes.length; i++) {
             var child = parent.childNodes[i];
             if (child.tagName == 'DIV' && scoreHash[child.id]) {
                 divs.push(child);
