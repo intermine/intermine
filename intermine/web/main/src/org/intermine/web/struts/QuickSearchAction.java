@@ -99,7 +99,9 @@ public class QuickSearchAction extends InterMineAction
         } else if (qsType.equals("bgs")) {
             request.setAttribute("type", "bag");
             request.setAttribute("initialFilterText", qsf.getValue());
-            return mapping.findForward("bags");
+  		    return new ForwardParameters(mapping.findForward("bags"))
+	                .addParameter("subtab", "view")
+					.forward();
         } else if (qsType.equals("tpls")) {
             request.setAttribute("type", "template");
             request.setAttribute("initialFilterText", qsf.getValue());

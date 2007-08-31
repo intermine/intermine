@@ -41,7 +41,7 @@ function clearElement(e) {
 <tiles:importAttribute name="menuItem" ignore="true"/>
 <html:form action="/browseAction" style="display:inline;">
   <fmt:message key="header.search.pre"/>
-  <select name="quickSearchType" onchange="updateExample(selectedIndex);" style="font-size:1em;">
+  <select name="quickSearchType" id="quickSearchType" onchange="updateExample(selectedIndex);" style="font-size:1em;">
 	<option value="ids" selected>Identifiers</option>
 	<option value="tpls" <c:if test="${quickSearchType=='tpls'}">selected</c:if>>Templates&nbsp;&nbsp;</option>
 	<option value="bgs" <c:if test="${quickSearchType=='bgs'}">selected</c:if>>Lists</option>
@@ -51,4 +51,7 @@ function clearElement(e) {
 <html:submit><fmt:message key="header.search.button"/></html:submit>
 
 </html:form>
+<script language="javascript">
+  window.onload = updateExample($('quickSearchType').selectedIndex);
+</script>
 <!-- /browse.jsp -->
