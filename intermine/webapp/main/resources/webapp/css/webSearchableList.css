@@ -74,8 +74,8 @@ div.filterBar {
 	height:20px;
 }
 ul.filterActions{
-	width:600px;
-}
+/*	width:600px;
+*/}
 ul.filterActions ,ul.filterActions li{
 	list-style: none;
 	margin:0px;
