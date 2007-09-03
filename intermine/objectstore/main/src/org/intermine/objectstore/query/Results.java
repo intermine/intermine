@@ -465,7 +465,8 @@ public class Results extends AbstractList implements LazyCollection
             throw new IllegalStateException("Cannot set batchSize if rows have been retrieved");
         }
         if (size > os.getMaxLimit()) {
-            throw new IllegalArgumentException("Batch size cannot be greater that max limit");
+            throw new IllegalArgumentException("Batch size cannot be greater that max limit ("
+                                               + os.getMaxLimit() + ") tried to set to: " + size);
         }
         batchSize = size;
     }
