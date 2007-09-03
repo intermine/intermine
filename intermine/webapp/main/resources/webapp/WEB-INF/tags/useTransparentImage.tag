@@ -43,5 +43,5 @@
   <div class="${id}" style="float:${floatValue}">&nbsp</div>
 </html:link>
 <c:if test="${! empty breakFloat && breakFloat == 'true'}">
-  <div class="clear-both"></div>
+  <div style="clear:${floatValue};width:${width}"></div>
 </c:if>
