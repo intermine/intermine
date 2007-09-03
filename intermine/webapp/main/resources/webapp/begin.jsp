@@ -66,6 +66,7 @@
             <tiles:put name="showSearchBox" value="false"/>
           </tiles:insert>
         </div>
+        <im:useTransparentImage src="/images/search_with_templates.png" id="search_with_templates" link="templates" height="22px" width="153px" floatValue="right" breakFloat="true" />
       </im:roundbox>
      
       <im:roundbox title="Lists" titleLink="/bag.do" stylename="frontBox">
@@ -87,17 +88,15 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         </div>
+        <im:useTransparentImage src="/images/view_lists.png" id="view_lists" link="
+bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/images/create_lists.png" id="create_lists" link="bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:roundbox>
 
       <im:roundbox title="Query Builder" titleLink="/customQuery.do" stylename="frontBox">
         <p><em><fmt:message key="begin.querybuilder"/></em></p>
         <br/>
         <div>
-                  <div id="qbImport">
-            <html:link action="/importQueries.do?query_builder=yes">
-              <fmt:message key="begin.importQuery"/>
-            </html:link>
-          </div>
           <div id="qbStartQuery">
             Start a query from:
             <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Gene">
@@ -108,6 +107,12 @@
             </html:link>
           </div>
         </div>
+        <div id="qbImport">
+          <html:link action="/importQueries.do?query_builder=yes">
+            <fmt:message key="begin.importQuery"/>
+          </html:link>
+        </div>
+        <im:useTransparentImage src="/images/build_a_query.png" id="build_a_query" link="query" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:roundbox>
 </div>
 
