@@ -22,9 +22,10 @@ import org.postgresql.copy.CopyManager;
  */
 public class FlushJobPostgresCopyImpl implements FlushJob
 {
-    CopyManager copyManager;
-    String sql;
-    byte data[];
+    private CopyManager copyManager;
+    private String sql;
+    private byte data[];
+    private int size;
 
     /**
      * Constructor for this class
@@ -32,11 +33,13 @@ public class FlushJobPostgresCopyImpl implements FlushJob
      * @param copyManager the CopyManager to use
      * @param sql the SQL String containing the COPY command
      * @param data a byte array of COPY data
+     * @param size the size of data
      */
-    public FlushJobPostgresCopyImpl(CopyManager copyManager, String sql, byte data[]) {
+    public FlushJobPostgresCopyImpl(CopyManager copyManager, String sql, byte data[], int size) {
         this.copyManager = copyManager;
         this.sql = sql;
         this.data = data;
+        this.size = size;
     }
     
     /**
@@ -44,7 +47,7 @@ public class FlushJobPostgresCopyImpl implements FlushJob
      */
     public void flush() throws SQLException {
         try {
-            copyManager.copyInQuery(sql, new ByteArrayInputStream(data));
+            copyManager.copyInQuery(sql, new ByteArrayInputStream(data, 0, size));
             copyManager = null;
             sql = null;
             data = null;

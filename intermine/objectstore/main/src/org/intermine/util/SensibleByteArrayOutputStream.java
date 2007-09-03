@@ -57,7 +57,7 @@ public class SensibleByteArrayOutputStream extends ByteArrayOutputStream
      *
      * @param newSize the new minimum size of the buffer
      */
-    protected void assureSize(int newSize) {
+    public void assureSize(int newSize) {
         if (newSize > buf.length) {
             byte newBuf[] = new byte[Math.max(buf.length << 1, newSize + (newSize / 10))];
             System.arraycopy(buf, 0, newBuf, 0, count);

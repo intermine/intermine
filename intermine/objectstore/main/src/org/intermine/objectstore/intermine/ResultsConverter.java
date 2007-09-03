@@ -288,7 +288,8 @@ public class ResultsConverter
         //timeSpentBuildObject += time2 - time1;
         //countBuildObject++;
         //if (countBuildObject % 100000 == 0) {
-        //    LOG.info("Called buildObject " + countBuildObject + " times. Time spent: " + timeSpentBuildObject + ", Sql: " + timeSpentSql);
+        //    LOG.info("Called buildObject " + countBuildObject + " times. Time spent: "
+        //    + timeSpentBuildObject + ", Sql: " + timeSpentSql);
         //}
         return retval;
     }

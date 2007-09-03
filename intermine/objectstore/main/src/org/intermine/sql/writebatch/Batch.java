@@ -13,7 +13,6 @@ package org.intermine.sql.writebatch;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -223,6 +222,8 @@ public class Batch
      * the connection will have its transaction committed and re-opened, without ever waiting for a
      * batch flush. Note that stuff added to this batch AFTER this method is called may make it into
      * the commit!
+     *
+     * @throws SQLException never
      */
     public void batchCommit() throws SQLException {
         needBatchCommit = true;

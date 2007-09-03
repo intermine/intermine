@@ -12,7 +12,6 @@ package org.intermine.sql.writebatch;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Map;
 
 /**
  * A FlushJob that commits and re-opens a transaction on the database.
