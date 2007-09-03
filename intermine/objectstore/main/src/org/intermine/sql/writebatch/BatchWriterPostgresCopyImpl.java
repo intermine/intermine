@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.util.SensibleByteArrayOutputStream;
 import org.intermine.util.StringConstructor;
 
 import org.postgresql.PGConnection;
@@ -60,8 +59,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                             + " back to prepared statements");
                     super.doInserts(name, table, batches);
                 } else {
-                    SensibleByteArrayOutputStream baos = new SensibleByteArrayOutputStream();
-                    DataOutputStream dos = new DataOutputStream(baos);
+                    PostgresByteArrayOutputStream baos = new PostgresByteArrayOutputStream();
+                    PostgresDataOutputStream dos = new PostgresDataOutputStream(baos);
                     dos.writeBytes("PGCOPY\n");
                     dos.writeByte(255);
                     dos.writeBytes("\r\n");
@@ -101,7 +100,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     dos.writeShort(-1);
                     dos.flush();
                     batches.add(new FlushJobPostgresCopyImpl(copyManager, sql,
-                                baos.toByteArray()));
+                                baos.getBuffer(), baos.size()));
                 }
             } catch (IOException e) {
                 throw new SQLException(e.toString());
@@ -111,7 +110,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         return 0;
     }
 
-    private static void writeObject(DataOutputStream dos, Object o) throws IOException {
+    private static void writeObject(PostgresDataOutputStream dos, Object o) throws IOException {
         if (o == null) {
             dos.writeInt(-1);
         } else if (o instanceof Integer) {
@@ -133,21 +132,9 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
             dos.writeInt(8);
             dos.writeLong(((Long) o).longValue());
         } else if (o instanceof String) {
-            byte bytes[] = ((String) o).getBytes("UTF-8");
-            dos.writeInt(bytes.length);
-            dos.write(bytes);
+            dos.writeLargeUTF((String) o);
         } else if (o instanceof StringConstructor) {
-            ArrayList<byte []> byteArrays = new ArrayList();
-            int totalLength = 0;
-            for (String string : ((StringConstructor) o).getStrings()) {
-                byte bytes[] = ((String) string).getBytes("UTF-8");
-                totalLength += bytes.length;
-                byteArrays.add(bytes);
-            }
-            dos.writeInt(totalLength);
-            for (byte bytes[] : byteArrays) {
-                dos.write(bytes);
-            }
+            dos.writeLargeUTF((StringConstructor) o);
         } else if (o instanceof BigDecimal) {
             BigInteger unscaledValue = ((BigDecimal) o).unscaledValue();
             int signum = ((BigDecimal) o).signum();
@@ -222,7 +209,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                             + " back to prepared statements");
                     super.doIndirectionInserts(name, table, batches);
                 } else {
-                    SensibleByteArrayOutputStream baos = new SensibleByteArrayOutputStream();
+                    PostgresByteArrayOutputStream baos = new PostgresByteArrayOutputStream();
                     DataOutputStream dos = new DataOutputStream(baos);
                     dos.writeBytes("PGCOPY\n");
                     dos.writeByte(255);
@@ -244,7 +231,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
                     dos.writeShort(-1);
                     dos.flush();
                     batches.add(new FlushJobPostgresCopyImpl(copyManager, sql,
-                                baos.toByteArray()));
+                                baos.getBuffer(), baos.size()));
                 }
             } catch (IOException e) {
                 throw new SQLException(e.toString());

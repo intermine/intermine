@@ -1515,7 +1515,7 @@ public class SqlGenerator
                     boolean limitRange = false;
                     //boolean limitRange = (lowest < highest) && (filteredBag.size() > 10);
                     //if (limitRange) {
-                    //    buffer.append("(" + leftHandSide + " >= " + lowest + " AND " + leftHandSide
+                  //    buffer.append("(" + leftHandSide + " >= " + lowest + " AND " + leftHandSide
                     //            + " <= " + highest + " AND ");
                     //}
                     boolean parenthesesForGroups = (filteredBag.size() > 9000)

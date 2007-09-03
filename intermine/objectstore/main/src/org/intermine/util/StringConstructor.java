@@ -11,18 +11,19 @@ package org.intermine.util;
  */
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
  * A CharSequence object representing a String constructed out of a sequence of other Strings.
  * This object does not copy any of the string data - rather, it stores pointers to the original
  * Strings it was constructed with.
+ *
+ * @author Matthew Wakeling
  */
 public class StringConstructor implements CharSequence
 {
     private TreeMap<Integer, String> strings = new TreeMap();
-    int length = 0;
+    private int length = 0;
 
     /**
      * Main constructor - creates an empty object.
@@ -30,15 +31,30 @@ public class StringConstructor implements CharSequence
     public StringConstructor() {
     }
 
+    /**
+     * Appends a String onto the end of this object.
+     *
+     * @param string the String
+     */
     public void append(String string) {
         strings.put(new Integer(length), string);
         length += string.length();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int length() {
         return length;
     }
 
+    /**
+     * Returns the String that this object represents - note that this method should be avoided,
+     * because it defeats the purpose of keeping the constituent Strings separate in the first
+     * place.
+     *
+     * @return a String
+     */
     public String toString() {
         StringBuffer retval = new StringBuffer();
         for (String string : strings.values()) {
@@ -47,6 +63,9 @@ public class StringConstructor implements CharSequence
         return retval.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public char charAt(int index) {
         // If we were using Java 1.6, I could do floorEntry(). Instead, I have to do:
         String component = strings.get(new Integer(index));
@@ -61,10 +80,18 @@ public class StringConstructor implements CharSequence
         return component.charAt(index - componentIndex);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public CharSequence subSequence(int start, int end) {
         throw new UnsupportedOperationException("We probably don't need this method");
     }
 
+    /**
+     * Returns a Collection containing the Strings that form this object, in the correct order.
+     *
+     * @return a Collection of Strings
+     */
     public Collection<String> getStrings() {
         return strings.values();
     }
