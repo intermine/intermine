@@ -3,6 +3,8 @@
 <%@ attribute name="titleKey" required="false" %>
 <%@ attribute name="titleLink" required="false" %>
 <%@ attribute name="stylename" required="true" %>
+<%@ attribute name="minWidth" required="false" %>
+<%@ attribute name="htmlId" required="false" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -20,8 +22,8 @@ if(new java.io.File(application.getRealPath("model")+"/"+stylename+"_L.gif").exi
 </c:if>
 
 <c:if test="${!empty title}">
- <div class="roundcornerbox" id="${stylename}" >
-    <h1>
+ <div class="roundcornerbox" id="${stylename}" <c:if test="${! empty minWidth}">style="min-width:${minWidth}"</c:if> >
+    <h1 id="${htmlId}">
       <c:choose>
         <c:when test="${!empty titleLink}">
           <html:link action="${titleLink}">${title}</html:link>

@@ -19,7 +19,7 @@
 
 <fmt:message key="bags.title" var="titleKey" />
 
-<im:roundbox title="${titleKey}" stylename="welcome">
+<im:roundbox title="${titleKey}" stylename="welcome" minWidth="800px" htmlId="liststop">
 <div class="" id="ws_${wsListId}_bag"><fmt:message key="lists.intro"/>
  
 <tiles:insert name="wsFilterList.tile">
@@ -40,6 +40,7 @@
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
   <tiles:put name="loginMessageKey" value="lists.notlogged"/>
 </tiles:insert>
+<html:link anchor="liststop" action="bag"><img src="images/go_to_top.png">top</html:link>
 <c:if test="${(fn:length(PROFILE.savedBags) > 0) && (scope == 'user')}">
   <p width="100%" align="right">
     <html:submit property="delete">

@@ -140,7 +140,7 @@
   <tiles:put name="loginMessageKey" value="${loginMessageKey}"/>
 </tiles:insert>
 
-  <script type="text/javascript">
+ <script type="text/javascript">
 <%-- enable filter only after the list is populated --%>
 <!--//<![CDATA[
     $('${ws_input_id}').disabled = false;

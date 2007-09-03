@@ -18,7 +18,7 @@
 
 <html:xhtml/>
 
-<im:roundbox titleKey="wsTemplateTable.heading" stylename="welcome">
+<im:roundbox titleKey="wsTemplateTable.heading" stylename="welcome" minWidth="800px" htmlId="templatetop">
 <div style=""><fmt:message key="templates.intro"/></div>
 <div class="" id="ws_${wsListId}_template">
 <tiles:insert name="wsFilterList.tile">
@@ -39,6 +39,7 @@
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
   <tiles:put name="loginMessageKey" value="template.notlogged"/>
 </tiles:insert>
+<html:link anchor="templatetop" action="templates"><img src="images/go_to_top.png">top</html:link>
 </div>
 </im:roundbox>
 
