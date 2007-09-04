@@ -32,7 +32,7 @@ Query Builder and constraining by certain fields - organism, for example.</div>
 <br/><br/>
 
 <ul><li>For more information:
-<ul><li> <a href="${WEB_PROPERTIES['project.sitePrefix']}/customQuery.html">Query Builder</a>
+<ul><li> <a href="${WEB_PROPERTIES['project.sitePrefix']}/help/customQuery.html">The Query Builder</a>
 </ul></ul>
 
 <!-- /tip7.jsp -->

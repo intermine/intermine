@@ -17,6 +17,9 @@ at the bottom of the Query Builder page.</div>
 link in the Query Builder box on the home page.  This will take you to
 a form where you can paste-in your saved queries and templates.</div>
 
+<br/><br/>
+
+<div align="center"><img src="tips/images/tip8bNew.gif" class="img"/></div>
 
 <ul><li>For more information:
 <ul><li><a href="${WEB_PROPERTIES['project.sitePrefix']}/help/mymine.html#savedQueries">MyMine</a>
