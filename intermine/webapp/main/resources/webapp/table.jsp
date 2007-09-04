@@ -314,9 +314,9 @@
                       </c:if>
 
                       <%-- summary --%>
-                      <c:if test="${isWebResults && !empty column.path}">
+                      <c:if test="${isWebResults && !empty pathNames[column.path]}">
 		        <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-                        <a href="javascript:getColumnSummary('${table}','${column.path}', &quot;${columnDisplayName}&quot;)" 
+                        <a href="javascript:getColumnSummary('${table}','${pathNames[column.path]}', &quot;${columnDisplayName}&quot;)" 
                            title="${summaryTitle}"><img src="images/summary_maths.png" alt="${summaryTitle}"></a>
                       </c:if>
 
