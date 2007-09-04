@@ -3,7 +3,7 @@
 <h3>Template queries can be modified in the query builder.</h3>
 
 <div class="tipText">Template queries are queries that have already been built for you.  If you click on
-the 'Edit Template' button, you will be taken to the QueryBuilder.</div>
+the 'Edit Query' button, you will be taken to the QueryBuilder.</div>
 
 <br/><br/>
 
