@@ -13,8 +13,7 @@ produce a pop-up window containing all relevant summary information for that dat
 
 
 <ul><li>For more information:
-<ul><li><a href="http://www.flymine.org/doc/manual/manualResults.shtml">Query Results</a>
-<li><a href="http://www.flymine.org/doc/tutorials/tutorial3-Templates.shtml">Tutorial:  Running Template Queries</a>
+<ul><li><a href="${WEB_PROPERTIES['project.sitePrefix']}/help/results.html">Results page</a>
 </ul></ul>
 
 <!-- /tip4.jsp -->

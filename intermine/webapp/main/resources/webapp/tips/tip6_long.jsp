@@ -7,7 +7,7 @@ the 'Edit Template' button, you will be taken to the QueryBuilder.</div>
 
 <br/><br/>
 
-<div align="center"><img src="tips/images/tip6a.png" class="img"/></div>
+<div align="center"><img src="tips/images/tip6aNew.gif" class="img"/></div>
 
 <br/><br/>
 
@@ -21,8 +21,8 @@ displayed.</div>
 <br/><br/>
 
 <ul><li>For more information:
-<ul><li><a href="http://www.flymine.org/doc/manual/manualQueryBuilder.shtml">The FlyMine QueryBuilder</a>
-<li><a href="http://www.flymine.org/doc/tutorials/tutorial7-buildtemplate.shtml">Tutorial:  Building Template Queries</a>
+<ul><li><a href="${WEB_PROPERTIES['project.sitePrefix']}/help/template.html">The template form</a>
+<li><a href="${WEB_PROPERTIES['project.sitePrefix']}/help/customQuery.html">The Query Builder</a>
 </ul></ul>
 
 <!-- /tip6.jsp -->

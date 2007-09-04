@@ -2,15 +2,15 @@
 
 <h3>You can compare and contrast two or more lists of data.</h3>
 
-<div class="tipText">On the bags page, you will find all of the lists of data you have made.</div>
+<div class="tipText">On the lists page, you will find all of the lists of data you have made, together with some 'public' lists.</div>
 
 <br/><br/>
 
-<div align="center"><img src="tips/images/tip1a.png" class="img"/></div>
+<div align="center"><img src="tips/images/tip1aNew.gif" class="img"/></div>
 
 <br/><br/>
 
-<div class="tipText">Select two or more bags and click on one of the buttons:
+<div class="tipText">Select two or more lists using the checkboxes, enter a new name for your list and click on one of the following buttons:
 
 <ul>
 	<li>Union - combine all elements into one new list</li>
@@ -18,24 +18,23 @@
 	<li>Subtract - remove all items contained in the second list from the first list</li>
 </ul>
 
-<p>To find out what objects the lists have in common, for instance, check the checkbox next to each bag of interest 
-and enter a new bag name.  Then click on the 'Intersect' button. </p> 
+<p>To find out what objects the lists have in common, for instance, check the checkbox next to each list of interest 
+and enter a new list name.  Then click on the 'Intersect' button. </p> 
 
 </div>
 
 <br/><br/>
 
-<div align="center"><img src="tips/images/tip1b.png" class="img"/></div>
+<div align="center"><img src="tips/images/tip1bNew.gif" class="img"/></div>
 
 <br/><br/>
 
-<div class="tipText">This will result in a new bag that consists of only the objects that were in all of the bags that
+<div class="tipText">This will result in a new list that consists of only the objects that were in all of the lists that
 you selected.</div>
 
 
 <ul><li>For more information:
-<ul><li><a href="http://www.flymine.org/doc/manual/manualUsingBags.shtml">Making use of Bags</a>
-<li><a href="http://www.flymine.org/doc/tutorials/tutorial4-Bags.shtml">Tutorial: Bags</a>
+<ul><li><a href="${WEB_PROPERTIES['project.sitePrefix']}/help/lists-view.html">Lists</a>
 </ul></ul>
 
 <!-- /tip1.jsp -->
