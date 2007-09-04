@@ -18,17 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.path.Path;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.query.OrderBy;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PageOutOfRangeException;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateQuery;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,6 +30,16 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.path.Path;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.query.OrderBy;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.results.Column;
+import org.intermine.web.logic.results.PageOutOfRangeException;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateQuery;
 import org.stringtree.json.JSONWriter;
 
 /**
@@ -274,6 +273,13 @@ public class TableController extends TilesAction
         request.setAttribute("columnsToHighlight", jsonWriter.write(columnsToHighlightMap));
         request.setAttribute("pathQuery", pt.getWebTable().getPathQuery());
         request.setAttribute("table", request.getParameter("table"));
+
+        Map<Path,String> pathNames = new HashMap<Path,String> ();
+        for (Column column : columns) {
+            Path path = column.getPath();
+            pathNames.put(path, path.toStringNoConstraints());
+        }
+        request.setAttribute("pathNames", pathNames);
 
         return null;
     }
