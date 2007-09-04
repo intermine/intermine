@@ -8,7 +8,7 @@ best match.</div>
 
 <br/><br/>
 
-<div align="center"><img src="tips/images/tip9a.png" class="img"/></div>
+<div align="center"><img src="tips/images/tip9aNew.gif" class="img"/></div>
 
 <br/><br/>
 
@@ -21,8 +21,7 @@ best match.</div>
 <br/><br/>
 
 <ul><li>For more information:
-<ul><li><a href="http://www.flymine.org/doc/manual/manualMakingBags.shtml">Making Bags</a>
-<li><a href="http://www.flymine.org/doc/tutorials/tutorial4-Bags.shtml">Tutorial:  Bags and History</a>
+<ul><li><a href="${WEB_PROPERTIES['project.sitePrefix']}/help/lists.html">Lists</a
 </ul></ul>
 
 <!-- /tip9.jsp -->

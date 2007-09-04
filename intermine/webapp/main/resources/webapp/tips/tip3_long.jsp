@@ -1,12 +1,11 @@
 <h3>You can upload and query lists of data.</h3>
 
 <div class="tipText">If you have a list of genes, proteins, etc., you can upload that list to FlyMine using the 
-form on the 'Bags' page.  You can then use your bag with a query that someone else has made for you
-or a query you made yourself.</div>
+form on the 'Lists' page (click on the 'Upload' tab of the lists page).  You can then use your list with a template or in the query builder.</div>
 
 <br/><br/>
 
-<div align="center"><img src="tips/images/tip3b.png" class="img"/></div>
+<div align="center"><img src="tips/images/tip3bNew.gif" class="img"/></div>
 
 <br/><br/>
 
@@ -16,7 +15,7 @@ proteins related to those genes.</div>
 <ul>
 <li>For more information:  
 	<ul>
-	<li><a href="http://www.flymine.org/doc/manual/manualQueryBuilder.shtml">The FlyMine Query Builder</a>
-	<li><a href="http://www.flymine.org/doc/tutorials/tutorial6-QB.shtml">Tutorial: QueryBuilder</a>
+	<li><a href="${WEB_PROPERTIES['project.sitePrefix']}/help/template.html">Templates</a>
+	<li><a href="${WEB_PROPERTIES['project.sitePrefix']}/help/customQuery.html">Query Builder</a>
 	</ul>
 </ul>
