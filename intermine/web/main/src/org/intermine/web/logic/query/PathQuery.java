@@ -340,16 +340,14 @@ public class PathQuery
      */
     public void removePathStringFromSortOrder(String viewString) {
         Iterator<OrderBy> iter = sortOrder.iterator();
-        boolean inSortOrder = false;
-        while (iter.hasNext() && !inSortOrder) {            
+        while (iter.hasNext()) {            
             OrderBy sort = iter.next();
-            if (sort.getField().toString().equals(viewString)) {
+            String obs = sort.getField().toString();
+            if (sort.getField().toStringNoConstraints().equals(viewString)) {
                 // this is the field on the sort order, so clear and add first item on view list
-                inSortOrder = true;
+                removePathStringFromSortOrder();
+                return;
             }
-        }
-        if (inSortOrder) {
-            removePathStringFromSortOrder();
         }
     }
     
