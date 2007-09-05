@@ -17,7 +17,7 @@
   <p>
     <fmt:message key="history.savedbags.intro"/>
     <c:if test="${empty PROFILE.username}">
-        <fmt:message key="history.savedbags.login"/>
+      <html:link action="/login?returnto=/mymine.do?subtab=lists"><fmt:message key="history.savedbags.login"/></html:link>&nbsp;&nbsp;
     </c:if>
   </p>
 <br/>
