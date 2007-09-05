@@ -117,28 +117,65 @@ h1, h2, h3, h1 a, h1 a:visited {
 	font-weight: bold;
     color:#FFF;    
 }
-.roundcornerbox {
-    margin:15px;
-	padding:10px;
-    font-size: 12px;
-	border:1px solid #9E68AE;
-	background-image: url('../images/blue_grad.png');
-	background-repeat: repeat-x;
-	background-color: #FFF;
+
+/*** Definition of styles for boxes ***/
+.roundcorners, .gradientbox, .plainbox {
+    margin:0px 5px 10px 5px;
+	padding:0;
+    font-size: 1em;
+	text-align: left;
+	height: 1%;/**kill peek-a-boo bug**/
 }
-.roundcornerbox h1 {
-    margin:0px;
+.roundcorners h1, .gradientbox h1, .plainbox h1{
+    margin:5px 0;
     padding:0px;
     color:#5C0075;
 	font-size:1.5em;
 }
-.roundcornerbox img{
+.roundcorners img, .gradientbox img, .plainbox img{
 	padding:0px;
 	margin:0px;
 }
-.roundcornerbox p {
+.roundcorners p, .gradientbox p, .plainbox p {
 	background:none;
 }
+
+.plainbox {
+	padding:10px;
+	border:1px solid #9E68AE;
+	background-color: #F5F0FF;
+}
+
+.gradientbox {
+	padding:10px;
+	border:1px solid #9E68AE;
+	background: url('../images/blue_grad.png') repeat-x;
+}
+
+.roundcorners {
+	background: url('../images/roundcorner_b_l.png') no-repeat bottom left;
+	background-color: #F5F0FF;
+}
+.roundcorners dl {
+	background: url('../images/roundcorner_t_l.png') no-repeat top left;
+	margin:0;
+	padding:0 0 0 5px;
+}
+
+.roundcorners dt {
+	padding:0 0 5px 10px;
+	margin:0;
+	background: url('../images/roundcorner_t_r.png') no-repeat top right;
+}
+
+.roundcorners dd {
+	padding:10px;
+	margin:0;
+	background: url('../images/roundcorner_b_r.png') no-repeat bottom right;
+}
+
+/*** end style for boxes ***/
+
 table#headertable{
 	width:100%;
 	margin:0px;
@@ -156,22 +193,10 @@ table#headertable{
 	background:none;
 }
 
-#leftCol{width:400px;float:left;}
+#leftCol{width:380px;float:left;}
 #rightCol{margin-left:390px;}
 #clearLine{clear:both;}
 
-div.actionArea{
-	margin:0px 15px 15px 15px;
-	padding:10px;
-	border:1px solid #9E68AE;
-	background: #F5F0FF;
-}
-div.actionArea h2{
-	margin:0px;
-	padding:0px;
-	background:#F5F0FF;
-	color:#5C0075;;
-}
 textarea#pasteInput {
   width: 345px;
 }

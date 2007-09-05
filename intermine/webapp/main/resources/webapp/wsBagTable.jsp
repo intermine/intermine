@@ -19,7 +19,7 @@
 
 <fmt:message key="bags.title" var="titleKey" />
 
-<im:roundbox title="${titleKey}" stylename="welcome" minWidth="800px" htmlId="liststop">
+<im:boxarea title="${titleKey}" stylename="gradientbox" minWidth="800px" htmlId="liststop">
 <div class="" id="ws_${wsListId}_bag"><fmt:message key="lists.intro"/>
  
 <tiles:insert name="wsFilterList.tile">
@@ -49,5 +49,5 @@
   </p>
 </c:if>
 </div>
-</im:roundbox>
+</im:boxarea>
 <!-- /wsBagTable.jsp -->

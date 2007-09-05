@@ -84,47 +84,6 @@ table.results tr td.highlightCell {
 	width:350px;
 }
 
-.boxcontentwelcome {
-    border-left: 1px solid #9D66AD;
-    border-right: 1px solid #9D66AD;
-}
-.boxbottomwelcome {
-	height:9px;
-    border-bottom: 1px solid #9D66AD;
-}
-.boxcontentqueries {
-    border-left: 1px solid #589100;
-    border-right: 1px solid #589100;
-}
-.boxbottomqueries {
-	height:9px;
-    border-bottom: 1px solid #589100;
-}
-.boxcontentlists {
-    border-left: 1px solid #AD8668;
-    border-right: 1px solid #AD8668;
-}
-.boxbottomlists {
-	height:9px;
-    border-bottom: 1px solid #AD8668;
-}
-.boxcontenttemplates {
-    border-left: 1px solid #4A497B;
-    border-right: 1px solid #4A497B;
-}
-.boxbottomtemplates {
-	height:9px;
-    border-bottom: 1px solid #4A497B;
-}
-.boxcontentcategories {
-    border-left: 1px solid #663366;
-    border-right: 1px solid #663366;
-}
-.boxbottomcategories {
-	height:9px;
-    border-bottom: 1px solid #663366;
-}
-
 table.dbsources {margin:10px 20px 10px 20px;}
 
 table.dbsources th  {

@@ -15,25 +15,6 @@ div.aspectOverview{
 	float:left;
 }
 
-div#aspectsFront {float:left;width:300px;height:622px;}
-div#aspectsFront h1 {
-    margin:0px;
-    color:#5C0075;
-	font-size:1.5em;
-}
-#aspectsFront p {
-	background:none;
-}
-div#aspectsFront ul {list-style: none;margin:0px;padding:0px;}
-div#aspectsFront ul li{
-	display:inline;
-	float:left;
-/*	width:180px;
-*//*	height:0px;
-*/	margin:10px;
-	padding:0px;
-}
-
 div.aspectDescr{
 	visibility:hidden;
 	font-style: italic;

@@ -11,8 +11,7 @@
 <div class="body">
         
 <!-- First column -->
-     <div id="aspectsFront" class="actionArea">
-     <h1><html:link action="/dataCategories.do">Data</html:link></h1>
+     <im:boxarea title="Data" titleLink="dataCategories" stylename="plainbox" floatValue="left" fixedWidth="300px">
      <em><p><fmt:message key="begin.data"/></p></em>
      <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
           <table cellpadding="0" cellspacing="0" border="0"><tr>
@@ -31,7 +30,7 @@
                   </td>
              </c:forEach>
           </tr></table>
-     </div>
+    </im:boxarea>
 	
 
 <!-- Second column - elastic -->
@@ -44,9 +43,10 @@
  	  <span style="font-size:+1.4em"><a href="${WEB_PROPERTIES['project.sitePrefix']}/tour/start.html" target="_help"  onclick="javascript:window.open('${WEB_PROPERTIES['project.sitePrefix']}/tour/start.html','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Take a tour!</a></span>
       <p class="errors">This is release 8.0 of FlyMine.  See the <a href="${WEB_PROPERTIES['project.sitePrefix']}/release-notes.shtml">release notes</a> to find out what's new.</p>
     </div>
+    <div style="clear:right"></div>
   </div>	
 
-      <im:roundbox title="Templates" titleLink="/templates.do" stylename="frontBox">
+      <im:boxarea title="Templates" titleLink="/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
         <div>
@@ -67,9 +67,9 @@
           </tiles:insert>
         </div>
         <im:useTransparentImage src="/images/search_with_templates.png" id="search_with_templates" link="templates" height="22px" width="153px" floatValue="right" breakFloat="true" />
-      </im:roundbox>
+      </im:boxarea>
      
-      <im:roundbox title="Lists" titleLink="/bag.do" stylename="frontBox">
+      <im:boxarea title="Lists" titleLink="/bag.do" stylename="gradientbox">
         <p><em><fmt:message key="begin.bags"/></em></p>
         <br/>
         <div>
@@ -91,9 +91,9 @@
         <im:useTransparentImage src="/images/view_lists.png" id="view_lists" link="
 bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
         <im:useTransparentImage src="/images/create_lists.png" id="create_lists" link="bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
-      </im:roundbox>
+      </im:boxarea>
 
-      <im:roundbox title="Query Builder" titleLink="/customQuery.do" stylename="frontBox">
+      <im:boxarea title="Query Builder" titleLink="/customQuery.do" stylename="gradientbox">
         <p><em><fmt:message key="begin.querybuilder"/></em></p>
         <br/>
         <div>
@@ -113,7 +113,7 @@ bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="t
           </html:link>
         </div>
         <im:useTransparentImage src="/images/build_a_query.png" id="build_a_query" link="customQuery" height="22px" width="120px" floatValue="right" breakFloat="true"/>
-      </im:roundbox>
+      </im:boxarea>
 </div>
 
 </div>

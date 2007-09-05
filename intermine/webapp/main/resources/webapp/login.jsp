@@ -6,7 +6,7 @@
 <!-- login.jsp -->
 <html:xhtml/>
 <div class="body" align="center">
-<div class="actionArea" style="width:60%;clear:both;text-align:left">
+<im:boxarea stylename="plainbox" fixedWidth="60%">
   <html:form action="/loginAction" focus="username" method="post" enctype="multipart/form-data">
     <fmt:message key="login.haspassword"/><br/><br/>
     <html:hidden property="returnToString"/>
@@ -49,5 +49,5 @@
   <br/>
   
 </div>
-</div>
+</im:boxarea>
 <!-- /login.jsp -->

@@ -70,8 +70,7 @@
 </script>
 
 
-<div class="actionArea" style="width:60%;clear:both;text-align:left">
-  <h2><fmt:message key="bagBuild.makeNewBag"/></h2>
+<im:boxarea titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
   <div class="bagBuild">
     <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
       <p><fmt:message key="bagBuild.bagFromText1"/></p>
@@ -140,5 +139,5 @@
     <html:hidden styleId="whichInput" property="whichInput" />
   </html:form>
 </div>
-</div>
+</im:boxarea>
 <!-- /bagBuild.jsp -->

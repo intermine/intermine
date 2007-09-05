@@ -11,17 +11,16 @@
 <div class="body">
   <div id="leftCol">
       <div id="pageDesc" class="pageDesc"><p><fmt:message key="dataCategories.intro"/></p></div>
-	     <div class="actionArea">
-	     <h2>Actions:</h2>
+      <im:boxarea title="Actions" stylename="plainbox" >
            <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a> <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/><BR/> 
            <html:link action="/templates">
              <fmt:message key="dataCategories.action2"/>
              <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
            </html:link>
-        </div>
+      </im:boxarea>
    </div>
 <div id="rightCol">
-   <im:roundbox titleKey="dataCategories.title" stylename="welcome">
+   <im:boxarea titleKey="dataCategories.title" stylename="gradientbox">
 		<c:choose>
 		    <c:when test="${!empty ASPECTS}">
 		       <tiles:insert name="aspects.tile"/>
@@ -45,7 +44,7 @@
 		      </c:forEach>
 		    </c:otherwise>
 		  </c:choose>
-		 </im:roundbox>
+		 </im:boxarea>
 </div>
 </div>
 </div>
