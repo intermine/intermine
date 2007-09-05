@@ -26,6 +26,7 @@ public class ModifyTemplateForm extends ActionForm
 {
     protected String[] selected;
     protected String pageName; // can modify template from templates and mymine pages
+    protected String templateButton;
     
     /**
      * Constructor
@@ -72,6 +73,21 @@ public class ModifyTemplateForm extends ActionForm
     public void setPageName(String pageName) {
         this.pageName = pageName;
     }
+    
+    /**
+     * @param templateButton the template button pressed
+     */
+    public void setTemplateButton(String templateButton) {
+        this.templateButton = templateButton;
+    }
+    
+    /**
+     * @return the template button
+     */
+    public String getTemplateButton() {
+        return templateButton;
+    }
+    
     
     /**
      * {@inheritDoc}
