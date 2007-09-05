@@ -68,7 +68,7 @@
   </c:if>
   <li>
     &nbsp;&nbsp;<a href="#" onclick="javascript:return clearFilter('${type}', '${wsListId}')">
-      <img src="images/reset.png" width="45" height="20" alt="Reset search"/>
+      <img src="images/reset.png" alt="Reset search"/>
     </a>
   </li>
 </ul>
