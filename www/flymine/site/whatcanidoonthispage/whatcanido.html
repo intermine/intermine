@@ -4,6 +4,14 @@
 <div id="basics" class="tabset_content">
 <h2 class="tabset_label">The basics</h2>
 
+<p> The FlyMine home page gives you access to browsing the data available in FlyMine and to the different ways in which data can be accessed, queried and manipulated.  There are four ways to query or access the data in FlyMine:</p>
+
+   <p>1. <b>Search</b> - allows you to browse all the available data for one particular object.</p>
+    <p>2. <b>Templates</b> - are predefined queries that allow you to quickly and easily run a query.</p>
+    <p>3. <b>Lists</b> - allows you to view and analyse lists and run queries on the the entire list in one go.</p>
+    <p>4. <b>Query Builder</b> - allows you to build you own custom query</p>
+
+
 </div>
 
 <h1 id="templates">Templates</h1>
@@ -96,12 +104,12 @@ minutes - so if you have a suggestion, let us know!</b></p>
 <p>You can merge lists, subtract lists and find common members between lists.</p>
 
 
-<p><i>As an example, an intersection of 2 lists is shown:</i></p>
+<p><i>As an example, an subtraction of 2 lists is shown:</i></p>
 
 
-<img alt="[Lists]"  src="lists_view_intersect.png"/>
+<img alt="[Lists]"  src="lists_subtract1.png"/>
 
-
+<img alt="[Lists]"  src="lists_subtract2.png"/>
 
 
 </div>
@@ -118,12 +126,21 @@ their own data mining queries. This page gives access to the QueryBuilder. </p>
 
 <img alt="[QueryBuilder page]"  src="querybuilder_select.png"/>
 
+<p> A set of actions allows you to browse the full FlyMine data model,
+import a query you or someone else has previously saved as XML or view
+all of your saved queries in your MyMine account.  </p>
 
 <img alt="[QueryBuilder page]"  src="querybuilder_actions.png"/>
 
 <p>All the queries you have run during this session are also listed
 on this page under 'Query History'. Your Query History can also be found
 under MyMine.</p>
+
+
+<img alt="[QueryBuilder page]"  src="querybuilder_history.png"/>
+
+
+
 
 </div>
 
@@ -150,9 +167,29 @@ category.</p>
 <div id="basics" class="tabset_content">
 <h2 class="tabset_label">The basics</h2>
 
+
+<p>You can create a MyMine account by logging-in to FlyMine.  (You only
+need to provide an email address and a password to generate an
+account, there is no other information required.).  Creating a myMine
+account allows you to permanently save lists, queries and templates - the MyMine
+pages allow you to manage these.  Your saved data is always private.</p>
+
+
+
 </div>
 
 <div id="lists" class="tabset_content"><h2 class="tabset_label">Lists</h2>
+
+<p>The lists tab shows all your permanently saved lists and any lists
+you have made this session if you are not logged in.  If you are
+logged in, or if you log-in during a session, any lists you have made
+will automatically be permanently saved.  You can change the name
+of a list, delete lists and perform logical operations on lists on
+this page.</p>
+
+<img alt="[Mymine Page]"  src="MyMine_lists.png"/>
+
+
 
 </div>
 
@@ -166,7 +203,7 @@ save queries permanently and to import queries, you need to be
 logged-in. Exporting and saving a query will will not delete it from
 your query history during that session.</p>
 
-<img alt="[Mymine Page]"  src="Mymine_history.png"/>
+<img alt="[Mymine Page]"  src="MyMine_history.png"/>
 
 
 </div>
@@ -174,23 +211,23 @@ your query history during that session.</p>
 
 
 <p>This page lists all queries that you have saved before. They will
-be saved permanently. Queries with names identical to existing queries
-will get an automatic extension to make it unique,
-e.g. dmel-proteins-1, dmel-proteins-2.</p>
+be saved permanently. If you import a query with a name identical to
+an existing query it will get an automatic extension to make it
+unique, e.g. dmel-proteins-1, dmel-proteins-2.</p>
 
-<img alt="[Mymine Page]"  src="Mymine_savedqueries.png"/>
+<img alt="[Mymine Page]"  src="MyMine_savedqueries.png"/>
 
 </div>
 <div id="savedTemplates" class="tabset_content"><h2 class="tabset_label">Saved Templates</h2>
 
  <p>The 'Saved Templates' page provides a list of all templates that
  you created yourself or have imported. They will be saved
- permanently. Template queries with names identical to existing
- queries will get an automatic extension to make it unique,
+ permanently. If you import a template query with a name identical to
+ an existing query it will get an automatic extension to make it unique,
  e.g. dmel-proteins-1, dmel-proteins-2.</p>
 
 
-<img alt="[Mymine Page]"  src="Mymine_savedtemplates.png"/>
+<img alt="[Mymine Page]"  src="MyMine_savedtemplates.png"/>
 
 
 
@@ -262,7 +299,6 @@ minutes - so if you have a suggestion, let us know.  </p>
 <img alt="[Report Page]"  src="report_bottom.png"/>
 
 
-<p> See also Tutotial 2: Navigating report pages. </p>
 
 </div>
 
@@ -442,13 +478,10 @@ identifier.</p>
 <p>1. List contents: A table summarising the contents of your
 list. Only up to ten items are shown. You can enter a description for
 your list, which might be useful if you want to use your list again at
-a later point.</p>
+a later point.  A set of actions allow you to use and export your list. </p>
 
 <img alt="[List Analysis Page]" src="listpage_list.png"/>.
 
-<p>2. Links to actions you can do with your list:</p>
-
-<img alt="[List Analysis Page]" src="listpage_actions.png"/>.
    
 <p>2. Widgets: Widgets provide additional information about the
 contents of your list. Widgets are currently only available for lists
