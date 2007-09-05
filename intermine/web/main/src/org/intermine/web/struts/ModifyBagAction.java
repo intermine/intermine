@@ -75,11 +75,11 @@ public class ModifyBagAction extends InterMineAction
         ActionErrors errors = mbf.validate(mapping, request);
         if (errors.isEmpty()) {       
             if (request.getParameter("union") != null) {
-                combine(mapping, form, request, ObjectStoreBagCombination.UNION);
+                combine(mapping, form, request, ObjectStoreBagCombination.UNION, "Union");
             } else if (request.getParameter("intersect") != null) {
-                combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT);
+                combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT, "Intersect");
             } else if (request.getParameter("subtract") != null) {
-                combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT);
+                combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT, "Subtract");
             } else if (request.getParameter("delete") != null) {
                 delete(mapping, form, request);
             }
@@ -99,7 +99,7 @@ public class ModifyBagAction extends InterMineAction
      *  an exception
      */
     public ActionForward combine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 int op) throws Exception {
+                                 int op, String opText) throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
@@ -134,7 +134,6 @@ public class ModifyBagAction extends InterMineAction
         ObjectStoreWriter osw = null;
         try {
             osw = new ObjectStoreWriterInterMineImpl(os);
-            LOG.error("Combining lists with query: " + q);
             osw.addToBagFromQuery(combined.getOsb(), q);
         } catch (ObjectStoreException e) {
             LOG.error(e);
@@ -152,22 +151,14 @@ public class ModifyBagAction extends InterMineAction
             }
         }
 
-/*        int defaultMax = 10000;
-        int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", defaultMax);
-
-        if (combined.size () > maxBagSize) {
-            ActionMessage actionMessage =
-                new ActionMessage("bag.tooBig", new Integer(maxBagSize));
-            recordError(actionMessage, request);
-
-            return mapping.findForward("bag");
+        if (combined.size() > 0) {
+            profile.saveBag(name, combined);
+        } else {
+            SessionMethods.recordError(opText + " operation on lists " 
+                                       + StringUtil.prettyList(Arrays.asList(selectedBags))
+                                       + " produced no results.", session);
         }
 
-        int maxNotLoggedSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
-                                                             Constants.MAX_NOT_LOGGED_BAG_SIZE);
-        profile.saveBag(name, combined, maxNotLoggedSize);
-*/
-        profile.saveBag(name, combined);
         return getReturn(mbf.getPageName(), mapping);
     }
 
