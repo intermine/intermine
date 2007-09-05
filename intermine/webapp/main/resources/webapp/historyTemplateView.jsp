@@ -165,13 +165,14 @@
         <br/>
       </c:otherwise>
     </c:choose>
-  
+  <c:if test="${IS_SUPERUSER}">
     <span class="smallnote">
       <html:link action="/summariseAllTemplates" titleKey="begin.summariseAllTemplatesDesc">
         <fmt:message key="begin.summariseAllTemplates"/>
       </html:link>
     </span>
     <BR/>
+    </c:if>
     <span class="smallnote">
       <html:link action="/import" titleKey="begin.importTemplatesDesc">
         <fmt:message key="begin.importTemplates"/>
