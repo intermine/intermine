@@ -6,6 +6,7 @@
   	 	
        var columnCheckBox = 'selected_' + type;
        var checked = document.getElementById(columnCheckBox).checked;
+
        if (deleteButton != null) {
            deleteButton.disabled = !checked;
        }
@@ -18,11 +19,14 @@
        with(form) {
            for(var i=0;i < elements.length;i++) {
                var thiselm = elements[i];
+               var testString = columnCheckBox + '_';
                if(thiselm.id.indexOf(testString) != -1)
                    thiselm.checked = checked;
            }
        }
    }
+   
+
    function setDeleteDisabledness(form, type) {
 
        	var deleteButton = document.getElementById('delete_button');
@@ -59,19 +63,7 @@
        return true;
    }
    
- function selectColumnCheckbox(form, type, scope) {
 
-    var checkBoxId = 'selected_' + type;
-    var checked = document.getElementById(checkBoxId).checked;
-    with(form) {
-      for(i=0;i < elements.length;i++) {
-        thiselm = elements[i];
-        var testString = checkBoxId + '_';
-        if(thiselm.id.indexOf(testString) != -1)
-          thiselm.checked = checked;
-      }
-    }
-  }
   function noenter() {
     return !(window.event && window.event.keyCode == 13);
   }
