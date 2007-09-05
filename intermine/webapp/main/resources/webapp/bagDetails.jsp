@@ -170,7 +170,7 @@
 		<li><a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a></li>
 		
   <span style="font-size:+2em;">Upload</span>
-		<li><html:link action="/bag">your data</html:link></li>
+		<li><html:link action="/bag?subtab=upload">your data</html:link></li>
 
 </td>
 </tr>

@@ -85,7 +85,7 @@ public class ProteinDomainAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         String bagName = request.getParameter("bag");
-        String goTermId = request.getParameter("key");
+        String domain = request.getParameter("key");
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, InterMineBag> allBags =
@@ -159,8 +159,10 @@ public class ProteinDomainAction extends InterMineAction
         cs1.addConstraint(cc3);
 
         SimpleConstraint sc = 
-            new SimpleConstraint(qfInterpro, ConstraintOp.MATCHES, new QueryValue("IPR%"));
+            new SimpleConstraint(qfInterpro, ConstraintOp.MATCHES, new QueryValue(domain));
         cs1.addConstraint(sc);
+        
+        
         
         querySample.setConstraint(cs1);
 
