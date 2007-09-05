@@ -81,6 +81,7 @@
 <c:when test="${type == 'template'}">
   <html:image property="export" value="export" styleId="export_button" src="images/export.png" alt="Export selected Templates" title="Export selected Templates"/>
   <html:hidden property="pageName" value="templates"/>
+  <html:hidden property="templateButton" value="export"/>
 </c:when>
 <c:otherwise>
 <c:set var="textForBox">
@@ -97,15 +98,16 @@
 
 </script>
 <html:text property="newBagName" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
-<html:image property="union" value="union" src="images/union.png">
+<html:image property="union" value="union" src="images/union.png" onclick="$(listsButton).value='union'">
   <fmt:message key="history.union"/>
 </html:image>
-<html:image property="intersect" value="intersect" src="images/intersect.png">
+<html:image property="intersect" value="intersect" src="images/intersect.png" onclick="$(listsButton).value='intersect'">
   <fmt:message key="history.intersect"/>
 </html:image>
-<html:image property="subtract" value="subtract" src="images/substract.png">
+<html:image property="subtract" value="subtract" src="images/substract.png" onclick="$(listsButton).value='substract'">
   <fmt:message key="history.subtract"/>
 </html:image>
+<html:hidden property="listsButton" value="" styleId="listsButton"/>
 </c:otherwise>
 </c:choose>
 </div>

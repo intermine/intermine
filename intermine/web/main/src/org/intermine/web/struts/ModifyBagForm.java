@@ -40,6 +40,7 @@ public class ModifyBagForm extends ActionForm
     protected String[] selectedBags;
     protected String newBagName;
     protected String pageName;
+    protected String listsButton;
 
     /**
      * Constructor
@@ -102,6 +103,14 @@ public class ModifyBagForm extends ActionForm
      */
     public void setPageName(String pageName) {
         this.pageName = pageName;
+    }
+    
+    public String getListsButton() {
+        return listsButton;
+    }
+    
+    public void setListsButton(String listsButton) {
+        this.listsButton = listsButton;
     }
 
     /**

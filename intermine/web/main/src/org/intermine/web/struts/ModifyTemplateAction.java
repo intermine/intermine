@@ -71,7 +71,7 @@ public class ModifyTemplateAction extends InterMineAction
         if (errors == null || errors.isEmpty()) {  
             if (request.getParameter("delete") != null) {
                 errors = delete(mapping, form, request, response);
-            } else if (request.getParameter("export") != null) {
+            } else if (request.getParameter("export") != null || mtf.getTemplateButton() != null) {
                  export(mapping, form, request, response);
             } else if (request.getParameter("remove_favourite") != null) {
                  removeFavourite(mapping, form, request, response);

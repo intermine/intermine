@@ -74,11 +74,14 @@ public class ModifyBagAction extends InterMineAction
         ModifyBagForm mbf = (ModifyBagForm) form;
         ActionErrors errors = mbf.validate(mapping, request);
         if (errors.isEmpty()) {       
-            if (request.getParameter("union") != null) {
+            if (request.getParameter("union") != null 
+                || (mbf.getListsButton() != null && mbf.getListsButton().equals("union"))) {
                 combine(mapping, form, request, ObjectStoreBagCombination.UNION, "Union");
-            } else if (request.getParameter("intersect") != null) {
+            } else if (request.getParameter("intersect") != null  
+                || (mbf.getListsButton() != null && mbf.getListsButton().equals("intersect"))) {
                 combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT, "Intersect");
-            } else if (request.getParameter("subtract") != null) {
+            } else if (request.getParameter("subtract") != null  
+                || (mbf.getListsButton() != null && mbf.getListsButton().equals("substract"))) {
                 combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT, "Subtract");
             } else if (request.getParameter("delete") != null) {
                 delete(mapping, form, request);
