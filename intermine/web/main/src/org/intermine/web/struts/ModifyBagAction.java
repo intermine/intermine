@@ -10,9 +10,11 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
@@ -24,6 +26,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -102,7 +105,7 @@ public class ModifyBagAction extends InterMineAction
         ModifyBagForm mbf = (ModifyBagForm) form;
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+        
         Map<String, InterMineBag> allBags = 
             WebUtil.getAllBags(profile.getSavedBags(), servletContext); 
 
@@ -110,7 +113,10 @@ public class ModifyBagAction extends InterMineAction
 
         String type = getTypesMatch(allBags, selectedBags, os);
         if (type == null) {
-            recordError(new ActionMessage("bag.typesDontMatch"), request);
+            // TODO this didn't get message from message bundle correctly
+            SessionMethods.recordError("You can only perform operations on lists of the same type."
+                    + "Lists don't match: " 
+                    + StringUtil.prettyList(Arrays.asList(selectedBags)), session);
             return getReturn(mbf.getPageName(), mapping);
         }
 

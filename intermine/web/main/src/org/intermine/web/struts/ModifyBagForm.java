@@ -136,7 +136,7 @@ public class ModifyBagForm extends ActionForm
                 || request.getParameter("subtract") != null)) {
             if (StringUtils.isEmpty(getNewBagName())) {
                 ActionMessage actionMessage =
-                    new ActionMessage("errors.required", "New bag name");
+                    new ActionMessage("errors.required", "New List name");
                 errors.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
             }
         }
