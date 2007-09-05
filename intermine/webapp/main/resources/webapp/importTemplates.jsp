@@ -9,7 +9,7 @@
 <html:xhtml/>
 
 <div class="body" align="center">
-<div class="actionArea" style="width:60%;clear:both;text-align:left">
+<im:boxarea stylename="plainbox" fixedWidth="60%">
 
 <p><fmt:message key="importTemplates.intro"/></p>
 
@@ -41,7 +41,6 @@
   <br/>
   
   <font size="0.8em"><fmt:message key="importTemplates.message"/></font>
-  
-  
-</div></div>
+</im:boxarea>
+</div>
 <!-- /importTemplates.jsp -->

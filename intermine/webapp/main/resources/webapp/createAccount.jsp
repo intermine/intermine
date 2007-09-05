@@ -1,10 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- createAccount.jsp -->
 <html:xhtml/>
 <div class="body" align="center">
-  <div class="actionArea" style="width:60%;clear:both;text-align:left">
+<im:boxarea stylename="plainbox" fixedWidth="60%">
   <html:form action="/createAccountAction">
       <b><i><fmt:message key="createAccount.privacy"/></i></b>
     <p/>
@@ -24,6 +25,6 @@
       </tr>
     </table>
   </html:form>
-  </div>
+</im:boxarea>
 </div>
 <!-- /createAccount.jsp -->

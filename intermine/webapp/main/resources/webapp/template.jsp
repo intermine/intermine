@@ -81,7 +81,7 @@
 
 <tiles:get name="objectTrail.tile"/>
 <div class="body" align="center">
-<div class="actionArea" style="width:60%;clear:both;text-align:left">
+<im:boxarea stylename="plainbox" fixedWidth="60%">
   <html:form action="/templateAction">
     <h2>
     <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />

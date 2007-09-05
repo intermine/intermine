@@ -1,4 +1,3 @@
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
@@ -9,14 +8,8 @@
 <!-- dataCategories -->
 <html:xhtml/>
 
-
-<table padding="0px" margin="0px" width="50%">
-  <tr>
-    <td valign="top" width="50%">
-      <div id="pageDesc" class="pageDesc"><p><fmt:message key="dataCategories.intro"/></p></div>
-    </td>
-  </tr>
-</table>
+<div class="body">
+<im:boxarea title="Data" stylename="plainbox"><p><fmt:message key="dataCategories.intro"/></p></im:boxarea>
 
 <table cellpadding="0" cellpadding="0" border="0" class="dbsources">
   <tr>
@@ -467,10 +460,5 @@
 </p>
 </div>
 
-      <script type="text/javascript">
-      	Nifty("div#pageDesc","big");
-      	Nifty("div#dataCategories","big");
-      </script>
-
-
+</div>
 <!-- /dataCategories -->

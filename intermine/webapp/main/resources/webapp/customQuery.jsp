@@ -11,10 +11,9 @@
 <script type="text/javascript" src="js/mymine.js"></script>
 
 <div class="body">
-    <div id="leftCol">  
-      <div id="pageDesc" class="pageDesc"><p><fmt:message key="customQuery.intro"/></p></div>
-	   <div class="actionArea">
-	     <h2>Actions:</h2>
+    <div id="leftCol">
+      <im:boxarea title="QueryBuilder" stylename="plainbox" >
+      <p><fmt:message key="customQuery.intro"/></p><br>
 	     	  <html:link action="/tree">
 	            Browse data model
 	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
@@ -45,23 +44,23 @@
 	          
 
 	          
-          </div>
+          </im:boxarea>
    </div>
 
    <div id="rightCol">
 	<%-- class chooser --%>	
-	<im:roundbox titleKey="customQuery.classChooser" stylename="welcome">
+	<im:boxarea titleKey="customQuery.classChooser" stylename="gradientbox">
 	  <tiles:insert name="classChooser.tile"/>
-	</im:roundbox>
+	</im:boxarea>
    </div>
 
 	<div id="clearLine"> 
 	 	    <%-- query history --%> 
-	 	    <im:roundbox title="Query History" stylename="welcome"> 
+	 	    <im:boxarea title="Query History" stylename="gradientbox"> 
 	 	     <tiles:insert name="historyQueryView.jsp"> 
 	 	        <tiles:put name="type" value="history"/> 
 	 	      </tiles:insert> 	 	    
-	 	     </im:roundbox> 
+	 	     </im:boxarea> 
  	     
 
 
