@@ -233,15 +233,20 @@ public class DataTracker
         if (desc == null) {
             desc = new ObjectDescription();
             try {
-                //long start = System.currentTimeMillis();
+                long start = System.currentTimeMillis();
                 Statement s = conn.createStatement();
                 ResultSet r = s.executeQuery("select fieldname, sourcename, version from tracker"
                         + " where objectid = " + id + " ORDER BY version");
                 while (r.next()) {
                     desc.putClean(r.getString(1).intern(), stringToSource(r.getString(2)));
                 }
-                //long now = System.currentTimeMillis();
+                long now = System.currentTimeMillis();
                 //LOG.debug("Fetched entry from DB (time = " + (now - start) + " ms)");
+                if (now - start > 2000) {
+                    LOG.error("Query on tracker table took too long (" + (now - start) + " ms) "
+                            + "- switching off sequential scans. You should analyse the database");
+                    conn.createStatement().execute("SET enable_seqscan = off;");
+                }
             } catch (SQLException e) {
                 broken = e;
                 IllegalArgumentException e2 = new IllegalArgumentException();
