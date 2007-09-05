@@ -342,7 +342,6 @@ public class PathQuery
         Iterator<OrderBy> iter = sortOrder.iterator();
         while (iter.hasNext()) {            
             OrderBy sort = iter.next();
-            String obs = sort.getField().toString();
             if (sort.getField().toStringNoConstraints().equals(viewString)) {
                 // this is the field on the sort order, so clear and add first item on view list
                 removePathStringFromSortOrder();

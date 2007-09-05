@@ -127,7 +127,9 @@
                     </c:otherwise>
                   </c:choose>
                 </td>
-                <td class="sorting" align="right">
+                <td class="sorting" align="right">        <html:link action="/login?returnto=/mymine.do?subtab=history">
+        	<fmt:message key="history.history.login"/>
+        	</html:link>&nbsp;&nbsp;
                   <c:choose>
                     <c:when test="${savedQuery.value.pathQuery.info != null}">
                       <c:out value="${savedQuery.value.pathQuery.info.rows}"/>
@@ -213,6 +215,13 @@
 
       </c:otherwise>
     </c:choose>
+        <html:link action="/importQueries">
+        	<fmt:message key="begin.importQuery" />
+        </html:link>
+    
+    
+    
   </im:body>
+
 
 <!-- /historyQueryView.jsp -->
