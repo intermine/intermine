@@ -41,7 +41,7 @@
   <p>
     <fmt:message key="${messageKey}"/>
         <c:if test="${empty PROFILE.username}">
-        <html:link action="/login?returnto=/mymine.do?subtab=history">
+        	<html:link action="/login?returnto=/mymine.do?subtab=history">
         	<fmt:message key="history.history.login"/>
         	</html:link>&nbsp;&nbsp;
     	</c:if>
@@ -127,9 +127,7 @@
                     </c:otherwise>
                   </c:choose>
                 </td>
-                <td class="sorting" align="right">        <html:link action="/login?returnto=/mymine.do?subtab=history">
-        	<fmt:message key="history.history.login"/>
-        	</html:link>&nbsp;&nbsp;
+                <td class="sorting" align="right">
                   <c:choose>
                     <c:when test="${savedQuery.value.pathQuery.info != null}">
                       <c:out value="${savedQuery.value.pathQuery.info.rows}"/>
