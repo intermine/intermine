@@ -11,28 +11,12 @@
 
 <c:choose>
   <%-- bags --%>
-  <c:when test="${userOptionMap[subtabName]  =='lists'||userOptionMap[subtabName]  ==null}">
+  <c:when test="${userOptionMap[subtabName]  =='lists'||userOptionMap[subtabName]  == null}">
     <tiles:insert name="historyBagView.jsp">
 	  <tiles:put name="type" value="bag"/>
 	</tiles:insert>
   </c:when>
-    
-  <%-- favourite bags --%>
-  <c:when test="${userOptionMap[subtabName]  =='favouriteLists'}">
-    <tiles:insert name="historyBagView.jsp">
-	  <tiles:put name="type" value="favourite"/>
-	</tiles:insert>
-  </c:when>
-    
-    
-    <%-- saved queries --%>
-    <c:when test="${userOptionMap[subtabName]  =='saved'}">
-      <tiles:insert name="historyQueryView.jsp">
-        <tiles:put name="type" value="saved"/>
-      </tiles:insert>
-    </c:when>
-    
-    
+
     <%-- query history --%>
     <c:when test="${userOptionMap[subtabName]  =='history'}">
       <tiles:insert name="historyQueryView.jsp">
@@ -40,16 +24,18 @@
       </tiles:insert>
     </c:when>
     
+    <%-- saved queries --%>
+    <c:when test="${userOptionMap[subtabName]  =='saved'}">
+      <tiles:insert name="historyQueryView.jsp">
+        <tiles:put name="type" value="saved"/>
+      </tiles:insert>
+    </c:when>
+           
     <%-- saved templates --%>    
     <c:when test="${userOptionMap[subtabName]  =='templates'}">
       <tiles:insert name="historyTemplateView.jsp">
         <tiles:put name="type" value="template"/>
       </tiles:insert>
-    </c:when>
-    
-    <%-- favourites --%> 
-    <c:when test="${userOptionMap[subtabName]  =='favourites'}">
-      <tiles:insert name="favourites.tile" />
     </c:when>
     
     <%-- password --%> 
@@ -59,13 +45,14 @@
   </c:choose>
 
 
-  <%-- login msg --%>
+  <%-- a login prompt is already in the intro msg
+  login msg
   <c:if test="${empty PROFILE.username}">
     <div class="body">
       <html:link action="/login"><fmt:message key="menu.login"/></html:link>&nbsp;&nbsp;
       <fmt:message key="mymine.login.help"/>
     </div>
-  </c:if>
+  </c:if> --%>
 
   <%-- tag actions for super user --%>
   <div class="body">
