@@ -17,17 +17,8 @@
   <span id="name_${name}">
     <c:set var="nameForURL"/>
     <str:encodeUrl var="nameForURL">${name}</str:encodeUrl>
-    <c:choose>
-      <c:when test="${type == 'bag'}">
-        <html:link action="/bagDetails?bagName=${nameForURL}">
-          <c:out value="${name}"/>
-          <img src="images/bag_ico.png" width="13" height="13" alt="View Bag">
-        </html:link>
-      </c:when>
-      <c:otherwise>
-        <c:out value="${name}"/>
-      </c:otherwise>
-    </c:choose>
+            <c:out value="${name}"/>
+            
   </span>
   <a href="javascript:editName('${name}');">
     <img border="0" src="images/edit.gif" width="13" height="13" alt="rename"/>
