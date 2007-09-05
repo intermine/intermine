@@ -278,5 +278,5 @@
       </i>
     </p>
   </c:if>
-</div>
+</im:boxarea>
 </div>
