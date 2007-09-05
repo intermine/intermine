@@ -34,7 +34,7 @@
 	          </html:link>
             </c:when>
             <c:otherwise>
-            	<c:set var="linky" value="/mymine.do?page=saved"/>
+            	<c:set var="linky" value="/mymine.do?subtab=saved"/>
             	<html:link action="${linky}">
 	            View saved queries
 	            <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
