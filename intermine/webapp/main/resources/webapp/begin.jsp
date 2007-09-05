@@ -112,7 +112,7 @@ bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="t
             <fmt:message key="begin.importQuery"/>
           </html:link>
         </div>
-        <im:useTransparentImage src="/images/build_a_query.png" id="build_a_query" link="query" height="22px" width="120px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/images/build_a_query.png" id="build_a_query" link="customQuery" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:roundbox>
 </div>
 
