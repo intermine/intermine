@@ -156,7 +156,7 @@
 
   <span style="font-size:+2em;">View</span>
   	<li><html:link action="/bag">all lists</html:link></li>
-  	<li><html:link action="/mymine">your lists</html:link></li>
+  	<li><html:link action="/mymine?subtab=lists">your lists</html:link></li>
   <span style="font-size:+2em;">Use</span>		
 	<li><a href="javascript:go('query');">in a query</a>
 	<input type="hidden" name="useBagInQuery" />
