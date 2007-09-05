@@ -9,7 +9,7 @@
 <tiles:useAttribute name="loggedin" id="loggedin"/>
 <tiles:useAttribute name="itemList" id="itemList"/>
 
-<!-- mymineMenu.jsp -->
+<!-- subMenu.jsp -->
 <c:choose>
   <c:when test="${tab == 'mymine'}">
     <c:set var="styleClass" value="submenu_mymine" />
@@ -54,4 +54,4 @@
 </ul>
 </div>
 
-<!-- /mymineMenu.jsp -->
+<!-- /subMenu.jsp -->
