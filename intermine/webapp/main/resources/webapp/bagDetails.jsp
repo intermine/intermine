@@ -121,7 +121,7 @@
   
 	  <c:choose>
 	  <c:when test="${myBag == 'true'}">
-	  <td align="center">
+	  <td>
 	  <div id="clear-both"/>
 	    <div id="bagDescriptionDiv" onclick="swapDivs('bagDescriptionDiv','bagDescriptionTextarea')">
 	      <c:choose>
@@ -153,32 +153,46 @@
   <td>
   
   <br/>  <br/>
+  
 
+
+<table><tr>
+<td valign="top" align="center">
   <span style="font-size:+2em;">View</span>
+</td><td valign="top" align="center">  	
+  <span style="font-size:+2em;">Use</span>		
+</td><td valign="top" align="center">
+  <span style="font-size:+2em;">Export</span>
+</td><td valign="top" align="center">
+  <span style="font-size:+2em;">Upload</span>
+</td>
+</tr>
+
+<tr>
+<td valign="top">
   	<li><html:link action="/bag">all lists</html:link></li>
   	<li><html:link action="/mymine?subtab=lists">your lists</html:link></li>
-  <span style="font-size:+2em;">Use</span>		
+</td><td valign="top">  	
 	<li><a href="javascript:go('query');">in a query</a>
 	<input type="hidden" name="useBagInQuery" />
   	</li>
-		<li><html:link action="/templates">in a template</html:link></li>
-		
-  <span style="font-size:+2em;">Export</span>
-
+	<li><html:link action="/templates">in a template</html:link></li>
+</td><td valign="top">
 		<li><a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a></li>
 		<li><a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a></li>
 		<li><a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a></li>
-		
-  <span style="font-size:+2em;">Upload</span>
+</td><td valign="top">
 		<li><html:link action="/bag?subtab=upload">your data</html:link></li>
+</td>
+</tr>
+</table>
+
 
 </td>
 </tr>
 </table>
 	
-  </td>
-  
-  
+  </td>  
   </tr>
   </table>
   </html:form>
@@ -192,7 +206,7 @@
   <c:if test="${(!empty graphDisplayerArray) || (! empty tableDisplayerArray)}">
     <c:set var="widgetCount" value="0" />
     <div class="heading">
-      Viewers
+      Widgets
     </div>
     <div class="body">
       <c:forEach items="${graphDisplayerArray}" var="htmlContent">
