@@ -1,3 +1,4 @@
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -30,35 +31,17 @@
 </script>
 
 <div class="heading">
-	<html:link action="bag.page">All Lists</html:link> > <fmt:message key="bagDetails.title"/>
+   	<b>${bag.name}</b> (${bag.size} ${bag.type}s)
 </div>
 
 <div class="body" >
 
-	    <table border=0 cellpadding=0 cellspacing=5>
-    	  <tr>
-        	<td width="50%">
-        	
-        	
-        	<table width="100%">
-        	<tr>
-        	<td>
-        	<b>${bag.name}</b> (${bag.size} ${bag.type}s)
-        	</td>
-        	<td align="right">
-              <%-- Page size controls --%>
-			</td>
-		</tr>
-		</table>
-          
-        	
-        	</td>
-        	<td width="50%" align="right" valign="middle">
-			  <c:if test="${!empty bag.dateCreated}">
-			    <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
-			  </c:if>
-						</td>
-</tr>
+<c:if test="${!empty bag.dateCreated}">
+    <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i></div>
+</c:if>
+
+
+<table border=0 cellpadding=0 cellspacing=5>
 <tr>
 	<td width="50%" valign="top">        
 	
