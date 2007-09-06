@@ -20,7 +20,7 @@
 
 <!-- wsTemplateLine.jsp -->
 <div id="${wsListId}_${type}_item_line_${webSearchable.name}" <c:choose><c:when test="${! empty userWebSearchables[wsName]}">class="wsLine_my" onmouseout="this.className='wsLine_my'" onmouseover="this.className='wsLine_my_act'"</c:when>
-<c:otherwise> class="wsLine" onmouseout="this.className='wsLine'" onmouseover="this.className='wsLine_act'"</c:otherwise></c:choose> >
+<c:otherwise> class="wsLine" onmouseout="swapStyles('${wsListId}_${type}_item_line_${webSearchable.name}','wsLine','wsLine_act','${wsListId}_${type}_chck_${webSearchable.name}')" onmouseover="swapStyles('${wsListId}_${type}_item_line_${webSearchable.name}','wsLine','wsLine_act','${wsListId}_${type}_chck_${webSearchable.name}')"</c:otherwise></c:choose> >
 <div style="float: right" id="${wsListId}_${type}_item_score_${webSearchable.name}">
   &nbsp;
 </div>
