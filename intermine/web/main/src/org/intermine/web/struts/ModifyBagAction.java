@@ -14,26 +14,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-
-import org.intermine.objectstore.query.ObjectStoreBagCombination;
-import org.intermine.objectstore.query.Query;
-
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagHelper;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +28,22 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.query.ObjectStoreBagCombination;
+import org.intermine.objectstore.query.Query;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagHelper;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
@@ -76,13 +73,14 @@ public class ModifyBagAction extends InterMineAction
         if (errors.isEmpty()) {       
             if (request.getParameter("union") != null 
                 || (mbf.getListsButton() != null && mbf.getListsButton().equals("union"))) {
-                combine(mapping, form, request, ObjectStoreBagCombination.UNION, "Union");
+                combine(mapping, form, request, ObjectStoreBagCombination.UNION, "UNION");
             } else if (request.getParameter("intersect") != null  
                 || (mbf.getListsButton() != null && mbf.getListsButton().equals("intersect"))) {
-                combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT, "Intersect");
+                combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT, "INTERSECT");
             } else if (request.getParameter("subtract") != null  
                 || (mbf.getListsButton() != null && mbf.getListsButton().equals("substract"))) {
-                combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT, "Subtract");
+                combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT, 
+                        "SUBTRACT");
             } else if (request.getParameter("delete") != null) {
                 delete(mapping, form, request);
             }
@@ -118,8 +116,9 @@ public class ModifyBagAction extends InterMineAction
         if (type == null) {
             // TODO this didn't get message from message bundle correctly
             SessionMethods.recordError("You can only perform operations on lists of the same type."
-                    + "Lists don't match: " 
-                    + StringUtil.prettyList(Arrays.asList(selectedBags)), session);
+                    + " Lists " 
+                    + StringUtil.prettyList(Arrays.asList(selectedBags))
+                    + " don't match.", session);
             return getReturn(mbf.getPageName(), mapping);
         }
 
@@ -156,7 +155,12 @@ public class ModifyBagAction extends InterMineAction
 
         if (combined.size() > 0) {
             profile.saveBag(name, combined);
+            SessionMethods.recordMessage("Created list '" + combined.getName() + "' as " + opText 
+                                         + " of  " 
+                                       + StringUtil.prettyList(Arrays.asList(selectedBags))
+                                       + ".", session);
         } else {
+            deleteBag(session, profile, combined);
             SessionMethods.recordError(opText + " operation on lists " 
                                        + StringUtil.prettyList(Arrays.asList(selectedBags))
                                        + " produced no results.", session);
@@ -217,18 +221,24 @@ public class ModifyBagAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
 
         ModifyBagForm mbf = (ModifyBagForm) form;
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
-            SessionMethods.invalidateBagTable(session, mbf.getSelectedBags()[i]);
-            String bagName = mbf.getSelectedBags()[i];
-            InterMineBag bag = profile.getSavedBags().get(bagName);
-            bag.setProfileId(null, uosw); // Deletes from database
-            profile.deleteBag(mbf.getSelectedBags()[i]);
+            InterMineBag bag = profile.getSavedBags().get(mbf.getSelectedBags()[i]);
+            deleteBag(session, profile, bag);
         }
 
         return getReturn(mbf.getPageName(), mapping);
+    }
+    
+    // Remove a bag from userprofile database and session cache
+    private void deleteBag(HttpSession session, Profile profile, InterMineBag bag) 
+    throws ObjectStoreException {
+        ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
+        // removed a cached bag table from the session
+        SessionMethods.invalidateBagTable(session, bag.getName());
+        bag.setProfileId(null, uosw); // Deletes from database
+        profile.deleteBag(bag.getName());
     }
     
     private ActionForward getReturn(String pageName, ActionMapping mapping) {
