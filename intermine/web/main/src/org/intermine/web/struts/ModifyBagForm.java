@@ -138,14 +138,18 @@ public class ModifyBagForm extends ActionForm
                 }
             }
         }
-        
+
+        // This is a hack, see #1399.
+        String defaultName = "new list name";
+
         if (request.getParameter("newName") == null
             && (request.getParameter("union") != null
                 || request.getParameter("intersect") != null
                 || request.getParameter("subtract") != null)) {
-            if (StringUtils.isEmpty(getNewBagName())) {
+            if (StringUtils.isEmpty(getNewBagName()) 
+                            || (getNewBagName().trim().equalsIgnoreCase(defaultName))) {
                 ActionMessage actionMessage =
-                    new ActionMessage("errors.required", "New List name");
+                    new ActionMessage("errors.required", "New list name");
                 errors.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
             }
         }
