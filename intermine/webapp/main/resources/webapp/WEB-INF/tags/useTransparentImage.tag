@@ -22,7 +22,7 @@
         width:${width};
         margin-top:${marginTop};
         cursor:pointer;
-        filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<html:rewrite page="${src}"/>' ,sizingMethod='crop');
+        filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='<html:rewrite page="${src}"/>' ,sizingMethod='');
       }
     </style>
   </c:when>

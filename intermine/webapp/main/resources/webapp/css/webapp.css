@@ -127,7 +127,7 @@ h1, h2, h3, h1 a, h1 a:visited {
 	height: 1%;/**kill peek-a-boo bug**/
 }
 .roundcorners h1, .gradientbox h1, .plainbox h1{
-    margin:5px 0;
+    margin:0;
     padding:0px;
     color:#5C0075;
 	font-size:1.5em;
