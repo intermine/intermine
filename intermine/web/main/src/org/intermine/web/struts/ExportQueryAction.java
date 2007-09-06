@@ -71,9 +71,9 @@ public class ExportQueryAction extends InterMineAction
         if (StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
             query = (PathQuery) session.getAttribute(Constants.QUERY);
         } else if ("history".equals(type)) {
-            query = ((SavedQuery) profile.getHistory().get(name)).getPathQuery();
+            query = (profile.getHistory().get(name)).getPathQuery();
         } else if ("saved".equals(type)) {
-            query = ((SavedQuery) profile.getSavedQueries().get(name)).getPathQuery();
+            query = (profile.getSavedQueries().get(name)).getPathQuery();
         } else {
             LOG.error("Bad type parameter: " + type);
             return null;
