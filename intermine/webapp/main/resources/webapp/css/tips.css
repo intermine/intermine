@@ -2,7 +2,8 @@
  	background-color:#F5F0FF;
 	padding:10px;
 	width:250px;
-	margin-right:15px;
+	margin-right:5px;
+	float:right;
 }
 #tipbox h3 {
 	margin:0px 0px 5px 0px;
