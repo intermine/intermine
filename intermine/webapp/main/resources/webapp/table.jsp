@@ -515,7 +515,9 @@
                 <fmt:message key="bag.existing"/>
                 <html:select property="existingBagName">
                   <c:forEach items="${PROFILE.savedBags}" var="entry">
-                    <html:option value="${entry.key}"/>
+                    <c:if test="${param.bagName != entry.key}">
+                      <html:option value="${entry.key}"/>
+                    </c:if>
                   </c:forEach>
                 </html:select>
                 <html:submit property="addToExistingBag">
