@@ -84,4 +84,12 @@ function toggleAll(count, prefix, display, extraField) {
      }
 }
 
-
+function swapStyles(elementId,style1,style2,checkbox){
+	if($(checkbox)!=null && !$(checkbox).checked){
+	if($(elementId).className == style1) {
+		$(elementId).className = style2;
+	} else {
+		$(elementId).className = style1;
+	}
+    }
+}
