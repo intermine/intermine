@@ -96,7 +96,7 @@ public class BagDetailsController extends TilesAction
             InterMineBag imBag = null;
             String scope = request.getParameter("scope");
             if (scope == null) {
-                scope = TemplateHelper.USER_TEMPLATE;
+                scope = TemplateHelper.ALL_TEMPLATE;
             }
             
             if (scope.equals(TemplateHelper.USER_TEMPLATE)
