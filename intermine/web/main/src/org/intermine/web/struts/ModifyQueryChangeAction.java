@@ -61,9 +61,9 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         SavedQuery sq;
         
         if (request.getParameter("type").equals("history")) {
-            sq = (SavedQuery) profile.getHistory().get(queryName);
+            sq = profile.getHistory().get(queryName);
         } else {
-            sq = (SavedQuery) profile.getSavedQueries().get(queryName);
+            sq = profile.getSavedQueries().get(queryName);
         }
         
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
@@ -100,9 +100,9 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         SavedQuery sq;
         
         if (request.getParameter("type").equals("history")) {
-            sq = (SavedQuery) profile.getHistory().get(queryName);
+            sq = profile.getHistory().get(queryName);
         } else {
-            sq = (SavedQuery) profile.getSavedQueries().get(queryName);
+            sq = profile.getSavedQueries().get(queryName);
         }
         
         if (sq == null) {
@@ -141,7 +141,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
-        SavedQuery sq = (SavedQuery) profile.getHistory().get(queryName);
+        SavedQuery sq = profile.getHistory().get(queryName);
         sq = SessionMethods.saveQuery(session,
                 SaveQueryHelper.findNewQueryName(profile.getSavedQueries(), queryName),
                 sq.getPathQuery(), sq.getDateCreated());
