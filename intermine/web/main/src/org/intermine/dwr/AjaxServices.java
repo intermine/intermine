@@ -304,13 +304,22 @@ public class AjaxServices
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-//        PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                .getWebTable();
         PathQuery pathQuery = webTable.getPathQuery();
+        
+        SearchRepository globalRepository =
+            (SearchRepository) servletContext.getAttribute(Constants.
+                                                           GLOBAL_SEARCH_REPOSITORY);
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
+        SearchRepository userSearchRepository = currentProfile.getSearchRepository();
+        Map<String, InterMineBag> userWsMap = 
+            (Map<String, InterMineBag>) userSearchRepository.getWebSearchableMap(TagTypes.BAG);
+        Map<String, InterMineBag> globalWsMap =
+            (Map<String, InterMineBag>) globalRepository.getWebSearchableMap(TagTypes.BAG);
+        Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>(userWsMap);
+        allBags.putAll(globalWsMap);
+        
         Query distinctQuery =
             MainHelper.makeSummaryQuery(pathQuery, allBags,
                                         new HashMap<String, QueryNode>(), summaryPath,
@@ -327,7 +336,7 @@ public class AjaxServices
         MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
                                                           .getAttribute(Globals.MESSAGES_KEY);
         Query countQuery =
-            MainHelper.makeSummaryQuery(pathQuery, currentProfile.getSavedBags(),
+            MainHelper.makeSummaryQuery(pathQuery, allBags,
                                         new HashMap<String, QueryNode>(), summaryPath
                                         , servletContext);
         String qid = SessionMethods.startQueryCount(clientState, session, messages, countQuery);
