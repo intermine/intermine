@@ -50,8 +50,8 @@ public class ExportTagsAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {

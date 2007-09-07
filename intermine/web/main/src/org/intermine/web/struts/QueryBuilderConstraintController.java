@@ -53,11 +53,11 @@ public class QueryBuilderConstraintController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
+                                 @SuppressWarnings("unused") HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);

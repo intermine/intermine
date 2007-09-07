@@ -24,7 +24,6 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.PathQueryBinding;
-import org.intermine.web.logic.query.SavedQuery;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -56,8 +55,8 @@ public class ExportQueryAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
