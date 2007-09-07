@@ -87,6 +87,15 @@
                 </c:forEach>
               </tr>
             </c:forEach>
+            <!-- show dotted lines if there are more than 5 items in bag -->            
+            <c:if test="${pagedColl.pageSize < pagedColl.size}">
+              <tr>
+                <c:forEach var="column" items="${pagedColl.columns}" varStatus="status2">
+                  <td style="border: dotted 1px #666;">&nbsp;</td>
+                  </c:forEach>
+               </tr>
+            </c:if>
+            
           </table>
           <br/>
           <div align="right">
