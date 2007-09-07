@@ -5,7 +5,16 @@
 
 <!-- htmlHead.jsp -->
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
+<%
+/* In Safari, loading a css that doesnt exist causes weirdness */
+String pageName = (String) request.getAttribute("pageName");
+if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()) {
+        request.setAttribute("pageCSS","true");
+}
+%>
+<c:if test="${pageCSS == 'true'}">
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
+</c:if>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/model/css/model.css'/>"/>
 
 <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
