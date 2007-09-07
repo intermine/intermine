@@ -94,6 +94,14 @@ public class ModifyDetails extends DispatchAction
         String identifier = "itt." + template.getName() + "." + idForLookup;
         SessionMethods.setResultsTable(session, identifier, itt.getPagedTable());
 
+        // add results table to trail 
+        if (trail != null) {
+            trail += "|results." + identifier;
+        } else {
+            trail = "|results." + identifier;
+        }
+        
+        
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("table", identifier)
                         .addParameter("size", "10")
