@@ -475,23 +475,23 @@ identifier.</p>
 
 <p>A list analysis page provides the following information:</p>
    
-<p>1. List contents: A table summarising the contents of your
+<p>1.<b> List contents</b>: A table summarising the contents of your
 list. Only up to ten items are shown. You can enter a description for
 your list, which might be useful if you want to use your list again at
 a later point.  A set of actions allow you to use and export your list. </p>
 
-<img alt="[List Analysis Page]" src="listpage_list.png"/>.
+<img alt="[List Analysis Page]" src="listpage_list.png"/>
 
    
-<p>2. Widgets: Widgets provide additional information about the
+<p>2. <b>Widgets</b>: Widgets provide additional information about the
 contents of your list. Widgets are currently only available for lists
 of genes. The types of data shown through widgets will increase in
 future releases of FlyMine.</p>
 
 
-<img alt="[List Analysis Page]" src="listpage_widgets.png"/>.
+<img alt="[List Analysis Page]" src="listpage_widgets.png"/>
   
-<p>3. Templates: A set of template queries which have been
+<p>3. <b>Templates</b>: A set of template queries which have been
 automatically run on all the items in your list. </p>
 
 <img alt="[List Analysis Page]" src="listpage_templates.png"/>
@@ -582,6 +582,42 @@ to browse the data structure in FlyMine and to select a starting class to make y
 </div>
 
 
+<h1 id="importQueries">Import Queries</h1>
+
+<div id="basics" class="tabset_content">
+<h2 class="tabset_label">The basics</h2>
+
+<p> It is possible to import queries. The queries need to be in xml
+format, as in the example below. You can import more than one query at
+the same time by  by
+enclosing them in the xml tags &lt;queries&gt;&lt;/queries&gt;. </p>
+
+<p>- If you are not logged in, the query will automactically be displayed
+in the QueryBuilder. You can save the query permanently when you're
+logged in.
+
+<p>- If you are logged in, the query will automatically be saved to MyMine
+under 'Saved Queries'.</p>
+
+<img alt="[List Confirm Page]" src="importquery.png"/></p>
+
+
+</div>
+
+
 <h1 id="importTemplates">Import Template Query</h1>
 
-<h1 id="importQueries">Import Queries</h1>
+<div id="basics" class="tabset_content">
+<h2 class="tabset_label">The basics</h2>
+
+
+<p> It is possible to import templates, but only when you are logged
+in. The templates need to be in xml format, as in the example
+below. You can import more than one template at the same time by
+enclosing them in the xml tags
+&lt;template-list&gt;&lt;/template-list&gt;. </p>
+
+<p> - The template will be saved to MyMine under 'Saved Templates'.</p>
+
+<img alt="[List Confirm Page]" src="importtemplate.png"/></p>
+</div>
