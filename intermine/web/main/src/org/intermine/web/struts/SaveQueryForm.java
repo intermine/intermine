@@ -55,7 +55,8 @@ public class SaveQueryForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+                                 HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Map savedQueries = profile.getSavedQueries();

@@ -73,7 +73,14 @@ public class SaveQueryAction extends InterMineAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String queryName = ((SaveQueryForm) form).getQueryName();
 
+        // TODO just add default fields to select list?
+        if (query.getView().isEmpty()) {
+             recordError(new ActionMessage("errors.query.badquery"), request);
+            return mapping.findForward("query");
+        }
+        
         try {
+            
             if (query.getInfo() == null) {
                 Map<String, InterMineBag> allBags =
                     WebUtil.getAllBags(profile.getSavedBags(), servletContext);
