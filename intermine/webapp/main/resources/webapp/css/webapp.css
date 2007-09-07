@@ -113,9 +113,9 @@ h1, h2, h3, h1 a, h1 a:visited {
 }
 
 #loginbar  a:link, #loginbar a:visited, #loginbar{
-    font-size:12px;
 	font-weight: bold;
-    color:#FFF;    
+    color:#FFF;
+	font-size: 1.1em;
 }
 
 /*** Definition of styles for boxes ***/
