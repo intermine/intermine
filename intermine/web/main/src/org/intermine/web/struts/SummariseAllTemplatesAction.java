@@ -51,9 +51,9 @@ public class SummariseAllTemplatesAction extends InterMineAction
      * @exception Exception if the application business logic throws an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -64,7 +64,7 @@ public class SummariseAllTemplatesAction extends InterMineAction
         Map<String, TemplateQuery> templates = profile.getSavedTemplates();
 
         for (Map.Entry<String, TemplateQuery> entry : templates.entrySet()) {
-            String templateName = entry.getKey();
+            //String templateName = entry.getKey();
             TemplateQuery template = entry.getValue();
             try {
                 template.summarise(os, osw);
@@ -73,7 +73,7 @@ public class SummariseAllTemplatesAction extends InterMineAction
             }
         }
         
-        ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("mymine"));
-        return forwardParameters.addParameter("page", "templates").forward();
+       return mapping.findForward("mymine");
+       
     }
 }

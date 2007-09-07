@@ -64,7 +64,7 @@ public class SaveQueryAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -93,7 +93,6 @@ public class SaveQueryAction extends InterMineAction
         messages.add("saveQuery", new ActionMessage("saveQuery.message", queryName));
         request.setAttribute(Globals.MESSAGE_KEY, messages);
         
-        ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("mymine"));
-        return forwardParameters.addParameter("page", "saved").forward();
+        return mapping.findForward("mymine");
     }
 }
