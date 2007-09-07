@@ -37,7 +37,6 @@ import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -168,7 +167,7 @@ public class TemplateController extends TilesAction
 
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
-            PathNode displayNode = (PathNode) displayTemplate.getNodes().get(node.getPathString());
+            PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
             int j = 1;
             for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator(); ci
                     .hasNext();) {

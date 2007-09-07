@@ -11,13 +11,10 @@ package org.intermine.web.struts;
  */
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 
 /**
  * @author Xavier Watkins
@@ -78,9 +75,10 @@ public class ModifyBagDetailsForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+                                 @SuppressWarnings("unused") HttpServletRequest request) {
+        //HttpSession session = request.getSession();
+        //Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
         ActionErrors errors = new ActionErrors();
         return errors;
@@ -93,7 +91,8 @@ public class ModifyBagDetailsForm extends ActionForm
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+                      @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }
 
