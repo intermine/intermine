@@ -32,7 +32,8 @@
     }
 
     function doBagAction(name, url){
-        location.href = url + document.getElementById('name_'+name).innerHTML.replace(/[ \t\n]/g, '');
+    	queryName = document.getElementById('name_'+name).innerHTML.replace(/[\t\n]/g, '')
+        location.href = url + queryName.trim();
         return false;
     }
     //]]>-->
