@@ -212,9 +212,22 @@ function getResultsPoller(qid, timeout, userCallback, userData) {
     AjaxServices.getResults(qid, callback);
 }
 
-function getResults(qid, timeout, userCallback, userData) {
-    setTimeout("getResultsPoller(" + qid + ", " + timeout + ", " + userCallback + ","
-               + userData + ")", timeout);
+var qid, timeout,userCallback,userdata;
+function getResults(qid1, timeout1, usercallback1, userdata1) {
+	qid = qid1;
+	timeout = timeout1;
+	userCallback = usercallback1;
+	userdata = userdata1;
+	//Passing variables directly doesn't work in Safari
+    setTimeout("getResultsPoller(qid, timeout, userCallback, userData)", timeout);
+}
+
+function getResults(qid1,timeout1,usercallback1) {
+	qid = qid1;
+	timeout = timeout1;
+	userCallback = usercallback1;
+	//Passing variables directly doesn't work in Safari
+    setTimeout("getResultsPoller(qid, timeout, userCallback, null)", timeout);
 }
 
 // delete all the child nodes of the node given by parentElement and create a child
