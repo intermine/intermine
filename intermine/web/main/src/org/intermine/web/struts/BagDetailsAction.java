@@ -74,6 +74,10 @@ public class BagDetailsAction extends Action
         if (bagName == null) {
             bagName = request.getParameter("name");
         }
+        String trail = null;
+        if (request.getParameter("trail") != null) {
+            trail = request.getParameter("trail");
+        }
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         InterMineBag bag = allBags.get(bagName);
@@ -102,6 +106,7 @@ public class BagDetailsAction extends Action
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("bagName", bagName)
                         .addParameter("table", identifier)
-                        .addParameter("size", "25").forward();
+                        .addParameter("size", "25")
+                        .addParameter("trail", trail).forward();
     }
 }
