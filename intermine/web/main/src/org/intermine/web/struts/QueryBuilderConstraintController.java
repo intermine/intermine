@@ -13,10 +13,12 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -78,7 +80,7 @@ public class QueryBuilderConstraintController extends TilesAction
             MainHelper.moveToRequest("editingTemplateConstraint", request);
             MainHelper.moveToRequest("editingConstraintValue", request);
             MainHelper.moveToRequest("editingConstraintOperand", request);
-            
+
             if (node.getPathString().indexOf(".") != -1 && node.isAttribute()) {
                 request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
                             null));
@@ -103,7 +105,7 @@ public class QueryBuilderConstraintController extends TilesAction
             String nodeType;
             boolean useBags;
             if (node.isAttribute() && (node.getPathString().indexOf('.')) >= 0) {
-                nodeType = ((PathNode) query.getNodes().get(
+                nodeType = (query.getNodes().get(
                         node.getPathString().substring(0,
                         node.getPathString().lastIndexOf(".")))).getType();
                 useBags = ClassKeyHelper.isKeyField(classKeys, nodeType, node
@@ -128,6 +130,14 @@ public class QueryBuilderConstraintController extends TilesAction
                 if (!bags.isEmpty()) {
                         request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
                         request.setAttribute("bags", bags);
+                }
+            }
+            Integer index = (Integer) request.getAttribute("editingConstraintOperand");
+            if (index != null) {
+                ConstraintOp op = ConstraintOp.getOpForIndex(index);
+                List ops = BagConstraint.VALID_OPS;
+                if (op != null && ops.contains(op)) {
+                    request.setAttribute("constrainOnBag", "true");
                 }
             }
         }

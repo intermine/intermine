@@ -23,6 +23,13 @@ fixedOps displayConstraint.fixedOpIndices
 options displayConstraint.optionsList
 
 --%>
+${constrainOnBag}
+<script type="text/javascript">
+if (${!empty constrainOnBag}) {
+	swapInputs('bag');
+}
+</script>
+
 
 <!-- mainConstraint.jsp -->
 
