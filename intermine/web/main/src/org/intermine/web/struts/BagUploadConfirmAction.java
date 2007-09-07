@@ -56,7 +56,7 @@ public class BagUploadConfirmAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         if (request.getParameter("goBack") != null) {
             return mapping.findForward("back");
