@@ -213,7 +213,8 @@ public class BagDetailsController extends TilesAction
                 new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig,
                                       classKeys);
 
-            PagedTable pagedColl = new PagedTable(webPathCollection);
+            // TODO put 5 in properties file
+            PagedTable pagedColl = new PagedTable(webPathCollection, 5);
             request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);
             request.setAttribute("bagSize", new Integer(imBag.size()));

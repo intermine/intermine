@@ -31,7 +31,7 @@ public class PagedTable
     private List<String> columnNames = null;
     private List<List<ResultElement>> resultElementRows = null;
     private int startRow = 0;
-    private int pageSize = 10;
+    private int pageSize = 10;  //TODO put in properties files
 
     private List<Column> columns;
 
@@ -46,6 +46,18 @@ public class PagedTable
         this.webTable = webTable;
     }
 
+    /**
+     * Construct a PagedTable with a list of column names
+     * @param webTable the WebTable that this PagedTable will display
+     * @param pageSize the number of records to show on each page.  Default value is 10.
+     */
+    public PagedTable(WebTable webTable, int pageSize) {
+        super();
+        this.webTable = webTable;
+        this.pageSize = pageSize;
+    }
+
+    
     /**
      * Get the list of column configurations
      *
