@@ -40,7 +40,9 @@ function callback(results) {
 }
 
 window.onload = function() {
-    getResults(${qid}, ${POLL_REFRESH_SECONDS}*1000, callback);
+    var parsed = parseInt(${POLL_REFRESH_SECONDS});
+    var refresh = parsed*1000;
+    getResults(${qid}, refresh, callback);
 }
 
 window.status = '';
