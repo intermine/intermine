@@ -91,7 +91,7 @@
             <c:if test="${pagedColl.pageSize < pagedColl.size}">
               <tr>
                 <c:forEach var="column" items="${pagedColl.columns}" varStatus="status2">
-                  <td style="border: dotted 1px #666;">&nbsp;</td>
+                  <td style="border-right: dotted 1px #666; border-bottom: dotted 1px #666;">&nbsp;</td>
                   </c:forEach>
                </tr>
             </c:if>
@@ -148,33 +148,24 @@
   
 
 
-<table><tr>
-<td valign="top" align="center">
-  <span style="font-size:+2em;">View</span>
-</td><td valign="top" align="center">  	
-  <span style="font-size:+2em;">Use</span>		
-</td><td valign="top" align="center">
-  <span style="font-size:+2em;">Export</span>
-</td><td valign="top" align="center">
-  <span style="font-size:+2em;">Upload</span>
-</td>
-</tr>
-
-<tr>
+<table cellpadding="0" cellspacing="30"><tr>
 <td valign="top">
-  	<li><html:link action="/bag">all lists</html:link></li>
-  	<li><html:link action="/mymine?subtab=lists">your lists</html:link></li>
+  <span style="font-size:+2em;">View</span><br/>
+    <html:link action="/bag">all lists</html:link><br/>
+  	<html:link action="/mymine?subtab=lists">your lists</html:link>
 </td><td valign="top">  	
-	<li><a href="javascript:go('query');">in a query</a>
+  <span style="font-size:+2em;">Use</span><br/>		
+  	<a href="javascript:go('query');">in a query</a><br/>
 	<input type="hidden" name="useBagInQuery" />
-  	</li>
-	<li><html:link action="/templates">in a template</html:link></li>
+	<html:link action="/templates">in a template</html:link>
 </td><td valign="top">
-		<li><a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a></li>
-		<li><a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a></li>
-		<li><a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a></li>
+  <span style="font-size:+2em;">Export</span><br/>
+  		<a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a><br/>
+		<a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a><br/>
+		<a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a>
 </td><td valign="top">
-		<li><html:link action="/bag?subtab=upload">your data</html:link></li>
+  <span style="font-size:+2em;">Upload</span><br/>
+  <html:link action="/bag?subtab=upload">your data</html:link>
 </td>
 </tr>
 </table>
