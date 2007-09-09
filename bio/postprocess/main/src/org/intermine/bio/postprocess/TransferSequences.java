@@ -271,6 +271,7 @@ public class TransferSequences
             }
 
             Chromosome chr = (Chromosome) os.getObjectById(chrId);
+            LOG.info("Chromosome id: " + chrId);
             Sequence chromosomeSequence = chr.getSequence();
 
             if (chromosomeSequence == null) {
