@@ -152,7 +152,8 @@
 <td valign="top">
   <span style="font-size:+2em;">View</span><br/>
     <html:link action="/bag">all lists</html:link><br/>
-  	<html:link action="/mymine?subtab=lists">your lists</html:link>
+  	<html:link action="/mymine?subtab=lists">your lists</html:link><br/>
+  	<html:link anchor="templates" action="bagDetails?bagName=${bag.name}">related templates</html:link>
 </td><td valign="top">  	
   <span style="font-size:+2em;">Use</span><br/>		
   	<a href="javascript:go('query');">in a query</a><br/>
@@ -319,8 +320,8 @@
 
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
-  <a name="templates">Related Templates</a>&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;"> 
-  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all +</a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all -</a>)</span></div>
+  Related Templates&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;"> 
+  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);" id="templates">expand all +</a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all -</a>)</span></div>
 </div>
 
 <div class="body">
