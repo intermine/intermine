@@ -52,6 +52,7 @@ function clearElement(e) {
 
 </html:form>
 <script language="javascript">
+  window.onload = document.getElementById('quickSearchType').selectedIndex = 0;
   window.onload = updateExample($('quickSearchType').selectedIndex);
 </script>
 <!-- /browse.jsp -->
