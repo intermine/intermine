@@ -33,3 +33,13 @@ div.frontBoxList {
 #qbImport {
 	margin-top:10px;
 }
+
+#what {
+	font-size:+2em;
+}
+
+#intro {
+	font-size: +1.2em;
+	color: #c00;
+	margin-top: 2px;
+}
