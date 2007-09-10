@@ -496,7 +496,7 @@
       <%-- Save bag controls --%>
       <c:if test="${resultsTable.size > 0}">
         <div class="heading">
-          <fmt:message key="results.save"/><im:manualLink section="manualResults.shtml"/>
+          <fmt:message key="results.save"/>
         </div>
         <div class="body">
           <fmt:message key="bag.save.msg"/>

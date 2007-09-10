@@ -7,7 +7,7 @@
 <html:xhtml/>
 
 <div class="heading">
-  <fmt:message key="export.export"/><im:manualLink section="manualExportData.shtml"/>
+  <fmt:message key="export.export"/>
 </div>
 <div class="body">
   <ul>

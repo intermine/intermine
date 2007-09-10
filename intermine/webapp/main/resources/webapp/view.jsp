@@ -15,7 +15,7 @@
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>'/>
 
 <div class="heading">
-  <fmt:message key="view.notEmpty.description"/><im:manualLink section="manualPageQB.shtml#manualOutputListQB"/>
+  <fmt:message key="view.notEmpty.description"/>
 </div>
 
 <div class="bodyPeekaboo">

@@ -19,7 +19,6 @@
     </c:when>
     <c:otherwise>      
       <fmt:message key="templateBuilder.new"/>
-     <im:manualLink section="manualCreateTemplates.shtml"/>
     </c:otherwise>
   </c:choose>
   </im:heading>

@@ -6,7 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <!-- queryActions.jsp -->
     <div class="heading">
-      <fmt:message key="view.actions"/><im:manualLink section="manualImportExportQueries.shtml"/>
+      <fmt:message key="view.actions"/>
     </div>
     <div class="body">
         <p>

@@ -78,9 +78,7 @@
     <c:set var="aspectStartingPointsHelpUrl" 
            value="${WEB_PROPERTIES['project.helpLocation']}${aspectStartingPointsHelpLink}"/>
 
-    See the <a href="${WEB_PROPERTIES['project.helpLocation']}/tutorials">tutorials</a>
-      and the <a href="${aspectStartingPointsHelpUrl}">manual</a> to learn
-      about the query builder.
+    See the <a href="${WEB_PROPERTIES['project.helpLocation']}/tutorials">tutorials</a> about the query builder.
     </p>
 
     <c:forEach items="${startingPoints}" var="classname" varStatus="status">

@@ -17,7 +17,6 @@ you to the same gene.</div>
 <br/><br/>
 
 <ul><li>For more information:
-<ul><li><a href="http://www.flymine.org/doc/manual/manualFlyMineIdentifiers.shtml">Identifiers, Accessions and Synonyms in FlyMine</a>
 <ul><li><a href="http://www.flymine.org/doc/tutorials/tutorial6-QB.shtml">Tutorial:  QueryBuilder</a>
 </ul></ul>
 

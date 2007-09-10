@@ -9,7 +9,7 @@
 
 <html:xhtml/>
 <div class="heading">
-  <fmt:message key="query.constraintLogic"/><im:manualLink section="manualPageQB.shtml#manualConstrainLogicQB"/>
+  <fmt:message key="query.constraintLogic"/>
 </div>
 <div class="body">
   <c:choose>
