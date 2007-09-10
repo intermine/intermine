@@ -20,7 +20,7 @@
   <tiles:put name="itemList" value="${itemList}"/>
 </tiles:insert>
 <!-- Nav trail -->
-<c:if test="${tab != '???.tab???'}">
+<c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
 <div id="navtrail">
   <html:link href="${WEB_PROPERTIES['project.sitePrefix']}"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
   <c:if test="${! empty tab }">
