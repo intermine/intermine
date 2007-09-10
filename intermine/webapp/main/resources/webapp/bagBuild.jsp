@@ -73,17 +73,18 @@
 <im:boxarea titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
   <div class="bagBuild">
     <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
-      <p><fmt:message key="bagBuild.bagFromText1"/></p>
-      <%-- example bag --%>
+      <p><fmt:message key="bagBuild.bagFormText1"/>
+            <%-- example bag --%>
           <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
           <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">
-              <div style="align: right">
                 <html:link href=""
                            onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
                   (click to see an example)
                 </html:link>
-              </div>
           </c:if>
+      </p>
+      <br/>
+      <p>Separate identifiers by a <strong>comma</strong>, <strong>tab</strong> or <strong>new line</strong>.</p>
           <br/>
 <ol id="buildbaglist">
   <li>
