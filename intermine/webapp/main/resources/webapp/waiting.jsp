@@ -17,11 +17,14 @@
   </head>
   <body>
   <div id="header"><tiles:insert page="/header.jsp"/></header>
+  <div style="clear:both;"/> 
+<div id="pagecontent">
     <div class="waitmsg">
       <fmt:message key="waiting.message"/>
       <p>
         <img border="0" src="model/progress${imgnum}.gif" alt="progress"/>
       </p>
+    </div>
     </div>
     <script language="JavaScript">
   <!--
