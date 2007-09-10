@@ -292,6 +292,10 @@ table.query {
   color: #333;
 }
 
+.body h3 {
+  margin-top: 10px;
+}
+
 .box div.title{
   color: black;
   padding: 5px;
@@ -719,4 +723,8 @@ div#navtrail{
 	padding-right:15px;
 	margin:0;
 	text-align:right
+}
+
+#sidebar li {
+	margin-left: 20px;
 }
