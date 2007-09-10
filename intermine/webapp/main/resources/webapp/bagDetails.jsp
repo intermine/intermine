@@ -34,17 +34,14 @@
    	<b>${bag.name}</b> (${bag.size} ${bag.type}s)
 </div>
 
-<div class="body" >
-
-<c:if test="${!empty bag.dateCreated}">
-    <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i></div>
-</c:if>
-
 
 <table border=0 cellpadding=0 cellspacing=5>
 <tr>
 	<td width="50%" valign="top">        
 	
+	<table>
+	<tr>
+	<td colspan=2>
 	<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
     	<html:hidden property="bagName" value="${bag.name}"/>
 	
@@ -97,12 +94,21 @@
             </c:if>
             
           </table>
-          <br/>
-          <div align="right">
+         </td></tr>
+         <tr><td>
+          
+<c:if test="${!empty bag.dateCreated}">
+    <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
+</c:if>
+
+</td><td align="right">          
+
          <html:submit property="showInResultsTable">
 			View all ${bag.size} records >>
         </html:submit>
-        </div>
+</td>
+</tr>
+</table>
 	
 		
   </td>
@@ -181,7 +187,7 @@
   </tr>
   </table>
   </html:form>
-</div>
+
 
 <br/>
 
