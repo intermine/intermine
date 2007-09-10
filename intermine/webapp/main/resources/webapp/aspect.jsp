@@ -74,10 +74,6 @@
   <div class="body aspectStartingPoints">
     <p><fmt:message key="aspect.starting.points.helptext"/>
 
-    <fmt:message key="query.help.link" var="aspectStartingPointsHelpLink"/>
-    <c:set var="aspectStartingPointsHelpUrl" 
-           value="${WEB_PROPERTIES['project.helpLocation']}${aspectStartingPointsHelpLink}"/>
-
     See the <a href="${WEB_PROPERTIES['project.helpLocation']}/tutorials">tutorials</a> about the query builder.
     </p>
 
