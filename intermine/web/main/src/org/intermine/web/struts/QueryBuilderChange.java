@@ -492,6 +492,12 @@ public class QueryBuilderChange extends DispatchAction
         String fullPathName = MainHelper.toPath(prefix, pathName);
         Path path = MainHelper.makePath(model, query, fullPathName);
         
+        /* this test can't just rely on the sort order being empty 
+           because sort order may have been populated by javascript by default
+           especially if it's a template
+         */
+        boolean newQuery = (view.isEmpty() && sortOrder.isEmpty());
+        
         // If an object has been selected, select its fields instead
         if (path.getEndFieldDescriptor() == null || path.endIsReference()
             || path.endIsCollection()) {
@@ -505,9 +511,10 @@ public class QueryBuilderChange extends DispatchAction
                                 && !view.contains(pathToAdd)
                                 && fc.getShowInResults()) {
                     view.add(pathToAdd);
+                    newQuery = false;
                 }
                 // if sort order is empty, then add first element to sort order 
-                if (sortOrder.isEmpty()) {
+                if (newQuery) {
                     OrderBy o = new OrderBy(pathToAdd, "asc");
                     sortOrder.add(o);
                 }
@@ -515,7 +522,7 @@ public class QueryBuilderChange extends DispatchAction
         } else {
             view.add(path);
             // if sort order is empty, then add first element to sort order 
-            if (sortOrder.isEmpty()) {
+            if (newQuery) {
                 OrderBy o = new OrderBy(path, "asc");
                 sortOrder.add(o);
             }
