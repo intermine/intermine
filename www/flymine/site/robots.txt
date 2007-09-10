@@ -1,4 +1,5 @@
 User-agent: *
+Disallow: /
 Disallow: /query/
 Disallow: /release-8.0/
 Disallow: /release-7.1/
