@@ -12,7 +12,7 @@ through all these options more easy:</p>
 
 <img alt="[begin]" src="home_toolbar.png"/>
 
-<p> The <b>FlyMine Tour</b> gives you a brief and easy introduction of what FlyMine can offer you! And have a look at our <b>tips</b>:</p>
+<p>Have a look at our <b>tips</b> to find out more about FlyMine:</p>
 <img alt="[begin]"  src="home_tip.png"/>
 
 </div>
@@ -34,7 +34,7 @@ through all these options more easy:</p>
 
 
     <p>2. <b>Templates</b> - are predefined queries that allow you to
-    quickly and easily run a query. There are currently more dan 150
+    quickly and easily run a query. There are currently more than 150
     templates. You can also make them yourself with the
     QueryBuilder, or, we can make them for you - it only takes a
     few minutes - so if you have a wish, let us know!</p>
@@ -557,7 +557,7 @@ ensure that everything in your list can be found in FlyMine.
 <img alt="[List Confirm Page]" src="listconfirm_summary.png"/>
 
 
-<p>Any discrepancies are reported as follows:<p>
+<p>Any discrepancies are reported as follows:</p>
 
 <p>1. <b>Low quality matches</b>: These are items in your list that do not
 match a key (main) identifier in FlyMine but were found as
@@ -609,6 +609,80 @@ all of them at once as follows:</p>
 
 <div id="basics" class="tabset_content">
 <h2 class="tabset_label">The basics</h2>
+
+<p>The Query Builder allows you to construct your own custom queries or edit a template query.  It consists of the following sections:</p>
+
+<p>1. <b>The Model Browser</b>: Allows you to browse the FlyMine data model and select the data you wish to query.</p>
+
+<p>2. <b>Query Summary</b>: Shows the set of constraints (filters) you have applied to the data. </p>
+
+<p>3. <b>Constraint editor</b>: Allows you to add and edit constraints. </p>
+
+<p>4. <b>Output columns</b>: Shows the columns you have selected for your results table and allows you to select which column on which to sort the results. </p>
+
+<p>5. <b>Sort order</b>: Shows which column is selected for sorting and allows you to change the sort direction. </p>
+
+
+
+<img alt="[QueryBuilder Page]" src="querybuilder_overview.png"/>
+
+
+</div>
+
+
+<div id="modelbrowser" class="tabset_content">
+<h2 class="tabset_label">Model Browser</h2>
+
+<p>The model browser allows you to browse the FlyMine data model and select the data you wish to query.  The browser displays an initial starting class, which in the example below is 'Gene'.  If you are building a query from scratch you will have selected the initial starting class to start building your query.  From this initial class it is possible to browse to related classes.  Expanding a related class again shows classes related to that class and so on.  For each class there is also a set of relevant fields, such as Gene symbol and Gene identifier.  For each class and field there are two buttons:
+
+<p>1. <b>Constrain</b>: Allows you to allows you to add a constaint (filter) to that particular class or field.</p>
+
+<p>2. <b>Show</b>: Allows you to add that field to your results table output. </p>
+
+<img alt="[QueryBuilder Page]" src="querybuilder_modelbrowser.png"/>
+
+
+</div>
+
+<div id="constraints" class="tabset_content">
+<h2 class="tabset_label">Constraints</h2>
+
+
+<p>Clicking on a constraint button in the model browser brings up a box on the left hand pane which allows you to define your constraint. If you are constraining a field the following constraint options will be available:
+
+<p>1. <b>Filter query results on this field having a specific value</b>: Allows you to constrain your query to a single value.  An example would be constraining the Gene symbol field to 'Zen'.</p>
+shoe
+<p>2. <b>Filter query results on the contents of your list</b>: Allows you to constrain your query to a list of values.  The list can be selected from the drop down list which will contain both 'public' lists and any lists you have created yourself. </p>
+
+<p>2. <b>Filter query results on this field having any value or not</b>: Allows you to constrain this field to data which either must have a value for this field or do not have a value for this field.</p>
+
+
+<img alt="[QueryBuilder Page]" src="querybuilder_constrain.png"/>
+
+
+</div>
+
+
+<div id="output" class="tabset_content">
+<h2 class="tabset_label">Results output</h2>
+
+
+<p>Clicking on a show button next to a field in the model browser will
+add that field to your 'Fields selected for output' list. This means
+that data from that field will appear as a column in your results
+table.  You can change the order of the columns by picking up the box
+and moving it.  You can remove a column using the red cross.  You can
+select which column on which the results should be sorted by clicking
+on 'sort' within the relevant box - the sort direction can then be set
+from the sort box below.  In the example below the results table will
+contain three columns: Gene symbol, gene identifer and Go annotation
+name. Each box shows the path taken in the model browser - eg Gene >
+goAnnotation > name.  However, usually just the last two parts of the
+path (eg goAnnotation > name) are enough to show you what will be in
+that column.</p>
+
+
+<img alt="[QueryBuilder Page]" src="querybuilder_resultsoutput.png"/>
 
 </div>
 
