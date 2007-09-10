@@ -51,7 +51,7 @@ if (${!empty constrainOnBag}) {
   <c:if test="${!editingTemplateConstraint}">
 
     <div class="heading">
-      <fmt:message key="query.constrain"/><%--Constraint--%><im:manualLink section="manualPageQB.shtml#manualConstrainQB"/>
+      <fmt:message key="query.constrain"/><%--Constraint--%>
     </div>
 
     <div class="body">

@@ -24,7 +24,7 @@
     <fmt:message key="begin.or"/>
     <html:link action="/exportQuery?as=iql">
       IQL
-    </html:link><im:manualLink section="manualImportExportQueries.shtml"/>
+    </html:link>
   </div>
 </c:if>
 <!-- /saveQuery.jsp -->

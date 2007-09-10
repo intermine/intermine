@@ -53,7 +53,7 @@
 </script>
 
 <div class="heading">
-  <fmt:message key="query.currentclass"/><im:manualLink section="manualPageQB.shtml#manualModelBrowserQB"/>
+  <fmt:message key="query.currentclass"/>
 </div>
 <div class="body">
   <div> 
