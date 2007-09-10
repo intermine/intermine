@@ -1,33 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu>
   <item title="About">
-    <item url="/about.xml" title="About FlyMine"/>
-    <item url="/contact.xml" title="Contact us"/>
-    <item url="/link.xml" title="Link to FlyMine"/>
-    <item url="/cite.xml" title="Cite FlyMine"/>
+    <item url="/about.xml" title="About"/>
+    <item url="/contact.xml" title="Contact"/>
     <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
   </item>
 
   <item title="Release info">
     <item url="/dataCategories.do" title="Data sources"/>
     <item url="/release-notes.xml" title="Release notes"/>
-    <item url="/archive.xml" title="Archived releases"/>
+    <item url="/archive.xml" title="Archive releases"/>
   </item>
 
   <item title="News">
-    <news id="news" limit="3"/>
+    <news id="news" limit="2"/>
     <item url="/news.xml" title="All news"/>
   </item>
 
   <item title="Documentation">
-    <item url="/doc/software.xml" title="SOFTWARE"/>
-    <item url="/doc/links.xml" title="Links"/>
+    <item url="/link.xml" title="Link to FlyMine"/>
+    <item url="/cite.xml" title="Cite FlyMine"/>
+    <item url="/software.xml" title="Software"/>
+    <item url="/doc/links.xml" title="Resources"/>
   </item>
-  
-  <item title="Project">
-    <item url="/project/team.xml" title="Team"/>
-    <item url="/project/jobs.xml" title="Jobs"/>
-    <item url="/project/funding.xml" title="Funding"/>
-  </item>
+
 </menu>
 
