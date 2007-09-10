@@ -73,16 +73,7 @@
 <im:boxarea titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
   <div class="bagBuild">
     <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
-      <p><fmt:message key="bagBuild.bagFormText1"/>
-            <%-- example bag --%>
-          <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
-          <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">
-                <html:link href=""
-                           onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
-                  (click to see an example)
-                </html:link>
-          </c:if>
-      </p>
+      <p><fmt:message key="bagBuild.bagFormText1"/></p>
       <br/>
       <p>Separate identifiers by a <strong>comma</strong>, <strong>tab</strong> or <strong>new line</strong>.</p>
           <br/>
@@ -117,7 +108,19 @@
    <li>
    <%-- textarea --%>
    <label><fmt:message key="bagBuild.bagPaste"/></label>
-   <html:textarea styleId="pasteInput" property="text" rows="10" cols="35" onfocus="switchInputs('paste','file');" />
+   <span>
+   <%-- example bag --%>
+     <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
+     <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">
+         <div style="text-align:right;width:87%;">
+           <html:link href=""
+                      onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
+             (click to see an example)<img src="images/disclosed.gif" title="Show example" alt="Show example">
+           </html:link>
+         </div>
+     </c:if>
+   <html:textarea styleId="pasteInput" property="text" rows="10" cols="60" onfocus="switchInputs('paste','file');" />
+   </span>
    <script type="text/javascript" charset="utf-8">
       initPasteInput();
     </script>
