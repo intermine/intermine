@@ -34,13 +34,7 @@
       <%-- Context help bar --%>
       <tiles:insert page="/contextHelp.jsp"/>
       
-      <%-- Construct help page key --%>
-      <fmt:message key="${pageName}.help.link" var="helplink"/>
 
-      <c:if test="${!empty helplink && !fn:startsWith(helplink, '???')}">
-        <c:set var="helpUrl" value="${WEB_PROPERTIES['project.helpLocation']}${helplink}" 
-               scope="request"/>
-      </c:if>
 
       <tiles:get name="body"/>
       
