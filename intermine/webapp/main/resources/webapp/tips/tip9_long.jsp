@@ -1,8 +1,8 @@
 <!-- tip9.jsp -->
 
-<h3>Uploading bags is easy, even if you aren't certain about your list.</h3>
+<h3>Uploading lists of data is easy, even if you aren't certain about your identifiers.</h3>
 
-<div class="tipText">The bag uploader automatically scans the database for all likely matches to your 
+<div class="tipText">The list uploader automatically scans the database for all likely matches to your 
 list.  Even if your list contains a mix of identifiers, names, types, etc, the uploader will find the 
 best match.</div>
 
