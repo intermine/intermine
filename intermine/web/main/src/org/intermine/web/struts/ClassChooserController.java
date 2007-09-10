@@ -89,7 +89,7 @@ public class ClassChooserController extends TilesAction
             if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
                             && oss.getClassCount(className) > 0) {
              
-                String helpKey = (String) unqualifiedName;
+                String helpKey = unqualifiedName;
                 String helpText = (String) classDescrs.get(helpKey);
                 
                 // add to help map.  always 
@@ -98,9 +98,9 @@ public class ClassChooserController extends TilesAction
                     sb.append("'" + helpKey + "': '" + escaped + "', ");
                 }
                 // add to map if not on preferred map
+                /* user feedback indicated this was confusing, so all classes get added here */
                 if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
-                                && oss.getClassCount(className) > 0
-                                && !preferedTypeList.contains(unqualifiedName)) {
+                                && oss.getClassCount(className) > 0) {
 
                     typeList.add(unqualifiedName);
 
