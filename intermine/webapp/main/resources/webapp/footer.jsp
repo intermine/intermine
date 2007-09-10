@@ -30,7 +30,52 @@
            
 <br/>
 
-<font size="0.8em">Home | Lists | Templates | Data | MyMine | Help | About | Software | Login</font>
+<font size="0.8em"
+
+<html:link action="/begin">
+Home
+</html:link>
+&nbsp;|&nbsp;
+<html:link action="/templates">
+Templates
+</html:link>
+&nbsp;|&nbsp;
+<html:link action="/bag">
+Lists
+</html:link>
+&nbsp;|&nbsp;
+<html:link action="/customQuery">
+QueryBuilder
+</html:link>
+&nbsp;|&nbsp;
+<html:link action="/dataCategories">
+Data
+</html:link>
+&nbsp;|&nbsp;
+<html:link action="/mymine">
+MyMine
+</html:link>
+&nbsp;|&nbsp;
+<a href="${WEB_PROPERTIES['project.sitePrefix']}/help.shtml">
+Help
+</a>
+&nbsp;|&nbsp;
+<a href="${WEB_PROPERTIES['project.sitePrefix']}/about.shtml">
+About
+</a>
+&nbsp;|&nbsp;
+<a href="${WEB_PROPERTIES['project.sitePrefix']}/cite.shtml">
+Citation
+</a>
+&nbsp;|&nbsp;
+<a href="${WEB_PROPERTIES['project.sitePrefix']}/software.shtml">
+Software
+</a>
+&nbsp;|&nbsp;
+<html:link action="/login">
+Login
+</html:link>
+</font>
 
 <br/>
 
