@@ -72,10 +72,7 @@
     <fmt:message key="aspect.starting.points.heading"/>
   </div>
   <div class="body aspectStartingPoints">
-    <p><fmt:message key="aspect.starting.points.helptext"/>
-
-    See the <a href="${WEB_PROPERTIES['project.helpLocation']}/tutorials">tutorials</a> about the query builder.
-    </p>
+    <p><fmt:message key="aspect.starting.points.helptext"/></p>
 
     <c:forEach items="${startingPoints}" var="classname" varStatus="status">
       <im:unqualify className="${classname}" var="name"/>
