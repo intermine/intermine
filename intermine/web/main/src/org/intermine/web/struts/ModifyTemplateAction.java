@@ -198,7 +198,8 @@ public class ModifyTemplateAction extends InterMineAction
                 pm.deleteTag(tag);
             }
         }
-        return mapping.findForward("mymine");
+        return new ForwardParameters(mapping.findForward("mymine"))
+        .addParameter("subtab", "templates").forward();
     }
     
     private ActionForward getReturn(String pageName, ActionMapping mapping) {

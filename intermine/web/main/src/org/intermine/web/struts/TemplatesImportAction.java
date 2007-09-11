@@ -102,7 +102,9 @@ public class TemplatesImportAction extends InterMineAction
                                             new Integer(renamed)), 
                                             request);
 
-            return mapping.findForward("mymine");
+            return new ForwardParameters(mapping.findForward("mymine"))
+            .addParameter("subtab", "templates").forward();
+            
         } finally {
             profile.enableSaving();
         }

@@ -57,8 +57,9 @@ public class LogoutAction extends InterMineAction
             
             if (request.getParameter("returnto").indexOf("mymine") == -1) {
                 return new ActionForward(request.getParameter("returnto"));
-            } else {
-                return  mapping.findForward("mymine");
+            } else {             
+                return new ForwardParameters(mapping.findForward("mymine"))
+                .addParameter("subtab", "lists").forward();
             }
         } else {
             return mapping.findForward("begin");
