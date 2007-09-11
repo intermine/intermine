@@ -12,7 +12,7 @@
       <div class="body">
         <p>
           Orthologue and paralogue relationships calculated by <A
-          href="http://inparanoid.sbc.su.se/">InParanoid</A> - Version 5.1 - between the following organisms:
+          href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</A> - Version 5.1 - between the following organisms:
         </p>
         <ul>
           <li><I>D. melanogaster</I></li>
@@ -28,7 +28,7 @@
           <i>C. familiaris , D. discoideum, D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, R. norvegicus, S. cerevisiae, S. pombe</I>
         <p>
           <im:querylink text="Show all pairs of organisms linked by orthologues" skipBuilder="true">
-            <query name="" model="genomic" view="Orthologue.object.organism.shortName Orthologue.subject.organism.shortName"><node path="Orthologue" type="Orthologue"></node></query>
+            <query name="" model="genomic" view="Orthologue.gene.organism.shortName Orthologue.orthologue.organism.shortName"><node path="Orthologue" type="Orthologue"></node></query>
           </im:querylink>
       </div>
     </td>
