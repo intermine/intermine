@@ -226,6 +226,7 @@ public class OboParser
 
         // Copy all terms into rootTerms map - non-root terms will be removed
         rootTerms = new HashMap(terms);
+        //System.err.println("Root terms: " + rootTerms.keySet());
 
         // Now connect them all together
         for (Iterator iter = tagValuesList.iterator(); iter.hasNext();) {
@@ -234,6 +235,7 @@ public class OboParser
                 configureDagTerm(tvs);
             }
         }
+        System.err.println("Root terms: " + rootTerms.keySet());
     }
 
     /**
@@ -242,10 +244,13 @@ public class OboParser
      * @param tagValues term config
      */
     protected void configureDagTerm(Map tagValues) {
+        //System.err.println("configureDagTerm(" + tagValues + ")");
         String id = (String) ((List) tagValues.get("id")).get(0);
         OboTerm term = (OboTerm) terms.get(id);
 
         if (term != null) {
+            term.setTagValues(tagValues);
+            //System.err.println("Found term (" + term + "), putting in tagValues");
 
             List isas = (List) tagValues.get("is_a");
             if (isas != null) {
@@ -253,13 +258,17 @@ public class OboParser
                     String isa = (String) iter.next();
                     DagTerm pt = (DagTerm) terms.get(isa);
                     if (pt == null) {
-                        LOG.warn("child term (" + term + ") in OBO file refers to a non-existant "
+                        LOG.warn("child term (" + term + ") in OBO file refers to a non-existent "
                                 + "parent (" + isa + ")");
+                        System.err.println("Child term (" + term + ") in OBO file refers to a non-"
+                                + "existent parent (" + isa + ")");
                         continue;
                     }
                     LOG.debug(term + " isa " + pt);
                     pt.addChild(term);
                     rootTerms.remove(term.getId());
+                    //System.err.println("Adding " + term.getName() + " as child of " + pt.getName()
+                    //        + ", children now " + pt.getChildren());
                 }
             }
 
@@ -339,12 +348,12 @@ public class OboParser
      * @param tagValues map of tag name to value for a single term
      * @return true if the term is marked obsolete, false if not
      */
-    public boolean isObsolete(Map tagValues) {
+    public static boolean isObsolete(Map tagValues) {
         List vals = (List) tagValues.get("is_obsolete");
         if (vals != null && vals.size() > 0) {
             if (vals.size() > 1) {
                 LOG.warn("Term: " + tagValues + " has more than one (" + vals.size()
-                        + ") is_obselete values - just using first");
+                        + ") is_obsolete values - just using first");
             }
             return ((String) vals.get(0)).equalsIgnoreCase("true");
         }

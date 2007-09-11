@@ -10,9 +10,10 @@ package org.intermine.ontology;
  *
  */
 
-import java.util.Set;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Extension of DagTerm that adds a namespace attribute that is specific to the OBO
@@ -26,6 +27,7 @@ public class OboTerm extends DagTerm
     private String description = "";
     private boolean obsolete = false;
     private Set allParentIds = null;
+    private Map tagValues;
 
     /**
      * Construct with an id and name.
@@ -101,5 +103,23 @@ public class OboTerm extends DagTerm
             allParentIds = new HashSet();
         }
         allParentIds.addAll(parentIds);
+    }
+
+    /**
+     * Sets the variable holding the raw tagValues that created this Term.
+     *
+     * @param tagValues the values
+     */
+    protected void setTagValues(Map tagValues) {
+        this.tagValues = tagValues;
+    }
+
+    /**
+     * Gets the tagValues.
+     *
+     * @return the tagValues
+     */
+    protected Map getTagValues() {
+        return tagValues;
     }
 }
