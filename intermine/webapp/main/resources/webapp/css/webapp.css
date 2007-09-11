@@ -19,7 +19,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   white-space: nowrap;
 }
 
-h1, h2, h3, h1 a, h1 a:visited {
+h1, h2, h3, h1 a, h1 a:visited, label {
    color:#5C0075;
 }
 
@@ -297,7 +297,7 @@ table.query {
 }
 
 .box div.title{
-  color: black;
+  color: #333;
   padding: 5px;
   text-align: left;
   font-size: 14px;
@@ -670,7 +670,7 @@ ul#nav a{
 	background-position: right top;
 	color:white;
 }
-ul#nav a:hover,ul#nav li#mymine a:hover{color:#000;}
+ul#nav a:hover,ul#nav li#mymine a:hover{color:#333;}
 ul#nav li#mymine {background:#9B89A7 url('../images/corner_my_t_l.png') no-repeat;}
 ul#nav li#mymine a{color:white;background:url('../images/corner_my_t_r.png') no-repeat top right;}
 ul#nav li.activelink {background:#5C0075 url('../images/corner_act_t_l.png') no-repeat;}
@@ -717,7 +717,7 @@ ul#submenulist li#subactive_bag {font-weight:bold;color:#FFF;background:url('../
 ul#submenulist li#subactive_mymine {font-weight:bold;color:#FFF;background:url('../images/submenu_my.png') no-repeat bottom center;}
 
 ul#submenulist li a {color:#FFF;text-decoration: none;font-weight: bold;float:left;}
-ul#submenulist li a:hover {color:#000;text-decoration: underline;font-weight: bold;float:left;}
+ul#submenulist li a:hover {color:#333;text-decoration: underline;font-weight: bold;float:left;}
 div#navtrail{
 	font-size:0.7em;
 	padding-right:15px;
