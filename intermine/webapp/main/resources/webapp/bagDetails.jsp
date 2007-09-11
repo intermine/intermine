@@ -323,8 +323,8 @@
 
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
-  <a id="templates">Related Templates</a>&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;"> 
-  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all +</a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all -</a>)</span></div>
+  Related Templates&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;"> 
+  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);" id="templates">expand all +</a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all -</a>)</span></div>
 </div>
 
 <div class="body">
