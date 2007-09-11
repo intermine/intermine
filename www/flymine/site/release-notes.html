@@ -2,6 +2,77 @@
 <div class="docbook-page">
 
   <div style="clear:" class="box">
+
+<div class="heading2">FlyMine version 8.1 - release notes (11th September 2007)</div>
+<div class="body">
+<p style="font-size: +1.1em;">
+In release 8.1 of FlyMine we have made some major changes to the layout of FlyMine.  This has been done in response to feedback from users and to make the most exciting parts of FlyMine more obvious.  We have also added public lists and a new help system.
+</p>
+
+<h3>New Layout</h3>
+<p>
+A new <strong>header</strong> provides tabs for easy access to the major areas of the site.  The <strong>Templates</strong> and <strong>Lists</strong> tabs link to new search pages that show all templates/lists and update as you type keyword search terms.  You can also restrict by data category and, if you are logged in, restrict to your favourites or own saved data.  The <strong>search bar</strong> in the header is a quick way to search identifiers and now also templates and lists.
+</p>
+
+<p>
+The updated <strong>home page</strong> layout introducea the main concepts - Data categories, Templates, Lists and the QueryBuilder.  There is also space for us to highlight new or interesting templates and public lists, these will change over time.
+</p>
+
+<h3>Renaming</h3>
+<p>
+In response to user feedback we have renamed some elements of the FlyMine interface to make them more obvious.  <strong>'Bags'</strong> are now called <strong>'Lists'</strong>, <strong>'Aspects'</strong> are now <strong>'Data categories'</strong>.  We also refer now refer to <strong>Report pages</strong> instead of the computer speak: <strong>Object details pages</strong> and a <strong>List analysis page</strong> instead of a <strong>Bag details page</strong>.  Hopefully it won't cause confusion for too long.  
+</p>
+
+<h3>Public Lists</h3>
+<p>
+Another major development is the introduction of <strong>public lists</strong>.  These are lists that we create and make available for everyone to use, typically they will be derived from a publication.  In this release we have added public lists based on <a href="http://www.flyatlas.org">FlyAtlas</a> expression in the adult fly tissues and <a href="http://www.flytf.org">FlyTF</a> transcription factor lists.  Click on an example on the home page to see a list analysis page with graphs, tables, statistical enrichment and the results of templates run for the list.  We can add new public lists at any time, please contact us if you have a suggestion.
+</p>
+
+<h3>List Analysis Widgets</h3>
+<p>
+We have added two new <strong>'widgets'</strong> to the analysis page for a list of genes.  These show statistical enrichment of InterPro protein domains within a list of genes and the publications that reference the most genes from the list (data from PubMed).  We will continue to add to the list analysis page in every release, so let us know if you have any suggestions.
+</p>
+
+<h3>Help System</h3>
+<p>
+A new context sensitive help system has replaced the FlyMine manual.  On every page there is a '?' icon to the top right, click this to get help with the current page and find out what you could do next.  The help should now be briefer and more readable.
+</p>
+
+<h3>Other Changes</h3>
+<br/>
+<ul>
+  <li><strong>Results page</strong>
+    <ul>
+      <li>FIX - column summaries sometimes gave misleading results when counting unique rows.</li>
+      <li>FIX - the total number of rows and unique rows in summaries now update correctly in Safari.</li>
+    </ul>
+  </li>
+  <li><strong>MyMine</strong>
+    <ul>
+      <li>FIX - colons are now allowed in list/template names.</li>
+      <li>FIX - occasional issues with creation dates of templates/lists are fixed.</li>
+    </ul>
+  </li>
+  <li><strong>Report page</strong>
+    <ul>
+      <li>NEW - the bottom of each report page shows any lists (public or saved) that contain the object.</li>
+      <li>NEW - template descriptions are now included when inline tables are open.</li>
+    </ul>
+  </li>  
+  <li><strong>QueryBuilder</strong>
+    <ul>
+      <li>FIX - some issues with the view list and sort order on Internet Explorer are fixed.</li>
+      <li>FIX - when using LOOKUP constraints can now convert wildcards that match an incorrect type - e.g. convert EVE_DROME* (a protein identifier) to a gene.</li>
+      <li>FIX - LOOKUP constraints and list upload now accept names that contain spaces - e.g. 'even skipped' for the eve gene.</li>
+      <li>FIX - sort order is now remembered for saved queries, doesn't get reset when removing elements from view list.</li>
+    </ul>
+  </li>
+</ul>
+
+
+</div>
+
+
 <div class="heading2">FlyMine version 8.0 - release notes (27th June 2007)</div>
 <div class="body">
 <p style="">
