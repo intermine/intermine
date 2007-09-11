@@ -77,7 +77,7 @@
        <p><i>A. mellifera</i></p>
        <p><i>C. elegans</i></p>
     </td>
-    <td> Orthologue and paralogue relationships between these 5 organism</td>
+    <td> Orthologue and paralogue relationships between these 5 organisms</td>
     <td> <a href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</a> - Version 5.1</td>
     <td> O'Brien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15608241" target="_new">PubMed: 15608241</a></td>
     <td>(1)</td>
