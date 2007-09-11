@@ -16,6 +16,10 @@
      method or make it unnecessary --%>
 <c:set var="isWebResults"
        value="${resultsTable.webTableClass.name == 'org.intermine.web.logic.results.WebResults'}"/>
+<c:set var="isWebCollection"
+       value="${resultsTable.webTableClass.name == 'org.intermine.web.struts.WebPathCollection'}"/>
+<c:set var="noBagSave"
+       value="${!empty param.noSelect}"/>
 
 <script type="text/javascript">
 <!--//<![CDATA[
@@ -274,7 +278,7 @@
               </c:choose>
               <c:choose>
                 <c:when test="${column.visible}">
-                  <c:if test="${column.selectable}">
+                    <c:if test="${column.selectable && ((!isWebCollection) || (! noBagSave && status.count<=1))}">
                     <th align="center" class="checkbox">
                       <html:multibox property="selectedObjects" styleId="selectedObjects_${status.index}"
                                      onclick="selectColumnCheckbox(columnsToDisable, columnsToHighlight, ${status.index})"
@@ -388,7 +392,7 @@
                   <c:choose>
                     <c:when test="${column.visible}">
                       <%-- the checkbox to select this object --%>
-                      <c:if test="${column.selectable}">
+                       <c:if test="${column.selectable && ((!isWebCollection) || (! noBagSave && status2.count<=1))}">
                         <td align="center" class="checkbox" id="cell_checkbox,${status2.index},${status.index},${row[column.index].htmlId}">
                           <html:multibox property="selectedObjects"
                                          styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].htmlId}"
