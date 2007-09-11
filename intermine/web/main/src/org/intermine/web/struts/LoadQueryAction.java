@@ -75,7 +75,7 @@ public class LoadQueryAction extends DispatchAction
                                                  profile.getSavedBags(),
                                                  servletContext);
         PathQuery query = (PathQuery) queries.values().iterator().next();
-        SessionMethods.loadQuery((PathQuery) query, session, response);
+        SessionMethods.loadQuery(query, session, response);
         
         if (!skipBuilder.booleanValue()) {
             return mapping.findForward("query");

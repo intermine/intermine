@@ -67,6 +67,9 @@ public class UserTemplateAction extends InterMineDispatchAction
             recordError(new ActionMessage("errors.template.nosuchtemplate"), request);
         }
         
-        return mapping.findForward("begin");
+         return new ForwardParameters(mapping.findForward("begin"))
+        .addParameter("subtab", "templates").forward();
+        
     }
+    
 }

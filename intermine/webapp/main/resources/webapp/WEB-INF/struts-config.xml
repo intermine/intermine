@@ -128,7 +128,7 @@
     </action>
     <action path="/logout" type="org.intermine.web.struts.LogoutAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=lists"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/confirm" type="org.intermine.web.struts.ConfirmAction">
       <forward name="confirm" path="confirm.page"/>
@@ -137,7 +137,7 @@
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
     <action path="/userTemplateAction" type="org.intermine.web.struts.UserTemplateAction" parameter="method">
-      <forward name="begin" redirect="true" path="/mymine.do?subtab=templates"/>
+      <forward name="begin" redirect="true" path="/mymine.do"/>
       <forward name="template" path="template.page"/>
     </action>
     <action path="/mainChange" type="org.intermine.web.struts.QueryBuilderChange" parameter="method">
@@ -232,11 +232,11 @@
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
     </action>
     <action path="/createTemplate" type="org.intermine.web.struts.CreateTemplateAction">
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=templates"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/summariseAllTemplates" type="org.intermine.web.struts.SummariseAllTemplatesAction">
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=templates"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/changeTableSize" name="changeTableSizeForm" type="org.intermine.web.struts.ChangeTableSizeAction" scope="request">
       <forward name="results" redirect="true" path="/results.do"/>
@@ -248,12 +248,12 @@
     </action>
     <action path="/importTemplates" name="importTemplatesForm" type="org.intermine.web.struts.TemplatesImportAction" scope="request" input="import">
       <forward name="import" path="importTemplates.page"/>
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=templates"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/importQueriesAction" name="importQueriesForm" type="org.intermine.web.struts.ImportQueriesAction" scope="request" input="importQueries">
       <forward name="importQueries" path="importQueries.page"/>
       <forward name="query" redirect="true" path="/query.do"/>
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=saved"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/browseAction" name="browseForm" type="org.intermine.web.struts.QuickSearchAction" input="begin">
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
@@ -265,15 +265,15 @@
       <forward name="feedback" path="feedback.page"/>
     </action>
     <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=saved"/>
-      <forward name="history" redirect="true" path="/mymine.do?subtab=history"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+      <forward name="history" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/modifyBag" name="modifyBagForm" type="org.intermine.web.struts.ModifyBagAction" scope="request" input="bag" parameter="action" validate="false">
-      <forward name="bag" redirect="true" path="/bag.do?subtab=view"/>
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=lists"/>
+      <forward name="bag" redirect="true" path="/bag.do"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/modifyTemplate" name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateAction" scope="request" input="mymine" parameter="action" validate="false">
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=templates"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="templates" redirect="true" path="/templates.do"/>
     </action>
     <action path="/saveBag" name="saveBagForm" type="org.intermine.web.struts.SaveBagAction" input="results">
@@ -282,7 +282,7 @@
     </action>
     <action path="/saveQuery" name="saveQueryForm" type="org.intermine.web.struts.SaveQueryAction" input="query">
       <forward name="query" path="query.page"/>
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=saved"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
       
     </action>
     <action path="/buildBag" name="buildBagForm" type="org.intermine.web.struts.BuildBagAction" input="bags" parameter="action" validate="false">

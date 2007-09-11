@@ -243,9 +243,11 @@ public class ModifyBagAction extends InterMineAction
     
     private ActionForward getReturn(String pageName, ActionMapping mapping) {
         if (pageName != null && pageName.equals("MyMine")) {
-            return mapping.findForward("mymine");
+            return new ForwardParameters(mapping.findForward("mymine"))
+            .addParameter("subtab", "lists").forward();
         } else {
-            return mapping.findForward("bag");
+            return new ForwardParameters(mapping.findForward("bag"))
+            .addParameter("subtab", "view").forward();
         }
     }
 }
