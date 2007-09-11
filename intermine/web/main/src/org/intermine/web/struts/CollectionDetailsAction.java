@@ -117,6 +117,7 @@ public class CollectionDetailsAction extends Action
         }
         
         return new ForwardParameters(mapping.findForward("results"))
+                        .addParameter("noSelect", "true")
                         .addParameter("table", identifier)
                         .addParameter("size", pageSize)
                         .addParameter("trail", trail).forward();
