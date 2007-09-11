@@ -23,7 +23,6 @@
     <form-bean name="feedbackForm" type="org.intermine.web.struts.FeedbackForm"/>
     <form-bean name="importTemplatesForm" type="org.intermine.web.struts.TemplatesImportForm"/>
     <form-bean name="importTagsForm" type="org.intermine.web.struts.ImportTagsForm"/>
-    <form-bean name="searchForm" type="org.intermine.web.struts.SearchForm"/>
     <form-bean name="importQueriesForm" type="org.intermine.web.struts.ImportQueriesForm"/>
     <form-bean name="templateSettingsForm" type="org.intermine.web.struts.TemplateSettingsForm"/>
     <form-bean name="createAccountForm" type="org.intermine.web.struts.CreateAccountForm"/>
@@ -111,7 +110,7 @@
 
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
-      <forward name="mymine" redirect="true" path="/mymine.do?subtab=saved"/>      
+      <forward name="mymine" redirect="true" path="/mymine.do"/>      
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
       <forward name="template" redirect="true" path="/template.do"/>
@@ -259,7 +258,6 @@
     <action path="/browseAction" name="browseForm" type="org.intermine.web.struts.QuickSearchAction" input="begin">
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
       <forward name="begin" redirect="true" path="/begin.do"/>
-      <forward name="search" path="search.page"/>
       <forward name="templates" path="templates.page"/>
       <forward name="bags" path="/bag.do"/>
     </action>

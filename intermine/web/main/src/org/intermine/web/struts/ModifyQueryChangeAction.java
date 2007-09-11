@@ -148,7 +148,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         recordMessage(new ActionMessage("savedInSavedQueries.message", sq.getName()), request);
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("action", "rename")
-            .addParameter("page", "saved")
+            .addParameter("subtab", "saved")
             .addParameter("name", sq.getName()).forward();
     }
 }
