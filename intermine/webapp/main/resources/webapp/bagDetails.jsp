@@ -153,7 +153,7 @@
 <table cellpadding="0" cellspacing="30"><tr>
 <td valign="top">
   <span style="font-size:+2em;">View</span><br/>
-    <html:link action="/bag">all lists</html:link><br/>
+    <html:link action="/bag?subtab=view">all lists</html:link><br/>
   	<html:link action="/mymine?subtab=lists">your lists</html:link><br/>
   	<html:link anchor="templates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
   	<html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
