@@ -21,7 +21,7 @@
 
     <!-- down = asc, up = desc -->
     <img src="images/${sortDirection}.gif" id="sortImg"
-         onclick="javascript:reverseSortDirection();" alt="sort"
+         onclick="javascript:reverseSortDirection();" title="sort"
          title="Click to reverse the sort order">
 
   </im:sortableDiv>

@@ -18,7 +18,7 @@
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
   <tr>
     <td width="15">
-      <img border="0" src="images/blank.gif" alt="" width="15" height="11"/>
+      <img border="0" src="images/blank.gif" width="15" height="11"/>
     </td>
     <td>
     <table border="0" cellspacing="0" class="refSummary" align="right">

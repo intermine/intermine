@@ -33,22 +33,22 @@
       </c:choose>
       <c:choose>
         <c:when test="${isNull}">
-          <img border="0" src="images/plus-disabled.gif" width="11" height="11" alt="+"/>
+          <img border="0" src="images/plus-disabled.gif" width="11" height="11" title="+"/>
         </c:when>
         <c:when test="${node.button == '+'}">
           <html:link action="/mainChange?method=changePath&amp;path=${node.pathString}"
             onclick="return toggle('${node.pathString}', '${node.pathString}')">
-            <img id="img_${node.pathString}" border="0" src="images/plus.gif" width="11" height="11" alt="+"/>
+            <img id="img_${node.pathString}" border="0" src="images/plus.gif" width="11" height="11" title="+"/>
           </html:link>
         </c:when>
         <c:when test="${node.button == '-'}">
           <html:link action="/mainChange?method=changePath&amp;path=${node.prefix}"
             onclick="return toggle('${node.pathString}', '${node.pathString}');">
-            <img id="img_${node.pathString}" border="0" src="images/minus.gif" width="11" height="11" alt="-"/>
+            <img id="img_${node.pathString}" border="0" src="images/minus.gif" width="11" height="11" title="-"/>
           </html:link>
         </c:when>
         <c:otherwise>
-          <img src="images/blank.gif" width="11" height="11" alt=" "/>
+          <img src="images/blank.gif" width="11" height="11" title=" "/>
         </c:otherwise>
       </c:choose>
       <im:viewableSpan path="${fullpath}"node="${node}" idPrefix="browser">
@@ -103,30 +103,30 @@
       <c:choose>
         <c:when test="${!node.selected && !isNull && summary}">
           <html:link action="/mainChange?method=addToView&amp;path=${node.pathString}" title="${selectNodeTitle}">
-            <img class="arrow" src="images/show-ref.gif" width="60" height="13" alt="show" style="margin-right:-0.5ex"/>
+            <img class="arrow" src="images/show-ref.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
           </html:link>
         </c:when>
         <c:when test="${node.selected  && summary}">
-            <img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" alt="show" style="margin-right:-0.5ex"/>
+            <img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
         </c:when>
         <c:when test="${!node.selected && !isNull}">
           <html:link action="/mainChange?method=addToView&amp;path=${node.pathString}" title="${selectNodeTitle}">
-            <img class="arrow" src="images/show.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
+            <img class="arrow" src="images/show.gif" width="43" height="13" title="show" style="margin-right:-0.5ex"/>
           </html:link>
         </c:when>
         <c:otherwise>
-          <img class="arrow" src="images/show-disabled.gif" width="43" height="13" alt="show" style="margin-right:-0.5ex"/>
+          <img class="arrow" src="images/show-disabled.gif" width="43" height="13" title="show" style="margin-right:-0.5ex"/>
         </c:otherwise>
       </c:choose>
       <c:choose>
         <c:when test="${isNull}">
           <img class="arrow" src="images/constrain-disabled.gif" width="70"
-               height="13" alt="constrain"/> 
+               height="13" title="constrain"/> 
         </c:when>
         <c:otherwise>
           <html:link action="/mainChange?method=addPath&path=${node.pathString}" title="${addConstraintToTitle}"
             onclick="return addConstraint('${node.pathString}');">
-            <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain"/>
+            <img class="arrow" src="images/constrain.gif" width="70" height="13" title="constrain"/>
           </html:link>
         </c:otherwise>
       </c:choose>

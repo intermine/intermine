@@ -198,7 +198,7 @@ if (${!empty constrainOnBag}) {
                       <%-- might want to show up arrow --%>
                       <c:if test="${!empty options}">
                         <br/><im:vspacer height="2"/>
-                        <img src="images/up-arrow.gif" alt="^^^" border="0" height="13" width="13"/>
+                        <img src="images/up-arrow.gif" title="^^^" border="0" height="13" width="13"/>
                         <im:vspacer height="2"/>
                       </c:if>
                     </span>

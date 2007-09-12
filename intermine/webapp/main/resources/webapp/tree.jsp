@@ -22,16 +22,16 @@
       </c:forEach>
       <c:choose>
         <c:when test="${node.leaf}">
-          <img src="images/blank.gif" alt=" "/>
+          <img src="images/blank.gif" />
         </c:when>
         <c:when test="${node.open}">
           <html:link action="/changeTree?method=collapse&amp;node=${node.object.name}" anchor="${node.object.name}">
-            <img border="0" src="images/minus.gif" alt="-"/>
+            <img border="0" src="images/minus.gif" title="-"/>
           </html:link>
         </c:when>
         <c:otherwise>
           <html:link action="/changeTree?method=expand&amp;node=${node.object.name}" anchor="${node.object.name}">
-            <img border="0" src="images/plus.gif" alt="+"/>
+            <img border="0" src="images/plus.gif" title="+"/>
           </html:link>
         </c:otherwise>
       </c:choose>

@@ -239,14 +239,14 @@
             <strong>Legend: </strong>
             <img style="vertical-align:text-bottom;" border="0"
                  width="13" height="13" src="images/left_arrow.png"
-                 alt="${moveLeftString}"/>
+                 title="${moveLeftString}"/>
             &nbsp;&amp;&nbsp;<img style="vertical-align:text-bottom;" border="0"
                                   width="13" height="13" src="images/right_arrow.png"
-                                  alt="${moveLeftString}"/>
+                                  title="${moveLeftString}"/>
             Move columns - <img style="vertical-align:text-bottom;" border="0"
                                 src="images/close.png" title="${hideColumnTitle}" />
             Close column <c:if test="${isWebResults}">-
-            <img src="images/summary_maths.png" style="vertical-align:text-bottom;" alt="Column Summary">
+            <img src="images/summary_maths.png" style="vertical-align:text-bottom;" title="Column Summary">
               Get summary statistics for column</img></c:if>
           </td>
         </tr>
@@ -299,7 +299,7 @@
                     	<span title="${sortHelpString}">
                         	<img style="vertical-align:top;" border="0"
                             	   width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
-                               	alt="${column.name}"/>
+                               	title="${column.name}"/>
                         </span>                       
                       </c:if>      
                                
@@ -313,7 +313,7 @@
                                    title="${moveLeftTitle}">
                           <img style="vertical-align:top;" border="0"
                                width="13" height="13" src="images/left_arrow.png"
-                               alt="${moveLeftString}"/>
+                               title="${moveLeftString}"/>
                         </html:link>
                       </c:if>
 
@@ -321,7 +321,7 @@
                       <c:if test="${isWebResults && !empty pathNames[column.path]}">
 		        <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
                         <a href="javascript:getColumnSummary('${table}','${pathNames[column.path]}', &quot;${columnDisplayName}&quot;)" 
-                           title="${summaryTitle}"><img src="images/summary_maths.png" alt="${summaryTitle}"></a>
+                           title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"></a>
                       </c:if>
 
                       <%-- right --%>
@@ -334,7 +334,7 @@
                                    title="${moveRightTitle}">
                           <img style="vertical-align:top;" border="0"
                                width="13" height="13"
-                               src="images/right_arrow.png" alt="${moveRightString}"/>
+                               src="images/right_arrow.png" title="${moveRightString}"/>
                         </html:link>
                       </c:if>
 
@@ -503,7 +503,6 @@
           <fmt:message key="results.save"/>
         </div>
         <div class="body">
-          <fmt:message key="bag.save.msg"/>
           <ul>
             <li>
               <fmt:message key="bag.new"/>

@@ -91,7 +91,7 @@
         <div id="hiddenDiv3" style="display:none;" class="dataSetDescription">
           <dl>
             <ul><li><i>Anopheles gambiae</i> - Clustered EST data set version 8.0 from the 
-              <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php/">Imperial College London Centre for Bioinformatics</a>.
+              <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php/" target="_new">Imperial College London Centre for Bioinformatics</a>.
             </dt>
           </li></ul>
         </div>

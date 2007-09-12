@@ -26,7 +26,7 @@
     
     <td align="right" valign="middle" width="1">
       <a href="javascript:editName('${name}');">
-        <img border="0" src="images/edit.gif" width="13" height="13" alt="rename"/>
+        <img border="0" src="images/edit.gif" width="13" height="13" title="rename"/>
       </a>
     </td>
 <!-- /bagElementName.jsp -->

@@ -45,8 +45,8 @@
   <li>&nbsp;&nbsp;&nbsp;Filter:&nbsp;</li>
 </c:if>  
 <c:if test="${! empty PROFILE.username}">
-  <li ><a href="javascript:filterFavourites('${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" alt="Show Only Favourites" title="Show Only Favourites"/></a></li>
-  <li><a href="javascript:changeScope('${type}', '${wsListId}');"><img id="filter_scope_${wsListId}_${type}" src="images/filter_all.png" width="20" height="20" alt="Show all or mine only"/></a></li>
+  <li ><a href="javascript:filterFavourites('${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" title="Show Only Favourites"/></a></li>
+  <li><a href="javascript:changeScope('${type}', '${wsListId}');"><img id="filter_scope_${wsListId}_${type}" src="images/filter_all.png" width="20" height="20" title="Show all or mine only"/></a></li>
 </c:if>
   <!-- <li><img src="images/filter_sort_desc.png" width="20" height="20" alt="Sort by name"/></li>
   <li><img src="images/filter_date_desc.png" width="20" height="20" alt="Sort by Date"/>&nbsp;</li> -->
@@ -68,7 +68,7 @@
   </c:if>
   <li>
     &nbsp;&nbsp;<a href="#" onclick="javascript:return clearFilter('${type}', '${wsListId}')">
-      <img src="images/reset.png" alt="Reset search"/>
+      <img src="images/reset.png" title="Reset search"/>
     </a>
   </li>
 </ul>
@@ -79,7 +79,7 @@
         <span style="vertical-align:top;">Actions:&nbsp;</span>
 <c:choose>
 <c:when test="${type == 'template'}">
-  <html:image property="export" value="export" styleId="export_button" src="images/export.png" alt="Export selected Templates" title="Export selected Templates"/>
+  <html:image property="export" value="export" styleId="export_button" src="images/export.png"  title="Export selected Templates"/>
   <html:hidden property="pageName" value="templates"/>
   <html:hidden property="templateButton" value="export"/>
 </c:when>
@@ -98,13 +98,13 @@
 
 </script>
 <html:text property="newBagName" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
-<html:image property="union" value="union" src="images/union.png" onclick="$(listsButton).value='union'">
+<html:image property="union" value="union" src="images/union.png" onclick="$(listsButton).value='union'" title="union">
   <fmt:message key="history.union"/>
 </html:image>
-<html:image property="intersect" value="intersect" src="images/intersect.png" onclick="$(listsButton).value='intersect'">
+<html:image property="intersect" value="intersect" src="images/intersect.png" onclick="$(listsButton).value='intersect'" title="intersect">
   <fmt:message key="history.intersect"/>
 </html:image>
-<html:image property="subtract" value="subtract" src="images/substract.png" onclick="$(listsButton).value='substract'">
+<html:image property="subtract" value="subtract" src="images/substract.png" onclick="$(listsButton).value='substract'" title="subtract">
   <fmt:message key="history.subtract"/>
 </html:image>
 <html:hidden property="listsButton" value="" styleId="listsButton"/>

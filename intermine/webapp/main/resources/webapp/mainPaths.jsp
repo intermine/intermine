@@ -85,7 +85,7 @@
             <%--
             <html:link action="/mainChange?method=addConstraint&amp;path=${node.pathString}"
                        title="${addConstraintToTitle}">
-              <img class="arrow" src="images/constrain.gif" width="70" height="13" alt="constrain" style="vertical-align:middle"/>
+              <img class="arrow" src="images/constrain.gif" width="70" height="13" title="constrain" style="vertical-align:middle"/>
             </html:link>
             --%>
             <c:if test="${!lockedPaths[node.pathString]}">
@@ -94,12 +94,12 @@
               </fmt:message>
               <html:link action="/mainChange?method=removeNode&amp;path=${node.pathString}"
                          title="${removeNodeTitle}">
-                <img border="0" src="images/cross.gif" width="13" height="13" alt="x"/>
+                <img border="0" src="images/cross.gif" width="13" height="13" title="x"/>
               </html:link>
             </c:if>
             <c:if test="${lockedPaths[node.pathString]}">
               <img border="0" src="images/discross.gif" width="13" height="13"
-                   alt="x" title="<fmt:message key="query.disabledRemoveNodeTitle"/>"/>
+                   title="x" title="<fmt:message key="query.disabledRemoveNodeTitle"/>"/>
             </c:if>
           </div>
           <c:forEach var="constraint" items="${node.constraints}" varStatus="status">
@@ -124,13 +124,13 @@
               <fmt:message key="query.removeConstraintTitle" var="removeConstraintTitle"/>
               <html:link action="/mainChange?method=removeConstraint&amp;path=${node.pathString}&amp;index=${status.index}"
                          title="${removeConstraintTitle}">
-                <img border="0" src="images/cross.gif" width="13" height="13" alt="x"/>
+                <img border="0" src="images/cross.gif" width="13" height="13" title="x"/>
               </html:link>
               <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
               <html:link action="/mainChange?method=editConstraint&amp;path=${node.pathString}&amp;index=${status.index}"
                          onclick="return editConstraint('${node.pathString}', '${status.index}')"
                          title="${editConstraintTitle}">
-                <img border="0" src="images/edit.gif" width="13" height="13" alt="x"/>
+                <img border="0" src="images/edit.gif" width="13" height="13" title="x"/>
               </html:link>
               <c:if test="${TEMPLATE_BUILD_STATE != null}">
                 <c:choose>
@@ -139,16 +139,16 @@
                                titleKey="templateBuilder.editTemplateConstraint.linktitle">
                       <c:choose>
                         <c:when test="${constraint.editable}">
-                          <img border="0" src="images/unlocked.gif" width="13" height="13" alt="unlocked"/>
+                          <img border="0" src="images/unlocked.gif" width="13" height="13" title="unlocked"/>
                         </c:when>
                         <c:otherwise>
-                          <img border="0" src="images/locked.gif" width="13" height="13" alt="locked"/>
+                          <img border="0" src="images/locked.gif" width="13" height="13" title="locked"/>
                         </c:otherwise>
                       </c:choose>
                     </html:link>
                   </c:when>
                   <c:otherwise>
-                    <img border="0" src="images/locked-disabled.gif" width="13" height="13" alt="locked"
+                    <img border="0" src="images/locked-disabled.gif" width="13" height="13" title="locked"
                       title="<fmt:message key="templateBuilder.constraintNotEditable"/>"/>
                   </c:otherwise>
                 </c:choose>

@@ -17,7 +17,7 @@
       <td align="right" valign="top">
         <c:if test="${empty param['ctxHelpTxt']}">
           <a href="#" onclick="javascript:document.getElementById('ctxHelpDiv').style.display='none';return false">
-            <img border="0" src="images/cross.gif" alt="x"/>
+            <img border="0" src="images/cross.gif" title="x"/>
           </a>
         </c:if>
       </td>
