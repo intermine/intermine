@@ -136,10 +136,6 @@
     <action path="/collectionDetails" type="org.intermine.web.struts.CollectionDetailsAction">
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
-    <action path="/userTemplateAction" type="org.intermine.web.struts.UserTemplateAction" parameter="method">
-      <forward name="begin" redirect="true" path="/mymine.do"/>
-      <forward name="template" path="template.page"/>
-    </action>
     <action path="/mainChange" type="org.intermine.web.struts.QueryBuilderChange" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="browserLines" path="/mainBrowserLines.jsp"/>
