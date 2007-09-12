@@ -67,7 +67,7 @@
 
 <div style="${heightStyle} overflow: auto; background-color: white">
 
-<div style="${spinnerPaddingStyle}" id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" alt="Searching..."></div>
+<div style="${spinnerPaddingStyle}" id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" title="Searching..."></div>
 
 <c:choose>
   <c:when test="${empty filteredWebSearchables}">
@@ -170,10 +170,10 @@
                 <div class="wsListElement">
                   <c:choose>
                     <c:when test="${type=='template'}">
-                      <img border="0" class="arrow" src="images/template_t.gif" alt="-&gt;"/>
+                      <img border="0" class="arrow" src="images/template_t.gif" title="-&gt;"/>
                     </c:when>
                     <c:otherwise>
-                      <img border="0" class="arrow" src="images/bag_ico.png" alt="-&gt;"/>
+                      <img border="0" class="arrow" src="images/bag_ico.png" title="-&gt;"/>
 	                </c:otherwise>
     	          </c:choose>
                   <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${entry.key}">${entry.value.title} 

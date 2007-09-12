@@ -75,7 +75,7 @@
                 <td valign="top" width="99%">
                   <span id="queryClassSelect"></span>
                 </td>
-                <td align="right" valign="top"><a href="#" onclick="javascript:document.getElementById('classSelectDiv').style.display='none';return false"><img border="0" src="images/cross.gif" alt="x"></a></td>
+                <td align="right" valign="top"><a href="#" onclick="javascript:document.getElementById('classSelectDiv').style.display='none';return false"><img border="0" src="images/cross.gif" title="x"></a></td>
               </tr>
             </table>
           </div>

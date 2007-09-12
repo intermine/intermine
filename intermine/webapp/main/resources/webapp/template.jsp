@@ -157,7 +157,7 @@
                 <html:text property="attributeValues(${index})"/>
                 <%-- might want to show up arrow --%>
                 <c:if test="${!empty options}">
-                  <img src="images/left-arrow.gif" alt="&lt;-" border="0" height="13" width="13"/>
+                  <img src="images/left-arrow.gif" title="&lt;-" border="0" height="13" width="13"/>
                 </c:if>
               </span>
               <c:if test="${!empty options}">

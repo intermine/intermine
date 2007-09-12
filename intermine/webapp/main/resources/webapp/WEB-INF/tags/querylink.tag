@@ -21,7 +21,7 @@
   <span>
     ${text}
     <c:if test="${showArrow}">
-      <img border="0" class="arrow" src="images/right-arrow.gif" alt="-&gt;"/>
+      <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
     </c:if>
   </span>
 </html:link>

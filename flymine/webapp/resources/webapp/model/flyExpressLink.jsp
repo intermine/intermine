@@ -6,7 +6,7 @@
 
 <c:if test="${object.organism.taxonId == '7227'}">
   <p>
-    <html:link href="http://www.flyexpress.net/search.php?type=gene&search=${object.organismDbId}">
+    <html:link href="http://www.flyexpress.net/search.php?type=gene&search=${object.organismDbId}" target="_new">
       <html:img src="model/flyexpress.png"/>${object.organismDbId}
     </html:link>
   </p>

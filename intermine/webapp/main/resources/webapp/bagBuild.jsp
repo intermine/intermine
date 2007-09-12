@@ -71,7 +71,7 @@
 
 
 <im:boxarea titleKey="bagBuild.makeNewBag" stylename="plainbox" fixedWidth="60%">
-  <div class="bagBuild">
+  <div class="body">
     <html:form action="/buildBag" method="post" enctype="multipart/form-data" >
       <p><fmt:message key="bagBuild.bagFormText1"/></p>
       <br/>
@@ -115,7 +115,7 @@
          <div style="text-align:right;width:87%;">
            <html:link href=""
                       onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
-             (click to see an example)<img src="images/disclosed.gif" title="Show example" alt="Show example">
+             (click to see an example)<img src="images/disclosed.gif" title="Show example" title="Show example">
            </html:link>
          </div>
      </c:if>

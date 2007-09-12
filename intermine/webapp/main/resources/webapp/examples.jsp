@@ -24,7 +24,7 @@
         </c:if>
         <span class="link">
           <html:link action="/loadQuery?method=example&amp;name=${exampleQuery.key}">
-            <img class="arrow" src="images/right-arrow.gif" alt="->"/>
+            <img class="arrow" src="images/right-arrow.gif" title="->"/>
           </html:link>
         </span>
       </div>

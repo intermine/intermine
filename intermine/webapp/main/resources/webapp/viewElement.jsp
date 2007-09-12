@@ -30,7 +30,7 @@
                title="${removeFromViewTitle}">
       <img border="0" align="top"
            src="images/cross.gif" width="13" height="13"
-           alt="${removeFromViewString}" style="margin-top: 3px;"/>
+           title="${removeFromViewString}" style="margin-top: 3px;"/>
     </html:link>
 
   </div>
@@ -51,7 +51,7 @@
       <c:choose>
         <c:when test="${isFirst}">
           <img style="margin-right: 5px" border="0" align="middle"
-               src="images/blank13x13.gif" alt=" " width="13" height="13"/>
+               src="images/blank13x13.gif" title=" " width="13" height="13"/>
         </c:when>
         <c:otherwise>
           <fmt:message key="view.moveLeftHelp" var="moveLeftTitle">
@@ -63,7 +63,7 @@
                      title="${moveLeftTitle}">
             <img style="margin-right: 5px" border="0" align="middle"
                  src="images/left-arrow-square.gif" width="13" height="13"
-                 alt="${moveRightString}"/>
+                 title="${moveRightString}"/>
           </html:link>
 
         </c:otherwise>
@@ -74,7 +74,7 @@
 
     <%-- sort button --%>
     <input type="image" id="btn_${viewIndex}" onclick="javascript:updateSortOrder('${pathString}', '${viewIndex}');"
-           width="39" height="11" alt="sort" src="images/sort.gif"
+           width="39" height="11" title="sort" src="images/sort.gif"
            title="Click to sort results by this field"/>
 
     <c:if test="${!iePre7}">
@@ -83,7 +83,7 @@
     <c:choose>
       <c:when test="${isLast || errorPath}">
         <img style="margin-left: 5px" border="0" align="middle"
-             src="images/blank13x13.gif" alt=" " width="13" height="13" />
+             src="images/blank13x13.gif" width="13" height="13" />
       </c:when>
       <c:otherwise>
         <fmt:message key="view.moveRightHelp" var="moveRightTitle">
@@ -95,7 +95,7 @@
                    title="${moveRightTitle}">
           <img style="margin-left: 5px" border="0" align="middle"
                src="images/right-arrow-square.gif" width="13" height="13"
-               alt="${moveRightString}"/>
+               title="${moveRightString}"/>
         </html:link>
 
       </c:otherwise>
