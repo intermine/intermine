@@ -238,7 +238,7 @@ public class SaveBagAction extends InterMineAction
 
         /** 
          * Create a new SingleColumnResults object
-         * @param the list of lists to act on
+         * @param list the list of lists to act on
          */
         public SingleColumnResults(List list) {
             this.list = list;
