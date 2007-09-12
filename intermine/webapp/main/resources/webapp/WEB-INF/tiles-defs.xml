@@ -101,10 +101,6 @@
     <put name="body" value="templateProblems.jsp"/>
     <put name="pageName" value="templateProblems"/>
   </definition>
-  <definition name="search.page" extends="layout.template">
-    <put name="body" value="search.tile"/>
-    <put name="pageName" value="search"/>
-  </definition>
   <definition name="aspect.page" extends="layout.template">
     <put name="title" value="/aspectTitle.jsp" />
     <put name="body" value="aspect.tile"/>
@@ -198,7 +194,6 @@
   <definition name="tableCountEstimate.tile" path="/tableCountEstimate.jsp" 
               controllerUrl="/initTableCountEstimate.do"/>
   <definition name="aspect.tile" path="/aspect.jsp" controllerUrl="/initAspect.do"/>
-  <definition name="search.tile" path="/search.jsp" controllerUrl="/initSearch.do"/>
   <definition name="webSearchableList.tile" path="/webSearchableList.jsp"
               controllerUrl="/initWebSearchableList.do"/>
   <definition name="wsFilterList.tile" path="/wsFilterList.jsp"/>
