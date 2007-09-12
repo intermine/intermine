@@ -13,6 +13,11 @@ package org.intermine.web.struts;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,10 +26,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.LoginHandler;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
+import org.apache.struts.action.ActionMessage;
 
 /**
  * @author Xavier Watkins
@@ -57,7 +59,12 @@ public class CreateAccountAction extends LoginHandler
         pm.createProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
                 new HashMap()));
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        MailUtils.email(username, password, webProperties);
+        try {
+            MailUtils.email(username, password, webProperties);
+        } catch (Exception e) {
+            recordMessage(new ActionMessage("createAccount.badmail"), request);
+        }
+        
         /*
          * This code generates an MD5 key for the given username which is then
          * encoded in Hexadecimal. This could later be used for account
