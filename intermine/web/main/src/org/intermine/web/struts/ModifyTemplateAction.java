@@ -47,8 +47,6 @@ import org.apache.struts.action.ActionMessages;
  */
 public class ModifyTemplateAction extends InterMineAction
 {
-    private static final Logger LOG = Logger.getLogger(ModifyTemplateAction.class);
-
     /**
      * Forward to the correct method based on the button pressed.
      * @param mapping The ActionMapping used to select this instance
@@ -72,9 +70,7 @@ public class ModifyTemplateAction extends InterMineAction
             if (request.getParameter("delete") != null) {
                 errors = delete(mapping, form, request, response);
             } else if (request.getParameter("export") != null || mtf.getTemplateButton() != null) {
-                 export(mapping, form, request, response);
-            } else if (request.getParameter("remove_favourite") != null) {
-                 removeFavourite(mapping, form, request, response);
+                export(mapping, form, request, response);
             } 
         }
         saveErrors(request, (ActionMessages) errors);
@@ -170,38 +166,7 @@ public class ModifyTemplateAction extends InterMineAction
         out.flush();
     }
 
-    /**
-     * Remove the selected templates from the list of favourites.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
-     */
-    private ActionForward removeFavourite(ActionMapping mapping, ActionForm form,
-                          HttpServletRequest request,
-                          @SuppressWarnings("unused") HttpServletResponse response) {
-        HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = request.getSession().getServletContext();
-        ProfileManager pm =
-            (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        ModifyTemplateForm mqf = (ModifyTemplateForm) form;
-        for (int i = 0; i < mqf.getSelected().length; i++) {
-            String templateName = mqf.getSelected()[i];
-            List tagList =
-                pm.getTags("favourite", templateName, TagTypes.TEMPLATE, profile.getUsername());
-            for (Iterator iter = tagList.iterator(); iter.hasNext();) {
-                Tag tag = (Tag) iter.next();
-                pm.deleteTag(tag);
-            }
-        }
-        return new ForwardParameters(mapping.findForward("mymine"))
-        .addParameter("subtab", "templates").forward();
-    }
-    
+   
     private ActionForward getReturn(String pageName, ActionMapping mapping) {
         if (pageName != null && pageName.equals("MyMine")) {
             return mapping.findForward("mymine");
