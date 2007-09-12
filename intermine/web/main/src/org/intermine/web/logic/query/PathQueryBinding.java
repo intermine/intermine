@@ -71,9 +71,12 @@ public class PathQueryBinding
             writer.writeAttribute("name", queryName);
             writer.writeAttribute("model", modelName);
             writer.writeAttribute("view", StringUtil.join(query.getViewStrings(), " "));
-            if (query.getSortOrderStrings() != null) {
+            if (query.getSortOrderStrings() != null && !query.getSortOrderStrings().isEmpty()) {
                 writer.writeAttribute("sortOrder", 
                                       StringUtil.join(query.getSortOrderStrings(), " "));
+            } else {
+                writer.writeAttribute("sortOrder", 
+                                      StringUtil.join(query.getViewStrings(), " "));
             }
             if (query.getConstraintLogic() != null) {
                 writer.writeAttribute("constraintLogic", query.getConstraintLogic());
