@@ -10,6 +10,18 @@
 
     <!-- Add new news at the top here -->
     <item>
+      <title>FlyMine 8.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 8.1&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  In release 8.1 of FlyMine we have made some major changes to the layout of FlyMine. This has been done in response to feedback from users and to make the most exciting parts of FlyMine more obvious. We have also added public lists and a new help system.
+      </description>
+      <pubDate>Wed, 12th Sep 2007</pubDate>
+    </item>
+
+    <item>
       <title>FlyMine 8.0 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
