@@ -101,7 +101,6 @@ public class TemplatesImportForm extends ValidatorForm
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         ActionErrors errors = super.validate(mapping, request);
         if (errors != null && errors.size() > 0) {
             return errors;

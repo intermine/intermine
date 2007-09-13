@@ -84,7 +84,8 @@ public class SaveQueryForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+                      @SuppressWarnings("unused") HttpServletRequest request) {
         queryName = "";
     }
 }

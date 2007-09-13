@@ -45,9 +45,9 @@ public class TreeAction extends DispatchAction
      *  an exception
      */
     public ActionForward expand(ActionMapping mapping,
-                                       ActionForm form,
-                                       HttpServletRequest request,
-                                       HttpServletResponse response)
+                                @SuppressWarnings("unused") ActionForm form,
+                                HttpServletRequest request,
+                                @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
 
         Set openClasses = (Set) request.getSession().getAttribute("openClasses");
@@ -73,9 +73,9 @@ public class TreeAction extends DispatchAction
      *  an exception
      */
     public ActionForward collapse(ActionMapping mapping,
-                                       ActionForm form,
-                                       HttpServletRequest request,
-                                       HttpServletResponse response)
+                                  @SuppressWarnings("unused") ActionForm form,
+                                  HttpServletRequest request,
+                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         Set openClasses = (Set) request.getSession().getAttribute("openClasses");
         openClasses.remove(request.getParameter("node"));
@@ -100,9 +100,9 @@ public class TreeAction extends DispatchAction
      *  an exception
      */
     public ActionForward select(ActionMapping mapping,
-                                ActionForm form,
+                                @SuppressWarnings("unused") ActionForm form,
                                 HttpServletRequest request,
-                                HttpServletResponse response)
+                                @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String className = request.getParameter("node");

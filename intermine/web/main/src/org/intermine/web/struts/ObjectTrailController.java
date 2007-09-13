@@ -66,7 +66,7 @@ public class ObjectTrailController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = (Model) os.getModel();
+        Model model = os.getModel();
         String trail = request.getParameter("trail");
         // parse trail into bits with pipe delimiter
         String ids[] = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')

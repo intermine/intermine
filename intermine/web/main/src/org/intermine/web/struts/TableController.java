@@ -170,43 +170,6 @@ public class TableController extends TilesAction
         // selected then all the columns in the coresponding list should be disabled
         Map<String, List<String>> columnsToDisableMap = new HashMap<String, List<String>>();
 
-        /*
-         * code to make a columnsToDisableMap that disables only those columns that have a type
-         * that isn't a sub-type of the selected column
-        for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-            Column column = columns.get(columnIndex);
-            Path columnPath = column.getPath();
-            if (columnPath != null) {
-                Class columnEndType = columnPath.getLastClassDescriptor().getType();
-                if (columnEndType != null) {
-                    List<String> columnsToDisable = new ArrayList<String>();
-                    // find columns that should be disabled if an object from this column is 
-                    // selected
-                    for (int otherColumnIndex = 0; 
-                        otherColumnIndex < columns.size(); 
-                        otherColumnIndex++) {
-                        Column otherColumn = columns.get(otherColumnIndex);
-                        if (otherColumn.equals(column) || !otherColumn.isSelectable()) {
-                            continue;
-                        } else {
-                            Path otherColumnPath = otherColumn.getPath();
-                            if (otherColumnPath != null) {
-                                Class otherColumnEndType = 
-                                    otherColumnPath.getLastClassDescriptor().getType();
-                                if (otherColumnEndType != null) {
-                                    if (!columnEndType.isAssignableFrom(otherColumnEndType)) {
-                                        columnsToDisable.add("" + otherColumnIndex);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    columnsToDisableMap.put("" + columnIndex, columnsToDisable);
-                }
-            }
-        }
-        */
-        
         // disable all other columns that have a different type
         for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
             Column column = columns.get(columnIndex);
@@ -274,7 +237,7 @@ public class TableController extends TilesAction
         request.setAttribute("pathQuery", pt.getWebTable().getPathQuery());
         request.setAttribute("table", request.getParameter("table"));
 
-        Map<Path,String> pathNames = new HashMap<Path,String> ();
+        Map<Path, String> pathNames = new HashMap<Path, String> (); 
         for (Column column : columns) {
             Path path = column.getPath();
             pathNames.put(path, path.toStringNoConstraints());

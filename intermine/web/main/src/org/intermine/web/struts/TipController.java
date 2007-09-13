@@ -38,7 +38,7 @@ public class TipController extends TilesAction
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
@@ -51,7 +51,7 @@ public class TipController extends TilesAction
             Random generator = new Random();
             request.setAttribute("randomTip", getRandomTip(generator, i));
         } catch (NumberFormatException e) {
-
+            // do something clever
         }
         
         request.setAttribute("tipCount", tipCount);

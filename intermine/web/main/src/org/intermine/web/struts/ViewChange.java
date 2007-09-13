@@ -10,24 +10,22 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.actions.DispatchAction;
 
 /**
  * Action to handle links on view tile
@@ -35,7 +33,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class ViewChange extends DispatchAction
 {
-    private static final Logger LOG = Logger.getLogger(ViewChange.class);
     
     /**
      * Remove a Node from the results view
@@ -47,9 +44,9 @@ public class ViewChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward removeFromView(ActionMapping mapping,
-                                        ActionForm form,
+                                        @SuppressWarnings("unused") ActionForm form,
                                         HttpServletRequest request,
-                                        HttpServletResponse response)
+                                        @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
@@ -74,9 +71,9 @@ public class ViewChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward moveLeft(ActionMapping mapping,
-                                  ActionForm form,
+                                  @SuppressWarnings("unused") ActionForm form,
                                   HttpServletRequest request,
-                                  HttpServletResponse response)
+                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         int index = Integer.parseInt(request.getParameter("index"));
@@ -100,9 +97,9 @@ public class ViewChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward moveRight(ActionMapping mapping,
-                                   ActionForm form,
+                                   @SuppressWarnings("unused") ActionForm form,
                                    HttpServletRequest request,
-                                   HttpServletResponse response)
+                                   @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         int index = Integer.parseInt(request.getParameter("index"));
@@ -125,10 +122,10 @@ public class ViewChange extends DispatchAction
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      */
-    public ActionForward reorder(ActionMapping mapping,
-                                   ActionForm form,
+    public ActionForward reorder(@SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused")   ActionForm form,
                                    HttpServletRequest request,
-                                   HttpServletResponse response)
+                                   @SuppressWarnings("unused")   HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String newOrder[] = request.getParameterValues("viewDivs[]");

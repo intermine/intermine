@@ -113,7 +113,8 @@ public class SaveBagForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+                                 HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
@@ -164,7 +165,8 @@ public class SaveBagForm extends ActionForm
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+                      @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }
 }

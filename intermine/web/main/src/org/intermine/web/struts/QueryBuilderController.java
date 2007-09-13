@@ -64,8 +64,11 @@ public class QueryBuilderController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse response)
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context, 
+                                 @SuppressWarnings("unused") ActionMapping mapping, 
+                                 @SuppressWarnings("unused") ActionForm form,
+                                 HttpServletRequest request, 
+                                 HttpServletResponse response)
                     throws Exception {
         populateRequest(request, response);
         return null;
@@ -81,7 +84,8 @@ public class QueryBuilderController extends TilesAction
      *            the current response
      * {@inheritDoc}
      */
-    public static void populateRequest(HttpServletRequest request, HttpServletResponse response) {
+    public static void populateRequest(HttpServletRequest request, 
+                                       @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);

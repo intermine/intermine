@@ -56,7 +56,7 @@ public class QuickSearchAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext context = session.getServletContext();
@@ -85,7 +85,8 @@ public class QuickSearchAction extends InterMineAction
             PathNode node =   ((PathNode) template.getEditableNodes().get(0));
 
             valuesMap.put(node.getPathString(), qsf.getValue());
-            constraintOpsMap.put(node.getPathString(), ConstraintOp.getOpForIndex(6));
+            constraintOpsMap.put(node.getPathString(), 
+                                 ConstraintOp.getOpForIndex(Integer.valueOf(6)));
             
             TemplateQuery queryCopy = TemplateHelper.editTemplate(valuesMap, 
                                                                   constraintOpsMap, template, null);

@@ -64,10 +64,10 @@ public class ObjectDetailsController extends InterMineAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -291,7 +291,7 @@ public class ObjectDetailsController extends InterMineAction
         StringBuffer sb = new StringBuffer();
         for (Object object : results) {
             List list = (List) object;
-            if(sb.length() != 0) { sb.append(","); }
+            if (sb.length() != 0) { sb.append(","); }
             sb.append(list.get(0));
         }
         return sb.toString();

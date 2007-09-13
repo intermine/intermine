@@ -10,20 +10,17 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.results.DisplayObject;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.results.DisplayObject;
 
 /**
  * Controller for the objectDetailsAspect tile.
@@ -40,9 +37,6 @@ public class ObjectDetailsAspectController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         DisplayObject dobj = (DisplayObject) context.getAttribute("displayObject");
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         
