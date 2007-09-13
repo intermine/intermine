@@ -44,11 +44,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * An implementation of TableExporter that exports LocatedSequenceFeature objects in GFF3 format.
@@ -168,18 +168,18 @@ public class GFF3Exporter implements TableExporter
             }
 
             if (writtenFeaturesCount == 0) {
-                ActionErrors messages = new ActionErrors();
-                ActionError error = new ActionError("errors.export.nothingtoexport");
-                messages.add(ActionErrors.GLOBAL_ERROR, error);
+                ActionMessages messages = new ActionMessages();
+                ActionMessage error = new ActionMessage("errors.export.nothingtoexport");
+                messages.add(ActionMessages.GLOBAL_MESSAGE, error);
                 request.setAttribute(Globals.ERROR_KEY, messages);
 
                 return mapping.findForward("results");
             }
 
         } catch (ObjectStoreException e) {
-            ActionErrors messages = new ActionErrors();
-            ActionError error = new ActionError("errors.query.objectstoreerror");
-            messages.add(ActionErrors.GLOBAL_ERROR, error);
+            ActionMessages messages = new ActionMessages();
+            ActionMessage error = new ActionMessage("errors.query.objectstoreerror");
+            messages.add(ActionMessages.GLOBAL_MESSAGE, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
             LOG.error(e);
         }
