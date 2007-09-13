@@ -3,7 +3,7 @@
 <h3>You can query for information about any BioEntity using the any name or identifier.</h3>
 
 <div class="tipText">When querying for results you can enter a variety of identifiers into the LOOKUP
-field.  You can use FlyBase numbers, symbols, identifiers, names, etc.</div>
+field.  You can use symbols, identifiers, names, etc.</div>
 
 <br/><br/>
 
