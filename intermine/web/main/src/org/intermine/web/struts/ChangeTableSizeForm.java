@@ -67,7 +67,8 @@ public class ChangeTableSizeForm extends ActionForm
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+                      HttpServletRequest request) {
         initialise();
         HttpSession session = request.getSession();
         //PagedTable pr = (PagedTable) request.getSession().getAttribute(Constants.RESULTS_TABLE);

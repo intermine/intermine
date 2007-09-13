@@ -152,12 +152,12 @@ public class FeedbackForm extends ValidatorForm
     
     /**
      * Check part of the message for injected headers.
-     * @param message some part of the message
+     * @param msg some part of the message
      * @param buffer output buffer with bad lines stripped
      * @return true if message contains headers, false if not
      */
-    protected boolean containsHeaders(String message, StringBuffer buffer) {
-        String lines[] = message.split("\n");
+    protected boolean containsHeaders(String msg, StringBuffer buffer) {
+        String lines[] = msg.split("\n");
         boolean found = false;
         for (int i = 0; i < lines.length; i++) {
             if (isEmailHeader(lines[i], "to")

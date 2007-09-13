@@ -42,9 +42,9 @@ public class ChangeTableSizeAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws ServletException {
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));

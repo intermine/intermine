@@ -13,8 +13,6 @@ package org.intermine.web.struts;
 import java.util.Map;
 
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.PathQueryBinding;
@@ -28,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -44,7 +41,7 @@ import org.apache.struts.util.MessageResources;
  */
 public class LoadQueryAction extends DispatchAction
 {
-    private static final Logger LOG = Logger.getLogger(LoadQueryAction.class);
+  
 
     /**
      * Load a query from path query XML passed as a request parameter.
@@ -57,7 +54,7 @@ public class LoadQueryAction extends DispatchAction
      *  an exception
      */
     public ActionForward xml(ActionMapping mapping,
-                              ActionForm form,
+                             @SuppressWarnings("unused") ActionForm form,
                               HttpServletRequest request,
                               HttpServletResponse response)
         throws Exception {
@@ -68,9 +65,9 @@ public class LoadQueryAction extends DispatchAction
         String queryXml = request.getParameter("query");
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
         
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        Map<String, InterMineBag> allBags =
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        //Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        //Map<String, InterMineBag> allBags =
+        //    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         Map queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
                                                  profile.getSavedBags(),
                                                  servletContext);
@@ -82,9 +79,9 @@ public class LoadQueryAction extends DispatchAction
         } else {
             QueryMonitorTimeout clientState
                     = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-            MessageResources messages =
+            MessageResources msgs =
                 (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-            String qid = SessionMethods.startQuery(clientState, session, messages, false, query);
+            String qid = SessionMethods.startQuery(clientState, session, msgs, false, query);
             Thread.sleep(200); // slight pause in the hope of avoiding holding page
             return new ForwardParameters(mapping.findForward("waiting"))
                                 .addParameter("trail", trail)

@@ -132,7 +132,8 @@ public class BagUploadConfirmForm extends ActionForm
    /**
     * {@inheritDoc}
     */
-   public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+   public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+                                HttpServletRequest request) {
        ActionErrors errors = new ActionErrors();
        if (bagName.equals("") && request.getParameter("goBack") == null) {
            
