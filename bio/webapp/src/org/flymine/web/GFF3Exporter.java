@@ -10,15 +10,31 @@ package org.flymine.web;
  *
  */
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.bio.util.GFF3Util;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.util.TypeUtil.FieldInfo;
+import org.intermine.web.logic.export.ExportHelper;
+import org.intermine.web.logic.export.TableExporter;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebTable;
+import org.intermine.web.logic.session.SessionMethods;
+
+import org.flymine.model.genomic.LocatedSequenceFeature;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -33,21 +49,6 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.intermine.bio.io.gff3.GFF3Record;
-import org.intermine.bio.util.GFF3Util;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.TypeUtil.FieldInfo;
-import org.intermine.web.logic.export.ExportHelper;
-import org.intermine.web.logic.export.TableExporter;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.results.WebTable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.struts.ExportController;
 
 /**
  * An implementation of TableExporter that exports LocatedSequenceFeature objects in GFF3 format.
