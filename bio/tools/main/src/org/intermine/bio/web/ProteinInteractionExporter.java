@@ -18,25 +18,12 @@ package org.intermine.bio.web;
  * @author Florian Reisinger
  * @author Richard Smith
  */
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.flymine.model.genomic.ProteinInteraction;
 import org.intermine.bio.networkview.FlyNetworkCreator;
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.model.InterMineObject;
@@ -48,6 +35,22 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
+
+import org.flymine.model.genomic.ProteinInteraction;
+
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * An implementation of TableExporter that exports protein interactions 
@@ -144,18 +147,20 @@ public class ProteinInteractionExporter implements TableExporter
             }
 
             if (writtenInteractionsCount == 0) {
-                ActionErrors messages = new ActionErrors();
-                ActionError error = new ActionError("errors.export.nothingtoexport");
-                messages.add(ActionErrors.GLOBAL_ERROR, error);
-                request.setAttribute(Globals.ERROR_KEY, messages);
 
+                ActionMessages messages = new ActionMessages();
+                ActionMessage error = new ActionMessage("errors.export.nothingtoexport");
+                messages.add(ActionMessages.GLOBAL_MESSAGE, error);
+                request.setAttribute(Globals.ERROR_KEY, messages);
+               
+                
                 return mapping.findForward("results");
             }
         //} catch (ObjectStoreException e) {
         } catch (Exception e) {
-            ActionErrors messages = new ActionErrors();
-            ActionError error = new ActionError("errors.query.objectstoreerror");
-            messages.add(ActionErrors.GLOBAL_ERROR, error);
+            ActionMessages messages = new ActionMessages();
+            ActionMessage error = new ActionMessage("errors.query.objectstoreerror");
+            messages.add(ActionMessages.GLOBAL_MESSAGE, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
         }
         return null;

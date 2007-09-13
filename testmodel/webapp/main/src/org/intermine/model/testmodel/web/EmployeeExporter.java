@@ -10,19 +10,8 @@ package org.intermine.model.testmodel.web;
  *
  */
 
-import java.io.PrintStream;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
@@ -30,6 +19,19 @@ import org.intermine.web.logic.export.TableExporter;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
+
+import java.io.PrintStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * An implementation of TableExporter that exports Employee objects.
@@ -103,10 +105,11 @@ public class EmployeeExporter implements TableExporter
 
             printStream.close();
         } catch (ObjectStoreException e) {
-            ActionErrors messages = new ActionErrors();
-            ActionError error = new ActionError("errors.query.objectstoreerror");
-            messages.add(ActionErrors.GLOBAL_ERROR, error);
+            ActionMessages messages = new ActionMessages();
+            ActionMessage error = new ActionMessage("errors.query.objectstoreerror");
+            messages.add(ActionMessages.GLOBAL_MESSAGE, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
+     
         }
 
         return null;
