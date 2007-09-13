@@ -39,7 +39,7 @@
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
   <tiles:put name="loginMessageKey" value="template.notlogged"/>
 </tiles:insert>
-<html:link anchor="templatetop" action="templates"><img src="images/go_to_top.png">top</html:link>
+<html:link anchor="templatetop" action="templates"><img src="images/go_to_top.png" title="Click here to jump to the top of this page">top</html:link>
 </div>
 </im:boxarea>
 

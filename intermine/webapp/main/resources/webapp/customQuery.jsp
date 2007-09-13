@@ -16,12 +16,12 @@
       <p><fmt:message key="customQuery.intro"/></p><br>
 	     	  <html:link action="/tree">
 	            Browse data model
-	            <img border="0" class="arrow" src="images/right-arrow.gif" title="->"/>
+	            <img border="0" class="arrow" src="images/right-arrow.gif" title="Click here to browse the data model"/>
 	          </html:link>
 	          <br/>
 	          <html:link action="/importQueries?query_builder=yes">
 	            <fmt:message key="begin.import.query"/>
-	            <img border="0" class="arrow" src="images/right-arrow.gif" title="->"/>
+	            <img border="0" class="arrow" src="images/right-arrow.gif" title="Click here to import a query"/>
 	          </html:link>
 	          <br/>
 	          <%-- TODO this should be done elsewhere --%>	
@@ -30,14 +30,14 @@
             	<c:set var="linky" value="login.do?returnto=%2Fmymine.do%3Fpage%3Dsaved"/>
             	<html:link action="${linky}">
 	            Login to view saved queries
-	            <img border="0" class="arrow" src="images/right-arrow.gif" title="->"/>
+	            <img border="0" class="arrow" src="images/right-arrow.gif" title="Click here to login"/>
 	          </html:link>
             </c:when>
             <c:otherwise>
             	<c:set var="linky" value="/mymine.do?subtab=saved"/>
             	<html:link action="${linky}">
 	            View saved queries
-	            <img border="0" class="arrow" src="images/right-arrow.gif" title="->"/>
+	            <img border="0" class="arrow" src="images/right-arrow.gif" title="Click here to view saved queries"/>
 	          </html:link>
             </c:otherwise>
 	        </c:choose>

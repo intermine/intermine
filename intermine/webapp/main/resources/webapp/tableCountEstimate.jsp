@@ -15,7 +15,7 @@
 </fmt:message>
 <span class="resBar">&nbsp;|&nbsp;</span>
 <span id="resultsCountEstimate" style="display: inline">
-  <img src="images/spinner.gif"/>
+  <img src="images/spinner.gif" title="Waiting..." />
   <fmt:message key="results.pageinfo.estimate"/>
   ${resultsTable.size}
   <im:helplink key="results.help.estimate"/>

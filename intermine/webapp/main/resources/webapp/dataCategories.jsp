@@ -12,10 +12,10 @@
   <div id="leftCol">
       <div id="pageDesc" class="pageDesc"><p><fmt:message key="dataCategories.intro"/></p></div>
       <im:boxarea title="Actions" stylename="plainbox" >
-           <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a> <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/><BR/> 
+           <a href="/sources.html"><fmt:message key="dataCategories.action1"/></a> <img border="0" class="arrow" src="images/right-arrow.gif" alt="Go"/><BR/> 
            <html:link action="/templates">
              <fmt:message key="dataCategories.action2"/>
-             <img border="0" class="arrow" src="images/right-arrow.gif" alt="->"/>
+             <img border="0" class="arrow" src="images/right-arrow.gif" alt="Go"/>
            </html:link>
       </im:boxarea>
    </div>

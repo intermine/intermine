@@ -43,7 +43,7 @@
     </c:choose>
   </span>
   <a href="javascript:editName('${pathName}');" title="change description">
-    <img border="0" src="images/edit.gif" width="13" height="13" title="change description"/>
+    <img border="0" src="images/edit.gif" width="13" height="13" title="Click here to change description"/>
   </a>
 </span>
 <!-- /viewElementDescription.jsp -->

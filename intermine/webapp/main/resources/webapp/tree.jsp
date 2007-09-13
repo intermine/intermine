@@ -26,12 +26,12 @@
         </c:when>
         <c:when test="${node.open}">
           <html:link action="/changeTree?method=collapse&amp;node=${node.object.name}" anchor="${node.object.name}">
-            <img border="0" src="images/minus.gif" title="-"/>
+            <img border="0" src="images/minus.gif" title="Click here to hide children"/>
           </html:link>
         </c:when>
         <c:otherwise>
           <html:link action="/changeTree?method=expand&amp;node=${node.object.name}" anchor="${node.object.name}">
-            <img border="0" src="images/plus.gif" title="+"/>
+            <img border="0" src="images/plus.gif" title="Click here to show children"/>
           </html:link>
         </c:otherwise>
       </c:choose>

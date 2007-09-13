@@ -25,7 +25,7 @@
             <tr>
               <td>
                 <html:link action="/aspect?name=${set.name}">
-                  <img src="<html:rewrite page="/${set.iconImage}"/>" class="dsIconImage" width="${iconSize}" height="${iconSize}"/>
+                  <img src="<html:rewrite page="/${set.iconImage}"/>" title="${set.name}" class="dsIconImage" width="${iconSize}" height="${iconSize}"/>
                 </html:link>
               </td>
               <td class="aspectIconCell">

@@ -168,14 +168,6 @@
             <c:forEach items="${filteredWebSearchables}" var="entry">
               <li id='${wsListId}_${type}_item_${entry.value.name}'>
                 <div class="wsListElement">
-                  <c:choose>
-                    <c:when test="${type=='template'}">
-                      <img border="0" class="arrow" src="images/template_t.gif" title="-&gt;"/>
-                    </c:when>
-                    <c:otherwise>
-                      <img border="0" class="arrow" src="images/bag_ico.png" title="-&gt;"/>
-	                </c:otherwise>
-    	          </c:choose>
                   <html:link action="/gotows?type=${type}&amp;scope=${scope}&amp;name=${entry.key}">${entry.value.title} 
                   </html:link>
                   <tiles:insert name="setFavourite.tile" flush="false">
