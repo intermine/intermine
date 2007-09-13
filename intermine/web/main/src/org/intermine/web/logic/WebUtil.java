@@ -73,14 +73,14 @@ public abstract class WebUtil
                                             int defaultValue) {
         Map webProperties =
             (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-        String maxBagSizeString = (String) webProperties.get(propertyName);
+        String n = (String) webProperties.get(propertyName);
 
         int intVal = defaultValue;
 
         try {
-            intVal = Integer.parseInt(maxBagSizeString);
+            intVal = Integer.parseInt(n);
         } catch (NumberFormatException e) {
-            LOG.warn("Failed to parse " + propertyName + " property: " + maxBagSizeString);
+            LOG.warn("Failed to parse " + propertyName + " property: " + n);
         }
 
         return intVal;
