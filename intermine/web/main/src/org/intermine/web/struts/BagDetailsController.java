@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.BagTableDisplayer;
 import org.intermine.web.logic.config.GraphDisplayer;
@@ -213,8 +214,10 @@ public class BagDetailsController extends TilesAction
                 new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig,
                                       classKeys);
 
+            int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
+            
             // TODO put 5 in properties file
-            PagedTable pagedColl = new PagedTable(webPathCollection, 5);
+            PagedTable pagedColl = new PagedTable(webPathCollection, pageSize);
             request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);
             request.setAttribute("bagSize", new Integer(imBag.size()));
