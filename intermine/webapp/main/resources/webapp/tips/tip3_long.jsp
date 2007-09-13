@@ -1,6 +1,6 @@
 <h3>You can upload and query lists of data.</h3>
 
-<div class="tipText">If you have a list of genes, proteins, etc., you can upload that list using the 
+<div class="tipText">If you have a list of data, you can upload that list using the 
 form on the 'Lists' page (click on the 'Upload' tab of the lists page).</div>  
 
 <br/><br/>
