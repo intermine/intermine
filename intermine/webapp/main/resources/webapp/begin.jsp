@@ -20,7 +20,7 @@
 	         <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
                    <td style="height:80px;padding:10px">
                      <html:link action="/aspect?name=${set.name}">
-                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon" width="40px" height="40px" />
+                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon" title="Click here to view the ${set.name} Data Category" width="40px" height="40px" />
                      </html:link>
                      <p>
                        <html:link action="/aspect?name=${set.name}">
@@ -65,7 +65,7 @@
             <tiles:put name="showSearchBox" value="false"/>
           </tiles:insert>
         </div>
-        <im:useTransparentImage src="/images/search_with_templates.png" id="search_with_templates" link="templates" height="22px" width="153px" floatValue="right" breakFloat="true" />
+        <im:useTransparentImage src="/images/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" link="templates" height="22px" width="153px" floatValue="right" breakFloat="true" />
       </im:boxarea>
      
       <im:boxarea title="Lists" titleLink="/bag.do" stylename="gradientbox">
@@ -87,9 +87,8 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         </div>
-        <im:useTransparentImage src="/images/view_lists.png" id="view_lists" link="
-bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
-        <im:useTransparentImage src="/images/create_lists.png" id="create_lists" link="bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/images/view_lists.png" id="view_lists" title="Click here to View Lists" link="bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/images/create_lists.png" id="create_lists" title="Click here to Upload Lists" link="bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:boxarea>
 
       <im:boxarea title="Query Builder" titleLink="/customQuery.do" stylename="gradientbox">
@@ -98,6 +97,7 @@ bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="t
         <div>
           <div id="qbStartQuery">
             Start a query from:
+            <!-- loop through starting classes -->
             <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Gene">
               Gene 
             </html:link>,
@@ -111,7 +111,7 @@ bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="t
             <fmt:message key="begin.importQuery"/>
           </html:link>
         </div>
-        <im:useTransparentImage src="/images/build_a_query.png" id="build_a_query" link="customQuery" height="22px" width="120px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/images/build_a_query.png" id="build_a_query" title="Build A Query" link="customQuery" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:boxarea>
 </div>
 
