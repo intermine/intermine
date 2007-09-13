@@ -79,8 +79,11 @@ public class TemplateController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
-            ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+                                 @SuppressWarnings("unused") ActionMapping mapping, 
+                                 ActionForm form, 
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);

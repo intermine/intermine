@@ -41,8 +41,12 @@ public class SetFavouriteController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward execute(ComponentContext context, 
+                                 @SuppressWarnings("unused") ActionMapping mapping, 
+                                 @SuppressWarnings("unused") ActionForm form,
+                                 HttpServletRequest request, 
+                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    throws Exception {
         String name = (String) context.getAttribute("name");
         String type = (String) context.getAttribute("type");
         HttpSession session = request.getSession();

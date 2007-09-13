@@ -43,9 +43,9 @@ public class UserTemplateAction extends InterMineDispatchAction
      *  an exception
      */
     public ActionForward delete(ActionMapping mapping,
-                                ActionForm form,
+                                @SuppressWarnings("unused") ActionForm form,
                                 HttpServletRequest request,
-                                HttpServletResponse response)
+                                @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();

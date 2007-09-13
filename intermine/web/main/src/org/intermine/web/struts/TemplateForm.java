@@ -234,7 +234,8 @@ public class TemplateForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+                                 HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         String queryName = getTemplateName();
@@ -305,7 +306,8 @@ public class TemplateForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void reset(ActionMapping mapping, 
+                      @SuppressWarnings("unused") HttpServletRequest request) {
         reset();
     }
     

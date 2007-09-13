@@ -14,6 +14,7 @@ package org.intermine.web.struts;
 import java.util.List;
 
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -41,12 +42,12 @@ public class SortOrderChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward removeFromSortOrder(ActionMapping mapping,
-                                        ActionForm form,
+                                             @SuppressWarnings("unused") ActionForm form,
                                         HttpServletRequest request,
-                                        HttpServletResponse response)
+                                        @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        String path = request.getParameter("path");
+        //String path = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         
         query.removePathStringFromSortOrder();
@@ -65,9 +66,9 @@ public class SortOrderChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward addToSortOrder(ActionMapping mapping,
-                                        ActionForm form,
+                                        @SuppressWarnings("unused") ActionForm form,
                                         HttpServletRequest request,
-                                        HttpServletResponse response)
+                                        @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("pathString");
@@ -93,9 +94,9 @@ public class SortOrderChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward changeDirection(ActionMapping mapping,
-                                         ActionForm form,
+                                         @SuppressWarnings("unused") ActionForm form,
                                          HttpServletRequest request,
-                                         HttpServletResponse response)
+                                         @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         HttpSession session = request.getSession();      
         String direction = request.getParameter("direction");
@@ -121,15 +122,15 @@ public class SortOrderChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward moveLeft(ActionMapping mapping,
-                                  ActionForm form,
+                                  @SuppressWarnings("unused") ActionForm form,
                                   HttpServletRequest request,
-                                  HttpServletResponse response)
+                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         int index = Integer.parseInt(request.getParameter("index"));
 
-        List sortOrder = SessionMethods.getEditingSortOrder(session);
-        Object o = sortOrder.get(index - 1);
+        List<OrderBy> sortOrder = SessionMethods.getEditingSortOrder(session);
+        OrderBy o = sortOrder.get(index - 1);
         sortOrder.set(index - 1, sortOrder.get(index));
         sortOrder.set(index, o);
 
@@ -147,56 +148,19 @@ public class SortOrderChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward moveRight(ActionMapping mapping,
-                                   ActionForm form,
+                                   @SuppressWarnings("unused") ActionForm form,
                                    HttpServletRequest request,
-                                   HttpServletResponse response)
+                                   @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         int index = Integer.parseInt(request.getParameter("index"));
 
-        List sortOrder = SessionMethods.getEditingSortOrder(session);
-        Object o = sortOrder.get(index + 1);
+        List<OrderBy> sortOrder = SessionMethods.getEditingSortOrder(session);
+        OrderBy o = sortOrder.get(index + 1);
         sortOrder.set(index + 1, sortOrder.get(index));
         sortOrder.set(index, o);
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
     }
-    
-    /**
-     * not used
-     * AJAX request - reorder sort order.
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     */
-//    public ActionForward reorder(ActionMapping mapping,
-//                                   ActionForm form,
-//                                   HttpServletRequest request,
-//                                   HttpServletResponse response)
-//        throws Exception {
-//        HttpSession session = request.getSession();
-
-//        String newOrder[] = request.getParameterValues("sortOrderDivs[]");
-//        String oldOrder[] = request.getParameterValues("oldSortOrder[]");
-//
-//        
-//        List sortOrder = SessionMethods.getEditingSortOrder(session);
-//        ArrayList newView = new ArrayList();
-//        
-//        for (int i = 0; i < sortOrder.size(); i++) {
-//            int newi = Integer.parseInt(newOrder[i]);
-//            int oldi = Arrays.asList(oldOrder).indexOf("" + newi);
-//            newView.add(sortOrder.get(oldi));
-//        }
-//        
-//        sortOrder.clear();
-//        sortOrder.addAll(newView);        
-
-//        return null;
-//    }
-
 }

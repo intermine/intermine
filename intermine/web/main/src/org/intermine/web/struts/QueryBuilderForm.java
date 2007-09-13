@@ -305,7 +305,8 @@ public class QueryBuilderForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
+                                 HttpServletRequest request) {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
@@ -398,7 +399,8 @@ public class QueryBuilderForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+                      HttpServletRequest request) {
         bagOp = null;
         bagValue = null;
         attributeOp = null;

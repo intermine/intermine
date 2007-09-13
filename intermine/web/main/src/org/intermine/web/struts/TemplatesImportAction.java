@@ -47,17 +47,14 @@ public class TemplatesImportAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         TemplatesImportForm tif = (TemplatesImportForm) form;
-
         Map templates = null;
         int deleted = 0, imported = 0, renamed = 0;
-        
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags,
