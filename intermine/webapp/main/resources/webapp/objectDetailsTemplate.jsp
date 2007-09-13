@@ -39,7 +39,7 @@
       <div class="templateIcon">
         <html:link action="/modifyDetails?method=unverbosify&amp;field=${templateName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${trail}"
           onclick="return toggleTemplateList('${fn:replace(placement, ' ', '_')}', '${templateName}')">
-          <img border="0" src="images/minus.gif" title="-" id="img_${uid}" height="11" width="11"/>
+          <img border="0" src="images/minus.gif" title="Click here to hide these data" id="img_${uid}" height="11" width="11"/>
         </html:link>
       </div>
     </c:when>
@@ -47,7 +47,7 @@
       <div class="templateIcon">
         <html:link action="/modifyDetails?method=verbosify&amp;field=${templateName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${trail}"
           onclick="return toggleTemplateList('${fn:replace(placement, ' ', '_')}', '${templateName}')">
-          <img border="0" src="images/plus.gif" title="+" id="img_${uid}" height="11" width="11"/>
+          <img border="0" src="images/plus.gif" title="Click here to show these data" id="img_${uid}" height="11" width="11"/>
         </html:link>
       </div>
     </c:otherwise>

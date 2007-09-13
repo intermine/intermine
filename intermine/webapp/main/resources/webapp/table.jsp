@@ -246,7 +246,7 @@
             Move columns - <img style="vertical-align:text-bottom;" border="0"
                                 src="images/close.png" title="${hideColumnTitle}" />
             Close column <c:if test="${isWebResults}">-
-            <img src="images/summary_maths.png" style="vertical-align:text-bottom;" title="Column Summary">
+            <img src="images/summary_maths.png" style="vertical-align:text-bottom;" title="Click here to view Column Summary statistics">
               Get summary statistics for column</img></c:if>
           </td>
         </tr>

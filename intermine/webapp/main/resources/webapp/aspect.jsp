@@ -45,7 +45,7 @@
     </div>
   </c:if>
 
-  <img src="${ASPECTS[aspect.name].iconImage}" class="aspectPageIcon" align="left"/>
+  <img src="${ASPECTS[aspect.name].iconImage}" title="${ASPECTS[aspect.name]}" class="aspectPageIcon" align="left"/>
   <div class="body aspectIntro">
     ${aspect.introText}
   </div>

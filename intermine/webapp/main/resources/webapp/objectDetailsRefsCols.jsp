@@ -27,7 +27,7 @@
               <c:choose>
                 <c:when test="${verbose && collection.size > 0}">
                   <html:link onclick="return toggleCollectionVisibility('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"  action="/modifyDetails?method=unverbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
-                    <img id="img_${placement}_${fieldName}" border="0" src="images/minus.gif" title="-" width="11" height="11"/>
+                    <img id="img_${placement}_${fieldName}" title="Click here to view ${fieldName}" border="0" src="images/minus.gif" title="-" width="11" height="11"/>
                     <span class="collectionField">${fieldName}</span>
                     <c:forEach items="${object.clds}" var="cld">
                       <im:typehelp type="${cld.unqualifiedName}.${fieldName}"/>
@@ -36,7 +36,7 @@
                 </c:when>
                 <c:when test="${collection.size > 0}">
                   <html:link onclick="return toggleCollectionVisibility('${placement}', '${fieldName}', '${object.object.id}', '${param.trail}')"  action="/modifyDetails?method=verbosify&amp;field=${fieldName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${param.trail}">
-                    <img id="img_${placement}_${fieldName}" border="0" src="images/plus.gif" title="+" width="11" height="11"/>
+                    <img id="img_${placement}_${fieldName}" title="Click here to view ${fieldName}"  border="0" src="images/plus.gif" title="+" width="11" height="11"/>
                     <span class="collectionField">${fieldName}</span>
                     <c:forEach items="${object.clds}" var="cld">
                       <im:typehelp type="${cld.unqualifiedName}.${fieldName}"/>

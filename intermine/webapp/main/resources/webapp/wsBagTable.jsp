@@ -40,7 +40,7 @@
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
   <tiles:put name="loginMessageKey" value="lists.notlogged"/>
 </tiles:insert>
-<html:link anchor="liststop" action="bag"><img src="images/go_to_top.png" title="top"/>top</html:link>
+<html:link anchor="liststop" action="bag"><img src="images/go_to_top.png" title="Click here to jump to the top of the page"/>top</html:link>
 <c:if test="${(fn:length(PROFILE.savedBags) > 0) && (scope == 'user')}">
   <p width="100%" align="right">
     <html:submit property="delete">

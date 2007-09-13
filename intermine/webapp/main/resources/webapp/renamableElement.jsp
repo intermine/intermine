@@ -29,6 +29,6 @@
 	</c:choose> 
  </span>
   <a href="javascript:editName('${name}');">
-    <img border="0" src="images/edit.gif" width="13" height="13" title="rename"/>
+    <img border="0" src="images/edit.gif" width="13" height="13" title="Click here to rename this item"/>
   </a>
 <!-- /renamableElement.jsp -->
