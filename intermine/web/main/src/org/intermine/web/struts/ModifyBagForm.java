@@ -105,10 +105,18 @@ public class ModifyBagForm extends ActionForm
         this.pageName = pageName;
     }
     
+    /**
+     * 
+     * @return listsButton
+     */
     public String getListsButton() {
         return listsButton;
     }
     
+    /**
+     * 
+     * @param listsButton lists button
+     */
     public void setListsButton(String listsButton) {
         this.listsButton = listsButton;
     }
@@ -181,7 +189,8 @@ public class ModifyBagForm extends ActionForm
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+                      @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }
 }

@@ -95,6 +95,7 @@ public class ModifyBagAction extends InterMineAction
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
      * @param op the operation to pass to the ObjectStoreBagCombination constructor
+     * @param opText the operation's name
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception

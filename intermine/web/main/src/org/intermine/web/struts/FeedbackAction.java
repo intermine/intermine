@@ -54,7 +54,7 @@ public class FeedbackAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         FeedbackForm ff = (FeedbackForm) form;

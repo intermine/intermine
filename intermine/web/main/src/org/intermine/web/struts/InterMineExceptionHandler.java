@@ -52,13 +52,11 @@ public class InterMineExceptionHandler extends ExceptionHandler
     public ActionForward execute(Exception ex,
                                  ExceptionConfig ae,
                                  ActionMapping mapping,
-                                 ActionForm formInstance,
+                                 @SuppressWarnings("unused") ActionForm formInstance,
                                  HttpServletRequest request,
-                                 HttpServletResponse response) {
+                                 @SuppressWarnings("unused") HttpServletResponse response) {
 
         ActionForward forward = null;
-        ActionMessage error = null;
-        String property = null;
 
         // Build the forward from the exception mapping if it exists
         // or from the form input
@@ -67,8 +65,6 @@ public class InterMineExceptionHandler extends ExceptionHandler
         } else {
             forward = mapping.getInputForward();
         }
-
-        Throwable t = ex;
 
         // Put the stack trace on the request
         StringWriter sw = new StringWriter();
@@ -125,7 +121,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
     protected void storeException(HttpServletRequest request,
                                   String property,
                                   ActionMessage message,
-                                  ActionForward forward,
+                                  @SuppressWarnings("unused") ActionForward forward,
                                   String scope) {
 
         ActionMessages messages = null;

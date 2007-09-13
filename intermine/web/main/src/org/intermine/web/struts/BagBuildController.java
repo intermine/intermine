@@ -68,10 +68,10 @@ public class BagBuildController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();

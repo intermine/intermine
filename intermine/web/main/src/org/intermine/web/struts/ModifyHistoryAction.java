@@ -103,7 +103,7 @@ public abstract class ModifyHistoryAction extends InterMineAction
                 recordError(new ActionMessage("errors.modifyQuery.queryExists", newName), request);
                 return editForward(historyForward, type, name);
             }
-            sq = (SavedQuery) profile.getSavedQueries().get(name);
+            sq = profile.getSavedQueries().get(name);
             profile.deleteQuery(sq.getName());
             sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
             profile.saveQuery(sq.getName(), sq);
@@ -112,7 +112,7 @@ public abstract class ModifyHistoryAction extends InterMineAction
                 recordError(new ActionMessage("errors.modifyQuery.queryExists", newName), request);
                 return editForward(historyForward, type, name);
             }
-            InterMineBag bag = (InterMineBag) profile.getSavedBags().get(name);
+            InterMineBag bag = profile.getSavedBags().get(name);
             profile.deleteBag(name);
             SessionMethods.invalidateBagTable(session, name);
             ObjectStoreWriter uosw = ((ProfileManager) session.getServletContext().getAttribute(

@@ -46,8 +46,11 @@ public class FavouritesController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context, 
+                                 @SuppressWarnings("unused") ActionMapping mapping, 
+                                 @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, 
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         ArrayList favouriteTemplates = new ArrayList();
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();

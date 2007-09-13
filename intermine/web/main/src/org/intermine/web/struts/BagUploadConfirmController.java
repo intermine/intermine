@@ -10,35 +10,30 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.bag.ConvertedObjectPair;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-import org.intermine.model.InterMineObject;
-
-import org.intermine.web.logic.bag.ConvertedObjectPair;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Controller for the bagUploadConfirm
@@ -50,9 +45,12 @@ public class BagUploadConfirmController extends TilesAction
      * Set up the bagUploadConfirm page.
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context,
-            ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping, 
+                                 ActionForm form, 
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    throws Exception {
         HttpSession session = request.getSession();
         BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult");
         request.setAttribute("matches", bagQueryResult.getMatches());
@@ -65,7 +63,7 @@ public class BagUploadConfirmController extends TilesAction
         // get all of the "low quality" matches ie. those found by queries other than matching 
         // class keys
         Map lowQualityMatches = new LinkedHashMap();
-        Map otherMatchMap = (Map) bagQueryResult.getIssues().get(BagQueryResult.OTHER);
+        Map otherMatchMap = bagQueryResult.getIssues().get(BagQueryResult.OTHER);
         if (otherMatchMap != null) {
             Iterator otherMatchesIter = otherMatchMap.values().iterator();
             while (otherMatchesIter.hasNext()) {
@@ -78,7 +76,7 @@ public class BagUploadConfirmController extends TilesAction
         
         // find all input strings that match more than one object
         Map duplicates = new LinkedHashMap();
-        Map duplicateMap = (Map) bagQueryResult.getIssues().get(BagQueryResult.DUPLICATE);
+        Map duplicateMap = bagQueryResult.getIssues().get(BagQueryResult.DUPLICATE);
         if (duplicateMap != null) {
             Iterator duplicateMapIter = duplicateMap.values().iterator();
             while (duplicateMapIter.hasNext()) {
@@ -91,7 +89,7 @@ public class BagUploadConfirmController extends TilesAction
         
         // make a List of [input string, ConvertedObjectPair]
         Map convertedObjects = new LinkedHashMap();
-        Map convertedMap = (Map) bagQueryResult.getIssues().get(BagQueryResult.TYPE_CONVERTED);
+        Map convertedMap = bagQueryResult.getIssues().get(BagQueryResult.TYPE_CONVERTED);
         if (convertedMap != null) {
             Iterator convertedMapIter = convertedMap.values().iterator();
             while (convertedMapIter.hasNext()) {
@@ -129,7 +127,7 @@ public class BagUploadConfirmController extends TilesAction
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
-        bagUploadConfirmForm.setExtraFieldValue((String) TypeUtil.unqualifiedName(extraClassName));
+        bagUploadConfirmForm.setExtraFieldValue(TypeUtil.unqualifiedName(extraClassName));
         request.setAttribute("matchCount", new Integer(matchCount));
         request.setAttribute("jsArray", flattenedArray);
         return null;
@@ -149,10 +147,7 @@ public class BagUploadConfirmController extends TilesAction
         // a map from identifiers to indexes into objectList (and hence into the InlineResultsTable)
         Map identifierResultElementMap = new LinkedHashMap();
         
-        // a map from identifier to initial type (for converted identifiers)
-        Map initialTypeMap = new HashMap();
-     
-        
+       
         int objectListIndex = 0;
         Iterator identifierIter = orderedIssuesMap.keySet().iterator();
         while (identifierIter.hasNext()) {

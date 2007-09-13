@@ -63,7 +63,8 @@ public class BuildBagAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response) throws Exception {
+                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    throws Exception {
         HttpSession session = request.getSession();
         BuildBagForm buildBagForm = (BuildBagForm) form;
         ServletContext servletContext = session.getServletContext();
@@ -107,11 +108,7 @@ public class BuildBagAction extends InterMineAction
                     recordError(new ActionMessage("bagBuild.noBagFile"), request);
                     return mapping.findForward("bags");
                 }
-        
-                //MimetypesFileTypeMap mimeMap = new MimetypesFileTypeMap();
-                //String mimetype = mimeMap.getContentType(formFile.getFileName());
-                String mimetype = formFile.getContentType();
-             
+                String mimetype = formFile.getContentType();             
                 if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
                     recordError(new ActionMessage("bagBuild.notText", 
                                                   mimetype), request);

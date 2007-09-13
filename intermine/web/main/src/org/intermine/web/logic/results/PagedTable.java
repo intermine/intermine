@@ -15,8 +15,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.web.logic.WebUtil;
-
 import org.apache.log4j.Logger;
 
 /**
@@ -34,7 +32,7 @@ public class PagedTable
     private List<List<ResultElement>> resultElementRows = null;
     private int startRow = 0;
     
-    private int pageSize = WebUtil.getIntSessionProperty(session, "results.table.size", 10);  
+    private int pageSize = 10;  
     private List<Column> columns;
 
     private List<List<Object>> rows = null;

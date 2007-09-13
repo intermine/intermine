@@ -208,7 +208,8 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load the user-friendly class descriptions
      */
-    private void loadClassDescriptions(ServletContext servletContext, ObjectStore os)
+    private void loadClassDescriptions(ServletContext servletContext,
+                                       @SuppressWarnings("unused") ObjectStore os)
         throws ServletException {
         Properties classDescriptions = new Properties();
         try {

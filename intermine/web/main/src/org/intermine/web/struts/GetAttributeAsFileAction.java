@@ -43,8 +43,8 @@ public class GetAttributeAsFileAction extends Action
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {

@@ -46,8 +46,10 @@ public class ChangePasswordAction extends InterMineAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward execute(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward execute(ActionMapping mapping, 
+                                 ActionForm form,
+            HttpServletRequest request, 
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
