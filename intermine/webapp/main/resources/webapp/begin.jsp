@@ -39,7 +39,7 @@
   <im:boxarea stylename="">
     <tiles:insert name="tipWrapper.tile"/>
     <div style="margin-left:5px">
- 	  <span id="what"><a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is FlyMine?</a></span><br>
+ 	  <span id="what"><a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is ${WEB_PROPERTIES['project.title']}?</a></span><br>
       <p id="intro">Welcome to the new look FlyMine!  See the <a href="${WEB_PROPERTIES['project.sitePrefix']}/release-notes.shtml">release notes</a> to find out what's new.</p>
     </div>
       <div style="clear:right;height:1em"></div>

@@ -10,7 +10,7 @@
 <html:xhtml/>
 
 <c:set var="msg" value="I found this error on ${pageContext.request.requestURL}.%0D%0A%0D%0A---- Error Found ----%0D%0A%0D%0A${stacktrace}"/>
-<c:set var="subject" value="Error found on FlyMine.org"/>
+<c:set var="subject" value="Error found on website"/>
 <div id="generic_error">
   <div id="errorApology">
     <p>
