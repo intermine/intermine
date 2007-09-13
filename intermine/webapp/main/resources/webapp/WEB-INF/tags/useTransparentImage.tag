@@ -7,6 +7,8 @@
 <%@ attribute name="marginTop" required="false" %>
 <%@ attribute name="floatValue" required="false" %>
 <%@ attribute name="breakFloat" required="false" %>
+<%@ attribute name="title" required="false" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -40,7 +42,7 @@
 </c:choose>
 
 <html:link action="${link}" >
-  <div class="${id}" style="float:${floatValue}">&nbsp</div>
+  <div class="${id}" style="float:${floatValue}" title="${title}">&nbsp</div>
 </html:link>
 <c:if test="${! empty breakFloat && breakFloat == 'true'}">
   <div style="clear:${floatValue};width:${width}"></div>
