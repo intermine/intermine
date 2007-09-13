@@ -111,7 +111,7 @@
    <span>
    <%-- example bag --%>
      <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
-     <c:if test="${!empty bagExampleComment && !empty bagExampleIdentifiers}">
+     <c:if test="${!empty bagExampleIdentifiers}">
          <div style="text-align:right;width:87%;">
            <html:link href=""
                       onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
