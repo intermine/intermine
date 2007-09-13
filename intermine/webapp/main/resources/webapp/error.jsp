@@ -16,7 +16,7 @@
     <p>
       There has been an internal error while processing your request.  The
       problem has been logged and will be investigated.  You may also 
-      <html:link href="mailto:info@flymine.org?body=${msg}&subject=${subject}">send us an email</html:link>
+      <html:link href="mailto:${WEB_PROPERTIES['project.contact']?body=${msg}&subject=${subject}">send us an email</html:link>
       describing how you encountered this error.
     </p>
     <p>
