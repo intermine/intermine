@@ -1,6 +1,6 @@
 <h3>You can upload and query lists of data.</h3>
 
-<div class="tipText">If you have a list of genes, proteins, etc., you can upload that list to FlyMine using the 
+<div class="tipText">If you have a list of genes, proteins, etc., you can upload that list using the 
 form on the 'Lists' page (click on the 'Upload' tab of the lists page).</div>  
 
 <br/><br/>
@@ -17,8 +17,8 @@ form on the 'Lists' page (click on the 'Upload' tab of the lists page).</div>
 
 <br/><br/>
 
-<div class="tipText">If you had a list of genes, for instance, you can query for a list of orthologues, transcripts, or 
-proteins related to those genes.</div>
+<!--  <div class="tipText">If you had a list of genes, for instance, you can query for a list of orthologues, transcripts, or 
+proteins related to those genes.</div> -->
 
 <ul>
 <li>For more information:  
