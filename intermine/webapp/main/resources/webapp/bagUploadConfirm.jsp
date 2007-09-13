@@ -77,7 +77,7 @@ function toggleForm(matchCount) {
         </c:otherwise>
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
-      <html:text property="bagName" size="20" />
+      <html:text property="bagName" size="20" value="" />
       <html:submit property="submit">
         <fmt:message key="bagUploadConfirm.submitOK"/>
       </html:submit>

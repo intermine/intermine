@@ -21,14 +21,13 @@ import org.apache.struts.upload.FormFile;
 
 public class BuildBagForm extends ActionForm
 {
-    private String bagName;
+
     private FormFile formFile;
     private String text;
     private String type;
     private String extraFieldValue;
     private String whichInput;
-    
-    
+      
     
     /**
      * Get the bag type
@@ -78,13 +77,6 @@ public class BuildBagForm extends ActionForm
         return formFile;
     }
 
-    /**
-     * Get the bag name (existing bags)
-     * @return the bag name
-     */
-    public String getBagName() {
-        return bagName;
-    }
 
     /**
      * Get the value to use when creating an extra constraint on a BagQuery, configured in
