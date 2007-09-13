@@ -98,12 +98,9 @@
           <div id="qbStartQuery">
             Start a query from:
             <!-- loop through starting classes -->
-            <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Gene">
-              Gene 
-            </html:link>,
-            <html:link action="/queryClassSelect.do?action=Select&className=org.flymine.model.genomic.Protein">
-              Protein
-            </html:link>
+            <c:forEach var="entry" items="${WEB_PROPERTIES['begin.queryStarts']}" varStatus="status">
+            	<c:if test="${status.count != 1}">,</c:if>&nbsp;<html:link action="/queryClassSelect.do?action=Select&className=${entry}">${entry}</html:link>
+            </c:forEach>
           </div>
         </div>
         <div id="qbImport">
