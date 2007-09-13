@@ -62,6 +62,7 @@ public class CreateAccountAction extends LoginHandler
         try {
             MailUtils.email(username, password, webProperties);
         } catch (Exception e) {
+            // TODO I don't think this displays the error msg to the user
             recordMessage(new ActionMessage("createAccount.badmail"), request);
         }
         
