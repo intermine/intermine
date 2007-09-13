@@ -69,8 +69,6 @@
                   <td>
                     <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
                     <c:choose>
-                      <c:when test="${pagedColl.columnNames[column.index] == 'Gene.chromosomeLocation'}">
-                      </c:when>
                       <c:when test="${resultElement.keyField}">
                         <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=|bag.${bag.name}|${resultElement.id}">
                           <c:out value="${resultElement.field}" />
@@ -298,8 +296,8 @@
 
     </div>
   </c:if>
-
-  <c:if test="${bag.type == 'Gene'}">
+  <c:set var="widgetClass" value="${WEB_PROPERTIES['bag.widget.class']}"/>
+  <c:if test="${bag.type == widgetClass}">
 
 <tr>
 	<td>
