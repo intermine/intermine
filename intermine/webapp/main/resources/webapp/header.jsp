@@ -2,15 +2,17 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- header.jsp -->
-
+<c:set value="${WEB_PROPERTIES['header.links']}" var="headerLinks"/>
+<c:if test="${fn:length(headerLinks) > 0}">
 <div id="topnav">
-  <a href="${WEB_PROPERTIES['project.sitePrefix']}/help.shtml">Help</a> |
-  <a href="${WEB_PROPERTIES['project.sitePrefix']}/about.shtml">About</a> |
-  <a href="${WEB_PROPERTIES['project.sitePrefix']}/cite.shtml">Citation</a> |
-  <a href="${WEB_PROPERTIES['project.sitePrefix']}/software.shtml">Software</a>
+	<c:forEach var="entry" items="${headerLinks}" varStatus="status">
+		<c:if test="${status.count != 1}">&nbsp;|&nbsp;</c:if><a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml">${entry}</a>
+	</c:forEach>  
 </div>
+</c:if>
 
 <div id="loginbar">
     <c:if test="${!empty PROFILE.username}">
