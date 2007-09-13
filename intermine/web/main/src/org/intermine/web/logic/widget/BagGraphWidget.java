@@ -47,7 +47,6 @@ public class BagGraphWidget
     private String imageMap = null;
     private static final int WIDTH = 430;
     private static final int HEIGHT = 350;
-    private int index = 0;
     
     /**
      * Creates a BagGraphWidet object which handles

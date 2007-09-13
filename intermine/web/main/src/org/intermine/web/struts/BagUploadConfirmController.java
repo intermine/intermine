@@ -54,7 +54,7 @@ public class BagUploadConfirmController extends TilesAction
         HttpSession session = request.getSession();
         BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult");
         request.setAttribute("matches", bagQueryResult.getMatches());
-        Map issues = bagQueryResult.getIssues();
+        Map<String, Map<String, Map<String, List>>> issues = bagQueryResult.getIssues();
         request.setAttribute("issues", issues);
         request.setAttribute("unresolved", bagQueryResult.getUnresolved());
         ServletContext servletContext = session.getServletContext();
@@ -62,12 +62,14 @@ public class BagUploadConfirmController extends TilesAction
         
         // get all of the "low quality" matches ie. those found by queries other than matching 
         // class keys
-        Map lowQualityMatches = new LinkedHashMap();
-        Map otherMatchMap = bagQueryResult.getIssues().get(BagQueryResult.OTHER);
+        Map<String, ArrayList<String>> lowQualityMatches 
+                                            = new LinkedHashMap<String, ArrayList<String>>();
+        Map<String, Map<String, List>> otherMatchMap 
+                                            = bagQueryResult.getIssues().get(BagQueryResult.OTHER);
         if (otherMatchMap != null) {
             Iterator otherMatchesIter = otherMatchMap.values().iterator();
             while (otherMatchesIter.hasNext()) {
-                Map inputToObjectsMap = (Map) otherMatchesIter.next();
+                Map<String, ArrayList<String>> inputToObjectsMap = (Map) otherMatchesIter.next();
                 lowQualityMatches.putAll(inputToObjectsMap);
             }
         }
@@ -75,12 +77,14 @@ public class BagUploadConfirmController extends TilesAction
         flattenedArray.append(setJSArray(lowQualityMatches, "lowQ"));
         
         // find all input strings that match more than one object
-        Map duplicates = new LinkedHashMap();
-        Map duplicateMap = bagQueryResult.getIssues().get(BagQueryResult.DUPLICATE);
+        Map<String, ArrayList<String>> duplicates = new LinkedHashMap<String, ArrayList<String>>();
+        Map<String, Map<String, List>> duplicateMap 
+                                    = bagQueryResult.getIssues().get(BagQueryResult.DUPLICATE);
         if (duplicateMap != null) {
             Iterator duplicateMapIter = duplicateMap.values().iterator();
             while (duplicateMapIter.hasNext()) {
-                Map inputToObjectsMap = (Map) duplicateMapIter.next();
+                Map<String, ArrayList<String>> inputToObjectsMap 
+                = (Map) duplicateMapIter.next();
                 duplicates.putAll(inputToObjectsMap);
             }
         }
@@ -88,12 +92,14 @@ public class BagUploadConfirmController extends TilesAction
         flattenedArray.append(setJSArray(duplicates, "duplicate"));
         
         // make a List of [input string, ConvertedObjectPair]
-        Map convertedObjects = new LinkedHashMap();
-        Map convertedMap = bagQueryResult.getIssues().get(BagQueryResult.TYPE_CONVERTED);
+        Map<String, ArrayList<String>> convertedObjects 
+                                                = new LinkedHashMap<String, ArrayList<String>>();
+        Map<String, Map<String, List>> convertedMap 
+        = bagQueryResult.getIssues().get(BagQueryResult.TYPE_CONVERTED);
         if (convertedMap != null) {
             Iterator convertedMapIter = convertedMap.values().iterator();
             while (convertedMapIter.hasNext()) {
-                Map inputToObjectsMap = (Map) convertedMapIter.next();
+                Map<String, ArrayList<String>> inputToObjectsMap = (Map) convertedMapIter.next();
                 convertedObjects.putAll(inputToObjectsMap);
             }
         }
@@ -135,25 +141,26 @@ public class BagUploadConfirmController extends TilesAction
     
     // takes all the issues and puts them in a flattened array that the javascript can use for
     // the "add all" and "remove all" buttons
-    private String setJSArray(Map issues, String issueType) {
+    private String setJSArray(Map<String, ArrayList<String>> issues, String issueType) {
 
         StringBuffer sb = new StringBuffer();
-        Map orderedIssuesMap = new LinkedHashMap(issues);
+        Map<String, ArrayList<String>> orderedIssuesMap 
+            = new LinkedHashMap<String, ArrayList<String>>(issues);
 
         // Make a Map from identifier to a List of rows for display.  Each row will contain
         // information about one object.  The row List will contain (first) the class name, then
         // a ResultElement object for each field to display.
         
         // a map from identifiers to indexes into objectList (and hence into the InlineResultsTable)
-        Map identifierResultElementMap = new LinkedHashMap();
-        
-       
+        Map<String, ArrayList<String>> identifierResultElementMap 
+                                                   = new LinkedHashMap<String, ArrayList<String>>();
+
         int objectListIndex = 0;
         Iterator identifierIter = orderedIssuesMap.keySet().iterator();
         while (identifierIter.hasNext()) {
             String identifier = (String) identifierIter.next();
-            identifierResultElementMap.put(identifier, new ArrayList());
-            List objectListPerIdentifierMap = (List) orderedIssuesMap.get(identifier);
+            identifierResultElementMap.put(identifier, new ArrayList<String>());
+            List objectListPerIdentifierMap = orderedIssuesMap.get(identifier);
             for (int objIndex = 0; objIndex < objectListPerIdentifierMap.size(); objIndex++) {
                 Object obj = objectListPerIdentifierMap.get(objIndex);
                 InterMineObject o;
@@ -163,8 +170,6 @@ public class BagUploadConfirmController extends TilesAction
                 } else {
                     o = (InterMineObject) obj;
                 }
-                //addId2Bag('${resultElementRow[rowStatus.index]}','${idcounter}',
-                //          '${identifier}','${issueType}');
                 sb.append(o.getId() + "," + objectListIndex + "," 
                           + identifier + "," + issueType + "|");                
                 objectListIndex++;

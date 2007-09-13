@@ -69,7 +69,6 @@ public class BuildBagAction extends InterMineAction
         BuildBagForm buildBagForm = (BuildBagForm) form;
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        String newBagName = buildBagForm.getBagName();
         String type = buildBagForm.getType();
 
         if (StringUtils.isEmpty(type)) {
@@ -121,7 +120,7 @@ public class BuildBagAction extends InterMineAction
         }
 
         String thisLine;
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         int elementCount = 0;
         while ((thisLine = reader.readLine()) != null) {
             StringTokenizer st = new StringTokenizer(thisLine, "\n\t,");
@@ -147,7 +146,6 @@ public class BuildBagAction extends InterMineAction
         BagQueryResult bagQueryResult = 
             bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue(), false);
         session.setAttribute("bagQueryResult", bagQueryResult);
-        request.setAttribute("bagName", newBagName);
         request.setAttribute("bagType", type);
 
         return mapping.findForward("bagUploadConfirm");

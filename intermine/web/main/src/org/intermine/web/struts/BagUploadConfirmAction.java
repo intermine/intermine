@@ -85,7 +85,7 @@ public class BagUploadConfirmAction extends InterMineAction
         String idsString = confirmForm.getMatchIDs().trim();
         String[] ids = StringUtil.split(idsString, " ");
 
-        List contents = new ArrayList();
+        List<Integer> contents = new ArrayList<Integer>();
         
         String bagType = confirmForm.getBagType();
         for (int i = 0; i < ids.length; i++) {

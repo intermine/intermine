@@ -57,6 +57,8 @@ public class BagTableWidgetLoader
      * This class loads and formats the data for the count
      * table widgets in the bag details page
      *
+     * @param title title of widget
+     * @param description description of widget
      * @param type The type to do the count on
      * @param collectionName the name of the collection corresponding to the
      * bag type
@@ -65,6 +67,7 @@ public class BagTableWidgetLoader
      * @param webConfig the webConfig
      * @param model the model
      * @param classKeys the classKeys
+     * @param fields fields involved in widget
      */
     public BagTableWidgetLoader(String title, String description, String type, String
             collectionName, InterMineBag bag, ObjectStore os, WebConfig webConfig, Model model,
