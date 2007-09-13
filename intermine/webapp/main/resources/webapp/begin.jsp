@@ -98,7 +98,7 @@
           <div id="qbStartQuery">
             Start a query from:
             <!-- loop through starting classes -->
-            <c:forEach var="entry" items="${WEB_PROPERTIES['begin.queryStarts']}" varStatus="status">
+            <c:forEach var="entry" items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status">
             	<c:if test="${status.count != 1}">,</c:if>&nbsp;<html:link action="/queryClassSelect.do?action=Select&className=${entry}">${entry}</html:link>
             </c:forEach>
           </div>
