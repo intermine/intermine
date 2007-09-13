@@ -222,6 +222,7 @@ public class GoStatDisplayerController extends TilesAction
      }
 
         // adds 3 main ontologies to array.  these 3 will be excluded from the query
+        // TODO get these from properties file
         private Collection getOntologies() {
 
             Collection<String> ids = new ArrayList<String>();

@@ -115,7 +115,7 @@
          <div style="text-align:right;width:87%;">
            <html:link href=""
                       onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
-             (click to see an example)<img src="images/disclosed.gif" title="Click to Show example" title="Show example">
+             (click to see an example)<img src="images/disclosed.gif" title="Click to Show example">
            </html:link>
          </div>
      </c:if>

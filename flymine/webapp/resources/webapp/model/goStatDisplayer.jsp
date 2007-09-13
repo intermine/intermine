@@ -30,14 +30,7 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
 	<script type='text/javascript' src='dwr/util.js'></script>
 
     <script type="text/javascript" src="js/imdwr.js"></script>
-    
-    <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
-    <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
-          name="description"/>
-    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
-    
-    <title>
-      
+          
     <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
     <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
           name="description"/>
