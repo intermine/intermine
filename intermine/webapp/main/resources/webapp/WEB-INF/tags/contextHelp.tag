@@ -19,10 +19,10 @@
     <%-- do nothing --%>
   </c:when>
   <c:when test="${empty helpPageSubSection}">
-    <im:popupHelp pageName="${helpPage}" helpimg="images/help.png"/>
+    <im:popupHelp pageName="${helpPage}" helpimg="images/help.png" />
   </c:when>
   <c:otherwise>
-    <im:popupHelp pageName="${helpPage}-${helpPageSubSection}" helpimg="images/help.png"/>
+    <im:popupHelp pageName="${helpPage}-${helpPageSubSection}" helpimg="images/help.png" />
   </c:otherwise>
 </c:choose>
 
