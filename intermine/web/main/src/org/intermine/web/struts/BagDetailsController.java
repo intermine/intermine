@@ -215,8 +215,7 @@ public class BagDetailsController extends TilesAction
                                       classKeys);
 
             int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
-            
-            // TODO put 5 in properties file
+
             PagedTable pagedColl = new PagedTable(webPathCollection, pageSize);
             request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);
