@@ -41,8 +41,6 @@
   <action-mappings>
     <action path="/tree" forward="tree.page">
     </action>
-    <action path="/examples" forward="examples.page">
-    </action>
     <action path="/template" forward="template.page">
     </action>
     <action path="/templates" forward="templates.page">
