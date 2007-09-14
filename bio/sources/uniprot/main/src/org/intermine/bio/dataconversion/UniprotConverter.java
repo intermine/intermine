@@ -28,6 +28,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.SAXParser;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
@@ -75,6 +76,9 @@ public class UniprotConverter extends FileConverter
     private boolean createInterpro = false;
     private static final List<String> GENE_PREFIXES_TO_STRIP = 
         Arrays.asList(new String[] {"AgaP_"});
+    private Set<String> taxonIds = null;
+    private Set<String> doneTaxonIds = new HashSet();
+    private boolean useSplitFiles = false;
     
     /**
      * Constructor
@@ -90,17 +94,43 @@ public class UniprotConverter extends FileConverter
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
+        boolean doProcess = true;
+        if (useSplitFiles) {
+            doProcess = false;
+            String fileName = getCurrentFile().getName();
+            String taxonId = fileName.substring(0, fileName.indexOf("_"));
+            if (taxonIds.contains(taxonId)) {
+                doProcess = true;
+                doneTaxonIds.add(taxonId);
+            } else {
+                System.err.println("Not processing " + fileName + " - not in list of organisms.");
+            }
+        }
 
-        mapMaps();
-        readConfig();
-        mapFeatures();
-        UniprotHandler handler = new UniprotHandler(getItemWriter(), mapMaster, createInterpro);
+        if (doProcess) {
+            mapMaps();
+            readConfig();
+            mapFeatures();
+            UniprotHandler handler = new UniprotHandler(getItemWriter(), mapMaster, createInterpro);
 
-        try {
-            SAXParser.parse(new InputSource(reader), handler);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            try {
+                SAXParser.parse(new InputSource(reader), handler);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDocs}
+     */
+    public void close() throws Exception {
+        if (useSplitFiles) {
+            if (!doneTaxonIds.containsAll(taxonIds)) {
+                throw new Exception("Did not process all required taxonIds. Required = " + taxonIds
+                        + ", done = " + doneTaxonIds);
+            }
         }
     }
 
@@ -234,6 +264,25 @@ public class UniprotConverter extends FileConverter
             this.createInterpro = false;
         }
 
+    }
+
+    /**
+     * Sets the list of taxonIds that should be imported if using split input files.
+     *
+     * @param taxonIds a space-separated list of taxonIds
+     */
+    public void setUniprotOrganisms(String taxonIds) {
+        this.taxonIds = new HashSet(Arrays.asList(StringUtil.split(taxonIds, " ")));
+        System.err.println("Setting list of organisms to " + this.taxonIds);
+    }
+
+    /**
+     * Sets the parameter that this will read the split uniprot files.
+     *
+     * @param p ignored
+     */
+    public void setUseSplitFiles(String p) {
+        useSplitFiles = true;
     }
 
     /**
@@ -539,7 +588,8 @@ public class UniprotConverter extends FileConverter
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("organism name")
                            && attrs.getValue("value").equals("Homo sapiens")) {
-                    if (possibleGeneIdSource != null && possibleGeneId != null) {
+                    if ((possibleGeneIdSource != null) && (possibleGeneId != null)
+                            && (geneDesignations != null)) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
                     
