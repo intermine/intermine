@@ -167,24 +167,6 @@ public class GraphDisplayer
     public String getGraphType() {
         return graphType;
     }
-            
-    /**
-     * Sets the class for this displayer.  This class will be displayed on the x-axis.  For instance
-     * a graph may have sales on the y-axis and the x-axis can be set to be employees or managers.
-     * @param clazz class 
-     */
-    public void setClazz(String clazz) {
-        this.clazz = clazz;
-    }
-
-    
-    /**
-     * gets the class on the x-axis of this graph.  Not configurable for most graphs.
-     * @return the class on the x-axis of this graph
-     */
-    public String getClazz() {
-        return clazz;
-    }
     
     /**
      * Return an XML String of this Type object
