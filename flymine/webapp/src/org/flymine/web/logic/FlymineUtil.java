@@ -31,6 +31,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.SortableMap;
@@ -56,13 +57,15 @@ public abstract class FlymineUtil
      * @param bag InterMineBag
      * @return collection of organism names
      * @exception No bag
+     * @exception ClassNotFoundException
      */
     public static Collection getOrganisms(ObjectStore os, InterMineBag bag) 
-    throws Exception {
+        throws ClassNotFoundException {
 
         Query q = new Query();
-
-        QueryClass qcGene = new QueryClass(Gene.class);
+        Model model = os.getModel();
+        QueryClass qcGene 
+            = new QueryClass(Class.forName(model.getPackageName() + "." + bag.getType()));
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");     
@@ -74,13 +77,8 @@ public abstract class FlymineUtil
         q.addToSelect(qfOrganismName);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        if (bag != null) {
-            BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-            cs.addConstraint(bc);
-        } else {
-            // always need a bag
-            throw new Exception("Need a bag to calculate gostats!  Bad user!");
-        }
+        BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+        cs.addConstraint(bc);
 
         QueryObjectReference qr = new QueryObjectReference(qcGene, "organism");
         ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcOrganism);

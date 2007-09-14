@@ -155,7 +155,7 @@ public class BagTableWidgetLoader
             ResultsRow resRow = (ResultsRow) iter.next();
             Integer lastObjectId = null;
             for (Iterator iterator = resRow.iterator(); iterator.hasNext();) {
-                Object element = (Object) iterator.next();
+                Object element = iterator.next();
                 if (element instanceof InterMineObject) {
                     InterMineObject o = (InterMineObject) element;
                     for (Iterator iterator3 = columns.iterator(); iterator3.hasNext();) {

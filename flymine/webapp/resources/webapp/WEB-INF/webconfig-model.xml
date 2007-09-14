@@ -103,6 +103,14 @@
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
+    
+    <bagdisplayers>    
+      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.flymine.web.widget.ChromosomeDistributionDataSetLdr"
+      toolTipGen="org.flymine.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.flymine.web.widget.ChromosomeDistributionGraphURLGenerator"
+      description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome." graphType="BarChart"
+      groupBy="organism" />
+    </bagdisplayers>   
+    
   </class>
 
   <class className="org.flymine.model.genomic.Exon">
