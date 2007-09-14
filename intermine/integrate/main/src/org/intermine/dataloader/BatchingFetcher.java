@@ -19,12 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.WeakHashMap;
 
-import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.PrimaryKey;
@@ -34,7 +31,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -90,6 +86,7 @@ public class BatchingFetcher extends HintingFetcher
      * Returns an ObjectStore layered on top of the given ObjectStore, which reports to this fetcher
      * which objects are being loaded.
      *
+     * @param os an ObjectStore
      * @return an ObjectStore
      */
     public ObjectStore getNoseyObjectStore(ObjectStore os) {
@@ -212,8 +209,8 @@ public class BatchingFetcher extends HintingFetcher
                         if (!classNotExists) {
                             //LOG.error("Inspecting class " + className);
                             List<InterMineObject> objectsForCld = new ArrayList<InterMineObject>();
-                            for (Map.Entry<Class, List<InterMineObject>> category :
-                                    categorised.entrySet()) {
+                            for (Map.Entry<Class, List<InterMineObject>> category
+                                    : categorised.entrySet()) {
                                 if (cld.getType().isAssignableFrom(category.getKey())) {
                                     objectsForCld.addAll(category.getValue());
                                 }
@@ -258,7 +255,7 @@ public class BatchingFetcher extends HintingFetcher
                 }
                 if (canDoPkNow) {
                     //LOG.error("Running pk " + cld.getName() + "." + pk.getName());
-                    doPk(pk, categorised, cld, results, cldToObjectsForCld.get(cld),
+                    doPk(pk, cld, results, cldToObjectsForCld.get(cld),
                             fetchedObjectIds);
                     pkIter.remove();
                 } else {
@@ -271,7 +268,6 @@ public class BatchingFetcher extends HintingFetcher
         }
         batchQueried += results.size();
         equivalents.putAll(results);
-        LOG.info("fetchedObjectIds.size = " + fetchedObjectIds.size());
         long time2 = System.currentTimeMillis();
         timeSpentPrefetchEquiv += time2 - time1;
         dataTracker.prefetchIds(fetchedObjectIds);
@@ -279,10 +275,20 @@ public class BatchingFetcher extends HintingFetcher
         timeSpentPrefetchTracker += time1 - time2;
     }
 
-    protected void doPk(PrimaryKey pk, Map<Class, List<InterMineObject>> categorised,
-            ClassDescriptor cld, Map<InterMineObject, Set<InterMineObject>> results,
-            List<InterMineObject> objectsForCld, Set<Integer> fetchedObjectIds)
-    throws ObjectStoreException {
+    /**
+     * Fetches equivalent objects for a particular primary key.
+     *
+     * @param pk the PrimaryKey
+     * @param cld the ClassDescriptor of the PrimaryKey
+     * @param results a Map to hold results that are to be added to the cache
+     * @param objectsForCld a List of objects relevant to this PrimaryKey
+     * @param fetchedObjectIds a Set to hold ids of objects that are fetched, to prefetch from the
+     * data tracker later
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected void doPk(PrimaryKey pk, ClassDescriptor cld, Map<InterMineObject,
+            Set<InterMineObject>> results, List<InterMineObject> objectsForCld,
+            Set<Integer> fetchedObjectIds) throws ObjectStoreException {
         Iterator<InterMineObject> objectsForCldIter = objectsForCld.iterator();
         while (objectsForCldIter.hasNext()) {
             int objCount = 0;
@@ -327,7 +333,8 @@ public class BatchingFetcher extends HintingFetcher
                                 if (value instanceof InterMineObject) {
                                     Integer id = idMap.get(((InterMineObject) value).getId());
                                     if (id == null) {
-                                        Set<InterMineObject> eqs = results.get((InterMineObject) value);
+                                        Set<InterMineObject> eqs = results.get((InterMineObject)
+                                                value);
                                         if (eqs == null) {
                                             eqs = queryEquivalentObjects((InterMineObject) value,
                                                     source);
@@ -418,9 +425,6 @@ public class BatchingFetcher extends HintingFetcher
                     }
                     fetchedObjectIds.add(((InterMineObject) row.get(0)).getId());
                 }
-                LOG.info("Ran pk " + DynamicUtil.getFriendlyName(cld.getType()) + "." + pk.getName() + " for " + objCount + "/" + origObjCount + " objects, got " + matches + " matches, took " + (System.currentTimeMillis() - time) + " ms");
-            } else {
-                LOG.info("Not running query for pk " + DynamicUtil.getFriendlyName(cld.getType()) + "." + pk.getName() + " for " + origObjCount + " objects");
             }
         }
     }
@@ -437,7 +441,8 @@ public class BatchingFetcher extends HintingFetcher
          */
         public void shutdown() {
             LOG.info("Time spent: Execute: " + timeSpentExecute + ", Prefetch equivalent objects: "
-                    + timeSpentPrefetchEquiv + ", Prefetch tracker data: " + timeSpentPrefetchTracker);
+                    + timeSpentPrefetchEquiv + ", Prefetch tracker data: "
+                    + timeSpentPrefetchTracker);
         }
 
         /**
