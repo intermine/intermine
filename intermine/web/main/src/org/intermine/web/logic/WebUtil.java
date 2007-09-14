@@ -234,8 +234,7 @@ public abstract class WebUtil
      * @return a new Results object with a new batch size
      * @throws ObjectStoreException if there is a problem while creating the new Results object
      */
-    public static Results changeResultBatchSize(Results oldResults, int newBatchSize)
-        throws ObjectStoreException {
+    public static Results changeResultBatchSize(Results oldResults, int newBatchSize) {
         Results newResults = oldResults.getObjectStore().execute(oldResults.getQuery());
         newResults.setBatchSize(newBatchSize);
         return newResults;
@@ -300,7 +299,7 @@ public abstract class WebUtil
 
     private static HashMap mapChars() {
 
-        HashMap specCharToText = new HashMap();
+        HashMap<String, String> specCharToText = new HashMap<String, String> ();
 
         specCharToText.put("‘", new String("QUOTE"));
         specCharToText.put("’", new String("QUOTE"));
@@ -348,7 +347,7 @@ public abstract class WebUtil
      * @param max the number of items to be in the final list
      * @return the newly randomised, shortened map
      */
-    public static <V> Map<String, V> shuffle(Map<String,V> map, int max) {
+    public static <V> Map<String, V> shuffle(Map<String, V> map, int max) {
         List<String> keys = new ArrayList<String>(map.keySet());
 
         Collections.shuffle(keys);
@@ -397,7 +396,7 @@ public abstract class WebUtil
      * @param servletContext
      * @param userBags 
      * @param profile
-     * @return
+     * @return map containing all bags
      */
     public static Map<String, InterMineBag> getAllBags(Map<String, InterMineBag> userBags,
                                                        ServletContext servletContext) {        

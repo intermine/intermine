@@ -169,8 +169,6 @@ public class BagDetailsController extends TilesAction
                             } 
                         }
                     }
-
-
                 } catch  (Exception e) {
                     // TODO do something clever
                     //return null;
@@ -224,9 +222,6 @@ public class BagDetailsController extends TilesAction
             request.setAttribute("graphDisplayerArray", graphDisplayerArray);
             request.setAttribute("tableDisplayerArray", tableDisplayerArray);
             return null;
-
-
-
     }
 
 

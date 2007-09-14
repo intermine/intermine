@@ -17,11 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.flymine.web.logic.FlymineUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -35,9 +30,17 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
+
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.Organism;
+import org.flymine.web.logic.FlymineUtil;
+
 import org.jfree.data.category.DefaultCategoryDataset;
 /**
  *
@@ -45,17 +48,20 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 {
-    private Results results;
+   
     private Object[] geneCategoryArray;
     private LinkedHashMap<String, GraphDataSet> dataSets 
                                                         = new LinkedHashMap<String, GraphDataSet>();
     private ObjectStore os;
+    private Model model;
+    private String bagType;
     
     /**
      * Creates a ChromosomeDistributionDataSetLdr used to retrieve, organise
      * and structure the data to create a graph
      * @param bag the bag
      * @param os the ObjectStore
+     * @param c the class being compared
      * @throws Exception
      */
     
@@ -63,6 +69,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         throws Exception {
         super();
         this.os = os;
+        model = os.getModel();
+        bagType = bag.getType();
         Collection organisms = null;
         try {
             organisms = FlymineUtil.getOrganisms(os, bag);
@@ -70,10 +78,6 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             throw new Exception("Can't render chromosome view without a bag.");
         }
 
-        // TODO this may not be necessary once chromosomes are sorted out in #1186.
-        //organisms.remove("Drosophila pseudoobscura");
-        //organisms.remove("Apis mellifera");
-        
         for (Iterator it = organisms.iterator(); it.hasNext();) {
             
             String organismName = (String) it.next();
@@ -100,7 +104,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             
             // run query 
             Query q = createQuery(organismName, "actual", bag);            
-            results = os.execute(q);
+            Results results = os.execute(q);
             results.setBatchSize(50000);
             boolean hasResults = false;
             if (results.size() > 0) {
@@ -159,23 +163,25 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     }
 
     /* select count(*) from genes where chromosomeLocation != null; */
-    private long getTotal(String organismName) {
+    private long getTotal(String organismName) 
+    throws ClassNotFoundException {
 
         Query q = createQuery(organismName, "total", null);        
-        results = os.execute(q);          
+        Results results = os.execute(q);          
         Iterator iter = results.iterator();
         ResultsRow rr = (ResultsRow) iter.next();
         return ((Long) rr.get(0)).longValue();
     }
 
     private void addExpected(HashMap resultsTable, 
-                             int bagSize, String organismName) {
+                             int bagSize, String organismName) 
+        throws ClassNotFoundException {
         // totals
         long total = getTotal(organismName);
 
         // get expected results
         Query q = createQuery(organismName, "expected", null);
-        results = os.execute(q);
+        Results results = os.execute(q);
         Iterator iter = results.iterator();
         int i = 0;
         
@@ -201,12 +207,14 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         }
     }    
     
-    private Query createQuery(String organismName, String resultsType, InterMineBag bag) {
+    private Query createQuery(String organismName, String resultsType, InterMineBag bag) 
+        throws ClassNotFoundException {
         
         Query q = new Query();
         
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);
-        QueryClass geneQC = new QueryClass(Gene.class); 
+        QueryClass geneQC 
+            = new QueryClass(Class.forName(model.getPackageName() + "." + bagType)); 
         QueryClass organismQC = new QueryClass(Organism.class);
         
         QueryField chromoQF = new QueryField(chromosomeQC, "identifier");
@@ -235,7 +243,6 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         cs.addConstraint(cc);
         
         // constrain to be in chosen list of chomosomes, this may not be all chromosomes
-        // TODO probably remove this once #1186 fixed.
         Collection chrs = FlymineUtil.getChromosomes(os, organismName);
         if (chrs != null && !chrs.isEmpty()) {
             QueryField qfChrId = new QueryField(chromosomeQC, "identifier");
