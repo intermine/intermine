@@ -153,7 +153,7 @@
   <span style="font-size:+2em;">View</span><br/>
     <html:link action="/bag?subtab=view">all lists</html:link><br/>
   	<html:link action="/mymine?subtab=lists">your lists</html:link><br/>
-  	<html:link anchor="templates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
+  	<html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
   	<html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
 </td><td valign="top">  	
   <span style="font-size:+2em;">Use</span><br/>		
@@ -325,8 +325,8 @@
 
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
-  Related Templates&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;"> 
-  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);" id="templates">expand all +</a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all -</a>)</span></div>
+   <a id="relatedTemplates">Related Templates&nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;"> 
+  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all +</a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all -</a>)</span></div>
 </div>
 
 <div class="body">
