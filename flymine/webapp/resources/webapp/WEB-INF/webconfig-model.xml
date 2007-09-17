@@ -169,9 +169,7 @@
       toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
       description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."  
       graphType="StackedBarChart" />
-   
-      <bagtabledisplayer title="Related Publications" type="Publication" collectionName="publications" fields="title,pubMedId"
-       description="Most common publications for this list according to &lt;a href=&quot;http://www.ncbi.nlm.nih.gov/sites/entrez?db=PubMed&quot; target=&quot;_new&quot;&gt;PubMed&lt;/a&gt;."/>
+      
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways"
       description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
       
@@ -188,6 +186,12 @@
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
     </longdisplayers>
+    <bagdisplayers>    
+      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Feature Count" dataSetLoader="org.flymine.web.widget.ChromosomeDistributionDataSetLdr"
+      toolTipGen="org.flymine.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.flymine.web.widget.ChromosomeDistributionGraphURLGenerator"
+      description="Actual: number of features in this list found on each chromosome.  Expected: given the total number of features on the chromosome and the number of features in this list, the number of features expected to be found on each chromosome." graphType="BarChart"
+      groupBy="organism" />
+    </bagdisplayers>   
   </class>
 
   <class className="org.flymine.model.genomic.DefinedRegion">

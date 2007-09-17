@@ -312,8 +312,12 @@
  	
     </td>
 </tr>
-
-    <c:set var="widgetCount" value="${widgetCount+2}" />
+<tr>
+	<td colspan=2>
+	<%-- publications --%>
+ 	<iframe src="publicationDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
+	</td>
+    <c:set var="widgetCount" value="${widgetCount+3}" />
   </c:if>
 
 </table>

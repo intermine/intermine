@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -77,7 +78,7 @@ public class ImportQueriesAction extends InterMineAction
                 while (iter.hasNext()) {
                     String queryName = (String) iter.next();
                     PathQuery query = (PathQuery) queries.get(queryName);
-                    queryName = validateQueryName(queryName, profile);
+                    queryName = validateQueryName(queryName, profile);                    
                     SessionMethods.saveQuery(session, queryName, query);
                     if (sb.length() > 0) {
                         sb.append(", ");
