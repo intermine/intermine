@@ -43,6 +43,7 @@ import org.intermine.web.struts.WebPathCollection;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Publication;
+import org.flymine.web.logic.FlymineUtil;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -118,7 +119,7 @@ public class PublicationAction extends InterMineAction
         }
 
         // get organisms
-        ArrayList organisms = (ArrayList) BioUtil.getOrganisms(os, bag);
+        ArrayList organisms = (ArrayList) FlymineUtil.getOrganisms(os, bag);
 
         // limit to organisms in the bag
         BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
