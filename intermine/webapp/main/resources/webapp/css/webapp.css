@@ -717,7 +717,7 @@ ul#submenulist li#subactive_bag {font-weight:bold;color:#FFF;background:url('../
 ul#submenulist li#subactive_mymine {font-weight:bold;color:#FFF;background:url('../images/submenu_my.png') no-repeat bottom center;}
 
 ul#submenulist li a {color:#FFF;text-decoration: none;font-weight: bold;float:left;}
-ul#submenulist li a:hover {color:#333;text-decoration: underline;font-weight: bold;float:left;}
+ul#submenulist li a:hover {color:#FFF;text-decoration: underline;font-weight: bold;float:left;}
 div#navtrail{
 	font-size:0.7em;
 	padding-right:15px;
