@@ -46,3 +46,16 @@
             type="org.flymine.web.ProteinDomainAction">
       <forward name="results" path="/results.do" redirect="true"/>    
     </action>
+    
+    <action path="/initPublicationDisplayer" 
+		type="org.flymine.web.PublicationDisplayerController" />
+    
+    <action path="/publicationDisplayer" 
+		forward="publicationDisplayer.tile" />
+    
+    <action path="/publicationAction"
+            type="org.flymine.web.PublicationAction">
+      <forward name="results" path="/results.do" redirect="true"/>    
+    </action>
+    
+    

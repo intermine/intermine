@@ -11,7 +11,7 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<!-- proteinDomainDisplayer.jsp -->
+<!-- publicationDisplayer.jsp -->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd">
 
@@ -35,14 +35,6 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
     <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
           name="description"/>
     <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
-    
-    <title>
-      
-    <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
-    <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
-          name="description"/>
-    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
-    
     <title>FlyMine: List Analysis Page</title>
   </head>
 
@@ -53,9 +45,9 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
 
 <div class="body">
 
-<center><h2>Protein Domain Enrichment</h2></center>
+<center><h2>Publication Enrichment</h2></center>
 
-Protein domains that are enriched for objects in this list compared to the reference population.  Smaller p-values show greater enrichment. Method: Hypergeometric test with Bonferroni error correction (using a significance value of 0.05).
+Publications that are enriched for objects in this list compared to the reference population.  Smaller p-values show greater enrichment. Method: Hypergeometric test with Bonferroni error correction (using a significance value of 0.05).
 <br><br>
 Reference population: <c:out value='${organisms}'/>.
 <br><br>
@@ -69,7 +61,7 @@ Reference population: <c:out value='${organisms}'/>.
 		<c:when test="${!empty pvalues}">
 			<table cellpadding="5" border="0" cellspacing="0" class="results">
 		  	<tr>	
-  				<th>Protein Domain</td>
+  				<th>Publication</td>
 	  			<th>p-value</td>
   				<th>&nbsp;</td>
 			</tr>
@@ -90,7 +82,7 @@ Reference population: <c:out value='${organisms}'/>.
     				    </c:choose>
   					</td>
   					<td align="left" nowrap>
-  		   				<html:link action="/proteinDomainAction?key=${results.key}&bag=${bagName}" target="_top">
+  		   				<html:link action="/publicationAction?key=${results.key}&bag=${bagName}" target="_top">
   		   					[<c:out value='${totals[results.key]}'/> genes]
        					</html:link>  	
 	       			</td>
@@ -111,4 +103,4 @@ Reference population: <c:out value='${organisms}'/>.
  </body>
  </html>
  
-<!-- /proteinDomainDisplayer.jsp -->
+<!-- /publicationDisplayer.jsp -->
