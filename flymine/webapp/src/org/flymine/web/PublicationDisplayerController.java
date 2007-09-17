@@ -23,8 +23,6 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
@@ -35,6 +33,7 @@ import org.intermine.web.logic.profile.Profile;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Publication;
+import org.flymine.web.logic.FlymineUtil;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -121,7 +120,7 @@ public class PublicationDisplayerController extends TilesAction
              }
 
              // get organisms
-             ArrayList organisms = (ArrayList) BioUtil.getOrganisms(os, bag);
+             ArrayList organisms = (ArrayList) FlymineUtil.getOrganisms(os, bag);
 
              // limit to organisms in the bag
              BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
@@ -163,7 +162,7 @@ public class PublicationDisplayerController extends TilesAction
              queryPopulation.addToGroupBy(qfId);
                           
              // run both queries and compare the results 
-             ArrayList results = BioUtil.statsCalc(os, queryPopulation, querySample, bag, 
+             ArrayList results = FlymineUtil.statsCalc(os, queryPopulation, querySample, bag, 
                                        organisms, maxValue);
              if (results.isEmpty()) {
                  return null;
