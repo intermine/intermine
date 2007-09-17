@@ -84,6 +84,8 @@ public class EquivalentObjectHints
             databaseEmptyChecked = true;
         } catch (ObjectStoreException e) {
             LOG.error("Error checking database", e);
+            databaseEmptyChecked = true;
+            databaseEmpty = false;
             return false;
         }
         return databaseEmpty;
