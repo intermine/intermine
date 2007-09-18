@@ -118,11 +118,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectUnidirectionalCollection", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
         results.put("EmptyAndConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
         results2.put("EmptyAndConstraintSet", Collections.singleton("InterMineObject"));
-        results.put("EmptyOrConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND false ORDER BY a1_.id");
-        results2.put("EmptyOrConstraintSet", Collections.singleton("InterMineObject"));
-        results.put("EmptyNandConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND false ORDER BY a1_.id");
-        results2.put("EmptyNandConstraintSet", Collections.singleton("InterMineObject"));
-        results.put("EmptyNorConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' AND true ORDER BY a1_.id");
+        results.put("EmptyNorConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
         results2.put("EmptyNorConstraintSet", Collections.singleton("InterMineObject"));
         results.put("BagConstraint", "SELECT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM InterMineObject AS Company WHERE Company.class = 'org.intermine.model.testmodel.Company' AND Company.name IN ('CompanyA', 'goodbye', 'hello') ORDER BY Company.id");
         results2.put("BagConstraint", Collections.singleton("InterMineObject"));
@@ -284,6 +280,12 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("WhereCount", Collections.singleton("InterMineObject"));
         results.put("LimitedSubquery", "SELECT DISTINCT a1_.a2_ AS a2_ FROM (SELECT a1_.name AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' LIMIT 3) AS a1_ ORDER BY a1_.a2_");
         results2.put("LimitedSubquery", Collections.singleton("InterMineObject"));
+        results.put("TotallyTrue", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
+        results2.put("TotallyTrue", Collections.singleton("InterMineObject"));
+        results.put("MergeFalse", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND (a1_.age > 3) ORDER BY a1_.id");
+        results2.put("MergeFalse", Collections.singleton("InterMineObject"));
+        results.put("MergeTrue", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.age > 3 ORDER BY a1_.id");
+        results2.put("MergeTrue", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {

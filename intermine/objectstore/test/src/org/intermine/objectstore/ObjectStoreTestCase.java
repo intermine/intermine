@@ -509,6 +509,17 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         //results.put("LimitedSubquery", toList(r));
         results.put("LimitedSubquery", NO_RESULT); // Gives a random selection of the Employees
         results.put("ObjectStoreBagCombination3", Collections.EMPTY_LIST);
+
+        results.put("TotallyFalse", Collections.EMPTY_LIST);
+        r = new Object[][] { { data.get("EmployeeA1") },
+                             { data.get("EmployeeA2") },
+                             { data.get("EmployeeA3") },
+                             { data.get("EmployeeB1") },
+                             { data.get("EmployeeB2") },
+                             { data.get("EmployeeB3") } };
+        results.put("TotallyTrue", toList(r));
+        results.put("MergeFalse", toList(r));
+        results.put("MergeTrue", toList(r));
     }
 
     /**
