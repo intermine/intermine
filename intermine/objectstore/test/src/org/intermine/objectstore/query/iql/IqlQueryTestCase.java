@@ -276,5 +276,8 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("TotallyTrue", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age > 3 OR true)", null));
         results.put("MergeFalse", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age > 3 OR false)", null));
         results.put("MergeTrue", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age > 3 AND true)", null));
+        fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.name IN ?", null);
+        fq.setParameters(Collections.singletonList(Collections.EMPTY_SET));
+        results.put("EmptyBagConstraint", fq);
     }
 }

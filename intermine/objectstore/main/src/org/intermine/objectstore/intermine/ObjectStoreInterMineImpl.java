@@ -1097,8 +1097,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected ResultsInfo estimateWithConnection(Connection c,
             Query q) throws ObjectStoreException {
-        String sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db,
-                                           bagConstraintTables);
+        String sql;
+        try {
+            sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, bagConstraintTables);
+        } catch (CompletelyFalseException e) {
+            return new ResultsInfo(0, 0, 0, 0, 0);
+        }
         try {
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
@@ -1145,9 +1149,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             Map<Object, Integer> sequence) throws ObjectStoreException {
         checkSequence(sequence, q, "COUNT ");
 
-        String sql =
-            SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, bagConstraintTables);
+        String sql = null;
         try {
+            sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, bagConstraintTables);
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
@@ -1168,6 +1172,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             //}
             sqlResults.next();
             return sqlResults.getInt(1);
+        } catch (CompletelyFalseException e) {
+            return 0;
         } catch (SQLException e) {
             throw new ObjectStoreException("Problem counting SQL statement \"" + sql + "\"", e);
         }

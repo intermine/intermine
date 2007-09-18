@@ -520,6 +520,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("TotallyTrue", toList(r));
         results.put("MergeFalse", toList(r));
         results.put("MergeTrue", toList(r));
+        results.put("EmptyBagConstraint", Collections.EMPTY_LIST);
     }
 
     /**
