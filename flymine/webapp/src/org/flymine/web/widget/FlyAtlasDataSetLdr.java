@@ -84,8 +84,8 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         results = os.execute(q);
         results.setBatchSize(100000);
         Iterator iter = results.iterator();
-        HashMap callTable = new HashMap();
-        HashMap geneMap = new HashMap();
+        HashMap<String, int[]> callTable = new HashMap<String, int[]>();
+        HashMap<String, ArrayList<String>> geneMap = new HashMap<String, ArrayList<String>>();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
             // Double enrichment = (Double)resRow.get(0);
@@ -95,31 +95,31 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
             if (affyCall != null) {
                 if (callTable.get(tissue) != null) {
                     if (affyCall.equals("Up")) {
-                        ((int[]) callTable.get(tissue))[0]++;
-                        ((ArrayList) geneMap.get(tissue + "_Up")).add(identifier);
+                        (callTable.get(tissue))[0]++;
+                        ((ArrayList<String>) geneMap.get(tissue + "_Up")).add(identifier);
                     } else
                         if (affyCall.equals("Down")) {
-                            ((int[]) callTable.get(tissue))[1]--;
-                            ((ArrayList) geneMap.get(tissue + "_Down")).add(identifier);
+                            (callTable.get(tissue))[1]--;
+                            ((ArrayList<String>) geneMap.get(tissue + "_Down")).add(identifier);
                         }
                 } else {
                     int[] count = new int[2];
-                    ArrayList genesArray = new ArrayList();
+                    ArrayList<String> genesArray = new ArrayList<String>();
                     genesArray.add(identifier);
                     if (affyCall.equals("Up")) {
                         count[0]++;
                         geneMap.put(tissue + "_Up", genesArray);
                         ;
-                        geneMap.put(tissue + "_Down", new ArrayList());
+                        geneMap.put(tissue + "_Down", new ArrayList<String>());
                     } else
                         if (affyCall.equals("Down")) {
                             count[1]--;
-                            geneMap.put(tissue + "_Up", new ArrayList());
+                            geneMap.put(tissue + "_Up", new ArrayList<String>());
                             geneMap.put(tissue + "_Down", genesArray);
                         } else
                             if (affyCall.equals("None")) {
-                                geneMap.put(tissue + "_Up", new ArrayList());
-                                geneMap.put(tissue + "_Down", new ArrayList());
+                                geneMap.put(tissue + "_Up", new ArrayList<String>());
+                                geneMap.put(tissue + "_Down", new ArrayList<String>());
                             }
                     callTable.put(tissue, count);
                 }
@@ -131,11 +131,11 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         int i = 0;
         for (Iterator iterator = callTable.keySet().iterator(); iterator.hasNext();) {
             String tissue = (String) iterator.next();
-            dataSet.addValue(((int[]) callTable.get(tissue))[0], "Up", tissue);
-            dataSet.addValue(((int[]) callTable.get(tissue))[1], "Down", tissue);
+            dataSet.addValue((callTable.get(tissue))[0], "Up", tissue);
+            dataSet.addValue((callTable.get(tissue))[1], "Down", tissue);
             Object[] geneSeriesArray = new Object[2];
-            geneSeriesArray[0] = (ArrayList) geneMap.get(tissue + "_Up");
-            geneSeriesArray[1] = (ArrayList) geneMap.get(tissue + "_Down");
+            geneSeriesArray[0] = geneMap.get(tissue + "_Up");
+            geneSeriesArray[1] = geneMap.get(tissue + "_Down");
             geneCategoryArray[i] = geneSeriesArray;
             i++;
         }

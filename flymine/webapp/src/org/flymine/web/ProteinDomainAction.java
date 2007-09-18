@@ -21,7 +21,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
@@ -103,12 +102,8 @@ public class ProteinDomainAction extends InterMineAction
 
 
         QueryField qfGeneId = new QueryField(qcGene, "id");
-        QueryField qfName = new QueryField(qcProteinFeature, "name");
-        QueryField qfId = new QueryField(qcProteinFeature, "interproId");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfInterpro = new QueryField(qcProteinFeature, "identifier");
-        
-        QueryFunction geneCount = new QueryFunction();
 
         querySample.addFrom(qcGene);
         querySample.addFrom(qcProtein);
