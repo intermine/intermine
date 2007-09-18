@@ -21,9 +21,7 @@
       
       <div id="feedbackFormDiv" style="display:none;">
             <im:vspacer height="11"/>
-            <im:box title="${WEB_PROPERTIES['feedback.title']}">
               <tiles:get name="feedbackForm"/>
-            </im:box>
         </div>
       </c:if>
            

@@ -86,3 +86,11 @@ ul.filterActions li{
 	float:left;
 	vertical-align: baseline;
 }
+/* =SPAN £WEBSEARCHABLES*/
+.templateTitle {
+  padding: 4px;}	
+
+/* =DIV £WEBSEARCHABLES */
+.templateDescription {
+  margin-top: 5px;padding: 4px;
+  font-style: italic; font-size: 90%;}

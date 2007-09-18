@@ -86,3 +86,10 @@ div.sortorderpath {
   line-height: 25px;
 }
 
+/* =TABLE £QB*/
+table.query {
+  border: none;}
+
+/* =TD £QB*/
+table.query td.modelbrowse {
+  border-right: 1px solid #888;}

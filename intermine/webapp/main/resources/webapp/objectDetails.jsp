@@ -8,7 +8,7 @@
 <!-- objectDetails.jsp -->
 <html:xhtml/>
 
-
+<link rel="stylesheet" href="css/resultstables.css" type="text/css" />
 
 <script type="text/javascript">
 <!--//<![CDATA[

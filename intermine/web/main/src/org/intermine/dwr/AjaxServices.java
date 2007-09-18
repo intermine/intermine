@@ -10,24 +10,34 @@ package org.intermine.dwr;
  *
  */
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.Results;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.struts.Globals;
+import org.apache.struts.util.MessageResources;
+import org.directwebremoting.WebContext;
+import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -48,20 +58,6 @@ import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
-import java.io.IOException;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.struts.Globals;
-import org.apache.struts.util.MessageResources;
-
-import uk.ltd.getahead.dwr.WebContext;
-import uk.ltd.getahead.dwr.WebContextFactory;
 
 /**
  * This class contains the methods called through DWR Ajax
@@ -406,10 +402,9 @@ public class AjaxServices
     public static List<String> filterWebSearchables(String scope, String type,
                                                     List<String> tags, String filterText,
                                                     String filterAction, String callId) {
-        WebContext ctx = WebContextFactory.get();        
-        ServletContext servletContext = ctx.getServletContext();
+        ServletContext servletContext = WebContextFactory.get().getServletContext();        
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        HttpSession session = ctx.getSession();
+        HttpSession session = WebContextFactory.get().getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, WebSearchable> wsMap;
         Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
@@ -504,7 +499,6 @@ public class AjaxServices
             }
             returnList.add(row);
         }
-        
 //        if(searching) {
 //            time = System.currentTimeMillis() - time;
 //            LOG.info("processing in filterWebSearchables() took: " + time + " milliseconds:");

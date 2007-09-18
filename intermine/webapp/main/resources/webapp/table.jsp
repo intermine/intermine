@@ -9,7 +9,7 @@
 
 <tiles:importAttribute/>
 <html:xhtml/>
-
+<link rel="stylesheet" href="css/resultstables.css" type="text/css" />
 <tiles:get name="objectTrail.tile"/> <%--<im:vspacer height="1"/>--%>
 
 <%-- PagedTable.getWebTableClass() is a bit hacky - replace with a boolean
