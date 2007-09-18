@@ -10,6 +10,7 @@ package org.flymine.web;
  *
  */
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -118,8 +119,9 @@ public class ChartRenderer extends InterMineAction
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        Map graphImageCache = (Map) session.getServletContext()
-            .getAttribute(Constants.GRAPH_CACHE);
+        Map<String, String> graphImageCache = new HashMap<String, String>();
+        graphImageCache.putAll((Map<String, String>) 
+                               session.getServletContext().getAttribute(Constants.GRAPH_CACHE));
         ObjectStore os = (ObjectStore) session.getServletContext()
             .getAttribute(Constants.OBJECTSTORE);
         String experiment = request.getParameter("experiment");
@@ -190,13 +192,14 @@ public class ChartRenderer extends InterMineAction
         return null;
     }
 
-    private void configureRenderer(AbstractRenderer renderer, HttpServletRequest request) {
+    private void configureRenderer(AbstractRenderer renderer, 
+                                   @SuppressWarnings("unused") HttpServletRequest request) {
         Color barColor = new Color(100, 149, 237);
         renderer.setSeriesPaint(0, barColor);
         renderer.setSeriesOutlinePaint(0, barColor.darker());
     }
 
-    private void configureXaxis(Axis axis, HttpServletRequest request) {
+    private void configureXaxis(Axis axis, @SuppressWarnings("unused") HttpServletRequest request) {
         if (request.getParameter("method").equals("microarray")) {
             ((CategoryAxis) axis).setMaximumCategoryLabelLines(7);
             axis.setLabelAngle(0);
@@ -206,11 +209,13 @@ public class ChartRenderer extends InterMineAction
         }
     }
 
-    private void configureYaxis(Axis axis, HttpServletRequest request) {
+    private void configureYaxis(Axis axis, 
+                                @SuppressWarnings("unused") HttpServletRequest request) {
         axis.setTickLabelFont(AbstractRenderer.DEFAULT_VALUE_LABEL_FONT.deriveFont(8));
     }
 
-    private void configureChart(JFreeChart chart, HttpServletRequest request) {
+    private void configureChart(JFreeChart chart, 
+                                @SuppressWarnings("unused") HttpServletRequest request) {
         chart.setBackgroundPaint(java.awt.Color.white);
         chart.setAntiAlias(false);
         chart.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,

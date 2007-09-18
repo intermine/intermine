@@ -55,7 +55,7 @@ public class GeneMicroArrayDisplayerController extends TilesAction
             Results results =
                 MicroArrayHelper.queryExperimentsInvolvingGene(gene.getIdentifier(), os);
             if (results != null) { 
-                ArrayList experiments = new ArrayList();
+                ArrayList<Object> experiments = new ArrayList<Object>();
                 for (Iterator iter = results.iterator(); iter.hasNext(); ) {
                     ResultsRow row = (ResultsRow) iter.next();
                     experiments.add(row.get(0));
