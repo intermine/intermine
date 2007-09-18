@@ -253,6 +253,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("TotallyTrue", totallyTrue());
         queries.put("MergeFalse", mergeFalse());
         queries.put("MergeTrue", mergeTrue());
+        queries.put("EmptyBagConstraint", emptyBagConstraint());
     }
 
     /*
@@ -1868,6 +1869,19 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         cs1.addConstraint(new SimpleConstraint(new QueryField(qc, "age"), ConstraintOp.GREATER_THAN, new QueryValue(new Integer(3))));
         cs1.addConstraint(new ConstraintSet(ConstraintOp.AND));
         q.setConstraint(cs1);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.name IN ()
+     */
+    public static Query emptyBagConstraint() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.setConstraint(new BagConstraint(new QueryField(qc, "name"), ConstraintOp.IN, Collections.EMPTY_SET));
         q.setDistinct(false);
         return q;
     }

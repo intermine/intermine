@@ -379,6 +379,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("MergeFalse", new HashSet(Arrays.asList("InterMineObject", "Employee")));
         results.put("MergeTrue", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.age > 3 ORDER BY a1_.id");
         results2.put("MergeTrue", new HashSet(Arrays.asList("InterMineObject", "Employee")));
+        results.put("EmptyBagConstraint", new Failure(CompletelyFalseException.class, null));
+        results2.put("EmptyBagConstraint", Collections.EMPTY_SET);
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

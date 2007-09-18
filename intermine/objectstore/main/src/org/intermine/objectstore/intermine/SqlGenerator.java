@@ -1054,6 +1054,10 @@ public class SqlGenerator
             } else {
                 throw new IllegalArgumentException("Invalid operation " + cs.getOp());
             }
+        } else if (con instanceof BagConstraint) {
+            BagConstraint bc = (BagConstraint) con;
+            return (bc.getBag() != null) && bc.getBag().isEmpty()
+                && (bc.getOp() == ConstraintOp.NOT_IN);
         }
         return false;
     }
@@ -1102,6 +1106,10 @@ public class SqlGenerator
             } else {
                 throw new IllegalArgumentException("Invalid operation " + cs.getOp());
             }
+        } else if (con instanceof BagConstraint) {
+            BagConstraint bc = (BagConstraint) con;
+            return (bc.getBag() != null) && bc.getBag().isEmpty()
+                && (bc.getOp() == ConstraintOp.IN);
         }
         return false;
     }
