@@ -47,8 +47,8 @@ public class ClassKeyHelper
      *            a properties object describing class keys
      * @return map from class name to set of available keys
      */
-    public static Map readKeys(Model model, Properties props) {
-        Map classKeys = new HashMap();
+    public static Map<String, Set<FieldDescriptor>> readKeys(Model model, Properties props) {
+        Map<String, Set<FieldDescriptor>> classKeys = new HashMap();
         for (Iterator i = props.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             String clsName = (String) entry.getKey();
@@ -60,28 +60,17 @@ public class ClassKeyHelper
                 String[] tokens = keys.split(",");
                 for (int o = 0; o < tokens.length; o++) {
                     String keyString = tokens[o].trim();
-                    String[] keyBits = keyString.split(" ");
-                    Set keyFields = new HashSet();
-                    for (int j = 0; j < keyBits.length; j++) {
-                        String keyBit = keyBits[j];
-                        FieldDescriptor fld = cld
-                                .getFieldDescriptorByName(keyBit);
-                        if (fld != null) {
-                            keyFields.add(fld);
-                        } else {
-                            LOG.warn("problem loading class key: " + keyString
-                                    + " for class " + clsName);
-                        }
-                    }
-                    if (keyFields.size() == keyBits.length) {
-                        ClassKeyHelper.addKey(classKeys, clsName, keyFields);
-                        // now add this key to all subclasses
+                    FieldDescriptor fld = cld.getFieldDescriptorByName(keyString);
+                    if (fld != null) {
+                        ClassKeyHelper.addKey(classKeys, clsName, fld);
                         Iterator subIter = model.getAllSubs(cld).iterator();
                         while (subIter.hasNext()) {
-                            ClassKeyHelper.addKey(classKeys, TypeUtil
-                                    .unqualifiedName(((ClassDescriptor) subIter
-                                            .next()).getName()), keyFields);
+                            ClassKeyHelper.addKey(classKeys, TypeUtil.unqualifiedName(
+                                        ((ClassDescriptor) subIter.next()).getName()), fld);
                         }
+                    } else {
+                        LOG.warn("problem loading class key: " + keyString
+                                + " for class " + clsName);
                     }
                 }
             } else {
@@ -100,10 +89,11 @@ public class ClassKeyHelper
      * @param clsName
      *            class name for key
      * @param key
-     *            set of FieldDescriptors that describe the key
+     *            a FieldDescriptor that describes the key
      */
-    protected static void addKey(Map classKeys, String clsName, Set key) {
-        Set keySet = (Set) classKeys.get(clsName);
+    protected static void addKey(Map<String, Set<FieldDescriptor>> classKeys, String clsName,
+            FieldDescriptor key) {
+        Set<FieldDescriptor> keySet = classKeys.get(clsName);
         if (keySet == null) {
             keySet = new HashSet();
             classKeys.put(clsName, keySet);
@@ -124,23 +114,16 @@ public class ClassKeyHelper
      *            the field name to look up
      * @return true if the field is an 'identifying' field for the class.
      */
-    public static boolean isKeyField(Map<String, Set> classKeys, String clsName,
-                                     String fieldName) {
+    public static boolean isKeyField(Map<String, Set<FieldDescriptor>> classKeys, String clsName,
+            String fieldName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
-        Set keys = classKeys.get(clsName);
+        Set<FieldDescriptor> keys = classKeys.get(clsName);
         if (keys != null) {
-            Iterator i = keys.iterator();
-            while (i.hasNext()) {
-                Set key = (Set) i.next();
-                Iterator j = key.iterator();
-                while (j.hasNext()) {
-                    FieldDescriptor fld = (FieldDescriptor) j.next();
-                    if (fld.getName().equals(fieldName) && fld.isAttribute()) {
-                        return true;
-                    }
-
+            for (FieldDescriptor key : keys) {
+                if (key.getName().equals(fieldName) && key.isAttribute()) {
+                    return true;
                 }
             }
         }
@@ -148,7 +131,7 @@ public class ClassKeyHelper
     }
 
     /**
-     * For a given classreturn true if it has any identifying fields.i An
+     * For a given classreturn true if it has any identifying fields. An
      * identifying field is an attribute (not a reference or collection) of the
      * class that is part of any key defined for that class.
      * 
@@ -158,11 +141,12 @@ public class ClassKeyHelper
      *            the class name to look up
      * @return true if the class has any key fields
      */
-    public static boolean hasKeyFields(Map<String, Set> classKeys, String clsName) {
+    public static boolean hasKeyFields(Map<String, Set<FieldDescriptor>> classKeys,
+            String clsName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
-        Set keys = (Set) classKeys.get(clsName);
+        Set<FieldDescriptor> keys = classKeys.get(clsName);
         if (keys != null && (keys.size() > 0)) {
             return true;
         }
@@ -175,11 +159,12 @@ public class ClassKeyHelper
      * @param clsName the class name to look up
      * @return the fields that are class keys for the class
      */
-    public static Collection getKeyFields(Map<String, Set> classKeys, String clsName) {
+    public static Collection getKeyFields(Map<String, Set<FieldDescriptor>> classKeys,
+            String clsName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
-        return (Collection) classKeys.get(clsName);
+        return classKeys.get(clsName);
     }
 
     
@@ -189,26 +174,21 @@ public class ClassKeyHelper
      * @param clsName the class name to look up
      * @return the names of fields that are class keys for the class
      */
-    public static Collection<String> getKeyFieldNames(Map<String, Set> classKeys, String clsName) {
+    public static Collection<String> getKeyFieldNames(Map<String, Set<FieldDescriptor>> classKeys,
+            String clsName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
-        Set fieldNames = new HashSet();
-        Set keys = classKeys.get(clsName);
+        Set<String> fieldNames = new HashSet();
+        Set<FieldDescriptor> keys = classKeys.get(clsName);
         if (keys != null) {
-            Iterator i = keys.iterator();
-            while (i.hasNext()) {
-                Set key = (Set) i.next();
-                Iterator j = key.iterator();
-                while (j.hasNext()) {
-                    fieldNames.add(((FieldDescriptor) j.next()).getName());
-                }
+            for (FieldDescriptor key : keys) {
+                fieldNames.add(key.getName());
             }
         }
         return fieldNames;
     }
-    
-    
+
     /**
      * For a given object/field return true if it is an 'identifying' field. An
      * identifying field is an attribute (not a reference or collection) of the
@@ -223,7 +203,7 @@ public class ClassKeyHelper
      * @return true if the field is an 'identifying' field for one of the
      *         classes that the object is
      */
-    public static boolean isKeyField(Map classKeys, InterMineObject o,
+    public static boolean isKeyField(Map<String, Set<FieldDescriptor>> classKeys, InterMineObject o,
             String fieldName) {
         return getKeyFieldClass(classKeys, o, fieldName) != null;
     }
@@ -240,13 +220,11 @@ public class ClassKeyHelper
      *            the field name to look up
      * @return the Class that fieldName is a key field in, otherwise null
      */
-    public static Class getKeyFieldClass(Map classKeys, InterMineObject o,
-            String fieldName) {
-        Set classes = DynamicUtil.decomposeClass(o.getClass());
+    public static Class getKeyFieldClass(Map<String, Set<FieldDescriptor>> classKeys,
+            InterMineObject o, String fieldName) {
+        Set<Class> classes = DynamicUtil.decomposeClass(o.getClass());
 
-        Iterator iter = classes.iterator();
-        while (iter.hasNext()) {
-            Class c = (Class) iter.next();
+        for (Class c : classes) {
             if (isKeyField(classKeys, c.getName(), fieldName)) {
                 return c;
             }

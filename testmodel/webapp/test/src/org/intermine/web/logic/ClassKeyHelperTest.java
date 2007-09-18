@@ -10,6 +10,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;
@@ -37,7 +38,7 @@ public class ClassKeyHelperTest extends TestCase {
 
         
         
-        Map expected = new HashMap();
+        Map<String, Set<FieldDescriptor>> expected = new HashMap();
         ClassDescriptor cldEmp = model.getClassDescriptorByName(pkg + "Employee");
         ClassDescriptor cldMan = model.getClassDescriptorByName(pkg + "Manager");
         ClassDescriptor cldCEO = model.getClassDescriptorByName(pkg + "CEO");
@@ -46,27 +47,16 @@ public class ClassKeyHelperTest extends TestCase {
         ClassDescriptor cldCon = model.getClassDescriptorByName(pkg + "Contractor");
         ClassDescriptor cldEmb = model.getClassDescriptorByName(pkg + "Employable");
         
-        ClassKeyHelper.addKey(expected, "Employee", new HashSet(Arrays.asList(new Object[] {
-        		cldEmp.getFieldDescriptorByName("name")})));		
-        ClassKeyHelper.addKey(expected, "Employable", new HashSet(Arrays.asList(new Object[] {
-        		cldEmb.getFieldDescriptorByName("name")})));		
-        ClassKeyHelper.addKey(expected, "Contractor", new HashSet(Arrays.asList(new Object[] {
-        		cldCon.getFieldDescriptorByName("name")})));
-		ClassKeyHelper.addKey(expected, "Manager", new HashSet(Arrays.asList(new Object[] {
-                cldMan.getFieldDescriptorByName("name")})));                
-		ClassKeyHelper.addKey(expected, "CEO", new HashSet(Arrays.asList(new Object[] {
-                cldCEO.getFieldDescriptorByName("name")})));          
-        ClassKeyHelper.addKey(expected, "Manager", new HashSet(Arrays.asList(new Object[] {
-                cldMan.getFieldDescriptorByName("title")}))); 
-        ClassKeyHelper.addKey(expected, "CEO", new HashSet(Arrays.asList(new Object[] {
-                cldCEO.getFieldDescriptorByName("title")})));
-		ClassKeyHelper.addKey(expected, "Company", new HashSet(Arrays.asList(new Object[] {
-                cldCom.getFieldDescriptorByName("name"),
-                cldCom.getFieldDescriptorByName("address")})));
-        ClassKeyHelper.addKey(expected, "Company", new HashSet(Arrays.asList(new Object[] {
-                cldCom.getFieldDescriptorByName("vatNumber")})));
-		ClassKeyHelper.addKey(expected, "Address", new HashSet(Arrays.asList(new Object[] {
-                cldAdd.getFieldDescriptorByName("address")})));
+        ClassKeyHelper.addKey(expected, "Employee", cldEmp.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "Employable", cldEmb.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "Contractor", cldCon.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("name"));                
+        ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("name"));          
+        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("title")); 
+        ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("title"));
+        ClassKeyHelper.addKey(expected, "Company", cldCom.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "Company", cldCom.getFieldDescriptorByName("vatNumber"));
+        ClassKeyHelper.addKey(expected, "Address", cldAdd.getFieldDescriptorByName("address"));
         assertEquals(expected, ClassKeyHelper.readKeys(model, props));
     }
     
