@@ -1,5 +1,5 @@
 // This line keeps the nasty error message away (FireFox Bug)
-DWREngine.setMethod(DWREngine.IFrame);
+//DWREngine.setMethod(DWREngine.IFrame);
 
 var wsNamesMap = {};
 

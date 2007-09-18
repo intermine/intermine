@@ -1,4 +1,3 @@
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -8,7 +7,7 @@
 
 <!-- bagDetails.jsp -->
 <html:xhtml/>
-
+<link rel="stylesheet" href="css/resultstables.css" type="text/css" />
 <script type="text/javascript">
   <!--//<![CDATA[
       var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';

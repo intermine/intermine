@@ -2,3 +2,6 @@ ol#buildbaglist, ol#buildbaglist li{list-style: none;margin:0;padding:0}
 ol#buildbaglist label{float:left;text-align:right;margin-right:1em;width:10em;font-size:1.2em;font-weight:bold;}
 ol#buildbaglist li {width:100%;float:left;clear:left;padding-bottom:1em;}
 ol#buildbaglist select, ol#buildbaglist textarea{width:60%;}
+/* =TEXTAREA £BAGBUILD*/
+textarea#pasteInput {
+  width: 345px;}
