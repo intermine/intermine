@@ -26,6 +26,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
@@ -213,8 +214,9 @@ public class TemplateListHelper
                 String name = null;
                 if (node.getParentType() != null) {
                     name = TypeUtil.unqualifiedName(node.getParentType());
-                    Map<String, Set> classKeys =
-                        (Map<String, Set>) context.getAttribute(Constants.CLASS_KEYS);
+                    Map<String, Set<FieldDescriptor>> classKeys =
+                        (Map<String, Set<FieldDescriptor>>) context.getAttribute(
+                                Constants.CLASS_KEYS);
                     if (ClassKeyHelper.isKeyField(classKeys, 
                                                    node.getParentType(), node.getFieldName())) {
                         if (type.equals(name)) {
