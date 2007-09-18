@@ -98,11 +98,7 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectUnidirectionalCollection", new HashSet(Arrays.asList(new String[] {"Company", "Secretary", "HasSecretarysSecretarys"})));
         results.put("EmptyAndConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("EmptyAndConstraintSet", Collections.singleton("Company"));
-        results.put("EmptyOrConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE false ORDER BY a1_.id");
-        results2.put("EmptyOrConstraintSet", Collections.singleton("Company"));
-        results.put("EmptyNandConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE false ORDER BY a1_.id");
-        results2.put("EmptyNandConstraintSet", Collections.singleton("Company"));
-        results.put("EmptyNorConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ WHERE true ORDER BY a1_.id");
+        results.put("EmptyNorConstraintSet", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("EmptyNorConstraintSet", Collections.singleton("Company"));
         results.put("BagConstraint", "SELECT Company.OBJECT AS \"Company\", Company.id AS \"Companyid\" FROM Company AS Company WHERE Company.name IN ('CompanyA', 'goodbye', 'hello') ORDER BY Company.id");
         results2.put("BagConstraint", Collections.singleton("Company"));
@@ -228,6 +224,12 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("OrderDescending", Collections.singleton("Employee"));
         results.put("WhereCount", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a3_ FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId GROUP BY a1_.OBJECT, a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
         results2.put("WhereCount", new HashSet(Arrays.asList("Employee", "Department")));
+        results.put("TotallyTrue", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("TotallyTrue", Collections.singleton("Employee"));
+        results.put("MergeFalse", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE (a1_.age > 3) ORDER BY a1_.id");
+        results2.put("MergeFalse", Collections.singleton("Employee"));
+        results.put("MergeTrue", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.age > 3 ORDER BY a1_.id");
+        results2.put("MergeTrue", Collections.singleton("Employee"));
     }
 
     protected DatabaseSchema getSchema() {

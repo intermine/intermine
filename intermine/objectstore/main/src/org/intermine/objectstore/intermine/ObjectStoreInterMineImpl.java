@@ -740,7 +740,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             flushOldTempBagTables(c);
         }
         long preGenTime = System.currentTimeMillis();
-        String sql = SqlGenerator.generate(q, start, limit, schema, db, bagConstraintTables);
+        String sql;
+        try {
+            sql = SqlGenerator.generate(q, start, limit, schema, db, bagConstraintTables);
+        } catch (CompletelyFalseException e) {
+            return Collections.emptyList();
+        }
         String generatedSql = sql;
         try {
             long estimatedTime = 0;

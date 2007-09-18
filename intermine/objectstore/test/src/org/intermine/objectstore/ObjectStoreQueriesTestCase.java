@@ -249,6 +249,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("WhereCount", whereCount());
         queries.put("LimitedSubquery", limitedSubquery());
         queries.put("ObjectStoreBagCombination3", objectStoreBagCombination3());
+        queries.put("TotallyFalse", totallyFalse());
+        queries.put("TotallyTrue", totallyTrue());
+        queries.put("MergeFalse", mergeFalse());
+        queries.put("MergeTrue", mergeTrue());
     }
 
     /*
@@ -1800,6 +1804,70 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         osbc.addBag(osb1);
         osbc.addBag(osb2);
         q.addToSelect(osbc);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.age > 3 AND false
+     */
+    public static Query totallyFalse() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        cs1.addConstraint(new SimpleConstraint(new QueryField(qc, "age"), ConstraintOp.GREATER_THAN, new QueryValue(new Integer(3))));
+        cs1.addConstraint(new ConstraintSet(ConstraintOp.OR));
+        q.setConstraint(cs1);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.age > 3 OR true
+     */
+    public static Query totallyTrue() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.OR);
+        cs1.addConstraint(new SimpleConstraint(new QueryField(qc, "age"), ConstraintOp.GREATER_THAN, new QueryValue(new Integer(3))));
+        cs1.addConstraint(new ConstraintSet(ConstraintOp.AND));
+        q.setConstraint(cs1);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.age > 3 OR false
+     */
+    public static Query mergeFalse() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.OR);
+        cs1.addConstraint(new SimpleConstraint(new QueryField(qc, "age"), ConstraintOp.GREATER_THAN, new QueryValue(new Integer(3))));
+        cs1.addConstraint(new ConstraintSet(ConstraintOp.OR));
+        q.setConstraint(cs1);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_ FROM Employee AS a1_ WHERE a1_.age > 3 AND true
+     */
+    public static Query mergeTrue() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        cs1.addConstraint(new SimpleConstraint(new QueryField(qc, "age"), ConstraintOp.GREATER_THAN, new QueryValue(new Integer(3))));
+        cs1.addConstraint(new ConstraintSet(ConstraintOp.AND));
+        q.setConstraint(cs1);
         q.setDistinct(false);
         return q;
     }

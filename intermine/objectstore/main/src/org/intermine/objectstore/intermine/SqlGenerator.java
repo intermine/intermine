@@ -594,6 +594,9 @@ public class SqlGenerator
     private static void findTableNames(Set tablenames, Query q,
             DatabaseSchema schema, boolean addInterMineObject, boolean individualOsbs)
     throws ObjectStoreException {
+        if (completelyFalse(q.getConstraint())) {
+            return;
+        }
         findTableNamesInConstraint(tablenames, q.getConstraint(), schema, individualOsbs);
         Set fromElements = q.getFrom();
         Iterator fromIter = fromElements.iterator();
@@ -853,6 +856,12 @@ public class SqlGenerator
     protected static void buildWhereClause(State state, Query q, Constraint c,
             DatabaseSchema schema) throws ObjectStoreException {
         if (c != null) {
+            if (completelyFalse(c)) {
+                throw new CompletelyFalseException();
+            }
+            if (completelyTrue(c)) {
+                return;
+            }
             LinkedList<Constraint> constraints = new LinkedList<Constraint>();
             boolean needWhereComma = state.getWhereBuffer().length() > 0;
             boolean needHavingComma = state.getHavingBuffer().length() > 0;
@@ -1001,6 +1010,102 @@ public class SqlGenerator
         }
     }
 
+    /**
+     * Returns true if this constraint is always true, regardless of row values.
+     *
+     * @param con a Constraint
+     * @return a boolean
+     */
+    protected static boolean completelyTrue(Constraint con) {
+        if (con instanceof ConstraintSet) {
+            ConstraintSet cs = (ConstraintSet) con;
+            if (cs.getOp() == ConstraintOp.AND) {
+                boolean retval = true;
+                Iterator<Constraint> csIter = cs.getConstraints().iterator();
+                while (csIter.hasNext() && retval) {
+                    Constraint c = csIter.next();
+                    retval = retval && completelyTrue(c);
+                }
+                return retval;
+            } else if (cs.getOp() == ConstraintOp.OR) {
+                boolean retval = false;
+                Iterator<Constraint> csIter = cs.getConstraints().iterator();
+                while (csIter.hasNext() && (!retval)) {
+                    Constraint c = csIter.next();
+                    retval = retval || completelyTrue(c);
+                }
+                return retval;
+            } else if (cs.getOp() == ConstraintOp.NOR) {
+                boolean retval = true;
+                Iterator<Constraint> csIter = cs.getConstraints().iterator();
+                while (csIter.hasNext() && retval) {
+                    Constraint c = csIter.next();
+                    retval = retval && completelyFalse(c);
+                }
+                return retval;
+            } else if (cs.getOp() == ConstraintOp.NAND) {
+                boolean retval = false;
+                Iterator<Constraint> csIter = cs.getConstraints().iterator();
+                while (csIter.hasNext() && retval) {
+                    Constraint c = csIter.next();
+                    retval = retval || completelyFalse(c);
+                }
+                return retval;
+            } else {
+                throw new IllegalArgumentException("Invalid operation " + cs.getOp());
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if this constraint is always false, regardless of row values.
+     *
+     * @param con a Constraint
+     * @return a boolean
+     */
+    protected static boolean completelyFalse(Constraint con) {
+        if (con instanceof ConstraintSet) {
+            ConstraintSet cs = (ConstraintSet) con;
+            if (cs.getOp() == ConstraintOp.AND) {
+                boolean retval = false;
+                Iterator<Constraint> csIter = cs.getConstraints().iterator();
+                while (csIter.hasNext() && (!retval)) {
+                    Constraint c = csIter.next();
+                    retval = retval || completelyFalse(c);
+                }
+                return retval;
+            } else if (cs.getOp() == ConstraintOp.OR) {
+                boolean retval = true;
+                Iterator<Constraint> csIter = cs.getConstraints().iterator();
+                while (csIter.hasNext() && retval) {
+                    Constraint c = csIter.next();
+                    retval = retval && completelyFalse(c);
+                }
+                return retval;
+            } else if (cs.getOp() == ConstraintOp.NOR) {
+                boolean retval = false;
+                Iterator<Constraint> csIter = cs.getConstraints().iterator();
+                while (csIter.hasNext() && (!retval)) {
+                    Constraint c = csIter.next();
+                    retval = retval || completelyTrue(c);
+                }
+                return retval;
+            } else if (cs.getOp() == ConstraintOp.NAND) {
+                boolean retval = true;
+                Iterator<Constraint> csIter = cs.getConstraints().iterator();
+                while (csIter.hasNext() && retval) {
+                    Constraint c = csIter.next();
+                    retval = retval && completelyTrue(c);
+                }
+                return retval;
+            } else {
+                throw new IllegalArgumentException("Invalid operation " + cs.getOp());
+            }
+        }
+        return false;
+    }
+
     /** Safeness value indicating a situation safe for ContainsConstraint CONTAINS */
     public static final int SAFENESS_SAFE = 1;
     /** Safeness value indicating a situation safe for ContainsConstraint DOES NOT CONTAIN */
@@ -1117,12 +1222,17 @@ public class SqlGenerator
                     existing.append(generate(subQCQuery, schema, state.getDb(), null,
                                 QUERY_SUBQUERY_CONSTRAINT, state.getBagTableNames()));
                 } else {
-                    if (needComma) {
-                        buffer.append(disjunctive ? " OR " : " AND ");
+                    if ((disjunctive && completelyFalse(subC))
+                            || ((!disjunctive) && completelyTrue(subC))) {
+                        // This query can be skipped
+                    } else {
+                        if (needComma) {
+                            buffer.append(disjunctive ? " OR " : " AND ");
+                        }
+                        needComma = true;
+                        constraintToString(state, buffer, subC, q, schema, newSafeness, (!negate)
+                                && (!disjunctive));
                     }
-                    needComma = true;
-                    constraintToString(state, buffer, subC, q, schema, newSafeness, (!negate)
-                            && (!disjunctive));
                 }
             }
             Iterator subqueryConstraintIter = subqueryConstraints.entrySet().iterator();

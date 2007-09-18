@@ -100,11 +100,7 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectUnidirectionalCollection", new HashSet(Arrays.asList(new String[] {"Company", "Secretary", "HasSecretarysSecretarys"})));
         results.put("EmptyAndConstraintSet", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("EmptyAndConstraintSet", Collections.singleton("Company"));
-        results.put("EmptyOrConstraintSet", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE false ORDER BY a1_.id");
-        results2.put("EmptyOrConstraintSet", Collections.singleton("Company"));
-        results.put("EmptyNandConstraintSet", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE false ORDER BY a1_.id");
-        results2.put("EmptyNandConstraintSet", Collections.singleton("Company"));
-        results.put("EmptyNorConstraintSet", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ WHERE true ORDER BY a1_.id");
+        results.put("EmptyNorConstraintSet", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("EmptyNorConstraintSet", Collections.singleton("Company"));
         results.put("BagConstraint", "SELECT Company.CEOId AS \"Companyceoid\", Company.addressId AS \"Companyaddressid\", Company.id AS \"Companyid\", Company.name AS \"Companyname\", Company.vatNumber AS \"Companyvatnumber\" FROM Company AS Company WHERE Company.name IN ('CompanyA', 'goodbye', 'hello') ORDER BY Company.id");
         results2.put("BagConstraint", Collections.singleton("Company"));
@@ -231,6 +227,12 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results.put("WhereCount", "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, COUNT(*) AS a3_ FROM Department AS a1_, Employee AS a2_ WHERE a2_.class = 'org.intermine.model.testmodel.Employee' AND a1_.id = a2_.departmentId GROUP BY a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
         results2.put("WhereCount", new HashSet(Arrays.asList("Employee", "Department")));
         results.put("LimitedSubquery", "SELECT DISTINCT a1_.a2_ AS a2_ FROM (SELECT a1_.name AS a2_ FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' LIMIT 3) AS a1_ ORDER BY a1_.a2_");
+        results.put("TotallyTrue", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.objectclass AS a1_objectclass FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
+        results2.put("TotallyTrue", Collections.singleton("Employee"));
+        results.put("MergeFalse", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.objectclass AS a1_objectclass FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND (a1_.age > 3) ORDER BY a1_.id");
+        results2.put("MergeFalse", Collections.singleton("Employee"));
+        results.put("MergeTrue", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.objectclass AS a1_objectclass FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.age > 3 ORDER BY a1_.id");
+        results2.put("MergeTrue", Collections.singleton("Employee"));
     }
 
     protected DatabaseSchema getSchema() throws Exception {

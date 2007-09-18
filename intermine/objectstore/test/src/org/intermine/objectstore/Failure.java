@@ -10,6 +10,8 @@ package org.intermine.objectstore;
  *
  */
 
+import org.intermine.util.Util;
+
 /**
  * Object to be put in results maps, as representing a failure, with a given exception class and
  * error message.
@@ -34,7 +36,7 @@ public class Failure
     public boolean equals(Object o) {
         if (o instanceof Failure) {
             Failure f = (Failure) o;
-            if (exceptionClass.equals(f.exceptionClass) && message.equals(f.message)) {
+            if (exceptionClass.equals(f.exceptionClass) && Util.equals(message, f.message)) {
                 return true;
             }
         }
