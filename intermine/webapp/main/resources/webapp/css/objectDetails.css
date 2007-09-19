@@ -1,20 +1,13 @@
 img.objectDetailsAspectIcon {
-  vertical-align: middle;
-  margin-top: 1px;
-  margin-right: 5px;
-  margin-left: -2px;
   float: left;
-  margin-bottom: 1px;
-}
+  margin:1px 5px 1px -2px;
+  vertical-align: middle;}
 
 div.templateDetails {
   margin-left: 15px;
-
   /* needed to prevent the peekaboo bug on IE:
      http://www.positioniseverything.net/explorer/peekaboo.html */
-  height: 0.01%;
-}
+  height: 0.01%;}
 
 table.objSummary td{
-	padding:5px;
-}
+	padding:5px;}

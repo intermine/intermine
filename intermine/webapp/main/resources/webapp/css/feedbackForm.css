@@ -1,14 +1,10 @@
 #feedbackForm textarea, #feedbackForm input[type=text] {
   padding: 3px;
-  border-top: 1px solid #909090;
-  border-left: 1px solid #909090;
-  border-bottom: 1px solid #c0c0c0;
-  border-right: 1px solid #c0c0c0;
-}
+  border-top: 1px solid #909090; border-left: 1px solid #909090; border-bottom: 1px solid #c0c0c0; border-right: 1px solid #c0c0c0;}
+
 #feedbackForm {
-  white-space: nowrap;
-}
+  white-space: nowrap;}
+
 #feedbackFormDivButton {
-	clear:both;
-}
+	clear:both;}
 

@@ -1,18 +1,6 @@
-
-th
-        {
-        font: bold 10px/22px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-        color: #4f6b72;
-        border-right: 1px solid #C1DAD7;
-        border-bottom: 1px solid #C1DAD7;
-        border-top: 1px solid #C1DAD7;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        text-align: left;
-        padding: 8px 12px 4px 12px;
-        background: #CAE8EA url(../images/bg_header.jpg) no-repeat;
-        vertical-align:middle;
-        }
+th {
+  padding: 8px 12px 4px 12px;
+  font: bold 10px/22px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; color: #4f6b72; border: 1px solid #C1DAD7; letter-spacing: 1px; text-transform: uppercase; text-align: left; background: #CAE8EA url(../images/bg_header.jpg) no-repeat; vertical-align:middle;}
 
 th.sortable,
 th.sortable-text,
@@ -26,27 +14,20 @@ th.sortable-sortIPAddress,
 th.sortable-sortEnglishLonghandDateFormat,
 th.sortable-sortScientificNotation,
 th.sortable-sortImage,
-th.sortable-sortFileSize
+th.sortable-sortFileSize { 
+  padding: 8px 12px 4px 16px;        
+  cursor:pointer; background: #CAE8EA url(../images/bg_header_sortable.jpg) no-repeat;}
 
-        {
-        cursor:pointer;
-        background: #CAE8EA url(../images/bg_header_sortable.jpg) no-repeat;
-        padding: 8px 12px 4px 16px;
-        }
-th.forwardSort
-        {
-        background:#CAE8EA url(../images/bg_header_down.jpg) no-repeat 0 0;
-        }
-th.reverseSort
-        {
-        background:#CAE8EA url(../images/bg_header_up.jpg) no-repeat 0 0;
-        }
+th.forwardSort {
+        background:#CAE8EA url(../images/bg_header_down.jpg) no-repeat 0 0; }
+
+th.reverseSort {
+        background:#CAE8EA url(../images/bg_header_up.jpg) no-repeat 0 0; }
+
 th.forwardSort a,
-th.reverseSort a
-        {
-        color:#000;
-        outline:0 none;
-        }
+th.reverseSort a {
+        color:#000; outline:0 none; }
+
 /*
 These styles should be added when very long tables are expected
 th.sort-active
@@ -61,62 +42,32 @@ th.sort-active a
         }
 */
 
-td.lft
-        {
-        text-align:left;
-        background: #F5FAFA url(../images/td_alt.jpg) no-repeat;
-        border-width: 1px 1px 1px 1px;
+td.lft {
+  text-align:left; background: #F5FAFA url(../images/td_alt.jpg) no-repeat; border-width: 1px 1px 1px 1px;}
 
-        }
-tr.alt
-        {
-        background: #F5FAFA;
-        color: #797268;
-        border-width: 1px 1px 1px 1px;
+tr.alt {
+        background: #F5FAFA; color: #797268; border-width: 1px 1px 1px 1px; }
 
-        }
 /* Poor old Internet Explorer has a bug that means we can't use background images for the table rows
    as it trys to download the image each and every time that it is used... */
-tr[class="alt"] td
-        {
-        background: #F5FAFA url(../images/td_alt.jpg) no-repeat;
-       	border-width: 1px 1px 1px 1px;
+tr[class="alt"] td {
+        background: #F5FAFA url(../images/td_alt.jpg) no-repeat;border-width: 1px 1px 1px 1px;}
 
-        }
-td[class~="alt"]
-        {
-        background: #fff url(../images/col_alt.jpg) no-repeat !important;
-        border-width: 1px 1px 1px 1px;
-        }
-
+td[class~="alt"]{
+        background: #fff url(../images/col_alt.jpg) no-repeat !important; border-width: 1px 1px 1px 1px;}
         
-.sorting
-        {
-        font: normal 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-        border-right: 1px solid #C1DAD7;
-        border-bottom: 1px solid #C1DAD7;
-        padding: 6px 12px 6px 12px;
-        color: #4f6b72;
-        }
+.sorting{
+    padding: 6px 12px 6px 12px;
+    font: normal 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7;color: #4f6b72;}
         
 /* blue and green boxes surrounding class names in the query history table */ 
 .historySummaryRoot {
-  background-color: #e7F1E7;
-  border: 1px solid #bbb;
-  padding-left: 2px;
-  padding-right: 2px;
-  padding-bottom: 1px;
-  font-size: 10px;
-  font-weight: bold;
-}
+  padding:0 2px 1px 2px;
+  background-color: #e7F1E7;border: 1px solid #bbb;font-size: 10px;font-weight: bold;}
 
 .historySummaryShowing {
-  background-color: #E7F1FB;
-  border: 1px solid #bbb;
-  padding-left: 2px;
-  padding-right: 2px;
-  padding-bottom: 1px;
-  font-size: 10px;
+  padding:0 2px 1px 2px;
+  background-color: #E7F1FB;border: 1px solid #bbb;font-size: 10px;
 }
 
 

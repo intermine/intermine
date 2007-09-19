@@ -1,21 +1,13 @@
 .templateTitleBold {
-  font-weight: bold;
   padding: 4px;
-}
+  font-weight: bold;}
 
 .lookupWarn {
-  color: green;
-}
+  color: green;}
 
 .lookupError {
-  color: #c00;
-}
+  color: #c00;}
 
 .lookupReport {
-  margin-left: 10px;
-  margin-right: 10px; 
-  background-color: white;
-  padding: 6px;
-  font-size: 14px;
-  border: 1px dashed #777;
-}
+  padding: 6px;margin-left: 10px; margin-right: 10px; 
+  background-color: white;font-size: 14px;border: 1px dashed #777;}
