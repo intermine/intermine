@@ -13,21 +13,19 @@ package org.intermine.bio.dataconversion;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import org.intermine.util.TextFileUtil;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.MetaDataException;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.FileConverter;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
+import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TextFileUtil;
+import org.intermine.xml.full.Item;
 
 /**
  * DataConverter to load Drosophila2 Affymetrix probe set from a .gin file.
@@ -37,13 +35,10 @@ import org.apache.log4j.Logger;
  */
 public class Drosophila2ProbeConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected static final Logger LOG = Logger.getLogger(Drosophila2ProbeConverter.class);
 
     protected Item dataSource, dataSet, org;
-    protected ItemFactory itemFactory;
-    protected Map bioMap = new HashMap(), chrMap = new HashMap(), ids = new HashMap();
+    protected Map bioMap = new HashMap(), chrMap = new HashMap();
 
     /**
      * Constructor
@@ -51,23 +46,20 @@ public class Drosophila2ProbeConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public Drosophila2ProbeConverter(ItemWriter writer)
+    public Drosophila2ProbeConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer);
-
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
+        super(writer, model);
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "Affymetrix");
-        writer.store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
 
         org = createItem("Organism");
         org.setAttribute("taxonId", "7227");
-        writer.store(ItemHelper.convert(org));
-
+        store(org);
     }
 
 
@@ -118,7 +110,7 @@ public class Drosophila2ProbeConverter extends FileConverter
                         loc.setCollection("evidence",
                             new ArrayList(Collections.singleton(dataSet.getIdentifier())));
 
-                        getItemWriter().store(ItemHelper.convert(loc));
+                        store(loc);
                     }
                 }
 
@@ -136,13 +128,13 @@ public class Drosophila2ProbeConverter extends FileConverter
                         probeSet.setReference("gene", gene.getIdentifier());
                     }
                 }
-                getItemWriter().store(ItemHelper.convert(probeSet));
+                store(probeSet);
             } else {
                 // still in the header
                 if (line[0].startsWith("Arrays")) {
                     arrayName = line[0].substring(line[0].indexOf('=') + 1);
                     dataSet.setAttribute("title", "Affymetrix array: " + arrayName);
-                    getItemWriter().store(ItemHelper.convert(dataSet));
+                    store(dataSet);
                 }
             }
 
@@ -171,7 +163,7 @@ public class Drosophila2ProbeConverter extends FileConverter
             bio.setReference("organism", org.getIdentifier());
             bio.setAttribute("identifier", identifier);
             bioMap.put(identifier, bio);
-            getItemWriter().store(ItemHelper.convert(bio));
+            store(bio);
         }
         return bio;
     }
@@ -199,7 +191,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         synonym.setAttribute("value", probeSetId);
         synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", probeSet.getIdentifier());
-        getItemWriter().store(ItemHelper.convert(synonym));
+        store(synonym);
 
         return probeSet;
     }
@@ -212,24 +204,8 @@ public class Drosophila2ProbeConverter extends FileConverter
             chr.setAttribute("identifier", chrId.substring(3, chrId.length()));
             chr.setReference("organism", org.getIdentifier());
             chrMap.put(chrId, chr);
-            getItemWriter().store(ItemHelper.convert(chr));
+            store(chr);
         }
         return chr;
-    }
-
-    private String newId(String className) {
-        Integer id = (Integer) ids.get(className);
-        if (id == null) {
-            id = new Integer(0);
-            ids.put(className, id);
-        }
-        id = new Integer(id.intValue() + 1);
-        ids.put(className, id);
-        return id.toString();
-    }
-
-    private Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    GENOMIC_NS + className, "");
     }
 }

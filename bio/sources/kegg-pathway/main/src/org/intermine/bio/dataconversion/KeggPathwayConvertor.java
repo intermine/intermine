@@ -14,8 +14,8 @@ import java.io.File;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
@@ -23,8 +23,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TextFileUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
 
 
@@ -35,11 +33,7 @@ import org.intermine.xml.full.ReferenceList;
  */
 public class KeggPathwayConvertor extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected Item dataSource, dmel;
-    protected ItemFactory itemFactory;
-    protected Map ids = new HashMap();
     protected HashMap pathwayMap = new HashMap();
 
     /**
@@ -48,19 +42,17 @@ public class KeggPathwayConvertor extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public KeggPathwayConvertor(ItemWriter writer)
+    public KeggPathwayConvertor(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer);
-
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
+        super(writer, model);
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "Kegg");
-        writer.store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         dmel = createItem("Organism");
         dmel.setAttribute("taxonId", "7227");
-        writer.store(ItemHelper.convert(dmel));
+        store(dmel);
 
     }
 
@@ -91,7 +83,7 @@ public class KeggPathwayConvertor extends FileConverter
                 String mapName = line[1];
                 Item pathway = getPathway(mapIdentifier);
                 pathway.setAttribute("name", mapName);
-                getItemWriter().store(ItemHelper.convert(pathway));
+                store(pathway);
             } else if (currentFile.getName().startsWith("dme_gene_map")) {
                 String geneName = line[0];
                 if (geneName.startsWith("Dmel_")) {
@@ -110,7 +102,7 @@ public class KeggPathwayConvertor extends FileConverter
                 gene.setReference("organism", dmel);
 
                 gene.addCollection(referenceList);
-                getItemWriter().store(ItemHelper.convert(gene));
+                store(gene);
             }
         }
     }
@@ -123,21 +115,5 @@ public class KeggPathwayConvertor extends FileConverter
             pathwayMap.put(identifier, pathway);
         }
         return pathway;
-    }
-
-    private String newId(String className) {
-        Integer id = (Integer) ids.get(className);
-        if (id == null) {
-            id = new Integer(0);
-            ids.put(className, id);
-        }
-        id = new Integer(id.intValue() + 1);
-        ids.put(className, id);
-        return id.toString();
-    }
-
-    private Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    GENOMIC_NS + className, "");
     }
 }

@@ -68,8 +68,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
 
 /**
@@ -91,16 +89,14 @@ public class MageConverter extends FileConverter
     protected HashMap seenMap = new LinkedHashMap();
     protected HashMap refMap = new LinkedHashMap();
     protected HashMap classmap = new HashMap();
-    protected ItemFactory itemFactory;
     protected Set qTypes = new HashSet();
     protected int id = 0;
 
     /**
      * @see FileConverter#FileConverter
      */
-    public MageConverter(ItemWriter writer) throws Exception {
-        super(writer);
-        this.itemFactory = new ItemFactory(Model.getInstanceByName("mage"));
+    public MageConverter(ItemWriter writer, Model model) throws Exception {
+        super(writer, model);
     }
 
 
@@ -1007,7 +1003,7 @@ public class MageConverter extends FileConverter
     }
 
     private void storeItem(Item item) throws Exception {
-        getItemWriter().store(ItemHelper.convert(item));
+        store(item);
     }
 
     private String findItemIdentifier(Object obj, boolean create) throws Exception {

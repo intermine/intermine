@@ -17,6 +17,7 @@ import java.util.HashMap;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 public class UniprotKeywordConverterTest extends ItemsTestCase
 {
@@ -34,7 +35,8 @@ public class UniprotKeywordConverterTest extends ItemsTestCase
         Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("UniprotKeywordImporterTest_src.xml"));
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new UniprotKeywordConverter(itemWriter);
+        FileConverter converter = new UniprotKeywordConverter(itemWriter,
+                                                              Model.getInstanceByName("genomic"));
         converter.process(reader);
         converter.close();
 

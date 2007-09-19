@@ -10,15 +10,14 @@ package org.intermine.dataconversion;
  *
  */
 
-import org.apache.log4j.Logger;
-
 import java.io.Reader;
 
+import org.apache.log4j.Logger;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.xml.full.FullHandler;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
 import org.xml.sax.InputSource;
 
 /**
@@ -38,9 +37,10 @@ public class FullXmlConverter extends DataConverter
      * Constructor.
      *
      * @param writer an ItemWriter to accept the loaded Items
+     * @param model the data model
      */
-    public FullXmlConverter(ItemWriter writer) {
-        super(writer);
+    public FullXmlConverter(ItemWriter writer, Model model) {
+        super(writer, model);
     }
 
     /**
@@ -76,7 +76,7 @@ public class FullXmlConverter extends DataConverter
          */
         public void finishedItem(Item item) {
             try {
-                getItemWriter().store(ItemHelper.convert(item));
+                store(item);
             } catch (ObjectStoreException e) {
                 throw new RuntimeException(e);
             }

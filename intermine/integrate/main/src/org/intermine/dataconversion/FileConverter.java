@@ -12,12 +12,8 @@ package org.intermine.dataconversion;
 
 import java.io.File;
 import java.io.Reader;
-import java.util.Iterator;
-import java.util.Collection;
 
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.Item;
+import org.intermine.metadata.Model;
 
 /**
  * Parent class for DataConverters that read from files
@@ -25,16 +21,15 @@ import org.intermine.xml.full.Item;
  */
 public abstract class FileConverter extends DataConverter
 {
-    protected String param1;
-    protected String param2;
     private File currentFile;
 
     /**
      * Constructor
      * @param writer the Writer used to output the resultant items
+     * @param model the data model
      */
-    public FileConverter(ItemWriter writer) {
-        super(writer);
+    public FileConverter(ItemWriter writer, Model model) {
+        super(writer, model);
     }
     
     /**
@@ -66,41 +61,5 @@ public abstract class FileConverter extends DataConverter
      */
     public File getCurrentFile() {
         return currentFile;
-    }
-    
-    /**
-     * Set some param1 to some String value.
-     * @param param1 value for param1
-     */
-    public void setParam1(String param1) {
-        this.param1 = param1;
-    }
-
-    /**
-     * Set some param2 to some String value.
-     * @param param2 value for param1
-     */
-    public void setParam2(String param2) {
-        this.param2 = param2;
-    }
-
-    /**
-     * Store a single Item
-     * @param item the Item
-     * @throws ObjectStoreException if an error occurs in storing
-     */
-    protected void store(Item item) throws ObjectStoreException {
-        getItemWriter().store(ItemHelper.convert(item));
-    }
-    
-    /**
-     * Store a Collection of Items
-     * @param c the Collection
-     * @throws ObjectStoreException if an error occurs in storing
-     */
-    protected void store(Collection c) throws ObjectStoreException {
-        for (Iterator i = c.iterator(); i.hasNext(); ) {
-            getItemWriter().store(ItemHelper.convert((Item) i.next()));
-        }
     }
 }

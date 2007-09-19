@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 public class RNAiConverterTest extends ItemsTestCase
 {
@@ -31,7 +32,8 @@ public class RNAiConverterTest extends ItemsTestCase
             + "WBGene00016559\t6239\t11231151\tWT\twild type morphology\tclone does not match to the reported genomic sequence" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        RNAiConverter converter = new RNAiConverter(itemWriter);
+        RNAiConverter converter = new RNAiConverter(itemWriter,
+                                                    Model.getInstanceByName("genomic"));
 
         converter.process(new StringReader(input));
         converter.close();

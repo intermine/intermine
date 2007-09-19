@@ -1,82 +1,82 @@
 <items>
-<item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
+<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="Proceedings of the National Academy of Sciences USA"/>
 <attribute name="url" value="http://www.pnas.org/"/>
 </item>
 
-<item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
+<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="description" value="Rossi et al, 2005: Compare blood stem cells from young vs old mice"/>
   <attribute name="title" value="E-SMDB-3450"/>
   <attribute name="url" value="http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls"/>
-  <reference name="dataSource" ref_id="-1_1"/>
+  <reference name="dataSource" ref_id="0_1"/>
 </item>
 
-<item id="-1_3" class="http://www.flymine.org/model/genomic#Organism">
+<item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="abbreviation" value="MM"/>
 </item>
 
-<item id="-1_4" class="http://www.flymine.org/model/genomic#MicroArrayExperiment">
+<item id="3_1" class="http://www.flymine.org/model/genomic#MicroArrayExperiment">
 <attribute name="identifier" value="E-SMDB-3450"/>
 <attribute name="description" value="Compare blood stem cells from young vs old mice"/>
 <attribute name="name" value="Rossi et al, 2005"/>
-<reference name="publication" ref_id="-1_5"/>
+<reference name="publication" ref_id="4_1"/>
 </item>
 
-<item id="-1_5" class="http://www.flymine.org/model/genomic#Publication">
+<item id="4_1" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="15967997"/>
 </item>
 
-<item id="-1_6" class="http://www.flymine.org/model/genomic#ProbeSet">
+<item id="5_1" class="http://www.flymine.org/model/genomic#ProbeSet">
 <attribute name="identifier" value="Affymetrix:CompositeSequence:Mouse430:1415904_at"/>
 <attribute name="name" value="1415904_at"/>
-<reference name="organism" ref_id="-1_3"/>
+<reference name="organism" ref_id="2_1"/>
 <collection name="evidence">
-<reference ref_id="-1_2"/>
+<reference ref_id="1_1"/>
 </collection>
 <collection name="results">
-<reference ref_id="-1_8"/>
+<reference ref_id="7_1"/>
 </collection>
 </item>
 
-<item id="-1_7" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="6_1" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="Affymetrix:CompositeSequence:Mouse430:1415904_at"/>
-<reference name="source" ref_id="-1_1"/>
-<reference name="subject" ref_id="-1_6"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="5_1"/>
 </item>
 
-<item id="-1_8" class="http://www.flymine.org/model/genomic#MicroArrayResult">
+<item id="7_1" class="http://www.flymine.org/model/genomic#MicroArrayResult">
 <attribute name="isControl" value="false"/>
 <attribute name="scale" value="linear"/>
 <attribute name="type" value="Fold Change"/>
 <attribute name="value" value="1.70531060431265"/>
-<reference name="experiment" ref_id="-1_4"/>
+<reference name="experiment" ref_id="3_1"/>
 </item>
 
-<item id="-1_9" class="http://www.flymine.org/model/genomic#ProbeSet">
+<item id="5_2" class="http://www.flymine.org/model/genomic#ProbeSet">
 <attribute name="identifier" value="Affymetrix:CompositeSequence:Mouse430:1415965_at"/>
 <attribute name="name" value="1415965_at"/>
-<reference name="organism" ref_id="-1_3"/>
+<reference name="organism" ref_id="2_1"/>
 <collection name="evidence">
-<reference ref_id="-1_2"/>
+<reference ref_id="1_1"/>
 </collection>
 <collection name="results">
-<reference ref_id="-1_11"/>
+<reference ref_id="7_2"/>
 </collection>
 </item>
 
-<item id="-1_10" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="6_2" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="Affymetrix:CompositeSequence:Mouse430:1415965_at"/>
-<reference name="source" ref_id="-1_1"/>
-<reference name="subject" ref_id="-1_9"/>
+<reference name="source" ref_id="0_1"/>
+<reference name="subject" ref_id="5_2"/>
 </item>
 
-<item id="-1_11" class="http://www.flymine.org/model/genomic#MicroArrayResult">
+<item id="7_2" class="http://www.flymine.org/model/genomic#MicroArrayResult">
 <attribute name="isControl" value="false"/>
 <attribute name="scale" value="linear"/>
 <attribute name="type" value="Fold Change"/>
 <attribute name="value" value="1.77306715111304"/>
-<reference name="experiment" ref_id="-1_4"/>
+<reference name="experiment" ref_id="3_1"/>
 </item>
 </items>

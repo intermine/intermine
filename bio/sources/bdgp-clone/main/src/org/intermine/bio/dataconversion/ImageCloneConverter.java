@@ -22,8 +22,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.util.StringUtil;
 
@@ -35,14 +33,11 @@ import org.apache.log4j.Logger;
  */
 public class ImageCloneConverter extends CDNACloneConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected static final Logger LOG = Logger.getLogger(ImageCloneConverter.class);
 
     protected Item dataSource;
     protected Item dataSet;
     protected Item organism;
-    protected ItemFactory itemFactory;
     protected Map geneMap = new HashMap();
     protected Map cloneMap = new HashMap();
 
@@ -52,24 +47,21 @@ public class ImageCloneConverter extends CDNACloneConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public ImageCloneConverter(ItemWriter writer)
+    public ImageCloneConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer);
-
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
+        super(writer, model);
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "RZPD");
-        writer.store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "RZPD uniprot data set");
-        writer.store(ItemHelper.convert(dataSet));
+        store(dataSet);
 
         organism = createItem("Organism");
         organism.setAttribute("abbreviation", "HS");
-        writer.store(ItemHelper.convert(organism));
-
+        store(organism);
     }
 
 
@@ -122,7 +114,7 @@ public class ImageCloneConverter extends CDNACloneConverter
             gene.setAttribute("organismDbId", id);
             gene.setReference("organism", orgId);
             geneMap.put(id, gene);
-            writer.store(ItemHelper.convert(gene));
+            store(gene);
         }
         return gene;
     }
@@ -149,15 +141,14 @@ public class ImageCloneConverter extends CDNACloneConverter
             clone.addCollection(new ReferenceList("evidence",
                                 new ArrayList(Collections.singleton(datasetId))));
             cloneMap.put(id, clone);
-            writer.store(ItemHelper.convert(clone));
+            store(clone);
 
             Item synonym = createItem("Synonym");
             synonym.setAttribute("type", "identifier");
             synonym.setAttribute("value", id);
             synonym.setReference("source", datasourceId);
             synonym.setReference("subject", clone.getIdentifier());
-            writer.store(ItemHelper.convert(synonym));
-
+            store(synonym);
         }
     }
 

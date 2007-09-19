@@ -20,7 +20,6 @@ import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.OntologyUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
@@ -51,8 +50,8 @@ public class ChadoXmlConverter extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public ChadoXmlConverter(ItemWriter writer) throws ObjectStoreException {
-        super(writer);
+    public ChadoXmlConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+        super(writer, model);
     }
 
 
@@ -78,7 +77,6 @@ public class ChadoXmlConverter extends FileConverter
     {
         private int nextClsId = 0;
         private ItemFactory itemFactory;
-
         private Map ids = new HashMap();
         private Map aliases = new HashMap();
         private Map<String, Item> organisms = new HashMap<String, Item>();

@@ -11,23 +11,20 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import org.intermine.util.TextFileUtil;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.MetaDataException;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TextFileUtil;
+import org.intermine.xml.full.Item;
 
 /**
  * DataConverter to load a flat file containing FlyBase gene ids, gene full names
@@ -37,11 +34,7 @@ import org.intermine.dataconversion.FileConverter;
  */
 public class FlyBaseGeneNamesConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected Item dataSource, dmel, dpse;
-    protected ItemFactory itemFactory;
-    protected Map ids = new HashMap();
 
     /**
      * Constructor
@@ -49,23 +42,21 @@ public class FlyBaseGeneNamesConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public FlyBaseGeneNamesConverter(ItemWriter writer)
+    public FlyBaseGeneNamesConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer);
-
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
+        super(writer, model);
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "FlyBase");
-        getItemWriter().store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         dmel = createItem("Organism");
         dmel.setAttribute("taxonId", "7227");
-        getItemWriter().store(ItemHelper.convert(dmel));
+        store(dmel);
 
         dpse = createItem("Organism");
         dpse.setAttribute("taxonId", "7237");
-        getItemWriter().store(ItemHelper.convert(dpse));
+        store(dpse);
     }
 
 
@@ -141,7 +132,7 @@ public class FlyBaseGeneNamesConverter extends FileConverter
                 }
 
                 gene.setReference("organism", organism.getIdentifier());
-                getItemWriter().store(ItemHelper.convert(gene));
+                store(gene);
             }
             lineNo++;
         }
@@ -154,22 +145,6 @@ public class FlyBaseGeneNamesConverter extends FileConverter
         synonym.setAttribute("value", value);
         synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", subject.getIdentifier());
-        getItemWriter().store(ItemHelper.convert(synonym));
-    }
-
-    private String newId(String className) {
-        Integer id = (Integer) ids.get(className);
-        if (id == null) {
-            id = new Integer(0);
-            ids.put(className, id);
-        }
-        id = new Integer(id.intValue() + 1);
-        ids.put(className, id);
-        return id.toString();
-    }
-
-    private Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    GENOMIC_NS + className, "");
+        store(synonym);
     }
 }

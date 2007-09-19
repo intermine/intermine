@@ -29,8 +29,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
 
 /**
@@ -40,14 +38,11 @@ import org.intermine.xml.full.ReferenceList;
  */
 public class InparanoidConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected static final String PROP_FILE = "inparanoid_config.properties";
     protected Map bioEntities = new HashMap();
     protected Item db, pub;
     protected Map ids = new HashMap();
     protected Map organisms = new LinkedHashMap();
-    protected ItemFactory itemFactory;
     protected Map sources = new LinkedHashMap();
     protected Map orgSources = new HashMap();
     protected Map taxonIds = new HashMap();
@@ -63,9 +58,8 @@ public class InparanoidConverter extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public InparanoidConverter(ItemWriter writer) throws ObjectStoreException {
-        super(writer);
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+    public InparanoidConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+        super(writer, model);
         setupItems();
 
         readConfig();
@@ -215,8 +209,8 @@ public class InparanoidConverter extends FileConverter
                 leftParalogues.add(leftPara.getIdentifier());
                 rightParalogues.add(rightPara.getIdentifier());
                 
-                getItemWriter().store(ItemHelper.convert(leftPara));
-                getItemWriter().store(ItemHelper.convert(rightPara));
+                store(leftPara);
+                store(rightPara);
             }
 
             // clear old values and try to set new ones
@@ -273,7 +267,7 @@ public class InparanoidConverter extends FileConverter
             }
             orth.setCollection("coOrthologues", coOrths);
             orth.setCollection("paralogues", leftParalogues);
-            getItemWriter().store(ItemHelper.convert(orth));    
+            store(orth);    
         }
         
         for (Item orth : rights) {
@@ -285,7 +279,7 @@ public class InparanoidConverter extends FileConverter
             }
             orth.setCollection("coOrthologues", coOrths);
             orth.setCollection("paralogues", rightParalogues);
-            getItemWriter().store(ItemHelper.convert(orth));    
+            store(orth);    
         }
     }
     
@@ -340,17 +334,6 @@ public class InparanoidConverter extends FileConverter
         store(sources.values());
     }
 
-    private String newId(String className) {
-        Integer id = (Integer) ids.get(className);
-        if (id == null) {
-            id = new Integer(0);
-            ids.put(className, id);
-        }
-        id = new Integer(id.intValue() + 1);
-        ids.put(className, id);
-        return id.toString();
-    }
-
     /**
      * Convenience method to create and cache Genes/Proteins by identifier
      * @param value identifier for the new Gene/Translation
@@ -372,7 +355,7 @@ public class InparanoidConverter extends FileConverter
         Item item = createItem(type);
         item.setAttribute(attribute, value);
         item.setReference("organism", organism.getIdentifier());
-        getItemWriter().store(ItemHelper.convert(item));
+        store(item);
         bioEntities.put(key, item);
 
         // create a synonm - lookup source according to organism
@@ -382,7 +365,7 @@ public class InparanoidConverter extends FileConverter
         synonym.setReference("subject", item.getIdentifier());
         Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
         synonym.setReference("source", source.getIdentifier());
-        getItemWriter().store(ItemHelper.convert(synonym));
+        store(synonym);
 
         
         return item;
@@ -433,18 +416,8 @@ public class InparanoidConverter extends FileConverter
 
         List toStore = Arrays.asList(new Object[] {db, pub});
         for (Iterator i = toStore.iterator(); i.hasNext();) {
-            getItemWriter().store(ItemHelper.convert((Item) i.next()));
+            store((Item) i.next());
         }
-    }
-
-    /**
-     * Convenience method for creating a new Item
-     * @param className the name of the class
-     * @return a new Item
-     */
-    protected Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    GENOMIC_NS + className, "");
     }
 
     private class BioAndScores 
@@ -476,6 +449,5 @@ public class InparanoidConverter extends FileConverter
             return isGene;
         }
     }
-
 }
 

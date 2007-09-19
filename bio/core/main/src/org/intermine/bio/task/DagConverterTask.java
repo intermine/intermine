@@ -1,4 +1,4 @@
-package org.intermine.task;
+package org.intermine.bio.task;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -10,18 +10,15 @@ package org.intermine.task;
  *
  */
 
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.intermine.bio.dataconversion.DagConverter;
+import org.intermine.bio.dataconversion.OboConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
-import org.intermine.dataconversion.DagConverter;
-import org.intermine.dataconversion.OboConverter;
-
-
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
-
-import org.apache.log4j.Logger;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 /**
  * Initiates retrieval and conversion of data from a source database
@@ -104,9 +101,9 @@ public class DagConverterTask extends Task
 
             DagConverter converter;
             if (file.endsWith(".ontology") || file.endsWith(".dag")) {
-                converter = new DagConverter(writer, file, dagName, url, termClass);
+                converter = new DagConverter(writer, osw.getModel(), file, dagName, url, termClass);
             } else if (file.endsWith(".obo")) {
-                converter = new OboConverter(writer, file, dagName, url, termClass);
+                converter = new OboConverter(writer, osw.getModel(), file, dagName, url, termClass);
             } else {
                 throw new IllegalArgumentException("Don't know how to deal with file " + file);
             }

@@ -64,7 +64,7 @@ public abstract class DirectDataLoaderTask extends Task
     /**
      * Return the IntegrationWriter for this task.
      * @return the IntegrationWriter
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException  if anything goes wrong
      */
     protected IntegrationWriter getIntegrationWriter() throws ObjectStoreException {
         if (iw == null) {

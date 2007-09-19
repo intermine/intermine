@@ -90,7 +90,7 @@ public class FullXmlConverterTask extends ConverterTask
         try {
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());
             writer = new ObjectStoreItemWriter(osw);
-            FullXmlConverter converter = new FullXmlConverter(writer);
+            FullXmlConverter converter = new FullXmlConverter(writer, osw.getModel());
             
             List<File> files = new ArrayList<File>();
 

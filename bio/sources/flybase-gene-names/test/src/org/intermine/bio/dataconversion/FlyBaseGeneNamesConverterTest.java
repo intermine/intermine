@@ -16,6 +16,7 @@ import java.util.HashMap;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 public class FlyBaseGeneNamesConverterTest extends ItemsTestCase
 {
@@ -32,7 +33,8 @@ public class FlyBaseGeneNamesConverterTest extends ItemsTestCase
             + "FBgn0012699\tDpse\\Gld\tGlucose dehydrogenas" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new FlyBaseGeneNamesConverter(itemWriter);
+        FileConverter converter = new FlyBaseGeneNamesConverter(itemWriter,
+                                                                Model.getInstanceByName("genomic"));
         converter.process(new StringReader(input));
         converter.close();
 

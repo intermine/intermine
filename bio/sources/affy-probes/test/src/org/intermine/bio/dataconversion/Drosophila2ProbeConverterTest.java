@@ -16,6 +16,7 @@ import java.util.HashMap;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 public class Drosophila2ProbeConverterTest extends ItemsTestCase
 {
@@ -42,7 +43,8 @@ public class Drosophila2ProbeConverterTest extends ItemsTestCase
             + "654\t\t\t1623461_at\tCG40239-RA  FEA=BDGP  GEN=CG40239  DB_XREF=CG40239 FBgn0058239  SEG=chr2h:+119934,120342  LEN=408  DEF=(CG40239 gene symbol:CG40239 FBgn0058239 )\t\tBDGP\tCG40239-RA\t[CG40239 gene symbol:CG40239 FBgn0058239 ]\t\tCG40239\t\tchr2h\t+\t119934\t120342\tBDGP" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new Drosophila2ProbeConverter(itemWriter);
+        FileConverter converter = new Drosophila2ProbeConverter(itemWriter,
+                                                                Model.getInstanceByName("genomic"));
         converter.process(new StringReader(input));
         converter.close();
 

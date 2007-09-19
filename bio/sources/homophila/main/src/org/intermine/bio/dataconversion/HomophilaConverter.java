@@ -26,7 +26,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.Reference;
 
 /**
@@ -43,8 +42,6 @@ public class HomophilaConverter extends FileConverter
     private static final int OMIM_ID = 1;
     private static final int PROTEIN_ID = 2;
     private static final int E_VALUE = 3;
-        
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
     protected Map diseaseDescriptions = new HashMap();
     protected Map proteinToGene = new HashMap();
@@ -54,7 +51,6 @@ public class HomophilaConverter extends FileConverter
     protected Map diseases = new HashMap();
     protected Map genes = new HashMap();
 
-    protected int id = 0;
     protected int matchCount = 0;
     protected int annotationCount = 0;
 
@@ -66,8 +62,6 @@ public class HomophilaConverter extends FileConverter
     
     protected File diseaseFile;
     protected File proteinGeneFile;
-    
-    protected ItemFactory itemFactory;
 
     /**
      * Construct a new instance of HomophilaCnoverter.
@@ -75,28 +69,26 @@ public class HomophilaConverter extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public HomophilaConverter(ItemWriter writer) throws ObjectStoreException {
-        super(writer);
+    public HomophilaConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+        super(writer, model);
 
-        Model tgtModel = Model.getInstanceByName("genomic");
-        itemFactory = new ItemFactory(tgtModel);
-        orgHuman = newItem("Organism");
+        orgHuman = createItem("Organism");
         orgHuman.addAttribute(new Attribute("taxonId", "9606"));
         store(orgHuman);
         
-        orgDrosophila = newItem("Organism");
+        orgDrosophila = createItem("Organism");
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
         store(orgDrosophila);
         
-        homophilaDb = newItem("DataSet");
+        homophilaDb = createItem("DataSet");
         homophilaDb.addAttribute(new Attribute("title", "Homophila data set"));
         store(homophilaDb);
         
-        pub1 = newItem("Publication");
+        pub1 = createItem("Publication");
         pub1.addAttribute(new Attribute("pubMedId", "11381037"));
         store(pub1);
         
-        pub2 = newItem("Publication");
+        pub2 = createItem("Publication");
         pub2.addAttribute(new Attribute("pubMedId", "11752278"));
         store(pub2);
     }
@@ -235,7 +227,7 @@ public class HomophilaConverter extends FileConverter
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item newBlastMatch(String array[]) throws ObjectStoreException {
-        Item item = newItem("BlastMatch");
+        Item item = createItem("BlastMatch");
         item.addReference(new Reference("subject", findProtein(array).getIdentifier()));
         item.addReference(new Reference("object", findTranslation(array).getIdentifier()));
         item.addAttribute(new Attribute("EValue", array[E_VALUE]));
@@ -254,7 +246,7 @@ public class HomophilaConverter extends FileConverter
     protected Item findTranslation(String array[]) throws ObjectStoreException {
         Item translation = (Item) translations.get(array[TRANSLATION_ID]);
         if (translation == null) {
-            translation = newItem("Translation");
+            translation = createItem("Translation");
             translation.addAttribute(new Attribute("identifier", array[TRANSLATION_ID]));
             translation.addReference(new Reference("organism", orgDrosophila.getIdentifier()));
             translations.put(array[TRANSLATION_ID], translation);
@@ -273,7 +265,7 @@ public class HomophilaConverter extends FileConverter
     protected Item findProtein(String array[]) throws ObjectStoreException {
         Item protein = (Item) proteins.get(array[PROTEIN_ID]);
         if (protein == null) {
-            protein = newItem("Protein");
+            protein = createItem("Protein");
             protein.addAttribute(new Attribute("identifier", array[PROTEIN_ID]));
             protein.addReference(new Reference("organism", orgHuman.getIdentifier()));
             Item gene = findGene(array);
@@ -301,7 +293,7 @@ public class HomophilaConverter extends FileConverter
         }
         Item gene = (Item) genes.get(geneId);
         if (gene == null) {
-            gene = newItem("Gene");
+            gene = createItem("Gene");
             genes.put(geneId, gene);
             gene.addAttribute(new Attribute("symbol", geneId));
             gene.addReference(new Reference("organism", orgHuman.getIdentifier()));
@@ -322,7 +314,7 @@ public class HomophilaConverter extends FileConverter
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item newAnnotation(Item gene, Item disease) throws ObjectStoreException {
-        Item annotation = newItem("Annotation");
+        Item annotation = createItem("Annotation");
         annotation.addReference(new Reference("subject", gene.getIdentifier()));
         annotation.addReference(new Reference("property", disease.getIdentifier()));
         addToCollection(annotation, "evidence", homophilaDb);
@@ -343,7 +335,7 @@ public class HomophilaConverter extends FileConverter
     protected Item findDisease(String array[]) throws ObjectStoreException {
         Item disease = (Item) diseases.get(array[OMIM_ID]);
         if (disease == null) {
-            disease = newItem("Disease");
+            disease = createItem("Disease");
             diseases.put(array[OMIM_ID], disease);
             disease.addAttribute(new Attribute("omimId", array[OMIM_ID]));
             String desc = (String) diseaseDescriptions.get(array[OMIM_ID]);
@@ -368,16 +360,6 @@ public class HomophilaConverter extends FileConverter
         LOG.info("matches.size() == " + matchCount);
         LOG.info("annotation.size() == " + annotationCount);
         super.close();
-    }
-
-    /**
-     * Convenience method for creating a new Item.
-     * 
-     * @param className the name of the class
-     * @return a new Item
-     */
-    protected Item newItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + (id++), GENOMIC_NS + className, "");
     }
 }
 

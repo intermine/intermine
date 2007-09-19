@@ -25,8 +25,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.xml.full.ReferenceList;
@@ -41,10 +39,8 @@ import org.apache.log4j.Logger;
 public class MageFlatFileConverter extends FileConverter
 {
     protected static final Logger LOG = Logger.getLogger(MageFlatFileConverter.class);
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:Mouse430:";
 
-    protected ItemFactory itemFactory;
     protected Map config = new HashMap();
     protected Item dataSource, dataSet, organismMM, experiment;
     protected String expName = "E-SMDB-3450";
@@ -57,16 +53,16 @@ public class MageFlatFileConverter extends FileConverter
      * @throws MetaDataException if cannot generate model
      * @throws IOException if fail to read config file
      */
-    public MageFlatFileConverter(ItemWriter writer)
+    public MageFlatFileConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException, IOException {
-        super(writer);
+        super(writer, model);
     
         init(writer);
     }
     
-    protected MageFlatFileConverter(ItemWriter writer, String propertiesFileName)
+    protected MageFlatFileConverter(ItemWriter writer, Model model, String propertiesFileName)
     throws ObjectStoreException, MetaDataException, IOException {
-        super(writer);
+        super(writer, model);
         this.propertiesFileName = propertiesFileName;
         init(writer);
     }   
@@ -74,12 +70,11 @@ public class MageFlatFileConverter extends FileConverter
     private void init(ItemWriter writer) throws IOException, ObjectStoreException {
         readConfig();
         LOG.info("config " + config);
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "Proceedings of the National Academy of Sciences USA");
         dataSource.setAttribute("url", "http://www.pnas.org/");
-        getItemWriter().store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
@@ -89,11 +84,11 @@ public class MageFlatFileConverter extends FileConverter
         
         dataSet.setAttribute("url", 
         "http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls");
-        getItemWriter().store(ItemHelper.convert(dataSet));
+        store(dataSet);
 
         organismMM = createItem("Organism");
         organismMM.setAttribute("abbreviation", "MM");
-        getItemWriter().store(ItemHelper.convert(organismMM));
+        store(organismMM);
 
         experiment = createItem("MicroArrayExperiment");
         experiment.setAttribute("identifier", expName);
@@ -110,11 +105,10 @@ public class MageFlatFileConverter extends FileConverter
         String pmid = getConfig(expName, "pmid");
         if (pmid != null && !pmid.equals("")) {
             Item pub = getPublication(pmid.trim()); 
-            getItemWriter().store(ItemHelper.convert(pub));
+            store(pub);
             experiment.setReference("publication", pub.getIdentifier());
         }
-        getItemWriter().store(ItemHelper.convert(experiment));
-
+        store(experiment);
     }
 
 
@@ -149,12 +143,11 @@ public class MageFlatFileConverter extends FileConverter
             result.setAttribute("isControl", "false");
             result.setAttribute("value", foldChange);
             result.setReference("experiment", experiment.getIdentifier());
-            getItemWriter().store(ItemHelper.convert(result));
+            store(result);
             probe.addCollection(new ReferenceList("results", 
                                 new ArrayList(Collections.singleton(result.getIdentifier()))));
 
-            getItemWriter().store(ItemHelper.convert(probe));            
-            
+            store(probe);                    
         }
     }
 
@@ -185,7 +178,7 @@ public class MageFlatFileConverter extends FileConverter
         synonym.setAttribute("value", PROBEPREFIX + id);
         synonym.setReference("source", datasourceId);
         synonym.setReference("subject", probe.getIdentifier());
-        getItemWriter().store(ItemHelper.convert(synonym));
+        store(synonym);
 
         return probe;
     }
@@ -259,15 +252,5 @@ public class MageFlatFileConverter extends FileConverter
         Item pub = createItem("Publication");
         pub.setAttribute("pubMedId", pmid);        
         return pub;
-    }
-
-
-    /**
-     * @param clsName = target class name
-     * @return item created by itemFactory
-     */
-    protected Item createItem(String clsName) {
-        return itemFactory.makeItemForClass(GENOMIC_NS + clsName);
-    }   
-    
+    }    
 }

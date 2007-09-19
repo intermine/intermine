@@ -32,6 +32,7 @@
     <merge-additions file="bio/sources/flyatlas/flyatlas_additions.xml"/>
     <merge-additions file="bio/sources/flyrnai-screens/flyrnai-screens_additions.xml"/>
     <merge-additions file="bio/sources/kegg-pathway/kegg-pathway_additions.xml"/>
+    <merge-additions file="bio/sources/vienna-prot/vienna-prot_additions.xml"/>
   </target>
 
 </project>

@@ -19,7 +19,7 @@
 <reference name="organism" ref_id="2_1"/>
 <reference name="sequence" ref_id="11_1"/>
 </item>
-<item id="14_1" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+<item id="14_2" class="http://www.flymine.org/model/genomic#ProteinInteraction">
 <attribute name="biologicalRole" value="unspecified role"/>
 <attribute name="experimentalRole" value="bait"/>
 <attribute name="shortName" value="appl-aplip1-2"/>
@@ -80,7 +80,7 @@
 <attribute name="text" value="J. Biol. Chem. (0021-9258)"/>
 <attribute name="type" value="journal"/>
 </item>
-<item id="14_2" class="http://www.flymine.org/model/genomic#ProteinInteraction">
+<item id="14_1" class="http://www.flymine.org/model/genomic#ProteinInteraction">
 <attribute name="biologicalRole" value="unspecified role"/>
 <attribute name="experimentalRole" value="prey"/>
 <attribute name="shortName" value="appl-aplip1-2"/>

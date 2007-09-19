@@ -1,4 +1,4 @@
-package org.intermine.ontology;
+package org.intermine.bio.ontology;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -10,7 +10,7 @@ package org.intermine.ontology;
  *
  */
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 public class DagTermTest extends TestCase
 {

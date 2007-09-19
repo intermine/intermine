@@ -24,7 +24,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TextFileUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 
 /**
  * DataConverter to parse an FlyAtlas expression data into items
@@ -32,20 +31,16 @@ import org.intermine.xml.full.ItemFactory;
  */
 public class FlyAtlasConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     private Item expt, org, dataSet;
-    private Map assays, ids = new HashMap();
-    private ItemFactory itemFactory;
+    private Map assays = new HashMap();
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public FlyAtlasConverter(ItemWriter writer) throws ObjectStoreException {
-        super(writer);
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+    public FlyAtlasConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+        super(writer, model);
         setupItems();
     }
 
@@ -104,18 +99,6 @@ public class FlyAtlasConverter extends FileConverter
         store(assays.values());
         store(dataSet);
     }
-
-    private String newId(String className) {
-        Integer id = (Integer) ids.get(className);
-        if (id == null) {
-            id = new Integer(0);
-            ids.put(className, id);
-        }
-        id = new Integer(id.intValue() + 1);
-        ids.put(className, id);
-        return id.toString();
-    }
-
 
     private Item createProbe(String probeId) {
         Item probe = createItem("ProbeSet");
@@ -219,15 +202,5 @@ public class FlyAtlasConverter extends FileConverter
         format.setMaximumFractionDigits(dp);
         format.setGroupingUsed(false);
         return format.format(d);
-    }
-
-    /**
-     * Convenience method for creating a new Item
-     * @param className the name of the class
-     * @return a new Item
-     */
-    protected Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    GENOMIC_NS + className, "");
     }
 }
