@@ -10,30 +10,26 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -45,10 +41,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class ProteinStructureDataConvertor extends FileConverter
 {
-
-    private static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static final Logger LOG = Logger.getLogger(ProteinStructureDataConvertor.class);
-    private ItemFactory itemFactory;
     private String dataLocation;
     protected static final String ENDL = System.getProperty("line.separator");
     private Item proteinStructureExperiment;
@@ -62,17 +55,16 @@ public class ProteinStructureDataConvertor extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public ProteinStructureDataConvertor(ItemWriter writer) {
-        super(writer);
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+    public ProteinStructureDataConvertor(ItemWriter writer, Model model) {
+        super(writer, model);
         proteinStructureExperiment = createItem("ProteinStructureExperiment");
         proteinStructureExperiment.setAttribute("type", "Computer prediction");
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "Kenji Mizuguchi - NIBIO, Japan");
         dataSet.setAttribute("url", "http://www.nibio.go.jp");
         try {
-            writer.store(ItemHelper.convert(proteinStructureExperiment));
-            writer.store(ItemHelper.convert(dataSet));
+            store(proteinStructureExperiment);
+            store(dataSet);
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -117,15 +109,6 @@ public class ProteinStructureDataConvertor extends FileConverter
     @Override
     public void close() throws ObjectStoreException {
         store(featureMap.values());
-    }
-    
-    /**
-     * Convenience method for creating a new Item
-     * @param className the name of the class
-     * @return a new Item
-     */
-    private Item createItem(String className) {
-        return itemFactory.makeItemForClass(GENOMIC_NS + className);
     }
     
     protected String getFileContent(String fileName, String extention) throws InterMineException {

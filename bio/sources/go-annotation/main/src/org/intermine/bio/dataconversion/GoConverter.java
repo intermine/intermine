@@ -30,17 +30,14 @@ import java.util.Stack;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.intermine.bio.ontology.DagParser;
+import org.intermine.bio.ontology.OboParser;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.ontology.DagParser;
-import org.intermine.ontology.OboParser;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
 
 /**
@@ -53,7 +50,6 @@ import org.intermine.xml.full.ReferenceList;
  */
 public class GoConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     protected static final String PROP_FILE = "go-annotation_config.properties";
 
     protected Map goTerms = new LinkedHashMap();
@@ -63,13 +59,11 @@ public class GoConverter extends FileConverter
     protected Map publications = new LinkedHashMap();
     protected Map organisms = new LinkedHashMap();
     protected Map termIdNameMap = new LinkedHashMap();
-    protected Map ids = new HashMap();
     protected File ontology;
     protected Map withTypes = new LinkedHashMap();
     protected Map synonymTypes = new HashMap();
     protected Map productWrapperMap = new LinkedHashMap(), geneAttributes = new HashMap();
     protected Map holderMap = new LinkedHashMap();
-    protected ItemFactory itemFactory;
     private OboParser oboParser = null;
     protected Set productIds = new HashSet();
     
@@ -86,9 +80,8 @@ public class GoConverter extends FileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @throws Exception if an error occurs in storing or finding Model
      */
-    public GoConverter(ItemWriter writer) throws Exception {
-        super(writer);
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+    public GoConverter(ItemWriter writer, Model model) throws Exception {
+        super(writer, model);
         addWithType("FB", "Gene", "organismDbId");
         addWithType("UniProt", "Protein", "primaryAccession");
         synonymTypes.put("protein", "accession");
@@ -398,7 +391,7 @@ public class GoConverter extends FileConverter
 
         // If the qualifier is not a NOT.
         if (!"".equals(placeHolder.getQualifier())) {
-            currentGoItem.addAttribute(new Attribute("qualifier", placeHolder.getQualifier()));
+            currentGoItem.setAttribute("qualifier", placeHolder.getQualifier());
         }
 
         // if it has a name, add
@@ -634,7 +627,7 @@ public class GoConverter extends FileConverter
      * @param callSource  info string so I can work out where the method was called from...
      */
     private void doStore(Item itemToStore, String callSource) throws ObjectStoreException {
-        getItemWriter().store(ItemHelper.convert(itemToStore));
+        store(itemToStore);
     }
 
 
@@ -704,7 +697,7 @@ public class GoConverter extends FileConverter
                 accession,
                 dataSourceId);
 
-        getItemWriter().store(ItemHelper.convert(synonym));
+        store(synonym);
 
         ItemWrapper newProductWrapper = new ItemWrapper(key, product);
         productWrapperMap.put(key, newProductWrapper);
@@ -746,7 +739,7 @@ public class GoConverter extends FileConverter
         Item item = (Item) goTerms.get(identifier);
         if (item == null) {
             item = createItem("GOTerm");
-            item.addAttribute(new Attribute("identifier", identifier));
+            item.setAttribute("identifier", identifier);
             goTerms.put(identifier, item);
             doStore(item, "newGoTerm");
         }
@@ -764,10 +757,10 @@ public class GoConverter extends FileConverter
         Item item = (Item) goEvidence.get(code);
         if (item == null) {
             item = createItem("GOEvidenceCode");
-            item.addAttribute(new Attribute("code", code));
+            item.setAttribute("code", code);
             goEvidence.put(code, item);
             //doStore(item, "newGoEvidence");
-            getItemWriter().store(ItemHelper.convert(item));
+            store(item);
         }
         return item;
     }
@@ -806,7 +799,7 @@ public class GoConverter extends FileConverter
             item = createItem("DataSource");
             item.setAttribute("name", title);
             datasources.put(title, item);
-            getItemWriter().store(ItemHelper.convert(item));
+            store(item);
         }
         return item;
     }
@@ -826,10 +819,10 @@ public class GoConverter extends FileConverter
                 pubId = (String) publications.get(code);
                 if (pubId == null) {
                     Item item = createItem("Publication");
-                    item.addAttribute(new Attribute("pubMedId", code));
+                    item.setAttribute("pubMedId", code);
                     pubId = item.getIdentifier();
                     publications.put(code, pubId);
-                    getItemWriter().store(ItemHelper.convert(item));
+                    store(item);
                 }
                 break;
             }
@@ -851,9 +844,9 @@ public class GoConverter extends FileConverter
         Item item = (Item) organisms.get(taxonIdNew);
         if (item == null) {
             item = createItem("Organism");
-            item.addAttribute(new Attribute("taxonId", taxonIdNew));
+            item.setAttribute("taxonId", taxonIdNew);
             organisms.put(taxonIdNew, item);
-            getItemWriter().store(ItemHelper.convert(item));
+            store(item);
         }
         return item;
     }
@@ -869,29 +862,6 @@ public class GoConverter extends FileConverter
         synonym.setAttribute("value", value);
         synonym.setReference("source", dataSourceId);
         return synonym;
-    }
-
-
-    /**
-     * Convenience method for creating a new Item
-     *
-     * @param className the name of the class
-     * @return a new Item
-     */
-    protected Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    GENOMIC_NS + className, "");
-    }
-
-    private String newId(String className) {
-        Integer id = (Integer) ids.get(className);
-        if (id == null) {
-            id = new Integer(0);
-            ids.put(className, id);
-        }
-        id = new Integer(id.intValue() + 1);
-        ids.put(className, id);
-        return id.toString();
     }
 
     /**

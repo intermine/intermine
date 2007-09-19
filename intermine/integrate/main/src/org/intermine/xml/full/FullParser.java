@@ -65,7 +65,6 @@ public class FullParser
      * @param items a collection of items to realise
      * @param model the parent model
      * @param useIdentifier if true, set the id of each new object using the identifier of the Item
-     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible
      * @return a collection of realised business objects
      * @throws ClassNotFoundException if one of the items has a class that isn't in the model 

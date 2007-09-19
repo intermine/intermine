@@ -16,6 +16,7 @@ import java.util.HashMap;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 public class InparanoidConverterTest extends ItemsTestCase
 {
@@ -43,7 +44,8 @@ public class InparanoidConverterTest extends ItemsTestCase
             + "14\t1217\tensANOGA.fa\t0.566\tENSANGP00000008615\t100%" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new InparanoidConverter(itemWriter);
+        FileConverter converter = new InparanoidConverter(itemWriter,
+                                                          Model.getInstanceByName("genomic"));
         converter.process(new StringReader(input));
         converter.close();
 

@@ -28,7 +28,7 @@ import org.intermine.xml.full.ItemFactory;
 public class GoConverterTest extends ItemsTestCase
 {
     private File goOboFile;
-
+    Model model;
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
     public GoConverterTest(String arg) {
@@ -36,6 +36,7 @@ public class GoConverterTest extends ItemsTestCase
     }
 
     public void setUp() throws Exception {
+        model = Model.getInstanceByName("genomic");
         goOboFile = File.createTempFile("go-tiny", ".obo");
         Reader goOboReader = new InputStreamReader(
             getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
@@ -60,7 +61,7 @@ public class GoConverterTest extends ItemsTestCase
         Reader reader = new InputStreamReader(
                 getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-        GoConverter converter = new GoConverter(writer);
+        GoConverter converter = new GoConverter(writer, model);
         converter.setOntologyfile(goOboFile);
         converter.process(reader);
         converter.close();
@@ -74,7 +75,7 @@ public class GoConverterTest extends ItemsTestCase
 
     public void testCreateWithObjects() throws Exception {
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-        GoConverter converter = new GoConverter(writer);
+        GoConverter converter = new GoConverter(writer, model);
 
         Set expected = new HashSet();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
@@ -98,7 +99,7 @@ public class GoConverterTest extends ItemsTestCase
     // if we see the same product id twice but not in order process should fail
     public void testFileNotOrdered() throws Exception {
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-        GoConverter converter = new GoConverter(writer);
+        GoConverter converter = new GoConverter(writer, model);
         converter.setOntologyfile(goOboFile);
 
         Reader reader = new InputStreamReader(

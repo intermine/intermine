@@ -10,25 +10,22 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.Reader;
 import java.io.BufferedReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
-
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.Model;
+import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
+import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.dataconversion.ItemWriter;
-
-import org.apache.log4j.Logger;
 
 /**
  * DataConverter to load flat file linking BDGP clones to Flybase genes.
@@ -36,14 +33,11 @@ import org.apache.log4j.Logger;
  */
 public class AffyConverter extends CDNACloneConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected static final Logger LOG = Logger.getLogger(AffyConverter.class);
 
     protected Item dataSource;
     protected Item dataSet;
     protected Item organism;
-    protected ItemFactory itemFactory;
     protected Map geneMap = new HashMap();
     protected Map probeMap = new HashMap();
     private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:HG-U133A:";
@@ -55,24 +49,21 @@ public class AffyConverter extends CDNACloneConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public AffyConverter(ItemWriter writer)
+    public AffyConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer);
-
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
+        super(writer, model);
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "Affymetrix GeneChip");
-        writer.store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "Affymetrix HG-U133A annotation data set");
-        writer.store(ItemHelper.convert(dataSet));
+        store(dataSet);
 
         organism = createItem("Organism");
         organism.setAttribute("abbreviation", "HS");
-        writer.store(ItemHelper.convert(organism));
-
+        store(organism);
     }
 
 
@@ -111,7 +102,7 @@ public class AffyConverter extends CDNACloneConverter
                     rf.addRefId(gene.getIdentifier());
                 }
                 probe.addCollection(rf);
-                getItemWriter().store(ItemHelper.convert(probe));
+                store(probe);
             }
 
         }
@@ -134,7 +125,7 @@ public class AffyConverter extends CDNACloneConverter
             gene.setReference("organism", orgId);
             gene.setAttribute("organismDbId", geneEnsembl);
             geneMap.put(geneEnsembl, gene);
-            writer.store(ItemHelper.convert(gene));
+            store(gene);
         }
         return gene;
     }
@@ -167,7 +158,7 @@ public class AffyConverter extends CDNACloneConverter
         synonym.setAttribute("value", PROBEPREFIX + id);
         synonym.setReference("source", datasourceId);
         synonym.setReference("subject", probe.getIdentifier());
-        writer.store(ItemHelper.convert(synonym));
+        store(synonym);
 
         return probe;
     }

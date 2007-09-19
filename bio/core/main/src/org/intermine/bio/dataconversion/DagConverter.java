@@ -1,4 +1,4 @@
-package org.intermine.dataconversion;
+package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -18,14 +18,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.intermine.bio.ontology.DagParser;
+import org.intermine.bio.ontology.DagTerm;
+import org.intermine.bio.ontology.DagTermSynonym;
+import org.intermine.dataconversion.DataConverter;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.ontology.DagParser;
-import org.intermine.ontology.DagTerm;
-import org.intermine.ontology.DagTermSynonym;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
@@ -37,12 +38,6 @@ import org.intermine.xml.full.ReferenceList;
  */
 public class DagConverter extends DataConverter
 {
-    protected static final String ONTOLOGY_RELATION =
-        "http://www.flymine.org/model/genomic#OntologyRelation";
-    protected static final String ONTOLOGY = "http://www.flymine.org/model/genomic#Ontology";
-    protected static final String ONTOLOGY_TERM_SYNONYM =
-        "http://www.flymine.org/model/genomic#OntologyTermSynonym";
-    
     protected String dagFilename;
     protected String termClass;
     protected int uniqueId = 0;
@@ -50,7 +45,6 @@ public class DagConverter extends DataConverter
     protected Map nameToTerm = new HashMap();
     protected Map synToItem = new HashMap();
     protected Item ontology;
-    protected ItemFactory itemFactory = ItemFactory.NULL_MODEL_ITEM_FACTORY;
 
     /**
      * Constructor for this class.
@@ -61,15 +55,13 @@ public class DagConverter extends DataConverter
      * @param url the URL of the source of this ontology
      * @param termClass the class of the Term
      */
-    public DagConverter(ItemWriter writer, String dagFilename, String dagName, String url,
-                        String termClass) {
-        super(writer);
+    public DagConverter(ItemWriter writer, Model model, String dagFilename, String dagName,
+                        String url, String termClass) {
+        super(writer, model);
         this.dagFilename = dagFilename;
         this.termClass = termClass;
 
-        ontology = itemFactory.makeItem("0_" + (uniqueId++));
-        ontology.setClassName(ONTOLOGY);
-        ontology.setImplementations("");
+        ontology = createItem("Ontology");
         ontology.addAttribute(new Attribute("title", dagName));
         ontology.addAttribute(new Attribute("url", url));
     }
@@ -106,12 +98,12 @@ public class DagConverter extends DataConverter
         for (Iterator i = rootTerms.iterator(); i.hasNext();) {
             process((DagTerm) i.next());
         }
-        getItemWriter().store(ItemHelper.convert(ontology));
+        store(ontology);
         for (Iterator i = nameToTerm.values().iterator(); i.hasNext();) {
-            getItemWriter().store(ItemHelper.convert((Item) i.next()));
+            store((Item) i.next());
         }
         for (Iterator i = synToItem.values().iterator(); i.hasNext();) {
-            getItemWriter().store(ItemHelper.convert((Item) i.next()));
+            store((Item) i.next());
         }
     }
 
@@ -126,9 +118,7 @@ public class DagConverter extends DataConverter
         String termId = (term.getId() == null ? term.getName() : term.getId());
         Item item = (Item) nameToTerm.get(termId);
         if (item == null) {
-            item = itemFactory.makeItem("0_" + (uniqueId++));
-            item.setClassName(termClass);
-            item.setImplementations("");
+            item = createItem(termClass);
             nameToTerm.put(termId, item);
             configureItem(termId, item, term);
         } else {
@@ -185,9 +175,7 @@ public class DagConverter extends DataConverter
             DagTermSynonym syn = (DagTermSynonym) iter.next();
             Item synItem = (Item) synToItem.get(syn);
             if (synItem == null) {
-                synItem = itemFactory.makeItem("1_" + (uniqueSynId++));
-                synItem.setClassName(ONTOLOGY_TERM_SYNONYM);
-                synItem.setImplementations("");
+                synItem = createItem("OntologyTermSynonym");
                 synToItem.put(syn, synItem);
                 configureSynonymItem(syn, synItem, term);
             }
@@ -220,9 +208,7 @@ public class DagConverter extends DataConverter
      * @throws ObjectStoreException if an error occurs while writing to the ItemWriter
      */
     protected void relate(Item item, Item subItem, String type) throws ObjectStoreException {
-        Item relation = itemFactory.makeItem("0_" + (uniqueId++));
-        relation.setClassName(ONTOLOGY_RELATION);
-        relation.setImplementations("");
+        Item relation = createItem("OntologyRelation");
         relation.addAttribute(new Attribute("type", type));
         relation.addReference(new Reference("childTerm", subItem.getIdentifier()));
         relation.addReference(new Reference("parentTerm", item.getIdentifier()));
@@ -230,6 +216,6 @@ public class DagConverter extends DataConverter
         parentRelations.addRefId(relation.getIdentifier());
         ReferenceList childRelations = item.getCollection("childRelations");
         childRelations.addRefId(relation.getIdentifier());
-        getItemWriter().store(ItemHelper.convert(relation));
+        store(relation);
     }
 }

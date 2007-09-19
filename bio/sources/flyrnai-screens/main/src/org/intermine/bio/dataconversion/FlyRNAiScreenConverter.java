@@ -10,28 +10,24 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
+import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TextFileUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.metadata.Model;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.FileReader;
-import java.io.File;
-
-import org.apache.tools.ant.BuildException;
 
 /**
  * DataConverter to create items from DRSC RNAi screen date files.
@@ -40,11 +36,7 @@ import org.apache.tools.ant.BuildException;
  */
 public class FlyRNAiScreenConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected Item dataSource, organism, hfaSource;
-    private Map ids = new HashMap();
-    private ItemFactory itemFactory;
 
     private Map genes = new HashMap();
     private Map synonyms = new HashMap();
@@ -81,9 +73,8 @@ public class FlyRNAiScreenConverter extends FileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      */
-    public FlyRNAiScreenConverter(ItemWriter writer) {
-        super(writer);
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+    public FlyRNAiScreenConverter(ItemWriter writer, Model model) {
+        super(writer, model);
     }
 
     /**
@@ -120,9 +111,9 @@ public class FlyRNAiScreenConverter extends FileConverter
         BufferedReader br = new BufferedReader(reader);
 
         if (organism == null) {
-            organism = newItem("Organism");
+            organism = createItem("Organism");
             organism.setAttribute("taxonId", taxonId);
-            getItemWriter().store(ItemHelper.convert(organism));
+            store(organism);
         }
 
         System.err .println("Processing file: " + getCurrentFile().getName());
@@ -133,30 +124,30 @@ public class FlyRNAiScreenConverter extends FileConverter
 
         Item publication = newPublication(pubmedId);
 
-        dataSet = newItem("DataSet");
+        dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "DRSC RNAi data set: "
                              + headerFieldValues.get(SCREEN_NAME_PREFIX));
         if (dataSource == null) {
-            dataSource = newItem("DataSource");
+            dataSource = createItem("DataSource");
             dataSource.setAttribute("name", "Drosophila RNAi Screening Center");
-            getItemWriter().store(ItemHelper.convert(dataSource));
+            store(dataSource);
         }
         if (hfaSource == null) {
-            hfaSource = newItem("DataSource");
+            hfaSource = createItem("DataSource");
             hfaSource.setAttribute("name", "Renato Paro lab");
-            getItemWriter().store(ItemHelper.convert(hfaSource));
+            store(hfaSource);
         }
         dataSet.setReference("dataSource", dataSource);
-        getItemWriter().store(ItemHelper.convert(dataSet));
+        store(dataSet);
 
-        Item rnaiScreen = newItem("RNAiScreen");
+        Item rnaiScreen = createItem("RNAiScreen");
         rnaiScreen.setAttribute("name", (String) headerFieldValues.get(SCREEN_NAME_PREFIX));
         rnaiScreen.setAttribute("analysisDescription",
                                 (String) headerFieldValues.get(PHENOTYPE_DESCRIPTION_PREFIX));
         rnaiScreen.setAttribute("cellLine", (String) headerFieldValues.get(CELL_LINE_PREFIX));
         rnaiScreen.setReference("organism", organism);
         rnaiScreen.setReference("publication", publication);
-        getItemWriter().store(ItemHelper.convert(rnaiScreen));
+        store(rnaiScreen);
 
         String[] columnNameRow = null;
 
@@ -201,7 +192,7 @@ public class FlyRNAiScreenConverter extends FileConverter
             }
             Item amplicon = (Item) amplicons.get(ampliconIdentifier);
             if (amplicon == null) {
-                amplicon = newItem("Amplicon");
+                amplicon = createItem("Amplicon");
                 String ampliconLength =
                     getColumnValue(columnNameMap, thisRow, AMPLICON_LENGTH_COLUMN);
                 String hfaAmpliconIdentifier =
@@ -217,7 +208,7 @@ public class FlyRNAiScreenConverter extends FileConverter
                 amplicon.setAttribute("length", ampliconLength);
                 amplicon.setReference("organism", organism);
                 amplicons.put(ampliconIdentifier, amplicon);
-                getItemWriter().store(ItemHelper.convert(amplicon));
+                store(amplicon);
 
                 newSynonym(ampliconIdentifier, amplicon, dataSource);
                 newSynonym(hfaAmpliconIdentifier, amplicon, hfaSource);
@@ -246,7 +237,7 @@ public class FlyRNAiScreenConverter extends FileConverter
 
                     Item gene = newGene(geneName);
 
-                    Item screenHit = newItem("RNAiScreenHit");
+                    Item screenHit = createItem("RNAiScreenHit");
                     screenHit.setReference("analysis", rnaiScreen);
                     screenHit.setReference("gene", gene);
                     String result = getColumnValue(columnNameMap, thisRow, PHENOTYPE_COLUMN);
@@ -268,7 +259,7 @@ public class FlyRNAiScreenConverter extends FileConverter
                     String offTarget = offTargetFalse.contains(ampliconIdentifier)
                         ? "false" : "true";
                     screenHit.setAttribute("hasPredictedOffTargetEffect", offTarget);
-                    getItemWriter().store(ItemHelper.convert(screenHit));
+                    store(screenHit);
                 }
             }
         }
@@ -279,7 +270,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         if (publications.containsKey(pubmedId)) {
             publication = (Item) publications.get(pubmedId);
         } else {
-            publication = newItem("Publication");
+            publication = createItem("Publication");
             publication.setAttribute("pubMedId", pubmedId);
             publications.put(pubmedId, publication);
         }
@@ -350,7 +341,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         }
         Item item = (Item) genes.get(geneName);
         if (item == null) {
-            item = newItem("Gene");
+            item = createItem("Gene");
             item.setAttribute("organismDbId", geneName);
             // identifier needs to be a Synonym for quick search to work
             newSynonym(geneName, item, dataSource);
@@ -374,7 +365,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         if (synonyms.containsKey(synonymName)) {
             return (Item) synonyms.get(synonymName);
         }
-        Item item = newItem("Synonym");
+        Item item = createItem("Synonym");
         item.setAttribute("value", synonymName);
         item.setAttribute("type", "identifier");
         item.setReference("subject", subject.getIdentifier());
@@ -384,26 +375,6 @@ public class FlyRNAiScreenConverter extends FileConverter
         return item;
     }
 
-    /**
-     * Convenience method for creating a new Item
-     * @param className the name of the class
-     * @return a new Item
-     */
-    protected Item newItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    GENOMIC_NS + className, "");
-    }
-
-    private String newId(String className) {
-        Integer id = (Integer) ids.get(className);
-        if (id == null) {
-            id = new Integer(0);
-            ids.put(className, id);
-        }
-        id = new Integer(id.intValue() + 1);
-        ids.put(className, id);
-        return id.toString();
-    }
 
     /**
      * @see FileConverter#close()

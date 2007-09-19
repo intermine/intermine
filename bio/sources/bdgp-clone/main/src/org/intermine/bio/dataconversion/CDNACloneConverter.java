@@ -12,15 +12,14 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.MetaDataException;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
+import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
-
-import org.apache.log4j.Logger;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Item;
 
 /**
  * DataConverter to load flat file linking cdna clones to genes.
@@ -28,13 +27,11 @@ import org.apache.log4j.Logger;
  */
 public abstract class CDNACloneConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     protected static final Logger LOG = Logger.getLogger(CDNACloneConverter.class);
 
     protected Item dataSource;
     protected Item dataSet;
     protected Item organism;
-    protected ItemFactory itemFactory;
 
     /**
      * Constructor
@@ -42,13 +39,10 @@ public abstract class CDNACloneConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public CDNACloneConverter(ItemWriter writer)
+    public CDNACloneConverter(ItemWriter writer, Model model)
         throws ObjectStoreException,
                MetaDataException {
-        super(writer);
-
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
-
+        super(writer, model);
     }
 
 
@@ -71,15 +65,6 @@ public abstract class CDNACloneConverter extends FileConverter
         bioEntity.setReference("organism", orgId);
         return bioEntity;
     }
-
-    /**
-     * @param clsName = target class name
-     * @return item created by itemFactory
-     */
-    protected Item createItem(String clsName) {
-        return itemFactory.makeItemForClass(GENOMIC_NS + clsName);
-    }
-
 }
 
 

@@ -24,8 +24,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TextFileUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
+
 
 /**
  * DataConverter to load WormBase gene identifiers from genes2molecular_names.txt.
@@ -37,7 +36,6 @@ public class WormBaseIdentifiersConverter extends FileConverter
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
     protected Item dataSource, worm;
-    protected ItemFactory itemFactory;
     protected Map ids = new HashMap();
 
     /**
@@ -46,19 +44,17 @@ public class WormBaseIdentifiersConverter extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public WormBaseIdentifiersConverter(ItemWriter writer)
+    public WormBaseIdentifiersConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer);
-
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
+        super(writer, model);
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "WormBase");
-        writer.store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         worm = createItem("Organism");
         worm.setAttribute("taxonId", "6239");
-        writer.store(ItemHelper.convert(worm));
+        store(worm);
     }
 
 
@@ -103,7 +99,7 @@ public class WormBaseIdentifiersConverter extends FileConverter
             }
 
             gene.setReference("organism", worm.getIdentifier());
-            getItemWriter().store(ItemHelper.convert(gene));
+            store(gene);
 
         }
     }
@@ -115,22 +111,6 @@ public class WormBaseIdentifiersConverter extends FileConverter
         synonym.setAttribute("value", value);
         synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", subject.getIdentifier());
-        getItemWriter().store(ItemHelper.convert(synonym));
-    }
-
-    private String newId(String className) {
-        Integer id = (Integer) ids.get(className);
-        if (id == null) {
-            id = new Integer(0);
-            ids.put(className, id);
-        }
-        id = new Integer(id.intValue() + 1);
-        ids.put(className, id);
-        return id.toString();
-    }
-
-    private Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    GENOMIC_NS + className, "");
+        store(synonym);
     }
 }

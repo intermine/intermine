@@ -10,13 +10,16 @@ package org.intermine.dataconversion;
  *
  */
 
-import org.apache.log4j.Logger;
-
-import java.util.Map;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
 
 /**
@@ -30,13 +33,19 @@ public abstract class DataConverter
     private ItemWriter writer;
     private Map aliases = new HashMap();
     private int nextClsId = 0;
-
+    private Map ids = new HashMap();
+    private Model model;
+    private ItemFactory itemFactory;
+    
     /**
     * Constructor that should be called by children
     * @param writer an ItemWriter used to handle the resultant Items
+    * @param model the data model
     */
-    public DataConverter(ItemWriter writer) {
+    public DataConverter(ItemWriter writer, Model model) {
         this.writer = writer;
+        this.model = model;
+        this.itemFactory = new ItemFactory(this.model);
     }
 
     /**
@@ -80,5 +89,53 @@ public abstract class DataConverter
             item.addCollection(coll);
         }
         coll.addRefId(addition.getIdentifier());
+    }
+
+    /**
+     * Create item for the given class name.  Assign a sequential identifier
+     * with an alias set for the class, e.g. ClassA: 1_1, 1_2  ClassB: 2_1
+     * @param className unqualified classname to create item for
+     * @return a new item with an identifier but not fields
+     */
+    public Item createItem(String className) {
+        return itemFactory.makeItem(alias(className) + "_" + newId(className),
+                                    model.getNameSpace() + className, "");
+    }
+    
+    /**
+     * Generate an identifier for an item, assign ids sequentially with a
+     * different alias per class, e.g. ClassA: 1_1, 1_2  ClassB: 2_1
+     * @param className the class of the item
+     * @return a new identifier with the next sequential id for the given class
+     */
+    protected String newId(String className) {
+        Integer id = (Integer) ids.get(className);
+        if (id == null) {
+            id = new Integer(0);
+            ids.put(className, id);
+        }
+        id = new Integer(id.intValue() + 1);
+        ids.put(className, id);
+        return id.toString();
+    }
+
+    /**
+     * Store a single XML Item
+     * @param item the Item to store
+     * @throws ObjectStoreException if an error occurs in storing
+     */
+    public void store(Item item) throws ObjectStoreException {
+        getItemWriter().store(ItemHelper.convert(item));
+    }
+
+    /**
+     * Store a Collection of XMl Items
+     * @param c the Collection to store
+     * @throws ObjectStoreException if an error occurs in storing
+     */
+    public void store(Collection<Item> c) throws ObjectStoreException {
+        for (Item item : c) {
+            getItemWriter().store(ItemHelper.convert(item));
+        }
     }
 }

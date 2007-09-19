@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 
 import org.intermine.InterMineException;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
 
 /**
  * @author Xavier Watkins
@@ -24,7 +25,7 @@ import org.intermine.dataconversion.ItemWriter;
 public class MockProteinStructureDataConvertor extends ProteinStructureDataConvertor
 {
     public MockProteinStructureDataConvertor(ItemWriter writer) {
-        super(writer);
+        super(writer, Model.getInstanceByName("genomic"));
     }
     
     protected String getFileContent(String fileName, String extention) throws InterMineException {

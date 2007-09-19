@@ -17,9 +17,9 @@ import java.util.Collections;
 
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.ItemWriter;
 
 import org.apache.log4j.Logger;
@@ -39,22 +39,22 @@ public class BDGPCloneConverter extends CDNACloneConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public BDGPCloneConverter(ItemWriter writer)
+    public BDGPCloneConverter(ItemWriter writer, Model model)
         throws ObjectStoreException,
                MetaDataException {
-        super(writer);
+        super(writer, model);
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "BDGP");
-        writer.store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "BDGP cDNA clone data set");
-        writer.store(ItemHelper.convert(dataSet));
+        store(dataSet);
 
         organism = createItem("Organism");
         organism.setAttribute("taxonId", "7227");
-        writer.store(ItemHelper.convert(organism));
+        store(organism);
     }
 
 
@@ -77,7 +77,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
             }
 
             Item gene = createBioEntity("Gene", array[0], organism.getIdentifier());
-            getItemWriter().store(ItemHelper.convert(gene));
+            store(gene);
 
             String[] cloneIds = array[3].split(";");
 
@@ -90,11 +90,11 @@ public class BDGPCloneConverter extends CDNACloneConverter
                 synonym.setAttribute("value", cloneIds[i]);
                 synonym.setReference("source", dataSource.getIdentifier());
                 synonym.setReference("subject", clone.getIdentifier());
-                getItemWriter().store(ItemHelper.convert(synonym));
+                store(synonym);
 
                 clone.addCollection(new ReferenceList("evidence",
                     new ArrayList(Collections.singleton(dataSet.getIdentifier()))));
-                getItemWriter().store(ItemHelper.convert(clone));
+                store(clone);
             }
         }
     }

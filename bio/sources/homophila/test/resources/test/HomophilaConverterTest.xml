@@ -1,54 +1,54 @@
 <?xml version="1.0"?>
 <items>
-  <item id="0_0" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="9606"/>
   </item>
-  <item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="0_2" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
-  <item id="3_5" class="http://www.flymine.org/model/genomic#BlastMatch">
+  <item id="3_1" class="http://www.flymine.org/model/genomic#BlastMatch">
     <attribute name="EValue" value="123"/>
-    <reference name="subject" ref_id="4_6"/>
-    <reference name="object" ref_id="8_10"/>
+    <reference name="subject" ref_id="4_1"/>
+    <reference name="object" ref_id="8_1"/>
   </item>
-  <item id="4_6" class="http://www.flymine.org/model/genomic#Protein">
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="identifier" value="NP_000005"/>
-    <reference name="organism" ref_id="0_0"/>
+    <reference name="organism" ref_id="0_1"/>
     <collection name="genes">
-      <reference ref_id="5_7"/>
+      <reference ref_id="5_1"/>
     </collection>
   </item>
-  <item id="5_7" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="symbol" value="A2M"/>
-    <reference name="organism" ref_id="0_0"/>
+    <reference name="organism" ref_id="0_1"/>
     <collection name="omimDiseases">
-      <reference ref_id="6_8"/>
+      <reference ref_id="6_1"/>
     </collection>
   </item>
-  <item id="6_8" class="http://www.flymine.org/model/genomic#Disease">
+  <item id="6_1" class="http://www.flymine.org/model/genomic#Disease">
     <attribute name="omimId" value="103950"/>
     <attribute name="description" value="Emphysema due to alpha-2-macroglobulin deficiency (1); {Alzheimer disease, susceptibility to} (3)"/>
   </item>
-  <item id="8_10" class="http://www.flymine.org/model/genomic#Translation">
+  <item id="8_1" class="http://www.flymine.org/model/genomic#Translation">
     <attribute name="identifier" value="CG7052-PA"/>
-    <reference name="organism" ref_id="0_1"/>
+    <reference name="organism" ref_id="0_2"/>
   </item>
-  <item id="2_4" class="http://www.flymine.org/model/genomic#Publication">
+  <item id="2_2" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="11752278"/>
   </item>
-  <item id="2_3" class="http://www.flymine.org/model/genomic#Publication">
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="11381037"/>
   </item>
-  <item id="1_2" class="http://www.flymine.org/model/genomic#DataSet">
+  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="Homophila data set"/>
   </item>
-  <item id="7_9" class="http://www.flymine.org/model/genomic#Annotation">
-    <reference name="property" ref_id="6_8"/>
-    <reference name="subject" ref_id="5_7"/>
+  <item id="7_1" class="http://www.flymine.org/model/genomic#Annotation">
+    <reference name="property" ref_id="6_1"/>
+    <reference name="subject" ref_id="5_1"/>
     <collection name="evidence">
-    <reference ref_id="1_2"/>
-    <reference ref_id="2_3"/>
-    <reference ref_id="2_4"/>
+    <reference ref_id="1_1"/>
+    <reference ref_id="2_1"/>
+    <reference ref_id="2_2"/>
     </collection>
   </item>
 </items>

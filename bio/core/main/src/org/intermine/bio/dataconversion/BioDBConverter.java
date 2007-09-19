@@ -18,9 +18,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
 
 /**
  * A DBConverter with helper methods for bio sources.
@@ -50,15 +48,15 @@ public abstract class BioDBConverter extends DBConverter
                           String dataSetTitle, String dataSourceName) 
         throws ObjectStoreException {
         super(database, tgtModel, writer);
-        dataSource = makeItem("DataSource");
+        dataSource = createItem("DataSource");
         dataSource.setAttribute("name", dataSourceName);
-        writer.store(ItemHelper.convert(dataSource));
-        organism = makeItem("Organism");
+        store(dataSource);
+        organism = createItem("Organism");
         organism.setAttribute("taxonId", String.valueOf(taxonId));
-        writer.store(ItemHelper.convert(organism));
-        dataSet = makeItem("DataSet");
+        store(organism);
+        dataSet = createItem("DataSet");
         dataSet.setAttribute("title", dataSetTitle);
-        writer.store(ItemHelper.convert(dataSet));
+        store(dataSet);
     }
 
     /**
@@ -74,7 +72,7 @@ public abstract class BioDBConverter extends DBConverter
     protected Item makeLocation(String chromosomeIdentifier, Item locatedSequenceFeature,
                                 int start, int end, int strand) throws ObjectStoreException {
         Item chromosome = getChromosome(chromosomeIdentifier);
-        Item location = makeItem("Location");
+        Item location = createItem("Location");
         
         if (start < end) {
             location.setAttribute("start", String.valueOf(start));
@@ -83,11 +81,11 @@ public abstract class BioDBConverter extends DBConverter
             location.setAttribute("start", String.valueOf(end));
             location.setAttribute("end", String.valueOf(start));
         }
-        location.addAttribute(new Attribute("strand", String.valueOf(strand)));
+        location.setAttribute("strand", String.valueOf(strand));
         location.setReference("object", chromosome);
         location.setReference("subject", locatedSequenceFeature);
         location.addToCollection("evidence", dataSet);
-        getItemWriter().store(ItemHelper.convert(location));
+        store(location);
         return location;
     }
 
@@ -110,11 +108,11 @@ public abstract class BioDBConverter extends DBConverter
     private Item getChromosome(String identifier) throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
-            chromosome = makeItem("Chromosome");
+            chromosome = createItem("Chromosome");
             chromosome.setAttribute("identifier", identifier);
             chromosome.setReference("organism", getOrganism());
             chromosomes.put(identifier, chromosome);
-            getItemWriter().store(ItemHelper.convert(chromosome));
+            store(chromosome);
         }
         return chromosome;
     }
@@ -129,7 +127,7 @@ public abstract class BioDBConverter extends DBConverter
      */
     public Item createSynonym(Item subject, String type, String value, boolean isPrimary,
                               Item evidence) {
-        Item synonym = makeItem("Synonym");
+        Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setAttribute("isPrimary", String.valueOf(isPrimary));

@@ -14,30 +14,31 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.util.Stack;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.modelproduction.xmlschema.XmlMetaData;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.SAXParser;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
+import org.intermine.util.XmlUtil;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.*;
-import org.intermine.modelproduction.xmlschema.XmlMetaData;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.SAXParser;
-import org.intermine.util.XmlUtil;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.Attribute;
-import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-
-import org.apache.log4j.Logger;
 
 /**
  * Convert XML format data conforming to given InterMine model to fulldata
@@ -69,7 +70,7 @@ public class XmlConverter extends DataConverter
      */
     public XmlConverter(Model model, Reader xsdReader, ItemWriter writer)
         throws Exception {
-        super(writer);
+        super(writer, model);
         this.model = model;
         this.xmlInfo = new XmlMetaData(xsdReader);
 
@@ -350,7 +351,7 @@ public class XmlConverter extends DataConverter
                 String path = (String) paths.pop();
                 try {
                     if (!xmlInfo.isReferenceElement(path)) {
-                        getItemWriter().store(ItemHelper.convert((Item) items.pop()));
+                        store((Item) items.pop());
                         count++;
                         if (count % 10000 == 0) {
                             long now = System.currentTimeMillis();

@@ -67,7 +67,7 @@ public class DBRetriever extends DataConverter
      */
     protected DBRetriever(
             Model model, Database db, DBReader reader, ItemWriter writer, String excludeList) {
-        super(writer);
+        super(writer, model);
         this.model = model;
         this.db = db;
         this.reader = reader;

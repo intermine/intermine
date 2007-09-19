@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.File;
 import java.lang.reflect.Constructor;
 
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.dataconversion.ItemWriter;
@@ -42,9 +43,7 @@ public class FileConverterTask extends ConverterTask
 
     protected FileSet fileSet;
     protected String clsName;
-    protected String param1 = null;
-    protected String param2 = null;
-
+    
     /**
      * Set the source specific subclass of FileConverter to run
      * @param clsName name of converter class to run
@@ -52,7 +51,7 @@ public class FileConverterTask extends ConverterTask
     public void setClsName(String clsName) {
         this.clsName = clsName;
     }
-
+    
     /**
      * Set the data fileset
      * @param fileSet the fileset
@@ -95,23 +94,17 @@ public class FileConverterTask extends ConverterTask
                                              + "of org.intermine.dataconversion.FileConverter.");
             }
 
-            Constructor m = c.getConstructor(new Class[] {ItemWriter.class});
-            FileConverter converter = (FileConverter) m.newInstance(new Object[] {writer});
-            if (param1 != null) {
-                System.err .println("Using param1 - please dynamic properties"
-                        + "instead (see FileConverterTask)");
-                converter.setParam1(param1);
-            }
-            if (param2 != null) {
-                System.err .println("Using param2 - please dynamic properties"
-                        + "instead (see FileConverterTask)");
-                converter.setParam2(param2);
-            }
+            Constructor m = c.getConstructor(new Class[] {ItemWriter.class, Model.class});
+            FileConverter converter = 
+                (FileConverter) m.newInstance(new Object[] {writer, osw.getModel()});
 
             configureDynamicAttributes(converter);
 
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
+            if (files.length == 0) {
+                throw new BuildException("No files found in: " + fileSet.getDir(getProject()));
+            }
             for (int i = 0; i < files.length; i++) {
                 File f = new File(ds.getBasedir(), files[i]);
                 System.err .println("Processing file: " + f.getPath());

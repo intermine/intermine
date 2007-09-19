@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 public class FlyRNAiScreenConverterTest extends ItemsTestCase
 {
@@ -28,7 +29,8 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FlyRNAiScreenConverter converter = new FlyRNAiScreenConverter(itemWriter);
+        FlyRNAiScreenConverter converter = new FlyRNAiScreenConverter(itemWriter,
+                                                                      Model.getInstanceByName("genomic"));
         File srcFile = new File(getClass().getClassLoader().getResource("FlyRNAiConverterTest.dataset").toURI());
         converter.setCurrentFile(srcFile);
         converter.taxonId = "7227";

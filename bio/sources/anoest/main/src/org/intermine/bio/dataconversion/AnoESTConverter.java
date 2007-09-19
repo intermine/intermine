@@ -76,7 +76,7 @@ public class AnoESTConverter extends BioDBConverter
             int end = res.getInt(4);
             int strand = res.getInt(5);
             
-            Item cluster = makeItem("ESTCluster");
+            Item cluster = createItem("ESTCluster");
             cluster.setAttribute("identifier", identifier);
             Item accSynonym = createSynonym(cluster, "identifier", identifier, true, getDataSet());
             getItemWriter().store(ItemHelper.convert(accSynonym));
@@ -116,7 +116,7 @@ public class AnoESTConverter extends BioDBConverter
             
             Item est = ests.get(accession);
             if (est == null) {
-                est = makeItem("EST");
+                est = createItem("EST");
                 ests.put(accession, est);
                 est.setAttribute("identifier", accession);
                 Item accSynonym = createSynonym(est, "identifier", accession, true, getDataSet());

@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 /**
  * Test for translating MAGE data in fulldata Item format conforming to a source OWL definition
@@ -40,7 +41,9 @@ public class MageFlatFileConverterTest extends ItemsTestCase {
         BufferedReader srcReader = new BufferedReader(new
             InputStreamReader(getClass().getClassLoader().getResourceAsStream("mageFlat.txt")));
 
-        MageFlatFileConverter converter = new MageFlatFileConverter(writer, "mage_config_test.properties");
+        MageFlatFileConverter converter = new MageFlatFileConverter(writer,
+                                                                    Model.getInstanceByName("genomic"),
+                                                                    "mage_config_test.properties");
 
         converter.process(srcReader);
         converter.close();

@@ -1,4 +1,4 @@
-package org.intermine.dataconversion;
+package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -15,12 +15,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.intermine.bio.ontology.DagTerm;
+import org.intermine.bio.ontology.DagTermSynonym;
+import org.intermine.bio.ontology.OboParser;
+import org.intermine.bio.ontology.OboTerm;
+import org.intermine.bio.ontology.OboTermSynonym;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.ontology.DagTerm;
-import org.intermine.ontology.DagTermSynonym;
-import org.intermine.ontology.OboParser;
-import org.intermine.ontology.OboTerm;
-import org.intermine.ontology.OboTermSynonym;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
@@ -42,9 +44,9 @@ public class OboConverter extends DagConverter
      * @param url the URL of the source of this ontology
      * @param termClass the class of the Term
      */
-    public OboConverter(ItemWriter writer, String dagFilename, String dagName, String url,
-            String termClass) {
-        super(writer, dagFilename, dagName, url, termClass);
+    public OboConverter(ItemWriter writer, Model model, String dagFilename, String dagName,
+                        String url, String termClass) {
+        super(writer, model, dagFilename, dagName, url, termClass);
     }
 
     /**

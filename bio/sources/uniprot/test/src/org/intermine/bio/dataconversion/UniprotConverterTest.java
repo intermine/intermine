@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 public class UniprotConverterTest extends ItemsTestCase
 {
@@ -34,7 +35,8 @@ public class UniprotConverterTest extends ItemsTestCase
                                               .getResourceAsStream("UniprotConverterTest_src.xml"));
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        UniprotConverter converter = new UniprotConverter(itemWriter);
+        UniprotConverter converter = new UniprotConverter(itemWriter,
+                                                          Model.getInstanceByName("genomic"));
         converter.setCreateinterpro("true"); 
         converter.process(reader);
         converter.close();

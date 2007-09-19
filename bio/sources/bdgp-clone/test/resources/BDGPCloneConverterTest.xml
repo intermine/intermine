@@ -1,44 +1,44 @@
 <?xml version="1.0"?>
 <items>
-  <item id="-1_2" class="http://www.flymine.org/model/genomic#DataSet">
+  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="BDGP cDNA clone data set"/>
   </item>
-  <item id="-1_3" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
-  <item id="-1_1" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="BDGP"/>
   </item>
-  <item id="-1_7" class="http://www.flymine.org/model/genomic#CDNAClone">
+  <item id="4_2" class="http://www.flymine.org/model/genomic#CDNAClone">
     <attribute name="identifier" value="RE21586"/>
-    <reference name="gene" ref_id="-1_4"/>
-    <reference name="organism" ref_id="-1_3"/>
+    <reference name="gene" ref_id="3_1"/>
+    <reference name="organism" ref_id="2_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="-1_6" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="RE02181"/>
-    <reference name="source" ref_id="-1_1"/>
-    <reference name="subject" ref_id="-1_5"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="4_1"/>
   </item>
-  <item id="-1_5" class="http://www.flymine.org/model/genomic#CDNAClone">
+  <item id="4_1" class="http://www.flymine.org/model/genomic#CDNAClone">
     <attribute name="identifier" value="RE02181"/>
-    <reference name="gene" ref_id="-1_4"/>
-    <reference name="organism" ref_id="-1_3"/>
+    <reference name="gene" ref_id="3_1"/>
+    <reference name="organism" ref_id="2_1"/>
     <collection name="evidence">
-      <reference ref_id="-1_2"/>
+      <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="-1_8" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="RE21586"/>
-    <reference name="source" ref_id="-1_1"/>
-    <reference name="subject" ref_id="-1_7"/>
+    <reference name="source" ref_id="0_1"/>
+    <reference name="subject" ref_id="4_2"/>
   </item>
-  <item id="-1_4" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="identifier" value="CG9480"/>
-    <reference name="organism" ref_id="-1_3"/>
+    <reference name="organism" ref_id="2_1"/>
   </item>
 </items>

@@ -46,8 +46,8 @@ public class UniprotKeywordConverter extends FileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      */
-    public UniprotKeywordConverter(ItemWriter writer) {
-        super(writer);
+    public UniprotKeywordConverter(ItemWriter writer, Model model) {
+        super(writer, model);
 
     }
 

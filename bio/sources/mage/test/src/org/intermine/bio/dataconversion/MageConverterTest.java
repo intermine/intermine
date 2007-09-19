@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -33,7 +34,7 @@ public class MageConverterTest extends ItemsTestCase
     MageConverter converter;
     String ns = "http://www.intermine.org/model/mage#";
     File f = null;
-
+    Model model;
     
     
     public MageConverterTest(String arg) {
@@ -41,7 +42,8 @@ public class MageConverterTest extends ItemsTestCase
     }
 
     public void setUp() throws Exception {
-        converter = new MageConverter(new MockItemWriter(new HashMap()));
+        model = Model.getInstanceByName("genomic");
+        converter = new MageConverter(new MockItemWriter(new HashMap()), model);
     }
 
     public void tearDown() throws Exception {
@@ -54,7 +56,7 @@ public class MageConverterTest extends ItemsTestCase
     public void testConvertMageML() throws Exception {
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
-        MageConverter mc = new MageConverter(itemWriter);   
+        MageConverter mc = new MageConverter(itemWriter, model);   
         mc.seenMap = new LinkedHashMap();
         mc.refMap = new LinkedHashMap();
         File srcFile1 = new File(getClass().getClassLoader().getResource("mage_ml_example.xml").toURI());
@@ -84,7 +86,7 @@ public class MageConverterTest extends ItemsTestCase
 
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
-        MageConverter mc = new MageConverter(itemWriter);
+        MageConverter mc = new MageConverter(itemWriter, model);
 
         String s = "<BioSequence_package><BioSequence_assnlist> <BioSequence identifier=\"bio_identifier\" sequence=\"GATTACA\"></BioSequence></BioSequence_assnlist></BioSequence_package>";
         StringReader sr = new StringReader(s);
@@ -107,7 +109,7 @@ public class MageConverterTest extends ItemsTestCase
 
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
-        MageConverter mc = new MageConverter(itemWriter);
+        MageConverter mc = new MageConverter(itemWriter, model);
         String s = "<BioSequence_package><BioSequence_assnlist><BioSequence><PolymerType_assn><OntologyEntry value=\"Term\" ></OntologyEntry></PolymerType_assn></BioSequence></BioSequence_assnlist></BioSequence_package>";
         StringReader sr = new StringReader(s);
         mc.process(sr);
@@ -138,7 +140,7 @@ public class MageConverterTest extends ItemsTestCase
 
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
-        MageConverter mc = new MageConverter(itemWriter);
+        MageConverter mc = new MageConverter(itemWriter, model);
         String s = "<BioSequence_package><BioSequence_assnlist><BioSequence><SequenceDatabases_assnlist><DatabaseEntry URI=\"www.test1.org\"/><DatabaseEntry URI=\"www.test2.org\"/></SequenceDatabases_assnlist></BioSequence></BioSequence_assnlist></BioSequence_package>";
 
         StringReader sr = new StringReader(s);
@@ -176,7 +178,7 @@ public class MageConverterTest extends ItemsTestCase
 
     public void testBioAssayData() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        MageConverter mc = new MageConverter(itemWriter);
+        MageConverter mc = new MageConverter(itemWriter, model);
         // only take two types should skip middle column of file
         mc.setQuantitationtypes("col1, col3");
 
@@ -255,7 +257,7 @@ public class MageConverterTest extends ItemsTestCase
 
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
-        MageConverter mc = new MageConverter(itemWriter);
+        MageConverter mc = new MageConverter(itemWriter, model);
         String s = "<MAGE-ML identifier=\"MAGE:EBI\"><BioSequence_package><BioSequence_assnlist><BioSequence name=\"bsName\"><PolymerType_assn><OntologyEntry value=\"Term\" ></OntologyEntry></PolymerType_assn></BioSequence></BioSequence_assnlist></BioSequence_package></MAGE-ML>";
         StringReader sr = new StringReader(s);
         mc.process(sr);

@@ -25,8 +25,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.xml.full.ReferenceList;
@@ -41,11 +39,9 @@ import org.apache.log4j.Logger;
 public class MageTimeCourseMasFileConverter extends FileConverter
 {
     protected static final Logger LOG = Logger.getLogger(MageTimeCourseMasFileConverter.class);
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static final String PROBEPREFIX = "Affymetrix:CompositeSequence:MG_U74Av2:";
     private static final String PROBEURL = "https://www.affymetrix.com/LinkServlet?probeset=";
 
-    protected ItemFactory itemFactory;
     protected Map config = new HashMap();
     protected Item dataSource, dataSet, organismMM, experiment, sample1;
     protected String expName = "FDCP";
@@ -58,19 +54,18 @@ public class MageTimeCourseMasFileConverter extends FileConverter
      * @throws MetaDataException if cannot generate model
      * @throws IOException if fail to read config file
      */
-    public MageTimeCourseMasFileConverter(ItemWriter writer)
+    public MageTimeCourseMasFileConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException, IOException {
-        super(writer);
+        super(writer, model);
 
         readConfig();
         LOG.info("config " + config);
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "The Weatherall Institute of Molecular Medicine, "
                                 + "Oxford University");
         dataSource.setAttribute("url", "http://www.imm.ox.ac.uk/");
-        getItemWriter().store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
@@ -82,11 +77,11 @@ public class MageTimeCourseMasFileConverter extends FileConverter
 
         dataSet.setAttribute("url",
                         "http://www.imm.ox.ac.uk/pages/research/molecular_haematology/tariq.htm");
-        getItemWriter().store(ItemHelper.convert(dataSet));
+        store(dataSet);
 
         organismMM = createItem("Organism");
         organismMM.setAttribute("abbreviation", "MM");
-        getItemWriter().store(ItemHelper.convert(organismMM));
+        store(organismMM);
 
         experiment = createItem("MicroArrayExperiment");
         experiment.setAttribute("identifier", expName);
@@ -103,10 +98,10 @@ public class MageTimeCourseMasFileConverter extends FileConverter
         String pmid = getConfig(expName, "pmid");
         if (pmid != null && !pmid.equals("")) {
             Item pub = getPublication(pmid.trim());
-            getItemWriter().store(ItemHelper.convert(pub));
+            store(pub);
             experiment.setReference("publication", pub.getIdentifier());
         }
-        getItemWriter().store(ItemHelper.convert(experiment));
+        store(experiment);
 
         Item sample1 = createItem("Sample");
         sample1.setReference("organism", organismMM.getIdentifier());
@@ -122,7 +117,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             sample1.setAttribute("primaryCharacteristic",
                                  getConfig(expName, "primaryCharacteristic"));
         }
-        getItemWriter().store(ItemHelper.convert(sample1));
+        store(sample1);
     }
 
 
@@ -173,12 +168,12 @@ public class MageTimeCourseMasFileConverter extends FileConverter
             result.setReference("experiment", experiment.getIdentifier());
             result.addCollection(new ReferenceList("assays",
                                  new ArrayList(Collections.singleton(assay.getIdentifier()))));
-            getItemWriter().store(ItemHelper.convert(result));
+            store(result);
 
             probe.addCollection(new ReferenceList("results",
                                 new ArrayList(Collections.singleton(result.getIdentifier()))));
 
-            getItemWriter().store(ItemHelper.convert(probe));
+            store(probe);
 
         }
     }
@@ -210,7 +205,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
         synonym.setAttribute("value", PROBEPREFIX + id);
         synonym.setReference("source", datasourceId);
         synonym.setReference("subject", probe.getIdentifier());
-        getItemWriter().store(ItemHelper.convert(synonym));
+        store(synonym);
 
         return probe;
     }
@@ -230,7 +225,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
                                 new ArrayList(Collections.singleton(sample1.getIdentifier()))));
             }
             assayMap.put(name, assay);
-            getItemWriter().store(ItemHelper.convert(assay));
+            store(assay);
         }
         return assay;
     }
@@ -305,14 +300,4 @@ public class MageTimeCourseMasFileConverter extends FileConverter
         pub.setAttribute("pubMedId", pmid);
         return pub;
     }
-
-
-    /**
-     * @param clsName = target class name
-     * @return item created by itemFactory
-     */
-    protected Item createItem(String clsName) {
-        return itemFactory.makeItemForClass(GENOMIC_NS + clsName);
-    }
-
 }

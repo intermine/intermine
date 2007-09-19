@@ -12,18 +12,17 @@ package org.intermine.bio.dataconversion;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
-import org.intermine.util.TextFileUtil;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.metadata.Model;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TextFileUtil;
+import org.intermine.xml.full.Item;
+
 
 /**
  * DataConverter to parse an RNAi data file into Items
@@ -32,40 +31,34 @@ import org.intermine.dataconversion.FileConverter;
  */
 public class RNAiConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     private Map geneMap = new HashMap(), screenMap = new HashMap(),
         pubMap = new HashMap(), phenotypeMap = new HashMap();
-    private Map ids = new HashMap();
     private Item dataSource, dataSet, org, ontology;
-    private ItemFactory itemFactory;
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException of problem reading/writing data
      */
-    public RNAiConverter(ItemWriter writer) throws ObjectStoreException {
-        super(writer);
-
-        itemFactory = new ItemFactory(Model.getInstanceByName("genomic"), "-1_");
+    public RNAiConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+        super(writer, model);
 
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "WormBase");
-        getItemWriter().store(ItemHelper.convert(dataSource));
+        store(dataSource);
 
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "WormBase RNAi Phenotype");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
-        getItemWriter().store(ItemHelper.convert(dataSet));
+        store(dataSet);
 
         org = createItem("Organism");
         org.setAttribute("taxonId", "6239");
-        getItemWriter().store(ItemHelper.convert(org));
+        store(org);
 
         ontology = createItem("Ontology");
         ontology.setAttribute("title", "WormBase phenotype codes");
-        getItemWriter().store(ItemHelper.convert(ontology));
+        store(ontology);
     }
 
     /**
@@ -104,7 +97,7 @@ public class RNAiConverter extends FileConverter
                 Item screen = createScreen(pub);
                 phenotype.setReference("analysis", screen.getIdentifier());
 
-                getItemWriter().store(ItemHelper.convert(phenotype));
+                store(phenotype);
             }
         }
     }
@@ -123,8 +116,8 @@ public class RNAiConverter extends FileConverter
             synonym.setReference("subject", gene.getIdentifier());
             synonym.setReference("source", dataSource.getIdentifier());
 
-            getItemWriter().store(ItemHelper.convert(gene));
-            getItemWriter().store(ItemHelper.convert(synonym));
+            store(gene);
+            store(synonym);
         }
         return gene;
     }
@@ -146,7 +139,7 @@ public class RNAiConverter extends FileConverter
             phenotype.setReference("ontology", ontology.getIdentifier());
             phenotypeMap.put(code, phenotype);
 
-            getItemWriter().store(ItemHelper.convert(phenotype));
+            store(phenotype);
         }
         rnaiPhenotype.setReference("property", phenotype.getIdentifier());
         return rnaiPhenotype;
@@ -160,7 +153,7 @@ public class RNAiConverter extends FileConverter
             pub = createItem("Publication");
             pub.setAttribute("pubMedId", pubMedId);
             pubMap.put(pubMedId, pub);
-            getItemWriter().store(ItemHelper.convert(pub));
+            store(pub);
         }
         return pub;
     }
@@ -174,26 +167,9 @@ public class RNAiConverter extends FileConverter
             screen.setReference("publication", pubId);
             screen.setReference("organism", org.getIdentifier());
             screenMap.put(pubId, screen);
-            getItemWriter().store(ItemHelper.convert(screen));
+            store(screen);
         }
         return screen;
-    }
-
-
-    private String newId(String className) {
-        Integer id = (Integer) ids.get(className);
-        if (id == null) {
-            id = new Integer(0);
-            ids.put(className, id);
-        }
-        id = new Integer(id.intValue() + 1);
-        ids.put(className, id);
-        return id.toString();
-    }
-
-    private Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    GENOMIC_NS + className, "");
     }
 }
 

@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 /**
  * Homophila converter functional test.
@@ -26,13 +27,15 @@ import org.intermine.dataconversion.MockItemWriter;
  */
 public class HomophilaConverterTest extends ItemsTestCase
 {
+    Model model = Model.getInstanceByName("genomic");
+    
     public HomophilaConverterTest(String arg) {
         super(arg);
     }
 
     public void testConstruct() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        HomophilaConverter converter = new HomophilaConverter(itemWriter);
+        HomophilaConverter converter = new HomophilaConverter(itemWriter, model);
         assertNotNull(converter.orgHuman);
         assertNotNull(converter.orgDrosophila);
     }
@@ -51,7 +54,7 @@ public class HomophilaConverterTest extends ItemsTestCase
         String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("test/HomophilaConverterTestInput"));
         
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        HomophilaConverter converter = new HomophilaConverter(itemWriter);
+        HomophilaConverter converter = new HomophilaConverter(itemWriter, model);
         converter.setDiseasefile(diseases);
         converter.setProteingenefile(proteinGene);
         converter.process(new StringReader(input));

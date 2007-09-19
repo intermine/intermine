@@ -1,4 +1,4 @@
-package org.intermine.ontology;
+package org.intermine.bio.ontology;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -13,51 +13,48 @@ package org.intermine.ontology;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Object representing aa OboTerm synonym.
+ * Object representing a DagTerm synonym.
  * 
  * @author Thomas Riley
  */
-public class OboTermSynonym extends DagTermSynonym
+public class DagTermSynonym
 {
-    private String type;
+    private String name;
     
     /**
      * Create a new instance of DagTermSynonym.
-     * @param name the synonym name
-     * @param type synonym type
+     * @param name the synoym name
      */
-    public OboTermSynonym(String name, String type) {
-        super(name);
-        this.type = type;
+    public DagTermSynonym(String name) {
+        this.name = name;
     }
     
     /**
-     * Get the synonym type.
-     * @return synonym type
+     * Get the synonym name.
+     * @return synonym name
      */
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
     }
     
     /**
      * {@inheritDoc}
      */
     public boolean equals(Object o) {
-        return (o instanceof OboTermSynonym && super.equals(o)
-                && ((OboTermSynonym) o).type.equals(type));
+        return (o instanceof DagTermSynonym && ((DagTermSynonym) o).name.equals(name));
     }
 
     /**
      * {@inheritDoc}
      */
     public int hashCode() {
-        return super.hashCode() + 3 * type.hashCode();
+        return name.hashCode();
     }
     
     /**
      * {@inheritDoc}
      */
     public String toString() {
-        return new ToStringBuilder(this).append("name", getName()).append("type", type).toString();
+        return new ToStringBuilder(this).append("name", name).toString();
     }
 }

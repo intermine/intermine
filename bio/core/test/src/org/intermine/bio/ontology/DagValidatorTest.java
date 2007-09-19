@@ -1,4 +1,4 @@
-package org.intermine.ontology;
+package org.intermine.bio.ontology;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -10,11 +10,11 @@ package org.intermine.ontology;
  *
  */
 
-import junit.framework.*;
-
-import java.util.Set;
-import java.io.StringReader;
 import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.Set;
+
+import junit.framework.TestCase;
 
 
 public class DagValidatorTest extends TestCase

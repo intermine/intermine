@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 /**
  * BDGP clone converter functional test.
@@ -35,7 +36,8 @@ public class BDGPCloneConverterTest extends ItemsTestCase
             + "CG9480\tGlycogenin\tFBgn0034603\tRE02181;RE21586" + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        BDGPCloneConverter converter = new BDGPCloneConverter(itemWriter);
+        BDGPCloneConverter converter = new BDGPCloneConverter(itemWriter,
+                                                              Model.getInstanceByName("genomic"));
 
         converter.process(new StringReader(input));
         converter.close();
