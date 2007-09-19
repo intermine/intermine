@@ -31,7 +31,8 @@ form to perform a specific task.  You can create your own templates if
 you log in.</p>
 
 <p><b>Lists</b> lets you operate on whole lists of data at once.  You can
-upload lists or save them from results tables.</p>
+upload lists or save them from results tables.  We also create useful public
+lists for everyone to use.</p>
 
 <p><b>The QueryBuilder</b> lets you create custom queries and
 edit existing templates.</p>
@@ -45,7 +46,7 @@ Protein Interactions.</p>
 
 <h1>2. Report Pages</h1>
 
-<p>A quick search box appears on the front page and in the menu bar of all pages.  You can search for any identifier or symbol for genes, proteins, transcripts and so on.  You can use '*' as a wildcard.</p>
+<p>A quick search box appears in the menu bar of all pages.  You can search for any identifier or symbol for genes, proteins, transcripts and so on.  You can use '*' as a wildcard.</p>
 
 <p><b>Run a quick search for the Drosophila gene 'eve'.</b></p>
 
@@ -130,7 +131,7 @@ All results pages have a number of export options.
 
 <h1>6. List Upload</h1>
 
-<p>FlyMine can operate on custom lists of data.  You can save lists from results pages or create them by uploading lists of identifiers.  Lists can be used when running template queries and analysed by a series of <b>widgets</b> on a list details page.  You can merge, subtract and find common members if you have more than one list.</p>
+<p>FlyMine can operate on custom lists of data.  You can save lists from results pages or create them by uploading lists of identifiers.  Lists can be used when running template queries and analysed by a series of <b>widgets</b> on a list analysis page.  You can merge, subtract and find common members if you have more than one list.</p>
 </p>
 
 <p>
@@ -166,13 +167,13 @@ If some identifiers don't produce an exact match a confirmation page lets you re
 <img alt="[Save bag]"  src="bag_confirm_save.png"/>
 
 
-<h1>8. List details page</h1>
+<h1>8. List analysis page</h1>
 
 <p>
-The list details page is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each category.
+The list analysis page is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each category.
 </p>
 
-<p><i>Coming soon - we plan to add more widgets and functionality to the list details page.</i></p>
+<p><i>Coming soon - we plan to add more widgets and functionality to the list analysis page.</i></p>
 
 
 <p>The GO enrichment and KEGG widgets suggest that this list of genes contains a high number of transcription factors.</p>
@@ -188,7 +189,7 @@ Template queries have been executed on the whole list, just like on the gene rep
 <h1>9. Use lists in template queries</h1>
 
 <p>
-You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list details page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase 1 binding site data set which we can query with another template. 
+You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list analysis page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase 1 binding site data set which we can query with another template. 
 </p>
 
 <p><b>Search the template queries for 'regulated genes'.</b></p>
@@ -207,7 +208,7 @@ You can use lists in any template query, or in queries you create yourself in th
 
 <p>The results table shows any genes from our original list that, according to FlyReg, regulate a particular gene.</p>
 
-<p>You can also create new lists from results tables.  We can save a list of the regulated genes from this query for analysis on the list details page or to use in more templates.</p>
+<p>You can also create new lists from results tables.  We can save a list of the regulated genes from this query to view in the list analysis page or to use in more templates.</p>
 
 <p><b>Click on the checkbox by 'Regulated gene > identifier' and choose a name for the saved list.</b></p>
 
