@@ -19,6 +19,8 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 
@@ -71,19 +73,19 @@ public class AnoESTConverterTest extends ItemsTestCase
 
         protected ResultSet getEstResultSet(Connection connection) {
             Object[][] resObjects = new Object[][] {
-                {"BM654701.1","NCLAG150001"},
-                {"BM654701.1","NCLAG150002"},
-                {"BX615094.1","NCLAG150003"},
-                {"AF043434.1","NCLAG169971"},
-                {"AF043436.1","NCLAG169971"},
-                {"AF043437.1","NCLAG169971"},
-                {"AF043439.1","NCLAG169971"},
-                {"AF043443.1","NCLAG169971"},
-                {"AA413316.1","UCLAG189057"},
-                {"BX040896.1","UCLAG189057"},
-                {"BX040897.1","UCLAG189057"},
-                {"BX610489.1","UCLAG189057"},
-                {"BX610490.1","UCLAG189057"}
+                {"BM654701.1","NCLAG150001", "1234567"},
+                {"BM654701.1","NCLAG150002", "1234567"},
+                {"BX615094.1","NCLAG150003", "1234567"},
+                {"AF043434.1","NCLAG169971", "1234567"},
+                {"AF043436.1","NCLAG169971", "1234567"},
+                {"AF043437.1","NCLAG169971", "1234567"},
+                {"AF043439.1","NCLAG169971", "1234567"},
+                {"AF043443.1","NCLAG169971", "1234567"},
+                {"AA413316.1","UCLAG189057", "1234567"},
+                {"BX040896.1","UCLAG189057", "1234567"},
+                {"BX040897.1","UCLAG189057", "1234567"},
+                {"BX610489.1","UCLAG189057", "1234567"},
+                {"BX610490.1","UCLAG189057", "1234567"}
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
             res.setupRows(resObjects);
