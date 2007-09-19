@@ -14,7 +14,7 @@ domains of biological knowledge.</p>
 <b>See a list of all the data sources from the FlyMine home page:</b>
 </td>
 <td padding="5px" valign="top">
-<img alt="[Release info]" src="release_info.png"/>
+<img alt="[Release info]" src="data.png"/>
 </td>
 </tr>
 </table>
@@ -30,13 +30,13 @@ an identifier to see a report page.</p>
 form to perform a specific task.  You can create your own templates if
 you log in.</p>
 
-<p><b>Bags</b> let you operate on whole lists of data at once.  You can
+<p><b>Lists</b> lets you operate on whole lists of data at once.  You can
 upload lists or save them from results tables.</p>
 
 <p><b>The QueryBuilder</b> lets you create custom queries and
 edit existing templates.</p>
 
-<p><b>Aspects</b> are a way to explore the data and template queries
+<p><b>Data categories</b> are a way to explore the data and template queries
 for a particular area of biology - for example Comparative Genomics or
 Protein Interactions.</p>
 
@@ -70,13 +70,13 @@ Template queries are run for this gene when the page is loaded.  We can add temp
 FlyMine includes a library of <b>template queries</b> - predefined queries designed to perform a particular task.  Each one has a description and a form to fill in.  For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
 
 <p>
-You can find lists of template queries on each aspect page.
+You can find lists of template queries on each data category page.
 </p>
 
 <img alt="[Aspects]"  src="aspects.png"/>
 
 <p>
-Or use the 'Search templates' menu link that searches the titles and descriptions.
+Or go to the templates page where you can search the titles and descriptions.
 </p>
 
 <img alt="[Click Search Templates]"  src="click_search_templates.png"/>
@@ -128,51 +128,51 @@ All results pages have a number of export options.
 <img alt="[Export]"  src="export.png"/>
 
 
-<h1>6. Bag Upload</h1>
+<h1>6. List Upload</h1>
 
-<p>FlyMine can operate on custom lists of data, we call them <b>bags</b>.  You can save bags from results pages or create them by uploading lists of identifiers.  Bags can be used when running template queries and analysed by a series of <b>widgets</b> on a bag details page.  You can merge, subtract and find common members if you have more than one bag.</p>
+<p>FlyMine can operate on custom lists of data.  You can save lists from results pages or create them by uploading lists of identifiers.  Lists can be used when running template queries and analysed by a series of <b>widgets</b> on a list details page.  You can merge, subtract and find common members if you have more than one list.</p>
 </p>
 
 <p>
-<i>Coming soon - we will create globally available bags with, for example, lists of genes identified in a particular paper.</i>
+<i>FlyMine also includes a set of 'Public' lists that we have made for you.</i>
 </p>
 
 <p>
-<b>Click on 'bags' in the top menu bar to get to the bag upload page.</b>
+<b>Click on 'Upload List' in list box on the home page to get to the list upload page.</b>
 </p>
 
 <img alt="[Click bags in the menu bar]"  src="click_bags.png"/>
 
 <p>
-FlyMine's bag creation tool helps you upload a list of identifiers, the list can contain a mix of identifier types.</p>
+FlyMine's list creation tool helps you upload a list of identifiers, the list can contain a mix of identifier types.</p>
 
-<p><b>Now upload the example bag:</b></p>
+<p><b>Now upload the example list:</b></p>
 
 <img alt="[Create a new bag]"  src="create_a_bag.png"/>
 
 
-<h1>7. Bag confirm page</h1>
+<h1>7. List confirm page</h1>
 
 <p>
-If some identifiers don't produce an exact match a confirmation page lets you resolve any issues.  Here, two genes were found by synonyms and a protein identifier has been converted to the corresponding gene.  You can check through each issue or just add all the matches to your bag.
+If some identifiers don't produce an exact match a confirmation page lets you resolve any issues.  Here, two genes were found by synonyms and a protein identifier has been converted to the corresponding gene.  You can check through each issue or just add all the matches to your list.
 </p>
 
-<p><b>Click 'Add all' to include all suggested genes to the bag.</b></p>
+<p><b>Click 'Add all' to include all suggested genes to the list.</b></p>
 
 <img alt="[Add these bag]"  src="bag_confirm_add.png"/>
 
-<p><b>Choose a name for your bag and save it.</b></p>
+<p><b>Choose a name for your list and save it.</b></p>
 
 <img alt="[Save bag]"  src="bag_confirm_save.png"/>
 
 
-<h1>8. Bag details page</h1>
+<h1>8. List details page</h1>
 
 <p>
-The bag details page is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each category.
+The list details page is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each category.
 </p>
 
-<p><i>Coming soon - we plan to add more widgets and functionality to the bag details page.</i></p>
+<p><i>Coming soon - we plan to add more widgets and functionality to the list details page.</i></p>
 
 
 <p>The GO enrichment and KEGG widgets suggest that this list of genes contains a high number of transcription factors.</p>
@@ -180,15 +180,15 @@ The bag details page is a great way to find out more about a list of genes.  A n
 <img alt="[Bag widgets]"  src="bag_widgets.png"/>
 
 <p>
-Template queries have been executed on the whole bag, just like on the gene report page.  This is a simple way to retrieve further information about the entire list.  For example, you could retrieve all the exons or protein sequences.
+Template queries have been executed on the whole list, just like on the gene report page.  This is a simple way to retrieve further information about the entire list.  For example, you could retrieve all the exons or protein sequences.
 </p>
 
 <img alt="[Bag templates]"  src="bag_templates.png"/>
 
-<h1>9. Use bags in template queries</h1>
+<h1>9. Use lists in template queries</h1>
 
 <p>
-You can use bags in any template query, or in queries you create yourself in the QueryBuilder.  As the bag details page suggested many of the genes in our bag are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase 1 binding site data set which we can query with another template. 
+You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list details page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase 1 binding site data set which we can query with another template. 
 </p>
 
 <p><b>Search the template queries for 'regulated genes'.</b></p>
@@ -199,24 +199,24 @@ You can use bags in any template query, or in queries you create yourself in the
 
 <img alt="[Select template]"  src="select_template2.png"/>
 
-<p>Now that we have created a bag the template query gives us the option to use it instead of entering an identifier.</p>
+<p>Now that we have created a list the template query gives us the option to use it instead of entering an identifier.</p>
 
 <p><b>Click the checkbox to select the demo bag you named earlier, and then run the query.</b></p>
 
 <img alt="[Run template with bag]"  src="template_bag.png"/>
 
-<p>The results table shows any genes from our original bag that, according to FlyReg, regulate a particular gene.</p>
+<p>The results table shows any genes from our original list that, according to FlyReg, regulate a particular gene.</p>
 
-<p>You can also create new bags from results tables.  We can save a bag of the regulated genes from this query for analysis on the bag details page or to use in more templates.</p>
+<p>You can also create new lists from results tables.  We can save a list of the regulated genes from this query for analysis on the list details page or to use in more templates.</p>
 
-<p><b>Click on the checkbox by 'Regulated gene > identifier' and choose a name for the saved bag.</b></p>
+<p><b>Click on the checkbox by 'Regulated gene > identifier' and choose a name for the saved list.</b></p>
 
 <img alt="[Save column in a bag]"  src="results_bag.png"/>
 <br/>
 <img alt="[Save in a bag]"  src="save_in_bag.png"/>
 
 
-<p>Using bags is an excellent way to retrieve information about a whole list of data. For example we could also retrieve:
+<p>Using lists is an excellent way to retrieve information about a whole list of data. For example we could also retrieve:
 <ul>
 <li>all the orthologues in another organism, e.g. <i>D. pseudoobscura</i></li>
 <li>gene expression results from FlyAtlas</li>
@@ -246,7 +246,7 @@ You can use bags in any template query, or in queries you create yourself in the
 
 <img alt="[query builder]"  src="query_builder.png"/>
 
-<p>The query summary section shows the constraints applied to this query.  Notice that one of them says 'factor Gene' then 'IN demo bag'.  This shows us that the search is using just the transcription factors from the bag we saved earlier.</p> 
+<p>The query summary section shows the constraints applied to this query.  Notice that one of them says 'factor Gene' then 'IN demo bag'.  This shows us that the search is using just the transcription factors from the list we saved earlier.</p> 
 
 <p>What if we want to search for <b>all</b> transcription factors in FlyMine and find the genes they regulate?  We can just remove this constraint and run the query again.</p> 
 
@@ -264,13 +264,13 @@ You can use bags in any template query, or in queries you create yourself in the
 
 <h1>11. MyMine</h1>
 
-<p>The bags that we have created will be saved temporarily for the current session. To save them permanently in FlyMine you can create a MyMine account.</p>
+<p>The lists that we have created will be saved temporarily for the current session. To save them permanently in FlyMine you can create a MyMine account.</p>
 
 <p>You only need to provide an email address and a password to generate an account, there is no other information required.  Your saved data is always private.</p>
 
 <img alt="[Click log in]"  src="click_login.png"/>
 
- <p>In MyMine you can save bags and queries you create in the QueryBuilder.  You can even use the QueryBuilder to turn queries into new templates of your own.  You can export/import queries and templates as XML to share them with others.</p>
+ <p>In MyMine you can save lists and queries you create in the QueryBuilder.  You can even use the QueryBuilder to turn queries into new templates of your own.  You can export/import queries and templates as XML to share them with others.</p>
 
 <p>The <img alt="[Favourite]"  src="star_active.gif"/> icon lets you set templates as favourites so it's easy to access the ones you use often.</p>
 
