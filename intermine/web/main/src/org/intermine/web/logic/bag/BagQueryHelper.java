@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -89,15 +88,12 @@ public class BagQueryHelper
         ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
         q.setConstraint(cs);
 
-        Collection keyFields = ClassKeyHelper.getKeyFields(classKeys, type);
+        Collection<FieldDescriptor> keyFields = ClassKeyHelper.getKeyFields(classKeys, type);
 
         Iterator keyFieldIter = keyFields.iterator();
         while (keyFieldIter.hasNext()) {
-            Set flds = (Set) keyFieldIter.next();
-            if (flds.size() > 1) {
-                continue;
-            }
-            FieldDescriptor fld = (FieldDescriptor) flds.iterator().next();
+            FieldDescriptor fld = (FieldDescriptor) keyFieldIter.next();
+
             if (!fld.isAttribute()) {
                 continue;
             }
