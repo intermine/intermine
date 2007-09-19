@@ -1,7 +1,18 @@
-ol#buildbaglist, ol#buildbaglist li{list-style: none;margin:0;padding:0}
-ol#buildbaglist label{float:left;text-align:right;margin-right:1em;width:10em;font-size:1.2em;font-weight:bold;}
-ol#buildbaglist li {width:100%;float:left;clear:left;padding-bottom:1em;}
-ol#buildbaglist select, ol#buildbaglist textarea{width:60%;}
-/* =TEXTAREA £BAGBUILD*/
+ol#buildbaglist, ol#buildbaglist li{
+	margin:0;padding:0;
+	list-style: none;}
+
+ol#buildbaglist label{
+	float:left;
+	margin-right:1em;width:10em;
+	text-align:right;font-size:1.2em;font-weight:bold;}
+
+ol#buildbaglist li {
+	float:left;clear:left;
+	width:100%;padding-bottom:1em;}
+
+ol#buildbaglist select, ol#buildbaglist textarea{
+	width:60%;}
+
 textarea#pasteInput {
   width: 345px;}

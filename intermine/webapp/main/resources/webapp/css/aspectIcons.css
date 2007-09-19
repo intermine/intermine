@@ -1,19 +1,13 @@
 .dsIconLabel {
-font-size:13px;
-margin-left:3px;
-margin-top:-3px
-}
+	margin-left:3px; margin-top:-3px;
+	font-size:13px;}
 
 .dsIconImage {
-border:1px solid #222;
-margin-bottom:5px
-}
+	margin-bottom:5px;
+	border:1px solid #222;}
 
 table.aspectIconsTable {
-margin-bottom:5px;
-margin-left:10px;
-}
+	margin-bottom:5px;margin-left:10px;}
 
 td.aspectIconCell {
-padding-right:15px
-}
+	padding-right:15px}

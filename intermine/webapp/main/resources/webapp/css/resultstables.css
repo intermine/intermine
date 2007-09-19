@@ -2,75 +2,75 @@
 td.resBar {
     background-image:url('../model/res_bar_middle.gif');}
 
-	/* =DIV £OBJECTDETAILSTEMPLATETABLE
-	-------------------------------------- */
-	#summary {
-	  top:360px; left:40%; position:absolute;
-	  min-width:100px; padding:5px;
-	  background-color:#fff; border: solid black 1px;}
+/* =DIV £OBJECTDETAILSTEMPLATETABLE
+-------------------------------------- */
+#summary {
+  top:360px; left:40%; position:absolute;
+  min-width:100px; padding:5px;
+  background-color:#fff; border: solid black 1px;}
 
-	/* template results - used by object & bag details pages */
-	/* =TABLE */
-	table.refSummary {
-	  width: 100%;
-	  border-top: 1px solid #888; border-left: 1px solid #888;}
+/* template results - used by object & bag details pages */
+/* =TABLE */
+table.refSummary {
+  width: 100%;
+  border-top: 1px solid #888; border-left: 1px solid #888;}
 
-	/* =TD */
-	table.refSummary thead tr td {
-	  background-color: #eee; border-bottom: 1px solid #888; border-right: 1px solid #888;}
+/* =TD */
+table.refSummary thead tr td {
+  background-color: #eee; border-bottom: 1px solid #888; border-right: 1px solid #888;}
 
-	/* =TD */
-	table.refSummary thead tr td.object {
-	  background-color: #eee; font-weight: bold; border-bottom: 1px solid #888; border-right: 1px solid #888;}
+/* =TD */
+table.refSummary thead tr td.object {
+  background-color: #eee; font-weight: bold; border-bottom: 1px solid #888; border-right: 1px solid #888;}
 
-	/* =TD */
-	table.refSummary tbody tr td {
-	  padding: 3px;
-	  background-color: #FAF8FF; border-bottom: 1px solid #888; border-right: 1px solid #888;}
+/* =TD */
+table.refSummary tbody tr td {
+  padding: 3px;
+  background-color: #FAF8FF; border-bottom: 1px solid #888; border-right: 1px solid #888;}
 
-	/* =SPAN */
-	span.templateResCount {
-	  color: #555; white-space: nowrap; font-size: 10px;}
+/* =SPAN */
+span.templateResCount {
+  color: #555; white-space: nowrap; font-size: 10px;}
 
-	/* =DIV */
-	div.templateIcon {
-	  float: left; padding-top: 2px;}
+/* =DIV */
+div.templateIcon {
+  float: left; padding-top: 2px;}
 	
-	/* =TABLE £TABLE,£BAGDETAILS*/
-	table.results {
-	  border-left: solid 1px #666; border-top: solid 1px #666;font-size: small;}
+/* =TABLE £TABLE,£BAGDETAILS*/
+table.results {
+  border-left: solid 1px #666; border-top: solid 1px #666;font-size: small;}
 
-	/* =TD, =TH £TABLE,£BAGDETAILS*/
-	table.results th, table.results td {
-	  padding: 4px; border-right: solid 1px #666; border-bottom: solid 1px #666;
-	  background: #fff;}
+/* =TD, =TH £TABLE,£BAGDETAILS*/
+table.results th, table.results td {
+  padding: 4px; border-right: solid 1px #666; border-bottom: solid 1px #666;
+  background: #fff;}
 
-	/* =TH £TABLE,£BAGDETAILS*/
-	table.results th {
-	  background: #eee;font-size: 12px;}
+/* =TH £TABLE,£BAGDETAILS*/
+table.results th {
+  background: #eee;font-size: 12px;}
 
-	/* =TD £TABLE,£BAGDETAILS*/
-	table.results td td {
-	  border: none;}
+/* =TD £TABLE,£BAGDETAILS*/
+table.results td td {
+  border: none;}
 
-	/* =DIV £TABLE */
-	.lookupReport
-	{
-	  margin-left: 10px; margin-right: 10px; padding: 6px;
-	  background-color: white; font-size: 14px; border: 1px dashed #777;}
+/* =DIV £TABLE */
+.lookupReport
+{
+  margin-left: 10px; margin-right: 10px; padding: 6px;
+  background-color: white; font-size: 14px; border: 1px dashed #777;}
 
-	/* =DIV £TABLE */
-	.lookupWarn {
-	  color: green;}
+/* =DIV £TABLE */
+.lookupWarn {
+  color: green;}
 
-	/* =DIV £TABLE */
-	.lookupError {
-	  color: red;}
+/* =DIV £TABLE */
+.lookupError {
+  color: red;}
 	
-	/* =TD £TABLE,£BAGDETAILS*/
-	table.results tr.even TD{
-	  background-color: #F5F0FF;}
+/* =TD £TABLE,£BAGDETAILS*/
+table.results tr.even TD{
+  background-color: #F5F0FF;}
 
-	/* =TD, TH £TABLE,£BAGDETAILS*/
-	table.results th.checkbox,table.results td.checkbox{
-	  border-right-style: dotted;}
+/* =TD, TH £TABLE,£BAGDETAILS*/
+table.results th.checkbox,table.results td.checkbox{
+  border-right-style: dotted;}

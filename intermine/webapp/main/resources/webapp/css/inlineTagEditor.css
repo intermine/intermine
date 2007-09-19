@@ -1,24 +1,14 @@
 img.tag {
-  vertical-align: text-bottom;
-  cursor: pointer;
-  cursor: hand;
-}
-
-a.editTag {
-}
+  vertical-align: text-bottom; cursor: pointer;cursor: hand;}
 
 a.deleteTagLink {
-  color: #888;
-  font-size: 10px;
-}
+  color: #888; font-size: 10px;}
 
-a.deleteTagLink:hover { color:#CF4D23; text-decoration:underline }
+a.deleteTagLink:hover { 
+  color:#CF4D23; text-decoration:underline }
 
 a.addTagLink {
-  color: #888;
-  font-size: 10px;
-  text-decoration:underline;
-  white-space: nowrap;
-}
+  color: #888; font-size: 10px; text-decoration:underline; white-space: nowrap;}
 
-a.addTagLink:hover { color:#CF4D23; text-decoration:underline }
+a.addTagLink:hover { 
+  color:#CF4D23; text-decoration:underline }

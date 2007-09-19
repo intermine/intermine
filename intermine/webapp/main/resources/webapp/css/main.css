@@ -1,15 +1,11 @@
 .and {
-  font-size: 10px;
-}
+  font-size: 10px;}
 
 .constraint {
-  color: purple;
-}
+  color: purple;}
 
 .browserline {
-  white-space: nowrap;
-}
+  white-space: nowrap;}
 
 table.noborder, table.noborder td, table.noborder th {
-  border: none;
-}
+  border: none;}

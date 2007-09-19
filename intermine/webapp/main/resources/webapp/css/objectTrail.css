@@ -1,13 +1,9 @@
 .objectTrail {
-//  margin-bottom: 1px;
-  font-weight: bold;
-}
+  margin-bottom: 1px;
+  font-weight: bold;}
 
 .objectTrailLink {
-  white-space: nowrap;
-}
+  white-space: nowrap;}
 
 .objectTrailLinkResults {
-  white-space: nowrap;
-  font-weight: bold;
-}
+  white-space: nowrap; font-weight: bold;}

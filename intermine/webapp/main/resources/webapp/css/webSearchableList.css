@@ -1,96 +1,73 @@
 div.wsListContainer{
-	background-color:white;
-	margin:10px 0px 10px 0px;
 	display:none;
-}
+	margin:10px 0px 10px 0px;
+	background-color:white;}
+
 div.wsListSpinner{
-	text-align:center;
-	background-color:white;
 	padding-top:10px;
-}
+	text-align:center;background-color:white;}
+
 .wsListElement {
-   margin-bottom:5px;
-   padding-top:5px;
-   padding-bottom:5px;
-   border-bottom: #F5F0FF solid 1px;
-}
+   margin-bottom:5px; padding-top:5px; padding-bottom:5px;
+   border-bottom: #F5F0FF solid 1px;}
+
 .wsListDescription {
-	font-style: italic;
 	margin-left:15px;
-}
+	font-style: italic;}
+
 .wsList {
-	padding:0px;
-}
+	padding:0px;}
+
 .wsList li,.wsList ul {
-	list-style-type:none;
-	padding:0px;
-	margin:0px;
-}
+	padding:0px;margin:0px;
+	list-style-type:none;}
+
 .wsLine {
 	padding:10px;
-	border-bottom: #F5F0FF solid 1px;
-}
+	border-bottom: #F5F0FF solid 1px;}
+
 .wsLine_act {
 	padding:10px;
-	border-bottom: #F5F0FF solid 1px;
-    background:#CEE7FF;
-}
+	border-bottom: #F5F0FF solid 1px; background:#CEE7FF;}
+
 .wsLine_my {
 	padding:10px;
-	border-bottom: #F5F0FF solid 1px;
-	background: #D9D2E0 url('../images/my_tr.png') no-repeat bottom left;
-}
+	border-bottom: #F5F0FF solid 1px; background: #D9D2E0 url('../images/my_tr.png') no-repeat bottom left;}
+
 .wsLine_my_act {
 	padding:10px;
-	border-bottom: #F5F0FF solid 1px;
-	background: #CCC url('../images/my_tr.png') no-repeat bottom left;
-}
+	border-bottom: #F5F0FF solid 1px;background: #CCC url('../images/my_tr.png') no-repeat bottom left;}
 
 div.wsLine p.description, div.wsLine div.description
 ,.wsLine_act p.description,.wsLine_act div.description
 ,.wsLine_my p.description,.wsLine_my div.description
 ,.wsLine_my_act p.description,.wsLine_my_act div.description{
-	font-style:italic;
-	margin:5px 5px 5px 30px;
-	padding:0px;
-}
+	margin:5px 5px 5px 30px;padding:0px;
+	font-style:italic;}
+
 div.wsLine p.description a{
-	font-style: normal;
-    font-size: small;
-}
+	font-style: normal; font-size: small;}
+
 .aspectSelect {
-  font-size: small;
-  float:left;
-  display: inline;
-  padding:0px;
-  margin:0px;
-}
+  float:left; display: inline;
+  padding:0px; margin:0px;
+  font-size: small;}
+
 div.filterBar {
-	margin:10px 0px 10px 0px;
-	background:#9F67AD;
-	color:white;
-	font-weight: bold;
-	padding:15px;
-	height:20px;
-}
-ul.filterActions{
-/*	width:600px;
-*/}
+	padding:15px;height:20px;margin:10px 0px 10px 0px;
+	background:#9F67AD;color:white;font-weight: bold;}
+
 ul.filterActions ,ul.filterActions li{
-	list-style: none;
-	margin:0px;
-	padding:0px;
-	white-space: nowrap;
-}
+	margin:0px; padding:0px;
+	list-style: none;white-space: nowrap;}
+
 ul.filterActions li{
 	float:left;
-	vertical-align: baseline;
-}
-/* =SPAN £WEBSEARCHABLES*/
+	vertical-align: baseline;}
+
 .templateTitle {
   padding: 4px;}	
 
-/* =DIV £WEBSEARCHABLES */
 .templateDescription {
   margin-top: 5px;padding: 4px;
   font-style: italic; font-size: 90%;}

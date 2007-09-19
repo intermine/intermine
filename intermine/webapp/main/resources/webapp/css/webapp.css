@@ -178,6 +178,22 @@ div#navtrail{
 	padding-right:15px;margin:0;
 	font-size:0.7em; text-align:right}
 
+div#quicksearch {
+	float:right;
+	padding-right:15px;	margin-top:0.6em;
+	font-weight:bold; color:white;white-space: nowrap;}
+
+#submenu {
+	clear:both;	display:block;
+	padding:0px; margin:0 0 5px 0; padding-left:15px;height:3em;
+	color:#CCC;	font-size: 12px;}
+
+.submenu{
+	background:#5C0075;}
+
+.submenu_mymine{
+	background:#9B89A7;}
+
 /* =SPAN 
 -------------------------*/
 #logo {
@@ -278,6 +294,20 @@ a.constraintId {
 a.brokenTmplLink {
   color: #d00;}
 
+ul#nav a{
+	float:left;
+	padding:0px 15px;line-height:2;
+	text-decoration:none; color: #5C0075; font-weight:bold;	background-image:url('../images/corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
+
+ul#nav a:hover,ul#nav li#mymine a:hover{
+	color:#333;}
+
+ul#nav li#mymine a{
+	color:white;background:url('../images/corner_my_t_r.png') no-repeat top right;}
+
+ul#nav li.activelink a{
+	color:white;background:url('../images/corner_act_t_r.png') no-repeat top right;}
+
 /* =IMG
 -------------------------*/
 .roundcorners img, .gradientbox img, .plainbox img{
@@ -306,49 +336,14 @@ hr.seperator {
   border: 0px; height: 1px;
   color: #ccc; background-color: #ccc;}
 
-/**********************
-	HEADER MENU
-***********************/
-
-
-ul#nav a{
-	float:left;
-	padding:0px 15px;line-height:2;
-	text-decoration:none; color: #5C0075; font-weight:bold;	background-image:url('../images/corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
-
-ul#nav a:hover,ul#nav li#mymine a:hover{
-	color:#333;}
-
-ul#nav li#mymine a{
-	color:white;background:url('../images/corner_my_t_r.png') no-repeat top right;}
-
-ul#nav li.activelink a{
-	color:white;background:url('../images/corner_act_t_r.png') no-repeat top right;}
-
+/* =LISTS
+-------------------------*/
 ul#nav li#mymine {
 	background:#9B89A7 url('../images/corner_my_t_l.png') no-repeat;}
 
 ul#nav li.activelink {
 	background:#5C0075 url('../images/corner_act_t_l.png') no-repeat;}
 
-div#quicksearch {
-	float:right;
-	padding-right:15px;	margin-top:0.6em;
-	font-weight:bold; color:white;white-space: nowrap;}
-
-#submenu {
-	clear:both;	display:block;
-	padding:0px; margin:0 0 5px 0; padding-left:15px;height:3em;
-	color:#CCC;	font-size: 12px;}
-
-.submenu{
-	background:#5C0075;}
-
-.submenu_mymine{
-	background:#9B89A7;}
-
-/* =LISTS
--------------------------*/
 ul#submenulist, ul#submenulist li {
 	padding: 0px; margin:0px; line-height:3;
 	list-style: none;}

@@ -1,25 +1,18 @@
 #bagTable{
-    padding:5px;
-}
+    padding:5px;}
 
 #bagTable td{
-  vertical-align: top;
-  padding-right: 10px;
-  padding-left: 10px;
-}
+  padding-right: 10px;padding-left: 10px;
+  vertical-align: top;}
 
 #bagDescriptionTextarea{
   display: none;
-  text-align: center;
-}
+  text-align: center;}
 
 #emptyDesc{
-  text-align:center;
   width:100%;
-  font-style: italic;
-}
+  text-align:center;font-style: italic;}
 
 li {
-  list-style: none;
   margin-left: 10px;
-}
+  list-style: none;}

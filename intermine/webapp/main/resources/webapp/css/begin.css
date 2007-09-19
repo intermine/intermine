@@ -1,43 +1,30 @@
 div#rightColumn{
-	margin-left:340px;
-	padding-top:0px;
-	_margin-top:15px;
-	margin-right:0px;
-}
+	margin-left:340px; padding-top:0px;	_margin-top:15px;/* IE Only Hack */	margin-right:0px;}
+	
 div.aspectOverview{
-	padding:5px;
-	margin:5px 5px 10px 5px;
-}
+	padding:5px; margin:5px 5px 10px 5px;}
+
 .aspectIcon{
-	border:1px solid #222;
-	margin-bottom:5px;
-	margin-right:5px;
 	float:left;
-}
+	margin-bottom:5px; margin-right:5px;
+	border:1px solid #222;}
 
 div.aspectDescr{
 	visibility:hidden;
-	font-style: italic;
-}
+	font-style: italic;}
 
 div.wsList {
    font-size: 0.95em;
-   padding-left: 15px;
-}
+   padding-left: 15px;}
 
 div.frontBoxList {
-   margin-top: 5px;
-   margin-left: 10px;	
-}
+   margin-top: 5px; margin-left: 10px;	}
 
 #qbImport {
-	margin-top:10px;
-}
+	margin-top:10px;}
 
 #what {
-	font-size:+2em;
-}
+	font-size:+2em;}
 
 #intro {
-	font-size: +1.2em;
-}
+	font-size: +1.2em;}

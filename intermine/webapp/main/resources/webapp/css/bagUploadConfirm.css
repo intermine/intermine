@@ -1,43 +1,33 @@
 .blueBg {
-	background-color:#F5F0FF;
-	text-align:center;
-	padding: 20px;
-	margin:20px;
-	width:350px;
-}
+	padding: 20px;margin:20px;width:350px;
+	background-color:#F5F0FF;text-align:center;}
+
 #uploadConfirmMessage {
-  text-align:center;
-  font-size: 140%;
-}
-/* =TABLE £bagUploadConfirmIssue */
+  text-align:center; font-size: 140%;}
+
 table.collection {
   border-left: solid 1px #666; border-top: solid 1px #666;font-size: small;}
 
-/* =TH, =TD £bagUploadConfirmIssue */
 table.collection th, table.collection td {
   padding: 4px; border-right: solid 1px #666; border-bottom: solid 1px #666;
   background-color: #fff;}
 
-/* =TH £bagUploadConfirmIssue */
 table.collection th {
   background-color: #eee;font-size: 12px;}
 
-/* =TD £bagUploadConfirmIssue */
 table.collection t td {
   border: none;}
 
-/* =TD £bagUploadConfirmIssue */
 table.collection tr.even TD{
   background-color: #F5F0FF;}
 
-/* =SPAN */
+/* =SPAN 
+------------------*/
 .fakelink{
   color:#049; cursor: pointer;}
 
-/* =SPAN */
 .fakelink:hover{
   color:#CF4D23; text-decoration:underline;}
 
-/* =SPAN */
 .fakelink:active {
   color:#58e; text-decoration:none}
