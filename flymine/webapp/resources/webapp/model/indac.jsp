@@ -11,17 +11,17 @@
       </div>
       <div class="body">
         <p>
-          The aim of <A href="http://www.indac.net">INDAC</A> is to produce a widely
+          The aim of <A href="http://www.indac.net" target="_new">INDAC</A> is to produce a widely
           available and uniform set of array reagents so that microarray data collected
           from different studies may be more easily compared. On behalf of INDAC, the
-          <A href="http://www.flychip.org.uk">FlyChip group</A> has designed a set
+          <A href="http://www.flychip.org.uk" target="_new">FlyChip group</A> has designed a set
           of 65-69mer long oligonucleotides to release 4.1 of the <I>D. melanogaster</I>
           genome. Oligos were designed using a modified version of 
-          <A href="http://berry.engin.umich.edu/oligoarray2">OligoArray2</A> and other
+          <A href="http://berry.engin.umich.edu/oligoarray2" target="_new">OligoArray2</A> and other
           post-processing steps (David Kreil, Debashis Rana, Gos Micklem unpublished).
         </p>
         <p>
-          Synthesis of the set by <A href="http://www.illumina.com">Illumina</A>
+          Synthesis of the set by <A href="http://www.illumina.com" target="_new">Illumina</A>
           began in April 2005.  FlyMine will incorporate the results of these tests
           when available.
         </p>
