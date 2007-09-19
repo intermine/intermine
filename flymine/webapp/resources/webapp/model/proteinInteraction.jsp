@@ -73,7 +73,7 @@
 
        <dl>
          <dt>
-           Li et al (2004) Science 303: 540-543 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14704431">PubMed: 14704431</a>)
+           Li et al (2004) Science 303: 540-543 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14704431" target="_new">PubMed: 14704431</a>)
            - A map of the interactome network of the metazoan <i>C. elegans</i>.
          </dt>
          <dd>

@@ -22,7 +22,7 @@
 
         <h4>
           <a href="javascript:toggleDiv('hiddenDiv1');">
-            <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+            <img id='hiddenDiv1Toggle' src="images/undisclosed.gif" title="Click here to view the datasets" />
             Major data sets ...
           </a>
         </h4>
@@ -35,27 +35,27 @@
          <ul>
          <li>
             <dt>
-              <i>Drosophila melanogaster</i> - Genome annotation release 5.1 from <a href="http://www.flybase.org">
-                <html:img src="model/FlyBase_logo_mini.png"/> </a>.
+              <i>Drosophila melanogaster</i> - Genome annotation release 5.1 from <a href="http://www.flybase.org" target="_new">
+                <html:img src="images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website" /> </a>.
             </dt></dl>
           <li>
             <dt>
               <i>Drosophila pseudoobscura</i> - Genome annotation release 2.0 from
-              <a href="http://www.flybase.org">
-                <html:img src="model/FlyBase_logo_mini.png"/></a>.
+              <a href="http://www.flybase.org" target="_new">
+                <html:img src="images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website"/></a>.
             </dt></li>
         <li>
           <dt>
             <i>Anopheles gambiae</i> str. PEST -  Genome annotation release AgamP3 from
-            <a href="http://www.ensembl.org/Anopheles_gambiae">
-              <html:img src="model/ensembl_logo_mini.png"/>
+            <a href="http://www.ensembl.org/Anopheles_gambiae" target="_new">
+              <html:img src="images/ensembl_logo_mini.png" title="Click here to view EnSembl's website" />
             </a>.
           </dt></li>
          <li>
           <dt>
             <i>Apis mellifera</i> - Genome annotation release 2 from
-            <a href="http://www.ensembl.org/Apis_mellifera">
-              <html:img src="model/ensembl_logo_mini.png"/>
+            <a href="http://www.ensembl.org/Apis_mellifera" target="_new">
+              <html:img src="images/ensembl_logo_mini.png" title="Click here to view EnSembl's website"/>
             </a>.
           </dt></li>
         </ul>
@@ -63,7 +63,7 @@
 
         <h4>
           <a href="javascript:toggleDiv('hiddenDiv2');">
-            <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+            <img id='hiddenDiv2Toggle' src="images/undisclosed.gif" title="Click here to view more datasets"/>
             Minor data sets ...
           </a>
         </h4>
@@ -76,14 +76,14 @@
             comparison purposes.
           </p>
 
-            <ul><li><i>Caenorhabditis elegans</i> - Genome information from <a href="http://www.wormbase.org">WormBase</a>
+            <ul><li><i>Caenorhabditis elegans</i> - Genome information from <a href="http://www.wormbase.org" target="_new">WormBase</a>
             </li></ul>
 
         </div>
 
         <h4>
           <a href="javascript:toggleDiv('hiddenDiv3');">
-            <img id='hiddenDiv3Toggle' src="images/undisclosed.gif"/>
+            <img id='hiddenDiv3Toggle' src="images/undisclosed.gif" title="Click here to view more datasets"/>
             EST data sets ...
           </a>
         </h4>

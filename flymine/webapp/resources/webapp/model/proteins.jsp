@@ -22,7 +22,7 @@
 <div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
           <p>
             All proteins from the <a
-            href="http://www.ebi.uniprot.org/index.shtml">UniProt
+            href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt
             Knowledgebase</a> for the following organisms have
             been loaded:</p>
 
@@ -61,7 +61,7 @@
           <p>
             Protein family and domain assignments to proteins in UniProt have
             been loaded from <a
-            href="http://www.ebi.ac.uk/interpro">InterPro</a> for the following organisms:</p>
+            href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> for the following organisms:</p>
           <ul> 
               <li><i>D. melanogaster</i></li>
               <li><i>A. gambiae</i></li>

@@ -32,10 +32,10 @@
           in <i>D. melanogaster</i>. The locations of the <i>P</i>-element insertions
           and the deletions that can be constructed from them have been loaded into
           FlyMine. Constructed deletions are tagged as available in FlyMine. Stocks 
-          can be ordered from the <a href="http://expbio.bio.u-szeged.hu/fly/index.php">Szeged stock centre</a>.</dt></li>
+          can be ordered from the <a href="http://expbio.bio.u-szeged.hu/fly/index.php" target="_new">Szeged stock centre</a>.</dt></li>
 
-          <li><dt>FlyMine has additional insertions from <a href="http://www.flybase.org/">FlyBase</a> and 
-          from the <a href="http://drosophila.med.harvard.edu">Exelixis</a> collection.</dt></li>
+          <li><dt>FlyMine has additional insertions from <a href="http://www.flybase.org/" target="_new">FlyBase</a> and 
+          from the <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis</a> collection.</dt></li>
          </ul>
 
 	<dt>Note: The DrosDel data has been re-mapped to
@@ -58,7 +58,7 @@
 
           <div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
 
-          <dt> Probe sets from the <a href="http://www.affymetrix.com/">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 2.0 Array, a
+          <dt> Probe sets from the <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 2.0 Array, a
            microarray tool for studying expression of <i>D. melanogaster</i> transcripts.Comprised of 18,880 probe sets for the analysis 
            of over 18,500 transcripts. Sequences used in the design of the GeneChip <i>Drosophila</i> Genome 2.0 Array were selected 
            from Flybase version 3.1.</dt>
@@ -139,11 +139,11 @@
         and PCR products.  The PCR products that overlap a promoter region are highlighted:</p>
 
         <div style="margin-left: 20px">
-          <img style="border: 1px solid black" src="model/tiling_path_screen_shot.png"/>
+          <img style="border: 1px solid black" src="model/images/tiling_path_screen_shot.png"/>
         </div>
         <p>A closer view:</p>
         <div style="margin-left: 20px">
-          <img style="border: 1px solid black" src="model/tiling_path_screen_shot_zoom.png"/>
+          <img style="border: 1px solid black" src="model/images/tiling_path_screen_shot_zoom.png"/>
         </div>
 
      </div>

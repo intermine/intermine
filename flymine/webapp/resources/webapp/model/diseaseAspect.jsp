@@ -12,7 +12,7 @@
       <div class="body">
         <p>
 
-          From the <a href="http://superfly.ucsd.edu/homophila/">Homophila web site</a>:
+          From the <a href="http://superfly.ucsd.edu/homophila/" target="_new">Homophila web site</a>:
         </p>
         <blockquote>
           "Homophila utilizes the sequence information of human disease genes from the
@@ -25,7 +25,7 @@
 
         <p>
           See also:
-          <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM">Online
+          <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM" target="_new">Online
           Mendelian Inheritance in Man<sup><font size="-2">TM</font></sup></a>
         </p>
       </div>

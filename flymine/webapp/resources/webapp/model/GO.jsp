@@ -32,11 +32,11 @@
       other organisms is also included and is accessible via orthologues.
       </p>      
         <ul>
-         <li><i>D. melanogaster</i> - GO annotations for <i>D. melanogaster</i> gene products assigned by <a href="http://www.ebi.ac.uk/GOA/">FlyBase</a></li><br/>
-         <li><i>A. gambiae</i> - GO annotations for <i>A. gambiae</i> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/">GO annotation@EBI</a> project.</li><br/>
-         <li><i>C. elegans</i> - GO annotations for <i>C. elegans</i> gene products assigned by <a href="http://www.wormbase.org">WormBase</a>.</li><br/>
-         <li><i>S. cerevisiae</i> - GO annotations for <i>S. cerevisiae</i> gene products assigned by <a href="http://www.yeastgenome.org/">SGD</a>.</li><br/>
-         <li><i>M. musculus</i> - GO annotations for <i>M. musculus</i> gene products assigned by <a href="http://www.informatics.jax.org">MGI</a>.</li><br/>
+         <li><i>D. melanogaster</i> - GO annotations for <i>D. melanogaster</i> gene products assigned by <a href="http://www.ebi.ac.uk/GOA/" target="_new">FlyBase</a></li><br/>
+         <li><i>A. gambiae</i> - GO annotations for <i>A. gambiae</i> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/" target="_new">GO annotation@EBI</a> project.</li><br/>
+         <li><i>C. elegans</i> - GO annotations for <i>C. elegans</i> gene products assigned by <a href="http://www.wormbase.org" target="_new">WormBase</a>.</li><br/>
+         <li><i>S. cerevisiae</i> - GO annotations for <i>S. cerevisiae</i> gene products assigned by <a href="http://www.yeastgenome.org/" target="_new">SGD</a>.</li><br/>
+         <li><i>M. musculus</i> - GO annotations for <i>M. musculus</i> gene products assigned by <a href="http://www.informatics.jax.org" target="_new">MGI</a>.</li><br/>
        </ul>
       </div>
 
@@ -53,7 +53,7 @@
       <p> Every GO annotation indicates the type of evidence that
       supports it; these evidence codes correspond to broad categories
       of experimental or other support. The codes are listed below. For more
-      information, go to <a href="http://www.geneontology.org/GO.evidence.shtml">Guide to GO Evidence Codes</a>. </p>
+      information, go to <a href="http://www.geneontology.org/GO.evidence.shtml" target="_new">Guide to GO Evidence Codes</a>. </p>
       <p> IC = Inferred by Curator </p> 
       <p> IDA = Inferred from Direct Assay </p> 
       <p> IEA = Inferred from Electronic Annotation </p> 

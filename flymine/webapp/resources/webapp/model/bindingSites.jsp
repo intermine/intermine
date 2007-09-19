@@ -24,7 +24,7 @@
 
             <ul><li><dt>
               Transcriptional  <i>cis</i>-regulatory modules (CRMs) for <i>D. melanogaster</i>
-              from the <a href="http://redfly.ccr.buffalo.edu"> REDfly database </a>.
+              from the <a href="http://redfly.ccr.buffalo.edu" target="_new"> REDfly database </a>.
             </dt>
 
 
@@ -35,14 +35,14 @@
 
             <ul><li><dt>
               Regulatory elements for <i>D. melanogaster</i> annotated by
-              <a href="http://flybase.bio.indiana.edu">FlyBase</a>.
+              <a href="http://flybase.bio.indiana.edu" target="_new">FlyBase</a>.
             </dt></li></ul>
 
           </div>
 
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv2');">
-              <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+              <img id='hiddenDiv2Toggle' src="images/undisclosed.gif" title="Click here to view the binding sites" />
               <i>D. melanogaster</i>  - Binding sites ...
             </a>
           </h4>
@@ -51,11 +51,11 @@
 
           <ul><li>
             <dt>DNase I footprints for <i>D. melanogaster</i> from the
-              <a href="http://www.flyreg.org"> DNase I footprint database (V2.0)</a>.</dt>
+              <a href="http://www.flyreg.org" target="_new"> DNase I footprint database (V2.0)</a>.</dt>
              <dt>Note: The FlyReg data has been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0.</dt></li></ul>
 
           <ul><li>
-            <dt><a href="http://servlet.sanger.ac.uk/tiffin/">Tiffin</a> is a database of predicted regulatory motifs and predicted functional sites ("motif instances") on genome sequences.</dt>
+            <dt><a href="http://servlet.sanger.ac.uk/tiffin/" target="_new">Tiffin</a> is a database of predicted regulatory motifs and predicted functional sites ("motif instances") on genome sequences.</dt>
             <dt>Note: The Tiffin-1.2 data has been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0.</dt></li></ul>
 
 
