@@ -6,18 +6,9 @@ The main focus is <i>Drosophila</i> and <i>Anopheles</i> genomics and proteomics
 By integrating such data into one place it is possible to construct queries across
 domains of biological knowledge.</p>
 
+<p> See a list of all the data sources from the toolbar on any FlyMine page:</p>
+<img alt="[Quick Search]" src="toolbar_data.png"/>
 
-
-<table class="inlinetable">
-<tr>
-<td valign="top" width="60%">
-<b>See a list of all the data sources from the FlyMine home page:</b>
-</td>
-<td padding="5px" valign="top">
-<img alt="[Release info]" src="data.png"/>
-</td>
-</tr>
-</table>
 
 <p>The FlyMine user interface is designed to go beyond simply looking
 up an identifier and viewing a report page.  This quick tour will
@@ -43,12 +34,15 @@ Protein Interactions.</p>
 
 <p><b>MyMine</b> lets you create an account to save your own queries, bags and templates, as well as marking public templates as favourites.</p>
 
+<p> All these features are accessible from the toolbar on every FlyMine page:</p>
 
-<h1>2. Report Pages</h1>
+<img alt="[Quick Search]" src="toolbar.png"/>
+
+<h1>2. Report Page</h1>
 
 <p>A quick search box appears in the menu bar of all pages.  You can search for any identifier or symbol for genes, proteins, transcripts and so on.  You can use '*' as a wildcard.</p>
 
-<p><b>Run a quick search for the Drosophila gene 'eve'.</b></p>
+<p><b>Run a quick search for the <i>Drosophila</i> gene <i>eve</i>:</b></p>
 
 <img alt="[Quick Search]" src="quick_search.png"/>
 
@@ -56,56 +50,57 @@ Protein Interactions.</p>
 The report page shows information from many data sources in one place.  There are corresponding pages for all objects in FlyMine, use <img alt="[details...]" valign="bottom" src="details.png"/> links to browse.
 </p>
 
-<img alt="[object details summary]"  src="object_details_summary.png"/>
+<img alt="[object details summary]"  src="report_top.png"/>
 
 <p>
-Template queries are run for this gene when the page is loaded.  We can add templates to this page at any time - it only takes a few minutes - so if you have a suggestion, let us know.
+Template queries are run for this gene when the page is loaded.
 </p>
 
-<img alt="[object details templates]"  src="object_details_templates.png"/>
+<img alt="[object details templates]"  src="report_bottom.png"/>
 
 
 <h1>3. Template Queries</h1>
 
-<p>
-FlyMine includes a library of <b>template queries</b> - predefined queries designed to perform a particular task.  Each one has a description and a form to fill in.  For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
+<p>FlyMine includes a library of <b>template queries</b> - predefined queries designed to perform a particular task.  Each one has a description and a form to fill in.  For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
 
-<p>
-You can find lists of template queries on each data category page.
-</p>
+ 
 
-<img alt="[Aspects]"  src="aspects.png"/>
+<p>You can find all FlyMine templates on the templates page, accessible via the toolbar on any page. Here you can search the titles and descriptions of all templates.</p>
 
-<p>
-Or go to the templates page where you can search the titles and descriptions.
-</p>
+<p><i>We can add templates to this page at any time - it only takes a few minutes - so if you have a suggestion, let us know!</i></p>
 
-<img alt="[Click Search Templates]"  src="click_search_templates.png"/>
+<img alt="[Aspects]"  src="toolbar_templates.png"/>
 
-<p><b>Search templates for 'orthologue' and select the template 'Gene --> Orthologues + GO terms of these orthologues'</b></p>
+<p>You can also find templates per data type on each data category page (accessible via the icons on the home page).</p>
+
+
+<p><b> On the templates page, search templates for 'orthologue':</b></p>
+
+
+<img alt="[Select template]"  src="templates_search.png"/>
+
+
+<p><b>and select the template 'Gene --> Orthologues + GO terms of these orthologues':</b></p>
 
 <img alt="[Select template]"  src="select_template1.png"/>
 
 
-<h1>4. Run a template</h1>
+<h1>4. Run a Template</h1>
 
-<p>The template we found in our previous search takes a particular gene as input and searches for orthologues that have GO annotation.</p>
+<p>The template we found in our previous search takes a particular gene as input and searches for orthologues that have GO annotation. Click on the title of the template to show the template form. </p>
 
+<p>Now you can run the template with the default value or restrict it to the gene of your choice. You can enter any identifier and FlyMine will try to find the right gene.  For example, for the <i>D. melanogaster</i> gene <i>zen</i> you can enter 'zen', 'CG1046', 'FBgn0004053', 'zerknullt' or any synonym.  You can even enter a transcript (CG1046-RA) or protein (ZEN1_DROME) identifier and FlyMine will convert it for you.</p>
 
-<p>You can enter any identifier and FlyMine will try to find the right gene.</p>
-
-<p>For example, for the the <i>D. melanogaster</i> gene zen you can enter 'zen', 'CG1046', 'FBgn0004053', 'zerknullt' or any synonym.  You can even enter a transcript (CG1046-RA) or protein (ZEN1_DROME) identifier and FlyMine will convert it for you.</p>
-
-<p><b>Click 'Show Results' to run this template with the default value.</b></p>
+<p><b>Click 'Show Results' to run this template with the default value:</b></p>
 
 <p>
 <img alt="[Template form]"  src="template_form.png"/>
 </p>
 
-<h1>5. Results page</h1>
+<h1>5. Results Page</h1>
 
 <p>
-The results table shows the starting gene, orthologous genes and organism names with details of each GO term applied to the orthologous genes.  Orthologue data in FlyMine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a>, note that 'main' means the best hit in the other organism, 'secondary' denotes paralogues of the best hit.
+The results table for the template 'Gene --> Orthologues + GO terms of these orthologues' shows the starting gene, orthologous genes and organism names with details of each GO term applied to the orthologous genes.  Orthologue data in FlyMine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a>, note that 'main' means the best hit in the other organism, 'secondary' denotes paralogues of the best hit.
 </p>
 
 <img alt="[Results table]"  src="results.png"/>
@@ -117,57 +112,63 @@ Summary buttons <img alt="[icon]"  src="summary_maths.png" valign="center"/> at 
 <p><b>Click the summary button for the column 'Orthologue > GO annotation > name'</b></p>
 
 <p>
-The table shows the most commonly occurring GO terms applied to orthologues of the original gene.
+The table shows the most commonly occurring GO terms applied to orthologues of the original gene:
 </p>
 
 <img alt="[Summary table]"  src="summary_table.png"/>
 
 <p>
-All results pages have a number of export options.
+All results pages have a number of export options:
 </p>
 
 <img alt="[Export]"  src="export.png"/>
 
 
-<h1>6. List Upload</h1>
+<h1>6. Creating a List</h1>
 
 <p>FlyMine can operate on custom lists of data.  You can save lists from results pages or create them by uploading lists of identifiers.  Lists can be used when running template queries and analysed by a series of <b>widgets</b> on a list analysis page.  You can merge, subtract and find common members if you have more than one list.</p>
-</p>
+
 
 <p>
-<i>FlyMine also includes a set of 'Public' lists that we have made for you.</i>
+FlyMine includes a set of 'Public' lists (marked with 'PL') that we think might be useful for our users. Some of these originate from external datasources, eg from the <a href="http://www.flyTF.org/">FlyTF</a>database.</p>
+
+<p><i>We can add more lists at any time - it only takes a few minutes - so if you have a suggestion, let us know!</i></p>
 </p>
+
+<p>All lists, public ones as well as personal ones (if you are logged in) can be viewed on the Lists page, where you can search them and do operations on them. </p>
+
+<img alt="[Click lists in the menu bar]"  src="toolbar_view.png"/>
 
 <p>
-<b>Click on 'Upload List' in list box on the home page to get to the list upload page.</b>
+<b>To create a new list yourself, click on 'Lists', and then on 'Upload' in the toolbar on any FlyMine page:</b>
 </p>
 
-<img alt="[Click bags in the menu bar]"  src="click_bags.png"/>
+<img alt="[Click lists in the menu bar]"  src="toolbar_upload.png"/>
 
 <p>
 FlyMine's list creation tool helps you upload a list of identifiers, the list can contain a mix of identifier types.</p>
 
 <p><b>Now upload the example list:</b></p>
 
-<img alt="[Create a new bag]"  src="create_a_bag.png"/>
+<img alt="[Create a new list]"  src="create_a_list.png"/>
 
 
-<h1>7. List confirm page</h1>
+<h1>7. List Confirmation</h1>
 
 <p>
-If some identifiers don't produce an exact match a confirmation page lets you resolve any issues.  Here, two genes were found by synonyms and a protein identifier has been converted to the corresponding gene.  You can check through each issue or just add all the matches to your list.
+If some identifiers don't produce an exact match a confirmation page lets you resolve any issues.  Here, one gene was found by a synonym and a protein identifier has been converted to the corresponding gene.  You can check through each issue or just add all the matches to your list.
 </p>
 
-<p><b>Click 'Add all' to include all suggested genes to the list.</b></p>
+<p><b>Click 'Add all' to include all suggested genes to the list:</b></p>
 
-<img alt="[Add these bag]"  src="bag_confirm_add.png"/>
+<img alt="[Add these list]"  src="list_confirm_add.png"/>
 
-<p><b>Choose a name for your list and save it.</b></p>
+<p><b>Choose a name for your list and save it:</b></p>
 
-<img alt="[Save bag]"  src="bag_confirm_save.png"/>
+<img alt="[Save list]"  src="list_confirm_save.png"/>
 
 
-<h1>8. List analysis page</h1>
+<h1>8. List Analysis Page</h1>
 
 <p>
 The list analysis page is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each category.
@@ -178,43 +179,44 @@ The list analysis page is a great way to find out more about a list of genes.  A
 
 <p>The GO enrichment and KEGG widgets suggest that this list of genes contains a high number of transcription factors.</p>
 
-<img alt="[Bag widgets]"  src="bag_widgets.png"/>
+<img alt="[List widgets]"  src="list_widgets.png"/>
 
 <p>
 Template queries have been executed on the whole list, just like on the gene report page.  This is a simple way to retrieve further information about the entire list.  For example, you could retrieve all the exons or protein sequences.
 </p>
 
-<img alt="[Bag templates]"  src="bag_templates.png"/>
+<img alt="[List templates]"  src="list_templates.png"/>
 
-<h1>9. Use lists in template queries</h1>
+<h1>9. Use Lists in Templates</h1>
 
 <p>
-You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list analysis page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase 1 binding site data set which we can query with another template. 
+You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list analysis page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase1 binding site data set which we can query with another template. 
 </p>
 
-<p><b>Search the template queries for 'regulated genes'.</b></p>
+<p><b>Search the template queries for 'binding site':</b></p>
 
 <img alt="[Click Search Templates]"  src="click_search_templates.png"/>
 
-<p><b>Select the template 'Transcription factor --> TF binding sites + chromosomal locations + genes regulated'</b></p>
+<p><b>and select the template </b></p>
+<p><b>'Transcription factor --> TF binding sites + chromosomal locations + genes regulated':</b></p>
 
-<img alt="[Select template]"  src="select_template2.png"/>
+<img alt="[Select template]"  src="click_search_template2.png"/>
 
 <p>Now that we have created a list the template query gives us the option to use it instead of entering an identifier.</p>
 
-<p><b>Click the checkbox to select the demo bag you named earlier, and then run the query.</b></p>
+<p><b>Click the checkbox to select the demo list you named earlier, and then run the query.</b></p>
 
-<img alt="[Run template with bag]"  src="template_bag.png"/>
+<img alt="[Run template with list]"  src="template_list.png"/>
 
-<p>The results table shows any genes from our original list that, according to FlyReg, regulate a particular gene.</p>
+<p>The results table shows the genes that have binding sites for any of the genes from our original list, according to FlyReg.</p>
 
 <p>You can also create new lists from results tables.  We can save a list of the regulated genes from this query to view in the list analysis page or to use in more templates.</p>
 
 <p><b>Click on the checkbox by 'Regulated gene > identifier' and choose a name for the saved list.</b></p>
 
-<img alt="[Save column in a bag]"  src="results_bag.png"/>
+<img alt="[Save column in a list]"  src="results_list.png"/>
 <br/>
-<img alt="[Save in a bag]"  src="save_in_bag.png"/>
+<img alt="[Save in a list]"  src="save_in_list.png"/>
 
 
 <p>Using lists is an excellent way to retrieve information about a whole list of data. For example we could also retrieve:
@@ -232,50 +234,51 @@ You can use lists in any template query, or in queries you create yourself in th
 
 <p><b>Now use the browser back button to return to the results table.</b></p>
 
-<p><b>Click on 'Query' in the Trail to get back to the template form.</b></p>
+<p><b>Click on 'Query' in the Trail to get back to the template form:</b></p>
 
 <img alt="[Click on trail]"  src="click_on_trail.png"/>
 
-<p><b>Now click 'Edit Query' to bring up the QueryBuilder.</b></p>
+<p><b>Now click 'Edit Query' to bring up the QueryBuilder:</b></p>
 
 <p><img alt="[Click edit query]"  src="click_edit_query.png"/></p>
 
 
-<p>The pane on the left is a view of the data model starting at the TFBindingSite class and showing all attributes (e.g. name, symbol) and related classes (e.g. organism, proteins).  FlyMine uses an object based data model - biological types are termed 'classes' and individual entries are termed 'objects'.  For example the 'zen' and 'eve' genes are both objects of the class Gene.</p>
+<p>The pane on the left is a view of the data model starting at the TFBindingSite class and showing all attributes (e.g. name, symbol) and related classes (e.g. organism, proteins).  FlyMine uses an object based data model - biological types are termed 'classes' and individual entries are termed 'objects'.  For example the <i>zen</i> and <i>eve</i> genes are both objects of the class Gene.</p>
 
 <p>You can click <img alt="[plus]" src="plus.gif"/> to open related classes and see their attributes.  Use the <img alt="[show]"  src="show.gif"/> button to add fields to the output.  The <img alt="[constrain]" src="constrain.gif"/> button lets you add constraints (filters). </p> 
 
 <img alt="[query builder]"  src="query_builder.png"/>
 
-<p>The query summary section shows the constraints applied to this query.  Notice that one of them says 'factor Gene' then 'IN demo bag'.  This shows us that the search is using just the transcription factors from the list we saved earlier.</p> 
+<p>The query summary section shows the constraints applied to this query.  Notice that one of them says 'factor Gene' then 'IN demo list'.  This shows us that the search is using just the transcription factors from the list we saved earlier.</p> 
 
-<p>What if we want to search for <b>all</b> transcription factors in FlyMine and find the genes they regulate?  We can just remove this constraint and run the query again.</p> 
+<p>What if we want to search for <b>all</b> binding sites in FlyMine for <b>any</b> transcription factor?  We can just remove this constraint and run the query again.</p> 
 
-<p><b>Click on the <img alt="[red cross]"  src="cross.gif"/> button next to 'IN demo bag' to remove the constraint.</b></p>
+<p><b>Click on the <img alt="[red cross]"  src="cross.gif"/> button next to 'IN demo list' to remove the constraint:</b></p>
 
 <img alt="[remove constraint]"  src="remove_constraint.png"/>
 
-<p><b>Now click 'Show results' to run the query.</b></p>
+<p><b>Now click 'Show results' to run the query:</b></p>
 
 <img alt="[click show results]"  src="click_show_results.png"/>
 
-<p>The results table now shows all the transcription factors in FlyMine, the genes they regulate and the data set that provided this infomation.  You can use the summary buttons <img alt="[summary icon]"  src="summary_maths.png" valign="middle"/> on the 'Transcription factor > symbol' and 'Regulated gene > symbol' columns to find more information about the numbers of each.</p>
+<p>The results table now shows all the transcription factors in FlyMine for which there are known binding sites, the location of these binding sites and the data set that provided this infomation.  You can use the summary buttons <img alt="[summary icon]"  src="summary_maths.png" valign="middle"/> on the 'Transcription factor > symbol' and 'Regulated gene > symbol' columns to find more information about the numbers of each.</p>
 
 
 
 <h1>11. MyMine</h1>
 
-<p>The lists that we have created will be saved temporarily for the current session. To save them permanently in FlyMine you can create a MyMine account.</p>
+<p> All lists and queries you ran will be saved temporarily in FlyMine for the current session. To save them permanently, you can create a <b>MyMine account</b>. You only need to provide an email address and a password to generate an account, there is no other information required.  Your saved data is always private.</p>
 
-<p>You only need to provide an email address and a password to generate an account, there is no other information required.  Your saved data is always private.</p>
+<img alt="[Click log in]"  src="toolbar_login.png"/>
 
-<img alt="[Click log in]"  src="click_login.png"/>
+<p> You can then access all your lists, queries and templates via the MyMine page. In MyMine you can save lists and queries you create in the QueryBuilder.  You can even use the QueryBuilder to turn queries into new templates of your own.  You can export/import queries and templates as XML to share them with others. </p>
 
- <p>In MyMine you can save lists and queries you create in the QueryBuilder.  You can even use the QueryBuilder to turn queries into new templates of your own.  You can export/import queries and templates as XML to share them with others.</p>
+<img alt="[Click log in]"  src="toolbar_mymine.png"/>
 
+ 
 <p>The <img alt="[Favourite]"  src="star_active.gif"/> icon lets you set templates as favourites so it's easy to access the ones you use often.</p>
 
-<img alt="[MyMine tabs]"  src="mymine_tabs.png"/>
+<img alt="[MyMine tabs]"  src="mymine_templates.png"/>
 
 <p/>
 <p/>
