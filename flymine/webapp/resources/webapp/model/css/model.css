@@ -16,34 +16,34 @@ html, body {
 
 .gradientbox {
 	padding:10px; 
-	border:1px solid #9E68AE;background: url('../blue_grad.png') repeat-x;}
+	border:1px solid #9E68AE;background: url('../images/blue_grad.png') repeat-x;}
 
 ul#nav a{
-	text-decoration:none; color: #5C0075; font-weight:bold;	background-image:url('../corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
+	text-decoration:none; color: #5C0075; font-weight:bold;	background-image:url('../images/corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
 
 ul#nav a:hover,ul#nav li#mymine a:hover{
 	color:#333;}
 
 ul#nav li#mymine a{
-	color:white;background:url('../corner_my_t_r.png') no-repeat top right;}
+	color:white;background:url('../images/corner_my_t_r.png') no-repeat top right;}
 
 ul#nav li.activelink a{
-	color:white;background:url('../corner_act_t_r.png') no-repeat top right;}
+	color:white;background:url('../images/corner_act_t_r.png') no-repeat top right;}
 
 ul#nav li#mymine {
-	background:#9B89A7 url('../corner_my_t_l.png') no-repeat;}
+	background:#9B89A7 url('../images/corner_my_t_l.png') no-repeat;}
 
 ul#nav li.activelink {
-	background:#5C0075 url('../corner_act_t_l.png') no-repeat;}
+	background:#5C0075 url('../images/corner_act_t_l.png') no-repeat;}
 
 ul#submenulist li#subactive_bag {
-	font-weight:bold;color:#FFF;background:url('../submenu_indent.png') no-repeat bottom center;}
+	font-weight:bold;color:#FFF;background:url('../images/submenu_indent.png') no-repeat bottom center;}
 
 ul#submenulist li#subactive_mymine {
-	font-weight:bold;color:#FFF;background:url('../submenu_my.png') no-repeat bottom center;}
+	font-weight:bold;color:#FFF;background:url('../images/submenu_my.png') no-repeat bottom center;}
 
 ul#nav li{
-	text-align: center;background:#9F67AD url('../corner_t_l.png') no-repeat;}
+	text-align: center;background:#9F67AD url('../images/corner_t_l.png') no-repeat;}
 
 .submenu{
 	background:#5C0075;}
