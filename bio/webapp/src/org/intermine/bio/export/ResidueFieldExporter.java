@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.bio.export;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -22,13 +22,13 @@ import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.utils.ChangeVetoException;
-import org.flymine.biojava.FlyMineSequence;
-import org.flymine.biojava.FlyMineSequenceFactory;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Sequence;
 
+import org.intermine.bio.biojava.FlyMineSequence;
+import org.intermine.bio.biojava.FlyMineSequenceFactory;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;

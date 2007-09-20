@@ -1,4 +1,4 @@
-package org.flymine.web;
+package org.intermine.bio.export;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.bio.biojava.FlyMineSequence;
+import org.intermine.bio.biojava.FlyMineSequenceFactory;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -34,8 +36,6 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.struts.WebPathCollection;
 
-import org.flymine.biojava.FlyMineSequence;
-import org.flymine.biojava.FlyMineSequenceFactory;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.LocatedSequenceFeature;
