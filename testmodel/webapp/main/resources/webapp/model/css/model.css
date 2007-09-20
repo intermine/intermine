@@ -1,0 +1,138 @@
+html, body {
+    color: #000000;background-color: #FFF;}
+
+a {
+    color: #00e;}
+
+/* =CUSTOMISABLE LOOK
+--------------------------*/
+
+#header{
+	background: url('../top_gradient.png') repeat-x;}
+
+.plainbox {
+	padding:10px; border:1px solid #000;
+	background:#F0F0F0;}
+
+.gradientbox {
+	padding:10px; 
+	border:1px solid #000;background: url('../gray_grad.png') repeat-x;}
+
+ul#nav a{
+	text-decoration:none; color: #FFF; font-weight:bold;	background-image:url('../corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
+
+ul#nav a:hover,ul#nav li#mymine a:hover{
+	color:#333;}
+
+ul#nav li#mymine a{
+	color:white;background:url('../corner_my_t_r.png') no-repeat top right;}
+
+ul#nav li.activelink a{
+	color:white;background:url('../corner_act_t_r.png') no-repeat top right;}
+
+ul#nav li#mymine {
+	background:#9B89A7 url('../corner_my_t_l.png') no-repeat;}
+
+ul#nav li.activelink {
+	background:#000 url('../corner_act_t_l.png') no-repeat;}
+
+ul#submenulist li#subactive_bag {
+	font-weight:bold;color:#FFF;background:url('../submenu_indent.png') no-repeat bottom center;}
+
+ul#submenulist li#subactive_mymine {
+	font-weight:bold;color:#FFF;background:url('../submenu_my.png') no-repeat bottom center;}
+
+ul#nav li{
+	text-align: center;background:#9E9E9E url('../corner_t_l.png') no-repeat;}
+
+.submenu{
+	background:#000;}
+
+.submenu_mymine{
+	background:#9B89A7;}
+
+ul#submenulist li a {
+	color:#FFF;text-decoration: none;font-weight: bold;}
+
+ul#submenulist li a:hover {
+	color:#FFF;text-decoration: underline;font-weight: bold;}
+
+div.filterBar {
+    background:#000;color:white;}
+
+.imbox {
+    padding:5px 5px 10px 5px; border-top:solid 1px #888; border-bottom:solid 1px #888; height:1.2em;
+    font-size:0.8em; background:#000; color:white;}
+
+#loginbar  a:link, #loginbar a:visited, #loginbar{
+	color:#000;}
+
+
+/* =/CUSTOMISABLE LOOK
+--------------------------*/
+
+/**************************************/
+
+#header #title h1 a
+{
+    color: #000;
+}
+
+#header p
+{
+    color: black;
+}
+
+.box .title {
+  padding: 5px;
+  text-align: left;
+  font-weight: normal;
+  font-size: 14px;
+  font-weight: bold;
+  background: #eee;
+  border-top: 1px solid #888;
+  border-bottom: 1px solid #888;
+}
+
+.debt {
+  color: red;
+}
+.address {
+  font-weight: bold;
+}
+.highlightCell{
+  background-color: #D4D4D4;
+}
+
+.widget {
+    padding:15px;
+    text-align: center;
+    width: 450px;
+    background-color: #D4D4D4;
+}
+
+#bagDescriptionDiv{
+	background-color: #D4D4D4;
+	height:150px;
+	width:70%;
+	text-align:left;
+	padding:10px;
+}
+#bagDescriptionDiv:hover{
+	background-color: #D4D4D4;
+}
+
+#textarea {
+	width:70%;
+	height:150px;
+	background-color: #D4D4D4;
+	padding:10px;
+}
+
+.blueBg {
+	background-color:#D4D4D4;
+	text-align:center;
+	padding: 20px;
+	margin:20px;
+	width:350px;
+}
