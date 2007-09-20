@@ -118,7 +118,7 @@ public class BagQuery
                 try {
                     lowerCaseBag.add(new Integer((String) o));
                 } catch (NumberFormatException e) {
-                    LOG.info("Couldn't parse string \"" + o + "\" into integer");
+                    //LOG.info("Couldn't parse string \"" + o + "\" into integer");
                     // Wasn't a number
                 }
             } else {
