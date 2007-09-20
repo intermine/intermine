@@ -39,7 +39,12 @@
   <im:boxarea stylename="">
     <tiles:insert name="tipWrapper.tile"/>
     <div style="margin-left:5px">
- 	  <span id="what"><a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is ${WEB_PROPERTIES['project.title']}?</a></span><br>
+      <span id="what"><a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is ${WEB_PROPERTIES['project.title']}?</a></span>
+      &nbsp;
+      <span style="font-size: 150%">
+        <im:popupHelp pageName="tour/start">Take a tour</im:popupHelp>
+      </span>
+      <br>
       <p id="intro">${WEB_PROPERTIES['begin.intro']}</p>
     </div>
       <div style="clear:right;height:1em"></div>
