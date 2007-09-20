@@ -30,12 +30,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   white-space: nowrap; background: url('../images/extlink.gif') right center no-repeat; }
 
 ul#submenulist li a {
-	float:left;
-	color:#FFF;text-decoration: none;font-weight: bold;}
-
-ul#submenulist li a:hover {
-	float:left;
-	color:#FFF;text-decoration: underline;font-weight: bold;}
+	float:left;}
 
 /* =H */
 h1, h2, h3, h1 a, h1 a:visited, label {
@@ -60,8 +55,7 @@ li {
 --------------------------*/
 #header {
 	padding: 90px 0 0 0;height:24px;margin:0;
-	font-size: 12px;
-	background: url('../model/top_gradient.png') repeat-x #D0B5D7;}
+	font-size: 12px;}
 
 #title {
    position:absolute; top:15px;
@@ -103,17 +97,9 @@ li {
    margin:0px 5px 10px 5px; padding:0;	height: 1%;/**kill peek-a-boo bug**/
    font-size: 1em;	text-align: left;}
 
-.plainbox {
-	padding:10px; border:1px solid #9E68AE;
-	background-color: #F5F0FF;}
-
-.gradientbox {
-	padding:10px; border:1px solid #9E68AE;
-	background: url('../images/blue_grad.png') repeat-x;}
-
-.roundcorners {
+/*.roundcorners {
 	background: url('../images/roundcorner_b_l.png') no-repeat bottom left #F5F0FF;}
-
+*/
 .pageDesc { 
     padding: 10px; margin: 0 15px 15px 15px;
 	background-color: #F5F0FF; vertical-align: middle; text-align: left;}
@@ -142,10 +128,6 @@ div.templateLine {
 
 .boxTopRight {
   float: right;}
-
-.imbox {
-  padding:5px 5px 10px 5px; border-top:solid 1px #888; border-bottom:solid 1px #888; height:1.2em;
-  font-size:0.8em; background:#9F67AD; color:white;}
 
 .body {
   margin:10px 12px 10px 12px;
@@ -187,12 +169,6 @@ div#quicksearch {
 	clear:both;	display:block;
 	padding:0px; margin:0 0 5px 0; padding-left:15px;height:3em;
 	color:#CCC;	font-size: 12px;}
-
-.submenu{
-	background:#5C0075;}
-
-.submenu_mymine{
-	background:#9B89A7;}
 
 /* =SPAN 
 -------------------------*/
@@ -276,7 +252,7 @@ div#quicksearch {
     color:#FFF;}
 
 #loginbar  a:link, #loginbar a:visited, #loginbar{
-	font-welsight: bold; color:#FFF; font-size: 1.1em;}
+	font-weight: bold; color:#FFF; font-size: 1.1em;}
 
 .imbox a{
 	color:white;}
@@ -296,17 +272,7 @@ a.brokenTmplLink {
 
 ul#nav a{
 	float:left;
-	padding:0px 15px;line-height:2;
-	text-decoration:none; color: #5C0075; font-weight:bold;	background-image:url('../images/corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
-
-ul#nav a:hover,ul#nav li#mymine a:hover{
-	color:#333;}
-
-ul#nav li#mymine a{
-	color:white;background:url('../images/corner_my_t_r.png') no-repeat top right;}
-
-ul#nav li.activelink a{
-	color:white;background:url('../images/corner_act_t_r.png') no-repeat top right;}
+	padding:0px 15px;line-height:2;}
 
 /* =IMG
 -------------------------*/
@@ -338,12 +304,6 @@ hr.seperator {
 
 /* =LISTS
 -------------------------*/
-ul#nav li#mymine {
-	background:#9B89A7 url('../images/corner_my_t_l.png') no-repeat;}
-
-ul#nav li.activelink {
-	background:#5C0075 url('../images/corner_act_t_l.png') no-repeat;}
-
 ul#submenulist, ul#submenulist li {
 	padding: 0px; margin:0px; line-height:3;
 	list-style: none;}
@@ -351,16 +311,10 @@ ul#submenulist, ul#submenulist li {
 ul#submenulist li {
 	float:left;}
 
-ul#submenulist li#subactive_bag {
-	font-weight:bold;color:#FFF;background:url('../images/submenu_indent.png') no-repeat bottom center;}
-
-ul#submenulist li#subactive_mymine {
-	font-weight:bold;color:#FFF;background:url('../images/submenu_my.png') no-repeat bottom center;}
-
 #sidebar li {
 	margin-left: 20px;}
 
-.roundcorners dl {
+/*.roundcorners dl {
 	margin:0; padding:0 0 0 5px;
 	background: url('../images/roundcorner_t_l.png') no-repeat top left; }
 
@@ -371,7 +325,7 @@ ul#submenulist li#subactive_mymine {
 .roundcorners dd {
 	padding:10px; margin:0;
 	background: url('../images/roundcorner_b_r.png') no-repeat bottom right;}
-
+*/
 ul#nav,ul#nav li{
 	margin:0px;padding:0px;
 	list-style-type:none;}
@@ -382,5 +336,4 @@ ul#nav{
 
 ul#nav li{
 	float:left;
-	margin:0px 1px 0px 0px;
-	text-align: center;background:#9F67AD url('../images/corner_t_l.png') no-repeat;}
+	margin:0px 1px 0px 0px;}

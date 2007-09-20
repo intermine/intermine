@@ -55,7 +55,7 @@ div.wsLine p.description a{
 
 div.filterBar {
 	padding:15px;height:20px;margin:10px 0px 10px 0px;
-	background:#9F67AD;color:white;font-weight: bold;}
+	font-weight: bold;}
 
 ul.filterActions ,ul.filterActions li{
 	margin:0px; padding:0px;

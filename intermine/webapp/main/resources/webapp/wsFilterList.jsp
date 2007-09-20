@@ -68,7 +68,7 @@
   </c:if>
   <li>
     &nbsp;&nbsp;<a href="#" onclick="javascript:return clearFilter('${type}', '${wsListId}')">
-      <img src="images/reset.png" title="Reset search"/>
+      <img src="model/images/reset.png" title="Reset search"/>
     </a>
   </li>
 </ul>
@@ -79,7 +79,7 @@
         <span style="vertical-align:top;">Actions:&nbsp;</span>
 <c:choose>
 <c:when test="${type == 'template'}">
-  <html:image property="export" value="export" styleId="export_button" src="images/export.png"  title="Export selected Templates"/>
+  <html:image property="export" value="export" styleId="export_button" src="model/images/export.png"  title="Export selected Templates"/>
   <html:hidden property="pageName" value="templates"/>
   <html:hidden property="templateButton" value="export"/>
 </c:when>
@@ -98,13 +98,13 @@
 
 </script>
 <html:text property="newBagName" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
-<html:image property="union" value="union" src="images/union.png" onclick="$(listsButton).value='union'" title="union">
+<html:image property="union" value="union" src="model/images/union.png" onclick="$(listsButton).value='union'" title="union">
   <fmt:message key="history.union"/>
 </html:image>
-<html:image property="intersect" value="intersect" src="images/intersect.png" onclick="$(listsButton).value='intersect'" title="intersect">
+<html:image property="intersect" value="intersect" src="model/images/intersect.png" onclick="$(listsButton).value='intersect'" title="intersect">
   <fmt:message key="history.intersect"/>
 </html:image>
-<html:image property="subtract" value="subtract" src="images/substract.png" onclick="$(listsButton).value='substract'" title="subtract">
+<html:image property="subtract" value="subtract" src="model/images/substract.png" onclick="$(listsButton).value='substract'" title="subtract">
   <fmt:message key="history.subtract"/>
 </html:image>
 <html:hidden property="listsButton" value="" styleId="listsButton"/>
