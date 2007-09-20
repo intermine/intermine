@@ -24,8 +24,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 
-import org.intermine.bio.web.biojava.FlyMineSequence;
-import org.intermine.bio.web.biojava.FlyMineSequenceFactory;
+import org.intermine.bio.web.biojava.BioSequence;
+import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.export.ExportException;
@@ -103,12 +103,12 @@ public class ResidueFieldExporter implements FieldExporter
                 return;
             }
 
-            FlyMineSequence flyMineSequence;
+            BioSequence bioSequence;
             
             if (lsf != null) {
-                flyMineSequence = FlyMineSequenceFactory.make(lsf);
+                bioSequence = BioSequenceFactory.make(lsf);
             } else {
-                flyMineSequence = FlyMineSequenceFactory.make(protein);
+                bioSequence = BioSequenceFactory.make(protein);
             }
             
             // avoid opening the OutputStream until we have all the data - this avoids some problems
@@ -116,11 +116,11 @@ public class ResidueFieldExporter implements FieldExporter
             // write the error)
             OutputStream outputStream = response.getOutputStream();
 
-            Annotation annotation = flyMineSequence.getAnnotation();
+            Annotation annotation = bioSequence.getAnnotation();
 
             annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, bioEntity.getIdentifier());
 
-            SeqIOTools.writeFasta(outputStream, flyMineSequence);
+            SeqIOTools.writeFasta(outputStream, bioSequence);
 
             outputStream.close();
         } catch (IllegalSymbolException e) {

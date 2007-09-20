@@ -15,8 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.bio.web.biojava.FlyMineSequence;
-import org.intermine.bio.web.biojava.FlyMineSequenceFactory;
+import org.intermine.bio.web.biojava.BioSequence;
+import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -85,7 +85,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         HttpSession session = request.getSession();
         ObjectStore os =
             (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
-        FlyMineSequence flyMineSequence = null;
+        BioSequence bioSequence = null;
         
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ",
@@ -102,14 +102,14 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         }
         if (obj instanceof LocatedSequenceFeature || obj instanceof Protein) {
             if (obj instanceof LocatedSequenceFeature) {
-                flyMineSequence = FlyMineSequenceFactory.make((LocatedSequenceFeature) obj);
+                bioSequence = BioSequenceFactory.make((LocatedSequenceFeature) obj);
             } else {
-                flyMineSequence = FlyMineSequenceFactory.make((Protein) obj);
+                bioSequence = BioSequenceFactory.make((Protein) obj);
             }
-            if (flyMineSequence == null) {
+            if (bioSequence == null) {
                 return null;
             }
-            Annotation annotation = flyMineSequence.getAnnotation();
+            Annotation annotation = bioSequence.getAnnotation();
             BioEntity bioEntity = (BioEntity) obj;
             String identifier = bioEntity.getIdentifier();
             if (identifier == null) {
@@ -133,7 +133,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
             }
             annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, identifier);
             OutputStream out = response.getOutputStream();
-            SeqIOTools.writeFasta(out, flyMineSequence);
+            SeqIOTools.writeFasta(out, bioSequence);
         }
         
         return null;
@@ -209,7 +209,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     continue;
                 }
 
-                FlyMineSequence flyMineSequence;
+                BioSequence bioSequence;
 
                 Object object = os.getObjectById(resultElement.getId());
                 
@@ -225,7 +225,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 
                 if (object instanceof LocatedSequenceFeature) {
                     LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
-                    flyMineSequence = FlyMineSequenceFactory.make(feature);
+                    bioSequence = BioSequenceFactory.make(feature);
                     if (feature.getIdentifier() == null) {
                         if (feature instanceof Gene) {
                             header.append(((Gene) feature).getOrganismDbId());
@@ -266,7 +266,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     }
                 } else if (object instanceof Protein) {
                     Protein protein = (Protein) object;
-                    flyMineSequence = FlyMineSequenceFactory.make(protein);
+                    bioSequence = BioSequenceFactory.make(protein);
                     header.append(protein.getIdentifier());
                     header.append(' ');
                     if (protein.getName() == null) {
@@ -291,7 +291,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                                                                          + "." + "Translation");
                     if (cld.getReferenceDescriptorByName("sequence", true) != null) {
                         Translation translation = (Translation) object;
-                        flyMineSequence = FlyMineSequenceFactory.make(translation);
+                        bioSequence = BioSequenceFactory.make(translation);
                         header.append(translation.getIdentifier());
                         header.append(' ');
                         if (translation.getName() == null) {
@@ -309,19 +309,19 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                             }
                         }
                     } else {
-                        flyMineSequence = null;
+                        bioSequence = null;
                     }
                 } else {
                     // ignore other objects
                     continue;
                 }
 
-                if (flyMineSequence == null) {
+                if (bioSequence == null) {
                     // the object doesn't have a sequence
                     continue;
                 }
 
-                Annotation annotation = flyMineSequence.getAnnotation();
+                Annotation annotation = bioSequence.getAnnotation();
 
                 String headerString = header.toString();
 
@@ -345,7 +345,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     // write the error)
                     outputStream = response.getOutputStream();
                 }
-                SeqIOTools.writeFasta(outputStream, flyMineSequence);
+                SeqIOTools.writeFasta(outputStream, bioSequence);
 
                 exportedIDs.add(objectId);
             }

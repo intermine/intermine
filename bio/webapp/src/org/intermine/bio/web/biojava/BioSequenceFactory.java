@@ -19,62 +19,62 @@ import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Translation;
 
 /**
- * A factory for creating FlyMineSequence objects.
+ * A factory for creating BioSequence objects.
  *
  * @author Kim Rutherford
  */
 
-public abstract class FlyMineSequenceFactory
+public abstract class BioSequenceFactory
 {
     /**
-     * Create a new FlyMineSequence from a LocatedSequenceFeature
+     * Create a new BioSequence from a LocatedSequenceFeature
      * @param feature the LocatedSequenceFeature
-     * @return a new FlyMineSequence object or null if the LocatedSequenceFeature doesn't have a
+     * @return a new BioSequence object or null if the LocatedSequenceFeature doesn't have a
      * Sequence 
      * @throws IllegalSymbolException if any of the residues of the LocatedSequenceFeature can't be
      * turned into DNA symbols.
      */
-    public static FlyMineSequence make(LocatedSequenceFeature feature)
+    public static BioSequence make(LocatedSequenceFeature feature)
         throws IllegalSymbolException {
         if (feature.getSequence() == null) {
             return null;
         } else {
             String residues = feature.getSequence().getResidues();
-            return new FlyMineSequence(DNATools.createDNA(residues), feature);
+            return new BioSequence(DNATools.createDNA(residues), feature);
         }
     }
 
     /**
-     * Create a new FlyMineSequence from a Translation
+     * Create a new BioSequence from a Translation
      * @param translation the Translation
-     * @return a new FlyMineSequence object or null if the Translation doesn't have a Sequence
+     * @return a new BioSequence object or null if the Translation doesn't have a Sequence
      * @throws IllegalSymbolException if any of the residues of the Translation can't be
      * turned into amino acid symbols.
      */
-    public static FlyMineSequence make(Translation translation)
+    public static BioSequence make(Translation translation)
         throws IllegalSymbolException {
         if (translation.getSequence() == null) {
             return null;
         } else {
             String residues = translation.getSequence().getResidues();
-            return new FlyMineSequence(ProteinTools.createProtein(residues), translation);
+            return new BioSequence(ProteinTools.createProtein(residues), translation);
         }
     }
  
     /**
-     * Create a new FlyMineSequence from a Protein
+     * Create a new BioSequence from a Protein
      * @param protein the Protein
-     * @return a new FlyMineSequence object or null if the Protein doesn't have a Sequence
+     * @return a new BioSequence object or null if the Protein doesn't have a Sequence
      * @throws IllegalSymbolException if any of the residues of the Protein can't be
      * turned into amino acid symbols.
      */
-    public static FlyMineSequence make(Protein protein)
+    public static BioSequence make(Protein protein)
     throws IllegalSymbolException {
         if (protein.getSequence() == null) {
             return null;
         } else {
             String residues = protein.getSequence().getResidues();
-            return new FlyMineSequence(ProteinTools.createProtein(residues), protein);
+            return new BioSequence(ProteinTools.createProtein(residues), protein);
         }
     }
 }
