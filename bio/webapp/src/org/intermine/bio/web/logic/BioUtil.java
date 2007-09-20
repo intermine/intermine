@@ -1,4 +1,4 @@
-package org.flymine.web.logic;
+package org.intermine.bio.web.logic;
 
 /* 
  * Copyright (C) 2002-2007 FlyMine
@@ -36,12 +36,12 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.SortableMap;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.widget.Bonferroni;
+import org.intermine.web.logic.widget.Hypergeometric;
 
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
-import org.flymine.web.Bonferroni;
-import org.flymine.web.Hypergeometric;
 
 
 
@@ -49,7 +49,7 @@ import org.flymine.web.Hypergeometric;
  * Utility methods for the flymine package.
  * @author Julie Sullivan
  */
-public abstract class FlymineUtil
+public abstract class BioUtil
 {
     /**
      * For a bag of genes, returns a list of organisms
