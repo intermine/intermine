@@ -20,7 +20,7 @@ import org.flymine.model.genomic.BioEntity;
  *
  * @author Kim Rutherford
  */
-public class FlyMineSequence extends SimpleSequence
+public class BioSequence extends SimpleSequence
 {
     /**
      * The BioEntity that was passed to the constructor.
@@ -28,11 +28,11 @@ public class FlyMineSequence extends SimpleSequence
     private BioEntity bioEntity = null;
 
     /**
-     * Create a new FlyMineSequence from a BioEntity
+     * Create a new BioSequence from a BioEntity
      * @param symbols a DNA SymbolList created from the BioEntity
      * @param bioEntity the BioEntity
      */
-    FlyMineSequence (SymbolList symbols, BioEntity bioEntity) {
+    BioSequence (SymbolList symbols, BioEntity bioEntity) {
         super(symbols, null, bioEntity.getIdentifier(), null);
         this.bioEntity = bioEntity;
     }
