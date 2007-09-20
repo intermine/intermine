@@ -130,7 +130,7 @@ All results pages have a number of export options:
 
 
 <p>
-FlyMine includes a set of 'Public' lists (marked with 'PL') that we think might be useful for our users. Some of these originate from external datasources, eg from the <a href="http://www.flyTF.org/">FlyTF</a>database.</p>
+FlyMine includes a set of 'Public' lists (marked with 'PL') that we think might be useful for our users. Some of these originate from external datasources, eg from the <a href="http://www.flyTF.org/">FlyTF</a> database.</p>
 
 <p><i>We can add more lists at any time - it only takes a few minutes - so if you have a suggestion, let us know!</i></p>
 </p>
