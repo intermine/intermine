@@ -295,30 +295,35 @@
 
     </div>
   </c:if>
-  <c:set var="widgetClass" value="${WEB_PROPERTIES['bag.widget.class']}"/>
-  <c:if test="${bag.type == widgetClass}">
 
-<tr>
-	<td>
+[${enrichmentDisplayerArray}]
+      <c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
+
+        <c:choose>
+          <c:when test="${widgetCount % 2 == 0}">
+            <tr valign="top"><td>
+          </c:when>
+          <c:otherwise>
+            <td>
+          </c:otherwise>
+        </c:choose>
 
     <%-- go stats --%>
- 	<iframe src="goStatDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
+ 	<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
  	
-	</td><td>
-  
-    <%-- protein domains --%>
- 	<iframe src="proteinDomainDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
  	
-    </td>
-</tr>
-<tr>
-	<td colspan=2>
-	<%-- publications --%>
- 	<iframe src="publicationDisplayer.do?bagName=${bag.name}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
-	</td>
-    <c:set var="widgetCount" value="${widgetCount+3}" />
-  </c:if>
-
+ 	    <c:choose>
+          <c:when test="${widgetCount % 2 == 0}">
+        </td>
+        </c:when>
+        <c:otherwise>
+        </td></tr>
+        </c:otherwise>
+        </c:choose>
+        <c:set var="widgetCount" value="${widgetCount+1}" />
+ 	
+ 	
+	</c:forEach>
 </table>
 <!-- /widget table -->
 

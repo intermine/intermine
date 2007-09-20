@@ -13,9 +13,7 @@ package org.intermine.bio.web.logic;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -33,11 +31,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.web.logic.SortableMap;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.widget.Bonferroni;
-import org.intermine.web.logic.widget.Hypergeometric;
 
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Gene;
@@ -59,13 +53,16 @@ public abstract class BioUtil
      * @exception No bag
      * @exception ClassNotFoundException
      */
-    public static Collection getOrganisms(ObjectStore os, InterMineBag bag) 
-        throws ClassNotFoundException {
+    public static Collection getOrganisms(ObjectStore os, InterMineBag bag) {
 
         Query q = new Query();
         Model model = os.getModel();
-        QueryClass qcGene 
-            = new QueryClass(Class.forName(model.getPackageName() + "." + bag.getType()));
+        QueryClass qcGene = null;
+        try {
+            qcGene  = new QueryClass(Class.forName(model.getPackageName() + "." + bag.getType()));
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");     
@@ -165,106 +162,15 @@ public abstract class BioUtil
         return chromosomes;
     }   
     
-/**
- * Takes two queries.  Runs both and compares the results.
- * @param os
- * @param queryPopulation The query to get the entire population, ie all genes in the database
- * @param querySample The query to get the sample, ie all genes in the bag
- * @param bag the bag we are analysing
- * @param organisms organisms of interest
- * @param maxValue maximum value to return
- * @param significanceValue significance value
- * @return array of three results maps
- * @throws Exception
- */
-    public static ArrayList statsCalc(ObjectStoreInterMineImpl os, 
-                         Query queryPopulation, 
-                         Query querySample, 
-                         InterMineBag bag,
-                         Collection organisms,
-                         Double maxValue)      
-    throws Exception {
-      
-        
-        ArrayList<Map> maps = new ArrayList<Map>();
-        int numberOfGenesInBag;
-        try {
-            numberOfGenesInBag = bag.size();
-        } catch (Exception e) {
-            return null;
-        }
-        
-        // run bag query
-        Results r = os.execute(querySample);
-        r.setBatchSize(10000);
-        Iterator iter = r.iterator();
-        HashMap<String, Long> countMap = new HashMap<String, Long>();
-        HashMap<String, String> idMap = new HashMap<String, String>();
 
-        while (iter.hasNext()) {
-
-            // extract results
-            ResultsRow rr =  (ResultsRow) iter.next();
-
-            // id of item
-            String id = (String) rr.get(0);
-
-            // count of item
-            Long count = (java.lang.Long) rr.get(1);  
-
-            // id & count
-            countMap.put(id, count);
-
-            // id & label
-            idMap.put(id, (String) rr.get(2));
-
-        }
-        
-        // run population query
-        Results rAll = os.execute(queryPopulation);
-        rAll.setBatchSize(10000);
-
-        Iterator itAll = rAll.iterator();
-
-        // total number of genes for all organisms of interest 
-        int total = getGeneTotal(os, organisms);
-        
-        Hypergeometric h = new Hypergeometric(total);
-        HashMap<String, Double> resultsMap = new HashMap<String, Double>();
-
-        while (itAll.hasNext()) {
-
-            ResultsRow rrAll =  (ResultsRow) itAll.next();
-
-            String id = (String) rrAll.get(0);
-
-            if (countMap.containsKey(id)) {
-
-                Long countBag = countMap.get(id);
-                Long countAll = (java.lang.Long) rrAll.get(1);
-
-                double p =
-                    h.calculateP(numberOfGenesInBag, countBag.intValue(), 
-                                 countAll.intValue(), total);
-                resultsMap.put(id, new Double(p));
-            }
-        }
-        
-        Bonferroni b = new Bonferroni(resultsMap);
-        b.calculate(maxValue);
-        HashMap adjustedResultsMap = b.getAdjustedMap();
-
-        SortableMap sortedMap = new SortableMap(adjustedResultsMap);
-        sortedMap.sortValues();
-        
-        maps.add(0, sortedMap);  
-        maps.add(1, countMap); 
-        maps.add(2, idMap);   
-        return maps;
-    }
     
-    /* gets total number of genes */
-    private static int getGeneTotal(ObjectStore os, Collection organisms) {
+    /**
+     * 
+     * @param os
+     * @param organisms
+     * @return total number of genes in the database for selected organims
+     */
+    public static int getGeneTotal(ObjectStore os, Collection organisms) {
 
            Query q = new Query();
            q.setDistinct(false);

@@ -30,6 +30,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.BagTableDisplayer;
+import org.intermine.web.logic.config.EnrichmentWidgetDisplayer;
 import org.intermine.web.logic.config.GraphDisplayer;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -83,11 +84,11 @@ public class BagDetailsController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
-
+    
             HttpSession session = request.getSession();
             ServletContext servletContext = session.getServletContext();
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+    
             String bagName = request.getParameter("bagName");
             Boolean myBag = Boolean.FALSE;
             if (bagName == null) {
@@ -125,19 +126,19 @@ public class BagDetailsController extends TilesAction
             if (imBag == null) {
                 return null; 
             }
-
+    
             Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
             Model model = os.getModel();
             Type type = (Type) webConfig.getTypes().get(model.getPackageName() 
                                                         + "." + imBag.getType());
-
+    
             Set graphDisplayers = type.getGraphDisplayers();
             ArrayList<String[]> graphDisplayerArray = new ArrayList<String[]>();
             for (Iterator iter = graphDisplayers.iterator(); iter.hasNext();) {
-
+    
                 try {
-
+    
                     GraphDisplayer graphDisplayer = (GraphDisplayer) iter.next();
                     String dataSetLoader = graphDisplayer.getDataSetLoader();
                     Class clazz = TypeUtil.instantiate(dataSetLoader);
@@ -145,12 +146,12 @@ public class BagDetailsController extends TilesAction
                                                                         {
                         InterMineBag.class, ObjectStore.class
                                                                         });
-
+    
                     DataSetLdr dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
                                                                                        {
                         imBag, os
                                                                                        });
-
+    
                     //TODO use caching here
                     if (!dataSetLdr.getDataSets().isEmpty()) {
                         for (Iterator it 
@@ -175,7 +176,7 @@ public class BagDetailsController extends TilesAction
                     //throw new Exception();
                 }
             }
-
+    
             ArrayList<BagTableWidgetLoader> tableDisplayerArray 
                                                            = new ArrayList<BagTableWidgetLoader>();
             Set bagTabledisplayers = type.getBagTableDisplayers();
@@ -192,14 +193,22 @@ public class BagDetailsController extends TilesAction
                                                  imBag, os, webConfig, model,
                                                  classKeys, fields);
                     tableDisplayerArray.add(bagWidgLdr);
-
+    
                 } catch  (Exception e) {
                     // TODO do something clever
                     //return null;
                     //throw new Exception();
                 }
             }
-
+    
+            ArrayList<EnrichmentWidgetDisplayer> enrichmentWidgetDisplayerArray 
+            = new ArrayList<EnrichmentWidgetDisplayer>();
+            Set enrichmentWidgetDisplayers = type.getEnrichmentWidgetDisplayers();
+            for (Iterator iter = enrichmentWidgetDisplayers.iterator(); iter.hasNext();) {
+                EnrichmentWidgetDisplayer d = (EnrichmentWidgetDisplayer) iter.next();
+                enrichmentWidgetDisplayerArray.add(d);
+            }
+            
             Query q = new Query();
             QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
@@ -207,13 +216,13 @@ public class BagDetailsController extends TilesAction
             q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
             q.setDistinct(false);
             SingletonResults res = os.executeSingleton(q);
-
+    
             WebPathCollection webPathCollection =
                 new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig,
                                       classKeys);
-
+    
             int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
-
+    
             PagedTable pagedColl = new PagedTable(webPathCollection, pageSize);
             request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);
@@ -221,6 +230,7 @@ public class BagDetailsController extends TilesAction
             request.setAttribute("pagedColl", pagedColl);
             request.setAttribute("graphDisplayerArray", graphDisplayerArray);
             request.setAttribute("tableDisplayerArray", tableDisplayerArray);
+            request.setAttribute("enrichmentWidgetDisplayerArray", enrichmentWidgetDisplayerArray);
             return null;
     }
 

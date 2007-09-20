@@ -147,6 +147,8 @@
     <put name="body" value="showStatic.jsp"/>
     <put name="pageName" value="showStatic"/>
   </definition>
+
+  
   <definition name="htmlHead.page" path="/htmlHead.jsp"/>
   <definition name="headMenu.page" path="/headMenu.jsp"/>  
   <!--tiles-->
@@ -178,6 +180,8 @@
     <put name="saveQuery" value="/saveQuery.jsp"/>
     <put name="createTemplate" value="/createTemplate.jsp"/>
   </definition> 
+  
+    <definition name="enrichmentWidget.tile" path="/enrichmentWidget.jsp" controllerUrl="/initEnrichmentWidget.do"/>
   
    <definition name="objectDetailsBags.tile" path="/objectDetailsBags.jsp" controllerUrl="/objectDetailsBags.do"/>
   <definition name="classChooser.tile" path="/queryClassSelect.jsp" controllerUrl="/initClassChooser.do"/>

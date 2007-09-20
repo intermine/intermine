@@ -39,9 +39,11 @@ public class Type
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet graphDisplayers = new ListOrderedSet();
     private ListOrderedSet bagTableDisplayers = new ListOrderedSet();
+    private ListOrderedSet enrichmentWidgetDisplayers = new ListOrderedSet();
     private Displayer tableDisplayer;
     private Map aspectDisplayers = new HashMap();
 
+    
     /**
      * Set the fully-qualified class name for this Type
      * @param className the name of the Type
@@ -107,7 +109,7 @@ public class Type
     
     
     /**
-     * Get the GraphDisplayers for thi type
+     * Get the GraphDisplayers for this type
      * @return the List of GraphDisplayers
      */
     public ListOrderedSet getGraphDisplayers() {
@@ -115,7 +117,7 @@ public class Type
     }
     
     /**
-     * Get the BagTableDisplayers for thi type
+     * Get the BagTableDisplayers for this type
      * @return the List of BagTableDisplayers
      */
     public ListOrderedSet getBagTableDisplayers() {
@@ -123,7 +125,15 @@ public class Type
     }
 
     /**
-     * Add a GraphDisplayer to the List oof GraphDisplayers
+     * Get the getEnrichmentDisplayers for this type
+     * @return the List of BagTableDisplayers
+     */
+    public ListOrderedSet getEnrichmentWidgetDisplayers() {
+        return enrichmentWidgetDisplayers;
+    }
+    
+    /**
+     * Add a GraphDisplayer to the List of GraphDisplayers
      * for that type
      * @param gdisp a GraphDisplayer
      */
@@ -132,7 +142,7 @@ public class Type
     }
 
     /**
-     * Add a BagTableDisplayer to the List oof BagTableDisplayers
+     * Add a BagTableDisplayer to the List of BagTableDisplayers
      * for that type
      * @param btDisp a BagTableDisplayer
      */
@@ -140,6 +150,16 @@ public class Type
         bagTableDisplayers.add(btDisp);
     }
 
+    /**
+     * Add a enrichmentDisplayers to the List of enrichmentDisplayers
+     * for that type
+     * @param ewDisp a BagTableDisplayer
+     */
+    public void addEnrichmentWidgetDisplayer(EnrichmentWidgetDisplayer ewDisp) {
+        enrichmentWidgetDisplayers.add(ewDisp);
+    }
+    
+    
     /**
      * Set the table displayer for this Type
      * @param disp the Displayer
@@ -163,7 +183,7 @@ public class Type
     public Displayer getTableDisplayer() {
         return tableDisplayer;
     }
-
+    
     /**
      * {@inheritDoc}
      * @param obj the Object to compare with
