@@ -181,16 +181,27 @@
     <div class="lookupWarn">
       <c:choose>
         <c:when test="${wildcardCount == 1}">
-          <fmt:message key="results.lookup.wildcard.one"/>:
+          <c:forEach var="wildcard" items="${bagQueryResultEntry.value.wildcards}" varStatus="status">
+            <c:choose>
+              <c:when test="${fn:length(wildcard.value) == 1}">
+                <fmt:message key="results.lookup.wildcard.oneone"/>
+                <c:out value="${wildcard.key}"/>
+              </c:when>
+              <c:otherwise>
+                <fmt:message key="results.lookup.wildcard.one"/>:
+                <c:out value="${wildcard.key}"/> (<c:out value="${fn:length(wildcard.value)}"/>)
+              </c:otherwise>
+            </c:choose>
+          </c:forEach>
         </c:when>
         <c:when test="${wildcardCount > 1}">
           <fmt:message key="results.lookup.wildcard.many"/>:
+          <c:forEach var="wildcard" items="${bagQueryResultEntry.value.wildcards}" varStatus="status">
+            <c:if test="${status.index != 0}">,</c:if>
+            <c:out value="${wildcard.key}"/> (<c:out value="${fn:length(wildcard.value)}"/>)
+          </c:forEach>
         </c:when>
       </c:choose>         
-      <c:forEach var="wildcard" items="${bagQueryResultEntry.value.wildcards}" varStatus="status">
-        <c:if test="${status.index != 0}">,</c:if>
-        <c:out value="${wildcard.key}"/> (<c:out value="${fn:length(wildcard.value)}"/>)
-      </c:forEach>
     </div>
   </c:if>
 
