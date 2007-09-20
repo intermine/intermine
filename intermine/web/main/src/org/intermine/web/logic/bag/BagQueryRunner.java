@@ -193,7 +193,7 @@ public class BagQueryRunner
                 for (ResultsRow row : (List<ResultsRow>) res) {
                     Integer id = (Integer) row.get(0);
                     for (int i = 1; i < row.size(); i++) {
-                        String field = (String) row.get(i);
+                        String field = "" + row.get(i);
                         if (field != null) {
                             String lowerField = field.toLowerCase();
                             for (String wildcard : wildcardInput) {

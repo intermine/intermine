@@ -33,6 +33,7 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryEvaluable;
@@ -157,8 +158,15 @@ public class BagQuery
         for (String string : bag) {
             String wildcardSql = string.replace('*', '%').toLowerCase();
             for (Map.Entry<QueryEvaluable, ConstraintSet> entry : nodes.entrySet()) {
-                entry.getValue().addConstraint(new SimpleConstraint(entry.getKey(),
-                            ConstraintOp.MATCHES, new QueryValue(wildcardSql)));
+                if (entry.getKey().getType().equals(String.class)) {
+                    entry.getValue().addConstraint(new SimpleConstraint(entry.getKey(),
+                                ConstraintOp.MATCHES, new QueryValue(wildcardSql)));
+                } else {
+                    entry.getValue().addConstraint(new SimpleConstraint(new QueryCast(
+                                    entry.getKey(), String.class), ConstraintOp.MATCHES,
+                                new QueryValue(wildcardSql)));
+
+                }
             }
         }
         return q;
