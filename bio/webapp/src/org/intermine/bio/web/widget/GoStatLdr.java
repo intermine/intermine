@@ -28,11 +28,13 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 import org.flymine.model.genomic.GOAnnotation;
 import org.flymine.model.genomic.GOTerm;
@@ -41,38 +43,25 @@ import org.flymine.model.genomic.Organism;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * calculates p-values of goterms
  * @author Julie Sullivan
  */
-public class GoStatDisplayerController extends TilesAction
+public class GoStatLdr implements EnrichmentWidgetLdr
 {
-
+    Query sampleQuery;
+    Query populationQuery;
+    Collection organisms;
+    int total;
+    
+    
     /**
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
      */
-     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                  @SuppressWarnings("unused") ActionForm form,
-                                  @SuppressWarnings("unused") HttpServletRequest request,
-                                  @SuppressWarnings("unused") HttpServletResponse response)
-     throws Exception {
+     public GoStatLdr (HttpServletRequest request) {
 
-         try {
              HttpSession session = request.getSession();
              Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
              ServletContext servletContext = session.getServletContext();
@@ -83,25 +72,19 @@ public class GoStatDisplayerController extends TilesAction
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-             
-             // TODO get these from request form
-             Double maxValue = new Double("0.10");
-
-             
-             // TODO get these from properties files
+     
              String namespace = (request.getParameter("ontology") != null
                                ? request.getParameter("ontology") : "biological_process");
              
-             // put in request for display on the .jsp page
-             request.setAttribute("bagName", bagName);
-             request.setAttribute("ontology", namespace);
+ 
+
              
              // list of ontologies to ignore
              Collection badOntologies = getOntologies(); 
 
              // build query constrained by bag
-             Query querySample = new Query();
-             querySample.setDistinct(false);
+             Query q = new Query();
+             q.setDistinct(false);
              QueryClass qcGene = new QueryClass(Gene.class);
              QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
              QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -116,29 +99,26 @@ public class GoStatDisplayerController extends TilesAction
 
              QueryFunction geneCount = new QueryFunction();
 
-             querySample.addFrom(qcGene);
-             querySample.addFrom(qcGoAnnotation);
-             querySample.addFrom(qcOrganism);
-             querySample.addFrom(qcGo);
+             q.addFrom(qcGene);
+             q.addFrom(qcGoAnnotation);
+             q.addFrom(qcOrganism);
+             q.addFrom(qcGo);
 
-             querySample.addToSelect(qfGoTermId);
-             querySample.addToSelect(geneCount);
-             querySample.addToSelect(qfGoTerm);
+             q.addToSelect(qfGoTermId);
+             q.addToSelect(geneCount);
+             q.addToSelect(qfGoTerm);
 
              ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-             if (bag != null) {
+         
                  // genes must be in bag
                  BagConstraint bc1 =
                      new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
                  cs.addConstraint(bc1);
-             } else {
-                 // always need a bag!
-                 throw new Exception("Need a bag to calculate gostats!  Bad user!");
-             }
+
 
              // get organisms
-             ArrayList organisms = (ArrayList) BioUtil.getOrganisms(os, bag);
+             organisms = BioUtil.getOrganisms(os, bag);
 
              // limit to organisms in the bag
              BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
@@ -175,22 +155,23 @@ public class GoStatDisplayerController extends TilesAction
                                                          ConstraintOp.EQUALS,
                                                          new QueryValue(namespace));
              cs.addConstraint(sc2);
-             querySample.setConstraint(cs);
-             querySample.addToGroupBy(qfGoTerm);
-             querySample.addToGroupBy(qfGoTermId);
+             q.setConstraint(cs);
+             q.addToGroupBy(qfGoTerm);
+             q.addToGroupBy(qfGoTermId);
 
+             sampleQuery = q;
 
              // construct population query
-             Query queryPopulation = new Query();
-             queryPopulation.setDistinct(false);
+             q = new Query();
+             q.setDistinct(false);
 
-             queryPopulation.addFrom(qcGene);
-             queryPopulation.addFrom(qcGoAnnotation);
-             queryPopulation.addFrom(qcOrganism);
-             queryPopulation.addFrom(qcGo);
+             q.addFrom(qcGene);
+             q.addFrom(qcGoAnnotation);
+             q.addFrom(qcOrganism);
+             q.addFrom(qcGo);
 
-             queryPopulation.addToSelect(qfGoTermId);
-             queryPopulation.addToSelect(geneCount);
+             q.addToSelect(qfGoTermId);
+             q.addToSelect(geneCount);
 
              cs = new ConstraintSet(ConstraintOp.AND);
              cs.addConstraint(cc1);
@@ -200,25 +181,12 @@ public class GoStatDisplayerController extends TilesAction
              cs.addConstraint(sc2);
              cs.addConstraint(bc2);
              cs.addConstraint(bc3);
-             queryPopulation.setConstraint(cs);
+             q.setConstraint(cs);
 
-             queryPopulation.addToGroupBy(qfGoTermId);
+             q.addToGroupBy(qfGoTermId);
              
-             // run both queries and compare the results 
-             ArrayList results = BioUtil.statsCalc(os, queryPopulation, querySample, bag, 
-                                       organisms, maxValue);
-             if (results.isEmpty()) {
-                 return null;
-             }
-             request.setAttribute("goStatPvalues", results.get(0));
-             request.setAttribute("goStatGeneTotals", results.get(1));
-             request.setAttribute("goStatGoTermToId", results.get(2));
-             request.setAttribute("goStatOrganisms", "All genes from:  " + organisms.toString());
-             return null;
-         } catch (Exception e) {
-             request.setAttribute("goStatOrganisms", "UNKNOWN");
-             return null;
-         }
+             populationQuery = q;
+
      }
 
         // adds 3 main ontologies to array.  these 3 will be excluded from the query
@@ -235,18 +203,39 @@ public class GoStatDisplayerController extends TilesAction
 
         }
 
+        /**
+         * @return the query representing the sample population (the bag)
+         */
+        public Query getSample() {
+            return sampleQuery;
+        }
+        
+        /**
+         * @return the query representing the entire population (all the items in the database)
+         */
+        public Query getPopulation() {
+            return populationQuery;
+        }
+
+        /**
+         * 
+         * @param os
+         * @param bag
+         * @return description of reference population, ie "Accounting dept"
+         */
+        public Collection getReferencePopulation() {
+            return organisms;
+        }
+        
+        /** 
+         * @param os     
+         * @return the query representing the sample population (the bag)
+         */
+        public int getTotal(ObjectStore os) {
+            return BioUtil.getGeneTotal(os, organisms);
+        }
+        
 }
 
 
 
-/**
- *
- * 1. query to get a list of go terms in the bag
- *  - total number of genes = N
- *  - total number of genes in bag = K
- * 2. loop through the terms and calc p value
- *  - number of genes with this go term = M
- *  - number of genes with this go term in bag = x
- * 3. calc the probability of this happening
- *
-*/

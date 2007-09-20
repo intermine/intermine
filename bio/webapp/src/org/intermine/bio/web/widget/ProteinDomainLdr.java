@@ -10,7 +10,7 @@ package org.intermine.bio.web.widget;
  *
  */
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import org.intermine.objectstore.query.BagConstraint;
@@ -27,11 +27,13 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
@@ -40,37 +42,25 @@ import org.flymine.model.genomic.ProteinFeature;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * @author Julie Sullivan
  */
-public class ProteinDomainDisplayerController extends TilesAction
+public class ProteinDomainLdr implements EnrichmentWidgetLdr
 {
 
+    Query sampleQuery;
+    Query populationQuery;
+    Collection organisms;
+    int total;
+    
     /**
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
      */
-     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                  @SuppressWarnings("unused") ActionForm form,
-                                  HttpServletRequest request,
-                                  @SuppressWarnings("unused") HttpServletResponse response)
-     throws Exception {
+     public ProteinDomainLdr(HttpServletRequest request) {
 
-         try {
+        
              HttpSession session = request.getSession();
              Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
              ServletContext servletContext = session.getServletContext();
@@ -81,27 +71,10 @@ public class ProteinDomainDisplayerController extends TilesAction
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-             
-             // TODO get these from request form
-             Double maxValue = new Double("0.10");
-             
-            
-             // put in request for display on the .jsp page
-             request.setAttribute("bagName", bagName);
-
-             
-/*             SELECT DISTINCT a1_, a3_ 
-             FROM org.flymine.model.genomic.Gene AS a1_, 
-             org.flymine.model.genomic.Protein AS a2_, 
-             org.flymine.model.genomic.ProteinFeature AS a3_ 
-             WHERE (LOWER(a1_.identifier) = 'cg4807' 
-                 AND a1_.proteins CONTAINS a2_ 
-                 AND a2_.proteinFeatures CONTAINS a3_) 
-             ORDER BY a1_.identifier, a3_.identifier, a3_.interproId, a3_.name, a3_.shortName*/
-             
+                          
              // build query constrained by bag
-             Query querySample = new Query();
-             querySample.setDistinct(false);
+             Query q = new Query();
+             q.setDistinct(false);
              QueryClass qcGene = new QueryClass(Gene.class);
              QueryClass qcProtein = new QueryClass(Protein.class);
              QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -116,29 +89,25 @@ public class ProteinDomainDisplayerController extends TilesAction
              
              QueryFunction geneCount = new QueryFunction();
 
-             querySample.addFrom(qcGene);
-             querySample.addFrom(qcProtein);
-             querySample.addFrom(qcOrganism);
-             querySample.addFrom(qcProteinFeature);
+             q.addFrom(qcGene);
+             q.addFrom(qcProtein);
+             q.addFrom(qcOrganism);
+             q.addFrom(qcProteinFeature);
 
-             querySample.addToSelect(qfId);
-             querySample.addToSelect(geneCount);
-             querySample.addToSelect(qfName);
+             q.addToSelect(qfId);
+             q.addToSelect(geneCount);
+             q.addToSelect(qfName);
 
              ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
 
-             if (bag != null) {
+         
                  // genes must be in bag
                  BagConstraint bc1 =
                      new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
                  cs1.addConstraint(bc1);
-             } else {
-                 // always need a bag!
-                 throw new Exception("Need a bag to calculate stats!  Bad user!");
-             }
 
              // get organisms
-             ArrayList organisms = (ArrayList) BioUtil.getOrganisms(os, bag);
+             organisms = BioUtil.getOrganisms(os, bag);
 
              // limit to organisms in the bag
              BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
@@ -169,21 +138,23 @@ public class ProteinDomainDisplayerController extends TilesAction
                  new SimpleConstraint(qfInterpro, ConstraintOp.MATCHES, new QueryValue("IPR%"));
              cs1.addConstraint(sc);
              
-             querySample.setConstraint(cs1);
-             querySample.addToGroupBy(qfId);
-             querySample.addToGroupBy(qfName);
+             q.setConstraint(cs1);
+             q.addToGroupBy(qfId);
+             q.addToGroupBy(qfName);
+             
+             sampleQuery = q;
              
              // construct population query
-             Query queryPopulation = new Query();
-             queryPopulation.setDistinct(false);
+             q = new Query();
+             q.setDistinct(false);
 
-             queryPopulation.addFrom(qcGene);
-             queryPopulation.addFrom(qcProtein);
-             queryPopulation.addFrom(qcOrganism);
-             queryPopulation.addFrom(qcProteinFeature);
+             q.addFrom(qcGene);
+             q.addFrom(qcProtein);
+             q.addFrom(qcOrganism);
+             q.addFrom(qcProteinFeature);
 
-             queryPopulation.addToSelect(qfId);
-             queryPopulation.addToSelect(geneCount);
+             q.addToSelect(qfId);
+             q.addToSelect(geneCount);
 
              ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
              cs2.addConstraint(cc1);
@@ -191,27 +162,43 @@ public class ProteinDomainDisplayerController extends TilesAction
              cs2.addConstraint(cc3);
              cs2.addConstraint(bc2);
              cs2.addConstraint(sc);
-             queryPopulation.setConstraint(cs2);
-
-             queryPopulation.addToGroupBy(qfId);
-             
-             // run both queries and compare the results 
-             ArrayList results = BioUtil.statsCalc(os, queryPopulation, querySample, bag, 
-                                       organisms, maxValue);
-             if (results.isEmpty()) {
-                 return null;
-             }
-             request.setAttribute("pvalues", results.get(0));
-             request.setAttribute("totals", results.get(1));
-             request.setAttribute("names", results.get(2));
-             request.setAttribute("organisms", "All genes from:  " + organisms.toString());
-             return null;
-         } catch (Exception e) {
-             request.setAttribute("organisms", "UNKNOWN");
-             return null;
-         }
+             q.setConstraint(cs2);
+             q.addToGroupBy(qfId);
+             populationQuery = q;
      }
 
+         /**
+          * @return the query representing the sample population (the bag)
+          */
+         public Query getSample() {
+             return sampleQuery;
+         }
+         
+         /**
+          * @return the query representing the entire population (all the items in the database)
+          */
+         public Query getPopulation() {
+             return populationQuery;
+         }
+
+         /**
+          * 
+          * @param os
+          * @param bag
+          * @return description of reference population, ie "Accounting dept"
+          */
+         public Collection getReferencePopulation() {
+             return organisms;
+         }
+         
+         /** 
+          * @param os     
+          * @return the query representing the sample population (the bag)
+          */
+         public int getTotal(ObjectStore os) {
+             return BioUtil.getGeneTotal(os, organisms);
+         }
+         
 }
 
 

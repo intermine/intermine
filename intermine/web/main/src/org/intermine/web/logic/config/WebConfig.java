@@ -98,6 +98,12 @@ public class WebConfig
         digester.addSetNext("webconfig/class/bagdisplayers/bagtabledisplayer",
                             "addBagTableDisplayer");
         
+        digester.addObjectCreate("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer",
+                                 EnrichmentWidgetDisplayer.class);
+        digester.addSetProperties("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer");
+        digester.addSetNext("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer",
+                            "addEnrichmentWidgetDisplayer");
+        
         digester.addSetNext("webconfig/class", "addType");
         
         digester.addObjectCreate("webconfig/tableExportConfig", TableExportConfig.class);
