@@ -93,15 +93,15 @@
 
   <target name="generate-tour" depends="prepare" 
           description="Generate html for tour and copy images to build directory">
-     <mkdir dir="${dist.www}/tour"/>
+     <mkdir dir="${dist.www}/help/tour"/>
 
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/tour/tour.txt"/>
        <arg value="FlyMine Tour"/>
-       <arg value="${dist.www}/tour/"/>
+       <arg value="${dist.www}/help/tour/"/>
      </exec>
 
-     <copy todir="${dist.www}/tour">
+     <copy todir="${dist.www}/help/tour">
        <fileset dir="${src.www}/tour">
          <include name="*.png"/>
          <include name="*.gif"/>
