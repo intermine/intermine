@@ -162,11 +162,11 @@ public class BagDetailsController extends TilesAction
                             /* stacked bar chart */
                             if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
                                 setStackedBarGraph(session, graphDisplayer, graphDataSet, 
-                                                   graphDisplayerArray, bagName);
+                                                   graphDisplayerArray, imBag);
                             /* regular bar chart */
                             } else {
-                                setBarGraph(session, graphDisplayer, graphDataSet, 
-                                            graphDisplayerArray, bagName, key);
+                                setBarGraph(os, session, graphDisplayer, graphDataSet, 
+                                            graphDisplayerArray, imBag, key);
                             } 
                         }
                     }
@@ -235,11 +235,12 @@ public class BagDetailsController extends TilesAction
     }
 
 
-    private void setBarGraph(HttpSession session, 
+    private void setBarGraph(ObjectStore os,
+                             HttpSession session, 
                              GraphDisplayer graphDisplayer, 
                              GraphDataSet graphDataSet,                          
                              ArrayList<String[]> graphDisplayerArray,
-                             String bagName,
+                             InterMineBag bag,
                              String subtitle) {
         JFreeChart chart = null;
         CategoryPlot plot = null;
@@ -273,12 +274,12 @@ public class BagDetailsController extends TilesAction
             Class clazz2 = TypeUtil.instantiate(graphDisplayer.getUrlGen());                    
             Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
                                                                             {
-                String.class
+                Model.class, InterMineBag.class
                                                                             });
             categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
             .newInstance(new Object[]
                                     {
-                bagName
+                os.getModel(), bag
                                     });
             
         } catch (Exception err) {
@@ -294,7 +295,7 @@ public class BagDetailsController extends TilesAction
                        
         bagGraphWidget = new BagGraphWidget(session, 
                          graphDataSet.getCategoryArray(),
-                         bagName,
+                         bag.getName(),
                          graphDisplayer.getToolTipGen(),
                          null,
                          chart,
@@ -310,7 +311,7 @@ public class BagDetailsController extends TilesAction
                                     GraphDisplayer graphDisplayer, 
                                     GraphDataSet graphDataSet,                                  
                                     ArrayList<String[]> graphDisplayerArray,
-                                    String bagName) {
+                                    InterMineBag bag) {
         
         JFreeChart chart = null;
         CategoryPlot plot = null;
@@ -330,7 +331,7 @@ public class BagDetailsController extends TilesAction
         StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
         bagGraphWidget = new BagGraphWidget(session,
                          graphDataSet.getCategoryArray(),
-                         bagName, 
+                         bag.getName(), 
                          graphDisplayer.getToolTipGen(),
                          graphDisplayer.getUrlGen(), 
                          chart,

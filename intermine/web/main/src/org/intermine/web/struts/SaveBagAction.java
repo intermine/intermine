@@ -159,7 +159,7 @@ public class SaveBagAction extends InterMineAction
             // Second pass through, to actually copy the data.
             for (int i = 0; i < crf.getSelectedObjects().length; i++) {
                 String selectedObjectString = crf.getSelectedObjects()[i];
-                LOG.error("SelectedObjectString: " + selectedObjectString);
+                
                 int indexOfFirstComma = selectedObjectString.indexOf(',');
                 String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
                 int columnIndex = Integer.parseInt(columnIndexString);
@@ -167,7 +167,7 @@ public class SaveBagAction extends InterMineAction
                 int indexOfLastComma = selectedObjectString.lastIndexOf(',');
                 if (indexOfFirstComma == indexOfLastComma) {
                     // there's just one comma eg. "1,Gene", so save the whole column
-                    LOG.error("Column index: " + columnIndex);
+                
                     if (allRows instanceof WebResults) {
                         Query q = QueryCloner.cloneQuery(((WebResults) allRows)
                                 .getInterMineResults().getQuery());
@@ -178,9 +178,9 @@ public class SaveBagAction extends InterMineAction
                         }
                         q.clearSelect();
                         q.addToSelect(qs);
-                        LOG.error("Creating bag from query: " + q);
+                
                         osw.addToBagFromQuery(bag.getOsb(), q);
-                        LOG.error("Created bag from query: " + q);
+                
                     } else {
                         if (allRows instanceof WebPathCollection) {
                             List allRowsList = ((WebPathCollection) allRows).getList();

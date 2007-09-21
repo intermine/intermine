@@ -87,9 +87,6 @@ public class PollQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.pollquery.cancelled", qid), request);
             return mapping.findForward("cancelled");
         } else if (controller.isCompleted()) {
-
-
-            LOG.debug("query qid " + qid + " complete");
             // Look at results, if only one result, go straight to object details page
             PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
             if (followSingleResult) {
