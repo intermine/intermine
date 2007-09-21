@@ -22,7 +22,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -139,6 +138,8 @@ public class ChadoDBConverter extends BioDBConverter
             String residues = res.getString("residues");
             int seqlen = res.getInt("seqlen");
             Item feature = makeFeature(featureId, name, uniqueName, type, residues, seqlen);
+            feature.setReference("organism", organismItem);
+            feature.addToCollection("evidence", dataSet);
             store(feature);
             features.put(featureId, feature.getIdentifier());
         }
