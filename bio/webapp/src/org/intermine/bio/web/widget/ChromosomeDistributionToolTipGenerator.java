@@ -25,7 +25,7 @@ public class ChromosomeDistributionToolTipGenerator implements CategoryToolTipGe
     Object [] geneMap;
     
     /**
-     * Constructs a FlyaAtlasToolTipGenerator
+     * Constructs a ToolTipGenerator
      * @param geneMap the map of genes
      */
     public ChromosomeDistributionToolTipGenerator(Object[] geneMap) {
