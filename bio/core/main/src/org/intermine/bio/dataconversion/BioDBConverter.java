@@ -27,36 +27,18 @@ import org.intermine.xml.full.Item;
 public abstract class BioDBConverter extends DBConverter
 {
     private Map<String, Item> chromosomes = new HashMap<String, Item>();
-    private Item organism;
-    
-    // the DataSet Item for the evidence collection of the new Location
-    private final Item dataSet;
-    // the DataSource for the Synonym objects
-    private final Item dataSource;
+    private Map<String, Item> organisms = new HashMap<String, Item>();
+    private Map<String, Item> dataSets = new HashMap<String, Item>();
+    private Map<String, Item> dataSources = new HashMap<String, Item>();
 
     /**
      * Create a new BioDBConverter object.
      * @param database the database to read from
      * @param tgtModel the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle the resultant Items
-     * @param taxonId organism taxon id to use to create the Organism object for BioEntitys
-     * @param dataSetTitle the title attribute to user when creating the DataSet item
-     * @param dataSourceName the name for the DataSource for this conversion
-     * @throws ObjectStoreException thrown if ItemWriter.store() fails
      */
-    public BioDBConverter(Database database, Model tgtModel, ItemWriter writer, int taxonId,
-                          String dataSetTitle, String dataSourceName) 
-        throws ObjectStoreException {
+    public BioDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
-        dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", dataSourceName);
-        store(dataSource);
-        organism = createItem("Organism");
-        organism.setAttribute("taxonId", String.valueOf(taxonId));
-        store(organism);
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", dataSetTitle);
-        store(dataSet);
     }
 
     /**
@@ -66,12 +48,15 @@ public abstract class BioDBConverter extends DBConverter
      * @param start the start position
      * @param end the end position
      * @param strand the strand
+     * @param taxonId the taxon id to use when finding the Chromosome for the Location
+     * @param dataSet the DataSet to put in the evidence collection of the new Location
      * @return the new Location object
      * @throws ObjectStoreException if an Item can't be stored
      */
     protected Item makeLocation(String chromosomeIdentifier, Item locatedSequenceFeature,
-                                int start, int end, int strand) throws ObjectStoreException {
-        Item chromosome = getChromosome(chromosomeIdentifier);
+                                int start, int end, int strand, int taxonId, Item dataSet)
+        throws ObjectStoreException {
+        Item chromosome = getChromosome(chromosomeIdentifier, taxonId);
         Item location = createItem("Location");
         
         if (start < end) {
@@ -93,24 +78,68 @@ public abstract class BioDBConverter extends DBConverter
      * The Organism item created from the taxon id passed to the constructor.  
      * @return the Organism Item
      */
-    public Item getOrganism() {
+    public Item getOrganismItem(int taxonId) {
+        String taxonString = String.valueOf(taxonId);
+        Item organism = organisms.get(taxonString); 
+        if (organism == null) {
+            organism = createItem("Organism");
+            organism.setAttribute("taxonId", taxonString);
+            try {
+                store(organism);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
+            }
+            organisms.put(taxonString, organism);
+        }
         return organism;
     }
     
     /**
-     * The DataSet item created from the dataset title passed to the constructor.  
+     * Return a DataSet item for the given title
+     * @param name the DataSet name
      * @return the DataSet Item
      */
-    public Item getDataSet() {
+    public Item getDataSourceItem(String name) {
+        Item dataSource = dataSources.get(name);
+        if (dataSource == null) {
+            dataSource = createItem("DataSource");
+            dataSource.setAttribute("name", name);
+            try {
+                store(dataSource);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("failed to store DataSource with name: " + name, e);
+            }
+            dataSources.put(name, dataSource);
+        }
+        return dataSource;
+    }
+    
+    /**
+     * Return a DataSource item for the given name
+     * @param title the DataSet title
+     * @return the DataSet Item
+     */
+    public Item getDataSetItem(String title) {
+        Item dataSet = dataSets.get(title);
+        if (dataSet == null) {
+            dataSet = createItem("DataSet");
+            dataSet.setAttribute("title", title);
+            try {
+                store(dataSet);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("failed to store DataSet with title: " + title, e);
+            }
+            dataSets.put(title, dataSet);
+        }
         return dataSet;
     }
 
-    private Item getChromosome(String identifier) throws ObjectStoreException {
+    private Item getChromosome(String identifier, int taxonId) throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
             chromosome = createItem("Chromosome");
             chromosome.setAttribute("identifier", identifier);
-            chromosome.setReference("organism", getOrganism());
+            chromosome.setReference("organism", getOrganismItem(taxonId));
             chromosomes.put(identifier, chromosome);
             store(chromosome);
         }
@@ -123,10 +152,11 @@ public abstract class BioDBConverter extends DBConverter
      * @param type the Synonym type
      * @param value the Synonym value
      * @param evidence the Synonym evidence (eg. a DataSet)
+     * @param dataSource the source of this synonym
      * @return the new Synonym
      */
     public Item createSynonym(Item subject, String type, String value, boolean isPrimary,
-                              Item evidence) {
+                              Item evidence, Item dataSource) {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
