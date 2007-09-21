@@ -61,14 +61,12 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
      */
     public Query getQuery() {
 
-
         Query q = new Query();
         q.setDistinct(true);
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
         QueryClass qcProteinFeature = new QueryClass(ProteinFeature.class);
-
 
         QueryField qfGeneId = new QueryField(qcGene, "id");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
@@ -81,15 +79,11 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
 
         q.addToSelect(qcGene);
 
-
         ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
 
-
         // genes must be in bag
-        BagConstraint bc1 =
-            new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+        BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
         cs1.addConstraint(bc1);
-
 
         // get organisms
         ArrayList organisms = (ArrayList) BioUtil.getOrganisms(os, bag);
@@ -104,13 +98,11 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
         = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
         cs1.addConstraint(cc1);
 
-
         // gene.Proteins CONTAINS protein
         QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "proteins");
         ContainsConstraint cc2 =
             new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcProtein);
         cs1.addConstraint(cc2);
-
 
         // protein.ProteinFeatures CONTAINS proteinFeature
         QueryCollectionReference qr3 
