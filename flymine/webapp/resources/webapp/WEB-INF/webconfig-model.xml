@@ -103,13 +103,12 @@
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
-        <bagdisplayers>
-    
+    <bagdisplayers>
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
       toolTipGen="org.intermine.bio.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
-      description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome." graphType="BarChart"
-      groupBy="organism" />
-      </bagdisplayers>
+      description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome." 
+      graphType="BarChart"/>
+    </bagdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Exon">
@@ -158,6 +157,11 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
+
+      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
+      toolTipGen="org.intermine.bio.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+      description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome." 
+      graphType="BarChart"/>
 
   	  <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
       toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
