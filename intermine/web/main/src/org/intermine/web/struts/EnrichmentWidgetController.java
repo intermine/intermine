@@ -83,6 +83,7 @@ public class EnrichmentWidgetController extends TilesAction
              String title = request.getParameter("title");
              String controller = request.getParameter("controller");
              String description = request.getParameter("description");
+             String link = request.getParameter("link");
              
              Class clazz = TypeUtil.instantiate(controller);
              Constructor constr = clazz.getConstructor(new Class[]
@@ -107,6 +108,7 @@ public class EnrichmentWidgetController extends TilesAction
              request.setAttribute("pvalues", results.get(0));
              request.setAttribute("totals", results.get(1));
              request.setAttribute("labelToId", results.get(2));
+             request.setAttribute("link", link);
              request.setAttribute("referencePopulation", "All genes from:  " 
                                   + ldr.getReferencePopulation().toString());
                           

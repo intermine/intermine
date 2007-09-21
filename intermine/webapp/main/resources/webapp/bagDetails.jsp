@@ -296,7 +296,6 @@
     </div>
   </c:if>
 
-[${enrichmentDisplayerArray}]
       <c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
 
         <c:choose>
@@ -309,7 +308,7 @@
         </c:choose>
 
     <%-- go stats --%>
- 	<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
+ 	<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&link=${enrichmentWidgetResults.link}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
  	
  	
  	    <c:choose>
