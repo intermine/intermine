@@ -11,12 +11,3 @@
   <definition name="orthologueDisplayer.tile" path="/model/orthologueDisplayer.jsp" 
   	controllerUrl="/initOrthologueDisplayer.do"/>
   	
-  <definition name="goStatDisplayer.tile" path="/model/goStatDisplayer.jsp" 
-  	controllerUrl="/initGoStatDisplayer.do"/>
-
-  <definition name="proteinDomainDisplayer.tile" path="/model/proteinDomainDisplayer.jsp" 
-  	controllerUrl="/initProteinDomainDisplayer.do"/>
-
-  <definition name="publicationDisplayer.tile" path="/model/publicationDisplayer.jsp" 
-  	controllerUrl="/initPublicationDisplayer.do"/>
-  	

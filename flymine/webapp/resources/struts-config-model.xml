@@ -25,37 +25,6 @@
       <forward name="details" path="/objectDetails.do" redirect="true"/>
     </action>
     
-	<action path="/initGoStatDisplayer" 
-		type="org.flymine.web.GoStatDisplayerController" />
-    
-    <action path="/goStatDisplayer" 
-		forward="goStatDisplayer.tile" />
-    
-    <action path="/goStatAction"
-            type="org.flymine.web.GoStatAction">
-      <forward name="results" path="/results.do" redirect="true"/>    
-    </action>
-    
-    <action path="/initProteinDomainDisplayer" 
-		type="org.flymine.web.ProteinDomainDisplayerController" />
-    
-    <action path="/proteinDomainDisplayer" 
-		forward="proteinDomainDisplayer.tile" />
-    
-    <action path="/proteinDomainAction"
-            type="org.flymine.web.ProteinDomainAction">
-      <forward name="results" path="/results.do" redirect="true"/>    
-    </action>
-    
-    <action path="/initPublicationDisplayer" 
-		type="org.flymine.web.PublicationDisplayerController" />
-    
-    <action path="/publicationDisplayer" 
-		forward="publicationDisplayer.tile" />
-    
-    <action path="/publicationAction"
-            type="org.flymine.web.PublicationAction">
-      <forward name="results" path="/results.do" redirect="true"/>    
-    </action>
+
     
     

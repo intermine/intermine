@@ -75,10 +75,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
      
              String namespace = (request.getParameter("ontology") != null
                                ? request.getParameter("ontology") : "biological_process");
-             
- 
-
-             
+                          
              // list of ontologies to ignore
              Collection badOntologies = getOntologies(); 
 

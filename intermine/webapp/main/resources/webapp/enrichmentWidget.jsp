@@ -92,7 +92,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
     				    </c:choose>
   					</td>
   					<td align="left" nowrap>
-  		   				<html:link action="/widgetAction?key=${results.key}&bag=${bagName}" target="_top">
+  		   				<html:link action="/widgetAction?key=${results.key}&bag=${bagName}&link=${link}" target="_top">
   		   					[<c:out value='${totals[results.key]}'/> genes]
        					</html:link>  	
 	       			</td>

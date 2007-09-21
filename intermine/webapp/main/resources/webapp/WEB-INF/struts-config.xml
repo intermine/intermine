@@ -260,6 +260,9 @@
     <action path="/feedbackAction" name="feedbackForm" type="org.intermine.web.struts.FeedbackAction" scope="request" input="feedback">
       <forward name="feedback" path="feedback.page"/>
     </action>
+    <action path="/widgetAction" type="org.intermine.web.struts.EnrichmentWidgetAction">
+      <forward name="results" redirect="true" path="/results.do"/>
+    </action>
     <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="history" redirect="true" path="/mymine.do"/>

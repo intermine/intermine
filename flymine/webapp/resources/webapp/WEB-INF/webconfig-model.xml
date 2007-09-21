@@ -103,6 +103,13 @@
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
+        <bagdisplayers>
+    
+      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
+      toolTipGen="org.intermine.bio.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+      description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome." graphType="BarChart"
+      groupBy="organism" />
+      </bagdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Exon">
@@ -151,12 +158,7 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
-    
-      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
-      toolTipGen="org.intermine.bio.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
-      description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome." graphType="BarChart"
-      groupBy="organism" />
-          
+
   	  <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr"
       toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator"
       description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."  
@@ -165,9 +167,9 @@
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways"
       description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
       
-      <enrichmentwidgetdisplayer title="Gene Ontology Enrichment" link="org.intermine.bio.web.widget.GoStatAction" controller="org.intermine.bio.web.widget.GoStatLdr" description="Go terms enriched for genes in this list.  " />
-      <enrichmentwidgetdisplayer title="Protein Domain Enrichment" link="org.intermine.bio.web.widget.ProteinDomainAction" controller="org.intermine.bio.web.widget.ProteinDomainLdr" description="Protein Domains enriched for genes in this list.  " />
-      <enrichmentwidgetdisplayer title="Publication Enrichment" link="org.intermine.bio.web.widget.PublicationAction" controller="org.intermine.bio.web.widget.PublicationLdr" description="Publications enriched for genes in this list.  " />
+      <enrichmentwidgetdisplayer title="Gene Ontology Enrichment" link="org.intermine.bio.web.widget.GoStatURLQuery" controller="org.intermine.bio.web.widget.GoStatLdr" description="Go terms enriched for genes in this list.  " />
+      <enrichmentwidgetdisplayer title="Protein Domain Enrichment" link="org.intermine.bio.web.widget.ProteinDomainURLQuery" controller="org.intermine.bio.web.widget.ProteinDomainLdr" description="Protein Domains enriched for genes in this list.  " />
+      <enrichmentwidgetdisplayer title="Publication Enrichment" link="org.intermine.bio.web.widget.PublicationURLQuery" controller="org.intermine.bio.web.widget.PublicationLdr" description="Publications enriched for genes in this list.  " />
    
     </bagdisplayers>
   </class>
@@ -182,12 +184,6 @@
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
     </longdisplayers>
-    <bagdisplayers>    
-      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Feature Count" dataSetLoader="org.flymine.web.widget.ChromosomeDistributionDataSetLdr"
-      toolTipGen="org.flymine.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.flymine.web.widget.ChromosomeDistributionGraphURLGenerator"
-      description="Actual: number of features in this list found on each chromosome.  Expected: given the total number of features on the chromosome and the number of features in this list, the number of features expected to be found on each chromosome." graphType="BarChart"
-      groupBy="organism" />
-    </bagdisplayers>   
   </class>
 
   <class className="org.flymine.model.genomic.DefinedRegion">
