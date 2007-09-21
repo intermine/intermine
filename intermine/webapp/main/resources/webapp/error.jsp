@@ -11,7 +11,7 @@
 
 <c:set var="msg" value="I found this error on ${pageContext.request.requestURL}.%0D%0A%0D%0A---- Error Found ----%0D%0A%0D%0A${stacktrace}"/>
 <c:set var="subject" value="Error found on ${WEB_PROPERTIES['project.title']} website"/>
-<c:set var="rec" value="${WEB_PROPERTIES['project.contact']}"/>
+<c:set var="rec" value="${WEB_PROPERTIES['mail.from']}"/>
 <div id="generic_error">
   <div id="errorApology">
     <p>
