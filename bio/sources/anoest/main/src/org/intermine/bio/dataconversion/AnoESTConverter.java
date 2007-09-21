@@ -46,7 +46,7 @@ public class AnoESTConverter extends BioDBConverter
      */
     public AnoESTConverter(Database database, Model tgtModel, ItemWriter writer)
         throws ObjectStoreException {
-        super(database, tgtModel, writer, ANOPHELES_TAXON_ID, DATASET_TITLE, DATA_SOURCE_NAME);
+        super(database, tgtModel, writer);
     }
 
     /**
@@ -78,15 +78,18 @@ public class AnoESTConverter extends BioDBConverter
             
             Item cluster = createItem("ESTCluster");
             cluster.setAttribute("identifier", identifier);
-            Item accSynonym = createSynonym(cluster, "identifier", identifier, true, getDataSet());
+            Item dataSet = getDataSetItem(DATASET_TITLE);
+            Item accSynonym = createSynonym(cluster, "identifier", identifier, true,
+                                            dataSet, getDataSourceItem(DATA_SOURCE_NAME));
             getItemWriter().store(ItemHelper.convert(accSynonym));
             cluster.setAttribute("curated", "false");
-            cluster.setReference("organism", getOrganism());
-            cluster.addToCollection("evidence", getDataSet());
+            cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
+            cluster.addToCollection("evidence", dataSet);
 
             // some clusters have no location
             if (chromosomeIdentifier != null && start > 0 && end > 0) {
-                makeLocation(chromosomeIdentifier, cluster, start, end, strand);
+                makeLocation(chromosomeIdentifier, cluster, start, end, strand, ANOPHELES_TAXON_ID,
+                             dataSet);
             }
             getItemWriter().store(ItemHelper.convert(cluster));
             
@@ -95,7 +98,7 @@ public class AnoESTConverter extends BioDBConverter
     }
 
     /**
-     * This is a method so that it can be overriden for testing
+     * This is a protected method so that it can be overriden for testing
      */
     protected ResultSet getClusterResultSet(Connection connection) throws SQLException {
         Statement stmt = connection.createStatement();
@@ -119,12 +122,15 @@ public class AnoESTConverter extends BioDBConverter
                 est = createItem("EST");
                 ests.put(accession, est);
                 est.setAttribute("identifier", accession);
-                Item accSynonym = createSynonym(est, "identifier", accession, true, getDataSet());
+                Item dataSet = getDataSetItem(DATASET_TITLE);
+                Item accSynonym = createSynonym(est, "identifier", accession, true, dataSet,
+                                                getDataSourceItem(DATA_SOURCE_NAME));
                 getItemWriter().store(ItemHelper.convert(accSynonym));
                 est.setAttribute("curated", "false");
-                est.setReference("organism", getOrganism());
-                est.addToCollection("evidence", getDataSet());
-                Item cloneSynonym = createSynonym(est, "identifier", cloneId, false, getDataSet());
+                est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
+                est.addToCollection("evidence", dataSet);
+                Item cloneSynonym = createSynonym(est, "identifier", cloneId, false, dataSet,
+                                                  getDataSourceItem(DATA_SOURCE_NAME));
                 getItemWriter().store(ItemHelper.convert(cloneSynonym));
                 Item cluster = clusters.get(clusterId);
                 if (cluster != null) {
@@ -136,7 +142,7 @@ public class AnoESTConverter extends BioDBConverter
     }
 
     /**
-     * This is a method so that it can be overriden for testing
+     * This is a protected method so that it can be overriden for testing
      */
     protected ResultSet getEstResultSet(Connection connection) throws SQLException {
         Statement stmt = connection.createStatement();
