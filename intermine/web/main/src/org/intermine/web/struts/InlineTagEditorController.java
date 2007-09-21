@@ -79,8 +79,6 @@ public class InlineTagEditorController extends TilesAction
             uid = ((InterMineBag) taggable).getName();
         }
         
-        LOG.info("taggable uid " + uid + " and type " + type);
-        
         request.setAttribute("uid", uid);
         request.setAttribute("type", type);
         request.setAttribute("currentTags", pm.getTags(null, uid, type, profile.getUsername()));

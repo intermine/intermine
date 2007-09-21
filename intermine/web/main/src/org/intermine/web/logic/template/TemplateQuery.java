@@ -316,7 +316,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
                 possibleValues.put(node.getPathString(), values);
             }
         }
-        LOG.error("New summary: " + possibleValues);
         // Now write the summary to the user profile database.
         try {
             osw.beginTransaction();
