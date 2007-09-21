@@ -615,9 +615,9 @@
   </class>
 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
-                     className="org.flymine.web.SequenceExporter"/>
+                     className="org.intermine.bio.web.export.SequenceExporter"/>
   <tableExportConfig id="gff3Exporter" actionPath="/exportAction?type=gff3Exporter"
-                     className="org.flymine.web.GFF3Exporter"/>
+                     className="org.intermine.bio.web.export.GFF3Exporter"/>
   <tableExportConfig id="proteinInteractionExporter" actionPath="/exportAction?type=proteinInteractionExporter"
                      className="org.intermine.bio.web.ProteinInteractionExporter"/>
 </webconfig>
