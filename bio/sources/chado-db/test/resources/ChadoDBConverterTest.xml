@@ -1,0 +1,83 @@
+<items>
+  <item id="4_4" class="http://www.flymine.org/model/genomic#Exon">
+    <attribute name="identifier" value="CG10000:4"/>
+    <attribute name="organismDbId" value="CG10000:4"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="4.5SRNA"/>
+    <attribute name="organismDbId" value="FBgn0000001"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="4_2" class="http://www.flymine.org/model/genomic#Exon">
+    <attribute name="identifier" value="CG10000:2"/>
+    <attribute name="organismDbId" value="CG10000:2"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
+    <attribute name="name" value="test name"/>
+  </item>
+  <item id="4_1" class="http://www.flymine.org/model/genomic#Exon">
+    <attribute name="identifier" value="CG10000:1"/>
+    <attribute name="organismDbId" value="CG10000:1"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="CG10006"/>
+    <attribute name="organismDbId" value="FBgn0036461"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
+    <attribute name="title" value="test title"/>
+  </item>
+  <item id="4_3" class="http://www.flymine.org/model/genomic#Exon">
+    <attribute name="identifier" value="CG10000:3"/>
+    <attribute name="organismDbId" value="CG10000:3"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="3_4" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="CG10000"/>
+    <attribute name="organismDbId" value="FBgn0039596"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="3_3" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="identifier" value="CG10005"/>
+    <attribute name="organismDbId" value="FBgn0037972"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="4_5" class="http://www.flymine.org/model/genomic#Exon">
+    <attribute name="identifier" value="CG10000:5"/>
+    <attribute name="organismDbId" value="CG10000:5"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+</items>

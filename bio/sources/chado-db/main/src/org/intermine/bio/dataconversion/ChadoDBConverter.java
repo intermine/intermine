@@ -122,21 +122,41 @@ public class ChadoDBConverter extends BioDBConverter
         }
         
         makeFeatureItems(connection);
+        makeRelationItems(connection);
+        makeSynonymItems(connection);
+    }
+
+    /**
+     * @param connection
+     */
+    private void makeSynonymItems(Connection connection) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @param connection
+     */
+    private void makeRelationItems(Connection connection) {
+        // TODO Auto-generated method stub
+        
     }
 
     private void makeFeatureItems(Connection connection) throws SQLException, ObjectStoreException {
         Item dataSet = getDataSetItem(dataSetTitle);
         Item dataSource = getDataSourceItem(dataSourceName);
-        Item organismItem = getOrganismItem(taxonId);
-        int chadoOrganismId = getChadoOrganismId(connection, genus, species);
-        ResultSet res = getFeatureResultSet(connection, chadoOrganismId);
+        Item organismItem = getOrganismItem(taxonId);        
+        ResultSet res = getFeatureResultSet(connection);
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             String name = res.getString("name");
             String uniqueName = res.getString("uniquename");
             String type = res.getString("type");
             String residues = res.getString("residues");
-            int seqlen = res.getInt("seqlen");
+            int seqlen = 0;
+            if (res.getObject("seqlen") != null) {
+                seqlen = res.getInt("seqlen");
+            }
             Item feature = makeFeature(featureId, name, uniqueName, type, residues, seqlen);
             feature.setReference("organism", organismItem);
             feature.addToCollection("evidence", dataSet);
@@ -179,19 +199,31 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
+     * Return the interesting rows from the features table. 
      * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
      */
-    protected ResultSet getFeatureResultSet(Connection connection, int chadoOrganismId)
+    protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
+        int chadoOrganismId = getChadoOrganismId(connection, genus, species);
         String query = "select feature_id, name, uniquename, type, residues, seqlen from f_type "
-            + "where type in (" + featureTypesString + ")";
+            + "where type in (" + featureTypesString + ") and organism_id = " + chadoOrganismId;
         Statement stmt = connection.createStatement();
         
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
 
-    protected int getChadoOrganismId(Connection connection, String genus, String species)
+    /**
+     * Return the chado organism id for the given genus/species.  This is a protected method so
+     * that it can be overriden for testing
+     * @param connection the db connection
+     * @param genus the genus
+     * @param species the species
+     * @return the internal id (organism_id from the organism table)
+     * @throws SQLException if the is a database problem
+     */
+    private int getChadoOrganismId(Connection connection, String genus, String species)
         throws SQLException {
         String query = "select organism_id from organism where genus = " 
             + DatabaseUtil.objectToString(genus) + " and species = "
