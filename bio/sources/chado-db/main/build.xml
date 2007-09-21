@@ -1,4 +1,4 @@
-<project name="anoest-tasks" default="default" basedir=".">
-  <description>build anoest tasks</description>
+<project name="chado-db-main" default="default" basedir=".">
+  <description>build chado-db code</description>
   <import file="../../../../imbuild/library.xml"/> 
 </project>
