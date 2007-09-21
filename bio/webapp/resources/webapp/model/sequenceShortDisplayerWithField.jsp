@@ -14,8 +14,8 @@
   <c:otherwise>
     <im:value>${outVal}</im:value>
     <c:if test="${!empty interMineObject.sequence}">
-      <html:link action="sequenceExporter?object=${interMineObject.id}">
-        <html:img styleClass="fasta" src="model/fasta.gif"/>
+      <html:link action="sequenceExporter?object=${interMineObject.id}" target="_new">
+        <html:img styleClass="fasta" src="model/images/fasta.gif" title="FASTA" />
       </html:link>
     </c:if>
   </c:otherwise>

@@ -7,7 +7,7 @@
 <!-- flymineQuickStart.jsp -->
 <html:xhtml/>
 
-<img src="model/quickStart.png" class="aspectPageIcon" align="left"/>
+<img src="model/images/quickStart.png" class="aspectPageIcon" align="left"/>
 <div class="body aspectIntro">
   Welcome to the FlyMine quick start guide.  This page exists to give you an
   overview of what is possible using the FlyMine system.  More detail is

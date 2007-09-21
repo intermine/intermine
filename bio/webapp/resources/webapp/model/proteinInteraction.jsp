@@ -15,17 +15,17 @@
       <div class="body">
         <P><B>High-throughput 2-hybrid protein interaction datasets.</B></P>
         <P>
-          These datasets were downloaded in <A href="http://psidev.sourceforge.net/mi/xml/doc/user">PSI-MI format</A> from the <A href="http://www.ebi.ac.uk/intact/index.html">intAct</A> database:
+          These datasets were downloaded in <A href="http://psidev.sourceforge.net/mi/xml/doc/user" target="_new">PSI-MI format</A> from the <A href="http://www.ebi.ac.uk/intact/index.html" target="_new">intAct</A> database:
        </P>
        <P><B><I>D. melanogaster</I></B></P>
        <DL>
-         <DT>Giot et al (2003) Science 302 1727-1736 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14605208">PubMed: 14605208</A>).
+         <DT>Giot et al (2003) Science 302 1727-1736 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14605208" target="_new">PubMed: 14605208</A>).
          </DT>
          <DD>
            High throughput Gal4-based two-hybrid interaction data set.<BR>
            7048 proteins and 20,405 interactions.<BR>
          </DD>
-         <DT>Stanyon et al (2004) Genome Biology 5: R96 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15575970">PubMed: 15575970</A>).
+         <DT>Stanyon et al (2004) Genome Biology 5: R96 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15575970" target="_new">PubMed: 15575970</A>).
          </DT>
          <DD>
            High-throughput LexA-based two-hybrid system.<BR>  
@@ -33,7 +33,7 @@
            1,814 reproducible interactions among 488 proteins.<BR>
            28 interactions in common between this screen and the Giot et al screen described above.<BR>
          </DD>
-         <DT>Formstecher E. et al (2005) Genome Research 15 (3): 376-84.   (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15710747">PubMed: 15710747</A>).
+         <DT>Formstecher E. et al (2005) Genome Research 15 (3): 376-84.   (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15710747" target="_new">PubMed: 15710747</A>).
          </DT>
          <DD>
 High-throughput yeast two-hybrid dataset.<BR>

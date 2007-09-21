@@ -3,7 +3,7 @@
 
 <!-- sequenceShortDisplayer.jsp -->
 <html:xhtml/>
-<html:link action="sequenceExporter?object=${object.id}">
-  <html:img styleClass="fasta" src="model/fasta.gif"/>
+<html:link action="sequenceExporter?object=${object.id}" target="_new">
+  <html:img styleClass="fasta" src="model/images/fasta.gif" title="FASTA" />
 </html:link>
 <!-- /sequenceShortDisplayer.jsp -->

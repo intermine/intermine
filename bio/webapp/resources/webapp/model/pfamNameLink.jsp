@@ -9,7 +9,7 @@
   <div style="margin-left: 20px">
     <c:set var="sourceTitle" value="Pfam"/>
     <c:set var="linkProperty" value="${sourceTitle}.url.prefix"/>
-    <html:img src="model/${sourceTitle}_logo_small.png"/>
+    <html:img src="model/images/${sourceTitle}_logo_small.png" title="${sourceTitle}" />
     <html:link href="${WEB_PROPERTIES[linkProperty]}${object.name}"
                title="${sourceTitle}: ${object.name}"
                target="view_window">

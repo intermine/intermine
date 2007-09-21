@@ -14,14 +14,14 @@
           <DT>DNase I footprints: <I>D. melanogaster</I></DT>
           <DD>
             DNase I footprints for <I>D. melanogaster</I> from the 
-            <A HREF="http://www.flyreg.org"> DNase I footprint database (V2.0)</A>.
+            <A HREF="http://www.flyreg.org" target="_new"> DNase I footprint database (V2.0)</A>.
             This data has been reported in Bergman, Carlson and Celniker (2005)
-            Bioinformatics 21:1747-1749 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468">PubMed: 15572468</A>). 
+            Bioinformatics 21:1747-1749 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468" target="_new">PubMed: 15572468</A>). 
           </DD>
           <DT>Protein binding sites: <I>D. melanogaster</I></DT>
           <DD>
             Protein binding sites for <I>D. melanogaster</I> annotated by 
-            <A HREF="http://flybase.bio.indiana.edu">FlyBase</A>.
+            <A HREF="http://flybase.bio.indiana.edu" target="_new">FlyBase</A>.
           </DD>
         </DL>
       </div>
