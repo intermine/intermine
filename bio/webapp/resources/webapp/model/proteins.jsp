@@ -12,11 +12,11 @@
       </div>
       <div class="body">
         <DL>
-          <DT><A href="http://www.ebi.uniprot.org/index.shtml">UniProt
+          <DT><A href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt
           Knowledgebase (UniProtKB)</A></DT>
           <DD>
             All proteins from the <A
-            href="http://www.ebi.uniprot.org/index.shtml">UniProt
+            href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt
             Knowledgebase</A> (version 7.5) for the following organisms have
             been loaded:
             <UL>
@@ -37,12 +37,12 @@
               <LI>Gene ORF name</LI>
             </UL>
           </DD>
-          <DT><A href="http://www.ebi.ac.uk/interpro">InterPro</A> protein
+          <DT><A href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</A> protein
           families and domains.</DT>
           <DD>
             Protein family and domain assignments to proteins in UniProt have
             been loaded from <A
-            href="http://www.ebi.ac.uk/interpro">InterPro</A> (version 12.1)
+            href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</A> (version 12.1)
             for the following organisms:
             <UL>
               <LI><I>D. melanogaster</I></LI>

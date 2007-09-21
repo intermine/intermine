@@ -15,7 +15,7 @@
 
   <html:xhtml/>
   <html:link action="sequenceExporter?object=${object.id}">
-    <html:img styleClass="fasta" src="model/fasta.gif"/>
+    <html:img styleClass="fasta" src="model/images/fasta.gif"/>
   </html:link>
 
 <% } %>

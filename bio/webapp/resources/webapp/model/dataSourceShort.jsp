@@ -11,6 +11,6 @@
 </c:if>
 
 <html:link href="${interMineObject.url}">
-  <html:img src="model/${interMineObject.name}_logo_small.png"/>
+  <html:img src="model/images/${interMineObject.name}_logo_small.png"/>
 </html:link>
 <!-- /dataSourceShort.jsp -->

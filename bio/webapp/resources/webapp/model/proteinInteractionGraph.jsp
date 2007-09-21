@@ -9,7 +9,7 @@
     <p>No protein interactions found in FlyMine</p>
   </c:when>
   <c:otherwise>
-    <img style="border: 1px solid #ccc"
+    <img style="border: 1px solid #ccc" title="Protein Interactions" 
          src="<html:rewrite action="/proteinInteractionRenderer?object=${object.id}"/>"/>
   </c:otherwise>
 </c:choose>

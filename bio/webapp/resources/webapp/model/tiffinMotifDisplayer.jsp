@@ -16,7 +16,7 @@
                title="Sanger Tiffin pages: ${object.identifier}"
                target="view_window">
       <fmt:message key="tiffin.description"/>:
-      <html:img src="model/Sanger_logo_small.png"/>
+      <html:img src="model/images/Sanger_logo_small.png"/>
     </html:link>
   </div>
 </c:if>

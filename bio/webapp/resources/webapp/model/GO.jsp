@@ -27,23 +27,23 @@
           </DD>
           <DT><I>A. gambiae</I></DT>
           <DD>
-            GO annotations for <I>A. gambiae</I> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/">GO annotation@EBI</a> project, updated 4th March 2006.<BR/>
+            GO annotations for <I>A. gambiae</I> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/" target="_new">GO annotation@EBI</a> project, updated 4th March 2006.<BR/>
           </DD>
           <DT><I>C. elegans</I></DT>
           <DD>
-            GO annotations for <I>C. elegans</I> gene products assigned by <a href="www.wormbase.org">WormBase</a>, updated 12th March 2006.<BR/>
+            GO annotations for <I>C. elegans</I> gene products assigned by <a href="www.wormbase.org" target="_new">WormBase</a>, updated 12th March 2006.<BR/>
           </DD>
           <DT><I>S. cerevisiae</I></DT>
           <DD>
-            GO annotations for <I>S. cerevisiae</I> gene products assigned by <a href="http://www.yeastgenome.org/">SGD</a>, updated 19th April 2006.<BR/>
+            GO annotations for <I>S. cerevisiae</I> gene products assigned by <a href="http://www.yeastgenome.org/" target="_new">SGD</a>, updated 19th April 2006.<BR/>
           </DD>
           <DT><I>M. musculus</I></DT>
           <DD>
-            GO annotations for <I>M. musculus</I> gene products assigned by <a href="http://www.informatics.jax.org">MGI</a>, updated 15th April 2006.<BR/>
+            GO annotations for <I>M. musculus</I> gene products assigned by <a href="http://www.informatics.jax.org" target="_new">MGI</a>, updated 15th April 2006.<BR/>
           </DD>
           <DT><I>R. norvegicus</I></DT>
           <DD>
-            GO annotations for <I>R. norvegicus</I> gene products assigned by <a href="http://rgd.mcw.edu/">RGD</a>, updated 26th March 2006.<BR/>
+            GO annotations for <I>R. norvegicus</I> gene products assigned by <a href="http://rgd.mcw.edu/" target="_new">RGD</a>, updated 26th March 2006.<BR/>
           </DD>
         </DL>
       </div>

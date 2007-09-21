@@ -6,9 +6,9 @@
 <!-- publication.jsp -->
 <fmt:message key="publication.pubmed"/>:
 <div style="margin-left: 20px">
-  <html:link href="${WEB_PROPERTIES['pubmed.url.prefix']}${object.pubMedId}">
+  <html:link href="${WEB_PROPERTIES['pubmed.url.prefix']}${object.pubMedId}" target="_new">
     <span>
-      <html:img src="model/PubMed_logo_small.png"/>
+      <html:img src="model/images/PubMed_logo_small.png" title="PubMed"/>
     </span>
     <span>
       PMID:${object.pubMedId}

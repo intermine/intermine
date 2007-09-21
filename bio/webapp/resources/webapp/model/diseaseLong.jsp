@@ -13,7 +13,7 @@
   <html:link href="${WEB_PROPERTIES[linkProperty]}${object.omimId}"
              title="${sourceTitle}: ${object.omimId}"
              target="view_window">
-    <html:img src="model/${sourceTitle}_logo_small.png" align="middle" border="0"/>
+    <html:img src="model/images/${sourceTitle}_logo_small.png" align="middle" border="0"/>
     ${sourceTitle}: ${object.omimId}
   </html:link>
 </div>
