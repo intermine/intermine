@@ -21,8 +21,10 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.iql.IqlQuery;
 
+import org.intermine.metadata.Model;
+import org.intermine.web.logic.bag.InterMineBag;
+
 import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Gene;
 
 import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
@@ -33,15 +35,18 @@ import org.jfree.data.category.CategoryDataset;
  */
 public class ChromosomeDistributionGraphURLGenerator implements CategoryURLGenerator
 {
-    String bagName;
-
+    InterMineBag bag;
+    Model model;
+    
     /**
      * Creates a ChromosomeDistributionGraphURLGenerator for the chart
-     * @param bagName the bag name
+     * @param model
+     * @param bag the bag
      */
-    public ChromosomeDistributionGraphURLGenerator(String bagName) {
+    public ChromosomeDistributionGraphURLGenerator(Model model, InterMineBag bag) {
         super();
-        this.bagName = bagName;
+        this.bag = bag;
+        this.model = model;
     }
 
     /**
@@ -50,14 +55,21 @@ public class ChromosomeDistributionGraphURLGenerator implements CategoryURLGener
      *      org.jfree.data.category.CategoryDataset,
      *      int, int)
      */
-    public String generateURL(CategoryDataset dataset, @SuppressWarnings("unused") int series,
+    public String generateURL(CategoryDataset dataset, 
+                              @SuppressWarnings("unused") int series,
                               int category) {
-        StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
+        
+        StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bag.getName());
         
         Query q = new Query();
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);
-        QueryClass geneQC = new QueryClass(Gene.class); 
-        
+        QueryClass geneQC = null;
+        try {
+            geneQC = new QueryClass(Class.forName(model.getPackageName() 
+                                                           + "." + bag.getType())); 
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
         q.addFrom(geneQC);
         q.addFrom(chromosomeQC);
         
