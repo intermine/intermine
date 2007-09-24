@@ -128,7 +128,6 @@
     </action>
     <action path="/logout" type="org.intermine.web.struts.LogoutAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
-      <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/confirm" type="org.intermine.web.struts.ConfirmAction">
       <forward name="confirm" path="confirm.page"/>

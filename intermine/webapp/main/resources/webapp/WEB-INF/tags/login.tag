@@ -30,7 +30,7 @@ if (returnToPath != null) {
     </html:link>
   </c:when>
   <c:otherwise>
-    <html:link action="/logout.do${returnToString}">
+    <html:link action="/logout.do">
       <fmt:message key="menu.logout"/>
     </html:link>
   </c:otherwise>
