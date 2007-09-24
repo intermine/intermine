@@ -109,7 +109,7 @@ public class Integrate extends Task
             for (int i = 0; i < possibleActionsArray.length - 1; i++) {
                 sb.append(possibleActionsArray[i]).append(", ");
             }
-            sb.append(possibleActionsArray[2]);
+            sb.append(possibleActionsArray[possibleActionsArray.length - 1]);
             throw new BuildException(sb.toString());
         }
 
