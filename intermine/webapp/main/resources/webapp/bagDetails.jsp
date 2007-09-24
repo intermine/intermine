@@ -148,13 +148,7 @@
   <td>
 
 <table cellpadding="0" cellspacing="30"><tr>
-<td valign="top">
-  <span style="font-size:+2em;">View</span><br/>
-    <html:link action="/bag?subtab=view">all lists</html:link><br/>
-  	<html:link action="/mymine?subtab=lists">your lists</html:link><br/>
-  	<html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
-  	<html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
-</td><td valign="top">  	
+<td valign="top">  	
   <span style="font-size:+2em;">Use</span><br/>		
   	<a href="javascript:go('query');">in a query</a><br/>
 	<input type="hidden" name="useBagInQuery" />
@@ -164,6 +158,10 @@
   		<a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a><br/>
 		<a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a><br/>
 		<a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a>
+</td><td valign="top">
+  <span style="font-size:+2em;">View</span><br/>
+  	<html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
+  	<html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
 </td><td valign="top">
   <span style="font-size:+2em;">Upload</span><br/>
   <html:link action="/bag?subtab=upload">your data</html:link>
