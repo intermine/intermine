@@ -1,4 +1,4 @@
-package org.intermine.bio.web;
+package org.intermine.bio.web.export;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
