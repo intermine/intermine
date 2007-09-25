@@ -307,8 +307,7 @@
 
     <%-- go stats --%>
  	<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
- 	
- 	
+ 	 	
  	    <c:choose>
           <c:when test="${widgetCount % 2 == 0}">
         </td>
@@ -318,8 +317,7 @@
         </c:otherwise>
         </c:choose>
         <c:set var="widgetCount" value="${widgetCount+1}" />
- 	
- 	
+ 	 	
 	</c:forEach>
 </table>
 <!-- /widget table -->
