@@ -16,7 +16,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 
 import java.io.FileWriter;
@@ -108,6 +107,26 @@ public class ChadoDBConverterTest extends ItemsTestCase
             res.setupColumnNames(columnNames);
             return res;
         }
+        
+        protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
+            String[] columnNames = new String[] {
+                "feature_id", "accession"
+            };
+            Object[][] resObjects = new Object[][] { 
+                {
+                    23269151, "FBgn0000001_sym1"
+                },
+                {
+                    23269151, "FBgn0000001_sym2"
+                },
+                {
+                    3117509, "FBgn0036461_sym1"
+                },
+            };
+            MockMultiRowResultSet res = new MockMultiRowResultSet();
+            res.setupRows(resObjects);
+            res.setupColumnNames(columnNames);
+            return res;
+        }
     }
-
 }

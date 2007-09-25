@@ -148,20 +148,20 @@ public abstract class BioDBConverter extends DBConverter
 
     /**
      * Create and return a new Synonym, but don't store it.
-     * @param subject the Synonym subject
+     * @param subject the Synonym subject id
      * @param type the Synonym type
      * @param value the Synonym value
      * @param evidence the Synonym evidence (eg. a DataSet)
      * @param dataSource the source of this synonym
      * @return the new Synonym
      */
-    public Item createSynonym(Item subject, String type, String value, boolean isPrimary,
+    public Item createSynonym(String subjectId, String type, String value, boolean isPrimary,
                               Item evidence, Item dataSource) {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setAttribute("isPrimary", String.valueOf(isPrimary));
-        synonym.setReference("subject", subject);
+        synonym.setReference("subject", subjectId);
         synonym.setReference("source", dataSource);
         synonym.addToCollection("evidence", evidence);
         return synonym;

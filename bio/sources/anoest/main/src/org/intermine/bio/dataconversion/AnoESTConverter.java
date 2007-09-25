@@ -79,7 +79,7 @@ public class AnoESTConverter extends BioDBConverter
             Item cluster = createItem("ESTCluster");
             cluster.setAttribute("identifier", identifier);
             Item dataSet = getDataSetItem(DATASET_TITLE);
-            Item accSynonym = createSynonym(cluster, "identifier", identifier, true,
+            Item accSynonym = createSynonym(cluster.getIdentifier(), "identifier", identifier, true,
                                             dataSet, getDataSourceItem(DATA_SOURCE_NAME));
             getItemWriter().store(ItemHelper.convert(accSynonym));
             cluster.setAttribute("curated", "false");
@@ -123,14 +123,14 @@ public class AnoESTConverter extends BioDBConverter
                 ests.put(accession, est);
                 est.setAttribute("identifier", accession);
                 Item dataSet = getDataSetItem(DATASET_TITLE);
-                Item accSynonym = createSynonym(est, "identifier", accession, true, dataSet,
-                                                getDataSourceItem(DATA_SOURCE_NAME));
+                Item accSynonym = createSynonym(est.getIdentifier(), "identifier", accession, true, 
+                                                dataSet, getDataSourceItem(DATA_SOURCE_NAME));
                 getItemWriter().store(ItemHelper.convert(accSynonym));
                 est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
                 est.addToCollection("evidence", dataSet);
-                Item cloneSynonym = createSynonym(est, "identifier", cloneId, false, dataSet,
-                                                  getDataSourceItem(DATA_SOURCE_NAME));
+                Item cloneSynonym = createSynonym(est.getIdentifier(), "identifier", cloneId, false,
+                                                  dataSet, getDataSourceItem(DATA_SOURCE_NAME));
                 getItemWriter().store(ItemHelper.convert(cloneSynonym));
                 Item cluster = clusters.get(clusterId);
                 if (cluster != null) {

@@ -10,7 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.dataconversion.ItemWriter;
@@ -26,7 +28,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
 /**
  * DataConverter to read from a Chado database into items
  * @author Kim Rutherford
@@ -34,6 +35,7 @@ import java.sql.Statement;
 public class ChadoDBConverter extends BioDBConverter
 {
     private Map<Integer, String> features = new HashMap<Integer, String>();
+    private Map<Integer, List<String>> featurePrimaryIds = new HashMap<Integer, List<String>>();
     private String dataSourceName;
     private String dataSetTitle;
     private int taxonId = -1;
@@ -126,25 +128,8 @@ public class ChadoDBConverter extends BioDBConverter
         makeSynonymItems(connection);
     }
 
-    /**
-     * @param connection
-     */
-    private void makeSynonymItems(Connection connection) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * @param connection
-     */
-    private void makeRelationItems(Connection connection) {
-        // TODO Auto-generated method stub
-        
-    }
-
     private void makeFeatureItems(Connection connection) throws SQLException, ObjectStoreException {
         Item dataSet = getDataSetItem(dataSetTitle);
-        Item dataSource = getDataSourceItem(dataSourceName);
         Item organismItem = getOrganismItem(taxonId);        
         ResultSet res = getFeatureResultSet(connection);
         while (res.next()) {
@@ -157,11 +142,19 @@ public class ChadoDBConverter extends BioDBConverter
             if (res.getObject("seqlen") != null) {
                 seqlen = res.getInt("seqlen");
             }
+            List<String> primaryIds = new ArrayList<String>();
+            primaryIds.add(uniqueName);
+            if (name != null) {
+                primaryIds.add(name);
+            }
+            featurePrimaryIds.put(featureId, primaryIds);
             Item feature = makeFeature(featureId, name, uniqueName, type, residues, seqlen);
-            feature.setReference("organism", organismItem);
-            feature.addToCollection("evidence", dataSet);
-            store(feature);
-            features.put(featureId, feature.getIdentifier());
+            if (feature != null) {
+                feature.setReference("organism", organismItem);
+                feature.addToCollection("evidence", dataSet);
+                store(feature);
+                features.put(featureId, feature.getIdentifier());
+            }
         }
     }
 
@@ -177,6 +170,12 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected Item makeFeature(Integer featureId, String name, String uniqueName, String type,
                                String residues, int seqlen) {
+        
+        // XXX FIMXE TODO HACK - this should be configured somehow
+        if (uniqueName.startsWith("FBal")) {
+            return null; 
+        }
+        
         String clsName = TypeUtil.javaiseClassName(type);
         Item feature = createItem(clsName);
         if (name != null) {
@@ -199,13 +198,48 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
+     * @param connection
+     * @throws SQLException 
+     * @throws ObjectStoreException 
+     */
+    private void makeSynonymItems(Connection connection) throws SQLException, ObjectStoreException {
+        Item dataSource = getDataSourceItem(dataSourceName);
+        Item dataSet = getDataSetItem(dataSetTitle);
+
+        ResultSet res = getSynonymResultSet(connection);
+        while (res.next()) {
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String accession = res.getString("accession");
+            boolean isPrimary;
+            if (featurePrimaryIds.get(featureId) != null 
+                && featurePrimaryIds.get(featureId).contains(accession)) {
+                isPrimary = true;
+            } else {
+                isPrimary = false;
+            }
+            if (features.containsKey(featureId)) {
+                Item synonym = createSynonym(features.get(featureId), "identifier", accession,
+                                         isPrimary, dataSet, dataSource);
+                store(synonym);
+            }
+        }
+    }
+
+    /**
+     * @param connection
+     */
+    private void makeRelationItems(Connection connection) {
+        
+    }
+
+    /**
      * Return the interesting rows from the features table. 
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
      */
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
-        int chadoOrganismId = getChadoOrganismId(connection, genus, species);
+        int chadoOrganismId = getChadoOrganismId(connection);
         String query = "select feature_id, name, uniquename, type, residues, seqlen from f_type "
             + "where type in (" + featureTypesString + ") and organism_id = " + chadoOrganismId;
         Statement stmt = connection.createStatement();
@@ -218,12 +252,10 @@ public class ChadoDBConverter extends BioDBConverter
      * Return the chado organism id for the given genus/species.  This is a protected method so
      * that it can be overriden for testing
      * @param connection the db connection
-     * @param genus the genus
-     * @param species the species
      * @return the internal id (organism_id from the organism table)
      * @throws SQLException if the is a database problem
      */
-    private int getChadoOrganismId(Connection connection, String genus, String species)
+    private int getChadoOrganismId(Connection connection)
         throws SQLException {
         String query = "select organism_id from organism where genus = " 
             + DatabaseUtil.objectToString(genus) + " and species = "
@@ -236,5 +268,20 @@ public class ChadoDBConverter extends BioDBConverter
             throw new RuntimeException("no rows returned when querying organism table for genus \"" 
                                        + genus + "\" and species \"" + species + "\"");
         }
+    }
+    
+    protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
+        int chadoOrganismId = getChadoOrganismId(connection);
+        String query =
+            "select feature.feature_id, accession from dbxref, feature_dbxref, feature "
+            + " where feature_dbxref.dbxref_id = dbxref.dbxref_id "
+            + "   and feature_dbxref.feature_id = feature.feature_id "
+            + "   and feature.feature_id in"
+            + "        (select feature_id from f_type" 
+            + "           where type in (" + featureTypesString + ") "
+            + "           and organism_id = " + chadoOrganismId + ")";
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
     }
 }
