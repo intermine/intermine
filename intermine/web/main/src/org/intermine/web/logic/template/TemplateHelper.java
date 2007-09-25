@@ -10,10 +10,6 @@ package org.intermine.web.logic.template;
  *
  */
 
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,15 +17,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.Results;
 
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMessage;
 import org.intermine.cache.InterMineCache;
 import org.intermine.cache.ObjectCreator;
 import org.intermine.metadata.ClassDescriptor;
@@ -38,10 +30,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryNode;
-import org.intermine.objectstore.query.Results;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
@@ -58,6 +46,20 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateForm;
+
+import java.io.Reader;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
 
 /**
  * Static helper routines related to templates.
@@ -426,7 +428,7 @@ public class TemplateHelper
                             }
                         }
                     } else if (c.getOp().equals(ConstraintOp.EQUALS) 
-                                    || c.getOp().equals(ConstraintOp.IN)){
+                                    || c.getOp().equals(ConstraintOp.IN)) {
                         String constraintIdentifier = c.getIdentifier();
                         String[] bits = constraintIdentifier.split("\\.");
 
