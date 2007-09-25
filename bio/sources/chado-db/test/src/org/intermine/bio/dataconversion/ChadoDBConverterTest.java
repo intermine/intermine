@@ -61,6 +61,11 @@ public class ChadoDBConverterTest extends ItemsTestCase
 
     private class TestAnoESTConverter extends ChadoDBConverter
     {
+        @Override
+        protected int getChadoOrganismId(@SuppressWarnings("unused") Connection connection) {
+            return 1;
+        }
+
         public TestAnoESTConverter(Database database, Model tgtModel, ItemWriter writer) {
             super(database, tgtModel, writer);
         }
@@ -81,26 +86,11 @@ public class ChadoDBConverterTest extends ItemsTestCase
                      3117509, "CG10006", "FBgn0036461", "gene", null, 5023
                  },
                  {
-                     3158204, "CG10005", "FBgn0037972", "gene", null, 2036
-                 },
-                 {
-                     3175410, "CG10000", "FBgn0039596", "gene", null, 3209
-                 },
-                 {
                      3175412, "CG10000:1", "CG10000:1", "exon", null, 148
                  },
                  {
                      3175413, "CG10000:2", "CG10000:2", "exon", null, 161
                  },
-                 {
-                     3175414, "CG10000:3", "CG10000:3", "exon", null, 179
-                 },
-                 {
-                     3175415, "CG10000:4", "CG10000:4", "exon", null, 464
-                 },
-                 {
-                     3175416, "CG10000:5", "CG10000:5", "exon", null, 170
-                 }
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
             res.setupRows(resObjects);
@@ -108,7 +98,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
             return res;
         }
         
-        protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
+        protected ResultSet getDbxrefResultSet(Connection connection) throws SQLException {
             String[] columnNames = new String[] {
                 "feature_id", "accession"
             };
@@ -123,6 +113,54 @@ public class ChadoDBConverterTest extends ItemsTestCase
                     3117509, "FBgn0036461_sym1"
                 },
             };
+            MockMultiRowResultSet res = new MockMultiRowResultSet();
+            res.setupRows(resObjects);
+            res.setupColumnNames(columnNames);
+            return res;
+        }
+        
+        @Override
+        protected ResultSet getFeaturePropResultSet(Connection connection) {
+            String[] columnNames = new String[] {
+                "feature_id", "value", "type_name"
+            };
+            Object[][] resObjects = new Object[][] {
+                {
+                    23269151, "3-[21]", "genetic_location"
+                },
+                {
+                    23269151, "3-[21]", "promoted_genetic_location"
+                },
+                {
+                    23269151, "65A-65A; (determined by in situ hybridisation)", "derived_experimental_cyto"
+                },
+                {
+                    23269151, "65A-65A; Left limit from in situ hybridisation (FBrf0042734) Right limit from in situ hybridisation (FBrf0042734)", "derived_computed_cyto"
+                },
+                {
+                    23269151, "A function for the 4.5S RNA is still in the realm of speculation.", "misc"
+                },
+                {
+                    23269151, "non_protein_coding_gene", "promoted_gene_type"
+                },
+                {
+                    3117509, "71B1-71B1", "cyto_range"
+                },
+                {
+                    3117509, "AE014296", "gbunit"
+                },
+                {
+                    3117509, "CG10006_symbol", "symbol"
+                },
+                {
+                    3117509, "Not in SwissProt real (computational)", "sp_status"
+                },
+                {
+                    3117509, "protein_coding_gene", "promoted_gene_type"
+                },
+
+            };
+            
             MockMultiRowResultSet res = new MockMultiRowResultSet();
             res.setupRows(resObjects);
             res.setupColumnNames(columnNames);
