@@ -10,7 +10,12 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -26,11 +31,25 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.path.Path;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.bag.BagQueryRunner;
+import org.intermine.web.logic.bag.ConvertedObjectPair;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -47,6 +66,8 @@ import org.intermine.web.logic.template.TemplateQuery;
 
 public class PortalQueryAction extends InterMineAction
 {
+    private static int index = 0;
+    
     /**
      * Link-ins from other sites end up here (after some redirection).
      *
@@ -68,22 +89,98 @@ public class PortalQueryAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         String extId = request.getParameter("externalid");
         String origin = request.getParameter("origin");
-
+        String className = request.getParameter("class");
+        if ((extId == null) || (extId.length() <= 0)) {
+            extId = request.getParameter("externalids");
+        }
+        if (extId == null) {
+            recordError(new ActionMessage("errors.badportalquery"), request);
+            return mapping.findForward("failure");
+        }
         if (origin == null) {
             origin = "";
         } else if (origin.length() > 0) {
             origin = "." + origin;
         }
 
-        if (extId == null) {
-            recordError(new ActionMessage("errors.badportalquery"), request);
-            return mapping.findForward("failure");
-        }
 
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        String[] idList = extId.split(",");
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        BagQueryConfig bagQueryConfig = 
+                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        BagQueryRunner bagRunner =
+                new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
+        
+        TypeUtil.instantiate(className);
+        ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
+        InterMineBag imBag = new InterMineBag(origin + System.currentTimeMillis(), 
+                                              className , null , new Date() ,
+                                              os , profile.getUserId() , uosw);
+        
+        BagQueryResult bagQueryResult = 
+            bagRunner.searchForBag(className, Arrays.asList(idList), null, false);
+        
+        List <Integer> bagList = new ArrayList <Integer> ();
+        bagList.addAll(bagQueryResult.getMatches().keySet());
+        // If there are no exact matches, add converted
+        if (bagList.size() == 0) {
+            Map issues = bagQueryResult.getIssues();
+            if (issues != null ) {
+                Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
+                for (Iterator iter = converted.values().iterator(); iter.hasNext();) {
+                    Map queryMap = (Map) iter.next();
+                    for (Iterator iterator = queryMap.values().iterator(); iterator.hasNext();) {
+                        List <ConvertedObjectPair> convertedPairList = 
+                            (ArrayList<ConvertedObjectPair>) iterator.next();
+                        for (ConvertedObjectPair convertedObjPair : convertedPairList) {
+                            bagList.add(convertedObjPair.getNewObject().getId());
+                        }
+                    }
+                }
+            }
+        }
+        // Go to the object details page
+        if ((bagList.size() == 1) && (idList.length == 1)) {
+            return new ForwardParameters(mapping.findForward("objectDetails"))
+            .addParameter("id", bagList.get(0).toString()).forward();
+        // More than one matches for single identifier
+        } else if ((bagList.size() > 1) && (idList.length == 1)) {
+            Model model = os.getModel();
+            WebPathCollection webPathCollection = 
+                new WebPathCollection(os, new Path(model, className), bagList, model, webConfig,
+                                  classKeys);
+            PagedTable pc = new PagedTable(webPathCollection);
+            String identifier = "col" + index++;
+            SessionMethods.setResultsTable(session, identifier, pc);
+            int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
+            
+            return new ForwardParameters(mapping.findForward("results"))
+                            .addParameter("noSelect", "true")
+                            .addParameter("table", identifier).forward();
+            
+        // Make a bag
+        } else {
+            ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+            osw.addAllToBag(imBag.getOsb(), bagList);
+            osw.close();
+            profile.saveBag(imBag.getName(), imBag);
+            return new ForwardParameters(mapping.findForward("bagDetails"))
+            .addParameter("bagName", imBag.getName()).forward();
+        }
+        
+    }
+    
+    private String loadObjectDetails(ServletContext servletContext,
+                                                HttpSession session, HttpServletRequest request,
+                                                HttpServletResponse response, String userName, 
+                                                String extId, String origin) 
+                                                throws InterruptedException {
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
         Integer op = ConstraintOp.EQUALS.getIndex();
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              templateName, "global");
 
@@ -118,8 +215,8 @@ public class PortalQueryAction extends InterMineAction
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         String qid = SessionMethods.startQuery(clientState, session, messages, false, queryCopy);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
-        return new ForwardParameters(mapping.findForward("waiting"))
-                            .addParameter("qid", qid).forward();
+        return qid;
     }
+    
 }
 
