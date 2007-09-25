@@ -85,6 +85,7 @@ public class FileConverterTask extends ConverterTask
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         try {
+            Model model = Model.getInstanceByName(getModelName());
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());
             writer = new ObjectStoreItemWriter(osw);
 
@@ -96,7 +97,7 @@ public class FileConverterTask extends ConverterTask
 
             Constructor m = c.getConstructor(new Class[] {ItemWriter.class, Model.class});
             FileConverter converter = 
-                (FileConverter) m.newInstance(new Object[] {writer, osw.getModel()});
+                (FileConverter) m.newInstance(new Object[] {writer, model});
 
             configureDynamicAttributes(converter);
 
