@@ -38,9 +38,10 @@ div.sortorder {
 
 /* one path added to the sort order area */
 div.sortorderpath {
-  padding:4px 4px 14px 4px; width: 250px
-  border: #bbb 1px solid; font-size: 10px; color:  #660099; background-color: #F5F0FF; cursor: hand; text-align: center;}
-
+  float: left; width: 250px;
+  padding: 5px; margin-right: 5px; margin-bottom: 5px;
+  background-color: #F5F0FF; color: #660099; border: 1px solid #bbb; text-align: center; font-size: 11px; cursor: hand;}
+ 
 .showing {
   padding: 1px 0 1px 3px; margin-left: 3px; margin-right: 3px;
   background-color: #E7F1FB; border: 1px solid #bbb; line-height: 25px;}
