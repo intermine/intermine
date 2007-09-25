@@ -25,6 +25,7 @@ import org.apache.tools.ant.types.FileSet;
 import org.intermine.dataconversion.FullXmlConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
@@ -88,9 +89,10 @@ public class FullXmlConverterTask extends ConverterTask
         File toRead = null;
 
         try {
+            Model model = Model.getInstanceByName(getModelName());
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());
             writer = new ObjectStoreItemWriter(osw);
-            FullXmlConverter converter = new FullXmlConverter(writer, osw.getModel());
+            FullXmlConverter converter = new FullXmlConverter(writer, model);
             
             List<File> files = new ArrayList<File>();
 
