@@ -19,7 +19,10 @@ public class EnrichmentWidgetDisplayer
     private String link;
     private String controller;
     private String description;
-
+    private String max;
+    private String filters;
+    private String filterLabel;
+    
     /**
      * Get the link
      * @return the link
@@ -80,6 +83,51 @@ public class EnrichmentWidgetDisplayer
         this.description = description;
     }
 
+
+    /**
+     * @return the filters
+     */
+    public String getFilters() {
+        return filters;
+    }
+
+    /**
+     * @param filters
+     */
+    public void setFilters(String filters) {
+        this.filters = filters;
+    }
+    
+    /**
+     * @return the label for the filters
+     */
+    public String getFilterLabel() {
+        return filterLabel;
+    }
+
+    /**
+     * @param filterLabel the label for the filters
+     */
+    public void setFilterLabel(String filterLabel) {
+        this.filterLabel = filterLabel;
+    }
+    
+    /**
+     * @return the maximum value this widget will display
+     */
+    public String getMax() {
+        return max;
+    }
+
+    /**
+     * @param max maximum value this widget will display
+     */
+    public void setMax(String max) {
+        this.max = max;
+    }
+    
+    
+    
     /**
      * Return an XML String of this Type object
      * @return a String version of this WebConfig object
