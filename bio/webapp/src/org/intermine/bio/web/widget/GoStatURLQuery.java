@@ -40,10 +40,12 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
     InterMineBag bag;
     String key;
     /**
+     * @param os
      * @param key
      * @param bag
      */
-     public GoStatURLQuery(ObjectStore os, InterMineBag bag, String key) {
+     public GoStatURLQuery(@SuppressWarnings("unused") ObjectStore os, 
+                           InterMineBag bag, String key) {
          this.bag = bag;
          this.key = key;
      }
