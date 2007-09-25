@@ -52,9 +52,9 @@
       </div>
     </c:otherwise>
   </c:choose>
-  
+
   <%--title line e.g. "+ Gene --> Proteins.  [STAR] (t)  1 results" --%>
-  <div class="${displayObject == null ? '' : 'templateDetails'}">
+  <div class="templateDetails">
     <span class="${cssClass}" id="label_${uid}">
       <im:templateLine scope="${scope}" templateQuery="${templateQuery}"
                        interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" trail="${trail}" />

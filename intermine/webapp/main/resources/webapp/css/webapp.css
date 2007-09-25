@@ -119,7 +119,13 @@ li {
 	  background: white; font-size: 13px; border: 1px dashed #777;}
 
 div.templateLine {
-  margin-bottom: 5px; margin-top: 5px; padding-left: 20px;}
+  margin-bottom: 5px; margin-top: 5px;}
+
+div.templateDetails {
+  margin-left: 15px;
+  /* needed to prevent the peekaboo bug on IE:
+     http://www.positioniseverything.net/explorer/peekaboo.html */
+  height: 0.01%;}
 
 .listHeading {
   height: 1.5em; /* needed to prevent the peekaboo bug on IE: http://www.positioniseverything.net/explorer/peekaboo.html */
