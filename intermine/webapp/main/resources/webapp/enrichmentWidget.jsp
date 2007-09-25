@@ -54,7 +54,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
       	<td>
       		<select name="filter">
      		 <c:forEach items="${filters}" var="name">
-				<option value="${name}">${name}</option>
+				<option value="${name}" <c:if test="${filter == name}">SELECTED</c:if>>${name}</option>
     		 </c:forEach>
       		</select>	
 			&nbsp;
