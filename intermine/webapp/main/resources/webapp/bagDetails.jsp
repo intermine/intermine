@@ -306,7 +306,7 @@
         </c:choose>
 
     <%-- go stats --%>
- 	<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
+ 	<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
  	 	
  	    <c:choose>
           <c:when test="${widgetCount % 2 == 0}">
