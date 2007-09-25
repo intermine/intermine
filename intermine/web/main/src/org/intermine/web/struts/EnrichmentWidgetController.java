@@ -67,23 +67,35 @@ public class EnrichmentWidgetController extends TilesAction
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-             
-             // TODO get these from request form
-             Double maxValue = new Double("0.10");
+                          
 
-             
-             // TODO get these from properties files
-             String namespace = (request.getParameter("ontology") != null
-                               ? request.getParameter("ontology") : "biological_process");
-             
-             // put in request for display on the .jsp page
-             request.setAttribute("bagName", bagName);
-             request.setAttribute("ontology", namespace);
              
              String title = request.getParameter("title");
              String controller = request.getParameter("controller");
              String description = request.getParameter("description");
              String link = request.getParameter("link");
+             String filterLabel = request.getParameter("filterLabel");
+             String max = request.getParameter("max");
+             Double maxValue = new Double(0.10);
+             try {
+                 maxValue = new Double(max);
+             } catch (NumberFormatException e) {
+                 throw new RuntimeException("Please define a maximum value for your "
+                                            + "enrichmentWidgetDisplayers in webconfig-model.xml");
+             }
+             String filters = request.getParameter("filters");
+             // filters
+             if (filters != null) {                 
+                 if (filters.contains(",")) {
+                     String[] filterList = filters.split(",");                   
+                     String filter = (request.getParameter("filter") != null
+                                 ? request.getParameter("filter") : filterList[0]);
+                     request.setAttribute("filter", filter);
+                     request.setAttribute("filters", filters);
+                 }
+             }
+             
+             request.setAttribute("bagName", bagName);
              
              Class clazz = TypeUtil.instantiate(controller);
              Constructor constr = clazz.getConstructor(new Class[]
@@ -96,19 +108,24 @@ public class EnrichmentWidgetController extends TilesAction
                  request
                                                                                 });
              
+                          
              // run both queries and compare the results 
              ArrayList results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(), bag, 
                                        ldr.getTotal(os), maxValue);
-
+                        
              request.setAttribute("title", title);
              request.setAttribute("description", description);
+             request.setAttribute("link", link);
+             request.setAttribute("max", max);
+             request.setAttribute("controller", controller);
+             request.setAttribute("filterLabel", filterLabel);
              if (results.isEmpty()) {
                  return null;
              }
              request.setAttribute("pvalues", results.get(0));
              request.setAttribute("totals", results.get(1));
              request.setAttribute("labelToId", results.get(2));
-             request.setAttribute("link", link);
+ 
              request.setAttribute("referencePopulation", "All genes from:  " 
                                   + ldr.getReferencePopulation().toString());
                           

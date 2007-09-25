@@ -73,8 +73,8 @@ public class GoStatLdr implements EnrichmentWidgetLdr
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
      
-             String namespace = (request.getParameter("ontology") != null
-                               ? request.getParameter("ontology") : "biological_process");
+             String namespace = (request.getParameter("filter") != null
+                               ? request.getParameter("filter") : "biological_process");
                           
              // list of ontologies to ignore
              Collection badOntologies = getOntologies(); 

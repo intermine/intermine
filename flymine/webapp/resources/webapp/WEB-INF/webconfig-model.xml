@@ -171,9 +171,23 @@
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways"
       description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." />
       
-      <enrichmentwidgetdisplayer title="Gene Ontology Enrichment" link="org.intermine.bio.web.widget.GoStatURLQuery" controller="org.intermine.bio.web.widget.GoStatLdr" description="Go terms enriched for genes in this list.  " />
-      <enrichmentwidgetdisplayer title="Protein Domain Enrichment" link="org.intermine.bio.web.widget.ProteinDomainURLQuery" controller="org.intermine.bio.web.widget.ProteinDomainLdr" description="Protein Domains enriched for genes in this list.  " />
-      <enrichmentwidgetdisplayer title="Publication Enrichment" link="org.intermine.bio.web.widget.PublicationURLQuery" controller="org.intermine.bio.web.widget.PublicationLdr" description="Publications enriched for genes in this list.  " />
+      <enrichmentwidgetdisplayer title="Gene Ontology Enrichment" 
+      	link="org.intermine.bio.web.widget.GoStatURLQuery" 
+      	controller="org.intermine.bio.web.widget.GoStatLdr" 
+      	description="Go terms enriched for genes in this list."   
+      	filters="biological_process,cellular_component,molecular_function" 
+      	filterLabel="ontology"
+      	max="0.10" />
+      <enrichmentwidgetdisplayer title="Protein Domain Enrichment" 
+    	link="org.intermine.bio.web.widget.ProteinDomainURLQuery" 
+	    controller="org.intermine.bio.web.widget.ProteinDomainLdr" 
+      	description="Protein Domains enriched for genes in this list." 
+      	max="0.10"  />
+      <enrichmentwidgetdisplayer title="Publication Enrichment" 
+      	link="org.intermine.bio.web.widget.PublicationURLQuery" 
+      	controller="org.intermine.bio.web.widget.PublicationLdr" 
+      	description="Publications enriched for genes in this list." 
+      	max="0.10"  />
    
     </bagdisplayers>
   </class>

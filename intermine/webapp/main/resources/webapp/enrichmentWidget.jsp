@@ -42,29 +42,40 @@ Reference population: <c:out value='${referencePopulation}'/>.
 
 	
 <table>	
+
+<c:if test="${!empty filters}">
 <tr>
 	<td valign="top" align="center">
-	<!-- 
-	<form action="goStatDisplayer.do" method="get" name="goStatForm">
+
+	<form action="enrichmentWidget.do" method="get" name="goStatForm">
 	<table>
       <tr>
-      	<td>Ontology</td>
+      	<td>${filterLabel}</td>
       	<td>
-      		<select name="ontology">
-           		<option value="biological_process" ${bioSELECTED}>Biological process</option>
-           		<option value="cellular_component" ${cellSELECTED}>Cellular component</option>
-           		<option value="molecular_function" ${moleSELECTED}>Molecular function</option>
-      		</select>
+      		<select name="filter">
+     		 <c:forEach items="${filters}" var="name">
+				<option value="${name}">${name}</option>
+    		 </c:forEach>
+      		</select>	
 			&nbsp;
-      		<input type="hidden" name="bagName" value="${bagName}"/>
+      			<input type="hidden" name="bagName" value="${bagName}"/>
+      		    <input type="hidden" name="filters" value="${filters}"/>
+      		    <input type="hidden" name="controller" value="${controller}"/>
+      		   	<input type="hidden" name="title" value="${title}"/>
+      		   	<input type="hidden" name="link" value="${link}"/>
+      		  	<input type="hidden" name="max" value="${max}"/>
+      		  	<input type="hidden" name="description" value="${description}"/>
+      		  	<input type="hidden" name="filterLabel" value="${filterLabel}"/>
 			<input type="submit" name="filterSubmit" value="Update results">
 	    </td>
 	   </tr>
 	</table>
 	</form>	
-	 -->
+	
 	</td>
 </tr>
+</c:if>
+
 <tr>
 	<td>
 		<c:choose>
