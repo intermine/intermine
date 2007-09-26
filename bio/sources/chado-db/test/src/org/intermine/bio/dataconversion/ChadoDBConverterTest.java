@@ -158,11 +158,33 @@ public class ChadoDBConverterTest extends ItemsTestCase
                 {
                     3117509, "protein_coding_gene", "promoted_gene_type"
                 },
-
             };
             
             MockMultiRowResultSet res = new MockMultiRowResultSet();
             res.setupRows(resObjects);
+            res.setupColumnNames(columnNames);
+            return res;
+        }
+
+        protected ResultSet getFeatureLocResultSet(Connection connection) throws SQLException {
+            String[] columnNames = new String[] {
+                "featureloc_id", "feature_id", "srcfeature_id", "fmin", "is_fmin_partial", 
+                "fmax", "is_fmax_partial", "strand"
+            };
+            MockMultiRowResultSet res = new MockMultiRowResultSet();
+            // no test yet:
+            res.setupRows(new Object[][] {});
+            res.setupColumnNames(columnNames);
+            return res;
+        }
+        
+        protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
+            String[] columnNames = new String[] {
+                "feature_id", "synonym_name"
+            };
+            MockMultiRowResultSet res = new MockMultiRowResultSet();
+            // no test yet:
+            res.setupRows(new Object[][] {});
             res.setupColumnNames(columnNames);
             return res;
         }

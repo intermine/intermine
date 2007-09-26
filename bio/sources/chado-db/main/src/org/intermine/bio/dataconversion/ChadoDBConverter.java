@@ -36,21 +36,25 @@ import java.sql.Statement;
  */
 public class ChadoDBConverter extends BioDBConverter
 {
-    private class FeatureData {
+    private class FeatureData
+    {
         String uniqueName;
         // the synonyms that have already been created
         Set<String> existingSynonyms = new HashSet<String>();
         String itemIdentifier;
         String type;
     }
-    
+
     private Map<Integer, FeatureData> features = new HashMap<Integer, FeatureData>();
     private String dataSourceName;
     private String dataSetTitle;
     private int taxonId = -1;
     private String genus;
     private String species;
-    private String featureTypesString = "'gene', 'exon', 'transcript'";
+    private String sequenceFeatureTypesString = "'chromosome', 'chromosome_arm'";
+    private String featureTypesString =
+        "'gene', 'exon', 'transcript', " + sequenceFeatureTypesString;
+    private String relationshipTypesString = "'partof'";
     private int chadoOrganismId;
 
     /**
@@ -78,9 +82,9 @@ public class ChadoDBConverter extends BioDBConverter
     public void setDataSourceName(String name) {
         this.dataSourceName = name;
     }
-    
+
     /**
-     * Set the taxonId to use when creating the Organism Item for the   
+     * Set the taxonId to use when creating the Organism Item for the
      * @param taxonId the taxon id
      */
     public void setTaxonId(String taxonId) {
@@ -88,7 +92,7 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * The genus to use when querying for features. 
+     * The genus to use when querying for features.
      * @param genus the genus
      */
     public void setGenus(String genus) {
@@ -96,13 +100,13 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * The species to use when querying for features. 
+     * The species to use when querying for features.
      * @param species the species
      */
     public void setSpecies(String species) {
         this.species = species;
     }
-    
+
     /**
      * Process the data from the Database and write to the ItemWriter.
      * {@inheritDoc}
@@ -116,7 +120,7 @@ public class ChadoDBConverter extends BioDBConverter
         } else {
             connection = getDatabase().getConnection();
         }
-        
+
         if (dataSetTitle == null) {
             throw new IllegalArgumentException("dataSetTitle not set in ChadoDBConverter");
         }
@@ -134,15 +138,18 @@ public class ChadoDBConverter extends BioDBConverter
         }
         chadoOrganismId = getChadoOrganismId(connection);
         processFeatureTable(connection);
-        processRelationTable(connection);
+        processLocationTable(connection);
+  //      processRelationTable(connection);
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
     }
 
-    private void processFeatureTable(Connection connection) throws SQLException, ObjectStoreException {
+    private void processFeatureTable(Connection connection)
+        throws SQLException, ObjectStoreException {
         Item dataSet = getDataSetItem(dataSetTitle);
-        Item organismItem = getOrganismItem(taxonId);        
+        Item dataSource = getDataSourceItem(dataSourceName);
+        Item organismItem = getOrganismItem(taxonId);
         ResultSet res = getFeatureResultSet(connection);
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -164,6 +171,10 @@ public class ChadoDBConverter extends BioDBConverter
                 fdat.type = type;
                 feature.setReference("organism", organismItem);
                 feature.addToCollection("evidence", dataSet);
+                createSynonym(fdat, "identifier", uniqueName, true, dataSet, dataSource);
+                if (name != null) {
+                    createSynonym(fdat, "name", name, false, dataSet, dataSource);
+                }
                 store(feature);
                 features.put(featureId, fdat);
             }
@@ -171,76 +182,114 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Make and store a new feature 
+     * Make and store a new feature
      * @param featureId the chado feature id
      * @param name the name
      * @param uniqueName the uniquename
-     * @param type the feature type from the cvterm table 
+     * @param type the feature type from the cvterm table
      * @param residues the residues (if any)
      * @param seqlen the sequence length (if known)
      * @throws ObjectStoreException if there is a problem while storing
      */
     protected Item makeFeature(Integer featureId, String name, String uniqueName, String type,
                                String residues, int seqlen) {
-        
-        // XXX FIMXE TODO HACK - this should be configured somehow
+
+        // XXX FIMXE TODO HACK - this should be configured somewhere
         if (uniqueName.startsWith("FBal")) {
-            return null; 
+            return null;
         }
-        
+
         String clsName = TypeUtil.javaiseClassName(type);
         Item feature = createItem(clsName);
-        if (name != null) {
-            feature.setAttribute("identifier", name);
+
+        // XXX FIMXE TODO HACK - this should be configured somewhere
+        if (feature.hasAttribute("organismDbId")) {
+            if (name != null) {
+                feature.setAttribute("identifier", name);
+            }
+            feature.setAttribute("organismDbId", uniqueName);
+        } else {
+            feature.setAttribute("identifier", uniqueName);
         }
-        feature.setAttribute("organismDbId", uniqueName);
-   
-/*
-                createSynonym(feature, "identifier", accession, true, dataSet, dataSource);
-            getItemWriter().store(ItemHelper.convert(accSynonym));
-            feature.setAttribute("curated", "false");
-            feature.setReference("organism", organismItem);
-            feature.addToCollection("evidence", dataSet);
-            Item cloneSynonym =
-                createSynonym(feature, "identifier", cloneId, false, dataSet, dataSource);
-            getItemWriter().store(ItemHelper.convert(cloneSynonym));
-        }
-       */
         return feature;
     }
 
-    private void processRelationTable(Connection connection) {
-        
-    }
-
-    private void processDbxrefTable(Connection connection) throws SQLException, ObjectStoreException {
-        Item dataSource = getDataSourceItem(dataSourceName);
+    private void processLocationTable(Connection connection)
+        throws SQLException, ObjectStoreException {
         Item dataSet = getDataSetItem(dataSetTitle);
 
+        ResultSet res = getFeatureLocResultSet(connection);
+        while (res.next()) {
+            Integer featureLocId = new Integer(res.getInt("featureloc_id"));
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            Integer srcFeatureId = new Integer(res.getInt("srcfeature_id"));
+            int start = res.getInt("fmin") + 1;
+            int end = res.getInt("fmax");
+            int strand = res.getInt("strand");
+            if (features.containsKey(srcFeatureId)) {
+                FeatureData srcFeatureData = features.get(srcFeatureId);
+                if (features.containsKey(featureId)) {
+                    FeatureData featureData = features.get(featureId);
+                    makeLocation(srcFeatureData.uniqueName, featureData.itemIdentifier,
+                                 start, end, strand, taxonId, dataSet);
+                } else {
+                    throw new RuntimeException("featureId (" + featureId + ") from location "
+                                               + featureLocId 
+                                               + " was not found in the feature table");
+                }
+            } else {
+                throw new RuntimeException("srcfeature_id (" + srcFeatureId + ") from location "
+                                           + featureLocId + " was not found in the feature table");
+            }
+        }
+    }
+
+    private void processRelationTable(Connection connection)
+        throws SQLException {
+        Item dataSet = getDataSetItem(dataSetTitle);
+
+        ResultSet res = getFeatureRelationshipResultSet(connection);
+        while (res.next()) {
+            Integer featureRelationshipId = new Integer(res.getInt("feature_relationship_id"));
+            Integer subjectId = new Integer(res.getInt("subject_id"));
+            Integer objectId = new Integer(res.getInt("object_id"));
+
+            if (features.containsKey(subjectId)) {
+                FeatureData subjectData = features.get(subjectId);
+                if (features.containsKey(objectId)) {
+                    FeatureData featureData = features.get(objectId);
+                    
+                } else {
+                    throw new RuntimeException();
+                }
+            } else {
+                throw new RuntimeException("subject_id " + subjectId + " from feature_relationship "
+                                           + featureRelationshipId 
+                                           + " was not found in the feature table");
+            }
+        }
+    }
+
+    private void processDbxrefTable(Connection connection)
+        throws SQLException, ObjectStoreException {
+        Item dataSource = getDataSourceItem(dataSourceName);
+        Item dataSet = getDataSetItem(dataSetTitle);
         ResultSet res = getDbxrefResultSet(connection);
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             String accession = res.getString("accession");
-            boolean isPrimary;
             if (features.containsKey(featureId)) {
                 FeatureData fdat = features.get(featureId);
                 Set<String> existingSynonyms = fdat.existingSynonyms;
                 if (existingSynonyms.contains(accession)) {
                     return;
                 } else {
-                    if (fdat.uniqueName.equals(accession)) {
-                        isPrimary = true;
-                    } else {
-                        isPrimary = false;
-                    }
-                    Item synonym = createSynonym(fdat.itemIdentifier, "identifier", accession,
-                                                 isPrimary, dataSet, dataSource);
-                    store(synonym);
+                    createSynonym(fdat, "identifier", accession, false, dataSet, dataSource);
                 }
             }
         }
     }
-    
+
     private void processFeaturePropTable(Connection connection)
         throws SQLException, ObjectStoreException {
         Item dataSource = getDataSourceItem(dataSourceName);
@@ -251,41 +300,54 @@ public class ChadoDBConverter extends BioDBConverter
             Integer featureId = new Integer(res.getInt("feature_id"));
             String identifier = res.getString("value");
             String typeName = res.getString("type_name");
-            boolean isPrimary;
             if (features.containsKey(featureId) && typeName.equals("symbol")) {
                 FeatureData fdat = features.get(featureId);
                 Set<String> existingSynonyms = fdat.existingSynonyms;
                 if (existingSynonyms.contains(identifier)) {
                     return;
                 } else {
-                    if (fdat.uniqueName.equals(identifier)) {
-                        isPrimary = true;
-                    } else {
-                        isPrimary = false;
-                    }
-                    Item synonym = createSynonym(fdat.itemIdentifier, "identifier", identifier,
-                                                 isPrimary, dataSet, dataSource);
-                    store(synonym);
+                    createSynonym(fdat, typeName, identifier, false, dataSet, dataSource);
                 }
             }
         }
     }
 
-    private void processSynonymTable(Connection connection) throws SQLException {
-            
+    private void processSynonymTable(Connection connection)
+        throws SQLException, ObjectStoreException {
+        Item dataSource = getDataSourceItem(dataSourceName);
+        Item dataSet = getDataSetItem(dataSetTitle);
+
+        ResultSet res = getSynonymResultSet(connection);
+        while (res.next()) {
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String identifier = res.getString("synonym_name");
+            String typeName = res.getString("type_name");
+            if (features.containsKey(featureId)
+                && (typeName.equals("symbol") || typeName.equals("fullname"))) {
+                FeatureData fdat = features.get(featureId);
+                Set<String> existingSynonyms = fdat.existingSynonyms;
+                if (existingSynonyms.contains(identifier)) {
+                    return;
+                } else {
+                    createSynonym(fdat, typeName, identifier, false, dataSet, dataSource);
+                }
+            }
+        }
     }
 
     /**
-     * Return the interesting rows from the features table. 
+     * Return the interesting rows from the features table.
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
      */
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
         String query = "select feature_id, name, uniquename, type, residues, seqlen from f_type "
-            + "where type in (" + featureTypesString + ") and organism_id = " + chadoOrganismId;
+            + "where type IN (" + featureTypesString + ") and organism_id = " + chadoOrganismId;
         Statement stmt = connection.createStatement();
-        
+
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
@@ -299,7 +361,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected int getChadoOrganismId(Connection connection)
         throws SQLException {
-        String query = "select organism_id from organism where genus = " 
+        String query = "select organism_id from organism where genus = "
             + DatabaseUtil.objectToString(genus) + " and species = "
             + DatabaseUtil.objectToString(species);
         Statement stmt = connection.createStatement();
@@ -307,45 +369,126 @@ public class ChadoDBConverter extends BioDBConverter
         if (res.next()) {
             return res.getInt(1);
         } else {
-            throw new RuntimeException("no rows returned when querying organism table for genus \"" 
+            throw new RuntimeException("no rows returned when querying organism table for genus \""
                                        + genus + "\" and species \"" + species + "\"");
         }
     }
-    
+
     /**
-     * Return the interesting rows from the dbxref table. 
+     * Return the interesting rows from the feature_relationship table.
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getDbxrefResultSet(Connection connection) throws SQLException {
+    private ResultSet getFeatureRelationshipResultSet(Connection connection) throws SQLException {
         String query =
-            "select feature.feature_id, accession from dbxref, feature_dbxref, feature "
-            + " where feature_dbxref.dbxref_id = dbxref.dbxref_id "
-            + "   and feature_dbxref.feature_id = feature.feature_id "
-            + "   and feature.feature_id in"
-            + "        (select feature_id from f_type" 
-            + "           where type in (" + featureTypesString + ") "
-            + "           and organism_id = " + chadoOrganismId + ")";
+            "SELECT feature_relationship_id, subject_id, object_id, cvterm.name AS type_name"
+            + "  FROM feature_relationship, cvterm"
+            + "  WHERE cvterm.cvterm_id = type_id"
+            + "      AND cvterm.name IN (" + relationshipTypesString  + ")"
+            + "      AND subject_id IN"
+            + "           (SELECT feature_id FROM f_type\"\n" 
+            + "                  WHERE type IN (" + featureTypesString + "))";
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
 
     /**
-     * Return the interesting rows from the featureprop table. 
+     * Return the interesting rows from the featureloc table.
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getFeaturePropResultSet(Connection connection) throws SQLException {
-
+    protected ResultSet getFeatureLocResultSet(Connection connection) throws SQLException {
         String query =
-            "select feature_id, value, cvterm.name as type_name from featureprop, cvterm"
-            + "   where featureprop.type_id = cvterm.cvterm_id"
-            + "       and feature_id in (select feature_id from f_type"
-            + "                          where type in (" + featureTypesString + ")"
-            + "                              and organism_id = " + chadoOrganismId + ")";
+            "SELECT featureloc_id, feature_id, srcfeature_id, fmin, is_fmin_partial,"
+            + "     fmax, is_fmax_partial, strand"
+            + "   FROM featureloc"
+            + "   WHERE feature_id IN"
+            + "          (SELECT feature_id FROM f_type"
+            + "               WHERE type IN (" + featureTypesString + "))"
+            + "       AND srcfeature_id IN"
+            + "          (SELECT feature_id FROM f_type"
+            + "               WHERE type IN (" + sequenceFeatureTypesString + "))";
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
+    }
+
+    /**
+     * Return the interesting rows from the dbxref table.
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getDbxrefResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT feature.feature_id, accession FROM dbxref, feature_dbxref, feature "
+            + " WHERE feature_dbxref.dbxref_id = dbxref.dbxref_id "
+            + "   AND feature_dbxref.feature_id = feature.feature_id "
+            + "   AND feature.feature_id IN"
+            + "        (SELECT feature_id FROM f_type"
+            + "           WHERE type IN (" + featureTypesString + ") "
+            + "           AND organism_id = " + chadoOrganismId + ")";
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /**
+     * Return the interesting rows from the featureprop table.
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getFeaturePropResultSet(Connection connection) throws SQLException {
+        String query =
+            "select feature_id, value, cvterm.name AS type_name FROM featureprop, cvterm"
+            + "   WHERE featureprop.type_id = cvterm.cvterm_id"
+            + "       AND feature_id IN (SELECT feature_id FROM f_type"
+            + "                          WHERE type IN (" + featureTypesString + ")"
+            + "                              AND organism_id = " + chadoOrganismId + ")";
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /**
+     * Return the interesting rows from the synonym table.
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT feature_id, synonym.name AS synonym_name, cvterm.name AS type_name"
+            + "  FROM feature_synonym, synonym, cvterm"
+            + "  WHERE feature_synonym.synonym_id = synonym.synonym_id"
+            + "     AND synonym.type_id = cvterm.cvterm_id"
+            + "     AND feature_id IN (SELECT feature_id FROM f_type WHERE type = \'gene\')"
+            + "     AND feature_id IN (select feature_id from f_type"
+            + "                          WHERE type IN (" + featureTypesString + ")"
+            + "                              AND organism_id = " + chadoOrganismId + ")";
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /**
+     * Call super.createSynonym(), store the Item then record in fdat that we've created it.
+     */
+    private Item createSynonym(FeatureData fdat, String type, String identifier,
+                               boolean isPrimary, Item dataSet, Item dataSource)
+        throws ObjectStoreException {
+        Item returnItem = createSynonym(fdat.itemIdentifier, type, identifier, isPrimary,
+                                        dataSet, dataSource);
+        fdat.existingSynonyms.add(identifier);
+        return returnItem;
     }
 }
