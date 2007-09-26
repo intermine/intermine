@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.ReferenceList;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.ItemHelper;
 
 /**
@@ -46,7 +48,7 @@ public class MockItemWriter implements ItemWriter
     /**
      * {@inheritDoc}
      */
-    public void storeAll(Collection items) {
+    public void storeAll(Collection<Item> items) {
         for (Iterator i = items.iterator(); i.hasNext();) {
             store((Item) i.next());
         }
@@ -69,5 +71,12 @@ public class MockItemWriter implements ItemWriter
             result.add(ItemHelper.convert((Item) i.next()));
         }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void store(ReferenceList refList) throws ObjectStoreException {
+        throw new UnsupportedOperationException("store(ReferenceList) not implemented");
     }
 }

@@ -10,14 +10,28 @@ package org.intermine.xml.full;
  *
  */
 
+import java.util.Arrays;
+
+import org.intermine.model.testmodel.Department;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.proxy.ProxyReference;
+
 import junit.framework.TestCase;
 
 public class ItemHelperTest extends TestCase
 {
     Item item;
     org.intermine.model.fulldata.Item dbItem;
+    
+    ReferenceList referenceList;
+    org.intermine.model.fulldata.ReferenceList dbReferenceList;
 
+    ObjectStore os;
+    
     public void setUp() throws Exception {
+        os = ObjectStoreFactory.getObjectStore("os.unittest");
+
         item = new Item();
         item.setClassName("http://www.intermine.org/model/testmodel#Department");
         item.setImplementations("http://www.intermine.org/model/testmodel#Broke");
@@ -44,6 +58,7 @@ public class ItemHelperTest extends TestCase
         dbItem.setClassName("http://www.intermine.org/model/testmodel#Department");
         dbItem.setImplementations("http://www.intermine.org/model/testmodel#Broke");
         dbItem.setIdentifier("1");
+        dbItem.setId(1001);
         org.intermine.model.fulldata.Attribute dbAttr1 = new  org.intermine.model.fulldata.Attribute();
         dbAttr1.setName("name");
         dbAttr1.setValue("Department1");
@@ -64,6 +79,16 @@ public class ItemHelperTest extends TestCase
         dbCol1.setRefIds("3 4");
         dbCol1.setItem(dbItem);
         dbItem.addCollections(dbCol1);
+
+        referenceList = new ReferenceList();
+        referenceList.setName("employees");
+        referenceList.setRefIds(Arrays.asList("3", "4"));
+        
+        dbReferenceList = new org.intermine.model.fulldata.ReferenceList();
+        dbReferenceList.setName("employees");
+        dbReferenceList.setRefIds("3 4");
+        dbReferenceList.proxyItem(new ProxyReference(os, 1, Department.class));
+        dbReferenceList.setId(2002);
     }
 
     public void testConvertFromDbItem() throws Exception {
@@ -72,5 +97,12 @@ public class ItemHelperTest extends TestCase
 
     public void testConvertToDbItem() throws Exception {
         assertEquals(item, ItemHelper.convert(ItemHelper.convert(item)));
+    }
+    
+    public void testConvertReferenceList() throws Exception {
+        org.intermine.model.fulldata.ReferenceList resRefList =
+            ItemHelper.convert(referenceList, os, 1, Department.class);
+        resRefList.setId(2002);
+        assertEquals(dbReferenceList, resRefList);
     }
 }
