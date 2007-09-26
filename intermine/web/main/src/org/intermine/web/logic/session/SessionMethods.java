@@ -529,6 +529,7 @@ public class SessionMethods
      * @param session the current http session
      * @param messages messages resources (for messages and errors)
      * @param saveQuery whether or not to automatically save the query
+     * @param pathQuery query to start
      * @return the new query id created
      */
     public static String startQuery(final QueryMonitor monitor,
@@ -553,15 +554,13 @@ public class SessionMethods
                 public void run () {
                     final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                     try {
-                        LOG.debug("startQuery qid " + qid + " thread started");
-
                         Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
                         Map<String, BagQueryResult> pathToBagQueryResult
                                 = new HashMap<String, BagQueryResult>();
                         Map<String, InterMineBag> allBags =
                             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
                         Query q =
-                            MainHelper.makeQuery(pathQuery,allBags,
+                            MainHelper.makeQuery(pathQuery, allBags,
                                                  pathToQueryNode, servletContext,
                                                  pathToBagQueryResult, false);
                         Results results = TableHelper.makeResults(os, q);
@@ -672,8 +671,6 @@ public class SessionMethods
                                               final MessageResources messages, 
                                               final Collection collection) {
         synchronized (session) {
-            final ServletContext servletContext = session.getServletContext();
-            final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
             if (queries == null) {
                 queries = new HashMap();
