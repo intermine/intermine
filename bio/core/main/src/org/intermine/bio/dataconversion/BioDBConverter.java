@@ -44,7 +44,7 @@ public abstract class BioDBConverter extends DBConverter
     /**
      * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
      * @param chromosomeIdentifier Chromosome identifier
-     * @param locatedSequenceFeature the feature
+     * @param locatedSequenceFeatureId the Item idenitifier of the feature
      * @param start the start position
      * @param end the end position
      * @param strand the strand
@@ -53,7 +53,7 @@ public abstract class BioDBConverter extends DBConverter
      * @return the new Location object
      * @throws ObjectStoreException if an Item can't be stored
      */
-    protected Item makeLocation(String chromosomeIdentifier, Item locatedSequenceFeature,
+    protected Item makeLocation(String chromosomeIdentifier, String locatedSequenceFeatureId,
                                 int start, int end, int strand, int taxonId, Item dataSet)
         throws ObjectStoreException {
         Item chromosome = getChromosome(chromosomeIdentifier, taxonId);
@@ -68,7 +68,7 @@ public abstract class BioDBConverter extends DBConverter
         }
         location.setAttribute("strand", String.valueOf(strand));
         location.setReference("object", chromosome);
-        location.setReference("subject", locatedSequenceFeature);
+        location.setReference("subject", locatedSequenceFeatureId);
         location.addToCollection("evidence", dataSet);
         store(location);
         return location;
@@ -154,9 +154,10 @@ public abstract class BioDBConverter extends DBConverter
      * @param evidence the Synonym evidence (eg. a DataSet)
      * @param dataSource the source of this synonym
      * @return the new Synonym
+     * @throws ObjectStoreException if there is a problem while storing
      */
     public Item createSynonym(String subjectId, String type, String value, boolean isPrimary,
-                              Item evidence, Item dataSource) {
+                              Item evidence, Item dataSource) throws ObjectStoreException {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
@@ -164,6 +165,7 @@ public abstract class BioDBConverter extends DBConverter
         synonym.setReference("subject", subjectId);
         synonym.setReference("source", dataSource);
         synonym.addToCollection("evidence", evidence);
+        store(synonym);
         return synonym;
     }
 }
