@@ -79,17 +79,16 @@ public class AnoESTConverter extends BioDBConverter
             Item cluster = createItem("ESTCluster");
             cluster.setAttribute("identifier", identifier);
             Item dataSet = getDataSetItem(DATASET_TITLE);
-            Item accSynonym = createSynonym(cluster.getIdentifier(), "identifier", identifier, true,
-                                            dataSet, getDataSourceItem(DATA_SOURCE_NAME));
-            getItemWriter().store(ItemHelper.convert(accSynonym));
+            createSynonym(cluster.getIdentifier(), "identifier", identifier, true,
+                          dataSet, getDataSourceItem(DATA_SOURCE_NAME));
             cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
             cluster.addToCollection("evidence", dataSet);
 
             // some clusters have no location
             if (chromosomeIdentifier != null && start > 0 && end > 0) {
-                makeLocation(chromosomeIdentifier, cluster, start, end, strand, ANOPHELES_TAXON_ID,
-                             dataSet);
+                makeLocation(chromosomeIdentifier, cluster.getIdentifier(), start, end, strand,
+                             ANOPHELES_TAXON_ID, dataSet);
             }
             getItemWriter().store(ItemHelper.convert(cluster));
             
@@ -123,9 +122,8 @@ public class AnoESTConverter extends BioDBConverter
                 ests.put(accession, est);
                 est.setAttribute("identifier", accession);
                 Item dataSet = getDataSetItem(DATASET_TITLE);
-                Item accSynonym = createSynonym(est.getIdentifier(), "identifier", accession, true, 
-                                                dataSet, getDataSourceItem(DATA_SOURCE_NAME));
-                getItemWriter().store(ItemHelper.convert(accSynonym));
+                createSynonym(est.getIdentifier(), "identifier", accession, true, 
+                              dataSet, getDataSourceItem(DATA_SOURCE_NAME));
                 est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
                 est.addToCollection("evidence", dataSet);
