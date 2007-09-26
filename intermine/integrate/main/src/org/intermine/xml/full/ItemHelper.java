@@ -16,6 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.RandomAccess;
 
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.StringUtil;
 
 /**
@@ -61,12 +63,41 @@ public class ItemHelper
             org.intermine.model.fulldata.ReferenceList newRefs
                 = new org.intermine.model.fulldata.ReferenceList();
             newRefs.setName(refs.getName());
-            newRefs.setRefIds(StringUtil.join(refs.getRefIds(), " "));
+            newRefs.setRefIds(makeFulldataRefIds(refs));
             newItem.getCollections().add(newRefs);
             newRefs.setItem(newItem);
         }
 
         return newItem;
+    }
+
+    /**
+     * Get the item ids from a ReferenceList and make a String for the fulldata ReferenceList.
+     */
+    private static String makeFulldataRefIds(ReferenceList refs) {
+        return StringUtil.join(refs.getRefIds(), " ");
+    }
+    
+    /**
+     * Convert a xml ReferenceList to a fulldata ReferenceList that can then be stored with
+     * ItemWriter
+     * @param refList the input ReferenceList
+     * @param os the ObjectStore to use when creating a ProxyReference
+     * @param itemId the id of the Item that will contain this ReferenceList
+     * @param itemClass the class of the Item that will contain this ReferenceList
+     * @return a fulldata object
+     */
+    public static org.intermine.model.fulldata.ReferenceList convert(ReferenceList refList,
+                                                                     ObjectStore os,
+                                                                     Integer itemId,
+                                                                     Class itemClass) {
+        org.intermine.model.fulldata.ReferenceList newRefList =
+            new org.intermine.model.fulldata.ReferenceList();
+        newRefList.setName(refList.getName());
+        newRefList.setRefIds(makeFulldataRefIds(refList));
+        ProxyReference proxy = new ProxyReference(os, itemId, itemClass); 
+        newRefList.proxyItem(proxy);
+        return newRefList;
     }
     
     /**

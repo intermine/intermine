@@ -13,6 +13,7 @@ package org.intermine.dataconversion;
 import java.util.Collection;
 
 import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.ReferenceList;
 import org.intermine.objectstore.ObjectStoreException;
 
 /**
@@ -35,6 +36,13 @@ public interface ItemWriter
     public void store(Item item) throws ObjectStoreException;
 
     /**
+     * Stores the given ReferenceList without needing an Item.
+     * @param refList the ReferenceList
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void store(ReferenceList refList) throws ObjectStoreException;
+    
+    /**
      * Stores the given Collection of Items and all their associated attributes, references, and
      * referencelists.
      *
@@ -44,7 +52,7 @@ public interface ItemWriter
      * terminates, therefore a problem could result in an ObjectStoreException being thrown at a
      * later time
      */
-    public void storeAll(Collection items) throws ObjectStoreException;
+    public void storeAll(Collection<Item> items) throws ObjectStoreException;
 
     /**
      * Flushes any store queue, closes transactions, and generally makes sure that every Item passed

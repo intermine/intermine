@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.ReferenceList;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 
@@ -67,24 +68,18 @@ public class ObjectStoreItemWriter implements ItemWriter
             throw new RuntimeException("className not set for item: " + item.getIdentifier());
         }
         osw.store(item);
-        transactionCounter++;
-        if (transactionCounter >= TRANSACTION_BATCH_SIZE) {
-            LOG.info("Committing transaction");
-            osw.commitTransaction();
-            osw.beginTransaction();
-            transactionCounter = 0;
-        }
+        incrementTransaction();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void storeAll(Collection items) throws ObjectStoreException {
-        Iterator i = items.iterator();
+    public void storeAll(Collection<Item> items) throws ObjectStoreException {
+        Iterator<Item> i = items.iterator();
         int count = 0;
         Item item = new Item();
         while (i.hasNext()) {
-            item = (Item) i.next();
+            item = i.next();
             store(item);
             count++;
             if (count % 1000 == 0) {
@@ -103,4 +98,23 @@ public class ObjectStoreItemWriter implements ItemWriter
             osw.commitTransaction();
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void store(ReferenceList refList) throws ObjectStoreException {
+        store(refList);
+        incrementTransaction();
+    }
+
+    private void incrementTransaction() throws ObjectStoreException {
+        transactionCounter++;
+        if (transactionCounter >= TRANSACTION_BATCH_SIZE) {
+            LOG.info("Committing transaction");
+            osw.commitTransaction();
+            osw.beginTransaction();
+            transactionCounter = 0;
+        }
+    }
+
 }
