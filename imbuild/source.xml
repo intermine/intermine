@@ -308,12 +308,13 @@
     Convert a dag/obo file - converter accepts both .dag and .obo files.
   -->
   <target name="-retrieve-from-dag" if="have.file.dag">
-    <taskdef name="convert-dag-file" classname="org.intermine.task.DagConverterTask">
+    <taskdef name="convert-dag-file" classname="org.intermine.bio.task.DagConverterTask">
       <classpath refid="task.class.path"/>
     </taskdef>
 
     <convert-dag-file file="${src.data.file}"
                       osName="osw.${common.os.prefix}-tgt-items"
+                      modelName="${target.model}"
                       dagName="${dag.ontology.name}"
                       url="${dag.source.url}"
                       termClass="${dag.term.class}"/>
