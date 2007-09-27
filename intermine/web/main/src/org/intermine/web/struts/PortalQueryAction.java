@@ -89,6 +89,7 @@ public class PortalQueryAction extends InterMineAction
         String extId = request.getParameter("externalid");
         String origin = request.getParameter("origin");
         String className = request.getParameter("class");
+        String organism = request.getParameter("organism");
         if ((extId == null) || (extId.length() <= 0)) {
             extId = request.getParameter("externalids");
         }
@@ -101,6 +102,17 @@ public class PortalQueryAction extends InterMineAction
         } else if (origin.length() > 0) {
             origin = "." + origin;
         }
+        session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
+        // Add a message to welcome the user
+        Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        SessionMethods.recordMessage(properties.getProperty("portal.welcome" + origin), session);
+
+        // Set collapsed/uncollapsed state of object details UI
+        Map collapsed = SessionMethods.getCollapsedMap(session);
+        collapsed.put("fields", Boolean.TRUE);
+        collapsed.put("further", Boolean.FALSE);
+        collapsed.put("summary", Boolean.FALSE);
+
         session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
         
 
@@ -139,14 +151,14 @@ public class PortalQueryAction extends InterMineAction
                                               os , profile.getUserId() , uosw);
         
         BagQueryResult bagQueryResult = 
-            bagRunner.searchForBag(className, Arrays.asList(idList), null, false);
+            bagRunner.searchForBag(className, Arrays.asList(idList), organism, false);
         
         List <Integer> bagList = new ArrayList <Integer> ();
         bagList.addAll(bagQueryResult.getMatches().keySet());
         // If there are no exact matches, add converted
         if (bagList.size() == 0) {
             Map issues = bagQueryResult.getIssues();
-            if (issues != null) {
+            if (issues != null && issues.size() != 0) {
                 Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
                 for (Iterator iter = converted.values().iterator(); iter.hasNext();) {
                     Map queryMap = (Map) iter.next();
@@ -218,16 +230,6 @@ public class PortalQueryAction extends InterMineAction
                                                                          new HashMap());
         // Convert path query to intermine query
         SessionMethods.loadQuery(queryCopy, request.getSession(), response);
-        // Add a message to welcome the user
-        SessionMethods.recordMessage(properties.getProperty("portal.welcome" + origin), session);
-
-        // Set collapsed/uncollapsed state of object details UI
-        Map collapsed = SessionMethods.getCollapsedMap(session);
-        collapsed.put("fields", Boolean.TRUE);
-        collapsed.put("further", Boolean.FALSE);
-        collapsed.put("summary", Boolean.FALSE);
-
-        session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
 
         QueryMonitorTimeout clientState
                 = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);

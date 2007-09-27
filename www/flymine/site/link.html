@@ -27,6 +27,9 @@ message to incoming users from your site.  It also helps us keep track of incomi
 Let us know what you want to use.
 </p>
 <p style="">
+As an option, you can specify an organism name by using <strong>organism</strong> in the URL. The organism name must be the <strong>shortName</strong> as defined in FlyMine, for instance <em>D. melanogaster</em>.
+</p>
+<p style="">
 A typical URL to link to a gene report page:
 
 <a href="http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;origin=flybase">www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;origin=flybase</a>
@@ -46,14 +49,47 @@ Some other examples:
 </li>
 </ul>
 <p style="">
-If you would like to link to a paricular type of entry and have suggstions for additional templates
+If you would like to link to a particular type of entry and have suggestions for additional templates
 you would like to see there please <a href="contact">let us know</a>, this is easy to configure.
 </p>
-</div>
-</div>
-<div class="body">
+
+<h3>Links to List Analysis pages</h3>
+<p>It is possible to link directly to  a lists analysis page by providing a list of identifiers in the URL. FlyMine will then search for the corresponding entries and create a FlyMine List with them. It is mandatory to specify the class of the data to load, i.e. Gene, Protein and it is important to respect the font case. For a list of data types please refer to the list of data types on the QueryBuilder page: <a href="http://www.flymine.org/quer/customQuery.do">http://www.flymine.org/query/customQuery.do</a></p>
+<p style="">
+The URL to use takes the form:
+
+<strong>www.flymine.org/query/portal.do?externalids=identifier1,identifier2,identifier3&amp;class=ClassName&amp;origin=MySite</strong>
+</p>
+<p style="">
+The <strong>origin</strong> in the URL is optional but will allow us to show a specific welcome/help
+message to incoming users from your site.  It also helps us keep track of incoming links.
+Let us know what you want to use.
+</p>
+<p style="">
+As an option, you can specify an organism name by using <strong>organism</strong> in the URL. The organism name must be the <strong>shortName</strong> as defined in FlyMine, for instance <em>D. melanogaster</em>.
+</p>
+<p style="">
+A typical URL to link to a gene report page:
+
+<a href="http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Gene&amp;origin=flybase">www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Gene&amp;origin=flyexpress</a>
+</p>
+
+<h3>Converting data types</h3>
+<p>When linking to a report page or a list analysis page you can convert the data type, for instance if you provide a Gene identifier and want to link to the corresponding Protein, you need to specify the class as Protein.</p>
+<p style="">
+The URL to use takes the form:
+
+<strong>www.flymine.org/query/portal.do?externalid=geneId&amp;class=proteinId&amp;</strong>
+</p>
+<p>
+Examples:
+<ul>
+  <li><a href="http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Protein" title="Running Query...">www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Protein</a></li>
+  <li><a href="http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Protein" title="Running Query...">www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Protein</a></li>
+</ul>
+</p>
+
 <h3>Links to data categories</h3>
-<div class="body">
 <p style="">
 Links directly to data category pages in the latest release take the form:
 </p>
