@@ -327,8 +327,10 @@
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
     <action path="/portal" type="org.intermine.web.struts.PortalQueryAction">
+      <forward name="failure" path="error.page"/>
       <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
+      <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
