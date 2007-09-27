@@ -37,9 +37,8 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
-import org.intermine.util.TypeUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
@@ -93,7 +92,7 @@ public class PortalQueryAction extends InterMineAction
         if ((extId == null) || (extId.length() <= 0)) {
             extId = request.getParameter("externalids");
         }
-        if (extId == null) {
+        if (extId == null || extId.length() == 0) {
             recordError(new ActionMessage("errors.badportalquery"), request);
             return mapping.findForward("failure");
         }
@@ -102,19 +101,38 @@ public class PortalQueryAction extends InterMineAction
         } else if (origin.length() > 0) {
             origin = "." + origin;
         }
-
+        session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
+        
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String[] idList = extId.split(",");
+        
+        // Use the old way = quicksearch template in case some people used to link in 
+        // without class name
+        if ((idList.length == 1) && (className == null || className.length() == 0)) {
+            String qid = loadObjectDetails(servletContext, session, request, response, 
+                                           profile.getUsername(), extId, origin);
+            return new ForwardParameters(mapping.findForward("waiting"))
+            .addParameter("qid", qid).forward();
+        }
+        
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Model model = os.getModel();
         BagQueryConfig bagQueryConfig = 
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         BagQueryRunner bagRunner =
                 new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
-        
-        TypeUtil.instantiate(className);
+
+        // If the class is not in the model, we can't continue
+        try {
+            className = StringUtil.capitalise(className);
+            Class.forName(model.getPackageName() + "." + className);
+        } catch (ClassNotFoundException clse) {
+            recordError(new ActionMessage("errors.badportalclass"), request);
+            return mapping.findForward("failure");
+        }
         ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
         InterMineBag imBag = new InterMineBag(origin + System.currentTimeMillis(), 
                                               className , null , new Date() ,
@@ -128,7 +146,7 @@ public class PortalQueryAction extends InterMineAction
         // If there are no exact matches, add converted
         if (bagList.size() == 0) {
             Map issues = bagQueryResult.getIssues();
-            if (issues != null ) {
+            if (issues != null) {
                 Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
                 for (Iterator iter = converted.values().iterator(); iter.hasNext();) {
                     Map queryMap = (Map) iter.next();
@@ -148,19 +166,20 @@ public class PortalQueryAction extends InterMineAction
             .addParameter("id", bagList.get(0).toString()).forward();
         // More than one matches for single identifier
         } else if ((bagList.size() > 1) && (idList.length == 1)) {
-            Model model = os.getModel();
+            List intermineObjectList = os.getObjectsByIds(bagQueryResult.getMatches().keySet());
             WebPathCollection webPathCollection = 
-                new WebPathCollection(os, new Path(model, className), bagList, model, webConfig,
+                new WebPathCollection(os, new Path(model, className), intermineObjectList
+                                      , model, webConfig,
                                   classKeys);
             PagedTable pc = new PagedTable(webPathCollection);
             String identifier = "col" + index++;
             SessionMethods.setResultsTable(session, identifier, pc);
-            int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
             
             return new ForwardParameters(mapping.findForward("results"))
                             .addParameter("noSelect", "true")
-                            .addParameter("table", identifier).forward();
-            
+                            .addParameter("table", identifier)
+                            .addParameter("size", "10")
+                            .addParameter("trail", "").forward();
         // Make a bag
         } else {
             ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
@@ -219,4 +238,3 @@ public class PortalQueryAction extends InterMineAction
     }
     
 }
-
