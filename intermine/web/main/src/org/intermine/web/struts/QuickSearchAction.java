@@ -84,9 +84,8 @@ public class QuickSearchAction extends InterMineAction
 
             PathNode node =   ((PathNode) template.getEditableNodes().get(0));
 
-            valuesMap.put(node.getPathString(), qsf.getValue());
-            constraintOpsMap.put(node.getPathString(), 
-                                 ConstraintOp.getOpForIndex(Integer.valueOf(6)));
+            valuesMap.put(node.getPathString(), qsf.getParsedValue());
+            constraintOpsMap.put(node.getPathString(), ConstraintOp.EQUALS);
             
             TemplateQuery queryCopy = TemplateHelper.editTemplate(valuesMap, 
                                                                   constraintOpsMap, template, null);

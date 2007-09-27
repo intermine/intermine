@@ -10,11 +10,22 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
+import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-
 /**
  * @author Xavier Watkins
  *
@@ -22,7 +33,7 @@ import org.apache.struts.action.ActionMapping;
 public class QuickSearchForm extends ActionForm
 {
 
-    private String value;
+    private String value, parsedValue;
     private String quickSearchType;
     
     /**
@@ -64,7 +75,31 @@ public class QuickSearchForm extends ActionForm
         this.value = value;
     }
 
+    
+    /**
+     * @return the parsed value
+     */
+    public String getParsedValue() {
+        return parsedValue;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
+                                 HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
+        ActionErrors errors = new ActionErrors();
+
+        Object o =
+            QueryBuilderForm.parseValue(value, String.class, ConstraintOp.EQUALS, locale, errors);
+        parsedValue = o.toString();
+        
+        return errors;
+    }
+    
+    
     /**
      * Reset form bean.
      *
