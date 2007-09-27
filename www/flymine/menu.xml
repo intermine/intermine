@@ -3,6 +3,7 @@
   <item title="About">
     <item url="/about.xml" title="About"/>
     <item url="/contact.xml" title="Contact"/>
+    <item url="/project/jobs.xml" title="Jobs"/>
     <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
   </item>
 
