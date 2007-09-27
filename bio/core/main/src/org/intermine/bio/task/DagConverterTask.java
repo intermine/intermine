@@ -17,8 +17,10 @@ import org.intermine.bio.dataconversion.DagConverter;
 import org.intermine.bio.dataconversion.OboConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.task.ConverterTask;
 
 /**
  * Initiates retrieval and conversion of data from a source database
@@ -27,7 +29,7 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class DagConverterTask extends Task
+public class DagConverterTask extends ConverterTask
 {
     protected static final Logger LOG = Logger.getLogger(DagConverterTask.class);
 
@@ -98,12 +100,13 @@ public class DagConverterTask extends Task
         try {
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(osName);
             writer = new ObjectStoreItemWriter(osw);
-
+            Model model = Model.getInstanceByName(getModelName());
+            
             DagConverter converter;
             if (file.endsWith(".ontology") || file.endsWith(".dag")) {
-                converter = new DagConverter(writer, osw.getModel(), file, dagName, url, termClass);
+                converter = new DagConverter(writer, model, file, dagName, url, termClass);
             } else if (file.endsWith(".obo")) {
-                converter = new OboConverter(writer, osw.getModel(), file, dagName, url, termClass);
+                converter = new OboConverter(writer, model, file, dagName, url, termClass);
             } else {
                 throw new IllegalArgumentException("Don't know how to deal with file " + file);
             }
