@@ -67,9 +67,7 @@ public class EnrichmentWidgetController extends TilesAction
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-                          
-
-             
+                                       
              String title = request.getParameter("title");
              String controller = request.getParameter("controller");
              String description = request.getParameter("description");
@@ -96,7 +94,7 @@ public class EnrichmentWidgetController extends TilesAction
              }
              
              request.setAttribute("bagName", bagName);
-             
+             request.setAttribute("bagType", bag.getType());
              Class clazz = TypeUtil.instantiate(controller);
              Constructor constr = clazz.getConstructor(new Class[]
                                                                  {

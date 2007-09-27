@@ -87,11 +87,10 @@ Reference population: <c:out value='${referencePopulation}'/>.
   				<th>&nbsp;</td>
 			</tr>
 	  		<c:forEach items="${pvalues}" var="results">
-    			<tr>  	
-  					<td align="left"><c:out value='${labelToId[results.key]}'/> [<c:out value='${results.key}'/>]</td>
-  					
-  					
-  					
+    			<tr>  	    			
+  					<td align="left"><c:out value='${labelToId[results.key]}'/> 
+  						<c:if test="${labelToId[results.key] != results.key}">[<c:out value='${results.key}'/>]</c:if>
+  					</td>  				
   					<td align="left">
   						<c:choose>
   						<c:when test="${results.value < 0.0000001}">
@@ -104,7 +103,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
   					</td>
   					<td align="left" nowrap>
   		   				<html:link action="/widgetAction?key=${results.key}&bagName=${bagName}&link=${link}" target="_top">
-  		   					[<c:out value='${totals[results.key]}'/> genes]
+  		   					[<c:out value='${totals[results.key]}'/>  ${bagType}s]
        					</html:link>  	
 	       			</td>
 				</tr>
