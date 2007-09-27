@@ -83,7 +83,7 @@ while (<F>)
     #### Templates
     if ($url =~ /template.do/)
     {
-        next unless ($url =~ /type=global/);
+        next unless (($url =~ /type=global/) || ($url =~ /scope=global/));
         next unless ($url =~ /name=([^&]+)/);
         my($idx)=$yearMonth." ".$1;
         $countT{$idx}=0 unless (defined $countT{$idx});
