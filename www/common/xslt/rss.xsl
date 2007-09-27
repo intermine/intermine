@@ -39,9 +39,9 @@
       <div class="news-item">
         <div class="news-item-header">
           <xsl:if test="title">
-            <div class="news-title"><xsl:value-of select="title"/></div>
+            <h3><xsl:value-of select="title"/></h3>
           </xsl:if>
-          <div class="news-date"><xsl:value-of select="pubDate"/></div>
+          <i><xsl:value-of select="pubDate"/></i>
         </div>
         <p><xsl:call-template name="globalReplace">
              <xsl:with-param name="outputString" select="description"/>
