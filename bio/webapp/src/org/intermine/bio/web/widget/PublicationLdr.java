@@ -93,12 +93,9 @@ public class PublicationLdr implements EnrichmentWidgetLdr
 
              ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
 
-       
-                 // genes must be in bag
-                 BagConstraint bc1 =
-                     new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-                 cs1.addConstraint(bc1);
-   
+             // genes must be in bag
+             BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+             cs1.addConstraint(bc1);
 
              // get organisms
              organisms = BioUtil.getOrganisms(os, bag);

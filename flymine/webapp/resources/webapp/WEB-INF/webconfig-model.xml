@@ -188,6 +188,12 @@
       	controller="org.intermine.bio.web.widget.PublicationLdr" 
       	description="Publications enriched for genes in this list." 
       	max="0.10"  />
+       <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment" 
+      	link="org.intermine.bio.web.widget.TiffinURLQuery" 
+      	controller="org.intermine.bio.web.widget.TiffinLdr" 
+      	description="Tiffin Motifs enriched for genes in this list." 
+      	max="0.10"  />
+   
    
     </bagdisplayers>
   </class>
