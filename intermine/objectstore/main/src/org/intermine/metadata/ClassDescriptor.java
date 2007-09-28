@@ -35,7 +35,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
 
     // the supers string passed to the constructor
     private String origSuperNames;
-    
+
     // supers set after redundant super classes have been removed
     private final Set<String> superNames = new LinkedHashSet<String>();
     private final Set<ClassDescriptor> superDescriptors = new LinkedHashSet<ClassDescriptor>();
@@ -90,13 +90,13 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             throw new IllegalArgumentException("'supers' parameter must be null or a valid"
                     + " list of interface or superclass names");
         }
-        
+
         if (supers == null) {
             this.origSuperNames = "";
         } else {
-            this.origSuperNames = supers;    
+            this.origSuperNames = supers;
         }
-        
+
         if (supers != null) {
             superNames.addAll(StringUtil.tokenize(supers));
         } else if (!INTERMINEOBJECT_NAME.equals(name)) {
@@ -507,9 +507,9 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             throw new MetaDataException("circular dependency: " + className
                                         + " is a super class of itself");
         }
-        
+
         List<String> redundantSupers = new ArrayList<String>();
-        
+
         if (superNames.size() > 0) {
             for (String superName : superNames) {
                 for (String otherSuperName : superNames) {
@@ -533,9 +533,9 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                 }
             }
         }
-        
+
         superNames.removeAll(redundantSupers);
-        
+
         findSuperDescriptors();
         findSuperclassDescriptor();
         configureReferenceDescriptors();
@@ -544,14 +544,14 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
-     * Return -1 if superName names a class that is a super class of otherSuperName, 1 if 
+     * Return -1 if superName names a class that is a super class of otherSuperName, 1 if
      * otherSuperName names a class that is a super class of superName, 0 if they neither is a super
      * class of the other.
      * @param model the Model to use to find super classes
      * @param className1 a super class name
      * @param className2 a super class name
      * @throws MetaDataException of superName names a class that is a super class of otherSuperName
-     * and otherSuperName names a class that is a super class of superName - ie. a circular 
+     * and otherSuperName names a class that is a super class of superName - ie. a circular
      * dependency
      * @return -1, 1, or 0
      */
@@ -567,7 +567,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         if (class1InClass2Supers) {
             if (class2InClass1Supers) {
                 throw new MetaDataException("circular dependency: " + className1
-                                            + " is a super class of " + className2 
+                                            + " is a super class of " + className2
                                             + " and vice versa");
             } else {
                 return -1;
@@ -582,6 +582,21 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     /**
+     * Return a list of the super class names for the given class name.  The search is performed
+     * breadth-first and the returned Set is a LinkedHashSet so the direct super class names will
+     * be first in the list.
+     * @param model the Model
+     * @param className the className
+     * @return set of super class names
+     * @throws MetaDataException if className isn't in the model
+     */
+    static public Set<String> findSuperClassNames(Model model, String className)
+        throws MetaDataException {
+        Set<String> superClassNames = new LinkedHashSet<String>();
+        findSuperClassNames(model, className, superClassNames);
+        return superClassNames;
+    }
+    /**
      * Return a list of the super class names for the given class name
      * @param model the Model
      * @param className the className
@@ -592,7 +607,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                                     Set<String> superClassNames) throws MetaDataException {
         ClassDescriptor cd = model.getClassDescriptorByName(className);
         if (cd == null) {
-            throw new MetaDataException("Model construction failed - class: " + className 
+            throw new MetaDataException("Model construction failed - class: " + className
                                         + " is not in the model but is used as a super class");
         }
         for (String superName: cd.getSuperclassNames()) {
@@ -670,7 +685,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         Set<String> superClassNames = getSuperclassNames();
         sb.append("<class name=\"" + className + "\"")
             .append(superClassNames.size() > 0
-                    ? " extends=\"" + StringUtil.join(superClassNames, " ") + "\"" 
+                    ? " extends=\"" + StringUtil.join(superClassNames, " ") + "\""
                     : "")
             .append(" is-interface=\"" + isInterface + "\">");
         Set<FieldDescriptor> l = new LinkedHashSet<FieldDescriptor>();
