@@ -72,6 +72,12 @@
 	<c:set var="spinnerPaddingStyle" value="display:none"/>
   </noscript>
 
+<script type="text/javascript">
+<!--//<![CDATA[
+     hideWSList('${wsListId}', '${type}');
+//]]>-->
+</script>
+
 <div style="${spinnerPaddingStyle}" id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" title="Searching..."/></div>
 
 <c:choose>
@@ -200,7 +206,10 @@
         $(wsListId + '_' + type + '_spinner').style.display = 'none';
         $(wsListId + '_' + type + '_container').style.display = 'block';
     }
-
+    function hideWSList(wsListId, type) {
+        $(wsListId + '_' + type + '_spinner').style.display = 'block';
+        $(wsListId + '_' + type + '_container').style.display = 'none';
+    }
     setWsNamesMap(${wsNames}, '${wsListId}', '${type}');
 //]]>-->
 </script>
