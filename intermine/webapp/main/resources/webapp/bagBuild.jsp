@@ -14,12 +14,9 @@
    function switchInputs(open, close) {
       document.getElementById(open + 'Input').disabled = false;
       document.getElementById(close + 'Input').disabled = true;
-
-      
-
       document.getElementById('submitBag').disabled = false;
-      // only clear contents if contents equals our help text
-      
+
+      // only clear contents if contents equals our help text      
       if(open == 'paste' && document.getElementById('pasteInput').value == "e.g.: ${bagExampleIdentifiers}") {
          document.getElementById('pasteInput').value = "";
          document.getElementById('pasteInput').style.color = "#000";

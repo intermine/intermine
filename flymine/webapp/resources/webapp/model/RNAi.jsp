@@ -14,12 +14,12 @@
 
   <h4>
    <a href="javascript:toggleDiv('hiddenDiv1');">
-    <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+    <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
      <i>D. melanogaster</i>  - High-throughput cell-based RNAi screens from the RNAi Screening Center ...
    </a>
   </h4>
 
-<div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
+<div id="hiddenDiv1" class="dataSetDescription">
 
         <dl>
 
@@ -96,12 +96,12 @@
 
     <h4>   
       <a href="javascript:toggleDiv('hiddenDiv2');">
-        <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+        <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
           <i>C. elegans</i>  - RNAi data from <i>in vivo</i> experiments ...
       </a>
     </h4>
 
-<div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
+<div id="hiddenDiv2" class="dataSetDescription">
 
         <dl>
           <dt>

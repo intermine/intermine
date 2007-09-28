@@ -22,12 +22,12 @@
 
         <h4>
           <a href="javascript:toggleDiv('hiddenDiv1');">
-            <img id='hiddenDiv1Toggle' src="images/undisclosed.gif" title="Click here to view the datasets" />
+            <img id='hiddenDiv1Toggle' src="images/disclosed.gif" title="Click here to view the datasets" />
             Major data sets ...
           </a>
         </h4>
 
-        <div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
+        <div id="hiddenDiv1" class="dataSetDescription">
           <p>
             <a href="/">FlyMine</a> is a resource aimed at the <i>Drosophila</i> and
             <i>Anopheles</i> research communities hence the focus is on those organisms.
@@ -63,12 +63,12 @@
 
         <h4>
           <a href="javascript:toggleDiv('hiddenDiv2');">
-            <img id='hiddenDiv2Toggle' src="images/undisclosed.gif" title="Click here to view more datasets"/>
+            <img id='hiddenDiv2Toggle' src="images/disclosed.gif" title="Click here to view more datasets"/>
             Minor data sets ...
           </a>
         </h4>
 
-        <div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
+        <div id="hiddenDiv2" class="dataSetDescription">
 
           <p>
             More limited information is available
@@ -83,12 +83,12 @@
 
         <h4>
           <a href="javascript:toggleDiv('hiddenDiv3');">
-            <img id='hiddenDiv3Toggle' src="images/undisclosed.gif" title="Click here to view more datasets"/>
+            <img id='hiddenDiv3Toggle' src="images/disclosed.gif" title="Click here to view more datasets"/>
             EST data sets ...
           </a>
         </h4>
 
-        <div id="hiddenDiv3" style="display:none;" class="dataSetDescription">
+        <div id="hiddenDiv3" class="dataSetDescription">
           <dl>
             <ul><li><i>Anopheles gambiae</i> - Clustered EST data set version 8.0 from the 
               <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php/" target="_new">Imperial College London Centre for Bioinformatics</a>.
@@ -164,8 +164,7 @@
           </li>
 
           <li>
-            <im:querylink text="All <i>A. gambiae</i> EST clusters from Imperial College"
- skipBuilder="true">
+            <im:querylink text="All <i>A. gambiae</i> EST clusters from Imperial College" skipBuilder="true">
               <query name="" model="genomic" view="ESTCluster.identifier ESTCluster.length ESTCluster.chromosome.identifier ESTCluster.chromosomeLocation.start ESTCluster.chromosomeLocation.end">
                 <pathDescription pathString="ESTCluster.chromosomeLocation" description="Chromosome location">
                 </pathDescription>

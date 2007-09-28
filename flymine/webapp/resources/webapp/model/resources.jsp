@@ -18,12 +18,12 @@
         <dl>
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv1');">
-              <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+              <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
               Insertions and deletions
             </a>
           </h4>
 
-          <div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
+          <div id="hiddenDiv1" class="dataSetDescription">
 
 
          <ul>
@@ -51,12 +51,12 @@
         <dl>
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv2');">
-              <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+              <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
               Affymetrix Probe Sets
             </a>
           </h4>
 
-          <div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
+          <div id="hiddenDiv2" class="dataSetDescription">
 
           <dt> Probe sets from the <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 2.0 Array, a
            microarray tool for studying expression of <i>D. melanogaster</i> transcripts.Comprised of 18,880 probe sets for the analysis 
@@ -70,12 +70,12 @@
         <dl>
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv3');">
-              <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+              <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
               INDAC Microarray oligo set
             </a>
           </h4>
 
-          <div id="hiddenDiv3" style="display:none;" class="dataSetDescription">
+          <div id="hiddenDiv3" class="dataSetDescription">
 
             <dt>The aim of INDAC is to produce a widely available and uniform set of array reagents so that microarray data collected from 
             different studies may be more easily compared. On behalf of INDAC, the FlyChip group has designed a set of 65-69mer long
@@ -92,12 +92,12 @@
         <dl>
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv4');">
-              <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+              <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
               Whole genome tiling path
             </a>
           </h4>
 
-          <div id="hiddenDiv4" style="display:none;" class="dataSetDescription">
+          <div id="hiddenDiv4" class="dataSetDescription">
 
 
         <p>Note: In release 7.0 of FlyMine the format for the tiling path

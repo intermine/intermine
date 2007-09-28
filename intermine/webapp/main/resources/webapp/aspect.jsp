@@ -16,13 +16,29 @@
    function toggleDiv(elementId) {
       var element = document.getElementById(elementId);
       var display = element.style.display;
-      if(display=='block') {
+      if(display=='none') {
+			element.style.display='block';
+          document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
+      } else {
           element.style.display='none';
           document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
-      } else {
-          element.style.display='block';
-          document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
-      }
+      }      
+   }
+   
+   function hideCurrentDataDivs() {
+   	var hasHidden = true;
+   	var index = 1;
+   	while (hasHidden) {
+   		if (document.getElementById('hiddenDiv' + index)) {
+		   	toggleDiv('hiddenDiv' + index);
+   			index ++;
+   		} else {
+   		   	hasHidden = false;
+		}   	
+  	 }
+   }
+   window.onload = function() {
+     hideCurrentDataDivs();
    }
 //]]>-->
 </script>
