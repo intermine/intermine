@@ -82,7 +82,7 @@ public class ModelTest extends TestCase
         Set hasAddressCds =
             model.getClassDescriptorsForClass(org.intermine.model.testmodel.HasAddress.class);
         assertEquals(2, hasAddressCds.size());
-        
+
         ClassDescriptor addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
 
         if (addressCld.getName() == "org.intermine.model.InterMineObject") {
@@ -115,7 +115,7 @@ public class ModelTest extends TestCase
         }
 
         Set resultCds = model.getAllSubs(addressCld);
-        Set expectedCdNames = new HashSet(); 
+        Set expectedCdNames = new HashSet();
         expectedCdNames.add("org.intermine.model.testmodel.Company");
         expectedCdNames.add("org.intermine.model.testmodel.Employee");
         expectedCdNames.add("org.intermine.model.testmodel.Manager");
@@ -135,6 +135,16 @@ public class ModelTest extends TestCase
 
         assertEquals(cld1, model.getClassDescriptorByName("Class1"));
         assertEquals(cld2, model.getClassDescriptorByName("Class2"));
+    }
+
+    public void testGetCDByNameQualified() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        assertNotNull(model.getClassDescriptorByName("org.intermine.model.testmodel.Company"));
+    }
+
+    public void testGetCDByNameUnqualified() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        assertNotNull(model.getClassDescriptorByName("Company"));
     }
 
     public void testGetClassDescriptorByWrongName() throws Exception {
@@ -192,8 +202,8 @@ public class ModelTest extends TestCase
 
         assertEquals(expected, model.toString());
     }
-    
-    // test that we end up with BaseClass < MidClass < SubClass from BaseClass < SubClass, 
+
+    // test that we end up with BaseClass < MidClass < SubClass from BaseClass < SubClass,
     // MidClass < SubClass and BaseClass < MidClass
     public void testRemoveRedundantClasses() throws Exception {
         String baseName = "org.intermine.model.testmodel.BaseClass";
@@ -206,10 +216,10 @@ public class ModelTest extends TestCase
         Model model = new Model("model", uri, clds);
 
         ClassDescriptor subCD = model.getClassDescriptorByName(subName);
-        
+
         assertEquals(1, subCD.getSuperclassNames().size());
         assertEquals(midName, subCD.getSuperclassNames().iterator().next());
-        
+
         System.err.println(model);
     }
 
