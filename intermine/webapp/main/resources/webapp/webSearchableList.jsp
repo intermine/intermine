@@ -59,6 +59,7 @@
 
 <c:set var="heightStyle" value=""/>
 <c:set var="spinnerPaddingStyle" value=""/>
+<c:set var="containerStyle" value=""/>
 
 <c:if test="${!empty height && fn:length(filteredWebSearchables) > 5}">
   <c:set var="heightStyle" value="height: ${height}px; "/>
@@ -67,7 +68,11 @@
 
 <div style="${heightStyle} overflow: auto; background-color: white">
 
-<div style="${spinnerPaddingStyle}" id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" title="Searching..."></div>
+  <noscript>
+	<c:set var="spinnerPaddingStyle" value="display:none"/>
+  </noscript>
+
+<div style="${spinnerPaddingStyle}" id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" title="Searching..."/></div>
 
 <c:choose>
   <c:when test="${empty filteredWebSearchables}">
