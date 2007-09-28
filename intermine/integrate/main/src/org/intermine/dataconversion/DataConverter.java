@@ -16,10 +16,12 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
+import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
 /**
@@ -36,7 +38,7 @@ public abstract class DataConverter
     private Map ids = new HashMap();
     private Model model;
     private ItemFactory itemFactory;
-    
+
     /**
     * Constructor that should be called by children
     * @param writer an ItemWriter used to handle the resultant Items
@@ -55,7 +57,7 @@ public abstract class DataConverter
     public ItemWriter getItemWriter() {
         return writer;
     }
-    
+
     /**
      * Uniquely alias a className
      * @param className the class name
@@ -71,11 +73,11 @@ public abstract class DataConverter
         LOG.info("Aliasing className " + className + " to index " + nextIndex);
         return nextIndex;
     }
-    
+
     /**
      * Add an Item to a named collection on another Item. If the collection does not exist
      * if will be created.
-     * 
+     *
      * @param item item with collection
      * @param collection collection name
      * @param addition item to add to collection
@@ -101,7 +103,7 @@ public abstract class DataConverter
         return itemFactory.makeItem(alias(className) + "_" + newId(className),
                                     model.getNameSpace() + className, "");
     }
-    
+
     /**
      * Generate an identifier for an item, assign ids sequentially with a
      * different alias per class, e.g. ClassA: 1_1, 1_2  ClassB: 2_1
@@ -122,10 +124,33 @@ public abstract class DataConverter
     /**
      * Store a single XML Item
      * @param item the Item to store
+     * @return the database id of the new Item.
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public void store(Item item) throws ObjectStoreException {
-        getItemWriter().store(ItemHelper.convert(item));
+    public Integer store(Item item) throws ObjectStoreException {
+        return getItemWriter().store(ItemHelper.convert(item));
+    }
+
+    /**
+     * Store a single XML ReferenceList
+     * @param referenceList the list to store
+     * @param itemId the InterMine ID of the Item that holds this ReferenceList
+     * @throws ObjectStoreException if an error occurs in storing
+     */
+    public void store(ReferenceList referenceList, Integer itemId)
+        throws ObjectStoreException {
+        getItemWriter().store(ItemHelper.convert(referenceList), itemId);
+    }
+
+
+    /**
+     * Store a single XML Reference
+     * @param reference the Reference to store
+     * @param itemId the InterMine ID of the Item that holds this Reference
+     * @throws ObjectStoreException if an error occurs in storing
+     */
+    public void store(Reference reference, Integer itemId) throws ObjectStoreException {
+        getItemWriter().store(ItemHelper.convert(reference), itemId);
     }
 
     /**

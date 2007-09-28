@@ -100,8 +100,7 @@ public class ItemHelperTest extends TestCase
     }
     
     public void testConvertReferenceList() throws Exception {
-        org.intermine.model.fulldata.ReferenceList resRefList =
-            ItemHelper.convert(referenceList, os, 1, Department.class);
+        org.intermine.model.fulldata.ReferenceList resRefList = ItemHelper.convert(referenceList);
         resRefList.setId(2002);
         assertEquals(dbReferenceList, resRefList);
     }
