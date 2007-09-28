@@ -38,7 +38,7 @@ public class DisplayConstraintTest extends MockStrutsTestCase
         
         dc = new DisplayConstraint(node, Model.getInstanceByName("testmodel"),
                 (ObjectStoreSummary) getActionServlet().getServletContext().getAttribute(Constants.OBJECT_STORE_SUMMARY),
-                null);
+                null, null);
     }
     
     public void testValidOps() throws Exception {        

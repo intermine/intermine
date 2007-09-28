@@ -3,6 +3,7 @@ package org.intermine.web.logic;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -38,7 +39,7 @@ public class ClassKeyHelperTest extends TestCase {
 
         
         
-        Map<String, Set<FieldDescriptor>> expected = new HashMap();
+        Map<String, List<FieldDescriptor>> expected = new HashMap();
         ClassDescriptor cldEmp = model.getClassDescriptorByName(pkg + "Employee");
         ClassDescriptor cldMan = model.getClassDescriptorByName(pkg + "Manager");
         ClassDescriptor cldCEO = model.getClassDescriptorByName(pkg + "CEO");

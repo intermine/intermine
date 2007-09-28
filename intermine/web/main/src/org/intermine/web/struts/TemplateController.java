@@ -202,7 +202,7 @@ public class TemplateController extends TilesAction
                     }
                 }
                 displayConstraints.put(c, new DisplayConstraint(displayNode, os
-                        .getModel(), oss, template.getPossibleValues(node)));
+                        .getModel(), oss, template.getPossibleValues(node), classKeys));
                 
                 // create display name
                 PathNode parent;

@@ -214,8 +214,8 @@ public class TemplateListHelper
                 String name = null;
                 if (node.getParentType() != null) {
                     name = TypeUtil.unqualifiedName(node.getParentType());
-                    Map<String, Set<FieldDescriptor>> classKeys =
-                        (Map<String, Set<FieldDescriptor>>) context.getAttribute(
+                    Map<String, List<FieldDescriptor>> classKeys =
+                        (Map<String, List<FieldDescriptor>>) context.getAttribute(
                                 Constants.CLASS_KEYS);
                     if (ClassKeyHelper.isKeyField(classKeys, 
                                                    node.getParentType(), node.getFieldName())) {
