@@ -5,11 +5,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
+
 <!-- dataCategories -->
+
+<c:set var="note1" value="Also orthologues from these 5 organisms to <i>C. familiaris</i>, <i>D. discoideum</i>, <i>D. rerio</i>, <i>G. gallus</i>, <i>H. sapiens</i>, <i>M. musculus</i>, <i>P. troglodytes</i>, <i>R. norvegicus</i>, <i>S. cerevisiae</i>, <i>S. pombe</i>" />
+<c:set var="note2" value="These data have been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0"/>
+<c:set var="note3" value="Coordinates for the Exelixis set are still to genomce sequence release 4.0. These will be updated to release 5.0 in the next release of FlyMine"/>
+
+
 <html:xhtml/>
 
 <div class="body">
 <im:boxarea title="Data" stylename="plainbox"><p><fmt:message key="dataCategories.intro"/></p></im:boxarea>
+
 
 <table cellpadding="0" cellpadding="0" border="0" class="dbsources">
   <tr>
@@ -23,7 +31,7 @@
   </tr>
 
   <tr><td rowspan="5" class="leftcol">
-        <html:link action="/aspect?name=Genomics"> <p><img src="model/genomics.gif" /></p>
+        <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Genome annotation - Release 5.1</td>
@@ -68,7 +76,7 @@
 
   <tr><td rowspan="1"  class="leftcol">
         <html:link action="/aspect?name=Comparative%20Genomics">
-          <p>  <img src="model/comparativeGenomics.png" /></p>
+          <p>  <img src="model/images/comparativeGenomics.png" /></p>
           <p> Comparative Genomics </p></html:link></td>
     <td>
        <p><i>D. melanogaster</i></p>
@@ -80,13 +88,13 @@
     <td> Orthologue and paralogue relationships between these 5 organisms</td>
     <td> <a href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</a> - Version 5.1</td>
     <td> O'Brien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15608241" target="_new">PubMed: 15608241</a></td>
-    <td>(1)</td>
+    <td><html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>    
   </tr>
 
 
   <tr><td rowspan="8"  class="leftcol">
         <html:link action="/aspect?name=Proteins">
-        <p> <img src="model/proteins.png" /></p>
+        <p> <img src="model/images/proteins.png" /></p>
         <p> Proteins </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Protein annotation</td>
@@ -154,7 +162,7 @@
 
   <tr><td rowspan="2"  class="leftcol">
         <html:link action="/aspect?name=Protein%20Structure">
-        <p> <img src="model/pstructure.gif" /></p>
+        <p> <img src="model/images/pstructure.gif" /></p>
         <p> Protein Structure</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> 3-D structure predictions for protein domains</td>
@@ -174,7 +182,7 @@
 
   <tr><td rowspan="3"  class="leftcol">
         <html:link action="/aspect?name=Protein%20Interactions">
-         <p> <img src="model/proteinInteraction.gif" /></p>
+         <p> <img src="model/images/proteinInteraction.gif" /></p>
         <p> Protein Interactions</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
@@ -203,7 +211,7 @@
   <tr><td rowspan="8"  class="leftcol">
 
         <html:link action="/aspect?name=Gene%20Ontology">
-         <p> <img src="model/geneOntology.png" /></p>
+         <p> <img src="model/images/geneOntology.png" /></p>
         <p> Gene Ontology </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> GO annotations </td>
@@ -271,10 +279,10 @@
 
   <tr><td rowspan="2" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
-        <p> <img src="model/marray.gif" /></p>
+        <p> <img src="model/images/marray.gif" /></p>
         <p> Gene Expression</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
-    <td> Microarray-based gene expression data for the life cycle of <i>D. melanogaster</i></a></td>
+    <td> Microarray-based gene expression data for the life cycle of <i>D. melanogaster</i></td>
     <td> <a href="http://www.ebi.ac.uk/arrayexpress/" target="_new"> ArrayExpress </a> - Experiment E-FLYC-6</td>
     <td> Arbeitman et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 12351791" target="_new">PubMed: 12351791</a></td>
     <td> &nbsp;</td>
@@ -292,13 +300,13 @@
 
   <tr><td rowspan="4" class="leftcol">
        <html:link action="/aspect?name=Transcriptional%20Regulation">
-        <p> <img src="model/bindingSites.png" /></p>
+        <p> <img src="model/images/bindingSites.png" /></p>
         <p> Transcriptional Regulation</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Transcriptional cis-regulatory modules (CRMs)</td>
     <td> <a href="http://redfly.ccr.buffalo.edu/" target="_new">REDfly</a> - 25th June 2006</td>
     <td> Gallo et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16303794" target="_new">PubMed: 16303794</a></td>
-    <td> (2)</td>
+    <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr>
@@ -306,7 +314,7 @@
     <td> DNase I footprints</td>
     <td> <a href="http://www.flyreg.org/" target="_new">FlyREG - Drosophila DNase I Footprint Database</a> - Version 2.0</td>
     <td> Bergman et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468" target="_new">PubMed: 15572468</a></td>
-    <td> (2)</td>
+	<td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr>
@@ -322,12 +330,12 @@
     <td> Binding site predictions</td>
     <td> <a href="http://servlet.sanger.ac.uk/tiffin/" target="_new">Tiffin</a> - 1.2</td>
     <td> Down et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17238282" target="_new">PubMed: 17238282</a></td>
-    <td> (2)</td>
+    <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr><td rowspan="2" class="leftcol">
        <html:link action="/aspect?name=RNAi">
-        <p> <img src="model/rnai.png" /></p>
+        <p> <img src="model/images/rnai.png" /></p>
         <p> RNAi</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput cell-based RNAi screens</td>
@@ -346,7 +354,7 @@
 
   <tr><td rowspan="1" class="leftcol">
        <html:link action="/aspect?name=Pathways">
-        <p> <img src="model/pathways.png" /></p>
+        <p> <img src="model/images/pathways.png" /></p>
         <p> Pathways</p></html:link></td>
     <td> <i>D. melanogaster</i></td>
     <td> Pathway information and the genes involved in them</td>
@@ -357,7 +365,7 @@
 
   <tr><td rowspan="1" class="leftcol">
        <html:link action="/aspect?name=Disease">
-        <p> <img src="model/disease.png" /></p>
+        <p> <img src="model/images/disease.png" /></p>
         <p> Diseases</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Human disease to Drosophila gene data set</td>
@@ -368,13 +376,14 @@
 
   <tr><td rowspan="6" class="leftcol">
        <html:link action="/aspect?name=Resources">
-        <p> <img src="model/drosdel.gif" /></p>
+        <p> <img src="model/images/drosdel.gif" /></p>
         <p> Resources</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions and deletions</td>
     <td> <a href="http://www.drosdel.org.uk/" target="_new">DrosDel</a></td>
     <td> Ryder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15238529" target="_new">PubMed: 15238529</a></td>
-    <td> (2)</td>
+
+	  <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr>
@@ -382,7 +391,8 @@
     <td> Insertions</td>
     <td> <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis</a></td>
     <td> &nbsp;</td>
-    <td> (3)</td>
+
+      <td><html:link action="/dataCategories" anchor="note3" title="${note3}">#3</html:link></td> 
   </tr>
 
   <tr>
@@ -419,7 +429,7 @@
 
   <tr><td rowspan="3" class="leftcol">
        <html:link action="/aspect?name=Literature">
-        <p> <img src="model/book.png" /></p>
+        <p> <img src="model/images/book.png" /></p>
         <p> Literature</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
@@ -448,15 +458,15 @@
 
 <div class="body">
 <p>
-(1) Also orthologues from these 5 organisms to <i>C. familiaris</i>, <i>D. discoideum</i>, <i>D. rerio</i>, <i>G. gallus</i>, <i>H. sapiens</i>, <i>M. musculus</i>, <i>P. troglodytes</i>, <i>R. norvegicus</i>, <i>S. cerevisiae</i>, <i>S. pombe</i>
+1. <a name="note1">${note1}</a>
 </p>
 
 <p>
-(2) These data have been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0
+2. <a name="note2">${note2}</a>
 </p>
 
 <p>
-(3) Coordinates for the Exelixis set are still to genomce sequence release 4.0. These will be updated to release 5.0 in the next release of FlyMine
+3. <a name="note3">${note3}</a>
 </p>
 </div>
 
