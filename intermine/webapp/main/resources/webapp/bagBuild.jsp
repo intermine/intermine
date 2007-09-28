@@ -94,15 +94,15 @@
       <c:if test="${!empty extraBagQueryClass}">
        <label>
          <fmt:message key="bagBuild.extraConstraint">
-            <fmt:param value="${extraBagQueryClass}"/>
-          </fmt:message>
+           <fmt:param value="${extraBagQueryClass}"/>
+         </fmt:message>
        </label>
-          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
-            <html:option value="">All</html:option>
-      	    <c:forEach items="${extraClassFieldValues}" var="value">
-              <html:option value="${value}">${value}</html:option>
-      	    </c:forEach>
-          </html:select>
+         <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
+           <html:option value="">All</html:option>
+      	   <c:forEach items="${extraClassFieldValues}" var="value">
+             <html:option value="${value}">${value}</html:option>
+      	   </c:forEach>
+         </html:select>
       </c:if>
    </li>
    <li>

@@ -20,7 +20,10 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.StringUtil;
@@ -28,6 +31,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.DisplayConstraint;
@@ -70,6 +74,9 @@ public class QueryBuilderConstraintController extends TilesAction
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
                                                getAttribute(Constants.OBJECT_STORE_SUMMARY);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        BagQueryConfig bagQueryConfig =
+            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         
         //set up the node on which we are editing constraints
         if (session.getAttribute("editingNode") != null) {
@@ -80,6 +87,7 @@ public class QueryBuilderConstraintController extends TilesAction
             MainHelper.moveToRequest("editingTemplateConstraint", request);
             MainHelper.moveToRequest("editingConstraintValue", request);
             MainHelper.moveToRequest("editingConstraintOperand", request);
+            MainHelper.moveToRequest("editingConstraintExtraValue", request);
 
             if (node.getPathString().indexOf(".") != -1 && node.isAttribute()) {
                 request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
@@ -112,11 +120,35 @@ public class QueryBuilderConstraintController extends TilesAction
                         .getFieldName());
             } else {
                 if ((node.getPathString().indexOf('.')) >= 0) {
-                        nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(
-                                                node.getPathString(), query));
-                }  else {
-                        nodeType = node.getType();
+                    nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(
+                                node.getPathString(), query));
+                } else {
+                    nodeType = node.getType();
                 }
+                String connectFieldName = bagQueryConfig.getConnectField();
+                Class nodeClass;
+                Boolean haveExtraConstraint;
+                try {
+                    nodeClass = Class.forName(model.getPackageName() + "." + node.getType());
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Can't find class for: " + node.getType());
+                }
+                FieldDescriptor fd = model.getFieldDescriptorsForClass(nodeClass)
+                    .get(connectFieldName);
+                if ((fd != null) && (fd instanceof ReferenceDescriptor)) {
+                    haveExtraConstraint = Boolean.TRUE;
+                } else {
+                    haveExtraConstraint = Boolean.FALSE;
+                }
+                // A Boolean describing whether a LOOKUP constraint on that
+                //    Constraint would have an extra constraint
+                request.setAttribute("haveExtraConstraint", haveExtraConstraint);
+                // The type of the extra constraint class
+                request.setAttribute("extraBagQueryClass",
+                        TypeUtil.unqualifiedName(extraClassName));
+                // A List of values for the extra constraint
+                request.setAttribute("extraClassFieldValues", oss.getFieldValues(extraClassName,
+                            bagQueryConfig.getConstrainField()));
                 useBags = ClassKeyHelper.hasKeyFields(classKeys, nodeType);
                 Collection<String> keyFields = ClassKeyHelper.getKeyFieldNames(classKeys, nodeType);
                 String keyFieldStr = StringUtil.prettyList(keyFields, true);

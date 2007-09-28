@@ -70,6 +70,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 
+import org.apache.log4j.Logger;
 
 /**
  * Helper methods for main controller and main action
@@ -79,6 +80,8 @@ import org.intermine.web.logic.results.PagedTable;
  */
 public class MainHelper
 {
+    private static final Logger LOG = Logger.getLogger(MainHelper.class);
+
     /**
      * Move an attribute from the session to the request, removing it from the session.
      * @param attributeName the attribute name
@@ -413,12 +416,25 @@ public class MainHelper
                         identifierList.add(token.trim());
                     }
                     try {
+                        LOG.info("Running bag query, with extra value " + c.getExtraValue());
                         bagQueryResult = bagQueryRunner.searchForBag(node.getType(),
-                            identifierList, null, true);
+                            identifierList, (String) c.getExtraValue(), true);
                     } catch (ClassNotFoundException e) {
                         throw new ObjectStoreException(e);
                     } catch (InterMineException e) {
                         throw new ObjectStoreException(e);
+                    }
+                    if (qc == null) {
+                        LOG.error("qc is null. queryBits = " + queryBits + ", finalPath = "
+                                + finalPath + ", pathQuery: " + pathQueryOrig);
+                    }
+                    if (bagQueryResult == null) {
+                        LOG.error("bagQueryResult is null. queryBits = " + queryBits
+                                + ", finalPath = " + finalPath + ", pathQuery: " + pathQueryOrig);
+                    }
+                    if (cs == null) {
+                        LOG.error("cs is null. codeToCS = " + codeToCS + ", code = " + code
+                                + ", pathQuery: " + pathQueryOrig);
                     }
                     cs.addConstraint(new BagConstraint(new QueryField(qc, "id"), 
                                 ConstraintOp.IN, bagQueryResult.getMatchAndIssueIds()));
@@ -756,7 +772,7 @@ public class MainHelper
             Iterator citer = node.getConstraints().iterator();
             while (citer.hasNext()) {
                 Constraint con = (Constraint) citer.next();
-                map.put(con, con.getDisplayValue());
+                map.put(con, con.getReallyDisplayValue());
             }
         }
         return map;
@@ -953,14 +969,17 @@ public class MainHelper
      * @param savedBags the current saved bags map
      * @param pathToQueryNode Map, into which columns to display will be placed
      * @param summaryPath a String path of the column to summarise
+     * @param servletContext a ServletContext
      * @return an InterMine Query
      */
     public static Query makeSummaryQuery(PathQuery pathQuery, Map savedBags,
-            Map<String, QueryNode> pathToQueryNode, String summaryPath, ServletContext servletContext) {
+            Map<String, QueryNode> pathToQueryNode, String summaryPath,
+            ServletContext servletContext) {
         Map<String, QueryNode> origPathToQueryNode = new HashMap<String, QueryNode>();
         Query subQ = null;
         try {
-            subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null, false);
+            subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null,
+                    false);
         } catch (ObjectStoreException e) {
             // Not possible if second-last argument is null
         }
@@ -1029,8 +1048,7 @@ public class MainHelper
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue,
-                                      false, label, code, id);
+        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         pathQuery.addNode(bagType).getConstraints().add(c);
         return pathQuery;    
     }

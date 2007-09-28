@@ -126,14 +126,14 @@
     </tag>
     <tag name="aspect:People" objectIdentifier="employeesFromCompanyAndDepartment" type="template">
     </tag>
-    <tag name="aspect:People" objectIdentifier="employeesOverACertainAgeFromDepartmentA" type="template">
-    </tag>
-    <tag name="aspect:People" objectIdentifier="employeeByName" type="template">
-    </tag>
-    <tag name="aspect:People" objectIdentifier="employeesOfACertainAge" type="template">
-    </tag>
-    <tag name="aspect:People" objectIdentifier="ManagerLookup" type="template">
-    </tag>
+    <tag name="aspect:People" objectIdentifier="employeesOverACertainAgeFromDepartmentA" type="template"/>
+    <tag name="im:public" objectIdentifier="employeesFromCompanyAndDepartment" type="template"/>
+    <tag name="aspect:People" objectIdentifier="employeeByName" type="template"/>
+    <tag name="im:public" objectIdentifier="employeeByName" type="template"/>
+    <tag name="aspect:People" objectIdentifier="employeesOfACertainAge" type="template"/>
+    <tag name="im:public" objectIdentifier="employeesOfACertainAge" type="template"/>
+    <tag name="aspect:People" objectIdentifier="ManagerLookup" type="template"/>
+    <tag name="im:public" objectIdentifier="ManagerLookup" type="template"/>
     <tag name="im:converter" objectIdentifier="convertEmployeesToAddresses" type="template"/>
     <tag name="im:converter" objectIdentifier="convertContractorToEmployees" type="template"/>
     <tag name="im:converter" objectIdentifier="convertEmployeeToManager" type="template"/>

@@ -82,7 +82,7 @@ public class TemplateHelperTest extends MockStrutsTestCase
         PathNode node = (PathNode) expected.getNodes().get(tmpNode.getPathString());
         Constraint c = node.getConstraint(0);
         node.getConstraints().set(0, new Constraint(ConstraintOp.NOT_EQUALS,
-                "EmployeeA1", true, c.getDescription(), c.getCode(), c.getIdentifier()));
+                "EmployeeA1", true, c.getDescription(), c.getCode(), c.getIdentifier(), null));
         expected.setEdited(true);
         
         TemplateQuery actual = TemplateHelper.templateFormToTemplateQuery(tf, template, new HashMap());

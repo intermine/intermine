@@ -255,6 +255,26 @@ if (${!empty constrainOnBag}) {
                 </fmt:message>
               </span>
             </p>
+            <c:choose>
+              <c:when test="${haveExtraConstraint}">
+                <p style="text-align: left;">
+                  <fmt:message key="bagBuild.extraConstraint">
+                    <fmt:param value="${extraBagQueryClass}"/>
+                  </fmt:message>
+                  <html:select property="extraValue" value="${editingConstraintExtraValue}">
+                    <html:option value="">All</html:option>
+                    <c:forEach items="${extraClassFieldValues}" var="value">
+                      <html:option value="${value}">
+                        <c:out value="${value}"/>
+                      </html:option>
+                    </c:forEach>
+                  </html:select>
+                </p>
+              </c:when>
+              <c:otherwise>
+                <html:hidden property="extraValue" value=""/>
+              </c:otherwise>
+            </c:choose>
           </c:if>
           
           <c:if test="${editingNode.indentation != 0 && !empty SUBCLASSES[editingNode.type]}">

@@ -82,7 +82,7 @@ public class PathNode extends Node
         int index = constraints.indexOf(constraint);
         constraints.set(index, new Constraint(constraint.getOp(), value, constraint.isEditable(),
                         constraint.getDescription(), constraint.getCode(),
-                        constraint.getIdentifier()));
+                        constraint.getIdentifier(), constraint.getExtraValue()));
         return constraints.get(index);
     }
 

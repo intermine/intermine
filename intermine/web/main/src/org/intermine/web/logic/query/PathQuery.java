@@ -513,7 +513,7 @@ public class PathQuery
             Constraint constraint = (Constraint) i.next();
             newNode.getConstraints().add(new Constraint(constraint.getOp(), constraint.getValue(),
                     constraint.isEditable(), constraint.getDescription(), constraint.getCode(),
-                    constraint.getIdentifier()));
+                    constraint.getIdentifier(), constraint.getExtraValue()));
         }
         return newNode;
     }

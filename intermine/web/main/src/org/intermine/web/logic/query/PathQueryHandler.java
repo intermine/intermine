@@ -153,15 +153,14 @@ public class PathQueryHandler extends DefaultHandler
                 code = "" + gencode;
                 gencode++;
             }
+            String extraValue = attrs.getValue("extraValue");
             if (constrainParent) {
                 PathNode parent = (PathNode) node.getParent();
                 parent.getConstraints().add(new Constraint(constraintOp, constraintValue,
-                                                           editableFlag, description, code,
-                                                           identifier));
+                            editableFlag, description, code, identifier, extraValue));
             } else {
                 node.getConstraints().add(new Constraint(constraintOp, constraintValue,
-                                                         editableFlag, description, code,
-                                                         identifier));
+                            editableFlag, description, code, identifier, extraValue));
             }
         }
         if (qName.equals("pathDescription")) {
