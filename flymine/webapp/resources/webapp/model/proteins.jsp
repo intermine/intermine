@@ -14,12 +14,12 @@
 
  <h4>  
   <a href="javascript:toggleDiv('hiddenDiv1');">
-    <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+    <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
       Data from the UniProt Knowledgebase (UniProtKB) ...
   </a>
  </h4>
 
-<div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
+<div id="hiddenDiv1" class="dataSetDescription">
           <p>
             All proteins from the <a
             href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt
@@ -51,12 +51,12 @@
      
    <h4>  
     <a href="javascript:toggleDiv('hiddenDiv2');">
-     <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+     <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
       Data from InterPro ...
     </a>
    </h4>
 
-<div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
+<div id="hiddenDiv2" class="dataSetDescription">
 
           <p>
             Protein family and domain assignments to proteins in UniProt have

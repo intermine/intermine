@@ -14,12 +14,12 @@
         <dl>
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv1');">
-              <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+              <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
               <i>D. melanogaster</i>  - Regulatory elements ...
             </a>
           </h4>
 
-          <div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
+          <div id="hiddenDiv1" class="dataSetDescription">
 
 
             <ul><li><dt>
@@ -42,12 +42,12 @@
 
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv2');">
-              <img id='hiddenDiv2Toggle' src="images/undisclosed.gif" title="Click here to view the binding sites" />
+              <img id='hiddenDiv2Toggle' src="images/disclosed.gif" title="Click here to view the binding sites" />
               <i>D. melanogaster</i>  - Binding sites ...
             </a>
           </h4>
 
-          <div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
+          <div id="hiddenDiv2" class="dataSetDescription">
 
           <ul><li>
             <dt>DNase I footprints for <i>D. melanogaster</i> from the

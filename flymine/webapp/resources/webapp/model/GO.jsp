@@ -13,12 +13,12 @@
 
  <h4>
    <a href="javascript:toggleDiv('hiddenDiv1');">
-    <img id='hiddenDiv1Toggle' src="images/undisclosed.gif"/>
+    <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
     GO annotation in FlyMine ...
    </a>
  </h4>
 
-<div id="hiddenDiv1" style="display:none;" class="dataSetDescription">
+<div id="hiddenDiv1" class="dataSetDescription">
       <p>
       The Gene Ontology project provides a controlled vocabulary to describe 
       gene and gene product attributes in any organism.  The GO collaborators 
@@ -43,12 +43,12 @@
 
  <h4>
    <a href="javascript:toggleDiv('hiddenDiv2');">
-    <img id='hiddenDiv2Toggle' src="images/undisclosed.gif"/>
+    <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
     GO Evidence Codes ...
    </a>
  </h4>
 
-<div id="hiddenDiv2" style="display:none;" class="dataSetDescription">
+<div id="hiddenDiv2"  class="dataSetDescription">
 
       <p> Every GO annotation indicates the type of evidence that
       supports it; these evidence codes correspond to broad categories
@@ -74,12 +74,12 @@
 
  <h4>
    <a href="javascript:toggleDiv('hiddenDiv3');">
-    <img id='hiddenDiv3Toggle' src="images/undisclosed.gif"/>
+    <img id='hiddenDiv3Toggle' src="images/disclosed.gif"/>
     GO Qualifiers ...
    </a>
  </h4>
 
-<div id="hiddenDiv3" style="display:none;" class="dataSetDescription">
+<div id="hiddenDiv3"  class="dataSetDescription">
 
       <p> The Qualifier column is used for flags that modify the
       interpretation of an annotation. Allowable values are
