@@ -104,8 +104,7 @@ public class WebSearchableListController extends TilesAction
             }
         }
         if (limitInt > 0) {
-            filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables,
-                                                     limitInt);
+            filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables, limitInt);
         } else {
             filteredWebSearchables = sortList(filteredWebSearchables);
         }
@@ -125,6 +124,7 @@ public class WebSearchableListController extends TilesAction
         request.setAttribute("wsNames", jsonWriter.write(wsMapForJS));
         return null;
     }
+    
 
     /**
      * Return a copy of the given Map sorted by creation date, then by name. 
