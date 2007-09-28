@@ -92,31 +92,24 @@ public class BuildBagAction extends InterMineAction
 
         BufferedReader reader = null;
 
-        if (request.getParameter("whichInput").equals("paste")) {
-            String trimmedText = buildBagForm.getText().trim();
-            if (trimmedText.length() == 0) {
-                recordError(new ActionMessage("bagBuild.noBagPaste"), request);
-                return mapping.findForward("bags");
-            }
+        String trimmedText = buildBagForm.getText().trim();
+         if (trimmedText.length() != 0) {
             reader = new BufferedReader(new StringReader(trimmedText));
         } else {
-            if (request.getParameter("whichInput").equals("file")) {
-                FormFile formFile = buildBagForm.getFormFile();
-                if (formFile == null || formFile.getFileName() == null
-                                || formFile.getFileName().length() == 0) {
-                    recordError(new ActionMessage("bagBuild.noBagFile"), request);
-                    return mapping.findForward("bags");
-                }
-                String mimetype = formFile.getContentType();             
-                if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
-                    recordError(new ActionMessage("bagBuild.notText", 
-                                                  mimetype), request);
-                    return mapping.findForward("bags");
-                } 
-                reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
-            } else {
-                throw new RuntimeException("unknown action type in BuildBagAction");
+
+            FormFile formFile = buildBagForm.getFormFile();
+            if (formFile == null || formFile.getFileName() == null
+                            || formFile.getFileName().length() == 0) {
+                recordError(new ActionMessage("bagBuild.noBagFile"), request);
+                return mapping.findForward("bags");
             }
+            String mimetype = formFile.getContentType();             
+            if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
+                recordError(new ActionMessage("bagBuild.notText", 
+                                              mimetype), request);
+                return mapping.findForward("bags");
+            } 
+            reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
         }
 
         String thisLine;

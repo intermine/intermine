@@ -15,7 +15,7 @@
       document.getElementById(open + 'Input').disabled = false;
       document.getElementById(close + 'Input').disabled = true;
 
-      document.getElementById('whichInput').value = open;
+      
 
       document.getElementById('submitBag').disabled = false;
       // only clear contents if contents equals our help text
@@ -53,6 +53,7 @@
    </c:forEach>
 
    function typeChanged() {
+     submitBag.disabled = true;
      var type = document.getElementById('typeSelector').value;
      var el = document.getElementById('extraConstraintSelect');
      if (typeToEnable[type] == null){
@@ -137,7 +138,7 @@
     <div align="right">
        <%-- reset button --%>
        <input type="button" onClick="resetInputs()" value="Reset" />
-       <html:submit disabled="true" styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit>
+       <html:submit styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit>
     </div>
 
     <html:hidden styleId="whichInput" property="whichInput" />
