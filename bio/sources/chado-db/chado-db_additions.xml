@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="org.flymine.model.genomic.CDS" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="CDSs"/>
+    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
+  </class>
+  <class name="org.flymine.model.genomic.Gene" is-interface="true">
+    <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="gene" ordered="true"/>
+    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="gene" ordered="true"/>
+  </class>
+  <class name="org.flymine.model.genomic.InsertionSite" is-interface="true">
+    <attribute name="organismDbId" type="java.lang.String"/>
+    <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
+  </class>
+  <class name="org.flymine.model.genomic.MRNA" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+    <attribute name="organismDbId" type="java.lang.String"/>
+    <reference name="fivePrimeUTR" referenced-type="org.flymine.model.genomic.FivePrimeUTR"/>
+    <reference name="threePrimeUTR" referenced-type="org.flymine.model.genomic.ThreePrimeUTR"/>
+    <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="MRNAs" ordered="true"/>
+  </class>
+  <class name="org.flymine.model.genomic.Transcript" is-interface="true">
+    <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" reverse-reference="transcripts" ordered="true"/>
+    <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" reverse-reference="transcripts" ordered="true"/>
+  </class>
+  <class name="org.flymine.model.genomic.NcRNA" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.Exon" is-interface="true">
+    <attribute name="organismDbId" type="java.lang.String"/>
+    <attribute name="symbol" type="java.lang.String"/>
+    <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="exons" ordered="true"/>
+  </class>
+  <class name="org.flymine.model.genomic.Intron" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+    <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="introns" ordered="true"/>
+  </class>
+  <class name="org.flymine.model.genomic.UTR" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="UTRs"/>
+    <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="UTRs" ordered="true"/>
+  </class>    
+  <class name="org.flymine.model.genomic.ThreePrimeUTR" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.FivePrimeUTR" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.Enhancer" is-interface="true">
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+    <attribute name="organismDbId" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.TransposableElement" is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
+    <attribute name="organismDbId" type="java.lang.String"/>
+  </class>
+  <class name="org.flymine.model.genomic.SequenceVariant" is-interface="true">
+    <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
+  </class>
+  <class name="org.flymine.model.genomic.ProteinBindingSite" extends="org.flymine.model.genomic.BindingSite" is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.Pseudogene" extends="org.flymine.model.genomic.Gene" is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.Polypeptide" is-interface="true">
+    <attribute name="organismDbId" type="java.lang.String"/>
+    <attribute name="symbol" type="java.lang.String"/>
+  </class> 
+  <class name="org.flymine.model.genomic.Vector" extends="org.flymine.model.genomic.BioEntity" 
+         is-interface="true"/>
+  <class name="org.flymine.model.genomic.BAC" extends="org.flymine.model.genomic.Vector"
+         is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.ChromosomeArm" 
+         extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
+  </class>
+  <class name="org.flymine.model.genomic.TFmodule" 
+         extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
+  </class>
+</classes>
