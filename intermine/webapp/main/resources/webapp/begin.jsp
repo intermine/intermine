@@ -70,7 +70,7 @@
             <tiles:put name="showSearchBox" value="false"/>
           </tiles:insert>
         </div>
-        <im:useTransparentImage src="/model/images/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" link="templates" height="22px" width="153px" floatValue="right" breakFloat="true" />
+        <im:useTransparentImage src="/theme/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" link="templates" height="22px" width="153px" floatValue="right" breakFloat="true" />
       </im:boxarea>
      
       <im:boxarea title="Lists" titleLink="/bag.do" stylename="gradientbox">
@@ -92,8 +92,8 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         </div>
-        <im:useTransparentImage src="/model/images/view_lists.png" id="view_lists" title="Click here to View Lists" link="bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
-        <im:useTransparentImage src="/model/images/create_lists.png" id="create_lists" title="Click here to Upload Lists" link="bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/theme/view_lists.png" id="view_lists" title="Click here to View Lists" link="bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/theme/create_lists.png" id="create_lists" title="Click here to Upload Lists" link="bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:boxarea>
 
       <im:boxarea title="Query Builder" titleLink="/customQuery.do" stylename="gradientbox">
@@ -113,7 +113,7 @@
             <fmt:message key="begin.importQuery"/>
           </html:link>
         </div>
-        <im:useTransparentImage src="/model/images/build_a_query.png" id="build_a_query" title="Click here to Build A Query" link="customQuery" height="22px" width="120px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/theme/build_a_query.png" id="build_a_query" title="Click here to Build A Query" link="customQuery" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:boxarea>
 </div>
 
