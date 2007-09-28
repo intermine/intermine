@@ -64,10 +64,11 @@ public class GoConverterTest extends ItemsTestCase
         GoConverter converter = new GoConverter(writer, model);
         converter.setOntologyfile(goOboFile);
         converter.process(reader);
+        System.out.println("productWrapperMap: " + converter.productWrapperMap.keySet());
         converter.close();
 
         // uncomment to write a new target items file
-        writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
         
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
