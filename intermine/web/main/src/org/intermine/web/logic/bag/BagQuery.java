@@ -64,8 +64,8 @@ public class BagQuery
      * @param queryString the query IQL
      * @param message the message from the bag-queries.xml describing this query
      * @param packageName the package name
-     * @param matchesAreIssues true if and and if matches for this bag query should be treated as
-     * issues (aka low quality matches)
+     * @param matchesAreIssues true if matches for this bag query should be treated as issues (aka
+     * low quality matches)
      */
     public BagQuery(BagQueryConfig bagQueryConfig, Model model, String queryString, 
                     String message, String packageName, boolean matchesAreIssues) {

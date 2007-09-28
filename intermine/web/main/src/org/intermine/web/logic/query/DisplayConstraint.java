@@ -20,6 +20,10 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.util.TypeUtil;
+
+import org.apache.log4j.Logger;
 
 /**
  * When an constraint is being applied to an attribute, an instance of this class is used
@@ -30,6 +34,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
  */
 public class DisplayConstraint
 {
+    private static final Logger LOG = Logger.getLogger(DisplayConstraint.class);
     /** . */
     protected PathNode node;
     /** The related model. */
@@ -42,6 +47,8 @@ public class DisplayConstraint
     private List optionsList;
     /** The object store summary. */
     protected ObjectStoreSummary oss;
+    /** The classKeys Map. */
+    protected Map classKeys;
 
     /**
      * Creates a new instance of DisplayConstraint.
@@ -50,13 +57,15 @@ public class DisplayConstraint
      * @param model the associated model
      * @param oss the object store summary
      * @param optionsList a List of possible values, or null (to fall back to oss)
+     * @param classKeys the ClassKeys Map
      */
     public DisplayConstraint(PathNode node, Model model, ObjectStoreSummary oss,
-        List optionsList) {
+        List optionsList, Map classKeys) {
         this.node = node;
         this.model = model;
         this.oss = oss;
         this.optionsList = optionsList;
+        this.classKeys = classKeys;
     }
 
     /**
@@ -108,18 +117,26 @@ public class DisplayConstraint
         List newOptionsList = new ArrayList();
 
         String parentType = node.getParentType();
-        if (parentType != null) {
-            String parentClassName;
+        if ((parentType != null) || (!node.isAttribute())) {
+            Class parentClass;
+            String fieldName;
             try {
-                parentClassName = MainHelper.getClass(parentType, model).getName();
+                if (node.isAttribute()) {
+                    parentClass = MainHelper.getClass(parentType, model);
+                    fieldName = node.getFieldName();
+                } else {
+                    parentClass = MainHelper.getClass(node.getType(), model);
+                    fieldName = ClassKeyHelper.getKeyFieldNames(classKeys, node.getType())
+                        .iterator().next();
+                }
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("unexpected exception", e);
             }
-            List fieldNames = oss.getFieldValues(parentClassName, node.getFieldName());
-            if (fieldNames != null && node.getType() != null) {
-                newOptionsList.addAll(fieldNames);
-                Class parentClass = MainHelper.getClass(node.getType());
-                Iterator iter = SimpleConstraint.fixedEnumOps(parentClass).iterator();
+            List fieldValues = oss.getFieldValues(parentClass.getName(), fieldName);
+            if (fieldValues != null && node.getType() != null) {
+                newOptionsList.addAll(fieldValues);
+                Class fieldClass = TypeUtil.getFieldInfo(parentClass, fieldName).getType();
+                Iterator iter = SimpleConstraint.fixedEnumOps(fieldClass).iterator();
 
                 // This is commented out so that no edit box appears next to the dropdown
                 // for string constraints.  A proper solution is needed - see #1398.

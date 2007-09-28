@@ -243,7 +243,19 @@ if (${!empty constrainOnBag}) {
               <fmt:message key="query.lookupConstraintLabel"/><%--Search for:--%>
               <html:hidden property="attributeOp" styleId="attribute1" value="18" disabled="false" />
               <html:text property="attributeValue" styleId="attribute2" value="${editingConstraintValue}"/>
-
+              <c:if test="${!empty options}">
+                <html:select property="attributeOptions" styleId="attribute3" onchange="this.form.attributeValue.value=this.value;">
+                  <c:forEach items="${options}" var="option">
+                    <option value="${option}"
+                            <c:if test="${editingConstraintValue == option}">
+                              selected
+                            </c:if>
+                            >
+                      <c:out value="${option}"/>
+                    </option>
+                  </c:forEach>
+                </html:select>
+              </c:if>
               <html:submit property="attribute" styleId="attributeSubmit" disabled="false" >
                 <fmt:message key="query.submitConstraint"/><%--Add to query--%>
               </html:submit>

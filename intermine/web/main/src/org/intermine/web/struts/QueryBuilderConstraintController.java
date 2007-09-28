@@ -89,9 +89,9 @@ public class QueryBuilderConstraintController extends TilesAction
             MainHelper.moveToRequest("editingConstraintOperand", request);
             MainHelper.moveToRequest("editingConstraintExtraValue", request);
 
+            request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
+                        null, classKeys));
             if (node.getPathString().indexOf(".") != -1 && node.isAttribute()) {
-                request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
-                            null));
             } else {
                 // loop query arguments
                 ArrayList paths = new ArrayList();

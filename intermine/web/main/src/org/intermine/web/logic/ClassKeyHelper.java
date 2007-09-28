@@ -10,10 +10,11 @@ package org.intermine.web.logic;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -47,8 +48,8 @@ public class ClassKeyHelper
      *            a properties object describing class keys
      * @return map from class name to set of available keys
      */
-    public static Map<String, Set<FieldDescriptor>> readKeys(Model model, Properties props) {
-        Map<String, Set<FieldDescriptor>> classKeys = new HashMap();
+    public static Map<String, List<FieldDescriptor>> readKeys(Model model, Properties props) {
+        Map<String, List<FieldDescriptor>> classKeys = new HashMap();
         for (Iterator i = props.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             String clsName = (String) entry.getKey();
@@ -91,14 +92,14 @@ public class ClassKeyHelper
      * @param key
      *            a FieldDescriptor that describes the key
      */
-    protected static void addKey(Map<String, Set<FieldDescriptor>> classKeys, String clsName,
+    protected static void addKey(Map<String, List<FieldDescriptor>> classKeys, String clsName,
             FieldDescriptor key) {
-        Set<FieldDescriptor> keySet = classKeys.get(clsName);
-        if (keySet == null) {
-            keySet = new HashSet();
-            classKeys.put(clsName, keySet);
+        List<FieldDescriptor> keyList = classKeys.get(clsName);
+        if (keyList == null) {
+            keyList = new ArrayList();
+            classKeys.put(clsName, keyList);
         }
-        keySet.add(key);
+        keyList.add(key);
     }
 
     /**
@@ -114,12 +115,12 @@ public class ClassKeyHelper
      *            the field name to look up
      * @return true if the field is an 'identifying' field for the class.
      */
-    public static boolean isKeyField(Map<String, Set<FieldDescriptor>> classKeys, String clsName,
+    public static boolean isKeyField(Map<String, List<FieldDescriptor>> classKeys, String clsName,
             String fieldName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
-        Set<FieldDescriptor> keys = classKeys.get(clsName);
+        List<FieldDescriptor> keys = classKeys.get(clsName);
         if (keys != null) {
             for (FieldDescriptor key : keys) {
                 if (key.getName().equals(fieldName) && key.isAttribute()) {
@@ -141,12 +142,12 @@ public class ClassKeyHelper
      *            the class name to look up
      * @return true if the class has any key fields
      */
-    public static boolean hasKeyFields(Map<String, Set<FieldDescriptor>> classKeys,
+    public static boolean hasKeyFields(Map<String, List<FieldDescriptor>> classKeys,
             String clsName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
-        Set<FieldDescriptor> keys = classKeys.get(clsName);
+        List<FieldDescriptor> keys = classKeys.get(clsName);
         if (keys != null && (keys.size() > 0)) {
             return true;
         }
@@ -159,7 +160,7 @@ public class ClassKeyHelper
      * @param clsName the class name to look up
      * @return the fields that are class keys for the class
      */
-    public static Collection getKeyFields(Map<String, Set<FieldDescriptor>> classKeys,
+    public static List<FieldDescriptor> getKeyFields(Map<String, List<FieldDescriptor>> classKeys,
             String clsName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
@@ -174,13 +175,13 @@ public class ClassKeyHelper
      * @param clsName the class name to look up
      * @return the names of fields that are class keys for the class
      */
-    public static Collection<String> getKeyFieldNames(Map<String, Set<FieldDescriptor>> classKeys,
+    public static Collection<String> getKeyFieldNames(Map<String, List<FieldDescriptor>> classKeys,
             String clsName) {
         if (clsName.indexOf('.') != -1) {
             clsName = TypeUtil.unqualifiedName(clsName);
         }
-        Set<String> fieldNames = new HashSet();
-        Set<FieldDescriptor> keys = classKeys.get(clsName);
+        List<String> fieldNames = new ArrayList();
+        List<FieldDescriptor> keys = classKeys.get(clsName);
         if (keys != null) {
             for (FieldDescriptor key : keys) {
                 fieldNames.add(key.getName());
@@ -203,7 +204,7 @@ public class ClassKeyHelper
      * @return true if the field is an 'identifying' field for one of the
      *         classes that the object is
      */
-    public static boolean isKeyField(Map<String, Set<FieldDescriptor>> classKeys, InterMineObject o,
+    public static boolean isKeyField(Map<String, List<FieldDescriptor>> classKeys, InterMineObject o,
             String fieldName) {
         return getKeyFieldClass(classKeys, o, fieldName) != null;
     }
@@ -220,7 +221,7 @@ public class ClassKeyHelper
      *            the field name to look up
      * @return the Class that fieldName is a key field in, otherwise null
      */
-    public static Class getKeyFieldClass(Map<String, Set<FieldDescriptor>> classKeys,
+    public static Class getKeyFieldClass(Map<String, List<FieldDescriptor>> classKeys,
             InterMineObject o, String fieldName) {
         Set<Class> classes = DynamicUtil.decomposeClass(o.getClass());
 
