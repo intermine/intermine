@@ -24,7 +24,7 @@ import org.intermine.modelproduction.xml.InterMineModelParser;
 
 /**
  * Task to merge a single additions file into an intermine XML model.
- * 
+ *
  * @see org.intermine.modelproduction.ModelMerger
  * @author Thomas Riley
  */
@@ -34,7 +34,7 @@ public class ModelMergerTask extends Task
     protected File inputModelFile;
     protected File additionsFile;
     protected File outputModelFile;
-    
+
     /**
      * Set the model to add additions to.
      * @param file path to model file
@@ -42,7 +42,7 @@ public class ModelMergerTask extends Task
     public void setInputModelFile(File file) {
         inputModelFile = file;
     }
-    
+
     /**
      * The file containing model additions.
      * @param file the additions file
@@ -50,7 +50,7 @@ public class ModelMergerTask extends Task
     public void setAdditionsFile(File file) {
         additionsFile = file;
     }
-    
+
     /**
      * Path of file to write resulting model to. May be the same as <code>inputModelFile</code>.
      * @param file path to write resulting model to
@@ -75,7 +75,8 @@ public class ModelMergerTask extends Task
             writer.write(merged.toString());
             writer.close();
         } catch (Exception e) {
-            throw new BuildException("Exception while merging " + inputModelFile, e);
+            throw new BuildException("Exception while merging " + additionsFile + " into "
+                                     + inputModelFile, e);
         }
     }
 }
