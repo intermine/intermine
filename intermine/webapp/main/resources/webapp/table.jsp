@@ -222,7 +222,7 @@
     <div class="body">
       <table cellpadding="0" cellspacing="0" >
         <tr>
-          <td><img src="model/res_bar_left.gif"></td>
+          <td><img src="theme/res_bar_left.gif"></td>
           <td class="resBar"><tiles:insert page="/tablePageLinks.jsp"/></td>
           <td class="resBar"><img src="images/blank.gif" width="10px">|<img src="images/blank.gif" width="10px"></td>
           <td class="resBar">
@@ -244,7 +244,7 @@
               </noscript>
             </html:form>
           </td>
-          <td><img src="model/res_bar_right.gif"></td>
+          <td><img src="theme/res_bar_right.gif"></td>
           <td><img src="images/blank.gif" width="20px"></td>
           <td style="padding:5px;font-size:10px;background-color:#EEEEEE;">
             <strong>Legend: </strong>

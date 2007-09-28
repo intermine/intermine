@@ -15,7 +15,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <c:if test="${pageCSS == 'true'}">
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
 </c:if>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/model/css/model.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/theme/theme.css'/>"/>
 
 <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/scriptaculous.js'/>"></script>
