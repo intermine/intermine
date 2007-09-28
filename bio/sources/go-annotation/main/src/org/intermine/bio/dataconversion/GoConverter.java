@@ -101,6 +101,18 @@ public class GoConverter extends FileConverter
         readConfig();
     }
 
+    @Override
+    public void close() throws Exception {
+        // store all gene/protein data at the end of conversion
+        for (Iterator pwmKeyIt = productWrapperMap.keySet().iterator(); pwmKeyIt.hasNext();) {
+            ItemWrapper nextWrapper = (ItemWrapper) productWrapperMap.get(pwmKeyIt.next());
+            LOG.debug("productWrapperMap storing item tied to key:" + nextWrapper.getKey());
+            Item nextGeneProduct = nextWrapper.getItem();
+            doStore(nextGeneProduct, STORE_THREE);
+        }
+        super.close();
+    }
+
     // read config file that has specific settings for each organism, key is taxon id
     private void readConfig() {
         Properties props = new Properties();
@@ -144,7 +156,6 @@ public class GoConverter extends FileConverter
     public void process(Reader reader) throws ObjectStoreException, IOException {
 
         // Renew this at the start of processing each file
-        productWrapperMap = new LinkedHashMap();
         holderMap = new LinkedHashMap();
         goAnnoItems = new LinkedHashMap();
 
@@ -193,7 +204,7 @@ public class GoConverter extends FileConverter
             
             if (lastProductId != null && !lastProductId.equals(productId)) {
                 // we have moved onto the next product, store the previous one
-                storeProductData();
+                storeGoAnnotation();
                 
                 if (productIds.contains(productId)) {
                     throw new IllegalArgumentException("Product was found twice in file but not in "
@@ -203,8 +214,7 @@ public class GoConverter extends FileConverter
                 }
                 productIds.add(productId);
                 
-                // Free up some memory
-                productWrapperMap = new LinkedHashMap();
+                // Free up some memory now we have finished this product
                 holderMap = new LinkedHashMap();
                 goAnnoItems = new LinkedHashMap();
             }
@@ -272,12 +282,14 @@ public class GoConverter extends FileConverter
                 LOG.debug("PROCESS - OLD KEY:" + key.toString());
             }
         }
+        LOG.info("productWrapperMap: " + productWrapperMap.keySet());
         // store the final product
-        storeProductData();
+        storeGoAnnotation();
     }
 
         
-    private void storeProductData() throws ObjectStoreException {
+    // Store GoAnnotation items, need to keep products (genes/proteins) until the end.
+    private void storeGoAnnotation() throws ObjectStoreException {
 
         // Now create and store all the new items...
         // First put everything on a stack so we don't have to hold too many items in memory
@@ -324,17 +336,6 @@ public class GoConverter extends FileConverter
 
             // this is where all go annotation objects are stored
             doStore(goAnnotation, STORE_ONE);
-        }
-
-        LOG.debug("productWrapperMap.keyset size:" + productWrapperMap.keySet().size());
-        LOG.debug("productWrapperMap.values size:" + productWrapperMap.values().size());
-
-        // store genes
-        for (Iterator pwmKeyIt = productWrapperMap.keySet().iterator(); pwmKeyIt.hasNext();) {
-            ItemWrapper nextWrapper = (ItemWrapper) productWrapperMap.get(pwmKeyIt.next());
-            LOG.debug("productWrapperMap storing item tied to key:" + nextWrapper.getKey());
-            Item nextGeneProduct = nextWrapper.getItem();
-            doStore(nextGeneProduct, STORE_THREE);
         }
     }
 
@@ -594,7 +595,7 @@ public class GoConverter extends FileConverter
                         ItemWrapper productWrapper = null;
 
                         // if a UniProt protein it may be from a differnet organism
-                        // also FlyBase mey be from a different Drosophila species
+                        // also FlyBase may be from a different Drosophila species
                         if (prefix.equals("UniProt")) {
                             productWrapper = newProduct(value, wt.clsName,
                                                         organism, dataSourceId, false, null);

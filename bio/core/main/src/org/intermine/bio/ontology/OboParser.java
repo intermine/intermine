@@ -235,7 +235,7 @@ public class OboParser
                 configureDagTerm(tvs);
             }
         }
-        System.err.println("Root terms: " + rootTerms.keySet());
+        //System.err.println("Root terms: " + rootTerms.keySet());
     }
 
     /**
