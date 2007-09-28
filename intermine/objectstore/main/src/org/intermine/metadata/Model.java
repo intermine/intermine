@@ -116,7 +116,7 @@ public class Model
         for (ClassDescriptor cld : orderedClds) {
             cld.setModel(this);
         }
- 
+
         for (ClassDescriptor cld : orderedClds) {
             // add this class to subMap sets for any interfaces and superclasses
             Set<ClassDescriptor> supers = cld.getSuperDescriptors();
@@ -156,7 +156,7 @@ public class Model
      * @return the ClassDescriptors of all decedents
      */
     public Set<ClassDescriptor> getAllSubs(ClassDescriptor cld) {
-        Set<ClassDescriptor> returnSubs = new TreeSet<ClassDescriptor>(); 
+        Set<ClassDescriptor> returnSubs = new TreeSet<ClassDescriptor>();
         Set<ClassDescriptor> directSubs = getDirectSubs(cld);
         returnSubs.addAll(directSubs);
         for (ClassDescriptor sub : directSubs) {
@@ -171,7 +171,12 @@ public class Model
      * @return the requested ClassDescriptor
      */
     public ClassDescriptor getClassDescriptorByName(String name) {
-        return (ClassDescriptor) cldMap.get(name);
+        ClassDescriptor cd = cldMap.get(name);
+        if (cd == null) {
+            return cldMap.get(getPackageName() + "." + name);
+        } else {
+            return cd;
+        }
     }
 
     /**
