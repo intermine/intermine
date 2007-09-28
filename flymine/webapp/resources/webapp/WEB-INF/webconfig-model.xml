@@ -180,8 +180,8 @@
       	filterLabel="ontology"
       	max="0.10" />
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment" 
-    	link="org.intermine.bio.web.widget.ProteinDomainURLQuery" 
-	    controller="org.intermine.bio.web.widget.ProteinDomainLdr" 
+    	link="org.flymine.web.widget.ProteinDomainURLQuery" 
+	    controller="org.flymine.web.widget.ProteinDomainLdr" 
       	description="Protein Domains enriched for genes in this list." 
       	max="0.10"  />
       <enrichmentwidgetdisplayer title="Publication Enrichment" 
@@ -190,8 +190,8 @@
       	description="Publications enriched for genes in this list." 
       	max="0.10"  />
        <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment" 
-      	link="org.intermine.bio.web.widget.TiffinURLQuery" 
-      	controller="org.intermine.bio.web.widget.TiffinLdr" 
+      	link="org.flymine.web.widget.TiffinURLQuery" 
+      	controller="org.flymine.web.widget.TiffinLdr" 
       	description="Tiffin Motifs enriched for genes in this list." 
       	max="0.10"  />
    
