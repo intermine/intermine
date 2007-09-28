@@ -61,9 +61,9 @@ public class LogicExpression
             parser.expr();
             ast = parser.getAST();
             //new antlr.DumpASTVisitor().visit(ast);
-            if (ast.getText().equals("or")) {
+            if (ast.getText().toLowerCase().equals("or")) {
                 rootNode = new Or(ast, true);
-            } else if (ast.getText().equals("and")) {
+            } else if (ast.getText().toLowerCase().equals("and")) {
                 rootNode = new And(ast, true);
             } else {
                 rootNode = new Variable(ast.getText());

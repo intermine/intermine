@@ -27,6 +27,7 @@ public class Constraint
     protected String description = null;
     protected String identifier = null;
     protected String code = null;
+    protected Object extraValue = null;
 
     /**
      * Make a new Constraint with no description or identifier, and which has the editable flag set
@@ -49,15 +50,17 @@ public class Constraint
      * @param code the constraint code
      * @param identifier a label for this Constraint used for refering to this it in a
      * template. null means that this Constraint has no identifier. 
+     * @param extraValue an extra value, for LOOKUP constraints
      */
-    public Constraint(ConstraintOp op, Object value,
-                      boolean editable, String description, String code, String identifier) {
+    public Constraint(ConstraintOp op, Object value, boolean editable, String description,
+            String code, String identifier, Object extraValue) {
         this.op = op;
         this.value = value;
         this.editable = editable;
         this.description = description;
         this.identifier = identifier;
         this.code = code;
+        this.extraValue = extraValue;
     }
 
     /**
@@ -68,7 +71,7 @@ public class Constraint
     public ConstraintOp getOp()  {
         return op;
     }
-    
+
     /**
      * Gets the value of value
      *
@@ -77,7 +80,7 @@ public class Constraint
     public Object getValue()  {
         return value;
     }
-    
+
     /**
      * Return true if and only if this constraint should be editable in a template. 
      * @return the editable flag
@@ -101,13 +104,22 @@ public class Constraint
     public String getCode() {
         return code;
     }
-    
+
     /**
      * Return the identifier that was passed to the constructor.
      * @return the identifier or null if unset
      */
     public String getIdentifier() {
         return identifier;
+    }
+
+    /**
+     * Return the extra value that was passed into the constructor.
+     *
+     * @return the extra value or null if unset
+     */
+    public Object getExtraValue() {
+        return extraValue;
     }
 
     /**
@@ -125,9 +137,28 @@ public class Constraint
             return "" + getValue();
         }
     }
-    
-    
-    
+
+    /**
+     * Return the value in <i>really</i> display format. This is like getDisplayValue, but it
+     * actually produces a value that you want to look at, rather than a value that is machine-read
+     * later on.
+     *
+     * @return a String
+     */
+    public String getReallyDisplayValue() {
+        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH 
+            || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS) {
+            return WebUtil.wildcardSqlToUser(getValue().toString());
+        } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
+            return "";
+        } else if ((op == ConstraintOp.LOOKUP) && (extraValue != null)
+                && (!"".equals(extraValue))) {
+            return getValue() + " IN " + extraValue;
+        } else {
+            return "" + getValue();
+        }
+    }
+
     /**
      * Return true if this constraint can be presented as editable in a
      * template query. This method assumes that the constraint is applied to an
@@ -148,6 +179,7 @@ public class Constraint
         return "<Constraint: " + op + ", " + value
             + (identifier == null ? "" : ", " + identifier)
             + (description == null ? "" : ", " + description)
+            + (extraValue == null ? "" : ", " + extraValue)
             + ">";
     }
 
@@ -177,6 +209,15 @@ public class Constraint
                         return false;
                     }
                 }
+                if (extraValue == null) {
+                    if (other.extraValue != null) {
+                        return false;
+                    }
+                } else {
+                    if (!extraValue.equals(other.extraValue)) {
+                        return false;
+                    }
+                }
                 return true;
             }
         }
@@ -191,6 +232,7 @@ public class Constraint
         return 2 * op.hashCode()
             + 3 * (value != null ? value.hashCode() : 0)
             + (description == null ? 0 : 5 * description.hashCode())
-            + (identifier == null ? 0 : 7 * identifier.hashCode());
+            + (identifier == null ? 0 : 7 * identifier.hashCode())
+            + (extraValue == null ? 0 : 11 * extraValue.hashCode());
     }
 }

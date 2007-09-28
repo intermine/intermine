@@ -44,7 +44,7 @@ import org.apache.struts.action.ActionMessages;
 public class QueryBuilderForm extends ActionForm
 {
     protected String bagOp, bagValue;
-    protected String attributeOp, attributeValue, attributeOptions;
+    protected String attributeOp, attributeValue, attributeOptions, extraValue;
     protected String subclassValue;
     protected String loopQueryOp, loopQueryValue;
 
@@ -153,6 +153,22 @@ public class QueryBuilderForm extends ActionForm
      */
     public void setAttributeValue(String attributeValue) {
         this.attributeValue = attributeValue;
+    }
+
+    /**
+     * Gets the value of extraValue
+     * @return the value of extraValue
+     */
+    public String getExtraValue() {
+        return extraValue;
+    }
+
+    /**
+     * Sets the value of extraValue
+     * @param extraValue the value to assign to extraValue
+     */
+    public void setExtraValue(String extraValue) {
+        this.extraValue = extraValue;
     }
 
     /**

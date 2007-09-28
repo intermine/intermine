@@ -168,7 +168,7 @@ public class TemplateHelper
                     }
                     if (bag != null) {
                         Constraint bagConstraint = new Constraint(constraintOp, constraintValue,
-                                true, c.getDescription(), c.getCode(), c.getIdentifier());
+                                true, c.getDescription(), c.getCode(), c.getIdentifier(), null);
                         if (nodeCopy.isAttribute()) {
                             // remove the constraint on this node, possibly remove node
                             //nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
@@ -184,11 +184,9 @@ public class TemplateHelper
                                     bagConstraint);
                         }
                     } else {
-                        nodeCopy.getConstraints().set(
-                                node.getConstraints().indexOf(c),
-                                new Constraint(constraintOp, constraintValue,
-                                        true, c.getDescription(), c.getCode(),
-                                        c.getIdentifier()));
+                        nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
+                                new Constraint(constraintOp, constraintValue, true,
+                                    c.getDescription(), c.getCode(), c.getIdentifier(), null));
                     }
 
                 } else {
@@ -196,6 +194,7 @@ public class TemplateHelper
                     String op = (String) tf.getAttributeOps(key);
                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
                     Object constraintValue = tf.getParsedAttributeValues(key);
+                    Object extraValue = tf.getExtraValues(key);
 
                     if (c.getOp().equals(ConstraintOp.LOOKUP)
                         && constraintOp.equals(ConstraintOp.EQUALS)) {
@@ -206,13 +205,13 @@ public class TemplateHelper
                         Integer valueAsInteger = Integer.valueOf((String) constraintValue);
                         Constraint objectConstraint =
                             new Constraint(ConstraintOp.EQUALS, valueAsInteger, true,
-                                           null, c.getCode(), null);
+                                    null, c.getCode(), null, null);
                         newNode.getConstraints().add(objectConstraint);
                     } else {
                      // In query copy, replace old constraint with new one
                         nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
-                            new Constraint(constraintOp, constraintValue, true,
-                                    c.getDescription(), c.getCode(), c.getIdentifier()));
+                            new Constraint(constraintOp, constraintValue, true, c.getDescription(),
+                                c.getCode(), c.getIdentifier(), extraValue));
                     }
                 }
                 j++;
@@ -234,9 +233,8 @@ public class TemplateHelper
      * @return          a new TemplateQuery matching template with user supplied constraints
      */
     public static TemplateQuery editTemplate(Map <String, Object> valuesMap,
-                                                     Map <String, ConstraintOp> constraintOpsMap,
-                                                            TemplateQuery template,
-                                                            Map savedBags) {
+            Map<String, ConstraintOp> constraintOpsMap, TemplateQuery template, Map savedBags,
+            Map<String, String> extraValuesMap) {
         TemplateQuery queryCopy = (TemplateQuery) template.clone();
         // Step over nodes and their constraints in order, ammending our
         // copy as we go
@@ -255,8 +253,8 @@ public class TemplateHelper
                     // Replace constraint with bag constraint
                     InterMineBag bag = (InterMineBag) obj;
                     if (bag != null) {
-                        Constraint bagConstraint = new Constraint(constraintOp, bag,
-                                true, c.getDescription(), c.getCode(), c.getIdentifier());
+                        Constraint bagConstraint = new Constraint(constraintOp, bag, true,
+                                c.getDescription(), c.getCode(), c.getIdentifier(), null);
                         if (nodeCopy.isAttribute()) {
                             // remove the constraint on this node, possibly remove node
                             //nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
@@ -276,7 +274,7 @@ public class TemplateHelper
                                 node.getConstraints().indexOf(c),
                                 new Constraint(constraintOp, bag,
                                         true, c.getDescription(), c.getCode(),
-                                        c.getIdentifier()));
+                                        c.getIdentifier(), null));
                     }
                 } else {
                     // Parse user input
@@ -291,13 +289,13 @@ public class TemplateHelper
                         Integer valueAsInteger = Integer.valueOf((String) constraintValue);
                         Constraint objectConstraint =
                             new Constraint(ConstraintOp.EQUALS, valueAsInteger, true,
-                                           null, c.getCode(), null);
+                                           null, c.getCode(), null, null);
                         newNode.getConstraints().add(objectConstraint);
                     } else {
                      // In query copy, replace old constraint with new one
                         nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
-                            new Constraint(constraintOp, constraintValue, true,
-                                    c.getDescription(), c.getCode(), c.getIdentifier()));
+                            new Constraint(constraintOp, constraintValue, true, c.getDescription(),
+                                c.getCode(), c.getIdentifier(), extraValuesMap.get(pathName)));
                     }
                 }
             }
@@ -307,13 +305,13 @@ public class TemplateHelper
     }
     
     /**
-     * Make a Query from a TemplateQuery and the coresponding TemplateForm.
+     * Make a Query from a TemplateQuery and the corresponding TemplateForm.
      * @param tq the TemplateQuery
      * @param tf the TemplateForm with values filled in for all editable constraints in tq
      * @return a Query
      */
 /* needs testing:
-    public Query queryFromTempateAndForm(TemplateQuery tq, TemplateForm tf) {
+    public Query queryFromTemplateAndForm(TemplateQuery tq, TemplateForm tf) {
         TemplateQuery filledInTemplate = 
             templateFormToTemplateQuery(tf, tq, Collections.EMPTY_MAP);
         Map pathToQueryNode = new HashMap();

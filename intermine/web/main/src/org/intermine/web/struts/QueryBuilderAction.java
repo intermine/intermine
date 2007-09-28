@@ -69,16 +69,14 @@ public class QueryBuilderAction extends InterMineAction
             // We're updating an existing constraint, just remove the old one
             Constraint c = node.getConstraints().get(cindex.intValue());
             node.removeConstraint(c);
-            label = c.getDescription();
-            id = c.getIdentifier();
-            editable = c.isEditable();
             code = c.getCode();
 
             if (request.getParameter("template") != null) {
                 // We're just updating template settings
                 node.getConstraints().add(
                         new Constraint(c.getOp(), c.getValue(), mf.isEditable(), mf
-                                .getTemplateLabel(), c.getCode(), mf.getTemplateId()));
+                                .getTemplateLabel(), c.getCode(), mf.getTemplateId(),
+                                c.getExtraValue()));
                 mf.reset(mapping, request);
                 return mapping.findForward("query");
             }
@@ -95,12 +93,13 @@ public class QueryBuilderAction extends InterMineAction
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getAttributeOp()));
             Object constraintValue = mf.getParsedAttributeValue();
+            //String extraValue = mf.getExtraValue();
             if (constraintValue.equals("NULL")) {
                 node.getConstraints().add(
-                        new Constraint(ConstraintOp.IS_NULL, null, false, label, code, id));
+                        new Constraint(ConstraintOp.IS_NULL, null, false, label, code, id, null));
             } else {
                 Constraint c = new Constraint(constraintOp, constraintValue, editable, label, code,
-                        id);
+                        id, mf.getExtraValue());
                 node.getConstraints().add(c);
             }
         } else if (request.getParameter("bag") != null) {
@@ -115,7 +114,7 @@ public class QueryBuilderAction extends InterMineAction
                 parent = node;
             }
             Constraint c = new Constraint(constraintOp, constraintValue,
-                                          false, label, code, id);
+                                          false, label, code, id, null);
             parent.getConstraints().add(c);
 
             // if no other constraints on the original node, remove it
@@ -126,7 +125,8 @@ public class QueryBuilderAction extends InterMineAction
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getLoopQueryOp()));
             Object constraintValue = mf.getLoopQueryValue();
-            Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id);
+            Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id,
+                    null);
             node.getConstraints().add(c);
         } else if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
@@ -135,10 +135,11 @@ public class QueryBuilderAction extends InterMineAction
         } else if (request.getParameter("nullnotnull") != null) {
             if (mf.getNullConstraint().equals("NotNULL")) {
                 node.getConstraints().add(
-                        new Constraint(ConstraintOp.IS_NOT_NULL, null, false, label, code, id));
+                        new Constraint(ConstraintOp.IS_NOT_NULL, null, false, label, code, id,
+                            null));
             } else {
                 node.getConstraints().add(
-                        new Constraint(ConstraintOp.IS_NULL, null, false, label, code, id));
+                        new Constraint(ConstraintOp.IS_NULL, null, false, label, code, id, null));
             }
         } else if (request.getParameter("expression") != null) {
             query.setConstraintLogic(request.getParameter("expr"));
@@ -151,9 +152,9 @@ public class QueryBuilderAction extends InterMineAction
             session.setAttribute(Constants.DEFAULT_OPERATOR, mf.getOperator());
         }
 
-        if (query.getAllConstraints().size() == previousConstraintCount + 1) {
+        //if (query.getAllConstraints().size() == previousConstraintCount + 1) {
             query.syncLogicExpression(mf.getOperator());
-        }
+        //}
 
         mf.reset(mapping, request);
 

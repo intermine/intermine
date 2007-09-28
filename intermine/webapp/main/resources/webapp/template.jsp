@@ -171,15 +171,37 @@
               </c:if>
             </td>
             <td valign="top">
-              <c:if test="${!empty keyFields}">
+              <c:if test="${!empty keyFields[con]}">
                 <span class="smallnote">
                   <fmt:message key="query.lookupConstraintHelp"><%--This will search...--%>
-                    <fmt:param value="${keyFields}"/>
+                    <fmt:param value="${keyFields[con]}"/>
                   </fmt:message>
                 </span>
               </c:if>
             </td>
           </tr>
+          <c:if test="${haveExtraConstraint[con]}">
+            <tr>
+              <td>
+                &nbsp; <%-- for IE --%>
+              </td>
+              <td valign="top" colspan="4">
+                <label>
+                  <fmt:message key="bagBuild.extraConstraint">
+                    <fmt:param value="${extraBagQueryClass}"/>
+                  </fmt:message>
+                </label>
+                <html:select property="extraValues(${index})">
+                  <html:option value="">All</html:option>
+                  <c:forEach items="${extraClassFieldValues}" var="value">
+                    <html:option value="${value}">
+                      <c:out value="${value}"/>
+                    </html:option>
+                  </c:forEach>
+                </html:select>
+              </td>
+            </tr>
+          </c:if>
           <tr>
             <td>
               &nbsp; <%-- for IE --%>

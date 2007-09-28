@@ -299,7 +299,11 @@ public class PagedTable
             try {
                 updateResultElementRows();
             } catch (PageOutOfRangeException e) {
+                LOG.error(e);
                 throw new RuntimeException("unexpected exception while getting rows", e);
+            } catch (RuntimeException e) {
+                LOG.error(e);
+                throw e;
             }
         }
         return resultElementRows;

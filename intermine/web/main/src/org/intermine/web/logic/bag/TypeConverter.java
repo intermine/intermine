@@ -72,7 +72,7 @@ public class TypeConverter
         // want to constrain. Just because our query builder has been crippled to only allow that.
         PathNode parent = tq.getNodes().get(node.getParent().getPathString());
         tq.getNodes().remove(node.getPathString());
-        Constraint newC = new Constraint(ConstraintOp.IN, bag, false, "", c.getCode(), null);
+        Constraint newC = new Constraint(ConstraintOp.IN, bag, false, "", c.getCode(), null, null);
         parent.getConstraints().add(newC);
 
         Query q;

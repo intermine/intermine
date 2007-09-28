@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,8 +88,8 @@ public class QuickSearchAction extends InterMineAction
             valuesMap.put(node.getPathString(), qsf.getParsedValue());
             constraintOpsMap.put(node.getPathString(), ConstraintOp.EQUALS);
             
-            TemplateQuery queryCopy = TemplateHelper.editTemplate(valuesMap, 
-                                                                  constraintOpsMap, template, null);
+            TemplateQuery queryCopy = TemplateHelper.editTemplate(valuesMap,
+                    constraintOpsMap, template, null, new HashMap());
             String qid = SessionMethods.startQuery(clientState, session, messages, 
                                                    false, queryCopy);
             Thread.sleep(200);

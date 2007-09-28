@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +20,9 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -30,6 +32,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.Constraint;
@@ -87,16 +90,18 @@ public class TemplateController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ObjectStore os = (ObjectStore) servletContext
-                .getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
                 .getAttribute(Constants.OBJECT_STORE_SUMMARY);
+        BagQueryConfig bagQueryConfig =
+            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         TemplateForm tf = (TemplateForm) form;
         TemplateQuery template = null;
         String queryName = request.getParameter("name");
         String scope = request.getParameter("scope");
-        String loadModifiedTemplate = request
-                .getParameter("loadModifiedTemplate");
+        String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
         String bagName = request.getParameter("bagName");
         
         String idForLookup = request.getParameter("idForLookup");
@@ -156,6 +161,8 @@ public class TemplateController extends TilesAction
         Map bags = new HashMap();
         Map constraintBagTypes = new HashMap();
         Map selectedBagNames = new HashMap();
+        Map keyFields = new HashMap();
+        Map haveExtraConstraint = new HashMap();
         
         servletContext = session.getServletContext();
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
@@ -186,8 +193,8 @@ public class TemplateController extends TilesAction
                         value = c.getValue();
                         selectedBagName = (String) modC.getValue();
                     }
-                    Constraint newC = new Constraint(c.getOp(), value, true,
-                            c.getDescription(), c.getCode(), c.getIdentifier());
+                    Constraint newC = new Constraint(c.getOp(), value, true, c.getDescription(),
+                            c.getCode(), c.getIdentifier(), c.getExtraValue());
                     displayNode.getConstraints().set(node.getConstraints().indexOf(c), newC);
                     c = newC;
                     if (selectedBagName != null) {
@@ -242,10 +249,24 @@ public class TemplateController extends TilesAction
                     }
                     // this might be a lookup constraint, find the key fields for a help message
                     if (c.getOp().equals(ConstraintOp.LOOKUP)) {
-                        Collection<String> keyFields = ClassKeyHelper.getKeyFieldNames(classKeys,
-                                                                                  node.getType());
-                        String keyFieldStr = StringUtil.prettyList(keyFields, true);
-                        request.setAttribute("keyFields", keyFieldStr);
+                        Collection<String> keyFieldCol = ClassKeyHelper.getKeyFieldNames(classKeys,
+                                node.getType());
+                        String keyFieldStr = StringUtil.prettyList(keyFieldCol, true);
+                        keyFields.put(c, keyFieldStr);
+                        String connectFieldName = bagQueryConfig.getConnectField();
+                        Class nodeType;
+                        try {
+                            nodeType = Class.forName(model.getPackageName() + "." + node.getType());
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException("Can't find class for: " + node.getType());
+                        }
+                        FieldDescriptor fd = model.getFieldDescriptorsForClass(nodeType)
+                            .get(connectFieldName);
+                        if ((fd != null) && (fd instanceof ReferenceDescriptor)) {
+                            haveExtraConstraint.put(c, Boolean.TRUE);
+                        } else {
+                            haveExtraConstraint.put(c, Boolean.FALSE);
+                        }
                     }
                 }
                 j++;
@@ -257,13 +278,30 @@ public class TemplateController extends TilesAction
 
         tf.setTemplateName(queryName);
         tf.setTemplateType(scope);
+        // The template query
         request.setAttribute("templateQuery", displayTemplate);
+        // A Map from Constraint to a String that should be displayed as the constraint name
         request.setAttribute("names", names);
+        // A Map from displayNode to a collection of editable constraints
         request.setAttribute("constraints", constraints);
+        // A Map from Constraint to a DisplayConstraint which provides access to summary data
         request.setAttribute("displayConstraints", displayConstraints);
+        // A Map from Constraint to a Map from bag name to InterMineBag
         request.setAttribute("constraintBags", bags);
+        // A Map from Constraint to the Class of the parent node
         request.setAttribute("constraintBagTypes", constraintBagTypes);
+        // A Map from Constraint to a bag name, for if a particular bag should be pre-selected
         request.setAttribute("selectedBagNames", selectedBagNames);
+        // A Map from Constraint to a String containing help for a LOOKUP constraint
+        request.setAttribute("keyFields", keyFields);
+        // A Map from Constraint to a Boolean describing whether a LOOKUP constraint on that
+        //    Constraint would have an extra constraint
+        request.setAttribute("haveExtraConstraint", haveExtraConstraint);
+        // The type of the extra constraint class
+        request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
+        // A List of values for the extra constraint
+        request.setAttribute("extraClassFieldValues", oss.getFieldValues(extraClassName,
+                    bagQueryConfig.getConstrainField()));
         
         if (searchBags.size() > 0) {
             request.setAttribute("bagOps", MainHelper
@@ -289,16 +327,16 @@ public class TemplateController extends TilesAction
                 String attributeKey = "" + (j + 1);
                 tf.setAttributeValues(attributeKey, "" + c.getDisplayValue());
                 tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
+                tf.setExtraValues(attributeKey, "" + c.getExtraValue());
                 if (imObject != null) {
                     Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
                     Set keyFields = (Set) classKeys.get(DynamicUtil.getFriendlyName(imObject
                                                                    .getClass()));
-                    HashSet classKey = (HashSet) keyFields.iterator().next();
+                    AttributeDescriptor classKey = (AttributeDescriptor) keyFields.iterator()
+                        .next();
                     String value = null;
                     try {
-                        AttributeDescriptor attrDesc = (AttributeDescriptor) classKey.iterator()
-                                                        .next();
-                        value = (String) TypeUtil.getFieldValue(imObject, attrDesc.getName());
+                        value = (String) TypeUtil.getFieldValue(imObject, classKey.getName());
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException("Error while filling in Lookup template values:" 
                                                    + e.getMessage());

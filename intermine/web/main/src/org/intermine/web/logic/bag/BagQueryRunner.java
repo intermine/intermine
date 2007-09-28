@@ -138,10 +138,11 @@ public class BagQueryRunner
             // run the next query on identifiers not yet resolved
             if (!unresolved.isEmpty()) {
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
-                Query q = bq.getQuery(unresolved, extraFieldValue);
-                // TODO this is hacky as default batch size is hard coded in the os
                 boolean faster = false;
+                Query q = null;
                 try {
+                    q = bq.getQuery(unresolved, extraFieldValue);
+                    // TODO this is hacky as default batch size is hard coded in the os
                     if (unresolved.size() > 1000) {
                         os.goFaster(q);
                         faster = true;
@@ -178,6 +179,8 @@ public class BagQueryRunner
                             }
                         }
                     }
+                } catch (IllegalArgumentException e) {
+                    // Query couldn't handle extra value
                 } finally {
                     if (faster) {
                         os.releaseGoFaster(q);
@@ -186,37 +189,41 @@ public class BagQueryRunner
                 addResults(resMap, unresolved, bqr, bq, typeCls, false);
             }
             if (!wildcardInput.isEmpty()) {
-                Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
-                Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
-                Results res = os.execute(q);
-                res.setNoPrefetch();
-                for (ResultsRow row : (List<ResultsRow>) res) {
-                    Integer id = (Integer) row.get(0);
-                    for (int i = 1; i < row.size(); i++) {
-                        String field = "" + row.get(i);
-                        if (field != null) {
-                            String lowerField = field.toLowerCase();
-                            for (String wildcard : wildcardInput) {
-                                Pattern pattern = patterns.get(wildcard);
-                                if (pattern.matcher(lowerField).matches()) {
-                                    Set<Integer> ids = resMap.get(wildcard);
-                                    if (ids == null) {
-                                        ids = new HashSet<Integer>();
-                                        resMap.put(wildcard, ids);
+                try {
+                    Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
+                    Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
+                    Results res = os.execute(q);
+                    res.setNoPrefetch();
+                    for (ResultsRow row : (List<ResultsRow>) res) {
+                        Integer id = (Integer) row.get(0);
+                        for (int i = 1; i < row.size(); i++) {
+                            String field = "" + row.get(i);
+                            if (field != null) {
+                                String lowerField = field.toLowerCase();
+                                for (String wildcard : wildcardInput) {
+                                    Pattern pattern = patterns.get(wildcard);
+                                    if (pattern.matcher(lowerField).matches()) {
+                                        Set<Integer> ids = resMap.get(wildcard);
+                                        if (ids == null) {
+                                            ids = new HashSet<Integer>();
+                                            resMap.put(wildcard, ids);
+                                        }
+                                        ids.add(id);
+                                        // we have matched at least once with wildcard
+                                        wildcardUnresolved.remove(wildcard);
                                     }
-                                    ids.add(id);
-                                    // we have matched at least once with wildcard
-                                    wildcardUnresolved.remove(wildcard);
                                 }
                             }
                         }
                     }
-                }
-                for (Map.Entry<String, Set<Integer>> entry : resMap.entrySet()) {
-                    // This is a dummy issue just to give a message when running queries
-                    bqr.addIssue(BagQueryResult.WILDCARD, bq.getMessage(),
-                            entry.getKey(), new ArrayList(entry.getValue()));
-                    addResults(resMap, wildcardUnresolved, bqr, bq, typeCls, true);
+                    for (Map.Entry<String, Set<Integer>> entry : resMap.entrySet()) {
+                        // This is a dummy issue just to give a message when running queries
+                        bqr.addIssue(BagQueryResult.WILDCARD, bq.getMessage(),
+                                entry.getKey(), new ArrayList(entry.getValue()));
+                        addResults(resMap, wildcardUnresolved, bqr, bq, typeCls, true);
+                    }
+                } catch (IllegalArgumentException e) {
+                    // Query couldn't handle extra value
                 }
             }
         }

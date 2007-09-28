@@ -53,6 +53,8 @@ class LogicLexer extends Lexer;
 
 options {
   exportVocab = Logic;
+  caseSensitive = false;
+  caseSensitiveLiterals = false;
 }
 
 OPEN_PAREN   : '(' ;

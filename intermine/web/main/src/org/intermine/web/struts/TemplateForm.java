@@ -32,14 +32,18 @@ import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
+import org.apache.log4j.Logger;
+
 /**
  * Form to handle input from the template page
  * @author Mark Woodbridge
  */
 public class TemplateForm extends ActionForm
 {
+    private static final Logger LOG = Logger.getLogger(TemplateForm.class);
+
     /** Maps containing form state for each constraint. */
-    protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint;
+    protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint, extraValues;
     protected Map selectedBags, bagOps;
     protected String templateType, templateName;
     protected String view;
@@ -118,6 +122,40 @@ public class TemplateForm extends ActionForm
      */
     public Object getAttributeValues(String key)  {
         return attributeValues.get(key);
+    }
+
+    /**
+     * Sets the extra values
+     * @param extraValues the extra values
+     */
+    public void setExtraValues(Map extraValues) {
+        this.extraValues = extraValues;
+    }
+
+    /**
+     * Get the extra values
+     * @return the extra values
+     */
+    public Map getExtraValues() {
+        return extraValues;
+    }
+
+    /**
+     * Set an extra value
+     * @param key the key
+     * @param value the value
+     */
+    public void setExtraValues(String key, Object value) {
+        extraValues.put(key, value);
+    }
+
+    /**
+     * Get an extra value
+     * @param key the key
+     * @return the value
+     */
+    public Object getExtraValues(String key) {
+        return extraValues.get(key);
     }
 
     /**
@@ -321,6 +359,7 @@ public class TemplateForm extends ActionForm
         useBagConstraint = new HashMap();
         selectedBags = new HashMap();
         bagOps = new HashMap();
+        extraValues = new HashMap();
         templateName = null;
         templateType = null;
         view = "";

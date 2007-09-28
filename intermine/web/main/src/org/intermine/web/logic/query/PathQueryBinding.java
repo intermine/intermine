@@ -112,6 +112,9 @@ public class PathQueryBinding
                     } else {
                         writer.writeAttribute("code", "");                        
                     }
+                    if (c.getExtraValue() != null) {
+                        writer.writeAttribute("extraValue", "" + c.getExtraValue());
+                    }
                     writer.writeEndElement();
                 }
                 writer.writeEndElement();

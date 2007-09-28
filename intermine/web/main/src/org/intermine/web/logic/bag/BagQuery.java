@@ -129,9 +129,9 @@ public class BagQuery
         if (query == null) {
             IqlQuery q = new IqlQuery(queryString, packageName,
                                       new ArrayList(Collections.singleton(lowerCaseBag)));
-            return addExtraContraint(q.toQuery(), extraFieldValue);
+            return addExtraConstraint(q.toQuery(), extraFieldValue);
         }
-        return addExtraContraint(query, extraFieldValue);
+        return addExtraConstraint(query, extraFieldValue);
     }
 
     /**
@@ -204,7 +204,7 @@ public class BagQuery
      * Return a Query modified using the connectField, className and constrainField from the
      * BagQueryCongfig.
      */
-    private Query addExtraContraint(Query queryArg, String extraFieldValue) {
+    private Query addExtraConstraint(Query queryArg, String extraFieldValue) {
         String connectFieldName = bagQueryConfig.getConnectField();
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         String constrainFieldName = bagQueryConfig.getConstrainField();
@@ -214,6 +214,7 @@ public class BagQuery
         }
         Query queryCopy = QueryCloner.cloneQuery(queryArg);
         Set fromSet = new HashSet(queryCopy.getFrom());
+        boolean doneExtraField = false;
         Iterator fromIter = fromSet.iterator();
         while (fromIter.hasNext()) {
             FromElement fromElement = (FromElement) fromIter.next();
@@ -261,8 +262,12 @@ public class BagQuery
                             + " but it isn't a ReferenceDescriptor";
                         throw new RuntimeException(exceptionMessage);
                     }
+                    doneExtraField = true;
                 }
             }
+        }
+        if (!doneExtraField) {
+            throw new IllegalArgumentException("Class does not have required extra field");
         }
         return queryCopy;
     }

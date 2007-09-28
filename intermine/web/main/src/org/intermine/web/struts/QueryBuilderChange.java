@@ -209,6 +209,7 @@ public class QueryBuilderChange extends DispatchAction
         session.removeAttribute("editingConstraintIndex");
         session.removeAttribute("editingConstraintValue");
         session.removeAttribute("editingConstraintOperand");
+        session.removeAttribute("editingConstraintExtraValue");
 
         return mapping.findForward("query");
     }
@@ -280,9 +281,11 @@ public class QueryBuilderChange extends DispatchAction
             && op != ConstraintOp.CONTAINS && op != ConstraintOp.DOES_NOT_CONTAIN) {
             session.setAttribute("editingConstraintValue", c.getDisplayValue());
             session.setAttribute("editingConstraintOperand", c.getOp().getIndex());
+            session.setAttribute("editingConstraintExtraValue", c.getExtraValue());
         } else {
             session.removeAttribute("editingConstraintValue");
             session.removeAttribute("editingConstraintOperand");
+            session.removeAttribute("editingConstraintExtraValue");
         }
 
         return mapping.findForward("query");
@@ -367,6 +370,7 @@ public class QueryBuilderChange extends DispatchAction
         session.removeAttribute("editingConstraintIndex");
         session.removeAttribute("editingConstraintValue");
         session.removeAttribute("editingConstraintOperand");
+        session.removeAttribute("editingConstraintExtraValue");
 
         request.setAttribute("deletePath", deletePath); // for ajax
 
