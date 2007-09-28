@@ -82,22 +82,28 @@ public class ItemHelper
      * Convert a xml ReferenceList to a fulldata ReferenceList that can then be stored with
      * ItemWriter
      * @param refList the input ReferenceList
-     * @param os the ObjectStore to use when creating a ProxyReference
-     * @param itemId the id of the Item that will contain this ReferenceList
-     * @param itemClass the class of the Item that will contain this ReferenceList
      * @return a fulldata object
      */
-    public static org.intermine.model.fulldata.ReferenceList convert(ReferenceList refList,
-                                                                     ObjectStore os,
-                                                                     Integer itemId,
-                                                                     Class itemClass) {
+    public static org.intermine.model.fulldata.ReferenceList convert(ReferenceList refList) {
         org.intermine.model.fulldata.ReferenceList newRefList =
             new org.intermine.model.fulldata.ReferenceList();
         newRefList.setName(refList.getName());
         newRefList.setRefIds(makeFulldataRefIds(refList));
-        ProxyReference proxy = new ProxyReference(os, itemId, itemClass); 
-        newRefList.proxyItem(proxy);
         return newRefList;
+    }
+    
+    /**
+     * Convert a xml Reference to a fulldata Reference that can then be stored with
+     * ItemWriter
+     * @param ref the input Reference
+     * @return a fulldata object
+     */
+    public static org.intermine.model.fulldata.Reference convert(Reference ref) {
+        org.intermine.model.fulldata.Reference newRef =
+            new org.intermine.model.fulldata.Reference();
+        newRef.setName(ref.getName());
+        newRef.setRefId(ref.getRefId());
+        return newRef;
     }
     
     /**

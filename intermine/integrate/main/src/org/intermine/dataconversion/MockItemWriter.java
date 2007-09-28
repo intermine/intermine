@@ -11,14 +11,14 @@ package org.intermine.dataconversion;
  */
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.ItemHelper;
 
 /**
@@ -28,29 +28,46 @@ import org.intermine.xml.full.ItemHelper;
  */
 public class MockItemWriter implements ItemWriter
 {
-    Map storedItems;
-
+    Map<String, Item> storedItems;
+    private int itemIdCounter = 0;
+    
     /**
      * Constructor
      * @param map Map in which to store Items
      */
-    public MockItemWriter(Map map) {
+    public MockItemWriter(Map<String, Item> map) {
         storedItems = map;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void store(Item item) {
+    public Integer store(Item item) {
+        item.setId(itemIdCounter++);
         storedItems.put(item.getIdentifier(), item);
+        return item.getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void store(ReferenceList refList, Integer itemId) {
+        throw new UnsupportedOperationException("method not implemented");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void store(Reference ref, Integer itemId) {
+        throw new UnsupportedOperationException("method not implemented");
     }
 
     /**
      * {@inheritDoc}
      */
     public void storeAll(Collection<Item> items) {
-        for (Iterator i = items.iterator(); i.hasNext();) {
-            store((Item) i.next());
+        for (Iterator<Item> i = items.iterator(); i.hasNext();) {
+            store(i.next());
         }
     }
     
@@ -58,6 +75,7 @@ public class MockItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void close() {
+        // empty
     }
     
     /**
@@ -73,10 +91,4 @@ public class MockItemWriter implements ItemWriter
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void store(ReferenceList refList) throws ObjectStoreException {
-        throw new UnsupportedOperationException("store(ReferenceList) not implemented");
-    }
 }

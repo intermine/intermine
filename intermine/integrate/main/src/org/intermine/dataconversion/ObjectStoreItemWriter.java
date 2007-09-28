@@ -15,9 +15,11 @@ import java.util.Iterator;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Item;
+import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.proxy.ProxyReference;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -50,7 +52,7 @@ public class ObjectStoreItemWriter implements ItemWriter
     /**
      * {@inheritDoc}
      */
-    public void store(Item item) throws ObjectStoreException {
+    public Integer store(Item item) throws ObjectStoreException {
         for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
             osw.store((InterMineObject) i.next());
             transactionCounter++;
@@ -68,6 +70,27 @@ public class ObjectStoreItemWriter implements ItemWriter
             throw new RuntimeException("className not set for item: " + item.getIdentifier());
         }
         osw.store(item);
+        incrementTransaction();
+        return item.getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void store(ReferenceList refList, Integer itemId) throws ObjectStoreException {
+        ProxyReference proxy = new ProxyReference(osw.getObjectStore(), itemId, Item.class); 
+        refList.proxyItem(proxy);
+        osw.store(refList);
+        incrementTransaction();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void store(Reference ref, Integer itemId) throws ObjectStoreException {
+        ProxyReference proxy = new ProxyReference(osw.getObjectStore(), itemId, Item.class); 
+        ref.proxyItem(proxy);
+        osw.store(ref);
         incrementTransaction();
     }
 
@@ -99,14 +122,6 @@ public class ObjectStoreItemWriter implements ItemWriter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void store(ReferenceList refList) throws ObjectStoreException {
-        store(refList);
-        incrementTransaction();
-    }
-
     private void incrementTransaction() throws ObjectStoreException {
         transactionCounter++;
         if (transactionCounter >= TRANSACTION_BATCH_SIZE) {
@@ -116,5 +131,4 @@ public class ObjectStoreItemWriter implements ItemWriter
             transactionCounter = 0;
         }
     }
-
 }
