@@ -65,7 +65,8 @@ public class ChadoDBConverter extends BioDBConverter
     private String species;
     private String sequenceFeatureTypesString = "'chromosome', 'chromosome_arm'";
     private String featureTypesString =
-        "'gene', 'EST', 'CDS', 'intron', 'exon', 'mRNA', 'transcript', "
+        "'gene', 'mRNA', 'transcript', 'CDS', 'intron', 'exon', 'five_prime_untranslated_region', "
+        + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', "
         + sequenceFeatureTypesString;
     private String relationshipTypesString = "'partof'";
     private int chadoOrganismId;
@@ -170,6 +171,7 @@ public class ChadoDBConverter extends BioDBConverter
             String name = res.getString("name");
             String uniqueName = res.getString("uniquename");
             String type = res.getString("type");
+            type = fixFeatureType(type);
             String residues = res.getString("residues");
             int seqlen = 0;
             if (res.getObject("seqlen") != null) {
@@ -227,6 +229,24 @@ public class ChadoDBConverter extends BioDBConverter
             feature.setAttribute("identifier", uniqueName);
         }
         return feature;
+    }
+
+    /**
+     * Fix types from the feature table, perhaps by changing non-SO type into their SO equivalent.
+     * Types that don't need fixing will be returned unchanged.
+     * @param type the input type
+     * @return the fixed type
+     */
+    protected String fixFeatureType(String type) {
+        if (type.equals("five_prime_untranslated_region")) {
+            return "five_prime_UTR";
+        } else {
+            if (type.equals("three_prime_untranslated_region")) {
+                return "three_prime_UTR";
+            } else {
+                return type;
+            }
+        }
     }
 
     private void processLocationTable(Connection connection)
@@ -451,8 +471,13 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
-        String query = "select feature_id, name, uniquename, type, residues, seqlen from f_type "
-            + "where type IN (" + featureTypesString + ") and organism_id = " + chadoOrganismId;
+        String query =
+            "SELECT feature_id, feature.name, uniquename, cvterm.name as type, residues, seqlen"
+            + "   FROM feature, cvterm"
+            + "   WHERE feature.type_id = cvterm.cvterm_id"
+            + "        AND cvterm.name IN (" + featureTypesString + ")"
+            + "        AND organism_id = " + chadoOrganismId
+            + "        AND NOT feature.is_obsolete AND NOT feature.is_analysis";
         Statement stmt = connection.createStatement();
 
         ResultSet res = stmt.executeQuery(query);
