@@ -13,22 +13,31 @@ package org.intermine.bio.dataconversion;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
+import org.intermine.xml.full.ReferenceList;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import org.apache.log4j.Logger;
 
 /**
  * DataConverter to read from a Chado database into items
@@ -42,8 +51,11 @@ public class ChadoDBConverter extends BioDBConverter
         // the synonyms that have already been created
         Set<String> existingSynonyms = new HashSet<String>();
         String itemIdentifier;
-        String type;
+        String interMineType;
+        public Integer intermineObjectId;
     }
+
+    protected static final Logger LOG = Logger.getLogger(ChadoDBConverter.class);
 
     private Map<Integer, FeatureData> features = new HashMap<Integer, FeatureData>();
     private String dataSourceName;
@@ -53,9 +65,11 @@ public class ChadoDBConverter extends BioDBConverter
     private String species;
     private String sequenceFeatureTypesString = "'chromosome', 'chromosome_arm'";
     private String featureTypesString =
-        "'gene', 'exon', 'transcript', " + sequenceFeatureTypesString;
+        "'gene', 'EST', 'CDS', 'intron', 'exon', 'mRNA', 'transcript', "
+        + sequenceFeatureTypesString;
     private String relationshipTypesString = "'partof'";
     private int chadoOrganismId;
+    private Model model = Model.getInstanceByName("genomic");
 
     /**
      * Create a new ChadoDBConverter object.
@@ -139,7 +153,7 @@ public class ChadoDBConverter extends BioDBConverter
         chadoOrganismId = getChadoOrganismId(connection);
         processFeatureTable(connection);
         processLocationTable(connection);
-  //      processRelationTable(connection);
+        processRelationTable(connection);
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
@@ -163,19 +177,21 @@ public class ChadoDBConverter extends BioDBConverter
             }
             List<String> primaryIds = new ArrayList<String>();
             primaryIds.add(uniqueName);
-            Item feature = makeFeature(featureId, name, uniqueName, type, residues, seqlen);
+            String interMineType = TypeUtil.javaiseClassName(type);
+            Item feature =
+                makeFeature(featureId, name, uniqueName, interMineType, residues, seqlen);
             if (feature != null) {
                 FeatureData fdat = new FeatureData();
                 fdat.itemIdentifier = feature.getIdentifier();
                 fdat.uniqueName = uniqueName;
-                fdat.type = type;
+                fdat.interMineType = interMineType;
                 feature.setReference("organism", organismItem);
                 feature.addToCollection("evidence", dataSet);
                 createSynonym(fdat, "identifier", uniqueName, true, dataSet, dataSource);
                 if (name != null) {
                     createSynonym(fdat, "name", name, false, dataSet, dataSource);
                 }
-                store(feature);
+                fdat.intermineObjectId = store(feature);
                 features.put(featureId, fdat);
             }
         }
@@ -186,12 +202,12 @@ public class ChadoDBConverter extends BioDBConverter
      * @param featureId the chado feature id
      * @param name the name
      * @param uniqueName the uniquename
-     * @param type the feature type from the cvterm table
+     * @param clsName the InterMine feature class
      * @param residues the residues (if any)
      * @param seqlen the sequence length (if known)
      * @throws ObjectStoreException if there is a problem while storing
      */
-    protected Item makeFeature(Integer featureId, String name, String uniqueName, String type,
+    protected Item makeFeature(Integer featureId, String name, String uniqueName, String clsName,
                                String residues, int seqlen) {
 
         // XXX FIMXE TODO HACK - this should be configured somewhere
@@ -199,7 +215,6 @@ public class ChadoDBConverter extends BioDBConverter
             return null;
         }
 
-        String clsName = TypeUtil.javaiseClassName(type);
         Item feature = createItem(clsName);
 
         // XXX FIMXE TODO HACK - this should be configured somewhere
@@ -234,7 +249,7 @@ public class ChadoDBConverter extends BioDBConverter
                                  start, end, strand, taxonId, dataSet);
                 } else {
                     throw new RuntimeException("featureId (" + featureId + ") from location "
-                                               + featureLocId 
+                                               + featureLocId
                                                + " was not found in the feature table");
                 }
             } else {
@@ -245,29 +260,121 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     private void processRelationTable(Connection connection)
-        throws SQLException {
-        Item dataSet = getDataSetItem(dataSetTitle);
-
+        throws SQLException, ObjectStoreException {
         ResultSet res = getFeatureRelationshipResultSet(connection);
+        Integer lastSubjectId = null;
+        Map<String, List<String>> collectionData = new HashMap<String, List<String>>();
         while (res.next()) {
             Integer featureRelationshipId = new Integer(res.getInt("feature_relationship_id"));
             Integer subjectId = new Integer(res.getInt("subject_id"));
             Integer objectId = new Integer(res.getInt("object_id"));
 
+            if (lastSubjectId != null && subjectId != lastSubjectId) {
+                processCollectionData(lastSubjectId, collectionData);
+                collectionData = new HashMap<String, List<String>>();
+            }
             if (features.containsKey(subjectId)) {
-                FeatureData subjectData = features.get(subjectId);
                 if (features.containsKey(objectId)) {
-                    FeatureData featureData = features.get(objectId);
-                    
+                    FeatureData objectData = features.get(objectId);
+                    List<String> currentList;
+                    if (collectionData.containsKey(objectData.interMineType)) {
+                        currentList = collectionData.get(objectData.interMineType);
+                    } else {
+                        currentList = new ArrayList<String>();
+                        collectionData.put(objectData.interMineType, currentList);
+                    }
+                    currentList.add(objectData.itemIdentifier);
                 } else {
-                    throw new RuntimeException();
+                    LOG.warn("object_id " + objectId + " from feature_relationship "
+                             + featureRelationshipId + " was not found in the feature table");
                 }
             } else {
                 throw new RuntimeException("subject_id " + subjectId + " from feature_relationship "
-                                           + featureRelationshipId 
+                                           + featureRelationshipId
                                            + " was not found in the feature table");
             }
+            lastSubjectId = subjectId;
         }
+        if (lastSubjectId != null) {
+            processCollectionData(lastSubjectId, collectionData);
+        }
+    }
+
+    /**
+     * Create collections and references for the Item given by chadoSubjectId.
+     */
+    private void processCollectionData(Integer chadoSubjectId,
+                                       Map<String, List<String>> collectionData)
+        throws ObjectStoreException {
+        FeatureData subjectData = features.get(chadoSubjectId);
+        String subjectInterMineType = subjectData.interMineType;
+        Integer intermineItemId = subjectData.intermineObjectId;
+        for (Map.Entry<String, List<String>> entry: collectionData.entrySet()) {
+            String objectType = entry.getKey();
+            List<String> collectionContents = entry.getValue();
+
+            ClassDescriptor cd = model.getClassDescriptorByName(subjectInterMineType);
+            FieldDescriptor fd = getReferenceForRelationship(objectType, cd);
+
+            if (fd == null) {
+                throw new RuntimeException("can't find collection for type " + objectType
+                                           + " in " + subjectInterMineType);
+            }
+
+            if (fd.isReference()) {
+                if (collectionContents.size() > 1) {
+                    throw new RuntimeException("found more than one object for reference "
+                                               + fd + " in class "
+                                               + subjectInterMineType
+                                               + " current subject identifier: "
+                                               + subjectData.uniqueName);
+                } else {
+                    if (collectionContents.size() == 1) {
+                        Reference reference= new Reference();
+                        reference.setName(fd.getName());
+                        reference.setRefId(collectionContents.get(0));
+                        store(reference, intermineItemId);
+                    }
+                }
+            } else {
+                ReferenceList referenceList = new ReferenceList();
+                referenceList.setName(fd.getName());
+                referenceList.setRefIds(collectionContents);
+                store(referenceList, intermineItemId);
+            }
+        }
+    }
+
+    /**
+     * Search ClassDescriptor cd class for a ref/collection with the right name for the objectType
+     * eg. find CDSs collection for objectType = CDS and find gene reference for objectType = Gene.
+     */
+    private FieldDescriptor getReferenceForRelationship(String objectType, ClassDescriptor cd) {
+        FieldDescriptor fd = null;
+        LinkedHashSet<String> allClasses = new LinkedHashSet<String>();
+        allClasses.add(objectType);
+        try {
+            Set<String> parentClasses = ClassDescriptor.findSuperClassNames(model, objectType);
+            allClasses.addAll(parentClasses);
+        } catch (MetaDataException e) {
+            throw new RuntimeException("class not found in the model", e);
+        }
+
+        for (String clsName: allClasses) {
+            List<String> possibleRefNames = new ArrayList<String>();
+            String unqualifiedClsName = TypeUtil.unqualifiedName(clsName);
+            possibleRefNames.add(unqualifiedClsName);
+            possibleRefNames.add(unqualifiedClsName + 's');
+            possibleRefNames.add(StringUtil.decapitalise(unqualifiedClsName));
+            possibleRefNames.add(StringUtil.decapitalise(unqualifiedClsName) + 's');
+            for (String possibleRefName: possibleRefNames) {
+                fd = cd.getFieldDescriptorByName(possibleRefName);
+                if (fd != null) {
+                    return fd;
+                }
+            }
+        }
+        return fd;
     }
 
     private void processDbxrefTable(Connection connection)
@@ -388,8 +495,10 @@ public class ChadoDBConverter extends BioDBConverter
             + "  WHERE cvterm.cvterm_id = type_id"
             + "      AND cvterm.name IN (" + relationshipTypesString  + ")"
             + "      AND subject_id IN"
-            + "           (SELECT feature_id FROM f_type\"\n" 
-            + "                  WHERE type IN (" + featureTypesString + "))";
+            + "           (SELECT feature_id FROM f_type"
+            + "                  WHERE type IN (" + featureTypesString + ")"
+            + "                        AND organism_id = " + chadoOrganismId + ")"
+            + "  ORDER BY subject_id";
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -409,10 +518,12 @@ public class ChadoDBConverter extends BioDBConverter
             + "   FROM featureloc"
             + "   WHERE feature_id IN"
             + "          (SELECT feature_id FROM f_type"
-            + "               WHERE type IN (" + featureTypesString + "))"
+            + "               WHERE type IN (" + featureTypesString + ")"
+            + "                   AND organism_id = " + chadoOrganismId + ")"
             + "       AND srcfeature_id IN"
             + "          (SELECT feature_id FROM f_type"
-            + "               WHERE type IN (" + sequenceFeatureTypesString + "))";
+            + "               WHERE type IN (" + sequenceFeatureTypesString + ")"
+            + "                   AND organism_id = " + chadoOrganismId + ")";
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
