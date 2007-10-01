@@ -112,7 +112,7 @@ li {
 .heading, .heading2 {
   height: 1.5em; /* needed to prevent the peekaboo bug on IE: http://www.positioniseverything.net/explorer/peekaboo.html */
   margin: 0 8px 4px 8px; padding:5px 0px 0px 10px; border: 1px solid #888;
-  font-size: 14px; font-weight:bold; background: url('../model/images/heading-bg.gif') top center repeat; white-space: nowrap;}
+  font-size: 14px; font-weight:bold; background: url('../theme/heading-bg.gif') top center repeat; white-space: nowrap;}
 
 .topBar {
 	  padding: 6px;
