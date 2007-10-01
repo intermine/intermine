@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class AnoESTConverter extends BioDBConverter
     private static final String DATA_SOURCE_NAME = "VectorBase";
     private Map<String, Item> clusters = new HashMap<String, Item>();
     private Map<String, Item> ests = new HashMap<String, Item>();
-    
+
     /**
      * Create a new AnoESTConverter object.
      * @param database the database to read from
@@ -75,12 +76,12 @@ public class AnoESTConverter extends BioDBConverter
             int start = res.getInt(3);
             int end = res.getInt(4);
             int strand = res.getInt(5);
-            
+
             Item cluster = createItem("ESTCluster");
             cluster.setAttribute("identifier", identifier);
             Item dataSet = getDataSetItem(DATASET_TITLE);
             createSynonym(cluster.getIdentifier(), "identifier", identifier, true,
-                          dataSet, getDataSourceItem(DATA_SOURCE_NAME));
+                          Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
             cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
             cluster.addToCollection("evidence", dataSet);
@@ -91,7 +92,7 @@ public class AnoESTConverter extends BioDBConverter
                              ANOPHELES_TAXON_ID, dataSet);
             }
             getItemWriter().store(ItemHelper.convert(cluster));
-            
+
             clusters.put(identifier, cluster);
         }
     }
@@ -115,21 +116,20 @@ public class AnoESTConverter extends BioDBConverter
             String accession = res.getString(1);
             String clusterId = res.getString(2);
             String cloneId = res.getString(3);
-            
+
             Item est = ests.get(accession);
             if (est == null) {
                 est = createItem("EST");
                 ests.put(accession, est);
                 est.setAttribute("identifier", accession);
                 Item dataSet = getDataSetItem(DATASET_TITLE);
-                createSynonym(est.getIdentifier(), "identifier", accession, true, 
-                              dataSet, getDataSourceItem(DATA_SOURCE_NAME));
+                createSynonym(est.getIdentifier(), "identifier", accession, true,
+                              Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
                 est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
                 est.addToCollection("evidence", dataSet);
-                Item cloneSynonym = createSynonym(est.getIdentifier(), "identifier", cloneId, false,
-                                                  dataSet, getDataSourceItem(DATA_SOURCE_NAME));
-                getItemWriter().store(ItemHelper.convert(cloneSynonym));
+                createSynonym(est.getIdentifier(), "identifier", cloneId, false,
+                              Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
                 Item cluster = clusters.get(clusterId);
                 if (cluster != null) {
                     est.addToCollection("ESTClusters", cluster);

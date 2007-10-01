@@ -1,6 +1,6 @@
 package org.intermine.bio.dataconversion;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.dataconversion.DBConverter;
@@ -58,7 +59,7 @@ public abstract class BioDBConverter extends DBConverter
         throws ObjectStoreException {
         Item chromosome = getChromosome(chromosomeIdentifier, taxonId);
         Item location = createItem("Location");
-        
+
         if (start < end) {
             location.setAttribute("start", String.valueOf(start));
             location.setAttribute("end", String.valueOf(end));
@@ -75,12 +76,12 @@ public abstract class BioDBConverter extends DBConverter
     }
 
     /**
-     * The Organism item created from the taxon id passed to the constructor.  
+     * The Organism item created from the taxon id passed to the constructor.
      * @return the Organism Item
      */
     public Item getOrganismItem(int taxonId) {
         String taxonString = String.valueOf(taxonId);
-        Item organism = organisms.get(taxonString); 
+        Item organism = organisms.get(taxonString);
         if (organism == null) {
             organism = createItem("Organism");
             organism.setAttribute("taxonId", taxonString);
@@ -93,7 +94,7 @@ public abstract class BioDBConverter extends DBConverter
         }
         return organism;
     }
-    
+
     /**
      * Return a DataSet item for the given title
      * @param name the DataSet name
@@ -113,7 +114,7 @@ public abstract class BioDBConverter extends DBConverter
         }
         return dataSource;
     }
-    
+
     /**
      * Return a DataSource item for the given name
      * @param title the DataSet title
@@ -157,14 +158,16 @@ public abstract class BioDBConverter extends DBConverter
      * @throws ObjectStoreException if there is a problem while storing
      */
     public Item createSynonym(String subjectId, String type, String value, boolean isPrimary,
-                              Item evidence, Item dataSource) throws ObjectStoreException {
+                              List<Item> evidence, Item dataSource) throws ObjectStoreException {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setAttribute("isPrimary", String.valueOf(isPrimary));
         synonym.setReference("subject", subjectId);
         synonym.setReference("source", dataSource);
-        synonym.addToCollection("evidence", evidence);
+        for (Item evidenceItem: evidence) {
+            synonym.addToCollection("evidence", evidenceItem);
+        }
         store(synonym);
         return synonym;
     }
