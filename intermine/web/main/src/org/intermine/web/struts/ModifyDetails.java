@@ -63,7 +63,8 @@ public class ModifyDetails extends DispatchAction
      */
     public ActionForward runTemplate(ActionMapping mapping, 
                                      @SuppressWarnings("unused") ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+                                     HttpServletRequest request, 
+                                     @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -127,11 +128,16 @@ public class ModifyDetails extends DispatchAction
                                    @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();
+        if (session == null) {
+            return null;
+        }
+        
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
         String placement = request.getParameter("placement");
         DisplayObject object = getDisplayObject(session, request.getParameter("id"));
-
+        
+        
         if (object != null) {
             object.setVerbosity(placement + "_" + fieldName, true);
         }
@@ -310,6 +316,11 @@ public class ModifyDetails extends DispatchAction
      */
     protected DisplayObject getDisplayObject(HttpSession session, String idString) {
         Map displayObjects = (Map) session.getAttribute("displayObjects");
-        return (DisplayObject) displayObjects.get(new Integer(idString));
+        if (displayObjects != null && displayObjects.get(new Integer(idString)) != null) {
+            return (DisplayObject) displayObjects.get(new Integer(idString));
+        } else {
+            return null;
+        }
+
     }
 }
