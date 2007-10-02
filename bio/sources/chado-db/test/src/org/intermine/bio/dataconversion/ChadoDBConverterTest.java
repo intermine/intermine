@@ -43,7 +43,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         ChadoDBConverter converter =
-            new TestAnoESTConverter(null, Model.getInstanceByName("genomic"), itemWriter);
+            new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         converter.setDataSetTitle("test title");
         converter.setDataSourceName("test name");
         converter.setGenus("Drosophila");
@@ -59,17 +59,51 @@ public class ChadoDBConverterTest extends ItemsTestCase
         assertEquals(readItemSet("ChadoDBConverterTest.xml"), itemWriter.getItems());
     }
 
-    private class TestAnoESTConverter extends ChadoDBConverter
+    private class TestChadoDBConverter extends ChadoDBConverter
     {
+        /* (non-Javadoc)
+         * @see org.intermine.bio.dataconversion.ChadoDBConverter#getPubResultSet(java.sql.Connection)
+         */
+        @Override
+        protected ResultSet getPubResultSet(Connection connection) throws SQLException {
+            String[] columnNames = new String[] {
+                "feature_id", "pub_db_identifier"
+            };
+            Object[][] resObjects = new Object[][] {
+                {
+                    23269151, "8344257"
+                },
+                {
+                    23269151, "8543160"
+                },
+                {
+                    3117509, "2892759"
+                },
+                {
+                    3175412, "1988156"
+                },
+                {
+                    3175412, "2612903"
+                },
+                {
+                    3175412, "7720555"
+                }
+            };
+            MockMultiRowResultSet res = new MockMultiRowResultSet();
+            res.setupRows(resObjects);
+            res.setupColumnNames(columnNames);
+            return res;
+        }
+
         @Override
         protected int getChadoOrganismId(@SuppressWarnings("unused") Connection connection) {
             return 1;
         }
 
-        public TestAnoESTConverter(Database database, Model tgtModel, ItemWriter writer) {
+        public TestChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
             super(database, tgtModel, writer);
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -78,7 +112,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
             String[] columnNames = new String[] {
                 "feature_id", "name", "uniquename", "type", "residues", "seqlen"
             };
-            Object[][] resObjects = new Object[][] { 
+            Object[][] resObjects = new Object[][] {
                 {
                     23269151, "4.5SRNA", "FBgn0000001", "gene", null, null
                  },
@@ -97,12 +131,12 @@ public class ChadoDBConverterTest extends ItemsTestCase
             res.setupColumnNames(columnNames);
             return res;
         }
-        
+
         protected ResultSet getDbxrefResultSet(Connection connection) throws SQLException {
             String[] columnNames = new String[] {
                 "feature_id", "accession"
             };
-            Object[][] resObjects = new Object[][] { 
+            Object[][] resObjects = new Object[][] {
                 {
                     23269151, "FBgn0000001_sym1"
                 },
@@ -118,7 +152,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
             res.setupColumnNames(columnNames);
             return res;
         }
-        
+
         @Override
         protected ResultSet getFeaturePropResultSet(Connection connection) {
             String[] columnNames = new String[] {
@@ -159,7 +193,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
                     3117509, "protein_coding_gene", "promoted_gene_type"
                 },
             };
-            
+
             MockMultiRowResultSet res = new MockMultiRowResultSet();
             res.setupRows(resObjects);
             res.setupColumnNames(columnNames);
@@ -168,7 +202,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
 
         protected ResultSet getFeatureLocResultSet(Connection connection) throws SQLException {
             String[] columnNames = new String[] {
-                "featureloc_id", "feature_id", "srcfeature_id", "fmin", "is_fmin_partial", 
+                "featureloc_id", "feature_id", "srcfeature_id", "fmin", "is_fmin_partial",
                 "fmax", "is_fmax_partial", "strand"
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
@@ -177,7 +211,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
             res.setupColumnNames(columnNames);
             return res;
         }
-        
+
         protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
             String[] columnNames = new String[] {
                 "feature_id", "synonym_name"

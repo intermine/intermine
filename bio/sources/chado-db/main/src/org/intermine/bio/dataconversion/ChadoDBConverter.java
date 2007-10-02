@@ -38,6 +38,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
 
 /**
@@ -46,14 +48,14 @@ import org.apache.log4j.Logger;
  */
 public class ChadoDBConverter extends BioDBConverter
 {
-    private class FeatureData
+    private static class FeatureData
     {
         String uniqueName;
         // the synonyms that have already been created
         Set<String> existingSynonyms = new HashSet<String>();
         String itemIdentifier;
         String interMineType;
-        public Integer intermineObjectId;
+        Integer intermineObjectId;
     }
 
     protected static final Logger LOG = Logger.getLogger(ChadoDBConverter.class);
@@ -73,6 +75,19 @@ public class ChadoDBConverter extends BioDBConverter
     private String relationshipTypesString = "'partof'";
     private int chadoOrganismId;
     private Model model = Model.getInstanceByName("genomic");
+    private MultiKeyMap config = new MultiKeyMap();
+
+    private static class ConfigAction
+    {
+        boolean doDefault = true;
+        String attributeName = null;
+        ConfigAction(String attributeName, boolean doDefault) {
+            this.attributeName = attributeName;
+            this.doDefault = doDefault;
+        }
+    }
+
+    static final ConfigAction DEFAULT_CONFIG_ACTION = new ConfigAction(null, true);
 
     /**
      * Create a new ChadoDBConverter object.
@@ -82,6 +97,9 @@ public class ChadoDBConverter extends BioDBConverter
      */
     public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
+
+        config.put(new MultiKey("synonym", "gene", "fullname"), new ConfigAction("name", true));
+        config.put(new MultiKey("synonym", "gene", "symbol"), DEFAULT_CONFIG_ACTION);
     }
 
     /**
@@ -155,6 +173,7 @@ public class ChadoDBConverter extends BioDBConverter
         }
         chadoOrganismId = getChadoOrganismId(connection);
         processFeatureTable(connection);
+        processPubTable(connection);
         processLocationTable(connection);
         processRelationTable(connection);
         processDbxrefTable(connection);
@@ -190,7 +209,7 @@ public class ChadoDBConverter extends BioDBConverter
                 fdat.uniqueName = uniqueName;
                 fdat.interMineType = interMineType;
                 feature.setReference("organism", organismItem);
-                feature.addToCollection("evidence", dataSet);
+                // don't set the evidence collection - that's done by processPubTable()
                 createSynonym(fdat, "identifier", uniqueName, true, dataSet, Collections.EMPTY_LIST,
                               dataSource);
                 if (name != null) {
@@ -290,7 +309,7 @@ public class ChadoDBConverter extends BioDBConverter
         Map<String, List<String>> collectionData = new HashMap<String, List<String>>();
         int featureWarnings = 0;
         while (res.next()) {
-            Integer featureRelationshipId = new Integer(res.getInt("feature_relationship_id"));
+            Integer featRelationshipId = new Integer(res.getInt("feature_relationship_id"));
             Integer subjectId = new Integer(res.getInt("subject_id"));
             Integer objectId = new Integer(res.getInt("object_id"));
 
@@ -313,7 +332,7 @@ public class ChadoDBConverter extends BioDBConverter
                     if (featureWarnings <= 20) {
                         if (featureWarnings < 20) {
                             LOG.warn("object_id " + objectId + " from feature_relationship "
-                                     + featureRelationshipId + " was not found in the feature table");
+                                     + featRelationshipId + " was not found in the feature table");
                         } else {
                             LOG.warn("further feature_relationship warnings ignored");
                         }
@@ -322,7 +341,7 @@ public class ChadoDBConverter extends BioDBConverter
                 }
             } else {
                 throw new RuntimeException("subject_id " + subjectId + " from feature_relationship "
-                                           + featureRelationshipId
+                                           + featRelationshipId
                                            + " was not found in the feature table");
             }
             lastSubjectId = subjectId;
@@ -363,7 +382,7 @@ public class ChadoDBConverter extends BioDBConverter
                                                    + subjectData.uniqueName);
                     } else {
                         if (collectionContents.size() == 1) {
-                            Reference reference= new Reference();
+                            Reference reference = new Reference();
                             reference.setName(fd.getName());
                             reference.setRefId(collectionContents.get(0));
                             store(reference, intermineItemId);
@@ -420,7 +439,6 @@ public class ChadoDBConverter extends BioDBConverter
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             String accession = res.getString("accession");
-            String db_name = res.getString("db_name");
             if (features.containsKey(featureId)) {
                 FeatureData fdat = features.get(featureId);
                 Set<String> existingSynonyms = fdat.existingSynonyms;
@@ -474,11 +492,70 @@ public class ChadoDBConverter extends BioDBConverter
                 if (existingSynonyms.contains(identifier)) {
                     continue;
                 } else {
-                    createSynonym(fdat, typeName, identifier, false, dataSet, Collections.EMPTY_LIST,
-                                  dataSource);
+                    createSynonym(fdat, typeName, identifier, false, dataSet,
+                                  Collections.EMPTY_LIST, dataSource);
                 }
             }
         }
+    }
+
+    private void processPubTable(Connection connection)
+        throws SQLException, ObjectStoreException {
+        ResultSet res = getPubResultSet(connection);
+
+        List<Item> currentEvidence = new ArrayList<Item>();
+        Integer lastPubFeatureId = null;
+        int featureWarnings = 0;
+
+        while (res.next()) {
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            if (!features.containsKey(featureId)) {
+                if (featureWarnings <= 20) {
+                    if (featureWarnings < 20) {
+                        LOG.warn("feature " + featureId + " not found in features Map while "
+                                 + "processing publications");
+                    } else {
+                        LOG.warn("further feature id warnings ignored in processPubTable()");
+                    }
+                    featureWarnings++;
+                }
+                continue;
+            }
+            String pubMedId = res.getString("pub_db_identifier");
+            if (lastPubFeatureId != null && !featureId.equals(lastPubFeatureId)) {
+                makeFeatureEvidence(lastPubFeatureId, currentEvidence);
+                currentEvidence = new ArrayList<Item>();
+            }
+            Item publication = createItem("Publication");
+            publication.setAttribute("pubMedId", pubMedId);
+            store(publication);
+            currentEvidence.add(publication);
+            lastPubFeatureId = featureId;
+        }
+        makeFeatureEvidence(lastPubFeatureId, currentEvidence);
+    }
+
+    /**
+     * Set the evidence collection of the feature with the given (chado) feature id.
+     */
+    private void makeFeatureEvidence(Integer featureId, List<Item> currentEvidence)
+        throws ObjectStoreException {
+        FeatureData fdat = features.get(featureId);
+        if (fdat == null) {
+            throw new RuntimeException("feature " + featureId + " not found in features Map");
+        }
+        Item dataSet = getDataSetItem(dataSetTitle);
+
+        ReferenceList referenceList = new ReferenceList();
+        referenceList.setName("evidence");
+        List<String> currentEvidenceIds = new ArrayList<String>();
+        currentEvidenceIds.add(dataSet.getIdentifier());
+
+        for (Item edivence: currentEvidence) {
+            currentEvidenceIds.add(edivence.getIdentifier());
+        }
+        referenceList.setRefIds(currentEvidenceIds);
+        store(referenceList, fdat.intermineObjectId);
     }
 
     /**
@@ -527,6 +604,18 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
+     * Return a SQL query string the gets all non-obsolete interesting features.
+     */
+    private String getFeatureIdQuery() {
+        return
+          " SELECT feature_id FROM feature, cvterm"
+        + "             WHERE cvterm.name IN (" + featureTypesString + ")"
+        + "                 AND organism_id = " + chadoOrganismId
+        + "                 AND NOT feature.is_obsolete AND NOT feature.is_analysis"
+        + "                 AND feature.type_id = cvterm.cvterm_id";
+    }
+
+    /**
      * Return the interesting rows from the feature_relationship table.
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
@@ -539,12 +628,7 @@ public class ChadoDBConverter extends BioDBConverter
             + "  FROM feature_relationship, cvterm"
             + "  WHERE cvterm.cvterm_id = type_id"
             + "      AND cvterm.name IN (" + relationshipTypesString  + ")"
-            + "      AND subject_id IN"
-            + "         (SELECT feature_id FROM feature, cvterm"
-            + "             WHERE cvterm.name IN (" + featureTypesString + ")"
-            + "                 AND organism_id = " + chadoOrganismId
-            + "                 AND NOT feature.is_obsolete AND NOT feature.is_analysis"
-            + "                 AND feature.type_id = cvterm.cvterm_id )"
+            + "      AND subject_id IN (" + getFeatureIdQuery() + ")"
             + "  ORDER BY subject_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -565,17 +649,9 @@ public class ChadoDBConverter extends BioDBConverter
             + "     fmax, is_fmax_partial, strand"
             + "   FROM featureloc"
             + "   WHERE feature_id IN"
-            + "         (SELECT feature_id FROM feature, cvterm"
-            + "             WHERE cvterm.name IN (" + featureTypesString + ")"
-            + "                 AND organism_id = " + chadoOrganismId
-            + "                 AND NOT feature.is_obsolete AND NOT feature.is_analysis"
-            + "                 AND feature.type_id = cvterm.cvterm_id)"
+            + "         (" + getFeatureIdQuery() + ")"
             + "     AND srcfeature_id IN"
-            + "         (SELECT feature_id FROM feature, cvterm"
-            + "             WHERE cvterm.name IN (" + featureTypesString + ")"
-            + "                 AND organism_id = " + chadoOrganismId
-            + "                 AND NOT feature.is_obsolete AND NOT feature.is_analysis"
-            + "                 AND feature.type_id = cvterm.cvterm_id )";
+            + "         (" + getFeatureIdQuery() + ")";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -596,9 +672,7 @@ public class ChadoDBConverter extends BioDBConverter
             + "  WHERE feature_dbxref.dbxref_id = dbxref.dbxref_id "
             + "    AND feature_dbxref.feature_id = feature.feature_id "
             + "    AND feature.feature_id IN"
-            + "        (SELECT feature_id FROM f_type"
-            + "           WHERE type IN (" + featureTypesString + ") "
-            + "           AND organism_id = " + chadoOrganismId + ")"
+            + "        (" + getFeatureIdQuery() + ")"
             + "    AND dbxref.db_id = db.db_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -617,9 +691,7 @@ public class ChadoDBConverter extends BioDBConverter
         String query =
             "select feature_id, value, cvterm.name AS type_name FROM featureprop, cvterm"
             + "   WHERE featureprop.type_id = cvterm.cvterm_id"
-            + "       AND feature_id IN (SELECT feature_id FROM f_type"
-            + "                          WHERE type IN (" + featureTypesString + ")"
-            + "                              AND organism_id = " + chadoOrganismId + ")";
+            + "       AND feature_id IN (" + getFeatureIdQuery() + ")";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -639,9 +711,31 @@ public class ChadoDBConverter extends BioDBConverter
             + "  FROM feature_synonym, synonym, cvterm"
             + "  WHERE feature_synonym.synonym_id = synonym.synonym_id"
             + "     AND synonym.type_id = cvterm.cvterm_id"
-            + "     AND feature_id IN (select feature_id from f_type"
-            + "                          WHERE type IN (" + featureTypesString + ")"
-            + "                              AND organism_id = " + chadoOrganismId + ")";
+            + "     AND feature_id IN (" + getFeatureIdQuery() + ")";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /**
+     * Return the interesting rows from the pub table.
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getPubResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT feature_pub.feature_id, dbxref.accession as pub_db_identifier"
+            + "  FROM feature_pub, dbxref, db, pub, pub_dbxref"
+            + "  WHERE feature_pub.pub_id = pub.pub_id"
+            + "    AND pub_dbxref.dbxref_id = dbxref.dbxref_id"
+            + "    AND dbxref.db_id = db.db_id"
+            + "    AND pub.pub_id = pub_dbxref.pub_id"
+            + "    AND db.name = 'pubmed'"
+            + "    AND feature_id IN (" + getFeatureIdQuery() + ")"
+            + "  ORDER BY feature_pub.feature_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
