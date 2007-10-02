@@ -282,6 +282,9 @@ function filterWebSearchablesHandler(event, object, type, wsListId) {
     if (tags == null) {
         tags = [];
     }
+    // if (object.value=='') {
+    //     showAll(wsListId,type);
+    // }
 
     setTimeout('filterWebSearchables("' + object.id + '", "' + scope + '","' + type + '","' + callId + '","' + wsListId + '")', 500);
     callId++;
@@ -324,6 +327,13 @@ function do_filtering(filteredList, type, wsListId) {
                     descHighlight.style.display = 'block';
 
                     var descChild = setChild(descHighlight, highlightText, 'p');
+                    if(scoreHash.length == 0) {
+                        var scoreId = wsListId + '_' + type + '_item_score_' + name;
+                        var scoreSpan = $(scoreId);
+                        // we do this instead of scoreSpan.innerHTML = "stuff"
+                        // because it's buggy in Internet Explorer
+                        setChild(scoreSpan, '', 'span');
+                    }
                 }
 
                 if (scoreHash[div.id]) {
@@ -345,7 +355,7 @@ function do_filtering(filteredList, type, wsListId) {
         }
 
         showWSList(wsListId, type);
-
+        
         function sortWsFilter(el1, el2) {
             var el1score = scoreHash[el1.id];
             var el2score = scoreHash[el2.id]
@@ -375,6 +385,7 @@ function do_filtering(filteredList, type, wsListId) {
         for (var i = 0; i < divs.length; i++) {
             parent.appendChild(divs[i]);
         }
+        
         $(wsListId + '_' + type + '_spinner').style.display = 'none';
         $(wsListId + '_' + type + '_container').style.display = 'block';
     }
