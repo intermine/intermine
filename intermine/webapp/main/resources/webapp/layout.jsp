@@ -15,6 +15,10 @@
   <tiles:importAttribute name="pageName" scope="request"/>
   <head>
     <html:base/>
+    <fmt:message key="${pageName}.noFollow" var="noFollow" />
+    <c:if test="${noFollow == 'true'}">
+	    <META NAME="ROBOTS" CONTENT="NOFOLLOW">
+	</c:if>
     <tiles:insert name="htmlHead.jsp">
       <tiles:put name="title" value="${title}"/>
     </tiles:insert>
