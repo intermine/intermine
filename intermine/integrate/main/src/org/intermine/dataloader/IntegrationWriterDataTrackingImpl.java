@@ -10,6 +10,7 @@ package org.intermine.dataloader;
  *
  */
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntPresentSet;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -48,6 +50,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
 {
     private static final Logger LOG = Logger.getLogger(IntegrationWriterDataTrackingImpl.class);
     protected DataTracker dataTracker;
+    protected Set<Class> trackerMissingClasses;
     protected IntPresentSet skeletons = new IntPresentSet();
     /** This is a list of the objects that did not merge with anything from a previous data
      * source */
@@ -109,20 +112,32 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             throw new ObjectStoreException(props.getProperty("alias") + " does not have a"
                     + " datatracker commit size specified (check properties file)");
         }
+        String trackerMissingClassesString = props.getProperty("datatrackerMissingClasses");
 
         ObjectStoreWriter writer = ObjectStoreWriterFactory.getObjectStoreWriter(writerAlias);
         try {
             int maxSize = Integer.parseInt(trackerMaxSizeString);
             int commitSize = Integer.parseInt(trackerCommitSizeString);
             Database db = ((ObjectStoreWriterInterMineImpl) writer).getDatabase();
+            Set<Class> trackerMissingClasses = new HashSet();
+            if (trackerMissingClassesString != null) {
+                String trackerMissingClassesStrings[] = StringUtil.split(
+                        trackerMissingClassesString, ",");
+                for (String trackerMissingClassString : trackerMissingClassesStrings) {
+                    Class c = Class.forName(writer.getModel().getPackageName() + "."
+                            + trackerMissingClassString.trim());
+                    trackerMissingClasses.add(c);
+                }
+            }
             Constructor con = trackerClass.getConstructor(new Class[]
                 {Database.class, Integer.TYPE, Integer.TYPE});
             DataTracker newDataTracker = (DataTracker) con.newInstance(new Object[]
                 {db, new Integer(maxSize), new Integer(commitSize)});
 
-            con = iwClass.getConstructor(new Class[] {ObjectStoreWriter.class, DataTracker.class});
+            con = iwClass.getConstructor(new Class[] {ObjectStoreWriter.class, DataTracker.class,
+                    Set.class});
             return (IntegrationWriterDataTrackingImpl) con.newInstance(new Object[]
-                {writer, newDataTracker});
+                {writer, newDataTracker, trackerMissingClasses});
         } catch (Exception e) {
             IllegalArgumentException e2 = new IllegalArgumentException("Problem instantiating"
                     + " IntegrationWriterDataTrackingImpl " + props.getProperty("alias"));
@@ -141,6 +156,22 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     public IntegrationWriterDataTrackingImpl(ObjectStoreWriter osw, DataTracker dataTracker) {
         super(osw);
         this.dataTracker = dataTracker;
+        this.trackerMissingClasses = Collections.emptySet();
+    }
+
+    /**
+     * Constructs a new instance of IntegrationWriterDataTrackingImpl.
+     *
+     * @param osw an instance of an ObjectStoreWriter, which we can use to access the database
+     * @param dataTracker an instance of DataTracker, which we can use to store data tracking
+     * information
+     * @param trackerMissingClasses a Set of classes for which DataTracker data is useless
+     */
+    public IntegrationWriterDataTrackingImpl(ObjectStoreWriter osw, DataTracker dataTracker,
+            Set<Class> trackerMissingClasses) {
+        super(osw);
+        this.dataTracker = dataTracker;
+        this.trackerMissingClasses = trackerMissingClasses;
     }
 
     /**
@@ -172,6 +203,22 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      */
     protected DataTracker getDataTracker() {
         return dataTracker;
+    }
+
+    /**
+     * Returns true if the given class is NOT a subclass of any of the classes in
+     * trackerMissingClasses.
+     *
+     * @param c a Class
+     * @return a boolean
+     */
+    public boolean doTrackerFor(Class c) {
+        for (Class missing : trackerMissingClasses) {
+            if (missing.isAssignableFrom(c)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private long timeSpentEquiv = 0;
@@ -236,9 +283,11 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 store(newObj);
                 time1 = System.currentTimeMillis();
                 timeSpentStore += time1 - time2;
-                dataTracker.clearObj(newId);
-                for (Map.Entry<String, Source> entry : trackingMap.entrySet()) {
-                    dataTracker.setSource(newObj.getId(), entry.getKey(), entry.getValue());
+                if (doTrackerFor(newObj.getClass())) {
+                    dataTracker.clearObj(newId);
+                    for (Map.Entry<String, Source> entry : trackingMap.entrySet()) {
+                        dataTracker.setSource(newObj.getId(), entry.getKey(), entry.getValue());
+                    }
                 }
                 if (type == SKELETON) {
                     skeletons.add(newObj.getId());
@@ -445,20 +494,22 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             time2 = System.currentTimeMillis();
             timeSpentStore += time2 - time1;
 
-            // We have called store() on an object, and we are about to write all of its data
-            // tracking data. We should tell the data tracker, ONLY IF THE ID OF THE OBJECT IS NEW,
-            // so that the data tracker can cache the writes without having to ask the db if
-            // records for that objectid already exist - we know there aren't.
-            if (newId == null) {
-                dataTracker.clearObj(newObj.getId());
-            }
+            if (doTrackerFor(newObj.getClass())) {
+                // We have called store() on an object, and we are about to write all of its data
+                // tracking data. We should tell the data tracker, ONLY IF THE ID OF THE OBJECT IS NEW,
+                // so that the data tracker can cache the writes without having to ask the db if
+                // records for that objectid already exist - we know there aren't.
+                if (newId == null) {
+                    dataTracker.clearObj(newObj.getId());
+                }
 
-            Iterator trackIter = trackingMap.entrySet().iterator();
-            while (trackIter.hasNext()) {
-                Map.Entry trackEntry = (Map.Entry) trackIter.next();
-                String fieldName = (String) trackEntry.getKey();
-                Source lastSource = (Source) trackEntry.getValue();
-                dataTracker.setSource(newObj.getId(), fieldName, lastSource);
+                Iterator trackIter = trackingMap.entrySet().iterator();
+                while (trackIter.hasNext()) {
+                    Map.Entry trackEntry = (Map.Entry) trackIter.next();
+                    String fieldName = (String) trackEntry.getKey();
+                    Source lastSource = (Source) trackEntry.getValue();
+                    dataTracker.setSource(newObj.getId(), fieldName, lastSource);
+                }
             }
 
             while (equivalentIter.hasNext()) {
