@@ -1,8 +1,8 @@
 <aspects>
   <aspect name="Genomics">
     <subtitle>Genome annotation</subtitle>
-    <icon-image>model/genomics.gif</icon-image>
-    <large-image>model/genomics.gif</large-image>
+    <icon-image>model/images/genomics.gif</icon-image>
+    <large-image>model/images/genomics.gif</large-image>
     <intro-text>
       The gene structure and other genome annotation in FlyMine are provided by
       a variety of source databases.  In most cases FlyMine includes
@@ -16,8 +16,8 @@
 
   <aspect name="Comparative Genomics">
     <subtitle>Orthologues and paralogues</subtitle>
-    <icon-image>model/comparativeGenomics.png</icon-image>
-    <large-image>model/comparativeGenomics.png</large-image>
+    <icon-image>model/images/comparativeGenomics.png</icon-image>
+    <large-image>model/images/comparativeGenomics.png</large-image>
     <intro-text>
       Orthologues and Paralogues.  Orthologues are equivalent genes in
       different species that evolved from a common ancestor by
@@ -31,8 +31,8 @@
 
   <aspect name="Proteins">
     <subtitle>Protein and&lt;br/&gt;proteomics data</subtitle>
-    <icon-image>model/proteins.png</icon-image>
-    <large-image>model/proteins.png</large-image>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
     <intro-text>
       Protein annotation, including family and domain annotation, from UniProt
       and InterPro.
@@ -44,8 +44,8 @@
 
   <aspect name="Protein Structure">
     <subtitle>3-D protein structures</subtitle>
-    <icon-image>model/pstructure.gif</icon-image>
-    <large-image>model/pstructure.gif</large-image>
+    <icon-image>model/images/pstructure.gif</icon-image>
+    <large-image>model/images/pstructure.gif</large-image>
     <intro-text>
       3-D protein structures from the Mizuguchi lab.
     </intro-text>
@@ -56,8 +56,8 @@
 
   <aspect name="Protein Interactions">
     <subtitle>IntAct</subtitle>
-    <icon-image>model/proteinInteraction.gif</icon-image>
-    <large-image>model/proteinInteraction.gif</large-image>
+    <icon-image>model/images/proteinInteraction.gif</icon-image>
+    <large-image>model/images/proteinInteraction.gif</large-image>
     <tile-name></tile-name>
     <intro-text>
       High-throughput 2-hybrid protein interaction datasets for &lt;i&gt;D. melanogaster&lt;/i&gt;, 
@@ -71,8 +71,8 @@
 
   <aspect name="Gene Ontology">
     <subtitle></subtitle>
-    <icon-image>model/geneOntology.png</icon-image>
-    <large-image>model/geneOntology.png</large-image>
+    <icon-image>model/images/geneOntology.png</icon-image>
+    <large-image>model/images/geneOntology.png</large-image>
     <intro-text>
       Gene Ontology (GO) annotations for &lt;i&gt;Drosophila&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt;.  The GO annotations are 'attached' to
       Genes and so each Gene has a reference (link) to a list of its GO
@@ -85,8 +85,8 @@
 
   <aspect name="Gene Expression">
     <subtitle></subtitle>
-    <icon-image>model/marray.gif</icon-image>
-    <large-image>model/marray.gif</large-image>
+    <icon-image>model/images/marray.gif</icon-image>
+    <large-image>model/images/marray.gif</large-image>
     <intro-text>
       &lt;p&gt;
       Microarray-based gene expression data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyAtlas, as well as from selected data sets.
@@ -99,8 +99,8 @@
 
   <aspect name="Transcriptional Regulation">
     <subtitle>Regulatory regions and&lt;br/&gt;transcription factor binding sites</subtitle>
-    <icon-image>model/bindingSites.png</icon-image>
-    <large-image>model/bindingSites.png</large-image>
+    <icon-image>model/images/bindingSites.png</icon-image>
+    <large-image>model/images/bindingSites.png</large-image>
     <intro-text>
       Regulatory regions and transcription factor binding sites in &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyReg, REDfly, Tiffin and FlyBase.
     </intro-text>
@@ -114,8 +114,8 @@
 
   <aspect name="RNAi">
     <subtitle>RNA interference</subtitle>
-    <icon-image>model/rnai.png</icon-image>
-    <large-image>model/rnai.png</large-image>
+    <icon-image>model/images/rnai.png</icon-image>
+    <large-image>model/images/rnai.png</large-image>
     <intro-text>
      Results from cell-based RNAi interference experiments from the
      &lt;i&gt;Drosophila&lt;/i&gt; RNAi screening center and from
@@ -130,8 +130,8 @@
 
   <aspect name="Pathways">
     <subtitle></subtitle>
-    <icon-image>model/pathways.png</icon-image>
-    <large-image>model/pathways.png</large-image>
+    <icon-image>model/images/pathways.png</icon-image>
+    <large-image>model/images/pathways.png</large-image>
     <intro-text>
       KEGG pathway data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;
     </intro-text>
@@ -141,8 +141,8 @@
 
   <aspect name="Disease">
     <subtitle>Human disease matches&lt;br/&gt;from Homophila</subtitle>
-    <icon-image>model/disease.png</icon-image>
-    <large-image>model/disease.png</large-image>
+    <icon-image>model/images/disease.png</icon-image>
+    <large-image>model/images/disease.png</large-image>
     <intro-text>
       Homophila Human Disease to &lt;i&gt;Drosophila&lt;/i&gt; Database (version 2.1).
     </intro-text>
@@ -153,8 +153,8 @@
 
   <aspect name="Resources">
     <subtitle>Material resources</subtitle>
-    <icon-image>model/drosdel.gif</icon-image>
-    <large-image>model/drosdel.gif</large-image>
+    <icon-image>model/images/drosdel.gif</icon-image>
+    <large-image>model/images/drosdel.gif</large-image>
     <intro-text>Material resources
     </intro-text>
     <tile-name>model/resources.jsp</tile-name>
@@ -167,8 +167,8 @@
 
   <aspect name="Literature">
     <subtitle></subtitle>
-    <icon-image>model/book.png</icon-image>
-    <large-image>model/book.png</large-image>
+    <icon-image>model/images/book.png</icon-image>
+    <large-image>model/images/book.png</large-image>
     <intro-text>Literature
     </intro-text>
     <tile-name>model/literature.jsp</tile-name>
@@ -179,8 +179,8 @@
   <!--
       <aspect name="Anopheles">
         <subtitle></subtitle>
-        <icon-image>model/anopheles.gif</icon-image>
-        <large-image>model/anopheles.gif</large-image>
+        <icon-image>model/images/anopheles.gif</icon-image>
+        <large-image>model/images/anopheles.gif</large-image>
         <tile-name></tile-name>
         <intro-text>
         </intro-text>
