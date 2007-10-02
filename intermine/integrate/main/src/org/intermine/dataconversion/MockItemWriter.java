@@ -11,6 +11,7 @@ package org.intermine.dataconversion;
  */
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,8 +30,9 @@ import org.intermine.xml.full.ItemHelper;
 public class MockItemWriter implements ItemWriter
 {
     Map<String, Item> storedItems;
-    private int itemIdCounter = 0;
-    
+    Map<Integer, Item> storedItemIds = new HashMap<Integer, Item>();
+    private static int idCounter = 0;
+
     /**
      * Constructor
      * @param map Map in which to store Items
@@ -43,8 +45,9 @@ public class MockItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public Integer store(Item item) {
-        item.setId(itemIdCounter++);
+        item.setId(idCounter++);
         storedItems.put(item.getIdentifier(), item);
+        storedItemIds.put(item.getId(), item);
         return item.getId();
     }
 
@@ -52,14 +55,20 @@ public class MockItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void store(ReferenceList refList, Integer itemId) {
-        throw new UnsupportedOperationException("method not implemented");
+        refList.setId(idCounter++);
+        Item item = storedItemIds.get(itemId);
+        refList.setItem(item);
+        item.addCollections(refList);
     }
 
     /**
      * {@inheritDoc}
      */
     public void store(Reference ref, Integer itemId) {
-        throw new UnsupportedOperationException("method not implemented");
+        ref.setId(idCounter++);
+        Item item = storedItemIds.get(itemId);
+        ref.setItem(item);
+        item.addReferences(ref);
     }
 
     /**
@@ -70,14 +79,14 @@ public class MockItemWriter implements ItemWriter
             store(i.next());
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void close() {
         // empty
     }
-    
+
     /**
      * Get the items that have been stored
      * This method is not part of ItemWriter, and for testing convenience returns XML Items
@@ -91,4 +100,10 @@ public class MockItemWriter implements ItemWriter
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "" + storedItems;
+    }
 }
