@@ -19,13 +19,13 @@
     <source name="uniprot-malaria" type="uniprot">
       <property name="uniprot.organisms" value="36329"/>
       <property name="src.data.dir" location="my_data_dir/malaria/uniprot/7.7/"/>
+      <property name="use.split.files" value="true"/>
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="my_data_dir/malaria/gene_ontology/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation" dump="true">
       <property name="ontologyfile" location="my_data_dir/malaria/gene_ontology/gene_ontology.obo"/>
-      <property name="geneattribute" value="identifier"/>
       <property name="src.data.dir" location="my_data_dir/malaria/go-annotation"/>
     </source>
     <source name="inparanoid-orthologue" type="orthologue" dump="true">
