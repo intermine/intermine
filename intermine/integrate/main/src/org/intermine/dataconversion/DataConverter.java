@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
@@ -142,6 +143,16 @@ public abstract class DataConverter
         getItemWriter().store(ItemHelper.convert(referenceList), itemId);
     }
 
+    /**
+     * Store a single XML Attribute
+     * @param att the list to store
+     * @param itemId the InterMine ID of the Item that holds this att
+     * @throws ObjectStoreException if an error occurs in storing
+     */
+    public void store(Attribute att, Integer itemId)
+        throws ObjectStoreException {
+        getItemWriter().store(ItemHelper.convert(att), itemId);
+    }
 
     /**
      * Store a single XML Reference

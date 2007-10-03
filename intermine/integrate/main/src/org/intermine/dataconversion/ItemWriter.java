@@ -12,6 +12,7 @@ package org.intermine.dataconversion;
 
 import java.util.Collection;
 
+import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
@@ -48,10 +49,18 @@ public interface ItemWriter
     /**
      * Stores the given Reference after setting its item id.
      * @param ref the ReferenceList
-     * @param itemIdthe ID of the Item that contains the Reference
+     * @param itemId the ID of the Item that contains the Reference
      * @throws ObjectStoreException if something goes wrong
      */
     public void store(Reference ref, Integer itemId) throws ObjectStoreException;
+
+    /**
+     * Stores the given Attribute after setting its item id.
+     * @param att the Attribute
+     * @param itemId the ID of the Item that contains the Attribute
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void store(Attribute ref, Integer itemId) throws ObjectStoreException;
 
     /**
      * Stores the given Collection of Items and all their associated attributes, references, and
