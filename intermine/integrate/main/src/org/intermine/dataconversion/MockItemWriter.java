@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
@@ -69,6 +70,16 @@ public class MockItemWriter implements ItemWriter
         Item item = storedItemIds.get(itemId);
         ref.setItem(item);
         item.addReferences(ref);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void store(Attribute ref, Integer itemId) {
+        ref.setId(idCounter++);
+        Item item = storedItemIds.get(itemId);
+        ref.setItem(item);
+        item.addAttributes(ref);
     }
 
     /**

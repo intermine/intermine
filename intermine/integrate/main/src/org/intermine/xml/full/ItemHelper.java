@@ -77,7 +77,7 @@ public class ItemHelper
     private static String makeFulldataRefIds(ReferenceList refs) {
         return StringUtil.join(refs.getRefIds(), " ");
     }
-    
+
     /**
      * Convert a xml ReferenceList to a fulldata ReferenceList that can then be stored with
      * ItemWriter
@@ -91,7 +91,7 @@ public class ItemHelper
         newRefList.setRefIds(makeFulldataRefIds(refList));
         return newRefList;
     }
-    
+
     /**
      * Convert a xml Reference to a fulldata Reference that can then be stored with
      * ItemWriter
@@ -105,7 +105,21 @@ public class ItemHelper
         newRef.setRefId(ref.getRefId());
         return newRef;
     }
-    
+
+    /**
+     * Convert a xml Attribute to a fulldata Attribute that can then be stored with
+     * ItemWriter
+     * @param ref the input Attribute
+     * @return a fulldata Attribute
+     */
+    public static org.intermine.model.fulldata.Attribute convert(Attribute att) {
+        org.intermine.model.fulldata.Attribute newAtt =
+            new org.intermine.model.fulldata.Attribute();
+        newAtt.setName(att.getName());
+        newAtt.setValue(att.getValue());
+        return newAtt;
+    }
+
     /**
      * Convert a list of XML items to a list of data model items.
      * @param items of XML item

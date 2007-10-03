@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.intermine.model.InterMineObject;
+import org.intermine.model.fulldata.Attribute;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Reference;
 import org.intermine.model.fulldata.ReferenceList;
@@ -78,7 +79,7 @@ public class ObjectStoreItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void store(ReferenceList refList, Integer itemId) throws ObjectStoreException {
-        ProxyReference proxy = new ProxyReference(osw.getObjectStore(), itemId, Item.class); 
+        ProxyReference proxy = new ProxyReference(osw.getObjectStore(), itemId, Item.class);
         refList.proxyItem(proxy);
         osw.store(refList);
         incrementTransaction();
@@ -88,9 +89,19 @@ public class ObjectStoreItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void store(Reference ref, Integer itemId) throws ObjectStoreException {
-        ProxyReference proxy = new ProxyReference(osw.getObjectStore(), itemId, Item.class); 
+        ProxyReference proxy = new ProxyReference(osw.getObjectStore(), itemId, Item.class);
         ref.proxyItem(proxy);
         osw.store(ref);
+        incrementTransaction();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void store(Attribute att, Integer itemId) throws ObjectStoreException {
+        ProxyReference proxy = new ProxyReference(osw.getObjectStore(), itemId, Item.class);
+        att.proxyItem(proxy);
+        osw.store(att);
         incrementTransaction();
     }
 
