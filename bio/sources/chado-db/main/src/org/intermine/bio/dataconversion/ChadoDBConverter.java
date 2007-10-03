@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
@@ -70,24 +72,34 @@ public class ChadoDBConverter extends BioDBConverter
     private String featureTypesString =
         "'gene', 'mRNA', 'transcript', 'CDS', 'intron', 'exon', 'five_prime_untranslated_region', "
         + "'EST', 'cDNA_clone', 'miRNA', 'snRNA', 'ncRNA', 'rRNA', 'ncRNA', 'snoRNA', 'tRNA', "
-        + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', "
+        + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', 'transcript', "
         + sequenceFeatureTypesString;
-    private String relationshipTypesString = "'partof'";
+    private String relationshipTypesString = "'partof', 'part_of'";
     private int chadoOrganismId;
     private Model model = Model.getInstanceByName("genomic");
     private MultiKeyMap config = new MultiKeyMap();
 
     private static class ConfigAction
     {
-        boolean doDefault = true;
-        String attributeName = null;
-        ConfigAction(String attributeName, boolean doDefault) {
-            this.attributeName = attributeName;
-            this.doDefault = doDefault;
+        protected ConfigAction() {
+            // empty
         }
     }
 
-    static final ConfigAction DEFAULT_CONFIG_ACTION = new ConfigAction(null, true);
+    private static class SetAttributeConfigAction extends ConfigAction
+    {
+        String attributeName = null;
+        SetAttributeConfigAction(String attributeName) {
+            this.attributeName = attributeName;
+        }
+    }
+
+    private static class DefaultConfigAction extends ConfigAction
+    {
+        // do the default - eg. make a synonym or set a collection
+    }
+
+    static final ConfigAction DEFAULT_CONFIG_ACTION = new DefaultConfigAction();
 
     /**
      * Create a new ChadoDBConverter object.
@@ -98,8 +110,12 @@ public class ChadoDBConverter extends BioDBConverter
     public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
 
-        config.put(new MultiKey("synonym", "gene", "fullname"), new ConfigAction("name", true));
-        config.put(new MultiKey("synonym", "gene", "symbol"), DEFAULT_CONFIG_ACTION);
+        config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
+                   Arrays.asList(new SetAttributeConfigAction("name"), DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.FALSE),
+                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("synonym", "Gene", "symbol", null),
+                   Arrays.asList(DEFAULT_CONFIG_ACTION));
     }
 
     /**
@@ -201,6 +217,8 @@ public class ChadoDBConverter extends BioDBConverter
             List<String> primaryIds = new ArrayList<String>();
             primaryIds.add(uniqueName);
             String interMineType = TypeUtil.javaiseClassName(type);
+            name = fixIdentifier(interMineType, name);
+            uniqueName = fixIdentifier(interMineType, uniqueName);
             Item feature =
                 makeFeature(featureId, name, uniqueName, interMineType, residues, seqlen);
             if (feature != null) {
@@ -439,6 +457,7 @@ public class ChadoDBConverter extends BioDBConverter
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             String accession = res.getString("accession");
+            String dbName = res.getString("db_name");
             if (features.containsKey(featureId)) {
                 FeatureData fdat = features.get(featureId);
                 Set<String> existingSynonyms = fdat.existingSynonyms;
@@ -481,22 +500,92 @@ public class ChadoDBConverter extends BioDBConverter
         Item dataSet = getDataSetItem(dataSetTitle);
 
         ResultSet res = getSynonymResultSet(connection);
+        Set<String> existingAttributes = new HashSet<String>();
+        Integer currentFeatureId = null;
+
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             String identifier = res.getString("synonym_name");
             String typeName = res.getString("type_name");
-            if (features.containsKey(featureId)
-                && (typeName.equals("symbol") || typeName.equals("fullname"))) {
+            Boolean isCurrent = res.getBoolean("is_current");
+
+            identifier = fixIdentifier(typeName, identifier);
+
+            if (currentFeatureId != null && currentFeatureId != featureId) {
+                existingAttributes = new HashSet<String>();
+            }
+
+            if (features.containsKey(featureId)) {
                 FeatureData fdat = features.get(featureId);
-                Set<String> existingSynonyms = fdat.existingSynonyms;
-                if (existingSynonyms.contains(identifier)) {
+                MultiKey key = new MultiKey("synonym", fdat.interMineType, typeName, isCurrent);
+                List<ConfigAction> actionList = (List<ConfigAction>) config.get(key);
+
+                if (actionList == null) {
+                    // try ignoring isCurrent
+                    MultiKey key2 = new MultiKey("synonym", fdat.interMineType, typeName, null);
+                    actionList = (List<ConfigAction>) config.get(key2);
+                }
+                if (actionList == null) {
+                    // no actions configured for this synonym
                     continue;
-                } else {
-                    createSynonym(fdat, typeName, identifier, false, dataSet,
-                                  Collections.EMPTY_LIST, dataSource);
+                }
+                for (ConfigAction action: actionList) {
+                    if (action instanceof SetAttributeConfigAction) {
+                        SetAttributeConfigAction setAction = (SetAttributeConfigAction) action;
+                        if (!existingAttributes.contains(setAction.attributeName)) {
+                            setAttribute(fdat, setAction.attributeName, identifier);
+                            existingAttributes.add(setAction.attributeName);
+                        }
+                    } else {
+                        if (action instanceof DefaultConfigAction) {
+                            Set<String> existingSynonyms = fdat.existingSynonyms;
+                            if (existingSynonyms.contains(identifier)) {
+                                continue;
+                            } else {
+                                createSynonym(fdat, typeName, identifier, false, dataSet,
+                                              Collections.EMPTY_LIST, dataSource);
+                            }
+
+                        }
+                    }
                 }
             }
+
+            currentFeatureId = featureId;
         }
+    }
+
+    /**
+     * Process the identifier and return a "cleaned" version.  Implement in sub-classes to fix
+     * data problem.
+     * @param the (SO) type of the feature that this identifier came from
+     * @param identifier the identifier
+     * @return a cleaned identifier
+     */
+    protected String fixIdentifier(String type, String identifier) {
+        /*
+         * default implementation should be: return identifier
+         */
+        // XXX FIXME TODO - for wormbase - move to WormBaseDBConverter
+        if (identifier.startsWith(type + ":")) {
+            return identifier.substring(type.length() + 1);
+        } else {
+            return identifier;
+        }
+    }
+
+    /**
+     * Set an attribute in an Item by creating an Attribute object and storing it.
+     * @param fdat the data about the feature
+     * @param attributeName the attribute name
+     * @param value the value to set
+     */
+    private void setAttribute(FeatureData fdat, String attributeName, String value)
+        throws ObjectStoreException {
+        Attribute att = new Attribute();
+        att.setName(attributeName);
+        att.setValue(value);
+        store(att, fdat.intermineObjectId);
     }
 
     private void processPubTable(Connection connection)
@@ -568,12 +657,13 @@ public class ChadoDBConverter extends BioDBConverter
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
         String query =
-            "SELECT feature_id, feature.name, uniquename, cvterm.name as type, residues, seqlen"
+            "SELECT feature_id, feature.name, uniquename, cvterm.name as type, residues, seqlen,"
+            + "     is_analysis"
             + "   FROM feature, cvterm"
             + "   WHERE feature.type_id = cvterm.cvterm_id"
             + "        AND cvterm.name IN (" + featureTypesString + ")"
             + "        AND organism_id = " + chadoOrganismId
-            + "        AND NOT feature.is_obsolete AND NOT feature.is_analysis";
+            + "        AND NOT feature.is_obsolete";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -611,7 +701,7 @@ public class ChadoDBConverter extends BioDBConverter
           " SELECT feature_id FROM feature, cvterm"
         + "             WHERE cvterm.name IN (" + featureTypesString + ")"
         + "                 AND organism_id = " + chadoOrganismId
-        + "                 AND NOT feature.is_obsolete AND NOT feature.is_analysis"
+        + "                 AND NOT feature.is_obsolete"
         + "                 AND feature.type_id = cvterm.cvterm_id";
     }
 
@@ -707,7 +797,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT feature_id, synonym.name AS synonym_name, cvterm.name AS type_name"
+            "SELECT feature_id, synonym.name AS synonym_name, cvterm.name AS type_name, is_current"
             + "  FROM feature_synonym, synonym, cvterm"
             + "  WHERE feature_synonym.synonym_id = synonym.synonym_id"
             + "     AND synonym.type_id = cvterm.cvterm_id"
