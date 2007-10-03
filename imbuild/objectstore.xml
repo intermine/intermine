@@ -39,7 +39,10 @@
     <property name="doing.build.db" value="true"/>
   </target>
 
-  <target name="-pre-build-db"/>
+  <target name="-pre-build-db">
+    <copy file="${resources.dir}/${model.name}_keyDefs.properties"
+          todir="${build.model.dir}" preservelastmodified="true"/>
+  </target>
 
   <target name="-post-build-db"/>
 
@@ -108,7 +111,7 @@
           depends="-init-properties, init, -init-deps, -init-task-xml,
                    -pre-generate-retrieve, -pre-generate-properties"
           unless="doing.build.db">
-    <copy file="${build.model.dir}/${model.name}_keyDefs.properties"
+    <copy file="${resources.dir}/${model.name}_keyDefs.properties"
           todir="${build.classes.dir}" preservelastmodified="true"/>
   </target>
 
