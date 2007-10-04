@@ -20,7 +20,7 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
   <head>
 
     <base href="<%=basePath%>" />
-    <link rel="stylesheet" type="text/css" href="model/css/widget.css"/>
+    <link rel="stylesheet" type="text/css" href="css/enrichmentWidget.css"/>
     <title>List Analysis Page</title>
   </head>
 
