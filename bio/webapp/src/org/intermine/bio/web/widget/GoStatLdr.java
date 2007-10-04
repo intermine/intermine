@@ -55,7 +55,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     Query populationQuery;
     Collection organisms;
     int total;
-    
+    String externalLink, append;
     
     /**
      * @param request The HTTP request we are processing
@@ -229,6 +229,20 @@ public class GoStatLdr implements EnrichmentWidgetLdr
             return BioUtil.getGeneTotal(os, organisms);
         }
         
+        /**
+         * @return if the widget should have an external link, where it should go to
+         */
+        public String getExternalLink() {
+            return externalLink;
+        }
+        
+        /**
+         * 
+         * @return the string to append to the end of external link
+         */
+        public String getAppendage() {
+            return append;
+        }
 }
 
 

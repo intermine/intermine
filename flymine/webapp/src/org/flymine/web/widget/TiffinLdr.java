@@ -54,7 +54,9 @@ public class TiffinLdr implements EnrichmentWidgetLdr
     Query populationQuery;
     Collection organisms;
     int total;
-    
+    // TODO put this in a properties file
+    String externalLink = "http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc=";
+    String append = ".2"; 
     
     /**
      * @param request The HTTP request we are processing
@@ -71,7 +73,6 @@ public class TiffinLdr implements EnrichmentWidgetLdr
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-             
                         
              sampleQuery = getQuery(os, bag, true);
              populationQuery = getQuery(os, bag, false);
@@ -197,6 +198,21 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          q.addToGroupBy(qfMotif);  
          
          return q;
+     }
+     
+     /**
+      * @return if the widget should have an external link, where it should go to
+      */
+     public String getExternalLink() {
+         return externalLink;
+     }
+     
+     /**
+      * 
+      * @return the string to append to the end of external link
+      */
+     public String getAppendage() {
+         return append;
      }
 }
 

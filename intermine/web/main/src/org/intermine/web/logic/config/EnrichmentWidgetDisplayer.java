@@ -22,6 +22,8 @@ public class EnrichmentWidgetDisplayer
     private String max;
     private String filters;
     private String filterLabel;
+    private String externalLink;
+    private String append;
     
     /**
      * Get the link
@@ -126,6 +128,35 @@ public class EnrichmentWidgetDisplayer
         this.max = max;
     }
     
+    /**
+     * Get the link
+     * @return the link
+     */
+    public String getExternalLink() {
+        return externalLink;
+    }
+    
+    /**
+     * Set the link
+     * @param externalLink the external link
+     */
+    public void setExternalLink(String externalLink) {
+        this.externalLink = externalLink;
+    }
+    
+    /**
+     * @return the string to append to the end of the external link
+     */
+    public String getAppend() {
+        return append;
+    }
+    
+    /**
+     * @param append the string to append to the end of the link
+     */
+    public void setAppend(String append) {
+        this.append = append;
+    }
     
     
     /**

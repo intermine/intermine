@@ -88,9 +88,17 @@ Reference population: <c:out value='${referencePopulation}'/>.
 			</tr>
 	  		<c:forEach items="${pvalues}" var="results">
     			<tr>  	    			
-  					<td align="left"><c:out value='${labelToId[results.key]}'/> 
+  					<td align="left">
+  							<c:choose>
+							<c:when test="${!empty externalLink}">
+								<a href="${externalLink}${results.key}${append}" class="extlink" target="_new"><c:out value='${labelToId[results.key]}'/></a>
+					 		</c:when>		
+							<c:otherwise>	
+								<c:out value='${labelToId[results.key]}'/>
+					        </c:otherwise>        
+					        </c:choose>
   						<c:if test="${labelToId[results.key] != results.key}">[<c:out value='${results.key}'/>]</c:if>
-  					</td>  				
+ 					</td>  				
   					<td align="left">
   						<c:choose>
   						<c:when test="${results.value < 0.0000001}">
