@@ -7,8 +7,7 @@ export PATH
 
 dumps_dir=/export/flymine/dumps/userprofile
 
-#/software/noarch/bio_scripts/userprofile_backup -p 5433 $dumps_dir/userprofile_backup gollum > $HOME/.userprofile_backup.output.new 2>&1
-/home/kmr/svn/dev/bio/scripts/userprofile_backup -p 5433 $dumps_dir/userprofile_backup gollum > $HOME/.userprofile_backup.output.new 2>&1
+/software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/userprofile_backup gollum > $HOME/.userprofile_backup.output.new 2>&1
 
 latest_version=`cat $HOME/.userprofile_latest_version`
 
