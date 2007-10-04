@@ -70,10 +70,9 @@ public class ChadoDBConverter extends BioDBConverter
     private String species;
     private String sequenceFeatureTypesString = "'chromosome', 'chromosome_arm'";
     private String featureTypesString =
-        "'gene', "
-        //, 'mRNA', 'transcript', 'CDS', 'intron', 'exon', 'five_prime_untranslated_region', "
-//        + "'cDNA_clone', 'miRNA', 'snRNA', 'ncRNA', 'rRNA', 'ncRNA', 'snoRNA', 'tRNA', 'EST', "
-//        + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', 'transcript', "
+        "'gene', 'mRNA', 'transcript', 'CDS', 'intron', 'exon', 'five_prime_untranslated_region', "
+        + "'EST', 'cDNA_clone', 'miRNA', 'snRNA', 'ncRNA', 'rRNA', 'ncRNA', 'snoRNA', 'tRNA', "
+        + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', 'transcript', "
         + sequenceFeatureTypesString;
     private String relationshipTypesString = "'partof', 'part_of'";
     private int chadoOrganismId;
