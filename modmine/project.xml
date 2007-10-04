@@ -20,7 +20,7 @@
       <property name="dataSourceName" value="FlyBase"/>
       <property name="dataSetTitle" value="FlyBase Drosophila pseudoobscura data set"/>
     </source>
-    <source name="chado-db-wormbase-celegans" type="chado-db" dump="true">
+    <source name="chado-db-wormbase-c_elegans" type="chado-db" dump="true">
       <property name="source.db.name" value="wormbase"/>
       <property name="genus" value="Caenorhabditis"/>
       <property name="species" value="elegans"/>
