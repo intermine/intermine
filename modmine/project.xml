@@ -4,9 +4,49 @@
   <property name="intermine.properties.file" value="modmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="chado" type="chado" dump="true">
-      <property name="src.data.dir" location="/dumps/flyminebuild/rns/chado/"/>
-      <property name="src.data.dir.includes" value="*.xml"/>
+    <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
+      <property name="source.db.name" value="flybase"/>
+      <property name="genus" value="Drosophila"/>
+      <property name="species" value="melanogaster"/>
+      <property name="taxonId" value="7227"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
+    </source>
+    <source name="chado-db-flybase-dpse" type="chado-db" dump="true">
+      <property name="source.db.name" value="flybase"/>
+      <property name="genus" value="Drosophila"/>
+      <property name="species" value="pseudoobscura"/>
+      <property name="taxonId" value="7237"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="dataSetTitle" value="FlyBase Drosophila pseudoobscura data set"/>
+    </source>
+    <source name="chado-db-wormbase-celegans" type="chado-db" dump="true">
+      <property name="source.db.name" value="wormbase"/>
+      <property name="genus" value="Caenorhabditis"/>
+      <property name="species" value="elegans"/>
+      <property name="taxonId" value="6239"/>
+      <property name="dataSourceName" value="WormBase"/>
+      <property name="dataSetTitle" value="WormBase C.elegans data set"/>
+    </source>
+    <source name="inparanoid-orthologue" type="orthologue" dump="true">
+      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
+    </source>
+    <source name="entrez-organism" type="entrez-organism">
+      <!-- this source finds the taxon ids in the objectstore, retrieves
+           species name and genus from Entrez into an InterMine format XML
+           file, loads that file into a target items DB, then into the final
+           objectstore -->
+      <property name="src.data.file" location="build/organisms.xml"/>
+    </source>
+    <source name="modmine-static" type="intermine-items-xml-file">
+      <property name="src.data.file" location="datasets.xml"/>
+    </source>
+    <source name="update-publications" type="update-publications" dump="true">
+      <!-- this source finds the publication ids (pubmed ids) in the
+           objectstore, retrieves the details of the publication from Entrez
+           into an InterMine format XML file, loads that file into a target
+           items DB, then into the final objectstore -->
+      <property name="src.data.file" location="build/publications.xml"/>
     </source>
   </sources>
 
@@ -25,19 +65,6 @@
     <post-process name="create-intron-features"/>
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
-
-    <!-- grant-db-production/
-    TODO: Not really post processing but just has to be done sometime...
-  <target name="grant-db-production" depends="prepare" - ->
-    <!- - grant 'public' user select permission on production db - ->
-    <taskdef name="grant" classname="org.intermine.task.GrantTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <grant database="db.production" user="PUBLIC" perm="SELECT"/>
-
-  </target>
-    -->
   </post-processing>
 
 </project>
