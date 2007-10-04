@@ -54,9 +54,8 @@ public class TiffinLdr implements EnrichmentWidgetLdr
     Query populationQuery;
     Collection organisms;
     int total;
-    // TODO put this in a properties file
-    String externalLink = "http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc=";
-    String append = ".2"; 
+    String externalLink;
+    String append; 
     
     /**
      * @param request The HTTP request we are processing
