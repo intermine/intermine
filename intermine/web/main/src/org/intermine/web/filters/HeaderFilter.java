@@ -1,5 +1,15 @@
 package org.intermine.web.filters;
 
+/*
+ * Copyright (C) 2002-2007 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Enumeration;
 
 import java.io.IOException;
@@ -16,7 +26,8 @@ import javax.servlet.http.HttpServletResponse;
  * A Filter that modifies response headers of outgoing pages.
  * @author Kim Rutherford
  */
-public class HeaderFilter implements Filter {
+public class HeaderFilter implements Filter 
+{
     private FilterConfig fc;
 
     /**
@@ -25,7 +36,7 @@ public class HeaderFilter implements Filter {
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
     throws IOException, ServletException {
-        HttpServletResponse response =(HttpServletResponse) res;
+        HttpServletResponse response = (HttpServletResponse) res;
 
         Enumeration<String> e = fc.getInitParameterNames();
         while (e.hasMoreElements()) {
