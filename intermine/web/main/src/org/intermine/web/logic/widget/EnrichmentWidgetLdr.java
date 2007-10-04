@@ -50,5 +50,14 @@ public interface EnrichmentWidgetLdr
      */
     public int getTotal(ObjectStore os);
     
-
+    /**
+     * @return if the widget should have an external link, where it should go to
+     */
+    public String getExternalLink();
+    
+    /**
+     * 
+     * @return the string to append to the end of external link
+     */
+    public String getAppendage();
 }

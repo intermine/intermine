@@ -73,6 +73,8 @@ public class EnrichmentWidgetController extends TilesAction
              String description = request.getParameter("description");
              String link = request.getParameter("link");
              String filterLabel = request.getParameter("filterLabel");
+             String externalLink = request.getParameter("externalLink");
+             String append = request.getParameter("append");
              String max = request.getParameter("max");
              Double maxValue = new Double(0.10);
              try {
@@ -117,6 +119,8 @@ public class EnrichmentWidgetController extends TilesAction
              request.setAttribute("max", max);
              request.setAttribute("controller", controller);
              request.setAttribute("filterLabel", filterLabel);
+             request.setAttribute("externalLink", externalLink);
+             request.setAttribute("append", append);
              if (results.isEmpty()) {
                  return null;
              }
