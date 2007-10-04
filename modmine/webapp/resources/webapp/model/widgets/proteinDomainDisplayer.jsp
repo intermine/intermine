@@ -1,0 +1,114 @@
+<%
+String path = request.getContextPath();
+String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+path+"/layout.jsp";
+%>
+
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+
+<!-- proteinDomainDisplayer.jsp -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+  <head>
+
+    <base href="<%=basePath%>" />
+    <link rel="stylesheet" type="text/css" href="model/css/gostat.css"/>
+    
+    <script type="text/javascript" src="js/prototype.js"></script>
+    <script type="text/javascript" src="js/scriptaculous.js"></script>
+    
+	<script type='text/javascript' src='dwr/interface/AjaxServices.js'></script>
+	<script type='text/javascript' src='dwr/engine.js'></script>
+	<script type='text/javascript' src='dwr/util.js'></script>
+
+    <script type="text/javascript" src="js/imdwr.js"></script>
+    
+    <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
+    <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
+          name="description"/>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
+    
+    <title>
+      
+    <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
+    <meta content="Integrated queryable database for Drosophila and Anopheles genomics" 
+          name="description"/>
+    <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
+    
+    <title>FlyMine: List Analysis Page</title>
+  </head>
+
+  
+  <body> 
+
+<html:xhtml/>
+
+<div class="body">
+
+<center><h2>Protein Domain Enrichment</h2></center>
+
+Protein domains that are enriched for objects in this list compared to the reference population.  Smaller p-values show greater enrichment. Method: Hypergeometric test with Bonferroni error correction (using a significance value of 0.05).
+<br><br>
+Reference population: <c:out value='${organisms}'/>.
+<br><br>
+
+
+	
+<table>	
+<tr>
+	<td>
+		<c:choose>
+		<c:when test="${!empty pvalues}">
+			<table cellpadding="5" border="0" cellspacing="0" class="results">
+		  	<tr>	
+  				<th>Protein Domain</td>
+	  			<th>p-value</td>
+  				<th>&nbsp;</td>
+			</tr>
+	  		<c:forEach items="${pvalues}" var="results">
+    			<tr>  	
+  					<td align="left"><c:out value='${names[results.key]}'/> [<c:out value='${results.key}'/>]</td>
+  					
+  					
+  					
+  					<td align="left">
+  						<c:choose>
+  						<c:when test="${results.value < 0.0000001}">
+  							<fmt:formatNumber value="${results.value}" pattern="0.#######E0" minFractionDigits="7" maxFractionDigits="7" />
+						</c:when>		
+						<c:otherwise>
+	  						<fmt:formatNumber value="${results.value}" minFractionDigits="7" maxFractionDigits="7" />
+				        </c:otherwise>        
+    				    </c:choose>
+  					</td>
+  					<td align="left" nowrap>
+  		   				<html:link action="/proteinDomainAction?key=${results.key}&bag=${bagName}" target="_top">
+  		   					[<c:out value='${totals[results.key]}'/> genes]
+       					</html:link>  	
+	       			</td>
+				</tr>
+			</c:forEach>
+			</table>
+		</c:when>		
+		<c:otherwise>
+	        No results found.
+        </c:otherwise>        
+        </c:choose>
+
+	</td>
+</tr>
+</table>
+            
+ </div>
+ </body>
+ </html>
+ 
+<!-- /proteinDomainDisplayer.jsp -->

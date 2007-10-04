@@ -1,0 +1,30 @@
+<!-- this comment is here to prevent ant from setting model.struts.config to null -->
+  	
+               
+    <action path="/sequenceExporter"
+            type="org.flymine.web.SequenceExporter"/>
+    
+    <action path="/chartRenderer"
+            type="org.flymine.web.ChartRenderer"
+            parameter="method"/>
+    
+    <action path="/quickStart" forward="flymineQuickStart.page"/>
+    
+    <action path="/initGeneMicroArrayDisplayer"
+            type="org.flymine.web.GeneMicroArrayDisplayerController"/>
+
+    <action path="/proteinInteractionRenderer"
+            type="org.flymine.web.ProteinInteractionImgRenderer"/>
+    
+	<action path="/initOrthologueDisplayer" 
+		type="org.flymine.web.OrthologueDisplayerController"/>
+		
+    <action path="/orthologueAction"
+            type="org.flymine.web.OrthologueAction">
+      <forward name="results" path="/results.do" redirect="true"/>
+      <forward name="details" path="/objectDetails.do" redirect="true"/>
+    </action>
+    
+
+    
+    
