@@ -255,10 +255,10 @@ public class TemplateListHelper
             LOG.error("Could not find class for type of bag: " + bag.getQualifiedType());
             return Collections.emptyList();
         }
-        LOG.info("Found class for type of bag: " + bagClass);
+       
         SearchRepository searchRepository  = 
             (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-        LOG.info("Web searchable types available: " + searchRepository.getWebSearchableMaps().keySet());
+       
         Map<String, ? extends WebSearchable> globalTemplates = 
             searchRepository.getWebSearchableMap(TagTypes.TEMPLATE);
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
@@ -266,20 +266,20 @@ public class TemplateListHelper
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
         List tags = pm.getTags(null, null, TagTypes.TEMPLATE, sup);
         
-        LOG.info("Templates available: " + globalTemplates.keySet());
+       
       TAGS:
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
-            LOG.info("Inspecting tag: " + tag.getTagName() + ", " + tag.getObjectIdentifier());
+
             if (tag.getTagName().startsWith(AspectController.ASPECT_PREFIX)) {
                 String aspectFromTagName = tag.getTagName().substring(7).trim();
-                LOG.info("Aspect from tag name: " + aspectFromTagName);
+           
 
                 if (StringUtils.equals(aspect, aspectFromTagName)) {
                     TemplateQuery templateQuery = 
                         (TemplateQuery) globalTemplates.get(tag.getObjectIdentifier());
                     if (templateQuery != null) {
-                        LOG.info("Found TemplateQuery: " + templateQuery.getName());
+           
                         List<String> fieldExprs = new ArrayList<String>();
                         if (templateQuery.getAllEditableConstraints().size() > 1) {
                             continue;
@@ -300,8 +300,7 @@ public class TemplateListHelper
                                         LOG.error(e);
                                         continue;
                                     }
-                                    LOG.info("Found LOOKUP constraint, comparing classes "
-                                            + pathNodeType + ", " + bagClass);
+           
                                     if (pathNodeType.isAssignableFrom(bagClass)) {
                                         templates.add(templateQuery);
                                     }
