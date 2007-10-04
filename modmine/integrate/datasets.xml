@@ -1,0 +1,362 @@
+<?xml version="1.0"?>
+<items>
+    <item id="0" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="FlyMine"/>
+        <attribute name="description"
+            value="The FlyMine Drosophila and Anopheles data warehouse"/>
+        <attribute name="url" value="http://www.flymine.org"/>
+    </item>
+
+    <item id="10" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="UniProt"/>
+        <attribute name="description" value="UniProt Universal Protein Resource"/>
+        <attribute name="url" value="http://www.uniprot.org"/>
+    </item>
+    <item id="11" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Swiss-Prot data set"/>
+        <attribute name="description" value="The Swiss-Prot protein knowledge base"/>
+        <attribute name="version" value="UniProt 9.6"/>
+        <attribute name="url" value="http://ca.expasy.org/sprot"/>
+        <reference name="dataSource" ref_id="10"/>
+    </item>
+    <item id="12" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="TrEMBL data set"/>
+        <attribute name="description" value="Translated CDSs from the EMBL database"/>
+        <attribute name="version" value="UniProt 9.6"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
+        <reference name="dataSource" ref_id="10"/>
+    </item>
+    <item id="13" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="UniProt data set"/>
+        <attribute name="description" value="UniProt Knowledgebase"/>
+        <attribute name="version" value="9.6"/>
+        <attribute name="url" value="http://www.ebi.uniprot.org/uniprot-srv/uniProtSearch.do"/>
+        <reference name="dataSource" ref_id="10"/>
+    </item>
+
+    <item id="20" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="FlyBase"/>
+        <attribute name="description"
+            value="A database of genetic and molecular data for Drosophila"/>
+        <attribute name="url" value="http://www.flybase.org"/>
+    </item>
+    <item id="21" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="FlyBase Drosophila melanogaster data set"/>
+        <attribute name="description" value="The FlyBase Drosophila melanogaster genome data set"/>
+        <attribute name="version" value="5.1"/>
+        <attribute name="url" value="http://www.flybase.org"/>
+        <reference name="dataSource" ref_id="20"/>
+    </item>
+    <item id="22" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="FlyBase Drosophila pseudoobscura data set"/>
+        <attribute name="description" value="The FlyBase Drosophila pseudoobscura genome data set"/>
+        <attribute name="version" value="2.0"/>
+        <attribute name="url" value="http://www.flybase.org"/>
+        <reference name="dataSource" ref_id="20"/>
+    </item>
+
+    <item id="30" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="CGB, KI"/>
+        <attribute name="description"
+            value="Center for Genomics and Bioinformatics, Karolinska Institutet"/>
+        <attribute name="url" value="http://www.flybase.org"/>
+    </item>
+
+    <item id="31" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="InParanoid data set"/>
+        <attribute name="description"
+            value="InParanoid eukaryotic orthologue groups"/>
+        <attribute name="version" value="04/01/07"/>
+        <attribute name="url" value="http://inparanoid.cgb.ki.se"/>
+        <reference name="dataSource" ref_id="30"/>
+    </item>
+
+    <item id="40" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="WormBase"/>
+        <attribute name="description"
+            value="The database of the genetics, genomics and biology of Caenorhabditis elegans"/>
+        <attribute name="url" value="http://www.wormbase.org"/>
+    </item>
+    <item id="50" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="MGI"/>
+        <attribute name="description" value="Mouse Genome Database Project"/>
+        <attribute name="url" value="http://www.informatics.jax.org"/>
+    </item>
+
+    <item id="60" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="SGD"/>
+        <attribute name="description" value="Saccharomyces cerevisiae genome database"/>
+        <attribute name="url" value="http://www.yeastgenome.org"/>
+    </item>
+
+    <item id="70" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Pfam"/>
+        <attribute name="description"
+            value="Database of multiple alignments of protein domains and conserved protein regions"/>
+        <attribute name="url" value="http://www.sanger.ac.uk/Software/Pfam"/>
+    </item>
+
+    <item id="80" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="IntAct"/>
+        <attribute name="description" value="Protein interaction database"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/intact"/>
+    </item>
+
+    <item id="90" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="FlyReg"/>
+        <attribute name="description" value="Drosophila DNase I Footprint Database"/>
+        <attribute name="url" value="http://www.flyreg.org"/>
+    </item>
+    <item id="91" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="FlyReg data set"/>
+        <attribute name="description" value="Drosophila DNase I Footprint data set"/>
+        <attribute name="version" value="2"/>
+        <attribute name="url" value="http://www.flyreg.org"/>
+        <reference name="dataSource" ref_id="90"/>
+    </item>
+
+    <item id="100" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="INDAC"/>
+        <attribute name="description" value="International Drosophila Array Consortium"/>
+        <attribute name="url" value="http://www.indac.net/"/>
+    </item>
+    <item id="101" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="INDAC long oligo data set"/>
+        <attribute name="description"
+            value="International Drosophila Array Consortium long oligo data set"/>
+        <attribute name="version" value="1.0"/>
+        <attribute name="url" value="http://www.indac.net/"/>
+        <reference name="dataSource" ref_id="100"/>
+    </item>
+
+    <item id="110" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Genetics"/>
+        <attribute name="description" value="Department of Genetics, University of Cambridge"/>
+        <attribute name="url" value="http://www.gen.cam.ac.uk/"/>
+    </item>
+    <item id="111" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Department of Genetics tiling path"/>
+        <attribute name="description"
+            value="Primers and amplimers tiling the Drosophila melanogaster genome"/>
+        <attribute name="version" value="5.1"/>
+        <attribute name="url" value="http://www.gen.cam.ac.uk/"/>
+        <reference name="dataSource" ref_id="110"/>
+    </item>
+
+    <item id="120" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Homophila"/>
+        <attribute name="description" value="Homophila: Human Disease to Drosophila Gene Database"/>
+        <attribute name="url" value="http://superfly.ucsd.edu/homophila/"/>
+    </item>
+    <item id="121" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Homophila data set"/>
+        <attribute name="description" value="Homophila human disease to Drosophila gene data set"/>
+        <attribute name="version" value="2.1"/>
+        <attribute name="url" value="http://superfly.ucsd.edu/homophila/"/>
+        <reference name="dataSource" ref_id="120"/>
+    </item>
+
+    <item id="130" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="DrosDel"/>
+        <attribute name="description" value="An isogenic deficiency kit for Drosophila melanogaster"/>
+        <attribute name="url" value="http://www.drosdel.org.uk/"/>
+    </item>
+    <item id="131" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="DrosDel data set"/>
+        <attribute name="description" value="DrosDel deletion data"/>
+        <attribute name="version" value="FlyBase 5.1 mapping"/>
+        <attribute name="url" value="http://www.drosdel.org.uk/"/>
+        <reference name="dataSource" ref_id="130"/>
+    </item>
+
+    <item id="140" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="embl"/>
+        <attribute name="description" value="The EMBL genome database"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/embl"/>
+    </item>
+
+    <item id="150" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Kenji Mizuguchi"/>
+        <attribute name="description"
+            value="Kenji Mizuguchi's group at the Department of Biochemistry"/>
+        <attribute name="url" value="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
+    </item>
+    <item id="151" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Mizuguchi protein structure predictions"/>
+        <attribute name="description"
+            value="Prediction of structure and function for the Drosophila genome sequences"/>
+        <attribute name="url" value="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/research.htm"/>
+        <reference name="dataSource" ref_id="150"/>
+    </item>
+
+    <item id="160" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="ArrayExpress"/>
+        <attribute name="description"
+            value="Public repository for microarray data"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/arrayexpress"/>
+    </item>
+
+    <item id="170" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PRINTS"/>
+        <attribute name="description" value="A compendium of protein fingerprints."/>
+        <attribute name="url" value="http://umber.sbs.man.ac.uk/dbbrowser/PRINTS/PRINTS.html"/>
+    </item>
+
+    <item id="180" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="ProDom"/>
+        <attribute name="description" value="ProDom is a comprehensive set of protein domain families automatically generated from the SWISS-PROT and TrEMBL sequence databases"/>
+        <attribute name="url" value="http://protein.toulouse.inra.fr/prodom/current/html/home.php"/>
+    </item>
+
+    <item id="190" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PANTHER"/>
+        <attribute name="description" value="The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System was designed to classify proteins (and their genes) in order to facilitate high-throughput analysis. Proteins have been classified according to families and subfamilies, molecular functions, biological processes, pathways."/>
+        <attribute name="url" value="http://www.appliedbiosystems.com/"/>
+    </item>
+
+    <item id="200" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Superfamily"/>
+        <attribute name="description"
+            value="To provide structural (and hence implied functional) assignments to protein sequences at the superfamily level."/>
+        <attribute name="url" value="http://supfam.mrc-lmb.cam.ac.uk/SUPERFAMILY/"/>
+    </item>
+
+    <item id="210" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="ensembl"/>
+        <attribute name="description"
+            value="The Ensembl eukaryotic genome annotation database"/>
+        <attribute name="url" value="http://www.ensembl.org"/>
+    </item>
+    <item id="211" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Ensembl Anopheles"/>
+        <attribute name="description"
+            value="The Ensembl Anopheles gambiae genome annotation"/>
+        <attribute name="version" value="AgamP3"/>
+        <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
+        <reference name="dataSource" ref_id="210"/>
+    </item>
+    <item id="212" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Ensembl Apis"/>
+        <attribute name="description"
+            value="The Ensembl Apis mellifera genome annotation"/>
+        <attribute name="version" value="2.0"/>
+        <attribute name="url" value="http://www.ensembl.org/Apis_mellifera"/>
+        <reference name="dataSource" ref_id="210"/>
+    </item>
+
+    <item id="220" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="InterPro"/>
+        <attribute name="description" value="A database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences."/>
+        <attribute name="url" value="http://www.ebi.ac.uk/interpro"/>
+    </item>
+
+    <item id="230" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PROSITE"/>
+        <attribute name="description" value="The ExPASy (Expert Protein Analysis System) proteomics server of the Swiss Institute of Bioinformatics (SIB) is dedicated to the analysis of protein sequences and structures as well as 2-D PAGE"/>
+        <attribute name="url" value="http://www.expasy.org"/>
+    </item>
+
+    <item id="240" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PROSITE patterns"/>
+        <attribute name="description" value="The ExPASy (Expert Protein Analysis System) proteomics server of the Swiss Institute of Bioinformatics (SIB) is dedicated to the analysis of protein sequences and structures as well as 2-D PAGE."/>
+        <attribute name="url" value="http://www.expasy.org/cgi-bin/prosite-search-ac?"/>
+    </item>
+
+    <item id="250" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PROSITE profiles"/>
+        <attribute name="description" value="The ExPASy (Expert Protein Analysis System) proteomics server of the Swiss Institute of Bioinformatics (SIB) is dedicated to the analysis of protein sequences and structures as well as 2-D PAGE."/>
+        <attribute name="url" value="http://www.expasy.org/cgi-bin/prosite-search-ac?"/>
+    </item>
+
+    <item id="260" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PROSITE preprofiles"/>
+        <attribute name="description" value="The ExPASy (Expert Protein Analysis System) proteomics server of the Swiss Institute of Bioinformatics (SIB) is dedicated to the analysis of protein sequences and structures as well as 2-D PAGE. (NOTE: Preprofiles will probably not appear in the expasy search results)"/>
+        <attribute name="url" value="http://ca.expasy.org/prosite/"/>
+    </item>
+
+    <item id="270" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="TrEMBL"/>
+        <attribute name="description" value="UniProtKB/TrEMBL contains the translations of all coding sequences (CDS) present in the EMBL/GenBank/DDBJ Nucleotide Sequence Databases and also protein sequences extracted from the literature or submitted to UniProtKB/Swiss-Prot."/>
+        <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
+    </item>
+
+    <item id="280" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="PIR SuperFamily"/>
+        <attribute name="description" value="The iProClass is an integrated resource that provides comprehensive family relationships and structural/functional features of proteins."/>
+        <attribute name="url" value="http://pir.georgetown.edu/iproclass/"/>
+    </item>
+
+    <item id="290" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="GENE3D"/>
+        <attribute name="description" value="Structural and Functional Annotation of Protein Families."/>
+        <attribute name="url" value="http://bsmmac1.biochem.ucl.ac.uk:8080/Gene3D/"/>
+    </item>
+
+    <item id="300" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Smart"/>
+        <attribute name="description" value="SMART (a Simple Modular Architecture Research Tool) allows the identification and annotation of genetically mobile domains and the analysis of domain architectures."/>
+        <attribute name="url" value="http://smart.embl-heidelberg.de/"/>
+    </item>
+
+    <item id="310" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Gene Ontology"/>
+        <attribute name="description" value="The GO term onotolgy"/>
+        <attribute name="url" value="http://www.geneontology.org/"/>
+    </item>
+
+    <item id="320" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="RGD"/>
+        <attribute name="description" value="Rat Genome Database"/>
+        <attribute name="url" value="http://rgd.mcw.edu/"/>
+    </item>
+
+    <item id="330" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="FlyAtlas"/>
+        <attribute name="description"
+            value="FlyAtlas: Gene expression in the adult fly."/>
+        <attribute name="url" value="http://www.flyatlas.org"/>
+    </item>
+
+    <item id="340" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="Sanger"/>
+        <attribute name="description" value="The Sanger Institute"/>
+        <attribute name="url" value="http://www.sanger.ac.uk"/>
+    </item>
+    <item id="341" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="Tiffin"/>
+        <attribute name="description" value="Tiffin predicted Drosophila transcription factor binding sites"/>
+        <attribute name="version" value="1.2"/>
+        <attribute name="url" value="http://servlet.sanger.ac.uk/tiffin/"/>
+        <reference name="dataSource" ref_id="340"/>
+    </item>
+
+    <item id="350" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="VectorBase"/>
+        <attribute name="description" value="Database for disease vectors"/>
+        <attribute name="url" value="http://www.vectorbase.org/"/>
+    </item>
+    <item id="351" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="AnoEST clusters"/>
+        <attribute name="description"
+                   value="Annotated EST clusters for Anopheles gambiae"/>
+        <attribute name="version" value="8"/>
+        <attribute name="url" 
+                   value="http://agambiae.vectorbase.org/SequenceData/EST"/>
+        <reference name="dataSource" ref_id="350"/>
+    </item>
+    <item id="450" class="" implements="http://www.flymine.org/model/genomic#DataSource">
+        <attribute name="name" value="REDfly"/>
+        <attribute name="description" value="Regulatory element database for Drosophila"/>
+        <attribute name="url" value="http://redfly.ccr.buffalo.edu/"/>
+    </item>
+    <item id="451" class="" implements="http://www.flymine.org/model/genomic#DataSet">
+        <attribute name="title" value="REDfly Drosophila transcriptional cis-regulatory modules"/>
+        <attribute name="description"
+                   value="Regulatory element database for Drosophila"/>
+        <attribute name="version" value=""/>
+        <attribute name="url" 
+                   value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
+        <reference name="dataSource" ref_id="450"/>
+    </item>
+
+</items>

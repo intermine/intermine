@@ -1,5 +1,5 @@
 
-<project name="modmine-dbmodel" default="default" basedir=".">
+<project name="flymine-dbmodel" default="default" basedir=".">
   
   <description>represents the production objectstore and the model therein</description>
   <import file="../../imbuild/objectstore.xml"/>
@@ -7,5 +7,31 @@
   <target name="-merge-models" if="doing.build.db">
     <merge-additions file="bio/core/genomic_additions.xml"/>
     <merge-additions file="bio/sources/so/so_additions.xml"/>
+    <merge-additions file="bio/sources/chado-db/chado-db_additions.xml"/>
+    <merge-additions file="bio/sources/psi/psi_additions.xml"/>
+    <merge-additions file="bio/sources/psi-mi-ontology/psi-mi-ontology_additions.xml"/>
+    <merge-additions file="bio/sources/rnai/rnai_additions.xml"/>
+    <merge-additions file="bio/sources/ensembl/ensembl_additions.xml"/>
+    <merge-additions file="bio/sources/go/go_additions.xml"/>
+    <merge-additions file="bio/sources/go-annotation/go-annotation_additions.xml"/>
+    <merge-additions file="bio/sources/uniprot/uniprot_additions.xml"/>
+    <merge-additions file="bio/sources/protein_structure/protein_structure_additions.xml"/>
+    <merge-additions file="bio/sources/orthologue/orthologue_additions.xml"/>
+    <merge-additions file="bio/sources/flyreg/flyreg_additions.xml"/>
+    <merge-additions file="bio/sources/tiling_path/tiling_path_additions.xml"/>
+    <merge-additions file="bio/sources/long_oligo/long_oligo_additions.xml"/>
+    <merge-additions file="bio/sources/tiffin/tiffin_additions.xml"/>
+    <merge-additions file="bio/sources/homophila/homophila_additions.xml"/>
+    <merge-additions file="bio/sources/interpro/interpro_additions.xml"/>
+    <merge-additions file="bio/sources/bdgp-clone/bdgp-clone_additions.xml"/>
+    <merge-additions file="bio/sources/drosdel/drosdel_additions.xml"/>
+    <merge-additions file="bio/sources/mage/mage_additions.xml"/>
+    <merge-additions file="bio/sources/redfly/redfly_additions.xml"/>
+    <merge-additions file="bio/sources/flyrnai-screens/flyrnai-screens_additions.xml"/>
+    <merge-additions file="bio/sources/flyatlas/flyatlas_additions.xml"/>
+    <merge-additions file="bio/sources/anoest/anoest_additions.xml"/>
+    <merge-additions file="bio/sources/affy-probes/affy-probes_additions.xml"/>
+    <merge-additions file="bio/sources/fly-anatomy-ontology/fly-anatomy-ontology_additions.xml"/>
+    <merge-additions file="bio/sources/kegg-pathway/kegg-pathway_additions.xml"/>
   </target>
 </project>
