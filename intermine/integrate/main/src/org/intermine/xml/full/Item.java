@@ -156,8 +156,12 @@ public class Item implements Comparable
      * @param attribute the Attribute to add
      */
     public void addAttribute(Attribute attribute) {
-        checkAttribute(attribute.getName());
-        attributes.put(attribute.getName(), attribute);
+        String name = attribute.getName();
+        if (!checkAttribute(name)) {
+            throw new RuntimeException("class \"" + classDescriptor.getName() + "\" has no \""
+                                       + name + "\" attribute");
+        }
+        attributes.put(name, attribute);
     }
 
     /**
@@ -165,7 +169,10 @@ public class Item implements Comparable
      * @param attributeName name of the attribute to remove
      */
     public void removeAttribute(String attributeName) {
-        checkAttribute(attributeName);
+        if (!checkAttribute(attributeName)) {
+            throw new RuntimeException("class \"" + classDescriptor.getName() + "\" has no \""
+                                       + attributeName + "\" attribute");
+        }
         attributes.remove(attributeName);
     }
 
@@ -183,8 +190,11 @@ public class Item implements Comparable
      * @return the Attribute with the given name
      */
     public Attribute getAttribute(String attributeName) {
-        checkAttribute(attributeName);
-        return (Attribute) attributes.get(attributeName);
+        if (!checkAttribute(attributeName)) {
+            throw new RuntimeException("class \"" + classDescriptor.getName() + "\" has no \""
+                                       + attributeName + "\" attribute");
+        }
+        return attributes.get(attributeName);
     }
 
     /**
@@ -289,7 +299,6 @@ public class Item implements Comparable
         return (ReferenceList) collections.get(collectionName);
     }
 
-    
     /**
      * Set a colletion.
      * @param collectionName collection name
@@ -297,8 +306,8 @@ public class Item implements Comparable
      */
     public void setCollection(String collectionName, List refIds) {
         addCollection(new ReferenceList(collectionName, refIds));
-    }   
-    
+    }
+
     /**
      * Add an attribute to this item
      * @param name the name of the attribute
@@ -319,7 +328,7 @@ public class Item implements Comparable
         }
         addReference(new Reference(name, refId));
     }
-    
+
     /**
      * Add a reference that points to a particular item.
      * @param name the name of the attribute
@@ -361,14 +370,13 @@ public class Item implements Comparable
     }
 
     /**
-     * Throw a RuntimeException if the name parameter isn't an attribute of the class set by
-     * setClassName() in the Model set by setModel().  Returns immediately if the Model or the
-     * className of this Item haven't been set.
+     * Return true if the name parameter is an attribute of the class for this Item or if
+     * the Model or the className of this Item haven't been set.
      * @param name the attribute name
      */
-    protected void checkAttribute(String name) {
+    public boolean checkAttribute(String name) {
         if (model == null || classDescriptor == null) {
-            return;
+            return true;
         }
 
         Iterator cdIter = getAllClassDescriptors().iterator();
@@ -376,12 +384,11 @@ public class Item implements Comparable
         while (cdIter.hasNext()) {
             ClassDescriptor cd = (ClassDescriptor) cdIter.next();
             if (cd.getAttributeDescriptorByName(name, true) != null) {
-                return;
+                return true;
             }
         }
 
-        throw new RuntimeException("class \"" + classDescriptor.getName() + "\" has no \""
-                                   + name + "\" attribute");
+        return false;
     }
 
     /**
@@ -558,13 +565,13 @@ public class Item implements Comparable
      * Compare items first by class, then by identifier, intended for creating
      * ordered output files.
      * {@inheritDoc}
-     */ 
+     */
     public int compareTo(Object o) {
         if (!(o instanceof Item)) {
             throw new RuntimeException("Attempt to compare an item to a " + o.getClass() + " ("
                                        + o.toString() + ")");
         }
-        
+
         Item i = (Item) o;
         int compValue = this.getClassName().compareTo(i.getClassName());
         if (compValue == 0) {
@@ -572,7 +579,7 @@ public class Item implements Comparable
         }
         return compValue;
     }
-    
+
     /**
      * {@inheritDoc}
      */
