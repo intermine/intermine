@@ -19,6 +19,7 @@
     <reference name="fivePrimeUTR" referenced-type="org.flymine.model.genomic.FivePrimeUTR"/>
     <reference name="threePrimeUTR" referenced-type="org.flymine.model.genomic.ThreePrimeUTR"/>
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="MRNAs" ordered="true"/>
+    <collection name="cDNAClones" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="MRNA" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.Transcript" is-interface="true">
     <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" reverse-reference="transcripts" ordered="true"/>
@@ -40,7 +41,7 @@
     <attribute name="symbol" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="UTRs"/>
     <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="UTRs" ordered="true"/>
-  </class>    
+  </class>
   <class name="org.flymine.model.genomic.ThreePrimeUTR" is-interface="true">
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
@@ -68,16 +69,19 @@
   <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.Polypeptide" is-interface="true">
     <attribute name="organismDbId" type="java.lang.String"/>
     <attribute name="symbol" type="java.lang.String"/>
-  </class> 
-  <class name="org.flymine.model.genomic.Vector" extends="org.flymine.model.genomic.BioEntity" 
+  </class>
+  <class name="org.flymine.model.genomic.Vector" extends="org.flymine.model.genomic.BioEntity"
          is-interface="true"/>
   <class name="org.flymine.model.genomic.BAC" extends="org.flymine.model.genomic.Vector"
          is-interface="true">
   </class>
-  <class name="org.flymine.model.genomic.ChromosomeArm" 
+  <class name="org.flymine.model.genomic.CDNAClone" is-interface="true">
+    <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA"/>
+  </class>
+  <class name="org.flymine.model.genomic.ChromosomeArm"
          extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
   </class>
-  <class name="org.flymine.model.genomic.TFmodule" 
+  <class name="org.flymine.model.genomic.TFmodule"
          extends="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
   </class>
 </classes>
