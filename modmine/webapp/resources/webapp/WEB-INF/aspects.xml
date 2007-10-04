@@ -1,0 +1,190 @@
+<aspects>
+  <aspect name="Genomics">
+    <subtitle>Genome annotation</subtitle>
+    <icon-image>model/images/genomics.gif</icon-image>
+    <large-image>model/images/genomics.gif</large-image>
+    <intro-text>
+      The gene structure and other genome annotation in FlyMine are provided by
+      a variety of source databases.  In most cases FlyMine includes
+      all genome features that have chromosomal locations (e.g. genes and repeat regions).
+    </intro-text>
+    <tile-name>model/genomics.jsp</tile-name>
+    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="Ensembl" url="http://www.ensembl.org/Anopheles_gambiae/"/>
+  </aspect>
+
+
+  <aspect name="Comparative Genomics">
+    <subtitle>Orthologues and paralogues</subtitle>
+    <icon-image>model/images/comparativeGenomics.png</icon-image>
+    <large-image>model/images/comparativeGenomics.png</large-image>
+    <intro-text>
+      Orthologues and Paralogues.  Orthologues are equivalent genes in
+      different species that evolved from a common ancestor by
+      speciation.  Paralogues are genes from the same homologous
+      superfamily found in another part of the genome of a particular
+      taxon. Paralogues are the result of gene duplication.
+    </intro-text>
+    <tile-name>model/inparanoid.jsp</tile-name>
+    <aspect-source name="Inparanoid" url="http://inparanoid.cgb.ki.se/"/>
+  </aspect>
+
+  <aspect name="Proteins">
+    <subtitle>Protein and&lt;br/&gt;proteomics data</subtitle>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
+    <intro-text>
+      Protein annotation, including family and domain annotation, from UniProt
+      and InterPro.
+    </intro-text>
+    <tile-name>model/proteins.jsp</tile-name>
+    <aspect-source name="InterPro" url="http://www.ebi.ac.uk/interpro"/>
+    <aspect-source name="UniProt" url="http://www.uniprot.org"/>
+  </aspect>
+
+  <aspect name="Protein Structure">
+    <subtitle>3-D protein structures</subtitle>
+    <icon-image>model/images/pstructure.gif</icon-image>
+    <large-image>model/images/pstructure.gif</large-image>
+    <intro-text>
+      3-D protein structures from the Mizuguchi lab.
+    </intro-text>
+    <tile-name>model/proteinStructure.jsp</tile-name>
+    <aspect-source name="Kenji Mizuguchi lab"
+                   url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
+  </aspect>
+
+  <aspect name="Protein Interactions">
+    <subtitle>IntAct</subtitle>
+    <icon-image>model/images/proteinInteraction.gif</icon-image>
+    <large-image>model/images/proteinInteraction.gif</large-image>
+    <tile-name></tile-name>
+    <intro-text>
+      High-throughput 2-hybrid protein interaction datasets for &lt;i&gt;D. melanogaster&lt;/i&gt;, 
+      &lt;i&gt;C. elegans&lt;/i&gt; and  &lt;i&gt;S. cerevisiae&lt;/i&gt;. The datasets were 
+      downloaded in Proteomics Standards Initiative molecular interaction PSI-MI format from the IntAct database.
+    </intro-text>
+    <tile-name>model/proteinInteraction.jsp</tile-name>
+    <aspect-source name="IntAct" url="http://www.ebi.ac.uk/intact/"/>
+  </aspect>
+
+
+  <aspect name="Gene Ontology">
+    <subtitle></subtitle>
+    <icon-image>model/images/geneOntology.png</icon-image>
+    <large-image>model/images/geneOntology.png</large-image>
+    <intro-text>
+      Gene Ontology (GO) annotations for &lt;i&gt;Drosophila&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt;.  The GO annotations are 'attached' to
+      Genes and so each Gene has a reference (link) to a list of its GO
+      annotations (if available).
+    </intro-text>
+    <tile-name>model/GO.jsp</tile-name>
+    <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
+  </aspect>
+
+
+  <aspect name="Gene Expression">
+    <subtitle></subtitle>
+    <icon-image>model/images/marray.gif</icon-image>
+    <large-image>model/images/marray.gif</large-image>
+    <intro-text>
+      &lt;p&gt;
+      Microarray-based gene expression data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyAtlas, as well as from selected data sets.
+      &lt;/p&gt;    
+    </intro-text>
+    <tile-name>model/microarray.jsp</tile-name>
+    <aspect-source name="ArrayExpress" url="http://www.ebi.ac.uk/arrayexpress/"/>
+    <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
+  </aspect>
+
+  <aspect name="Transcriptional Regulation">
+    <subtitle>Regulatory regions and&lt;br/&gt;transcription factor binding sites</subtitle>
+    <icon-image>model/images/bindingSites.png</icon-image>
+    <large-image>model/images/bindingSites.png</large-image>
+    <intro-text>
+      Regulatory regions and transcription factor binding sites in &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyReg, REDfly, Tiffin and FlyBase.
+    </intro-text>
+    <tile-name>model/bindingSites.jsp</tile-name>
+    <aspect-source name="FlyReg" url="http://www.flyreg.org/"/>
+    <aspect-source name="REDfly" url="http://redfly.ccr.buffalo.edu/"/>
+    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
+    <aspect-source name="Tiffin" url="http://servlet.sanger.ac.uk/tiffin/"/>
+  </aspect>
+
+
+  <aspect name="RNAi">
+    <subtitle>RNA interference</subtitle>
+    <icon-image>model/images/rnai.png</icon-image>
+    <large-image>model/images/rnai.png</large-image>
+    <intro-text>
+     Results from cell-based RNAi interference experiments from the
+     &lt;i&gt;Drosophila&lt;/i&gt; RNAi screening center and from
+     &lt;i&gt;in vivo&lt;/i&gt; experiments in &lt;i&gt;Caenorhabditis
+     elegans&lt;/i&gt;.  By using orthologues, gene phenotypes in other
+     organisms can be inferred from the &lt;i&gt;C. elegans&lt;/i&gt;
+     RNAi experiments.
+    </intro-text>
+    <tile-name>model/RNAi.jsp</tile-name>
+    <aspect-source name="Drosophila&lt;/i&gt; RNAi Screening Center" url="http://www.flyrnai.org/"/>
+  </aspect>
+
+  <aspect name="Pathways">
+    <subtitle></subtitle>
+    <icon-image>model/images/pathways.png</icon-image>
+    <large-image>model/images/pathways.png</large-image>
+    <intro-text>
+      KEGG pathway data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;
+    </intro-text>
+    <tile-name>model/pathways.jsp</tile-name>
+    <aspect-source name="Kegg pathway database" url="http://www.genome.jp/kegg/pathway.html/"/>
+  </aspect>
+
+  <aspect name="Disease">
+    <subtitle>Human disease matches&lt;br/&gt;from Homophila</subtitle>
+    <icon-image>model/images/disease.png</icon-image>
+    <large-image>model/images/disease.png</large-image>
+    <intro-text>
+      Homophila Human Disease to &lt;i&gt;Drosophila&lt;/i&gt; Database (version 2.1).
+    </intro-text>
+    <tile-name>model/diseaseAspect.jsp</tile-name>
+    <aspect-source name="Homophila" url="http://superfly.ucsd.edu/homophila/"/>
+  </aspect>
+
+
+  <aspect name="Resources">
+    <subtitle>Material resources</subtitle>
+    <icon-image>model/images/drosdel.gif</icon-image>
+    <large-image>model/images/drosdel.gif</large-image>
+    <intro-text>Material resources
+    </intro-text>
+    <tile-name>model/resources.jsp</tile-name>
+    <aspect-source name="DrosDel" url="http://www.drosdel.org.uk/"/>
+    <aspect-source name="Affymetrix" url="http://www.affymetrix.com/"/>
+    <aspect-source name="International &lt;i&gt;Drosophila&lt;/i&gt; Array Consortium" url="http://www.indac.net/"/>
+    <aspect-source name="NCBI" url="http://www.ncbi.nlm.nih.gov/"/>
+  </aspect>
+
+
+  <aspect name="Literature">
+    <subtitle></subtitle>
+    <icon-image>model/images/book.png</icon-image>
+    <large-image>model/images/book.png</large-image>
+    <intro-text>Literature
+    </intro-text>
+    <tile-name>model/literature.jsp</tile-name>
+    <aspect-source name="NCBI" url="http://www.ncbi.nlm.nih.gov/"/>
+  </aspect>
+
+
+  <!--
+      <aspect name="Anopheles">
+        <subtitle></subtitle>
+        <icon-image>model/images/anopheles.gif</icon-image>
+        <large-image>model/images/anopheles.gif</large-image>
+        <tile-name></tile-name>
+        <intro-text>
+        </intro-text>
+        <starting-points></starting-points>
+      </aspect>
+      -->
+</aspects>

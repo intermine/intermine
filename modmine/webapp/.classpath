@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-tools-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-webapp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web-tasks"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry kind="lib" path="/intermine-web/lib/jfreechart-1.0.3.jar"/>
+	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.6.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/modmine-dbmodel"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

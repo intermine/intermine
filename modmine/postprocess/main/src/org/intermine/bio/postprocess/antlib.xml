@@ -1,0 +1,5 @@
+<antlib>
+    <typedef
+            name="create-flybase-to-uniprot-refs"
+            classname="org.flymine.postprocess.FlyBaseUniProtRefsTask"/>
+</antlib>        
