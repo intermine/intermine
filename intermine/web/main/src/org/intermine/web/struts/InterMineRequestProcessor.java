@@ -75,6 +75,14 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             }
             
             HttpSession session = request.getSession();
+            String userAgent = request.getHeader("user-agent"); 
+                
+            if (userAgent != null && (userAgent.contains("googlebot") 
+                                || userAgent.contains("slurp") 
+                                || userAgent.contains("msnbot"))) {
+                    session.setMaxInactiveInterval(60);
+            }
+            
             ServletContext sc = session.getServletContext();
             ProfileManager pm = (ProfileManager) sc.getAttribute(Constants.PROFILE_MANAGER);
 
