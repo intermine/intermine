@@ -118,11 +118,19 @@ public class ChadoDBConverter extends BioDBConverter
                    Arrays.asList(new SetAttributeConfigAction("symbol"), DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                    Arrays.asList(DEFAULT_CONFIG_ACTION));
-
         config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs"),
                    Arrays.asList(new SetAttributeConfigAction("identifier"),
                                  DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("dbxref", "Gene", "FlyBase"), Arrays.asList(DEFAULT_CONFIG_ACTION));
+
+        config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.TRUE),
+                   Arrays.asList(new SetAttributeConfigAction("symbol"), DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
+                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs"),
+                   Arrays.asList(new SetAttributeConfigAction("identifier"),
+                                 DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("dbxref", "MRNA", "FlyBase"), Arrays.asList(DEFAULT_CONFIG_ACTION));
     }
 
     /**
@@ -878,7 +886,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected ResultSet getPubResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT feature_pub.feature_id, dbxref.accession as pub_db_identifier"
+            "SELECT DISTINCT feature_pub.feature_id, dbxref.accession as pub_db_identifier"
             + "  FROM feature_pub, dbxref, db, pub, pub_dbxref"
             + "  WHERE feature_pub.pub_id = pub.pub_id"
             + "    AND pub_dbxref.dbxref_id = dbxref.dbxref_id"
