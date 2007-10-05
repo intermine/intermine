@@ -77,6 +77,10 @@
   </class>
   <class name="org.flymine.model.genomic.CDNAClone" is-interface="true">
     <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA"/>
+    <reference name="EST" referenced-type="org.flymine.model.genomic.EST"/>
+  </class>
+  <class name="org.flymine.model.genomic.EST" is-interface="true">
+    <collection name="cDNAClones" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="EST"/>
   </class>
   <class name="org.flymine.model.genomic.ChromosomeArm"
          extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
