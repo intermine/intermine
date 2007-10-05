@@ -53,7 +53,11 @@ public class ChadoDBConverterTest extends ItemsTestCase
         itemWriter.close();
         FileWriter fw = new FileWriter("/tmp/item_out");
         PrintWriter pw = new PrintWriter(fw);
-        pw.println(itemWriter.getItems());
+        pw.println("<items>");
+        for (Object item: itemWriter.getItems()) {
+            pw.println(item);
+        }
+        pw.println("</items>");
         pw.close();
         fw.close();
         assertEquals(readItemSet("ChadoDBConverterTest.xml"), itemWriter.getItems());
@@ -87,6 +91,9 @@ public class ChadoDBConverterTest extends ItemsTestCase
                  },
                  {
                      3175411, "CG10000-RA", "FBtr0085315", "mRNA", 2528
+                 },
+                 {
+                     11494725, "3", "3L", "chromosome_arm", 24543557
                  },
                  {
                      11494726, "3", "3R", "chromosome_arm", 27905053
@@ -201,8 +208,21 @@ public class ChadoDBConverterTest extends ItemsTestCase
                 "fmax", "is_fmax_partial", "strand"
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
-            // no test yet:
-            res.setupRows(new Object[][] {});
+            Object[][] resObjects = new Object[][] {
+                {
+                    23774567, 3117509, 11494725, 14985571, false, 14990594, false, 1
+                },
+                {
+                    3201099, 3175411, 11494726, 24574104, false, 24577313, false, -1
+                },
+                {
+                    3201101, 3175413, 11494726, 24576946, false, 24577107, false, -1
+                },
+                {
+                    3201100, 3175412, 11494726, 24577165, false, 24577313, false, -1
+                }
+            };
+            res.setupRows(resObjects);
             res.setupColumnNames(columnNames);
             return res;
         }
@@ -212,7 +232,6 @@ public class ChadoDBConverterTest extends ItemsTestCase
                 "feature_id", "synonym_name", "type_name", "is_current"
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
-            // no test yet:
             Object[][] resObjects = new Object[][] {
                 {
                     23269151, "FBgn0000001_fullname_synonym", "fullname", true
