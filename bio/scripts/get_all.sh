@@ -5,7 +5,7 @@ then
 	mkdir -p $logdir
 fi
 tempname="temp_log.txt"
-tempfile=$logdir$tempname
+tempfile=$logdir/$tempname
 shared_data="/shared/data"
 config_file="./resources/get_scripts.config"
 rm $tempfile
@@ -80,7 +80,7 @@ echo "Getting FlyBase version"
 echo "==========================================================="
 
 today=$(date +"%F")
-logfile="/shared/data/download_logs/$today.txt"
+logfile="$logdir/$today.txt"
 mv $tempfile $logfile
 
 file_with_usernames=${1:-./resources/mail_list}
