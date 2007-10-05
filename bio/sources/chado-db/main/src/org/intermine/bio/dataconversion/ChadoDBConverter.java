@@ -779,7 +779,7 @@ public class ChadoDBConverter extends BioDBConverter
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    private ResultSet getFeatureRelationshipResultSet(Connection connection) throws SQLException {
+    protected ResultSet getFeatureRelationshipResultSet(Connection connection) throws SQLException {
         String query =
             "SELECT feature_relationship_id, subject_id, object_id, cvterm.name AS type_name"
             + "  FROM feature_relationship, cvterm"

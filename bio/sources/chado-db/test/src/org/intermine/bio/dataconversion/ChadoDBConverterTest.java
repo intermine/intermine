@@ -110,20 +110,26 @@ public class ChadoDBConverterTest extends ItemsTestCase
         @Override
         protected ResultSet getFeatureResultSet(@SuppressWarnings("unused") Connection connection) {
             String[] columnNames = new String[] {
-                "feature_id", "name", "uniquename", "type", "residues", "seqlen"
+                "feature_id", "name", "uniquename", "type", "seqlen"
             };
             Object[][] resObjects = new Object[][] {
                 {
-                    23269151, "4.5SRNA", "FBgn0000001", "gene", null, null
+                    23269151, "4.5SRNA", "FBgn0000001", "gene", null
                  },
                  {
-                     3117509, "CG10006", "FBgn0036461", "gene", null, 5023
+                     3117509, "CG10006", "FBgn0036461", "gene", 5023
                  },
                  {
-                     3175412, "CG10000:1", "CG10000:1", "exon", null, 148
+                     3175411, "CG10000-RA", "FBtr0085315", "mRNA", 2528
                  },
                  {
-                     3175413, "CG10000:2", "CG10000:2", "exon", null, 161
+                     11494726, "3", "3R", "chromosome_arm", 27905053
+                 },
+                 {
+                     3175412, "CG10000:1", "CG10000:1", "exon", 148
+                 },
+                 {
+                     3175413, "CG10000:2", "CG10000:2", "exon", 161
                  },
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
@@ -132,19 +138,24 @@ public class ChadoDBConverterTest extends ItemsTestCase
             return res;
         }
 
-        protected ResultSet getDbxrefResultSet(Connection connection) throws SQLException {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected ResultSet getFeatureRelationshipResultSet(@SuppressWarnings("unused")
+                                                                Connection connection) {
             String[] columnNames = new String[] {
-                "feature_id", "accession"
+                "feature_relationship_id", "subject_id", "object_id", "type_name"
             };
             Object[][] resObjects = new Object[][] {
                 {
-                    23269151, "FBgn0000001_sym1"
+                    1753955 ,    3175411 ,   3175410 , "partof"
                 },
                 {
-                    23269151, "FBgn0000001_sym2"
+                    1753948 ,    3175412 ,   3175411 , "partof"
                 },
                 {
-                    3117509, "FBgn0036461_sym1"
+                    1753948 ,    3175413 ,   3175411 , "partof"
                 },
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
@@ -154,7 +165,31 @@ public class ChadoDBConverterTest extends ItemsTestCase
         }
 
         @Override
-        protected ResultSet getFeaturePropResultSet(Connection connection) {
+        protected ResultSet getDbxrefResultSet(@SuppressWarnings("unused")
+                                               Connection connection) {
+            String[] columnNames = new String[] {
+                "feature_id", "accession", "db_name"
+            };
+            Object[][] resObjects = new Object[][] {
+                {
+                    23269151, "FBgn0000001_dbxref1", "FlyBase Annotation IDs"
+                },
+                {
+                    23269151, "FBgn0000001_dbxref2", "FlyBase"
+                },
+                {
+                    3117509, "FBgn0036461_dbxref3", "FlyBase"
+                },
+            };
+            MockMultiRowResultSet res = new MockMultiRowResultSet();
+            res.setupRows(resObjects);
+            res.setupColumnNames(columnNames);
+            return res;
+        }
+
+        @Override
+        protected ResultSet getFeaturePropResultSet(@SuppressWarnings("unused")
+                                                    Connection connection) {
             String[] columnNames = new String[] {
                 "feature_id", "value", "type_name"
             };
@@ -214,11 +249,22 @@ public class ChadoDBConverterTest extends ItemsTestCase
 
         protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
             String[] columnNames = new String[] {
-                "feature_id", "synonym_name"
+                "feature_id", "synonym_name", "type_name", "is_current"
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
             // no test yet:
-            res.setupRows(new Object[][] {});
+            Object[][] resObjects = new Object[][] {
+                {
+                    23269151, "FBgn0000001_fullname_synonym", "fullname", true
+                },
+                {
+                    23269151, "FBgn0000001_symbol_synonym", "symbol", true
+                },
+                {
+                    3117509, "FBgn0036461_symbol_3", "other", false
+                },
+            };
+            res.setupRows(resObjects);
             res.setupColumnNames(columnNames);
             return res;
         }
