@@ -11,19 +11,19 @@ package org.intermine.web.logic.query;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
+import org.intermine.web.logic.ClassKeyHelper;
 
 /**
  * When an constraint is being applied to an attribute, an instance of this class is used
@@ -126,8 +126,12 @@ public class DisplayConstraint
                     fieldName = node.getFieldName();
                 } else {
                     parentClass = MainHelper.getClass(node.getType(), model);
-                    fieldName = ClassKeyHelper.getKeyFieldNames(classKeys, node.getType())
-                        .iterator().next();
+                    Collection keyFieldNames = ClassKeyHelper
+                                .getKeyFieldNames(classKeys, node.getType());
+                    if (keyFieldNames == null || keyFieldNames.size() == 0) {
+                        return new ArrayList();
+                    }
+                    fieldName = (String) keyFieldNames.iterator().next();
                 }
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("unexpected exception", e);
