@@ -39,7 +39,9 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
@@ -95,13 +97,6 @@ public class PortalQueryAction extends InterMineAction
         if ((extId == null) || (extId.length() <= 0)) {
             extId = request.getParameter("externalids");
         }
-        if (extId == null || extId.length() == 0) {
-            recordError(new ActionMessage("errors.badportalquery"), request);
-            return mapping.findForward("failure");
-        }
-        origin = "." + origin;
-
-        session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
         // Add a message to welcome the user
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String welcomeMsg = properties.getProperty("portal.welcome" + origin);
@@ -109,6 +104,14 @@ public class PortalQueryAction extends InterMineAction
             welcomeMsg = properties.getProperty("portal.welcome");
         }
         SessionMethods.recordMessage(welcomeMsg, session);
+ 
+        if (extId == null || extId.length() == 0) {
+            recordError(new ActionMessage("errors.badportalquery"), request);
+            return mapping.findForward("failure");
+        }
+        origin = "." + origin;
+
+        session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
 
         // Set collapsed/uncollapsed state of object details UI
         // TODO This might not be used anymore
@@ -118,7 +121,6 @@ public class PortalQueryAction extends InterMineAction
         collapsed.put("summary", Boolean.FALSE);
 
         session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
-        
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String[] idList = extId.split(",");
@@ -159,58 +161,78 @@ public class PortalQueryAction extends InterMineAction
         
         List <Integer> bagList = new ArrayList <Integer> ();
         bagList.addAll(bagQueryResult.getMatches().keySet());
-        // If there are no exact matches, add converted
-        if (bagList.size() == 0) {
-            Map issues = bagQueryResult.getIssues();
-            if (issues != null && issues.size() != 0) {
-                Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
-                if (converted != null) {
-                    for (Iterator iter = converted.values().iterator(); iter.hasNext();) {
-                        Map queryMap = (Map) iter.next();
-                        for (Iterator iterator = queryMap.values().iterator(); 
-                                iterator.hasNext();) {
-                            List <ConvertedObjectPair> convertedPairList = 
-                                (ArrayList<ConvertedObjectPair>) iterator.next();
-                            for (ConvertedObjectPair convertedObjPair : convertedPairList) {
-                                bagList.add(convertedObjPair.getNewObject().getId());
-                            }
+        Map issues = bagQueryResult.getIssues();
+        if (issues != null && issues.size() != 0) {
+            Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
+            // coverted items
+            if (converted != null) {
+                StringBuffer convertedNames = new StringBuffer();
+                for (Iterator iter = converted.values().iterator(); iter.hasNext();) {
+                    Map<String, ConvertedObjectPair> queryMap = 
+                        (Map<String, ConvertedObjectPair>) iter.next();
+                    if (convertedNames.length() > 0) {
+                        convertedNames.append(",");
+                    }
+                    convertedNames.append(queryMap.keySet().iterator().next());
+                    for (Iterator iterator = queryMap.values().iterator();
+                    iterator.hasNext();) {
+                        List <ConvertedObjectPair> convertedPairList = 
+                            (ArrayList<ConvertedObjectPair>) iterator.next();
+                        for (ConvertedObjectPair convertedObjPair : convertedPairList) {
+                            convertedNames.append(
+                            " ("
+                            + DynamicUtil
+                            .getFriendlyName(convertedObjPair.getOldObject().getClass())
+                            + ") -> (" 
+                            + DynamicUtil
+                            .getFriendlyName(convertedObjPair.getNewObject().getClass())
+                            + ")");
+                            bagList.add(convertedObjPair.getNewObject().getId());
                         }
                     }
-                } // Duplicates were found 
-                else if (issues.get(BagQueryResult.DUPLICATE) != null) {
-                    List<Integer> objectIds = new ArrayList<Integer>();
-                    Map<String, Map> duplicateMap = (Map<String, Map>) 
-                                                               issues.get(BagQueryResult.DUPLICATE);
-                    for (Map<String, List> innerMap : duplicateMap.values()) {
-                        for (List<InterMineObject> duplicateObjList : innerMap.values()) {
-                            for (InterMineObject imObj : duplicateObjList) {
-                                objectIds.add(imObj.getId());
-                            }
-                        }
-                    }
-                    List intermineObjectList = os.getObjectsByIds(objectIds);
-                    WebPathCollection webPathCollection = 
-                        new WebPathCollection(os, new Path(model, className), intermineObjectList
-                                              , model, webConfig,
-                                          classKeys);
-                    PagedTable pc = new PagedTable(webPathCollection);
-                    String identifier = "col" + index++;
-                    SessionMethods.setResultsTable(session, identifier, pc);
-                    
-                    SessionMethods.recordMessage(properties.getProperty("portal.welcome" 
-                                                                        + origin), session);
-                    recordMessage(new ActionMessage("portal.duplicates", extId), request);
-
-                    
-                    return new ForwardParameters(mapping.findForward("results"))
-                                    .addParameter("noSelect", "true")
-                                    .addParameter("table", identifier)
-                                    .addParameter("size", "10")
-                                    .addParameter("trail", "").forward();
-                    
+                    recordMessage(new ActionMessage("portal.converted", 
+                                                    convertedNames.toString()), request);
                 }
+            } // Duplicates were found 
+            if (issues.get(BagQueryResult.DUPLICATE) != null) {
+                Map<String, Map> duplicateMap = (Map<String, Map>) 
+                issues.get(BagQueryResult.DUPLICATE);
+                StringBuffer duplicateNames = new StringBuffer();
+                for (Map<String, List> innerMap : duplicateMap.values()) {
+                    for (String name : innerMap.keySet()) {
+                        if (duplicateNames.length() > 0) {
+                            duplicateNames.append(",");
+                        }
+                        duplicateNames.append(name);
+                    }
+                    for (List<InterMineObject> duplicateObjList : innerMap.values()) {
+                        for (InterMineObject imObj : duplicateObjList) {
+                            bagList.add(imObj.getId());
+                        }
+                    }
+                }
+                List intermineObjectList = os.getObjectsByIds(bagList);
+                WebPathCollection webPathCollection = 
+                    new WebPathCollection(os, new Path(model, className), intermineObjectList
+                                          , model, webConfig,
+                                          classKeys);
+                PagedTable pc = new PagedTable(webPathCollection);
+                String identifier = "col" + index++;
+                SessionMethods.setResultsTable(session, identifier, pc);
+
+                recordMessage(new ActionMessage("portal.duplicates", 
+                                                duplicateNames.toString()), request);
+
+
+                return new ForwardParameters(mapping.findForward("results"))
+                .addParameter("table", identifier)
+                .addParameter("size", "10")
+                .addParameter("trail", "").forward();
+
             }
+            // ignore non matches
         }
+
         // Go to the object details page
         if ((bagList.size() == 1) && (idList.length == 1)) {
             return new ForwardParameters(mapping.findForward("objectDetails"))
@@ -223,6 +245,7 @@ public class PortalQueryAction extends InterMineAction
             profile.saveBag(imBag.getName(), imBag);
             return new ForwardParameters(mapping.findForward("bagDetails"))
             .addParameter("bagName", imBag.getName()).forward();
+        // No matches
         } else {
             recordMessage(new ActionMessage("portal.nomatches", extId), request);
 
