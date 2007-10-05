@@ -61,40 +61,6 @@ public class ChadoDBConverterTest extends ItemsTestCase
 
     private class TestChadoDBConverter extends ChadoDBConverter
     {
-        /* (non-Javadoc)
-         * @see org.intermine.bio.dataconversion.ChadoDBConverter#getPubResultSet(java.sql.Connection)
-         */
-        @Override
-        protected ResultSet getPubResultSet(Connection connection) throws SQLException {
-            String[] columnNames = new String[] {
-                "feature_id", "pub_db_identifier"
-            };
-            Object[][] resObjects = new Object[][] {
-                {
-                    23269151, "8344257"
-                },
-                {
-                    23269151, "8543160"
-                },
-                {
-                    3117509, "2892759"
-                },
-                {
-                    3175412, "1988156"
-                },
-                {
-                    3175412, "2612903"
-                },
-                {
-                    3175412, "7720555"
-                }
-            };
-            MockMultiRowResultSet res = new MockMultiRowResultSet();
-            res.setupRows(resObjects);
-            res.setupColumnNames(columnNames);
-            return res;
-        }
-
         @Override
         protected int getChadoOrganismId(@SuppressWarnings("unused") Connection connection) {
             return 1;
@@ -201,13 +167,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
                     23269151, "3-[21]", "promoted_genetic_location"
                 },
                 {
-                    23269151, "65A-65A; (determined by in situ hybridisation)", "derived_experimental_cyto"
-                },
-                {
-                    23269151, "65A-65A; Left limit from in situ hybridisation (FBrf0042734) Right limit from in situ hybridisation (FBrf0042734)", "derived_computed_cyto"
-                },
-                {
-                    23269151, "A function for the 4.5S RNA is still in the realm of speculation.", "misc"
+                    23269151, "A function for the 4.5S RNA is unknown", "misc"
                 },
                 {
                     23269151, "non_protein_coding_gene", "promoted_gene_type"
@@ -264,6 +224,40 @@ public class ChadoDBConverterTest extends ItemsTestCase
                     3117509, "FBgn0036461_symbol_3", "other", false
                 },
             };
+            res.setupRows(resObjects);
+            res.setupColumnNames(columnNames);
+            return res;
+        }
+
+        /* (non-Javadoc)
+         * @see org.intermine.bio.dataconversion.ChadoDBConverter#getPubResultSet(java.sql.Connection)
+         */
+        @Override
+        protected ResultSet getPubResultSet(Connection connection) throws SQLException {
+            String[] columnNames = new String[] {
+                "feature_id", "pub_db_identifier"
+            };
+            Object[][] resObjects = new Object[][] {
+                {
+                    23269151, "8344257"
+                },
+                {
+                    23269151, "8543160"
+                },
+                {
+                    3117509, "2892759"
+                },
+                {
+                    3175412, "1988156"
+                },
+                {
+                    3175412, "2612903"
+                },
+                {
+                    3175412, "7720555"
+                }
+            };
+            MockMultiRowResultSet res = new MockMultiRowResultSet();
             res.setupRows(resObjects);
             res.setupColumnNames(columnNames);
             return res;
