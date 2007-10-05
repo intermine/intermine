@@ -363,7 +363,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
-    public void store(InterMineObject o) throws ObjectStoreException {
+    public void store(Object o) throws ObjectStoreException {
         Connection c = null;
         try {
             c = getConnection();
@@ -382,26 +382,27 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param o the object to store
      * @throws ObjectStoreException sometimes
      */
-    protected void storeWithConnection(Connection c, InterMineObject o)
+    protected void storeWithConnection(Connection c, Object o)
     throws ObjectStoreException {
         boolean wasInTransaction = isInTransactionWithConnection(c);
         if (!wasInTransaction) {
             beginTransactionWithConnection(c);
         }
         try {
-            boolean doDeletes = populateIds(c, o);
+            boolean doDeletes = (o instanceof InterMineObject ? populateIds(c,
+                        (InterMineObject) o) : false);
             StringConstructor xml = null;
             String objectClass = null;
             Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
-            Iterator cldIter = classDescriptors.iterator();
-            while (cldIter.hasNext()) {
-                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-                ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                String tableName = DatabaseUtil.getTableName(tableMaster);
-                if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
-                    if (doDeletes) {
-                        batch.deleteRow(c, tableName, "id", o.getId());
+            if (doDeletes) {
+                Iterator cldIter = classDescriptors.iterator();
+                while (cldIter.hasNext()) {
+                    ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                    String tableName = DatabaseUtil.getTableName(tableMaster);
+                    if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
+                        batch.deleteRow(c, tableName, "id", ((InterMineObject) o).getId());
                         tablesAltered.add(tableName);
                     }
                 }
@@ -418,7 +419,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     validFieldNames.add(fieldName);
                 }
             }
-            cldIter = classDescriptors.iterator();
+            Iterator cldIter = classDescriptors.iterator();
             while (cldIter.hasNext()) {
                 ClassDescriptor cld = (ClassDescriptor) cldIter.next();
                 ClassDescriptor tableMaster = schema.getTableMaster(cld);
@@ -439,7 +440,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
 
                 if (!schema.getMissingTables().contains(tableInfo.tableName.toLowerCase())) {
                     tablesWritten++;
-                    if (schema.isFlatMode() && (!schema.isTruncated(schema.getTableMaster(cld)))
+                    if (schema.isFlatMode(cld.getType()) && (!schema.isTruncated(schema
+                                    .getTableMaster(cld)))
                             && (!(cld.getType().equals(o.getClass())))) {
                         Set decomposed = DynamicUtil.decomposeClass(o.getClass());
                         if (!((decomposed.size() == 1) && cld.getType().equals(decomposed.iterator()
@@ -510,7 +512,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                         }
                         values[colNo] = value;
                     }
-                    if (schema.isFlatMode()) {
+                    if (schema.isFlatMode(cld.getType())) {
                         Iterator validFieldNameIter = validFieldNames.iterator();
                         while (validFieldNameIter.hasNext()) {
                             String validFieldName = (String) validFieldNameIter.next();
@@ -522,7 +524,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             }
                         }
                     }
-                    batch.addRow(c, tableInfo.tableName, o.getId(), tableInfo.colNames, values);
+                    batch.addRow(c, tableInfo.tableName, (o instanceof InterMineObject
+                                ? ((InterMineObject) o).getId() : null), tableInfo.colNames,
+                            values);
                     tablesAltered.add(tableInfo.tableName);
                 }
 
@@ -566,8 +570,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                                     collIter.next();
                                 batch.addRow(c, indirectTableName, indirColNames[0],
                                              indirColNames[1],
-                                             (swap ? o.getId() : inCollection.getId()).intValue(),
-                                             (swap ? inCollection.getId() : o.getId()).intValue());
+                                             (swap ? ((InterMineObject) o).getId()
+                                              : inCollection.getId()).intValue(),
+                                             (swap ? inCollection.getId()
+                                              : ((InterMineObject) o).getId()).intValue());
                                 tablesAltered.add(indirectTableName);
                             }
                         }
@@ -578,7 +584,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 throw new ObjectStoreException("Object " + DynamicUtil.decomposeClass(o.getClass())
                         + " does not map onto any database table.");
             }
-            invalidateObjectById(o.getId());
+            if (o instanceof InterMineObject) {
+                invalidateObjectById(((InterMineObject) o).getId());
+            }
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while storing", e);
         } catch (IllegalAccessException e) {
@@ -690,9 +698,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             int colCount = allColumns.getAttributes().size() + allColumns.getReferences().size();
             boolean isTruncated = schema.isTruncated(tableMaster);
             boolean hasObject = "InterMineObject".equals(tableName) || (!(schema.isMissingNotXml()
-                        || schema.isFlatMode()));
+                        || schema.isFlatMode(tableMaster.getType())));
             if (isTruncated) {
-                if (schema.isFlatMode()) {
+                if (schema.isFlatMode(tableMaster.getType())) {
                     colCount++;
                 }
                 colCount++;
@@ -709,7 +717,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 colNo++;
             }
             if (isTruncated) {
-                if (schema.isFlatMode()) {
+                if (schema.isFlatMode(tableMaster.getType())) {
                     retval.colNames[colNo] = "objectClass";
                     colNo++;
                 }
@@ -1294,7 +1302,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     protected InterMineObject internalGetObjectById(Integer id,
             Class clazz) throws ObjectStoreException {
-        if (schema.isFlatMode()) {
+        if (schema.isFlatMode(clazz)) {
             return super.internalGetObjectById(id, clazz);
         }
         Connection c = null;

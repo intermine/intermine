@@ -156,8 +156,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         Set toIds = new TreeSet();
                         Iterator rowIter = retval.iterator();
                         while (rowIter.hasNext()) {
-                            InterMineObject o = (InterMineObject)
-                                ((ResultsRow) rowIter.next()).get(0);
+                            Object o = ((ResultsRow) rowIter.next()).get(0);
                             Map fromColls = new HashMap();
                             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(o
                                     .getClass());
@@ -201,7 +200,9 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                 }
                             }
                             froms.put(o, fromColls);
-                            doneAlready.add(o.getId());
+                            if (o instanceof InterMineObject) {
+                                doneAlready.add(((InterMineObject) o).getId());
+                            }
                         }
                         // Now, froms is a Map from object to be populated to a Map from collection
                         // name to a Set of ids of objects that should be in the collection.
@@ -271,8 +272,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         Iterator fromIter = froms.entrySet().iterator();
                         while (fromIter.hasNext()) {
                             Map.Entry fromEntry = (Map.Entry) fromIter.next();
-                            InterMineObject objToPopulate = (InterMineObject) fromEntry
-                                .getKey();
+                            Object objToPopulate = fromEntry.getKey();
                             Map collectionsToPopulate = (Map) fromEntry.getValue();
                             Iterator collectionIter = collectionsToPopulate.entrySet().iterator();
                             while (collectionIter.hasNext()) {
@@ -299,15 +299,20 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                     (ObjectStoreTranslatingImpl) os;
                                                 ItemToObjectTranslator itot =
                                                     (ItemToObjectTranslator) osti.getTranslator();
-                                                String itemIdentifer =
-                                                    itot.idToIdentifier(objToPopulate.getId());
+                                                String itemIdentifer = (objToPopulate instanceof
+                                                        InterMineObject ? itot.idToIdentifier(
+                                                            ((InterMineObject) objToPopulate)
+                                                            .getId()) : null);
                                                 String idToAddIdentifer =
                                                     itot.idToIdentifier(idToAdd);
                                                 String message = 
                                                     "Collection " + collectionName + " in object "
-                                                    + objToPopulate.getId() + " ("  + itemIdentifer
-                                                    + ") refers to object with id " + idToAdd + " ("
-                                                    + idToAddIdentifer + ") which doesn't exist";
+                                                    + (objToPopulate instanceof InterMineObject
+                                                            ? ((InterMineObject) objToPopulate)
+                                                            .getId() : null) + " ("
+                                                    + itemIdentifer + ") refers to object with id "
+                                                    + idToAdd + " (" + idToAddIdentifer
+                                                    + ") which doesn't exist";
                                                 throw new ObjectStoreException(message);
                                             }
                                         }

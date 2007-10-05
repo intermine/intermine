@@ -102,14 +102,14 @@ public class ObjectStoreDataLoader extends DataLoader
             SingletonResults res = os.executeSingleton(q);
             res.setNoOptimise();
             res.setNoExplain();
-            res.setBatchSize(1000);
+            res.setBatchSize(5000);
             Iterator iter = res.iterator();
             long time4 = System.currentTimeMillis();
             long time1, time2, time3;
             while (iter.hasNext()) {
                 time1 = System.currentTimeMillis();
                 timeSpentLoop += time1 - time4;
-                InterMineObject obj = (InterMineObject) iter.next();
+                Object obj = iter.next();
                 time2 = System.currentTimeMillis();
                 timeSpentRead += time2 - time1;
                 //if (obj.getClass().getName().equals("org.intermine.model.chado.feature")) {

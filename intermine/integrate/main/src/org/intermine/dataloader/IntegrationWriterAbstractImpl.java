@@ -156,7 +156,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
-    public void store(InterMineObject o, Source source, Source skelSource)
+    public void store(Object o, Source source, Source skelSource)
             throws ObjectStoreException {
         if (o == null) {
             throw new NullPointerException("Object o should not be null");
@@ -165,8 +165,9 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         store(o, source, skelSource, SOURCE);
         long now = (new Date()).getTime();
         if (now - time > 20000) {
-            LOG.info("Stored object " + o.getClass().getName() + ":" + o.getId() + " - took "
-                    + (now - time) + " ms");
+            LOG.info("Stored object " + o.getClass().getName() + (o instanceof InterMineObject
+                        ? ":" + ((InterMineObject) o).getId() : "") + " - took " + (now - time)
+                    + " ms");
         }
     }
 
@@ -182,7 +183,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @return the InterMineObject that was written to the database
      * @throws ObjectStoreException if an error occurs in the underlying objectstore
      */
-    protected abstract InterMineObject store(InterMineObject o, Source source,
+    protected abstract InterMineObject store(Object o, Source source,
             Source skelSource, int type) throws ObjectStoreException;
 
     protected long timeSpentRecursing = 0;
@@ -201,7 +202,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @throws IllegalAccessException should never happen
      * @throws ObjectStoreException if an error ocurs in the underlying objectstore
      */
-    protected void copyField(InterMineObject srcObj, InterMineObject dest,
+    protected void copyField(Object srcObj, Object dest,
             Source source, Source skelSource, FieldDescriptor field, int type)
             throws IllegalAccessException, ObjectStoreException {
         String fieldName = field.getName();
@@ -312,8 +313,10 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                     }*/
                     break;
                 case FieldDescriptor.M_N_RELATION:
-                    if ((type == SOURCE) || ((type == FROM_DB) && ((dest.getId() == null)
-                                || (!dest.getId().equals(srcObj.getId()))))) {
+                    if ((type == SOURCE) || ((type == FROM_DB)
+                                && ((((InterMineObject) dest).getId() == null)
+                                || (!((InterMineObject) dest).getId()
+                                    .equals(((InterMineObject) srcObj).getId()))))) {
                         Collection destCol = (Collection) TypeUtil.getFieldValue(dest, fieldName);
                         Collection col = (Collection) TypeUtil.getFieldValue(srcObj, fieldName);
                         Iterator colIter = col.iterator();
@@ -415,7 +418,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @param o the object to store
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public void store(InterMineObject o) throws ObjectStoreException {
+    public void store(Object o) throws ObjectStoreException {
         osw.store(o);
     }
 

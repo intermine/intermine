@@ -56,13 +56,16 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         return os;
     }
 
-    public void store(InterMineObject o) throws ObjectStoreException {
-        if (o.getId() == null) {
-            Integer newId = getSerial();
-            o.setId(newId);
-            storedObjects.put(newId, o);
-        } else {
-            storedObjects.put(o.getId(), o);
+    public void store(Object nimo) throws ObjectStoreException {
+        if (nimo instanceof InterMineObject) {
+            InterMineObject o = (InterMineObject) nimo;
+            if (o.getId() == null) {
+                Integer newId = getSerial();
+                o.setId(newId);
+                storedObjects.put(newId, o);
+            } else {
+                storedObjects.put(o.getId(), o);
+            }
         }
     }
 

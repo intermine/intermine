@@ -71,14 +71,17 @@ public class XmlDataLoader extends DataLoader
 
             Iterator iter = objects.iterator();
             while (iter.hasNext()) {
-                InterMineObject o = (InterMineObject) iter.next();
-                o.setId(new Integer(idCounter++));
+                Object o = iter.next();
+                if (o instanceof InterMineObject) {
+                    InterMineObject io = (InterMineObject) o;
+                    io.setId(new Integer(idCounter++));
+                }
             }
 
             getIntegrationWriter().beginTransaction();
             iter = objects.iterator();
             while (iter.hasNext()) {
-                getIntegrationWriter().store((InterMineObject) iter.next(), source, skelSource);
+                getIntegrationWriter().store(iter.next(), source, skelSource);
                 opCount++;
                 if (opCount % 1000 == 0) {
                     long now = (new Date()).getTime();

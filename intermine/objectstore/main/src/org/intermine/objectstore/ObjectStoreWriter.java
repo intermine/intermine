@@ -57,7 +57,7 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param o the object to store
      * @throws ObjectStoreException if an error occurs during storage of the object
      */
-    public void store(InterMineObject o) throws ObjectStoreException;
+    public void store(Object o) throws ObjectStoreException;
 
     /**
      * Delete an object from this ObjectStore

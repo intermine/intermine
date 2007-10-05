@@ -28,6 +28,7 @@
         <attribute name="end" type="java.lang.String"/>
         <reference name="department" referenced-type="org.intermine.model.testmodel.Department" reverse-reference="employees"/>
         <reference name="departmentThatRejectedMe" referenced-type="org.intermine.model.testmodel.Department" reverse-reference="rejectedEmployee"/>
+        <collection name="simpleObjects" referenced-type="org.intermine.model.testmodel.SimpleObject" reverse-reference="employee"/>
     </class>
     <class name="org.intermine.model.testmodel.Department" extends="org.intermine.model.testmodel.RandomInterface" is-interface="false">
         <attribute name="name" type="java.lang.String"/>
@@ -79,5 +80,9 @@
     <class name="org.intermine.model.testmodel.Bank" is-interface="false">
         <attribute name="name" type="java.lang.String"/>
         <collection name="debtors" referenced-type="org.intermine.model.testmodel.Broke" reverse-reference="bank"/>
+    </class>
+    <class name="org.intermine.model.testmodel.SimpleObject" is-interface="false" extends="java.lang.Object">
+        <attribute name="name" type="java.lang.String"/>
+        <reference name="employee" referenced-type="org.intermine.model.testmodel.Employee" reverse-reference="simpleObjects"/>
     </class>
 </model>

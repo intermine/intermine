@@ -58,14 +58,15 @@ public class RandomDataGenerator extends FileConverter
      * Constructor.
      *
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the data model
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public RandomDataGenerator(ItemWriter writer)
+    public RandomDataGenerator(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
-        super(writer);
+        super(writer, model);
 
-        itemFactory = new ItemFactory(Model.getInstanceByName("performancetest1"), "-1_");
+        itemFactory = new ItemFactory(model, "-1_");
     }
 
     /**
@@ -250,7 +251,7 @@ public class RandomDataGenerator extends FileConverter
         return new BigDecimal(retval.toString());
     }
 
-    private String newId(String className) {
+    protected String newId(String className) {
         Integer id = (Integer) ids.get(className);
         if (id == null) {
             id = new Integer(0);
@@ -260,7 +261,7 @@ public class RandomDataGenerator extends FileConverter
         return id.toString();
     }
 
-    private Item createItem(String className) {
+    public Item createItem(String className) {
         return itemFactory.makeItem(alias(className) + "_" + newId(className), NS + className, "");
     }
 }

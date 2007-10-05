@@ -169,7 +169,7 @@ public class TorqueModelOutput
         if (!schema.getMissingTables().contains(className.toLowerCase())) {
             // Every class and interface has a separate table
             sb.append(INDENT + "<table name=\"" + className + "\">" + ENDL);
-            if ((!(schema.isMissingNotXml() || schema.isFlatMode()))
+            if ((!(schema.isMissingNotXml() || schema.isFlatMode(cld.getType())))
                     || InterMineObject.class.equals(cld.getType())) {
                 sb.append(generateColumn("OBJECT", "java.lang.String"));
             }
@@ -184,19 +184,21 @@ public class TorqueModelOutput
                 ReferenceDescriptor field = (ReferenceDescriptor) fieldIter.next();
                 sb.append(generateColumn(DatabaseUtil.getColumnName(field), "java.lang.Integer"));
             }
-            if (schema.isTruncated(cld)) {
-                if (schema.isFlatMode()) {
-                    sb.append(generateColumn("objectClass", "java.lang.String"));
+            if (cld.getFieldDescriptorByName("id") != null) {
+                if (schema.isTruncated(cld)) {
+                    if (schema.isFlatMode(cld.getType())) {
+                        sb.append(generateColumn("objectClass", "java.lang.String"));
+                    }
+                    sb.append(generateColumn("class", "java.lang.String"));
+                    sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
+                            + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
+                            + INDENT + INDENT + INDENT + "<unique-column name=\"class\"/>" + ENDL
+                            + INDENT + INDENT + "</unique>" + ENDL);
+                } else {
+                    sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
+                            + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
+                            + INDENT + INDENT + "</unique>" + ENDL);
                 }
-                sb.append(generateColumn("class", "java.lang.String"));
-                sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
-                        + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
-                        + INDENT + INDENT + INDENT + "<unique-column name=\"class\"/>" + ENDL
-                        + INDENT + INDENT + "</unique>" + ENDL);
-            } else {
-                sb.append(INDENT + INDENT + "<unique name=\"" + className + "_pkey\">" + ENDL
-                        + INDENT + INDENT + INDENT + "<unique-column name=\"id\"/>" + ENDL
-                        + INDENT + INDENT + "</unique>" + ENDL);
             }
             sb.append(INDENT + "</table>" + ENDL);
             return sb.toString();

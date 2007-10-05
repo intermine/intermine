@@ -266,9 +266,6 @@ public class Model
      * @return a Set of ClassDescriptor objects
      */
     public Set<ClassDescriptor> getClassDescriptorsForClass(Class c) {
-        if (!InterMineObject.class.isAssignableFrom(c)) {
-            return Collections.emptySet();
-        }
         synchronized (classToClassDescriptorSet) {
             Set<ClassDescriptor> retval = classToClassDescriptorSet.get(c);
             if (retval == null) {
@@ -312,9 +309,6 @@ public class Model
      * @return a Map of FieldDescriptor objects
      */
     public Map<String, FieldDescriptor> getFieldDescriptorsForClass(Class c) {
-        if (!InterMineObject.class.isAssignableFrom(c)) {
-            return Collections.emptyMap();
-        }
         synchronized (classToFieldDescriptorMap) {
             Map<String, FieldDescriptor> retval = classToFieldDescriptorMap.get(c);
             if (retval == null) {

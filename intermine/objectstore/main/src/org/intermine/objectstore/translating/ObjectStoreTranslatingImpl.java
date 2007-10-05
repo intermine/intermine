@@ -154,10 +154,11 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
                 while (rowIter.hasNext()) {
                     Object o = rowIter.next();
                     if (o instanceof InterMineObject) {
-                        InterMineObject imo =
-                            translator.translateFromDbObject((InterMineObject) o);
+                        Object imo = translator.translateFromDbObject((InterMineObject) o);
                         row.add(imo);
-                        cacheObjectById(imo.getId(), imo);
+                        if (imo instanceof InterMineObject) {
+                            cacheObjectById(((InterMineObject) imo).getId(), (InterMineObject) imo);
+                        }
                         objectCount++;
                     } else {
                         row.add(o);

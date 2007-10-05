@@ -86,11 +86,15 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
     /**
      * {@inheritDoc}
      */
-    protected InterMineObject store(InterMineObject o, Source source, Source skelSource,
+    protected InterMineObject store(Object nimo, Source source, Source skelSource,
             int type) throws ObjectStoreException {
-        if (o == null) {
+        if (nimo == null) {
             return null;
         }
+        if (!(nimo instanceof InterMineObject)) {
+            return null;
+        }
+        InterMineObject o = (InterMineObject) nimo;
         Set equivalentObjects = getEquivalentObjects(o, source);
         Integer newId = null;
         Iterator equivalentIter = equivalentObjects.iterator();

@@ -80,6 +80,7 @@ import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.AlwaysMap;
 import org.intermine.util.CombinedIterator;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 import org.apache.torque.engine.database.model.Domain;
@@ -103,6 +104,7 @@ public class SqlGenerator
     protected static final int ID_ONLY = 2;
     protected static final int NO_ALIASES_ALL_FIELDS = 3;
     protected static final int QUERY_FOR_PRECOMP = 4;
+    protected static final int QUERY_SUBQUERY_EXISTS = 5;
 
     protected static Map sqlCache = new WeakHashMap();
     protected static Map tablenamesCache = new WeakHashMap();
@@ -119,7 +121,7 @@ public class SqlGenerator
     public static String generateQueryForId(Integer id, Class clazz,
             DatabaseSchema schema) throws ObjectStoreException {
         ClassDescriptor tableMaster;
-//        if (schema.isFlatMode()) {
+//        if (schema.isFlatMode(clazz)) {
 //            Query q = new Query();
 //            QueryClass qc = new QueryClass(clazz);
 //            q.addFrom(qc);
@@ -328,8 +330,7 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     public static String generate(Query q, int start, int limit, DatabaseSchema schema, Database db,
-                                  Map bagTableNames)
-            throws ObjectStoreException {
+            Map bagTableNames) throws ObjectStoreException {
         synchronized (q) {
             Map schemaCache = getCacheForSchema(schema);
             CacheEntry cacheEntry = (CacheEntry) schemaCache.get(q);
@@ -775,7 +776,7 @@ public class SqlGenerator
                 Map fields = schema.getModel().getFieldDescriptorsForClass(qc.getType());
                 Map fieldToAlias = state.getFieldToAlias(qc);
                 Iterator fieldIter = null;
-                if (schema.isFlatMode()) {
+                if (schema.isFlatMode(qc.getType())) {
                     List iterators = new ArrayList();
                     ClassDescriptor cld = schema.getTableMaster((ClassDescriptor) schema.getModel()
                         .getClassDescriptorsForClass(qc.getType()).iterator().next());
@@ -795,7 +796,8 @@ public class SqlGenerator
                         Map.Entry aliasEntry = (Map.Entry) aliasIter.next();
                         ClassDescriptor cld = (ClassDescriptor) aliasEntry.getKey();
                         String alias = (String) aliasEntry.getValue();
-                        if (cld.getAllFieldDescriptors().contains(field) || schema.isFlatMode()) {
+                        if (cld.getAllFieldDescriptors().contains(field) || schema.isFlatMode(qc
+                                    .getType())) {
                             fieldToAlias.put(name, alias + "." + DatabaseUtil.getColumnName(field));
                             break;
                         }
@@ -814,7 +816,7 @@ public class SqlGenerator
                             break;
                         }
                     }
-                } else if (schema.isFlatMode()) {
+                } else if (schema.isFlatMode(qc.getType())) {
                     // We never want an OBJECT column in this case. However, we may want an
                     // objectclass column.
                     fieldToAlias.put("objectclass", baseAlias + ".objectclass");
@@ -1321,7 +1323,7 @@ public class SqlGenerator
             DatabaseSchema schema) throws ObjectStoreException {
         Query subQ = c.getQuery();
         buffer.append((c.getOp() == ConstraintOp.EXISTS ? "EXISTS(" : "(NOT EXISTS(")
-                         + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_CONSTRAINT,
+                         + generate(subQ, schema, state.getDb(), null, QUERY_SUBQUERY_EXISTS,
                                     state.getBagTableNames())
                          + (c.getOp() == ConstraintOp.EXISTS ? ")" : "))"));
     }
@@ -1383,7 +1385,8 @@ public class SqlGenerator
         if (arg1Desc == null) {
             throw new ObjectStoreException("Reference "
                     + IqlQuery.queryReferenceToString(q, arg1, new ArrayList())
-                    + "." + arg1.getFieldName() + " is not in the model");
+                    + "." + arg1.getFieldName() + " is not in the model - fields available in "
+                    + arg1.getQcType() + " are " + fieldNameToFieldDescriptor.keySet());
         }
         if (arg1 instanceof QueryObjectReference) {
             String arg1Alias = (String) state.getFieldToAlias(arg1.getQueryClass()).get(arg1Desc
@@ -1730,6 +1733,10 @@ public class SqlGenerator
      */
     protected static void queryClassToString(StringBuffer buffer, QueryClass qc, Query q,
             DatabaseSchema schema, int kind, State state) throws ObjectStoreException {
+        if ((kind == ID_ONLY) && (!InterMineObject.class.isAssignableFrom(qc.getType()))) {
+            throw new ObjectStoreException("QueryClass for non-InterMineObject class does not"
+                    + " have an ID");
+        }
         String alias = (String) q.getAliases().get(qc);
         Map fieldToAlias = state.getFieldToAlias(qc);
         if (alias == null) {
@@ -1737,7 +1744,13 @@ public class SqlGenerator
                     + " but the QueryClass is not in the FROM list of that query. QueryClass: "
                     + qc + ", aliases: " + q.getAliases());
         }
-        if (kind == QUERY_SUBQUERY_CONSTRAINT) {
+        if (kind == QUERY_SUBQUERY_EXISTS) {
+            if (InterMineObject.class.isAssignableFrom(qc.getType())) {
+                queryClassToString(buffer, qc, q, schema, QUERY_SUBQUERY_CONSTRAINT, state);
+            } else {
+                queryClassToString(buffer, qc, q, schema, NO_ALIASES_ALL_FIELDS, state);
+            }
+        } else if (kind == QUERY_SUBQUERY_CONSTRAINT) {
             buffer.append(DatabaseUtil.generateSqlCompatibleName(alias))
                 .append(".id");
         } else {
@@ -1754,12 +1767,12 @@ public class SqlGenerator
                 needComma = true;
             }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)
-                    || ((kind == QUERY_NORMAL) && schema.isFlatMode())
+                    || ((kind == QUERY_NORMAL) && schema.isFlatMode(qc.getType()))
                     || (kind == QUERY_FOR_PRECOMP)) {
                 Iterator fieldIter = null;
                 ClassDescriptor cld = schema.getModel().getClassDescriptorByName(qc.getType()
                         .getName());
-                if (schema.isFlatMode() && (kind == QUERY_NORMAL)) {
+                if (schema.isFlatMode(qc.getType()) && (kind == QUERY_NORMAL)) {
                     List iterators = new ArrayList();
                     DatabaseSchema.Fields fields = schema.getTableFields(schema
                             .getTableMaster(cld));
@@ -1799,7 +1812,8 @@ public class SqlGenerator
                                     + columnName.toLowerCase() + "\"");
                     }
                 }
-                if (schema.isFlatMode() && schema.isTruncated(schema.getTableMaster(cld))) {
+                if (schema.isFlatMode(qc.getType())
+                        && schema.isTruncated(schema.getTableMaster(cld))) {
                     buffer.append(", ")
                         .append((String) fieldToAlias.get("objectclass"))
                         .append(" AS ")
@@ -2093,7 +2107,12 @@ public class SqlGenerator
             if (!((node instanceof QueryValue) || (node instanceof QueryPathExpression))) {
                 StringBuffer buffer = new StringBuffer();
                 if (node instanceof QueryClass) {
-                    queryClassToString(buffer, (QueryClass) node, q, schema, ID_ONLY, state);
+                    if (TypeUtil.getFieldInfo(((QueryClass) node).getType(), "id") != null) {
+                        queryClassToString(buffer, (QueryClass) node, q, schema, ID_ONLY, state);
+                    } else {
+                        queryClassToString(buffer, (QueryClass) node, q, schema,
+                                NO_ALIASES_ALL_FIELDS, state);
+                    }
                     if (!seen.contains(buffer.toString())) {
                         retval.append(needComma ? ", " : " ORDER BY ");
                         needComma = true;
@@ -2116,7 +2135,7 @@ public class SqlGenerator
                                 // This means that the field's QueryClass is present in the SELECT
                                 // list, so adding the field artificially will not alter the number
                                 // of rows of a DISTINCT query.
-                                if (!schema.isFlatMode()) {
+                                if (!schema.isFlatMode(ref.getQueryClass().getType())) {
                                     buffer.append(" AS ")
                                         .append(state.getOrderByAlias());
                                     state.addToOrderBy(buffer.toString());
@@ -2143,7 +2162,7 @@ public class SqlGenerator
                                 // This means that this field is not in the SELECT list, but its
                                 // FromElement is, therefore adding it artificially to the SELECT
                                 // list will not alter the number of rows of a DISTINCT query.
-                                if (!schema.isFlatMode()) {
+                                if (!schema.isFlatMode(InterMineObject.class)) {
                                     buffer.append(" AS ")
                                         .append(state.getOrderByAlias());
                                     state.addToOrderBy(buffer.toString());

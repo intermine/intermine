@@ -6,14 +6,19 @@
 
   <sources>
     <source name="OneAttribute1" type="random">
-      <property name="count" value="1000000"/>
+      <property name="count" value="2000000"/>
       <property name="src.data.dir" location="data"/>
       <property name="className" value="OneAttribute"/>
     </source>
     <source name="OneAttribute2" type="random">
-      <property name="count" value="1000000"/>
+      <property name="count" value="2000000"/>
       <property name="src.data.dir" location="data"/>
       <property name="className" value="OneAttribute"/>
+    </source>
+    <source name="NonInterMineObject" type="random">
+      <property name="count" value="2000000"/>
+      <property name="src.data.dir" location="data"/>
+      <property name="className" value="NonInterMineObject"/>
     </source>
     <source name="NotInterface1" type="random">
       <property name="count" value="1000000"/>

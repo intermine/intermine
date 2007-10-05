@@ -320,7 +320,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
             ResultsRow row = (ResultsRow) lIter.next();
             Collection fromCollection = (Collection) collections.get(row.get(0));
             if (fromCollection != null) {
-                InterMineObject toObj = (InterMineObject) row.get(1);
+                Object toObj = row.get(1);
                 fromCollection.add(toObj);
             }
         }

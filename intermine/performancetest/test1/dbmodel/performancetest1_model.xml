@@ -2,6 +2,9 @@
     <class name="org.intermine.model.performancetest1.OneAttribute" is-interface="true">
         <attribute name="att" type="int"/>
     </class>
+    <class name="org.intermine.model.performancetest1.NonInterMineObject" extends="java.lang.Object" is-interface="false">
+        <attribute name="att" type="int"/>
+    </class>
     <class name="org.intermine.model.performancetest1.NotInterface" is-interface="false">
         <attribute name="att" type="int"/>
     </class>

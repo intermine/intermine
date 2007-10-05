@@ -1228,7 +1228,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected InterMineObject internalGetObjectById(Integer id,
             Class clazz) throws ObjectStoreException {
-        if (schema.isFlatMode()) {
+        if (schema.isFlatMode(clazz)) {
             return super.internalGetObjectById(id, clazz);
         }
         Connection c = null;
