@@ -367,16 +367,20 @@ public class JavaModelOutput extends ModelOutput
      * @return generated java code as string
      */
     protected String generateEquals(ClassDescriptor cld) {
-        String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
+        if (cld.getFieldDescriptorByName("id") != null) {
+            String unqualifiedName = TypeUtil.unqualifiedName(cld.getName());
 
-        StringBuffer sb = new StringBuffer();
-        sb.append(INDENT)
-            .append("public boolean equals(Object o) { return (o instanceof ")
-            .append(unqualifiedName)
-            .append(" && id != null) ? id.equals(((")
-            .append(unqualifiedName)
-            .append(")o).getId()) : false; }" + ENDL);
-        return sb.toString();
+            StringBuffer sb = new StringBuffer();
+            sb.append(INDENT)
+                .append("public boolean equals(Object o) { return (o instanceof ")
+                .append(unqualifiedName)
+                .append(" && id != null) ? id.equals(((")
+                .append(unqualifiedName)
+                .append(")o).getId()) : false; }" + ENDL);
+            return sb.toString();
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -385,12 +389,16 @@ public class JavaModelOutput extends ModelOutput
      * @return generate java code as a string
      */
     protected String generateHashCode(ClassDescriptor cld) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(INDENT)
-            .append("public int hashCode() { ")
-            .append("return (id != null) ? id.hashCode() : super.hashCode(); ")
-            .append("}" + ENDL);
-        return sb.toString();
+        if (cld.getFieldDescriptorByName("id") != null) {
+            StringBuffer sb = new StringBuffer();
+            sb.append(INDENT)
+                .append("public int hashCode() { ")
+                .append("return (id != null) ? id.hashCode() : super.hashCode(); ")
+                .append("}" + ENDL);
+            return sb.toString();
+        } else {
+            return "";
+        }
     }
 
     /**

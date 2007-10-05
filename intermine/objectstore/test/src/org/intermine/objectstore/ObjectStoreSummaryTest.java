@@ -84,6 +84,7 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         expected.add("secretarys");
         expected.add("address");
         expected.add("departmentThatRejectedMe");
+        expected.add("simpleObjects");
         
         assertEquals(expected, (Set) oss.emptyFieldsMap.get(cld.getName()));
         

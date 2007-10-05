@@ -206,4 +206,16 @@
     <attribute name="shortType" value="675"/>
     <attribute name="stringObjType" value="A test String"/>
   </item>
+  <item class="http://www.intermine.org/model/testmodel#SimpleObject">
+    <attribute name="name" value="Fred"/>
+    <reference name="employee" ref_id="8"/>
+  </item>
+  <item class="http://www.intermine.org/model/testmodel#SimpleObject">
+    <attribute name="name" value="Adam"/>
+    <reference name="employee" ref_id="8"/>
+  </item>
+  <item class="http://www.intermine.org/model/testmodel#SimpleObject">
+    <attribute name="name" value="Robert"/>
+    <reference name="employee" ref_id="9"/>
+  </item>
 </items>

@@ -90,19 +90,26 @@ public class FullParser
         throws ClassNotFoundException {
         Map objMap = new LinkedHashMap(); // map from id to outline object
 
-        for (Iterator<Item> i = items.iterator(); i.hasNext();) {
-            Item item = i.next();
-            objMap.put(item.getIdentifier(),
-                DynamicUtil.instantiateObject(
-                    OntologyUtil.generateClassNames(item.getClassName(),
-                                                    model),
-                    OntologyUtil.generateClassNames(item.getImplementations(),
-                                                    model)));
+        List result = new ArrayList();
+        for (Item item : items) {
+            if (item.getIdentifier() != null) {
+                objMap.put(item.getIdentifier(), DynamicUtil.instantiateObject(
+                            OntologyUtil.generateClassNames(item.getClassName(), model),
+                            OntologyUtil.generateClassNames(item.getImplementations(), model)));
+            }
         }
 
-        List result = new ArrayList();
-        for (Iterator i = items.iterator(); i.hasNext();) {
-            result.add(populateObject((Item) i.next(), objMap, useIdentifier, abortOnError));
+        for (Item item : items) {
+            Object instance;
+            if (item.getIdentifier() == null) {
+                instance = DynamicUtil.instantiateObject(
+                            OntologyUtil.generateClassNames(item.getClassName(), model),
+                            OntologyUtil.generateClassNames(item.getImplementations(), model));
+            } else {
+                instance = objMap.get(item.getIdentifier());
+            }
+            result.add(populateObject(item, objMap, useIdentifier, abortOnError,
+                        instance));
         }
 
         return result;
@@ -120,9 +127,7 @@ public class FullParser
      * @return a populated object
      */
     protected static Object populateObject(Item item, Map objMap, boolean useIdentifier,
-                                           boolean abortOnError) {
-        Object obj = objMap.get(item.getIdentifier());
-
+            boolean abortOnError, Object obj) {
         try {
             // Set the data for every given attribute except id
             Iterator attrIter = item.getAttributes().iterator();

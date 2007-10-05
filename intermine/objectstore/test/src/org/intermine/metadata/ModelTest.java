@@ -19,6 +19,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Iterator;
 
+import org.intermine.model.testmodel.SimpleObject;
+
 public class ModelTest extends TestCase
 {
     private static final Set EMPTY_SET = Collections.EMPTY_SET;
@@ -233,5 +235,12 @@ public class ModelTest extends TestCase
         } catch (MetaDataException e) {
             // expected
         }
+    }
+
+    public void testFieldsInNonInterMineObject() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        ClassDescriptor cld = model.getClassDescriptorByName("SimpleObject");
+        assertEquals(2, cld.getAllFieldDescriptors().size());
+        assertEquals(new HashSet(Arrays.asList("employee", "name")), model.getFieldDescriptorsForClass(SimpleObject.class).keySet());
     }
 }

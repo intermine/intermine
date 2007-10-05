@@ -167,30 +167,31 @@ public class ItemFactory
 
 
     /**
-     * Convert a InterMineObject to Item format.
+     * Convert an Object to Item format.
      * @param obj object to convert
      * @return a new Full Data Item
      */
-    public Item makeItem(InterMineObject obj) {
+    public Item makeItem(Object obj) {
         return makeItemImpl(obj, true);
     }
 
 
     /**
-     * Convert a InterMineObject to Item format.
+     * Convert an Object to Item format.
      * @param obj object to convert
      * @param transferCollections if true add the colections from obj to the new Item, otherwise
      * ignore the collections of obj
      * @return a new Full Data Item
      */
-    public Item makeItemImpl(InterMineObject obj, boolean transferCollections) {
-        if (obj.getId() == null) {
+    public Item makeItemImpl(Object obj, boolean transferCollections) {
+        if ((obj instanceof InterMineObject) && (((InterMineObject) obj).getId() == null)) {
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
 
         String className = XmlHelper.getClassName(obj, model);
 
-        Item item = makeItem(obj.getId().toString());
+        Item item = makeItem(obj instanceof InterMineObject ? ((InterMineObject) obj).getId()
+                .toString() : null);
         item.setClassName(className.equals("") ? "" : model.getNameSpace()
                           + TypeUtil.unqualifiedName(XmlHelper.getClassName(obj, model)));
         item.setImplementations(getImplements(obj, model));
@@ -251,7 +252,7 @@ public class ItemFactory
      * @param model the parent model
      * @return space separated list of extended/implemented classes/interfaces
      */
-    protected static String getImplements(InterMineObject obj, Model model) {
+    protected static String getImplements(Object obj, Model model) {
         StringBuffer sb = new StringBuffer();
 
         Class [] interfaces = obj.getClass().getInterfaces();

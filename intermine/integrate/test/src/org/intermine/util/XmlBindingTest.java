@@ -57,7 +57,7 @@ public class XmlBindingTest extends XMLTestCase {
         Diff diff = new Diff(originalBuffer.toString(), sw.toString());
         DetailedDiff detail = new DetailedDiff(diff);
         detail.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-        assertTrue(detail.getAllDifferences().toString(), detail.similar());
+        assertTrue(detail.getAllDifferences().toString() + ": Original: " + originalBuffer.toString() + ", Generated: " + sw.toString(), detail.similar());
         original = getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
     }
 
@@ -66,7 +66,10 @@ public class XmlBindingTest extends XMLTestCase {
         int i=1;
         Iterator iter = c.iterator();
         while (iter.hasNext()) {
-            TypeUtil.setFieldValue(iter.next(), "id", new Integer(i++));
+            try {
+                TypeUtil.setFieldValue(iter.next(), "id", new Integer(i++));
+            } catch (IllegalArgumentException e) {
+            }
         }
     }
 }

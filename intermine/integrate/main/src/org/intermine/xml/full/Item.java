@@ -96,9 +96,6 @@ public class Item implements Comparable
      * @param identifier the identifier
      */
     public void setIdentifier(String identifier) {
-        if (identifier == null) {
-            throw new IllegalArgumentException("identifier argument cannot be null");
-        }
         this.identifier = identifier;
     }
 

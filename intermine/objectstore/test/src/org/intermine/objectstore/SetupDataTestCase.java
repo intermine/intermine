@@ -127,7 +127,10 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         int i=1;
         Iterator iter = c.iterator();
         while (iter.hasNext()) {
-            TypeUtil.setFieldValue(iter.next(), "id", new Integer(i++));
+            try {
+                TypeUtil.setFieldValue(iter.next(), "id", new Integer(i++));
+            } catch (IllegalArgumentException e) {
+            }
         }
     }
 

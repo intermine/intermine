@@ -231,7 +231,7 @@ public class ItemToObjectTranslator extends Translator
     /**
      * {@inheritDoc}
      */
-    public InterMineObject translateToDbObject(InterMineObject o) {
+    public Object translateToDbObject(Object o) {
         return o;
     }
 
@@ -243,7 +243,7 @@ public class ItemToObjectTranslator extends Translator
     /**
      * {@inheritDoc}
      */
-    public InterMineObject translateFromDbObject(InterMineObject o)
+    public Object translateFromDbObject(Object o)
     throws MetaDataException {
         long time1 = System.currentTimeMillis();
         if (!(o instanceof Item)) {
@@ -273,10 +273,9 @@ public class ItemToObjectTranslator extends Translator
         }
         long time2 = System.currentTimeMillis();
         timeSpentSizing += time2 - time1;
-        InterMineObject obj;
+        Object obj;
         try {
-            obj = (InterMineObject)
-                DynamicUtil.instantiateObject(
+            obj = DynamicUtil.instantiateObject(
                     OntologyUtil.generateClassNames(item.getClassName(), model),
                     OntologyUtil.generateClassNames(item.getImplementations(), model));
         } catch (ClassNotFoundException e) {
@@ -284,7 +283,10 @@ public class ItemToObjectTranslator extends Translator
                                        e);
         }
 
-        obj.setId(identifierToId(item.getIdentifier()));
+        try {
+            TypeUtil.setFieldValue(obj, "id", identifierToId(item.getIdentifier()));
+        } catch (IllegalArgumentException e) {
+        }
         time1 = System.currentTimeMillis();
         timeSpentCreate += time1 - time2;
 

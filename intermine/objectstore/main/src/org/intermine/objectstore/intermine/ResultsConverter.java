@@ -91,8 +91,12 @@ public class ResultsConverter
                     String alias = DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
                             .get(node));
                     if (node instanceof QueryClass) {
-                        Integer idField = new Integer(sqlResults.getInt(alias + "id"));
-                        InterMineObject obj = os.pilferObjectById(idField);
+                        Integer idField = null;
+                        Object obj = null;
+                        if (InterMineObject.class.isAssignableFrom(((QueryClass) node).getType())) {
+                            idField = new Integer(sqlResults.getInt(alias + "id"));
+                            obj = os.pilferObjectById(idField);
+                        }
                         if (obj == null) {
                             String objectField = null;
                             if (noObjectColumns.contains(node)) {
@@ -101,10 +105,12 @@ public class ResultsConverter
                                     idsToFetch.add(idField);
                                 }
                             } else {
-                                if (os.getSchema().isFlatMode()) {
+                                if (os.getSchema().isFlatMode(((QueryClass) node).getType())) {
                                     obj = buildObject(sqlResults, alias, os,
                                             ((QueryClass) node).getType(), noObjectClassColumns);
-                                    os.cacheObjectById(obj.getId(), obj);
+                                    if (idField != null) {
+                                        os.cacheObjectById(idField, (InterMineObject) obj);
+                                    }
                                 } else {
                                     try {
                                         objectField = sqlResults.getString(alias);
@@ -113,7 +119,8 @@ public class ResultsConverter
                                             obj = NotXmlParser.parse(objectField, os);
                                             //if (objectField.length() < ObjectStoreInterMineImpl
                                             //        .CACHE_LARGEST_OBJECT) {
-                                                os.cacheObjectById(obj.getId(), obj);
+                                                os.cacheObjectById(((InterMineObject) obj).getId(),
+                                                        (InterMineObject) obj);
                                             //} else {
                                             //    LOG.debug("Not cacheing large object "
                                             //            + obj.getId() + " on read" + " (size = "
@@ -223,7 +230,7 @@ public class ResultsConverter
      * @return an InterMineObject
      * @throws SQLException if something goes wrong
      */
-    protected static InterMineObject buildObject(ResultSet sqlResults, String alias,
+    protected static Object buildObject(ResultSet sqlResults, String alias,
             ObjectStoreInterMineImpl os, Class type, Set noObjectClassColumns) throws SQLException {
         //long time1 = System.currentTimeMillis();
         Set classes = Collections.singleton(type);
@@ -250,7 +257,7 @@ public class ResultsConverter
                 }
             }
         }
-        InterMineObject retval = (InterMineObject) DynamicUtil.createObject(classes);
+        Object retval = DynamicUtil.createObject(classes);
         Map fields = os.getModel().getFieldDescriptorsForClass(retval.getClass());
         Iterator iter = fields.entrySet().iterator();
         while (iter.hasNext()) {
@@ -272,8 +279,8 @@ public class ResultsConverter
                 }
             } else if (fd instanceof CollectionDescriptor) {
                 CollectionDescriptor cd = (CollectionDescriptor) fd;
-                Collection lazyColl = new ProxyCollection(os, retval, cd.getName(),
-                        cd.getReferencedClassDescriptor().getType());
+                Collection lazyColl = new ProxyCollection(os, (InterMineObject) retval,
+                        cd.getName(), cd.getReferencedClassDescriptor().getType());
                 TypeUtil.setFieldValue(retval, cd.getName(), lazyColl);
             } else if (fd instanceof ReferenceDescriptor) {
                 ReferenceDescriptor rd = (ReferenceDescriptor) fd;

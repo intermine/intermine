@@ -467,11 +467,14 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         if (superNames.size() > 0) {
             for (String superName : superNames) {
                 if (!model.hasClassDescriptor(superName)) {
-                    throw new MetaDataException("No ClassDescriptor for superclass or interface ( "
-                            + superName + ") found in model.");
+                    if (!"java.lang.Object".equals(superName)) {
+                        throw new MetaDataException("No ClassDescriptor for superclass or interface"
+                                + " ( " + superName + ") found in model.");
+                    }
+                } else {
+                    ClassDescriptor superDescriptor = model.getClassDescriptorByName(superName);
+                    superDescriptors.add(superDescriptor);
                 }
-                ClassDescriptor superDescriptor = model.getClassDescriptorByName(superName);
-                superDescriptors.add(superDescriptor);
             }
         }
     }
@@ -590,12 +593,13 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * @return set of super class names
      * @throws MetaDataException if className isn't in the model
      */
-    static public Set<String> findSuperClassNames(Model model, String className)
+    public static Set<String> findSuperClassNames(Model model, String className)
         throws MetaDataException {
         Set<String> superClassNames = new LinkedHashSet<String>();
         findSuperClassNames(model, className, superClassNames);
         return superClassNames;
     }
+
     /**
      * Return a list of the super class names for the given class name
      * @param model the Model
@@ -606,16 +610,18 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     static void findSuperClassNames(Model model, String className,
                                     Set<String> superClassNames) throws MetaDataException {
         ClassDescriptor cd = model.getClassDescriptorByName(className);
-        if (cd == null) {
+        if ((cd == null) && (!"java.lang.Object".equals(className))) {
             throw new MetaDataException("Model construction failed - class: " + className
                                         + " is not in the model but is used as a super class");
         }
-        for (String superName: cd.getSuperclassNames()) {
-            if (superClassNames.contains(superName)) {
-                continue;
-            } else {
-                superClassNames.add(superName);
-                findSuperClassNames(model, superName, superClassNames);
+        if (cd != null) {
+            for (String superName: cd.getSuperclassNames()) {
+                if (superClassNames.contains(superName)) {
+                    continue;
+                } else {
+                    superClassNames.add(superName);
+                    findSuperClassNames(model, superName, superClassNames);
+                }
             }
         }
     }

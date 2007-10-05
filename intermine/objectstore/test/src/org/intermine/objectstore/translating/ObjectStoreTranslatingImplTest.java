@@ -103,11 +103,11 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
             return query;
         }
 
-        public InterMineObject translateToDbObject(InterMineObject o) {
+        public Object translateToDbObject(Object o) {
             return o;
         }
 
-        public InterMineObject translateFromDbObject(InterMineObject o) {
+        public Object translateFromDbObject(Object o) {
             return o;
         }
     }
@@ -125,11 +125,11 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
             return q;
         }
 
-        public InterMineObject translateToDbObject(InterMineObject o) {
+        public Object translateToDbObject(Object o) {
             return o;
         }
 
-        public InterMineObject translateFromDbObject(InterMineObject o) {
+        public Object translateFromDbObject(Object o) {
             if (o instanceof Company) {
                 Bank bank = new Bank();
                 bank.setId(((Company) o).getId());

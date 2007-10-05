@@ -204,7 +204,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         dbCol1.setItem(dbItem);
         dbItem.addCollections(dbCol1);
 
-        InterMineObject result = translator.translateFromDbObject(dbItem);
+        InterMineObject result = (InterMineObject) translator.translateFromDbObject(dbItem);
         assertTrue(result instanceof Department);
         assertTrue(result instanceof Broke);
 

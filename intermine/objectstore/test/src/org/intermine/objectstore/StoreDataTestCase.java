@@ -71,13 +71,14 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
             Iterator iter = data.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
-                InterMineObject o = (InterMineObject) entry.getValue();
+                Object o = entry.getValue();
                 storeDataWriter.store(o);
             }
-            storeDataWriter.commitTransaction();
         } catch (Exception e) {
             storeDataWriter.abortTransaction();
             throw new Exception(e);
+        } finally {
+            storeDataWriter.commitTransaction();
         }
 
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data");
@@ -127,8 +128,10 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
             Iterator iter = data.entrySet().iterator();
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
-                InterMineObject o = (InterMineObject) entry.getValue();
-                storeDataWriter.delete(o);
+                if (entry.getValue() instanceof InterMineObject) {
+                    InterMineObject o = (InterMineObject) entry.getValue();
+                    storeDataWriter.delete(o);
+                }
             }
             storeDataWriter.commitTransaction();
         } catch (Exception e) {

@@ -51,17 +51,17 @@ public class FullRenderer
     }
 
     /**
-     * Render a InterMineObject as Xml in Full Data format.
+     * Render an Object as Xml in Full Data format.
      * @param obj an object to render
      * @param model the parent model
      * @return the XML for object
      */
-    public static String render(InterMineObject obj, Model model) {
+    public static String render(Object obj, Model model) {
         return render(new ItemFactory(model).makeItem(obj));
     }
 
     /**
-     * Convert a collection of InterMineObjects to Item format.
+     * Convert a collection of Objects to Item format.
      * @param objects objects to convert
      * @param model the parent model
      * @return a list of Full Data Items
@@ -71,7 +71,7 @@ public class FullRenderer
 
         Iterator objIter = objects.iterator();
         while (objIter.hasNext()) {
-            InterMineObject obj = (InterMineObject) objIter.next();
+            Object obj = (Object) objIter.next();
             items.add(new ItemFactory(model).makeItem(obj));
         }
         return items;
@@ -112,13 +112,11 @@ public class FullRenderer
      */
     public static void renderImpl(XMLStreamWriter writer, Item item,
                                   boolean renderCollections) {
-        if (item.getIdentifier() == null) {
-            throw new IllegalArgumentException("Item has null Identifier");
-        }
-
         try {
             writer.writeStartElement("item");
-            writer.writeAttribute("id", item.getIdentifier());
+            if (item.getIdentifier() != null) {
+                writer.writeAttribute("id", item.getIdentifier());
+            }
             writer.writeAttribute("class", item.getClassName() == null ? "" : item.getClassName());
 
             if (item.getImplementations() != null && !item.getImplementations().equals("")) {

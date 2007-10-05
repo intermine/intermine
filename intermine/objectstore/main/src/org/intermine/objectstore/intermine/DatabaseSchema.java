@@ -22,6 +22,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 
 import org.apache.log4j.Logger;
@@ -132,13 +133,15 @@ public class DatabaseSchema
     }
 
     /**
-     * Returns true if the ObjectStore needs to run in flat mode - if notXml is missing and
-     * the InterMineObject table is missing.
+     * Returns true if the ObjectStore needs to run in flat mode for this Class - if
+     * notXml is missing and the InterMineObject table is missing (or if the class is not a
+     * subclass of InterMineObject).
      *
+     * @param c a Class
      * @return a boolean
      */
-    public boolean isFlatMode() {
-        return flatMode;
+    public boolean isFlatMode(Class c) {
+        return flatMode || (noNotXml && (!InterMineObject.class.isAssignableFrom(c)));
     }
 
     /**
@@ -190,7 +193,7 @@ public class DatabaseSchema
                     // proper subset of another. We check this here, as not all subclasses of
                     // the table master are necessarily mapped onto the same table.
                     ClassDescriptor subsMaster = getTableMaster(subCld);
-                    if ((subsMaster == cld) || isFlatMode()) {
+                    if ((subsMaster == cld) || isFlatMode(cld.getType())) {
                         // This class does map onto this table. We need to look at all the
                         // FieldDescriptors of this class, but we can give a small warning if this
                         // results in fields from classes that are not a subclass of the table

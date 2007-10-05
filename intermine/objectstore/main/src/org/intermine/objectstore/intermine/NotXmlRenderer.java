@@ -39,7 +39,7 @@ public class NotXmlRenderer
      * @param obj the object to render
      * @return the NotXml String
      */
-    public static StringConstructor render(InterMineObject obj) {
+    public static StringConstructor render(Object obj) {
         try {
             StringConstructor sb = new StringConstructor();
             sb.append(DELIM);

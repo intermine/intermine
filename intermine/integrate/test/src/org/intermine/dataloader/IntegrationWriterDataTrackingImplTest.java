@@ -111,7 +111,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             //DataTracking.precacheObjects(new HashSet(data.values()), iw.getDataTracker());
             Iterator iter = data.entrySet().iterator();
             while (iter.hasNext()) {
-                InterMineObject o = (InterMineObject) ((Map.Entry) iter.next())
+                Object o = ((Map.Entry) iter.next())
                     .getValue();
                 iw.store(o, source, skelSource);
             }

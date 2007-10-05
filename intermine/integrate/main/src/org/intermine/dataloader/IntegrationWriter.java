@@ -36,7 +36,7 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * @param skelSource the data Source to which to attribute skeleton data
      * @throws ObjectStoreException if an error occurs in the underlying objectstore
      */
-    public void store(InterMineObject o, Source source, Source skelSource)
+    public void store(Object o, Source source, Source skelSource)
         throws ObjectStoreException;
 
     /**

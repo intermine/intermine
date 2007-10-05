@@ -231,12 +231,32 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /**
      * {@inheritDoc}
      */
-    protected InterMineObject store(InterMineObject o, Source source, Source skelSource,
-                                    int type) throws ObjectStoreException {
-        if (o == null) {
+    protected InterMineObject store(Object nimo, Source source, Source skelSource,
+            int type) throws ObjectStoreException {
+        if (nimo == null) {
             return null;
         }
         try {
+            if (!(nimo instanceof InterMineObject)) {
+                long time1 = System.currentTimeMillis();
+                Object newObj = DynamicUtil.createObject(nimo.getClass());
+                long time2 = System.currentTimeMillis();
+                timeSpentCreate += time2 - time1;
+                Map<String, FieldDescriptor> fields = getModel().getFieldDescriptorsForClass(nimo
+                        .getClass());
+                for (Map.Entry<String, FieldDescriptor> entry : fields.entrySet()) {
+                    String fieldName = entry.getKey();
+                    FieldDescriptor field = entry.getValue();
+                    copyField(nimo, newObj, source, skelSource, field, type);
+                }
+                time1 = System.currentTimeMillis();
+                timeSpentCopyFields += time1 - time2;
+                store(newObj);
+                time2 = System.currentTimeMillis();
+                timeSpentStore += time2 - time1;
+                return null;
+            }
+            InterMineObject o = (InterMineObject) nimo;
             long time1 = System.currentTimeMillis();
             Set equivObjects = getEquivalentObjects(o, source);
             long time2 = System.currentTimeMillis();
@@ -532,12 +552,12 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             LOG.error("IDMAP contents: " + idMap.toString());
             LOG.error("Skeletons: " + skeletons.toString());
             LOG.error("pureObjects: " + pureObjects.toString());
-            throw new RuntimeException("Exception while loading object " + o, e);
+            throw new RuntimeException("Exception while loading object " + nimo, e);
         } catch (ObjectStoreException e) {
             LOG.error("IDMAP contents: " + idMap.toString());
             LOG.error("Skeletons: " + skeletons.toString());
             LOG.error("pureObjects: " + pureObjects.toString());
-            throw new ObjectStoreException("Exception while loading object " + o, e);
+            throw new ObjectStoreException("Exception while loading object " + nimo, e);
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
         }

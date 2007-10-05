@@ -81,7 +81,7 @@ public class ObjectStoreSummary
             nonEmptyFieldsMap.put(cld.getName(), new HashSet());
             Query q = new Query();
             QueryClass qc = new QueryClass(Class.forName(cld.getName()));
-            q.addToSelect(new QueryField(qc, "id"));
+            q.addToSelect(qc);
             q.addFrom(qc);
             classCountsMap.put(cld.getName(), new Integer(os.count(q,
                             ObjectStore.SEQUENCE_IGNORE)));
