@@ -8,8 +8,8 @@ use File::Compare;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_files 
-				checkdir_exists date_string_file unzip_dir convert_date 
+our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_files
+				checkdir_exists date_string_file unzip_dir convert_date
 				config_species write_version write_log search_webpage);
 
 #connect to server
@@ -37,7 +37,7 @@ sub ftp_download(){
 #download file from http server
 sub http_download(){
 	my ($source, $destination) = @_;
-	
+
 	print "getting $source\n";
 	io($source) > io($destination);
 }
@@ -62,15 +62,15 @@ my ($old,$new)=@_;
 	}
 }
 
-#check if a directory exists and return 0 if it does, 
+#check if a directory exists and return 0 if it does,
 #create it and return 1 if it doesn't
 sub checkdir_exists(){
 	my $dir = shift;
 	if (!(-d $dir)) {
 	    print STDERR "creating directory: $dir\n";
-	    mkdir $dir	
+	    mkdir $dir
 	        or die "failed to create directory $dir";
-		return 1;	
+		return 1;
 	}else{
 		print STDERR "$dir exists\n";
 		return 0;
@@ -89,7 +89,7 @@ sub date_string_file(){
 sub convert_date(){
 	my $string = shift;
 	my ($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst);
-	
+
 	if($string){
 		($second, $minute, $hour, $day, $month, $year, $weekday, $dayofyear, $isdst) = localtime($string);
 	}else{
@@ -139,7 +139,7 @@ sub config_species(){
 				chomp $f[1];
 				$data{$f[1]}=$f[1];
 			}
-		}	
+		}
 	}
 	close(F) or die "$!";
 	return %data;
@@ -148,25 +148,25 @@ sub config_species(){
 #write the version file
 sub write_version(){
 	my ($root_dir,$buffer) = @_;
-	
+
 	my $version = "$root_dir/VERSION";
 	unlink $version;
-	&write_file($version,$buffer); 
+	&write_file($version,$buffer);
 }
 
 #write the download log file
 sub write_log(){
 	my ($buffer,$logdir,$logname) = @_;
-	
+
 	my $log = $logdir.$logname;
-	&checkdir_exists("/shared/data/download_logs");
+	&checkdir_exists($logdir);
 	&write_file($log,$buffer);
 }
 
 #for write_version and write_log
 sub write_file(){
 	my($path,$buffer)=@_;
-	
+
 	if(-e $path){
 		open(FH, ">>$path") || die "$!";
 		print FH $buffer;
@@ -175,14 +175,14 @@ sub write_file(){
 	open(FH, ">$path") || die "$!";
 		print FH $buffer;
 		close(FH);
-	} 	
-}	
+	}
+}
 
 #use a reg exp to get a version/release number from a web page
 sub search_webpage(){
 	my ($server,$reg_exp) = @_;
 	my $number;
-	
+
 	my $page = io($server)->slurp();
 	if ($page =~ $reg_exp) {
 		$number = $1;
