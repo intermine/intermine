@@ -72,6 +72,7 @@ if (${!empty constrainOnBag}) {
       <h3><fmt:message key="query.constraintHeading"/></h3> <%--2. Choose a filter--%>
 
       <!-- ATTRIBUTE TOGGLE -->
+      <c:if test="${! empty displayConstraint.fixedOpIndices || ! empty keyFields}">
       <h4>
         <a href="javascript:swapInputs('attribute');">
           <img id='attributeToggle' src="images/disclosed.gif"/>
@@ -106,6 +107,7 @@ if (${!empty constrainOnBag}) {
       <c:set var="validOps" value="${displayConstraint.validOps}"/>
       <c:set var="fixedOps" value="${displayConstraint.fixedOpIndices}"/>
       <c:set var="options" value="${displayConstraint.optionsList}"/>
+      </c:if>
 
       <script type="text/javascript">
       <!--
@@ -296,7 +298,9 @@ if (${!empty constrainOnBag}) {
 
             <!-- SUBCLASS -->
 
-            <h5><fmt:message key="query.or"/></h5>
+            <c:if test="${! empty displayConstraint.fixedOpIndices}">
+              <h5><fmt:message key="query.or"/></h5>
+            </c:if>
 
             <h4>
               <a href="javascript:swapInputs('subclass');">
@@ -319,7 +323,12 @@ if (${!empty constrainOnBag}) {
               </html:submit>
             </p>
 
-
+          <c:if test="${empty displayConstraint.fixedOpIndices && empty keyFields}">
+            <script type="text/javascript">
+				swapInputs('subclass');
+			</script>
+          </c:if>
+          
           </c:if>
           <c:if test="${!empty loopQueryPaths && !empty loopQueryOps}">
 
