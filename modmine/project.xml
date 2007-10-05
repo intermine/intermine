@@ -12,14 +12,16 @@
       <property name="dataSourceName" value="FlyBase"/>
       <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
     </source>
+<!--
     <source name="chado-db-flybase-dpse" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="genus" value="Drosophila"/>
-      <property name="species" value="pseudoobscura"/>
+      <property name="species" value="pseudoobscura pseudoobscura"/>
       <property name="taxonId" value="7237"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="dataSetTitle" value="FlyBase Drosophila pseudoobscura data set"/>
     </source>
+-->
     <source name="chado-db-wormbase-c_elegans" type="chado-db" dump="true">
       <property name="source.db.name" value="wormbase"/>
       <property name="genus" value="Caenorhabditis"/>
@@ -30,6 +32,47 @@
     </source>
     <source name="inparanoid-orthologue" type="orthologue" dump="true">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
+    </source>
+    <source name="flybase-dmel-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
+      <property name="fasta.classAttribute" value="organismDbId"/>
+      <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
+    </source>
+    <source name="flybase-dmel-translation-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
+      <property name="fasta.classAttribute" value="organismDbId"/>
+      <property name="fasta.includes" value="dmel-all-translation-*.fasta"/>
+      <property name="fasta.sequenceType" value="protein"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
+    </source>
+    <source name="flybase-dmel-transcript-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
+      <property name="fasta.classAttribute" value="organismDbId"/>
+      <property name="fasta.includes" value="dmel-all-transcript-r*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
+    </source>
+    <source name="flybase-dmel-chromosome-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
+      <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
+    </source>
+    <source name="flybase-dmel-cds-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.idSuffix" value="-cds"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
+    </source>
+    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta">
+      <property name="fasta.taxonId" value="6239"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
+      <property name="fasta.includes" value="*chromosome*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/wormbase/ws175"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
