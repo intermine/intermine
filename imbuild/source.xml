@@ -268,9 +268,10 @@
   <target name="-retrieve-tgt-from-large-xml-file" depends="-set-xml-tgt-file-includes, -set-xml-tgt-file"
           if="have.large.file.xml.tgt">
     <convert-fullxml-file
-      osName="osw.${common.os.prefix}-tgt-items"
-      sourceName="${source.name}"
-      file="${src.data.file}">
+       osName="osw.${common.os.prefix}-tgt-items"
+       sourceName="${source.name}"
+       file="${src.data.file}"
+       modelName="${target.model}">
       <fileset dir="${src.data.dir}">
         <include name="${src.data.dir.includes}"/>
         <exclude name="${src.data.dir.excludes}"/>
