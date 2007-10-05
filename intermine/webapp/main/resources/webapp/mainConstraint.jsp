@@ -137,7 +137,9 @@ if (${!empty constrainOnBag}) {
           }
         }
 
-        document.getElementById("operandEditSpan" + index).style.display = "";
+		if (document.getElementById("operandEditSpan" + index)) {
+	        document.getElementById("operandEditSpan" + index).style.display = "";
+	    }
       }
 
       /***********************************************************
