@@ -215,9 +215,9 @@ public class ChadoDBConverter extends BioDBConverter
 
     private void processFeatureTable(Connection connection)
         throws SQLException, ObjectStoreException {
-        Item dataSet = getDataSetItem(dataSetTitle);
-        Item dataSource = getDataSourceItem(dataSourceName);
-        Item organismItem = getOrganismItem(taxonId);
+        Item dataSet = getDataSetItem(dataSetTitle); // Stores DataSet
+        Item dataSource = getDataSourceItem(dataSourceName); // Stores DataSource
+        Item organismItem = getOrganismItem(taxonId); // Stores Organism
         ResultSet res = getFeatureResultSet(connection);
         int count = 0;
         while (res.next()) {
@@ -243,19 +243,19 @@ public class ChadoDBConverter extends BioDBConverter
                 fdat.interMineType = interMineType;
                 feature.setReference("organism", organismItem);
                 // don't set the evidence collection - that's done by processPubTable()
+                fdat.intermineObjectId = store(feature); // Stores Feature
                 createSynonym(fdat, "identifier", uniqueName, true, dataSet, Collections.EMPTY_LIST,
-                              dataSource);
+                              dataSource); // Stores Synonym
                 if (name != null) {
                     name = fixIdentifier(interMineType, name);
                     createSynonym(fdat, "name", name, false, dataSet, Collections.EMPTY_LIST,
-                                  dataSource);
+                                  dataSource); // Stores Synonym
                 }
-                fdat.intermineObjectId = store(feature);
                 features.put(featureId, fdat);
                 count++;
             }
         }
-        LOG.warn("created " + count + " features");
+        LOG.info("created " + count + " features");
     }
 
     /**
@@ -324,7 +324,7 @@ public class ChadoDBConverter extends BioDBConverter
                 if (features.containsKey(featureId)) {
                     FeatureData featureData = features.get(featureId);
                     makeLocation(srcFeatureData.itemIdentifier, featureData.itemIdentifier,
-                                 start, end, strand, taxonId, dataSet);
+                                 start, end, strand, taxonId, dataSet); // Stores Location
                     count++;
                 } else {
                     throw new RuntimeException("featureId (" + featureId + ") from location "
@@ -336,7 +336,7 @@ public class ChadoDBConverter extends BioDBConverter
                                            + featureLocId + " was not found in the feature table");
             }
         }
-        LOG.warn("created " + count + " locations");
+        LOG.info("created " + count + " locations");
     }
 
     private void processRelationTable(Connection connection)
@@ -353,7 +353,7 @@ public class ChadoDBConverter extends BioDBConverter
             Integer objectId = new Integer(res.getInt("object_id"));
 
             if (lastSubjectId != null && subjectId != lastSubjectId) {
-                processCollectionData(lastSubjectId, collectionData);
+                processCollectionData(lastSubjectId, collectionData); // Stores stuff
                 collectionTotal += collectionData.size();
                 collectionData = new HashMap<String, List<String>>();
             }
@@ -388,11 +388,11 @@ public class ChadoDBConverter extends BioDBConverter
             lastSubjectId = subjectId;
         }
         if (lastSubjectId != null) {
-            processCollectionData(lastSubjectId, collectionData);
+            processCollectionData(lastSubjectId, collectionData); // Stores stuff
             collectionTotal += collectionData.size();
         }
-        LOG.warn("processed " + count + " relations");
-        LOG.warn("total collection elements created: " + collectionTotal);
+        LOG.info("processed " + count + " relations");
+        LOG.info("total collection elements created: " + collectionTotal);
     }
 
     /**
@@ -429,14 +429,14 @@ public class ChadoDBConverter extends BioDBConverter
                             Reference reference = new Reference();
                             reference.setName(fd.getName());
                             reference.setRefId(collectionContents.get(0));
-                            store(reference, intermineItemId);
+                            store(reference, intermineItemId); // Stores Reference for Feature
                         }
                     }
                 } else {
                     ReferenceList referenceList = new ReferenceList();
                     referenceList.setName(fd.getName());
                     referenceList.setRefIds(collectionContents);
-                    store(referenceList, intermineItemId);
+                    store(referenceList, intermineItemId); // Stores ReferenceList for Feature
                 }
             }
         }
@@ -508,7 +508,8 @@ public class ChadoDBConverter extends BioDBConverter
                     if (action instanceof SetAttributeConfigAction) {
                         SetAttributeConfigAction setAction = (SetAttributeConfigAction) action;
                         if (!existingAttributes.contains(setAction.attributeName)) {
-                            setAttribute(fdat, setAction.attributeName, accession);
+                            setAttribute(fdat, setAction.attributeName, accession); // Stores
+                                                                         // Attribute for Feature
                             existingAttributes.add(setAction.attributeName);
                         }
                     } else {
@@ -519,7 +520,7 @@ public class ChadoDBConverter extends BioDBConverter
                                 continue;
                             } else {
                                 createSynonym(fdat, "identifier", accession, false, dataSet,
-                                              Collections.EMPTY_LIST, dataSource);
+                                              Collections.EMPTY_LIST, dataSource); // Stores Synonym
                                 count++;
                             }
                         }
@@ -530,7 +531,7 @@ public class ChadoDBConverter extends BioDBConverter
             currentFeatureId = featureId;
         }
 
-        LOG.warn("created " + count + " synonyms from the dbxref table");
+        LOG.info("created " + count + " synonyms from the dbxref table");
     }
 
     private void processFeaturePropTable(Connection connection)
@@ -551,12 +552,12 @@ public class ChadoDBConverter extends BioDBConverter
                     continue;
                 } else {
                     createSynonym(fdat, typeName, identifier, false, dataSet,
-                                  Collections.EMPTY_LIST, dataSource);
+                                  Collections.EMPTY_LIST, dataSource); // Stores Synonym
                     count++;
                 }
             }
         }
-        LOG.warn("created " + count + " synonyms from the featureprop table");
+        LOG.info("created " + count + " synonyms from the featureprop table");
     }
 
     private void processSynonymTable(Connection connection)
@@ -598,7 +599,8 @@ public class ChadoDBConverter extends BioDBConverter
                     if (action instanceof SetAttributeConfigAction) {
                         SetAttributeConfigAction setAction = (SetAttributeConfigAction) action;
                         if (!existingAttributes.contains(setAction.attributeName)) {
-                            setAttribute(fdat, setAction.attributeName, identifier);
+                            setAttribute(fdat, setAction.attributeName, identifier); // Stores
+                                                                        // Attribute for Feature
                             existingAttributes.add(setAction.attributeName);
                         }
                     } else {
@@ -608,7 +610,7 @@ public class ChadoDBConverter extends BioDBConverter
                                 continue;
                             } else {
                                 createSynonym(fdat, typeName, identifier, false, dataSet,
-                                              Collections.EMPTY_LIST, dataSource);
+                                              Collections.EMPTY_LIST, dataSource); // Stores Synonym
                                 count++;
                             }
                         }
@@ -619,7 +621,7 @@ public class ChadoDBConverter extends BioDBConverter
             currentFeatureId = featureId;
         }
 
-        LOG.warn("created " + count + " synonyms from the synonym table");
+        LOG.info("created " + count + " synonyms from the synonym table");
     }
 
     /**
@@ -679,18 +681,20 @@ public class ChadoDBConverter extends BioDBConverter
             }
             String pubMedId = res.getString("pub_db_identifier");
             if (lastPubFeatureId != null && !featureId.equals(lastPubFeatureId)) {
-                makeFeatureEvidence(lastPubFeatureId, currentEvidence);
+                makeFeatureEvidence(lastPubFeatureId, currentEvidence); // Stores ReferenceList
                 currentEvidence = new ArrayList<Item>();
             }
             Item publication = createItem("Publication");
             publication.setAttribute("pubMedId", pubMedId);
-            store(publication);
+            store(publication); // Stores Publication
             currentEvidence.add(publication);
             lastPubFeatureId = featureId;
+            count++
         }
         if (lastPubFeatureId != null) {
             makeFeatureEvidence(lastPubFeatureId, currentEvidence);
         }
+        LOG.info("Created " + count + " publications");
     }
 
     /**
@@ -709,8 +713,8 @@ public class ChadoDBConverter extends BioDBConverter
         List<String> currentEvidenceIds = new ArrayList<String>();
         currentEvidenceIds.add(dataSet.getIdentifier());
 
-        for (Item edivence: currentEvidence) {
-            currentEvidenceIds.add(edivence.getIdentifier());
+        for (Item evidence: currentEvidence) {
+            currentEvidenceIds.add(evidence.getIdentifier());
         }
         referenceList.setRefIds(currentEvidenceIds);
         store(referenceList, fdat.intermineObjectId);
