@@ -78,9 +78,9 @@
            force="false">
       <classpath refid="xslt.class.path"/>
       <include name="**/*.html"/>
-      <exclude name="tour/*"/>
-      <exclude name="tutorials/*"/>
-      <exclude name="whatcanidoonthispage/*"/>
+      <exclude name="help/tour/*"/>
+      <exclude name="help/tutorials/*"/>
+      <exclude name="help/whatcanidoonthispage/*"/>
       <param name="branding" expression="${branding}" />
       <param name="basedir" expression="${project.sitePrefix}" />
       <param name="webappprefix" expression="${webapp.baseurl}/${webapp.path}"/>
@@ -90,42 +90,41 @@
       <param name="outputext" expression="${output.extension}" />
     </xslt>
   </target>
-
+  
+  <target name="generate-help" depends="prepare" 
+          description="Generate html for tour and copy images to build directory">
+ 
+ 		<mkdir dir="${dist.www}/help"/>
+ 
+     <exec executable="${common.scripts}/process_help.pl">
+       <arg value="${src.www}/help/whatcanidoonthispage/whatcanido.html"/>
+       <arg value="FlyMine Help"/>
+       <arg value="${dist.www}/help"/>
+     </exec>
+  </target>
+  
   <target name="generate-tour" depends="prepare" 
           description="Generate html for tour and copy images to build directory">
      <mkdir dir="${dist.www}/help/tour"/>
 
      <exec executable="${common.scripts}/process_help.pl">
-       <arg value="${src.www}/tour/tour.txt"/>
+       <arg value="${src.www}/help/tour/tour.txt"/>
        <arg value="FlyMine Tour"/>
-       <arg value="${dist.www}/help/tour/"/>
+       <arg value="${dist.www}/help/tour"/>
      </exec>
-
-     <copy todir="${dist.www}/help/tour">
-       <fileset dir="${src.www}/tour">
-         <include name="*.png"/>
-         <include name="*.gif"/>
-       </fileset>
-     </copy>
   </target>
 
-  <target name="generate-help" depends="prepare" 
-          description="Generate html for tour and copy images to build directory">
-     <mkdir dir="${dist.www}/help"/>
 
-     <exec executable="${common.scripts}/process_help.pl">
-       <arg value="${src.www}/whatcanidoonthispage/whatcanido.html"/>
-       <arg value="FlyMine Help"/>
-       <arg value="${dist.www}/help/"/>
+
+  <target name="generate-sitemap" depends="prepare" 
+          description="Generate sitemap for website">
+
+     <exec executable="${common.scripts}/sitemap_gen.pl">  
+          <arg value="FlyMine Tour"/>
      </exec>
-
-     <copy todir="${dist.www}/help">
-       <fileset dir="${src.www}/whatcanidoonthispage">
-         <include name="*.png"/>
-         <include name="*.gif"/>
-       </fileset>
-     </copy>
   </target>
+
+
 
   <!-- site isn't currently validated - the webapp header includes the <head> element
        and this is read by SSI, so files in dist don't validate. -->
