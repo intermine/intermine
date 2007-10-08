@@ -152,7 +152,21 @@ public class PortalQueryAction extends InterMineAction
             return mapping.findForward("results");
         }
         ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
-        InterMineBag imBag = new InterMineBag(origin + System.currentTimeMillis(), 
+        String bagName = null;
+        Map<String, InterMineBag> profileBags = profile.getSavedBags();
+        boolean bagExists = true;
+        int number = 0;
+        while (bagExists) {
+            bagName = "temp" + origin + "_" + number;
+            bagExists = false;
+            for (String name : profileBags.keySet()) {
+                if (bagName.equals(name)) {
+                    bagExists = true;
+                }
+            }
+            number++;
+        }
+        InterMineBag imBag = new InterMineBag(bagName, 
                                               className , null , new Date() ,
                                               os , profile.getUserId() , uosw);
         
