@@ -34,4 +34,14 @@
     <merge-additions file="bio/sources/fly-anatomy-ontology/fly-anatomy-ontology_additions.xml"/>
     <merge-additions file="bio/sources/kegg-pathway/kegg-pathway_additions.xml"/>
   </target>
+
+ <target name="generate-sitemap" depends="-init-summarise-objectstore">
+    <taskdef name="generate-sitemap" classname="org.intermine.bio.util.SiteMapTask">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+    <generate-sitemap objectStore="${objectstore.name}"
+                  outputFile="${dist.dir}/sitemap">
+    </generate-sitemap>
+  </target>
+
 </project>
