@@ -71,7 +71,8 @@ public class ChadoDBConverter extends BioDBConverter
     private String sequenceFeatureTypesString = "'chromosome', 'chromosome_arm'";
     private String featureTypesString =
         "'gene', 'mRNA', 'transcript', 'CDS', 'intron', 'exon', 'five_prime_untranslated_region', "
-        + "'EST', 'cDNA_clone', 'miRNA', 'snRNA', 'ncRNA', 'rRNA', 'ncRNA', 'snoRNA', 'tRNA', "
+// ignore for now:        + "'EST', 'cDNA_clone', "
+        + "'miRNA', 'snRNA', 'ncRNA', 'rRNA', 'ncRNA', 'snoRNA', 'tRNA', "
         + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', 'transcript', "
         + sequenceFeatureTypesString;
     private String relationshipTypesString = "'partof', 'part_of'";
@@ -269,7 +270,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected Item makeFeature(Integer featureId, String type,
                                String name, String uniqueName, String clsName,
-                               int seqlen) {
+                               int seqlen) throws ObjectStoreException {
 
         // XXX FIMXE TODO HACK - this should be configured somewhere
         if (uniqueName.startsWith("FBal")) {
@@ -322,7 +323,7 @@ public class ChadoDBConverter extends BioDBConverter
                 FeatureData srcFeatureData = features.get(srcFeatureId);
                 if (features.containsKey(featureId)) {
                     FeatureData featureData = features.get(featureId);
-                    makeLocation(srcFeatureData.uniqueName, featureData.itemIdentifier,
+                    makeLocation(srcFeatureData.itemIdentifier, featureData.itemIdentifier,
                                  start, end, strand, taxonId, dataSet);
                     count++;
                 } else {

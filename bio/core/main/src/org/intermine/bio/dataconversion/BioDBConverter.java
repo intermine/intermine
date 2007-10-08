@@ -44,7 +44,7 @@ public abstract class BioDBConverter extends DBConverter
 
     /**
      * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
-     * @param chromosomeIdentifier Chromosome identifier
+     * @param chromosomeId Chromosome Item identifier
      * @param locatedSequenceFeatureId the Item idenitifier of the feature
      * @param start the start position
      * @param end the end position
@@ -54,10 +54,9 @@ public abstract class BioDBConverter extends DBConverter
      * @return the new Location object
      * @throws ObjectStoreException if an Item can't be stored
      */
-    protected Item makeLocation(String chromosomeIdentifier, String locatedSequenceFeatureId,
+    protected Item makeLocation(String chromosomeId, String locatedSequenceFeatureId,
                                 int start, int end, int strand, int taxonId, Item dataSet)
         throws ObjectStoreException {
-        Item chromosome = getChromosome(chromosomeIdentifier, taxonId);
         Item location = createItem("Location");
 
         if (start < end) {
@@ -68,7 +67,7 @@ public abstract class BioDBConverter extends DBConverter
             location.setAttribute("end", String.valueOf(start));
         }
         location.setAttribute("strand", String.valueOf(strand));
-        location.setReference("object", chromosome);
+        location.setReference("object", chromosomeId);
         location.setReference("subject", locatedSequenceFeatureId);
         location.addToCollection("evidence", dataSet);
         store(location);
@@ -135,7 +134,15 @@ public abstract class BioDBConverter extends DBConverter
         return dataSet;
     }
 
-    private Item getChromosome(String identifier, int taxonId) throws ObjectStoreException {
+    /**
+     * Make a Chromosome Item, then store and return it.  The Item is held in a Map so this method
+     * can be called multiple times.
+     * @param identifier the chromsome identifier
+     * @param taxonId the id of the organism
+     * @throws ObjectStoreException if an Item can't be stored
+     * @return the Chromsome Item
+     */
+    protected Item getChromosome(String identifier, int taxonId) throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
             chromosome = createItem("Chromosome");

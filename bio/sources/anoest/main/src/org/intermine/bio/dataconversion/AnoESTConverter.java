@@ -88,7 +88,9 @@ public class AnoESTConverter extends BioDBConverter
 
             // some clusters have no location
             if (chromosomeIdentifier != null && start > 0 && end > 0) {
-                makeLocation(chromosomeIdentifier, cluster.getIdentifier(), start, end, strand,
+                Item chromosomeItem = getChromosome(chromosomeIdentifier, ANOPHELES_TAXON_ID);
+                String chromosomeItemId = chromosomeItem.getIdentifier();
+                makeLocation(chromosomeItemId, cluster.getIdentifier(), start, end, strand,
                              ANOPHELES_TAXON_ID, dataSet);
             }
             getItemWriter().store(ItemHelper.convert(cluster));
