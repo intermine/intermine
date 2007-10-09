@@ -11,7 +11,7 @@
 <div class="body">
         
 <!-- First column -->
-     <im:boxarea title="Data" titleLink="dataCategories" stylename="plainbox" floatValue="left" fixedWidth="300px">
+     <im:boxarea title="Data Categories" titleLink="dataCategories" stylename="plainbox" floatValue="left" fixedWidth="300px">
      <em><p><fmt:message key="begin.data"/></p></em>
      <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
           <table cellpadding="0" cellspacing="0" border="0"><tr>
