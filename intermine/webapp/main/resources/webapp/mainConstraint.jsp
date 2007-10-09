@@ -278,7 +278,7 @@ if (${!empty constrainOnBag}) {
                     <fmt:param value="${extraBagQueryClass}"/>
                   </fmt:message>
                   <html:select property="extraValue" value="${editingConstraintExtraValue}">
-                    <html:option value="">All</html:option>
+                    <html:option value="">Any</html:option>
                     <c:forEach items="${extraClassFieldValues}" var="value">
                       <html:option value="${value}">
                         <c:out value="${value}"/>

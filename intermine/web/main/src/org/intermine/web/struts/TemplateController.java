@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -68,6 +69,7 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class TemplateController extends TilesAction 
 {
+    private static final Logger LOG = Logger.getLogger(TemplateController.class);
     /**
      * Finds the correct template to display in the following ways:
      * <ol>
@@ -175,8 +177,20 @@ public class TemplateController extends TilesAction
         Map<String, InterMineBag> searchBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
 
-        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
+        Map<String, PathNode> editableNodesMap = new HashMap();
+        for (PathNode node : template.getEditableNodes()) {
+            editableNodesMap.put(node.getPathString(), node);
+        }
+
+        Map<String, PathNode> constrainedNodesMap = new HashMap();
+        for (Map.Entry<String, PathNode> nodeEntry : template.getNodes().entrySet()) {
+            PathNode node = nodeEntry.getValue();
+            if (node.getConstraints().size() > 0) {
+                constrainedNodesMap.put(node.getPathString(), node);
+            }
+        }
+
+        for (PathNode node : template.getEditableNodes()) {
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
             int j = 1;
             for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator(); ci
@@ -263,7 +277,25 @@ public class TemplateController extends TilesAction
                         FieldDescriptor fd = model.getFieldDescriptorsForClass(nodeType)
                             .get(connectFieldName);
                         if ((fd != null) && (fd instanceof ReferenceDescriptor)) {
-                            haveExtraConstraint.put(c, Boolean.TRUE);
+                            // An extra constraint is possible, now check if it has already been
+                            // constrained elsewhere in the query:
+                            String extraPath = node.getPathString() + "." + connectFieldName;
+                            LOG.info("Checking extra constraint. editableNodesMap: " + editableNodesMap + ", extraPath: " + extraPath);
+                            boolean alreadyConstrained = constrainedNodesMap.containsKey(extraPath);
+                            PathNode extraNode = template.getNode(extraPath);
+                            if (extraNode != null) {
+                                for (String classKey : ClassKeyHelper.getKeyFieldNames(classKeys,
+                                            extraNode.getType())) {
+                                    LOG.info("Checking path " + extraPath + "." + classKey);
+                                    alreadyConstrained = alreadyConstrained || constrainedNodesMap
+                                        .containsKey(extraPath + "." + classKey);
+                                }
+                            }
+                            if (alreadyConstrained) {
+                                haveExtraConstraint.put(c, Boolean.FALSE);
+                            } else {
+                                haveExtraConstraint.put(c, Boolean.TRUE);
+                            }
                         } else {
                             haveExtraConstraint.put(c, Boolean.FALSE);
                         }

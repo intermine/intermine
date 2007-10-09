@@ -192,7 +192,7 @@
                   </fmt:message>
                 </label>
                 <html:select property="extraValues(${index})">
-                  <html:option value="">All</html:option>
+                  <html:option value="">Any</html:option>
                   <c:forEach items="${extraClassFieldValues}" var="value">
                     <html:option value="${value}">
                       <c:out value="${value}"/>
