@@ -33,6 +33,7 @@ import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.ui.TextAnchor;
@@ -69,10 +70,14 @@ public class BagGraphWidget
 
             // display values for each column
             CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();
-            renderer.setItemLabelsVisible(true);
-            renderer.setItemLabelGenerator(generator);
+            plot.getRenderer().setBaseItemLabelsVisible(true);
+            plot.getRenderer().setBaseItemLabelGenerator(generator);
+//            renderer.setItemLabelsVisible(true);
+//            renderer.setItemLabelGenerator(generator);
            
-            renderer.setPositiveItemLabelPosition(new ItemLabelPosition(
+//            plot.getRenderer().setPositiveItemLabelPosition(new ItemLabelPosition(
+//                                        ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
+            renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
                                         ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
             
             // TODO put this in a config file
@@ -97,7 +102,7 @@ public class BagGraphWidget
                     {
                         geneCategoryArray
                     });
-            renderer.setToolTipGenerator(categoryToolTipGen);
+            plot.getRenderer().setBaseToolTipGenerator(categoryToolTipGen);
 
             // url to display genes
             // this may be already set individually for the different series
@@ -112,7 +117,7 @@ public class BagGraphWidget
                                         {
                     bagName
                                         });
-                renderer.setItemURLGenerator(categoryUrlGen);
+                plot.getRenderer().setBaseItemURLGenerator(categoryUrlGen);
             }
 /*            final ItemLabelPosition neg = new ItemLabelPosition(ItemLabelAnchor.INSIDE12, 
                                                                 TextAnchor.CENTER, 

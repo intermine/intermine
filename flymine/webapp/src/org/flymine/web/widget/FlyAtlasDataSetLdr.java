@@ -131,8 +131,12 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         int i = 0;
         for (Iterator iterator = callTable.keySet().iterator(); iterator.hasNext();) {
             String tissue = (String) iterator.next();
-            dataSet.addValue((callTable.get(tissue))[0], "Up", tissue);
-            dataSet.addValue((callTable.get(tissue))[1], "Down", tissue);
+            if ((callTable.get(tissue))[0] > 0) {
+              dataSet.addValue((callTable.get(tissue))[0], "Up", tissue);
+            }
+            if ((callTable.get(tissue))[1] < 0) {
+                dataSet.addValue((callTable.get(tissue))[1], "Down", tissue);
+            }
             Object[] geneSeriesArray = new Object[2];
             geneSeriesArray[0] = geneMap.get(tissue + "_Up");
             geneSeriesArray[1] = geneMap.get(tissue + "_Down");
