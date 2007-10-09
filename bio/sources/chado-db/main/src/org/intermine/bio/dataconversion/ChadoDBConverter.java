@@ -30,6 +30,7 @@ import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -225,22 +226,20 @@ public class ChadoDBConverter extends BioDBConverter
             String name = res.getString("name");
             String uniqueName = res.getString("uniquename");
             String type = res.getString("type");
-            type = fixFeatureType(type);
             int seqlen = 0;
             if (res.getObject("seqlen") != null) {
                 seqlen = res.getInt("seqlen");
             }
             List<String> primaryIds = new ArrayList<String>();
             primaryIds.add(uniqueName);
-            String interMineType = TypeUtil.javaiseClassName(type);
+            String interMineType = TypeUtil.javaiseClassName(fixFeatureType(type));
             uniqueName = fixIdentifier(interMineType, uniqueName);
-            Item feature =
-                makeFeature(featureId, interMineType, name, uniqueName, interMineType, seqlen);
+            Item feature =  makeFeature(featureId, type, interMineType, name, uniqueName, seqlen);
             if (feature != null) {
                 FeatureData fdat = new FeatureData();
                 fdat.itemIdentifier = feature.getIdentifier();
                 fdat.uniqueName = uniqueName;
-                fdat.interMineType = interMineType;
+                fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
                 feature.setReference("organism", organismItem);
                 // don't set the evidence collection - that's done by processPubTable()
                 fdat.intermineObjectId = store(feature); // Stores Feature
@@ -261,26 +260,46 @@ public class ChadoDBConverter extends BioDBConverter
     /**
      * Make and store a new feature
      * @param featureId the chado feature id
-     * @param the InterMine type of the feature
+     * @param chadoFeatureType the chado feature type (a SO term)
+     * @param interMineType the InterMine type of the feature
      * @param name the name
      * @param uniqueName the uniquename
-     * @param clsName the InterMine feature class
      * @param seqlen the sequence length (if known)
-     * @throws ObjectStoreException if there is a problem while storing
      */
-    protected Item makeFeature(Integer featureId, String type,
-                               String name, String uniqueName, String clsName,
-                               int seqlen) throws ObjectStoreException {
+    protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
+                               String name, String uniqueName,
+                               int seqlen) {
+        String realInterMineType = interMineType;
 
-        // XXX FIMXE TODO HACK - this should be configured somewhere
+        // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
         if (uniqueName.startsWith("FBal")) {
             return null;
         }
 
-        Item feature = createItem(clsName);
+        // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
+        if (taxonId == 7227) {
+            if (chadoFeatureType.equals("chromosome")
+                && !uniqueName.equals("dmel_mitochondrion_genome")) {
+                // ignore Chromosomes from flybase - features are located on ChromosomeArms except
+                // for mitochondrial features
+                return null;
+            } else {
+                if (chadoFeatureType.equals("chromosome_arm")) {
+                    if (uniqueName.equals("dmel_mitochondrion_genome")) {
+                        // ignore - all features are on the Chromosome object with uniqueName
+                        // "dmel_mitochondrion_genome"
+                        return null;
+                    } else {
+                        realInterMineType = "Chromosome";
+                    }
+                }
+            }
+        }
 
-        // XXX FIMXE TODO HACK - this should be configured somewhere
-        if (type.equals("Gene") && feature.checkAttribute("organismDbId")) {
+        Item feature = createItem(realInterMineType);
+
+        // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
+        if (realInterMineType.equals("Gene") && feature.checkAttribute("organismDbId")) {
             feature.setAttribute("organismDbId", uniqueName);
         } else {
             feature.setAttribute("identifier", uniqueName);
@@ -664,6 +683,7 @@ public class ChadoDBConverter extends BioDBConverter
         List<Item> currentEvidence = new ArrayList<Item>();
         Integer lastPubFeatureId = null;
         int featureWarnings = 0;
+        int count = 0;
 
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -689,7 +709,7 @@ public class ChadoDBConverter extends BioDBConverter
             store(publication); // Stores Publication
             currentEvidence.add(publication);
             lastPubFeatureId = featureId;
-            count++
+            count++;
         }
         if (lastPubFeatureId != null) {
             makeFeatureEvidence(lastPubFeatureId, currentEvidence);
