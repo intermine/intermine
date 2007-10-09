@@ -207,8 +207,8 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return the nodes
      */
-    public List getEditableNodes() {
-        List newEditableNodes = new ArrayList();
+    public List<PathNode> getEditableNodes() {
+        List<PathNode> newEditableNodes = new ArrayList();
         Iterator nodeIter = nodes.values().iterator();
         while (nodeIter.hasNext()) {
             PathNode node = (PathNode) nodeIter.next();

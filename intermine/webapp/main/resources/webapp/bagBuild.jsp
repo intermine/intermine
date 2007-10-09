@@ -96,7 +96,7 @@
          </fmt:message>
        </label>
          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
-           <html:option value="">All</html:option>
+           <html:option value="">Any</html:option>
       	   <c:forEach items="${extraClassFieldValues}" var="value">
              <html:option value="${value}">${value}</html:option>
       	   </c:forEach>
