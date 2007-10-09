@@ -46,7 +46,7 @@ public class CreateSiteMapLinkIns
     
 
     /**
-     * Create link-in file.
+     * Create sitemap
      * @param os ObjectStore to find Genes in
      * @param outputFile file to write to
      * @throws Exception if anything goes wrong
@@ -54,7 +54,6 @@ public class CreateSiteMapLinkIns
     public static void createSiteMap(ObjectStore os, String outputFile) throws Exception {
 
         String newFileName = outputFile + fileIndex + EXT;
-
         FileWriter writer = startFile(newFileName);
         
         Format formatter = new SimpleDateFormat("yyyy-MM-dd");
