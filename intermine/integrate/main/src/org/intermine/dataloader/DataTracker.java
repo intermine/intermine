@@ -159,30 +159,39 @@ public class DataTracker
         }
         Map<Integer, ObjectDescription> idsFetched = new HashMap();
         if (!toFetch.isEmpty()) {
-            StringBuffer sql = new StringBuffer("SELECT objectid, fieldname, sourcename, version"
-                    + " FROM tracker WHERE objectid IN (");
+            int count = 0;
+            StringBuffer sql = new StringBuffer();
             boolean needComma = false;
-            for (Integer id : toFetch) {
+            Iterator<Integer> idIter = toFetch.iterator();
+            while (idIter.hasNext()) {
+                Integer id = idIter.next();
                 if (needComma) {
                     sql.append(", ");
+                } else {
+                    sql.append("SELECT objectid, fieldname, sourcename, version"
+                    + " FROM tracker WHERE objectid IN (");
                 }
                 needComma = true;
                 sql.append("" + id);
                 idsFetched.put(id, new ObjectDescription());
-            }
-            sql.append(") ORDER BY version");
-            try {
-                Statement s = prefetchConn.createStatement();
-                ResultSet r = s.executeQuery(sql.toString());
-                while (r.next()) {
-                    idsFetched.get(new Integer(r.getInt(1))).putClean(r.getString(2).intern(),
-                            stringToSource(r.getString(3)));
+                if ((count % 500 == 0) || (!idIter.hasNext())) {
+                    sql.append(") ORDER BY version");
+                    try {
+                        Statement s = prefetchConn.createStatement();
+                        ResultSet r = s.executeQuery(sql.toString());
+                        while (r.next()) {
+                            idsFetched.get(new Integer(r.getInt(1))).putClean(r.getString(2).intern(),
+                                    stringToSource(r.getString(3)));
+                        }
+                    } catch (SQLException e) {
+                        broken = e;
+                        IllegalArgumentException e2 = new IllegalArgumentException();
+                        e2.initCause(broken);
+                        throw e2;
+                    }
+                    needComma = true;
+                    sql = new StringBuffer();
                 }
-            } catch (SQLException e) {
-                broken = e;
-                IllegalArgumentException e2 = new IllegalArgumentException();
-                e2.initCause(broken);
-                throw e2;
             }
         }
         synchronized (this) {
