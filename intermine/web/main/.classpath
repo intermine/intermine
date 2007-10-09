@@ -17,10 +17,10 @@
 	<classpathentry exported="true" kind="lib" path="lib/dwr.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/lucene-core-2.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/base64.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jcommon-1.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/stringtree-json-2.0.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/strutstest-2.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/mail.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
