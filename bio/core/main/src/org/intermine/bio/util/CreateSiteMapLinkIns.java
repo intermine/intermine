@@ -35,6 +35,7 @@ public class CreateSiteMapLinkIns
     private static final int MAX = 50000;  // can't have more than 50000 links per
     private static int index = 0;          // what number gene/protein we're on
     private static int fileIndex = 0;      // what number sitemap we're on
+    // TODO get this from config file
     private static final String LOC = "http://www.flymine.org/query/portal.do?externalid=";
     private static final String SETOPEN = 
         "< urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
@@ -43,7 +44,7 @@ public class CreateSiteMapLinkIns
     private static final String ENDL = System.getProperty("line.separator");
     private static final String EXT = ".xml";
     private static String date;
-    
+    private static final String PREFIX = "http://www.flymine.org/query/";
 
     /**
      * Create sitemap
@@ -59,16 +60,16 @@ public class CreateSiteMapLinkIns
         Format formatter = new SimpleDateFormat("yyyy-MM-dd");
         date = formatter.format(new Date());
 
-        ArrayList<String> queries = new ArrayList<String>();
-        queries.add("gene");
-        queries.add("protein");
+        writeStartPages(writer);
+        
+        String[] queries = {"gene", "protein"};
         
         for (String s : queries) {        
             Iterator i = getResults(os, s);
             while (i.hasNext()) {
                 ResultsRow r =  (ResultsRow) i.next();
                 String identifier = (String) r.get(0);            
-                writer.write(getURL(identifier) + ENDL);            
+                writer.write(getURL(LOC + identifier));            
                 index++;
                 if (index > MAX) {
                     writer = getNewFile(writer, outputFile + ++fileIndex + EXT);                
@@ -139,7 +140,7 @@ public class CreateSiteMapLinkIns
     private static String getURL(String identifier) {
         StringBuffer s = new StringBuffer("<url>" + ENDL);
         s.append("<loc>");
-        s.append(LOC + identifier);
+        s.append(identifier);
         s.append("</loc>" + ENDL);
         s.append("<lastmod>");
         s.append(date);
@@ -148,7 +149,16 @@ public class CreateSiteMapLinkIns
         return s.toString();
     }
     
-/*
+    private static void writeStartPages(FileWriter writer) throws Exception {
+        // TODO get these from config file
+        String[] pages = {"begin.do", "templates.do", "bag.do", "dataCategories.do"};
+        for (String s : pages) {     
+            writer.write(getURL(PREFIX + s));            
+            index++;
+        }
+    }
+
+    /*
     <?xml version="1.0" encoding="UTF-8"?>
     < urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
      < url>
