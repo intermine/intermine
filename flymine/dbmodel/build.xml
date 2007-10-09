@@ -42,6 +42,15 @@
     <generate-sitemap objectStore="${objectstore.name}"
                   outputFile="${dist.dir}/sitemap">
     </generate-sitemap>
+    
+    <gzip src="${dist.dir}/sitemap180454gene.xml" destfile="${dist.dir}/sitemap180454gene.xml.gz"/>
+    <gzip src="${dist.dir}/sitemap180454protein.xml" destfile="${dist.dir}/sitemap180454protein.xml.gz"/>
+    <gzip src="${dist.dir}/sitemap7227gene.xml" destfile="${dist.dir}/sitemap7227gene.xml.gz"/>
+    <gzip src="${dist.dir}/sitemap7227protein.xml" destfile="${dist.dir}/sitemap7227protein.xml.gz"/>
+    <gzip src="${dist.dir}/sitemap7237gene.xml" destfile="${dist.dir}/sitemap7237gene.xml.gz"/>
+    <gzip src="${dist.dir}/sitemap7237protein.xml" destfile="${dist.dir}/sitemap7237protein.xml.gz"/>
+    <gzip src="${dist.dir}/sitemap.xml" destfile="${dist.dir}/sitemap.xml.gz"/>
+
   </target>
 
 </project>
