@@ -115,16 +115,13 @@
   </target>
 
 
-
   <target name="generate-sitemap" depends="prepare" 
           description="Generate sitemap for website">
 
      <exec executable="${common.scripts}/sitemap_gen.pl">  
-          <arg value="FlyMine Tour"/>
+          <arg value="${dist.www}"/>
      </exec>
   </target>
-
-
 
   <!-- site isn't currently validated - the webapp header includes the <head> element
        and this is read by SSI, so files in dist don't validate. -->
@@ -151,6 +148,9 @@
   <target name="transform-site"
           depends="style-site, validate-site-xhtml"
           description="Transform the website contents from XML to HTML"/>
+
+
+
 
   <target name="release-www" depends="style-site, generate-tour, generate-help"
           description="releases the static website to the webserver">
