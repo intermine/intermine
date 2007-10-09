@@ -189,7 +189,7 @@ public class DataTracker
                         e2.initCause(broken);
                         throw e2;
                     }
-                    needComma = true;
+                    needComma = false;
                     sql = new StringBuffer();
                 }
             }
