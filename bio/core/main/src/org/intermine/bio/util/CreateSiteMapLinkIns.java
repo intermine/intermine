@@ -11,7 +11,6 @@ package org.intermine.bio.util;
  */
 
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -45,7 +44,9 @@ public class CreateSiteMapLinkIns
     private static final String EXT = ".xml";
     private static String date;
     private static final String PREFIX = "http://www.flymine.org/query/";
-
+    private static final String WEIGHT = "0.5";
+    private static final String STARTWEIGHT = "0.8";
+    
     /**
      * Create sitemap
      * @param os ObjectStore to find Genes in
@@ -69,7 +70,7 @@ public class CreateSiteMapLinkIns
             while (i.hasNext()) {
                 ResultsRow r =  (ResultsRow) i.next();
                 String identifier = (String) r.get(0);            
-                writer.write(getURL(LOC + identifier));            
+                writer.write(getURL(LOC + identifier, WEIGHT));            
                 index++;
                 if (index > MAX) {
                     writer = getNewFile(writer, outputFile + ++fileIndex + EXT);                
@@ -137,7 +138,7 @@ public class CreateSiteMapLinkIns
         return SETCLOSE + ENDL;
      }
     
-    private static String getURL(String identifier) {
+    private static String getURL(String identifier, String weight) {
         StringBuffer s = new StringBuffer("<url>" + ENDL);
         s.append("<loc>");
         s.append(identifier);
@@ -145,6 +146,9 @@ public class CreateSiteMapLinkIns
         s.append("<lastmod>");
         s.append(date);
         s.append("</lastmod>" + ENDL);
+        s.append("<priority>");
+        s.append(weight);
+        s.append("</priority>" + ENDL);
         s.append("</url>" + ENDL);
         return s.toString();
     }
@@ -153,7 +157,7 @@ public class CreateSiteMapLinkIns
         // TODO get these from config file
         String[] pages = {"begin.do", "templates.do", "bag.do", "dataCategories.do"};
         for (String s : pages) {     
-            writer.write(getURL(PREFIX + s));            
+            writer.write(getURL(PREFIX + s, STARTWEIGHT));            
             index++;
         }
     }
