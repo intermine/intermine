@@ -10,8 +10,7 @@ $urlset = "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
 $head = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 $indexfilename = "$dir/sitemap_index.xml";
 $indexhead = "<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"\n xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9\n http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd\">";
-@sitemaps = ("/sitemap.xml", "/query/sitemap.xml", "/query/sitemapGenes0.xml", "/query/sitemapGenes1.xml", "/query/sitemapGenes2.xml", "/query/sitemapProts0.xml" , "/query/sitemapProts1.xml", "/query/sitemapProts2.xml");
-
+@sitemaps = ("/sitemap.xml", "/query/sitemap.xml", "/query/sitemap180454gene.xml", "/query/sitemap7227gene.xml", "/query/sitemap7237gene.xml", "/query/sitemap180454protein.xml" , "/query/sitemap7227protein.xml", "/query/sitemap7237protein.xml");
 
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime(time);
 $y = $year+1900;

@@ -31,9 +31,6 @@ import java.text.SimpleDateFormat;
  */
 public class CreateSiteMapLinkIns
 {
-    private static final int MAX = 50000;  // can't have more than 50000 links per
-    private static int index = 0;          // what number gene/protein we're on
-    private static int fileIndex = 0;      // what number sitemap we're on
     // TODO get this from config file
     private static final String LOC = "http://www.flymine.org/query/portal.do?externalid=";
     private static final String SETOPEN = 
@@ -49,33 +46,34 @@ public class CreateSiteMapLinkIns
     
     /**
      * Create sitemap
+     * NOTE: Sitemaps can't contain more than 50000 entries or be over 10MB.  See sitemap.org.
      * @param os ObjectStore to find Genes in
      * @param outputFile file to write to
      * @throws Exception if anything goes wrong
      */
     public static void createSiteMap(ObjectStore os, String outputFile) throws Exception {
 
-        String newFileName = outputFile + fileIndex + EXT;
-        FileWriter writer = startFile(newFileName);
-        
         Format formatter = new SimpleDateFormat("yyyy-MM-dd");
         date = formatter.format(new Date());
 
+        String newFileName = outputFile + EXT;
+        FileWriter writer = startFile(newFileName);
+        
         writeStartPages(writer);
         
-        String[] queries = {"gene", "protein"};
-        
-        for (String s : queries) {        
-            Iterator i = getResults(os, s);
-            while (i.hasNext()) {
-                ResultsRow r =  (ResultsRow) i.next();
-                String identifier = (String) r.get(0);            
-                writer.write(getURL(LOC + identifier, WEIGHT));            
-                index++;
-                if (index > MAX) {
-                    writer = getNewFile(writer, outputFile + ++fileIndex + EXT);                
+        String[] bioentity = {"gene", "protein"};
+        String[] ids = {"180454", "7227", "7237"};
+
+        for (String e : bioentity) {   
+            for (String id : ids) { 
+                writer = getNewFile(writer, outputFile + id + e + EXT);   
+                Iterator i = getResults(os, e, id);
+                while (i.hasNext()) {
+                    ResultsRow r =  (ResultsRow) i.next();
+                    String identifier = (String) r.get(0);            
+                    writer.write(getURL(LOC + identifier, WEIGHT));            
                 }
-            }
+            }            
         }
         closeFile(writer);
     }
@@ -83,7 +81,6 @@ public class CreateSiteMapLinkIns
     private static FileWriter getNewFile(FileWriter writer, String newFilename) throws Exception {
         closeFile(writer);
         FileWriter w = startFile(newFilename);
-        index = 0;
         return w;
     }
 
@@ -100,15 +97,13 @@ public class CreateSiteMapLinkIns
         writer.close();
     }
     
-    private static Iterator getResults(ObjectStore os, String whichQuery) {
+    private static Iterator getResults(ObjectStore os, String whichQuery, String taxonId) {
         String query = null;
         if (whichQuery.equals("gene")) {
             query = "SELECT DISTINCT a1_.identifier as a3_ "
                 + "FROM org.flymine.model.genomic.Gene AS a1_, "
                 + "org.flymine.model.genomic.Organism AS a2_ WHERE " 
-                + "(a2_.taxonId = 180454 "
-                + "OR a2_.taxonId = 7227 "
-                + "OR a2_.taxonId = 7237) " 
+                + "a2_.taxonId = " + taxonId + " "            
                 + "AND a1_.organism CONTAINS a2_ " 
                 + "AND a1_.identifier != \'\') " 
                 + "ORDER BY a1_.identifier\n";
@@ -116,9 +111,7 @@ public class CreateSiteMapLinkIns
             query  = "SELECT DISTINCT a1_.identifier as a3_ "
                 + "FROM org.flymine.model.genomic.Protein AS a1_, "
                 + "org.flymine.model.genomic.Organism AS a2_ WHERE " 
-                + "(a2_.taxonId = 180454 "
-                + "OR a2_.taxonId = 7227 "
-                + "OR a2_.taxonId = 7237) " 
+                + "a2_.taxonId = " + taxonId + " "  
                 + "AND a1_.organism CONTAINS a2_ " 
                 + "AND a1_.identifier != \'\') " 
                 + "ORDER BY a1_.identifier\n";
@@ -158,7 +151,6 @@ public class CreateSiteMapLinkIns
         String[] pages = {"begin.do", "templates.do", "bag.do", "dataCategories.do"};
         for (String s : pages) {     
             writer.write(getURL(PREFIX + s, STARTWEIGHT));            
-            index++;
         }
     }
 
