@@ -5,19 +5,24 @@
 PATH=/usr/local/bin:/software/arch/postgresql/bin:$PATH
 export PATH
 
-dumps_dir=/export/flymine/dumps/userprofile
+dumps_dir=/shared/dumps/userprofile
 
 /software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/userprofile_backup gollum > $HOME/.userprofile_backup.output.new 2>&1
 
 latest_version=`cat $HOME/.userprofile_latest_version`
 
 dest_file=userprofile-release.$latest_version.`date +'%Y%m%d-%H%M'`
-
 cp $dumps_dir/userprofile_backup.$latest_version $dumps_dir/$dest_file
+cp $dumps_dir/userprofile_backup.$latest_version.bags $dumps_dir/$dest_file.bags
 
 gzip -9 $dumps_dir/$dest_file 2>&1 > $HOME/.userprofile_backup.output.new
+gzip -9 $dumps_dir/$dest_file.bags 2>&1 >> $HOME/.userprofile_backup.output.new
 
-(cd $dumps_dir; rm -f current_release_dump.gz; ln -s $dest_file.gz current_release_dump.gz)
+(cd $dumps_dir
+ rm -f current_release_dump.gz current_release_dump.bags.gz
+ ln -s $dest_file.gz current_release_dump.gz
+ ln -s $dest_file.bags.gz current_release_dump.bags.gz
+)
 
 echo backup complete >> $HOME/.userprofile_backup.output.new
 
