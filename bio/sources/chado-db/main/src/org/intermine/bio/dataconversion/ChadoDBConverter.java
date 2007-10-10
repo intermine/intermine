@@ -680,10 +680,12 @@ public class ChadoDBConverter extends BioDBConverter
         throws SQLException, ObjectStoreException {
         ResultSet res = getPubResultSet(connection);
 
-        List<Item> currentEvidence = new ArrayList<Item>();
+        List<String> currentEvidenceIds = new ArrayList<String>();
         Integer lastPubFeatureId = null;
         int featureWarnings = 0;
         int count = 0;
+
+        Map<String, String> pubs = new HashMap<String, String>();
 
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -701,18 +703,26 @@ public class ChadoDBConverter extends BioDBConverter
             }
             String pubMedId = res.getString("pub_db_identifier");
             if (lastPubFeatureId != null && !featureId.equals(lastPubFeatureId)) {
-                makeFeatureEvidence(lastPubFeatureId, currentEvidence); // Stores ReferenceList
-                currentEvidence = new ArrayList<Item>();
+                makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds); // Stores ReferenceList
+                currentEvidenceIds = new ArrayList<String>();
             }
-            Item publication = createItem("Publication");
-            publication.setAttribute("pubMedId", pubMedId);
-            store(publication); // Stores Publication
-            currentEvidence.add(publication);
+            String publicationId;
+            if (pubs.containsKey(pubMedId)) {
+                publicationId = pubs.get(pubMedId);
+            } else {
+                Item publication = createItem("Publication");
+                publication.setAttribute("pubMedId", pubMedId);
+                store(publication); // Stores Publication
+                publicationId = publication.getIdentifier();
+                pubs.put(pubMedId, publicationId);
+            }
+            currentEvidenceIds.add(publicationId);
             lastPubFeatureId = featureId;
             count++;
         }
+
         if (lastPubFeatureId != null) {
-            makeFeatureEvidence(lastPubFeatureId, currentEvidence);
+            makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds);
         }
         LOG.info("Created " + count + " publications");
     }
@@ -720,22 +730,18 @@ public class ChadoDBConverter extends BioDBConverter
     /**
      * Set the evidence collection of the feature with the given (chado) feature id.
      */
-    private void makeFeatureEvidence(Integer featureId, List<Item> currentEvidence)
+    private void makeFeatureEvidence(Integer featureId, List<String> currentEvidenceIds)
         throws ObjectStoreException {
         FeatureData fdat = features.get(featureId);
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
         }
         Item dataSet = getDataSetItem(dataSetTitle);
+        currentEvidenceIds.add(0, dataSet.getIdentifier());
 
         ReferenceList referenceList = new ReferenceList();
         referenceList.setName("evidence");
-        List<String> currentEvidenceIds = new ArrayList<String>();
-        currentEvidenceIds.add(dataSet.getIdentifier());
 
-        for (Item evidence: currentEvidence) {
-            currentEvidenceIds.add(evidence.getIdentifier());
-        }
         referenceList.setRefIds(currentEvidenceIds);
         store(referenceList, fdat.intermineObjectId);
     }

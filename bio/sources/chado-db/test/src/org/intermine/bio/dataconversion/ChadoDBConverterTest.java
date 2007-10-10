@@ -267,7 +267,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
                     3117509, "2892759"
                 },
                 {
-                    3175412, "1988156"
+                    3175412, "8344257"
                 },
                 {
                     3175412, "2612903"
