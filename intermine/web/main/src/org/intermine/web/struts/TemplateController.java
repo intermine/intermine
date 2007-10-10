@@ -362,8 +362,8 @@ public class TemplateController extends TilesAction
                 tf.setExtraValues(attributeKey, "" + c.getExtraValue());
                 if (imObject != null) {
                     Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-                    Set keyFields = (Set) classKeys.get(DynamicUtil.getFriendlyName(imObject
-                                                                   .getClass()));
+                    Collection keyFields = (Collection) classKeys.get(DynamicUtil
+                            .getFriendlyName(imObject.getClass()));
                     AttributeDescriptor classKey = (AttributeDescriptor) keyFields.iterator()
                         .next();
                     String value = null;
