@@ -123,6 +123,8 @@
      </exec>
      
      <gzip src="${dist.www}/sitemap.xml" destfile="${dist.www}/sitemap.xml.gz"/>
+
+     <delete file="${dist.www}/sitemap.xml"/>
   </target>
 
   <!-- site isn't currently validated - the webapp header includes the <head> element
