@@ -10,7 +10,6 @@ package org.intermine.dataloader;
  *
  */
 
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
 

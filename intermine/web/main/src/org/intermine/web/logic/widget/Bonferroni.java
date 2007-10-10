@@ -29,14 +29,13 @@ public class Bonferroni
      * @param significanceValue significance Value.
      */
     public Bonferroni(HashMap originalMap) {
-
         this.originalMap = originalMap;
         this.numberOfTests = originalMap.size();
     }
 
-/**
- * @param maxValue maximum value to display
- */
+    /**
+     * @param maxValue maximum value to display
+     */
     public void calculate(Double maxValue) {
 
         //double bonferroni = significanceValue.doubleValue() / numberOfTests;

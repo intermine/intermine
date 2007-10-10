@@ -60,7 +60,7 @@ public interface ItemWriter
      * @param itemId the ID of the Item that contains the Attribute
      * @throws ObjectStoreException if something goes wrong
      */
-    public void store(Attribute ref, Integer itemId) throws ObjectStoreException;
+    public void store(Attribute att, Integer itemId) throws ObjectStoreException;
 
     /**
      * Stores the given Collection of Items and all their associated attributes, references, and

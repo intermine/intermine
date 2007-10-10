@@ -80,7 +80,7 @@ public class CollectionUtil
 
     /**
      * Sorts objects in the given collection into different types by Class.
-     *
+     * @param <E> the element type
      * @param objects a Collection of objects
      * @param inherit if true, objects are put into all their class's superclasses as well, except
      * Object - the original Collection can be used in that case
@@ -126,7 +126,7 @@ public class CollectionUtil
 
     /**
      * Returns a collection containing all possible combinations of the input values.
-     * 
+     * @param <E> the element type
      * @param values a List of collections of values
      * @return a collection of Lists, all the same size as the input List, containing all possible
      * combinations of the values in the collections, in their respective indexes in the List.

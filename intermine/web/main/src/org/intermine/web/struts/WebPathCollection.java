@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -49,7 +49,7 @@ import org.apache.log4j.Logger;
 public class WebPathCollection extends AbstractList implements WebTable
 {
     private static final Logger LOG = Logger.getLogger(WebPathCollection.class);
-    
+
     private List list;
     private Model model;
     private WebConfig webConfig;
@@ -69,7 +69,7 @@ public class WebPathCollection extends AbstractList implements WebTable
      * @param webConfig the WebConfig object the configures the columns in the view
      * @param classKeys map of classname to set of keys
      */
-    public WebPathCollection(ObjectStore os, Path columnPath, Collection collection, Model model, 
+    public WebPathCollection(ObjectStore os, Path columnPath, Collection collection, Model model,
                          WebConfig webConfig, Map classKeys) {
         this.os = os;
         this.model = model;
@@ -138,7 +138,7 @@ public class WebPathCollection extends AbstractList implements WebTable
         }
         return rowCells;
     }
-    
+
     /**
      * If the collection passed to the constructor was a List, return it.  Otherwise return a List
      * constructed from the collection
@@ -204,7 +204,7 @@ public class WebPathCollection extends AbstractList implements WebTable
                     if (!types.contains(column.getColumnId())) {
                         String fieldName = colPath.getEndFieldDescriptor().getName();
                         String typeStr = TypeUtil.unqualifiedName(type.getName());
-                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, typeStr, 
+                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, typeStr,
                                                                        fieldName);
                         if (isKeyField) {
                             column.setSelectable(true);
@@ -254,6 +254,9 @@ public class WebPathCollection extends AbstractList implements WebTable
         return Integer.MAX_VALUE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public PathQuery getPathQuery() {
         // TODO Auto-generated method stub
         return null;

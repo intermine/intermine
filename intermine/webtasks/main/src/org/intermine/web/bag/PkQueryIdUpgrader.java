@@ -41,6 +41,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
 
     /**
      * No argument constructor - will use all available keyDefs to upgrade bags.
+     * @param os the ObjectStore to query
      */
     public PkQueryIdUpgrader(ObjectStore os) {
         this.source = null;

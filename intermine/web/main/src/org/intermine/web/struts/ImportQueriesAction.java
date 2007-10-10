@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;

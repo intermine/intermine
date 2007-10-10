@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -31,7 +29,6 @@ import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.SavedQueryHandler;
 import org.intermine.web.logic.tagging.TagHandler;
 import org.intermine.web.logic.template.TemplateQueryHandler;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.FullHandler;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.Item;

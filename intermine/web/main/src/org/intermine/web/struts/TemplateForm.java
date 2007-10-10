@@ -43,8 +43,8 @@ public class TemplateForm extends ActionForm
     private static final Logger LOG = Logger.getLogger(TemplateForm.class);
 
     /** Maps containing form state for each constraint. */
-    protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint, extraValues;
-    protected Map selectedBags, bagOps;
+    protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint;
+    protected Map extraValues, selectedBags, bagOps;
     protected String templateType, templateName;
     protected String view;
     

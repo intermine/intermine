@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -33,10 +33,10 @@ import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.ui.TextAnchor;
+
 /**
  * @author Xavier Watkins
  *
@@ -48,22 +48,22 @@ public class BagGraphWidget
     private String imageMap = null;
     private static final int WIDTH = 430;
     private static final int HEIGHT = 350;
-    
+
     /**
      * Creates a BagGraphWidet object which handles
      * the creation of thhe JFreeChart for the given
      * webconfig
      * @param session the HttpSession
      * @param geneCategoryArray the geneCategoryArray as created by the DataSetLdr
-     * @param bagName the bag name     
+     * @param bagName the bag name
      * @param toolTipGen the ToolTipGenerator to use
      * @param urlGen the UrlGenerator to use
      * @param chart the chart
      * @param plot the plot
      * @param renderer the renderer
      */
-    public BagGraphWidget(HttpSession session, Object[] geneCategoryArray, String bagName, 
-                          String toolTipGen, String urlGen, JFreeChart chart, CategoryPlot plot, 
+    public BagGraphWidget(HttpSession session, Object[] geneCategoryArray, String bagName,
+                          String toolTipGen, String urlGen, JFreeChart chart, CategoryPlot plot,
                           BarRenderer renderer) {
         super();
         try {
@@ -74,30 +74,30 @@ public class BagGraphWidget
             plot.getRenderer().setBaseItemLabelGenerator(generator);
 //            renderer.setItemLabelsVisible(true);
 //            renderer.setItemLabelGenerator(generator);
-           
+
 //            plot.getRenderer().setPositiveItemLabelPosition(new ItemLabelPosition(
 //                                        ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
             renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
                                         ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
-            
+
             // TODO put this in a config file
             // set colors for each data series
             ChartColor blue = new ChartColor(47, 114,  255);
-            renderer.setSeriesPaint(0, blue); 
-            
+            renderer.setSeriesPaint(0, blue);
+
             ChartColor lightBlue = new ChartColor(159, 192,  255);
-            renderer.setSeriesPaint(1, lightBlue); 
-                        
+            renderer.setSeriesPaint(1, lightBlue);
+
             //renderer.setDrawBarOutline(false);
             renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
-            
+
             // gene names as toolips
             Class clazz1 = TypeUtil.instantiate(toolTipGen);
             Constructor toolTipConstructor = clazz1.getConstructor(new Class[]
                 {
                     Object[].class
                 });
-            CategoryToolTipGenerator categoryToolTipGen = (CategoryToolTipGenerator) 
+            CategoryToolTipGenerator categoryToolTipGen = (CategoryToolTipGenerator)
                 toolTipConstructor.newInstance(new Object[]
                     {
                         geneCategoryArray
@@ -119,21 +119,20 @@ public class BagGraphWidget
                                         });
                 plot.getRenderer().setBaseItemURLGenerator(categoryUrlGen);
             }
-/*            final ItemLabelPosition neg = new ItemLabelPosition(ItemLabelAnchor.INSIDE12, 
-                                                                TextAnchor.CENTER, 
-                                                                TextAnchor.CENTER, 
+/*            final ItemLabelPosition neg = new ItemLabelPosition(ItemLabelAnchor.INSIDE12,
+                                                                TextAnchor.CENTER,
+                                                                TextAnchor.CENTER,
                                                                 0.0D);
-                                                                
-                                                                
-                                                                
             renderer.setNegativeItemLabelPosition(neg); */
-            
-            
-            renderer.setNegativeItemLabelPositionFallback(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT)); 
-            
+
+
+            ItemLabelPosition itemLabelPosition =
+                new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT);
+            renderer.setNegativeItemLabelPositionFallback(itemLabelPosition);
+
             NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
             rangeAxis.setUpperMargin(0.15);
-            
+
             Font labelFont = new Font("SansSerif", Font.BOLD, 12);
             plot.getDomainAxis().setLabelFont(labelFont);
             rangeAxis.setLabelFont(labelFont);
@@ -142,9 +141,9 @@ public class BagGraphWidget
                 .setCategoryLabelPositions(
                                            CategoryLabelPositions
                                                .createUpRotationLabelPositions(Math.PI / 6.0));
-        
+
             ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
-           
+
             // generate the image and imagemap
             fileName = ServletUtilities.saveChartAsPNG(chart, WIDTH, HEIGHT, info, session);
             imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);

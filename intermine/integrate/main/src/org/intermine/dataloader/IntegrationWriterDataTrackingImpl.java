@@ -323,16 +323,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             }
             if ((equivObjects.size() >= 1) && (type == SKELETON)) {
                 InterMineObject onlyEquivalent = (InterMineObject) equivObjects.iterator().next();
-//                if (onlyEquivalent instanceof ProxyReference) {
-                    //LOG.debug("store() finished trivially for object " + oText);
-                    // This onlyEquivalent object MUST have come from the ID map.
-                    //if (idMap.get(o.getId()) == null) {
-                    //    LOG.error("Got a ProxyReference as the only equivalent object, but not from"
-                    //            + " the ID map! o = " + o);
-                    //} else {
-                        return onlyEquivalent;
-                    //}
-//                }
+                return onlyEquivalent;
             }
             Set classes = new HashSet();
             classes.addAll(DynamicUtil.decomposeClass(o.getClass()));
@@ -516,9 +507,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
 
             if (doTrackerFor(newObj.getClass())) {
                 // We have called store() on an object, and we are about to write all of its data
-                // tracking data. We should tell the data tracker, ONLY IF THE ID OF THE OBJECT IS NEW,
-                // so that the data tracker can cache the writes without having to ask the db if
-                // records for that objectid already exist - we know there aren't.
+                // tracking data. We should tell the data tracker, ONLY IF THE ID OF THE OBJECT IS
+                // NEW, so that the data tracker can cache the writes without having to ask the db
+                // if records for that objectid already exist - we know there aren't.
                 if (newId == null) {
                     dataTracker.clearObj(newObj.getId());
                 }
