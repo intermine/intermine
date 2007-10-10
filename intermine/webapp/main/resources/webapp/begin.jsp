@@ -103,7 +103,7 @@
           <div id="qbStartQuery">
             Start a query from:
             <!-- loop through starting classes -->
-            <c:forEach var="entry" items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status"><c:if test="${status.count != 1}">,</c:if>&nbsp;<a href="/queryClassSelect.do?action=Select&className=${entry}" rel="NOFOLLOW">${entry}</a></c:forEach>
+            <c:forEach var="entry" items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status"><c:if test="${status.count != 1}">,</c:if>&nbsp;<html:link action="/queryClassSelect?action=Select&className=${entry}" >${entry}</html:link></c:forEach>
           </div>
         </div>
         <div id="qbImport">
