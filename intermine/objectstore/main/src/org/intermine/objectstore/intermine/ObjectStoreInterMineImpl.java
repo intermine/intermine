@@ -1012,6 +1012,24 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * Creates a temporary bag table for the given BagConstraint.
      *
+     * @param bagConstraint a BagConstraint
+     * @throws ObjectStoreException if an error occurs
+     */
+    public void createTempBagTable(BagConstraint bagConstraint) throws ObjectStoreException {
+        Connection c = null;
+        try {
+            c = getConnection();
+            createTempBagTable(c, bagConstraint, false, null);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(c);
+        }
+    }
+
+    /**
+     * Creates a temporary bag table for the given BagConstraint.
+     *
      * @param c a Connection
      * @param bagConstraint a BagConstraint
      * @param log true to log this action

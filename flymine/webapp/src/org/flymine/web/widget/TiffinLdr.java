@@ -10,7 +10,9 @@ package org.flymine.web.widget;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.query.BagConstraint;
@@ -28,6 +30,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -138,7 +141,16 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
          if (useBag) {
              // genes must be in bag
-             BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+             // We convert the bag into a separate bag table because PostgreSQL runs it 200 times
+             // faster that way.
+             List materialisedBag = new ArrayList(bag.getContentsAsIds());
+             BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, materialisedBag);
+             if (os instanceof ObjectStoreInterMineImpl) {
+                 try {
+                     ((ObjectStoreInterMineImpl) os).createTempBagTable(bc1);
+                 } catch (ObjectStoreException e) {
+                 }
+             }
              cs.addConstraint(bc1);
          }
          // get organisms

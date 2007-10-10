@@ -195,35 +195,23 @@ public abstract class WebUtil
             String substring = exp.substring(i);
             if (substring.startsWith("*")) {
                 sb.append("%");
+            } else if (substring.startsWith("?")) {
+                sb.append("_");
+            } else if (substring.startsWith("\\*")) {
+                sb.append("*");
+                i++;
+            } else if (substring.startsWith("\\?")) {
+                sb.append("?");
+                i++;
+            } else if (substring.startsWith("%")) {
+                sb.append("\\\\%");
+            } else if (substring.startsWith("_")) {
+                sb.append("\\\\_");
+            } else if (substring.startsWith("\\")) {
+                sb.append("\\\\\\\\");
+                i++;
             } else {
-                if (substring.startsWith("?")) {
-                    sb.append("_");
-                } else {
-                    if (substring.startsWith("\\*")) {
-                        sb.append("*");
-                        i++;
-                    } else {
-                        if (substring.startsWith("\\?")) {
-                            sb.append("?");
-                            i++;
-                        } else {
-                            if (substring.startsWith("%")) {
-                                sb.append("\\\\%");
-                            } else {
-                                if (substring.startsWith("_")) {
-                                    sb.append("\\\\_");
-                                } else {
-                                    if (substring.startsWith("\\")) {
-                                        sb.append("\\\\\\\\");
-                                        i++;
-                                    } else {
-                                        sb.append(substring.charAt(0));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                sb.append(substring.charAt(0));
             }
         }
 
@@ -446,7 +434,9 @@ public abstract class WebUtil
         }
         return buf.toString();
     }
-    
+
+    private static Map<String, List> statsCalcCache = new HashMap();
+
     /**
      * Takes two queries.  Runs both and compares the results.
      * @param os
@@ -459,14 +449,9 @@ public abstract class WebUtil
      * @return array of three results maps
      * @throws Exception
      */
-        public static ArrayList statsCalc(ObjectStoreInterMineImpl os, 
-                             Query queryPopulation, 
-                             Query querySample, 
-                             InterMineBag bag,
-                             int total,
-                             Double maxValue) {
-          
-            
+    public static ArrayList statsCalc(ObjectStoreInterMineImpl os, Query queryPopulation,
+            Query querySample, InterMineBag bag, int total, Double maxValue) {
+
             ArrayList<Map> maps = new ArrayList<Map>();
             int numberOfGenesInBag;
             try {
@@ -479,8 +464,8 @@ public abstract class WebUtil
             Results r = os.execute(querySample);
             r.setBatchSize(10000);
             Iterator iter = r.iterator();
-            HashMap<String, Long> countMap = new HashMap<String, Long>();
-            HashMap<String, String> idMap = new HashMap<String, String>();
+            HashMap<String, Long> countMap = new HashMap();
+            HashMap<String, String> idMap = new HashMap();
 
             while (iter.hasNext()) {
 
@@ -491,7 +476,7 @@ public abstract class WebUtil
                 String id = (String) rr.get(0);
 
                 // count of item
-                Long count = (java.lang.Long) rr.get(1);  
+                Long count = (Long) rr.get(1);  
 
                 // id & count
                 countMap.put(id, count);
@@ -502,8 +487,13 @@ public abstract class WebUtil
             }
             
             // run population query
-            Results rAll = os.execute(queryPopulation);
-            rAll.setBatchSize(10000);
+            List rAll = statsCalcCache.get(queryPopulation.toString());
+            if (rAll == null) {
+                rAll = os.execute(queryPopulation);
+                ((Results) rAll).setBatchSize(10000);
+                rAll = new ArrayList(rAll);
+                statsCalcCache.put(queryPopulation.toString(), rAll);
+            }
 
             Iterator itAll = rAll.iterator();
             
