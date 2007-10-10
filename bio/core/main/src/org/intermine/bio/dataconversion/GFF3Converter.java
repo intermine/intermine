@@ -107,7 +107,7 @@ public class GFF3Converter
         if (sequenceHander == null) {
             this.sequenceHander = new GFF3SeqHandler();
         }
-        
+
         handler.setItemFactory(itemFactory);
         handler.setIdentifierMap(identifierMap);
         handler.setDataSource(dataSource);
@@ -286,7 +286,7 @@ public class GFF3Converter
             }
             relation.addReference(new Reference("object", seq.getIdentifier()));
             relation.addReference(new Reference("subject", feature.getIdentifier()));
-            relation.addCollection(new ReferenceList("evidence", Arrays.asList(new Object[]
+            relation.addCollection(new ReferenceList("evidence", Arrays.asList(new String[]
                 {
                     dataSet.getIdentifier()
                 })));
@@ -442,7 +442,7 @@ public class GFF3Converter
     }
 
     /**
-     * Return the 
+     * Return the
      * @return the target Model
      */
     public Model getTgtModel() {

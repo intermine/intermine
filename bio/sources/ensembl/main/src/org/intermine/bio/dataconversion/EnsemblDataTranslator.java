@@ -551,9 +551,9 @@ public class EnsemblDataTranslator extends DataTranslator
 
                     if (config.useXrefDbsForGeneSymbol()) {
                         identifierType = "symbol";
-                   
+
                         extDbRef = config.getDataSrcRefByDataSrcName(dbname);
-                        Item synonym = 
+                        Item synonym =
                         createProductSynonym(tgtItem, identifierType, xrefIdentifier, extDbRef);
                         addReferencedItem(tgtItem, synonym, "synonyms", true, "subject", false);
                         synonyms.add(synonym);
@@ -873,7 +873,7 @@ public class EnsemblDataTranslator extends DataTranslator
             moveField(srcItem, result, "score", "score");
         }
         result.addReference(config.getEnsemblDataSetRef());
-        ReferenceList evidence = new ReferenceList("evidence", Arrays.asList(new Object[]
+        ReferenceList evidence = new ReferenceList("evidence", Arrays.asList(new String[]
         {result.getIdentifier(), config.getEnsemblDataSet().getIdentifier()}));
         tgtItem.addCollection(evidence);
         return result;
@@ -1558,7 +1558,7 @@ public class EnsemblDataTranslator extends DataTranslator
         boolean useXrefDbsForGeneOrganismDbId() {
             return useXrefDbsForGeneOrganismDbId;
         }
-        
+
         /**
          * Return true if we should put external ids into the symbol field (eg. for Anopheles)
          */

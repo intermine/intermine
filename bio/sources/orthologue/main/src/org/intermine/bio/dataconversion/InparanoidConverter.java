@@ -52,7 +52,7 @@ public class InparanoidConverter extends FileConverter
     protected List<String> rightParalogues = new ArrayList<String>();
     protected List<BioAndScores> firstParalogues = new ArrayList<BioAndScores>();
     protected List<BioAndScores> secondParalogues = new ArrayList<BioAndScores>();
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -98,7 +98,7 @@ public class InparanoidConverter extends FileConverter
             if (object == null) {
                 object = "transcript";
             }
-                        
+
             source = source.trim();
             taxonId = taxonId.trim();
             attribute = attribute.trim();
@@ -115,12 +115,12 @@ public class InparanoidConverter extends FileConverter
      */
     public void process(Reader reader) throws Exception {
         int lineNum = 0;
-        String line, lastCode = null, oldIndex = null;      
-        
+        String line, lastCode = null, oldIndex = null;
+
         Item bio = null;
         BioAndScores firstBio = null, secondBio = null;
-        boolean isGene, onFirstOrganism = true; 
-        
+        boolean isGene, onFirstOrganism = true;
+
         BufferedReader br = new BufferedReader(reader);
         while ((line = br.readLine()) != null) {
             lineNum++;
@@ -139,19 +139,19 @@ public class InparanoidConverter extends FileConverter
                 try {
                     bootstrap = array[5].substring(0, array[5].indexOf('%'));
                 } catch (Exception e) {
-                    throw new RuntimeException("Error getting bootstap score from line: " 
-                                               + lineNum + " of file: " 
+                    throw new RuntimeException("Error getting bootstap score from line: "
+                                               + lineNum + " of file: "
                                                + getCurrentFile().getName());
                 }
             }
             String score = array[3];
-            
+
             if (array[2].indexOf('.') > 0) {
                 code = array[2].substring(0, array[2].indexOf('.'));
             } else {
                 code = array[2];
             }
-            
+
             // work out if this is a Gene or Translation and create item
             if (createObjects.get(code) != null) {
                 if (createObjects.get(code).equals("Gene")) {
@@ -167,17 +167,17 @@ public class InparanoidConverter extends FileConverter
                 throw new RuntimeException("No configuration provided for organism code: " + code);
             }
             BioAndScores bands = new BioAndScores(bio.getIdentifier(), score, bootstrap, isGene);
-            
-            
+
+
             // Three situations possible:
             if (!index.equals(oldIndex)) {
                 onFirstOrganism = true;
-                
+
                 if (oldIndex != null) {
                     // finish up and store the previous group
-                    storeOrthologues(firstBio, secondBio); 
+                    storeOrthologues(firstBio, secondBio);
                 }
-                
+
                 firstBio = bands;
                 leftParalogues = new ArrayList<String>();
                 rightParalogues = new ArrayList<String>();
@@ -186,13 +186,13 @@ public class InparanoidConverter extends FileConverter
             } else if (!code.equals(lastCode)) {
                 // we are on the first line of the second organism in group
                 secondBio = bands;
-                
+
                 onFirstOrganism = false;
                 // could create an orthologue but don't know all inParalogues yet
-                
+
             } else {
                 // we are on a paralogue of the first or second bio
-                      
+
                 // create the paralogues
                 Item leftPara, rightPara;
                 if (onFirstOrganism) {
@@ -204,11 +204,11 @@ public class InparanoidConverter extends FileConverter
                     rightPara = createRelation("Paralogue", secondBio, bands, true, "");
                     secondParalogues.add(bands);
                 }
-                
+
                 // keep the paralogues in left/right paralogues
                 leftParalogues.add(leftPara.getIdentifier());
                 rightParalogues.add(rightPara.getIdentifier());
-                
+
                 store(leftPara);
                 store(rightPara);
             }
@@ -218,14 +218,14 @@ public class InparanoidConverter extends FileConverter
             lastCode = code;
 
         }
-        
+
         if (lineNum > 0) {
             // make sure final group gets stored
             storeOrthologues(firstBio, secondBio);
          }
     }
 
-    private void storeOrthologues(BioAndScores firstBio, BioAndScores secondBio) 
+    private void storeOrthologues(BioAndScores firstBio, BioAndScores secondBio)
     throws ObjectStoreException {
         List<Item> lefts = new ArrayList<Item>();
         List<Item> rights = new ArrayList<Item>();
@@ -247,7 +247,7 @@ public class InparanoidConverter extends FileConverter
             lefts.add(coOrthLeft);
             rights.add(coOrthRight);
         }
-        
+
         // create coOrthologues for second organism
         for (BioAndScores second : secondParalogues) {
             Item coOrthLeft = createRelation("Orthologue", second, firstBio, true, "secondary");
@@ -255,7 +255,7 @@ public class InparanoidConverter extends FileConverter
             lefts.add(coOrthLeft);
             rights.add(coOrthRight);
         }
-        
+
         // set coOrthologues collection to contain all left/right orthologues from group
         // except the current one.  Then store.
         for (Item orth : lefts) {
@@ -267,9 +267,9 @@ public class InparanoidConverter extends FileConverter
             }
             orth.setCollection("coOrthologues", coOrths);
             orth.setCollection("paralogues", leftParalogues);
-            store(orth);    
+            store(orth);
         }
-        
+
         for (Item orth : rights) {
             List<String> coOrths = new ArrayList<String>();
             for (Item coOrth : rights) {
@@ -279,11 +279,11 @@ public class InparanoidConverter extends FileConverter
             }
             orth.setCollection("coOrthologues", coOrths);
             orth.setCollection("paralogues", rightParalogues);
-            store(orth);    
+            store(orth);
         }
     }
-    
-    
+
+
     private Item createRelation(String className, BioAndScores first,
                                BioAndScores second, boolean reverse, String type) {
         Item relation = createItem(className);
@@ -292,40 +292,40 @@ public class InparanoidConverter extends FileConverter
         if (!type.equals("secondary")) {
             relation.setAttribute("inParanoidScore", second.getScore());
         }
-        
+
         // if not reversed then first is gene/translation and second is orthologue/paralogue
-                
+
         if (first.isGene()) {
             relation.setReference(reverse ? className.toLowerCase() : "gene", first.getBio());
         } else {
-            relation.setReference(reverse ? className.toLowerCase() + "Translation" 
+            relation.setReference(reverse ? className.toLowerCase() + "Translation"
                                           : "translation", first.getBio());
         }
         if (second.isGene()) {
             relation.setReference(reverse ? "gene" : className.toLowerCase(), second.getBio());
         } else {
-            relation.setReference(reverse ? "translation" : className.toLowerCase() 
+            relation.setReference(reverse ? "translation" : className.toLowerCase()
                                           + "Translation", second.getBio());
         }
-        
+
         if (className.equals("Orthologue") && first.getBootstrap() != null) {
             relation.setAttribute(reverse ? className.toLowerCase() + "BootstrapScore"
                                           : "bootstrapScore", first.getBootstrap());
         }
         if (className.equals("Orthologue") && second.getBootstrap() != null) {
-            relation.setAttribute(reverse ? "bootstrapScore" : className.toLowerCase() 
+            relation.setAttribute(reverse ? "bootstrapScore" : className.toLowerCase()
                                           + "BootstrapScore", second.getBootstrap());
         }
         if (className.equals("Orthologue")) {
             relation.setAttribute("type", type);
         }
-        
+
         relation.addCollection(new ReferenceList("evidence",
-            Arrays.asList(new Object[] {db.getIdentifier(), pub.getIdentifier()})));
+            Arrays.asList(new String[] {db.getIdentifier(), pub.getIdentifier()})));
         return relation;
     }
-    
-    
+
+
     /**
      * @see FileConverter#close()
      */
@@ -367,7 +367,7 @@ public class InparanoidConverter extends FileConverter
         synonym.setReference("source", source.getIdentifier());
         store(synonym);
 
-        
+
         return item;
     }
 
@@ -420,11 +420,11 @@ public class InparanoidConverter extends FileConverter
         }
     }
 
-    private class BioAndScores 
+    private class BioAndScores
     {
         private String bioIdentifier, score, bootstrap;
         private boolean isGene;
-        
+
         public BioAndScores(String bioIdentifier, String score, String bootstrap,
                             boolean isGene) {
             this.bioIdentifier = bioIdentifier;
