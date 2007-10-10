@@ -25,7 +25,7 @@ public class SiteMapTask extends Task
 {
     private String objectStore;
     private String outputFile;
-    
+
     /**
      * Sets the value of objectStore
      *
@@ -46,7 +46,7 @@ public class SiteMapTask extends Task
 
 
     /**
-     * @see Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
 
@@ -62,9 +62,7 @@ public class SiteMapTask extends Task
 
         try {
             os = ObjectStoreFactory.getObjectStore(objectStore);
-        
-                CreateSiteMapLinkIns.createSiteMap(os, outputFile);
-            
+            CreateSiteMapLinkIns.createSiteMap(os, outputFile);
         } catch (Exception e) {
             throw new BuildException(e);
         }

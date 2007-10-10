@@ -72,6 +72,7 @@ public class HomophilaPostProcess extends PostProcessor
      *
      * @throws ObjectStoreException if the objectstore throws an exception
      */
+    @Override
     public void postProcess()
         throws ObjectStoreException {
 
@@ -109,11 +110,12 @@ public class HomophilaPostProcess extends PostProcessor
             Disease disease = (Disease) rr.get(1);
             LOG.debug("gene = " + gene.getIdentifier() + "  disease = " + disease.getOmimId());
 
-            Set newCollection = new HashSet();
+            Set<Disease> newCollection = new HashSet<Disease>();
             newCollection.add(disease);
             try {
                 InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(gene);
-                Set oldCollection = (Set) TypeUtil.getFieldValue(tempObject, "omimDiseases");
+                Set<Disease> oldCollection =
+                    (Set<Disease>) TypeUtil.getFieldValue(tempObject, "omimDiseases");
                 newCollection.addAll(oldCollection);
                 TypeUtil.setFieldValue(tempObject, "omimDiseases", newCollection);
                 osw.store(tempObject);
@@ -193,7 +195,8 @@ public class HomophilaPostProcess extends PostProcessor
 
         q.setConstraint(cs);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+        ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
+        osimi.precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
 
         return res;

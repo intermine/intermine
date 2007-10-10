@@ -116,9 +116,8 @@ public class GFF3Converter
     }
 
     /**
-     * parse a bufferedReader and process GFF3 record
-     * @param readerName the name of the reader (file name)
-     * @param bReader BufferedReader
+     * Parse a bufferedReader and process GFF3 record
+     * @param bReader the Reader
      * @throws java.io.IOException if an error occurs reading GFF
      * @throws ObjectStoreException if an error occurs storing items
      */

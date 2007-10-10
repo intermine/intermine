@@ -58,7 +58,7 @@ public class FilterFlyBaseGFF3Task extends Task
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (fileSet == null) {

@@ -53,6 +53,7 @@ public class ProteinStructureDataConvertor extends FileConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      */
     public ProteinStructureDataConvertor(ItemWriter writer, Model model) {

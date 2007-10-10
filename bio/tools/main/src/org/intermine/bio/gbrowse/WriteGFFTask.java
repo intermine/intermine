@@ -101,7 +101,7 @@ public class WriteGFFTask extends Task
     }
 
     /**
-     * @see Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (destinationDirectory == null) {
@@ -167,7 +167,8 @@ public class WriteGFFTask extends Task
             }
 
             try {
-                if (TypeUtil.isInstanceOf(feature, "org.flymine.model.genomic.ArtificialDeletion")) {
+                if (TypeUtil.isInstanceOf(feature,
+                                          "org.flymine.model.genomic.ArtificialDeletion")) {
                     try {
                         if (TypeUtil.getFieldValue(feature, "available") != Boolean.TRUE) {
                             // write only the available deletions because there are too many
