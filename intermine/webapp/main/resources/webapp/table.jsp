@@ -306,12 +306,9 @@
                     
                  	<%-- sort img --%>
                      <c:if test="${not empty sortOrderMap[column.name]}">
-						<fmt:message key="results.sortHelp" var="sortHelpString"/>
-                    	<span title="${sortHelpString}">
                         	<img style="vertical-align:top;" border="0"
-                            	   width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
-                               	title="${column.name}"/>
-                        </span>                       
+                            	 width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
+                               	 title="Results are sorted by ${column.name}"/>
                       </c:if>      
                                
                       <%-- left --%>
