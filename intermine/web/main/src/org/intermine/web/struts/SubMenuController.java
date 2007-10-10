@@ -27,6 +27,9 @@ import org.intermine.web.logic.profile.Profile;
  */
 public class SubMenuController extends TilesAction
 {
+    /**
+     * {@inheritDoc}
+     */
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,

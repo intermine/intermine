@@ -1,6 +1,6 @@
 package org.intermine.web.logic.bag;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -50,7 +50,7 @@ public class BagQueryConfig
     public void setExtraConstraintClassName(String extraConstraintClassName) {
         this.extraConstraintClassName = extraConstraintClassName;
     }
-    
+
     /**
      * Return the connecting field.
      *
@@ -86,7 +86,7 @@ public class BagQueryConfig
     public void setConstrainField(String constrainField) {
         this.constrainField = constrainField;
     }
-    
+
     /**
      * Return a Map from type name to a List of BagQuerys to run for that type
      * @return the BagQuerys Map

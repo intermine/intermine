@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -25,38 +25,37 @@ import org.intermine.objectstore.ObjectStore;
  *
  */
 public interface EnrichmentWidgetLdr
-{    
+{
     /**
      * @return the query representing the sample population (the bag)
      */
     public Query getSample();
-    
+
     /**
      * @return the query representing the entire population (all the items in the database)
      */
     public Query getPopulation();
 
     /**
-     * 
+     *
      * @param os
      * @param bag
      * @return description of reference population, ie "Accounting dept"
      */
     public Collection getReferencePopulation();
-    
-    /** 
-     * @param os     
+
+    /**
      * @return the query representing the sample population (the bag)
      */
     public int getTotal(ObjectStore os);
-    
+
     /**
      * @return if the widget should have an external link, where it should go to
      */
     public String getExternalLink();
-    
+
     /**
-     * 
+     *
      * @return the string to append to the end of external link
      */
     public String getAppendage();

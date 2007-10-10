@@ -14,11 +14,6 @@ import java.util.Locale;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.PathNode;
-import org.intermine.web.logic.query.PathQuery;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 

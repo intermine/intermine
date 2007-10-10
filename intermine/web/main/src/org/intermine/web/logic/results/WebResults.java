@@ -1,6 +1,6 @@
 package org.intermine.web.logic.results;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -57,19 +57,19 @@ public class WebResults extends AbstractList implements WebTable
     private Map pathToQueryNode;
     private Map<String, BagQueryResult> pathToBagQueryResult;
     private PathQuery pathQuery;
-    
+
     /**
      * Create a new WebResults object.
      *
-     * @param columnPaths the Path objects representing the view
+     * @param pathQuery used to get the paths of the columns
      * @param results the underlying Results object
      * @param model the Model
-     * @param pathToQueryNode the mapping between Paths (in the columnPaths argument) and the 
+     * @param pathToQueryNode the mapping between Paths (in the columnPaths argument) and the
      * QueryNodes in the results object
      * @param classKeys the Map from class name to set of defined keys
      * @param pathToBagQueryResult a Map containing results from LOOKUP operations
      */
-    public WebResults(PathQuery pathQuery, Results results, Model model, Map pathToQueryNode, 
+    public WebResults(PathQuery pathQuery, Results results, Model model, Map pathToQueryNode,
                       Map classKeys, Map<String, BagQueryResult> pathToBagQueryResult) {
         this.osResults = results;
         this.model = model;
@@ -79,10 +79,10 @@ public class WebResults extends AbstractList implements WebTable
         this.pathToBagQueryResult = pathToBagQueryResult;
         this.pathQuery = pathQuery;
         pathToIndex = getPathToIndex(pathToQueryNode);
-        
+
         setColumns(columnPaths);
     }
- 
+
     // pathToQueryNode is map from string paths to QueryNodes from ObjectStore query
     private LinkedHashMap getPathToIndex(Map pathToQueryNode) {
         LinkedHashMap returnMap =  new LinkedHashMap();
@@ -112,7 +112,7 @@ public class WebResults extends AbstractList implements WebTable
     public List getColumnNames() {
         return columnNames;
     }
-    
+
     private void setColumns(List<Path> columnPaths) {
         List<String> types = new ArrayList<String>();
         int i = 0;
@@ -131,14 +131,14 @@ public class WebResults extends AbstractList implements WebTable
 
             String columnDescription = pathQuery.getPathDescription(columnPrefix);
             Column column;
-            
+
             if (columnDescription == null) {
                 column = new Column(columnPath, i, typeCls);
             } else {
                 column = new Column(columnPath, columnDescription + '.' + columnPathEnd, i,
                                     typeCls);
             }
-            
+
             if (!types.contains(column.getColumnId())) {
                 String fieldName = columnPath.getEndFieldDescriptor().getName();
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, type, fieldName);
@@ -249,7 +249,7 @@ public class WebResults extends AbstractList implements WebTable
      * Calls ObjectStore.releaseGoFaster() if this object wraps a Results object from an
      * ObjectStoreInterMineImpl.
      * @throws ObjectStoreException if ObjectStoreInterMineImpl.releaseGoFaster() throws the
-     * exception 
+     * exception
      */
     public void releaseGoFaster() throws ObjectStoreException {
         ObjectStore os = osResults.getObjectStore();
@@ -297,8 +297,8 @@ public class WebResults extends AbstractList implements WebTable
                                                                fieldName);
                 Set classes = DynamicUtil.decomposeClass(o.getClass());
                 Class cls = (Class) classes.iterator().next();
-                ResultElement resultElement = 
-                    new ResultElement(osResults.getObjectStore(), 
+                ResultElement resultElement =
+                    new ResultElement(osResults.getObjectStore(),
                                       fieldValue, o.getId(), cls, columnPath, isKeyField);
                 rowCells.add(resultElement);
             } else {
@@ -317,7 +317,7 @@ public class WebResults extends AbstractList implements WebTable
     public List getColumns() {
         return columns;
     }
-    
+
     public PathQuery getPathQuery() {
         return pathQuery;
     }

@@ -180,8 +180,10 @@ public class DataTracker
                         Statement s = prefetchConn.createStatement();
                         ResultSet r = s.executeQuery(sql.toString());
                         while (r.next()) {
-                            idsFetched.get(new Integer(r.getInt(1))).putClean(r.getString(2).intern(),
-                                    stringToSource(r.getString(3)));
+                            ObjectDescription objectDescription =
+                                idsFetched.get(new Integer(r.getInt(1)));
+                            objectDescription.putClean(r.getString(2).intern(),
+                                                       stringToSource(r.getString(3)));
                         }
                     } catch (SQLException e) {
                         broken = e;

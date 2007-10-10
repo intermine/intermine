@@ -370,6 +370,7 @@ public class Item implements Comparable
      * Return true if the name parameter is an attribute of the class for this Item or if
      * the Model or the className of this Item haven't been set.
      * @param name the attribute name
+     * @return true if the name is a valid attribute name
      */
     public boolean checkAttribute(String name) {
         if (model == null || classDescriptor == null) {

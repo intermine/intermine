@@ -41,6 +41,9 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class AspectController extends TilesAction
 {
+    /**
+     * The prefix used for aspect tags.
+     */
     public static final String ASPECT_PREFIX = "aspect:";
 
     private static final Logger LOG = Logger.getLogger(AspectController.class);

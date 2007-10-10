@@ -103,7 +103,7 @@ public class BagQueryResult
         return matches;
     }
 
-    
+
     public Set<Integer> getMatchAndIssueIds() {
         Set<Integer> ids = new HashSet<Integer>();
         ids.addAll(matches.keySet());
@@ -124,8 +124,8 @@ public class BagQueryResult
         }
         return ids;
     }
-    
-    
+
+
     /**
      * Add a new match from an input string to an InterMineObject id.
      * @param input the original input string entered

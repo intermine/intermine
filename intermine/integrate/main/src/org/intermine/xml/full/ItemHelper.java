@@ -16,8 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.RandomAccess;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.StringUtil;
 
 /**
@@ -109,7 +107,7 @@ public class ItemHelper
     /**
      * Convert a xml Attribute to a fulldata Attribute that can then be stored with
      * ItemWriter
-     * @param ref the input Attribute
+     * @param att the input Attribute
      * @return a fulldata Attribute
      */
     public static org.intermine.model.fulldata.Attribute convert(Attribute att) {
