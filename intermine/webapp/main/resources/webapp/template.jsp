@@ -76,6 +76,47 @@
     updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
   }*/
 
+  /***************Handle display of help windows******************************/
+  var helpMsgArray = new Array();
+  var ourDate;
+  function displayHelpMsg(e, id) {
+      // IE is retarded and doesn't pass the event object
+          if (e == null)
+              e = window.event; 
+
+          // IE uses srcElement, others use target
+          var target = e.target != null ? e.target : e.srcElement;
+          // grab the clicked element's position
+          _clientX = e.clientX;
+          _clientY = e.clientY;
+          
+          // grab the clicked element's position
+           _offsetX = ExtractNumber(target.style.left);
+           _offsetY = ExtractNumber(target.style.top);
+          
+          $(id).style.left = (_clientX + _offsetX) + "px";
+          $(id).style.top = (_clientY + _offsetY) + "px";
+          Effect.Appear(id, { duration: 0.30 });
+          helpMsgArray[helpMsgArray.length] = id;
+          ourDate = new Date().getTime();
+  }
+  document.body.onclick = function clearHelpMsg() {
+      newDate = new Date().getTime();
+      if(newDate > (ourDate + 100)){
+      for(var i=0;i<helpMsgArray.length;i++) {
+          Effect.Fade(helpMsgArray[i], { duration: 0.30 });
+      }
+      }
+  }
+  function ExtractNumber(value)
+  {
+      var n = parseInt(value);
+
+      return n == null || isNaN(n) ? 0 : n;
+  }
+
+
+
   //-->
 </script>
 
@@ -135,13 +176,13 @@
             <td valign="top">
               <c:out value="${names[con]}"/>:
             </td>
-            <td valign="top">
-              <c:choose>
-                <c:when test="${fn:length(validOps) == 1}">
-                  <fmt:message key="query.lookupConstraintLabel"/><%--Search for:--%>
-                  <input type="hidden" name="attributeOps(${index})" value="18"/>
-                </c:when>
-                <c:otherwise>
+            <c:choose>
+              <c:when test="${fn:length(validOps) == 1}">
+                <%--<fmt:message key="query.lookupConstraintLabel"/>Search for:--%>
+                <input type="hidden" name="attributeOps(${index})" value="18"/>
+              </c:when>
+              <c:otherwise>
+                <td valign="top">
                   <html:select property="attributeOps(${index})" onchange="updateConstraintForm(${index-1}, document.templateForm['attributeOps(${index})'], document.templateForm['attributeOptions(${index})'], document.templateForm['attributeValues(${index})'])">
                     <c:forEach items="${validOps}" var="op">
                       <html:option value="${op.key}">
@@ -149,12 +190,20 @@
                       </html:option>
                     </c:forEach>
                   </html:select>
-                </c:otherwise>
-              </c:choose>
-            </td>
-            <td valign="top">
+                </td>
+              </c:otherwise>
+             </c:choose>
+            <td valign="top" nowrap>
               <span id="operandEditSpan${index-1}">
                 <html:text property="attributeValues(${index})"/>
+                <c:if test="${!empty keyFields[con]}">
+                  <span onMouseDown="displayHelpMsg(event,'lookupHelp')" style="cursor:pointer">?</span>
+                  <div class="smallnote helpnote" id="lookupHelp" style="display:none">
+                    <fmt:message key="query.lookupConstraintHelp"><%--This will search...--%>
+                      <fmt:param value="${keyFields[con]}"/>
+                    </fmt:message>
+                  </div>
+                </c:if>
                 <%-- might want to show up arrow --%>
                 <c:if test="${!empty options}">
                   <img src="images/left-arrow.gif" title="&lt;-" border="0" height="13" width="13"/>
@@ -170,21 +219,14 @@
                 </select>
               </c:if>
             </td>
-            <td valign="top">
-              <c:if test="${!empty keyFields[con]}">
-                <span class="smallnote">
-                  <fmt:message key="query.lookupConstraintHelp"><%--This will search...--%>
-                    <fmt:param value="${keyFields[con]}"/>
-                  </fmt:message>
-                </span>
-              </c:if>
-            </td>
-          </tr>
           <c:if test="${haveExtraConstraint[con]}">
+          <c:if test="${empty keyFields[con]}">
+          </tr>
             <tr>
               <td>
                 &nbsp; <%-- for IE --%>
               </td>
+          </c:if>
               <td valign="top" colspan="4">
                 <label>
                   <fmt:message key="bagBuild.extraConstraint">
@@ -200,6 +242,8 @@
                   </c:forEach>
                 </html:select>
               </td>
+            </c:if>
+          <c:if test="${empty keyFields[con]}">
             </tr>
           </c:if>
           <tr>

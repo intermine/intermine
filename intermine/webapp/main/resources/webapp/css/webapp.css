@@ -216,6 +216,12 @@ div#quicksearch {
 .tag {
   white-space: nowrap; color: #444;}
 
+.helpnote {
+  position:absolute;
+  width:200px; padding:10px; z-index: 100;
+  background:#FFF;border:green 1px solid;
+  white-space: normal;
+}
 
 /* =H 
 -------------------------*/
