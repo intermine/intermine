@@ -74,3 +74,8 @@ table.results tr.even TD{
 /* =TD, TH £TABLE,£BAGDETAILS*/
 table.results th.checkbox,table.results td.checkbox{
   border-right-style: dotted;}
+  
+table.results tr td.highlightCell { 
+	background-color: #FFCBFF; 
+} 
+  

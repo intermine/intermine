@@ -329,7 +329,7 @@
                       <c:if test="${isWebResults && !empty pathNames[column.path]}">
 		        <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
                         <a href="javascript:getColumnSummary('${table}','${pathNames[column.path]}', &quot;${columnDisplayName}&quot;)" 
-                           title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"></a>
+                           title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
                       </c:if>
 
                       <%-- right --%>
