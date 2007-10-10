@@ -22,12 +22,13 @@ import java.util.ArrayList;
 public class ReferenceList
 {
     protected String name;
-    protected List refIds = new ArrayList();
+    protected List<String> refIds = new ArrayList<String>();
 
     /**
      * Constructor
      */
     public ReferenceList() {
+        // empty
     }
 
     /**
@@ -43,14 +44,14 @@ public class ReferenceList
      * @param name the name
      * @param refIds the refIds
      */
-    public ReferenceList(String name, List refIds) {
+    public ReferenceList(String name, List<String> refIds) {
         this(name);
-        Iterator refIdsIter = refIds.iterator();
+        Iterator<String> refIdsIter = refIds.iterator();
         while (refIdsIter.hasNext()) {
             // we do this rather this calling this.refIds.addAll(refIds) so that the type of the
             // elements is checked immediately
-            String thisId = (String) refIdsIter.next();
-            addRefId(thisId);    
+            String thisId = refIdsIter.next();
+            addRefId(thisId);
         }
     }
 
@@ -85,7 +86,7 @@ public class ReferenceList
      *
      * @return the list of references
      */
-    public List getRefIds() {
+    public List<String> getRefIds() {
         return refIds;
     }
 
@@ -94,13 +95,14 @@ public class ReferenceList
     *
     * @param refIds the refIds
     */
-    public void setRefIds(List refIds) {
+    public void setRefIds(List<String> refIds) {
         this.refIds = refIds;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof ReferenceList) {
             ReferenceList r = (ReferenceList) o;
@@ -113,6 +115,7 @@ public class ReferenceList
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return name.hashCode()
         + 3 * refIds.hashCode();

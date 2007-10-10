@@ -77,7 +77,7 @@ public class GFF3RecordHandlerTest extends TestCase
         handler.addParentRelation(relation2);
 
         Item expected = itemFactory.makeItem(exon.getIdentifier(), tgtNs + "Exon", "");
-        ReferenceList transcripts = new ReferenceList("transcripts", Arrays.asList(new Object[] {transcript2.getIdentifier(),
+        ReferenceList transcripts = new ReferenceList("transcripts", Arrays.asList(new String[] {transcript2.getIdentifier(),
                                                                                                  transcript1.getIdentifier()}));
         expected.addCollection(transcripts);
 
