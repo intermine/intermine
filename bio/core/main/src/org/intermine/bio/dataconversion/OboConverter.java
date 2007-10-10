@@ -39,6 +39,7 @@ public class OboConverter extends DagConverter
      * @see DagConverter#DagConverter(ItemWriter, String, String, String, String)
      *
      * @param writer an ItemWriter used to handle the resultant Items
+     * @param model the Model
      * @param dagFilename the name of the OBO file
      * @param dagName the title of the dag, as present in any static data
      * @param url the URL of the source of this ontology

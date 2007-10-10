@@ -46,7 +46,7 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
     }
 
     /**
-     * @see GFF3RecordHandler#process()
+     * {@inheritDoc}
      */
     public void process(GFF3Record record) throws BuildException {
         Item feature = getFeature();

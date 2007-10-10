@@ -52,14 +52,14 @@ import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * Controller to get all of the orthologues for all genes in a bag.
- * 
+ *
  * @author Julie Sullivan
  */
 public class OrthologueDisplayerController extends TilesAction
 {
-    
+
     /**
-     * @see TilesAction#execute
+     * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,
@@ -67,7 +67,7 @@ public class OrthologueDisplayerController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-                
+
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -79,48 +79,48 @@ public class OrthologueDisplayerController extends TilesAction
  */
 
         Query q = new Query();
-        
+
         QueryClass subjectGeneQC = new QueryClass(Gene.class);
         QueryClass objectGeneQC = new QueryClass(Gene.class);
         QueryClass orthologueQC = new QueryClass(Orthologue.class);
         QueryClass organismQC = new QueryClass(Organism.class);
-            
-        QueryField qfTaxonId = new QueryField(organismQC, "taxonId"); 
+
+        QueryField qfTaxonId = new QueryField(organismQC, "taxonId");
         // with no args, automatically is COUNT
         QueryFunction geneCountQF = new QueryFunction();
-        
-        // FROM statement        
+
+        // FROM statement
         q.addFrom(subjectGeneQC);
         q.addFrom(objectGeneQC);
         q.addFrom(orthologueQC);
         q.addFrom(organismQC);
-                    
+
         // SELECT statement
         q.addToSelect(qfTaxonId);
         q.addToSelect(geneCountQF);
-        
+
         // set of constraints
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        
+
         // orthologues
         QueryCollectionReference qr1 = new QueryCollectionReference(objectGeneQC, "orthologues");
         ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, orthologueQC);
         cs.addConstraint(cc1);
-      
+
         // orthologue record has to contain subject gene
         QueryObjectReference qr2 = new QueryObjectReference(orthologueQC, "subject");
         ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, subjectGeneQC);
         cs.addConstraint(cc2);
-       
+
         // object gene must be in bag
         QueryField qf1 = new QueryField(objectGeneQC, "id");
         Collection bag = (Collection) request.getAttribute("bag");
         QueryObjectReference qr3 = new QueryObjectReference(subjectGeneQC, "organism");
         ContainsConstraint cc3 = new ContainsConstraint(qr3, ConstraintOp.CONTAINS, organismQC);
         cs.addConstraint(cc3);
-        
 
-        
+
+
         if (bag != null && !bag.isEmpty()) {
             // get Ids of genes in the bag
             Collection geneIds = new ArrayList();
@@ -130,80 +130,80 @@ public class OrthologueDisplayerController extends TilesAction
                 geneIds.add(bagElement.getId());
             }
             BagConstraint bc = new BagConstraint(qf1, ConstraintOp.IN, geneIds);
-            cs.addConstraint(bc); 
+            cs.addConstraint(bc);
 
         // or if we're on the object details page, constrain to be that gene only
         } else {
             String s = request.getParameter("id");
             int n = Integer.parseInt(s);
             Integer nn = new Integer(n);
-            SimpleConstraint bc = new SimpleConstraint(new QueryField(objectGeneQC, "id"), 
-                                  ConstraintOp.EQUALS, new QueryValue(nn));    
+            SimpleConstraint bc = new SimpleConstraint(new QueryField(objectGeneQC, "id"),
+                                  ConstraintOp.EQUALS, new QueryValue(nn));
             cs.addConstraint(bc);
-           
+
         }
-      
+
         q.setConstraint(cs);
-        
+
         // group by organism
         q.addToGroupBy(qfTaxonId);
-                
+
         Results r1 = os.execute(q);
-   
+
         // get organisms
         Query qOrganisms = new Query();
         QueryClass qcOrganism = new QueryClass(Organism.class);
         qfTaxonId = new QueryField(qcOrganism, "taxonId");
         qOrganisms.addFrom(qcOrganism);
         qOrganisms.addToSelect(qfTaxonId);
-        
-        /*          
+
+        /*
          * TODO get organisms from oss instead of querying everytime.
         PathNode pathNode = new PathNode("org.flymine.model.genomic.Organism");
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
             getAttribute(Constants.OBJECT_STORE_SUMMARY);
         DisplayConstraint dispConst =  new DisplayConstraint(pathNode, os.getModel(), oss, null);
         */
-        
+
         Results r2 = os.execute(qOrganisms);
-        
-         /*  Map to hold results in 
+
+         /*  Map to hold results in
           taxonId = key
           array = value
-          [orthologue count][query for results page][id]              
+          [orthologue count][query for results page][id]
           */
         Map resultsMap = new HashMap();
-        
+
         Iterator it1 = r1.iterator();   // orthologues
         Iterator it2 = r2.iterator();   // organisms
-        
-        ResultsRow rr1 = null;        
+
+        ResultsRow rr1 = null;
         if (it1.hasNext()) {
             rr1 = (ResultsRow) it1.next();
-        }     
-   
+        }
+
         // loop through organisms.  add orthologues for organism, if present
         while (it2.hasNext()) {
-            
+
             // orthologue count for this organism
             ResultsRow rr2 =  (ResultsRow) it2.next();
             // array to hold results
             String[] a = new String[3];
             // id of this organism
             Integer taxonId = (java.lang.Integer) rr2.get(0);
-                 
+
             // match - this organism has orthologues
             if (rr1 != null && rr2.get(0).equals(rr1.get(0))) {
-                                      
+
                 // count of orthologues for this organism
-                Long orthoCount = (java.lang.Long) rr1.get(1);                
+                Long orthoCount = (java.lang.Long) rr1.get(1);
                 // add to our results array
-                a[0] = orthoCount.toString();  
-                               
+                a[0] = orthoCount.toString();
+
                 // build organism-specific query to be used on results page
                 Query qs = new Query();
-                
-                // FROM statement        
+
+                // FROM statement
                 qs.addFrom(subjectGeneQC);
                 qs.addFrom(objectGeneQC);
                 qs.addFrom(orthologueQC);
@@ -224,15 +224,15 @@ public class OrthologueDisplayerController extends TilesAction
                     String s = request.getParameter("id");
                     int n = Integer.parseInt(s);
                     Integer nn = new Integer(n);
-                    SimpleConstraint bc = new SimpleConstraint(new QueryField(objectGeneQC, "id"), 
-                                          ConstraintOp.EQUALS, new QueryValue(nn));    
+                    SimpleConstraint bc = new SimpleConstraint(new QueryField(objectGeneQC, "id"),
+                                          ConstraintOp.EQUALS, new QueryValue(nn));
                     cs.addConstraint(bc);
-                   
+
                 }
-             
+
                 // make sure organism matches this one in this loop
-                SimpleConstraint cc4 = new 
-                SimpleConstraint(new QueryField(organismQC, "taxonId"), 
+                SimpleConstraint cc4 = new
+                SimpleConstraint(new QueryField(organismQC, "taxonId"),
                                  ConstraintOp.EQUALS, new QueryValue(taxonId));
                 cs.addConstraint(cc4);
 
@@ -241,48 +241,48 @@ public class OrthologueDisplayerController extends TilesAction
 
                 // add new query to results
                 a[1] = qs.toString();
-                
+
                 // if there is only one results, get the ID of that object
                 if (a[0].equals("1")) {
 
-                    // need the id of the object    
+                    // need the id of the object
                     a[2] = getId(os, qs, new QueryField(subjectGeneQC, "id"));
-                    
+
                 }
-                                
+
                 // move to next organism in results
                 if (it1.hasNext()) {
                     rr1 =  (ResultsRow) it1.next();
-                }    
-                
-            // no match 
-            } else {              
-                a[0] = "0";              
+                }
+
+            // no match
+            } else {
+                a[0] = "0";
             }
             // add results to map
-            resultsMap.put(taxonId, a);            
-        }            
-        request.setAttribute("orthos", resultsMap);     
+            resultsMap.put(taxonId, a);
+        }
+        request.setAttribute("orthos", resultsMap);
         return null;
     }
-    
+
     private String getId(ObjectStore os, Query q, QueryField geneId) {
-        
+
         String idString = null;
         // select the id of the gene
         q.addToSelect(geneId);
         q.addToGroupBy(geneId);
         Results r = os.execute(q);
-        
-        Iterator it = r.iterator();   
-    
+
+        Iterator it = r.iterator();
+
         if (it.hasNext()) {
             ResultsRow rr =  (ResultsRow) it.next();
             Integer n = (Integer) rr.get(1);
             idString = n.toString();
         }
         return idString;
-        
+
     }
-    
+
 }

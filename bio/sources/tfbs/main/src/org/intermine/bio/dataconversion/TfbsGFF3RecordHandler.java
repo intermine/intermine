@@ -49,10 +49,8 @@ public class TfbsGFF3RecordHandler extends GFF3RecordHandler
 
     }
 
-
-
     /**
-     * @see GFF3RecordHandler#process(GFF3Record)
+     * {@inheritDoc}
      */
     public void process(GFF3Record record) {
         Item feature = getFeature();

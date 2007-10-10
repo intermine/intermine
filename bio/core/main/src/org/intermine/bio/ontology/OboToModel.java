@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,9 +29,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.util.XmlUtil;
 
 /**
  * Processes list of root OboTerms to produce the equivalent Model
@@ -85,17 +82,10 @@ public class OboToModel
     public boolean process(OboTerm term, String superClassName) {
         String className = generateClassName(term);
         boolean include = false;
-        // set subclasses
-        //if (!term.getChildren().isEmpty()) {
-        //    System.err.println("Children of term " + term + " = " + term.getChildren());
-        //}
         for (Iterator i = term.getChildren().iterator(); i.hasNext(); ) {
             OboTerm subTerm = (OboTerm) i.next();
             include = process(subTerm, className) || include;
         }
-        //System .err.println("Processing " + (term.isObsolete() ? "obsolete " : "") + "term "
-        //        + term.getName() + (superClassName == null ? "" : " superclass = "
-        //            + superClassName));
         if (term.isObsolete()) {
             return include;
         }
@@ -103,7 +93,6 @@ public class OboToModel
         List subsets = null;
         if (tagValues != null) {
             subsets = (List) tagValues.get("subset");
-            //System.err.println("Subsets: " + subsets);
         } else {
             System.err.println("No tag values for term " + term.getName());
         }
@@ -167,7 +156,8 @@ public class OboToModel
             DagValidator validator = new DagValidator();
             if (!validator.validate(rootTerms)) {
                 if (errorFilename != null) {
-                    BufferedWriter out = new BufferedWriter(new FileWriter(new File(errorFilename)));
+                    BufferedWriter out =
+                        new BufferedWriter(new FileWriter(new File(errorFilename)));
                     out.write(validator.getOutput());
                     out.flush();
                 } else {
@@ -200,7 +190,11 @@ public class OboToModel
                                     + "s", partof, null));
                     }
                 }
-                clds.add(new ClassDescriptor(className, (entry.getValue().isEmpty() ? null : supers.toString()), true, fakeAttributes, fakeReferences, collections));
+                clds.add(new ClassDescriptor(className,
+                                             (entry.getValue().isEmpty() ?
+                                              null :
+                                              supers.toString()),
+                                             true, fakeAttributes, fakeReferences, collections));
             }
             Model model = new Model("name", "whatever", clds);
             out.println(model);

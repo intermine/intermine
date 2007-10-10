@@ -39,7 +39,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
     }
 
     /**
-     * @see GFF3RecordHandler#process()
+     * {@inheritDoc}
      */
     public void process(GFF3Record record) {
         String geneNs = getTargetModel().getNameSpace() + "Gene";

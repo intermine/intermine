@@ -213,7 +213,7 @@ public class GFF3Exporter implements TableExporter
     }
 
     /**
-     * @see org.intermine.web.logic.export.TableExporter#canExport(PagedTable)
+     * {@inheritDoc}
      */
     public boolean canExport(PagedTable pt) {
         return ExportHelper.canExport(pt, LocatedSequenceFeature.class);

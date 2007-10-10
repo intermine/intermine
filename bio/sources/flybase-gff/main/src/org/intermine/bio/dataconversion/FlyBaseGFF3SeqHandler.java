@@ -12,8 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import org.intermine.xml.full.Item;
 
-import java.lang.String;
-
 /**
  * Implementation of GFF3SeqHandler for the flybase source.
  * @author Kim Rutherford

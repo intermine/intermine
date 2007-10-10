@@ -226,7 +226,6 @@ public class OboParser
 
         // Copy all terms into rootTerms map - non-root terms will be removed
         rootTerms = new HashMap(terms);
-        //System.err.println("Root terms: " + rootTerms.keySet());
 
         // Now connect them all together
         for (Iterator iter = tagValuesList.iterator(); iter.hasNext();) {
@@ -235,7 +234,6 @@ public class OboParser
                 configureDagTerm(tvs);
             }
         }
-        //System.err.println("Root terms: " + rootTerms.keySet());
     }
 
     /**
@@ -244,13 +242,11 @@ public class OboParser
      * @param tagValues term config
      */
     protected void configureDagTerm(Map tagValues) {
-        //System.err.println("configureDagTerm(" + tagValues + ")");
         String id = (String) ((List) tagValues.get("id")).get(0);
         OboTerm term = (OboTerm) terms.get(id);
 
         if (term != null) {
             term.setTagValues(tagValues);
-            //System.err.println("Found term (" + term + "), putting in tagValues");
 
             List isas = (List) tagValues.get("is_a");
             if (isas != null) {
@@ -267,8 +263,6 @@ public class OboParser
                     LOG.debug(term + " isa " + pt);
                     pt.addChild(term);
                     rootTerms.remove(term.getId());
-                    //System.err.println("Adding " + term.getName() + " as child of " + pt.getName()
-                    //        + ", children now " + pt.getChildren());
                 }
             }
 

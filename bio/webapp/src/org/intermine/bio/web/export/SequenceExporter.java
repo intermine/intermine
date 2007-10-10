@@ -86,13 +86,13 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         ObjectStore os =
             (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
         BioSequence bioSequence = null;
-        
+
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ",
                            "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
-        
+
         InterMineObject obj = os.getObjectById(new Integer(request.getParameter("object")));
-        
+
         if (obj instanceof Sequence) {
             Sequence sequence = (Sequence) obj;
             obj = ResidueFieldExporter.getLocatedSequenceFeatureForSequence(os, sequence);
@@ -135,10 +135,10 @@ public class SequenceExporter extends InterMineAction implements TableExporter
             OutputStream out = response.getOutputStream();
             SeqIOTools.writeFasta(out, bioSequence);
         }
-        
+
         return null;
     }
-    
+
     /**
      * Method called to export a PagedTable object using the BioJava sequence and feature writers.
      * @param mapping The ActionMapping used to select this instance
@@ -200,7 +200,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 StringBuffer header = new StringBuffer();
 
                 Object resultObject = row.get(realFeatureIndex);
-                
+
                 ResultElement resultElement;
                 if (resultObject instanceof ResultElement) {
                     resultElement = (ResultElement) resultObject;
@@ -210,9 +210,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 }
 
                 BioSequence bioSequence;
-
                 Object object = os.getObjectById(resultElement.getId());
-                
                 if (!(object instanceof InterMineObject)) {
                     continue;
                 }
@@ -222,7 +220,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     // exported already
                     continue;
                 }
-                
+
                 if (object instanceof LocatedSequenceFeature) {
                     LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
                     bioSequence = BioSequenceFactory.make(feature);
@@ -322,7 +320,6 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 }
 
                 Annotation annotation = bioSequence.getAnnotation();
-
                 String headerString = header.toString();
 
                 if (row.size() > 1 && headerString.length() > 0) {
@@ -355,29 +352,24 @@ public class SequenceExporter extends InterMineAction implements TableExporter
             }
 
             if (exportedIDs.size() == 0) {
-
                 ActionMessages messages = new ActionMessages();
                 ActionMessage error = new ActionMessage("errors.export.nothingtoexport");
                 messages.add(ActionMessages.GLOBAL_MESSAGE, error);
                 request.setAttribute(Globals.ERROR_KEY, messages);
-                
-                
                 return mapping.findForward("results");
             }
         } catch (ObjectStoreException e) {
-
             ActionMessages messages = new ActionMessages();
             ActionMessage error = new ActionMessage("errors.query.objectstoreerror");
             messages.add(ActionMessages.GLOBAL_MESSAGE, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
-            
         }
 
         return null;
     }
 
     /**
-     * @see org.intermine.web.logic.export.TableExporter#canExport(PagedTable)
+     * {@inheritDoc}
      */
     public boolean canExport(PagedTable pt) {
         return getFeatureColumn(pt) != null;
@@ -407,7 +399,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
             return false;
         }
     }
-    
+
     private boolean validType(InterMineObject imo) {
         Set classes = DynamicUtil.decomposeClass(imo.getClass());
         Iterator iter = classes.iterator();
@@ -418,11 +410,11 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         }
         return false;
     }
-    
+
     /**
      * Return the first column that contains features that can be exported.  It first checks the
      * Column objects from the PagedTable.
-     * 
+     *
      * If there are no LocatedSequenceFeature or Protein columns it checks the visible rows of the
      * Results objects and returns the first Column that contains a LocatedSequenceFeature or
      * Protein.  This is needed, for example, when the user select BioEntity and constrains the
@@ -430,13 +422,13 @@ public class SequenceExporter extends InterMineAction implements TableExporter
      *
      * If there is more than one LocatedSequenceFeature or Protein column, return null to prevent
      * confusion about which column is being exported.
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException
      */
     private Column getFeatureColumn(PagedTable pt) {
         List columns = pt.getColumns();
 
         Column returnColumn = null;
-        
+
         // find and remember the first valid Sequence-containing column
         for (int i = 0; i < columns.size(); i++) {
             Column column = (Column) columns.get(i);
@@ -477,7 +469,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
 
             while (rowListIter.hasNext()) {
                 List row = (List) rowListIter.next();
-          
+
                 if (realColumnIndex < row.size()) {
                     Object o = row.get(realColumnIndex);
 
@@ -487,10 +479,10 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                         try {
                             imo = resultElement.getInterMineObject();
                         } catch (ObjectStoreException e) {
-                            // give up 
+                            // give up
                             return null;
                         }
-                        
+
                         if (resultElement.isKeyField() && validType(imo)) {
                             return thisColumn;
                         }
@@ -498,7 +490,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 }
             }
         }
-        
+
         return returnColumn;
     }
 }

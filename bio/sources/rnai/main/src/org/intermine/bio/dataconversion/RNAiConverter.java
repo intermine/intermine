@@ -38,6 +38,7 @@ public class RNAiConverter extends FileConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the Model
      * @throws ObjectStoreException of problem reading/writing data
      */
     public RNAiConverter(ItemWriter writer, Model model) throws ObjectStoreException {

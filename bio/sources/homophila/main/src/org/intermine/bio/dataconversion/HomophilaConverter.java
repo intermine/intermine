@@ -66,6 +66,7 @@ public class HomophilaConverter extends FileConverter
     /**
      * Construct a new instance of HomophilaCnoverter.
      * 
+     * @param model the Model
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */

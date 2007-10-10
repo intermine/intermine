@@ -112,7 +112,8 @@ public class ProteinInteractionExporter implements TableExporter
                 }
                 // das objekt aus der gueltigen spalte der aktuellen reihe holen
                 // get object of interest - ProteinInteraction
-                InterMineObject object = (InterMineObject) row.get(realFeatureIndex).getInterMineObject();
+                InterMineObject object =
+                    (InterMineObject) row.get(realFeatureIndex).getInterMineObject();
                 
                 if (!exported.contains(object.getId())) {
                     // cast to ProteinInteraction
@@ -167,6 +168,7 @@ public class ProteinInteractionExporter implements TableExporter
     }
 
     /**
+     * {@inheritDoc}
      * @param pt the PagedTable containing the results 
      * @return true if exportable results were found
      * @see org.intermine.web.logic.export.TableExporter#canExport
@@ -177,8 +179,8 @@ public class ProteinInteractionExporter implements TableExporter
     }
     
     /**
-     * create lines in sif format
-     * @param interactors list of interactors
+     * Create lines in sif format
+     * @param interactions the interactions
      * @return String respresenting the network in sif format
      */
     public static String getSifLines(Collection<ProteinInteraction> interactions) {

@@ -13,7 +13,6 @@ package org.intermine.bio.postprocess;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.HashMap;
 
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStoreWriter;

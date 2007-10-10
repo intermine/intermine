@@ -116,7 +116,7 @@ public class InterproDataTranslator extends DataTranslator
     }
 
     /**
-     * @see DataTranslator#translate
+     * {@inheritDoc}
      */
     public void translate(ItemWriter tgtItemWriter)
     throws ObjectStoreException, InterMineException {

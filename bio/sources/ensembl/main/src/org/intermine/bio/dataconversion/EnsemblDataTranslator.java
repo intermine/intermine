@@ -113,7 +113,7 @@ public class EnsemblDataTranslator extends DataTranslator
     }
 
     /**
-     * @see org.intermine.dataconversion.DataTranslator#translate
+     * {@inheritDoc}
      */
     public void translate(ItemWriter tgtItemWriter)
             throws ObjectStoreException, InterMineException {
@@ -136,7 +136,7 @@ public class EnsemblDataTranslator extends DataTranslator
     }
 
     /**
-     * @see org.intermine.dataconversion.DataTranslator#translateItem
+     * {@inheritDoc}
      */
     protected Collection translateItem(Item srcItem)
             throws ObjectStoreException, InterMineException {
