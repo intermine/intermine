@@ -50,6 +50,14 @@
     <gzip src="${dist.dir}/sitemap7237gene.xml" destfile="${dist.dir}/sitemap7237gene.xml.gz"/>
     <gzip src="${dist.dir}/sitemap7237protein.xml" destfile="${dist.dir}/sitemap7237protein.xml.gz"/>
     <gzip src="${dist.dir}/sitemap.xml" destfile="${dist.dir}/sitemap.xml.gz"/>
+    
+    <delete file="${dist.dir}/sitemap180454gene.xml"/>
+	<delete file="${dist.dir}/sitemap180454protein.xml"/>
+	<delete file="${dist.dir}/sitemap7227gene.xml"/>
+	<delete file="${dist.dir}/sitemap7227protein.xml"/>
+	<delete file="${dist.dir}/sitemap7237gene.xml"/>
+	<delete file="${dist.dir}/sitemap7237protein.xml"/>
+	<delete file="${dist.dir}/sitemap.xml"/>
 
   </target>
 
