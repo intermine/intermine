@@ -9,6 +9,7 @@
   <head>
     <title><fmt:message key="waiting.title"/></title>
     <link rel="stylesheet" type="text/css" href="css/webapp.css"/>
+    <link rel="stylesheet" type="text/css" href="theme/theme.css"/>
     <link rel="stylesheet" type="text/css" href="css/waiting.css"/>
     <link rel="stylesheet" type="text/css" href="model/css/model.css"/>
     <noscript>
