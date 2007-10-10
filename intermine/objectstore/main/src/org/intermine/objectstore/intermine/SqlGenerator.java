@@ -1547,7 +1547,7 @@ public class SqlGenerator
      * The maximum size a bag in a BagConstraint can be before we consider using a temporary table
      * instead.
      */
-    public static final int MAX_BAG_INLINE_SIZE = 100;
+    public static final int MAX_BAG_INLINE_SIZE = 2;
 
     /**
      * Converts a BagConstraint object into a String suitable for putting on an SQL query.
