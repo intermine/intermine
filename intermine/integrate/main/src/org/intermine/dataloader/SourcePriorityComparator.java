@@ -11,9 +11,15 @@ package org.intermine.dataloader;
  */
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
+import static org.intermine.dataloader.IntegrationWriterAbstractImpl.SKELETON;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.TypeUtil;
 
@@ -82,50 +88,108 @@ public class SourcePriorityComparator implements Comparator
             Source source2 = null;
             Object value1, value2;
             try {
-                value1 = TypeUtil.getFieldProxy(o1, field.getName());
-                value2 = TypeUtil.getFieldProxy(o2, field.getName());
+                value1 = TypeUtil.getFieldProxy(f1, field.getName());
+                value2 = TypeUtil.getFieldProxy(f2, field.getName());
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            boolean storeValue1 = false;
-            boolean storeValue2 = false;
-            if (o1 == defObj) {
-                source1 = def;
-                storeValue1 = true;
-            } else {
-                source1 = dataTracker.getSource(f1.getId(), field.getName());
+            ClassDescriptor cld = field.getClassDescriptor();
+            String cldName = TypeUtil.unqualifiedName(cld.getName());
+            Map descriptorSources = DataLoaderHelper.getDescriptors(cld.getModel());
+            List srcs = (List) descriptorSources.get(cldName + "." + field.getName());
+            if (srcs == null) {
+                srcs = (List) descriptorSources.get(cldName);
             }
-            if (o2 == defObj) {
-                source2 = def;
-                storeValue2 = true;
-            } else {
-                source2 = dataTracker.getSource(f2.getId(), field.getName());
+            if (srcs != null) {
+                if (f1 == defObj) {
+                    source1 = def;
+                } else {
+                    source1 = dataTracker.getSource(f1.getId(), field.getName());
+                }
+                if (f2 == defObj) {
+                    source2 = def;
+                } else {
+                    source2 = dataTracker.getSource(f2.getId(), field.getName());
+                }
+                if (source1 == null) {
+                    throw new IllegalArgumentException("Object o1 is not in the data"
+                            + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
+                            + "\" for field \"" + field.getName() + "\"");
+                }
+                if (source2 == null) {
+                    throw new IllegalArgumentException("Object o2 is not in the data"
+                            + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
+                            + "\" for field \"" + field.getName() + "\"");
+                }
+                if (!srcs.contains(source1.getName())) {
+                    throw new IllegalArgumentException("Priority configured for " + cldName + "."
+                            + field.getName() + " does not include source " + source1.getName());
+                }
+                if (!srcs.contains(source2.getName())) {
+                    throw new IllegalArgumentException("Priority configured for " + cldName + "."
+                            + field.getName() + " does not include source " + source2.getName());
+                }
+                int retval = srcs.indexOf(source2.getName()) - srcs.indexOf(source1.getName());
+                if ((retval == 0) && (!o1.equals(o2)) && (!source1.getSkeleton())) {
+                    String errMessage = "Unequivalent objects have the same"
+                        + " non-skeleton Source; o1 = \"" + o1 + "\" ("
+                        + (o1 == defObj ? "from source" : (dbIdsStored.contains(f1.getId())
+                                    ? "stored in this run" : "from database")) + "), o2 = \"" + o2
+                        + "\"(" + (o2 == defObj ? "from source" : (dbIdsStored.contains(f2.getId())
+                                    ? "stored in this run" : "from database")) + "), source1 = \""
+                        + source1 + "\", source2 = \"" + source2 + "\" for field \""
+                        + field.getName() + "\"";
+                    LOG.error(errMessage);
+                    throw new IllegalArgumentException(errMessage);
+                }
+                return retval;
             }
-            if (source1 == null) {
-                throw new IllegalArgumentException("Object o1 is not in the data"
-                        + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
-                        + "\" for field \"" + field.getName() + "\"");
+            if ((value1 == null) && (value2 == null)) {
+                return (f1 == defObj ? 1 : -1);
             }
-            if (source2 == null) {
-                throw new IllegalArgumentException("Object o2 is not in the data"
-                        + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
-                        + "\" for field \"" + field.getName() + "\"");
+            if (value1 == null) {
+                return -1;
             }
-            int retval = DataLoaderHelper.comparePriority(field, source1, source2,
-                    value1, value2, iw, source, skelSource, storeValue1, storeValue2);
-            if ((retval == 0) && (!o1.equals(o2)) && (!source1.getSkeleton())) {
-                String errMessage = "Unequivalent objects have the same"
-                    + " non-skeleton Source; o1 = \"" + o1 + "\" ("
-                    + (o1 == defObj ? "from source" : (dbIdsStored.contains(f1.getId())
-                                ? "stored in this run" : "from database")) + "), o2 = \"" + o2
-                    + "\"(" + (o2 == defObj ? "from source" : (dbIdsStored.contains(f2.getId())
-                                ? "stored in this run" : "from database")) + "), source1 = \""
-                    + source1 + "\", source2 = \"" + source2 + "\" for field \""
-                    + field.getName() + "\"";
-                LOG.error(errMessage);
-                throw new IllegalArgumentException(errMessage);
+            if (value2 == null) {
+                return 1;
             }
-            return retval;
+            try {
+                if ((f1 == defObj) && (value1 instanceof InterMineObject)) {
+                    if (value1 instanceof ProxyReference) {
+                        value1 = ((ProxyReference) value1).getObject();
+                    }
+                    value1 = iw.store(value1, source, skelSource, SKELETON);
+                }
+                if ((f2 == defObj) && (value2 instanceof InterMineObject)) {
+                    if (value2 instanceof ProxyReference) {
+                        value2 = ((ProxyReference) value2).getObject();
+                    }
+                    value2 = iw.store(value2, source, skelSource, SKELETON);
+                }
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
+            if (((value1 instanceof InterMineObject) && (value2 instanceof InterMineObject)
+                        && (((InterMineObject) value1).getId().equals(((InterMineObject) value2)
+                                .getId()))) || value1.equals(value2)) {
+                return (f1 == defObj ? 1 : -1);
+            }
+            if (value1 instanceof ProxyReference) {
+                value1 = ((ProxyReference) value1).getObject();
+            }
+            if (value2 instanceof ProxyReference) {
+                value2 = ((ProxyReference) value2).getObject();
+            }
+            throw new IllegalArgumentException("Conflicting values for field "
+                    + field.getClassDescriptor().getName() + "." + field.getName()
+                    + " between " + source1.getName() + " (value "
+                    + (value1.toString().length() <= 1000 ? value1
+                       : value1.toString().subSequence(0, 999)) + ") and "
+                    + source2.getName() + " (value "
+                    + (value2.toString().length() <= 1000 ? value2
+                       : value2.toString().subSequence(0, 999)) + ") and "
+                    + "). This field needs configuring in "
+                    + cld.getModel().getName() + "_priorities.properties");
         }
         throw new ClassCastException("Trying to compare priorities for objects that are not"
                 + " InterMineObjects");
