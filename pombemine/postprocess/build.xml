@@ -1,7 +1,0 @@
-<project name="pombemine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for pombemine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>

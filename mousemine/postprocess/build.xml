@@ -1,7 +1,0 @@
-<project name="mousemine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for mousemine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>

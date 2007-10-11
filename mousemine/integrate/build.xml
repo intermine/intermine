@@ -1,6 +1,0 @@
-<project name="mouse-integration" default="default" basedir=".">
-  <description>perform integration</description>
-  
-  <import file="../../imbuild/integrate.xml"/>
-  <import file="../../imbuild/library.xml"/>
-</project>

@@ -1,5 +1,0 @@
-<project name="plant-integration" default="default" basedir=".">
-  <description>perform integration</description>
-  
-  <import file="../../imbuild/integrate.xml"/>
-</project>
