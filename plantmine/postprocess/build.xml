@@ -1,7 +1,0 @@
-<project name="plantmine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for plantmine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>
