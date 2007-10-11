@@ -128,11 +128,9 @@ public class SynonymUpdater
             CLASSES:
                 while (classesIter.hasNext()) {
                 String className = ((Class) classesIter.next()).getName();
-                Collection keyFields = ClassKeyHelper.getKeyFields(classKeyMap, className);
-                Iterator keyFieldIter = keyFields.iterator();
-                while (keyFieldIter.hasNext()) {
-                    Set parts = (Set) keyFieldIter.next();
-                    String fieldName = ((FieldDescriptor) parts.iterator().next()).getName();
+                Collection<FieldDescriptor> keyFields = ClassKeyHelper.getKeyFields(classKeyMap, className);
+                for (FieldDescriptor keyField: keyFields) {
+                    String fieldName = keyField.getName();
                     Object fieldValue = TypeUtil.getFieldValue(bioEntity, fieldName);
                     if (fieldValue != null && fieldValue.equals(synonymValue)) {
                         isPrimary = true;
