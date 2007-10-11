@@ -75,65 +75,69 @@
         </c:if>
       </c:if>
       <c:if test="${resultsTable.size == 0}">
-      <c:set var="matchesCount" value="${bagQueryResultEntry.value.matches}"/>
-      <c:if test="${matchesCount > 0}">
+        <c:set var="matchesCount" value="${bagQueryResultEntry.value.matches}"/>
+        <c:if test="${matchesCount > 0}">
+          <div class="lookupError">
+            <c:choose>      
+              <c:when test="${matchesCount == 1}">
+                <fmt:message key="results.lookup.noresults.one">
+                  <fmt:param value="${bagQueryResultEntry.value.matches}"/>
+                  <fmt:param value="${bagQueryResultEntry.value.type}"/>
+                </fmt:message>
+              </c:when>
+              <c:when test="${matchesCount > 1}">
+                <fmt:message key="results.lookup.noresults.many">
+                  <fmt:param value="${bagQueryResultEntry.value.matches}"/>
+                  <fmt:param value="${bagQueryResultEntry.value.type}"/>
+                </fmt:message>
+              </c:when>
+            </c:choose>
+          </div>
+        </c:if>
+      </c:if>
+      <c:set var="unresolvedCount" value="${fn:length(bagQueryResultEntry.value.unresolved)}"/>
+      <c:if test="${unresolvedCount > 0}">
         <div class="lookupError">
-          <c:choose>      
-            <c:when test="${matchesCount == 1}">
-              <fmt:message key="results.lookup.noresults.one">
-                <fmt:param value="${bagQueryResultEntry.value.matches}"/>
+          <c:choose>
+            <c:when test="${unresolvedCount == 1}">
+              <fmt:message key="results.lookup.unresolved.one">
                 <fmt:param value="${bagQueryResultEntry.value.type}"/>
               </fmt:message>
             </c:when>
-            <c:when test="${matchesCount > 1}">
-              <fmt:message key="results.lookup.noresults.many">
-                <fmt:param value="${bagQueryResultEntry.value.matches}"/>
+            <c:when test="${unresolvedCount > 1}">
+              <fmt:message key="results.lookup.unresolved.many">
                 <fmt:param value="${bagQueryResultEntry.value.type}"/>
               </fmt:message>
             </c:when>
           </c:choose>
+          <c:forEach var="identifier" items="${bagQueryResultEntry.value.unresolved}" varStatus="status">
+            <c:if test="${status.index != 0}">,</c:if>
+            <c:out value="${identifier}"/>
+          </c:forEach>
+          <c:if test="${bagQueryResultEntry.value.hasExtraConstraint}">
+            <fmt:message key="results.lookup.in"/>
+            <c:out value="${bagQueryResultEntry.value.extraConstraint}"/>
+          </c:if>
         </div>
       </c:if>
-    </c:if>
-  <c:set var="unresolvedCount" value="${fn:length(bagQueryResultEntry.value.unresolved)}"/>
-  <c:if test="${unresolvedCount > 0}">
-    <div class="lookupError">
-      <c:choose>
-        <c:when test="${unresolvedCount == 1}">
-          <fmt:message key="results.lookup.unresolved.one">
-            <fmt:param value="${bagQueryResultEntry.value.type}"/>
-          </fmt:message>
-        </c:when>
-        <c:when test="${unresolvedCount > 1}">
-          <fmt:message key="results.lookup.unresolved.many">
-            <fmt:param value="${bagQueryResultEntry.value.type}"/>
-          </fmt:message>
-        </c:when>
-      </c:choose>
-      <c:forEach var="identifier" items="${bagQueryResultEntry.value.unresolved}" varStatus="status">
-        <c:if test="${status.index != 0}">,</c:if>
-        <c:out value="${identifier}"/>
-      </c:forEach>
-    </div>
-  </c:if>
 
-  <c:set var="duplicateCount" value="${fn:length(bagQueryResultEntry.value.duplicates)}"/>
-  <c:if test="${duplicateCount > 0}">
-    <div class="lookupWarn">
-      <c:choose>
-        <c:when test="${duplicateCount == 1}">
-          <fmt:message key="results.lookup.duplicate.one"/>:
-        </c:when>
-        <c:when test="${duplicateCount > 1}">
-          <fmt:message key="results.lookup.duplicate.many"/>:
-        </c:when>
-      </c:choose>  
-      <c:forEach var="identifier" items="${bagQueryResultEntry.value.duplicates}" varStatus="status">
-        <c:if test="${status.index != 0}">,</c:if>
-        <c:out value="${identifier}"/>
-      </c:forEach>
-    </div>
-  </c:if>
+      <c:set var="duplicateCount" value="${fn:length(bagQueryResultEntry.value.duplicates)}"/>
+      <c:if test="${duplicateCount > 0}">
+        <div class="lookupWarn">
+          <c:choose>
+            <c:when test="${duplicateCount == 1}">
+              <fmt:message key="results.lookup.duplicate.one"/>:
+            </c:when>
+            <c:when test="${duplicateCount > 1}">
+              <fmt:message key="results.lookup.duplicate.many"/>:
+            </c:when>
+          </c:choose>  
+          <c:forEach var="identifier" items="${bagQueryResultEntry.value.duplicates}" varStatus="status">
+            <c:if test="${status.index != 0}">,</c:if>
+            <c:out value="${identifier}"/>
+          </c:forEach>
+        </div>
+      </c:if>
 
 
   <c:set var="translatedCount" value="${fn:length(bagQueryResultEntry.value.translated)}"/>

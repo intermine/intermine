@@ -102,6 +102,8 @@ public class TableController extends TilesAction
             for (Map.Entry<String, BagQueryResult> entry : pathToBagQueryResult.entrySet()) {
                 String path = entry.getKey();
                 String type = query.getNode(path).getType();
+                String extraConstraint = (String) query.getNode(path).getConstraint(0)
+                    .getExtraValue();
                 BagQueryResult bqr = entry.getValue();
                 int matches = bqr.getMatchAndIssueIds().size();
                 Set<String> unresolved = bqr.getUnresolved().keySet();
@@ -139,7 +141,7 @@ public class TableController extends TilesAction
                 }
                 
                 lookupResults.put(path, new DisplayLookup(type, matches, unresolved, duplicates,
-                            translated, lowQuality, wildcards));
+                            translated, lowQuality, wildcards, extraConstraint));
             }
             request.setAttribute("lookupResults", lookupResults);
         } else {
