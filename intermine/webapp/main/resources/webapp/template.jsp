@@ -124,7 +124,7 @@
 <div class="body" align="center">
 <im:boxarea stylename="plainbox" fixedWidth="60%">
   <html:form action="/templateAction">
-    <h2>
+    <h2 class="templateTitle">
     <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
 	${templateTitle}
     <tiles:insert name="setFavourite.tile">
@@ -132,7 +132,7 @@
         <tiles:put name="type" value="template"/>
     </tiles:insert></h2>
     <div class="templateDescription">${templateQuery.description}</div>
-    <table border="0" class="templateForm">
+    <ol class="templateForm">
       <c:set var="index" value="${0}"/>
       <c:forEach items="${templateQuery.editableNodes}" var="node">
         <c:forEach items="${constraints[node]}" var="con">
@@ -148,16 +148,12 @@
           </c:if>
 
           <c:if test="${!empty con.description}">
-            <tr>
-              <td align="right" valign="top" rowspan="2">
-                <c:out value="[${index}]"/>
-              </td>
-              <td colspan="5">
+            <li class="firstLine">
+                <span><c:out value="[${index}]"/></span>
                 <i><c:out value="${con.description}"/></i>
-              </td>
-            </tr>
+            </li>
           </c:if>
-          <tr>
+          <li>
 
             <script type="text/javascript">
               <!--
@@ -169,20 +165,20 @@
             </script>
 
             <c:if test="${empty con.description}">
-              <td valign="top" align="right">
+              <span>
                 <c:out value="[${index}]"/>
-              </td>
+              </span>
             </c:if>
-            <td valign="top">
+            <label>
               <c:out value="${names[con]}"/>:
-            </td>
+            </label>
             <c:choose>
               <c:when test="${fn:length(validOps) == 1}">
                 <%--<fmt:message key="query.lookupConstraintLabel"/>Search for:--%>
                 <input type="hidden" name="attributeOps(${index})" value="18"/>
               </c:when>
               <c:otherwise>
-                <td valign="top">
+                <span valign="top">
                   <html:select property="attributeOps(${index})" onchange="updateConstraintForm(${index-1}, document.templateForm['attributeOps(${index})'], document.templateForm['attributeOptions(${index})'], document.templateForm['attributeValues(${index})'])">
                     <c:forEach items="${validOps}" var="op">
                       <html:option value="${op.key}">
@@ -190,10 +186,10 @@
                       </html:option>
                     </c:forEach>
                   </html:select>
-                </td>
+                </span>
               </c:otherwise>
              </c:choose>
-            <td valign="top" nowrap>
+            <span nowrap>
               <span id="operandEditSpan${index-1}">
                 <html:text property="attributeValues(${index})"/>
                 <c:if test="${!empty keyFields[con]}">
@@ -218,17 +214,14 @@
                   </c:forEach>
                 </select>
               </c:if>
-            </td>
+            </span>
           <c:if test="${haveExtraConstraint[con]}">
           <c:if test="${empty keyFields[con]}">
-          </tr>
-            <tr>
-              <td>
-                &nbsp; <%-- for IE --%>
-              </td>
+            </li>
+            <li>
           </c:if>
-              <td valign="top" colspan="4">
-                <label>
+              <span valign="top" colspan="4">
+                <label class="marg">
                   <fmt:message key="bagBuild.extraConstraint">
                     <fmt:param value="${extraBagQueryClass}"/>
                   </fmt:message>
@@ -241,16 +234,16 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
-              </td>
+              </span>
             </c:if>
           <c:if test="${empty keyFields[con]}">
-            </tr>
+            </li>
           </c:if>
-          <tr>
-            <td>
+          <li>
+            <span>
               &nbsp; <%-- for IE --%>
-            </td>
-            <td valign="top" colspan="4">
+            </span>
+            <span valign="top" colspan="4">
               <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">
                 <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
 
@@ -315,12 +308,12 @@
                 }
                 //-->
               </script>
-            </td>
+            </span>
 
-          </tr>
+          </li>
         </c:forEach>
       </c:forEach>
-    </table>
+    </ol>
 
     <c:if test="${empty previewTemplate}">
       <br/>
