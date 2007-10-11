@@ -109,7 +109,6 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
                     if (affyCall.equals("Up")) {
                         count[0]++;
                         geneMap.put(tissue + "_Up", genesArray);
-                        ;
                         geneMap.put(tissue + "_Down", new ArrayList<String>());
                     } else
                         if (affyCall.equals("Down")) {
@@ -133,9 +132,13 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
             String tissue = (String) iterator.next();
             if ((callTable.get(tissue))[0] > 0) {
               dataSet.addValue((callTable.get(tissue))[0], "Up", tissue);
+            } else {
+              dataSet.addValue(0.0001, "Up", tissue);
             }
             if ((callTable.get(tissue))[1] < 0) {
                 dataSet.addValue((callTable.get(tissue))[1], "Down", tissue);
+            } else {
+              dataSet.addValue(-0.0001, "Down", tissue);
             }
             Object[] geneSeriesArray = new Object[2];
             geneSeriesArray[0] = geneMap.get(tissue + "_Up");
