@@ -442,7 +442,7 @@
           <br/>
           <table cellpadding="0" cellspacing="0" >
             <tr>
-              <td><img src="model/res_bar_left.gif"></td>
+              <td><img src="theme/res_bar_left.gif"></td>
               <%-- Paging controls --%>
               <td class="resBar"><tiles:insert page="/tablePageLinks.jsp"/></td>
               <td class="resBar">&nbsp;|&nbsp;</td>
@@ -487,7 +487,7 @@
                   </c:otherwise>
                 </c:choose>
               </td>
-              <td><img src="model/res_bar_right.gif"/></td>
+              <td><img src="theme/res_bar_right.gif"/></td>
             </tr>
           </table>
         </c:if>
