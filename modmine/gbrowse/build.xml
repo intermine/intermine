@@ -1,0 +1,4 @@
+<project name="modmine-gbrowse" default="default" basedir=".">
+  <description>build gbrowse tasks</description>
+  <import file="../../imbuild/gbrowse.xml"/>
+</project>
