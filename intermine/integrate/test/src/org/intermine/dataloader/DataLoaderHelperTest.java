@@ -170,67 +170,18 @@ public class DataLoaderHelperTest extends QueryTestCase
         expected.put("Department", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Company", Arrays.asList(new Object[] {"testsource4", "testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Address", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource4"}));
-        expected.put("Employable", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Employable", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("ImportantPerson", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Secretary", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Bank", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Types", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Employee.age", Arrays.asList(new Object[] {"testsource3", "storedata", "testsource2", "testsource"}));
-        expected.put("Employee", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Employee", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Broke", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("HasAddress", Arrays.asList(new Object[] {"testsource4", "testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Manager", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("CEO", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Contractor", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         assertEquals(expected, DataLoaderHelper.getDescriptors(model));
-    }
-
-    public void testComparePriorityField() throws Exception {
-        Source sourceA = new Source();
-        sourceA.setName("storedata");
-        Source sourceB = new Source();
-        sourceB.setName("testsource");
-        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Employee");
-        FieldDescriptor fd = cld.getFieldDescriptorByName("age");
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA) < 0);
-        assertEquals(0, DataLoaderHelper.comparePriority(fd, sourceA, sourceA));
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, null, null, null, null, false, false) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, Boolean.FALSE, null, null, null, false, false) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null, null, null, null, false, false) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.TRUE, null, null, null, false, false) > 0);
-    }
-
-    public void testComparePriorityClass() throws Exception {
-        Source sourceA = new Source();
-        sourceA.setName("storedata");
-        Source sourceB = new Source();
-        sourceB.setName("testsource");
-        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Employee");
-        FieldDescriptor fd = cld.getFieldDescriptorByName("fullTime");
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceB, sourceA) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, null, null, null, null, false, false) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, Boolean.FALSE, null, null, null, false, false) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null, null, null, null, false, false) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.TRUE, null, null, null, false, false) < 0);
-    }
-
-    public void testComparePriorityMissing() throws Exception {
-        Source sourceA = new Source();
-        sourceA.setName("SourceA");
-        Source sourceB = new Source();
-        sourceB.setName("SourceB");
-        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Department");
-        FieldDescriptor fd = cld.getFieldDescriptorByName("name");
-        try {
-            DataLoaderHelper.comparePriority(fd, sourceA, sourceB);
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, null, null, null, null, false, false) > 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, Boolean.FALSE, null, null, null, false, false) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, null, null, null, null, null, false, false) < 0);
-        assertTrue(DataLoaderHelper.comparePriority(fd, sourceA, sourceB, Boolean.TRUE, Boolean.TRUE, null, null, null, false, false) < 0);
     }
 }
