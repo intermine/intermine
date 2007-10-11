@@ -17,6 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.SavedQuery;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -26,9 +31,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.SavedQuery;
 
 /**
  * Form bean to used in combining bags
@@ -145,8 +147,9 @@ public class ModifyBagForm extends ActionForm
                     errors.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
                 }
             }
-        }
-
+        } 
+        
+        
         // This is a hack, see #1399.
         String defaultName = "new list name";
 
@@ -159,8 +162,11 @@ public class ModifyBagForm extends ActionForm
                 ActionMessage actionMessage =
                     new ActionMessage("errors.required", "New list name");
                 errors.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
+            } else if (!WebUtil.isValidName(getNewBagName())) { 
+                errors.add(ActionMessages.GLOBAL_MESSAGE,
+                       new ActionMessage("errors.badChars"));    
             }
-        }
+        } 
 
         return errors;
     }
