@@ -26,18 +26,21 @@ public class DisplayLookup
     private Set<String> unresolved, duplicates, translated, lowQuality;
     private Map<String, List> wildcards;
     private String type;
+    private String extraConstraint;
 
     /**
      * Create a new DisplayLookup object.
      *
+     * @param type a String for the type of the objects being looked up
      * @param matches the number of identifiers that matched useful objects
      * @param unresolved a Set of the identifiers that did not match anything useful
      * @param duplicates a Set of the identifiers that matched multiple useful objects
      * @param translated a Set of the identifiers that only matched objects of the wrong type
+     * @param extraConstraint the String for the value of the extra constraint
      */
     public DisplayLookup(String type, int matches, Set<String> unresolved, Set<String> duplicates,
-                         Set<String> translated, Set<String> lowQuality,
-                         Map<String, List> wildcards) {
+            Set<String> translated, Set<String> lowQuality, Map<String, List> wildcards,
+            String extraConstraint) {
         this.matches = matches;
         this.unresolved = unresolved;
         this.duplicates = duplicates;
@@ -45,6 +48,7 @@ public class DisplayLookup
         this.lowQuality = lowQuality;
         this.wildcards = wildcards;
         this.type = type;
+        this.extraConstraint = extraConstraint;
     }
 
     /**
@@ -115,5 +119,23 @@ public class DisplayLookup
      */
     public Map<String, List> getWildcards() {
         return wildcards;
+    }
+
+    /**
+     * Returns true if the extraConstraint is not null and non-empty.
+     *
+     * @return a boolean
+     */
+    public boolean getHasExtraConstraint() {
+        return (extraConstraint != null) && (!"".equals(extraConstraint));
+    }
+
+    /**
+     * Returns the extra constraint string.
+     *
+     * @return a String
+     */
+    public String getExtraConstraint() {
+        return extraConstraint;
     }
 }
