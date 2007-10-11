@@ -92,9 +92,11 @@ public class BuildBagAction extends InterMineAction
 
         BufferedReader reader = null;
 
-        String trimmedText = buildBagForm.getText().trim();
-         if (trimmedText.length() != 0) {
-            reader = new BufferedReader(new StringReader(trimmedText));
+         if (buildBagForm.getText() != null && buildBagForm.getText().length() != 0) {
+            String trimmedText = buildBagForm.getText().trim();
+            if (trimmedText.length() != 0) {
+                reader = new BufferedReader(new StringReader(trimmedText));
+            }
         } else {
 
             FormFile formFile = buildBagForm.getFormFile();
