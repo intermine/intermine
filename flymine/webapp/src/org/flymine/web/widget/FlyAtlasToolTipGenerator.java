@@ -43,12 +43,19 @@ public class FlyAtlasToolTipGenerator implements CategoryToolTipGenerator
                                   int series, int category) {
         ArrayList geneList = (ArrayList) ((Object[]) geneMap[category])[series];
         StringBuffer sb = new StringBuffer();
-        for (Iterator iter = geneList.iterator(); iter.hasNext();) {
+        Iterator iter = geneList.iterator();
+        int count = 0;
+        while (iter.hasNext() && count <= 5) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
             sb.append((String) iter.next());
+            count++;
         }
+        if (count > 5) {
+            sb.append("...");
+        }
+        sb.append("\nClick on the column to view.");
         return sb.toString();
     }
     

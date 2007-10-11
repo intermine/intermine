@@ -72,13 +72,10 @@ public class BagGraphWidget
             CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();
             plot.getRenderer().setBaseItemLabelsVisible(true);
             plot.getRenderer().setBaseItemLabelGenerator(generator);
-//            renderer.setItemLabelsVisible(true);
-//            renderer.setItemLabelGenerator(generator);
-
-//            plot.getRenderer().setPositiveItemLabelPosition(new ItemLabelPosition(
-//                                        ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
             renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
                                         ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
+            renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+                                        ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER));
 
             // TODO put this in a config file
             // set colors for each data series
@@ -124,15 +121,15 @@ public class BagGraphWidget
                                                                 TextAnchor.CENTER,
                                                                 0.0D);
             renderer.setNegativeItemLabelPosition(neg); */
-
-
-            ItemLabelPosition itemLabelPosition =
-                new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT);
-            renderer.setNegativeItemLabelPositionFallback(itemLabelPosition);
-
+            
+            
+            renderer.setNegativeItemLabelPositionFallback(new ItemLabelPosition(ItemLabelAnchor
+                                                           .OUTSIDE3, TextAnchor.BASELINE_LEFT)); 
+            
             NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
             rangeAxis.setUpperMargin(0.15);
-
+            rangeAxis.setLowerMargin(0.15);
+            
             Font labelFont = new Font("SansSerif", Font.BOLD, 12);
             plot.getDomainAxis().setLabelFont(labelFont);
             rangeAxis.setLabelFont(labelFont);
