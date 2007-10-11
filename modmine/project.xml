@@ -31,7 +31,7 @@
       <property name="dataSetTitle" value="WormBase C.elegans data set"/>
     </source>
     <source name="inparanoid-orthologue" type="orthologue" dump="true">
-      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
+      <property name="src.data.dir" location="/shared/data/modmine/inparanoid-orthologue/current/"/>
     </source>
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
@@ -68,7 +68,7 @@
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/fasta"/>
     </source>
-    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta">
+    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="*chromosome*.fasta"/>
@@ -100,11 +100,11 @@
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
-    <post-process name="transfer-sequences" dump="true"/>
+    <post-process name="transfer-sequences"/>
     <post-process name="create-overlap-relations-flymine" dump="true"/>
     <post-process name="do-sources"/>
 
-    <post-process name="set-collection-counts" dump="true"/>
+    <post-process name="set-collection-counts"/>
     <post-process name="create-intron-features"/>
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
