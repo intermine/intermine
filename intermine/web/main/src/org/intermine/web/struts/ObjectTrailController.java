@@ -68,19 +68,17 @@ public class ObjectTrailController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         String trail = request.getParameter("trail");
-        // parse trail into bits with pipe delimiter
+
         String ids[] = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')
                 : new String[0];
-        ArrayList elements = new ArrayList();
+        ArrayList<TrailElement> elements = new ArrayList<TrailElement>();
         String elementTrail = "";
 
         for (int i = 0; i < ids.length; i++) {
             elementTrail += "|" + ids[i];
-            // we also check that the results table actually exists. If the user bookmarked
-            // the URL then it probably won't exist in their session
 
             // split this param pair again with . delimiter
-            // will be something like bag.baggieName or results.col0
+            // will be something like bag.baggieName or results.col0 or itt.template.id
             String urlParam = ids[i];
             String breadcrumbs[] = StringUtils.split(urlParam, '.');
 
@@ -91,19 +89,29 @@ public class ObjectTrailController extends TilesAction
                  *      col0, col1, ... <-- template
                  *      qid0, qid1, ... <-- query
                  *      results.0   ... <-- i don't know
+                 *          ~~ re-add results.
+                 *      itt <-- inline template table
+                 *          ~~ re-concatenate itt.templateName.id
+                 *      
                  *
-                 *  so if breadcrumbs[1] is just an integer, we need to re-add "results." to it
                  */
                 String resultsTableId = breadcrumbs[1];
-                String prepend = "";
-                try {
-                        int n = Integer.parseInt(resultsTableId);
-                        prepend = "results.";   // this item should be "results.0" so
-                                                // re-add the results string
-                } catch (NumberFormatException e) {
-                    // isn't a number, don't need to do anything
+                String prepend = "results.";
+                
+                //(String label, String trail, int id)                
+                if (resultsTableId.startsWith("itt")) {
+                    // inline template
+                    String table = breadcrumbs[1] + "." + breadcrumbs[2] + "." + breadcrumbs[3];
+                    TrailElement e 
+                        = new TrailElement(table, elementTrail, "results");
+                    elements.add(e);
+                } else {
+                    // probably results.0
+                    TrailElement e 
+                        = new TrailElement(prepend + resultsTableId, elementTrail, "results");
+                    elements.add(e);
                 }
-                elements.add(new TrailElement(prepend + resultsTableId, elementTrail, "results"));
+
             } else if (breadcrumbs[0].equals("bag")) {
                 // breadcrumbs[1] is the bag name
                 elements.add(new TrailElement(breadcrumbs[1], elementTrail, "bag"));
@@ -125,12 +133,7 @@ public class ObjectTrailController extends TilesAction
                 elements.add(new TrailElement(label, elementTrail, o.getId().intValue()));
             }
         }
-//      TODO what is this?
-//        String tableParam = request.getParameter("table");
-//        if (ids.length == 0 && tableParam != null && tableParam.startsWith("results")
-//                && SessionMethods.getResultsTable(session, tableParam) != null) {
-//            elements.add(new TrailElement(tableParam, "table"));
-//        }
+
 
         request.setAttribute("trailElements", elements);
         return null;
@@ -160,7 +163,7 @@ public class ObjectTrailController extends TilesAction
         private String trail;
         private int id;
         private String type;        // query, bag or table (as in results table)
-        private String elementId;   // tableId or bagName
+        private String elementId;   // tableId or bagName or itt.templatename.id
 
         /**
          * Construct an object trail element.
