@@ -15,13 +15,13 @@
 
 <h4>
   <a href="javascript:toggleDiv('hiddenDiv1');">
-    <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
+    <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
      <i>D. melanogaster</i>  - Microarray-based gene expression data from FlyAtlas ...
   </a>
 </h4>
 
 <div id="hiddenDiv1" class="dataSetDescription">
-
+<dl>
 <dt>An affymetrix microarray-based atlas of gene expression in the adult <i>Drosophila</i> fly from <a href="http://www.flyatlas.org/" target="_new">FlyAtlas</a>.</dt>
 
 <dd>
@@ -40,21 +40,21 @@ tissue, the following data are given:
 
 </dd>
 
+</dl>
 
 
-<br/> 
 
 </div>
 
 <h4>
   <a href="javascript:toggleDiv('hiddenDiv2');">
-    <img id='hiddenDiv3Toggle' src="images/disclosed.gif"/>
+    <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
      <i>D. melanogaster</i>  - Gene expression data from ArrayExpress ...
    </a>
 </h4>
 
 <div id="hiddenDiv2" class="dataSetDescription"> 
-
+<dl>
 <dt>
 Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791" target="_new">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-6" target="_new">E-FLYC-6</a>
 </dt>
@@ -65,6 +65,7 @@ Arbeitman et al reported gene expression patterns for nearly one third of all <i
 <i>An example graph showing expression of the gene 'big brain'.</i>
 <br/>
 <img style="border: 1px solid black" src="model/images/big_brain_expression.png"/>
+</dl>
 </div>
 
 </div>
