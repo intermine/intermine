@@ -92,7 +92,7 @@
 
     <c:forEach items="${startingPoints}" var="classname" varStatus="status">
       <im:unqualify className="${classname}" var="name"/>
-      <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}" rel="NOFOLLOW" />">${name}</a><c:if test="${!status.last}">,</c:if>
+      <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"  /> "rel="NOFOLLOW" >${name}</a><c:if test="${!status.last}">,</c:if>
     </c:forEach>
   </div>
 

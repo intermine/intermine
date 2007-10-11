@@ -56,10 +56,10 @@ tissue, the following data are given:
 <div id="hiddenDiv2" class="dataSetDescription"> 
 
 <dt>
-Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791" target="_new">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-6">E-FLYC-6</a>
+Arbeitman et al (2002) Science 297:2270-2275 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12351791" target="_new">PubMed: 12351791</a>) - Gene Expression During the Life Cycle of <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-6" target="_new">E-FLYC-6</a>
 </dt>
 <dd>
-Arbeitman et al reported gene expression patterns for nearly one third of all <i>Drosophila</i> genes during a complete time course of development.  Graphs are displayed on summary pages for each gene involved in the experiment showing Log 2 exression ratio for 67 time points across life stages.  For more infomation refer to the <a href="http://genome.med.yale.edu/Lifecycle/">White Lab</a> page at Yale.
+Arbeitman et al reported gene expression patterns for nearly one third of all <i>Drosophila</i> genes during a complete time course of development.  Graphs are displayed on summary pages for each gene involved in the experiment showing Log 2 exression ratio for 67 time points across life stages.  For more infomation refer to the White Lab page at Yale.
 </dd>
 
 <i>An example graph showing expression of the gene 'big brain'.</i>
