@@ -1,5 +1,22 @@
 .noBagsMessage {
   font-size: 11px;color: #555;font-style: italic;}
 
-table.templateForm td {
-  padding: 5px;}
+ol.templateForm  {
+    list-style: none;
+    padding:0;
+    margin:10px;
+}
+ol.templateForm li{
+    list-style: none;
+    padding:5px 10px 5px 25px;margin:0;
+}
+ol.templateForm li.firstLine{
+    list-style: none;
+    padding:10px 10px 5px 0;
+}
+ol.templateForm li label.marg{
+    margin-left:10px;
+}
+.templateTitle {
+    font: 1.6em;
+}
