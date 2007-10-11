@@ -25,7 +25,7 @@
 
           <div id="hiddenDiv1" class="dataSetDescription">
 
-
+		<p>
          <ul>
           <li><dt><a href="http://www.drosdel.org.uk">DrosDel</a> is a collection
           of <i>P</i>-element insertions for generating custom chromosomal aberrations
@@ -43,7 +43,7 @@
 	however, coordinates for the Exelixis set are still to genomce
 	sequence release 4.0.  These will be updated to release 5.0 in the
 	next release of FlyMine.</dt>
-
+</p>
         </div>
       </dl> 
 
@@ -51,18 +51,18 @@
         <dl>
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv2');">
-              <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
+              <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
               Affymetrix Probe Sets
             </a>
           </h4>
 
           <div id="hiddenDiv2" class="dataSetDescription">
-
+		<p>
           <dt> Probe sets from the <a href="http://www.affymetrix.com/" target="_new">Affymetrix</a> GeneChip <i>Drosophila</i> Genome 2.0 Array, a
            microarray tool for studying expression of <i>D. melanogaster</i> transcripts.Comprised of 18,880 probe sets for the analysis 
            of over 18,500 transcripts. Sequences used in the design of the GeneChip <i>Drosophila</i> Genome 2.0 Array were selected 
            from Flybase version 3.1.</dt>
-
+		</p>
 
         </div>
        </dl>   
@@ -70,13 +70,14 @@
         <dl>
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv3');">
-              <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
+              <img id='hiddenDiv3Toggle' src="images/disclosed.gif"/>
               INDAC Microarray oligo set
             </a>
           </h4>
 
           <div id="hiddenDiv3" class="dataSetDescription">
-
+			
+			<p>
             <dt>The aim of INDAC is to produce a widely available and uniform set of array reagents so that microarray data collected from 
             different studies may be more easily compared. On behalf of INDAC, the FlyChip group has designed a set of 65-69mer long
             oligonucleotides to release 4.1 of the D. melanogaster genome. Oligos were designed using a modified version of OligoArray2 and other
@@ -84,7 +85,7 @@
             will incorporate the results of these tests when available.</dt>
 
             <dt>Note: FlyMine curently stores the positions of the oligos relative to the transcript rather than to the chromosome.</dt>
-
+			</p>
         </div>
       </dl> 
 
@@ -92,7 +93,7 @@
         <dl>
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv4');">
-              <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
+              <img id='hiddenDiv4Toggle' src="images/disclosed.gif"/>
               Whole genome tiling path
             </a>
           </h4>
