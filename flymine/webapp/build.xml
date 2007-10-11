@@ -11,7 +11,6 @@
   <!-- it's hacky to override do-generate, but it gets run at the right time -->
   <target name="do-generate">
     <ant antfile="build.xml" dir="../dbmodel" target="summarise-objectstore" inheritAll="false"/>
-    <ant antfile="build.xml" dir="../dbmodel" target="generate-sitemap" inheritAll="false"/>
   </target>
 
   <target name="-add-struts-config"
