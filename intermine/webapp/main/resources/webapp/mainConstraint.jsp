@@ -72,41 +72,41 @@ if (${!empty constrainOnBag}) {
       <h3><fmt:message key="query.constraintHeading"/></h3> <%--2. Choose a filter--%>
 
       <!-- ATTRIBUTE TOGGLE -->
-      <c:if test="${! empty displayConstraint.fixedOpIndices || ! empty keyFields}">
-      <h4>
-        <a href="javascript:swapInputs('attribute');">
-          <img id='attributeToggle' src="images/disclosed.gif"/>
-          <fmt:message key="query.filterValue"/><%--Filter query results on this field having a specific value.--%>
-        </a>
-      </h4>
+      <c:if test="${displayConstraint.attribute || ! empty keyFields}">
+        <h4>
+          <a href="javascript:swapInputs('attribute');">
+            <img id='attributeToggle' src="images/disclosed.gif"/>
+            <fmt:message key="query.filterValue"/><%--Filter query results on this field having a specific value.--%>
+          </a>
+        </h4>
 
-      <!-- field name -->
-      <c:choose>
-        <c:when test="${empty editingNode.fieldName}">
-          <span class="type">
-            <c:out value="${editingNode.pathString}"/>
-          </span>
-        </c:when>
-        <c:otherwise>
-          <span class="attributeField">
-            <c:out value="${editingNode.fieldName}"/>
-          </span>
-        </c:otherwise>
-      </c:choose>
-      <c:choose>
-        <c:when test="${editingNode.collection}">
-          <fmt:message key="query.collection"><%--collection--%>
-            <fmt:param value="${editingNode.type}"/>
-          </fmt:message>
-        </c:when>
-        <c:otherwise>
-          <%-- <c:out value="${editingNode.type}"/> --%>
-        </c:otherwise>
-      </c:choose>
+        <!-- field name -->
+        <c:choose>
+          <c:when test="${empty editingNode.fieldName}">
+            <span class="type">
+              <c:out value="${editingNode.pathString}"/>
+            </span>
+          </c:when>
+          <c:otherwise>
+            <span class="attributeField">
+              <c:out value="${editingNode.fieldName}"/>
+            </span>
+          </c:otherwise>
+        </c:choose>
+        <c:choose>
+          <c:when test="${editingNode.collection}">
+            <fmt:message key="query.collection"><%--collection--%>
+              <fmt:param value="${editingNode.type}"/>
+            </fmt:message>
+          </c:when>
+          <c:otherwise>
+            <%-- <c:out value="${editingNode.type}"/> --%>
+          </c:otherwise>
+        </c:choose>
 
-      <c:set var="validOps" value="${displayConstraint.validOps}"/>
-      <c:set var="fixedOps" value="${displayConstraint.fixedOpIndices}"/>
-      <c:set var="options" value="${displayConstraint.optionsList}"/>
+        <c:set var="fixedOps" value="${displayConstraint.fixedOpIndices}"/>
+        <c:set var="options" value="${displayConstraint.optionsList}"/>
+        <c:set var="validOps" value="${displayConstraint.validOps}"/>
       </c:if>
 
       <script type="text/javascript">

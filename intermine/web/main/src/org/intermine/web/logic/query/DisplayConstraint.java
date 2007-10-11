@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -34,7 +33,6 @@ import org.intermine.web.logic.ClassKeyHelper;
  */
 public class DisplayConstraint
 {
-    private static final Logger LOG = Logger.getLogger(DisplayConstraint.class);
     /** . */
     protected PathNode node;
     /** The related model. */
@@ -175,5 +173,13 @@ public class DisplayConstraint
         }
 
         return optionsList;
+    }
+    
+    /**
+     * Return whether the node is an attribute.
+     * @return true if node is an attribute
+     */
+    public boolean isAttribute() {
+        return node.isAttribute();
     }
 }
