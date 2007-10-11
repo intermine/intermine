@@ -36,26 +36,26 @@
          <li>
             <dt>
               <i>Drosophila melanogaster</i> - Genome annotation release 5.1 from <a href="http://www.flybase.org" target="_new">
-                <html:img src="images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website" /> </a>.
+                <html:img src="model/images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website" /> </a>.
             </dt></dl>
           <li>
             <dt>
               <i>Drosophila pseudoobscura</i> - Genome annotation release 2.0 from
               <a href="http://www.flybase.org" target="_new">
-                <html:img src="images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website"/></a>.
+                <html:img src="model/images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website"/></a>.
             </dt></li>
         <li>
           <dt>
             <i>Anopheles gambiae</i> str. PEST -  Genome annotation release AgamP3 from
             <a href="http://www.ensembl.org/Anopheles_gambiae" target="_new">
-              <html:img src="images/ensembl_logo_mini.png" title="Click here to view EnSembl's website" />
+              <html:img src="model/images/ensembl_logo_mini.png" title="Click here to view EnSembl's website" />
             </a>.
           </dt></li>
          <li>
           <dt>
             <i>Apis mellifera</i> - Genome annotation release 2 from
             <a href="http://www.ensembl.org/Apis_mellifera" target="_new">
-              <html:img src="images/ensembl_logo_mini.png" title="Click here to view EnSembl's website"/>
+              <html:img src="model/images/ensembl_logo_mini.png" title="Click here to view EnSembl's website"/>
             </a>.
           </dt></li>
         </ul>
