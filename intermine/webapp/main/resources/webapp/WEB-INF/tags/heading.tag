@@ -17,10 +17,10 @@
     <a href="javascript:toggleHidden('${id}');">
   	<c:choose>
       <c:when test="${COLLAPSED[id]}">
-        <img border="0" src="images/disclosed.gif" alt="-" id="${id}Toggle" />
+        <img border="0" src="images/undisclosed.gif" alt="-" id="${id}Toggle" />
       </c:when>
       <c:otherwise>
-        <img border="0" src="images/undisclosed.gif" alt="-" id="${id}Toggle" />
+        <img border="0" src="images/disclosed.gif" alt="-" id="${id}Toggle" />
       </c:otherwise>
     </c:choose>
     </a>

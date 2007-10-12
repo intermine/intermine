@@ -188,9 +188,28 @@
   <c:if test="${(!empty graphDisplayerArray) || (! empty tableDisplayerArray)}">
     <c:set var="widgetCount" value="0" />
     <div class="heading">
-      <a id="widgets">Widgets</a>
+      <a id="widgets">Widgets - displaying properties of '${bag.name}'</a>
     </div>
     <div class="body">
+      <fmt:message key="bagDetails.widgetHelp">
+         <c:choose>
+           <c:when test="${(!empty graphDisplayerArray) && (! empty tableDisplayerArray)}">
+              <fmt:param>
+                <fmt:message key="bagDetails.widgetHelpBoth"/>
+              </fmt:param>
+           </c:when>
+           <c:when test="${(!empty graphDisplayerArray) && (empty tableDisplayerArray)}">
+              <fmt:param>
+                <fmt:message key="bagDetails.widgetHelpGraph"/>
+              </fmt:param>
+           </c:when>
+           <c:when test="${(empty graphDisplayerArray) && (! empty tableDisplayerArray)}">
+              <fmt:param>
+                <fmt:message key="bagDetails.widgetHelpTable"/>
+              </fmt:param>
+           </c:when>
+         </c:choose>
+      </fmt:message>
       <c:forEach items="${graphDisplayerArray}" var="htmlContent">
         <c:choose>
           <c:when test="${widgetCount % 2 == 0}">
@@ -324,12 +343,18 @@
 
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
-   <a id="relatedTemplates">Related Templates&nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;"> 
-  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all +</a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all -</a>)</span></div>
+   <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;"> 
+  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all <img src="images/disclosed.gif"></a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all <img src="images/undisclosed.gif"></a>)</span></div>
 </div>
 
 <div class="body">
-
+  <fmt:message key="bagDetails.templatesHelp">
+    <fmt:param>
+      <img border="0" src="images/plus.gif" height="11" width="11"/>
+    </fmt:param>
+  </fmt:message>
+  <br/>
+  <br/>
   <%-- Each aspect --%>
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
     <tiles:insert name="objectDetailsAspect.tile">
