@@ -121,27 +121,51 @@ public class SourcePriorityComparator implements Comparator
                             + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
                             + "\" for field \"" + field.getName() + "\"");
                 }
+                if (source1.getName().equals(source2.getName())) {
+                    if (source1.getSkeleton() && (!source2.getSkeleton())) {
+                        return -1;
+                    } else if (source2.getSkeleton() && (!source1.getSkeleton())) {
+                        return 1;
+                    } else {
+                        if ((!o1.equals(o2)) && (!source1.getSkeleton())) {
+                            String errMessage = "Unequivalent objects have the same"
+                                + " non-skeleton Source; o1 = \"" + o1 + "\" ("
+                                + (o1 == defObj ? "from source" : (dbIdsStored.contains(f1.getId())
+                                            ? "stored in this run" : "from database"))
+                                + "), o2 = \"" + o2 + "\"(" + (o2 == defObj ? "from source"
+                                        : (dbIdsStored.contains(f2.getId())
+                                            ? "stored in this run" : "from database"))
+                                + "), source1 = \"" + source1 + "\", source2 = \"" + source2
+                                + "\" for field \"" + field.getName() + "\"";
+                            LOG.error(errMessage);
+                            throw new IllegalArgumentException(errMessage);
+                        }
+                        return 0;
+                    }
+                } 
+                String errorMessage = null;
                 if (!srcs.contains(source1.getName())) {
-                    throw new IllegalArgumentException("Priority configured for " + cldName + "."
-                            + field.getName() + " does not include source " + source1.getName());
+                    errorMessage = "Priority configured for " + cldName + "." + field.getName()
+                        + " does not include source " + source1.getName();
                 }
                 if (!srcs.contains(source2.getName())) {
-                    throw new IllegalArgumentException("Priority configured for " + cldName + "."
-                            + field.getName() + " does not include source " + source2.getName());
+                    errorMessage = "Priority configured for " + cldName + "." + field.getName()
+                        + " does not include source " + source2.getName();
+                }
+                if (errorMessage != null) {
+                    if ((value1 == null) && (value2 == null)) {
+                        return (f1 == defObj ? 1 : -1);
+                    }
+                    if (value1 == null) {
+                        return -1;
+                    }
+                    if (value2 == null) {
+                        return 1;
+                    }
+                    LOG.error(errorMessage);
+                    throw new IllegalArgumentException(errorMessage);
                 }
                 int retval = srcs.indexOf(source2.getName()) - srcs.indexOf(source1.getName());
-                if ((retval == 0) && (!o1.equals(o2)) && (!source1.getSkeleton())) {
-                    String errMessage = "Unequivalent objects have the same"
-                        + " non-skeleton Source; o1 = \"" + o1 + "\" ("
-                        + (o1 == defObj ? "from source" : (dbIdsStored.contains(f1.getId())
-                                    ? "stored in this run" : "from database")) + "), o2 = \"" + o2
-                        + "\"(" + (o2 == defObj ? "from source" : (dbIdsStored.contains(f2.getId())
-                                    ? "stored in this run" : "from database")) + "), source1 = \""
-                        + source1 + "\", source2 = \"" + source2 + "\" for field \""
-                        + field.getName() + "\"";
-                    LOG.error(errMessage);
-                    throw new IllegalArgumentException(errMessage);
-                }
                 return retval;
             }
             if ((value1 == null) && (value2 == null)) {
