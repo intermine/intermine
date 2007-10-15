@@ -331,7 +331,7 @@
       <forward name="objectDetails" path="/objectDetails.do"/>
       <forward name="bagDetails" path="/bagDetails.do"/>
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
-      <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="results" path="/results.do"/>
     </action>
     <action path="/ping" type="org.intermine.web.struts.HeartbeatAction">
     </action>

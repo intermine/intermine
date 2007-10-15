@@ -53,20 +53,6 @@ table.results th {
 table.results td td {
   border: none;}
 
-/* =DIV £TABLE */
-.lookupReport
-{
-  margin-left: 10px; margin-right: 10px; padding: 6px;
-  background-color: white; font-size: 14px; border: 1px dashed #777;}
-
-/* =DIV £TABLE */
-.lookupWarn {
-  color: green;}
-
-/* =DIV £TABLE */
-.lookupError {
-  color: red;}
-	
 /* =TD £TABLE,£BAGDETAILS*/
 table.results tr.even TD{
   background-color: #F5F0FF;}

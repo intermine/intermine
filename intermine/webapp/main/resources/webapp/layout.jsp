@@ -11,6 +11,7 @@
 <!-- layout.jsp -->
 <html:xhtml/>
 <html:html locale="true" xhtml="true">
+<c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>' scope="request"/>
   <%-- from the tiles config file for description.jsp --%>
   <tiles:importAttribute name="pageName" scope="request"/>
   <head>

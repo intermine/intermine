@@ -14,10 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -32,19 +33,16 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.path.Path;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
-import org.intermine.web.logic.bag.ConvertedObjectPair;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
@@ -57,12 +55,12 @@ import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * The portal query action handles links into flymine from external sites.
- * At the moment the action expects 'class' and 'externalid' parameters
- * the it performs some sensible query and redirects the user to the
- * results page or a tailored 'portal' page (at the moment it just goes
- * to the object details page).
+ * The action expects 'class' and 'externalid' or 'externalids' parameters
+ * it handles the creation of lists if linking in with multiple identifiers
+ * and is capable of converting types (e.g. Protein into Gene).
  *
  * @author Thomas Riley
+ * @author Xavier Watkins
  */
 
 public class PortalQueryAction extends InterMineAction
@@ -172,83 +170,68 @@ public class PortalQueryAction extends InterMineAction
             bagRunner.searchForBag(className, Arrays.asList(idList), organism, false);
         
         List <Integer> bagList = new ArrayList <Integer> ();
-        bagList.addAll(bagQueryResult.getMatches().keySet());
-        Map issues = bagQueryResult.getIssues();
-        if (issues != null && issues.size() != 0) {
-            Map converted = (Map) issues.get(BagQueryResult.TYPE_CONVERTED);
-            // coverted items
-            if (converted != null) {
-                StringBuffer convertedNames = new StringBuffer();
-                for (Iterator iter = converted.values().iterator(); iter.hasNext();) {
-                    Map<String, ConvertedObjectPair> queryMap = 
-                        (Map<String, ConvertedObjectPair>) iter.next();
-                    if (convertedNames.length() > 0) {
-                        convertedNames.append(",");
-                    }
-                    convertedNames.append(queryMap.keySet().iterator().next());
-                    for (Iterator iterator = queryMap.values().iterator();
-                    iterator.hasNext();) {
-                        List <ConvertedObjectPair> convertedPairList = 
-                            (ArrayList<ConvertedObjectPair>) iterator.next();
-                        for (ConvertedObjectPair convertedObjPair : convertedPairList) {
-                            convertedNames.append(
-                            " ("
-                            + DynamicUtil
-                            .getFriendlyName(convertedObjPair.getOldObject().getClass())
-                            + ") -> (" 
-                            + DynamicUtil
-                            .getFriendlyName(convertedObjPair.getNewObject().getClass())
-                            + ")");
-                            bagList.add(convertedObjPair.getNewObject().getId());
-                        }
-                    }
-                    recordMessage(new ActionMessage("portal.converted", 
-                                                    convertedNames.toString()), request);
-                }
-            } // Duplicates were found 
-            if (issues.get(BagQueryResult.DUPLICATE) != null) {
-                Map<String, Map> duplicateMap = (Map<String, Map>) 
-                issues.get(BagQueryResult.DUPLICATE);
-                StringBuffer duplicateNames = new StringBuffer();
-                for (Map<String, List> innerMap : duplicateMap.values()) {
-                    for (String name : innerMap.keySet()) {
-                        if (duplicateNames.length() > 0) {
-                            duplicateNames.append(",");
-                        }
-                        duplicateNames.append(name);
-                    }
-                    for (List<InterMineObject> duplicateObjList : innerMap.values()) {
-                        for (InterMineObject imObj : duplicateObjList) {
-                            bagList.add(imObj.getId());
-                        }
-                    }
-                }
-                List intermineObjectList = os.getObjectsByIds(bagList);
-                WebPathCollection webPathCollection = 
-                    new WebPathCollection(os, new Path(model, className), intermineObjectList
-                                          , model, webConfig,
-                                          classKeys);
-                PagedTable pc = new PagedTable(webPathCollection);
-                String identifier = "col" + index++;
-                SessionMethods.setResultsTable(session, identifier, pc);
-
-                recordMessage(new ActionMessage("portal.duplicates", 
-                                                duplicateNames.toString()), request);
-
-
-                return new ForwardParameters(mapping.findForward("results"))
-                .addParameter("table", identifier)
-                .addParameter("size", "10")
-                .addParameter("trail", "").forward();
-
+        bagList.addAll(bagQueryResult.getMatchAndIssueIds());
+        int matches = bagQueryResult.getMatchAndIssueIds().size();
+        Set<String> unresolved = bagQueryResult.getUnresolved().keySet();
+        Set<String> duplicates = new HashSet<String>();
+        Set<String> lowQuality = new HashSet<String>();
+        Set<String> translated = new HashSet<String>();
+        Map<String, List> wildcards = new HashMap<String, List>();
+        Map<String, Map<String, List>> duplicateMap = bagQueryResult.getIssues().get(BagQueryResult
+                .DUPLICATE);
+        if (duplicateMap != null) {
+            for (Map.Entry<String, Map<String, List>> queries : duplicateMap.entrySet()) {
+                duplicates.addAll(queries.getValue().keySet());
             }
-            // ignore non matches
         }
+        Map<String, Map<String, List>> translatedMap = bagQueryResult.getIssues().get(BagQueryResult
+                .TYPE_CONVERTED);
+        if (translatedMap != null) {
+            for (Map.Entry<String, Map<String, List>> queries : translatedMap.entrySet()) {
+                translated.addAll(queries.getValue().keySet());
+            }
+        }
+        Map<String, Map<String, List>> lowQualityMap = bagQueryResult.getIssues().get(BagQueryResult
+                .OTHER);
+        if (lowQualityMap != null) {
+            for (Map.Entry<String, Map<String, List>> queries : lowQualityMap.entrySet()) {
+                lowQuality.addAll(queries.getValue().keySet());
+            }
+        }
+        Map<String, Map<String, List>> wildcardMap = bagQueryResult.getIssues().get(BagQueryResult
+                                                          .WILDCARD);
+        if (wildcardMap != null) {
+            for (Map.Entry<String, Map<String, List>> queries : wildcardMap.entrySet()) {
+                wildcards.putAll(queries.getValue());
+            }
+        }
+        
+        DisplayLookup displayLookup = new DisplayLookup(className, matches, unresolved, 
+                                                        duplicates, translated, 
+                          lowQuality, wildcards, null);
+
+        List<DisplayLookup> lookupResults = new ArrayList<DisplayLookup>();
+        lookupResults.add(displayLookup);
+        request.setAttribute("lookupResults", lookupResults);
 
         // Go to the object details page
         if ((bagList.size() == 1) && (idList.length == 1)) {
             return new ForwardParameters(mapping.findForward("objectDetails"))
             .addParameter("id", bagList.get(0).toString()).forward();
+        /// Go to results page
+        } else if ((idList.length == 1)) {
+              List intermineObjectList = os.getObjectsByIds(bagList);
+              WebPathCollection webPathCollection = 
+                  new WebPathCollection(os, new Path(model, className), intermineObjectList
+                                        , model, webConfig,
+                                        classKeys);
+              PagedTable pc = new PagedTable(webPathCollection);
+              String identifier = "col" + index++;
+              SessionMethods.setResultsTable(session, identifier, pc);
+              return new ForwardParameters(mapping.findForward("results"))
+              .addParameter("table", identifier)
+              .addParameter("size", "10")
+              .addParameter("trail", "").forward();
         // Make a bag
         } else if (bagList.size() > 1) {
             ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);

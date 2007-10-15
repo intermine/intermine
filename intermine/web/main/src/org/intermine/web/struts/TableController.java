@@ -95,10 +95,12 @@ public class TableController extends TilesAction
             return null;
         }
         request.setAttribute("resultsTable", pt);
-        if (pt.getAllRows().getPathToBagQueryResult() != null) {
+        if (request.getAttribute("lookupResults") != null) {
+          //Do nothing  
+        } else if (pt.getAllRows().getPathToBagQueryResult() != null) {
             Map<String, BagQueryResult> pathToBagQueryResult = pt.getAllRows()
                 .getPathToBagQueryResult();
-            Map<String, DisplayLookup> lookupResults = new HashMap<String, DisplayLookup>();
+            List<DisplayLookup> lookupResults = new ArrayList<DisplayLookup>();
             for (Map.Entry<String, BagQueryResult> entry : pathToBagQueryResult.entrySet()) {
                 String path = entry.getKey();
                 String type = query.getNode(path).getType();
@@ -140,7 +142,7 @@ public class TableController extends TilesAction
                     }
                 }
                 
-                lookupResults.put(path, new DisplayLookup(type, matches, unresolved, duplicates,
+                lookupResults.add(new DisplayLookup(type, matches, unresolved, duplicates,
                             translated, lowQuality, wildcards, extraConstraint));
             }
             request.setAttribute("lookupResults", lookupResults);
