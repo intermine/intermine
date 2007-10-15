@@ -63,7 +63,7 @@
                      title="${moveLeftTitle}">
             <img style="margin-right: 5px" border="0" align="middle"
                  src="images/left-arrow-square.gif" width="13" height="13"
-                 title="${moveRightString}"/>
+                 alt="${moveLeftString}" title="${moveLeftTitle}"/>
           </html:link>
 
         </c:otherwise>
@@ -74,7 +74,7 @@
 
     <%-- sort button --%>
     <input type="image" id="btn_${viewIndex}" onclick="javascript:updateSortOrder('${pathString}', '${viewIndex}');"
-           width="39" height="11" title="sort" src="images/sort.gif"
+           width="39" height="11" title="Sort by this column" src="images/sort.gif"
            title="Click to sort results by this field"/>
 
     <c:if test="${!iePre7}">
@@ -95,7 +95,7 @@
                    title="${moveRightTitle}">
           <img style="margin-left: 5px" border="0" align="middle"
                src="images/right-arrow-square.gif" width="13" height="13"
-               title="${moveRightString}"/>
+               alt="${moveRightString}" title="${moveRightTitle}"/>
         </html:link>
 
       </c:otherwise>
