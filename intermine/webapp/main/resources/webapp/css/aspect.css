@@ -8,7 +8,7 @@
 
 .aspectIntro {
   padding:5px;
-  font-size:larger;}
+  font-size:larger;height: 1%;/**kill peek-a-boo bug**/}
 
 .aspectStartingPoints,.aspectTile {
   padding-bottom:8px}
