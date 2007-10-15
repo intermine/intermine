@@ -1,19 +1,26 @@
 
-<project name="flymine-dbmodel" default="default" basedir=".">
+<project name="flymine-sitemap" default="default" basedir=".">
   
   <description>represents the production objectstore and the model therein</description>
   <import file="../../imbuild/task.xml"/>
   <import file="../../imbuild/library.xml"/>
 
+
+
   <target name="-init-generate-sitemap"
-          depends="init, -init-deps, -init-task-xml, -init-jar, -init-properties"/>
+          depends="init, -init-deps, -init-task-xml, -init-jar, -init-properties, -set-sitemap-output"/>
+
+  <target name="-set-sitemap-output" unless="sitemap.output">
+    <!-- include everything by default -->
+    <property name="sitemap.output" value="${dist.dir}"/>
+  </target>
 
   <target name="generate-sitemap" depends="-init-generate-sitemap">
     <taskdef name="generate-sitemap" classname="org.intermine.bio.util.SiteMapTask">
       <classpath refid="task.class.path"/>
     </taskdef>
     <generate-sitemap objectStore="${objectstore.name}"
-                  outputFile="${dist.dir}/sitemap">
+                  outputFile="${sitemap.output}/sitemap">
     </generate-sitemap>
     <!-- We need a better way to zip the files and make sure it works with SiteMapTask file.exists() code
     <gzip src="${dist.dir}/sitemap180454gene.xml" destfile="${dist.dir}/sitemap180454gene.xml.gz"/>
@@ -35,5 +42,7 @@
   </target>
 
   <target name="default" depends="generate-sitemap"/>
+
+  <target name="do-jar" depends="generate-sitemap"/>
 
 </project>
