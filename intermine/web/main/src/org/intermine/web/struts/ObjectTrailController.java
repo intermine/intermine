@@ -88,7 +88,7 @@ public class ObjectTrailController extends TilesAction
                  *  can be:
                  *      col0, col1, ... <-- template
                  *      qid0, qid1, ... <-- query
-                 *      results.0   ... <-- i don't know
+                 *      results.0   ... <-- query from querybuilder or quicksearch
                  *          ~~ re-add results.
                  *      itt <-- inline template table
                  *          ~~ re-concatenate itt.templateName.id

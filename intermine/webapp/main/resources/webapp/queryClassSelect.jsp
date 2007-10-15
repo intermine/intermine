@@ -30,7 +30,8 @@
   }
 
   function handleClassClick(e) {
-      if (e.detail == 2) {
+	  var i = document.queryClassSelectForm.className.selectedIndex;
+      if (e.detail == 2 &&  document.queryClassSelectForm.className[i].value != '') {
           $('queryClassForm').submit();
       }
   }
@@ -75,7 +76,7 @@
                 <td valign="top" width="99%">
                   <span id="queryClassSelect"></span>
                 </td>
-                <td align="right" valign="top"><a href="#" onclick="javascript:document.getElementById('classSelectDiv').style.display='none';return false"><img border="0" src="images/cross.gif" title="Click here to close the help text."></a></td>
+                <td align="right" valign="top"><a href="#" onclick="javascript:document.getElementById('classSelectDiv').style.display='none';return false"><img border="0" src="images/cross.gif" title="Click here to close the help text."/></a></td>
               </tr>
             </table>
           </div>
