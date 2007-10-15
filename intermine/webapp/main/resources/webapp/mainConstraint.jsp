@@ -198,7 +198,9 @@ if (${!empty constrainOnBag}) {
                   </td>
                   <td valign="top" align="center">
                     <span id="operandEditSpan0">
-                      <html:text property="attributeValue" styleId="attribute6" value="${editingConstraintValue}"/>
+                      <html:text property="attributeValue" styleId="attribute6"
+                                 value="${editingConstraintValue}"
+                                 onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"/>
                       <%-- might want to show up arrow --%>
                       <c:if test="${!empty options}">
                         <br/><im:vspacer height="2"/>
@@ -246,7 +248,9 @@ if (${!empty constrainOnBag}) {
             <p style="text-align: left;">
               <fmt:message key="query.lookupConstraintLabel"/><%--Search for:--%>
               <html:hidden property="attributeOp" styleId="attribute1" value="18" disabled="false" />
-              <html:text property="attributeValue" styleId="attribute2" value="${editingConstraintValue}"/>
+              <html:text property="attributeValue" styleId="attribute2" 
+                         value="${editingConstraintValue}"
+                                 onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"/>
               <c:if test="${!empty options}">
                 <html:select property="attributeOptions" styleId="attribute3" onchange="this.form.attributeValue.value=this.value;">
                   <c:forEach items="${options}" var="option">
