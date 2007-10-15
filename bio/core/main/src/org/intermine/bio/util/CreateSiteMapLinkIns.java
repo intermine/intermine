@@ -11,18 +11,17 @@ package org.intermine.bio.util;
  */
 
 
-import java.util.Date;
-import java.util.Iterator;
-
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.iql.IqlQuery;
-
-import org.intermine.objectstore.ObjectStore;
-
+import java.io.File;
 import java.io.FileWriter;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
 /**
  * Create file to make site map 
@@ -34,7 +33,7 @@ public class CreateSiteMapLinkIns
     // TODO get this from config file
     private static final String LOC = "http://www.flymine.org/query/portal.do?externalid=";
     private static final String SETOPEN = 
-        "< urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
+        "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
     private static final String HEAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     private static final String SETCLOSE = "</urlset>";
     private static final String ENDL = System.getProperty("line.separator");
@@ -57,36 +56,38 @@ public class CreateSiteMapLinkIns
         date = formatter.format(new Date());
 
         String newFileName = outputFile + EXT;
-        FileWriter writer = startFile(newFileName);
+        FileWriter writer = startFile(new File(newFileName));
         
         writeStartPages(writer);
+        closeFile(writer);
         
         String[] bioentity = {"gene", "protein"};
         String[] ids = {"180454", "7227", "7237"};
 
+        
+        // Only create new files if they don't already exist, we have no input file
+        // to compare dates to so must rely on output directory being cleaned to
+        // force creation of new sitemaps.
         for (String e : bioentity) {   
             for (String id : ids) { 
-                writer = getNewFile(writer, outputFile + id + e + EXT);   
-                Iterator i = getResults(os, e, id);
-                while (i.hasNext()) {
-                    ResultsRow r =  (ResultsRow) i.next();
-                    String identifier = (String) r.get(0);            
-                    writer.write(getURL(LOC + identifier, WEIGHT));            
+                File newFile = new File(outputFile + id + e + EXT);
+                if (!newFile.exists()) {
+                    writer = startFile(newFile);   
+                    Iterator i = getResults(os, e, id);
+                    while (i.hasNext()) {
+                        ResultsRow r =  (ResultsRow) i.next();
+                        String identifier = (String) r.get(0);            
+                        writer.write(getURL(LOC + identifier, WEIGHT));            
+                    }
+                    closeFile(writer);
                 }
             }            
         }
-        closeFile(writer);
-    }
-
-    private static FileWriter getNewFile(FileWriter writer, String newFilename) throws Exception {
-        closeFile(writer);
-        FileWriter w = startFile(newFilename);
-        return w;
     }
 
     
-    private static FileWriter startFile(String newFileName) throws Exception  {
-        FileWriter writer = new FileWriter(newFileName);
+    private static FileWriter startFile(File f) throws Exception  {
+        FileWriter writer = new FileWriter(f);
         writer.write(getHeader());
         return writer;
     }
@@ -118,6 +119,7 @@ public class CreateSiteMapLinkIns
         }
         IqlQuery q = new IqlQuery(query, os.getModel().getPackageName());
         Results r = os.execute(q.toQuery());
+        r.setBatchSize(100000);
         Iterator i = r.iterator();        
         return i;
     }
