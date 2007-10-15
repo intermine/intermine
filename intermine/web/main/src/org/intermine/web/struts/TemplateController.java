@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -67,7 +66,7 @@ import org.apache.struts.tiles.actions.TilesAction;
  * @author Thomas Riley
  * @author Richard Smith
  */
-public class TemplateController extends TilesAction 
+public class TemplateController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(TemplateController.class);
     /**
@@ -84,10 +83,10 @@ public class TemplateController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping, 
-                                 ActionForm form, 
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
+                                 @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -105,25 +104,25 @@ public class TemplateController extends TilesAction
         String scope = request.getParameter("scope");
         String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
         String bagName = request.getParameter("bagName");
-        
+
         String idForLookup = request.getParameter("idForLookup");
         InterMineObject imObj = null;
         if (idForLookup != null && idForLookup.length() != 0) {
             imObj = os.getObjectById(new Integer(idForLookup));
         }
-        
+
         if (queryName == null) {
             queryName = request.getParameter("templateName");
         }
-       
+
         // look for request attribute "previewTemplate" which is set while building a template
         template = (TemplateQuery) request.getAttribute("previewTemplate");
 
         // load the temporary template from the query history
-        
+
         // If the template has been modified and uses an object bag constraint
         // it will be missing one of its original constraints (which will have been
-        // replaced by constraining the id to be in the bag.  
+        // replaced by constraining the id to be in the bag.
         TemplateQuery modifiedTemplate = null;
         if (loadModifiedTemplate != null) {
             String userName = ((Profile) session
@@ -165,7 +164,7 @@ public class TemplateController extends TilesAction
         Map selectedBagNames = new HashMap();
         Map keyFields = new HashMap();
         Map haveExtraConstraint = new HashMap();
-        
+
         servletContext = session.getServletContext();
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 
@@ -173,7 +172,7 @@ public class TemplateController extends TilesAction
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
 
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
-        
+
         Map<String, InterMineBag> searchBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
 
@@ -201,14 +200,14 @@ public class TemplateController extends TilesAction
                     Object value;
                     String selectedBagName = null;
                     if (!modC.getOp().equals(ConstraintOp.IN)) {
-                        value = modC.getValue(); 
+                        value = modC.getValue();
                     } else {
                         // modified constraint set to a bag
                         value = c.getValue();
                         selectedBagName = (String) modC.getValue();
                     }
                     Constraint newC = new Constraint(c.getOp(), value, true, c.getDescription(),
-                            c.getCode(), c.getIdentifier(), c.getExtraValue());
+                            c.getCode(), c.getIdentifier(), modC.getExtraValue());
                     displayNode.getConstraints().set(node.getConstraints().indexOf(c), newC);
                     c = newC;
                     if (selectedBagName != null) {
@@ -217,7 +216,7 @@ public class TemplateController extends TilesAction
                 }
                 displayConstraints.put(c, new DisplayConstraint(displayNode, os
                         .getModel(), oss, template.getPossibleValues(node), classKeys));
-                
+
                 // create display name
                 PathNode parent;
                 if (displayNode.getPathString().indexOf('.') >= 0) {
@@ -233,12 +232,12 @@ public class TemplateController extends TilesAction
                     .substring(displayNode.getPathString().lastIndexOf(".") + 1);
                 }
                 names.put(c, displayName);
-                        
+
                 // check if this constraint can be used with bags and if any available
                 if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), displayNode
                         .getFieldName())) {
                     constraintBagTypes.put(c, parent.getType());
-                    Map constraintBags = 
+                    Map constraintBags =
                         WebUtil.getBagsOfType(searchBags, parent.getType(),
                                               os.getModel());
                     if (constraintBags != null && constraintBags.size() != 0) {
@@ -306,7 +305,7 @@ public class TemplateController extends TilesAction
             }
             constraints.put(displayNode, displayTemplate.getEditableConstraints(displayNode));
         }
-        
+
         populateTemplateForm(displayTemplate, tf, request, servletContext, imObj);
 
         tf.setTemplateName(queryName);
@@ -335,7 +334,7 @@ public class TemplateController extends TilesAction
         // A List of values for the extra constraint
         request.setAttribute("extraClassFieldValues", oss.getFieldValues(extraClassName,
                     bagQueryConfig.getConstrainField()));
-        
+
         if (searchBags.size() > 0) {
             request.setAttribute("bagOps", MainHelper
                     .mapOps(BagConstraint.VALID_OPS));
@@ -348,7 +347,7 @@ public class TemplateController extends TilesAction
      *  Populate parts of the template form that are used in javscript methods in template.jsp
      */
     private static void populateTemplateForm(TemplateQuery template,
-            TemplateForm tf, HttpServletRequest request, ServletContext servletContext, 
+            TemplateForm tf, HttpServletRequest request, ServletContext servletContext,
             InterMineObject imObject) {
         int j = 0;
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
@@ -371,7 +370,7 @@ public class TemplateController extends TilesAction
                     try {
                         value = (String) TypeUtil.getFieldValue(imObject, classKey.getName());
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException("Error while filling in Lookup template values:" 
+                        throw new RuntimeException("Error while filling in Lookup template values:"
                                                    + e.getMessage());
                     }
                     tf.setAttributeValues(attributeKey, value);
