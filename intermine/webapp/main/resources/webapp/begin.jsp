@@ -63,8 +63,8 @@
             <!-- bag or template? -->
             <tiles:put name="type" value="template"/>
             <!-- user or global -->
-            <tiles:put name="wsListId" value="global_template"/>
-            <tiles:put name="scope" value="global"/>
+            <tiles:put name="wsListId" value="all_template"/>
+            <tiles:put name="scope" value="all"/>
             <tiles:put name="tags" value="im:frontpage"/>
             <tiles:put name="showDescriptions" value="false"/>
             <tiles:put name="showSearchBox" value="false"/>
@@ -82,11 +82,11 @@
         <div id="bagsList" class="frontBoxList">
         <tiles:insert name="webSearchableList.tile">
           <tiles:put name="limit" value="2"/>
-          <tiles:put name="wsListId" value="global_bag"/>
+          <tiles:put name="wsListId" value="all_bag"/>
           <%-- bag or template? --%>
           <tiles:put name="type" value="bag"/>
           <%-- user or global --%>
-          <tiles:put name="scope" value="global"/>
+          <tiles:put name="scope" value="all"/>
           <tiles:put name="tags" value="im:frontpage"/>
           <tiles:put name="showSearchBox" value="false"/>
           <%--<tiles:put name="height" value="100"/>--%>
