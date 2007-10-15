@@ -17,6 +17,16 @@
 
 <link rel="stylesheet" type="text/css" href="css/webSearchableList.css"/>
 
+  <noscript>
+     <link rel="stylesheet" type="text/css" href="css/webSearchableList_nojs.css"/>
+ </noscript>
+
+<script type="text/javascript">
+<!--
+document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type="text/css" />')
+//-->
+</script>
+
 <%-- if true this tile must be inside a <form> otherwise this tomcat error
      will appear in the log:
      Cannot find bean under name org.apache.struts.taglib.html.BEAN
@@ -66,13 +76,8 @@
   <c:set var="spinnerPaddingStyle" value="padding-top: ${height / 2 - 20}px"/>
 </c:if>
 
+
 <div style="${heightStyle} overflow: auto; background-color: white">
-
-  <noscript>
-	<c:set var="spinnerPaddingStyle" value="display:none"/>
-  </noscript>
-
-
 
 <div style="${spinnerPaddingStyle}" id="${wsListId}_${type}_spinner" class="wsListSpinner"><img src="images/wait30.gif" title="Searching..."/></div>
 
@@ -198,7 +203,6 @@
 
 <script type="text/javascript">
 <!--//<![CDATA[
-
     function showWSList(wsListId, type) {
         $(wsListId + '_' + type + '_spinner').style.display = 'none';
         $(wsListId + '_' + type + '_container').style.display = 'block';
@@ -207,8 +211,6 @@
         $(wsListId + '_' + type + '_spinner').style.display = 'block';
         $(wsListId + '_' + type + '_container').style.display = 'none';
     }
-
-
     setWsNamesMap(${wsNames}, '${wsListId}', '${type}');
 //]]>-->
 </script>
