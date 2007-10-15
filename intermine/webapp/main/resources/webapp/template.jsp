@@ -156,7 +156,7 @@
 
           <c:if test="${!empty con.description}">
             <li class="firstLine">
-                <span><c:out value="[${index}]"/></span>
+                <c:if test="${fn:length(templateQuery.editableNodes) > 1}"><span><c:out value="[${index}]"/></span></c:if>
                 <i><c:out value="${con.description}"/></i>
             </li>
           </c:if>
@@ -170,11 +170,8 @@
                   </c:forEach>
                   //-->
             </script>
-
             <c:if test="${empty con.description}">
-              <span>
-                <c:out value="[${index}]"/>
-              </span>
+              <c:if test="${fn:length(templateQuery.editableNodes) > 1}"><span><c:out value="[${index}]"/></span></c:if>
             </c:if>
             <label>
               <c:out value="${names[con]}"/>:
