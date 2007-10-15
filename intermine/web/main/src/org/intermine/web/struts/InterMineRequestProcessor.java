@@ -75,7 +75,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             }
             
             HttpSession session = request.getSession();
-            String userAgent = request.getHeader("user-agent"); 
+            String userAgent = request.getHeader("user-agent").toLowerCase(); 
                 
             if (userAgent != null && (userAgent.contains("googlebot") 
                                 || userAgent.contains("slurp") 
