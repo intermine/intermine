@@ -79,7 +79,9 @@
   /***************Handle display of help windows******************************/
   var helpMsgArray = new Array();
   var ourDate;
+  var isIE = '${iePre7}';
   function displayHelpMsg(e, id) {
+      if(isIE != 'true') {
       // IE is retarded and doesn't pass the event object
           if (e == null)
               e = window.event; 
@@ -99,12 +101,17 @@
           Effect.Appear(id, { duration: 0.30 });
           helpMsgArray[helpMsgArray.length] = id;
           ourDate = new Date().getTime();
+     } else {
+         $(id).style.position = "relative";
+         $(id).style.display = "block";
+     }
   }
   document.body.onclick = function clearHelpMsg() {
       newDate = new Date().getTime();
       if(newDate > (ourDate + 100)){
       for(var i=0;i<helpMsgArray.length;i++) {
           Effect.Fade(helpMsgArray[i], { duration: 0.30 });
+          $('DivShim').style.display = "none";
       }
       }
   }
@@ -174,7 +181,6 @@
             </label>
             <c:choose>
               <c:when test="${fn:length(validOps) == 1}">
-                <%--<fmt:message key="query.lookupConstraintLabel"/>Search for:--%>
                 <input type="hidden" name="attributeOps(${index})" value="18"/>
               </c:when>
               <c:otherwise>
@@ -194,7 +200,7 @@
                 <html:text property="attributeValues(${index})"/>
                 <c:if test="${!empty keyFields[con]}">
                   <span onMouseDown="displayHelpMsg(event,'lookupHelp')" style="cursor:pointer">?</span>
-                  <div class="smallnote helpnote" id="lookupHelp" style="display:none">
+                  <div class="smallnote helpnote" id="lookupHelp" style="display:none" >
                     <fmt:message key="query.lookupConstraintHelp"><%--This will search...--%>
                       <fmt:param value="${keyFields[con]}"/>
                     </fmt:message>
@@ -243,11 +249,11 @@
             <span>
               &nbsp; <%-- for IE --%>
             </span>
-            <span valign="top" colspan="4">
+            <span>
               <c:if test="${(!empty bagType) && (! empty constraintBags[con])}">
+                <strong><fmt:message key="template.or"/></strong>
                 <html:checkbox property="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty bags?'true':'false'}" />
 
-                <fmt:message key="template.or"/>
                 <fmt:message key="template.constraintobe"/>
                 <html:select property="bagOp(${index})">
                   <c:forEach items="${bagOps}" var="bagOp">
@@ -314,7 +320,6 @@
         </c:forEach>
       </c:forEach>
     </ol>
-
     <c:if test="${empty previewTemplate}">
       <br/>
       <html:hidden property="templateName"/>
