@@ -92,8 +92,6 @@ public class ObjectTrailController extends TilesAction
                  *          ~~ re-add results.
                  *      itt <-- inline template table
                  *          ~~ re-concatenate itt.templateName.id
-                 *      
-                 *
                  */
                 String resultsTableId = breadcrumbs[1];
                 String prepend = "results.";
@@ -106,9 +104,9 @@ public class ObjectTrailController extends TilesAction
                         = new TrailElement(table, elementTrail, "results");
                     elements.add(e);
                 } else {
-                    // probably results.0
+                    //results.do?table=col0&trail=|bag.PL+FlyTF_putative_TFs|713032719|results.col0
                     TrailElement e 
-                        = new TrailElement(prepend + resultsTableId, elementTrail, "results");
+                        = new TrailElement(resultsTableId, elementTrail, "results");
                     elements.add(e);
                 }
 
