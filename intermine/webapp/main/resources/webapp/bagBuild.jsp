@@ -43,14 +43,13 @@
     	return false;
     }
 
-
    var typeToEnable = new Array();
    <c:forEach items="${typesWithConnectingField}" var="type">
    typeToEnable['${type}'] = 1;
    </c:forEach>
 
    function typeChanged() {
-     submitBag.disabled = true;
+     document.getElementById('submitBag').disabled = true;
      var type = document.getElementById('typeSelector').value;
      var el = document.getElementById('extraConstraintSelect');
      if (typeToEnable[type] == null){
@@ -59,11 +58,6 @@
         el.disabled = false;
      }
    }
-
-   window.onload = function() {
-     typeChanged();
-   }
-
 //]]>-->
 </script>
 
@@ -142,4 +136,13 @@
   </html:form>
 </div>
 </im:boxarea>
+
+<script language="javascript">
+<!--//<![CDATA[
+   window.onload = function() {
+     typeChanged();
+   }
+
+//]]>-->
+</script>
 <!-- /bagBuild.jsp -->
