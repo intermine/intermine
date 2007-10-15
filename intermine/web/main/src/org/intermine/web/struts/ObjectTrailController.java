@@ -94,7 +94,7 @@ public class ObjectTrailController extends TilesAction
                  *          ~~ re-concatenate itt.templateName.id
                  */
                 String resultsTableId = breadcrumbs[1];
-                String prepend = "results.";
+                String prepend = "";
                 
                 //(String label, String trail, int id)                
                 if (resultsTableId.startsWith("itt")) {
@@ -104,9 +104,18 @@ public class ObjectTrailController extends TilesAction
                         = new TrailElement(table, elementTrail, "results");
                     elements.add(e);
                 } else {
-                    //results.do?table=col0&trail=|bag.PL+FlyTF_putative_TFs|713032719|results.col0
+                    /* results.do?table=col0&trail=|results.col0                    
+                     * results.do?table=results.1636&trail=|results.1636
+                     * sometimes you need to re-add "results." to the tablename in the trail
+                     */
+                    try {
+                        Integer.parseInt(resultsTableId);
+                        prepend = "results.";
+                    } catch (Exception e)  { 
+                        // nothing to do
+                    }                    
                     TrailElement e 
-                        = new TrailElement(resultsTableId, elementTrail, "results");
+                        = new TrailElement(prepend + resultsTableId, elementTrail, "results");
                     elements.add(e);
                 }
 
