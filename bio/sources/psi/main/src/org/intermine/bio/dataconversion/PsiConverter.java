@@ -327,7 +327,6 @@ public class PsiConverter extends FileConverter
                         }
                         
                         // TODO this should maybe create a data source for each db
-                        
                         Item synonym = createItem("Synonym");
                         synonym.setAttribute("value", id);
                         synonym.setAttribute("type", db.startsWith("uniprot") 
@@ -537,11 +536,9 @@ public class PsiConverter extends FileConverter
                 } else if (attName != null
                                 && attName.equals("experimentName")
                                 && qName.equals("shortLabel")) {
-
                     /* experiment.experimentName = shortLabel */
                     String shortLabel = attValue.toString();
                     if (shortLabel != null) {
-
                         // you can have an experiment spread across several xml files
                         experimentHolder = checkExperiment(shortLabel);
                         experimentIds.put(experimentId, experimentHolder);
@@ -552,8 +549,7 @@ public class PsiConverter extends FileConverter
                     } else {
                         LOG.error("Experiment " + experimentId + " doesn't have a shortLabel");
                     }
-
-                    // <experimentList><experimentDescription><names><fullName>
+                // <experimentList><experimentDescription><names><fullName>
                 } else if (attName != null
                                 && attName.equals("experimentFullName")
                                 && qName.equals("fullName")) {
@@ -565,12 +561,10 @@ public class PsiConverter extends FileConverter
                     } else {
                         LOG.info("Experiment doesn't have a fullName");
                     }
-
-                    // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
+                // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
                 } else if (attName != null
                                 && attName.equals("hostOrganismName")
                                 && qName.equals("fullName")) {
-
                     /* experiment.hostOrganism = fullName */
                     String fullName = attValue.toString();
                     if (fullName != null) {
@@ -579,13 +573,11 @@ public class PsiConverter extends FileConverter
                         LOG.info("Experiment " + experimentHolder.name
                                  + " doesn't have a host organism name");
                     }
-
-                    // <interactorList><interactor id="4"><sequence>
+                // <interactorList><interactor id="4"><sequence>
                 } else if (attName != null
                                 && attName.equals("sequence")
                                 && qName.equals("sequence")
                                 && stack.peek().equals("interactor")) {
-
                     sequence = createItem("Sequence");
                     String srcResidues = attValue.toString();
                     sequence.setAttribute("residues", srcResidues);
@@ -611,8 +603,8 @@ public class PsiConverter extends FileConverter
                     synonyms = null;
                     sequence = null;
 
-                    //<interactionList><interaction>
-                    //<participantList><participant id="5"><interactorRef>
+                //<interactionList><interaction>
+                //<participantList><participant id="5"><interactorRef>
                 } else if (qName.equals("interactorRef")
                                 && stack.peek().equals("participant")) {
 
@@ -896,23 +888,19 @@ public class PsiConverter extends FileConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-
         }
-
 
         private void getDatasource()
         throws SAXException {
-
-                Item datasource = createItem("DataSource");
-                datasourceItemId = datasource.getIdentifier();
-                try {
-                    datasource.addAttribute(new Attribute("name", "UniProt"));
-                    writer.store(ItemHelper.convert(datasource));
-                    masterList.put("datasource", datasourceItemId);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-
+            Item datasource = createItem("DataSource");
+            datasourceItemId = datasource.getIdentifier();
+            try {
+                datasource.addAttribute(new Attribute("name", "IntAct"));
+                writer.store(ItemHelper.convert(datasource));
+                masterList.put("datasource", datasourceItemId);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
         }
 
         /**
@@ -927,16 +915,11 @@ public class PsiConverter extends FileConverter
 
 
         private String newId(String className) {
-
-
-
             Integer id = ids.get(className);
             if (id == null) {
                 id = new Integer(0);
                 ids.put(className, id);
-
             }
-
             id = new Integer(id.intValue() + 1);
             ids.put(className, id);
             return id.toString();
