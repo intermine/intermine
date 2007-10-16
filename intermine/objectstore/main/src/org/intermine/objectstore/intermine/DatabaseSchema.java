@@ -141,7 +141,7 @@ public class DatabaseSchema
      * @return a boolean
      */
     public boolean isFlatMode(Class c) {
-        return flatMode || (noNotXml && (!InterMineObject.class.isAssignableFrom(c)));
+        return flatMode || (!InterMineObject.class.isAssignableFrom(c));
     }
 
     /**

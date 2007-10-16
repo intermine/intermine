@@ -29,8 +29,10 @@ import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.HasSecretarys;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Secretary;
+import org.intermine.model.testmodel.SimpleObject;
 import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.proxy.Lazy;
+import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -44,6 +46,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.query.iql.IqlQueryParser;
 import org.intermine.util.DynamicUtil;
@@ -888,6 +891,27 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
             storeDataWriter.delete(c1);
             storeDataWriter.delete(c2);
         }
+    }
+
+    public void testSimpleObjects() throws Exception {
+        SimpleObject so = new SimpleObject();
+        so.setName("Albert");
+        storeDataWriter.store(so);
+        Query q = new Query();
+        QueryClass qc = new QueryClass(SimpleObject.class);
+        QueryField qf = new QueryField(qc, "name");
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        Constraint con = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("Albert"));
+        q.setConstraint(con);
+        SingletonResults res = os.executeSingleton(q);
+        assertEquals(1, res.size());
+        SimpleObject got = (SimpleObject) res.get(0);
+        assertEquals("Albert", got.getName());
+        assertNull(got.getEmployee());
+        storeDataWriter.delete(qc, con);
+        res = os.executeSingleton(q);
+        assertEquals(0, res.size());
     }
 
     // helper method

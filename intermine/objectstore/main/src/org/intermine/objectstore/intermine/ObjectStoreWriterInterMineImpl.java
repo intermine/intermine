@@ -36,6 +36,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.Lazy;
+import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -1074,6 +1075,65 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     commitTransactionWithConnection(c);
                 } catch (ObjectStoreException e) {
                     abortTransactionWithConnection(c);
+                    throw e;
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void delete(QueryClass qc, Constraint c) throws ObjectStoreException {
+        Connection con = null;
+        try {
+            con = getConnection();
+            deleteWithConnection(con, qc, c);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Could not get connection to database", e);
+        } finally {
+            releaseConnection(con);
+        }
+    }
+
+    /**
+     * Performs a delete, with a connection.
+     *
+     * @param con the Connection
+     * @param qc the QueryClass in which to delete - note that this must currently be a Simple
+     * Object class
+     * @param c the Constraint to limit the deletes, or null to delete everything
+     */
+    public void deleteWithConnection(Connection con, QueryClass qc,
+            Constraint c) throws ObjectStoreException {
+        boolean wasInTransaction = isInTransactionWithConnection(con);
+        if (!wasInTransaction) {
+            beginTransactionWithConnection(con);
+        }
+
+        try {
+            if (InterMineObject.class.isAssignableFrom(qc.getType())) {
+                throw new ObjectStoreException("Cannot delete by query from " + qc.getType());
+            }
+            String tableName = DatabaseUtil.getTableName(getSchema().getModel()
+                    .getClassDescriptorByName(qc.getType().getName()));
+            batch.flush(con, Collections.singleton(tableName));
+            StringBuffer sql = new StringBuffer("DELETE FROM " + tableName);
+            if (c != null) {
+                sql.append(" WHERE ");
+                SqlGenerator.constraintToString(null, sql, c, null, getSchema(),
+                        SqlGenerator.SAFENESS_SAFE, true);
+            }
+            con.createStatement().execute(sql.toString());
+            System.out.println("Executed " + sql);
+        } catch (SQLException e) {
+            throw new ObjectStoreException("Error while deleting", e);
+        } finally {
+            if (!wasInTransaction) {
+                try {
+                    commitTransactionWithConnection(con);
+                } catch (ObjectStoreException e) {
+                    abortTransactionWithConnection(con);
                     throw e;
                 }
             }
