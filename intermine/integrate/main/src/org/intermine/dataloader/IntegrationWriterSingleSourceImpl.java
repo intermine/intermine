@@ -92,6 +92,9 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
             return null;
         }
         if (!(nimo instanceof InterMineObject)) {
+            Object newObj = DynamicUtil.createObject(nimo.getClass());
+            copyFields(nimo, newObj, source, skelSource, type);
+            store(newObj);
             return null;
         }
         InterMineObject o = (InterMineObject) nimo;
@@ -148,7 +151,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         return newObj;
     }
 
-    private void copyFields(InterMineObject srcObj, InterMineObject dest,
+    private void copyFields(Object srcObj, Object dest,
             Source source, Source skelSource, int type) throws ObjectStoreException {
         try {
             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(srcObj.getClass());

@@ -285,7 +285,7 @@ public class WebResults extends AbstractList implements WebTable
             Path columnPath = (Path) iter.next();
             String columnName = columnPath.toStringNoConstraints();
             int columnIndex = ((Integer) pathToIndex.get(columnName)).intValue();
-            InterMineObject o = (InterMineObject) resultsRow.get(columnIndex);
+            Object o = resultsRow.get(columnIndex);
             String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor().getName());
             String fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
             Path path = new Path(model, type + '.' + fieldName);
@@ -299,7 +299,9 @@ public class WebResults extends AbstractList implements WebTable
                 Class cls = (Class) classes.iterator().next();
                 ResultElement resultElement =
                     new ResultElement(osResults.getObjectStore(),
-                                      fieldValue, o.getId(), cls, columnPath, isKeyField);
+                                      fieldValue, (o instanceof InterMineObject
+                                          ? ((InterMineObject) o).getId()
+                                          : null), cls, columnPath, isKeyField);
                 rowCells.add(resultElement);
             } else {
                 rowCells.add(fieldValue);

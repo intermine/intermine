@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -46,6 +47,7 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class ModifyDetails extends DispatchAction
 {
+    private static final Logger LOG = Logger.getLogger(ModifyDetails.class);
     /**
      * Show in table for inline template queries.
      *
@@ -319,6 +321,7 @@ public class ModifyDetails extends DispatchAction
         if (displayObjects != null && displayObjects.get(new Integer(idString)) != null) {
             return (DisplayObject) displayObjects.get(new Integer(idString));
         } else {
+            LOG.error("Could not find DisplayObject on session for id " + idString);
             return null;
         }
 

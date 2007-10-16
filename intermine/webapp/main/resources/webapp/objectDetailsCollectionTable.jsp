@@ -35,9 +35,11 @@
               </span>
             </td>
           </c:forEach>
-          <td width="10">
-            &nbsp;<%--for IE--%>
-          </td>
+          <c:if test="${collection.table.ids[0] != null}">
+            <td width="10">
+              &nbsp;<%--for IE--%>
+            </td>
+          </c:if>
         </tr>
       </thead>
       <tbody>
@@ -87,11 +89,13 @@
                 </c:choose>
               </td>
             </c:forEach>
-            <td width="10px" nowrap>
-              [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&amp;trail=${param.trail}|${collection.table.ids[status.index]}">
-                <fmt:message key="results.details"/>
-              </html:link>]
-            </td>
+            <c:if test="${collection.table.ids[status.index] != null}">
+              <td width="10px" nowrap>
+                [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&amp;trail=${param.trail}|${collection.table.ids[status.index]}">
+                  <fmt:message key="results.details"/>
+                </html:link>]
+              </td>
+            </c:if>
           </tr>
         </c:forEach>
       </tbody>

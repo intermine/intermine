@@ -61,18 +61,32 @@ public class TreeController extends TilesAction
             session.setAttribute("openClasses", openClasses);
         }
 
-        String rootClass = (String) request.getAttribute("rootClass");
-        if (rootClass == null) {
-            rootClass = "org.intermine.model.InterMineObject";
-        }
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
-        ClassDescriptor root =
-            model.getClassDescriptorByName(rootClass);
+
+        String rootClass = (String) request.getAttribute("rootClass");
+        List<ClassDescriptor> rootClasses = new ArrayList();
+        if (rootClass != null) {
+            rootClasses.add(model.getClassDescriptorByName(rootClass));
+        } else {
+            rootClass = "org.intermine.model.InterMineObject";
+            rootClasses.add(model.getClassDescriptorByName(rootClass));
+            for (ClassDescriptor cld : model.getClassDescriptors()) {
+                if (cld.getSuperDescriptors().isEmpty() && (!"org.intermine.model.InterMineObject"
+                            .equals(cld.getName()))) {
+                    rootClasses.add(cld);
+                }
+            }
+        }
         Map classCounts = (Map) servletContext.getAttribute("classCounts");
 
-        context.putAttribute("nodes", makeNodes(root, openClasses, 0, classCounts));
+        List nodes = new ArrayList();
+        for (ClassDescriptor cld : rootClasses) {
+            nodes.addAll(makeNodes(cld, openClasses, 0, classCounts));
+        }
+
+        context.putAttribute("nodes", nodes);
 
         return null;
     }

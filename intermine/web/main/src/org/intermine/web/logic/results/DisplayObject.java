@@ -57,8 +57,6 @@ public class DisplayObject
     private Map references = null;
     private Map collections = null;
     private Map refsAndCollections = null;
-    private List keyAttributes = null;
-    private List keyReferences = null;
     private Map fieldConfigMap = null;
     private List fieldExprs = null;
     //private Map classTemplateExprs = null;
@@ -100,13 +98,14 @@ public class DisplayObject
      * @return Set of ClassDescriptor objects
      */
     public static Set getLeafClds(Class clazz, Model model) {
-        if (!InterMineObject.class.isAssignableFrom(clazz)) {
-            return Collections.EMPTY_SET;
-        }
         Set leafClds = new LinkedHashSet();
         for (Iterator j = DynamicUtil.decomposeClass(clazz).iterator();
             j.hasNext();) {
-            leafClds.add(model.getClassDescriptorByName(((Class) j.next()).getName()));
+            Class c = (Class) j.next();
+            ClassDescriptor cld = model.getClassDescriptorByName(c.getName());
+            if (cld != null) {
+                leafClds.add(cld);
+            }
         }
         return leafClds;
     }
@@ -136,17 +135,6 @@ public class DisplayObject
     }
 
     /**
-     * Get the key attribute fields and values for this object
-     * @return the key attributes
-     */
-    public List getKeyAttributes() {
-        if (keyAttributes == null) {
-            initialise();
-        }
-        return keyAttributes;
-    }
-
-    /**
      * Get attribute descriptors.
      * @return map of attribute descriptors
      */
@@ -157,17 +145,6 @@ public class DisplayObject
         return attributeDescriptors;
     }
     
-    /**
-     * Get the key reference fields and values for this object
-     * @return the key references
-     */
-    public List getKeyReferences() {
-        if (keyReferences == null) {
-            initialise();
-        }
-        return keyReferences;
-    }
-
     /**
      * Get the attribute fields and values for this object
      * @return the attributes
@@ -408,8 +385,6 @@ public class DisplayObject
         references = new TreeMap(String.CASE_INSENSITIVE_ORDER);
         collections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
         refsAndCollections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
-        keyAttributes = new ArrayList();
-        keyReferences = new ArrayList();
         attributeDescriptors = new HashMap();
         
         try {
@@ -446,19 +421,6 @@ public class DisplayObject
                         //if (newCollection.getSize() > 0) {
                             collections.put(fd.getName(), newCollection);
                         //}
-                    }
-                }
-            }
-
-            Iterator i = PrimaryKeyUtil.getPrimaryKeyFields(model, object.getClass()).iterator();
-
-            while (i.hasNext()) {
-                FieldDescriptor fd = (FieldDescriptor) i.next();
-                if (TypeUtil.getFieldValue(object, fd.getName()) != null) {
-                    if (fd.isAttribute() && !fd.getName().equals("id")) {
-                        keyAttributes.add(fd.getName());
-                    } else if (fd.isReference()) {
-                        keyReferences.add(fd.getName());
                     }
                 }
             }

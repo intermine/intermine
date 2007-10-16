@@ -111,14 +111,12 @@ public class WebPathCollection extends AbstractList implements WebTable
 
     private List getElementsInternal(int index, boolean makeResultElements) {
         Object object = getList().get(index);
-        InterMineObject o = null;
+        Object o = null;
         if (object instanceof ResultsRow) {
             ResultsRow resRow = (ResultsRow) object;
-            o = (InterMineObject) resRow.get(0);
-        } else if (object instanceof InterMineObject) {
-            o = (InterMineObject) object;
+            o = resRow.get(0);
         } else {
-            throw new RuntimeException();
+            o = object;
         }
         ArrayList rowCells = new ArrayList();
         for (Iterator iterator = getColumns().iterator(); iterator.hasNext();) {
@@ -130,8 +128,8 @@ public class WebPathCollection extends AbstractList implements WebTable
                 String fieldName = path.getEndFieldDescriptor().getName();
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys,
                     TypeUtil.unqualifiedName(type.getName()), fieldName);
-                rowCells.add(new ResultElement(os, fieldValue, o.getId(), type,
-                                               path, isKeyField));
+                rowCells.add(new ResultElement(os, fieldValue, (o instanceof InterMineObject
+                                ? ((InterMineObject) o).getId() : null), type, path, isKeyField));
             } else {
                 rowCells.add(fieldValue);
             }

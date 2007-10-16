@@ -72,9 +72,11 @@
             ${collection.size} <span class="type">${collection.descriptor.referencedClassDescriptor.unqualifiedName}</span>
           </span>
           <c:if test="${collection.size == 1 && !verbose}">
-            [<html:link action="/objectDetails?id=${collection.table.ids[0]}&amp;trail=${param.trail}|${collection.table.ids[0]}">
-              <fmt:message key="results.details"/>
-            </html:link>]
+            <c:if test="${collection.table.ids[0] != null}">
+              [<html:link action="/objectDetails?id=${collection.table.ids[0]}&amp;trail=${param.trail}|${collection.table.ids[0]}">
+                <fmt:message key="results.details"/>
+              </html:link>]
+            </c:if>
           </c:if>
          <%-- <c:if test="${collection.size == 0}">
             </span>

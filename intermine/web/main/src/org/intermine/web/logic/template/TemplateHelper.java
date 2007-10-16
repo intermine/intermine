@@ -168,7 +168,8 @@ public class TemplateHelper
                     }
                     if (bag != null) {
                         Constraint bagConstraint = new Constraint(constraintOp, constraintValue,
-                                true, c.getDescription(), c.getCode(), c.getIdentifier(), null);
+                                true, c.getDescription(), c.getCode(), c.getIdentifier(),
+                                c.getExtraValue());
                         if (nodeCopy.isAttribute()) {
                             // remove the constraint on this node, possibly remove node
                             //nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
@@ -186,7 +187,8 @@ public class TemplateHelper
                     } else {
                         nodeCopy.getConstraints().set(node.getConstraints().indexOf(c),
                                 new Constraint(constraintOp, constraintValue, true,
-                                    c.getDescription(), c.getCode(), c.getIdentifier(), null));
+                                    c.getDescription(), c.getCode(), c.getIdentifier(),
+                                    c.getExtraValue()));
                     }
 
                 } else {
@@ -254,7 +256,8 @@ public class TemplateHelper
                     InterMineBag bag = (InterMineBag) obj;
                     if (bag != null) {
                         Constraint bagConstraint = new Constraint(constraintOp, bag, true,
-                                c.getDescription(), c.getCode(), c.getIdentifier(), null);
+                                c.getDescription(), c.getCode(), c.getIdentifier(),
+                                c.getExtraValue());
                         if (nodeCopy.isAttribute()) {
                             // remove the constraint on this node, possibly remove node
                             //nodeCopy.getConstraints().remove(node.getConstraints().indexOf(c));
@@ -274,7 +277,7 @@ public class TemplateHelper
                                 node.getConstraints().indexOf(c),
                                 new Constraint(constraintOp, bag,
                                         true, c.getDescription(), c.getCode(),
-                                        c.getIdentifier(), null));
+                                        c.getIdentifier(), c.getExtraValue()));
                     }
                 } else {
                     // Parse user input

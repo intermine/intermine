@@ -197,6 +197,12 @@ public class SqlGenerator
             if (value.getClass().equals(Boolean.class)) {
                 return;
             }
+            QueryOrderable firstOrderByO = null;
+            firstOrderByO = (QueryOrderable) q.getEffectiveOrderBy().iterator().next();
+            if ((firstOrderByO instanceof QueryClass) && (!InterMineObject.class
+                        .isAssignableFrom(((QueryClass) firstOrderByO).getType()))) {
+                return;
+            }
             synchronized (q) {
                 Map schemaCache = getCacheForSchema(schema);
                 CacheEntry cacheEntry = (CacheEntry) schemaCache.get(q);
@@ -231,11 +237,9 @@ public class SqlGenerator
                         }
                     }
                 }
-                QueryOrderable firstOrderBy = null;
-                firstOrderBy = (QueryOrderable) q.getEffectiveOrderBy().iterator().next();
                 // Now we need to work out if this field is a primitive type or a object
                 // type (that can accept null values).
-                Constraint offsetConstraint = getOffsetConstraint(q, firstOrderBy, value, schema);
+                Constraint offsetConstraint = getOffsetConstraint(q, firstOrderByO, value, schema);
                 String sql = generate(q, schema, db, offsetConstraint, QUERY_NORMAL, bagTableNames);
                 if (cacheEntry == null) {
                     cacheEntry = new CacheEntry(start, sql);
@@ -247,6 +251,7 @@ public class SqlGenerator
             }
         } catch (ObjectStoreException e) {
             LOG.error("Error while registering offset for query " + q + ": " + e);
+        } catch (IllegalArgumentException e) {
         }
     }
 
@@ -257,6 +262,7 @@ public class SqlGenerator
      * element cannot have null values this is: 'field &gt; x'.  If field can have null values
      * *and* it has not already been constrained as 'NOT NULL' in the main query it is:
      * '(field &gt; x or field IS NULL'.
+     *
      * @param q the Query
      * @param firstOrderBy the offset element of the query's order by list
      * @param value a value, such that adding a WHERE component first_order_field &gt; value with
@@ -265,7 +271,7 @@ public class SqlGenerator
      * @return the constraint(s) to add to the main query
      */
     protected static Constraint getOffsetConstraint(Query q, QueryOrderable firstOrderBy,
-                                                  Object value, DatabaseSchema schema) {
+            Object value, DatabaseSchema schema) {
         boolean reverse = false;
         if (firstOrderBy instanceof OrderDescending) {
             firstOrderBy = ((OrderDescending) firstOrderBy).getQueryOrderable();
