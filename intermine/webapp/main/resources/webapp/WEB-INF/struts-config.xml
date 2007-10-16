@@ -7,7 +7,7 @@
   <form-beans>
     <form-bean name="loginForm" type="org.intermine.web.struts.LoginForm"/>
     <form-bean name="templateForm" type="org.intermine.web.struts.TemplateForm"/>
-    <form-bean name="browseForm" type="org.intermine.web.struts.QuickSearchForm"/>
+    <form-bean name="quickSearchForm" type="org.intermine.web.struts.QuickSearchForm"/>
     <form-bean name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryForm"/>
     <form-bean name="modifyBagForm" type="org.intermine.web.struts.ModifyBagForm"/>
     <form-bean name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateForm"/>
@@ -250,7 +250,7 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
-    <action path="/browseAction" name="browseForm" type="org.intermine.web.struts.QuickSearchAction" input="begin">
+    <action path="/quickSearchAction" name="quickSearchForm" type="org.intermine.web.struts.QuickSearchAction" input="begin">
       <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
       <forward name="begin" redirect="true" path="/begin.do"/>
       <forward name="templates" path="templates.page"/>
@@ -354,7 +354,7 @@
     </action>
     <action path="/initInlineTagEditor" type="org.intermine.web.struts.InlineTagEditorController">
     </action>
-    <action path="/initBrowse" type="org.intermine.web.struts.BrowseController">
+    <action path="/initQuickSearch" type="org.intermine.web.struts.QuickSearchController">
     </action>
     <action path="/initTemplateList" type="org.intermine.web.struts.TemplateListController">
     </action>

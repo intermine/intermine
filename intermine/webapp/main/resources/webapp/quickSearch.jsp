@@ -3,7 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
-<!-- browse.jsp -->
+<!-- quickSearch.jsp -->
 <c:set var="ids">
   <fmt:bundle basename="model"><fmt:message key="model.template.example"/></fmt:bundle>
 </c:set>
@@ -39,7 +39,7 @@ function clearElement(e) {
 }
 </script>
 <tiles:importAttribute name="menuItem" ignore="true"/>
-<html:form action="/browseAction" style="display:inline;">
+<html:form action="/quickSearchAction" style="display:inline;">
   <fmt:message key="header.search.pre"/>
   <select name="quickSearchType" id="quickSearchType" onchange="updateExample(selectedIndex);" style="font-size:1em;">
 	<option value="ids" selected>Identifiers</option>
@@ -55,4 +55,4 @@ function clearElement(e) {
   window.onload = document.getElementById('quickSearchType').selectedIndex = 0;
   window.onload = updateExample($('quickSearchType').selectedIndex);
 </script>
-<!-- /browse.jsp -->
+<!-- /quickSearch.jsp -->

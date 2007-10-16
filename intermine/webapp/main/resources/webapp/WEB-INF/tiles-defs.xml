@@ -172,7 +172,7 @@
   <definition name="mainConstraint.tile" path="/mainConstraint.jsp" controllerUrl="/initMainConstraint.do"/>
   <definition name="mainPaths.tile" path="/mainPaths.jsp" controllerUrl="/initMainPaths.do"/>
   <definition name="inlineTagEditor.tile" path="/inlineTagEditor.jsp" controllerUrl="/initInlineTagEditor.do"/>
-  <definition name="browse.tile" path="/browse.jsp" controllerUrl="/initBrowse.do">
+  <definition name="quickSearch.tile" path="/quickSearch.jsp" controllerUrl="/initQuickSearch.do">
     <put name="prompt" value="Query text"/>
     <put name="templateName" value=""/>
   </definition>
