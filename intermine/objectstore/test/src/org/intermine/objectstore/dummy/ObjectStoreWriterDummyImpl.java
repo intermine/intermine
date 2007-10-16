@@ -5,8 +5,10 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.SingletonResults;
@@ -76,6 +78,10 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
 
     public void delete(InterMineObject o) throws ObjectStoreException {
         storedObjects.remove(o.getId());
+    }
+
+    public void delete(QueryClass qc, Constraint c) throws ObjectStoreException {
+        throw new ObjectStoreException("Not implemented");
     }
 
     public Integer getSerial() throws ObjectStoreException {

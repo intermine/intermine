@@ -26,8 +26,10 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.SingletonResults;
@@ -444,6 +446,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void delete(InterMineObject o) throws ObjectStoreException {
         osw.delete(o);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void delete(QueryClass qc, Constraint c) throws ObjectStoreException {
+        osw.delete(qc, c);
     }
 
     /**

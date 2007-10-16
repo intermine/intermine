@@ -1855,16 +1855,20 @@ public class SqlGenerator
         if (node instanceof QueryField) {
             QueryField nodeF = (QueryField) node;
             FromElement nodeClass = nodeF.getFromElement();
-            Map aliasMap = state.getFieldToAlias(nodeClass);
-            String classAlias = (String) aliasMap.get(nodeF.getFieldName());
+            if (state != null) {
+                Map aliasMap = state.getFieldToAlias(nodeClass);
+                String classAlias = (String) aliasMap.get(nodeF.getFieldName());
 
-            buffer.append(classAlias);
-            if (aliasMap instanceof AlwaysMap) {
-                buffer.append(".")
-                    .append(DatabaseUtil.generateSqlCompatibleName(nodeF.getFieldName()))
-                    .append(nodeF.getSecondFieldName() == null
-                            ? "" : DatabaseUtil.generateSqlCompatibleName(nodeF
-                                .getSecondFieldName()));
+                buffer.append(classAlias);
+                if (aliasMap instanceof AlwaysMap) {
+                    buffer.append(".")
+                        .append(DatabaseUtil.generateSqlCompatibleName(nodeF.getFieldName()))
+                        .append(nodeF.getSecondFieldName() == null
+                                ? "" : DatabaseUtil.generateSqlCompatibleName(nodeF
+                                    .getSecondFieldName()));
+                }
+            } else {
+                buffer.append(DatabaseUtil.generateSqlCompatibleName(nodeF.getFieldName()));
             }
         } else if (node instanceof QueryExpression) {
             QueryExpression nodeE = (QueryExpression) node;

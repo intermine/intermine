@@ -12,8 +12,10 @@ package org.intermine.objectstore;
 
 import java.util.Collection;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
 
 /**
  * Store, update, and delete objects
@@ -66,6 +68,16 @@ public interface ObjectStoreWriter extends ObjectStore
      * @throws ObjectStoreException if an error occurs during deletion of the object
      */
     public void delete(InterMineObject o) throws ObjectStoreException;
+
+    /**
+     * Deletes a set of objects from this ObjectStore.
+     *
+     * @param qc a QueryClass for the class of objects to delete
+     * @param c a Constraint based on the QueryClass to filter the objects to delete, or null to
+     * delete all objects
+     * @throws ObjectStoreException if an error occurs while deleting the objects
+     */
+    public void delete(QueryClass qc, Constraint c) throws ObjectStoreException;
 
     /**
      * Place an object in a many-to-many collection of another object.
