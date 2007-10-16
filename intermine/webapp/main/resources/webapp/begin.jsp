@@ -18,16 +18,18 @@
 	       <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
 	         <c:set var="set" value="${entry.value}"/>
 	         <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
-                   <td style="height:80px;padding:10px">
+                   <td style="height:80px;padding:4px">
                      <html:link action="/aspect?name=${set.name}">
-                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon" title="Click here to view the ${set.name} Data Category" width="40px" height="40px" />
+                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon"
+                            title="Click here to view the ${set.name} Data Category"
+                            width="40px" height="40px" />
                      </html:link>
-                     <p>
-                       <html:link action="/aspect?name=${set.name}">
-                         ${set.name}
-                       </html:link><br/>
-                     </p>
-                  </td>
+                   </td>
+                   <td>
+                     <html:link action="/aspect?name=${set.name}">
+                       ${set.name}
+                     </html:link>
+                   </td>
              </c:forEach>
           </tr></table>
     </im:boxarea>
