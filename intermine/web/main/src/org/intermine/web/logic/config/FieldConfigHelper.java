@@ -10,9 +10,10 @@ package org.intermine.web.logic.config;
  *
  */
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -44,7 +45,7 @@ public class FieldConfigHelper
         }
 
         // there are no configured fields for this Class so use the fields from the primary keys
-        List returnRow = new ArrayList();
+/*        List returnRow = new ArrayList();
 
         Iterator keyAttributesIter = keyAttributes(cd).iterator();
         while (keyAttributesIter.hasNext()) {
@@ -53,7 +54,8 @@ public class FieldConfigHelper
             returnRow.add(fc);
         }
 
-        return returnRow;
+        return returnRow;*/
+        return Collections.EMPTY_LIST;
     }
 
     /**

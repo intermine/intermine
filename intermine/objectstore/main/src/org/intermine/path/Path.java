@@ -317,7 +317,7 @@ public class Path
      * @param o the start object
      * @return the attribute, object or collection at the end of the path
      */
-    public Object resolve(InterMineObject o) {
+    public Object resolve(Object o) {
         Set clds = model.getClassDescriptorsForClass(o.getClass());
         if (!clds.contains(getStartClassDescriptor())) {
             throw new PathError("ClassDescriptor from the start of path: " + path

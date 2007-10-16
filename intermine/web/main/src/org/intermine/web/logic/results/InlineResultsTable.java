@@ -141,7 +141,12 @@ public class InlineResultsTable
     public List getIds() {
         List ids = new ArrayList();
         for (Iterator i = getRowObjects().iterator(); i.hasNext();) {
-            ids.add(((InterMineObject) i.next()).getId());
+            Object n = i.next();
+            if (n instanceof InterMineObject) {
+                ids.add(((InterMineObject) n).getId());
+            } else {
+                ids.add(null);
+            }
         }
         return ids;
     }
@@ -274,7 +279,7 @@ public class InlineResultsTable
      *   a particular column isn't relavent for this row, that element of the List will be null.
      */
     public List getResultElementRow(ObjectStore os, int rowIndex) {
-        InterMineObject o = (InterMineObject) getRowObjects().get(rowIndex);
+        Object o = getRowObjects().get(rowIndex);
         List retList = new ArrayList();
         for (int i = 0; i < getColumnFullNames().size(); i++) {
             Path path;
@@ -290,8 +295,9 @@ public class InlineResultsTable
                 String lastFieldName = path.getEndFieldDescriptor().getName();
                 boolean isKeyField =
                     ClassKeyHelper.isKeyField(classKeys, endTypeName, lastFieldName);
-                ResultElement resultElement = new ResultElement(os, path.resolve(o), o.getId(),
-                                                                endType, path, isKeyField);
+                ResultElement resultElement = new ResultElement(os, path.resolve(o),
+                        (o instanceof InterMineObject ? ((InterMineObject) o).getId() : null),
+                        endType, path, isKeyField);
                 retList.add(resultElement);
             } catch (PathError e) {
                 // if the field can't be resolved then this Path doesn't make sense for this object
