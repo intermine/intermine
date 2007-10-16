@@ -20,7 +20,7 @@
 </c:choose>
 <div id="submenu" class="${styleClass}">
 <div id="quicksearch">
-  <tiles:insert name="browse.tile"> 
+  <tiles:insert name="quickSearch.tile"> 
     <tiles:put name="menuItem" value="true"/> 
   </tiles:insert>
 </div>

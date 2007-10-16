@@ -24,7 +24,7 @@ import org.apache.struts.tiles.actions.TilesAction;
  * Controller for the browse box.
  * @author Kim Rutherford
  */
-public class BrowseController extends TilesAction
+public class QuickSearchController extends TilesAction
 {
     /**
      * {@inheritDoc}
