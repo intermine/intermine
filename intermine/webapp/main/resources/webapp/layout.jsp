@@ -15,6 +15,12 @@
   <%-- from the tiles config file for description.jsp --%>
   <tiles:importAttribute name="pageName" scope="request"/>
   <head>
+  	<!-- for google webmaster -->
+	<meta name="verify-v1" content="hZtrkqyKEW4WN60PvB9GLrRIWMbEVxvAQ4GqmHGq3Fk=" />
+	
+	<!-- for yahoo -->
+	<META name="y_key" content="05e821942b9c36fb" >
+	 
     <html:base/>
     <fmt:message key="${pageName}.noFollow" var="noFollow" />
     <c:if test="${noFollow == 'true'}">
