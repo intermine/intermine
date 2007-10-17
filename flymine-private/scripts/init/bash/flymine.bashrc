@@ -1,7 +1,7 @@
 # This script will run the appropriate tasks for the group
 
 # Make files non-world readable by default
-umask 0027
+umask 0007
 
 # for TASK in production sybase java lims perl; do
 for TASK in java cvs perl; do
