@@ -1125,6 +1125,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                         SqlGenerator.SAFENESS_SAFE, true);
             }
             con.createStatement().execute(sql.toString());
+            tablesAltered.add(tableName);
             System.out.println("Executed " + sql);
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while deleting", e);
