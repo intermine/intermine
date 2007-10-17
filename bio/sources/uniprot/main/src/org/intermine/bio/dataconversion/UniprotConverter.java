@@ -10,21 +10,17 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -38,6 +34,11 @@ import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+
+import java.io.IOException;
+import java.io.Reader;
+
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -50,32 +51,33 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class UniprotConverter extends FileConverter
 {
-    private Map mapMaster = new HashMap();  // map of maps
+    private Map<String, Object> mapMaster = new HashMap<String, Object>();  // map of maps
     //TODO: This should come from props files!!!!
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     protected static final String PROP_FILE = "uniprot_config.properties";
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
-    private Map pubMaster = new HashMap();
-    private Map orgMaster = new HashMap();
-    private Map dbMaster = new HashMap();
-    private Map dsMaster = new HashMap();
-    private Map ontoMaster = new HashMap();
-    private Map featureTypes = new HashMap();
-    private Map geneMaster = new HashMap();
-    private Map interproMaster = new HashMap();
-    private Set geneIdentifiers = new HashSet();
-    private Map geneDataMaps = new HashMap();   // map of taxonId to object which determine
+    private Map<String, Item> pubMaster = new HashMap<String, Item>();
+    private Map<String, Item> orgMaster = new HashMap<String, Item>();
+    private Map<String, Item> dbMaster = new HashMap<String, Item>();
+    private Map<String, Item> dsMaster = new HashMap<String, Item>();
+    private Map<String, Item> ontoMaster = new HashMap<String, Item>();
+    private Map<String, String> featureTypes = new HashMap<String, String>();
+    private Map<String, Item> geneMaster = new HashMap<String, Item>();
+    private Map<String, Item> interproMaster = new HashMap<String, Item>();
+    private Set<String> geneIdentifiers = new HashSet<String>();
+    private Map<String, UniProtGeneDataMap> geneDataMaps 
+                                                        = new HashMap<String, UniProtGeneDataMap>();
+                                                // map of taxonId to object which determine
                                                 // which data to use for which organism
-    private Set geneSources = new HashSet();    // datasources that designate gene names
+    private Set<String> geneSources = new HashSet<String>();    
+                                                // datasources that designate gene names
                                                 // e.g. WormBase, Ensembl
     private Map ids = new HashMap();
     private Map aliases = new HashMap();
     private Map keyMaster = new HashMap();
     private boolean createInterpro = false;
-    private static final List<String> GENE_PREFIXES_TO_STRIP =
-        Arrays.asList(new String[] {"AgaP_"});
     private Set<String> taxonIds = null;
-    private Set<String> doneTaxonIds = new HashSet();
+    private Set<String> doneTaxonIds = new HashSet<String>();
     private boolean useSplitFiles = false;
 
     /**
@@ -84,7 +86,7 @@ public class UniprotConverter extends FileConverter
      * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public UniprotConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public UniprotConverter(ItemWriter writer, Model model) {
         super(writer, model);
     }
 
@@ -101,7 +103,7 @@ public class UniprotConverter extends FileConverter
                 doProcess = true;
                 doneTaxonIds.add(taxonId);
             } else {
-                System.err.println("Not processing " + fileName + " - not in list of organisms.");
+                LOG.error("Not processing " + fileName + " - not in list of organisms.");
             }
         }
 
@@ -270,17 +272,22 @@ public class UniprotConverter extends FileConverter
      * @param taxonIds a space-separated list of taxonIds
      */
     public void setUniprotOrganisms(String taxonIds) {
-        this.taxonIds = new HashSet(Arrays.asList(StringUtil.split(taxonIds, " ")));
-        System.err.println("Setting list of organisms to " + this.taxonIds);
+        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
+        LOG.info("Setting list of organisms to " + this.taxonIds);
     }
 
     /**
-     * Sets the parameter that this will read the split uniprot files.
-     *
-     * @param p ignored
+     * Sets the parameter that determines whether the files in the split directory will be read, or
+     * the files in the root directory will be used.
+     * @param useSplitFiles if true the files in /split will be loaded and if false the files in 
+     * the root directory will be loaded
      */
-    public void setUseSplitFiles(String p) {
-        useSplitFiles = true;
+    public void setUseSplitFiles(String useSplitFiles) {
+        if (useSplitFiles.equals("true")) {
+            this.useSplitFiles = true;
+        } else {
+            this.useSplitFiles = false;
+        }
     }
 
     /**
@@ -313,34 +320,34 @@ public class UniprotConverter extends FileConverter
         private ReferenceList interproCollection;
 
         // maps genes for this protein to that gene's lists of names, identifiers, etc
-        private Map geneTOgeneNameTypeToName;
-        private Map geneTOgeneDesignations;
+        private Map<String, Map> geneTOgeneNameTypeToName;
+        private Map<String, Map> geneTOgeneDesignations;
 
         // reset for each gene
-        private Map geneNameTypeToName;      // ORF, primary, etc value for gene name
-        private Set geneNames;               // list of names for this gene
-        private Map geneDesignations;        // gene names from each database
+        private Map<String, String> geneNameTypeToName; // ORF, primary, etc value for gene name
+        private Set<String> geneNames;                  // list of names for this gene
+        private Map<String, String> geneDesignations;        // gene names from each database
         private String possibleGeneIdSource; // ie FlyBase, Ensemble, etc.
         private String possibleGeneId;       // temp holder for gene identifier
                                              // until "gene designation" is verified on next line
 
         // master lists - only one is created
-        private Map pubMaster;
-        private Map orgMaster;
-        private Map dbMaster;
-        private Map dsMaster;
-        private Map ontoMaster;
-        private Map interproMaster;
+        private Map<String, String> pubMaster;
+        private Map<String, Item> orgMaster;
+        private Map<String, Item> dbMaster;
+        private Map<String, Item> dsMaster;
+        private Map<String, Item> ontoMaster;
+        private Map<String, String> interproMaster;
         private Map featureTypes;
         private Item datasource;
         private Item dataset;
-        private Map geneMaster;       // itemID to gene
-        private Set geneIdentifiers;  // all gene identifiers
-        private Map geneDataMaps;
-        private Set geneSources;
-        private Map ids;
-        private Map aliases;
-        private Map keyMaster;
+        private Map<String, String> geneMaster;       // itemID to gene
+        private Set<String> geneIdentifiers;  // all gene identifiers
+        private Map<String, Map> geneDataMaps;
+        private Set<String> geneSources;
+        private Map<String, Integer> ids;
+        private Map<String, String> aliases;
+        private Map<String, Item> keyMaster;
 
         private ItemWriter writer;
 
@@ -427,7 +434,6 @@ public class UniprotConverter extends FileConverter
                 } else if (qName.equals("feature")
                                 && attrs.getValue("type") != null
                                 && featureTypes.containsValue(attrs.getValue("type"))) {
-
                     String strType = attrs.getValue("type");
                     String strName = attrs.getValue("description");
                     String strStatus = null;
@@ -590,7 +596,6 @@ public class UniprotConverter extends FileConverter
                             && (geneDesignations != null)) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
-
                 // <uniprot>
                 } else if (qName.equals("uniprot")) {
                    initData();
@@ -607,9 +612,7 @@ public class UniprotConverter extends FileConverter
         /**
          * @see DefaultHandler#endElement
          */
-        public void characters(char[] ch, int start, int length) throws SAXException
-        {
-
+        public void characters(char[] ch, int start, int length) {
             if (attName != null) {
 
                 // DefaultHandler may call this method more than once for a single
