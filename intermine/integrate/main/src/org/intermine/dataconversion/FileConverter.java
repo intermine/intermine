@@ -75,7 +75,7 @@ public abstract class FileConverter extends DataConverter
      * @param identifier the identifier
      * @return an Item
      */
-    public Item getItemOnlyOnce(String className, String attributeName, String identifier) {
+    public Item getAndStoreItemOnce(String className, String attributeName, String identifier) {
         MultiKey key = new MultiKey(className, identifier);
         Item item = (Item) itemsMap.get(key);
         if (item == null) {
