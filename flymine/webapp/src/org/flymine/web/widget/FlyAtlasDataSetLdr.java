@@ -43,7 +43,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
 
     private Results results;
     private Object[] geneCategoryArray;
-    private HashMap dataSets = new HashMap();
+    private HashMap<String, GraphDataSet> dataSets = new HashMap<String, GraphDataSet>();
     /**
      * Creates a FlyAtlasDataSetLdr used to retrieve, organise
      * and structure the FlyAtlas data to create a graph
@@ -96,11 +96,11 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
                 if (callTable.get(tissue) != null) {
                     if (affyCall.equals("Up")) {
                         (callTable.get(tissue))[0]++;
-                        ((ArrayList<String>) geneMap.get(tissue + "_Up")).add(identifier);
+                        (geneMap.get(tissue + "_Up")).add(identifier);
                     } else
                         if (affyCall.equals("Down")) {
                             (callTable.get(tissue))[1]--;
-                            ((ArrayList<String>) geneMap.get(tissue + "_Down")).add(identifier);
+                            (geneMap.get(tissue + "_Down")).add(identifier);
                         }
                 } else {
                     int[] count = new int[2];
