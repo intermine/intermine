@@ -35,6 +35,7 @@ public abstract class FileConverter extends DataConverter
      */
     public FileConverter(ItemWriter writer, Model model) {
         super(writer, model);
+        itemsMap = new MultiKeyMap();
     }
     
     /**
@@ -78,7 +79,8 @@ public abstract class FileConverter extends DataConverter
     public Item getAndStoreItemOnce(String className, String attributeName, String identifier) {
         MultiKey key = new MultiKey(className, identifier);
         Item item = (Item) itemsMap.get(key);
-        if (item == null) {
+        if (itemsMap.get(key) == null) {
+            item = (Item) itemsMap.get(key);
             item = createItem(className);
             item.setAttribute(attributeName, identifier);
             itemsMap.put(key, item);
