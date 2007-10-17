@@ -13,7 +13,11 @@ package org.intermine.dataconversion;
 import java.io.File;
 import java.io.Reader;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Item;
 
 /**
  * Parent class for DataConverters that read from files
@@ -22,6 +26,7 @@ import org.intermine.metadata.Model;
 public abstract class FileConverter extends DataConverter
 {
     private File currentFile;
+    private MultiKeyMap itemsMap;
 
     /**
      * Constructor
@@ -62,4 +67,28 @@ public abstract class FileConverter extends DataConverter
     public File getCurrentFile() {
         return currentFile;
     }
+    
+    /**
+     * Get an item and if it doesn't already exist create it and store it
+     * @param className the name of the class
+     * @param attributeName the name of the attribute to set
+     * @param identifier the identifier
+     * @return an Item
+     */
+    public Item getItemOnlyOnce(String className, String attributeName, String identifier) {
+        MultiKey key = new MultiKey(className, identifier);
+        Item item = (Item) itemsMap.get(key);
+        if (item == null) {
+            item = createItem(className);
+            item.setAttribute(attributeName, identifier);
+            itemsMap.put(key, item);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("error while storing: " + identifier, e);
+            }
+        }   
+        return item;
+    }
+    
 }
