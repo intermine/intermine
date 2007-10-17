@@ -28,7 +28,7 @@
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>
     </source>
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 6239 180454 7460 4932 9606 10090"/> 
+      <property name="uniprot.organisms" value="7227 7237 6239 180454 7460 4932 9606 10090"/> 
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="createinterpro" value="false"/>
       <property name="use.split.files" value="true"/>
