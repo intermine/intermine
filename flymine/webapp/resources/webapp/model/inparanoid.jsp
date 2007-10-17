@@ -41,7 +41,7 @@
         <ul>
           <li>
             <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>A. gambiae</i> " skipBuilder="true">
-             <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+             <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol">
  				 <node path="Orthologue" type="Orthologue">
  				 </node>
  				 <node path="Orthologue.gene" type="Gene">
@@ -66,7 +66,7 @@
 
           <li>            
             <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>C. elegans</i> " skipBuilder="true">
-              <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+              <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol">
   <node path="Orthologue" type="Orthologue">
   </node>
   <node path="Orthologue.gene" type="Gene">
@@ -91,7 +91,7 @@
 
           <li>
            <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>H. sapiens</i> " skipBuilder="true">
-            <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+            <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol">
   <node path="Orthologue" type="Orthologue">
   </node>
   <node path="Orthologue.gene" type="Gene">
@@ -107,7 +107,7 @@
   <node path="Orthologue.orthologue.organism" type="Organism">
   </node>
   <node path="Orthologue.orthologue.organism.name" type="String">
-    <constraint op="=" value="Homo sapiens" description="" identifier="" code="C">
+    <constraint op="=" value="Homo sapiens" description="" identifier="" code="B">
     </constraint>
   </node>
 </query>
@@ -116,7 +116,7 @@
 
           <li>            
            <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>M. musculus</i> " skipBuilder="true">
-<query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+<query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol">
   <node path="Orthologue" type="Orthologue">
   </node>
   <node path="Orthologue.gene" type="Gene">
@@ -141,7 +141,7 @@
 
           <li>
           <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>D. pseudoobscura</i> " skipBuilder="true">
-           <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+           <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol">
   <node path="Orthologue" type="Orthologue">
   </node>
   <node path="Orthologue.gene" type="Gene">
@@ -166,7 +166,7 @@
 
           <li>
             <im:querylink text="Orthologues: <i>A. gambiae</i> vs <i>C. elegans</i> " skipBuilder="true">
-              <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
+              <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="A and B">
   <node path="Orthologue" type="Orthologue">
   </node>
   <node path="Orthologue.gene" type="Gene">
