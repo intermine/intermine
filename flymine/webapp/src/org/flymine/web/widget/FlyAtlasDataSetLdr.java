@@ -61,9 +61,12 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         q.addFrom(far);
         q.addFrom(maa);
         q.addFrom(gene);
+        
+        QueryField name = new QueryField(maa, "name");
+        
         // q.addToSelect(new QueryField(far,"enrichment"));
         q.addToSelect(new QueryField(far, "affyCall"));
-        q.addToSelect(new QueryField(maa, "name"));
+        q.addToSelect(name);
         q.addToSelect(new QueryField(gene, "identifier"));
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -80,7 +83,8 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         cs.addConstraint(cc);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
-
+        q.addToOrderBy(name);
+        
         results = os.execute(q);
         results.setBatchSize(100000);
         Iterator iter = results.iterator();
