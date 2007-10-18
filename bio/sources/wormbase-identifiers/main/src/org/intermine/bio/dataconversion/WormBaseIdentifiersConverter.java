@@ -11,9 +11,12 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.dataconversion.DataConverter;
@@ -35,7 +38,7 @@ public class WormBaseIdentifiersConverter extends FileConverter
 {
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
 
-    protected Item dataSource, worm;
+    protected Item dataSource, worm, dataSet;
     protected Map ids = new HashMap();
 
     /**
@@ -51,6 +54,11 @@ public class WormBaseIdentifiersConverter extends FileConverter
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "WormBase");
         store(dataSource);
+
+        dataSet = createItem("DataSet");
+        dataSet.setAttribute("title", "WormBase genes");
+        dataSet.setReference("dataSource", dataSource);
+        store(dataSet);
 
         worm = createItem("Organism");
         worm.setAttribute("taxonId", "6239");
@@ -83,34 +91,38 @@ public class WormBaseIdentifiersConverter extends FileConverter
             String organismdbid = line[0];
             String identifier = line[1];
             String symbol = line[2];
-
+            List synonyms = new ArrayList();
+            
             Item gene = createItem("Gene");
             if (organismdbid != null && !organismdbid.equals("")) {
                 gene.setAttribute("organismDbId", organismdbid);
-                createSynonym(gene, "identifier", organismdbid);
+                synonyms.add(createSynonym(gene, "identifier", organismdbid));
             }
             if (identifier != null && !identifier.equals("")) {
                 gene.setAttribute("identifier", identifier);
-                createSynonym(gene, "identifier", identifier);
+                synonyms.add(createSynonym(gene, "identifier", identifier));
             }
             if (symbol != null && !symbol.equals("")) {
                 gene.setAttribute("symbol", symbol);
-                createSynonym(gene, "symbol", symbol);
+                synonyms.add(createSynonym(gene, "symbol", symbol));
             }
 
             gene.setReference("organism", worm.getIdentifier());
+            gene.setCollection("evidence", 
+                               new ArrayList(Collections.singleton(dataSet.getIdentifier())));
             store(gene);
+            store(synonyms);
 
         }
     }
 
-    private void createSynonym(Item subject, String type, String value)
+    private Item createSynonym(Item subject, String type, String value)
         throws ObjectStoreException {
         Item synonym = createItem("Synonym");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", subject.getIdentifier());
-        store(synonym);
+        return synonym;
     }
 }
