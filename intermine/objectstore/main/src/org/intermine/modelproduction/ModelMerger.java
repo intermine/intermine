@@ -188,14 +188,16 @@ public class ModelMerger
         Set<String> supers = cd.getSuperclassNames();
         names.addAll(supers);
         for (String superClassName : supers) {
-            ClassDescriptor cld = classes.get(superClassName);
+            if (!"java.lang.Object".equals(superClassName)) {
+                ClassDescriptor cld = classes.get(superClassName);
 
-            if (cld == null) {
-                throw new ModelMergerException("cannot find superclass \"" + superClassName
-                                               + "\" of " + cd + " in the model");
+                if (cld == null) {
+                    throw new ModelMergerException("cannot find superclass \"" + superClassName
+                                                   + "\" of " + cd + " in the model");
+                }
+
+                findAllSuperclasses(cld, classes, names);
             }
-
-            findAllSuperclasses(cld, classes, names);
         }
     }
     
