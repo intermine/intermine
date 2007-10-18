@@ -5,13 +5,52 @@ Disallow: /
 
 User-agent: Googlebot
 Disallow:
+Disallow: /release-8.2/
+Disallow: /release-8.1/
+Disallow: /release-8.0/
+Disallow: /release-7.1/
+Disallow: /release-7.0/
+Disallow: /release-6.1/
+Disallow: /release-6.0/
+Disallow: /release-5.0/
+Disallow: /release-4.0/
+Disallow: /release-3.1/
+Disallow: /release-3.0/
+Disallow: /release-2.1/
+Disallow: /release-2.0/
+Disallow: /t1dmine-preview/
+Disallow: /stemcell-preview/
+Disallow: /stemcell/
+Disallow: /malaria/
+Disallow: /mouse/
+Disallow: /plantmine/
+Disallow: /plantmine-preview/
 
 User-agent: Slurp
 Disallow:
+Disallow: /release-8.2/
+Disallow: /release-8.1/
+Disallow: /release-8.0/
+Disallow: /release-7.1/
+Disallow: /release-7.0/
+Disallow: /release-6.1/
+Disallow: /release-6.0/
+Disallow: /release-5.0/
+Disallow: /release-4.0/
+Disallow: /release-3.1/
+Disallow: /release-3.0/
+Disallow: /release-2.1/
+Disallow: /release-2.0/
+Disallow: /t1dmine-preview/
+Disallow: /stemcell-preview/
+Disallow: /stemcell/
+Disallow: /malaria/
+Disallow: /mouse/
+Disallow: /plantmine/
+Disallow: /plantmine-preview/
 
 User-agent: msnbot
 Disallow:
-
 Disallow: /release-8.2/
 Disallow: /release-8.1/
 Disallow: /release-8.0/
