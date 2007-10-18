@@ -10,14 +10,15 @@
 
     <!-- Add new news at the top here -->
     <item>
-      <title>Software Developer vacancy</title>
+      <title>FlyMine 8.2 Released</title>
       <link>http://www.flymine.org/</link>
       <description>
-        We are looking for a software developer to join the FlyMine team.  See 
-        &lt;a href="http://www.flymine.org/project/jobs.shtml"&gt;
-        more details&lt;/a&gt;.
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 8.2&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
       </description>
-      <pubDate>Thu, 27th Sep 2007</pubDate>
+      <pubDate>Thu, 18th Oct 2007</pubDate>
     </item>
 
     <item>
