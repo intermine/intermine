@@ -72,8 +72,10 @@ public class ChadoDBConverter extends BioDBConverter
     private String sequenceFeatureTypesString = "'chromosome', 'chromosome_arm'";
     private String featureTypesString =
         "'gene', 'mRNA', 'transcript', 'CDS', 'intron', 'exon', 'five_prime_untranslated_region', "
-// ignore for now:        + "'EST', 'cDNA_clone', "
+        // ignore for now:        + "'EST', 'cDNA_clone', "
         + "'miRNA', 'snRNA', 'ncRNA', 'rRNA', 'ncRNA', 'snoRNA', 'tRNA', "
+        + "'chromosome_band', 'transposable_element_insertion_site', "
+        + "'chromosome_structure_variation', "
         + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', 'transcript', "
         + sequenceFeatureTypesString;
     private String relationshipTypesString = "'partof', 'part_of'";
@@ -101,7 +103,14 @@ public class ChadoDBConverter extends BioDBConverter
         // do the default - eg. make a synonym or set a collection
     }
 
-    static final ConfigAction DEFAULT_CONFIG_ACTION = new DefaultConfigAction();
+    private static class DoNothingConfigAction extends ConfigAction
+    {
+        // do nothing for this data
+    }
+
+    private static final ConfigAction DEFAULT_CONFIG_ACTION = new DefaultConfigAction();
+
+    private static final ConfigAction DO_NOTHING_CONFIG_ACTION = new DoNothingConfigAction();
 
     /**
      * Create a new ChadoDBConverter object.
@@ -133,6 +142,20 @@ public class ChadoDBConverter extends BioDBConverter
                    Arrays.asList(new SetAttributeConfigAction("identifier"),
                                  DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("dbxref", "MRNA", "FlyBase"), Arrays.asList(DEFAULT_CONFIG_ACTION));
+
+        config.put(new MultiKey("feature", "Exon", "FlyBase", "name"),
+                   Arrays.asList(new SetAttributeConfigAction("symbol"), DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("feature", "Chromosome", "FlyBase", "name"),
+                   Arrays.asList(DO_NOTHING_CONFIG_ACTION));
+
+        config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase", "name"),
+                   Arrays.asList(new SetAttributeConfigAction("symbol"),
+                                 new SetAttributeConfigAction("identifier")));
+        config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase", "uniquename"),
+                   Arrays.asList(new SetAttributeConfigAction("organismDbId")));
+                   
+        config.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
+                   Arrays.asList(new SetAttributeConfigAction("organismDbId")));
     }
 
     /**
@@ -241,14 +264,52 @@ public class ChadoDBConverter extends BioDBConverter
                 fdat.uniqueName = uniqueName;
                 fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
                 feature.setReference("organism", organismItem);
+                MultiKey nameKey =
+                    new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
+                List<ConfigAction> nameActionList = (List<ConfigAction>) config.get(nameKey);
+                MultiKey uniqueNameKey =
+                    new MultiKey("feature", fdat.interMineType, dataSourceName, "uniquename");
+                List<ConfigAction> uniqueNameActionList =
+                    (List<ConfigAction>) config.get(uniqueNameKey);
+
+                if (name != null) {
+                    if (nameActionList == null || nameActionList.size() == 0) {
+                        if (feature.checkAttribute("symbol")) {
+                            feature.setAttribute("symbol", name);
+                        }
+                    } else {
+                        for (ConfigAction action: nameActionList) {
+                            if (action instanceof SetAttributeConfigAction) {
+                                SetAttributeConfigAction attrAction = (SetAttributeConfigAction) action;
+                                feature.setAttribute(attrAction.attributeName, name);
+                            }
+                        }
+                    }
+                }
+
+                if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
+                    feature.setAttribute("identifier", uniqueName);
+                } else {
+                    for (ConfigAction action: uniqueNameActionList) {
+                        if (action instanceof SetAttributeConfigAction) {
+                            SetAttributeConfigAction attrAction = (SetAttributeConfigAction) action;
+                            feature.setAttribute(attrAction.attributeName, uniqueName);
+                        }
+                    }
+                }
+
                 // don't set the evidence collection - that's done by processPubTable()
                 fdat.intermineObjectId = store(feature); // Stores Feature
                 createSynonym(fdat, "identifier", uniqueName, true, dataSet, Collections.EMPTY_LIST,
                               dataSource); // Stores Synonym
+
                 if (name != null) {
-                    name = fixIdentifier(interMineType, name);
-                    createSynonym(fdat, "name", name, false, dataSet, Collections.EMPTY_LIST,
-                                  dataSource); // Stores Synonym
+                    if (nameActionList == null || nameActionList.size() == 0
+                        || nameActionList.contains(DEFAULT_CONFIG_ACTION)) {
+                        name = fixIdentifier(interMineType, name);
+                        createSynonym(fdat, "name", name, false, dataSet, Collections.EMPTY_LIST,
+                                      dataSource); // Stores Synonym
+                    }
                 }
                 features.put(featureId, fdat);
                 count++;
@@ -277,7 +338,7 @@ public class ChadoDBConverter extends BioDBConverter
         }
 
         // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
-        if (taxonId == 7227) {
+        if (taxonId == 7227 || taxonId == 7237) {
             if (chadoFeatureType.equals("chromosome")
                 && !uniqueName.equals("dmel_mitochondrion_genome")) {
                 // ignore Chromosomes from flybase - features are located on ChromosomeArms except
@@ -294,16 +355,17 @@ public class ChadoDBConverter extends BioDBConverter
                     }
                 }
             }
+            if (chadoFeatureType.equals("chromosome_structure_variation")) {
+                if (uniqueName.startsWith("FBab")) {
+                    realInterMineType = "ChromosomalDeletion";
+                } else {
+                    return null;
+                }
+            }
         }
 
         Item feature = createItem(realInterMineType);
 
-        // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
-        if (realInterMineType.equals("Gene") && feature.checkAttribute("organismDbId")) {
-            feature.setAttribute("organismDbId", uniqueName);
-        } else {
-            feature.setAttribute("identifier", uniqueName);
-        }
         return feature;
     }
 
