@@ -101,6 +101,15 @@
        <arg value="FlyMine Help"/>
        <arg value="${dist.www}/help"/>
      </exec>
+
+    <copy todir="${dist.www}/help/whatcanidoonthispage">
+      <fileset dir="${src.www}/help/whatcanidoonthispage">
+        <include name="*.png"/>
+        <include name="*.gif"/>
+      </fileset>
+    </copy>
+
+
   </target>
   
   <target name="generate-tour" depends="prepare" 
@@ -112,6 +121,14 @@
        <arg value="FlyMine Tour"/>
        <arg value="${dist.www}/help/tour"/>
      </exec>
+
+    <copy todir="${dist.www}/help/tour">
+      <fileset dir="${src.www}/help/tour">
+        <include name="*.png"/>
+        <include name="*.gif"/>
+      </fileset>
+    </copy>
+
   </target>
 
 
