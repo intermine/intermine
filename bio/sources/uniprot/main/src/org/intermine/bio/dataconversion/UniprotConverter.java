@@ -584,14 +584,15 @@ public class UniprotConverter extends FileConverter
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("gene designation")
                            && geneNames.contains(attrs.getValue("value"))) {
-                    /* for everyone but homo sapiens */
+                    /* for everyone but homo sapiens & honeybees */
                     if (possibleGeneIdSource != null && possibleGeneId != null) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
                //    <dbreference><property type="organism name" value="Homo sapiens"/>
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("organism name")
-                           && attrs.getValue("value").equals("Homo sapiens")) {
+                           && (attrs.getValue("value").equals("Homo sapiens") 
+                                           || attrs.getValue("value").equals("Apis mellifera"))) {
                     if ((possibleGeneIdSource != null) && (possibleGeneId != null)
                             && (geneDesignations != null)) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
