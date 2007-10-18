@@ -149,8 +149,14 @@ public class SourcePriorityComparator implements Comparator
                         + " does not include source " + source1.getName();
                 }
                 if (!srcs.contains(source2.getName())) {
-                    errorMessage = "Priority configured for " + cldName + "." + field.getName()
-                        + " does not include source " + source2.getName();
+                    if (errorMessage != null) {
+                        errorMessage = "Priority configured for " + cldName + "." + field.getName()
+                            + " does not include sources " + source1.getName() + " or "
+                            + source2.getName();
+                    } else {
+                        errorMessage = "Priority configured for " + cldName + "." + field.getName()
+                            + " does not include source " + source2.getName();
+                    }
                 }
                 if (errorMessage != null) {
                     if ((value1 == null) && (value2 == null)) {
