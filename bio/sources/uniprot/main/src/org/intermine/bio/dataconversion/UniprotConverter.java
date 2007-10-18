@@ -1071,7 +1071,6 @@ public class UniprotConverter extends FileConverter
 
                     /* set unique identifier */
                     uniqueGeneIdentifier = (String) variableLookup.get(geneDataMap.getAttribute());
-                    System.out.println(" ~~~~~~ " + uniqueGeneIdentifier);
                     variableLookup = null;
                 }
 
