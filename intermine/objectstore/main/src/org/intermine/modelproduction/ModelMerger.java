@@ -186,9 +186,9 @@ public class ModelMerger
     private static void findAllSuperclasses(ClassDescriptor cd,
             Map<String, ClassDescriptor> classes, Set<String> names) throws ModelMergerException {
         Set<String> supers = cd.getSuperclassNames();
-        names.addAll(supers);
         for (String superClassName : supers) {
             if (!"java.lang.Object".equals(superClassName)) {
+                names.add(superClassName);
                 ClassDescriptor cld = classes.get(superClassName);
 
                 if (cld == null) {
