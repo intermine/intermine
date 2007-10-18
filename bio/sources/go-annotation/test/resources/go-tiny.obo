@@ -2,6 +2,7 @@
 id: GO:0000001
 name: root term 1
 namespace: root_term
+def: "A phase of elevated metabolic activity, during which oxygen consumption increases made as a defense reponse ; this leads to the production, by an NADH dependent system, of hydrogen peroxide (H2O2), superoxide anions and hydroxyl radicals." [GOC:add, ISBN:0781735149 "Fundamental Immunology", PMID:12789499]
 
 [Term]
 id: GO:0000002
