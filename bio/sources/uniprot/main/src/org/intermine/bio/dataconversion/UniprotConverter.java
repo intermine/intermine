@@ -593,8 +593,17 @@ public class UniprotConverter extends FileConverter
                            && attrs.getValue("type").equals("organism name")
                            && (attrs.getValue("value").equals("Homo sapiens") 
                                            || attrs.getValue("value").equals("Apis mellifera"))) {
-                    if ((possibleGeneIdSource != null) && (possibleGeneId != null)
-                            && (geneDesignations != null)) {
+                    if ((possibleGeneIdSource != null) && (possibleGeneId != null)) {
+                        
+                        // we probably don't have a <gene> reference
+                        initGene();
+                        Item gene = createItem("Gene");
+                        genes.put(gene.getIdentifier(), gene);
+
+                        // associate gene with lists
+                        geneTOgeneNameTypeToName.put(gene.getIdentifier(), geneNameTypeToName);
+                        geneTOgeneDesignations.put(gene.getIdentifier(), geneDesignations);
+                        
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
                 // <uniprot>
@@ -1062,6 +1071,7 @@ public class UniprotConverter extends FileConverter
 
                     /* set unique identifier */
                     uniqueGeneIdentifier = (String) variableLookup.get(geneDataMap.getAttribute());
+                    System.out.println(" ~~~~~~ " + uniqueGeneIdentifier);
                     variableLookup = null;
                 }
 
