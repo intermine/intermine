@@ -31,7 +31,7 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 public class CreateSiteMapLinkIns
 {
     // TODO get this from config file
-    private static final String LOC = "http://www.flymine.org/query/portal.do?externalid=";
+    private static final String LOC = "http://www.flymine.org/query/portal.do?class=gene&externalid=";
     private static final String SETOPEN = 
         "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
     private static final String HEAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
