@@ -19,6 +19,7 @@ Disallow: /release-3.0/
 Disallow: /release-2.1/
 Disallow: /release-2.0/
 Disallow: /t1dmine-preview/
+Disallow: /t1dmine/
 Disallow: /stemcell-preview/
 Disallow: /stemcell/
 Disallow: /malaria/
@@ -42,6 +43,7 @@ Disallow: /release-3.0/
 Disallow: /release-2.1/
 Disallow: /release-2.0/
 Disallow: /t1dmine-preview/
+Disallow: /t1dmine/
 Disallow: /stemcell-preview/
 Disallow: /stemcell/
 Disallow: /malaria/
@@ -65,6 +67,7 @@ Disallow: /release-3.0/
 Disallow: /release-2.1/
 Disallow: /release-2.0/
 Disallow: /t1dmine-preview/
+Disallow: /t1dmine/
 Disallow: /stemcell-preview/
 Disallow: /stemcell/
 Disallow: /malaria/
