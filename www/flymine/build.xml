@@ -102,7 +102,7 @@
        <arg value="${dist.www}/help"/>
      </exec>
 
-    <copy todir="${dist.www}/help/whatcanidoonthispage">
+    <copy todir="${dist.www}/help/">
       <fileset dir="${src.www}/help/whatcanidoonthispage">
         <include name="*.png"/>
         <include name="*.gif"/>
