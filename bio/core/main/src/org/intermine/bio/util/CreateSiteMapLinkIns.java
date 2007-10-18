@@ -77,7 +77,7 @@ public class CreateSiteMapLinkIns
                     while (i.hasNext()) {
                         ResultsRow r =  (ResultsRow) i.next();
                         String identifier = (String) r.get(0);            
-                        writer.write(getURL(LOC + identifier + "&class=" + e, WEIGHT));            
+                        writer.write(getURL(LOC + identifier + "&amp;class=" + e, WEIGHT));
                     }
                     closeFile(writer);
                 }
