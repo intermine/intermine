@@ -102,7 +102,7 @@ public class ObjectStoreDataLoader extends DataLoader
             SingletonResults res = os.executeSingleton(q);
             res.setNoOptimise();
             res.setNoExplain();
-            res.setBatchSize(5000);
+            res.setBatchSize(1000);
             Iterator iter = res.iterator();
             long time4 = System.currentTimeMillis();
             long time1, time2, time3;
