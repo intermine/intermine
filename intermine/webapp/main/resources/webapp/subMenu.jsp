@@ -50,8 +50,10 @@
   <c:set var="count" value="${count+1}"/>
   </c:if>
 </c:forTokens>
-  
+	<c:if test="${count>0}">
+    	<li>&nbsp;|&nbsp;</li>
+  	</c:if>
+    <li><a href="http://www.surveymonkey.com/s.aspx?sm=jblP4sWPYOIbw_2bT42ZJifg_3d_3d" target="_new">Take our survey!</a></li>
 </ul>
 </div>
-
 <!-- /subMenu.jsp -->
