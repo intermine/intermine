@@ -344,6 +344,15 @@ public class PsiConverter extends FileConverter
                             synonym.setReference("subject", proteinIdentifier);
                             synonyms.add(synonym);
                         }
+                        
+                        // See #1450
+                        synonym = createItem("Synonym");
+                        synonym.setAttribute("value", id);
+                        synonym.setAttribute("type", "accession");
+                        synonym.setReference("source", "UniProt");
+                        synonym.setReference("subject", proteinIdentifier);
+                        synonyms.add(synonym);
+                        
                     }
 
                 // <interactorList><interactor id="4"><sequence>
