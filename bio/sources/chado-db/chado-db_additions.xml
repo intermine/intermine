@@ -91,5 +91,6 @@
   <class name="org.flymine.model.genomic.ChromosomalDeletion"
          extends="org.flymine.model.genomic.LocatedSequenceFeature"
          is-interface="true">
+    <attribute name="symbol" type="java.lang.String"/>
   </class>
 </classes>
