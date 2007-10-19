@@ -143,12 +143,20 @@ public class SourcePriorityComparator implements Comparator
                         return 0;
                     }
                 } 
+                int source1Priority = srcs.indexOf(source1.getName());
+                if (source1Priority == -1) {
+                    source1Priority = srcs.indexOf("*");
+                }
+                int source2Priority = srcs.indexOf(source2.getName());
+                if (source2Priority == -1) {
+                    source2Priority = srcs.indexOf("*");
+                }
                 String errorMessage = null;
-                if (!srcs.contains(source1.getName())) {
+                if (source1Priority == -1) {
                     errorMessage = "Priority configured for " + cldName + "." + field.getName()
                         + " does not include source " + source1.getName();
                 }
-                if (!srcs.contains(source2.getName())) {
+                if (source2Priority == -1) {
                     if (errorMessage != null) {
                         errorMessage = "Priority configured for " + cldName + "." + field.getName()
                             + " does not include sources " + source1.getName() + " or "
@@ -171,8 +179,10 @@ public class SourcePriorityComparator implements Comparator
                     LOG.error(errorMessage);
                     throw new IllegalArgumentException(errorMessage);
                 }
-                int retval = srcs.indexOf(source2.getName()) - srcs.indexOf(source1.getName());
-                return retval;
+                int retval = source2Priority - source1Priority;
+                if (retval != 0) {
+                    return retval;
+                }
             }
             if ((value1 == null) && (value2 == null)) {
                 return (f1 == defObj ? 1 : -1);
@@ -217,7 +227,7 @@ public class SourcePriorityComparator implements Comparator
                        : value1.toString().subSequence(0, 999)) + ") and "
                     + source2.getName() + " (value "
                     + (value2.toString().length() <= 1000 ? value2
-                       : value2.toString().subSequence(0, 999)) + ") and "
+                       : value2.toString().subSequence(0, 999))
                     + "). This field needs configuring in "
                     + cld.getModel().getName() + "_priorities.properties");
         }
