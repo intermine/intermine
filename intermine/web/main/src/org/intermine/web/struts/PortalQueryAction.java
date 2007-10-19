@@ -105,7 +105,6 @@ public class PortalQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.badportalquery"), request);
             return mapping.findForward("failure");
         }
-        origin = "." + origin;
 
         session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
 
@@ -153,7 +152,11 @@ public class PortalQueryAction extends InterMineAction
         boolean bagExists = true;
         int number = 0;
         while (bagExists) {
-            bagName = "temp" + origin + "_" + number;
+            bagName = ".link";
+            if (origin != null) {
+                bagName += origin; 
+            }
+            bagName += "_" + number;
             bagExists = false;
             for (String name : profileBags.keySet()) {
                 if (bagName.equals(name)) {
