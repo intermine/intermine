@@ -148,12 +148,17 @@ public class ChadoDBConverter extends BioDBConverter
         config.put(new MultiKey("feature", "Chromosome", "FlyBase", "name"),
                    Arrays.asList(DO_NOTHING_CONFIG_ACTION));
 
+        config.put(new MultiKey("feature", "ChromosomeBand", "FlyBase", "name"),
+                   Arrays.asList(DO_NOTHING_CONFIG_ACTION));
+
         config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase", "name"),
                    Arrays.asList(new SetAttributeConfigAction("symbol"),
-                                 new SetAttributeConfigAction("identifier")));
-        config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase", "uniquename"),
+                                 new SetAttributeConfigAction("identifier"),
+                                 DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
+                                "uniquename"),
                    Arrays.asList(new SetAttributeConfigAction("organismDbId")));
-                   
+
         config.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
                    Arrays.asList(new SetAttributeConfigAction("organismDbId")));
     }
@@ -280,7 +285,8 @@ public class ChadoDBConverter extends BioDBConverter
                     } else {
                         for (ConfigAction action: nameActionList) {
                             if (action instanceof SetAttributeConfigAction) {
-                                SetAttributeConfigAction attrAction = (SetAttributeConfigAction) action;
+                                SetAttributeConfigAction attrAction =
+                                    (SetAttributeConfigAction) action;
                                 feature.setAttribute(attrAction.attributeName, name);
                             }
                         }
@@ -300,6 +306,8 @@ public class ChadoDBConverter extends BioDBConverter
 
                 // don't set the evidence collection - that's done by processPubTable()
                 fdat.intermineObjectId = store(feature); // Stores Feature
+
+                // always create a synonym for the uniquename
                 createSynonym(fdat, "identifier", uniqueName, true, dataSet, Collections.EMPTY_LIST,
                               dataSource); // Stores Synonym
 
@@ -362,6 +370,13 @@ public class ChadoDBConverter extends BioDBConverter
                     return null;
                 }
             }
+            if (chadoFeatureType.equals("transposable_element_insertion_site")
+                && name == null && !uniqueName.startsWith("FBti")) {
+                // ignore this feature as it doesn't have an FBti identifier and there will be
+                // another feature for the same transposable_element_insertion_site that does have
+                // the FBti identifier
+                return null;
+            }
         }
 
         Item feature = createItem(realInterMineType);
@@ -393,6 +408,7 @@ public class ChadoDBConverter extends BioDBConverter
 
         ResultSet res = getFeatureLocResultSet(connection);
         int count = 0;
+        int featureWarnings = 0;
         while (res.next()) {
             Integer featureLocId = new Integer(res.getInt("featureloc_id"));
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -408,9 +424,15 @@ public class ChadoDBConverter extends BioDBConverter
                                  start, end, strand, taxonId, dataSet); // Stores Location
                     count++;
                 } else {
-                    throw new RuntimeException("featureId (" + featureId + ") from location "
-                                               + featureLocId
-                                               + " was not found in the feature table");
+                    if (featureWarnings <= 20) {
+                        if (featureWarnings < 20) {
+                            LOG.warn("featureId (" + featureId + ") from location " + featureLocId
+                                     + " was not found in the feature table");
+                        } else {
+                            LOG.warn("further location warnings ignored");
+                        }
+                        featureWarnings++;
+                    }
                 }
             } else {
                 throw new RuntimeException("srcfeature_id (" + srcFeatureId + ") from location "
@@ -461,9 +483,16 @@ public class ChadoDBConverter extends BioDBConverter
                     }
                 }
             } else {
-                throw new RuntimeException("subject_id " + subjectId + " from feature_relationship "
-                                           + featRelationshipId
-                                           + " was not found in the feature table");
+                if (featureWarnings <= 20) {
+                    if (featureWarnings < 20) {
+                        LOG.warn("subject_id " + subjectId + " from feature_relationship "
+                                 + featRelationshipId
+                                 + " was not found in the feature table");
+                    } else {
+                        LOG.warn("further feature_relationship warnings ignored");
+                    }
+                    featureWarnings++;
+                }
             }
             count++;
             lastSubjectId = subjectId;
@@ -483,6 +512,11 @@ public class ChadoDBConverter extends BioDBConverter
                                        Map<String, List<String>> collectionData)
         throws ObjectStoreException {
         FeatureData subjectData = features.get(chadoSubjectId);
+        if (subjectData == null) {
+            LOG.warn("unknown feature " + chadoSubjectId + " passed to processCollectionData - "
+                     + "ignoring");
+            return;
+        }
         String subjectInterMineType = subjectData.interMineType;
         Integer intermineItemId = subjectData.intermineObjectId;
         for (Map.Entry<String, List<String>> entry: collectionData.entrySet()) {
@@ -921,7 +955,6 @@ public class ChadoDBConverter extends BioDBConverter
             + "  FROM dbxref, feature_dbxref, feature, db"
             + "  WHERE feature_dbxref.dbxref_id = dbxref.dbxref_id "
             + "    AND feature_dbxref.feature_id = feature.feature_id "
-            + "    AND feature_dbxref.is_current"
             + "    AND feature.feature_id IN"
             + "        (" + getFeatureIdQuery() + ")"
             + "    AND dbxref.db_id = db.db_id";
