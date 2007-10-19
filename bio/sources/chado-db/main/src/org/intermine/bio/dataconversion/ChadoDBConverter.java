@@ -134,6 +134,10 @@ public class ChadoDBConverter extends BioDBConverter
                                  DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("dbxref", "Gene", "FlyBase"), Arrays.asList(DEFAULT_CONFIG_ACTION));
 
+        config.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
+                   Arrays.asList(new SetAttributeConfigAction("name"),
+                                 DEFAULT_CONFIG_ACTION));
+
         config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.TRUE),
                    Arrays.asList(new SetAttributeConfigAction("symbol"), DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
@@ -161,6 +165,10 @@ public class ChadoDBConverter extends BioDBConverter
 
         config.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
                    Arrays.asList(new SetAttributeConfigAction("organismDbId")));
+
+        config.put(new MultiKey("feature", "ChromosomalDeletion", "FlyBase", "name"),
+                   Arrays.asList(new SetAttributeConfigAction("symbol"),
+                                 DEFAULT_CONFIG_ACTION));
     }
 
     /**
@@ -281,6 +289,13 @@ public class ChadoDBConverter extends BioDBConverter
                     if (nameActionList == null || nameActionList.size() == 0) {
                         if (feature.checkAttribute("symbol")) {
                             feature.setAttribute("symbol", name);
+                        } else {
+                            if (feature.checkAttribute("symbol")) {
+                                feature.setAttribute("symbol", name);
+                            } else {
+                                // do nothing, if the name needs to go in a different attribute
+                                // it will need to be configured
+                            }
                         }
                     } else {
                         for (ConfigAction action: nameActionList) {
