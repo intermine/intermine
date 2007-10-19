@@ -319,7 +319,8 @@ public class GoConverter extends FileConverter
 
         while (!holderStack.isEmpty()) {
             PlaceHolder nextPlaceHolder = (PlaceHolder) holderStack.pop();
-            if (!nextPlaceHolder.getQualifier().equals("NOT")) {
+            String qually = nextPlaceHolder.getQualifier().toLowerCase();
+            if (!qually.contains("not")) {
                 newParentGoAnnotation(goTermId2ParentTermIdSetsMap, nextPlaceHolder);
             }
         }
