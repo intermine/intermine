@@ -23,7 +23,7 @@
           </P>
           <DT><I>D. melanogaster</I></DT>
           <DD>
-            GO annotations for <I>D. melanogaster</I> gene products assigned by FlyBase, updated 26th March 2006.
+            GO annotations for <I>D. melanogaster</I> gene products assigned by <a href="http://www.flybase.org" target="_new">FlyBase</a>, updated 26th March 2006.
           </DD>
           <DT><I>A. gambiae</I></DT>
           <DD>
