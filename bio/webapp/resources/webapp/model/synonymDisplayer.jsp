@@ -42,7 +42,7 @@
               <html:link href="${href}"
                          title="${sourceName}: ${thisSynonym.value}"
                          target="view_window">
-                <html:img src="model/${sourceName}_logo_small.png"/>
+                <html:img src="model/images/${sourceName}_logo_small.png"/>
               </html:link>
             </td>
             <td>
