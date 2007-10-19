@@ -258,7 +258,7 @@ public class GoConverter extends FileConverter
                         newProductWrapper, newGoTerm, array[7], newOrganism);
 
                 holderMap.put(key, newPlaceHolder);
-                LOG.debug("PROCESS - NEW KEY:" + key.toString());
+            
 
             } else {
 
@@ -278,11 +278,10 @@ public class GoConverter extends FileConverter
                         goEvidenceColl = new ReferenceList("goEvidenceCodes", new ArrayList());
                     }
                     goEvidenceColl.addRefId(evidence.getIdentifier());
-                }
-                LOG.debug("PROCESS - OLD KEY:" + key.toString());
+                }               
             }
         }
-        LOG.info("productWrapperMap: " + productWrapperMap.keySet());
+     
         // store the final product
         storeGoAnnotation();
     }
@@ -465,8 +464,6 @@ public class GoConverter extends FileConverter
 
             // go term object
             Item nextParentGoTermId = newGoTerm(parentTermGoId);
-
-            LOG.debug("GoConverter - parents are being set for go a term:" + parentTermGoId);
 
             Item parentItem = null;
             String geneId = placeHolder.getGeneProductWrapper().getItem().getIdentifier();
@@ -853,10 +850,6 @@ public class GoConverter extends FileConverter
     }
 
     private Item newSynonym(String subjectId, String type, String value, String dataSourceId) {
-
-        LOG.debug("NEW SYNONYM .subject:" + subjectId + " .type:" + type
-                + " .value:" + value + " .source:" + dataSourceId);
-
         Item synonym = createItem("Synonym");
         synonym.setReference("subject", subjectId);
         synonym.setAttribute("type", type);
