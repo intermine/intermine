@@ -4,25 +4,21 @@
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="flybase-identifiers" type="flybase-identifiers">
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/"/>
-      <property name="src.data.dir.includes" value="fbgn_annotationID.tsv"/>
+    <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
+      <property name="source.db.name" value="flybase"/>
+      <property name="genus" value="Drosophila"/>
+      <property name="species" value="melanogaster"/>
+      <property name="taxonId" value="7227"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
     </source>
-    <source name="flybase-dmel-gff" type="flybase-gff">
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/gff"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="gff3.taxonId" value="7227"/>
-    </source>
-    <source name="flybase-dpse-gff" type="flybase-gff">
-      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r20_20051018/gff"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="gff3.taxonId" value="7237"/>
-    </source>
-    <source name="flybase-gene-names" type="flybase-gene-names">
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_1/"/>
-      <property name="src.data.dir.includes" value="fb_synonym_truegenes.tsv"/>
+    <source name="chado-db-flybase-dpse" type="chado-db" dump="true">
+      <property name="source.db.name" value="flybase"/>
+      <property name="genus" value="Drosophila"/>
+      <property name="species" value="pseudoobscura pseudoobscura"/>
+      <property name="taxonId" value="7237"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="dataSetTitle" value="FlyBase Drosophila pseudoobscura data set"/>
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>
