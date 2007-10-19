@@ -85,7 +85,7 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/tiling/"/>
+      <property name="src.data.dir" location="/shared/data/liftover/tiling_reordered/"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
@@ -229,6 +229,22 @@
            items DB, then into the final objectstore -->
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
+    <!--
+    <source name="ensembl-homo-chromosome-fasta" type="fasta">
+      <property name="fasta.taxonId" value="9606"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
+      <property name="fasta.includes" value="*.fa"/>
+      <property name="src.data.dir" location="/shared/data/ensembl/homo_sapiens/ens46"/>
+    </source>
+    <source name="ensembl-mus-chromosome-fasta" type="fasta">
+      <property name="fasta.taxonId" value="10090"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
+      <property name="fasta.includes" value="*.fa"/>
+      <property name="src.data.dir" location="/shared/data/ensembl/mus_musculus/ens46"/>
+    </source>
+    <source name="vienna-prot" type="vienna-prot">
+      <property name="src.data.dir" location="/home/mnw21/vienna-prot/data"/>
+    </source>-->
   </sources>
 
   <post-processing>
