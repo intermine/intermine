@@ -129,10 +129,13 @@ public class ChadoDBConverter extends BioDBConverter
                    Arrays.asList(new SetAttributeConfigAction("symbol"), DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                    Arrays.asList(DEFAULT_CONFIG_ACTION));
-        config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs"),
+        config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.TRUE),
                    Arrays.asList(new SetAttributeConfigAction("identifier"),
                                  DEFAULT_CONFIG_ACTION));
-        config.put(new MultiKey("dbxref", "Gene", "FlyBase"), Arrays.asList(DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.FALSE),
+                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("dbxref", "Gene", "FlyBase", null),
+                   Arrays.asList(DEFAULT_CONFIG_ACTION));
 
         config.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
                    Arrays.asList(new SetAttributeConfigAction("name"),
@@ -144,10 +147,11 @@ public class ChadoDBConverter extends BioDBConverter
                                  DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
                    Arrays.asList(DEFAULT_CONFIG_ACTION));
-        config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs"),
+        config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", null),
                    Arrays.asList(new SetAttributeConfigAction("identifier"),
                                  DEFAULT_CONFIG_ACTION));
-        config.put(new MultiKey("dbxref", "MRNA", "FlyBase"), Arrays.asList(DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("dbxref", "MRNA", "FlyBase", null),
+                   Arrays.asList(DEFAULT_CONFIG_ACTION));
 
         config.put(new MultiKey("feature", "Exon", "FlyBase", "name"),
                    Arrays.asList(new SetAttributeConfigAction("symbol"), DEFAULT_CONFIG_ACTION));
@@ -349,6 +353,7 @@ public class ChadoDBConverter extends BioDBConverter
             }
         }
         LOG.info("created " + count + " features");
+        res.close();
     }
 
     /**
@@ -472,6 +477,7 @@ public class ChadoDBConverter extends BioDBConverter
             }
         }
         LOG.info("created " + count + " locations");
+        res.close();
     }
 
     private void processRelationTable(Connection connection)
@@ -535,6 +541,7 @@ public class ChadoDBConverter extends BioDBConverter
         }
         LOG.info("processed " + count + " relations");
         LOG.info("total collection elements created: " + collectionTotal);
+        res.close();
     }
 
     /**
@@ -636,6 +643,7 @@ public class ChadoDBConverter extends BioDBConverter
             Integer featureId = new Integer(res.getInt("feature_id"));
             String accession = res.getString("accession");
             String dbName = res.getString("db_name");
+            Boolean isCurrent = res.getBoolean("is_current");
 
             if (currentFeatureId != null && currentFeatureId != featureId) {
                 existingAttributes = new HashSet<String>();
@@ -644,8 +652,14 @@ public class ChadoDBConverter extends BioDBConverter
             if (features.containsKey(featureId)) {
                 FeatureData fdat = features.get(featureId);
                 accession  = fixIdentifier(fdat.interMineType, accession);
-                MultiKey key = new MultiKey("dbxref", fdat.interMineType, dbName);
+                MultiKey key = new MultiKey("dbxref", fdat.interMineType, dbName, isCurrent);
                 List<ConfigAction> actionList = (List<ConfigAction>) config.get(key);
+
+                if (actionList == null) {
+                    // try ignoring isCurrent
+                    MultiKey key2 = new MultiKey("dbxref", fdat.interMineType, dbName, null);
+                    actionList = (List<ConfigAction>) config.get(key2);
+                }
 
                 if (actionList == null) {
                     // no actions configured for this synonym
@@ -679,6 +693,7 @@ public class ChadoDBConverter extends BioDBConverter
         }
 
         LOG.info("created " + count + " synonyms from the dbxref table");
+        res.close();
     }
 
     private void processFeaturePropTable(Connection connection)
@@ -705,6 +720,7 @@ public class ChadoDBConverter extends BioDBConverter
             }
         }
         LOG.info("created " + count + " synonyms from the featureprop table");
+        res.close();
     }
 
     private void processSynonymTable(Connection connection)
@@ -769,6 +785,7 @@ public class ChadoDBConverter extends BioDBConverter
         }
 
         LOG.info("created " + count + " synonyms from the synonym table");
+        res.close();
     }
 
     /**
@@ -853,6 +870,7 @@ public class ChadoDBConverter extends BioDBConverter
             makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds);
         }
         LOG.info("Created " + count + " publications");
+        res.close();
     }
 
     /**
@@ -983,7 +1001,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected ResultSet getDbxrefResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT feature.feature_id, accession, db.name AS db_name"
+            "SELECT feature.feature_id, accession, db.name AS db_name, is_current"
             + "  FROM dbxref, feature_dbxref, feature, db"
             + "  WHERE feature_dbxref.dbxref_id = dbxref.dbxref_id "
             + "    AND feature_dbxref.feature_id = feature.feature_id "
