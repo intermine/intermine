@@ -21,13 +21,3 @@ table.collection t td {
 table.collection tr.even TD{
   background-color: #F5F0FF;}
 
-/* =SPAN 
-------------------*/
-.fakelink{
-  color:#049; cursor: pointer;}
-
-.fakelink:hover{
-  color:#CF4D23; text-decoration:underline;}
-
-.fakelink:active {
-  color:#58e; text-decoration:none}

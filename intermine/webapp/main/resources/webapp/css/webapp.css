@@ -223,6 +223,15 @@ div#quicksearch {
   white-space: normal;
 }
 
+.fakelink{
+  color:#049; cursor: pointer;}
+
+.fakelink:hover{
+  color:#CF4D23; text-decoration:underline;}
+
+.fakelink:active {
+  color:#58e; text-decoration:none}
+
 /* =H 
 -------------------------*/
 #header h1,
