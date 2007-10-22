@@ -19,6 +19,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 
 import java.io.BufferedReader;
 import java.io.Reader;
@@ -32,8 +33,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class FlyFishConverter extends FileConverter
 {
-    private Map<String, Item> genes = new HashMap<String, Item>();
-    private Map<String, Item> terms = new HashMap<String, Item>();
+    private Map<String, Item> geneItems = new HashMap<String, Item>();
+    private Map<String, Item> termItems = new HashMap<String, Item>();
 
     Item orgDrosophila;
     private Item dataSet;
@@ -119,12 +120,11 @@ public class FlyFishConverter extends FileConverter
                             if (stageNum == 4) {
                                 result.setAttribute("stage", "stage 8-9");
                             } else {
-                                result.setAttribute("stage", "some other stage");
+                                result.setAttribute("stage", "stage 10-");
                             }
                         }
                     }
                 }
-                store(result);
             }
 
             for (int column = 1; column < lineBits.length; column++) {
@@ -139,8 +139,17 @@ public class FlyFishConverter extends FileConverter
                     Item localisationTerm = getMRNALocalisationTerm(localisation);
                     Item result = mRNALocalisationResults[hc.stage - 1];
                     result.addToCollection("mRNALocalisationTerms", localisationTerm);
-
                 }
+            }
+
+            for (Item result: mRNALocalisationResults) {
+                ReferenceList resultTerms = result.getCollection("mRNALocalisationTerms");
+                if (resultTerms == null || resultTerms.getRefIds().size() == 0) {
+                    result.setAttribute("expressed", "false");
+                } else {
+                    result.setAttribute("expressed", "true");
+                }
+                store(result);
             }
         }
     }
@@ -151,24 +160,24 @@ public class FlyFishConverter extends FileConverter
      * @throws ObjectStoreException
      */
     private Item getMRNALocalisationTerm(String localisation) throws ObjectStoreException {
-        if (terms.containsKey(localisation)) {
-            return terms.get(localisation);
+        if (termItems.containsKey(localisation)) {
+            return termItems.get(localisation);
         } else {
             Item localisationTermItem = createItem("MRNALocalisationTerm");
             localisationTermItem.setAttribute("localisation", localisation);
             store(localisationTermItem);
-            terms.put(localisation, localisationTermItem);
+            termItems.put(localisation, localisationTermItem);
             return localisationTermItem;
         }
     }
 
     private Item getGene(String geneCG) throws ObjectStoreException {
-        if (genes.containsKey(geneCG)) {
-            return genes.get(geneCG);
+        if (geneItems.containsKey(geneCG)) {
+            return geneItems.get(geneCG);
         } else {
             Item gene = createItem("Gene");
             gene.setAttribute("identifier", geneCG);
-            genes.put(geneCG, gene);
+            geneItems.put(geneCG, gene);
             store(gene);
             return gene;
         }
