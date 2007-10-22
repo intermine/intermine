@@ -343,15 +343,15 @@ public class PsiConverter extends FileConverter
                             syn1.setReference("source", datasourceItemId);
                             syn1.setReference("subject", proteinIdentifier);
                             synonyms.add(synonym);
-
-                            // see ticket #1450
-                            Item syn2 = createItem("Synonym"); 
-                            syn2.setAttribute("value", id); 
-                            syn2.setAttribute("type", "accession"); 
-                            syn2.setReference("source", "UniProt"); 
-                            syn2.setReference("subject", proteinIdentifier); 
-                            synonyms.add(synonym);
                         }
+                        
+                        // see ticket #1450
+                        Item syn2 = createItem("Synonym"); 
+                        syn2.setAttribute("value", id); 
+                        syn2.setAttribute("type", "accession"); 
+                        syn2.setReference("source", "UniProt"); 
+                        syn2.setReference("subject", proteinIdentifier); 
+                        synonyms.add(synonym);
                     }
 
                 // <interactorList><interactor id="4"><sequence>
