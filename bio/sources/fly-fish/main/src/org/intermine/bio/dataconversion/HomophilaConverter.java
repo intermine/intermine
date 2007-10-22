@@ -29,9 +29,9 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 
 /**
- * DataConverter to parse homophila data file into Items.
+ * DataConverter to parse Fly-FISH data file into Items.
  * 
- * @author Thomas Riley
+ * @author Kim Rutherford
  */
 public class HomophilaConverter extends FileConverter
 {

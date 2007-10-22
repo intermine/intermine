@@ -22,7 +22,7 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 
 /**
- * Homophila converter functional test.
+ * Fly-FISH converter functional test.
  * @author Thomas Riley
  */
 public class HomophilaConverterTest extends ItemsTestCase

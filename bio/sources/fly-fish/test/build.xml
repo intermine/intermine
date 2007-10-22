@@ -1,8 +1,8 @@
-<project name="sources-homophila-test" default="default" basedir="."
+<project name="sources-fly-fish-test" default="default" basedir="."
          xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
          xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
 
-  <description>build and test sources-homophila-test</description>
+  <description>build and test sources-fly-fish-test</description>
 
   <import file="../../../../imbuild/tests.xml"/>
   <import file="../../../../imbuild/task.xml"/>
