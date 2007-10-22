@@ -121,7 +121,15 @@ public class TemplateHelper
             }
         } else if (TEMP_TEMPLATE.equals(type)) {
             SavedQuery savedQuery = profile.getHistory().get(templateName);
-            return (TemplateQuery) savedQuery.getPathQuery();
+            TemplateQuery t = null;
+            if (savedQuery.getPathQuery() instanceof TemplateQuery) {
+                t = (TemplateQuery) savedQuery.getPathQuery();
+            } else if (session.getAttribute(Constants.QUERY)
+                            instanceof TemplateQuery) {
+                // see #1435
+                t = (TemplateQuery) session.getAttribute(Constants.QUERY);
+            }
+            return t;
         } else {
             throw new IllegalArgumentException("findTemplate found bad type: " + type);
         }
