@@ -24,7 +24,6 @@ import java.io.BufferedReader;
 import java.io.Reader;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * DataConverter to parse Fly-FISH data file into Items.
@@ -33,13 +32,14 @@ import org.apache.log4j.Logger;
  */
 public class FlyFishConverter extends FileConverter
 {
-    private static final Logger LOG = Logger.getLogger(FlyFishConverter.class);
-
-    protected Map<String, Item> genes = new HashMap<String, Item>();
+    private Map<String, Item> genes = new HashMap<String, Item>();
+    private Map<String, Item> terms = new HashMap<String, Item>();
 
     Item orgDrosophila;
     private Item dataSet;
     private Item pub;
+
+
 
     /**
      * Construct a new instance of HomophilaCnoverter.
@@ -82,11 +82,11 @@ public class FlyFishConverter extends FileConverter
         String line = br.readLine();
         String headerArray[] = StringUtils.split(line, ';');
 
-        HeaderConfig[] config = new HeaderConfig[headerArray.length - 1];
-        for (int i = 1; i < headerArray.length; i++) {
+        HeaderConfig[] config = new HeaderConfig[headerArray.length];
+        for (int i = 0; i < headerArray.length; i++) {
             String thisHeader = headerArray[i];
             char stageTag = thisHeader.charAt(0);
-            if (stageTag != '1' && stageTag != '2' && stageTag != '3' && stageTag != '4' && stageTag != '5') {
+            if (stageTag < '1' || stageTag > '5') {
                 throw new RuntimeException("unknown stage " + stageTag + " in header of "
                                            + getCurrentFile());
             }
@@ -94,12 +94,9 @@ public class FlyFishConverter extends FileConverter
                 throw new RuntimeException("parse error in header of " + getCurrentFile());
             }
             String localisation = thisHeader.substring(2);
-            config[i - 1] = new HeaderConfig();
-            config[i - 1].stage = Integer.parseInt(String.valueOf(stageTag));
-            if (config[i - 1].stage < 1 || config[i - 1].stage > 5) {
-                throw new                                                            RuntimeException();
-            }
-            config[i - 1].localisation = localisation;
+            config[i] = new HeaderConfig();
+            config[i].stage = Integer.parseInt(String.valueOf(stageTag));
+            config[i].localisation = localisation;
         }
         while ((line = br.readLine()) != null) {
             String lineBits[] = StringUtils.split(line, ';');
@@ -134,14 +131,34 @@ public class FlyFishConverter extends FileConverter
                 String value = lineBits[column];
                 if (value.equals("1")) {
                     int configIndex = column - 1;
+                    if (configIndex >= config.length) {
+                        throw new RuntimeException("line too long: " + line);
+                    }
                     HeaderConfig hc = config[configIndex];
-                    Item localisationTerm = createItem("MRNALocalisationTerm");
-                    localisationTerm.setAttribute("localisation", hc.localisation);
+                    String localisation = hc.localisation;
+                    Item localisationTerm = getMRNALocalisationTerm(localisation);
                     Item result = mRNALocalisationResults[hc.stage - 1];
                     result.addToCollection("mRNALocalisationTerms", localisationTerm);
-                    store(localisationTerm);
+
                 }
             }
+        }
+    }
+
+    /**
+     * @param localisation
+     * @return
+     * @throws ObjectStoreException
+     */
+    private Item getMRNALocalisationTerm(String localisation) throws ObjectStoreException {
+        if (terms.containsKey(localisation)) {
+            return terms.get(localisation);
+        } else {
+            Item localisationTermItem = createItem("MRNALocalisationTerm");
+            localisationTermItem.setAttribute("localisation", localisation);
+            store(localisationTermItem);
+            terms.put(localisation, localisationTermItem);
+            return localisationTermItem;
         }
     }
 
