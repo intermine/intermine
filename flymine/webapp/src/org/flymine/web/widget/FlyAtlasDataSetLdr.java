@@ -13,12 +13,9 @@ package org.flymine.web.widget;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.flymine.model.genomic.FlyAtlasResult;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayAssay;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -29,9 +26,16 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
+
+import org.flymine.model.genomic.FlyAtlasResult;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.MicroArrayAssay;
+
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -62,11 +66,11 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         q.addFrom(maa);
         q.addFrom(gene);
         
-        QueryField name = new QueryField(maa, "name");
+        QueryField tissueName = new QueryField(maa, "name");
         
         // q.addToSelect(new QueryField(far,"enrichment"));
         q.addToSelect(new QueryField(far, "affyCall"));
-        q.addToSelect(name);
+        q.addToSelect(tissueName);
         q.addToSelect(new QueryField(gene, "identifier"));
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -83,13 +87,14 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         cs.addConstraint(cc);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
-        q.addToOrderBy(name);
+        q.addToOrderBy(tissueName);
         
         results = os.execute(q);
         results.setBatchSize(100000);
         Iterator iter = results.iterator();
-        HashMap<String, int[]> callTable = new HashMap<String, int[]>();
-        HashMap<String, ArrayList<String>> geneMap = new HashMap<String, ArrayList<String>>();
+        LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
+        LinkedHashMap<String, ArrayList<String>> geneMap 
+                                                = new LinkedHashMap<String, ArrayList<String>>();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
             // Double enrichment = (Double)resRow.get(0);
