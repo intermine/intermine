@@ -141,17 +141,20 @@ public class ChadoDBConverterTest extends ItemsTestCase
         protected ResultSet getDbxrefResultSet(@SuppressWarnings("unused")
                                                Connection connection) {
             String[] columnNames = new String[] {
-                "feature_id", "accession", "db_name"
+                "feature_id", "accession", "db_name", "is_current"
             };
             Object[][] resObjects = new Object[][] {
                 {
-                    23269151, "FBgn0000001_dbxref1", "FlyBase Annotation IDs"
+                    23269151, "FBgn0000001_dbxref1", "FlyBase Annotation IDs", true
                 },
                 {
-                    23269151, "FBgn0000001_dbxref2", "FlyBase"
+                    23269151, "FBgn0000001_dbxref2", "FlyBase Annotation IDs", false
                 },
                 {
-                    3117509, "FBgn0036461_dbxref3", "FlyBase"
+                    23269151, "FBgn0000001_dbxref3", "FlyBase", true
+                },
+                {
+                    3117509, "FBgn0036461_dbxref4", "FlyBase", false
                 },
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
