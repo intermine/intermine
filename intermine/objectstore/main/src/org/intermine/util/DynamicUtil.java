@@ -21,6 +21,8 @@ import java.util.Set;
 
 import net.sf.cglib.proxy.*;
 
+import org.intermine.model.InterMineObject;
+
 /**
  * Utilities to create DynamicBeans
  *
@@ -249,5 +251,19 @@ public class DynamicUtil
             friendlyNameMap.put(clazz, retval);
         }
         return retval;
+    }
+
+    /**
+     * Creates a friendly description of an object - that is, the class and the ID (if it has one).
+     *
+     * @param o the object to be described
+     * @return a String description
+     */
+    public static String getFriendlyDesc(Object o) {
+        if (o instanceof InterMineObject) {
+            return getFriendlyName(o.getClass()) + ":" + ((InterMineObject) o).getId();
+        } else {
+            return o.toString();
+        }
     }
 }
