@@ -33,6 +33,7 @@
     <merge-additions file="bio/sources/flyrnai-screens/flyrnai-screens_additions.xml"/>
     <merge-additions file="bio/sources/kegg-pathway/kegg-pathway_additions.xml"/>
     <merge-additions file="bio/sources/tiffin/tiffin_additions.xml"/>
+    <merge-additions file="bio/sources/fly-fish/fly-fish_additions.xml"/>
   </target>
 
 </project>

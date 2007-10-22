@@ -1,13 +1,15 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.Disease" extends="org.flymine.model.genomic.BioProperty" is-interface="true">
-    <attribute name="omimId" type="java.lang.String"/>
-    <attribute name="description" type="java.lang.String"/>
+  <class name="org.flymine.model.genomic.MRNALocalisationResult" extends="org.intermine.model.InterMineObject" is-interface="true">
+    <attribute name="stage" type="java.lang.String"/>
+    <attribute name="expressed" type="java.lang.Boolean"/>
+    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="mRNALocalisations"/>
+    <collection name="mRNALocalisationTerms" referenced-type="org.flymine.model.genomic.MRNALocalisationTerm"/>
   </class>
-  <class name="org.flymine.model.genomic.BlastMatch" extends="org.flymine.model.genomic.Relation" is-interface="true">
-    <attribute name="EValue" type="java.lang.Double"/>
+  <class name="org.flymine.model.genomic.MRNALocalisationTerm" extends="org.intermine.model.InterMineObject" is-interface="true">
+    <attribute name="localisation" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.Gene" is-interface="true">
-    <collection name="omimDiseases" referenced-type="org.flymine.model.genomic.Disease" ordered="true"/>
+    <collection name="mRNALocalisations" referenced-type="org.flymine.model.genomic.MRNALocalisationResult" reverse-reference="gene"/>
   </class>
 </classes>
