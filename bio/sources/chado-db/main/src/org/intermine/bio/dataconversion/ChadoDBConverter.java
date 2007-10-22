@@ -71,11 +71,13 @@ public class ChadoDBConverter extends BioDBConverter
     private String species;
     private String sequenceFeatureTypesString = "'chromosome', 'chromosome_arm'";
     private String featureTypesString =
-        "'gene', 'mRNA', 'transcript', 'CDS', 'intron', 'exon', 'five_prime_untranslated_region', "
+        "'gene', 'mRNA', 'transcript', 'CDS', 'intron', 'exon', "
+        + "'regulatory_region', "
         // ignore for now:        + "'EST', 'cDNA_clone', "
         + "'miRNA', 'snRNA', 'ncRNA', 'rRNA', 'ncRNA', 'snoRNA', 'tRNA', "
         + "'chromosome_band', 'transposable_element_insertion_site', "
         + "'chromosome_structure_variation', 'protein', "
+        + "'five_prime_untranslated_region', "
         + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', 'transcript', "
         + sequenceFeatureTypesString;
     private String relationshipTypesString = "'partof', 'part_of'";
