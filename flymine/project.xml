@@ -93,6 +93,10 @@
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
+    <source name="fly-fish" type="fly-fish">
+      <property name="src.data.dir" location="/shared/data/flyfish"/>
+      <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
+    </source>
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes"/>
     </source>
