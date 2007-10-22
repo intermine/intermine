@@ -20,6 +20,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.TypeUtil;
 
@@ -128,15 +129,17 @@ public class SourcePriorityComparator implements Comparator
                         return 1;
                     } else {
                         if ((!o1.equals(o2)) && (!source1.getSkeleton())) {
-                            String errMessage = "Unequivalent objects have the same"
-                                + " non-skeleton Source; o1 = \"" + o1 + "\" ("
-                                + (o1 == defObj ? "from source" : (dbIdsStored.contains(f1.getId())
-                                            ? "stored in this run" : "from database"))
-                                + "), o2 = \"" + o2 + "\"(" + (o2 == defObj ? "from source"
+                            String errMessage = "Duplicate objects from the same data source; "
+                                + "o1 = \"" + DynamicUtil.getFriendlyDesc(o1) + "\" ("
+                                + (o1 == defObj ? "from source, being stored"
+                                        : (dbIdsStored.contains(f1.getId())
+                                            ? "stored earlier in this run" : "in database"))
+                                + "), o2 = \"" + DynamicUtil.getFriendlyDesc(o2) + "\" ("
+                                + (o2 == defObj ? "from source, being stored"
                                         : (dbIdsStored.contains(f2.getId())
-                                            ? "stored in this run" : "from database"))
+                                            ? "stored earlier in this run" : "in database"))
                                 + "), source1 = \"" + source1 + "\", source2 = \"" + source2
-                                + "\" for field \"" + field.getName() + "\"";
+                                + "\"";
                             LOG.error(errMessage);
                             throw new IllegalArgumentException(errMessage);
                         }
@@ -219,6 +222,20 @@ public class SourcePriorityComparator implements Comparator
             }
             if (value2 instanceof ProxyReference) {
                 value2 = ((ProxyReference) value2).getObject();
+            }
+            if (source1 == null) {
+                if (f1 == defObj) {
+                    source1 = def;
+                } else {
+                    source1 = dataTracker.getSource(f1.getId(), field.getName());
+                }
+            }
+            if (source2 == null) {
+                if (f2 == defObj) {
+                    source2 = def;
+                } else {
+                    source2 = dataTracker.getSource(f2.getId(), field.getName());
+                }
             }
             throw new IllegalArgumentException("Conflicting values for field "
                     + field.getClassDescriptor().getName() + "." + field.getName()

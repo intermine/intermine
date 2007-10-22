@@ -359,9 +359,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     writtenObjects.add(newObj.getId());
                 }
             }
-            if (type != FROM_DB) {
-                assignMapping(o.getId(), newObj.getId());
-            }
             time1 = System.currentTimeMillis();
             timeSpentCreate += time1 - time2;
 
@@ -467,6 +464,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             time2 = System.currentTimeMillis();
             timeSpentPriorities += time2 - time1;
 
+            if (type != FROM_DB) {
+                assignMapping(o.getId(), newObj.getId());
+            }
             Iterator fieldToEquivIter = fieldToEquivalentObjects.entrySet().iterator();
             while (fieldToEquivIter.hasNext()) {
                 Source lastSource = null;
