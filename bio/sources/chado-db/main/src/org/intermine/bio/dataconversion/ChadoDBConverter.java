@@ -568,8 +568,10 @@ public class ChadoDBConverter extends BioDBConverter
             List<FieldDescriptor> fds = getReferenceForRelationship(objectType, cd);
 
             if (fds.size() == 0) {
-                throw new RuntimeException("can't find collection for type " + objectType
-                                           + " in " + subjectInterMineType);
+                LOG.error("can't find collection for type " + objectType
+                          + " in " + subjectInterMineType + " while processing feature "
+                          + chadoSubjectId);
+                continue;
             }
 
             for (FieldDescriptor fd: fds) {
