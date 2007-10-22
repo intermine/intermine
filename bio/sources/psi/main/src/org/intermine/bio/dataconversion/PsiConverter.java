@@ -337,16 +337,21 @@ public class PsiConverter extends FileConverter
                         
                         // create an extra synonym for proteins that have an IntAct identifier
                         if (db.equals("intact")) {
-                            synonym = createItem("Synonym");
-                            synonym.setAttribute("value", id);
-                            synonym.setAttribute("type", "identifier");
-                            synonym.setReference("source", datasourceItemId);
-                            synonym.setReference("subject", proteinIdentifier);
+                            Item syn1 = createItem("Synonym");
+                            syn1.setAttribute("value", id);
+                            syn1.setAttribute("type", "identifier");
+                            syn1.setReference("source", datasourceItemId);
+                            syn1.setReference("subject", proteinIdentifier);
+                            synonyms.add(synonym);
+
+                            // see ticket #1450
+                            Item syn2 = createItem("Synonym"); 
+                            syn2.setAttribute("value", id); 
+                            syn2.setAttribute("type", "accession"); 
+                            syn2.setReference("source", "UniProt"); 
+                            syn2.setReference("subject", proteinIdentifier); 
                             synonyms.add(synonym);
                         }
-                        
-
-                        
                     }
 
                 // <interactorList><interactor id="4"><sequence>
