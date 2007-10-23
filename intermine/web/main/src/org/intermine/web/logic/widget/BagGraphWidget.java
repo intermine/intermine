@@ -116,13 +116,7 @@ public class BagGraphWidget
                                         });
                 plot.getRenderer().setBaseItemURLGenerator(categoryUrlGen);
             }
-/*            final ItemLabelPosition neg = new ItemLabelPosition(ItemLabelAnchor.INSIDE12,
-                                                                TextAnchor.CENTER,
-                                                                TextAnchor.CENTER,
-                                                                0.0D);
-            renderer.setNegativeItemLabelPosition(neg); */
-            
-            
+          
             renderer.setNegativeItemLabelPositionFallback(new ItemLabelPosition(ItemLabelAnchor
                                                            .OUTSIDE3, TextAnchor.BASELINE_LEFT)); 
             
