@@ -102,19 +102,19 @@ public class ChadoDBConverter extends BioDBConverter
         }
     }
 
-    private static class DefaultConfigAction extends ConfigAction
+    private static class CreateSynonymAction extends ConfigAction
     {
         // do the default - eg. make a synonym or set a collection
     }
 
-    private static class DoNothingConfigAction extends ConfigAction
+    private static class DoNothingAction extends ConfigAction
     {
         // do nothing for this data
     }
 
-    private static final ConfigAction DEFAULT_CONFIG_ACTION = new DefaultConfigAction();
+    private static final ConfigAction CREATE_SYNONYM_ACTION = new CreateSynonymAction();
 
-    private static final ConfigAction DO_NOTHING_CONFIG_ACTION = new DoNothingConfigAction();
+    private static final ConfigAction DO_NOTHING_ACTION = new DoNothingAction();
 
     /**
      * Create a new ChadoDBConverter object.
@@ -131,48 +131,48 @@ public class ChadoDBConverter extends BioDBConverter
 //            throw new RuntimeException("Problem loading properties '" + CONFIG_FILE_NAME + "'", e);
 //        }
         config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
-                   Arrays.asList(new SetAttributeConfigAction("name"), DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(new SetAttributeConfigAction("name"), CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.FALSE),
-                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.TRUE),
-                   Arrays.asList(new SetAttributeConfigAction("symbol"), DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(new SetAttributeConfigAction("symbol"), CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
-                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.TRUE),
                    Arrays.asList(new SetAttributeConfigAction("identifier"),
-                                 DEFAULT_CONFIG_ACTION));
+                                 CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.FALSE),
-                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("dbxref", "Gene", "FlyBase", null),
-                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(CREATE_SYNONYM_ACTION));
 
         config.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
                    Arrays.asList(new SetAttributeConfigAction("name"),
-                                 DEFAULT_CONFIG_ACTION));
+                                 CREATE_SYNONYM_ACTION));
 
         config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.TRUE),
                    Arrays.asList(new SetAttributeConfigAction("identifier"),
                                  new SetAttributeConfigAction("symbol"),
-                                 DEFAULT_CONFIG_ACTION));
+                                 CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
-                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", null),
-                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("dbxref", "MRNA", "FlyBase", null),
-                   Arrays.asList(DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(CREATE_SYNONYM_ACTION));
 
         config.put(new MultiKey("feature", "Exon", "FlyBase", "name"),
-                   Arrays.asList(new SetAttributeConfigAction("symbol"), DEFAULT_CONFIG_ACTION));
+                   Arrays.asList(new SetAttributeConfigAction("symbol"), CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("feature", "Chromosome", "FlyBase", "name"),
-                   Arrays.asList(DO_NOTHING_CONFIG_ACTION));
+                   Arrays.asList(DO_NOTHING_ACTION));
 
         config.put(new MultiKey("feature", "ChromosomeBand", "FlyBase", "name"),
-                   Arrays.asList(DO_NOTHING_CONFIG_ACTION));
+                   Arrays.asList(DO_NOTHING_ACTION));
 
         config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase", "name"),
                    Arrays.asList(new SetAttributeConfigAction("symbol"),
                                  new SetAttributeConfigAction("identifier"),
-                                 DEFAULT_CONFIG_ACTION));
+                                 CREATE_SYNONYM_ACTION));
         config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
                                 "uniquename"),
                    Arrays.asList(new SetAttributeConfigAction("organismDbId")));
@@ -182,7 +182,7 @@ public class ChadoDBConverter extends BioDBConverter
 
         config.put(new MultiKey("feature", "ChromosomalDeletion", "FlyBase", "name"),
                    Arrays.asList(new SetAttributeConfigAction("symbol"),
-                                 DEFAULT_CONFIG_ACTION));
+                                 CREATE_SYNONYM_ACTION));
 
         config.put(new MultiKey("feature", "MRNA", "FlyBase", "uniquename"),
                    Arrays.asList(new SetAttributeConfigAction("organismDbId")));
@@ -350,7 +350,7 @@ public class ChadoDBConverter extends BioDBConverter
 
                 if (name != null) {
                     if (nameActionList == null || nameActionList.size() == 0
-                        || nameActionList.contains(DEFAULT_CONFIG_ACTION)) {
+                        || nameActionList.contains(CREATE_SYNONYM_ACTION)) {
                         name = fixIdentifier(interMineType, name);
                         createSynonym(fdat, "name", name, false, dataSet, Collections.EMPTY_LIST,
                                       dataSource); // Stores Synonym
@@ -684,7 +684,7 @@ public class ChadoDBConverter extends BioDBConverter
                             existingAttributes.add(setAction.attributeName);
                         }
                     } else {
-                        if (action instanceof DefaultConfigAction) {
+                        if (action instanceof CreateSynonymAction) {
 
                             Set<String> existingSynonyms = fdat.existingSynonyms;
                             if (existingSynonyms.contains(accession)) {
@@ -777,7 +777,7 @@ public class ChadoDBConverter extends BioDBConverter
                             existingAttributes.add(setAction.attributeName);
                         }
                     } else {
-                        if (action instanceof DefaultConfigAction) {
+                        if (action instanceof CreateSynonymAction) {
                             Set<String> existingSynonyms = fdat.existingSynonyms;
                             if (existingSynonyms.contains(identifier)) {
                                 continue;
