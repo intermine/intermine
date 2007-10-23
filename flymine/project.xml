@@ -197,7 +197,7 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/liftover/redfly"/>
+      <property name="src.data.dir" location="/shared/data/REDfly/current"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
