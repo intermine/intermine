@@ -149,7 +149,9 @@ public class ChadoDBConverter extends BioDBConverter
                                  DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
                    Arrays.asList(DEFAULT_CONFIG_ACTION));
-        config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", null),
+        config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", Boolean.TRUE),
+                   Arrays.asList(new SetAttributeConfigAction("identifier")));
+        config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", Boolean.FALSE),
                    Arrays.asList(new SetAttributeConfigAction("identifier"),
                                  DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("dbxref", "MRNA", "FlyBase", null),
