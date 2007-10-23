@@ -32,5 +32,5 @@ then
     exit 0;
 else
     mv $HOME/.userprofile_backup.output.new $HOME/.userprofile_backup.output
-    mail kmr@flymine.org < $HOME/.userprofile_backup.output
+    (echo Subject: userprofile backup; cat $HOME/.userprofile_backup.output) | mail kmr@flymine.org
 fi 
