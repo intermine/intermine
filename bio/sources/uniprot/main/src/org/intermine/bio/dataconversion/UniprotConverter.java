@@ -65,11 +65,11 @@ public class UniprotConverter extends FileConverter
     private Map<String, Item> geneMaster = new HashMap<String, Item>();
     private Map<String, Item> interproMaster = new HashMap<String, Item>();
     private Set<String> geneIdentifiers = new HashSet<String>();
-    private Map<String, UniProtGeneDataMap> geneDataMaps 
+    private Map<String, UniProtGeneDataMap> geneDataMaps
                                                         = new HashMap<String, UniProtGeneDataMap>();
                                                 // map of taxonId to object which determine
                                                 // which data to use for which organism
-    private Set<String> geneSources = new HashSet<String>();    
+    private Set<String> geneSources = new HashSet<String>();
                                                 // datasources that designate gene names
                                                 // e.g. WormBase, Ensembl
     private Map ids = new HashMap();
@@ -279,7 +279,7 @@ public class UniprotConverter extends FileConverter
     /**
      * Sets the parameter that determines whether the files in the split directory will be read, or
      * the files in the root directory will be used.
-     * @param useSplitFiles if true the files in /split will be loaded and if false the files in 
+     * @param useSplitFiles if true the files in /split will be loaded and if false the files in
      * the root directory will be loaded
      */
     public void setUseSplitFiles(String useSplitFiles) {
@@ -293,7 +293,7 @@ public class UniprotConverter extends FileConverter
     /**
      * Extension of PathQueryHandler to handle parsing TemplateQueries
      */
-    static class UniprotHandler extends DefaultHandler
+    class UniprotHandler extends DefaultHandler
     {
         private int nextClsId = 0;
         private ItemFactory itemFactory;
@@ -591,10 +591,10 @@ public class UniprotConverter extends FileConverter
                //    <dbreference><property type="organism name" value="Homo sapiens"/>
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("organism name")
-                           && (attrs.getValue("value").equals("Homo sapiens") 
+                           && (attrs.getValue("value").equals("Homo sapiens")
                                            || attrs.getValue("value").equals("Apis mellifera"))) {
                     if ((possibleGeneIdSource != null) && (possibleGeneId != null)) {
-                        
+
                         // we probably don't have a <gene> reference
                         initGene();
                         Item gene = createItem("Gene");
@@ -603,7 +603,7 @@ public class UniprotConverter extends FileConverter
                         // associate gene with lists
                         geneTOgeneNameTypeToName.put(gene.getIdentifier(), geneNameTypeToName);
                         geneTOgeneDesignations.put(gene.getIdentifier(), geneDesignations);
-                        
+
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
                 // <uniprot>
@@ -1189,10 +1189,8 @@ public class UniprotConverter extends FileConverter
          * @return a new Item
          */
         protected Item createItem(String className) {
-            return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                        GENOMIC_NS + className, "");
+            return UniprotConverter.this.createItem(className);
         }
-
 
         private String newId(String className) {
             Integer id = (Integer) ids.get(className);
