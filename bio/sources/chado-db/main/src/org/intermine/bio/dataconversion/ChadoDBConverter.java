@@ -85,6 +85,8 @@ public class ChadoDBConverter extends BioDBConverter
     private Model model = Model.getInstanceByName("genomic");
     private MultiKeyMap config = new MultiKeyMap();
 
+    private static final String CONFIG_FILE_NAME = "chado-db.config";
+
     private static class ConfigAction
     {
         protected ConfigAction() {
@@ -122,7 +124,12 @@ public class ChadoDBConverter extends BioDBConverter
      */
     public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
-
+//        Properties props = new Properties();
+//        try {
+//            props.load(getClass().getClassLoader().getResourceAsStream(CONFIG_FILE_NAME));
+//        } catch (IOException e) {
+//            throw new RuntimeException("Problem loading properties '" + CONFIG_FILE_NAME + "'", e);
+//        }
         config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
                    Arrays.asList(new SetAttributeConfigAction("name"), DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.FALSE),
@@ -149,11 +156,8 @@ public class ChadoDBConverter extends BioDBConverter
                                  DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
                    Arrays.asList(DEFAULT_CONFIG_ACTION));
-        config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", Boolean.TRUE),
-                   Arrays.asList(new SetAttributeConfigAction("identifier")));
-        config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", Boolean.FALSE),
-                   Arrays.asList(new SetAttributeConfigAction("identifier"),
-                                 DEFAULT_CONFIG_ACTION));
+        config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", null),
+                   Arrays.asList(DEFAULT_CONFIG_ACTION));
         config.put(new MultiKey("dbxref", "MRNA", "FlyBase", null),
                    Arrays.asList(DEFAULT_CONFIG_ACTION));
 
