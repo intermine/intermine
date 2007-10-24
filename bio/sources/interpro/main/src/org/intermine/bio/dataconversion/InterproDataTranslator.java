@@ -712,7 +712,8 @@ public class InterproDataTranslator extends DataTranslator
             dataSourceItem = procureDataSourceAndSetItem(sourceDbName);
             dataSetItem = procureDataSetItem(dataSourceItem);
 
-            addToCollection(tgtItem, EVIDENCE, dataSetItem);
+            // this is done in uniprot
+            //addToCollection(tgtItem, EVIDENCE, dataSetItem);
 
         } else {
             LOG.warn("FOUND A " + srcItem.getClassName() + " WITHOUT A REFERENCED CV_DATABASE!");

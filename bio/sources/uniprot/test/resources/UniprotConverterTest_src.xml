@@ -279,7 +279,7 @@ SPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPAS
 DMSPPPTTTVIAEPKPKLFKPYKTEA
 </sequence>
 </entry>
-<entry dataset="Swiss-Prot" created="1993-10-01" modified="2006-12-12" version="46">
+<entry dataset="TREmbl" created="1993-10-01" modified="2006-12-12" version="46">
   <accession>P32234</accession>
   <accession>Q9V648</accession>
   <name>128UP_DROME</name>

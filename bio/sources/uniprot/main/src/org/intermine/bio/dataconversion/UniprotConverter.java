@@ -396,6 +396,8 @@ public class UniprotConverter extends FileConverter
                 if (qName.equals("entry")) {
                     // create, clear all lists for each new protein
                     initProtein();
+                    // will be tremble or swiss-prot
+                    dataset = getDataSet(attrs.getValue("dataset"));
                 // <entry><protein>
                 } else if (qName.equals("protein")) {
                     String isFragment = "false";
@@ -827,10 +829,8 @@ public class UniprotConverter extends FileConverter
 
         private void initData()
         throws SAXException    {
-            try {
-                // TODO: the dataset name shouldn't be hard coded:
+            try {                
                 datasource = getDataSource("UniProt");
-                dataset = getDataSet("Uniprot data set");
                 setOnto("UniProtKeyword");
             } catch (Exception e) {
                 throw new SAXException(e);
@@ -939,8 +939,12 @@ public class UniprotConverter extends FileConverter
 
                 if (ds == null) {
                     ds = createItem("DataSet");
-                    ds.addAttribute(new Attribute("title", title));
+                    ds.addAttribute(new Attribute("title", title + " data set"));
                     dsMaster.put(title, ds);
+                    
+                    ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
+                    protein.addCollection(evidenceColl);
+                    evidenceColl.addRefId(ds.getIdentifier());
                     writer.store(ItemHelper.convert(ds));
                 }
 
