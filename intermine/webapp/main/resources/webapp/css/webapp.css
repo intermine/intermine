@@ -182,6 +182,8 @@ div#quicksearch {
  }
 
 
+
+
 /* =SPAN 
 -------------------------*/
 #logo {
@@ -238,6 +240,12 @@ div#quicksearch {
 .fakelink:active {
   color:#58e; text-decoration:none}
 
+  /* Genomics (12 results) */
+.templateResultsToggle {
+	font-size:0.8em;
+	text-align:right;
+ }
+
 /* =H 
 -------------------------*/
 #header h1,
@@ -254,6 +262,8 @@ div#quicksearch {
 
 .body h3 {
   margin-top: 10px;}
+  
+
   
 /* =P
 -------------------------*/

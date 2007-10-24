@@ -25,10 +25,10 @@
                 !empty templates}">
 
     <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}" scope="request"/>
-
+  	<c:set var="templateCount" value="${fn:length(templates)}"/>
     <im:heading id="template${index}">    
 
-        <a href="javascript:toggleHidden('template${index}');">${aspect}</a>
+       <a href="javascript:toggleHidden('template${index}');">${aspect}</a>&nbsp;&nbsp;<span class="templateResultsToggle">(Expand this section to view all ${templateCount} templates)</span>
 
     </im:heading>
 	<div class="body">
