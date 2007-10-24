@@ -192,10 +192,11 @@
 <br/>
 
 <!-- widget table -->
-<c:set var="widgetTotal" value="10"/>
+<c:set var="widgetTotal" value="${fn:length(graphDisplayerArray) 
+								+ fn:length(tableDisplayerArray)  
+								+ fn:length(enrichmentWidgetDisplayerArray) }"/>
 
-  <c:if test="${(!empty graphDisplayerArray) || (! empty tableDisplayerArray) 
-											 || (!empty enrichmentWidgetDisplayerArray)}">
+  <c:if test="${widgetTotal > 0}">
     <div class="heading">
       <a id="widgets">Widgets - displaying properties of '${bag.name}'</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
 		(<a href="javascript:toggleAll(${widgetTotal}, 'widget', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, 'widget', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
@@ -349,7 +350,7 @@
 
 <script type="text/javascript">
   <!--//<![CDATA[
-	toggleAll(${widgetCount}, 'widget', 'collapse', null);
+	toggleAll(${widgetTotal}, 'widget', 'collapse', null);
 	toggleAll(${aspectCount}, 'template', 'collapse', null);
       //]]>-->
 </script>
