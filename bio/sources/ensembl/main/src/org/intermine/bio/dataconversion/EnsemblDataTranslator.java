@@ -117,12 +117,11 @@ public class EnsemblDataTranslator extends DataTranslator
      */
     public void translate(ItemWriter tgtItemWriter)
             throws ObjectStoreException, InterMineException {
-
-        super.translate(tgtItemWriter);
-
+        
         tgtItemWriter.store(ItemHelper.convert(config.getOrganism()));
-
         tgtItemWriter.store(ItemHelper.convert(config.getEnsemblDataSet()));
+        
+        super.translate(tgtItemWriter);
 
         for (Iterator dsIt = config.getDataSrcItemIterator(); dsIt.hasNext(); ) {
 
@@ -140,7 +139,7 @@ public class EnsemblDataTranslator extends DataTranslator
      */
     protected Collection translateItem(Item srcItem)
             throws ObjectStoreException, InterMineException {
-        Collection result = new HashSet();
+        Collection result = new ArrayList();
         srcNs = XmlUtil.getNamespaceFromURI(srcItem.getClassName());
         String srcItemClassName = XmlUtil.getFragmentFromURI(srcItem.getClassName());
 
@@ -149,6 +148,8 @@ public class EnsemblDataTranslator extends DataTranslator
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
+                // store tgtItem first as other objects will point to it
+                result.add(tgtItem);
                 if ("dna".equals(srcItemClassName)) {
 
                     if (config.doStoreDna()) {
@@ -268,8 +269,8 @@ public class EnsemblDataTranslator extends DataTranslator
                     setNameAttribute(srcItem, tgtItem);
                     // display_marker_synonym
                 }
-                if (storeTgtItem) {
-                    result.add(tgtItem);
+                if (!storeTgtItem) {
+                    result.remove(tgtItem);
                 }
             }
         } else if ("marker_synonym".equals(srcItemClassName)) {
