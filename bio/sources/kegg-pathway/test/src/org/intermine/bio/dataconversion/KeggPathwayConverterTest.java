@@ -10,7 +10,19 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Vector;
+
 import org.intermine.dataconversion.ItemsTestCase;
+import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.metadata.Model;
 
 public class KeggPathwayConverterTest extends ItemsTestCase
 {
@@ -25,6 +37,52 @@ public class KeggPathwayConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        //TODO write a test case
+        File resources = new File ("test/resources");
+        Collection<File> allfiles = listFiles(resources, null, true);
+        
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        KeggPathwayConvertor converter = new KeggPathwayConvertor(itemWriter,
+                                                        Model.getInstanceByName("genomic"));
+        converter.setSrcDataDir("resouces/");
+
+        for (File file: allfiles) {
+            if(file.getPath().matches(".*\\.svn.*") || file.getName().matches(".*\\.svn.*")) {
+                continue;
+            }
+            if(file.isDirectory()) {
+                continue;
+            }
+            
+            Reader reader = new FileReader(file);
+            converter.setCurrentFile(file);
+            converter.process(reader);
+        }
+        
+        converter.close();
+
+        // uncomment to write out a new target items file
+//        writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
+            
+        assertEquals(readItemSet("kegg-tgt-items.xml"), itemWriter.getItems());
+    }
+    
+    public static Collection<File> listFiles(File directory, FilenameFilter filter, boolean recurse) {
+        Vector<File> files = new Vector<File>();
+        File[] entries = directory.listFiles();
+        for (File entry : entries) {
+            // If there is no filter or the filter accepts the
+            // file / directory, add it to the list
+            if (filter == null || filter.accept(directory, entry.getName())) {
+                files.add(entry);
+            }
+
+            // If the file is a directory and the recurse flag
+            // is set, recurse into the directory
+            if (recurse && entry.isDirectory()) {
+                files.addAll(listFiles(entry, filter, recurse));
+            }
+        }
+        // Return collection of files
+        return files;
     }
 }
