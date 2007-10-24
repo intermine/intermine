@@ -225,26 +225,29 @@
       
       <%-- graphs --%>
       <c:forEach items="${graphDisplayerArray}" var="htmlContent">
+      <div class="body">
 		<im:heading id="widget${widgetCount}">    
-			<a href="javascript:toggleHidden('widget${widgetCount}');">${widgetCount}</a>
+			<a href="javascript:toggleHidden('widget${widgetCount}');">${htmlContent[1]}</a>
 		</im:heading>
         <div class="widget" id="widget${widgetCount}">
           <c:out value="${htmlContent[0]}" escapeXml="false"/>
-          <p><c:out value="${htmlContent[1]}" escapeXml="false"/></p>
+          <p><c:out value="${htmlContent[2]}" escapeXml="false"/></p>
         </div>      
         <c:set var="widgetCount" value="${widgetCount+1}" />
+         </div>
       </c:forEach>
 
 	<%-- tables --%>
       <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
+      	<div class="body">
 			<im:heading id="widget${widgetCount}"> 
       			<a href="javascript:toggleHidden('widget${widgetCount}');"><c:out value="${bagTableDisplayerResults.title}"/></a>
     		</im:heading>
-    	  <div id="widget${widgetCount}">
+    	  <div id="widget${widgetCount}" class="tog">
           <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
           <c:choose>
             <c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
-                <div class="widget_slide" align="center">
+                <div class="widget_slide">
                 <table class="results" cellspacing="0">
                   <tr>
                     <c:forEach var="column" items="${bagTableDisplayerResults.columns}" varStatus="status">
@@ -293,23 +296,26 @@
           </c:choose>
         </div>
         <c:set var="widgetCount" value="${widgetCount+1}" />
+        </div>
       </c:forEach>
 
     
 	 <%-- enrichment --%>
 	<c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
+	<div class="body">
 		<im:heading id="widget${widgetCount}"> 
 			<a href="javascript:toggleHidden('widget${widgetCount}');"><c:out value="${enrichmentWidgetResults.title}"/></a>
 		</im:heading>
-		<div id="widget${widgetCount}">
+		<div id="widget${widgetCount}" class="tog">
 			<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&externalLink=${enrichmentWidgetResults.externalLink}&append=${enrichmentWidgetResults.append}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
 		</div>
 	 	<c:set var="widgetCount" value="${widgetCount+1}" />
+	 	 </div>
 	</c:forEach>
 	</div>
 </c:if>
 
-<!-- /widget table -->
+<!-- /widgets -->
 
 
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
@@ -328,12 +334,14 @@
   <br/>
   <%-- Each aspect --%>
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
+  <div class="body">
     <tiles:insert name="objectDetailsAspect.tile">
       <tiles:put name="placement" value="aspect:${aspect}"/>
       <tiles:put name="trail" value="|bag.${bag.name}"/>
       <tiles:put name="interMineIdBag" beanName="bag"/>
       <tiles:put name="index" value="${status.index}" />
     </tiles:insert>
+    </div>
   </c:forEach>
 </div>
 

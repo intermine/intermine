@@ -176,6 +176,12 @@ div#quicksearch {
 	padding:0px; margin:0 0 5px 0; padding-left:15px;height:3em;
 	color:#CCC;	font-size: 12px;}
 
+/* used on the details page to indent widgets and templates */
+.tog {
+ 	display:block;margin-left:20px;
+ }
+
+
 /* =SPAN 
 -------------------------*/
 #logo {

@@ -32,7 +32,7 @@
 
     </im:heading>
 	<div class="body">
-    <div id="template${index}" style="display:block;margin-left:20px;">
+    <div id="template${index}" class="tog">
     
     
       <c:if test="${!empty displayObject}">
