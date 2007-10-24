@@ -158,7 +158,7 @@ public class BagDetailsController extends TilesAction
                                   = dataSetLdr.getDataSets().keySet().iterator(); it.hasNext();) {
                             String key = (String) it.next();            
                             GraphDataSet graphDataSet 
-                            = (GraphDataSet) dataSetLdr.getDataSets().get(key);
+                                                = (GraphDataSet) dataSetLdr.getDataSets().get(key);
                             /* stacked bar chart */
                             if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
                                 setStackedBarGraph(session, graphDisplayer, graphDataSet, 

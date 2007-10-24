@@ -192,12 +192,13 @@
 <br/>
 
 <!-- widget table -->
-<table border=0 cellpadding="0" cellspacing="10">
 
-  <c:if test="${(!empty graphDisplayerArray) || (! empty tableDisplayerArray)}">
-    <c:set var="widgetCount" value="0" />
+  <c:if test="${(!empty graphDisplayerArray) || (! empty tableDisplayerArray) 
+											 || (!empty enrichmentWidgetDisplayerArray)}">
     <div class="heading">
-      <a id="widgets">Widgets - displaying properties of '${bag.name}'</a>
+      <a id="widgets">Widgets - displaying properties of '${bag.name}'</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
+      <c:set var="widgetTotal" value="10"/>
+      (<a href="javascript:toggleAll(${widgetTotal}, 'widget', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, 'widget', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
     </div>
     <div class="body">
       <fmt:message key="bagDetails.widgetHelp">
@@ -219,47 +220,31 @@
            </c:when>
          </c:choose>
       </fmt:message>
+      
+      <c:set var="widgetCount" value="0"/>
+      
+      <%-- graphs --%>
       <c:forEach items="${graphDisplayerArray}" var="htmlContent">
-        <c:choose>
-          <c:when test="${widgetCount % 2 == 0}">
-            <tr valign="top"><td>
-          </c:when>
-          <c:otherwise>
-            <td>
-          </c:otherwise>
-        </c:choose>
-        <div class="widget">
+		<im:heading id="widget${widgetCount}">    
+			<a href="javascript:toggleHidden('widget${widgetCount}');">${widgetCount}</a>
+		</im:heading>
+        <div class="widget" id="widget${widgetCount}">
           <c:out value="${htmlContent[0]}" escapeXml="false"/>
           <p><c:out value="${htmlContent[1]}" escapeXml="false"/></p>
-        </div>
-        <c:choose>
-          <c:when test="${widgetCount % 2 == 0}">
-        </td>
-        </c:when>
-        <c:otherwise>
-        </td></tr>
-        </c:otherwise>
-        </c:choose>
+        </div>      
         <c:set var="widgetCount" value="${widgetCount+1}" />
       </c:forEach>
 
+	<%-- tables --%>
       <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
-
-        <c:choose>
-          <c:when test="${widgetCount % 2 == 0}">
-            <tr valign="top"><td>
-          </c:when>
-          <c:otherwise>
-            <td>
-          </c:otherwise>
-        </c:choose>
-
-        <div class="widget">
+			<im:heading id="widget${widgetCount}"> 
+      			<a href="javascript:toggleHidden('widget${widgetCount}');"><c:out value="${bagTableDisplayerResults.title}"/></a>
+    		</im:heading>
+    	  <div id="widget${widgetCount}">
           <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
           <c:choose>
             <c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
-             
-              <div class="widget_slide" align="center">
+                <div class="widget_slide" align="center">
                 <table class="results" cellspacing="0">
                   <tr>
                     <c:forEach var="column" items="${bagTableDisplayerResults.columns}" varStatus="status">
@@ -307,53 +292,30 @@
             <c:otherwise><i>No results for ${bagTableDisplayerResults.title}</i></c:otherwise>
           </c:choose>
         </div>
-        <c:choose>
-          <c:when test="${widgetCount % 2 == 0}">
-        </td>
-        </c:when>
-        <c:otherwise>
-        </td></tr>
-        </c:otherwise>
-        </c:choose>
         <c:set var="widgetCount" value="${widgetCount+1}" />
-
       </c:forEach>
 
-    </div>
-  </c:if>
-
-      <c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
-
-        <c:choose>
-          <c:when test="${widgetCount % 2 == 0}">
-            <tr valign="top"><td>
-          </c:when>
-          <c:otherwise>
-            <td>
-          </c:otherwise>
-        </c:choose>
-
-    <%-- go stats --%>
- 	<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&externalLink=${enrichmentWidgetResults.externalLink}&append=${enrichmentWidgetResults.append}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
- 	 	
- 	    <c:choose>
-          <c:when test="${widgetCount % 2 == 0}">
-        </td>
-        </c:when>
-        <c:otherwise>
-        </td></tr>
-        </c:otherwise>
-        </c:choose>
-        <c:set var="widgetCount" value="${widgetCount+1}" />
- 	 	
+    
+	 <%-- enrichment --%>
+	<c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
+		<im:heading id="widget${widgetCount}"> 
+			<a href="javascript:toggleHidden('widget${widgetCount}');"><c:out value="${enrichmentWidgetResults.title}"/></a>
+		</im:heading>
+		<div id="widget${widgetCount}">
+			<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&externalLink=${enrichmentWidgetResults.externalLink}&append=${enrichmentWidgetResults.append}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
+		</div>
+	 	<c:set var="widgetCount" value="${widgetCount+1}" />
 	</c:forEach>
-</table>
+	</div>
+</c:if>
+
 <!-- /widget table -->
+
 
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
    <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;"> 
-  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all <img src="images/disclosed.gif"></a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all <img src="images/undisclosed.gif"></a>)</span></div>
+  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span></div>
 </div>
 
 <div class="body">
