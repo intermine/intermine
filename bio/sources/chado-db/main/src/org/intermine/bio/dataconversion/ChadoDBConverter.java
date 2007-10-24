@@ -11,7 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,8 +84,6 @@ public class ChadoDBConverter extends BioDBConverter
     private Model model = Model.getInstanceByName("genomic");
     private MultiKeyMap config = null;
 
-    private static final String CONFIG_FILE_NAME = "chado-db.config";
-
     private static final List<Item> EMPTY_ITEM_LIST = Collections.emptyList();
 
     /**
@@ -136,12 +133,6 @@ public class ChadoDBConverter extends BioDBConverter
      */
     public ChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
-//        Properties props = new Properties();
-//        try {
-//            props.load(getClass().getClassLoader().getResourceAsStream(CONFIG_FILE_NAME));
-//        } catch (IOException e) {
-//            throw new RuntimeException("Problem loading properties '" + CONFIG_FILE_NAME + "'", e);
-//        }
     }
 
     @SuppressWarnings("unchecked")
