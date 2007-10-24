@@ -9,6 +9,19 @@
     <webMaster>info@flymine.org</webMaster>
 
     <!-- Add new news at the top here -->
+
+    <item>
+      <title>FlyMine workshop</title>
+      <link>http://www.flymine.org/</link>
+      <description> 
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine &lt;/a&gt; is running a joint workshop with FlyBase in Cambridge (free of charge). For more information and to sign up see 
+        &lt;a href="http://www.biomed.cam.ac.uk/gradschool/current/courses/flymine.html"&gt;here&lt;/a&gt;
+      </description>
+      <pubDate>Wed, 7th Nov 2007</pubDate>
+    </item>
+
+
     <item>
       <title>FlyMine 8.2 Released</title>
       <link>http://www.flymine.org/</link>
