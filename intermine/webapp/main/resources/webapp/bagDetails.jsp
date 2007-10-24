@@ -337,4 +337,11 @@
   </c:forEach>
 </div>
 
+<script type="text/javascript">
+  <!--//<![CDATA[
+	toggleAll(${widgetCount}, 'widget', 'collapse', null);
+	toggleAll(${aspectCount}, 'template', 'collapse', null);
+      //]]>-->
+</script>
+
 <!-- /bagDetails.jsp -->
