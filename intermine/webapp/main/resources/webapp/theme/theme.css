@@ -109,6 +109,7 @@ div.filterBar {
     text-align: center;
     width: 450px;
     background-color: #D4D4D4;
+    display:block;margin-left:20px;
 }
 
 #bagDescriptionDiv{
