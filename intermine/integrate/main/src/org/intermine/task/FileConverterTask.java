@@ -110,7 +110,20 @@ public class FileConverterTask extends ConverterTask
                 File f = new File(ds.getBasedir(), files[i]);
                 System.err .println("Processing file: " + f.getPath());
                 converter.setCurrentFile(f);
-                converter.process(new BufferedReader(new FileReader(f)));
+                FileReader fr = null;
+                BufferedReader br = null;
+                try {
+                    fr = new FileReader(f);
+                    br = new BufferedReader(fr);
+                    converter.process(br);
+                } finally {
+                    if (br != null) {
+                        br.close();
+                    }
+                    if (fr != null) {
+                        fr.close();
+                    }
+                }
             }
             converter.close();
         } catch (Exception e) {
