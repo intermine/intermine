@@ -63,7 +63,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         assertEquals(readItemSet("ChadoDBConverterTest.xml"), itemWriter.getItems());
     }
 
-    private class TestChadoDBConverter extends ChadoDBConverter
+    private class TestChadoDBConverter extends FlyBaseChadoDBConverter
     {
         @Override
         protected int getChadoOrganismId(@SuppressWarnings("unused") Connection connection) {

@@ -89,14 +89,21 @@ public class ChadoDBConverter extends BioDBConverter
 
     private static final List<Item> EMPTY_ITEM_LIST = Collections.emptyList();
 
-    private static class ConfigAction
+    /**
+     * A class that represents an action while processing synonyms, dbxrefs, etc.
+     * @author Kim Rutherford
+     */
+    protected static class ConfigAction
     {
         protected ConfigAction() {
             // empty
         }
     }
 
-    private static class SetAttributeConfigAction extends ConfigAction
+    /**
+     * An action that sets an attribute in a new Item.
+     */
+    protected static class SetAttributeConfigAction extends ConfigAction
     {
         String attributeName = null;
         SetAttributeConfigAction(String attributeName) {
@@ -114,9 +121,12 @@ public class ChadoDBConverter extends BioDBConverter
         // do nothing for this data
     }
 
-    private static final ConfigAction CREATE_SYNONYM_ACTION = new CreateSynonymAction();
+    /**
+     * An action that make a synonym.
+     */
+    protected static final ConfigAction CREATE_SYNONYM_ACTION = new CreateSynonymAction();
 
-    private static final ConfigAction DO_NOTHING_ACTION = new DoNothingAction();
+    protected static final ConfigAction DO_NOTHING_ACTION = new DoNothingAction();
 
     /**
      * Create a new ChadoDBConverter object.
@@ -135,95 +145,11 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     @SuppressWarnings("unchecked")
-    private Map<MultiKey, List<ConfigAction>> getConfig() {
-       if (config == null) {
-           config = new MultiKeyMap();
-           if (getTaxonId() == 7227 || getTaxonId() == 7237) {
-
-               config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("name"),
-                                        CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.FALSE),
-                          Arrays.asList(CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("symbol"),
-                                        CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
-                          Arrays.asList(CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("identifier"),
-                                        CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.FALSE),
-                          Arrays.asList(CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("dbxref", "Gene", "FlyBase", null),
-                          Arrays.asList(CREATE_SYNONYM_ACTION));
-
-               config.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("name"),
-                                        CREATE_SYNONYM_ACTION));
-
-               config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("identifier"),
-                                        new SetAttributeConfigAction("symbol"),
-                                        CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
-                          Arrays.asList(CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", null),
-                          Arrays.asList(CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("dbxref", "MRNA", "FlyBase", null),
-                          Arrays.asList(CREATE_SYNONYM_ACTION));
-
-               config.put(new MultiKey("feature", "Exon", "FlyBase", "name"),
-                          Arrays.asList(new SetAttributeConfigAction("symbol"),
-                                        CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("feature", "Chromosome", "FlyBase", "name"),
-                          Arrays.asList(DO_NOTHING_ACTION));
-
-               config.put(new MultiKey("feature", "ChromosomeBand", "FlyBase", "name"),
-                          Arrays.asList(DO_NOTHING_ACTION));
-
-               config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
-                                       "name"),
-               Arrays.asList(new SetAttributeConfigAction("symbol"),
-                             new SetAttributeConfigAction("identifier"),
-                             CREATE_SYNONYM_ACTION));
-               config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
-                                       "uniquename"),
-               Arrays.asList(new SetAttributeConfigAction("organismDbId")));
-
-               config.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
-                          Arrays.asList(new SetAttributeConfigAction("organismDbId")));
-               config.put(new MultiKey("feature", "Gene", "FlyBase", "name"),
-                          Arrays.asList(DO_NOTHING_ACTION));
-
-               config.put(new MultiKey("feature", "ChromosomalDeletion", "FlyBase", "name"),
-                          Arrays.asList(new SetAttributeConfigAction("symbol"),
-                                        CREATE_SYNONYM_ACTION));
-
-               config.put(new MultiKey("feature", "MRNA", "FlyBase", "uniquename"),
-                          Arrays.asList(new SetAttributeConfigAction("organismDbId")));
-
-               if (getTaxonId() == 7227) {
-                   config.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
-                              Arrays.asList(new SetAttributeConfigAction("identifier"),
-                                            new SetAttributeConfigAction("symbol"),
-                                            CREATE_SYNONYM_ACTION));
-                   config.put(new MultiKey("feature", "Translation", "FlyBase", "uniquename"),
-                              Arrays.asList(new SetAttributeConfigAction("organismDbId")));
-               } else {
-                   config.put(new MultiKey("feature", "Translation", "FlyBase", "uniquename"),
-                              Arrays.asList(new SetAttributeConfigAction("organismDbId")));
-                   config.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
-                              Arrays.asList(new SetAttributeConfigAction("symbol"),
-                                            CREATE_SYNONYM_ACTION));
-                   config.put(new MultiKey("dbxref", "Translation", "GB_protein", null),
-                              Arrays.asList(new SetAttributeConfigAction("identifier"),
-                                            CREATE_SYNONYM_ACTION));
-               }
-           }
-       }
-
-       return config;
+    protected Map<MultiKey, List<ConfigAction>> getConfig() {
+        if (config == null) {
+            config = new MultiKeyMap();
+        }
+        return config;
     }
 
     /**
@@ -254,7 +180,7 @@ public class ChadoDBConverter extends BioDBConverter
      * Get the taxonId to use when creating the Organism Item for the
      * @return the taxon id
      */
-    public int getTaxonId() {
+    public int getTaxonIdInt() {
         return taxonId;
     }
 
@@ -294,7 +220,7 @@ public class ChadoDBConverter extends BioDBConverter
         if (dataSourceName == null) {
             throw new IllegalArgumentException("dataSourceName not set in ChadoDBConverter");
         }
-        if (getTaxonId() == -1) {
+        if (getTaxonIdInt() == -1) {
             throw new IllegalArgumentException("taxonId not set in ChadoDBConverter");
         }
         if (species == null) {
@@ -317,7 +243,7 @@ public class ChadoDBConverter extends BioDBConverter
         throws SQLException, ObjectStoreException {
         Item dataSet = getDataSetItem(dataSetTitle); // Stores DataSet
         Item dataSource = getDataSourceItem(dataSourceName); // Stores DataSource
-        Item organismItem = getOrganismItem(getTaxonId()); // Stores Organism
+        Item organismItem = getOrganismItem(getTaxonIdInt()); // Stores Organism
         ResultSet res = getFeatureResultSet(connection);
         int count = 0;
         while (res.next()) {
@@ -416,57 +342,7 @@ public class ChadoDBConverter extends BioDBConverter
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
                                String name, String uniqueName,
                                int seqlen) {
-        String realInterMineType = interMineType;
-
-        // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
-        if (uniqueName.startsWith("FBal")) {
-            return null;
-        }
-
-        // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
-        if (getTaxonId() == 7227 || getTaxonId() == 7237) {
-            if (chadoFeatureType.equals("chromosome")
-                && !uniqueName.equals("dmel_mitochondrion_genome")) {
-                // ignore Chromosomes from flybase - features are located on ChromosomeArms except
-                // for mitochondrial features
-                return null;
-            } else {
-                if (chadoFeatureType.equals("chromosome_arm")) {
-                    if (uniqueName.equals("dmel_mitochondrion_genome")) {
-                        // ignore - all features are on the Chromosome object with uniqueName
-                        // "dmel_mitochondrion_genome"
-                        return null;
-                    } else {
-                        realInterMineType = "Chromosome";
-                    }
-                }
-            }
-            if (chadoFeatureType.equals("chromosome_structure_variation")) {
-                if (uniqueName.startsWith("FBab")) {
-                    realInterMineType = "ChromosomalDeletion";
-                } else {
-                    return null;
-                }
-            }
-            if (chadoFeatureType.equals("protein")) {
-                if (uniqueName.startsWith("FBpp")) {
-                    realInterMineType = "Translation";
-                } else {
-                    return null;
-                }
-            }
-            if (chadoFeatureType.equals("transposable_element_insertion_site")
-                && name == null && !uniqueName.startsWith("FBti")) {
-                // ignore this feature as it doesn't have an FBti identifier and there will be
-                // another feature for the same transposable_element_insertion_site that does have
-                // the FBti identifier
-                return null;
-            }
-        }
-
-        Item feature = createItem(realInterMineType);
-
-        return feature;
+        return createItem(interMineType);
     }
 
     /**
@@ -506,7 +382,7 @@ public class ChadoDBConverter extends BioDBConverter
                 if (features.containsKey(featureId)) {
                     FeatureData featureData = features.get(featureId);
                     makeLocation(srcFeatureData.itemIdentifier, featureData.itemIdentifier,
-                                 start, end, strand, getTaxonId(), dataSet); // Stores Location
+                                 start, end, strand, getTaxonIdInt(), dataSet); // Stores Location
                     count++;
                 } else {
                     if (featureWarnings <= 20) {
