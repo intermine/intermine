@@ -198,30 +198,17 @@
 
   <c:if test="${widgetTotal > 0}">
     <div class="heading">
-      <a id="widgets">Widgets - displaying properties of '${bag.name}'</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
+      <a id="widgets">Widgets displaying properties of '${bag.name}'</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
 		(<a href="javascript:toggleAll(${widgetTotal}, 'widget', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, 'widget', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
     </div>
     <div class="body">
-      <fmt:message key="bagDetails.widgetHelp">
-         <c:choose>
-           <c:when test="${(!empty graphDisplayerArray) && (! empty tableDisplayerArray)}">
-              <fmt:param>
-                <fmt:message key="bagDetails.widgetHelpBoth"/>
-              </fmt:param>
-           </c:when>
-           <c:when test="${(!empty graphDisplayerArray) && (empty tableDisplayerArray)}">
-              <fmt:param>
-                <fmt:message key="bagDetails.widgetHelpGraph"/>
-              </fmt:param>
-           </c:when>
-           <c:when test="${(empty graphDisplayerArray) && (! empty tableDisplayerArray)}">
-              <fmt:param>
-                <fmt:message key="bagDetails.widgetHelpTable"/>
-              </fmt:param>
-           </c:when>
-         </c:choose>
+  
+      <fmt:message key="bagDetails.widgetsHelp">
+      	<fmt:param>
+            	<img src="images/undisclosed.gif"/> / <img src="images/disclosed.gif"/>  
+      	</fmt:param>
       </fmt:message>
-      
+    
       <c:set var="widgetCount" value="0"/>
       
       <%-- graphs --%>
@@ -229,8 +216,16 @@
       <div class="body">
 		<im:heading id="widget${widgetCount}">    
 			<a href="javascript:toggleHidden('widget${widgetCount}');">${htmlContent[1]}</a>
-		</im:heading>
-        <div class="tog" id="widget${widgetCount}">
+		</im:heading><div class="tog" id="widget${widgetCount}">
+		  
+		  <br/>		
+		<fmt:message key="bagDetails.widgetHelp">
+      	<fmt:param>
+            	<fmt:message key="bagDetails.widgetHelpGraph"/>
+      	</fmt:param>
+      </fmt:message>
+        <br/><br/>	
+	
         <div class="widget">
           <c:out value="${htmlContent[0]}" escapeXml="false"/>
           <p><c:out value="${htmlContent[2]}" escapeXml="false"/></p>
@@ -246,7 +241,16 @@
 			<im:heading id="widget${widgetCount}"> 
       			<a href="javascript:toggleHidden('widget${widgetCount}');"><c:out value="${bagTableDisplayerResults.title}"/></a>
     		</im:heading>
-    	  <div id="widget${widgetCount}" class="tog">
+    		<div id="widget${widgetCount}" class="tog">
+    		
+    		<br/>
+    	<fmt:message key="bagDetails.widgetHelp">
+      	<fmt:param>
+            	<fmt:message key="bagDetails.widgetHelpTable"/>
+      	</fmt:param>
+      </fmt:message>
+    		<br/><br/>
+    	  
           <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
           <c:choose>
             <c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
@@ -310,6 +314,16 @@
 			<a href="javascript:toggleHidden('widget${widgetCount}');"><c:out value="${enrichmentWidgetResults.title}"/></a>
 		</im:heading>
 		<div id="widget${widgetCount}" class="tog">
+	 
+	 <br/>
+	 <fmt:message key="bagDetails.widgetHelp">
+      	<fmt:param>
+            	<fmt:message key="bagDetails.widgetHelpTable"/>
+      	</fmt:param>
+      </fmt:message> 
+      <br/><br/>
+      
+		
 			<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&externalLink=${enrichmentWidgetResults.externalLink}&append=${enrichmentWidgetResults.append}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
 		</div>
 	 	<c:set var="widgetCount" value="${widgetCount+1}" />
