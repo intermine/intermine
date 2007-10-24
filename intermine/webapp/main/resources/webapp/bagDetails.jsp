@@ -192,13 +192,13 @@
 <br/>
 
 <!-- widget table -->
+<c:set var="widgetTotal" value="10"/>
 
   <c:if test="${(!empty graphDisplayerArray) || (! empty tableDisplayerArray) 
 											 || (!empty enrichmentWidgetDisplayerArray)}">
     <div class="heading">
       <a id="widgets">Widgets - displaying properties of '${bag.name}'</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
-      <c:set var="widgetTotal" value="10"/>
-      (<a href="javascript:toggleAll(${widgetTotal}, 'widget', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, 'widget', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
+		(<a href="javascript:toggleAll(${widgetTotal}, 'widget', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, 'widget', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
     </div>
     <div class="body">
       <fmt:message key="bagDetails.widgetHelp">
@@ -229,9 +229,11 @@
 		<im:heading id="widget${widgetCount}">    
 			<a href="javascript:toggleHidden('widget${widgetCount}');">${htmlContent[1]}</a>
 		</im:heading>
-        <div class="widget" id="widget${widgetCount}">
+        <div class="tog" id="widget${widgetCount}">
+        <div class="widget">
           <c:out value="${htmlContent[0]}" escapeXml="false"/>
           <p><c:out value="${htmlContent[2]}" escapeXml="false"/></p>
+        </div>
         </div>      
         <c:set var="widgetCount" value="${widgetCount+1}" />
          </div>
