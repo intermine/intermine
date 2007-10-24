@@ -138,7 +138,7 @@ public class ChadoDBConverter extends BioDBConverter
     private Map<MultiKey, List<ConfigAction>> getConfig() {
        if (config == null) {
            config = new MultiKeyMap();
-           if (taxonId == 7227 || taxonId == 7237) {
+           if (getTaxonId() == 7227 || getTaxonId() == 7237) {
 
                config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
                           Arrays.asList(new SetAttributeConfigAction("name"),
@@ -183,16 +183,18 @@ public class ChadoDBConverter extends BioDBConverter
                           Arrays.asList(DO_NOTHING_ACTION));
 
                config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
-               "name"),
+                                       "name"),
                Arrays.asList(new SetAttributeConfigAction("symbol"),
                              new SetAttributeConfigAction("identifier"),
                              CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
-               "uniquename"),
+                                       "uniquename"),
                Arrays.asList(new SetAttributeConfigAction("organismDbId")));
 
                config.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
                           Arrays.asList(new SetAttributeConfigAction("organismDbId")));
+               config.put(new MultiKey("feature", "Gene", "FlyBase", "name"),
+                          Arrays.asList(DO_NOTHING_ACTION));
 
                config.put(new MultiKey("feature", "ChromosomalDeletion", "FlyBase", "name"),
                           Arrays.asList(new SetAttributeConfigAction("symbol"),
@@ -201,7 +203,7 @@ public class ChadoDBConverter extends BioDBConverter
                config.put(new MultiKey("feature", "MRNA", "FlyBase", "uniquename"),
                           Arrays.asList(new SetAttributeConfigAction("organismDbId")));
 
-               if (taxonId == 7227) {
+               if (getTaxonId() == 7227) {
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
                               Arrays.asList(new SetAttributeConfigAction("identifier"),
                                             new SetAttributeConfigAction("symbol"),
@@ -241,11 +243,19 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Set the taxonId to use when creating the Organism Item for the
+     * Set the taxonId to use when creating the Organism Item for the new features.
      * @param taxonId the taxon id
      */
     public void setTaxonId(String taxonId) {
         this.taxonId = Integer.valueOf(taxonId).intValue();
+    }
+
+    /**
+     * Get the taxonId to use when creating the Organism Item for the
+     * @return the taxon id
+     */
+    public int getTaxonId() {
+        return taxonId;
     }
 
     /**
@@ -284,7 +294,7 @@ public class ChadoDBConverter extends BioDBConverter
         if (dataSourceName == null) {
             throw new IllegalArgumentException("dataSourceName not set in ChadoDBConverter");
         }
-        if (taxonId == -1) {
+        if (getTaxonId() == -1) {
             throw new IllegalArgumentException("taxonId not set in ChadoDBConverter");
         }
         if (species == null) {
@@ -307,7 +317,7 @@ public class ChadoDBConverter extends BioDBConverter
         throws SQLException, ObjectStoreException {
         Item dataSet = getDataSetItem(dataSetTitle); // Stores DataSet
         Item dataSource = getDataSourceItem(dataSourceName); // Stores DataSource
-        Item organismItem = getOrganismItem(taxonId); // Stores Organism
+        Item organismItem = getOrganismItem(getTaxonId()); // Stores Organism
         ResultSet res = getFeatureResultSet(connection);
         int count = 0;
         while (res.next()) {
@@ -414,7 +424,7 @@ public class ChadoDBConverter extends BioDBConverter
         }
 
         // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
-        if (taxonId == 7227 || taxonId == 7237) {
+        if (getTaxonId() == 7227 || getTaxonId() == 7237) {
             if (chadoFeatureType.equals("chromosome")
                 && !uniqueName.equals("dmel_mitochondrion_genome")) {
                 // ignore Chromosomes from flybase - features are located on ChromosomeArms except
@@ -496,7 +506,7 @@ public class ChadoDBConverter extends BioDBConverter
                 if (features.containsKey(featureId)) {
                     FeatureData featureData = features.get(featureId);
                     makeLocation(srcFeatureData.itemIdentifier, featureData.itemIdentifier,
-                                 start, end, strand, taxonId, dataSet); // Stores Location
+                                 start, end, strand, getTaxonId(), dataSet); // Stores Location
                     count++;
                 } else {
                     if (featureWarnings <= 20) {
