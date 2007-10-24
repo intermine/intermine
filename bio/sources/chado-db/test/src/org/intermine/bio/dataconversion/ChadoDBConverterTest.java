@@ -45,7 +45,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         ChadoDBConverter converter =
             new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         converter.setDataSetTitle("test title");
-        converter.setDataSourceName("test name");
+        converter.setDataSourceName("FlyBase");
         converter.setGenus("Drosophila");
         converter.setSpecies("melanogaster");
         converter.setTaxonId("7227");
