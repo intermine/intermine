@@ -90,7 +90,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                           Arrays.asList(CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("relationship", "Translation", "producedby", "MRNA"),
-                          Arrays.asList(new SetFieldConfigAction("wombat")));
+                          Arrays.asList(new SetFieldConfigAction("MRNA")));
 
                // featureprop configuration example: for features of class "Gene", if the type name
                // of the prop is "cyto_range", set the "cytoLocation" attribute of the

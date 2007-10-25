@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,10 +81,12 @@ public class ChadoDBConverter extends BioDBConverter
         + "'five_prime_untranslated_region', "
         + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', 'transcript', "
         + sequenceFeatureTypesString;
-    private String relationshipTypesString = "'partof', 'part_of'";
+
     private int chadoOrganismId;
     private Model model = Model.getInstanceByName("genomic");
     private MultiKeyMap config = null;
+
+    private static final List<String> PARTOF_RELATIONS = Arrays.asList("partof", "part_of");
 
     private static final List<Item> EMPTY_ITEM_LIST = Collections.emptyList();
 
@@ -103,9 +106,12 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected static class SetFieldConfigAction extends ConfigAction
     {
-        String fieldName = null;
-        SetFieldConfigAction(String attributeName) {
-            this.fieldName = attributeName;
+        private String fieldName;
+        SetFieldConfigAction() {
+            fieldName = null;
+        }
+        SetFieldConfigAction(String fieldName) {
+            this.fieldName = fieldName;
         }
     }
 
@@ -548,7 +554,16 @@ public class ChadoDBConverter extends BioDBConverter
                         throw new RuntimeException("no actions found for " + key);
                     }
                 } else {
-                    fds = getReferenceForRelationship(objectClass, cd);
+                    if (PARTOF_RELATIONS.contains(relationType)) {
+                        // special case for part_of relations - try to find a reference or
+                        // collection that has a name that looks right for these objects (of class
+                        // objectClass).  eg.  If the subject is a Transcript and the objectClass
+                        // is Exon then find collections called "exons", "geneParts" (GenePart is
+                        // a superclass of Exon)
+                        fds = getReferenceForRelationship(objectClass, cd);
+                    } else {
+                        continue;
+                    }
                 }
 
                 if (fds.size() == 0) {
