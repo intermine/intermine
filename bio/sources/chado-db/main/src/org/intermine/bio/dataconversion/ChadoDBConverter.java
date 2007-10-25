@@ -18,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.ClassDescriptor;
@@ -399,7 +400,10 @@ public class ChadoDBConverter extends BioDBConverter
         throws SQLException, ObjectStoreException {
         ResultSet res = getFeatureRelationshipResultSet(connection);
         Integer lastSubjectId = null;
-        Map<String, List<String>> collectionData = new HashMap<String, List<String>>();
+
+        // Map from relation type to Map from object type to FeatureData
+        Map<String, Map<String, List<FeatureData>>> relTypeMap =
+            new HashMap<String, Map<String, List<FeatureData>>>();
         int featureWarnings = 0;
         int count = 0;
         int collectionTotal = 0;
@@ -407,23 +411,34 @@ public class ChadoDBConverter extends BioDBConverter
             Integer featRelationshipId = new Integer(res.getInt("feature_relationship_id"));
             Integer subjectId = new Integer(res.getInt("subject_id"));
             Integer objectId = new Integer(res.getInt("object_id"));
+            String relationTypeName = res.getString("type_name");
 
             if (lastSubjectId != null && subjectId != lastSubjectId) {
-                processCollectionData(lastSubjectId, collectionData); // Stores stuff
-                collectionTotal += collectionData.size();
-                collectionData = new HashMap<String, List<String>>();
+                processCollectionData(lastSubjectId, relTypeMap); // Stores stuff
+                collectionTotal += relTypeMap.size();
+                relTypeMap = new HashMap<String, Map<String, List<FeatureData>>>();
             }
             if (features.containsKey(subjectId)) {
                 if (features.containsKey(objectId)) {
-                    FeatureData objectData = features.get(objectId);
-                    List<String> currentList;
-                    if (collectionData.containsKey(objectData.interMineType)) {
-                        currentList = collectionData.get(objectData.interMineType);
+                    FeatureData objectFeatureData = features.get(objectId);
+                    Map<String, List<FeatureData>> objectClassFeatureDataMap;
+                    if (relTypeMap.containsKey(relationTypeName)) {
+                        objectClassFeatureDataMap = relTypeMap.get(relationTypeName);
                     } else {
-                        currentList = new ArrayList<String>();
-                        collectionData.put(objectData.interMineType, currentList);
+                        objectClassFeatureDataMap = new HashMap<String, List<FeatureData>>();
+                        relTypeMap.put(relationTypeName, objectClassFeatureDataMap);
                     }
-                    currentList.add(objectData.itemIdentifier);
+
+                    List<FeatureData> featureDataList;
+                    if (objectClassFeatureDataMap.containsKey(objectFeatureData.interMineType)) {
+                        featureDataList =
+                            objectClassFeatureDataMap.get(objectFeatureData.interMineType);
+                    } else {
+                        featureDataList = new ArrayList<FeatureData>();
+                        objectClassFeatureDataMap.put(objectFeatureData.interMineType,
+                                                      featureDataList);
+                    }
+                    featureDataList.add(objectFeatureData);
                 } else {
                     if (featureWarnings <= 20) {
                         if (featureWarnings < 20) {
@@ -451,8 +466,8 @@ public class ChadoDBConverter extends BioDBConverter
             lastSubjectId = subjectId;
         }
         if (lastSubjectId != null) {
-            processCollectionData(lastSubjectId, collectionData); // Stores stuff
-            collectionTotal += collectionData.size();
+            processCollectionData(lastSubjectId, relTypeMap); // Stores stuff
+            collectionTotal += relTypeMap.size();
         }
         LOG.info("processed " + count + " relations");
         LOG.info("total collection elements created: " + collectionTotal);
@@ -463,7 +478,7 @@ public class ChadoDBConverter extends BioDBConverter
      * Create collections and references for the Item given by chadoSubjectId.
      */
     private void processCollectionData(Integer chadoSubjectId,
-                                       Map<String, List<String>> collectionData)
+                                       Map<String, Map<String, List<FeatureData>>> relTypeMap)
         throws ObjectStoreException {
         FeatureData subjectData = features.get(chadoSubjectId);
         if (subjectData == null) {
@@ -471,45 +486,74 @@ public class ChadoDBConverter extends BioDBConverter
                      + "ignoring");
             return;
         }
+
+        // map from collection name to list of item ids
+        Map<String, List<String>> collectionsToStore = new HashMap<String, List<String>>();
+
         String subjectInterMineType = subjectData.interMineType;
         Integer intermineItemId = subjectData.intermineObjectId;
-        for (Map.Entry<String, List<String>> entry: collectionData.entrySet()) {
-            String objectType = entry.getKey();
-            List<String> collectionContents = entry.getValue();
+        for (Map.Entry<String, Map<String, List<FeatureData>>> entry: relTypeMap.entrySet()) {
+            String relationType = entry.getKey();
+            Map<String, List<FeatureData>> objectClassFeatureDataMap = entry.getValue();
 
-            ClassDescriptor cd = model.getClassDescriptorByName(subjectInterMineType);
-            List<FieldDescriptor> fds = getReferenceForRelationship(objectType, cd);
+            Set<Entry<String, List<FeatureData>>> mapEntries = objectClassFeatureDataMap.entrySet();
+            for (Map.Entry<String, List<FeatureData>> featureDataMap: mapEntries) {
+                String objectClass = featureDataMap.getKey();
+                List<FeatureData> featureDataCollection = featureDataMap.getValue();
+                ClassDescriptor cd = model.getClassDescriptorByName(subjectInterMineType);
+                List<FieldDescriptor> fds = null;
 
-            if (fds.size() == 0) {
-                LOG.error("can't find collection for type " + objectType
-                          + " in " + subjectInterMineType + " while processing feature "
-                          + chadoSubjectId);
-                continue;
-            }
+                boolean config = false;
+                if (config) {
 
-            for (FieldDescriptor fd: fds) {
-                if (fd.isReference()) {
-                    if (collectionContents.size() > 1) {
-                        throw new RuntimeException("found more than one object for reference "
-                                                   + fd + " in class "
-                                                   + subjectInterMineType
-                                                   + " current subject identifier: "
-                                                   + subjectData.uniqueName);
+                } else {
+                    fds = getReferenceForRelationship(objectClass, cd);
+                }
+
+                if (fds.size() == 0) {
+                    LOG.error("can't find collection for type " + relationType
+                              + " in " + subjectInterMineType + " while processing feature "
+                              + chadoSubjectId);
+                    continue;
+                }
+
+                for (FieldDescriptor fd: fds) {
+                    if (fd.isReference()) {
+                        if (objectClassFeatureDataMap.size() > 1) {
+                            throw new RuntimeException("found more than one object for reference "
+                                                       + fd + " in class "
+                                                       + subjectInterMineType
+                                                       + " current subject identifier: "
+                                                       + subjectData.uniqueName);
+                        } else {
+                            if (objectClassFeatureDataMap.size() == 1) {
+                                Reference reference = new Reference();
+                                reference.setName(fd.getName());
+                                reference.setRefId(featureDataCollection.get(0).itemIdentifier);
+                                store(reference, intermineItemId); // Stores Reference for Feature
+                            }
+                        }
                     } else {
-                        if (collectionContents.size() == 1) {
-                            Reference reference = new Reference();
-                            reference.setName(fd.getName());
-                            reference.setRefId(collectionContents.get(0));
-                            store(reference, intermineItemId); // Stores Reference for Feature
+                        List<String> itemIds;
+                        if (collectionsToStore.containsKey(fd.getName())) {
+                            itemIds = collectionsToStore.get(fd.getName());
+                        } else {
+                            itemIds = new ArrayList<String>();
+                            collectionsToStore.put(fd.getName(), itemIds);
+                        }
+                        for (FeatureData featureData: featureDataCollection) {
+                            itemIds.add(featureData.itemIdentifier);
                         }
                     }
-                } else {
-                    ReferenceList referenceList = new ReferenceList();
-                    referenceList.setName(fd.getName());
-                    referenceList.setRefIds(collectionContents);
-                    store(referenceList, intermineItemId); // Stores ReferenceList for Feature
                 }
             }
+        }
+
+        for (Map.Entry<String, List<String>> entry: collectionsToStore.entrySet()) {
+            ReferenceList referenceList = new ReferenceList();
+            referenceList.setName(entry.getKey());
+            referenceList.setRefIds(entry.getValue());
+            store(referenceList, intermineItemId); // Stores ReferenceList for Feature
         }
     }
 
