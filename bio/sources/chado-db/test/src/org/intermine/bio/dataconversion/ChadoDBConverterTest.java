@@ -125,13 +125,16 @@ public class ChadoDBConverterTest extends ItemsTestCase
             };
             Object[][] resObjects = new Object[][] {
                 {
-                    1753955 ,    3175411 ,   3117509 , "partof"
+                    500 ,    3175411 ,   3117509 , "partof"
                 },
                 {
-                    1753948 ,    3175412 ,   3175411 , "partof"
+                    501 ,    3175412 ,   3175411 , "partof"
                 },
                 {
-                    1753948 ,    3175413 ,   3175411 , "partof"
+                    502 ,    3175413 ,   3175411 , "partof"
+                },
+                {
+                    503 ,    1000000 ,   3175411 , "producedby"
                 },
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
