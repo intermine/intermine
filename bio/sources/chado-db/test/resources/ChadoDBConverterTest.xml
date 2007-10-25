@@ -28,6 +28,13 @@
       <reference ref_id="9_3"/>
     </collection>
   </item>
+  <item id="8_1" class="http://www.flymine.org/model/genomic#Translation">
+    <attribute name="identifier" value="CG10000-RA_prot"/>
+    <attribute name="organismDbId" value="FBpp10000"/>
+    <attribute name="symbol" value="CG10000-RA_prot"/>
+    <reference name="MRNA" ref_id="5_1"/>
+    <reference name="organism" ref_id="2_1"/>
+  </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="test title"/>
   </item>
@@ -156,12 +163,6 @@
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
-  </item>
-  <item id="8_1" class="http://www.flymine.org/model/genomic#Translation">
-    <attribute name="identifier" value="CG10000-RA_prot"/>
-    <attribute name="organismDbId" value="FBpp10000"/>
-    <attribute name="symbol" value="CG10000-RA_prot"/>
-    <reference name="organism" ref_id="2_1"/>
   </item>
   <item id="4_8" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
