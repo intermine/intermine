@@ -101,11 +101,11 @@ public class ChadoDBConverter extends BioDBConverter
     /**
      * An action that sets an attribute in a new Item.
      */
-    protected static class SetAttributeConfigAction extends ConfigAction
+    protected static class SetFieldConfigAction extends ConfigAction
     {
-        String attributeName = null;
-        SetAttributeConfigAction(String attributeName) {
-            this.attributeName = attributeName;
+        String fieldName = null;
+        SetFieldConfigAction(String attributeName) {
+            this.fieldName = attributeName;
         }
     }
 
@@ -293,10 +293,10 @@ public class ChadoDBConverter extends BioDBConverter
                         }
                     } else {
                         for (ConfigAction action: nameActionList) {
-                            if (action instanceof SetAttributeConfigAction) {
-                                SetAttributeConfigAction attrAction =
-                                    (SetAttributeConfigAction) action;
-                                feature.setAttribute(attrAction.attributeName, name);
+                            if (action instanceof SetFieldConfigAction) {
+                                SetFieldConfigAction attrAction =
+                                    (SetFieldConfigAction) action;
+                                feature.setAttribute(attrAction.fieldName, name);
                             }
                         }
                     }
@@ -306,9 +306,9 @@ public class ChadoDBConverter extends BioDBConverter
                     feature.setAttribute("identifier", uniqueName);
                 } else {
                     for (ConfigAction action: uniqueNameActionList) {
-                        if (action instanceof SetAttributeConfigAction) {
-                            SetAttributeConfigAction attrAction = (SetAttributeConfigAction) action;
-                            feature.setAttribute(attrAction.attributeName, uniqueName);
+                        if (action instanceof SetFieldConfigAction) {
+                            SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
+                            feature.setAttribute(attrAction.fieldName, uniqueName);
                         }
                     }
                 }
@@ -517,9 +517,36 @@ public class ChadoDBConverter extends BioDBConverter
                 ClassDescriptor cd = model.getClassDescriptorByName(subjectInterMineType);
                 List<FieldDescriptor> fds = null;
 
-                boolean config = false;
-                if (config) {
+                FeatureData subjectFeatureData = features.get(chadoSubjectId);
+                // key example: ("relationship", "Translation", "producedby", "MRNA")
+                MultiKey key = new MultiKey("relationship", subjectFeatureData.interMineType,
+                                            relationType, objectClass);
+                List<ConfigAction> actionList = getConfig().get(key);
 
+                if (actionList != null) {
+                    if (actionList.size() == 0
+                        || actionList.size() == 1 && actionList.get(0) instanceof DoNothingAction) {
+                        // do nothing
+                        continue;
+                    }
+                    fds = new ArrayList<FieldDescriptor>();
+                    for (ConfigAction action: actionList) {
+                        if (action instanceof SetFieldConfigAction) {
+                            SetFieldConfigAction setAction = (SetFieldConfigAction) action;
+                            String fieldName = setAction.fieldName;
+                            FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName);
+                            if (fd == null) {
+                                throw new RuntimeException("can't find field " + fieldName
+                                                           + " in class " + cd + " configured for "
+                                                           + key);
+                            } else {
+                                fds.add(fd);
+                            }
+                        }
+                    }
+                    if (fds.size() == 0) {
+                        throw new RuntimeException("no actions found for " + key);
+                    }
                 } else {
                     fds = getReferenceForRelationship(objectClass, cd);
                 }
@@ -641,12 +668,12 @@ public class ChadoDBConverter extends BioDBConverter
                     continue;
                 }
                 for (ConfigAction action: actionList) {
-                    if (action instanceof SetAttributeConfigAction) {
-                        SetAttributeConfigAction setAction = (SetAttributeConfigAction) action;
-                        if (!existingAttributes.contains(setAction.attributeName)) {
-                            setAttribute(fdat, setAction.attributeName, accession); // Stores
+                    if (action instanceof SetFieldConfigAction) {
+                        SetFieldConfigAction setAction = (SetFieldConfigAction) action;
+                        if (!existingAttributes.contains(setAction.fieldName)) {
+                            setAttribute(fdat, setAction.fieldName, accession); // Stores
                                                                          // Attribute for Feature
-                            existingAttributes.add(setAction.attributeName);
+                            existingAttributes.add(setAction.fieldName);
                         }
                     } else {
                         if (action instanceof CreateSynonymAction) {
@@ -693,9 +720,9 @@ public class ChadoDBConverter extends BioDBConverter
                 }
 
                 for (ConfigAction action: actionList) {
-                    if (action instanceof SetAttributeConfigAction) {
-                        SetAttributeConfigAction setAction = (SetAttributeConfigAction) action;
-                        setAttribute(fdat, setAction.attributeName, identifier); // Stores
+                    if (action instanceof SetFieldConfigAction) {
+                        SetFieldConfigAction setAction = (SetFieldConfigAction) action;
+                        setAttribute(fdat, setAction.fieldName, identifier); // Stores
                                                                         // Attribute for Feature
                     } else {
                         if (action instanceof CreateSynonymAction) {
@@ -759,12 +786,12 @@ public class ChadoDBConverter extends BioDBConverter
                     continue;
                 }
                 for (ConfigAction action: actionList) {
-                    if (action instanceof SetAttributeConfigAction) {
-                        SetAttributeConfigAction setAction = (SetAttributeConfigAction) action;
-                        if (!existingAttributes.contains(setAction.attributeName)) {
-                            setAttribute(fdat, setAction.attributeName, identifier); // Stores
+                    if (action instanceof SetFieldConfigAction) {
+                        SetFieldConfigAction setAction = (SetFieldConfigAction) action;
+                        if (!existingAttributes.contains(setAction.fieldName)) {
+                            setAttribute(fdat, setAction.fieldName, identifier); // Stores
                                                                         // Attribute for Feature
-                            existingAttributes.add(setAction.attributeName);
+                            existingAttributes.add(setAction.fieldName);
                         }
                     } else {
                         if (action instanceof CreateSynonymAction) {
@@ -961,8 +988,8 @@ public class ChadoDBConverter extends BioDBConverter
             "SELECT feature_relationship_id, subject_id, object_id, cvterm.name AS type_name"
             + "  FROM feature_relationship, cvterm"
             + "  WHERE cvterm.cvterm_id = type_id"
-            + "      AND cvterm.name IN (" + relationshipTypesString  + ")"
             + "      AND subject_id IN (" + getFeatureIdQuery() + ")"
+            + "      AND object_id IN (" + getFeatureIdQuery() + ")"
             + "  ORDER BY subject_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();

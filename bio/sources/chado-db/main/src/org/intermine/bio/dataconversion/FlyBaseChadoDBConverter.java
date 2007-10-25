@@ -51,13 +51,13 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                // the synonym is "fullname" and "is_current" is true, set the "name" attribute of
                // the new Gene to be this synonym and then make a Synonym object
                config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("name"),
+                          Arrays.asList(new SetFieldConfigAction("name"),
                                         CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.FALSE),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("symbol"),
+                          Arrays.asList(new SetFieldConfigAction("symbol"),
                                         CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
@@ -66,7 +66,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                // db.name is "FlyBase Annotation IDs" and "is_current" is true, set the "identifier"
                // attribute of the new Gene to be this dbxref and then make a Synonym object
                config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("identifier"),
+                          Arrays.asList(new SetFieldConfigAction("identifier"),
                                         CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.FALSE),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
@@ -75,12 +75,12 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                           Arrays.asList(CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("name"),
+                          Arrays.asList(new SetFieldConfigAction("name"),
                                         CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.TRUE),
-                          Arrays.asList(new SetAttributeConfigAction("identifier"),
-                                        new SetAttributeConfigAction("symbol"),
+                          Arrays.asList(new SetFieldConfigAction("identifier"),
+                                        new SetFieldConfigAction("symbol"),
                                         CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("synonym", "MRNA", "symbol", Boolean.FALSE),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
@@ -89,21 +89,21 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                config.put(new MultiKey("dbxref", "MRNA", "FlyBase", null),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
 
-               config.put(new MultiKey("relationship", "Translation", "produces", "MRNA"),
-                          Arrays.asList(CREATE_SYNONYM_ACTION));
+               config.put(new MultiKey("relationship", "Translation", "producedby", "MRNA"),
+                          Arrays.asList(new SetFieldConfigAction("wombat")));
 
                // featureprop configuration example: for features of class "Gene", if the type name
                // of the prop is "cyto_range", set the "cytoLocation" attribute of the
                // new Gene to be this property
                config.put(new MultiKey("prop", "Gene", "cyto_range"),
-                          Arrays.asList(new SetAttributeConfigAction("cytoLocation")));
+                          Arrays.asList(new SetFieldConfigAction("cytoLocation")));
                config.put(new MultiKey("prop", "Gene", "symbol"),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
 
                // feature configuration example: for features of class "Exon", from "FlyBase",
                // set the Gene.symbol to be the "name" field from the chado feature
                config.put(new MultiKey("feature", "Exon", "FlyBase", "name"),
-                          Arrays.asList(new SetAttributeConfigAction("symbol"),
+                          Arrays.asList(new SetFieldConfigAction("symbol"),
                                         CREATE_SYNONYM_ACTION));
                // DO_NOTHING_ACTION means skip the name from this feature
                config.put(new MultiKey("feature", "Chromosome", "FlyBase", "name"),
@@ -114,40 +114,40 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
 
                config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
                                        "name"),
-               Arrays.asList(new SetAttributeConfigAction("symbol"),
-                             new SetAttributeConfigAction("identifier"),
+               Arrays.asList(new SetFieldConfigAction("symbol"),
+                             new SetFieldConfigAction("identifier"),
                              CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
                                        "uniquename"),
-               Arrays.asList(new SetAttributeConfigAction("organismDbId")));
+               Arrays.asList(new SetFieldConfigAction("organismDbId")));
 
                config.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
-                          Arrays.asList(new SetAttributeConfigAction("organismDbId")));
+                          Arrays.asList(new SetFieldConfigAction("organismDbId")));
                config.put(new MultiKey("feature", "Gene", "FlyBase", "name"),
                           Arrays.asList(DO_NOTHING_ACTION));
 
                config.put(new MultiKey("feature", "ChromosomalDeletion", "FlyBase", "name"),
-                          Arrays.asList(new SetAttributeConfigAction("symbol"),
+                          Arrays.asList(new SetFieldConfigAction("symbol"),
                                         CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("feature", "MRNA", "FlyBase", "uniquename"),
-                          Arrays.asList(new SetAttributeConfigAction("organismDbId")));
+                          Arrays.asList(new SetFieldConfigAction("organismDbId")));
 
                if (getTaxonIdInt() == 7227) {
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
-                              Arrays.asList(new SetAttributeConfigAction("identifier"),
-                                            new SetAttributeConfigAction("symbol"),
+                              Arrays.asList(new SetFieldConfigAction("identifier"),
+                                            new SetFieldConfigAction("symbol"),
                                             CREATE_SYNONYM_ACTION));
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "uniquename"),
-                              Arrays.asList(new SetAttributeConfigAction("organismDbId")));
+                              Arrays.asList(new SetFieldConfigAction("organismDbId")));
                } else {
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "uniquename"),
-                              Arrays.asList(new SetAttributeConfigAction("organismDbId")));
+                              Arrays.asList(new SetFieldConfigAction("organismDbId")));
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
-                              Arrays.asList(new SetAttributeConfigAction("symbol"),
+                              Arrays.asList(new SetFieldConfigAction("symbol"),
                                             CREATE_SYNONYM_ACTION));
                    config.put(new MultiKey("dbxref", "Translation", "GB_protein", null),
-                              Arrays.asList(new SetAttributeConfigAction("identifier"),
+                              Arrays.asList(new SetFieldConfigAction("identifier"),
                                             CREATE_SYNONYM_ACTION));
                }
            }
