@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -31,26 +31,28 @@ public abstract class MailUtils
 {
     /**
      * Send a password to an email address
-     * 
+     *
      * @param to the address to send to
      * @param imPassword the password to send
      * @param webProperties properties such as the from address
-     * @throws Exception if there is a problem creating the email 
+     * @throws Exception if there is a problem creating the email
      */
     public static void email(String to, String imPassword, final Map webProperties)
         throws Exception {
 
         final String user = (String) webProperties.get("mail.smtp.user");
+        String smtpPort = (String) webProperties.get("mail.smtp.port");
         String text = (String) webProperties.get("mail.text");
         String authFlag = (String) webProperties.get("mail.smtp.auth");
         String starttlsFlag = (String) webProperties.get("mail.smtp.starttls.enable");
-        
+
         text = MessageFormat.format(text, new Object[] {imPassword});
         Properties properties = System.getProperties();
 
         properties.put("mail.smtp.host", webProperties.get("mail.host"));
         properties.put("mail.smtp.user", user);
-        
+        properties.put("mail.smtp.port", smtpPort);
+
         if (starttlsFlag != null) {
             properties.put("mail.smtp.starttls.enable", starttlsFlag);
         }
