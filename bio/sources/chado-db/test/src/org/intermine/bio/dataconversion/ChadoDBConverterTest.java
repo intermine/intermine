@@ -122,7 +122,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
             };
             Object[][] resObjects = new Object[][] {
                 {
-                    1753955 ,    3175411 ,   3175410 , "partof"
+                    1753955 ,    3175411 ,   3117509 , "partof"
                 },
                 {
                     1753948 ,    3175412 ,   3175411 , "partof"
