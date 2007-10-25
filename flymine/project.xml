@@ -76,7 +76,7 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/flyreg"/>
     </source>
-    <source name="interpro" type="interpro">
+    <source name="interpro" type="interpro" dump="true">
       <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
     </source>
     <source name="homophila" type="homophila">
