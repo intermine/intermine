@@ -47,9 +47,13 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
            config = new MultiKeyMap();
            if (getTaxonIdInt() == 7227 || getTaxonIdInt() == 7237) {
 
+               // synomym configuration example: for features of class "Gene", if the type name of
+               // the synonym is "fullname" and "is_current" is true, set the "name" attribute of
+               // the new Gene to be this synonym and then make a Synonym object
                config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
                           Arrays.asList(new SetAttributeConfigAction("name"),
                                         CREATE_SYNONYM_ACTION));
+
                config.put(new MultiKey("synonym", "Gene", "fullname", Boolean.FALSE),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.TRUE),
@@ -57,11 +61,16 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                                         CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
+
+               // dbxref table configuration example: for features of class "Gene", where the
+               // db.name is "FlyBase Annotation IDs" and "is_current" is true, set the "identifier"
+               // attribute of the new Gene to be this dbxref and then make a Synonym object
                config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.TRUE),
                           Arrays.asList(new SetAttributeConfigAction("identifier"),
                                         CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.FALSE),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
+               // null for the "is_current" means either TRUE or FALSE is OK.
                config.put(new MultiKey("dbxref", "Gene", "FlyBase", null),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
 
@@ -83,14 +92,20 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                config.put(new MultiKey("relationship", "Translation", "produces", "MRNA"),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
 
-               config.put(new MultiKey("prop", "Gene", "symbol"),
-                          Arrays.asList(CREATE_SYNONYM_ACTION));
+               // featureprop configuration example: for features of class "Gene", if the type name
+               // of the prop is "cyto_range", set the "cytoLocation" attribute of the
+               // new Gene to be this property
                config.put(new MultiKey("prop", "Gene", "cyto_range"),
                           Arrays.asList(new SetAttributeConfigAction("cytoLocation")));
+               config.put(new MultiKey("prop", "Gene", "symbol"),
+                          Arrays.asList(CREATE_SYNONYM_ACTION));
 
+               // feature configuration example: for features of class "Exon", from "FlyBase",
+               // set the Gene.symbol to be the "name" field from the chado feature
                config.put(new MultiKey("feature", "Exon", "FlyBase", "name"),
                           Arrays.asList(new SetAttributeConfigAction("symbol"),
                                         CREATE_SYNONYM_ACTION));
+               // DO_NOTHING_ACTION means skip the name from this feature
                config.put(new MultiKey("feature", "Chromosome", "FlyBase", "name"),
                           Arrays.asList(DO_NOTHING_ACTION));
 
