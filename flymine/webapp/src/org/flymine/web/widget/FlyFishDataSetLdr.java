@@ -24,8 +24,10 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -47,6 +49,18 @@ public class FlyFishDataSetLdr implements DataSetLdr
     private Results results;
     private Object[] geneCategoryArray;
     private HashMap<String, GraphDataSet> dataSets = new HashMap<String, GraphDataSet>();
+    
+    /**
+     * Creates a FlyAtlasDataSetLdr used to retrieve, organise
+     * and structure the FlyAtlas data to create a graph
+     * @param identifier the gene to use in teh query
+     * @param os the ObjectStore
+     */
+    public FlyFishDataSetLdr(String identifier, ObjectStore os) {
+        super();
+        buildDataSets(null, identifier, os);
+    }
+
     /**
      * Creates a FlyAtlasDataSetLdr used to retrieve, organise
      * and structure the FlyAtlas data to create a graph
@@ -55,6 +69,17 @@ public class FlyFishDataSetLdr implements DataSetLdr
      */
     public FlyFishDataSetLdr(InterMineBag bag, ObjectStore os) {
         super();
+        buildDataSets(bag, null, os);
+    }
+    
+    /**
+     * @see org.intermine.web.logic.widget.DataSetLdr#getDataSet()
+     */
+    public Map getDataSets() {
+        return dataSets;
+    }
+
+    private void buildDataSets(InterMineBag bag, String geneIdentifier, ObjectStore os) {
         DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
         Query q = new Query();
@@ -73,8 +98,15 @@ public class FlyFishDataSetLdr implements DataSetLdr
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryField qf = new QueryField(gene, "id");
-
-        cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
+        
+        if (bag != null) {
+            cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
+        }
+        if (geneIdentifier != null) {
+            cs.addConstraint(new SimpleConstraint(new QueryField(gene, "identifier"),
+                                                  ConstraintOp.EQUALS, 
+                                                  new QueryValue(geneIdentifier)));
+        }
 
         QueryCollectionReference r = new QueryCollectionReference(gene, "mRNALocalisations");
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
@@ -146,13 +178,5 @@ public class FlyFishDataSetLdr implements DataSetLdr
             dataSets.put("anyOrganism", graphDataSet);
         }
     }
-
-    /**
-     * @see org.intermine.web.logic.widget.DataSetLdr#getDataSet()
-     */
-    public Map getDataSets() {
-        return dataSets;
-    }
-
     
 }
