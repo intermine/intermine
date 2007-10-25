@@ -80,11 +80,13 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                config.put(new MultiKey("dbxref", "MRNA", "FlyBase", null),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
 
-               // config.put(new MultiKey("relationship", "Translation", "FlyBase", null),
-               //             Arrays.asList(CREATE_SYNONYM_ACTION));
+               config.put(new MultiKey("relationship", "Translation", "produces", "MRNA"),
+                          Arrays.asList(CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("prop", "Gene", "symbol"),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
+               config.put(new MultiKey("prop", "Gene", "cyto_range"),
+                          Arrays.asList(new SetAttributeConfigAction("cytoLocation")));
 
                config.put(new MultiKey("feature", "Exon", "FlyBase", "name"),
                           Arrays.asList(new SetAttributeConfigAction("symbol"),

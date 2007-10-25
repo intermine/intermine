@@ -93,4 +93,8 @@
          is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
   </class>
+  <class name="org.flymine.model.genomic.LocatedSequenceFeature" 
+         is-interface="true">
+    <attribute name="cytoLocation" type="java.lang.String"/>
+  </class>
 </classes>
