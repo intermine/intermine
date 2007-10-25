@@ -303,7 +303,7 @@ public class BagDetailsController extends TilesAction
                          renderer);
 
         graphDisplayerArray.add(new String[] {
-            bagGraphWidget.getHTML(), graphDisplayer.getDescription()
+            bagGraphWidget.getHTML(), graphDisplayer.getTitle(), graphDisplayer.getDescription()
         });        
     }
     
@@ -339,7 +339,7 @@ public class BagDetailsController extends TilesAction
                          renderer);
         
         graphDisplayerArray.add(new String[] {
-            bagGraphWidget.getHTML(), graphDisplayer.getDescription()
+            bagGraphWidget.getHTML(), graphDisplayer.getTitle(), graphDisplayer.getDescription()
         });  
     }
 }
