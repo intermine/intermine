@@ -330,8 +330,10 @@ public class ChadoDBConverter extends BioDBConverter
                     if (nameActionList == null || nameActionList.size() == 0
                         || nameActionList.contains(CREATE_SYNONYM_ACTION)) {
                         name = fixIdentifier(interMineType, name);
-                        createSynonym(fdat, "name", name, false, dataSet, EMPTY_ITEM_LIST,
-                                      dataSource); // Stores Synonym
+                        if (!fdat.existingSynonyms.contains(name)) {
+                            createSynonym(fdat, "name", name, false, dataSet, EMPTY_ITEM_LIST,
+                                          dataSource); // Stores Synonym
+                        }
                     }
                 }
                 features.put(featureId, fdat);
@@ -692,9 +694,7 @@ public class ChadoDBConverter extends BioDBConverter
                         }
                     } else {
                         if (action instanceof CreateSynonymAction) {
-
-                            Set<String> existingSynonyms = fdat.existingSynonyms;
-                            if (existingSynonyms.contains(accession)) {
+                            if (fdat.existingSynonyms.contains(accession)) {
                                 continue;
                             } else {
                                 createSynonym(fdat, "identifier", accession, false, dataSet,
@@ -810,8 +810,7 @@ public class ChadoDBConverter extends BioDBConverter
                         }
                     } else {
                         if (action instanceof CreateSynonymAction) {
-                            Set<String> existingSynonyms = fdat.existingSynonyms;
-                            if (existingSynonyms.contains(identifier)) {
+                            if (fdat.existingSynonyms.contains(identifier)) {
                                 continue;
                             } else {
                                 createSynonym(fdat, synonymTypeName, identifier, false, dataSet,
@@ -1126,6 +1125,11 @@ public class ChadoDBConverter extends BioDBConverter
                                boolean isPrimary, Item dataSet, List<Item> otherEvidence,
                                Item dataSource)
         throws ObjectStoreException {
+        if (fdat.existingSynonyms.contains(identifier)) {
+            throw new IllegalArgumentException("feature identifier " + identifier
+                                               + " is already a synonym for: "
+                                               + fdat.existingSynonyms);
+        }
         List<Item> allEvidence = new ArrayList<Item>();
         allEvidence.add(dataSet);
         allEvidence.addAll(otherEvidence);
