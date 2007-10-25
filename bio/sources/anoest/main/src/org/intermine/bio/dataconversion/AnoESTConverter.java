@@ -80,11 +80,13 @@ public class AnoESTConverter extends BioDBConverter
             Item cluster = createItem("ESTCluster");
             cluster.setAttribute("identifier", identifier);
             Item dataSet = getDataSetItem(DATASET_TITLE);
-            createSynonym(cluster.getIdentifier(), "identifier", identifier, true,
-                          Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
             cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
             cluster.addToCollection("evidence", dataSet);
+            getItemWriter().store(ItemHelper.convert(cluster));
+
+            createSynonym(cluster.getIdentifier(), "identifier", identifier, true,
+                          Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
 
             // some clusters have no location
             if (chromosomeIdentifier != null && start > 0 && end > 0) {
@@ -93,7 +95,6 @@ public class AnoESTConverter extends BioDBConverter
                 makeLocation(chromosomeItemId, cluster.getIdentifier(), start, end, strand,
                              ANOPHELES_TAXON_ID, dataSet);
             }
-            getItemWriter().store(ItemHelper.convert(cluster));
 
             clusters.put(identifier, cluster);
         }
@@ -125,18 +126,18 @@ public class AnoESTConverter extends BioDBConverter
                 ests.put(accession, est);
                 est.setAttribute("identifier", accession);
                 Item dataSet = getDataSetItem(DATASET_TITLE);
-                createSynonym(est.getIdentifier(), "identifier", accession, true,
-                              Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
                 est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
                 est.addToCollection("evidence", dataSet);
-                createSynonym(est.getIdentifier(), "identifier", cloneId, false,
-                              Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
                 Item cluster = clusters.get(clusterId);
                 if (cluster != null) {
                     est.addToCollection("ESTClusters", cluster);
                 }
                 getItemWriter().store(ItemHelper.convert(est));
+                createSynonym(est.getIdentifier(), "identifier", accession, true,
+                              Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
+                createSynonym(est.getIdentifier(), "identifier", cloneId, false,
+                              Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
             }
         }
     }
