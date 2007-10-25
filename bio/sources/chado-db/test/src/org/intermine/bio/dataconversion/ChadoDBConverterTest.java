@@ -104,6 +104,9 @@ public class ChadoDBConverterTest extends ItemsTestCase
                  {
                      3175413, "CG10000:2", "CG10000:2", "exon", 161
                  },
+                 {
+                     1000000, "CG10000-RA_prot", "FBpp10000", "protein", 2345
+                 },
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
             res.setupRows(resObjects);
