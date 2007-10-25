@@ -2,22 +2,32 @@
   <item id="9_5" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="7720555"/>
   </item>
-  <item id="4_9" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="true"/>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
+  </item>
+  <item id="4_12" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
-    <attribute name="value" value="CG10000:2"/>
+    <attribute name="value" value="FBgn0000001_dbxref2"/>
     <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="7_2"/>
+    <reference name="subject" ref_id="3_1"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="taxonId" value="7227"/>
-  </item>
   <item id="6_2" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="identifier" value="3R"/>
     <reference name="organism" ref_id="2_1"/>
+  </item>
+  <item id="4_14" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="false"/>
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBgn0036461_dbxref4"/>
+    <reference name="source" ref_id="1_1"/>
+    <reference name="subject" ref_id="3_2"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
   </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="cytoLocation" value="71B1-71B1"/>
@@ -26,6 +36,16 @@
     <collection name="evidence">
       <reference ref_id="0_1"/>
       <reference ref_id="9_3"/>
+    </collection>
+  </item>
+  <item id="4_8" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="true"/>
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="CG10000:2"/>
+    <reference name="source" ref_id="1_1"/>
+    <reference name="subject" ref_id="7_2"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
     </collection>
   </item>
   <item id="8_1" class="http://www.flymine.org/model/genomic#Translation">
@@ -38,16 +58,6 @@
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="test title"/>
   </item>
-  <item id="4_13" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="identifier"/>
-    <attribute name="value" value="FBgn0000001_dbxref1"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="3_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
   <item id="10_2" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="24577313"/>
     <attribute name="start" value="24574105"/>
@@ -58,22 +68,12 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="4_10" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_17" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="CG10000:2"/>
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="CG10006_symbol"/>
     <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="7_2"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
-  <item id="4_12" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="CG10000-RA_prot"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="8_1"/>
+    <reference name="subject" ref_id="3_2"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
@@ -88,16 +88,6 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="4_16" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="identifier"/>
-    <attribute name="value" value="FBgn0036461_dbxref4"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="3_2"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
   <item id="7_2" class="http://www.flymine.org/model/genomic#Exon">
     <attribute name="identifier" value="CG10000:2"/>
     <attribute name="symbol" value="CG10000:2"/>
@@ -108,16 +98,6 @@
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="FlyBase"/>
-  </item>
-  <item id="4_18" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="symbol"/>
-    <attribute name="value" value="FBgn0000001_symbol_synonym"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="3_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
   </item>
   <item id="9_4" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="2612903"/>
@@ -164,16 +144,6 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="4_8" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="CG10000:1"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="7_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
   <item id="4_6" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
@@ -194,6 +164,36 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
+  <item id="4_16" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="false"/>
+    <attribute name="type" value="symbol"/>
+    <attribute name="value" value="FBgn0000001_symbol_synonym"/>
+    <reference name="source" ref_id="1_1"/>
+    <reference name="subject" ref_id="3_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="4_10" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="false"/>
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="CG10000-RA_prot"/>
+    <reference name="source" ref_id="1_1"/>
+    <reference name="subject" ref_id="8_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="4_15" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="false"/>
+    <attribute name="type" value="fullname"/>
+    <attribute name="value" value="FBgn0000001_fullname_synonym"/>
+    <reference name="source" ref_id="1_1"/>
+    <reference name="subject" ref_id="3_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#MRNA">
     <attribute name="organismDbId" value="FBtr0085315"/>
     <attribute name="symbol" value="CG10000-RA"/>
@@ -203,6 +203,16 @@
   <item id="6_1" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="identifier" value="3L"/>
     <reference name="organism" ref_id="2_1"/>
+  </item>
+  <item id="4_13" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="false"/>
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBgn0000001_dbxref3"/>
+    <reference name="source" ref_id="1_1"/>
+    <reference name="subject" ref_id="3_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
   </item>
   <item id="4_4" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -214,32 +224,12 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="4_14" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="identifier"/>
-    <attribute name="value" value="FBgn0000001_dbxref2"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="3_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
-  <item id="4_15" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="identifier"/>
-    <attribute name="value" value="FBgn0000001_dbxref3"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="3_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
   <item id="4_11" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="true"/>
+    <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
-    <attribute name="value" value="FBpp10000"/>
+    <attribute name="value" value="FBgn0000001_dbxref1"/>
     <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="8_1"/>
+    <reference name="subject" ref_id="3_1"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
@@ -254,12 +244,12 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="4_17" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="fullname"/>
-    <attribute name="value" value="FBgn0000001_fullname_synonym"/>
+  <item id="4_9" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="true"/>
+    <attribute name="type" value="identifier"/>
+    <attribute name="value" value="FBpp10000"/>
     <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="3_1"/>
+    <reference name="subject" ref_id="8_1"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
@@ -303,16 +293,6 @@
     <attribute name="strand" value="-1"/>
     <reference name="object" ref_id="6_2"/>
     <reference name="subject" ref_id="7_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
-  <item id="4_19" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
-    <attribute name="type" value="symbol"/>
-    <attribute name="value" value="CG10006_symbol"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="3_2"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
