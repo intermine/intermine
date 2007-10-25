@@ -53,7 +53,10 @@
 	<c:if test="${count>0}">
     	<li>&nbsp;|&nbsp;</li>
   	</c:if>
-    <li><a href="http://www.surveymonkey.com/s.aspx?sm=jblP4sWPYOIbw_2bT42ZJifg_3d_3d" target="_new">Take our survey!</a></li>
+  	<c:set var="linky" value="${WEB_PROPERTIES['submenu.extraLink']}"/>
+    <c:if test="${! empty linky}">
+		<li>${linky}</li>
+    </c:if>
 </ul>
 </div>
 <!-- /subMenu.jsp -->
