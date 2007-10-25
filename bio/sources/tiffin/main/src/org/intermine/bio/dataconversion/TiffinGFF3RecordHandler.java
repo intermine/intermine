@@ -10,8 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -49,15 +51,6 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
         bindingSite.setReference("motif", motif);
     }
 
-    /**
-     * Return the Motif objects created by process().
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<Item> getFinalItems() {
-        return motifs.values();
-    }
-
     private Item getMotif(String name) {
         Item motif = motifs.get(name);
         if (motif == null) {
@@ -65,6 +58,7 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
             motif.setAttribute("identifier", name);
             motif.setAttribute("curated", "false");
             motifs.put(name, motif);
+            addEarlyItem(motif);
         }
         return motif;
     }

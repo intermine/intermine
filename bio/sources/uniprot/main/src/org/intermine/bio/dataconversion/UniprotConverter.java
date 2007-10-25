@@ -355,6 +355,7 @@ public class UniprotConverter extends FileConverter
         private String attName = null;
         private StringBuffer attValue = null;
         private boolean createInterpro = false;
+        private ArrayList<Item> delayedItems = new ArrayList();
 
         /**
          * Constructor
@@ -704,6 +705,11 @@ public class UniprotConverter extends FileConverter
                                 + " does not have any accessions");
                     }
 
+                    for (Item item : delayedItems) {
+                        writer.store(ItemHelper.convert(item));
+                    }
+                    delayedItems.clear();
+
                 // <entry><sequence>
                 } else if (hasPrimary && qName.equals("sequence")) {
 
@@ -735,7 +741,7 @@ public class UniprotConverter extends FileConverter
                     Item syn = createSynonym(protein.getIdentifier(), "name", proteinName,
                                   datasource.getIdentifier());
                     if (syn != null) {
-                        writer.store(ItemHelper.convert(syn));
+                        delayedItems.add(syn);
                     }
 
                 // <entry><comment><text>
@@ -794,7 +800,7 @@ public class UniprotConverter extends FileConverter
                 // <entry><feature>
                 } else if (qName.equals("feature") && feature != null) {
 
-                    writer.store(ItemHelper.convert(feature));
+                    delayedItems.add(feature);
                     feature = null;
 
                 // <entry><name>
@@ -817,7 +823,7 @@ public class UniprotConverter extends FileConverter
                             hasPrimary = true;
                         }
                         if (hasPrimary) {
-                            writer.store(ItemHelper.convert(syn));
+                            delayedItems.add(syn);
                         }
                     }
                 }
@@ -1106,7 +1112,7 @@ public class UniprotConverter extends FileConverter
                                           geneOrganismDbId,
                                           getDataSource(dbName).getIdentifier());
                             if (syn != null) {
-                                writer.store(ItemHelper.convert(syn));
+                                delayedItems.add(syn);
                             }
                         }
                         if (geneIdentifier != null) {
@@ -1118,7 +1124,7 @@ public class UniprotConverter extends FileConverter
                                            geneIdentifier,
                                            getDataSource(dbName).getIdentifier());
                                 if (syn != null) {
-                                    writer.store(ItemHelper.convert(syn));
+                                    delayedItems.add(syn);
                                 }
                             }
                             // keep a track of non-null gene identifiers

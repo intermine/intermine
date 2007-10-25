@@ -140,7 +140,7 @@ public class InparanoidConverter extends FileConverter
                 try {
                     bootstrap = array[5].substring(0, array[5].indexOf('%'));
                 } catch (Exception e) {
-                    throw new RuntimeException("Error getting bootstap score from line: "
+                    throw new RuntimeException("Error getting bootstrap score from line: "
                                                + lineNum + " of file: "
                                                + getCurrentFile().getName());
                 }
@@ -157,11 +157,12 @@ public class InparanoidConverter extends FileConverter
             if (createObjects.get(code) != null) {
                 if (createObjects.get(code).equals("Gene")) {
                     bio = newBioEntity(array[4], (String) attributes.get(code),
-                                       getOrganism(code), "Gene");
+                                       getOrganism(code), "Gene");    // Stores BioEntity & Synonym
                     isGene = true;
                 } else {
                     bio = newBioEntity(array[4], (String) attributes.get(code),
                                        getOrganism(code), "Translation");
+                                                                      // Stores BioEntity & Synonym
                     isGene = false;
                 }
             } else {
@@ -177,6 +178,7 @@ public class InparanoidConverter extends FileConverter
                 if (oldIndex != null) {
                     // finish up and store the previous group
                     storeOrthologues(firstBio, secondBio);
+                                             // Stores Orthologues -> Paralogues
                 }
 
                 firstBio = bands;
@@ -210,8 +212,8 @@ public class InparanoidConverter extends FileConverter
                 leftParalogues.add(leftPara.getIdentifier());
                 rightParalogues.add(rightPara.getIdentifier());
 
-                store(leftPara);
-                store(rightPara);
+                store(leftPara);  // Stores Paralogues
+                store(rightPara); // Stores Paralogues
             }
 
             // clear old values and try to set new ones
@@ -326,15 +328,6 @@ public class InparanoidConverter extends FileConverter
         return relation;
     }
 
-
-    /**
-     * @see FileConverter#close()
-     */
-    public void close() throws ObjectStoreException {
-        store(organisms.values());
-        store(sources.values());
-    }
-
     /**
      * Convenience method to create and cache Genes/Proteins by identifier
      * @param value identifier for the new Gene/Translation
@@ -356,7 +349,7 @@ public class InparanoidConverter extends FileConverter
         Item item = createItem(type);
         item.setAttribute(attribute, value);
         item.setReference("organism", organism.getIdentifier());
-        store(item);
+        store(item);                                                 // Stores BioEntity
         bioEntities.put(key, item);
 
         // create a synonm - lookup source according to organism
@@ -366,14 +359,13 @@ public class InparanoidConverter extends FileConverter
         synonym.setReference("subject", item.getIdentifier());
         Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
         synonym.setReference("source", source.getIdentifier());
-        store(synonym);
-
+        store(synonym);                                              // Stores Synonym -> BioEntity
 
         return item;
     }
 
     // get source for synonyms, depends on organism
-    private Item getSourceForOrganism(String taxonId) {
+    private Item getSourceForOrganism(String taxonId) throws ObjectStoreException {
         String sourceName = (String) orgSources.get(taxonId);
         if (sourceName == null) {
                 throw new IllegalArgumentException("unable to find source name for organism: "
@@ -383,12 +375,13 @@ public class InparanoidConverter extends FileConverter
         if (source == null) {
             source = createItem("DataSource");
             source.setAttribute("name", sourceName);
+            store(source);
             sources.put(sourceName, source);
         }
         return source;
     }
 
-    private Item getOrganism(String code) {
+    private Item getOrganism(String code) throws ObjectStoreException {
         String taxonId = (String) taxonIds.get(code);
         if (taxonId == null) {
             throw new IllegalArgumentException("Unable to find taxonId for code: "
@@ -399,6 +392,7 @@ public class InparanoidConverter extends FileConverter
         if (organism == null) {
             organism = createItem("Organism");
             organism.setAttribute("taxonId", taxonId);
+            store(organism);
             organisms.put(taxonId, organism);
         }
         return organism;

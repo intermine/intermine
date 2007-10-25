@@ -10,20 +10,22 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-import org.intermine.xml.full.Attribute;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
@@ -37,7 +39,8 @@ import org.intermine.metadata.ClassDescriptor;
  */
 public class GFF3RecordHandler
 {
-    protected Map items = new HashMap();
+    protected Map items = new LinkedHashMap();
+    protected List<Item> earlyItems = new ArrayList();
     private Item sequence;
     protected Item analysis;
     private Model tgtModel;
@@ -198,6 +201,7 @@ public class GFF3RecordHandler
      */
     public void setResult(Item result) {
         items.put("_result", result);
+        earlyItems.add(result);
     }
 
     /**
@@ -304,9 +308,10 @@ public class GFF3RecordHandler
      * Remove all items held locally in handler.
      */
     public void clear() {
-        this.items = new HashMap();
-        this.sequence = null;
-        this.analysis = null;
+        items = new LinkedHashMap();
+        sequence = null;
+        analysis = null;
+        earlyItems.clear();
     }
 
     /**
@@ -315,7 +320,17 @@ public class GFF3RecordHandler
      * @return a set of items
      */
     public Collection getItems() {
-        return items.values();
+        Set all = new LinkedHashSet(items.values());
+        Set retval = new LinkedHashSet();
+        for (Item item : earlyItems) {
+            if (all.remove(item)) {
+                retval.add(item);
+            } else {
+                throw new RuntimeException("Found item in earlyItems but not items: " + item);
+            }
+        }
+        retval.addAll(all);
+        return retval;
     }
 
     /**
@@ -324,6 +339,15 @@ public class GFF3RecordHandler
      */
     public void addItem(Item item) {
         items.put(item.getIdentifier(), item);
+    }
+
+    /**
+     * Add a new Item to the Collection returned by getItems, at the beginning.
+     * @param item the Item to add
+     */
+    public void addEarlyItem(Item item) {
+        items.put(item.getIdentifier(), item);
+        earlyItems.add(item);
     }
 
     /**

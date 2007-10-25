@@ -104,14 +104,6 @@ public class ProteinStructureDataConvertor extends FileConverter
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws ObjectStoreException {
-        store(featureMap.values());
-    }
-    
     protected String getFileContent(String fileName, String extention) throws InterMineException {
         String str;
         StringBuffer fileBuffer = new StringBuffer();
@@ -259,12 +251,13 @@ public class ProteinStructureDataConvertor extends FileConverter
             }
         }
 
-        private Item getFeature(String identifier) {
+        private Item getFeature(String identifier) throws ObjectStoreException {
             Item feature = featureMap.get(identifier);
             if (feature == null) {
                 feature = createItem("ProteinFeature");
                 feature.setAttribute("identifier", attValue.toString());
                 featureMap.put(identifier, feature);
+                store(feature);
             }
             return feature;
         }

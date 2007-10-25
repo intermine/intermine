@@ -204,35 +204,53 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                 // so we can skip the BagConstraint and bound the id instead.
                                 Query subQ = new Query();
                                 subQ.setDistinct(false);
-                                QueryClass qc1 = new QueryClass(clazz);
-                                QueryClass qc2 = new QueryClass(coll.getReferencedClassDescriptor()
-                                        .getType());
-                                subQ.addFrom(qc1);
-                                subQ.addFrom(qc2);
-                                subQ.addToSelect(new QueryField(qc1, "id"));
-                                subQ.addToSelect(qc2);
-                                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                                subQ.setConstraint(cs);
-                                QueryCollectionReference qcr = new QueryCollectionReference(qc1,
-                                        fieldName);
-                                cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
-                                            qc2));
-                                QueryField idField = new QueryField(qc1, "id");
-                                cs.addConstraint(new SimpleConstraint(idField,
-                                            ConstraintOp.GREATER_THAN_EQUALS,
-                                            new QueryValue(new Integer(lowestId))));
-                                cs.addConstraint(new SimpleConstraint(idField,
-                                            ConstraintOp.LESS_THAN_EQUALS,
-                                            new QueryValue(new Integer(highestId))));
                                 if (coll.relationType() == FieldDescriptor.ONE_N_RELATION) {
-                                    QueryForeignKey reverseIdField = new QueryForeignKey(qc2,
+                                    QueryClass qc = new QueryClass(coll
+                                            .getReferencedClassDescriptor().getType());
+                                    subQ.addFrom(qc);
+                                    QueryForeignKey qfk = new QueryForeignKey(qc,
                                             coll.getReverseReferenceFieldName());
-                                    cs.addConstraint(new SimpleConstraint(reverseIdField,
+                                    subQ.addToSelect(qfk);
+                                    subQ.addToSelect(qc);
+                                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                                    subQ.setConstraint(cs);
+                                    cs.addConstraint(new SimpleConstraint(qfk,
                                                 ConstraintOp.GREATER_THAN_EQUALS,
                                                 new QueryValue(new Integer(lowestId))));
-                                    cs.addConstraint(new SimpleConstraint(reverseIdField,
+                                    cs.addConstraint(new SimpleConstraint(qfk,
                                                 ConstraintOp.LESS_THAN_EQUALS,
                                                 new QueryValue(new Integer(highestId))));
+                                } else {
+                                    QueryClass qc1 = new QueryClass(clazz);
+                                    QueryClass qc2 = new QueryClass(coll
+                                            .getReferencedClassDescriptor().getType());
+                                    subQ.addFrom(qc1);
+                                    subQ.addFrom(qc2);
+                                    subQ.addToSelect(new QueryField(qc1, "id"));
+                                    subQ.addToSelect(qc2);
+                                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                                    subQ.setConstraint(cs);
+                                    QueryCollectionReference qcr = new QueryCollectionReference(qc1,
+                                            fieldName);
+                                    cs.addConstraint(new ContainsConstraint(qcr,
+                                                ConstraintOp.CONTAINS, qc2));
+                                    QueryField idField = new QueryField(qc1, "id");
+                                    cs.addConstraint(new SimpleConstraint(idField,
+                                                ConstraintOp.GREATER_THAN_EQUALS,
+                                                new QueryValue(new Integer(lowestId))));
+                                    cs.addConstraint(new SimpleConstraint(idField,
+                                                ConstraintOp.LESS_THAN_EQUALS,
+                                                new QueryValue(new Integer(highestId))));
+                                    if (coll.relationType() == FieldDescriptor.ONE_N_RELATION) {
+                                        QueryForeignKey reverseIdField = new QueryForeignKey(qc2,
+                                                coll.getReverseReferenceFieldName());
+                                        cs.addConstraint(new SimpleConstraint(reverseIdField,
+                                                    ConstraintOp.GREATER_THAN_EQUALS,
+                                                    new QueryValue(new Integer(lowestId))));
+                                        cs.addConstraint(new SimpleConstraint(reverseIdField,
+                                                    ConstraintOp.LESS_THAN_EQUALS,
+                                                    new QueryValue(new Integer(highestId))));
+                                    }
                                 }
                                 Results l = new Results(subQ, os, sequence);
                                 if (!optimise) {

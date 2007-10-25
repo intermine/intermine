@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -311,8 +312,6 @@ public class MageDataTranslator extends DataTranslator
         while (i.hasNext()) {
             tgtItemWriter.store(ItemHelper.convert((Item) i.next()));
         }
-
-
     }
 
 
@@ -324,7 +323,7 @@ public class MageDataTranslator extends DataTranslator
         // TODO MageConverter could create BioDataTuples instead?  Seems to link
         // DesignElement with BioAssay and data
 
-        Collection result = new HashSet();
+        Collection result = new LinkedHashSet();
         String className = XmlUtil.getFragmentFromURI(srcItem.getClassName());
 
         Collection translated = super.translateItem(srcItem);
@@ -332,6 +331,7 @@ public class MageDataTranslator extends DataTranslator
             for (Iterator i = translated.iterator(); i.hasNext();) {
                 boolean storeTgtItem = true;
                 Item tgtItem = (Item) i.next();
+                Collection delayedItems = new LinkedHashSet();
                 if (className.equals("DataSource")) {
                     Attribute attr = srcItem.getAttribute("name");
                     if (attr != null) {
@@ -363,10 +363,10 @@ public class MageDataTranslator extends DataTranslator
                 } else if (className.equals("BioSequence")) {
                     storeTgtItem = false;
                 } else if (className.equals("BioSource")) {
-                    result.addAll(translateSample(srcItem, tgtItem));
+                    delayedItems.addAll(translateSample(srcItem, tgtItem));
                     storeTgtItem = false;
                 } else if (className.equals("Treatment")) {
-                    result.addAll(translateTreatment(srcItem, tgtItem));
+                    delayedItems.addAll(translateTreatment(srcItem, tgtItem));
                 } else if (className.equals("CompositeSequence")) {
                     if (compositeSeqNs == null) {
                         compositeSeqNs = namespaceFromIdentifier(srcItem.getIdentifier());
@@ -378,6 +378,7 @@ public class MageDataTranslator extends DataTranslator
                 if (storeTgtItem) {
                     result.add(tgtItem);
                 }
+                result.addAll(delayedItems);
             }
 
         } else if (className.equals("LabeledExtract")) {
@@ -392,10 +393,6 @@ public class MageDataTranslator extends DataTranslator
 
         return result;
     }
-
-
-
-
 
     /**
      * Given an experiment item create a corresponding DataSet and add entry

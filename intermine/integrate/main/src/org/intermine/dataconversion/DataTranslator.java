@@ -242,7 +242,8 @@ public class DataTranslator
      * @throws InterMineException if no target class/property name can be found
      */
     public void translate(ItemWriter tgtItemWriter)
-        throws ObjectStoreException, InterMineException {
+    throws ObjectStoreException, InterMineException {
+        long inCount = 0;
         long opCount = 0;
         long time = System.currentTimeMillis();
         long start = time;
@@ -252,6 +253,7 @@ public class DataTranslator
         }
         for (Iterator i = getItemIterator(); i.hasNext();) {
             Item srcItem = ItemHelper.convert((org.intermine.model.fulldata.Item) i.next());
+            inCount++;
             Collection translated = translateItem(srcItem);
             if (translated != null) {
                 for (Iterator j = translated.iterator(); j.hasNext();) {
@@ -261,13 +263,15 @@ public class DataTranslator
                     if (opCount % 1000 == 0) {
                         long now = System.currentTimeMillis();
                         if (times[(int) ((opCount / 1000) % 20)] == -1) {
-                            LOG.info("Translated " + opCount + " objects - running at "
+                            LOG.info("Translated " + inCount + " -> " + opCount
+                                    + " objects - running at "
                                     + (60000000 / (now - time)) + " (avg "
                                     + ((60000L * opCount) / (now - start))
                                     + ") objects per minute -- now on "
                                     + srcItem.getClassName());
                         } else {
-                            LOG.info("Translated " + opCount + " objects - running at "
+                            LOG.info("Translated " + inCount + " -> " + opCount
+                                    + " objects - running at "
                                     + (60000000 / (now - time)) + " (20000 avg "
                                     + (1200000000 / (now - times[(int) ((opCount / 1000) % 20)]))
                                     + ") (avg " + ((60000L * opCount) / (now - start))

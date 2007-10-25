@@ -37,7 +37,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        File resources = new File ("test/resources");
+        File resources = new File ("resources");
         Collection<File> allfiles = listFiles(resources, null, true);
         
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
@@ -57,12 +57,12 @@ public class KeggPathwayConverterTest extends ItemsTestCase
             converter.setCurrentFile(file);
             converter.process(reader);
         }
-        
+
         converter.close();
 
         // uncomment to write out a new target items file
 //        writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
-            
+
         assertEquals(readItemSet("kegg-tgt-items.xml"), itemWriter.getItems());
     }
     

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -88,7 +89,8 @@ public class Drosophila2ProbeConverter extends FileConverter
                     }
                 }
 
-                Item probeSet = createProbeSet(line[3]);
+                List<Item> delayedItems = new ArrayList();
+                Item probeSet = createProbeSet(line[3], delayedItems);
                 if (seqType.equalsIgnoreCase("control sequence")) {
                     // add a description and flag
                     probeSet.setAttribute("description", line[4]);
@@ -110,7 +112,7 @@ public class Drosophila2ProbeConverter extends FileConverter
                         loc.setCollection("evidence",
                             new ArrayList(Collections.singleton(dataSet.getIdentifier())));
 
-                        store(loc);
+                        delayedItems.add(loc);
                     }
                 }
 
@@ -129,6 +131,9 @@ public class Drosophila2ProbeConverter extends FileConverter
                     }
                 }
                 store(probeSet);
+                for (Item item : delayedItems) {
+                    store(item);
+                }
             } else {
                 // still in the header
                 if (line[0].startsWith("Arrays")) {
@@ -178,7 +183,7 @@ public class Drosophila2ProbeConverter extends FileConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-    private Item createProbeSet(String probeSetId) throws ObjectStoreException {
+    private Item createProbeSet(String probeSetId, List<Item> delayedItems) throws ObjectStoreException {
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("identifier", probeSetId);
         probeSet.setAttribute("name", probeSetId);
@@ -191,7 +196,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         synonym.setAttribute("value", probeSetId);
         synonym.setReference("source", dataSource.getIdentifier());
         synonym.setReference("subject", probeSet.getIdentifier());
-        store(synonym);
+        delayedItems.add(synonym);
 
         return probeSet;
     }
