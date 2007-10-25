@@ -29,6 +29,15 @@
     <attribute name="identifier" value="3R"/>
     <reference name="organism" ref_id="2_1"/>
   </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="cytoRange" value="71B1-71B1"/>
+    <attribute name="organismDbId" value="FBgn0036461"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+      <reference ref_id="8_3"/>
+    </collection>
+  </item>
   <item id="4_14" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
@@ -196,14 +205,6 @@
     <reference name="subject" ref_id="6_2"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
-    </collection>
-  </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="organismDbId" value="FBgn0036461"/>
-    <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-      <reference ref_id="8_3"/>
     </collection>
   </item>
   <item id="4_16" class="http://www.flymine.org/model/genomic#Synonym">
