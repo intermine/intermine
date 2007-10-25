@@ -109,9 +109,23 @@ public class ChadoDBConverter extends BioDBConverter
         }
     }
 
-    private static class CreateSynonymAction extends ConfigAction
+    /**
+     *  An action that sets a Synonym.
+     */
+    protected static class CreateSynonymAction extends ConfigAction
     {
-        // do the default - eg. make a synonym or set a collection
+        private String synonymType;
+
+        // make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym
+        // type
+        CreateSynonymAction() {
+            synonymType = null;
+        }
+
+        // make a synonym and use given type as the Synonym type
+        CreateSynonymAction(String synonymType) {
+            this.synonymType = synonymType;
+        }
     }
 
     private static class DoNothingAction extends ConfigAction
@@ -667,16 +681,39 @@ public class ChadoDBConverter extends BioDBConverter
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             String identifier = res.getString("value");
-            String typeName = res.getString("type_name");
-            if (features.containsKey(featureId) && typeName.equals("symbol")) {
+            String propTypeName = res.getString("type_name");
+
+            if (features.containsKey(featureId)) {
                 FeatureData fdat = features.get(featureId);
-                Set<String> existingSynonyms = fdat.existingSynonyms;
-                if (existingSynonyms.contains(identifier)) {
+                MultiKey key = new MultiKey("prop", fdat.interMineType, propTypeName);
+                List<ConfigAction> actionList = getConfig().get(key);
+                if (actionList == null) {
+                    // no actions configured for this prop
                     continue;
-                } else {
-                    createSynonym(fdat, typeName, identifier, false, dataSet,
-                                  EMPTY_ITEM_LIST, dataSource); // Stores Synonym
-                    count++;
+                }
+
+                for (ConfigAction action: actionList) {
+                    if (action instanceof SetAttributeConfigAction) {
+                        SetAttributeConfigAction setAction = (SetAttributeConfigAction) action;
+                        setAttribute(fdat, setAction.attributeName, identifier); // Stores
+                                                                        // Attribute for Feature
+                    } else {
+                        if (action instanceof CreateSynonymAction) {
+                            CreateSynonymAction synonymAction = (CreateSynonymAction) action;
+                            Set<String> existingSynonyms = fdat.existingSynonyms;
+                            if (existingSynonyms.contains(identifier)) {
+                                continue;
+                            } else {
+                                String synonymType = synonymAction.synonymType;
+                                if (synonymType == null) {
+                                    synonymType = propTypeName;
+                                }
+                                createSynonym(fdat, synonymType, identifier, false, dataSet,
+                                              EMPTY_ITEM_LIST, dataSource); // Stores Synonym
+                                count++;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -696,10 +733,10 @@ public class ChadoDBConverter extends BioDBConverter
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             String identifier = res.getString("synonym_name");
-            String typeName = res.getString("type_name");
+            String synonymTypeName = res.getString("type_name");
             Boolean isCurrent = res.getBoolean("is_current");
 
-            identifier = fixIdentifier(typeName, identifier);
+            identifier = fixIdentifier(synonymTypeName, identifier);
 
             if (currentFeatureId != null && currentFeatureId != featureId) {
                 existingAttributes = new HashSet<String>();
@@ -707,12 +744,14 @@ public class ChadoDBConverter extends BioDBConverter
 
             if (features.containsKey(featureId)) {
                 FeatureData fdat = features.get(featureId);
-                MultiKey key = new MultiKey("synonym", fdat.interMineType, typeName, isCurrent);
+                MultiKey key =
+                    new MultiKey("synonym", fdat.interMineType, synonymTypeName, isCurrent);
                 List<ConfigAction> actionList = getConfig().get(key);
 
                 if (actionList == null) {
                     // try ignoring isCurrent
-                    MultiKey key2 = new MultiKey("synonym", fdat.interMineType, typeName, null);
+                    MultiKey key2 =
+                        new MultiKey("synonym", fdat.interMineType, synonymTypeName, null);
                     actionList = getConfig().get(key2);
                 }
                 if (actionList == null) {
@@ -733,7 +772,7 @@ public class ChadoDBConverter extends BioDBConverter
                             if (existingSynonyms.contains(identifier)) {
                                 continue;
                             } else {
-                                createSynonym(fdat, typeName, identifier, false, dataSet,
+                                createSynonym(fdat, synonymTypeName, identifier, false, dataSet,
                                               EMPTY_ITEM_LIST, dataSource); // Stores Synonym
                                 count++;
                             }
