@@ -206,11 +206,6 @@
       <reference ref_id="8_3"/>
     </collection>
   </item>
-  <item id="5_1" class="http://www.flymine.org/model/genomic#MRNA">
-    <attribute name="organismDbId" value="FBtr0085315"/>
-    <attribute name="symbol" value="CG10000-RA"/>
-    <reference name="organism" ref_id="2_1"/>
-  </item>
   <item id="4_16" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="symbol"/>
@@ -233,6 +228,12 @@
   </item>
   <item id="8_5" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="7720555"/>
+  </item>
+  <item id="5_1" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="organismDbId" value="FBtr0085315"/>
+    <attribute name="symbol" value="CG10000-RA"/>
+    <reference name="gene" ref_id="3_2"/>
+    <reference name="organism" ref_id="2_1"/>
   </item>
   <item id="6_1" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="identifier" value="3L"/>
