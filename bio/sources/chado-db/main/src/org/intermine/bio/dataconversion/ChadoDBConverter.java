@@ -26,6 +26,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
@@ -587,8 +588,20 @@ public class ChadoDBConverter extends BioDBConverter
                             if (objectClassFeatureDataMap.size() == 1) {
                                 Reference reference = new Reference();
                                 reference.setName(fd.getName());
-                                reference.setRefId(featureDataCollection.get(0).itemIdentifier);
+                                FeatureData referencedFeatureData = featureDataCollection.get(0);
+                                reference.setRefId(referencedFeatureData.itemIdentifier);
                                 store(reference, intermineItemId); // Stores Reference for Feature
+
+                                // special case for 1-1 relations - we need to set the reverse
+                                // reference
+                                ReferenceDescriptor rd = (ReferenceDescriptor) fd;
+                                ReferenceDescriptor reverseRD = rd.getReverseReferenceDescriptor();
+                                if (reverseRD != null && !reverseRD.isCollection()) {
+                                    Reference revReference = new Reference();
+                                    revReference.setName(reverseRD.getName());
+                                    revReference.setRefId(subjectData.itemIdentifier);
+                                    store(revReference, referencedFeatureData.intermineObjectId);
+                                }
                             }
                         }
                     } else {
