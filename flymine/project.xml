@@ -101,11 +101,6 @@
       <property name="src.data.dir" location="/shared/data/flyfish"/>
       <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
     </source>
-    <source name="anoph-expr" type="anoph-expr">
-      <property name="src.data.dir" location="/shared/data/anoph_expr"/>
-      <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
-      <property name="genefile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
-    </source>
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes"/>
     </source>
