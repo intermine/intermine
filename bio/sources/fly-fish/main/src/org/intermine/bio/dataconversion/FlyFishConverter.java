@@ -91,6 +91,10 @@ public class FlyFishConverter extends FileConverter
                 throw new RuntimeException("unknown stage " + stageTag + " in header of "
                                            + getCurrentFile());
             }
+            if (stageTag == '5') {
+                // ignore "stage10-"
+                continue;
+            }
             if (thisHeader.charAt(1) != ' ') {
                 throw new RuntimeException("parse error in header of " + getCurrentFile());
             }
@@ -103,8 +107,8 @@ public class FlyFishConverter extends FileConverter
             String lineBits[] = StringUtils.split(line, ';');
             String geneCG = lineBits[0];
             Item gene = getGene(geneCG);
-            Item mRNALocalisationResults[] = new Item[5];
-            for (int stageNum = 1; stageNum <= 5; stageNum++) {
+            Item mRNALocalisationResults[] = new Item[4];
+            for (int stageNum = 1; stageNum <= 4; stageNum++) {
                 Item result = createItem("MRNALocalisationResult");
                 result.setReference("gene", gene);
                 mRNALocalisationResults[stageNum - 1] = result;
@@ -117,11 +121,7 @@ public class FlyFishConverter extends FileConverter
                         if (stageNum == 3) {
                             result.setAttribute("stage", "stage 6-7");
                         } else {
-                            if (stageNum == 4) {
-                                result.setAttribute("stage", "stage 8-9");
-                            } else {
-                                result.setAttribute("stage", "stage 10-");
-                            }
+                            result.setAttribute("stage", "stage 8-9");
                         }
                     }
                 }
@@ -135,6 +135,10 @@ public class FlyFishConverter extends FileConverter
                         throw new RuntimeException("line too long: " + line);
                     }
                     HeaderConfig hc = config[configIndex];
+                    if (hc == null) {
+                        // we ignore stage10- results
+                        continue;
+                    }
                     String localisation = hc.localisation;
                     Item localisationTerm = getMRNALocalisationTerm(localisation);
                     Item result = mRNALocalisationResults[hc.stage - 1];
