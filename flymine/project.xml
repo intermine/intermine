@@ -102,7 +102,7 @@
       <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
     </source>
     <source name="affy-probes" type="affy-probes">
-      <property name="src.data.dir" location="/shared/data/affy-probes"/>
+      <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
     </source>
     <source name="tiffin" type="tiffin" dump="true">
       <property name="gff3.taxonId" value="7227"/>
