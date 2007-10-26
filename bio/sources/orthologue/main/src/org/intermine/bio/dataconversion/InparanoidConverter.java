@@ -409,10 +409,8 @@ public class InparanoidConverter extends FileConverter
         db = createItem("DataSet");
         db.setAttribute("title", "InParanoid data set");
 
-        List toStore = Arrays.asList(new Object[] {db, pub});
-        for (Iterator i = toStore.iterator(); i.hasNext();) {
-            store((Item) i.next());
-        }
+        store(db);
+        store(pub);
     }
 
     private class BioAndScores

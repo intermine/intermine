@@ -13,9 +13,11 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.bio.ontology.DagParser;
@@ -45,6 +47,7 @@ public class DagConverter extends DataConverter
     protected Map nameToTerm = new HashMap();
     protected Map synToItem = new HashMap();
     protected Item ontology;
+    protected List relations = new ArrayList();
 
     /**
      * Constructor for this class.
@@ -104,6 +107,9 @@ public class DagConverter extends DataConverter
             store((Item) i.next());
         }
         for (Iterator i = synToItem.values().iterator(); i.hasNext();) {
+            store((Item) i.next());
+        }
+        for (Iterator i = relations.iterator(); i.hasNext();) {
             store((Item) i.next());
         }
     }
@@ -217,6 +223,6 @@ public class DagConverter extends DataConverter
         parentRelations.addRefId(relation.getIdentifier());
         ReferenceList childRelations = item.getCollection("childRelations");
         childRelations.addRefId(relation.getIdentifier());
-        store(relation);
+        relations.add(relation);
     }
 }

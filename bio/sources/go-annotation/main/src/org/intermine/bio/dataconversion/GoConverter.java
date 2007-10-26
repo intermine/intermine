@@ -109,6 +109,7 @@ public class GoConverter extends FileConverter
             LOG.debug("productWrapperMap storing item tied to key:" + nextWrapper.getKey());
             Item nextGeneProduct = nextWrapper.getItem();
             doStore(nextGeneProduct, STORE_THREE);
+            doStore(nextWrapper.getSynonym(), STORE_THREE);
         }
         super.close();
     }
@@ -696,9 +697,7 @@ public class GoConverter extends FileConverter
                 accession,
                 dataSourceId);
 
-        store(synonym);
-
-        ItemWrapper newProductWrapper = new ItemWrapper(key, product);
+        ItemWrapper newProductWrapper = new ItemWrapper(key, product, synonym);
         productWrapperMap.put(key, newProductWrapper);
 
         return newProductWrapper;
@@ -993,16 +992,19 @@ public class GoConverter extends FileConverter
     {
         String key;
         Item item;
+        Item synonym;
 
         /**
          * Constructor
          *
          * @param key  the key
          * @param item the Item
+         * @param synonym the synonym
          */
-        ItemWrapper(String key, Item item) {
+        ItemWrapper(String key, Item item, Item synonym) {
             this.key = key;
             this.item = item;
+            this.synonym = synonym;
         }
 
         /**
@@ -1017,6 +1019,13 @@ public class GoConverter extends FileConverter
          */
         public Item getItem() {
             return item;
+        }
+
+        /**
+         * @return the synonym
+         */
+        public Item getSynonym() {
+            return synonym;
         }
     }
 
