@@ -12,6 +12,8 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,7 +38,7 @@ import org.intermine.xml.full.ReferenceList;
  */
 public class KeggPathwayConvertor extends FileConverter
 {
-    protected Item dataSource;
+    protected Item dataSource, dataSet;
     protected Map<String, String> keggOrganismToTaxonId = new HashMap<String, String>();
     protected HashMap pathwayMap = new HashMap();
     private String dataLocation;
@@ -62,8 +64,12 @@ public class KeggPathwayConvertor extends FileConverter
 //        keggOrganismToTaxonId.put("dame", "7460");
 
         dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "Kegg");
+        dataSource.setAttribute("name", "Kyoto Encyclopedia of Genes and Genomes");
+        dataSet = createItem("DataSet");
+        dataSet.setAttribute("title", "KEGG PATHWAY - dme");
+        dataSet.setAttribute("url", "http://www.genome.jp/kegg/pathway.html");
         store(dataSource);
+        store(dataSet);
     }
 
 
@@ -95,6 +101,8 @@ public class KeggPathwayConvertor extends FileConverter
                 String mapName = line[1];
                 Item pathway = getAndStoreItemOnce("Pathway","identifier", mapIdentifier);
                 pathway.setAttribute("name", mapName);
+                pathway.setCollection("evidence", new ArrayList(Collections
+                                                                .singleton(dataSet.getIdentifier())));
                 store(pathway);
             } else if (matcher.find()){
                 String keggOrgName = matcher.group(1);
