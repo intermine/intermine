@@ -299,7 +299,7 @@ public class PsiConverter extends FileConverter
 
                     String db = attrs.getValue("db");
                     String id = attrs.getValue("id");
-                    synonyms = new HashSet<Item>();
+                    synonyms = new HashSet();
                     if (db != null) {
                         String primaryAccession = null;
                         if (db.startsWith("uniprot")) {
@@ -590,6 +590,7 @@ public class PsiConverter extends FileConverter
                     String srcResidues = attValue.toString();
                     sequence.setAttribute("residues", srcResidues);
                     sequence.setAttribute("length", "" + srcResidues.length());
+                    writer.store(ItemHelper.convert(sequence));
                     protein.setReference("sequence", sequence);
                 // <interactorList><interactor id="4">
                 } else if (qName.equals("interactor")) {
@@ -599,11 +600,8 @@ public class PsiConverter extends FileConverter
                         writer.store(ItemHelper.convert(protein));
                         proteinAccessions.put(protein.getAttribute("primaryAccession").getValue(),
                                               protein.getIdentifier());
-                        for (Object ob : synonyms) {
-                            writer.store(ItemHelper.convert((Item) ob));
-                        }
-                        if (sequence != null) {
-                            writer.store(ItemHelper.convert(sequence));
+                        for (Item item : synonyms) {
+                            writer.store(ItemHelper.convert(item));
                         }
                     }
                     protein = null;
@@ -769,11 +767,11 @@ public class PsiConverter extends FileConverter
                     proteinIds.add(proteinRefId);
 
                     /* store all protein interaction-related items */
-                    writer.store(ItemHelper.convert(interaction));
                     if (interactorHolder.getInteractionRegion() != null) {
                         writer.store(ItemHelper.convert(interactorHolder.getInteractionRegion()));
                         writer.store(ItemHelper.convert(interactorHolder.location));
                     }
+                    writer.store(ItemHelper.convert(interaction));
                 }
 
                 /* store all experiment-related items */
