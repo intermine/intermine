@@ -33,6 +33,7 @@
     <merge-additions file="bio/sources/fly-anatomy-ontology/fly-anatomy-ontology_additions.xml"/>
     <merge-additions file="bio/sources/kegg-pathway/kegg-pathway_additions.xml"/>
     <merge-additions file="bio/sources/fly-fish/fly-fish_additions.xml"/>
+    <merge-additions file="bio/sources/anoph-expr/anoph-expr_additions.xml"/>
   </target>
 
 </project>
