@@ -365,7 +365,7 @@
       <attribute name="url" value="http://www.utoronto.ca/krause/"/>
     </item>
     <item id="461" class="" implements="http://www.flymine.org/model/genomic#DataSet">
-      <attribute name="name" value="Fly-FISH"/>
+      <attribute name="title" value="Fly-FISH"/>
       <attribute name="description" value="The expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis"/>
       <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca/"/>
     </item>
