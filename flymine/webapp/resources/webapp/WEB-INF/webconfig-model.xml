@@ -548,6 +548,15 @@
      </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.RNAiPhenotype">
+    <fields>
+      <fieldconfig fieldExpr="comment"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="code"/>
+     </fields>
+  </class>
+
+
   <class className="org.flymine.model.genomic.RNAiScreen">
     <fields>
       <fieldconfig fieldExpr="name"/>
