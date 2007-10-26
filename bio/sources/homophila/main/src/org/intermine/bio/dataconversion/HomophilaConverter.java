@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -232,6 +233,7 @@ public class HomophilaConverter extends FileConverter
         item.addReference(new Reference("subject", findProtein(array).getIdentifier()));
         item.addReference(new Reference("object", findTranslation(array).getIdentifier()));
         item.addAttribute(new Attribute("EValue", array[E_VALUE]));
+        item.addToCollection("evidence", homophilaDb);
         store(item);
         matchCount++;
         return item;
@@ -250,6 +252,7 @@ public class HomophilaConverter extends FileConverter
             translation = createItem("Translation");
             translation.addAttribute(new Attribute("identifier", array[TRANSLATION_ID]));
             translation.addReference(new Reference("organism", orgDrosophila.getIdentifier()));
+            translation.addToCollection("evidence", homophilaDb);
             translations.put(array[TRANSLATION_ID], translation);
             store(translation);
         }
@@ -267,11 +270,11 @@ public class HomophilaConverter extends FileConverter
         Item protein = (Item) proteins.get(array[PROTEIN_ID]);
         if (protein == null) {
             protein = createItem("Protein");
-            protein.addAttribute(new Attribute("identifier", array[PROTEIN_ID]));
+            protein.addAttribute(new Attribute("refSeqId", array[PROTEIN_ID]));
             protein.addReference(new Reference("organism", orgHuman.getIdentifier()));
             Item gene = findGene(array);
             if (gene != null) {
-                addToCollection(protein, "genes", gene);
+                protein.addToCollection("genes", gene);
             }
             proteins.put(array[PROTEIN_ID], protein);
             store(protein);
@@ -298,7 +301,8 @@ public class HomophilaConverter extends FileConverter
             genes.put(geneId, gene);
             gene.addAttribute(new Attribute("symbol", geneId));
             gene.addReference(new Reference("organism", orgHuman.getIdentifier()));
-            addToCollection(gene, "omimDiseases", findDisease(array));
+            gene.addToCollection("omimDiseases", findDisease(array));
+            gene.addToCollection("evidence", homophilaDb);
             store(gene);
             newAnnotation(gene, findDisease(array));
         }
@@ -318,9 +322,9 @@ public class HomophilaConverter extends FileConverter
         Item annotation = createItem("Annotation");
         annotation.addReference(new Reference("subject", gene.getIdentifier()));
         annotation.addReference(new Reference("property", disease.getIdentifier()));
-        addToCollection(annotation, "evidence", homophilaDb);
-        addToCollection(annotation, "evidence", pub1);
-        addToCollection(annotation, "evidence", pub2);
+        annotation.addToCollection("evidence", homophilaDb);
+        annotation.addToCollection("evidence", pub1);
+        annotation.addToCollection("evidence", pub2);
         store(annotation);
         annotationCount++;
         return annotation;
@@ -339,6 +343,7 @@ public class HomophilaConverter extends FileConverter
             disease = createItem("Disease");
             diseases.put(array[OMIM_ID], disease);
             disease.addAttribute(new Attribute("omimId", array[OMIM_ID]));
+            disease.addToCollection("evidence", homophilaDb);
             String desc = (String) diseaseDescriptions.get(array[OMIM_ID]);
             if (desc == null) {
                 LOG.error("no disease description for OMIM " + array[OMIM_ID]);
