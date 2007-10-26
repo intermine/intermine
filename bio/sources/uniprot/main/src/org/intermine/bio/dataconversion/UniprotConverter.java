@@ -673,7 +673,12 @@ public class UniprotConverter extends FileConverter
 
                     // only store the protein if it has a primary accession value
                     if (hasPrimary) {
-
+                        protein.setAttribute("description", descr.toString());
+                        ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
+                        protein.addCollection(evidenceColl);
+                        evidenceColl.addRefId(dataset.getIdentifier());
+                        writer.store(ItemHelper.convert(protein));
+                        
                         // now that we know the taxonID, we can store the genes
                         if (hasPrimary && !genes.isEmpty()) {
 
@@ -681,16 +686,12 @@ public class UniprotConverter extends FileConverter
 
                             while (i.hasNext()) {
                                 Item gene = (Item) i.next();
-                                finaliseGene(gene, protein.getReference("organism").getRefId());
+                                finaliseGene(gene, protein.getReference("organism").getRefId(),
+                                             protein.getReference("dataset").getRefId());
                             }
                         }
-
-                        protein.setAttribute("description", descr.toString());
-                        ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
-                        protein.addCollection(evidenceColl);
-                        evidenceColl.addRefId(datasource.getIdentifier());
-                        writer.store(ItemHelper.convert(protein));
-
+                        
+                        
                         // <entry><name> is a synonym
                         Item syn = createSynonym(protein.getIdentifier(), "identifier",
                                                  protein.getAttribute("identifier").getValue(),
@@ -946,6 +947,7 @@ public class UniprotConverter extends FileConverter
                 if (ds == null) {
                     ds = createItem("DataSet");
                     ds.addAttribute(new Attribute("title", title + " data set"));
+                    ds.setReference("datasource", datasource);
                     dsMaster.put(title, ds);
                     
                     ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
@@ -978,7 +980,7 @@ public class UniprotConverter extends FileConverter
             return ontology;
         }
 
-        private void finaliseGene(Item gene, String orgId)
+        private void finaliseGene(Item gene, String orgId, String datasetId)
             throws SAXException {
             try {
 
@@ -1143,7 +1145,8 @@ public class UniprotConverter extends FileConverter
                         gene.setReference("organism", orgId);
                         ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
                         gene.addCollection(evidenceColl);
-                        evidenceColl.addRefId(datasource.getIdentifier());
+                       
+                        evidenceColl.addRefId(datasetId);
                         writer.store(ItemHelper.convert(gene));
                         i = nameTypeToName.keySet().iterator();
                         while (i.hasNext()) {
