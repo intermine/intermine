@@ -211,6 +211,9 @@ div#quicksearch {
 .attributeField {
   color: green;}
 
+.referenceField {
+  color: green;}
+
 .value {
   font-family: monospace; font-size: 13px;}
 
