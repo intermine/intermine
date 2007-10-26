@@ -1,23 +1,13 @@
 <?xml version="1.0"?>
 <items>
-  <item id="7_1" class="http://www.flymine.org/model/genomic#Transcript">
+  <item id="5_1" class="http://www.flymine.org/model/genomic#Transcript">
     <attribute name="identifier" value="CG9042-RB"/>
     <reference name="organism" ref_id="2_1"/>
-  </item>
-  <item id="6_1" class="http://www.flymine.org/model/genomic#Location">
-    <attribute name="end" value="5940528"/>
-    <attribute name="start" value="5935896"/>
-    <attribute name="strand" value="1"/>
-    <reference name="subject" ref_id="3_2"/>
-    <reference name="object" ref_id="5_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
-  <item id="8_1" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
     <attribute name="identifier" value="CG9042"/>
     <reference name="organism" ref_id="2_1"/>
   </item>
@@ -50,17 +40,13 @@
     <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_1"/>
   </item>
-  <item id="5_1" class="http://www.flymine.org/model/genomic#Chromosome">
-    <attribute name="identifier" value="2L"/>
-    <reference name="organism" ref_id="2_1"/>
-  </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#ProbeSet">
     <attribute name="identifier" value="1616608_a_at"/>
     <attribute name="isControl" value="false"/>
     <attribute name="name" value="1616608_a_at"/>
-    <reference name="gene" ref_id="8_1"/>
+    <reference name="gene" ref_id="6_1"/>
     <reference name="organism" ref_id="2_1"/>
-    <reference name="transcript" ref_id="7_1"/>
+    <reference name="transcript" ref_id="5_1"/>
     <collection name="evidence">
       <reference ref_id="1_1"/>
     </collection>

@@ -89,7 +89,7 @@ public class Drosophila2ProbeConverter extends FileConverter
                     }
                 }
 
-                List<Item> delayedItems = new ArrayList();
+                List<Item> delayedItems = new ArrayList<Item>();
                 Item probeSet = createProbeSet(line[3], delayedItems);
                 if (seqType.equalsIgnoreCase("control sequence")) {
                     // add a description and flag
@@ -97,23 +97,23 @@ public class Drosophila2ProbeConverter extends FileConverter
                     probeSet.setAttribute("isControl", "true");
                 } else {
                     probeSet.setAttribute("isControl", "false");
-
+// commented out for now.  see #1250
                     // create chromosome location for probe set
-                    String chrId = line[12];
-                    if (chrId != null && !chrId.equals("")) {
-                        Item chr = createChromosome(line[12]);
-
-                        Item loc = createItem("Location");
-                        loc.setReference("object", chr.getIdentifier());
-                        loc.setReference("subject", probeSet.getIdentifier());
-                        loc.setAttribute("strand", line[13].equals("+") ? "1" : "-1");
-                        loc.setAttribute("start", line[14]);
-                        loc.setAttribute("end", line[15]);
-                        loc.setCollection("evidence",
-                            new ArrayList(Collections.singleton(dataSet.getIdentifier())));
-
-                        delayedItems.add(loc);
-                    }
+//                    String chrId = line[12];
+//                    if (chrId != null && !chrId.equals("")) {
+//                        Item chr = createChromosome(line[12]);
+//
+//                        Item loc = createItem("Location");
+//                        loc.setReference("object", chr.getIdentifier());
+//                        loc.setReference("subject", probeSet.getIdentifier());
+//                        loc.setAttribute("strand", line[13].equals("+") ? "1" : "-1");
+//                        loc.setAttribute("start", line[14]);
+//                        loc.setAttribute("end", line[15]);
+//                        loc.setCollection("evidence",
+//                            new ArrayList(Collections.singleton(dataSet.getIdentifier())));
+//
+//                        delayedItems.add(loc);
+//                    }
                 }
 
                 if (seqType.equals("BDGP")) {
