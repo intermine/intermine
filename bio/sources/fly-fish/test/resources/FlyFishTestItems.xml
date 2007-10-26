@@ -1,518 +1,191 @@
 <items>
-  <item id="5_27" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Cell division apparatus"/>
-  </item>
-  <item id="4_9" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="3_3"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_2"/></collection>
-  </item>
-  <item id="5_15" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded completely stage 8"/>
-  </item>
-  <item id="5_57" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Accumlation nuclear subregion"/>
-  </item>
-  <item id="4_21" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="3_5"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_19"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_20"/><reference ref_id="5_21"/><reference ref_id="5_22"/><reference ref_id="5_23"/><reference ref_id="5_24"/><reference ref_id="5_25"/><reference ref_id="5_26"/><reference ref_id="5_27"/><reference ref_id="5_28"/><reference ref_id="5_29"/><reference ref_id="5_30"/><reference ref_id="5_31"/><reference ref_id="5_32"/><reference ref_id="5_33"/><reference ref_id="5_34"/><reference ref_id="5_13"/><reference ref_id="5_35"/><reference ref_id="5_36"/><reference ref_id="5_66"/><reference ref_id="5_88"/><reference ref_id="5_89"/><reference ref_id="5_60"/><reference ref_id="5_47"/><reference ref_id="5_50"/><reference ref_id="5_9"/><reference ref_id="5_99"/><reference ref_id="5_16"/><reference ref_id="5_113"/></collection>
-  </item>
-  <item id="5_48" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Apical localization"/>
-  </item>
-  <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG4475"/>
-  </item>
-  <item id="5_32" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Perinuclear around yolk nuclei"/>
-  </item>
-  <item id="5_29" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Perinuclear localization"/>
-  </item>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="3_1"/>
-  </item>
-  <item id="5_16" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degradation maternal transcripts"/>
-  </item>
-  <item id="5_91" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Germ cell nuclei"/>
-  </item>
-  <item id="4_4" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="3_1"/>
-  </item>
-  <item id="4_7" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="3_2"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_7"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_8"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_11"/></collection>
-  </item>
-  <item id="5_39" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="All pole cell nuclei"/>
-  </item>
-  <item id="5_83" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Segment polarity pattern"/>
-  </item>
-  <item id="5_40" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Subset pole cell nuclei"/>
-  </item>
-  <item id="5_56" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Accumlation in subset nuclei"/>
-  </item>
-  <item id="5_116" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Expression in mesoderm"/>
-  </item>
-  <item id="5_47" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Anterior localization"/>
-  </item>
-  <item id="4_23" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="3_5"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_13"/><reference ref_id="5_19"/><reference ref_id="5_67"/><reference ref_id="5_68"/><reference ref_id="5_69"/><reference ref_id="5_70"/><reference ref_id="5_38"/><reference ref_id="5_71"/><reference ref_id="5_72"/><reference ref_id="5_42"/><reference ref_id="5_41"/><reference ref_id="5_43"/><reference ref_id="5_73"/><reference ref_id="5_74"/><reference ref_id="5_75"/><reference ref_id="5_76"/><reference ref_id="5_77"/><reference ref_id="5_78"/><reference ref_id="5_79"/><reference ref_id="5_80"/><reference ref_id="5_81"/><reference ref_id="5_82"/><reference ref_id="5_83"/><reference ref_id="5_84"/><reference ref_id="5_85"/><reference ref_id="5_86"/><reference ref_id="5_87"/><reference ref_id="5_24"/><reference ref_id="5_54"/><reference ref_id="5_26"/><reference ref_id="5_61"/><reference ref_id="5_27"/><reference ref_id="5_55"/><reference ref_id="5_29"/><reference ref_id="5_56"/><reference ref_id="5_57"/><reference ref_id="5_58"/><reference ref_id="5_59"/><reference ref_id="5_32"/><reference ref_id="5_33"/><reference ref_id="5_34"/><reference ref_id="5_2"/><reference ref_id="5_90"/><reference ref_id="5_7"/><reference ref_id="5_48"/><reference ref_id="5_49"/><reference ref_id="5_52"/><reference ref_id="5_53"/><reference ref_id="5_5"/><reference ref_id="5_50"/><reference ref_id="5_20"/><reference ref_id="5_6"/><reference ref_id="5_51"/><reference ref_id="5_8"/><reference ref_id="5_101"/><reference ref_id="5_10"/><reference ref_id="5_102"/><reference ref_id="5_103"/><reference ref_id="5_104"/><reference ref_id="5_105"/><reference ref_id="5_106"/><reference ref_id="5_16"/><reference ref_id="5_107"/><reference ref_id="5_108"/><reference ref_id="5_109"/><reference ref_id="5_110"/><reference ref_id="5_117"/><reference ref_id="5_118"/><reference ref_id="5_115"/><reference ref_id="5_116"/></collection>
-  </item>
-  <item id="5_97" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded partially stage 9"/>
-  </item>
-  <item id="5_4" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Embryonic localization patterns"/>
-  </item>
-  <item id="4_18" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="3_4"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_9"/><reference ref_id="5_11"/></collection>
-  </item>
-  <item id="5_52" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pole cell localization"/>
-  </item>
-  <item id="5_42" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Subset yolk nuclei"/>
-  </item>
-  <item id="5_70" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded completely stage 7"/>
-  </item>
-  <item id="5_89" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Zygotic starting stage 3"/>
-  </item>
-  <item id="5_62" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Spindle midzone localization"/>
-  </item>
-  <item id="5_63" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Other cell division pattern"/>
-  </item>
-  <item id="5_5" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk cortex localization"/>
-  </item>
-  <item id="5_28" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pronucleus-associated"/>
-  </item>
-  <item id="5_18" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded completely stage 5"/>
-  </item>
-  <item id="5_88" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Cortical nuclei"/>
-  </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG4800"/>
-  </item>
-  <item id="4_12" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="3_3"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_13"/><reference ref_id="5_15"/><reference ref_id="5_16"/></collection>
-  </item>
-  <item id="5_93" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Zygotic starting stage 8"/>
-  </item>
-  <item id="5_65" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded partially stage 5"/>
-  </item>
-  <item id="5_60" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Perinuclear around all nuclei"/>
-  </item>
-  <item id="5_109" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Apical clusters"/>
-  </item>
-  <item id="5_98" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded completely stage 9"/>
-  </item>
-  <item id="5_67" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded partially stage 6"/>
-  </item>
-  <item id="5_103" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Local terms for zyg transcripts"/>
-  </item>
-  <item id="5_110" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Discrete apical foci"/>
-  </item>
-  <item id="5_43" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Anterior yolk nuclei"/>
-  </item>
-  <item id="4_8" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="3_2"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_7"/><reference ref_id="5_8"/><reference ref_id="5_12"/></collection>
-  </item>
-  <item id="5_74" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Anterior blastoderm nuclei"/>
-  </item>
-  <item id="5_17" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Ubiquitous (unlocalized)"/>
-  </item>
-  <item id="5_81" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Gap-gene pattern"/>
-  </item>
-  <item id="4_5" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="3_2"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_2"/></collection>
-  </item>
-  <item id="5_49" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Apical enrichment"/>
-  </item>
-  <item id="5_80" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Segmented pattern"/>
-  </item>
-  <item id="5_9" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Exclusionary patterns"/>
-  </item>
-  <item id="5_59" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Perinuclear around blastoderm nuclei"/>
-  </item>
-  <item id="5_86" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Random yolk nuclei"/>
-  </item>
-  <item id="5_46" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Zygotic starting stage 5"/>
-  </item>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
-    <attribute name="title" value="Fly-FISH"/>
-  </item>
-  <item id="5_95" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Germ cell enrichment"/>
-  </item>
-  <item id="5_7" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Basal localization"/>
-  </item>
-  <item id="5_37" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk nuclei"/>
-  </item>
-  <item id="4_24" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="3_5"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_19"/><reference ref_id="5_91"/><reference ref_id="5_37"/><reference ref_id="5_72"/><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_24"/><reference ref_id="5_48"/><reference ref_id="5_7"/><reference ref_id="5_92"/><reference ref_id="5_50"/><reference ref_id="5_42"/><reference ref_id="5_41"/><reference ref_id="5_73"/><reference ref_id="5_93"/><reference ref_id="5_94"/><reference ref_id="5_86"/><reference ref_id="5_76"/><reference ref_id="5_77"/><reference ref_id="5_85"/><reference ref_id="5_80"/><reference ref_id="5_83"/><reference ref_id="5_49"/><reference ref_id="5_95"/><reference ref_id="5_20"/><reference ref_id="5_51"/><reference ref_id="5_96"/><reference ref_id="5_97"/><reference ref_id="5_98"/><reference ref_id="5_54"/><reference ref_id="5_29"/><reference ref_id="5_26"/><reference ref_id="5_61"/><reference ref_id="5_55"/><reference ref_id="5_59"/><reference ref_id="5_32"/><reference ref_id="5_58"/><reference ref_id="5_8"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_11"/><reference ref_id="5_103"/><reference ref_id="5_104"/><reference ref_id="5_107"/><reference ref_id="5_111"/><reference ref_id="5_112"/><reference ref_id="5_114"/><reference ref_id="5_74"/><reference ref_id="5_115"/><reference ref_id="5_116"/><reference ref_id="5_117"/><reference ref_id="5_12"/></collection>
-  </item>
-  <item id="5_41" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="All yolk nuclei"/>
-  </item>
-  <item id="5_58" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Perinuclear subset of nuclei"/>
-  </item>
-  <item id="5_100" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk plasm exclusion"/>
-  </item>
-  <item id="5_50" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk plasm localization"/>
-  </item>
-  <item id="5_14" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded partially stage 4"/>
-  </item>
-  <item id="5_64" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded completely stage 4"/>
-  </item>
-  <item id="5_51" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk plasm enrichment"/>
-  </item>
-  <item id="3_3" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG1746"/>
-  </item>
-  <item id="5_72" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Blastoderm nuclei"/>
-  </item>
-  <item id="5_76" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Dorsal blastoderm nuclei"/>
-  </item>
-  <item id="3_5" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG2100"/>
-  </item>
-  <item id="5_21" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pole plasm"/>
-  </item>
-  <item id="5_34" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Microtubule-associated"/>
-  </item>
-  <item id="5_111" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Mesodermal expression"/>
-  </item>
-  <item id="5_69" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded partially stage 7"/>
-  </item>
-  <item id="5_104" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="All blastoderm nuclei"/>
-  </item>
-  <item id="5_77" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Ventral blastoderm nuclei"/>
-  </item>
-  <item id="4_15" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="3_4"/>
-  </item>
-  <item id="5_23" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pole buds"/>
-  </item>
-  <item id="4_10" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="3_3"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_13"/><reference ref_id="5_14"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_16"/></collection>
-  </item>
-  <item id="5_112" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Expresssion in amnioserosa"/>
-  </item>
-  <item id="5_36" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded partially stage 3"/>
-  </item>
-  <item id="4_3" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="3_1"/>
-  </item>
-  <item id="5_25" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Nuclei associated localization"/>
-  </item>
-  <item id="5_31" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Perinuclear around pole cell nuclei"/>
-  </item>
-  <item id="5_99" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk cortex exclusion"/>
-  </item>
-  <item id="4_16" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="3_4"/>
-  </item>
-  <item id="5_92" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Germ cell localization"/>
-  </item>
-  <item id="5_115" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Expression in API"/>
-  </item>
-  <item id="5_33" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Centrosomal localization"/>
-  </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="3_1"/>
-  </item>
-  <item id="4_6" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="3_2"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_11"/></collection>
-  </item>
-  <item id="5_44" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Posterior yolk nuclei"/>
-  </item>
-  <item id="5_13" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded"/>
-  </item>
-  <item id="5_106" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Persistent widespread"/>
-  </item>
-  <item id="4_20" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="3_4"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_13"/><reference ref_id="5_15"/><reference ref_id="5_16"/></collection>
-  </item>
-  <item id="5_96" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded partially stage 8"/>
-  </item>
-  <item id="5_45" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Zygotic starting stage 4"/>
-  </item>
-  <item id="5_90" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Zygotic starting stage 6"/>
-  </item>
-  <item id="5_10" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Apical exclusion"/>
-  </item>
-  <item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="taxonId" value="7227"/>
-  </item>
-  <item id="5_94" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Zygotic starting stage 9"/>
-  </item>
-  <item id="5_26" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Cytoplasmic foci"/>
-  </item>
-  <item id="5_66" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded completely stage 3"/>
-  </item>
-  <item id="5_71" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk Nuclei"/>
-  </item>
-  <item id="4_22" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="3_5"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_19"/><reference ref_id="5_37"/><reference ref_id="5_38"/><reference ref_id="5_39"/><reference ref_id="5_40"/><reference ref_id="5_41"/><reference ref_id="5_42"/><reference ref_id="5_43"/><reference ref_id="5_44"/><reference ref_id="5_45"/><reference ref_id="5_46"/><reference ref_id="5_17"/><reference ref_id="5_24"/><reference ref_id="5_47"/><reference ref_id="5_20"/><reference ref_id="5_48"/><reference ref_id="5_49"/><reference ref_id="5_7"/><reference ref_id="5_50"/><reference ref_id="5_51"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_52"/><reference ref_id="5_53"/><reference ref_id="5_54"/><reference ref_id="5_55"/><reference ref_id="5_56"/><reference ref_id="5_57"/><reference ref_id="5_29"/><reference ref_id="5_58"/><reference ref_id="5_59"/><reference ref_id="5_31"/><reference ref_id="5_32"/><reference ref_id="5_60"/><reference ref_id="5_26"/><reference ref_id="5_61"/><reference ref_id="5_27"/><reference ref_id="5_33"/><reference ref_id="5_62"/><reference ref_id="5_34"/><reference ref_id="5_63"/><reference ref_id="5_13"/><reference ref_id="5_14"/><reference ref_id="5_64"/><reference ref_id="5_65"/><reference ref_id="5_18"/><reference ref_id="5_86"/><reference ref_id="5_72"/><reference ref_id="5_73"/><reference ref_id="5_74"/><reference ref_id="5_75"/><reference ref_id="5_76"/><reference ref_id="5_77"/><reference ref_id="5_85"/><reference ref_id="5_80"/><reference ref_id="5_78"/><reference ref_id="5_79"/><reference ref_id="5_81"/><reference ref_id="5_82"/><reference ref_id="5_83"/><reference ref_id="5_84"/><reference ref_id="5_8"/><reference ref_id="5_100"/><reference ref_id="5_99"/><reference ref_id="5_10"/><reference ref_id="5_102"/><reference ref_id="5_103"/><reference ref_id="5_104"/><reference ref_id="5_105"/><reference ref_id="5_106"/><reference ref_id="5_16"/><reference ref_id="5_107"/><reference ref_id="5_108"/><reference ref_id="5_109"/><reference ref_id="5_110"/><reference ref_id="5_117"/><reference ref_id="5_118"/></collection>
-  </item>
-  <item id="2_1" class="http://www.flymine.org/model/genomic#Publication">
-    <attribute name="pubMedId" value="17923096"/>
-  </item>
-  <item id="5_1" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Maternal"/>
-  </item>
-  <item id="4_11" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="3_3"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_7"/><reference ref_id="5_8"/><reference ref_id="5_9"/><reference ref_id="5_10"/></collection>
-  </item>
-  <item id="5_35" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded partially stage 2"/>
-  </item>
-  <item id="5_73" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Subset blastoderm nuclei"/>
-  </item>
-  <item id="5_114" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Germ band localization"/>
-  </item>
-  <item id="5_117" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Single stripe"/>
-  </item>
-  <item id="5_84" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Terminal-gene pattern"/>
-  </item>
-  <item id="5_68" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded completely stage 6"/>
-  </item>
-  <item id="5_82" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pair-rule pattern"/>
-  </item>
-  <item id="5_78" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Right flanking nuclei"/>
-  </item>
-  <item id="5_113" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pole plasm excluded"/>
-  </item>
-  <item id="5_107" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degradation zygotic transcripts"/>
-  </item>
-  <item id="5_102" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Basal exclusion"/>
-  </item>
-  <item id="5_105" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Transiently widespread"/>
-  </item>
-  <item id="3_4" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG3057"/>
-  </item>
-  <item id="5_75" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Posterior blastoderm nuclei"/>
-  </item>
-  <item id="5_12" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Apical Localization Neuroblasts"/>
-  </item>
-  <item id="5_61" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Cell junction associated"/>
-  </item>
-  <item id="4_13" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="3_4"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_2"/></collection>
-  </item>
-  <item id="4_19" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="3_4"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_9"/><reference ref_id="5_11"/></collection>
-  </item>
-  <item id="5_30" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Perinuclear around cortical nuclei"/>
-  </item>
-  <item id="5_2" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Ubiquitous (Unlocalized)"/>
-  </item>
-  <item id="5_87" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Zygotic starting stage 7"/>
-  </item>
-  <item id="5_8" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Basal enrichment"/>
-  </item>
-  <item id="5_20" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Posterior localization"/>
-  </item>
-  <item id="5_53" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pole cell enrichment"/>
-  </item>
-  <item id="5_101" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yok cortex exclusion"/>
-  </item>
-  <item id="5_38" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pole cell nuclei"/>
-  </item>
-  <item id="5_54" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Nuclei-associated localization"/>
-  </item>
-  <item id="5_108" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Diffuse apical localization"/>
-  </item>
-  <item id="5_3" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Localized"/>
-  </item>
-  <item id="5_11" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pole cell exclusion"/>
-  </item>
-  <item id="5_118" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Central band of nuclei"/>
-  </item>
-  <item id="5_6" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk cortex enrichment"/>
-  </item>
-  <item id="4_17" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="3_4"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_2"/></collection>
-  </item>
-  <item id="5_22" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="RNA islands"/>
-  </item>
-  <item id="5_79" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Left flanking nuclei"/>
-  </item>
-  <item id="4_14" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="3_4"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_17"/><reference ref_id="5_13"/><reference ref_id="5_14"/><reference ref_id="5_18"/><reference ref_id="5_16"/></collection>
-  </item>
-  <item id="5_85" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Random blastoderm nuclei"/>
-  </item>
-  <item id="5_55" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Intranuclear accumulation"/>
-  </item>
-  <item id="5_19" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Zygotic"/>
-  </item>
-  <item id="5_24" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Subcellular localization patterns"/>
-  </item>
+<item id="4_17" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not localised"/>
+<attribute name="stage" value="stage 1-3"/>
+<reference name="gene" ref_id="3_4"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_2"/></collection>
+</item>
+<item id="4_4" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not expressed"/>
+<attribute name="stage" value="stage 8-9"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="4_7" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="localised"/>
+<attribute name="stage" value="stage 6-7"/>
+<reference name="gene" ref_id="3_2"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_7"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_8"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_11"/></collection>
+</item>
+<item id="5_15" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Degraded completely stage 8"/>
+</item>
+<item id="3_4" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="CG3057"/>
+</item>
+<item id="5_12" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Apical Localization Neuroblasts"/>
+</item>
+<item id="4_19" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="localised"/>
+<attribute name="stage" value="stage 6-7"/>
+<reference name="gene" ref_id="3_4"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_9"/><reference ref_id="5_11"/></collection>
+</item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="CG4475"/>
+</item>
+<item id="5_16" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Degradation maternal transcripts"/>
+</item>
+<item id="5_17" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Ubiquitous (unlocalized)"/>
+</item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Ubiquitous (Unlocalized)"/>
+</item>
+<item id="5_8" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Basal enrichment"/>
+</item>
+<item id="5_13" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Degraded"/>
+</item>
+<item id="5_9" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Exclusionary patterns"/>
+</item>
+<item id="4_6" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="localised"/>
+<attribute name="stage" value="stage 4-5"/>
+<reference name="gene" ref_id="3_2"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_11"/></collection>
+</item>
+<item id="4_9" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not localised"/>
+<attribute name="stage" value="stage 1-3"/>
+<reference name="gene" ref_id="3_3"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_2"/></collection>
+</item>
+<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+<attribute name="title" value="Fly-FISH"/>
+</item>
+<item id="4_11" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="localised"/>
+<attribute name="stage" value="stage 6-7"/>
+<reference name="gene" ref_id="3_3"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_7"/><reference ref_id="5_8"/><reference ref_id="5_9"/><reference ref_id="5_10"/></collection>
+</item>
+<item id="4_2" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not expressed"/>
+<attribute name="stage" value="stage 4-5"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_7" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Basal localization"/>
+</item>
+<item id="4_5" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not localised"/>
+<attribute name="stage" value="stage 1-3"/>
+<reference name="gene" ref_id="3_2"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_2"/></collection>
+</item>
+<item id="5_4" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Embryonic localization patterns"/>
+</item>
+<item id="5_11" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Pole cell exclusion"/>
+</item>
+<item id="5_3" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Localized"/>
+</item>
+<item id="4_12" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not expressed"/>
+<attribute name="stage" value="stage 8-9"/>
+<reference name="gene" ref_id="3_3"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_13"/><reference ref_id="5_15"/><reference ref_id="5_16"/></collection>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="5_10" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Apical exclusion"/>
+</item>
+<item id="4_15" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not expressed"/>
+<attribute name="stage" value="stage 6-7"/>
+<reference name="gene" ref_id="3_4"/>
+</item>
+<item id="4_18" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="localised"/>
+<attribute name="stage" value="stage 4-5"/>
+<reference name="gene" ref_id="3_4"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_9"/><reference ref_id="5_11"/></collection>
+</item>
+<item id="4_13" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not localised"/>
+<attribute name="stage" value="stage 1-3"/>
+<reference name="gene" ref_id="3_4"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_2"/></collection>
+</item>
+<item id="4_16" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not expressed"/>
+<attribute name="stage" value="stage 8-9"/>
+<reference name="gene" ref_id="3_4"/>
+</item>
+<item id="5_6" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Yolk cortex enrichment"/>
+</item>
+<item id="4_14" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not localised"/>
+<attribute name="stage" value="stage 4-5"/>
+<reference name="gene" ref_id="3_4"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_17"/><reference ref_id="5_13"/><reference ref_id="5_14"/><reference ref_id="5_18"/><reference ref_id="5_16"/></collection>
+</item>
+<item id="4_3" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not expressed"/>
+<attribute name="stage" value="stage 6-7"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
+<item id="5_5" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Yolk cortex localization"/>
+</item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Maternal"/>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#Publication">
+<attribute name="pubMedId" value="17923096"/>
+</item>
+<item id="5_14" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Degraded partially stage 4"/>
+</item>
+<item id="5_18" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
+<attribute name="localisation" value="Degraded completely stage 5"/>
+</item>
+<item id="4_8" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="localised"/>
+<attribute name="stage" value="stage 8-9"/>
+<reference name="gene" ref_id="3_2"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_7"/><reference ref_id="5_8"/><reference ref_id="5_12"/></collection>
+</item>
+<item id="4_20" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not expressed"/>
+<attribute name="stage" value="stage 8-9"/>
+<reference name="gene" ref_id="3_4"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_13"/><reference ref_id="5_15"/><reference ref_id="5_16"/></collection>
+</item>
+<item id="4_10" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="localised"/>
+<attribute name="stage" value="stage 4-5"/>
+<reference name="gene" ref_id="3_3"/>
+<collection name="mRNALocalisationTerms"><reference ref_id="5_1"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_13"/><reference ref_id="5_14"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_16"/></collection>
+</item>
+<item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="CG4800"/>
+</item>
+<item id="3_3" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="CG1746"/>
+</item>
+<item id="4_1" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
+<attribute name="localisation" value="not expressed"/>
+<attribute name="stage" value="stage 1-3"/>
+<reference name="gene" ref_id="3_1"/>
+</item>
 </items>
