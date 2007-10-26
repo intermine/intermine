@@ -21,6 +21,8 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
+import org.flymine.model.genomic.GeneGroup;
+
 import java.io.BufferedReader;
 import java.io.Reader;
 
@@ -143,15 +145,33 @@ public class FlyFishConverter extends FileConverter
                     Item localisationTerm = getMRNALocalisationTerm(localisation);
                     Item result = mRNALocalisationResults[hc.stage - 1];
                     result.addToCollection("mRNALocalisationTerms", localisationTerm);
+
+                    String newLocalisation = null;
+                    if (localisation.toLowerCase().contains("unlocalized")) {
+                        newLocalisation = "not localised";
+                    } else {
+                        if (localisation.toLowerCase().equals("localized")) {
+                            newLocalisation = "localised";
+                        }
+                    }
+                    if (newLocalisation != null) {
+                        Attribute resultLocalisation = result.getAttribute("localisation");
+                        if (resultLocalisation == null) {
+                            result.setAttribute("localisation", newLocalisation);
+                        } else {
+                            if (!resultLocalisation.getValue().equals(newLocalisation)) {
+                                throw new RuntimeException("fly-fish result is localised and "
+                                                           + "unlocalised for "
+                                                           + line);
+                            }
+                        }
+                    }
                 }
             }
 
             for (Item result: mRNALocalisationResults) {
-                ReferenceList resultTerms = result.getCollection("mRNALocalisationTerms");
-                if (resultTerms == null || resultTerms.getRefIds().size() == 0) {
-                    result.setAttribute("expressed", "false");
-                } else {
-                    result.setAttribute("expressed", "true");
+                if (result.getAttribute("localisation") == null) {
+                    result.setAttribute("localisation", "not expressed");
                 }
                 store(result);
             }
