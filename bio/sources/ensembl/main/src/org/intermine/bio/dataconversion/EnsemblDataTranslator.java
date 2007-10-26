@@ -355,8 +355,6 @@ public class EnsemblDataTranslator extends DataTranslator
             cds.setAttribute(IDENTIFIER,
                     stableId.getAttribute("stable_id").getValue() + "_CDS");
             cds.addToCollection("polypeptides", translation.getIdentifier());
-            result.add(createSimpleRelation(cds.getIdentifier(),
-                    translation.getIdentifier()));
 
             Item cdsSyn = createSynonym(
                     cds.getIdentifier(),
@@ -364,16 +362,17 @@ public class EnsemblDataTranslator extends DataTranslator
                     cds.getAttribute(IDENTIFIER).getValue(),
                     config.getEnsemblDataSrcRef());
 
-            result.add(cdsSyn);
-
             cds.addReference(config.getOrganismRef());
             addReferencedItem(cds,
                     config.getEnsemblDataSet(), "evidence", true, "", false);
 
             tgtItem.addToCollection("CDSs", cds);
+            result.add(cds);
+            result.add(createSimpleRelation(cds.getIdentifier(),
+                                            translation.getIdentifier()));
             result.add(createSimpleRelation(
                     tgtItem.getIdentifier(), cds.getIdentifier()));
-            result.add(cds);
+            result.add(cdsSyn);
         }
 
     }
@@ -544,7 +543,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     synonyms.add(synonym);
 
                 } else {
-                    tgtItem.addAttribute(new Attribute("identifier", stableId));
+                    tgtItem.setAttribute("identifier", stableId);
                 }
 
                 if (config.containsXrefDataSourceNamed(dbname)) {
@@ -638,11 +637,11 @@ public class EnsemblDataTranslator extends DataTranslator
             Item seq = getSeqItem(refId, false, srcItem);
 
             if (srcItemIsChild) {
-                addReferencedItem(tgtItem, location, "objects", true, "subject", false);
-                location.addReference(new Reference("object", seq.getIdentifier()));
+                location.setReference("object", seq.getIdentifier());
+                location.setReference("subject", tgtItem.getIdentifier());
             } else {
-                addReferencedItem(tgtItem, location, "subjects", true, "object", false);
-                location.addReference(new Reference("subject", seq.getIdentifier()));
+                location.setReference("subject", seq.getIdentifier());
+                location.setReference("object", tgtItem.getIdentifier());
             }
         } else {
 
