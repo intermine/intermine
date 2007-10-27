@@ -13,15 +13,13 @@ package org.intermine.bio.dataconversion;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
-
-import org.flymine.model.genomic.GeneGroup;
 
 import java.io.BufferedReader;
 import java.io.Reader;
@@ -41,8 +39,6 @@ public class FlyFishConverter extends FileConverter
     Item orgDrosophila;
     private Item dataSet;
     private Item pub;
-
-
 
     /**
      * Construct a new instance of HomophilaCnoverter.
