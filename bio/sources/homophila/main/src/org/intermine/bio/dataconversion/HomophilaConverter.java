@@ -31,13 +31,13 @@ import org.intermine.xml.full.Reference;
 
 /**
  * DataConverter to parse homophila data file into Items.
- * 
+ *
  * @author Thomas Riley
  */
 public class HomophilaConverter extends FileConverter
 {
     private static final Logger LOG = Logger.getLogger(HomophilaConverter.class);
-    
+
     /* Indexes into tab seperated array. */
     private static final int TRANSLATION_ID = 0;
     private static final int OMIM_ID = 1;
@@ -46,7 +46,7 @@ public class HomophilaConverter extends FileConverter
 
     protected Map diseaseDescriptions = new HashMap();
     protected Map proteinToGene = new HashMap();
-    
+
     protected Map translations = new HashMap();
     protected Map proteins = new HashMap();
     protected Map diseases = new HashMap();
@@ -60,13 +60,13 @@ public class HomophilaConverter extends FileConverter
     protected Item orgDrosophila;
     protected Item homophilaDb;
     protected Item pub1, pub2;
-    
+
     protected File diseaseFile;
     protected File proteinGeneFile;
 
     /**
      * Construct a new instance of HomophilaCnoverter.
-     * 
+     *
      * @param model the Model
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
@@ -77,38 +77,38 @@ public class HomophilaConverter extends FileConverter
         orgHuman = createItem("Organism");
         orgHuman.addAttribute(new Attribute("taxonId", "9606"));
         store(orgHuman);
-        
+
         orgDrosophila = createItem("Organism");
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
         store(orgDrosophila);
-        
+
         homophilaDb = createItem("DataSet");
         homophilaDb.addAttribute(new Attribute("title", "Homophila data set"));
         store(homophilaDb);
-        
+
         pub1 = createItem("Publication");
         pub1.addAttribute(new Attribute("pubMedId", "11381037"));
         store(pub1);
-        
+
         pub2 = createItem("Publication");
         pub2.addAttribute(new Attribute("pubMedId", "11752278"));
         store(pub2);
     }
-    
+
     /**
      * Read omim ids and descriptions from reader. Input is two columns, tab seperated, first
      * column is OMIM id and second column is a line of description. There may be several lines
      * of description (with the same OMIM id) on adjacent lines.
-     * 
+     *
      * @param reader reader
      * @throws IOException if the file cannot be found/read
      */
     protected void readDiseaseDescriptions(Reader reader) throws IOException {
         BufferedReader br = new BufferedReader(reader);
         String line;
-        
+
         LOG.info("Reading disease descriptions...");
-        
+
         StringBuffer descBuff = new StringBuffer();
         String omim = "";
         while ((line = br.readLine()) != null) {
@@ -129,13 +129,13 @@ public class HomophilaConverter extends FileConverter
             }
         }
         diseaseDescriptions.put(omim, descBuff.toString()); // last line
-        
+
         LOG.info("" + diseaseDescriptions.size() + " descriptions read.");
     }
 
     /**
      * Read mappings from protein id to gene id.
-     * 
+     *
      * @param reader reader
      * @throws IOException if the file cannot be found/read
      */
@@ -143,9 +143,9 @@ public class HomophilaConverter extends FileConverter
         BufferedReader br = new BufferedReader(reader);
         String line;
         int done = 1;
-        
+
         LOG.info("Reading protein_gene mapping...");
-        
+
         while ((line = br.readLine()) != null) {
             String fields[] = StringUtils.split(line, '\t');
             if (fields.length == 2) {
@@ -156,30 +156,30 @@ public class HomophilaConverter extends FileConverter
             }
             done++;
         }
-        
+
         LOG.info("" + proteinToGene.size() + " proteins read.");
     }
-    
+
     /**
      * Set the disease description input file. This file just contains OMIM ids and
      * several lines of description for each id.
-     * 
+     *
      * @param diseaseFile disease description input file
      */
     public void setDiseasefile(File diseaseFile) {
         this.diseaseFile = diseaseFile;
     }
-    
+
     /**
      * Set the protein to gene input file. This file contains two columns, the NP_ protein
      * id followed by the gene id.
-     * 
+     *
      * @param proteinGeneFile protein to gene input file
      */
     public void setProteingenefile(File proteinGeneFile) {
         this.proteinGeneFile = proteinGeneFile;
     }
-    
+
     /**
      * Reads disease description file first, then reads homophila matches file.
      * @param reader the Reader
@@ -192,29 +192,29 @@ public class HomophilaConverter extends FileConverter
         } else if (proteinGeneFile == null) {
             throw new NullPointerException("proteinGeneFile property not set");
         }
-        
+
         try {
             readDiseaseDescriptions(new FileReader(diseaseFile));
         } catch (IOException err) {
             throw new RuntimeException("error reading disease descriptions", err);
         }
-        
+
         try {
             readProteinGeneFile(new FileReader(proteinGeneFile));
         } catch (IOException err) {
             throw new RuntimeException("error reading protein to gene file", err);
         }
-        
+
         BufferedReader br = new BufferedReader(reader);
         br.readLine();
         String line;
         int done = 0;
-        
+
         while ((line = br.readLine()) != null) {
             String array[] = StringUtils.split(line, '\t');
-            
+
             newBlastMatch(array);
-            
+
             if (++done % 10000 == 0) {
                 LOG.info("Processed " + done + " homophila matches");
             }
@@ -223,7 +223,7 @@ public class HomophilaConverter extends FileConverter
 
     /**
      * Create new BlastMatch item. Fills in all attributes and references.
-     * 
+     *
      * @param array line of homophila matches file
      * @return BlastMatch Item
      * @throws ObjectStoreException if something goes wrong
@@ -238,10 +238,10 @@ public class HomophilaConverter extends FileConverter
         matchCount++;
         return item;
     }
-    
+
     /**
      * Create new Translation item. Fills in all attributes and references.
-     * 
+     *
      * @param array line of homophila matches file
      * @return Translation Item
      * @throws ObjectStoreException if something goes wrong
@@ -258,10 +258,10 @@ public class HomophilaConverter extends FileConverter
         }
         return translation;
     }
-    
+
     /**
      * Create new Protein item. Fills in all attributes and references.
-     * 
+     *
      * @param array line of homophila matches file
      * @return Protein Item
      * @throws ObjectStoreException if something goes wrong
@@ -270,7 +270,7 @@ public class HomophilaConverter extends FileConverter
         Item protein = (Item) proteins.get(array[PROTEIN_ID]);
         if (protein == null) {
             protein = createItem("Protein");
-            protein.addAttribute(new Attribute("refSeqId", array[PROTEIN_ID]));
+            protein.addAttribute(new Attribute("identifier", array[PROTEIN_ID]));
             protein.addReference(new Reference("organism", orgHuman.getIdentifier()));
             Item gene = findGene(array);
             if (gene != null) {
@@ -281,10 +281,10 @@ public class HomophilaConverter extends FileConverter
         }
         return protein;
     }
-    
+
     /**
      * Create new Gene item. Fills in all attributes and references.
-     * 
+     *
      * @param array line of homophila matches file
      * @return Gene Item
      * @throws ObjectStoreException if something goes wrong
@@ -308,11 +308,11 @@ public class HomophilaConverter extends FileConverter
         }
         return gene;
     }
-    
+
     /**
      * Create new Annotation item. Adds the Homophila database and the two publications
      * as evidence. The subject is the gene and the property is the disease.
-     * 
+     *
      * @param gene the Gene Item
      * @param disease the disease Item
      * @return the Annotation Item
@@ -329,10 +329,10 @@ public class HomophilaConverter extends FileConverter
         annotationCount++;
         return annotation;
     }
-    
+
     /**
      * Create new Disease item. Fills in all attributes and references.
-     * 
+     *
      * @param array line of homophila matches file
      * @return Disease Item
      * @throws ObjectStoreException if something goes wrong
@@ -354,7 +354,7 @@ public class HomophilaConverter extends FileConverter
         }
         return disease;
     }
-    
+
     /**
      * @see FileConverter#close()
      */
