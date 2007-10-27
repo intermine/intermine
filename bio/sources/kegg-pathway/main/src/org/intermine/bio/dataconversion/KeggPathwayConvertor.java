@@ -53,7 +53,7 @@ public class KeggPathwayConvertor extends FileConverter
     public KeggPathwayConvertor(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
         super(writer, model);
-        
+
         // Drosophila melanogaster
         keggOrganismToTaxonId.put("dme", "7227");
         // Drosophila pseudoobscura
@@ -101,18 +101,18 @@ public class KeggPathwayConvertor extends FileConverter
                 String mapName = line[1];
                 Item pathway = getAndStoreItemOnce("Pathway","identifier", mapIdentifier);
                 pathway.setAttribute("name", mapName);
-                pathway.setCollection("evidence", new ArrayList(Collections
-                                                                .singleton(dataSet.getIdentifier())));
+                //pathway.setCollection("evidence", new ArrayList(Collections
+                //                                                .singleton(dataSet.getIdentifier())));
                 store(pathway);
             } else if (matcher.find()){
                 String keggOrgName = matcher.group(1);
                 String taxonId = keggOrganismToTaxonId.get(keggOrgName);
-                
+
                 if (taxonId != null && taxonId.length() !=0 ) {
                     Item organism = getAndStoreItemOnce("Organism", "taxonId", taxonId);
-                    
+
                     String geneName = line[0];
-                    
+
                     // There are a couple of Transcripts ID's so for the moment we don't want them
                     if (geneName.startsWith("Dmel_")) {
                         geneName = geneName.substring(5);
@@ -129,7 +129,7 @@ public class KeggPathwayConvertor extends FileConverter
                     Item gene = createItem("Gene");
                     gene.setAttribute("identifier", geneName);
                     gene.setReference("organism", organism);
-    
+
                     gene.addCollection(referenceList);
                     store(gene);
                 }
