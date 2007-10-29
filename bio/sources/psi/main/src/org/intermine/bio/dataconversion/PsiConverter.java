@@ -59,6 +59,7 @@ public class PsiConverter extends FileConverter
     private Map<String, String> masterList = new HashMap<String, String>();
     //private int nextClsId;
 
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -766,12 +767,18 @@ public class PsiConverter extends FileConverter
                     interaction.addCollection(proteinList);
                     proteinIds.add(proteinRefId);
 
+                    // add dataset
+                    ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
+                    interaction.addCollection(evidenceColl);
+                    evidenceColl.addRefId(masterList.get("dataset"));
+                    
                     /* store all protein interaction-related items */
+                    writer.store(ItemHelper.convert(interaction));
                     if (interactorHolder.getInteractionRegion() != null) {
                         writer.store(ItemHelper.convert(interactorHolder.getInteractionRegion()));
                         writer.store(ItemHelper.convert(interactorHolder.location));
                     }
-                    writer.store(ItemHelper.convert(interaction));
+                    
                 }
 
                 /* store all experiment-related items */
@@ -855,10 +862,10 @@ public class PsiConverter extends FileConverter
         private void addToCollection(Item parent, ReferenceList collection, Item newItem) {
             //TODO how can collection be null?
             if (collection != null) {
-            if (collection.getRefIds().isEmpty()) {
-                parent.addCollection(collection);
-            }
-            collection.addRefId(newItem.getIdentifier());
+                if (collection.getRefIds().isEmpty()) {
+                    parent.addCollection(collection);
+                }
+                collection.addRefId(newItem.getIdentifier());
             }
         }
 
@@ -877,7 +884,7 @@ public class PsiConverter extends FileConverter
                     throw new SAXException(e);
                 }
                 initOrganisms();
-                getDatasource();
+                initDatasources();
 
         }
 
@@ -896,14 +903,18 @@ public class PsiConverter extends FileConverter
             }
         }
 
-        private void getDatasource()
+        private void initDatasources()
         throws SAXException {
-            Item datasource = createItem("DataSource");
-            datasourceItemId = datasource.getIdentifier();
             try {
+                Item datasource = createItem("DataSource");
+                datasourceItemId = datasource.getIdentifier();
+                Item dataSet = createItem("DataSet");
+                dataSet.setReference("dataSource", datasource.getIdentifier());
+                writer.store(ItemHelper.convert(dataSet));
+                masterList.put("dataset", dataSet.getIdentifier());
                 datasource.addAttribute(new Attribute("name", "UniProt"));
                 writer.store(ItemHelper.convert(datasource));
-                masterList.put("datasource", datasourceItemId);
+                masterList.put("datasource", datasource.getIdentifier());
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
