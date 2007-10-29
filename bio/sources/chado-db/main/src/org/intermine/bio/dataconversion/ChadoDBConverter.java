@@ -902,6 +902,7 @@ public class ChadoDBConverter extends BioDBConverter
             }
             String pubMedId = res.getString("pub_db_identifier");
             if (lastPubFeatureId != null && !featureId.equals(lastPubFeatureId)) {
+                makeFeaturePublications(lastPubFeatureId, currentEvidenceIds);
                 makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds); // Stores ReferenceList
                 currentEvidenceIds = new ArrayList<String>();
             }
@@ -921,6 +922,7 @@ public class ChadoDBConverter extends BioDBConverter
         }
 
         if (lastPubFeatureId != null) {
+            makeFeaturePublications(lastPubFeatureId, currentEvidenceIds);
             makeFeatureEvidence(lastPubFeatureId, currentEvidenceIds);
         }
         LOG.info("Created " + count + " publications");
@@ -928,21 +930,42 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Set the evidence collection of the feature with the given (chado) feature id.
+     * Set the publications collection of the feature with the given (chado) feature id.
      */
-    private void makeFeatureEvidence(Integer featureId, List<String> currentEvidenceIds)
+    private void makeFeaturePublications(Integer featureId, List<String> argPublicationIds)
         throws ObjectStoreException {
         FeatureData fdat = features.get(featureId);
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
         }
+        if (fdat.interMineType.equals("Gene")) {
+            // only Gene has a publications collection
+            return;
+        }
+        List<String> publicationIds = new ArrayList<String>(argPublicationIds);
+        ReferenceList referenceList = new ReferenceList();
+        referenceList.setName("publications");
+        referenceList.setRefIds(publicationIds);
+        store(referenceList, fdat.intermineObjectId);
+    }
+
+    /**
+     * Set the evidence collection of the feature with the given (chado) feature id.
+     */
+    private void makeFeatureEvidence(Integer featureId, List<String> argEvidenceIds)
+        throws ObjectStoreException {
+        FeatureData fdat = features.get(featureId);
+        if (fdat == null) {
+            throw new RuntimeException("feature " + featureId + " not found in features Map");
+        }
+        List<String> evidenceIds = new ArrayList<String>(argEvidenceIds);
         Item dataSet = getDataSetItem(dataSetTitle);
-        currentEvidenceIds.add(0, dataSet.getIdentifier());
+        evidenceIds.add(0, dataSet.getIdentifier());
 
         ReferenceList referenceList = new ReferenceList();
         referenceList.setName("evidence");
 
-        referenceList.setRefIds(currentEvidenceIds);
+        referenceList.setRefIds(evidenceIds);
         store(referenceList, fdat.intermineObjectId);
     }
 
