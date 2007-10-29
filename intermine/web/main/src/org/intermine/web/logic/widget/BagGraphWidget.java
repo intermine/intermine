@@ -85,6 +85,9 @@ public class BagGraphWidget
             ChartColor lightBlue = new ChartColor(159, 192,  255);
             renderer.setSeriesPaint(1, lightBlue);
 
+            ChartColor darkBlue = new ChartColor(39, 77,  216);
+            renderer.setSeriesPaint(2, darkBlue);
+            
             //renderer.setDrawBarOutline(false);
             renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
 
