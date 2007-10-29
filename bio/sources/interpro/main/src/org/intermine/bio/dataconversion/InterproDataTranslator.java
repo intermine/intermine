@@ -80,8 +80,8 @@ public class InterproDataTranslator extends DataTranslator
     //little evidence tag item...
     private org.intermine.xml.full.Item interproDataSet = null;
 
-    private HashMap dbNameToDbSourceItemMap;
-    private HashMap dataSourceToDbSetItemMap;
+//    private HashMap dbNameToDbSourceItemMap;
+//    private HashMap dataSourceToDbSetItemMap;
 
     private Item interproDataSource = null;
     private org.intermine.xml.full.Reference interproDataSourceReference = null;
@@ -98,21 +98,23 @@ public class InterproDataTranslator extends DataTranslator
     public InterproDataTranslator(ItemReader itemReader, Properties properties,
                                   Model sourceModel, Model targetModel) {
         super(itemReader, properties, sourceModel, targetModel);
+        
         interproDataSource = createItem("DataSource");
-        interproDataSource.addAttribute(new Attribute("name", "InterPro"));
+        interproDataSource.addAttribute(new Attribute("name", "UniProtKB"));
         interproDataSourceReference =
                 new org.intermine.xml.full.Reference(SOURCE, interproDataSource.getIdentifier());
 
         interproDataSet = createItem("DataSet");
-        interproDataSet.setAttribute("title", "InterPro data set");
+        interproDataSet.setAttribute("title", "UniProtKB data set");
         interproDataSet.setReference("dataSource", interproDataSource);
 
-        dbNameToDbSourceItemMap = new HashMap();
-        dbNameToDbSourceItemMap.put("InterPro",
-                new DataSourceAndSetUsageCounter(interproDataSource, interproDataSet));
-
-        dataSourceToDbSetItemMap = new HashMap();
-        dataSourceToDbSetItemMap.put(interproDataSource, interproDataSet);
+        
+//        dbNameToDbSourceItemMap = new HashMap();
+//        dbNameToDbSourceItemMap.put("InterPro",
+//                new DataSourceAndSetUsageCounter(interproDataSource, interproDataSet));
+//
+//        dataSourceToDbSetItemMap = new HashMap();
+//        dataSourceToDbSetItemMap.put(interproDataSource, interproDataSet);
     }
 
     /**
@@ -121,44 +123,9 @@ public class InterproDataTranslator extends DataTranslator
     public void translate(ItemWriter tgtItemWriter)
     throws ObjectStoreException, InterMineException {
         org180454Identifier = itemFactory.makeItem().getIdentifier();
-
+        tgtItemWriter.store(ItemHelper.convert(interproDataSet));
+        tgtItemWriter.store(ItemHelper.convert(interproDataSource));
         super.translate(tgtItemWriter);
-
-        for (Iterator dsIt = dbNameToDbSourceItemMap.values().iterator(); dsIt.hasNext();) {
-
-            DataSourceAndSetUsageCounter counter = (DataSourceAndSetUsageCounter) dsIt.next();
-
-            Item nextDataSrc = counter.getDataSource();
-
-            if (counter.getSourceUseageCount() > 1 || nextDataSrc == interproDataSource) {
-                LOG.debug("STORE USED DATASOURCE - ID:" + nextDataSrc.getIdentifier()
-                        + " TIMES_USED:" + (counter.getSourceUseageCount() - 1));
-
-                Attribute ndsName = nextDataSrc.getAttribute("name");
-
-                //Convert the SWISS-PROT data source name into UNIPROT - for dataset.xml reasons.
-                if (ndsName != null && "SWISS-PROT".equalsIgnoreCase(ndsName.getValue())) {
-
-                    nextDataSrc.removeAttribute("name");
-                    Attribute uniprotAttr = new Attribute("name", "UniProt");
-                    nextDataSrc.addAttribute(uniprotAttr);
-                    LOG.debug("CONVERTED SWISS-PROT TO UniProt");
-                } else {
-                    LOG.debug("SKIPPING NON SWISS-PROT DATASOURCE:"
-                            + (ndsName != null ? ndsName.getValue() : "NO_NAME_ATTR!"));
-                }
-
-                tgtItemWriter.store(ItemHelper.convert(nextDataSrc));
-
-                Item nextDataSet = counter.getDataSet();
-                LOG.debug("STORING A DATASET:" + nextDataSet.getIdentifier());
-                tgtItemWriter.store(ItemHelper.convert(nextDataSet));
-            } else {
-                Attribute ndsName = nextDataSrc.getAttribute("name");
-                LOG.debug("SKIPPED UNUSED DATASOURCE:"
-                        + (ndsName != null ? ndsName.getValue() : "NO_NAME_ATTR!"));
-            }
-        }
     }
 
     /**
@@ -184,9 +151,6 @@ public class InterproDataTranslator extends DataTranslator
 
             //skip this one, since we deal with it manually...
             LOG.debug("SKIPPING STORE FOR THE CV_DATABASE.InterPro ITEM!");
-
-            //But we need to set the version field in the interpro dataset
-            setVersionInDataSetItem(srcItem, interproDataSet, "InterPro");
         } else {
             Collection<Item> translated = super.translateItem(srcItem);
             if (srcItemClassName.equals("taxonomy")) {
@@ -228,7 +192,7 @@ public class InterproDataTranslator extends DataTranslator
                 } else {
 
                     if (CV_DATABASE.equals(srcItemClassName)) {
-                        processCVDatabaseItem(srcItem);
+                        //processCVDatabaseItem(srcItem);
                     } else {
                         LOG.debug("SKIPPING AN UNTRANSLATED CLASS:" + srcItemClassName);
                     }
@@ -298,9 +262,9 @@ public class InterproDataTranslator extends DataTranslator
             addToCollection(tgtItem, PROTEINFEATURES, nextEntry);
         }
 
-        Item[] sourceAndSet = setupCvDbDataSrcEvidenceRef(srcItem, tgtItem);
+
         Item extraDatabaseSynonym =
-                createExtraDataSrcSynonym(sourceAndSet[0], tgtItem, PRIMARYACCESSION);
+                createExtraDataSrcSynonym(interproDataSource, tgtItem, PRIMARYACCESSION);
 
         addReferencedItem(tgtItem, extraDatabaseSynonym, SYNONYMS, true, null, false);
 
@@ -426,9 +390,7 @@ public class InterproDataTranslator extends DataTranslator
             items.add(interproSynonym);
         }
 
-        Item[] sourceAndSet = setupCvDbDataSrcEvidenceRef(srcItem, tgtItem);
-
-        Item extraDatabaseSynonym = createExtraDataSrcSynonym(sourceAndSet[0], tgtItem, null);
+        Item extraDatabaseSynonym = createExtraDataSrcSynonym(interproDataSource, tgtItem, null);
 
         addReferencedItem(tgtItem, extraDatabaseSynonym, SYNONYMS, true, null, false);
 
@@ -556,21 +518,12 @@ public class InterproDataTranslator extends DataTranslator
         // WARN IF NONE FOUND!
         org.intermine.xml.full.Reference cvdbRefSrc = srcItem.getReference(CV_DATABASE);
 
-        Item dataSetItem;
-
         if (cvdbRefSrc != null) {
 
             org.intermine.xml.full.Item cvdbItem =
                     ItemHelper.convert(this.srcItemReader.getItemById(cvdbRefSrc.getRefId()));
 
-            String sourceDbName = cvdbItem.getAttribute("dbname").getValue();
-
-            Item dataSourceItem =
-                    procureDataSourceAndSetItem(sourceDbName);
-
-            dataSetItem = procureDataSetItem(dataSourceItem);
-
-            addToCollection(tgtItem, EVIDENCE, dataSetItem);
+            addToCollection(tgtItem, EVIDENCE, interproDataSet);
         } else {
             LOG.warn("!!! FOUND A MATCHES ITEM WITHOUT A REFERENCED CV_DATABASE ITEM !!!");
         }
@@ -594,135 +547,6 @@ public class InterproDataTranslator extends DataTranslator
         tgtItem.setReference(SOURCE, interproDataSet.getIdentifier());
     }
 
-    private void processCVDatabaseItem(org.intermine.xml.full.Item srcItem)
-            throws ObjectStoreException {
-
-        String dbName = srcItem.getAttribute("dbname").getValue();
-
-        LOG.debug("Processing a CV_DATABASE ITEM:" + dbName);
-
-        if (dbNameToDbSourceItemMap.containsKey(dbName)) {
-            LOG.debug("Skipping creating DataSource for a database we have already seen:" + dbName);
-        } else {
-            procureDataSourceAndSetItem(dbName);
-        }
-
-        //Remember to set the version field in the related dataset object.
-        Item dataSetItem = procureDataSetItem(procureDataSourceAndSetItem(dbName));
-        setVersionInDataSetItem(srcItem, dataSetItem, dbName);
-    }
-
-    private Item procureDataSourceAndSetItem(String dbName) {
-
-        Item dataSource;
-
-        if (!dbNameToDbSourceItemMap.containsKey(dbName)) {
-
-            Item nuDataSrc = createItem("DataSource");
-            nuDataSrc.addAttribute(new Attribute("name", dbName));
-            DataSourceAndSetUsageCounter counter =
-                    new DataSourceAndSetUsageCounter(nuDataSrc, procureDataSetItem(nuDataSrc));
-            dbNameToDbSourceItemMap.put(dbName, counter);
-            dataSource = counter.getDataSource();
-        } else {
-
-            DataSourceAndSetUsageCounter useCntr =
-                (DataSourceAndSetUsageCounter) dbNameToDbSourceItemMap.get(dbName);
-
-            dataSource = useCntr.getDataSource();
-        }
-
-        return dataSource;
-    }
-
-    private Item procureDataSetItem(Item parentDataSourceItem) {
-
-        Item dataSet;
-
-        if (!dataSourceToDbSetItemMap.containsKey(parentDataSourceItem)) {
-
-            String dsTitle = parentDataSourceItem.getAttribute("name").getValue() + " data set";
-
-            dataSet = createItem("DataSet");
-            dataSet.setAttribute("title", dsTitle);
-            dataSet.setReference("dataSource", parentDataSourceItem);
-
-            dataSourceToDbSetItemMap.put(parentDataSourceItem, dataSet);
-        } else {
-            dataSet = (Item) dataSourceToDbSetItemMap.get(parentDataSourceItem);
-        }
-
-        return dataSet;
-    }
-
-    private void setVersionInDataSetItem(Item srcCvDbItem, Item dataSetItem, String dbName)
-            throws ObjectStoreException {
-
-        if (dataSetItem.hasAttribute("version")) {
-            LOG.debug("Skipping setting version for a DataSet we have already seen:"
-                    + dbName + " data set");
-        } else {
-
-            org.intermine.xml.full.Item versionItem =
-                    getItemViaItemPath(srcCvDbItem, CV_DATABASE_VIA_DB_VERSION, srcItemReader);
-
-            if (versionItem != null) {
-
-                Attribute versionAttr = versionItem.getAttribute("version");
-
-                if (versionAttr != null) {
-
-                    dataSetItem.setAttribute("version", versionAttr.getValue());
-                } else {
-                    LOG.error("Version data is MISSING for this database:" + dbName);
-                }
-
-            } else {
-
-                LOG.debug("Version data is NOT available for this database: " + dbName);
-            }
-        }
-    }
-
-    /**
-     * Establishs a Datasource evidence item for source items that refer directly to the cv_db
-     * table in the interpro schema of which the PROTEIN and METHOD tables are of current interest.
-     *
-     * Also the call to procureDataSourceAndSetItem ensures that the datasource item will
-     * actually be created as the interpro_mappings file no longer handles
-     * the cv_database -- datasource item
-     * conversion.
-     * */
-    private Item[] setupCvDbDataSrcEvidenceRef(Item srcItem, Item tgtItem)
-            throws ObjectStoreException {
-
-        //CHECK THAT THERE IS A REFERENCE TO THE CV_DATABASE ITEM FOR THIS METHOD ITEM -
-        // WARN IF NONE FOUND!
-        org.intermine.xml.full.Reference cvdbRefSrc = srcItem.getReference(CV_DATABASE);
-        Item[] sourceAndSet = new Item[2];
-        Item dataSourceItem = null;
-        Item dataSetItem = null;
-
-        if (cvdbRefSrc != null) {
-
-            org.intermine.xml.full.Item cvdbItem
-                    = ItemHelper.convert(this.srcItemReader.getItemById(cvdbRefSrc.getRefId()));
-
-            String sourceDbName = cvdbItem.getAttribute("dbname").getValue();
-            dataSourceItem = procureDataSourceAndSetItem(sourceDbName);
-            dataSetItem = procureDataSetItem(dataSourceItem);
-
-            // this is done in uniprot
-            //addToCollection(tgtItem, EVIDENCE, dataSetItem);
-
-        } else {
-            LOG.warn("FOUND A " + srcItem.getClassName() + " WITHOUT A REFERENCED CV_DATABASE!");
-        }
-
-        sourceAndSet[0] = dataSourceItem;
-        sourceAndSet[1] = dataSetItem;
-        return sourceAndSet;
-    }
 
     /**
      * @param dataSrcItem - source database we are referencing
