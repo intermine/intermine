@@ -107,14 +107,6 @@ public class InterproDataTranslator extends DataTranslator
         interproDataSet = createItem("DataSet");
         interproDataSet.setAttribute("title", "UniProtKB data set");
         interproDataSet.setReference("dataSource", interproDataSource);
-
-        
-//        dbNameToDbSourceItemMap = new HashMap();
-//        dbNameToDbSourceItemMap.put("InterPro",
-//                new DataSourceAndSetUsageCounter(interproDataSource, interproDataSet));
-//
-//        dataSourceToDbSetItemMap = new HashMap();
-//        dataSourceToDbSetItemMap.put(interproDataSource, interproDataSet);
     }
 
     /**
@@ -406,7 +398,8 @@ public class InterproDataTranslator extends DataTranslator
         //Make sure that the entry object has a type !!!
         tryAndSetEntryTypeInAnEntry(srcItem);
 
-        addToCollection(tgtItem, EVIDENCE, interproDataSet);
+        // this is done in uniprot
+        //addToCollection(tgtItem, EVIDENCE, interproDataSet);
 
         //LINK ACCROSS THE SUPERMATCH BRIDGE TABLE TO SET THE RELATED
         // PROTEINS FOR THIS ENTRY/PROTEIN-DOMAIN/FAMILY
@@ -522,8 +515,8 @@ public class InterproDataTranslator extends DataTranslator
 
             org.intermine.xml.full.Item cvdbItem =
                     ItemHelper.convert(this.srcItemReader.getItemById(cvdbRefSrc.getRefId()));
-
-            addToCollection(tgtItem, EVIDENCE, interproDataSet);
+            // this is done in uniprot
+            // addToCollection(tgtItem, EVIDENCE, interproDataSet);
         } else {
             LOG.warn("!!! FOUND A MATCHES ITEM WITHOUT A REFERENCED CV_DATABASE ITEM !!!");
         }
@@ -998,50 +991,4 @@ public class InterproDataTranslator extends DataTranslator
 
         return entrySet;
     }
-
-    /**
-     * Holds a datasource item & a manual count of how many times the item has been used.
-     * */
-    class DataSourceAndSetUsageCounter
-    {
-
-        private Item dataSource;
-        private Item dataSet;
-
-        private int sourceUseageCount;
-
-        /**
-         * @param dataSource - the source db item to count for.
-         * @param dataSet - the related dataset item.
-         * */
-        DataSourceAndSetUsageCounter(Item dataSource, Item dataSet) {
-            this.dataSource = dataSource;
-            this.dataSet = dataSet;
-            sourceUseageCount = 0;
-        }
-
-        /**
-         * @return The datasource item that we are counting for.
-         * */
-        synchronized Item getDataSource() {
-            sourceUseageCount++;
-            return dataSource;
-        }
-
-        /**
-         * @return The dataset item that is related to the datasource item.
-         * */
-        public Item getDataSet() {
-            return dataSet;
-        }
-
-        /**
-         * @return the current value of our usage counter.
-         * */
-        synchronized int getSourceUseageCount() {
-            return sourceUseageCount;
-        }
-    }
-
-
 }
