@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * Fly-FISH converter functional test.
- * @author Thomas Riley
+ * @author Kim Rutherford
  */
 public class FlyFishConverterTest extends ItemsTestCase
 {

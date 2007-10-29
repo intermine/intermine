@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -25,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.Reader;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * DataConverter to parse Fly-FISH data file into Items.
@@ -33,6 +33,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class FlyFishConverter extends FileConverter
 {
+    protected static final Logger LOG = Logger.getLogger(FlyFishConverter.class);
+
     private Map<String, Item> geneItems = new HashMap<String, Item>();
     private Map<String, Item> termItems = new HashMap<String, Item>();
 
@@ -156,9 +158,12 @@ public class FlyFishConverter extends FileConverter
                             result.setAttribute("localisation", newLocalisation);
                         } else {
                             if (!resultLocalisation.getValue().equals(newLocalisation)) {
-                                throw new RuntimeException("fly-fish result is localised and "
-                                                           + "unlocalised for "
-                                                           + line);
+                                LOG.error("fly-fish result is localised and unlocalised for "
+                                          + line);
+                                if (newLocalisation.contains("localized")) {
+                                    // localized overrides unlocalized
+                                    result.setAttribute("localisation", newLocalisation);
+                                }
                             }
                         }
                     }
