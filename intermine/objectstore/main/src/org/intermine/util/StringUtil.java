@@ -328,7 +328,7 @@ public class StringUtil
     
     /**
      * Return true if all characters in a given String are digits.  Null or empty string
-     * will return false.
+     * will return false.  Ignores negative sign and decimal point.
      * @param s the string to examine
      * @return true if all characters are digits
      */
