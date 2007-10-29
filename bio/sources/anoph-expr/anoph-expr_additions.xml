@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.MicroArrayExperimentResult" is-interface="true">
+  <class name="org.flymine.model.genomic.AGambiaeLifeCycle" extends="org.flymine.model.genomic.MicroArrayResult" is-interface="true">
     <attribute name="standardError" type="java.lang.Float"/>    
   </class>
 </classes>
