@@ -11,17 +11,14 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.HashMap;
-import java.util.Set;
 
+import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 
-import java.io.File;
-import java.io.StringReader;
-
-import org.apache.commons.io.IOUtils;
-
+import java.io.InputStreamReader;
+import java.io.Reader;
 /**
  * Anoph Expr converter functional test.
  * @author Thomas Riley
@@ -40,21 +37,20 @@ public class AnophExprConverterTest extends ItemsTestCase
         assertNotNull(converter.org);
     }
 
+
     public void testProcess() throws Exception {
 
-        ClassLoader loader = getClass().getClassLoader();
-        String input = IOUtils.toString(loader.getResourceAsStream("test-matrix"));
+        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("AnophExprTest_src.txt"));
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        AnophExprConverter converter = new AnophExprConverter(itemWriter, model);
-        converter.setCurrentFile(new File("test-matrix"));
-        converter.process(new StringReader(input));
+        FileConverter converter = new AnophExprConverter(itemWriter, Model.getInstanceByName("genomic"));
+        converter.process(reader);
         converter.close();
 
-        // uncomment to create a new target items files
-        writeItemsFile(itemWriter.getItems(), "/tmp/AnophExprTestItems.xml");
+        // uncomment to write out a new target items file
+        writeItemsFile(itemWriter.getItems(), "anoph-expr_tgt.xml");
 
-        Set expected = readItemSet("AnophExprTestItems.xml");
-        assertEquals(expected, itemWriter.getItems());
+        assertEquals(readItemSet("AnophExprTest_tgt.xml"), itemWriter.getItems());
+        
     }
 }
