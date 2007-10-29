@@ -577,7 +577,7 @@ public class UniprotConverter extends FileConverter
                     if (ecNumber != null) {
                         protein.setAttribute("ecNumber", ecNumber);
                     }
-                // <dbreference type="FlyBase/UniProt/etc.." id="*" key="12345">
+                    // <dbreference type="FlyBase/UniProt/etc.." id="*" key="12345">
                 } else if (qName.equals("dbReference")
                            && geneSources.contains(attrs.getValue("type"))) {
                     // could be identifier but check next tag to see if this is a gene designation
@@ -591,7 +591,18 @@ public class UniprotConverter extends FileConverter
                     if (possibleGeneIdSource != null && possibleGeneId != null) {
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
-               //    <dbreference><property type="organism name" value="Homo sapiens"/>
+                // <dbreference type="RefSeq">
+                } else if (qName.equals("dbReference") && attrs.getValue("type").equals("RefSeq")) {
+                    String refSeqId = attrs.getValue("id");
+                    if (refSeqId != null) {
+                        refSeqId.trim();
+                        Item syn = createSynonym(protein.getIdentifier(), "identifier",
+                                                 refSeqId.trim(), datasource.getIdentifier());
+                        if (syn != null) {
+                            writer.store(ItemHelper.convert(syn));
+                        }
+                    }    
+                //    <dbreference><property type="organism name" value="Homo sapiens"/>
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("organism name")
                            && (attrs.getValue("value").equals("Homo sapiens")
@@ -828,7 +839,6 @@ public class UniprotConverter extends FileConverter
                         }
                     }
                 }
-
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
