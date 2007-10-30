@@ -37,6 +37,7 @@ public class AnoESTConverter extends BioDBConverter
     private static final String DATA_SOURCE_NAME = "VectorBase";
     private Map<String, Item> clusters = new HashMap<String, Item>();
     private Map<String, Item> ests = new HashMap<String, Item>();
+    private Map<String, String> cloneIds = new HashMap<String, String>();
 
     /**
      * Create a new AnoESTConverter object.
@@ -115,6 +116,8 @@ public class AnoESTConverter extends BioDBConverter
 
     private void makeEstItems(Connection connection) throws SQLException, ObjectStoreException {
         ResultSet res = getEstResultSet(connection);
+
+        Item dataSet = getDataSetItem(DATASET_TITLE);
         while (res.next()) {
             String accession = res.getString(1);
             String clusterId = res.getString(2);
@@ -125,7 +128,7 @@ public class AnoESTConverter extends BioDBConverter
                 est = createItem("EST");
                 ests.put(accession, est);
                 est.setAttribute("identifier", accession);
-                Item dataSet = getDataSetItem(DATASET_TITLE);
+
                 est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
                 est.addToCollection("evidence", dataSet);
@@ -133,12 +136,19 @@ public class AnoESTConverter extends BioDBConverter
                 if (cluster != null) {
                     est.addToCollection("ESTClusters", cluster);
                 }
-                getItemWriter().store(ItemHelper.convert(est));
-                createSynonym(est.getIdentifier(), "identifier", accession, true,
-                              Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
-                createSynonym(est.getIdentifier(), "identifier", cloneId, false,
-                              Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
+
+                cloneIds.put(accession, cloneId);
             }
+        }
+
+        for (Map.Entry<String, Item> entry: ests.entrySet()) {
+            String accession = entry.getKey();
+            Item est = entry.getValue();
+            store(est);
+            createSynonym(est.getIdentifier(), "identifier", accession, true,
+                          Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
+            createSynonym(est.getIdentifier(), "identifier", cloneIds.get(accession), false,
+                          Arrays.asList(dataSet), getDataSourceItem(DATA_SOURCE_NAME));
         }
     }
 
@@ -147,7 +157,7 @@ public class AnoESTConverter extends BioDBConverter
      */
     protected ResultSet getEstResultSet(Connection connection) throws SQLException {
         Statement stmt = connection.createStatement();
-        String query = "select acc, cl_id, clone from est_view;";
+        String query = "select acc, cl_id, clone from est_view order by acc;";
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
