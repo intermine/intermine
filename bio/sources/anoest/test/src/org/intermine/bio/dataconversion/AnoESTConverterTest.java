@@ -42,17 +42,18 @@ public class AnoESTConverterTest extends ItemsTestCase
             new TestAnoESTConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         converter.process();
         itemWriter.close();
+        writeItemsFile(itemWriter.getItems(), "/tmp/AnoESTConverterTest.xml");
         assertEquals(readItemSet("AnoESTConverterTest.xml"), itemWriter.getItems());
     }
 
     private class TestAnoESTConverter extends AnoESTConverter
     {
-        public TestAnoESTConverter(Database database, Model tgtModel, ItemWriter writer) 
+        public TestAnoESTConverter(Database database, Model tgtModel, ItemWriter writer)
         throws ObjectStoreException {
             super(database, tgtModel, writer);
         }
         protected ResultSet getClusterResultSet(@SuppressWarnings("unused") Connection connection) {
-            Object[][] resObjects = new Object[][] { 
+            Object[][] resObjects = new Object[][] {
                 {
                     "NCLAG150001", "2L", 2833, 12833, -1
                 },
