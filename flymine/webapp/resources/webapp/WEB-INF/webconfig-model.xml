@@ -161,11 +161,50 @@
     </longdisplayers>
     <bagdisplayers>
 
+ 	      <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr" 
+	 	      toolTipGen="org.intermine.bio.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator" 
+	 	      description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome."  
+	 	      graphType="BarChart"/> 
+	 	 
+	 	      <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr" 
+	 	      toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator" 
+	 	      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."   
+	 	      graphType="StackedBarChart" /> 
 
        <graphdisplayer title="mRNA localisation (Fly-fish)" domainLabel="Stage" rangeLabel="Up (expressed) or Down (not) gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr" 
  		      toolTipGen="org.flymine.web.widget.FlyFishToolTipGenerator" urlGen="org.flymine.web.widget.FlyFishGraphURLGenerator" 
  		      description="According to &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;Fly-fish&lt;/a&gt;" 
 		      graphType="StackedBarChart" /> 
+      
+       	      <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways" 
+	 	      description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." /> 
+	 	       
+	 	      <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"  
+	 	        link="org.intermine.bio.web.widget.GoStatURLQuery"  
+	 	        controller="org.intermine.bio.web.widget.GoStatLdr"  
+	 	        description="Go terms enriched for genes in this list."    
+	 	        filters="biological_process,cellular_component,molecular_function"  
+	 	        filterLabel="ontology" 
+	 	        max="0.10" /> 
+	 	      <enrichmentwidgetdisplayer title="Protein Domain Enrichment"  
+	 	        link="org.flymine.web.widget.ProteinDomainURLQuery"  
+	 	        controller="org.flymine.web.widget.ProteinDomainLdr"  
+	 	        description="Protein Domains enriched for genes in this list."  
+	 	        max="0.10"  /> 
+	 	      <enrichmentwidgetdisplayer title="Publication Enrichment"  
+	 	        link="org.intermine.bio.web.widget.PublicationURLQuery"  
+	 	        controller="org.intermine.bio.web.widget.PublicationLdr"  
+	 	        description="Publications enriched for genes in this list."  
+	 	        max="0.10"  /> 
+	 	      <!-- removed until we can optimise the query  
+	 	      <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"  
+	 	        link="org.flymine.web.widget.TiffinURLQuery"  
+	 	        controller="org.flymine.web.widget.TiffinLdr"  
+	 	        description="Tiffin Motifs enriched for genes in this list."  
+	 	        max="0.10"  
+	 	        externalLink="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc=" 
+	 	        append=".2" /> 
+	 	      --> 
       
     </bagdisplayers>
   </class>
