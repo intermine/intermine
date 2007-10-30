@@ -646,6 +646,19 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.MRNALocalisationResult">
+    <fields>
+      <fieldconfig fieldExpr="stage"/>
+      <fieldconfig fieldExpr="localisation"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.MRNALocalisationTerm">
+    <fields>
+      <fieldconfig fieldExpr="localisation"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.TFBindingSite">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
