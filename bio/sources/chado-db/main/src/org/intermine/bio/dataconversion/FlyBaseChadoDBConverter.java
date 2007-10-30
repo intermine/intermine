@@ -114,9 +114,9 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
 
                config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
                                        "name"),
-               Arrays.asList(new SetFieldConfigAction("symbol"),
-                             new SetFieldConfigAction("identifier"),
-                             CREATE_SYNONYM_ACTION));
+                                       Arrays.asList(new SetFieldConfigAction("symbol"),
+                                                     new SetFieldConfigAction("identifier"),
+                                                     CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
                                        "uniquename"),
                Arrays.asList(new SetFieldConfigAction("organismDbId")));
