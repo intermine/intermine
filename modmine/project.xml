@@ -96,7 +96,7 @@
     <source name="modmine-static" type="intermine-items-xml-file">
       <property name="src.data.file" location="datasets.xml"/>
     </source>
-    <source name="update-publications" type="update-publications" dump="true">
+    <source name="update-publications" type="update-publications">
       <!-- this source finds the publication ids (pubmed ids) in the
            objectstore, retrieves the details of the publication from Entrez
            into an InterMine format XML file, loads that file into a target
@@ -105,7 +105,7 @@
     </source>
   </sources>
   <post-processing>
-    <post-process name="create-utr-references"/>
+    <post-process name="create-utr-references" dump="true"/>
     <post-process name="calculate-locations"/>
     <post-process name="create-references" dump="true"/>
     <post-process name="make-spanning-locations"/>
@@ -113,10 +113,8 @@
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
     <post-process name="create-overlap-relations-flymine" dump="true"/>
-    <post-process name="do-sources"/>
 
-    <post-process name="set-collection-counts"/>
-    <post-process name="create-intron-features"/>
+    <post-process name="set-collection-counts" dump="true"/>
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
   </post-processing>
