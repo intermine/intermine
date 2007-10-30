@@ -83,7 +83,7 @@ public class ChadoDBConverter extends BioDBConverter
         + "'chromosome_band', 'transposable_element_insertion_site', "
         + "'chromosome_structure_variation', 'protein', 'point_mutation', "
         + "'five_prime_untranslated_region', "
-        + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', 'transcript', "
+        + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', "
         + sequenceFeatureTypesString;
 
     private int chadoOrganismId;
