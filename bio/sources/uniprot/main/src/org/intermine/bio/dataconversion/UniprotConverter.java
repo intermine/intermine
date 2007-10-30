@@ -697,12 +697,12 @@ public class UniprotConverter extends FileConverter
                                 finaliseGene(gene, protein.getReference("organism").getRefId());
                             }
                         }
-                        writer.store(ItemHelper.convert(protein));
+                        
                         // <entry><name> is a synonym
                         Item syn = createSynonym(protein.getIdentifier(), "identifier",
                                                  protein.getAttribute("identifier").getValue(),
                                                  datasource.getIdentifier());
-
+                        writer.store(ItemHelper.convert(protein));
                         if (syn != null) {
                             writer.store(ItemHelper.convert(syn));
                         }
@@ -1113,7 +1113,7 @@ public class UniprotConverter extends FileConverter
                             if (geneOrganismDbId.equals("")) {
                                 LOG.info("geneOrganismDbId was empty string");
                             }
-                            gene.addAttribute(new Attribute("organismDbId", geneOrganismDbId));
+                            gene.setAttribute("organismDbId", geneOrganismDbId);
 
                             Item syn = createSynonym(gene.getIdentifier(), "identifier",
                                           geneOrganismDbId,
@@ -1123,7 +1123,7 @@ public class UniprotConverter extends FileConverter
                             }
                         }
                         if (geneIdentifier != null) {
-                            gene.addAttribute(new Attribute("identifier", geneIdentifier));
+                            gene.setAttribute("identifier", geneIdentifier);
                             // don't create duplicate synonym
                             if (!geneIdentifier.equals(geneOrganismDbId)) {
 

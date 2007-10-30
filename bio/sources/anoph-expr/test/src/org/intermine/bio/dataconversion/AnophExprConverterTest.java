@@ -12,13 +12,15 @@ package org.intermine.bio.dataconversion;
 
 import java.util.HashMap;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.StringReader;
+
+import org.apache.commons.io.IOUtils;
 /**
  * Anoph Expr converter functional test.
  * @author Thomas Riley
@@ -39,18 +41,25 @@ public class AnophExprConverterTest extends ItemsTestCase
 
 
     public void testProcess() throws Exception {
+        
 
-        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("AnophExprTest_src.txt"));
-
+        File genes = File.createTempFile("genes", "");
+        FileOutputStream out = new FileOutputStream(genes);
+        IOUtils.copy(getClass().getClassLoader().getResourceAsStream("reporter_gene_mappingFile.txt"), out);
+        out.close();
+        
+        String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("AnophExprConverterTest_src.txt"));
+        
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        FileConverter converter = new AnophExprConverter(itemWriter, Model.getInstanceByName("genomic"));
-        converter.process(reader);
+        AnophExprConverter converter = new AnophExprConverter(itemWriter, Model.getInstanceByName("genomic"));
+        converter.setGenefile(genes);
+        converter.process(new StringReader(input));
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "anoph-expr_tgt.xml");
+        //writeItemsFile(itemWriter.getItems(), "anoph-expr_tgt.xml");
 
-        assertEquals(readItemSet("AnophExprTest_tgt.xml"), itemWriter.getItems());
-        
+        assertEquals(readItemSet("AnophExprConverterTest_tgt.xml"), itemWriter.getItems());
+
     }
 }
