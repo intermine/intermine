@@ -100,6 +100,11 @@
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
     </source>
+    <source name="anoph-expr" type="anoph-expr"> 
+      <property name="src.data.dir" location="/shared/data/anoph_expr"/> 
+      <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/> 
+      <property name="genefile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/> 
+    </source> 
     <source name="tiffin" type="tiffin" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
