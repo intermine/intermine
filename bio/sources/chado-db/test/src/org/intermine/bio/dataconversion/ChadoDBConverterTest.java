@@ -51,7 +51,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         converter.setTaxonId("7227");
         converter.process();
         itemWriter.close();
-        FileWriter fw = new FileWriter("/tmp/item_out");
+        FileWriter fw = new FileWriter("/tmp/item_out.xml");
         PrintWriter pw = new PrintWriter(fw);
         pw.println("<items>");
         for (Object item: itemWriter.getItems()) {
