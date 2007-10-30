@@ -61,6 +61,9 @@ public class ChadoDBConverter extends BioDBConverter
         String itemIdentifier;
         String interMineType;
         Integer intermineObjectId;
+        short flags = 0;
+        static final short EVIDENCE_CREATED_BIT = 0;
+        static final short EVIDENCE_CREATED = 1 << EVIDENCE_CREATED_BIT;
     }
 
     protected static final Logger LOG = Logger.getLogger(ChadoDBConverter.class);
@@ -250,6 +253,7 @@ public class ChadoDBConverter extends BioDBConverter
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
+        addMissingDataEvidence();
     }
 
     private void processFeatureTable(Connection connection)
@@ -938,7 +942,7 @@ public class ChadoDBConverter extends BioDBConverter
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
         }
-        if (fdat.interMineType.equals("Gene")) {
+        if (!fdat.interMineType.equals("Gene")) {
             // only Gene has a publications collection
             return;
         }
@@ -967,6 +971,24 @@ public class ChadoDBConverter extends BioDBConverter
 
         referenceList.setRefIds(evidenceIds);
         store(referenceList, fdat.intermineObjectId);
+
+        fdat.flags |= FeatureData.EVIDENCE_CREATED;
+    }
+
+    /**
+     * For those features in the features Map that don't yet have a evidence collection, create one
+     * containing the DataSet.  We know if a feature doesn't have an evidence collection if it
+     * doesn't have it's EVIDENCE_CREATED flag set.
+     */
+    private void addMissingDataEvidence() throws ObjectStoreException {
+        List<String> emptyList = Collections.emptyList();
+        for (Map.Entry<Integer, FeatureData> entry: features.entrySet()) {
+            Integer featureId = entry.getKey();
+            FeatureData featureData = entry.getValue();
+            if ((featureData.flags & FeatureData.EVIDENCE_CREATED) == 0) {
+                makeFeatureEvidence(featureId, emptyList);
+            }
+        }
     }
 
     /**
