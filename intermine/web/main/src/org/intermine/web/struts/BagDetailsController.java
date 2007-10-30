@@ -173,7 +173,7 @@ public class BagDetailsController extends TilesAction
                 } catch  (Exception e) {
                     // TODO do something clever
                     //return null;
-                    //throw new Exception();
+                    throw new Exception(e);
                 }
             }
     
