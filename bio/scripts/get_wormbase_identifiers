@@ -37,6 +37,7 @@ my $tab_delim_file = "$download_dir/$wb_id_data_file";
 #create directories and download the file
 &checkdir_exists($wb_main_dir);
 &checkdir_exists($download_dir);
+&checkdir_exists("$download_dir/temp");
 &http_download($file_to_get,$temp_file);
 
 #convert it from a space delimited to tab delimited file
