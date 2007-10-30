@@ -108,12 +108,11 @@ public class FlyFishDataSetLdr implements DataSetLdr
                                                   new QueryValue(geneIdentifier)));
         }
 
-        QueryCollectionReference r = new QueryCollectionReference(gene, "mRNALocalisations");
+        QueryCollectionReference r = new QueryCollectionReference(gene, "mRNALocalisationResults");
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
         
         q.setConstraint(cs);
-
-        
+       
         results = os.execute(q);
         results.setBatchSize(100000);
         Iterator iter = results.iterator();
@@ -138,7 +137,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
                         (geneMap.get(stage + "_NotExpressed")).add(identifier);
                     }
                 } else {
-                    int[] count = new int[2];
+                    int[] count = new int[3];
                     ArrayList<String> genesArray = new ArrayList<String>();
                     genesArray.add(identifier);
                     if (loc.equals("localised")) {
@@ -156,7 +155,9 @@ public class FlyFishDataSetLdr implements DataSetLdr
                         geneMap.put(stage + "_Localised", new ArrayList<String>());
                         geneMap.put(stage + "_NotLocalised", new ArrayList<String>());
                         geneMap.put(stage + "_NotExpressed", genesArray);
-                    } 
+                    } else {
+                        throw new RuntimeException("unknown term (" + loc + ") encountered");
+                    }
                     callTable.put(stage, count);
                 }
             }
@@ -172,7 +173,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
             dataSet.addValue((callTable.get(stage))[1], "NotLocalised", stage);
             dataSet.addValue((callTable.get(stage))[2], "NotExpressed", stage);
             
-            Object[] geneSeriesArray = new Object[2];
+            Object[] geneSeriesArray = new Object[3];
             geneSeriesArray[0] = geneMap.get(stage + "_Localised");
             geneSeriesArray[1] = geneMap.get(stage + "_NotLocalised");
             geneSeriesArray[2] = geneMap.get(stage + "_NotExpressed");
