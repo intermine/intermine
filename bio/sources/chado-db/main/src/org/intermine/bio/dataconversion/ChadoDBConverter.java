@@ -1084,7 +1084,8 @@ public class ChadoDBConverter extends BioDBConverter
             + "   WHERE feature_id IN"
             + "         (" + getFeatureIdQuery() + ")"
             + "     AND srcfeature_id IN"
-            + "         (" + getFeatureIdQuery() + ")";
+            + "         (" + getFeatureIdQuery() + ")"
+            + "     AND locgroup = 0";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
