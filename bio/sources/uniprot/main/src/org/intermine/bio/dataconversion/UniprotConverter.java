@@ -1153,10 +1153,6 @@ public class UniprotConverter extends FileConverter
                         geneMaster.put(uniqueGeneIdentifier, gene.getIdentifier());
                         geneCollection.addRefId(gene.getIdentifier());
                         gene.setReference("organism", orgId);
-                        ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
-                        gene.addCollection(evidenceColl);
-
-                        evidenceColl.addRefId(datasetId);
                         writer.store(ItemHelper.convert(gene));
                         i = nameTypeToName.keySet().iterator();
                         while (i.hasNext()) {
