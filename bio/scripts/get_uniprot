@@ -107,7 +107,7 @@ $connection->quit;
 #splits the uniprot xml files into separate files based on the ncbi taxon id. Reads the taxons of interest from a
 #centrally stored file.
 
-my($start, $end, $buffer, $trigger) = ("<entry", "</entry>", '', 'type="NCBI Taxonomy"');
+my($start, $end, $buffer) = ("<entry", "</entry>", '');
 my ($filename, $fname_end);
 my ($keep, $taxon) = ("false", '0000');
 my (@new_contents, @old_contents);
@@ -141,6 +141,9 @@ if (&checkdir_exists($split_dir)==0) {
   #open file to get taxonIDs from the config file
   my %taxons = &config_species($config_file,"uniprot");
 
+  # set to 1 while we are inside an <organism>...</organism>
+  my $in_organism = 0;
+
   #open each uniprot file
   foreach my $file_type (sort keys %files) {
     $filename = $files{$file_type}->{'filename'};
@@ -150,14 +153,17 @@ if (&checkdir_exists($split_dir)==0) {
     open(F,"<$filename") or die "$! was expecting something like uniprot_sprot.xml or uniprot_trembl.xml";
     while (my $newline = <F>) {
       #if a new entry is found we might want to keep it
-      if ($newline && $newline =~ /$start/gi) {
+      if ($newline =~ /<organism key=/) {
+        $in_organism = 1;
+      } elsif ($newline =~ m!</organism>!) {
+        $in_organism = 0;
+      } elsif ($newline =~ /$start/gi) {
         $keep = "true";
         #is this a taxon Id line?
-      } elsif ($newline && $newline =~ /$trigger/gi) {
-        #get the taxon Id if it is
-        if ($newline=~/id="(\d+)"/) {
-          $taxon = $1;
-        }
+      } elsif ($newline && $in_organism && 
+               $newline=~/dbReference type="NCBI Taxonomy".*id="(\d+)"/) {
+        #get the taxon Id only if we are in an <organism>...</organism> to avoid <organismHost>
+        $taxon = $1;
         #is this the end of the entry?
       } elsif ($newline && $newline =~ /$end/gi) {
         #add to the buffer
