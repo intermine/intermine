@@ -133,6 +133,14 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                config.put(new MultiKey("feature", "MRNA", "FlyBase", "uniquename"),
                           Arrays.asList(new SetFieldConfigAction("organismDbId")));
 
+               config.put(new MultiKey("feature", "PointMutation", "FlyBase", "uniquename"),
+                          Arrays.asList(new SetFieldConfigAction("name"),
+                                        new SetFieldConfigAction("identifier"),
+                                        CREATE_SYNONYM_ACTION));
+               // name isn't set in flybase:
+               config.put(new MultiKey("feature", "PointMutation", "FlyBase", "name"),
+                          Arrays.asList(DO_NOTHING_ACTION));
+
                if (getTaxonIdInt() == 7227) {
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
                               Arrays.asList(new SetFieldConfigAction("identifier"),
