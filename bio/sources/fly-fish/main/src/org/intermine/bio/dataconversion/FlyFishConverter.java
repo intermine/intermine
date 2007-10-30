@@ -56,13 +56,14 @@ public class FlyFishConverter extends FileConverter
         orgDrosophila.addAttribute(new Attribute("taxonId", "7227"));
         store(orgDrosophila);
 
-        dataSet = createItem("DataSet");
-        dataSet.addAttribute(new Attribute("title", "Fly-FISH"));
-        store(dataSet);
+        // TODO these need to be re-added
+//        dataSet = createItem("DataSet");
+//        dataSet.addAttribute(new Attribute("title", "Fly-FISH"));
+//        store(dataSet);
 
-        pub = createItem("Publication");
-        pub.addAttribute(new Attribute("pubMedId", "17923096"));
-        store(pub);
+//        pub = createItem("Publication");
+//        pub.addAttribute(new Attribute("pubMedId", "17923096"));
+//        store(pub);
     }
 
     private class HeaderConfig
@@ -202,6 +203,7 @@ public class FlyFishConverter extends FileConverter
         } else {
             Item gene = createItem("Gene");
             gene.setAttribute("identifier", geneCG);
+            gene.setReference("organism", orgDrosophila);
             geneItems.put(geneCG, gene);
             store(gene);
             return gene;
