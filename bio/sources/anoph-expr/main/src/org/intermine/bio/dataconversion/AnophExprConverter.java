@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.dataconversion.DataConverter;
+
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -45,10 +45,9 @@ public class AnophExprConverter extends FileConverter
     private Map<String, Item> genes = new HashMap<String, Item>();
     private static final String TYPE = "Geometric mean of ratios";
     Item org;
-    private Item dataSet;
+
     private Item pub;
     private Item experiment;
-    private ReferenceList experiments;
     protected File geneFile;
     
     /**
@@ -64,10 +63,11 @@ public class AnophExprConverter extends FileConverter
         org = createItem("Organism");
         org.addAttribute(new Attribute("taxonId", "180454"));
         store(org);
-
-        dataSet = createItem("DataSet");
-        dataSet.addAttribute(new Attribute("title", "Anoph-Expr data set"));
-        store(dataSet);
+        
+//      TODO where does this go?
+//        dataSet = createItem("DataSet");
+//        dataSet.addAttribute(new Attribute("title", "Anoph-Expr data set"));
+//        store(dataSet);
 
         pub = createItem("Publication");
         pub.addAttribute(new Attribute("pubMedId", "17563388"));
@@ -80,8 +80,6 @@ public class AnophExprConverter extends FileConverter
         experiment.setAttribute("name", experimentName);
         experiment.setReference("publication", pub);
         store(experiment);
-        experiments = new ReferenceList("experiments", new ArrayList<String>());
-        experiments.addRefId(experiment.getIdentifier());
         
     }
 
@@ -95,7 +93,7 @@ public class AnophExprConverter extends FileConverter
      * @param reader reader
      * @throws IOException if the file cannot be found/read
      */
-    protected void readGenes(Reader reader) throws IOException {
+    public void readGenes(Reader reader) throws IOException {
         BufferedReader br = new BufferedReader(reader);
         // don't load header
         String line = br.readLine();
@@ -130,7 +128,7 @@ public class AnophExprConverter extends FileConverter
     }
 
     /**
-     * Process the results matrix from Fly-FISH.
+     * Process the text file from arrayexpress
      * @param reader the Reader
      * @see DataConverter#process
      * @throws Exception if something goes wrong
@@ -190,6 +188,18 @@ public class AnophExprConverter extends FileConverter
                     geneIdentifier = geneIdentifier.substring(0, geneIdentifier.indexOf("("));
                 }
                 Item gene = getGene(geneIdentifier);
+                
+                Item material = createItem("BioEntity");
+                material.setAttribute("name", probe);
+                material.setAttribute("identifier", probe);
+                
+                Item reporter = createItem("Reporter");
+                reporter.setAttribute("isControl", "false");
+                reporter.setReference("material", material);
+                
+                store(reporter);
+                store(material);
+                
                 for (int i = 1; i < lineBits.length; i++) {      
 
                     if (stageNames[i] != null && StringUtil.allDigits(lineBits[i])) {
@@ -205,28 +215,16 @@ public class AnophExprConverter extends FileConverter
                                                                     new ArrayList<String>());
                             experimentGenes.addRefId(gene.getIdentifier());
                             result.addCollection(experimentGenes);
-                           
-                        // process stderr
-                        } else {
-                            
+                        } else {                            
                             Item result = results.get(stageName);
                             if (result != null) {
                                 result.setAttribute("standardError", lineBits[i]);
-                                store(result);
-                                
-                                Item material = createItem("BioEntity");
-                                material.setAttribute("name", probe);
-                                material.setAttribute("identifier", probe);
-                                
-                                Item reporter = createItem("Reporter");
-                                reporter.setAttribute("isControl", "false");
-                                reporter.setReference("material", material);
-                                
+                                                                
                                 ReferenceList reporters = new ReferenceList("reporters", 
                                                                           new ArrayList<String>());
-//                                reporters.addRefId(reporter.getIdentifier());
-//                                result.addCollection(reporters);
-                                
+                                reporters.addRefId(reporter.getIdentifier());
+                                result.addCollection(reporters);
+                                                                
                                 Item assay = createItem("MicroArrayAssay");
                                 assay.setAttribute("sample1", "Sample: Reference"); 
                                 assay.setAttribute("sample2", "stage: " + stageName);
@@ -237,9 +235,12 @@ public class AnophExprConverter extends FileConverter
                                                                          new ArrayList<String>());
                                 r.addRefId(result.getIdentifier());
                                 assay.addCollection(r);
+                                
+                                store(result);
                                 store(assay);
+
                             } else {
-                                LOG.error("Couldn't store standard error for the following "
+                                LOG.error("Couldn't store data for the following "
                                           + "stage: " + stageName + " and gene: " + geneIdentifier);
                             }
                         }                       

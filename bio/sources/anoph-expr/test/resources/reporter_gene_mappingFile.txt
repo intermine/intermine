@@ -1,0 +1,3 @@
+Reporter&nbsp;ID	Cluster	Gene&nbsp;sym.	Reporter&nbsp;name	Length	Sequence	Chrom.	Startpos.	Endpos.	SequenceType	SequencePolymerType	ReporterRole	ControlType	Updated
+NAH-P01-A-01	.0		AGAP008116	0			0	0	cDNA_clone	DNA	Experimental		2007-09-04 15:41:30
+NAH-P01-A-02	.0		AGAP002966 (PLL1)	0			0	0	cDNA_clone	DNA	Experimental		2007-09-04 15:41:30
