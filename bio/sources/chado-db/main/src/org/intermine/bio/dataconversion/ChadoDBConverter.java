@@ -481,7 +481,7 @@ public class ChadoDBConverter extends BioDBConverter
             Integer objectId = new Integer(res.getInt("object_id"));
             String relationTypeName = res.getString("type_name");
 
-            if (lastSubjectId != null && subjectId != lastSubjectId) {
+            if (lastSubjectId != null && !subjectId.equals(lastSubjectId)) {
                 processCollectionData(lastSubjectId, relTypeMap); // Stores stuff
                 collectionTotal += relTypeMap.size();
                 relTypeMap = new HashMap<String, Map<String, List<FeatureData>>>();
