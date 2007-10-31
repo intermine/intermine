@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="build/webapp/model/JmolApplet.jar"/>
+	<classpathentry exported="true" kind="lib" path="build/webapp/model/jmol/JmolApplet0.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/bio-tools.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/colt.jar"/>
 	<classpathentry exported="true" kind="lib" path="build/webapp/WEB-INF/lib/coltginy.jar"/>
@@ -42,7 +42,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-dbcp-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-pool-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta-regexp-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="resources/webapp/model/JmolApplet.jar"/>
+	<classpathentry exported="true" kind="lib" path="resources/webapp/model/jmol/JmolApplet0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bio-core-main"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-webapp"/>

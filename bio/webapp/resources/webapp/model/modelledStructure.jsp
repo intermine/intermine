@@ -4,7 +4,10 @@
 <fmt:setBundle basename="model"/>
 
 <!-- modelledStructure.jsp -->
-<applet name="jmol" code="JmolApplet" archive="<html:rewrite href='model/JmolApplet.jar'/>" width="350" height="350">
+<script type="text/javascript" src="<html:rewrite href='model/jmol/Jmol.js'/>" ></script>
+
+
+<applet name="jmol" code="JmolApplet" archive="<html:rewrite href='model/jmol/JmolApplet0.jar'/>" width="350" height="350">
   <param name="progressbar" value="true"/>
   <param name="progresscolor" value="blue"/>
   <!--param name="load" value="http://localhost:8080/1417.atm"/-->
