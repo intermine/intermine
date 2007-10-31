@@ -234,7 +234,7 @@
 
             <li>
              <im:querylink text="All Affymetrix probes from the GeneChip <i>Drosophila</i> Genome 2.0 Array " skipBuilder="true">
-              <query name="" model="genomic" view="ProbeSet.identifier ProbeSet.length ProbeSet.isControl">
+              <query name="" model="genomic" view="ProbeSet.identifier ProbeSet.isControl">
                </query>
              </im:querylink>
             </li>
