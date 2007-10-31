@@ -53,17 +53,43 @@ import org.apache.log4j.Logger;
  */
 public class ChadoDBConverter extends BioDBConverter
 {
-    private static class FeatureData
+    /**
+     * Data about one feature from the feature table in chado.  This exists to avoid having lots of
+     * Item objects in memory.
+     *
+     * @author Kim Rutherford
+     */
+    protected static class FeatureData
     {
-        String uniqueName;
+        private String uniqueName;
+        private String chadoFeatureName;
         // the synonyms that have already been created
-        Set<String> existingSynonyms = new HashSet<String>();
-        String itemIdentifier;
-        String interMineType;
-        Integer intermineObjectId;
+        private Set<String> existingSynonyms = new HashSet<String>();
+        private String itemIdentifier;
+        private String interMineType;
+        private Integer intermineObjectId;
+
         short flags = 0;
         static final short EVIDENCE_CREATED_BIT = 0;
         static final short EVIDENCE_CREATED = 1 << EVIDENCE_CREATED_BIT;
+        static final short IDENTIFIER_SET_BIT = 1;
+        static final short IDENTIFIER_SET = 1 << IDENTIFIER_SET_BIT;
+
+        /**
+         * Return the id of the Item representing this feature.
+         * @return the ID
+         */
+        public Integer getIntermineObjectId() {
+            return intermineObjectId;
+        }
+
+        /**
+         * Get the String read from the name column of the feature table.
+         * @return the chadoFeatureName
+         */
+        public String getChadoFeatureName() {
+            return chadoFeatureName;
+        }
     }
 
     protected static final Logger LOG = Logger.getLogger(ChadoDBConverter.class);
@@ -254,6 +280,7 @@ public class ChadoDBConverter extends BioDBConverter
         processSynonymTable(connection);
         processFeaturePropTable(connection);
         addMissingDataEvidence();
+        extraProcessing(features);
     }
 
     private void processFeatureTable(Connection connection)
@@ -281,6 +308,7 @@ public class ChadoDBConverter extends BioDBConverter
                 FeatureData fdat = new FeatureData();
                 fdat.itemIdentifier = feature.getIdentifier();
                 fdat.uniqueName = uniqueName;
+                fdat.chadoFeatureName = name;
                 fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
                 feature.setReference("organism", organismItem);
                 MultiKey nameKey =
@@ -295,12 +323,8 @@ public class ChadoDBConverter extends BioDBConverter
                         if (feature.checkAttribute("symbol")) {
                             feature.setAttribute("symbol", name);
                         } else {
-                            if (feature.checkAttribute("symbol")) {
-                                feature.setAttribute("symbol", name);
-                            } else {
-                                // do nothing, if the name needs to go in a different attribute
-                                // it will need to be configured
-                            }
+                            // do nothing, if the name needs to go in a different attribute
+                            // it will need to be configured
                         }
                     } else {
                         for (ConfigAction action: nameActionList) {
@@ -308,6 +332,9 @@ public class ChadoDBConverter extends BioDBConverter
                                 SetFieldConfigAction attrAction =
                                     (SetFieldConfigAction) action;
                                 feature.setAttribute(attrAction.fieldName, name);
+                                if (attrAction.fieldName.equals("identifier")) {
+                                    fdat.flags |= FeatureData.IDENTIFIER_SET;
+                                }
                             }
                         }
                     }
@@ -315,11 +342,15 @@ public class ChadoDBConverter extends BioDBConverter
 
                 if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
                     feature.setAttribute("identifier", uniqueName);
+                    fdat.flags |= FeatureData.IDENTIFIER_SET;
                 } else {
                     for (ConfigAction action: uniqueNameActionList) {
                         if (action instanceof SetFieldConfigAction) {
                             SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
                             feature.setAttribute(attrAction.fieldName, uniqueName);
+                            if (attrAction.fieldName.equals("identifier")) {
+                                fdat.flags |= FeatureData.IDENTIFIER_SET;
+                            }
                         }
                     }
                 }
@@ -380,6 +411,16 @@ public class ChadoDBConverter extends BioDBConverter
                 return type;
             }
         }
+    }
+
+    /**
+     * Do any extra processing for this database, after all other processing is done
+     * @param features a map from chado feature_id to data for that feature
+     */
+    protected void extraProcessing(@SuppressWarnings("unused")
+                                   Map<Integer, FeatureData> featureDataMap)
+        throws ObjectStoreException {
+        // override in subclasses as necessary
     }
 
     private void processLocationTable(Connection connection)
@@ -705,9 +746,11 @@ public class ChadoDBConverter extends BioDBConverter
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         if (!existingAttributes.contains(setAction.fieldName)) {
-                            setAttribute(fdat, setAction.fieldName, accession); // Stores
-                                                                         // Attribute for Feature
+                            setAttribute(fdat.intermineObjectId, setAction.fieldName, accession);
                             existingAttributes.add(setAction.fieldName);
+                            if (setAction.fieldName.equals("identifier")) {
+                                fdat.flags |= FeatureData.IDENTIFIER_SET;
+                            }
                         }
                     } else {
                         if (action instanceof CreateSynonymAction) {
@@ -754,8 +797,10 @@ public class ChadoDBConverter extends BioDBConverter
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
-                        setAttribute(fdat, setAction.fieldName, identifier); // Stores
-                                                                        // Attribute for Feature
+                        setAttribute(fdat.intermineObjectId, setAction.fieldName, identifier);
+                        if (setAction.fieldName.equals("identifier")) {
+                            fdat.flags |= FeatureData.IDENTIFIER_SET;
+                        }
                     } else {
                         if (action instanceof CreateSynonymAction) {
                             CreateSynonymAction synonymAction = (CreateSynonymAction) action;
@@ -821,9 +866,11 @@ public class ChadoDBConverter extends BioDBConverter
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         if (!existingAttributes.contains(setAction.fieldName)) {
-                            setAttribute(fdat, setAction.fieldName, identifier); // Stores
-                                                                        // Attribute for Feature
+                            setAttribute(fdat.intermineObjectId, setAction.fieldName, identifier);
                             existingAttributes.add(setAction.fieldName);
+                            if (setAction.fieldName.equals("identifier")) {
+                                fdat.flags |= FeatureData.IDENTIFIER_SET;
+                            }
                         }
                     } else {
                         if (action instanceof CreateSynonymAction) {
@@ -871,12 +918,12 @@ public class ChadoDBConverter extends BioDBConverter
      * @param attributeName the attribute name
      * @param value the value to set
      */
-    private void setAttribute(FeatureData fdat, String attributeName, String value)
+    protected void setAttribute(Integer intermineObjectId, String attributeName, String value)
         throws ObjectStoreException {
         Attribute att = new Attribute();
         att.setName(attributeName);
         att.setValue(value);
-        store(att, fdat.intermineObjectId);
+        store(att, intermineObjectId);
     }
 
     private void processPubTable(Connection connection)
