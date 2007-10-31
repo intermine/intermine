@@ -47,6 +47,8 @@ public class PdbConvertorTest extends ItemsTestCase
         converter.setSrcDataDir("resouces/");
         converter.process(reader);
         converter.close();
+        // uncomment to create a new target items files
+        // writeItemsFile(itemWriter.getItems(), "PdbConverterTest_tgt.xml");
         Set expected = readItemSet("PdbConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());
         
