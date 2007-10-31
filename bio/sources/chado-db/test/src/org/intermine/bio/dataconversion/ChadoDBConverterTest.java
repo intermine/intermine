@@ -90,7 +90,10 @@ public class ChadoDBConverterTest extends ItemsTestCase
                      3117509, "CG10006", "FBgn0036461", "gene", 5023
                  },
                  {
-                     3175411, "CG10000-RA", "FBtr0085315", "mRNA", 2528
+                     411, "CG10000-RA", "FBtr0085315", "mRNA", 2528
+                 },
+                 {
+                     412, "CG10000-RB", "FBtr0085316", "mRNA", 3000
                  },
                  {
                      11494725, "3", "3L", "chromosome_arm", 24543557
@@ -123,19 +126,26 @@ public class ChadoDBConverterTest extends ItemsTestCase
             String[] columnNames = new String[] {
                 "feature_relationship_id", "subject_id", "object_id", "type_name"
             };
+            // results must be ordered by subject_id
             Object[][] resObjects = new Object[][] {
                 {
-                    500 ,    3175411 ,   3117509 , "partof"
+                    500 ,    411 ,   3117509 , "partof"
                 },
                 {
-                    501 ,    3175412 ,   3175411 , "partof"
+                    601 ,    3175412 ,   411 , "partof"
                 },
                 {
-                    502 ,    3175413 ,   3175411 , "partof"
+                    602 ,    3175412 ,   412 , "partof"
                 },
                 {
-                    503 ,    1000000 ,   3175411 , "producedby"
+                    603 ,    3175413 ,   411 , "partof"
                 },
+                {
+                    604 ,    3175413 ,   412 , "partof"
+                },
+                {
+                    700 ,    1000000 ,   411 , "producedby"
+                }
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
             res.setupRows(resObjects);
@@ -222,7 +232,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
                     23774567, 3117509, 11494725, 14985571, false, 14990594, false, 1
                 },
                 {
-                    3201099, 3175411, 11494726, 24574104, false, 24577313, false, -1
+                    3201099, 411, 11494726, 24574104, false, 24577313, false, -1
                 },
                 {
                     3201101, 3175413, 11494726, 24576946, false, 24577107, false, -1
