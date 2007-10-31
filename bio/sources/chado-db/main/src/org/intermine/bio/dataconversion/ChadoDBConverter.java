@@ -85,10 +85,18 @@ public class ChadoDBConverter extends BioDBConverter
 
         /**
          * Get the String read from the name column of the feature table.
-         * @return the chadoFeatureName
+         * @return the name
          */
         public String getChadoFeatureName() {
             return chadoFeatureName;
+        }
+
+        /**
+         * Get the String read from the uniquename column of the feature table.
+         * @return the uniquename
+         */
+        public String getChadoFeatureUniqueName() {
+            return uniqueName;
         }
     }
 
