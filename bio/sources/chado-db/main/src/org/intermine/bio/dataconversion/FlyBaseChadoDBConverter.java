@@ -251,8 +251,13 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
         throws ObjectStoreException {
         for (FeatureData featureData: features.values()) {
             if ((featureData.flags & FeatureData.IDENTIFIER_SET) == 0) {
-                setAttribute(featureData.getIntermineObjectId(), "identifier",
-                             featureData.getChadoFeatureName());
+                if (featureData.getChadoFeatureName() == null) {
+                    setAttribute(featureData.getIntermineObjectId(), "identifier",
+                                 featureData.getChadoFeatureUniqueName());
+                } else {
+                    setAttribute(featureData.getIntermineObjectId(), "identifier",
+                                 featureData.getChadoFeatureName());
+                }
             }
         }
     }
