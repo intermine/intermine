@@ -27,12 +27,18 @@
   <class className="org.flymine.model.genomic.ProteinStructure">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="zScore"/>
-      <fieldconfig fieldExpr="qScore"/>
-      <fieldconfig fieldExpr="experiment.type"/>
-      <fieldconfig fieldExpr="alignment" displayer="/htmlDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="technique"/>
+      <fieldconfig fieldExpr="classification"/>
+      <fieldconfig fieldExpr="resolution" />
+      <fieldconfig fieldExpr="prosa_q_score"/>
+      <fieldconfig fieldExpr="prosa_z_score"/>
+      <fieldconfig fieldExpr="start"/>
+      <fieldconfig fieldExpr="end"/>
+      <fieldconfig fieldExpr="alignment" showInResults="false" />
     </fields>
     <longdisplayers>
+      <displayer src="/model/pdbLink.jsp"/>
       <displayer src="/model/modelledStructure.jsp"/>
     </longdisplayers>
   </class>
