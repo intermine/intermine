@@ -487,4 +487,40 @@ QLPDYNSPVVLHNERTSIEDFCNKLHRSIAKEFKYALVWGSSVKHQPQKV
 GIEHVLNDEDVVQIVKKV
 </sequence>
 </entry>
+<entry accession="UPI0000084574">
+  <dbReferenceList>
+    <dbReference db="TrEMBL" id="Q8IQH1"
+                 created="01-MAR-2003" last="03-OCT-2006"/>
+                 created="01-MAR-2003" last="03-OCT-2006"/>
+                 version="1" version_i="1" active="N"/>
+    <dbReference db="FlyBase" id="CG10632-PA"
+                 created="02-APR-2003" last="21-JUL-2003"/>
+                 created="02-APR-2003" last="21-JUL-2003"/>
+                 version_i="1"/>
+    <dbReference db="EMBL" id="AAN11870"
+                 created="12-MAR-2003" last="15-SEP-2006"/>
+                 created="12-MAR-2003" last="15-SEP-2006"/>
+                 version="1" version_i="1" active="N"/>
+    <dbReference db="RefSeq" id="NP_648591"
+                 created="08-JUL-2004" last="07-NOV-2006"/>
+                 created="08-JUL-2004" last="07-NOV-2006"/>
+                 version="1" version_i="1" active="N"/>
+    <dbReference db="Ensembl" id="CG10632-PA"
+                 created="01-APR-2003" last="28-MAR-2007"/>
+                 created="01-APR-2003" last="28-MAR-2007"/>
+                 version_i="1"/>
+  </dbReferenceList>
+  <sequence length="580" crc64="D6A93F534DCCD917" >
+    MELPKELSVAEIRNYMLANECKVTNHALVKHFKKFLTHPQSQNEARKRFKTYVTLLSTIK
+    NENNQKFLILRKKYVNECPTDEVVERAVAAASGIPEPSSPGGASLNFDSPMRQPPPYKPP
+    PMVTSPPAVSIAKEHQENYQECVDEFTAAIKRIEPARLERRTSVKSEDLDQQEKPEKTSR
+    SNSIDVIDNKENIPRFSFSSEASSASSTSIEKPEMADPTAPAAVGDVAENPISVKEATRK
+    FNRMASEEEAKIISPPAKKKPEKTALHWAAKHGNEDVVKLIAGTYKADVNARTGYTPLHL
+    ATQFGRDNIFELLWNVYKANRDIMDWSGNKPLDYSRQRSSVSASTCSKIKARKKHAIEKD
+    LGFLRIGSLNVRVKKTTEAFSNFLGVGNGSGVAPTGYGNGGSAVAANRHHPRSHRAPHQR
+    HHHHVGTTRSRHPNQRAAMSTPYATNGGLPSRASVPNSRNIYDGVHKSWGSADNIPHRSE
+    DLMPPPKAVEYISKRNKSSKRSSYASNTTDSPRDSICSSNSSSNLNGGYSSMPTTPNQLR
+    APKGIAASFAVDSDSDSACGFDSTWSVNCRGSSSSNPSQS
+  </sequence>
+</entry>
 </uniprot>
