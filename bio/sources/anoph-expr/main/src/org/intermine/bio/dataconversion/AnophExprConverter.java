@@ -12,9 +12,11 @@ package org.intermine.bio.dataconversion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
-
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -176,92 +178,108 @@ public class AnophExprConverter extends FileConverter
                 }
             }
         }
-        
+
         HashMap<String, Item> results = new HashMap<String, Item>();
-        
+
+
         while ((line = br.readLine()) != null) {
             String lineBits[] = StringUtils.split(line, '\t');
             String probe = lineBits[0];
             if (reporterToGene.get(probe) != null) {  
+                LinkedHashSet<Item> delayedItems = new LinkedHashSet<Item>();
                 String geneIdentifier = reporterToGene.get(probe);
                 if (reporterToGene.get(probe).contains("(")) {
                     geneIdentifier = geneIdentifier.substring(0, geneIdentifier.indexOf("("));
                 }
                 Item gene = getGene(geneIdentifier);
-                
+                ReferenceList microArrayResults 
+                = new ReferenceList("microArrayResults", new ArrayList<String>());
+
                 Item material = createItem("BioEntity");
                 material.setAttribute("name", probe);
                 material.setAttribute("identifier", probe);
-                
+
                 Item reporter = createItem("Reporter");
                 reporter.setAttribute("isControl", "false");
                 reporter.setReference("material", material);
-                
-                store(reporter);
-                store(material);
-                
+
                 for (int i = 1; i < lineBits.length; i++) {      
 
                     if (stageNames[i] != null && StringUtil.allDigits(lineBits[i])) {
                         String stageName = stageNames[i].getStageName();
                         if (results.get(stageName) == null) {
-                            
+
                             Item result = createItem("AGambiaeLifeCycle");
                             results.put(stageNames[i].getStageName(), result);
                             result.setAttribute("type", TYPE);
                             result.setAttribute("value", lineBits[i]);
                             result.setAttribute("isControl", "false");
                             ReferenceList experimentGenes = new ReferenceList("genes", 
-                                                                    new ArrayList<String>());
+                                                            new ArrayList<String>());
                             experimentGenes.addRefId(gene.getIdentifier());
                             result.addCollection(experimentGenes);
+                            delayedItems.add(result);
                         } else {                            
                             Item result = results.get(stageName);
                             if (result != null) {
                                 result.setAttribute("standardError", lineBits[i]);
-                                                                
+
                                 ReferenceList reporters = new ReferenceList("reporters", 
-                                                                          new ArrayList<String>());
+                                                          new ArrayList<String>());
                                 reporters.addRefId(reporter.getIdentifier());
                                 result.addCollection(reporters);
-                                                                
+
+                                microArrayResults.addRefId(result.getIdentifier());
+
                                 Item assay = createItem("MicroArrayAssay");
                                 assay.setAttribute("sample1", "Sample: Reference"); 
                                 assay.setAttribute("sample2", "stage: " + stageName);
                                 assay.setAttribute("name", "stage: " + stageName);
                                 assay.setReference("experiment", experiment);
-                                
-                                ReferenceList r = new ReferenceList("results", 
-                                                                         new ArrayList<String>());
-                                r.addRefId(result.getIdentifier());
-                                assay.addCollection(r);
-                                
-                                store(result);
-                                store(assay);
 
+//                                ReferenceList r = new ReferenceList("results", 
+//                                                                    new ArrayList<String>());
+//                                r.addRefId(result.getIdentifier());
+//                                assay.addCollection(r);
+
+                                ReferenceList assays = new ReferenceList("assays", 
+                                                                    new ArrayList<String>());
+                                assays.addRefId(assay.getIdentifier());
+                                result.addCollection(assays);
+                                
+                                delayedItems.add(assay);
                             } else {
                                 LOG.error("Couldn't store data for the following "
                                           + "stage: " + stageName + " and gene: " + geneIdentifier);
                             }
                         }                       
                     }
+                    delayedItems.add(reporter);
+                    delayedItems.add(material);
                 }
-            }
-
+                gene.addCollection(microArrayResults);
+                store(gene);
+                storeAll(delayedItems);
+            }            
         }
     }
 
 
-    private Item getGene(String geneCG) throws ObjectStoreException {
+    private Item getGene(String geneCG) {
         if (genes.containsKey(geneCG)) {
             return genes.get(geneCG);
         } else {
             Item gene = createItem("Gene");
             gene.setAttribute("identifier", geneCG);
             gene.setReference("organism", org);
-            genes.put(geneCG, gene);
-            store(gene);
+            genes.put(geneCG, gene);         
             return gene;
+        }
+    }
+    
+    private void storeAll(Set<Item> delayedItems) throws ObjectStoreException {
+        for (Item item : delayedItems) {
+            store(item);
         }
     }
 }
