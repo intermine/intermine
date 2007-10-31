@@ -117,6 +117,9 @@
     <source name="protein_structure" type="protein_structure">
       <property name="src.data.dir" location="/shared/data/kenji/data/all/"/>
     </source>
+    <source name="pdb" type="pdb">
+      <property name="src.data.dir" location="/shared/data/pdb/current"/>
+    </source>    
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
       <property name="organisms" value="7227 6239 4932"/>
