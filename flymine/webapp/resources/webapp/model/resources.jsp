@@ -27,7 +27,7 @@
 
 		<p>
          <ul>
-          <li><dt><a href="http://www.drosdel.org.uk">DrosDel</a> is a collection
+          <li><dt><a href="http://www.drosdel.org.uk" target="_new" title="DrosDel">DrosDel</a> is a collection
           of <i>P</i>-element insertions for generating custom chromosomal aberrations
           in <i>D. melanogaster</i>. The locations of the <i>P</i>-element insertions
           and the deletions that can be constructed from them have been loaded into
@@ -140,11 +140,11 @@
         and PCR products.  The PCR products that overlap a promoter region are highlighted:</p>
 
         <div style="margin-left: 20px">
-          <img style="border: 1px solid black" src="model/images/tiling_path_screen_shot.png"/>
+          <img style="border: 1px solid black" src="model/images/tiling_path_screen_shot.png" title="Tiling path" />
         </div>
         <p>A closer view:</p>
         <div style="margin-left: 20px">
-          <img style="border: 1px solid black" src="model/images/tiling_path_screen_shot_zoom.png"/>
+          <img style="border: 1px solid black" src="model/images/tiling_path_screen_shot_zoom.png" title="Tiling path"/>
         </div>
 
      </div>
