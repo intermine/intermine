@@ -57,17 +57,17 @@ public class GFF3Record
             throw new IOException("GFF line too short (" + st.countTokens() + " fields): " + line);
         }
 
-        sequenceID = fixEntityNames(URLDecoder.decode(st.nextToken(), "UTF-8"));
+        sequenceID = fixEntityNames(URLDecoder.decode(st.nextToken(), "UTF-8")).trim();
 
-        source = st.nextToken();
+        source = st.nextToken().trim();
 
         if (source.equals("") || source.equals(".")) {
             source = null;
         }
 
-        type = st.nextToken();
+        type = st.nextToken().trim();
 
-        String startString = st.nextToken();
+        String startString = st.nextToken().trim();
         try {
             if (startString.equals(".")) {
                 start = -1;
@@ -78,7 +78,7 @@ public class GFF3Record
             throw new IOException("can not parse integer for start position: " + startString);
         }
 
-        String endString = st.nextToken();
+        String endString = st.nextToken().trim();
         try {
             if (endString.equals(".")) {
                 end = -1;
@@ -89,7 +89,7 @@ public class GFF3Record
             throw new IOException("can not parse integer for end position: " + endString);
         }
 
-        String scoreString = st.nextToken();
+        String scoreString = st.nextToken().trim();
 
         if (scoreString.equals("") || scoreString.equals(".")) {
             score = null;
@@ -101,13 +101,13 @@ public class GFF3Record
             }
         }
 
-        strand = st.nextToken();
+        strand = st.nextToken().trim();
 
         if (strand.equals("") || strand.equals(".")) {
             strand = null;
         }
 
-        phase = st.nextToken();
+        phase = st.nextToken().trim();
 
         if (phase.equals("") || phase.equals(".")) {
             phase = null;
@@ -132,14 +132,14 @@ public class GFF3Record
      */
     public GFF3Record(String sequenceID, String source, String type, int start, int end,
                       Double score, String strand, String phase, Map attributes) {
-        this.sequenceID = sequenceID;
-        this.source = source;
-        this.type = type;
+        this.sequenceID = sequenceID.trim();
+        this.source = source.trim();
+        this.type = type.trim();
         this.start = start;
         this.end = end;
         this.score = score;
-        this.strand = strand;
-        this.phase = phase;
+        this.strand = strand.trim();
+        this.phase = phase.trim();
         this.attributes = attributes;
     }
 
