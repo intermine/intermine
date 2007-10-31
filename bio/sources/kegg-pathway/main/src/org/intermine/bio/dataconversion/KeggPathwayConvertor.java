@@ -101,8 +101,8 @@ public class KeggPathwayConvertor extends FileConverter
                 String mapName = line[1];
                 Item pathway = getAndStoreItemOnce("Pathway","identifier", mapIdentifier);
                 pathway.setAttribute("name", mapName);
-                //pathway.setCollection("evidence", new ArrayList(Collections
-                //                                                .singleton(dataSet.getIdentifier())));
+                pathway.setCollection("evidence", new ArrayList(Collections
+                                                                .singleton(dataSet.getIdentifier())));
                 store(pathway);
             } else if (matcher.find()){
                 String keggOrgName = matcher.group(1);
