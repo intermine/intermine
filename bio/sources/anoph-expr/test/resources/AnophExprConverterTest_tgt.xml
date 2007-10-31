@@ -89,6 +89,11 @@
 <attribute name="identifier" value="NAH-P01-A-01"/>
 <attribute name="name" value="NAH-P01-A-01"/>
 </item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="AGAP008116"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="microArrayResults"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/><reference ref_id="6_6"/><reference ref_id="6_7"/></collection>
+</item>
 <item id="2_1" class="http://www.flymine.org/model/genomic#MicroArrayExperiment">
 <attribute name="name" value="Koutos AC:  Life cycle transcriptions of malaria mosquito Anopheles gambiae and comparison with the fruitfly Drosophila melanogaster"/>
 <reference name="publication" ref_id="1_1"/>
@@ -99,10 +104,6 @@
 </item>
 <item id="1_1" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="17563388"/>
-</item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="AGAP008116"/>
-<reference name="organism" ref_id="0_1"/>
 </item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
 <attribute name="name" value="stage: 96 h_larva_mixed sex"/>
