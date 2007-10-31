@@ -85,18 +85,6 @@
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="FlyBase"/>
   </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="cytoLocation" value="71B1-71B1"/>
-    <attribute name="organismDbId" value="FBgn0036461"/>
-    <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-      <reference ref_id="9_3"/>
-    </collection>
-    <collection name="publications">
-      <reference ref_id="9_3"/>
-    </collection>
-  </item>
   <item id="7_2" class="http://www.flymine.org/model/genomic#Exon">
     <attribute name="identifier" value="CG10000:2"/>
     <attribute name="symbol" value="CG10000:2"/>
@@ -110,6 +98,19 @@
   </item>
   <item id="9_4" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="2612903"/>
+  </item>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
+    <attribute name="cytoLocation" value="71B1-71B1"/>
+    <attribute name="identifier" value="CG10006"/>
+    <attribute name="organismDbId" value="FBgn0036461"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+      <reference ref_id="9_3"/>
+    </collection>
+    <collection name="publications">
+      <reference ref_id="9_3"/>
+    </collection>
   </item>
   <item id="4_7" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -192,6 +193,7 @@
     </collection>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="identifier" value="CG10000-RA"/>
     <attribute name="organismDbId" value="FBtr0085315"/>
     <attribute name="symbol" value="CG10000-RA"/>
     <reference name="gene" ref_id="3_2"/>
