@@ -356,7 +356,8 @@ public class UniprotConverter extends FileConverter
         private StringBuffer attValue = null;
         private boolean createInterpro = false;
         private ArrayList<Item> delayedItems = new ArrayList();
-
+        private boolean isProtein = false;
+        
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
@@ -395,12 +396,22 @@ public class UniprotConverter extends FileConverter
             try {
                 // <entry>
                 if (qName.equals("entry")) {
-                    // create, clear all lists for each new protein
-                    initProtein();
-                    // will be tremble or swiss-prot
-                    dataset = getDataSet(attrs.getValue("dataset"));
+                    // TODO only store for swiss prot or trembl?
+                    if (attrs.getValue("dataset") != null) {
+                        isProtein = true;
+
+                        // create, clear all lists for each new protein
+                        initProtein();
+                        // will be tremble or swiss-prot
+                        dataset = getDataSet(attrs.getValue("dataset"));
+                    } else {
+                        isProtein = false;                       
+                    }
+                } 
+                
+                if (isProtein) {
                 // <entry><protein>
-                } else if (qName.equals("protein")) {
+                if (qName.equals("protein")) {
                     String isFragment = "false";
                     // check for <protein type="fragment*">
                     if (attrs.getValue("type") != null) {
@@ -620,10 +631,13 @@ public class UniprotConverter extends FileConverter
 
                         geneDesignations.put(possibleGeneIdSource, new String(possibleGeneId));
                     }
+                }
+                }
                 // <uniprot>
-                } else if (qName.equals("uniprot")) {
+                if (qName.equals("uniprot")) {
                    initData();
                 }
+           
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
@@ -678,7 +692,7 @@ public class UniprotConverter extends FileConverter
 
             try {
                 stack.pop();
-
+                if (isProtein) {
                 // <entry>
                 if (qName.equals("entry")) {
 
@@ -834,9 +848,10 @@ public class UniprotConverter extends FileConverter
                         }
                     }
                 }
+                }
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
-            }
+            }        
        }
 
         private void initData()
