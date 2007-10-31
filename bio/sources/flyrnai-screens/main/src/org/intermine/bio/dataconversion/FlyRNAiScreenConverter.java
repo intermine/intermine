@@ -10,11 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,35 +35,15 @@ public class FlyRNAiScreenConverter extends FileConverter
 {
     protected Item dataSource, organism, hfaSource;
 
-    private Map genes = new HashMap();
-    private Map synonyms = new HashMap();
-    private Map publications = new HashMap();
-    private Map amplicons = new HashMap();
-
-    protected String taxonId;
+    private Map<String,Item> genes = new HashMap<String,Item>();
+    private Map<String,Item> publications = new HashMap<String,Item>();
+    private Map<String,Item> screenMap = new HashMap<String,Item>();
+    private Map<String, String> resultValues = new HashMap<String,String>();
+    protected String taxonId = "7227";
     // access to current file for error messages
     private String fileName;
-
-    private static final String PMID_PREFIX = "PMID:";
-    private static final String SCREEN_NAME_PREFIX = "Screen_name:";
-    private static final String CELL_LINE_PREFIX = "Cell line:";
-    private static final String PHENOTYPE_DESCRIPTION_PREFIX = "Phenotype_description:";
-
-    private static final String[] HEADER_FIELDS = new String[] {
-        PMID_PREFIX, SCREEN_NAME_PREFIX, CELL_LINE_PREFIX, PHENOTYPE_DESCRIPTION_PREFIX
-    };
-
-    // column headings
-    private static final String FBGN_COLUMN = "FBGN";
-    private static final String PHENOTYPE_COLUMN = "Phenotype";
-    private static final String DRSC_AMPLICON_COLUMN = "DRSC_Amplicon";
-    private static final String CURATED_DRSC_AMPLICON_COLUMN = "DRSC Amplicon";
-    private static final String HFA_AMPLICON_COLUMN = "HFA_Amplicon";
-    private static final String AMPLICON_LENGTH_COLUMN = "Amplicon_Length";
-    private static final String NUM_OFF_TARGET_COLUMN = "19bp_Matches";
-    private static final String CAR_REPEATS_COLUMN = "CAR";
-    private static final String HIT_COLUMN = "Hit";
-
+    private Set<String> hitScreenNames = new HashSet<String>();
+    private Set<String> detailsScreenNames = new HashSet<String>();
     private Item dataSet;
 
     /**
@@ -81,253 +58,208 @@ public class FlyRNAiScreenConverter extends FileConverter
      * @see FileConverter#process(Reader)
      */
     public void process(Reader reader) throws Exception {
-        if (taxonId == null) {
-            throw new RuntimeException("taxonId attribute not set");
-        }
-
-        // Files named *.dataset contain the actual data.  Rows that have a
-        // corresponding entry in *_curated.tsv need to have
-        // RNAiScreenHit.hasPredictedOffTargetEffect set to false, otherwise
-        // the flag should be true.  DRSC Amplicon ids can be used to match
-        // entries in the two files.
-
-        fileName = getCurrentFile().getPath();
-        if (!fileName.endsWith(".dataset")) {
-            return;
-        }
-
-        BufferedReader curatedReader = null;
-        try {
-            File curatedFile = new File(fileName.substring(0, fileName.indexOf("."))
-                                   + "_curated.tsv");
-            curatedReader = new BufferedReader(new FileReader(curatedFile));
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to find curated file for: " + fileName, e);
-        }
-
-        Set offTargetFalse = readCurated(curatedReader);
-        System.out. println("offTargetFalse: " + offTargetFalse);
-
-        BufferedReader br = new BufferedReader(reader);
-
+        // set up common items
         if (organism == null) {
             organism = createItem("Organism");
             organism.setAttribute("taxonId", taxonId);
             store(organism);
         }
 
-        System.err .println("Processing file: " + getCurrentFile().getName());
-
-        Map headerFieldValues = getHeaderFields(br);
-
-        String pubmedId = (String) headerFieldValues.get(PMID_PREFIX);
-
-        Item publication = newPublication(pubmedId);
-
-        dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "DRSC RNAi data set: "
-                             + headerFieldValues.get(SCREEN_NAME_PREFIX));
         if (dataSource == null) {
             dataSource = createItem("DataSource");
             dataSource.setAttribute("name", "Drosophila RNAi Screening Center");
             store(dataSource);
         }
-        if (hfaSource == null) {
-            hfaSource = createItem("DataSource");
-            hfaSource.setAttribute("name", "Renato Paro lab");
-            store(hfaSource);
+
+        if (dataSet == null) {
+            dataSet = createItem("DataSet");
+            dataSet.setAttribute("title", "DRSC RNAi data set");
+            dataSet.setReference("dataSource", dataSource);
+            store(dataSet);
         }
-        dataSet.setReference("dataSource", dataSource);
-        store(dataSet);
 
-        Item rnaiScreen = createItem("RNAiScreen");
-        rnaiScreen.setAttribute("name", (String) headerFieldValues.get(SCREEN_NAME_PREFIX));
-        rnaiScreen.setAttribute("analysisDescription",
-                                (String) headerFieldValues.get(PHENOTYPE_DESCRIPTION_PREFIX));
-        rnaiScreen.setAttribute("cellLine", (String) headerFieldValues.get(CELL_LINE_PREFIX));
-        rnaiScreen.setReference("organism", organism);
-        rnaiScreen.setReference("publication", publication);
-        store(rnaiScreen);
+        fileName = getCurrentFile().getPath();
+        if (fileName.endsWith("RNAi_all_hits.txt")) {
+            processHits(reader);
+        } else if (fileName.endsWith("RNAi_screen_details")) {
+            processScreenDetails(reader);
+        }
+    }
 
-        String[] columnNameRow = null;
+    /*
+     * Check that we have seen the same screen names in the hits and details files.
+     * @see org.intermine.dataconversion.FileConverter#close()
+     */
+    public void close() throws Exception {
+        Set<String> noDetails = new HashSet<String>();
+        for (String screenName : hitScreenNames) {
+            if (!detailsScreenNames.contains(screenName)) {
+                noDetails.add(screenName);
+            }
+        }
+        
+        Set<String> noHits = new HashSet<String>();
+        for (String screenName : detailsScreenNames) {
+            if (!hitScreenNames.contains(screenName)) {
+                noHits.add(screenName);
+            }
+        }
+        
+        if (!noHits.isEmpty() || !noDetails.isEmpty()) {
+            throw new RuntimeException("Screen names from hits file and details file did not match."
+                    + (noHits.isEmpty() ? "" : "  No hits found for screen detail: " + noHits)
+                    + (noDetails.isEmpty() ? "" : "  No details found for screen hit: " + noDetails));
+        }
+        super.close();
+    }
 
-        // a Map from column name to column index
-        Map columnNameMap = new HashMap();
+    private void processHits(Reader reader) throws ObjectStoreException {
 
+        boolean readingData = false;
+        int headerLength = 0;
+        Item[] screens = null;
+        
         Iterator tsvIter;
         try {
-            tsvIter = TextFileUtil.parseTabDelimitedReader(br);
+            tsvIter = TextFileUtil.parseTabDelimitedReader(reader);
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + getCurrentFile(), e);
         }
 
         while (tsvIter.hasNext()) {
-            String [] thisRow = (String[]) tsvIter.next();
-            if (columnNameRow == null) {
-                // the first row has the column headings (unless it is blank)
-                if (thisRow.length <= 1) {
-                    continue;
+            String [] line = (String[]) tsvIter.next();
+
+            if (!readingData) {
+                
+                if (line.length == 2) {
+                    System.out.println("line (" + line.length + ") - " + Arrays.asList(line));
+                    // this is the key to result symbol, put them in a map.  Strip off 'A '.
+                    if (!line[0].equals("") && !line[1].equals("")) {
+                        String value = line[1].trim();
+                        if (value.startsWith("A ")) {
+                            value = value.substring(2);
+                        }
+                        resultValues.put(line[0].trim(), value);
+                    }
+                } else if (line[0].trim().equals("Amplicon")) {
+                    readingData = true;
+                    headerLength = line.length;
+                    screens = new Item[headerLength - 2];
+                    for (int i = 2; i < line.length; i++) {
+                        // create an array of screen item identifers (first two slots empty)
+                        screens[i-2] = getScreen(line[i], "hits");
+                        hitScreenNames.add(line[i]);
+                    }
                 }
-                columnNameRow = thisRow;
-                for (int i = 0; i < columnNameRow.length; i++) {
-                    columnNameMap.put(columnNameRow[i], new Integer(i));
-                }
-                continue;
-            }
-
-            String hitsColumn = getColumnValue(columnNameMap, thisRow, HIT_COLUMN);
-            String [] hitStrengths = hitsColumn.split("[ \\t]*,[ \\t]*");
-
-            if (hitsColumn.equals("")) {
-                continue;
-            }
-
-
-            String ampliconIdentifier =
-                getColumnValue(columnNameMap, thisRow, DRSC_AMPLICON_COLUMN);
-            // if the amplicon doesn't appear in the curated file then we don't want
-            // to create it, probably has off target effects.
-            if (!offTargetFalse.contains(ampliconIdentifier)) {
-                continue;
-            }
-            Item amplicon = (Item) amplicons.get(ampliconIdentifier);
-            if (amplicon == null) {
-                amplicon = createItem("Amplicon");
-                String ampliconLength =
-                    getColumnValue(columnNameMap, thisRow, AMPLICON_LENGTH_COLUMN);
-                String hfaAmpliconIdentifier =
-                    getColumnValue(columnNameMap, thisRow, HFA_AMPLICON_COLUMN);
-                try {
-                    new Integer(ampliconLength);
-                } catch (NumberFormatException e) {
-                    // ignore hits with invalid amplicon lengths
-                    continue;
+            } else {
+                if (line.length != headerLength) {
+                    throw new RuntimeException("Incorrect number of entries in line: "
+                                               + line + " (should be " + headerLength);
                 }
 
+                Set<Item> genes = new HashSet<Item>();
+
+                String ampliconIdentifier = line[0].trim();
+                Item amplicon = createItem("Amplicon");
                 amplicon.setAttribute("identifier", ampliconIdentifier);
-                amplicon.setAttribute("length", ampliconLength);
                 amplicon.setReference("organism", organism);
-                amplicons.put(ampliconIdentifier, amplicon);
+                amplicon.addToCollection("evidence", dataSet);
                 store(amplicon);
 
                 newSynonym(ampliconIdentifier, amplicon, dataSource);
-                newSynonym(hfaAmpliconIdentifier, amplicon, hfaSource);
-            }
 
-            String numOffTargets =
-                getColumnValue(columnNameMap, thisRow, NUM_OFF_TARGET_COLUMN);
+                // the amplicon may target zero or more genes, a gene can be targeted
+                // by more than one amplicon.  
+                if (!(line[1] == null || line[1].equals(""))) {
+                    String [] geneNames = line[1].split(",");
 
-            for (int hitStrengthIndex = 0; hitStrengthIndex < hitStrengths.length;
-                 hitStrengthIndex++) {
-                String hitStrength = hitStrengths[hitStrengthIndex];
-
-                // get columns using the column names from the header line
-                String geneNameColumn = getColumnValue(columnNameMap, thisRow, FBGN_COLUMN);
-                String [] geneNames = geneNameColumn.split("[ \\t]*,[ \\t]*");
-
-                for (int geneIndex = 0; geneIndex < geneNames.length; geneIndex++) {
-                    String geneName = geneNames[geneIndex];
-                    int geneNameColonIndex = geneName.lastIndexOf(':');
-                    if (geneNameColonIndex != -1) {
-                        geneName = geneName.substring(geneNameColonIndex + 1).trim();
+                    for (int i = 0; i < geneNames.length; i++) {
+                        String geneSymbol = geneNames[i].trim();
+                        genes.add(newGene(geneSymbol));
                     }
-                    if (geneName.equals("")) {
-                        continue;
+                }
+
+                // loop over screens to create results
+                for (int j = 0; j < screens.length; j++) {
+                    String resultValue = resultValues.get(line[j+2]);
+                    if (resultValue == null) {
+                        throw new RuntimeException("Unrecogised result symbol '" + line[j+2]
+                            + "' in line: " + Arrays.asList(line));
                     }
-
-                    Item gene = newGene(geneName);
-
-                    Item screenHit = createItem("RNAiScreenHit");
-                    screenHit.setReference("analysis", rnaiScreen);
-                    screenHit.setReference("gene", gene);
-                    String result = getColumnValue(columnNameMap, thisRow, PHENOTYPE_COLUMN);
-                    screenHit.setAttribute("result", result);
-                    String carRepeats = getColumnValue(columnNameMap, thisRow, CAR_REPEATS_COLUMN);
-                    screenHit.setAttribute("carRepeats", carRepeats);
-                    screenHit.setAttribute("numOffTargets", numOffTargets);
-                    if (hitStrength != null && hitStrength.trim().length() > 0) {
-                        try {
-                            new Float(hitStrength);
-                            screenHit.setAttribute("strength", hitStrength);
-                        } catch (NumberFormatException e) {
-                            // ignore - probably a "Y"
+                    if (genes.isEmpty()) {
+                        // create a hit that doesn't reference a gene
+                        Item screenHit = createItem("RNAiScreenHit");
+                        screenHit.setReference("analysis", screens[j]);
+                        
+                        screenHit.setAttribute("result", resultValue);
+                        screenHit.setReference("amplicon", amplicon);
+                        store(screenHit);
+                    } else {
+                        // create one hit for each gene targeted
+                        for (Item gene : genes) {
+                            Item screenHit = createItem("RNAiScreenHit");
+                            screenHit.setReference("analysis", screens[j]);
+                            screenHit.setReference("gene", gene);
+                            screenHit.setAttribute("result", resultValue);
+                            screenHit.setReference("amplicon", amplicon);
+                            store(screenHit);
                         }
                     }
-                    // we are only creating amplicons without off target effects
-                    // so don't really need this attribute
-                    screenHit.setReference("amplicon", amplicon);
-                    String offTarget = offTargetFalse.contains(ampliconIdentifier)
-                        ? "false" : "true";
-                    screenHit.setAttribute("hasPredictedOffTargetEffect", offTarget);
-                    store(screenHit);
                 }
             }
         }
     }
 
-    private Item newPublication(String pubmedId) {
-        Item publication;
-        if (publications.containsKey(pubmedId)) {
-            publication = (Item) publications.get(pubmedId);
-        } else {
+
+    private void processScreenDetails(Reader reader) throws ObjectStoreException {
+        Iterator tsvIter;
+        try {
+            tsvIter = TextFileUtil.parseTabDelimitedReader(reader);
+        } catch (Exception e) {
+            throw new BuildException("cannot parse file: " + getCurrentFile(), e);
+        }
+
+        while (tsvIter.hasNext()) {
+            String [] line = (String[]) tsvIter.next();
+
+            String pubmedId = line[0];
+            Item publication = getPublication(pubmedId);
+
+            String screenName = line[2];
+            detailsScreenNames.add(line[2]);
+            Item screen = getScreen(screenName, "screen details");
+            screen.setAttribute("name", screenName);
+            screen.setAttribute("cellLine", line[3]);
+            screen.setAttribute("analysisDescription", line[4]);
+            screen.setReference("organism", organism);
+            screen.setReference("publication", publication);
+            store(screen);
+        }
+    }
+
+
+    // Fetch or create a Publication
+    private Item getPublication(String pubmedId) throws ObjectStoreException {
+        Item publication = publications.get(pubmedId);
+        if (publication == null) {
             publication = createItem("Publication");
             publication.setAttribute("pubMedId", pubmedId);
             publications.put(pubmedId, publication);
+            store(publication);
         }
         return publication;
     }
 
-    /**
-     * Return a map from column name to column index.
-     */
-    private Map getHeaderFields(BufferedReader br) throws IOException {
-        Map headerFieldValues = new HashMap();
-
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            line = line.trim();
-            if (line.equals("----")) {
-                // end of header
-                break;
-            }
-
-            for (int i = 0; i < HEADER_FIELDS.length; i++) {
-                String headerFieldName = HEADER_FIELDS[i];
-                if (line.startsWith("# " + headerFieldName)) {
-                    String headerFieldValue = line.substring(headerFieldName.length() + 3);
-                    headerFieldValues.put(headerFieldName, headerFieldValue);
-                }
-            }
+    // Fetch of create an RNAiScreen
+    private Item getScreen(String screenName, String fileName) {
+        Item screen = screenMap.get(screenName);
+        if (screen == null) {
+            screen = createItem("RNAiScreen");
+            screenMap.put(screenName, screen);
         }
-
-
-        // check for missing header fields
-        for (int i = 0; i < HEADER_FIELDS.length; i++) {
-            String headerFieldName = HEADER_FIELDS[i];
-            if (!headerFieldValues.containsKey(headerFieldName)) {
-                throw new RuntimeException("missing header field: " + headerFieldName + " in "
-                                           + getCurrentFile().getName());
-            }
-        }
-        return headerFieldValues;
+        return screen;
     }
 
-    private String getColumnValue(Map columnNameMap, String[] row, String columnTag) {
-        Integer columnIndex = (Integer) columnNameMap.get(columnTag);
-        if (columnIndex == null) {
-            throw new RuntimeException("can't find column index for: " + columnTag + " in "
-                                       + columnNameMap + " while reading: " + fileName);
-        }
-        return row[columnIndex.intValue()];
-    }
-
-    /**
-     * Set the taxon ID of the organism object that we will create
-     * @param taxonId the taxon ID
-     */
-    public void setTaxonId(String taxonId) {
-        this.taxonId = taxonId;
-    }
 
     /**
      * Convenience method to create a new gene Item
@@ -335,18 +267,19 @@ public class FlyRNAiScreenConverter extends FileConverter
      * @return a new gene Item
      * @throws ObjectStoreException if an error occurs when storing the Item
      */
-    protected Item newGene(String geneName)  throws ObjectStoreException {
-        if (geneName == null) {
-            throw new RuntimeException("geneName can't be null");
+    protected Item newGene(String geneSymbol)  throws ObjectStoreException {
+        if (geneSymbol == null) {
+            throw new RuntimeException("geneSymbol can't be null");
         }
-        Item item = (Item) genes.get(geneName);
+        Item item = genes.get(geneSymbol);
         if (item == null) {
             item = createItem("Gene");
-            item.setAttribute("organismDbId", geneName);
-            // identifier needs to be a Synonym for quick search to work
-            newSynonym(geneName, item, dataSource);
+            item.setAttribute("symbol", geneSymbol);
             item.setReference("organism", organism);
-            genes.put(geneName, item);
+            genes.put(geneSymbol, item);
+            store(item);
+            // identifier needs to be a Synonym for quick search to work
+            newSynonym(geneSymbol, item, dataSource);
         }
         return item;
     }
@@ -358,58 +291,18 @@ public class FlyRNAiScreenConverter extends FileConverter
      * @param source the source of the Synonym
      * @return a new synonym Item
      */
-    protected Item newSynonym(String synonymName, Item subject, Item source) {
+    protected Item newSynonym(String synonymName, Item subject, Item source) 
+    throws ObjectStoreException {
         if (synonymName == null) {
             throw new RuntimeException("synonymName can't be null");
-        }
-        if (synonyms.containsKey(synonymName)) {
-            return (Item) synonyms.get(synonymName);
         }
         Item item = createItem("Synonym");
         item.setAttribute("value", synonymName);
         item.setAttribute("type", "identifier");
         item.setReference("subject", subject.getIdentifier());
         item.setReference("source", source.getIdentifier());
-        item.addToCollection("evidence", dataSet.getIdentifier());
-        synonyms.put(synonymName, item);
+        store(item);
         return item;
-    }
-
-
-    /**
-     * @see FileConverter#close()
-     */
-    public void close() throws ObjectStoreException {
-        store(genes.values());
-        store(synonyms.values());
-        store(publications.values());
-    }
-
-    private Set readCurated(BufferedReader br) throws IOException {
-        Set offtarget = new HashSet();
-        Iterator tsvIter = TextFileUtil.parseTabDelimitedReader(br);
-        String[] curatedNameRow = null;
-
-        Map curatedNameMap = new HashMap();
-        while (tsvIter.hasNext()) {
-            String [] thisRow = (String[]) tsvIter.next();
-            // get rid of header and find column headings
-            if (curatedNameRow == null) {
-                if (thisRow[0].equals("Final Hit")) {
-                    curatedNameRow = thisRow;
-                    for (int i = 0; i < curatedNameRow.length; i++) {
-                        curatedNameMap.put(curatedNameRow[i], new Integer(i));
-                    }
-                }
-                continue;
-            }
-            // reading actual data
-            String amplicon = getColumnValue(curatedNameMap, thisRow, CURATED_DRSC_AMPLICON_COLUMN);
-            if (amplicon != null) {
-                offtarget.add(amplicon);
-            }
-        }
-        return offtarget;
     }
 }
 

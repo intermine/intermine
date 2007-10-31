@@ -31,9 +31,12 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FlyRNAiScreenConverter converter = new FlyRNAiScreenConverter(itemWriter,
                                                                       Model.getInstanceByName("genomic"));
-        File srcFile = new File(getClass().getClassLoader().getResource("FlyRNAiConverterTest.dataset").toURI());
+        File srcFile = new File(getClass().getClassLoader().getResource("RNAi_screen_details").toURI());
         converter.setCurrentFile(srcFile);
-        converter.taxonId = "7227";
+        converter.process(new FileReader(srcFile));
+        
+        srcFile = new File(getClass().getClassLoader().getResource("RNAi_all_hits.txt").toURI());
+        converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));
         converter.close();
 
