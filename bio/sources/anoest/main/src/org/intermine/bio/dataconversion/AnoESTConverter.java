@@ -132,12 +132,13 @@ public class AnoESTConverter extends BioDBConverter
                 est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
                 est.addToCollection("evidence", dataSet);
-                Item cluster = clusters.get(clusterId);
-                if (cluster != null) {
-                    est.addToCollection("ESTClusters", cluster);
-                }
 
                 cloneIds.put(accession, cloneId);
+            }
+
+            Item cluster = clusters.get(clusterId);
+            if (cluster != null) {
+                est.addToCollection("ESTClusters", cluster);
             }
         }
 
