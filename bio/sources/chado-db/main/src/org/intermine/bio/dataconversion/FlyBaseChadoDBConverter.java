@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
 
@@ -185,12 +186,11 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                                int seqlen) {
         String realInterMineType = interMineType;
 
-        // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
+        // avoid allele features that have type 'gene'
         if (uniqueName.startsWith("FBal")) {
             return null;
         }
 
-        // XXX FIMXE TODO HACK for flybase - this should be configured somewhere
         if (getTaxonIdInt() == 7227 || getTaxonIdInt() == 7237) {
             if (chadoFeatureType.equals("chromosome")
                 && !uniqueName.equals("dmel_mitochondrion_genome")) {
@@ -235,4 +235,21 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
 
         return feature;
     }
+
+    /**
+     * For objects that don't have identifier == null, set the identifier to be the name column from
+     * chado.
+     * {@inheritDoc}
+     */
+    @Override
+    protected void extraProcessing(Map<Integer, FeatureData> features)
+        throws ObjectStoreException {
+        for (FeatureData featureData: features.values()) {
+            if ((featureData.flags & FeatureData.IDENTIFIER_SET) == 0) {
+                setAttribute(featureData.getIntermineObjectId(), "identifier",
+                             featureData.getChadoFeatureName());
+            }
+        }
+    }
+
 }
