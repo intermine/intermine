@@ -45,6 +45,8 @@ public class ProteinStructureDataConvertorTest extends ItemsTestCase
         converter.setSrcDataDir("resouces/");
         converter.process(reader);
         converter.close();
+        // uncomment to create a new target items files
+//        writeItemsFile(itemWriter.getItems(), "ProteinStructureConverterTest_tgt.xml");
         Set expected = readItemSet("ProteinStructureConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());
     }

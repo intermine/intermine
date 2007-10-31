@@ -28,6 +28,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.xml.sax.Attributes;
@@ -44,7 +45,6 @@ public class ProteinStructureDataConvertor extends FileConverter
     private static final Logger LOG = Logger.getLogger(ProteinStructureDataConvertor.class);
     private String dataLocation;
     protected static final String ENDL = System.getProperty("line.separator");
-    private Item proteinStructureExperiment;
     private Item dataSet;
     private final Map<String, Item> featureMap = new HashMap<String, Item>();
     private final Map<String, String> proteinMap = new HashMap<String, String>();
@@ -58,13 +58,10 @@ public class ProteinStructureDataConvertor extends FileConverter
      */
     public ProteinStructureDataConvertor(ItemWriter writer, Model model) {
         super(writer, model);
-        proteinStructureExperiment = createItem("ProteinStructureExperiment");
-        proteinStructureExperiment.setAttribute("type", "Computer prediction");
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "Kenji Mizuguchi - NIBIO, Japan");
         dataSet.setAttribute("url", "http://www.nibio.go.jp");
         try {
-            store(proteinStructureExperiment);
             store(dataSet);
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
@@ -190,7 +187,8 @@ public class ProteinStructureDataConvertor extends FileConverter
                     //Reference my be to proteinItemIdentifier accession
                     protId = attValue.toString();
                     proteinItemIdentifier = getProtein(protId);
-                    proteinStructure.setReference("protein", proteinItemIdentifier);
+                    proteinStructure.setCollection("proteins", new ArrayList(
+                                                    Collections.singleton(proteinItemIdentifier)));
                 } else if (qName.equals("pfam_id")) {
                     pfamId = attValue.toString();
                     proteinFeature = getFeature(pfamId);
@@ -211,17 +209,25 @@ public class ProteinStructureDataConvertor extends FileConverter
                     String html;
                     try {
                         html = getFileContent(attValue.toString(), ".html");
+                        // Strip some HTML off
+                        html = html.replaceAll("<HTML>", "");
+                        html = html.replaceAll("<BODY[^>]*>", "");
+                        html = html.replaceAll("<META[^>]*>", "");
+                        html = html.replaceAll("<HEAD>", "");
+                        html = html.replaceAll("</HEAD>", "");
+                        html = html.replaceAll("</BODY>", "");
+                        html = html.replaceAll("</HTML>", "");
                     } catch (InterMineException e) {
                         throw new SAXException(e);
                     }
                     proteinStructure.setAttribute("alignment", html.toString());
                     alignmentFile = false;
                 } else if (qName.equals("prosa_z_score")) {
-                    proteinStructure.setAttribute("zScore", attValue.toString());
+                    proteinStructure.setAttribute("prosa_z_score", attValue.toString());
                 } else if (qName.equals("prosa_q_score")) {
-                    proteinStructure.setAttribute("qScore", attValue.toString());
+                    proteinStructure.setAttribute("prosa_q_score", attValue.toString());
                 } else if (qName.equals("protein_structure")) {
-                    proteinStructure.setReference("experiment", proteinStructureExperiment);
+                    proteinStructure.setAttribute("technique", "Computer prediction");
                     proteinStructure.setAttribute("identifier", protId + "_" + pfamId);
                     proteinStructure.setCollection("evidence",
                         new ArrayList(Collections.singleton(dataSet.getIdentifier())));
