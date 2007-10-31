@@ -54,6 +54,7 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
         if (residues != null) {
             Item seqItem = getItemFactory().makeItem(null, tgtNs + "Sequence", "");
             seqItem.setAttribute("residues", residues);
+            seqItem.setAttribute("length", "" + residues.length());
             addItem(seqItem);
             oligo.setReference("sequence", seqItem.getIdentifier());
         }
