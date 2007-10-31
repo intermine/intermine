@@ -229,6 +229,11 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                 // the FBti identifier
                 return null;
             }
+            if (chadoFeatureType.equals("mRNA") && seqlen == 0) {
+                // flybase has > 7000 mRNA features that have no sequence and don't appear in their
+                // webapp so we filter them out
+                return null;
+            }
         }
 
         Item feature = createItem(realInterMineType);
