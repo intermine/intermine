@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <items>
   <item id="4_18" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -6,31 +5,21 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_3" class="http://www.flymine.org/model/genomic#EST">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="AF043434.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_3"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_3"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_4" class="http://www.flymine.org/model/genomic#EST">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="AF043436.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_3"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_3"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_5" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -38,9 +27,7 @@
     <attribute name="value" value="BX040897.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_10"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_3" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -48,9 +35,7 @@
     <attribute name="value" value="NCLAG169971"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="0_3"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_11" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -58,9 +43,7 @@
     <attribute name="value" value="AF043439.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_6"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_17" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -68,9 +51,7 @@
     <attribute name="value" value="BM654701.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_13" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -78,9 +59,7 @@
     <attribute name="value" value="BX610489.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_11"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_12" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -88,28 +67,20 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_6"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_11" class="http://www.flymine.org/model/genomic#EST">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="BX610489.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_4"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_4"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="0_3" class="http://www.flymine.org/model/genomic#ESTCluster">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="NCLAG169971"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -117,9 +88,7 @@
     <attribute name="value" value="NCLAG150001"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="0_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_21" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -127,9 +96,7 @@
     <attribute name="value" value="AF043443.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_7"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_10" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -137,9 +104,7 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_2"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_24" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -147,9 +112,7 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_12"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_23" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -157,13 +120,18 @@
     <attribute name="value" value="BX610490.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_12"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="identifier" value="mitochondrial"/>
     <reference name="organism" ref_id="2_1"/>
+  </item>
+  <item id="7_1" class="http://www.flymine.org/model/genomic#EST">
+    <attribute name="curated" value="false"/>
+    <attribute name="identifier" value="BM654701.1"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="ESTClusters"><reference ref_id="0_1"/><reference ref_id="0_2"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_4" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -171,9 +139,7 @@
     <attribute name="value" value="UCLAG189057"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="0_4"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_6" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -181,9 +147,7 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_10"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_7" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -191,9 +155,7 @@
     <attribute name="value" value="AF043434.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_3"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#DataSource">
     <attribute name="name" value="VectorBase"/>
@@ -204,9 +166,7 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_7"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="6_2" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="2211"/>
@@ -214,20 +174,7 @@
     <attribute name="strand" value="1"/>
     <reference name="object" ref_id="5_1"/>
     <reference name="subject" ref_id="0_2"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
-  </item>
-  <item id="7_1" class="http://www.flymine.org/model/genomic#EST">
-    <attribute name="curated" value="false"/>
-    <attribute name="identifier" value="BM654701.1"/>
-    <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_1"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_20" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -235,20 +182,14 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_9"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_8" class="http://www.flymine.org/model/genomic#EST">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="AA413316.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_4"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_4"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="6_3" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="8552"/>
@@ -256,9 +197,7 @@
     <attribute name="strand" value="-1"/>
     <reference name="object" ref_id="5_2"/>
     <reference name="subject" ref_id="0_3"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="180454"/>
@@ -267,9 +206,7 @@
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="NCLAG150001"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_15" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -277,9 +214,7 @@
     <attribute name="value" value="AF043437.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_5"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_27" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -287,9 +222,7 @@
     <attribute name="value" value="AA413316.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_8"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_19" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -297,9 +230,7 @@
     <attribute name="value" value="BX040896.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_9"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Chromosome">
     <attribute name="identifier" value="2L"/>
@@ -309,12 +240,8 @@
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="BX040896.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_4"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_4"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_28" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -322,9 +249,7 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_8"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_14" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -332,17 +257,13 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_11"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="0_2" class="http://www.flymine.org/model/genomic#ESTCluster">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="NCLAG150002"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="6_1" class="http://www.flymine.org/model/genomic#Location">
     <attribute name="end" value="12833"/>
@@ -350,39 +271,27 @@
     <attribute name="strand" value="-1"/>
     <reference name="object" ref_id="5_1"/>
     <reference name="subject" ref_id="0_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_12" class="http://www.flymine.org/model/genomic#EST">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="BX610490.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_4"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_4"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_2" class="http://www.flymine.org/model/genomic#EST">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="BX615094.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_10" class="http://www.flymine.org/model/genomic#EST">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="BX040897.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_4"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_4"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
     <attribute name="title" value="AnoEST clusters"/>
@@ -391,23 +300,15 @@
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="AF043443.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_3"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_3"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_5" class="http://www.flymine.org/model/genomic#EST">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="AF043437.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_3"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_3"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_26" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -415,9 +316,7 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_4"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_8" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -425,20 +324,14 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_3"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="7_6" class="http://www.flymine.org/model/genomic#EST">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="AF043439.1"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="ESTClusters">
-      <reference ref_id="0_3"/>
-    </collection>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="ESTClusters"><reference ref_id="0_3"/></collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_16" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
@@ -446,9 +339,7 @@
     <attribute name="value" value="1234567"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_5"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_25" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -456,9 +347,7 @@
     <attribute name="value" value="AF043436.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_4"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_9" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -466,17 +355,13 @@
     <attribute name="value" value="BX615094.1"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="7_2"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="0_4" class="http://www.flymine.org/model/genomic#ESTCluster">
     <attribute name="curated" value="false"/>
     <attribute name="identifier" value="UCLAG189057"/>
     <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
   <item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -484,8 +369,6 @@
     <attribute name="value" value="NCLAG150002"/>
     <reference name="source" ref_id="3_1"/>
     <reference name="subject" ref_id="0_2"/>
-    <collection name="evidence">
-      <reference ref_id="1_1"/>
-    </collection>
+    <collection name="evidence"><reference ref_id="1_1"/></collection>
   </item>
 </items>
