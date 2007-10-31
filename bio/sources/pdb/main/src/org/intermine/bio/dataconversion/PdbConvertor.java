@@ -16,11 +16,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.biojava.bio.program.formats.Ligand.Compound;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.io.PDBFileParser;
 import org.intermine.dataconversion.FileConverter;
@@ -48,12 +45,10 @@ public class PdbConvertor extends FileConverter
     public PdbConvertor(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
         dataSource = createItem("DataSource");
-        dataSource.setAttribute("name", "PDB");
-        store(dataSource);
-
+        dataSource.setAttribute("name", "The RCSB Protein Data Bank (PDB)");
         dataSet = createItem("DataSet");
-        dataSet.setAttribute("title", "PDB data");
-        dataSet.setReference("dataSource", dataSource.getIdentifier());
+        dataSet.setAttribute("title", "PDB data - dmel");
+        dataSet.setAttribute("url", "http://www.rcsb.org/pdb/");
         store(dataSet);
     }
     
@@ -70,8 +65,7 @@ public class PdbConvertor extends FileConverter
             Structure structure = pdbfileparser.parsePDBFile(pdbBuffReader);
             String atm = structure.toPDB();
             
-            proteinStructure.setAttribute("identifier", "pdb_" + getCurrentFile()
-                                          .getName().substring(0,getCurrentFile().getName().lastIndexOf(".pdb")));
+            proteinStructure.setAttribute("identifier", (String) structure.getHeader().get("idCode"));
     
             List<String> proteins = new ArrayList<String>();
             List<String> dbrefs = pdbBuffReader.getDbrefs();
@@ -80,16 +74,18 @@ public class PdbConvertor extends FileConverter
                 proteins.add(protein.getIdentifier());
             }
             
-            proteinStructure.setAttribute("idCode", (String) structure.getHeader().get("idCode"));
             proteinStructure.setAttribute("title", (String) structure.getHeader().get("title"));
             proteinStructure.setAttribute("technique", (String) structure.getHeader().get("technique"));
             proteinStructure.setAttribute("classification", (String) structure.getHeader().get("classification"));
-            proteinStructure.setAttribute("depDate", (String) structure.getHeader().get("depDate"));
-            proteinStructure.setAttribute("modDate", (String) structure.getHeader().get("modDate"));
-            proteinStructure.setAttribute("resolution", (String) structure.getHeader().get("resolution"));
+            Object resolution = structure.getHeader().get("resolution");
+            if (resolution instanceof Float) {
+                proteinStructure.setAttribute("resolution", Float.toString((Float) structure.getHeader().get("resolution")));
+            }
             
             proteinStructure.setAttribute("atm", atm);
             proteinStructure.setCollection("proteins", proteins);
+            proteinStructure.addToCollection("evidence", dataSet);
+            
             store(proteinStructure);
         }
     }
@@ -125,7 +121,7 @@ public class PdbConvertor extends FileConverter
             String line = super.readLine();
             if (line != null && line.matches("^DBREF.*")) {
                 String [] split = line.split("\\s+");
-                if (split[5].equals("SWS")) {
+                if (split[5].equals("SWS") || split[5].equals("UNP")) {
                     dbrefs.add(split[6]);
                 }
             }

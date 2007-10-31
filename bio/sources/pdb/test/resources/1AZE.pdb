@@ -46,7 +46,7 @@ REMARK   1  TITL 3 SOS
 REMARK   1  REF    NAT.STRUCT.BIOL.              V.   1   898 1994              
 REMARK   1  REFN   ASTM NSBIEW  US ISSN 1072-8368                 2024          
 REMARK   2                                                                      
-REMARK   2 RESOLUTION. NOT APPLICABLE.                                          
+REMARK   2 RESOLUTION. 2.00 ANGSTROMS.                                          
 REMARK   3                                                                      
 REMARK   3 REFINEMENT.                                                          
 REMARK   3   PROGRAM     : DISCOVER 2.95                                        
