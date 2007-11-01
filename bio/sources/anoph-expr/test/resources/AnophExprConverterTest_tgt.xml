@@ -1,129 +1,725 @@
 <items>
-<item id="6_4" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<item id="6_34" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
-<attribute name="standardError" value="0.055359084"/>
+<attribute name="standardError" value="0.05258652"/>
 <attribute name="type" value="Geometric mean of ratios"/>
-<attribute name="value" value="0.48506784"/>
-<collection name="genes"><reference ref_id="3_1"/></collection>
-<collection name="reporters"><reference ref_id="5_1"/></collection>
+<attribute name="value" value="1.0768135"/>
+<collection name="assays"><reference ref_id="7_34"/></collection>
+<collection name="genes"><reference ref_id="3_5"/></collection>
+<collection name="reporters"><reference ref_id="5_5"/></collection>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
-<attribute name="taxonId" value="180454"/>
-</item>
-<item id="6_5" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<item id="6_37" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
-<attribute name="standardError" value="0.03586623"/>
+<attribute name="standardError" value="0.080817975"/>
 <attribute name="type" value="Geometric mean of ratios"/>
-<attribute name="value" value="0.51145464"/>
-<collection name="genes"><reference ref_id="3_1"/></collection>
-<collection name="reporters"><reference ref_id="5_1"/></collection>
+<attribute name="value" value="0.8317409"/>
+<collection name="assays"><reference ref_id="7_37"/></collection>
+<collection name="genes"><reference ref_id="3_6"/></collection>
+<collection name="reporters"><reference ref_id="5_6"/></collection>
 </item>
-<item id="6_7" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
-<attribute name="isControl" value="false"/>
-<attribute name="standardError" value="0.049418982"/>
-<attribute name="type" value="Geometric mean of ratios"/>
-<attribute name="value" value="0.6288749"/>
-<collection name="genes"><reference ref_id="3_1"/></collection>
-<collection name="reporters"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_4" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="7_39" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
 <attribute name="name" value="stage: 192 h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 192 h_larva_mixed sex"/>
 <reference name="experiment" ref_id="2_1"/>
-<collection name="results"><reference ref_id="6_4"/></collection>
 </item>
-<item id="7_6" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="6_21" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.074326165"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.72079796"/>
+<collection name="assays"><reference ref_id="7_21"/></collection>
+<collection name="genes"><reference ref_id="3_3"/></collection>
+<collection name="reporters"><reference ref_id="5_3"/></collection>
+</item>
+<item id="6_1" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.18948314"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="1.090172"/>
+<collection name="assays"><reference ref_id="7_1"/></collection>
+<collection name="genes"><reference ref_id="3_1"/></collection>
+<collection name="reporters"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_13" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
 <attribute name="name" value="stage: 312 h_adult_female"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 312 h_adult_female"/>
 <reference name="experiment" ref_id="2_1"/>
-<collection name="results"><reference ref_id="6_6"/></collection>
 </item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
-<attribute name="isControl" value="false"/>
-<attribute name="standardError" value="0.05044717"/>
-<attribute name="type" value="Geometric mean of ratios"/>
-<attribute name="value" value="0.54705375"/>
-<collection name="genes"><reference ref_id="3_1"/></collection>
-<collection name="reporters"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_7" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
-<attribute name="name" value="stage: 312 h_adult_male"/>
+<item id="7_12" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 240 h_pupa_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
-<attribute name="sample2" value="stage: 312 h_adult_male"/>
+<attribute name="sample2" value="stage: 240 h_pupa_mixed sex"/>
 <reference name="experiment" ref_id="2_1"/>
-<collection name="results"><reference ref_id="6_7"/></collection>
 </item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
-<attribute name="name" value="stage: 48 h_larva_mixed sex"/>
+<item id="4_3" class="http://www.flymine.org/model/genomic#BioEntity">
+<attribute name="identifier" value="NAH-P01-D-07"/>
+<attribute name="name" value="NAH-P01-D-07"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="7_18" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 192 h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
-<attribute name="sample2" value="stage: 48 h_larva_mixed sex"/>
+<attribute name="sample2" value="stage: 192 h_larva_mixed sex"/>
 <reference name="experiment" ref_id="2_1"/>
-<collection name="results"><reference ref_id="6_1"/></collection>
 </item>
-<item id="6_6" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
-<attribute name="isControl" value="false"/>
-<attribute name="standardError" value="0.056217484"/>
-<attribute name="type" value="Geometric mean of ratios"/>
-<attribute name="value" value="0.5042728"/>
-<collection name="genes"><reference ref_id="3_1"/></collection>
-<collection name="reporters"><reference ref_id="5_1"/></collection>
+<item id="2_1" class="http://www.flymine.org/model/genomic#MicroArrayExperiment">
+<attribute name="name" value="Koutos AC:  Life cycle transcriptions of malaria mosquito Anopheles gambiae and comparison with the fruitfly Drosophila melanogaster"/>
+<reference name="publication" ref_id="1_1"/>
 </item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<item id="4_5" class="http://www.flymine.org/model/genomic#BioEntity">
+<attribute name="identifier" value="NAH-P01-E-04"/>
+<attribute name="name" value="NAH-P01-E-04"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="6_14" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
-<attribute name="standardError" value="0.11968166"/>
+<attribute name="standardError" value="0.1116213"/>
 <attribute name="type" value="Geometric mean of ratios"/>
-<attribute name="value" value="0.53784424"/>
-<collection name="genes"><reference ref_id="3_1"/></collection>
-<collection name="reporters"><reference ref_id="5_1"/></collection>
+<attribute name="value" value="1.5656228"/>
+<collection name="assays"><reference ref_id="7_14"/></collection>
+<collection name="genes"><reference ref_id="3_2"/></collection>
+<collection name="reporters"><reference ref_id="5_2"/></collection>
+</item>
+<item id="7_38" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 144 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 144 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_22" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.051227268"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.52247196"/>
+<collection name="assays"><reference ref_id="7_22"/></collection>
+<collection name="genes"><reference ref_id="3_4"/></collection>
+<collection name="reporters"><reference ref_id="5_4"/></collection>
+</item>
+<item id="7_9" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 96 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 96 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
 </item>
 <item id="7_5" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
 <attribute name="name" value="stage: 240 h_pupa_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 240 h_pupa_mixed sex"/>
 <reference name="experiment" ref_id="2_1"/>
-<collection name="results"><reference ref_id="6_5"/></collection>
 </item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#BioEntity">
-<attribute name="identifier" value="NAH-P01-A-01"/>
-<attribute name="name" value="NAH-P01-A-01"/>
+<item id="6_2" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.09102194"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.703425"/>
+<collection name="assays"><reference ref_id="7_2"/></collection>
+<collection name="genes"><reference ref_id="3_1"/></collection>
+<collection name="reporters"><reference ref_id="5_1"/></collection>
+</item>
+<item id="6_19" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.030702423"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.6742816"/>
+<collection name="assays"><reference ref_id="7_19"/></collection>
+<collection name="genes"><reference ref_id="3_3"/></collection>
+<collection name="reporters"><reference ref_id="5_3"/></collection>
+</item>
+<item id="7_11" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 192 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 192 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_32" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 192 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 192 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_32" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.019426573"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="1.1209277"/>
+<collection name="assays"><reference ref_id="7_32"/></collection>
+<collection name="genes"><reference ref_id="3_5"/></collection>
+<collection name="reporters"><reference ref_id="5_5"/></collection>
+</item>
+<item id="7_17" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 144 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 144 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_10" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.08014597"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.98826516"/>
+<collection name="assays"><reference ref_id="7_10"/></collection>
+<collection name="genes"><reference ref_id="3_2"/></collection>
+<collection name="reporters"><reference ref_id="5_2"/></collection>
+</item>
+<item id="7_33" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 240 h_pupa_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 240 h_pupa_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_14" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_male"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_male"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_30" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 96 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 96 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_40" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.021650024"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.8750189"/>
+<collection name="assays"><reference ref_id="7_40"/></collection>
+<collection name="genes"><reference ref_id="3_6"/></collection>
+<collection name="reporters"><reference ref_id="5_6"/></collection>
+</item>
+<item id="6_13" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.027551726"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="1.0258048"/>
+<collection name="assays"><reference ref_id="7_13"/></collection>
+<collection name="genes"><reference ref_id="3_2"/></collection>
+<collection name="reporters"><reference ref_id="5_2"/></collection>
+</item>
+<item id="6_36" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.06505995"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.7854331"/>
+<collection name="assays"><reference ref_id="7_36"/></collection>
+<collection name="genes"><reference ref_id="3_6"/></collection>
+<collection name="reporters"><reference ref_id="5_6"/></collection>
+</item>
+<item id="3_3" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="AGAP009112"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="microArrayResults"><reference ref_id="6_15"/><reference ref_id="6_16"/><reference ref_id="6_17"/><reference ref_id="6_18"/><reference ref_id="6_19"/><reference ref_id="6_20"/><reference ref_id="6_21"/></collection>
+</item>
+<item id="6_15" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.04389546"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.6828929"/>
+<collection name="assays"><reference ref_id="7_15"/></collection>
+<collection name="genes"><reference ref_id="3_3"/></collection>
+<collection name="reporters"><reference ref_id="5_3"/></collection>
+</item>
+<item id="7_1" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 48 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 48 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_8" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.084886745"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="1.0825793"/>
+<collection name="assays"><reference ref_id="7_8"/></collection>
+<collection name="genes"><reference ref_id="3_2"/></collection>
+<collection name="reporters"><reference ref_id="5_2"/></collection>
+</item>
+<item id="6_20" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.03315219"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.6489371"/>
+<collection name="assays"><reference ref_id="7_20"/></collection>
+<collection name="genes"><reference ref_id="3_3"/></collection>
+<collection name="reporters"><reference ref_id="5_3"/></collection>
+</item>
+<item id="4_2" class="http://www.flymine.org/model/genomic#BioEntity">
+<attribute name="identifier" value="NAH-P01-C-08"/>
+<attribute name="name" value="NAH-P01-C-08"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="7_28" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_male"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_male"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_30" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.35712263"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="2.365374"/>
+<collection name="assays"><reference ref_id="7_30"/></collection>
+<collection name="genes"><reference ref_id="3_5"/></collection>
+<collection name="reporters"><reference ref_id="5_5"/></collection>
+</item>
+<item id="7_21" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_male"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_male"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_39" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.090430506"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.9571468"/>
+<collection name="assays"><reference ref_id="7_39"/></collection>
+<collection name="genes"><reference ref_id="3_6"/></collection>
+<collection name="reporters"><reference ref_id="5_6"/></collection>
+</item>
+<item id="7_4" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 192 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 192 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_8" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 48 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 48 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_37" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 96 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 96 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_18" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.06154469"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.64161396"/>
+<collection name="assays"><reference ref_id="7_18"/></collection>
+<collection name="genes"><reference ref_id="3_3"/></collection>
+<collection name="reporters"><reference ref_id="5_3"/></collection>
+</item>
+<item id="6_38" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.06972104"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.8046826"/>
+<collection name="assays"><reference ref_id="7_38"/></collection>
+<collection name="genes"><reference ref_id="3_6"/></collection>
+<collection name="reporters"><reference ref_id="5_6"/></collection>
+</item>
+<item id="7_23" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 96 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 96 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_25" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 192 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 192 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_24" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.032294158"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.48249394"/>
+<collection name="assays"><reference ref_id="7_24"/></collection>
+<collection name="genes"><reference ref_id="3_4"/></collection>
+<collection name="reporters"><reference ref_id="5_4"/></collection>
+</item>
+<item id="6_17" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.029941509"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.6760555"/>
+<collection name="assays"><reference ref_id="7_17"/></collection>
+<collection name="genes"><reference ref_id="3_3"/></collection>
+<collection name="reporters"><reference ref_id="5_3"/></collection>
+</item>
+<item id="6_35" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.09429426"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="1.0152928"/>
+<collection name="assays"><reference ref_id="7_35"/></collection>
+<collection name="genes"><reference ref_id="3_5"/></collection>
+<collection name="reporters"><reference ref_id="5_5"/></collection>
+</item>
+<item id="6_23" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.08531817"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.46431208"/>
+<collection name="assays"><reference ref_id="7_23"/></collection>
+<collection name="genes"><reference ref_id="3_4"/></collection>
+<collection name="reporters"><reference ref_id="5_4"/></collection>
+</item>
+<item id="7_16" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 96 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 96 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="4_4" class="http://www.flymine.org/model/genomic#BioEntity">
+<attribute name="identifier" value="NAH-P01-E-01"/>
+<attribute name="name" value="NAH-P01-E-01"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="6_3" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.13042268"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.7424796"/>
+<collection name="assays"><reference ref_id="7_3"/></collection>
+<collection name="genes"><reference ref_id="3_1"/></collection>
+<collection name="reporters"><reference ref_id="5_1"/></collection>
+</item>
+<item id="6_28" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.109936684"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.45194402"/>
+<collection name="assays"><reference ref_id="7_28"/></collection>
+<collection name="genes"><reference ref_id="3_4"/></collection>
+<collection name="reporters"><reference ref_id="5_4"/></collection>
+</item>
+<item id="7_15" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 48 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 48 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Reporter">
+<attribute name="isControl" value="false"/>
+<reference name="material" ref_id="4_2"/>
+</item>
+<item id="3_6" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="AGAP008449"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="microArrayResults"><reference ref_id="6_36"/><reference ref_id="6_37"/><reference ref_id="6_38"/><reference ref_id="6_39"/><reference ref_id="6_40"/><reference ref_id="6_41"/><reference ref_id="6_42"/></collection>
+</item>
+<item id="6_6" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.11302908"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.8119671"/>
+<collection name="assays"><reference ref_id="7_6"/></collection>
+<collection name="genes"><reference ref_id="3_1"/></collection>
+<collection name="reporters"><reference ref_id="5_1"/></collection>
+</item>
+<item id="7_40" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 240 h_pupa_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 240 h_pupa_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_26" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 240 h_pupa_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 240 h_pupa_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_26" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.050599303"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.4505139"/>
+<collection name="assays"><reference ref_id="7_26"/></collection>
+<collection name="genes"><reference ref_id="3_4"/></collection>
+<collection name="reporters"><reference ref_id="5_4"/></collection>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="AGAP008116"/>
+<attribute name="identifier" value="AGAP005350"/>
 <reference name="organism" ref_id="0_1"/>
 <collection name="microArrayResults"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/><reference ref_id="6_4"/><reference ref_id="6_5"/><reference ref_id="6_6"/><reference ref_id="6_7"/></collection>
 </item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#MicroArrayExperiment">
-<attribute name="name" value="Koutos AC:  Life cycle transcriptions of malaria mosquito Anopheles gambiae and comparison with the fruitfly Drosophila melanogaster"/>
-<reference name="publication" ref_id="1_1"/>
+<item id="3_4" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="AGAP000734"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="microArrayResults"><reference ref_id="6_22"/><reference ref_id="6_23"/><reference ref_id="6_24"/><reference ref_id="6_25"/><reference ref_id="6_26"/><reference ref_id="6_27"/><reference ref_id="6_28"/></collection>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Reporter">
+<item id="5_5" class="http://www.flymine.org/model/genomic#Reporter">
 <attribute name="isControl" value="false"/>
-<reference name="material" ref_id="4_1"/>
+<reference name="material" ref_id="4_5"/>
+</item>
+<item id="4_6" class="http://www.flymine.org/model/genomic#BioEntity">
+<attribute name="identifier" value="NAH-P01-F-08"/>
+<attribute name="name" value="NAH-P01-F-08"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="6_42" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.061514087"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.9843341"/>
+<collection name="assays"><reference ref_id="7_42"/></collection>
+<collection name="genes"><reference ref_id="3_6"/></collection>
+<collection name="reporters"><reference ref_id="5_6"/></collection>
+</item>
+<item id="7_10" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 144 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 144 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_41" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_female"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_female"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_29" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 48 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 48 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="5_3" class="http://www.flymine.org/model/genomic#Reporter">
+<attribute name="isControl" value="false"/>
+<reference name="material" ref_id="4_3"/>
+</item>
+<item id="7_20" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_female"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_female"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_29" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.5218969"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="1.6974641"/>
+<collection name="assays"><reference ref_id="7_29"/></collection>
+<collection name="genes"><reference ref_id="3_5"/></collection>
+<collection name="reporters"><reference ref_id="5_5"/></collection>
 </item>
 <item id="1_1" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="17563388"/>
+</item>
+<item id="6_4" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.049028866"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.85359585"/>
+<collection name="assays"><reference ref_id="7_4"/></collection>
+<collection name="genes"><reference ref_id="3_1"/></collection>
+<collection name="reporters"><reference ref_id="5_1"/></collection>
+</item>
+<item id="6_5" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.059816748"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.8527923"/>
+<collection name="assays"><reference ref_id="7_5"/></collection>
+<collection name="genes"><reference ref_id="3_1"/></collection>
+<collection name="reporters"><reference ref_id="5_1"/></collection>
+</item>
+<item id="6_31" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.3988188"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="1.428718"/>
+<collection name="assays"><reference ref_id="7_31"/></collection>
+<collection name="genes"><reference ref_id="3_5"/></collection>
+<collection name="reporters"><reference ref_id="5_5"/></collection>
+</item>
+<item id="6_12" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.07920733"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.8764253"/>
+<collection name="assays"><reference ref_id="7_12"/></collection>
+<collection name="genes"><reference ref_id="3_2"/></collection>
+<collection name="reporters"><reference ref_id="5_2"/></collection>
+</item>
+<item id="5_4" class="http://www.flymine.org/model/genomic#Reporter">
+<attribute name="isControl" value="false"/>
+<reference name="material" ref_id="4_4"/>
+</item>
+<item id="7_31" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 144 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 144 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_9" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.22903213"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="1.1516402"/>
+<collection name="assays"><reference ref_id="7_9"/></collection>
+<collection name="genes"><reference ref_id="3_2"/></collection>
+<collection name="reporters"><reference ref_id="5_2"/></collection>
+</item>
+<item id="4_1" class="http://www.flymine.org/model/genomic#BioEntity">
+<attribute name="identifier" value="NAH-P01-C-07"/>
+<attribute name="name" value="NAH-P01-C-07"/>
+<reference name="organism" ref_id="0_1"/>
+</item>
+<item id="7_36" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 48 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 48 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_11" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.066456385"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.9416302"/>
+<collection name="assays"><reference ref_id="7_11"/></collection>
+<collection name="genes"><reference ref_id="3_2"/></collection>
+<collection name="reporters"><reference ref_id="5_2"/></collection>
+</item>
+<item id="3_5" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="AGAP006939"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="microArrayResults"><reference ref_id="6_29"/><reference ref_id="6_30"/><reference ref_id="6_31"/><reference ref_id="6_32"/><reference ref_id="6_33"/><reference ref_id="6_34"/><reference ref_id="6_35"/></collection>
+</item>
+<item id="7_42" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_male"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_male"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="identifier" value="AGAP011423"/>
+<reference name="organism" ref_id="0_1"/>
+<collection name="microArrayResults"><reference ref_id="6_8"/><reference ref_id="6_9"/><reference ref_id="6_10"/><reference ref_id="6_11"/><reference ref_id="6_12"/><reference ref_id="6_13"/><reference ref_id="6_14"/></collection>
+</item>
+<item id="7_27" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_female"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_female"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="7_35" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_male"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_male"/>
+<reference name="experiment" ref_id="2_1"/>
 </item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
 <attribute name="name" value="stage: 96 h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 96 h_larva_mixed sex"/>
 <reference name="experiment" ref_id="2_1"/>
-<collection name="results"><reference ref_id="6_2"/></collection>
+</item>
+<item id="7_24" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 144 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 144 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_27" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.0561079"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.44525224"/>
+<collection name="assays"><reference ref_id="7_27"/></collection>
+<collection name="genes"><reference ref_id="3_4"/></collection>
+<collection name="reporters"><reference ref_id="5_4"/></collection>
+</item>
+<item id="7_19" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 240 h_pupa_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 240 h_pupa_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
+<attribute name="taxonId" value="180454"/>
+</item>
+<item id="7_7" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_male"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_male"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_33" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.05956999"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.9739708"/>
+<collection name="assays"><reference ref_id="7_33"/></collection>
+<collection name="genes"><reference ref_id="3_5"/></collection>
+<collection name="reporters"><reference ref_id="5_5"/></collection>
+</item>
+<item id="7_22" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 48 h_larva_mixed sex"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 48 h_larva_mixed sex"/>
+<reference name="experiment" ref_id="2_1"/>
 </item>
 <item id="7_3" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
 <attribute name="name" value="stage: 144 h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 144 h_larva_mixed sex"/>
 <reference name="experiment" ref_id="2_1"/>
-<collection name="results"><reference ref_id="6_3"/></collection>
 </item>
-<item id="6_3" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<item id="7_6" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_female"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_female"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_16" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
 <attribute name="isControl" value="false"/>
-<attribute name="standardError" value="0.03292802"/>
+<attribute name="standardError" value="0.12147639"/>
 <attribute name="type" value="Geometric mean of ratios"/>
-<attribute name="value" value="0.44660482"/>
+<attribute name="value" value="0.52408135"/>
+<collection name="assays"><reference ref_id="7_16"/></collection>
+<collection name="genes"><reference ref_id="3_3"/></collection>
+<collection name="reporters"><reference ref_id="5_3"/></collection>
+</item>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Reporter">
+<attribute name="isControl" value="false"/>
+<reference name="material" ref_id="4_1"/>
+</item>
+<item id="7_34" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<attribute name="name" value="stage: 312 h_adult_female"/>
+<attribute name="sample1" value="Sample: Reference"/>
+<attribute name="sample2" value="stage: 312 h_adult_female"/>
+<reference name="experiment" ref_id="2_1"/>
+</item>
+<item id="6_25" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.03965098"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.55442864"/>
+<collection name="assays"><reference ref_id="7_25"/></collection>
+<collection name="genes"><reference ref_id="3_4"/></collection>
+<collection name="reporters"><reference ref_id="5_4"/></collection>
+</item>
+<item id="5_6" class="http://www.flymine.org/model/genomic#Reporter">
+<attribute name="isControl" value="false"/>
+<reference name="material" ref_id="4_6"/>
+</item>
+<item id="6_41" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.053166065"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="0.7787238"/>
+<collection name="assays"><reference ref_id="7_41"/></collection>
+<collection name="genes"><reference ref_id="3_6"/></collection>
+<collection name="reporters"><reference ref_id="5_6"/></collection>
+</item>
+<item id="6_7" class="http://www.flymine.org/model/genomic#AGambiaeLifeCycle">
+<attribute name="isControl" value="false"/>
+<attribute name="standardError" value="0.08687619"/>
+<attribute name="type" value="Geometric mean of ratios"/>
+<attribute name="value" value="1.3237987"/>
+<collection name="assays"><reference ref_id="7_7"/></collection>
 <collection name="genes"><reference ref_id="3_1"/></collection>
 <collection name="reporters"><reference ref_id="5_1"/></collection>
 </item>

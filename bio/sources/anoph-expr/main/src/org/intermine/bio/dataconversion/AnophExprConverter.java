@@ -80,7 +80,7 @@ public class AnophExprConverter extends FileConverter
         
         experiment = createItem("MicroArrayExperiment");
         experiment.setAttribute("name", experimentName);
-        experiment.setReference("publication", pub);
+        experiment.setReference("publication", pub.getIdentifier());
         store(experiment);
         
     }
@@ -179,38 +179,39 @@ public class AnophExprConverter extends FileConverter
             }
         }
 
-        HashMap<String, Item> results = new HashMap<String, Item>();
-
-
         while ((line = br.readLine()) != null) {
             String lineBits[] = StringUtils.split(line, '\t');
             String probe = lineBits[0];
             if (reporterToGene.get(probe) != null) {  
-                LinkedHashSet<Item> delayedItems = new LinkedHashSet<Item>();
+                HashMap<String, Item> results = new HashMap<String, Item>();
+               
                 String geneIdentifier = reporterToGene.get(probe);
                 if (reporterToGene.get(probe).contains("(")) {
                     geneIdentifier = geneIdentifier.substring(0, geneIdentifier.indexOf("("));
+                    geneIdentifier.trim();
                 }
                 Item gene = getGene(geneIdentifier);
+                
                 ReferenceList microArrayResults 
-                = new ReferenceList("microArrayResults", new ArrayList<String>());
+                                = new ReferenceList("microArrayResults", new ArrayList<String>());
 
                 Item material = createItem("BioEntity");
                 material.setAttribute("name", probe);
                 material.setAttribute("identifier", probe);
+                material.setReference("organism", org.getIdentifier());
 
                 Item reporter = createItem("Reporter");
                 reporter.setAttribute("isControl", "false");
-                reporter.setReference("material", material);
-
-                for (int i = 1; i < lineBits.length; i++) {      
-
+                reporter.setReference("material", material.getIdentifier());
+                
+                for (int i = 1; i < lineBits.length; i++) {     
                     if (stageNames[i] != null && StringUtil.allDigits(lineBits[i])) {
                         String stageName = stageNames[i].getStageName();
+                        
                         if (results.get(stageName) == null) {
-
+                            
                             Item result = createItem("AGambiaeLifeCycle");
-                            results.put(stageNames[i].getStageName(), result);
+                            
                             result.setAttribute("type", TYPE);
                             result.setAttribute("value", lineBits[i]);
                             result.setAttribute("isControl", "false");
@@ -218,49 +219,45 @@ public class AnophExprConverter extends FileConverter
                                                             new ArrayList<String>());
                             experimentGenes.addRefId(gene.getIdentifier());
                             result.addCollection(experimentGenes);
-                            delayedItems.add(result);
+
+                            ReferenceList reporters = new ReferenceList("reporters", 
+                                                                        new ArrayList<String>());
+                            reporters.addRefId(reporter.getIdentifier());
+                            result.addCollection(reporters);
+                            
+                            results.put(stageNames[i].getStageName(), result);
+                            
                         } else {                            
                             Item result = results.get(stageName);
                             if (result != null) {
                                 result.setAttribute("standardError", lineBits[i]);
-
-                                ReferenceList reporters = new ReferenceList("reporters", 
-                                                          new ArrayList<String>());
-                                reporters.addRefId(reporter.getIdentifier());
-                                result.addCollection(reporters);
-
                                 microArrayResults.addRefId(result.getIdentifier());
 
                                 Item assay = createItem("MicroArrayAssay");
                                 assay.setAttribute("sample1", "Sample: Reference"); 
                                 assay.setAttribute("sample2", "stage: " + stageName);
                                 assay.setAttribute("name", "stage: " + stageName);
-                                assay.setReference("experiment", experiment);
-
-//                                ReferenceList r = new ReferenceList("results", 
-//                                                                    new ArrayList<String>());
-//                                r.addRefId(result.getIdentifier());
-//                                assay.addCollection(r);
+                                assay.setReference("experiment", experiment.getIdentifier());
 
                                 ReferenceList assays = new ReferenceList("assays", 
                                                                     new ArrayList<String>());
                                 assays.addRefId(assay.getIdentifier());
                                 result.addCollection(assays);
-                                
-                                delayedItems.add(assay);
+                                store(result);
+                                store(assay);
                             } else {
                                 LOG.error("Couldn't store data for the following "
                                           + "stage: " + stageName + " and gene: " + geneIdentifier);
                             }
-                        }                       
-                    }
-                    delayedItems.add(reporter);
-                    delayedItems.add(material);
+                        }   
+                    }              
                 }
                 gene.addCollection(microArrayResults);
                 store(gene);
-                storeAll(delayedItems);
-            }            
+                store(reporter);
+                store(material);
+            }
+
         }
     }
 
@@ -271,7 +268,7 @@ public class AnophExprConverter extends FileConverter
         } else {
             Item gene = createItem("Gene");
             gene.setAttribute("identifier", geneCG);
-            gene.setReference("organism", org);
+            gene.setReference("organism", org.getIdentifier());
             genes.put(geneCG, gene);         
             return gene;
         }
