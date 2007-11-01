@@ -218,20 +218,6 @@
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
     </source>
-    <source name="flybase-dmel-cds-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.idSuffix" value="-cds"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
-      <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_3/fasta"/>
-    </source>
-    <source name="flybase-dpse-cds-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7237"/>
-      <property name="fasta.idSuffix" value="-cds"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
-      <property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_01/fasta"/>
-    </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
