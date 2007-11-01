@@ -293,7 +293,13 @@ public class PathQuery
      */
     public void changeDirection(String direction) {
         try {
-            sortOrder.get(0).setDirection(direction);
+            if (sortOrder != null && !sortOrder.isEmpty()) {
+                sortOrder.get(0).setDirection(direction);
+            } else {
+                Path p = MainHelper.makePath(model, this, view.get(0).toStringNoConstraints());
+                OrderBy o = new OrderBy(p, direction);
+                sortOrder.add(o);
+            }
         } catch (PathError e) {
             addProblem(e);
         }
