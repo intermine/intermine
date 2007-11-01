@@ -131,7 +131,8 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                           Arrays.asList(DO_NOTHING_ACTION));
 
                config.put(new MultiKey("feature", "ChromosomalDeletion", "FlyBase", "name"),
-                          Arrays.asList(new SetFieldConfigAction("symbol"),
+                          Arrays.asList(new SetFieldConfigAction("name"),
+                                        new SetFieldConfigAction("symbol"),
                                         CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("feature", "MRNA", "FlyBase", "uniquename"),
