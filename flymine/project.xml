@@ -11,7 +11,7 @@
       <property name="taxonId" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
-      <property name="convertor.class" 
+      <property name="convertor.class"
                 value="org.intermine.bio.dataconversion.FlyBaseChadoDBConverter"/>
     </source>
     <source name="chado-db-flybase-dpse" type="chado-db" dump="true">
@@ -21,7 +21,7 @@
       <property name="taxonId" value="7237"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="dataSetTitle" value="FlyBase Drosophila pseudoobscura data set"/>
-      <property name="convertor.class" 
+      <property name="convertor.class"
                 value="org.intermine.bio.dataconversion.FlyBaseChadoDBConverter"/>
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
@@ -32,7 +32,7 @@
       <property name="src.data.dir.includes" value="New_IDs*"/>
     </source>
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 7237 6239 180454 7460 4932 9606 10090"/> 
+      <property name="uniprot.organisms" value="7227 7237 6239 180454 7460 4932 9606 10090"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="createinterpro" value="false"/>
       <property name="use.split.files" value="true"/>
@@ -100,11 +100,11 @@
     <source name="affy-probes" type="affy-probes">
       <property name="src.data.dir" location="/shared/data/affy-probes/current"/>
     </source>
-    <source name="anoph-expr" type="anoph-expr"> 
-      <property name="src.data.dir" location="/shared/data/anoph_expr"/> 
-      <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/> 
-      <property name="genefile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/> 
-    </source> 
+    <source name="anoph-expr" type="anoph-expr">
+      <property name="src.data.dir" location="/shared/data/anoph_expr"/>
+      <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
+      <property name="genefile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
+    </source>
     <source name="tiffin" type="tiffin" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -119,7 +119,7 @@
     </source>
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/shared/data/pdb/current"/>
-    </source>    
+    </source>
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
       <property name="organisms" value="7227 6239 4932"/>
@@ -137,7 +137,7 @@
     </source>
     <source name="geneid-translationid" type="intermine-items-large-xml-file">
       <property name="src.data.file" location="/shared/data/orthologues/inparanoid/geneid2peptideid/current/geneId2peptideId.xml"/>
-    </source> 
+    </source>
     <source name="inparanoid-orthologue" type="orthologue" dump="true">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
@@ -205,10 +205,10 @@
       <property name="fasta.includes" value="dpse-all-chromosome-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_01/fasta"/>
     </source>
-     <source name="ncbigene2pubmed" type="intermine-items-xml-file">
-	<property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>
+    <source name="ncbigene2pubmed" type="intermine-items-xml-file">
+      <property name="src.data.file" location="/shared/data/pubmed/current/ncbiID_pubmedID.xml"/>
       <property name="ignore.duplicates" value="true"/>
-    </source>   
+    </source>
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
