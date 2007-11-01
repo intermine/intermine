@@ -174,7 +174,7 @@
     <source name="flybase-dpse-translation-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
-      <property name="fasta.classAttribute" value="identifier"/>
+      <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dpse-all-translation-*.fasta"/>
       <property name="fasta.sequenceType" value="protein"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_01/fasta"/>
@@ -182,7 +182,7 @@
     <source name="flybase-dpse-transcript-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
-      <property name="fasta.classAttribute" value="identifier"/>
+      <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dpse-all-transcript-r*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_01/fasta"/>
     </source>
