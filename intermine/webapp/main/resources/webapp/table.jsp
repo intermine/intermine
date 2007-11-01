@@ -80,11 +80,10 @@
     </c:if>
 
 <c:if test="${!empty lookupResults}">
-<div class="lookupReport">
    <tiles:insert name="bagRunnerMsg.tile">
       <tiles:put name="lookupResults" beanName="lookupResults" />
     </tiles:insert>
-</div> <%-- lookupReport --%>
+    <%-- lookupReport --%>
 </c:if>
 
 <c:choose>
