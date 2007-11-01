@@ -238,6 +238,10 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
 
         Item feature = createItem(realInterMineType);
 
+        if (getTaxonIdInt() == 7227 && chadoFeatureType.equals("protein")) {
+            feature.setAttribute("length", "" + seqlen);
+        }
+
         return feature;
     }
 
