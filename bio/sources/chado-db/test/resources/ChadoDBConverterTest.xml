@@ -236,16 +236,6 @@
       <reference ref_id="5_2"/>
     </collection>
   </item>
-  <item id="8_1" class="http://www.flymine.org/model/genomic#Translation">
-    <attribute name="identifier" value="CG10000-RA_prot"/>
-    <attribute name="organismDbId" value="FBpp10000"/>
-    <attribute name="symbol" value="CG10000-RA_prot"/>
-    <reference name="MRNA" ref_id="5_1"/>
-    <reference name="organism" ref_id="2_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
   <item id="4_15" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
@@ -304,6 +294,17 @@
   </item>
   <item id="9_2" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="8543160"/>
+  </item>
+  <item id="8_1" class="http://www.flymine.org/model/genomic#Translation">
+    <attribute name="identifier" value="CG10000-RA_prot"/>
+    <attribute name="length" value="2345"/>
+    <attribute name="organismDbId" value="FBpp10000"/>
+    <attribute name="symbol" value="CG10000-RA_prot"/>
+    <reference name="MRNA" ref_id="5_1"/>
+    <reference name="organism" ref_id="2_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
   </item>
   <item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
