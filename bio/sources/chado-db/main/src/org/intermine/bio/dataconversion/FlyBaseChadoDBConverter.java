@@ -235,6 +235,11 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                 // webapp so we filter them out
                 return null;
             }
+            if (chadoFeatureType.equals("protein") && seqlen == 0) {
+                // flybase has ~ 2100 protein features that don't appear in their webapp so we
+                // filter them out
+                return null;
+            }
         }
 
         Item feature = createItem(realInterMineType);
