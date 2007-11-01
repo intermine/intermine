@@ -21,7 +21,6 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.session.SessionMethods;
@@ -59,7 +58,6 @@ public class ClassChooserController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ObjectStoreSummary oss =
             (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
-        String model = os.getModel().getPackageName();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         
         Collection qualifiedTypes = os.getModel().getClassNames();
@@ -70,44 +68,33 @@ public class ClassChooserController extends TilesAction
 
         List preferredBagTypeTags = pm.getTags("im:preferredBagType", null, "class", superUserName);
         
-        ArrayList typeList = new ArrayList();
-        ArrayList preferedTypeList = new ArrayList();
-        
-        // loop through preferred list, add classes to map
+        ArrayList<String> typeList = new ArrayList<String>();
+        ArrayList<String> preferedTypeList = new ArrayList<String>();
+
         for (Iterator iter = preferredBagTypeTags.iterator(); iter.hasNext();) {
             Tag tag = (Tag) iter.next();
             preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
-        
-        // loop through all classes, add to map if not one of preferred classes
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+
         for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
            
             String className = (String) iter.next();
             String unqualifiedName = TypeUtil.unqualifiedName(className);
 
-            if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
-                            && oss.getClassCount(className) > 0) {
-             
+            if (oss.getClassCount(className) > 0) {
+
                 String helpKey = unqualifiedName;
                 String helpText = (String) classDescrs.get(helpKey);
-                
-                // add to help map.  always 
+
                 if (helpText != null) {                                 
                     String escaped = helpText.replaceAll("'", "\\\\'");
                     sb.append("'" + helpKey + "': '" + escaped + "', ");
                 }
-                // add to map if not on preferred map
-                /* user feedback indicated this was confusing, so all classes get added here */
-                if (ClassKeyHelper.hasKeyFields(classKeys, unqualifiedName)
-                                && oss.getClassCount(className) > 0) {
 
-                    typeList.add(unqualifiedName);
+                typeList.add(unqualifiedName);
 
-                }
             }
         }
-
 
         Collections.sort(preferedTypeList);
         Collections.sort(typeList);
