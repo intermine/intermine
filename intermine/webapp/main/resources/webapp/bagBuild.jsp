@@ -25,9 +25,10 @@
     }
 
     function resetInputs() {
+       netscape.security.PrivilegeManager.enablePrivilege('UniversalFileRead');
        document.getElementById('fileInput').disabled = false;
        document.getElementById('pasteInput').disabled = false;
-       document.getElementById('fileInput').value='';
+       document.getElementById('fileInput').value = '';
        initPasteInput();
     }
 
@@ -123,7 +124,7 @@
      <%-- file input --%>
     <li>
       <label><fmt:message key="bagBuild.or"/></label>
-      <html:file styleId="fileInput" property="formFile" onkeypress="switchInputs('file','paste');"  onfocus="switchInputs('file','paste');" />
+      <html:file styleId="fileInput" property="formFile" onkeypress="switchInputs('file','paste');"  onfocus="switchInputs('file','paste');" onclick="switchInputs('file','paste');"/>
     </li>
     </ol>
     <div align="right">
