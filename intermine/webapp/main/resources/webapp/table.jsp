@@ -42,7 +42,7 @@
 <script type="text/javascript" src="js/table.js" ></script>
 
 
-    <c:if test="${!empty templateQuery}">
+    <c:if test="${!empty templateQuery || !empty param.templateQueryTitle}">
 
       <%-- show the description only if we ve run a query (rather than viewing
            a bag) - see #1031 --%>
@@ -52,12 +52,27 @@
           <div class="resultsTableTemplateHeader">
             <div>
               <fmt:message key="results.templateTitle"/>:
-              <span class="templateTitleBold">
+              <span class="templateTitleBold"> <c:choose>
+              
+              	<c:when test="${!empty param.templateQueryTitle}">
+                 ${param.templateQueryTitle}
+                 </c:when>
+                 <c:otherwise>
                 ${templateQuery.title}
+                 </c:otherwise>
+                 </c:choose>
               </span>
             </div>
             <div class="templateDescription">
-              ${templateQuery.description}
+             <c:choose>
+              
+              	<c:when test="${!empty param.templateQueryTitle}">
+                 ${param.templateQueryDescription}
+                 </c:when>
+                 <c:otherwise>
+                ${templateQuery.description}
+                 </c:otherwise>
+                 </c:choose>
             </div>
           </div>
         </div>
