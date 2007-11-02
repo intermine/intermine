@@ -89,12 +89,13 @@
     <large-image>model/images/marray.gif</large-image>
     <intro-text>
       &lt;p&gt;
-      Microarray-based gene expression data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyAtlas, as well as from selected data sets.
+      Gene expression data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyAtlas and FlyFish, as well as from selected data sets.
       &lt;/p&gt;    
     </intro-text>
     <tile-name>model/microarray.jsp</tile-name>
     <aspect-source name="ArrayExpress" url="http://www.ebi.ac.uk/arrayexpress/"/>
     <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
+    <aspect-source name="FlyFish" url="http://fly-fish.ccbr.utoronto.ca/"/>
   </aspect>
 
   <aspect name="Transcriptional Regulation">
