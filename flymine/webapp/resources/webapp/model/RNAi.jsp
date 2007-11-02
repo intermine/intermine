@@ -22,7 +22,12 @@
 <div id="hiddenDiv1" class="dataSetDescription">
 
         <dl>
-
+          <dt>
+	   Agaisse et al (2005) Science 309:1248-1251 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16020693" target="_new">PubMed: 16020693</a>).
+          </dt>
+          <dd>
+          Genome-wide RNAi screen for host factors required for intracellular bacterial infection.
+          </dd>
           <dt>
            Baeg et al (2005) Genes Dev 19:1861-1870 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16055650" target="_new">PubMed: 16055650</a>).
           </dt>
@@ -60,10 +65,22 @@
            Parallel chemical genetic and genome-wide RNAi screens identify cytokinesis inhibitors and targets.
           </dd>
           <dt>
+	  Friedman and Perrimon (2006) Nature 444:230-234 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17086199" target="_new">PubMed: 17086199</a>).
+          </dt>
+          <dd>
+           A functional RNAi screen for regulators of receptor tyrosine kinase and ERK signalling.
+          </dd>
+          <dt>
              Gwack et al (2006) Nature 441:646-650 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16511445" target="_new">PubMed: 16511445</a>).
           </dt>
           <dd>
             A genome-wide <i>Drosophila</i> RNAi screen identifies DYRK-family kinases as regulators of NFAT.
+          </dd>
+          <dt>
+           Lu et al (2007) Proc Natl Acad Sci 104:9381-9386 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17517653" target="_new">PubMed: 17517653</a>).
+          <d/t>
+          <dd>
+            A genome-wide RNA interference screen identifies putative chromatin regulators essential for E2F repression.
           </dd>
           <dt>
             Nybakken et al (2005) Nature Genetics 37:1323-1332 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16311596" target="_new">PubMed: 16311596</a>).
@@ -71,6 +88,7 @@
           <dd>
             A genome-wide RNA interference screen in <i>Drosophila melanogaster</i> cells for new components of the Hh signaling pathway.
           </dd>
+
           <dt>
            Philips et al (2005) (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16020694" target="_new">PubMed: 16020694</a>).
           </dt>
@@ -83,12 +101,14 @@
           <dd>
            CRACM1 is a plasma membrane protein essential for store-operated Ca2+ entry.
           </dd>
+          <dt>
+Zhang et al (2006) PNAS 103:9357-9362 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16751269" target="_new">PubMed: 16751269</a>)
+          <d/t>
+          <dd>    
+           Genome-wide RNAi screen of Ca(2+) influx identifies genes that regulate Ca(2+) release-activated Ca(2+) channel activity.
+          </dd>
 
-          <p>
-          Note: Because of the issue of off-target effect (OTE) (see <a href="http://www.flyrnai.org/RNAi_OTE.html" target="_new">Matter Arising: Issues of off-targets in Drosophila RNAi screens </a>), FlyMine only contains results from the DRSC curated lists for each screen. Any gene that was targeted by a dsRNA with predicted OTEs is omitted from that list. Furthermore, for each result, FlyMine shows the number of potential off-targets based on sequence matches (numOffTargets) - at least one length of 19 bp or more with matching sequence of 19 bp or more of this amplicon - as well as CAR repeats - a 18 bp long stretch of CA(A/G) triplets. Such repeats have been implicated in off-target effects.
-          </p>
-
-        </dl>
+       </dl>
 
   <br/>
 
