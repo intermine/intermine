@@ -159,10 +159,10 @@ public class FlyFishConverter extends FileConverter
                             result.setAttribute("localisation", newLocalisation);
                         } else {
                             if (!resultLocalisation.getValue().equals(newLocalisation)) {
-                                LOG.error("fly-fish result is localised and unlocalised for "
-                                          + line);
-                                if (newLocalisation.contains("localized")) {
-                                    // localized overrides unlocalized
+                                LOG.error("fly-fish result is localised and unlocalised for stage "
+                                          + hc.stage + " line " + line);
+                                if (newLocalisation.equals("localised")) {
+                                    // localised overrides unlocalised
                                     result.setAttribute("localisation", newLocalisation);
                                 }
                             }
@@ -174,6 +174,8 @@ public class FlyFishConverter extends FileConverter
             for (Item result: mRNALocalisationResults) {
                 if (result.getAttribute("localisation") == null) {
                     result.setAttribute("localisation", "not expressed");
+                    Item localisationTerm = getMRNALocalisationTerm("non expressed");
+                    result.addToCollection("mRNALocalisationTerms", localisationTerm);
                 }
                 store(result);
             }
