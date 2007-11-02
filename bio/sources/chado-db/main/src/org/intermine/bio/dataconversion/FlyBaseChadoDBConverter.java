@@ -256,6 +256,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
      * chado.
      * {@inheritDoc}
      */
+    /**  Commented out to avoid setting duplicate gene identifiers
     @Override
     protected void extraProcessing(Map<Integer, FeatureData> features)
         throws ObjectStoreException {
@@ -271,5 +272,5 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
             }
         }
     }
-
+    **/
 }
