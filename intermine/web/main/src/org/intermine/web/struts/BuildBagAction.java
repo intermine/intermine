@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
@@ -118,10 +117,10 @@ public class BuildBagAction extends InterMineAction
         List<String> list = new ArrayList<String>();
         int elementCount = 0;
         while ((thisLine = reader.readLine()) != null) {
-            StringTokenizer st = new StringTokenizer(thisLine, "\n\t,");
+            QuotedStringTokeniser st = new QuotedStringTokeniser(thisLine, "\n\t, ");
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
-                list.add(token.trim());
+                list.add(token);
                 elementCount++;
                 if (elementCount > maxBagSize) {
                     ActionMessage actionMessage = null;
