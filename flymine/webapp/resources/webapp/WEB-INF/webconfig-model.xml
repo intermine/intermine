@@ -177,7 +177,7 @@
 	 	      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."   
 	 	      graphType="StackedBarChart" /> 
 
-       <graphdisplayer title="mRNA localisation (Fly-fish)" domainLabel="Stage" rangeLabel="Up (expressed) or Down (not) gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr" 
+       <graphdisplayer title="mRNA localisation (Fly-fish)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr" 
  		      toolTipGen="org.flymine.web.widget.FlyFishToolTipGenerator" urlGen="org.flymine.web.widget.FlyFishGraphURLGenerator" 
  		      description="According to &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;Fly-fish&lt;/a&gt;" 
 		      graphType="StackedBarChart" /> 

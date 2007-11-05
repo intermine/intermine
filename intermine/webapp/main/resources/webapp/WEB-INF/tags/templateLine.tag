@@ -21,7 +21,7 @@
 <c:choose>  
   <c:when test="${! empty bagName}">
     <%-- bag page --%>
-    <c:set var="extra" value="&amp;bagName=${interMineIdBag.name}&amp;useBagNode=${fieldExprMap[templateQuery]}"/>
+    <c:set var="extra" value="&amp;bagName=${bagName}&amp;useBagNode=${fieldExprMap[templateQuery]}"/>
   </c:when>
   <c:otherwise>
   	<%-- aspect or report page --%>
