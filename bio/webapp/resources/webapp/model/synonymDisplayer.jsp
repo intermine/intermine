@@ -32,8 +32,9 @@
                           || ((thisSynonym.type == 'name' || thisSynonym.type == 'accession')
                                && sourceName == 'HUGO'))
                       && (sourceName != 'FlyBase' || fn:startsWith(thisSynonym.value, 'FBgn'))
+                      && (sourceName != 'UniProt' || !fn:startsWith(thisSynonym.value, 'NP_'))
                       && seenUrls[linkPrefix] == null}">
-          
+
           <jsp:useBean id="seenUrls" scope="page" class="java.util.HashMap">
             <c:set target="${seenUrls}" property="${linkPrefix}" value="${linkPrefix}"/>
           </jsp:useBean>
