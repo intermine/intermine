@@ -67,12 +67,17 @@ public class FlyFishGraphURLGenerator implements CategoryURLGenerator
        
         QueryCollectionReference r = new QueryCollectionReference(gene, "mRNALocalisationResults");
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
-
-        // TODO fix for 3 datasets
-
         
+        String loc = (String) dataset.getRowKey(series);
+        loc = loc.toLowerCase();
+        if (loc.equals("notlocalised")) {
+            loc = "not localised";
+        } else if (loc.equals("notexpressed")) {
+            loc = "not expressed";
+        }
         cs.addConstraint(new SimpleConstraint(new QueryField(mrnaResult, "localisation"),
-                                             ConstraintOp.EQUALS, new QueryValue("localised")));
+                                             ConstraintOp.EQUALS, 
+                                             new QueryValue(loc)));
         
         cs.addConstraint(new SimpleConstraint(new QueryField(mrnaResult, "stage"), 
                                               ConstraintOp.EQUALS,
