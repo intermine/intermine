@@ -68,7 +68,7 @@
     <c:set var="label" value="${label}-CDSs"/>
   </c:if>
 
-  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750" target="_new">
+  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750">
     <div>
       <fmt:message key="locatedSequenceFeature.GBrowse.message"/>
     </div>
