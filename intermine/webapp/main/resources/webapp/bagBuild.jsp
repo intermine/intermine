@@ -25,7 +25,6 @@
     }
 
     function resetInputs() {
-       netscape.security.PrivilegeManager.enablePrivilege('UniversalFileRead');
        document.getElementById('fileInput').disabled = false;
        document.getElementById('pasteInput').disabled = false;
        document.getElementById('fileInput').value = '';
