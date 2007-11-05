@@ -207,14 +207,6 @@ public class PsiConverter extends FileConverter
                     /* experiment.experimentName = shortName */
                     attName = "experimentName";
 
-                //  <experimentList><experimentDescription id="2"><names><fullName>
-                } else if (qName.equals("fullName")
-                                && stack.peek().equals("names")
-                                && stack.search("experimentDescription") == 2) {
-
-                    /* dataset.description = fullName */
-                    attName = "experimentFullName";
-
                 //<experimentList><experimentDescription><bibref><xref><primaryRef>
                 } else if (qName.equals("primaryRef")
                                 && stack.peek().equals("xref")
@@ -552,24 +544,10 @@ public class PsiConverter extends FileConverter
                         experimentHolder = checkExperiment(shortLabel);
                         experimentIds.put(experimentId, experimentHolder);
                         experimentHolder.setName(shortLabel);
-                        Item dataset = createItem("DataSet");
-                        dataset.setAttribute("title", shortLabel);
-                        experimentHolder.setDataSet(dataset);
                     } else {
                         LOG.error("Experiment " + experimentId + " doesn't have a shortLabel");
                     }
-                // <experimentList><experimentDescription><names><fullName>
-                } else if (attName != null
-                                && attName.equals("experimentFullName")
-                                && qName.equals("fullName")) {
 
-                    String fullName = attValue.toString();
-                    if (fullName != null & experimentHolder.getDataSet() != null) {
-                        experimentHolder.getDataSet().setAttribute("description", fullName);
-                        experimentHolder.getDataSet().setReference("dataSource", datasourceItemId);
-                    } else {
-                        LOG.info("Experiment doesn't have a fullName");
-                    }
                 // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
                 } else if (attName != null
                                 && attName.equals("hostOrganismName")
@@ -788,10 +766,6 @@ public class PsiConverter extends FileConverter
                 if (!eh.isStored) {
                     eh.isStored = true;
                     writer.store(ItemHelper.convert(eh.experiment));
-                    // TODO how can dataset be null?
-                    if (eh.dataset != null) {
-                        writer.store(ItemHelper.convert(eh.dataset));
-                    }
                     //TODO store comments here instead
                     //for (Object o : eh.comments) {
                     //    writer.store(ItemHelper.convert((Item) o));
@@ -907,12 +881,13 @@ public class PsiConverter extends FileConverter
         throws SAXException {
             try {
                 Item datasource = createItem("DataSource");
+                datasource.setAttribute("name", "IntAct");
                 datasourceItemId = datasource.getIdentifier();
                 Item dataSet = createItem("DataSet");
+                dataSet.setAttribute("title", "IntAct data set");
                 dataSet.setReference("dataSource", datasource.getIdentifier());
                 writer.store(ItemHelper.convert(dataSet));
-                masterList.put("dataset", dataSet.getIdentifier());
-                datasource.addAttribute(new Attribute("name", "UniProt"));
+                masterList.put("dataset", dataSet.getIdentifier());               
                 writer.store(ItemHelper.convert(datasource));
                 masterList.put("datasource", datasource.getIdentifier());
             } catch (ObjectStoreException e) {
@@ -1077,10 +1052,6 @@ public class PsiConverter extends FileConverter
 
             protected String name;
             protected Item experiment;
-            //private String publication;
-            //private Item interactionDetectionMethod;
-            //private Item participantIdentificationMethod;
-            protected Item dataset;
             protected HashSet comments = new HashSet(); // items to be stored
             // whether or not this item has been stored in the db yet
             protected boolean isStored = false; 
@@ -1109,14 +1080,6 @@ public class PsiConverter extends FileConverter
 
             protected void setHostOrganism(String fullName) {
                 experiment.setAttribute("hostOrganism", fullName);
-            }
-
-            protected void setDataSet(Item dataset) {
-                this.dataset = dataset;
-            }
-
-            protected Item getDataSet() {
-                return dataset;
             }
         }
     }
