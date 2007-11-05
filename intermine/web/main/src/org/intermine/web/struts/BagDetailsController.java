@@ -329,6 +329,11 @@ public class BagDetailsController extends TilesAction
         );    
         plot = chart.getCategoryPlot();
         StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
+        
+        // integers only
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        
         bagGraphWidget = new BagGraphWidget(session,
                          graphDataSet.getCategoryArray(),
                          bag.getName(), 
