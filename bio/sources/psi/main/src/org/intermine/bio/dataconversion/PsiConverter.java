@@ -143,15 +143,16 @@ public class PsiConverter extends FileConverter
         private InteractionHolder holder;
         private ExperimentHolder experimentHolder;
         private Item protein, sequence;
-        private Item comment;
-        //private Item dataset;
-        private String datasourceItemId;
+        private Item comment;       
         private ReferenceList commentCollection;
         private String proteinId; // id used in xml to refer to protein
         private Set<Item> synonyms;
         private String psiDagTermItemId;
         private String experimentId;
-
+        private String evidenceDSItemId;
+        private String datasourceItemId;
+        
+        
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
@@ -174,7 +175,8 @@ public class PsiConverter extends FileConverter
             this.masterList = (Map) mapMaster.get("masterList");
             if (masterList.size() > 1) {
                 this.psiDagTermItemId = masterList.get("psiDagTerm");
-                this.datasourceItemId = masterList.get("datasource");
+                this.evidenceDSItemId = masterList.get("evidenceDatasource");  // for evidence
+                this.datasourceItemId = masterList.get("datasource");  // for proteins
             }
             //nextClsId = mastproteinAccessionserList.get("nextClsId");
             validProteins = new HashMap<String, String>();
@@ -342,7 +344,7 @@ public class PsiConverter extends FileConverter
                         Item syn2 = createItem("Synonym"); 
                         syn2.setAttribute("value", id); 
                         syn2.setAttribute("type", "accession"); 
-                        syn2.setReference("source", "UniProt"); 
+                        syn2.setReference("source", datasourceItemId); 
                         syn2.setReference("subject", proteinIdentifier); 
                         synonyms.add(synonym);
                     }
@@ -880,16 +882,23 @@ public class PsiConverter extends FileConverter
         private void initDatasources()
         throws SAXException {
             try {
-                Item datasource = createItem("DataSource");
-                datasource.setAttribute("name", "IntAct");
-                datasourceItemId = datasource.getIdentifier();
+                Item evidenceDatasource = createItem("DataSource");
+                evidenceDatasource.setAttribute("name", "IntAct");
+                evidenceDSItemId = evidenceDatasource.getIdentifier();
                 Item dataSet = createItem("DataSet");
                 dataSet.setAttribute("title", "IntAct data set");
-                dataSet.setReference("dataSource", datasource.getIdentifier());
+                dataSet.setReference("dataSource", evidenceDatasource.getIdentifier());
                 writer.store(ItemHelper.convert(dataSet));
                 masterList.put("dataset", dataSet.getIdentifier());               
+                writer.store(ItemHelper.convert(evidenceDatasource));
+                masterList.put("evidenceDatasource", evidenceDatasource.getIdentifier());
+                
+                Item datasource = createItem("DataSource");
+                datasource.setAttribute("name", "UniProt");
+                datasourceItemId = datasource.getIdentifier();                       
                 writer.store(ItemHelper.convert(datasource));
                 masterList.put("datasource", datasource.getIdentifier());
+                
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
