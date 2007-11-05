@@ -232,7 +232,7 @@
 
     <%-- All other references and collections --%>
     <im:heading id="misc">
-      <a href="javascript:toggleHidden('misc');">Miscellaneous</a>
+      <a href="javascript:toggleHidden('misc');">Miscellaneous</a>&nbsp;&nbsp;<span class="templateResultsToggle">(Expand this section for more information)</span>
     </im:heading>
 	<div class="body">
     <div id="misc" style="display:block;margin-left:25px;">
@@ -280,7 +280,16 @@
         </im:body>
      </div>
 
-  
+  <script type="text/javascript">
+  <!--//<![CDATA[    
+
+	toggleAll(${aspectCount}, 'template', 'collapse', 'misc');
+		
+	// open first one	
+	if (${aspectCount} > 0)	
+		toggleAll(1, 'template','expand');
+      //]]>-->
+</script>
   
 </c:if>
 

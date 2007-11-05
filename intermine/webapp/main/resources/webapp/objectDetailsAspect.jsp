@@ -19,6 +19,7 @@
   </c:if>
 </c:forEach>
 
+
 <c:choose>
   <c:when test="${!empty placementRefsAndCollections[placement] ||
                 foundDisplayer == true ||
@@ -26,9 +27,20 @@
 
     <c:set var="aspect" value="${fn:replace(placement, 'aspect:', '')}" scope="request"/>
   	<c:set var="templateCount" value="${fn:length(templates)}"/>
+  	
+<c:choose>
+  <c:when test="${templateCount > 0}">
+  	<c:set var="templateHeaderMsg" value="(Expand this section to view all ${templateCount} templates)" />
+  </c:when>
+  <c:otherwise>
+  	<c:set var="templateHeaderMsg" value="(Expand this section for more information)" />
+  </c:otherwise>
+</c:choose>
+  	
+  	
     <im:heading id="template${index}">    
 
-       <a href="javascript:toggleHidden('template${index}');">${aspect}</a>&nbsp;&nbsp;<span class="templateResultsToggle">(Expand this section to view all ${templateCount} templates)</span>
+       <a href="javascript:toggleHidden('template${index}');">${aspect}</a>&nbsp;&nbsp;<span class="templateResultsToggle">${templateHeaderMsg}</span>
 
     </im:heading>
 	<div class="body">
