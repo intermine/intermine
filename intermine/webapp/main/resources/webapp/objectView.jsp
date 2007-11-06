@@ -32,7 +32,7 @@
  	  </c:if>
         </c:when>
         <c:otherwise>
-          <c:out value="${object}" default="${nullFieldText}"/>
+          <c:out value="${object}" default="${nullFieldText}"/>   <%-- for IE 6: --%> &nbsp;
         </c:otherwise>
       </c:choose>
     </c:when>
