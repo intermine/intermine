@@ -51,7 +51,9 @@ public abstract class MailUtils
 
         properties.put("mail.smtp.host", webProperties.get("mail.host"));
         properties.put("mail.smtp.user", user);
-        properties.put("mail.smtp.port", smtpPort);
+        if (smtpPort != null) {
+            properties.put("mail.smtp.port", smtpPort);
+        }
 
         if (starttlsFlag != null) {
             properties.put("mail.smtp.starttls.enable", starttlsFlag);
