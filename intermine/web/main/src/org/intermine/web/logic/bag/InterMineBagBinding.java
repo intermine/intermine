@@ -63,6 +63,9 @@ public class InterMineBagBinding
             writer.writeStartElement("bag");
             writer.writeAttribute("name", bag.getName());
             writer.writeAttribute("type", bag.getType());
+            if (bag.getDateCreated() != null) {
+                writer.writeAttribute("date-created", "" + bag.getDateCreated().getTime());
+            }
             if (bag.getDescription() != null) {
                 writer.writeAttribute("description", bag.getDescription());
             }

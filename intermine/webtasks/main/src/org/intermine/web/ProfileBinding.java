@@ -222,9 +222,13 @@ public class ProfileBinding
                         throw new RuntimeException("Unable to find object for id: " + id, e);
                     }
                     if (object == null) {
-                        throw new RuntimeException("Unable to find object for id: " + id);
+                        LOG.error("Unable to find object for id: " + id 
+                                                   + " profile: " + profile.getUsername()
+                                                   + " bag: " + bag.getName());
+                    } else {
+                        getIdsFromObject(object, os.getModel(), idsToSerialise);
+                
                     }
-                    getIdsFromObject(object, os.getModel(), idsToSerialise);
                 }
             }
         } catch (ObjectStoreException e) {
@@ -271,6 +275,8 @@ public class ProfileBinding
 
                         if (referencedObject != null) {
                             // recurse
+                            //LOG.error("recursing for: " + pk.getName() + " object: " 
+                            //+ object.getId() + " field " + fieldName);
                             getIdsFromObject(referencedObject, model, idsToSerialise);
                         }
                     }
