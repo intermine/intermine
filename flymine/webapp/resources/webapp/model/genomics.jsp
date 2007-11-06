@@ -35,7 +35,7 @@
          <ul>
          <li>
             <dt>
-              <i>Drosophila melanogaster</i> - Genome annotation release 5.1 from <a href="http://www.flybase.org" target="_new">
+              <i>Drosophila melanogaster</i> - Genome annotation release 5.3 from <a href="http://www.flybase.org" target="_new">
                 <html:img src="model/images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website" /> </a>.
             </dt></dl>
           <li>
@@ -46,7 +46,7 @@
             </dt></li>
         <li>
           <dt>
-            <i>Anopheles gambiae</i> str. PEST -  Genome annotation release AgamP3 from
+            <i>Anopheles gambiae</i> str. PEST -  Genome annotation release AgamP3.4 from
             <a href="http://www.ensembl.org/Anopheles_gambiae" target="_new">
               <html:img src="model/images/ensembl_logo_mini.png" title="Click here to view EnSembl's website" />
             </a>.
