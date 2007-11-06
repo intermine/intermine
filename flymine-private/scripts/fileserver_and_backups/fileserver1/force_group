@@ -1,0 +1,11 @@
+#!/bin/sh
+
+chgrp_chmod ()
+{
+    chgrp -R flymine $1
+    chmod -R g+wX $1
+}
+
+chgrp_chmod "/export/shared_dmp_rel/*"
+chgrp_chmod /export/shared_data
+
