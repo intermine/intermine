@@ -160,7 +160,7 @@
   </tr>
 
 
-  <tr><td rowspan="2"  class="leftcol">
+  <tr><td rowspan="3"  class="leftcol">
         <html:link action="/aspect?name=Protein%20Structure">
         <p> <img src="model/images/pstructure.gif" /></p>
         <p> Protein Structure</p></html:link></td>
@@ -286,7 +286,7 @@
   </tr>
 
 
-  <tr><td rowspan="2" class="leftcol">
+  <tr><td rowspan="3" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
         <p> <img src="model/images/marray.gif" /></p>
         <p> Gene Expression</p></html:link></td>
