@@ -1,0 +1,11 @@
+#!/bin/bash
+
+LOG=/var/log/fileserver_sync_mirror.log
+
+> $LOG
+
+export RSYNC_RSH="ssh -i /root/id_dsa_freenas_rsync"
+
+rsync -av  --delete /export/dumps backup-flymine.gen.private.cam.ac.uk:/mnt/C/ >> $LOG
+rsync -av  --delete /export/releases backup-flymine.gen.private.cam.ac.uk:/mnt/C/ >> $LOG
+rsync -av  --delete /export/shared_dmp_rel backup-flymine.gen.private.cam.ac.uk:/mnt/C/ >> $LOG
