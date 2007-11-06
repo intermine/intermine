@@ -10,13 +10,38 @@ package org.intermine.bio.web.export;
  *
  */
 
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.io.FastaFormat;
+import org.biojava.bio.seq.io.SeqIOTools;
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.Translation;
 import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
+import org.intermine.bio.web.biojava.BioSequenceFactory.SequenceType;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -35,29 +60,6 @@ import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.web.struts.WebPathCollection;
-
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Translation;
-
-import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
 
 /**
  * An implementation of TableExporter that exports sequence objects using the BioJava sequence and
@@ -91,26 +93,40 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         response.setHeader("Content-Disposition ",
                            "inline; filename=sequence" + StringUtil.uniqueString() + ".txt");
 
+        ServletContext servletContext = session.getServletContext();
+        Properties webProps = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String classNames = webProps.getProperty("fasta.export.classes");
+        List <Class> classList = new ArrayList<Class>();
+        if (classNames != null && classNames.length() != 0) {
+            String [] classArray = classNames.split(",");
+            for (int i = 0; i < classArray.length; i++) {
+                classList.add(TypeUtil.instantiate(os.getModel().getPackageName() + "." 
+                                                   + classArray[i]));
+            }
+        } else {
+            classList.addAll(Arrays.asList(new Class[] {Protein.class, 
+                LocatedSequenceFeature.class, 
+                Translation.class}));
+        }
         InterMineObject obj = os.getObjectById(new Integer(request.getParameter("object")));
-
         if (obj instanceof Sequence) {
             Sequence sequence = (Sequence) obj;
-            obj = ResidueFieldExporter.getLocatedSequenceFeatureForSequence(os, sequence);
-            if (obj == null) {
-                obj = ResidueFieldExporter.getProteinForSequence(os, sequence);
+            for (Class clazz : classList) {
+                obj = ResidueFieldExporter.getIMObjectForSequence(os, clazz, 
+                                                                  sequence);
+                if (obj != null) {
+                    break;
+                }
             }
         }
-        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein) {
-            if (obj instanceof LocatedSequenceFeature) {
-                bioSequence = BioSequenceFactory.make((LocatedSequenceFeature) obj);
-            } else {
-                bioSequence = BioSequenceFactory.make((Protein) obj);
-            }
+        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein 
+                        || obj instanceof Translation) {
+            BioEntity bioEntity = (BioEntity) obj;
+            bioSequence = BioSequenceFactory.make(bioEntity, SequenceType.DNA);
             if (bioSequence == null) {
                 return null;
             }
             Annotation annotation = bioSequence.getAnnotation();
-            BioEntity bioEntity = (BioEntity) obj;
             String identifier = bioEntity.getIdentifier();
             if (identifier == null) {
                 identifier = bioEntity.getName();

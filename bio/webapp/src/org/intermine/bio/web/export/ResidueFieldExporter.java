@@ -10,8 +10,27 @@ package org.intermine.bio.web.export;
  *
  */
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.io.FastaFormat;
+import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.utils.ChangeVetoException;
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.Sequence;
+import org.intermine.bio.web.biojava.BioSequence;
+import org.intermine.bio.web.biojava.BioSequenceFactory;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -23,31 +42,9 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.bio.web.biojava.BioSequence;
-import org.intermine.bio.web.biojava.BioSequenceFactory;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.FieldExporter;
-
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.io.FastaFormat;
-import org.biojava.bio.seq.io.SeqIOTools;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.utils.ChangeVetoException;
 
 /**
  * ResidueFieldExporter class
@@ -197,6 +194,41 @@ public class ResidueFieldExporter implements FieldExporter
 
         if (results.size() == 1) {
             return (Protein) ((List) results.get(0)).get(0);
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Find the IntermineObject that references the given Sequence.
+     * @param os the ObjectStore
+     * @param className the InterMineObject class name
+     * @param sequence the Sequence
+     * @return the IntermineObject
+     */
+    public static InterMineObject getIMObjectForSequence(ObjectStore os, Class clazz, 
+                                                Sequence sequence) {
+        Query q = new Query();
+        
+        QueryClass queryClass = new QueryClass(clazz);
+        q.addFrom(queryClass);
+        q.addToSelect(queryClass);
+
+        QueryClass sequenceQc = new QueryClass(Sequence.class);
+        q.addFrom(sequenceQc);
+        QueryReference ref = new QueryObjectReference(queryClass, "sequence");
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(new ContainsConstraint(ref, ConstraintOp.CONTAINS, sequenceQc));
+
+        QueryField seqIdQf = new QueryField(sequenceQc, "id");
+        QueryValue seqIdQv = new QueryValue(sequence.getId());
+        cs.addConstraint(new SimpleConstraint(seqIdQf, ConstraintOp.EQUALS, seqIdQv));
+        q.setConstraint(cs);
+
+        Results results = os.execute(q);
+
+        if (results.size() == 1) {
+            return (InterMineObject) ((List) results.get(0)).get(0);
         } else {
             return null;
         }
