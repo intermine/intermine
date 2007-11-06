@@ -18,6 +18,8 @@ import javax.servlet.ServletContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
@@ -113,6 +115,8 @@ class ProfileManagerHandler extends DefaultHandler
     private ObjectStoreWriter osw;
     private final ServletContext servletContext;
     private boolean abortOnError;
+    private long startTime = 0;
+    private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
     
     /**
      * Create a new ProfileManagerHandler
@@ -142,6 +146,7 @@ class ProfileManagerHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (qName.equals("userprofile")) {
+            startTime = System.currentTimeMillis();
             profileHandler = new ProfileHandler(profileManager, idUpgrader, servletContext, osw,
                                                 abortOnError);
         }
@@ -167,6 +172,8 @@ class ProfileManagerHandler extends DefaultHandler
 
             }
             profileHandler = null;
+            long totalTime = System.currentTimeMillis() - startTime;
+            LOG.info("Finished profile: " + profile.getUsername() + " took " + totalTime + "ms.");
         }
         if (profileHandler != null) {
             profileHandler.endElement(uri, localName, qName);
