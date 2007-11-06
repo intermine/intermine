@@ -2,7 +2,7 @@
   	controllerUrl="/initGeneMicroArrayDisplayer.do"/>
 
   <definition name="flyFishDisplayer.tile" path="/model/flyFishDisplayer.jsp" 
-  	controllerUrl="/initFlyFIshDisplayer.do"/>
+  	controllerUrl="/initFlyFishDisplayer.do"/>
 
   <definition name="flymineQuickStart.tile" path="/model/flymineQuickStart.jsp" />
 
