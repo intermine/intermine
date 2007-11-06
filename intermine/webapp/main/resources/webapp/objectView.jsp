@@ -21,7 +21,9 @@
       <c:set var="maxLength" value="60"/>
       <c:choose>
         <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength}">
-          <im:abbreviate value="${object}" length="${maxLength}"/>
+          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}">
+            <im:abbreviate value="${object}" length="${maxLength}"/>
+          </html:link>
         </c:when>
         <c:when test="${resultElement.keyField}">
           <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}">
