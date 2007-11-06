@@ -12,7 +12,7 @@
       <div class="body">
         <p>
           Orthologue and paralogue relationships calculated by <A
-          href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</A> - Version 5.1 - between the following organisms:
+          href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</A> - Version 6.0 - between the following organisms:
         </p>
         <ul>
           <li><I>D. melanogaster</I></li>

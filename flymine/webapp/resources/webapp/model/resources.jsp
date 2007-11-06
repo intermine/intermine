@@ -1,3 +1,4 @@
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -38,11 +39,7 @@
           from the <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis</a> collection.</dt></li>
          </ul>
 
-	<dt>Note: The DrosDel data has been re-mapped to
-	genome sequence release 5.0 as of FlyMine release 7.0,
-	however, coordinates for the Exelixis set are still to genomce
-	sequence release 4.0.  These will be updated to release 5.0 in the
-	next release of FlyMine.</dt>
+
 </p>
         </div>
       </dl> 
@@ -101,7 +98,7 @@
           <div id="hiddenDiv4" class="dataSetDescription">
 
 
-        <p>Note: In release 7.0 of FlyMine the format for the tiling path
+        <p>Note: From 7.0 of FlyMine the format for the tiling path
 	span, PCR product and primer identifiers has changed.  Previously the
 	identifier included the genomic location (e.g.
 	span2L:1-7529_amplimer_1). However, in order for identifiers to remain

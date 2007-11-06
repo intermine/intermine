@@ -14,7 +14,7 @@
 
 
           <p>A mapping between genes and publications for <i>D. melanogaster</i>, 
-            <i>C. elegans</i> and <i>S. cerevisiae</i> from NCBI (till 14th December 2006)</p>
+            <i>C. elegans</i> and <i>S. cerevisiae</i> from NCBI.</p>
 
       </div>
     </dl>
