@@ -329,7 +329,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
             PrimaryKey pk, Source source, Set returnSet) throws MetaDataException {
         if (!queryNulls && !DataLoaderHelper.objectPrimaryKeyNotNull(model, obj, cld, pk,
                     source, idMap)) {
-            LOG.warn("Null values found for key (" + pk + ") for object: " + obj);
+            //LOG.warn("Null values found for key (" + pk + ") for object: " + obj);
             throw new IllegalArgumentException("Null values");
         }
 
