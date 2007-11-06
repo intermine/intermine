@@ -11,8 +11,10 @@ package org.intermine.web.bag;
  */
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.intermine.dataloader.BaseEquivalentObjectFetcher;
@@ -38,7 +40,8 @@ public class PkQueryIdUpgrader implements IdUpgrader
             .getLogger(PkQueryIdUpgrader.class);
     private Source source = null;
     EquivalentObjectFetcher eof;
-
+    private Map<Integer, Set> newIdsCache = new HashMap<Integer, Set>();
+    
     /**
      * No argument constructor - will use all available keyDefs to upgrade bags.
      * @param os the ObjectStore to query
@@ -67,6 +70,9 @@ public class PkQueryIdUpgrader implements IdUpgrader
      * @return the set of new InterMineObjects
      */
     public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
+        if (newIdsCache.containsKey(oldObject.getId())) {
+            return newIdsCache.get(oldObject.getId());
+        }
         Query query;
         try {
             query = eof.createPKQuery(oldObject, source, false);
@@ -111,6 +117,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
 
                 returnSet.add(newObject.getId());
             }
+            newIdsCache.put(oldObject.getId(), returnSet);
             return returnSet;
         }
     }
