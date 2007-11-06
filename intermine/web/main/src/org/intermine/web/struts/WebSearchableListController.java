@@ -138,7 +138,11 @@ public class WebSearchableListController extends TilesAction
                     InterMineBag bag1 = (InterMineBag) ws1;
                     if (ws2 instanceof InterMineBag) {
                         InterMineBag bag2 = (InterMineBag) ws2;
-                        return bag2.getDateCreated().compareTo(bag1.getDateCreated());
+                        if (bag1.getDateCreated() != null && bag2.getDateCreated() != null) {
+                            return bag2.getDateCreated().compareTo(bag1.getDateCreated());
+                        } else {
+                            return bag2.getName().compareTo(bag1.getName());
+                        }
                     }
                 } else {
                     return ws1.getTitle().compareTo(ws2.getTitle());              
