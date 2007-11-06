@@ -144,12 +144,20 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected static class SetFieldConfigAction extends ConfigAction
     {
-        private String fieldName;
+        private String thefieldName;
         SetFieldConfigAction() {
-            fieldName = null;
+            thefieldName = null;
         }
         SetFieldConfigAction(String fieldName) {
-            this.fieldName = fieldName;
+            this.thefieldName = fieldName;
+        }
+
+        /**
+         * Return the field name that was passed to the constructor.
+         * @return the field name
+         */
+        public String getFieldName() {
+            return thefieldName;
         }
     }
 
@@ -322,9 +330,6 @@ public class ChadoDBConverter extends BioDBConverter
                 MultiKey nameKey =
                     new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
                 List<ConfigAction> nameActionList = getConfig().get(nameKey);
-                MultiKey uniqueNameKey =
-                    new MultiKey("feature", fdat.interMineType, dataSourceName, "uniquename");
-                List<ConfigAction> uniqueNameActionList = getConfig().get(uniqueNameKey);
 
                 if (name != null) {
                     if (nameActionList == null || nameActionList.size() == 0) {
@@ -339,8 +344,8 @@ public class ChadoDBConverter extends BioDBConverter
                             if (action instanceof SetFieldConfigAction) {
                                 SetFieldConfigAction attrAction =
                                     (SetFieldConfigAction) action;
-                                feature.setAttribute(attrAction.fieldName, name);
-                                if (attrAction.fieldName.equals("identifier")) {
+                                feature.setAttribute(attrAction.getFieldName(), name);
+                                if (attrAction.getFieldName().equals("identifier")) {
                                     fdat.flags |= FeatureData.IDENTIFIER_SET;
                                 }
                             }
@@ -348,6 +353,9 @@ public class ChadoDBConverter extends BioDBConverter
                     }
                 }
 
+                MultiKey uniqueNameKey =
+                    new MultiKey("feature", fdat.interMineType, dataSourceName, "uniquename");
+                List<ConfigAction> uniqueNameActionList = getConfig().get(uniqueNameKey);
                 if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
                     feature.setAttribute("identifier", uniqueName);
                     fdat.flags |= FeatureData.IDENTIFIER_SET;
@@ -355,8 +363,8 @@ public class ChadoDBConverter extends BioDBConverter
                     for (ConfigAction action: uniqueNameActionList) {
                         if (action instanceof SetFieldConfigAction) {
                             SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
-                            feature.setAttribute(attrAction.fieldName, uniqueName);
-                            if (attrAction.fieldName.equals("identifier")) {
+                            feature.setAttribute(attrAction.getFieldName(), uniqueName);
+                            if (attrAction.getFieldName().equals("identifier")) {
                                 fdat.flags |= FeatureData.IDENTIFIER_SET;
                             }
                         }
@@ -595,7 +603,7 @@ public class ChadoDBConverter extends BioDBConverter
                     for (ConfigAction action: actionList) {
                         if (action instanceof SetFieldConfigAction) {
                             SetFieldConfigAction setAction = (SetFieldConfigAction) action;
-                            String fieldName = setAction.fieldName;
+                            String fieldName = setAction.getFieldName();
                             FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName);
                             if (fd == null) {
                                 throw new RuntimeException("can't find field " + fieldName
@@ -753,10 +761,11 @@ public class ChadoDBConverter extends BioDBConverter
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
-                        if (!existingAttributes.contains(setAction.fieldName)) {
-                            setAttribute(fdat.intermineObjectId, setAction.fieldName, accession);
-                            existingAttributes.add(setAction.fieldName);
-                            if (setAction.fieldName.equals("identifier")) {
+                        if (!existingAttributes.contains(setAction.getFieldName())) {
+                            setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
+                                         accession);
+                            existingAttributes.add(setAction.getFieldName());
+                            if (setAction.getFieldName().equals("identifier")) {
                                 fdat.flags |= FeatureData.IDENTIFIER_SET;
                             }
                         }
@@ -805,8 +814,8 @@ public class ChadoDBConverter extends BioDBConverter
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
-                        setAttribute(fdat.intermineObjectId, setAction.fieldName, identifier);
-                        if (setAction.fieldName.equals("identifier")) {
+                        setAttribute(fdat.intermineObjectId, setAction.getFieldName(), identifier);
+                        if (setAction.getFieldName().equals("identifier")) {
                             fdat.flags |= FeatureData.IDENTIFIER_SET;
                         }
                     } else {
@@ -873,10 +882,11 @@ public class ChadoDBConverter extends BioDBConverter
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
-                        if (!existingAttributes.contains(setAction.fieldName)) {
-                            setAttribute(fdat.intermineObjectId, setAction.fieldName, identifier);
-                            existingAttributes.add(setAction.fieldName);
-                            if (setAction.fieldName.equals("identifier")) {
+                        if (!existingAttributes.contains(setAction.getFieldName())) {
+                            setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
+                                         identifier);
+                            existingAttributes.add(setAction.getFieldName());
+                            if (setAction.getFieldName().equals("identifier")) {
                                 fdat.flags |= FeatureData.IDENTIFIER_SET;
                             }
                         }
