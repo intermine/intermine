@@ -13,9 +13,9 @@ package org.intermine.bio.web.biojava;
 import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
-
-import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Translation;
 
 /**
@@ -26,6 +26,8 @@ import org.flymine.model.genomic.Translation;
 
 public abstract class BioSequenceFactory
 {
+    public enum SequenceType { DNA, PROTEIN, RNA }
+    
     /**
      * Create a new BioSequence from a LocatedSequenceFeature
      * @param feature the LocatedSequenceFeature
@@ -75,6 +77,32 @@ public abstract class BioSequenceFactory
         } else {
             String residues = protein.getSequence().getResidues();
             return new BioSequence(ProteinTools.createProtein(residues), protein);
+        }
+    }
+    
+    /**
+     * Create a new BioSequence from a Protein
+     * @param protein the Protein
+     * @return a new BioSequence object or null if the Protein doesn't have a Sequence
+     * @throws IllegalSymbolException if any of the residues of the Protein can't be
+     * turned into amino acid symbols.
+     */
+    public static BioSequence make(BioEntity bioEnt, SequenceType type)
+    throws IllegalSymbolException {
+        if (bioEnt instanceof Protein) {
+            Protein protein = (Protein) bioEnt;
+            String residues = protein.getSequence().getResidues();
+            return new BioSequence(ProteinTools.createProtein(residues), protein);
+        } else if (bioEnt instanceof Translation) {
+            Translation translation = (Translation) bioEnt;
+            String residues = translation.getSequence().getResidues();
+            return new BioSequence(ProteinTools.createProtein(residues), translation);
+        } else if (bioEnt instanceof LocatedSequenceFeature) {
+            LocatedSequenceFeature feature = (LocatedSequenceFeature) bioEnt;
+            String residues = feature.getSequence().getResidues();
+            return new BioSequence(DNATools.createDNA(residues), feature);
+        } else {
+            throw new RuntimeException("Sequence type not defined.");
         }
     }
 }
