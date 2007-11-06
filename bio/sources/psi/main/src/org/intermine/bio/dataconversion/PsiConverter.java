@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,18 +21,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
+
+import java.io.Reader;
+
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -295,7 +296,7 @@ public class PsiConverter extends FileConverter
                     String db = attrs.getValue("db");
                     String id = attrs.getValue("id");
                     synonyms = new HashSet();
-                    if (db != null) {
+                    if (db != null && !db.equals("uniparc")) {
                         String primaryAccession = null;
                         if (db.startsWith("uniprot")) {
                             // accessions like P14734-1 are isoform identifiers, remove the '-n'
@@ -563,7 +564,7 @@ public class PsiConverter extends FileConverter
                                  + " doesn't have a host organism name");
                     }
                 // <interactorList><interactor id="4"><sequence>
-                } else if (attName != null
+                } else if (protein != null && attName != null
                                 && attName.equals("sequence")
                                 && qName.equals("sequence")
                                 && stack.peek().equals("interactor")) {
@@ -574,7 +575,7 @@ public class PsiConverter extends FileConverter
                     writer.store(ItemHelper.convert(sequence));
                     protein.setReference("sequence", sequence);
                 // <interactorList><interactor id="4">
-                } else if (qName.equals("interactor")) {
+                } else if (protein != null && qName.equals("interactor")) {
 
                     String accession = protein.getAttribute("primaryAccession").getValue();
                     if (!proteinAccessions.containsKey(accession)) {
