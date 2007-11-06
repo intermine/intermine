@@ -52,6 +52,7 @@
     <tile-name>model/proteinStructure.jsp</tile-name>
     <aspect-source name="Kenji Mizuguchi lab"
                    url="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm"/>
+     <aspect-source name="RCSB Protein Data Bank" url="http://www.rcsb.org/pdb/home/home.do"/>
   </aspect>
 
   <aspect name="Protein Interactions">
@@ -152,6 +153,18 @@
   </aspect>
 
 
+  <aspect name="Literature">
+    <subtitle></subtitle>
+    <icon-image>model/literature.png</icon-image>
+    <large-image>model/literature.png</large-image>
+    <intro-text>
+      A mapping between genes and publications which mention them for &lt;i&gt;Drosophila melanogaster&lt;/i&gt, &lt;i&gt;C. elegans&lt;/i&gt and &lt;i&gt;A. gambiae&lt;/i&gt (up to 14th December 2006).
+    </intro-text>
+    <tile-name>model/literature.jsp</tile-name>
+    <aspect-source name="NCBI" url="http://www.ncbi.nlm.nih.gov/"/>
+  </aspect>
+
+
   <aspect name="Resources">
     <subtitle>Material resources</subtitle>
     <icon-image>model/images/drosdel.gif</icon-image>
@@ -166,26 +179,6 @@
   </aspect>
 
 
-  <aspect name="Literature">
-    <subtitle></subtitle>
-    <icon-image>model/images/book.png</icon-image>
-    <large-image>model/images/book.png</large-image>
-    <intro-text>Literature
-    </intro-text>
-    <tile-name>model/literature.jsp</tile-name>
-    <aspect-source name="NCBI" url="http://www.ncbi.nlm.nih.gov/"/>
-  </aspect>
 
 
-  <!--
-      <aspect name="Anopheles">
-        <subtitle></subtitle>
-        <icon-image>model/images/anopheles.gif</icon-image>
-        <large-image>model/images/anopheles.gif</large-image>
-        <tile-name></tile-name>
-        <intro-text>
-        </intro-text>
-        <starting-points></starting-points>
-      </aspect>
-      -->
 </aspects>
