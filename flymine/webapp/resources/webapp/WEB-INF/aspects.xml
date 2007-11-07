@@ -155,10 +155,10 @@
 
   <aspect name="Literature">
     <subtitle></subtitle>
-    <icon-image>model/literature.png</icon-image>
-    <large-image>model/literature.png</large-image>
+    <icon-image>model/images/literature.png</icon-image>
+    <large-image>model/images/literature.png</large-image>
     <intro-text>
-      A mapping between genes and publications which mention them for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; (up to 14th December 2006).
+      A mapping between genes and publications which mention them for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; 
     </intro-text>
     <tile-name>model/literature.jsp</tile-name>
     <aspect-source name="NCBI" url="http://www.ncbi.nlm.nih.gov/"/>
