@@ -155,8 +155,8 @@
 
   <aspect name="Literature">
     <subtitle></subtitle>
-    <icon-image>model/images/literature.png</icon-image>
-    <large-image>model/images/literature.png</large-image>
+    <icon-image>model/images/book.png</icon-image>
+    <large-image>model/images/book.png</large-image>
     <intro-text>
       A mapping between genes and publications which mention them for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt; 
     </intro-text>
