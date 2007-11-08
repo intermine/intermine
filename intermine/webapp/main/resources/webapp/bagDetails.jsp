@@ -198,7 +198,7 @@
   <c:if test="${widgetTotal > 0}">
     <div class="heading">
       <a id="widgets">Widgets displaying properties of '${bag.name}'</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
-		(<a href="javascript:toggleAll(${widgetTotal}, 'widget', 'expand', null);">expand all <img src="images/undisclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, 'widget', 'collapse', null);">collapse all <img src="images/disclosed.gif"/></a>)</span>
+		(<a href="javascript:toggleAll(${widgetTotal}, 'widget', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, 'widget', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
     </div>
     <div class="body">
   
@@ -335,7 +335,7 @@
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
    <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;"> 
-  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all <img src="images/undisclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all <img src="images/disclosed.gif"/></a>)</span></div>
+  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span></div>
 </div>
 
 <div class="body">
