@@ -1,8 +1,8 @@
 <aspects>
   <aspect name="Genomics">
     <subtitle>Genome annotation</subtitle>
-    <icon-image>model/genomics.gif</icon-image>
-    <large-image>model/genomics.gif</large-image>
+    <icon-image>model/images/genomics.gif</icon-image>
+    <large-image>model/images/genomics.gif</large-image>
     <intro-text>
       The gene structure and other genome annotation in MalariaMine are provided by
       a variety of curated source databases.  In most cases MalariaMine includes
@@ -19,8 +19,8 @@
 
   <aspect name="Comparative Genomics">
     <subtitle>Orthologues&lt;br/&gt;and paralogues</subtitle>
-    <icon-image>model/comparativeGenomics.png</icon-image>
-    <large-image>model/comparativeGenomics.png</large-image>
+    <icon-image>model/images/comparativeGenomics.png</icon-image>
+    <large-image>model/images/comparativeGenomics.png</large-image>
     <intro-text>
       Orthologues and Paralogues.  Orthologues are equivalent genes in
       different species that evolved from a common ancestor by
@@ -35,8 +35,8 @@
 
   <aspect name="Proteins">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
-    <icon-image>model/proteins.png</icon-image>
-    <large-image>model/proteins.png</large-image>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
     <intro-text>
       Protein annotation (including family and domain annotation) from UniProt
       .
@@ -49,8 +49,8 @@
 
   <aspect name="Protein Interactions">
     <subtitle>IntAct</subtitle>
-    <icon-image>model/proteinInteraction.gif</icon-image>
-    <large-image>model/proteinInteraction.gif</large-image>
+    <icon-image>model/images/proteinInteraction.gif</icon-image>
+    <large-image>model/images/proteinInteraction.gif</large-image>
     <tile-name></tile-name>
     <intro-text>
       Proteins formatted in the Proteomics Standards Initiative (PSI)
@@ -66,8 +66,8 @@
 
   <aspect name="Gene Ontology">
     <subtitle></subtitle>
-    <icon-image>model/geneOntology.png</icon-image>
-    <large-image>model/geneOntology.png</large-image>
+    <icon-image>model/images/geneOntology.png</icon-image>
+    <large-image>model/images/geneOntology.png</large-image>
     <intro-text>
       The Gene Ontology (GO) project is a collaborative effort to
       address the need for consistent descriptions of gene products in
