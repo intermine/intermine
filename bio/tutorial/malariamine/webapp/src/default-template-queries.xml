@@ -43,7 +43,7 @@
     <node path="Chromosome" type="Chromosome">
     </node>
     <node path="Chromosome.identifier" type="String">
-      <constraint op="=" value="2L" description="Show the genes located on chromosome:" identifier="" editable="true" code="A">
+      <constraint op="=" value="MAL1" description="Show the genes located on chromosome:" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Chromosome.organism" type="Organism">
@@ -79,7 +79,7 @@
     <node path="Chromosome" type="Chromosome">
     </node>
     <node path="Chromosome.identifier" type="String">
-      <constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="" editable="true" code="A">
+      <constraint op="=" value="MAL1" description="Show the genes, transcripts and exons located on chromosome:" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Chromosome.organism" type="Organism">
@@ -113,7 +113,7 @@
     <node path="Gene.chromosome" type="Chromosome">
     </node>
     <node path="Gene.chromosome.identifier" type="String">
-      <constraint op="=" value="2L" description="Show genes located on chromosome" identifier="chromosome.identifier" editable="true" code="A">
+      <constraint op="=" value="MAL1" description="Show genes located on chromosome" identifier="chromosome.identifier" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.organism" type="Organism">
@@ -141,7 +141,7 @@
     <node path="IntergenicRegion.chromosomeLocation.object" type="Chromosome">
     </node>
     <node path="IntergenicRegion.chromosomeLocation.object.identifier" type="String">
-      <constraint op="=" value="2L" description="Show intergenic regions for chromosome:" identifier="" editable="true" code="B">
+      <constraint op="=" value="MAL1" description="Show intergenic regions for chromosome:" identifier="" editable="true" code="B">
       </constraint>
     </node>
   </query>
@@ -185,9 +185,9 @@
   </query>
 </template>
 <template name="Gene_Location" title="Gene --&gt; Chromosomal location." longDescription="Show the chromosome and the chromosome location of a particular gene." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_Location" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand" constraintLogic="A and B">
+  <query name="Gene_Location" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand" constraintLogic="A and B">
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG1046" description="Show the chromosome and the chromosome location for gene:" identifier="Gene.class" editable="true" code="A">
+      <constraint op="LOOKUP" value="mal1_18s" description="Show the chromosome and the chromosome location for gene:" identifier="Gene.class" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.organism" type="Organism">
@@ -209,7 +209,7 @@
     <pathDescription pathString="Gene.organism" description="Organism">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG3936" description="Show the predicted orthologues for gene;" identifier="Gene.class" editable="true" code="D">
+      <constraint op="LOOKUP" value="mal1_18s" description="Show the predicted orthologues for gene;" identifier="Gene.class" editable="true" code="D">
       </constraint>
     </node>
     <node path="Gene.organism" type="Organism">
@@ -241,7 +241,7 @@
     <pathDescription pathString="Gene.overlappingFeatures.chromosome" description="Overlapping gene  &gt; chromosome">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG11566" description="Search for any genes overlapping gene:" identifier="Gene.class" editable="true" code="A">
+      <constraint op="LOOKUP" value="mal1_18s" description="Search for any genes overlapping gene:" identifier="Gene.class" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.overlappingFeatures" type="Gene">
@@ -253,7 +253,7 @@
     <pathDescription pathString="Gene.proteins" description="Protein">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG1046" description="" identifier="" editable="true" code="A">
+      <constraint op="LOOKUP" value="mal1_18s" description="" identifier="" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -291,7 +291,7 @@
 <template name="Gene_paralogues" title="Gene --&gt; paralogues" longDescription="For a particular gene, show its paralogues." comment="07.06.07 updated to work from transcript class - Philip">
   <query name="Gene_paralogues" model="genomic" view="Gene.identifier Gene.symbol Gene.paralogues.paralogue.identifier Gene.paralogues.paralogue.symbol" constraintLogic="B and C">
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG1004" description="Gene:" identifier="Gene.class" editable="true" code="C">
+      <constraint op="LOOKUP" value="mal1_18s" description="Gene:" identifier="Gene.class" editable="true" code="C">
       </constraint>
     </node>
     <node path="Gene.organism" type="Organism">
@@ -345,7 +345,7 @@
 <template name="Protein_Gene" title="Protein --&gt; Gene." longDescription="For a particular protein show the identifiers and symbol of the corresponding gene." comment="07:02:07:Updated to work from protein primary accession- Rachel. 06.06.07 updated to work using the protein class - Philip">
   <query name="Protein_Gene" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.name Protein.genes.identifier Protein.genes.symbol Protein.genes.organismDbId">
     <node path="Protein" type="Protein">
-      <constraint op="LOOKUP" value="P32234" description="Protein:" identifier="Protein.class" editable="true" code="A">
+      <constraint op="LOOKUP" value="P46468" description="Protein:" identifier="Protein.class" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -357,7 +357,7 @@
     <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
     </pathDescription>
     <node path="Protein" type="Protein">
-      <constraint op="LOOKUP" value="P19107" description="Show interactions for protein primary accession:" identifier="Protein.class" editable="true" code="A">
+      <constraint op="LOOKUP" value="P46468" description="Show interactions for protein primary accession:" identifier="Protein.class" editable="true" code="A">
       </constraint>
     </node>
   </query>
