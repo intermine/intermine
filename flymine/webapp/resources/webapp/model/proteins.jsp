@@ -32,6 +32,9 @@
               <li><i>C. elegans</i></li>
               <li><i>H. sapiens</i></li>
               <li><i>M. musculus</i></li>
+              <li><i>D. pseudoobscura</i></li>
+              <li><i>S. cerevisiae</i></li>
+              <li><i>A. mellifera</i></li>
           </ul>
           <p>           
             For each protein record in UniProt for each species the following
