@@ -9,6 +9,18 @@
     <webMaster>info@flymine.org</webMaster>
 
     <!-- Add new news at the top here -->
+    <item>
+      <title>FlyMine 9.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 9.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Thu, 8th Nov 2007</pubDate>
+    </item>
+
 
     <item>
       <title>FlyMine workshop</title>
