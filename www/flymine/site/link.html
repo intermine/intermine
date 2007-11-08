@@ -14,7 +14,7 @@ exactly the same as running a Quick Search from the FlyMine home page.
 <p style="">
 The URL to use takes the form:
 
-<strong>www.flymine.org/query/portal.do?externalid=identifier&amp;origin=MySite</strong>
+<strong>www.flymine.org/query/portal.do?externalid=identifier&amp;class=identifierClass&amp;origin=MySite</strong>
 </p>
 <p style="">
 Note that using www.flymine.org/<strong>query</strong> will always redirect
@@ -27,24 +27,24 @@ message to incoming users from your site.  It also helps us keep track of incomi
 Let us know what you want to use.
 </p>
 <p style="">
-As an option, you can specify an organism name by using <strong>organism</strong> in the URL. The organism name must be the <strong>shortName</strong> as defined in FlyMine, for instance <em>D. melanogaster</em>.
+As an option, you can specify an organism name by using <strong>organism</strong> in the URL. The organism name must be the <strong>shortName</strong> as defined in FlyMine, for instance <em>D.%20melanogaster</em>.
 </p>
 <p style="">
 A typical URL to link to a gene report page:
 
-<a href="http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;origin=flybase">www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;origin=flybase</a>
+<a href="http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Gene&amp;origin=flybase">http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Gene&amp;origin=flybase</a>
 </p>
 <p style="">
 Some other examples:
 </p>
 <ul>
-    <li>A protein: <a href="http://www.flymine.org/query/portal.do?externalid=ZEN1_DROME">www.flymine.org/query/portal.do?externalid=ZEN1_DROME</a>
+    <li>A protein: <a href="http://www.flymine.org/query/portal.do?externalid=ZEN1_DROME&amp;class=Protein">http://www.flymine.org/query/portal.do?externalid=ZEN1_DROME&amp;class=Protein</a>
 <br />
 </li>
-<li>A FlyReg binding site: <a href="http://www.flymine.org/query/portal.do?externalid=FPID004210">www.flymine.org/query/portal.do?externalid=FPID004210</a>
+<li>A FlyReg binding site: <a href="http://www.flymine.org/query/portal.do?externalid=FPID004210&amp;class=TFBindingSite">http://www.flymine.org/query/portal.do?externalid=FPID004210&amp;class=TFBindingSite</a>
 <br />
 </li>
-<li>A DrosDel deletion: <a href="http://www.flymine.org/query/portal.do?externalid=Df(2L)ED7666">www.flymine.org/query/portal.do?externalid=Df(2L)ED7666</a>
+<li>A DrosDel deletion: <a href="http://www.flymine.org/query/portal.do?externalid=Df(2L)ED7666&amp;class=ArtificialDeletion">http://www.flymine.org/query/portal.do?externalid=Df(2L)ED7666&amp;class=ArtificialDeletion</a>
 <br />
 </li>
 </ul>
@@ -71,7 +71,7 @@ As an option, you can specify an organism name by using <strong>organism</strong
 <p style="">
 A typical URL to link to a gene report page:
 
-<a href="http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Gene&amp;origin=flybase">www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Gene&amp;origin=flyexpress</a>
+<a href="http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Gene&amp;origin=flybase">http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Gene&amp;origin=flyexpress</a>
 </p>
 
 <h3>Converting data types</h3>
@@ -79,13 +79,13 @@ A typical URL to link to a gene report page:
 <p style="">
 The URL to use takes the form:
 
-<strong>www.flymine.org/query/portal.do?externalid=geneId&amp;class=proteinId&amp;</strong>
+<strong>www.flymine.org/query/portal.do?externalid=geneId&amp;class=proteinId</strong>
 </p>
 <p>
 Examples:
 <ul>
-  <li><a href="http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Protein" title="Running Query...">www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Protein</a></li>
-  <li><a href="http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Protein" title="Running Query...">www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Protein</a></li>
+  <li><a href="http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Protein" title="Running Query...">http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Protein</a></li>
+  <li><a href="http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Protein" title="Running Query...">http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Protein</a></li>
 </ul>
 </p>
 
@@ -103,11 +103,11 @@ For example:
 </p>
 <ul>
     <li>
-<a href="http://www.flymine.org/query/aspect.do?name=Genomics">www.flymine.org/query/aspect.do?name=Genomics</a>
+<a href="http://www.flymine.org/query/aspect.do?name=Genomics">http://www.flymine.org/query/aspect.do?name=Genomics</a>
 <br />
 </li>
     <li>
-<a href="http://www.flymine.org/query/aspect.do?name=Protein+Interactions">www.flymine.org/query/aspect.do?name=Protein+Interactions</a>
+<a href="http://www.flymine.org/query/aspect.do?name=Protein+Interactions">http://www.flymine.org/query/aspect.do?name=Protein+Interactions</a>
 <br />
 </li>
 </ul>
