@@ -18,7 +18,6 @@ import javax.servlet.ServletContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -40,6 +39,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ProfileManagerBinding
 {
+    private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
+    
     /**
      * Convert the contents of a ProfileManager to XML and write the XML to the given writer.
      * @param profileManager the ProfileManager
@@ -54,7 +55,14 @@ public class ProfileManagerBinding
 
             while (iter.hasNext()) {
                 Profile profile = profileManager.getProfile((String) iter.next());
+                LOG.info("Writing profile: " + profile.getUsername());
+                long startTime = System.currentTimeMillis();
+                
                 ProfileBinding.marshal(profile, profileManager.getObjectStore(), writer);
+                
+                long totalTime = System.currentTimeMillis() - startTime;
+                LOG.info("Finished writing profile: " + profile.getUsername() 
+                         + " took " + totalTime + "ms.");
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
