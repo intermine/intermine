@@ -137,7 +137,14 @@ public class SaveBagAction extends InterMineAction
             String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
             int columnIndex = Integer.parseInt(columnIndexString);
             Path columnPath = allRows.getColumns().get(columnIndex).getPath();
-            String columnType = columnPath.getLastClassDescriptor().getName();
+            String columnType = null;
+            String cls = columnPath.getStartClassDescriptor().getUnqualifiedName();
+            if (cls.equals("Synonym")) {
+                int indexOfUnderscore = selectedObjectString.indexOf("_");
+                columnType = selectedObjectString.substring(++indexOfUnderscore);
+            } else {
+                columnType = columnPath.getLastClassDescriptor().getName();
+            }
             objectTypes.add(TypeUtil.unqualifiedName(columnType));
         }
 
