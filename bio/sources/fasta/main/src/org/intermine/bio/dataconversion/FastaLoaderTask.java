@@ -17,7 +17,10 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.util.TypeUtil;
 
+import org.flymine.model.genomic.BioEntity;
+import org.flymine.model.genomic.DataSource;
 import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Synonym;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -49,6 +52,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private Organism org;
     private String className;
     private int storeCount = 0;
+    private String synonymSource = null;
+    private DataSource dataSource = null;
+    
     /**
      * Append this suffix to the identifier of the LocatedSequenceFeatures that are stored.
      */
@@ -105,6 +111,15 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         this.classAttribute = classAttribute;
     }
 
+    /**
+     * If a value is specified a Synonym will be created for the feature with value of the
+     * 
+     * @param synonymSource
+     */
+    public void setSynonymSource(String synonymSource) {
+        this.synonymSource = synonymSource;
+    }
+    
     /**
      * Directly set the array of files to read from.  Use this for testing with junit.
      * @param files the File objects
@@ -213,6 +228,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         InterMineObject imo = getDirectDataLoader().createObject(c);
 
+        
         String attributeValue = bioJavaSequence.getName() + idSuffix;
         try {
             TypeUtil.setFieldValue(imo, classAttribute, attributeValue);
@@ -226,13 +242,37 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         if (TypeUtil.getSetter(c, "length") != null) {
             TypeUtil.setFieldValue(imo, "length", new Integer(flymineSequence.getLength()));
         }
+
+        Synonym synonym = null;
+        if (synonymSource != null && !synonymSource.equals("")) {
+            synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
+            synonym.setValue(attributeValue);
+            synonym.setType(classAttribute);
+            synonym.setSubject((BioEntity) imo);
+            synonym.setSource(getDataSource(synonymSource));
+        }
+        
         try {
             getDirectDataLoader().store(flymineSequence);
             getDirectDataLoader().store(imo);
             storeCount += 2;
+            if (synonym != null) {
+                getDirectDataLoader().store(synonym);
+                storeCount += 1;
+            }
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
         }
+    }
+    
+    private DataSource getDataSource(String sourceName) throws ObjectStoreException {
+        if (dataSource == null) {
+            dataSource = (DataSource) getDirectDataLoader().createObject(DataSource.class);
+            dataSource.setName(sourceName);
+            getDirectDataLoader().store(dataSource);
+            storeCount += 1;
+        }
+        return dataSource;
     }
 }
 
