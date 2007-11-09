@@ -103,7 +103,9 @@ public class UniprotConverter extends FileConverter
                 doProcess = true;
                 doneTaxonIds.add(taxonId);
             } else {
-                LOG.error("Not processing " + fileName + " - not in list of organisms.");
+                System .out.println("Not reading from " + fileName 
+                                    + " - not in list of organisms.");
+                LOG.error("Not reading from " + fileName + " - not in list of organisms.");
             }
         }
 
