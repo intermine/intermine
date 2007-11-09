@@ -50,7 +50,7 @@
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_3/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
     <source name="flybase-dmel-translation-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
@@ -58,20 +58,20 @@
       <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dmel-all-translation-*.fasta"/>
       <property name="fasta.sequenceType" value="protein"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_3/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
     <source name="flybase-dmel-transcript-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
       <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dmel-all-transcript-r*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_3/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
     <source name="flybase-dmel-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_3/fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
     <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
