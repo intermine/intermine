@@ -5,7 +5,7 @@
   </class>
   <class name="org.flymine.model.genomic.MRNALocalisationResult" extends="org.intermine.model.InterMineObject" is-interface="true">
     <attribute name="stage" type="java.lang.String"/>
-    <attribute name="localisation" type="java.lang.String"/>
+    <attribute name="expressed" type="java.lang.Boolean"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="mRNALocalisationResults"/>
     <collection name="mRNALocalisationTerms" referenced-type="org.flymine.model.genomic.MRNALocalisationTerm"/>
   </class>
