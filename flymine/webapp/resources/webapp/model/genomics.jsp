@@ -96,9 +96,8 @@
           </li></ul>
         </div>
       </div>
-
-
    </td>
+
     <td width="40%" valign="top">
       <div class="body">
         <ul>
