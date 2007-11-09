@@ -163,7 +163,6 @@
       <displayer src="/model/MGILink.jsp"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
-      <displayer src="flyFishDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
 
