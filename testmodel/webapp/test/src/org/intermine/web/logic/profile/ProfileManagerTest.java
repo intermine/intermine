@@ -81,7 +81,7 @@ public class ProfileManagerTest extends XMLTestCase
     private String sallyPass = "sally_pass";
     private Map classKeys;
     private ServletContext servletContext;
-    
+
     public ProfileManagerTest(String arg) {
         super(arg);
     }
@@ -106,7 +106,7 @@ public class ProfileManagerTest extends XMLTestCase
     private void setUpUserProfiles() throws Exception {
 
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
-        Date date = null;
+        Date date = new Date();
         SavedQuery sq = new SavedQuery("query1", date, query);
 
         // bob's details
@@ -114,7 +114,7 @@ public class ProfileManagerTest extends XMLTestCase
 
         Set contents = new HashSet();
         InterMineBag bag = new InterMineBag("bag1", "org.intermine.model.testmodel.Department",
-                                            "This is some description", new Date(), os, bobId, uosw);
+                                            "This is some description", date, os, bobId, uosw);
 
         Department deptEx = new Department();
         deptEx.setName("DepartmentA1");
@@ -127,12 +127,12 @@ public class ProfileManagerTest extends XMLTestCase
         deptEx2.setName("DepartmentB1");
         Department departmentB1 = (Department) os.getObjectByExample(deptEx2, fieldNames);
         osw.addToBag(bag.getOsb(), departmentB1.getId());
-       
+
         TemplateQuery template =
             new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
                               new PathQuery(Model.getInstanceByName("testmodel")),
                               "");
-        
+
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
                                  new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(bobProfile);
@@ -151,7 +151,7 @@ public class ProfileManagerTest extends XMLTestCase
 //        <bag name="sally_bag2" type="org.intermine.model.CEO">
 //        <bagElement type="org.intermine.model.CEO" id="1011"/>
 //    </bag>
-        
+
         CEO ceoEx = new CEO();
         ceoEx.setName("EmployeeB1");
         fieldNames = new HashSet();
@@ -159,7 +159,7 @@ public class ProfileManagerTest extends XMLTestCase
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
         InterMineBag objectBag = new InterMineBag("bag2", "org.intermine.model.testmodel.Employee",
-                                                  "description", new Date(), os, sallyId, uosw);
+                                                  "description", date, os, sallyId, uosw);
         osw.addToBag(objectBag.getOsb(), ceoB1.getId());
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
@@ -269,7 +269,7 @@ public class ProfileManagerTest extends XMLTestCase
 
         ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os), servletContext);
 
-        assertEquals(3, pm.getProfileUserNames().size());
+        assertEquals(4, pm.getProfileUserNames().size());
 
         assertTrue(pm.getProfileUserNames().contains("bob"));
 
@@ -287,13 +287,15 @@ public class ProfileManagerTest extends XMLTestCase
 
         expectedBagContents.add(employeeA3.getId());
         expectedBagContents.add(employeeB2.getId());
-        
+
         System.out.println("Testing profile with hashCode " + System.identityHashCode(sallyProfile));
         assertEquals(3, sallyProfile.getSavedBags().size());
         assertEquals(expectedBagContents, ((InterMineBag) sallyProfile.getSavedBags().get("sally_bag3")).getContentsAsIds());
 
         assertEquals(1, sallyProfile.getSavedQueries().size());
         assertEquals(1, sallyProfile.getSavedTemplates().size());
+
+        InterMineBag sallyBag = sallyProfile.getSavedBags().get("sally_bag1");
 
         Set expectedTags = new HashSet();
         Tag tag1 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
@@ -468,11 +470,11 @@ public class ProfileManagerTest extends XMLTestCase
         pm.addTag("test_tag3.1", "org.intermine.model.testmodel.Department", "class", "sally");
 
         List allTags = pm.getTags(null, null, null, null);
-        
+
         List aspectTags = pm.getTags("aspect:%", null, null, null);
         List imTags = pm .getTags("im:%", null, null, null);
         int excludeSize = aspectTags.size() + imTags.size();
-        
+
         // 18 tags because ProfileManagerBindingTestNewIDs.xml has 5
         assertEquals(18 + excludeSize, allTags.size());
 
