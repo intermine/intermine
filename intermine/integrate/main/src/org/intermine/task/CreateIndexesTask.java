@@ -32,6 +32,7 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.DatabaseSchema;
@@ -386,6 +387,8 @@ public class CreateIndexesTask extends Task
         Set doneFieldNames = new HashSet();
         String cldTableName = DatabaseUtil.getTableName(cld);
 
+        boolean simpleClass = !InterMineObject.class.isAssignableFrom(cld.getType());
+
         //add an index for each primary key
         Map primaryKeys = PrimaryKeyUtil.getPrimaryKeys(cld);
         for (Iterator i = primaryKeys.entrySet().iterator(); i.hasNext();) {
@@ -431,7 +434,8 @@ public class CreateIndexesTask extends Task
                             + "__" + keyName;
                     }
                     addStatement(statements, indexNameBase, tableName,
-                                 StringUtil.join(fieldNames, ", ") + ", id", nextCld, tableMaster);
+                                 StringUtil.join(fieldNames, ", ") + (simpleClass ? "" : ", id"),
+                                 nextCld, tableMaster);
                     if (doNulls) {
                         addStatement(statements,
                                      indexNameBase + "__nulls",
@@ -455,7 +459,7 @@ public class CreateIndexesTask extends Task
                     if (!doneFieldNames.contains(fieldName)) {
                         addStatement(statements,
                                      cldTableName + "__"  + ref.getName(), tableName,
-                                     fieldName + ", id", cld, tableMaster);
+                                     fieldName + (simpleClass ? "" : ", id"), cld, tableMaster);
                     }
                 }
             }
