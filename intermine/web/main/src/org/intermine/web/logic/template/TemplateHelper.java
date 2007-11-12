@@ -332,7 +332,7 @@ public class TemplateHelper
     /**
      * Given a Map of TemplateQuerys (mapping from template name to TemplateQuery)
      * return a string containing each template seriaised as XML. The root element
-     * will be a <code>template-list</code> element.
+     * will be a <code>template-queries</code> element.
      *
      * @param templates  map from template name to TemplateQuery
      * @return  all template queries serialised as XML
@@ -345,7 +345,7 @@ public class TemplateHelper
 
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
-            writer.writeStartElement("template-list");
+            writer.writeStartElement("template-queries");
             while (iter.hasNext()) {
                 TemplateQueryBinding.marshal((TemplateQuery) iter.next(), writer);
             }
