@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -253,12 +252,15 @@ public class AnophExprConverter extends FileConverter
                     }              
                 }
                 gene.addCollection(microArrayResults);
-                store(gene);
+
                 store(reporter);
                 store(material);
             }
-
+        }      
+        for (Item item : genes.values()) {
+            store(item);
         }
+        
     }
 
 
