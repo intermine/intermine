@@ -91,15 +91,14 @@ public class FlyFishDataSetLdr implements DataSetLdr
         
         QueryField stageName = new QueryField(mrnaResult, "stage");
 
-        q.addToSelect(new QueryField(mrnaResult, "localisation"));
+        q.addToSelect(new QueryField(mrnaResult, "expressed"));
         q.addToSelect(stageName);
         q.addToSelect(new QueryField(gene, "identifier"));
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        QueryField qf = new QueryField(gene, "id");
-        
         if (bag != null) {
+            QueryField qf = new QueryField(gene, "id");
             cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
         }
         if (geneIdentifier != null) {
@@ -112,6 +111,8 @@ public class FlyFishDataSetLdr implements DataSetLdr
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
         
         q.setConstraint(cs);
+        q.addToOrderBy(stageName);
+        q.addToOrderBy(mrnaResult);
        
         results = os.execute(q);
         results.setBatchSize(100000);
@@ -121,46 +122,34 @@ public class FlyFishDataSetLdr implements DataSetLdr
                                                 = new LinkedHashMap<String, ArrayList<String>>();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
-            String loc = (String) resRow.get(0);
+            Boolean expressed = (Boolean) resRow.get(0);
             String stage = (String) resRow.get(1);
             String identifier = (String) resRow.get(2);
-            if (loc != null) {
+       
                 if (callTable.get(stage) != null) {
-                    if (loc.equals("localised")) {
+                    if (expressed.booleanValue()) {
                         (callTable.get(stage))[0]++;
-                        (geneMap.get(stage + "_Localised")).add(identifier);
-                    } else if (loc.equals("not localised")) {
+                        (geneMap.get(stage + "_Expressed")).add(identifier);
+                    } else {
                         (callTable.get(stage))[1]++;
-                        (geneMap.get(stage + "_NotLocalised")).add(identifier);
-                    } else if (loc.equals("not expressed")) {
-                        (callTable.get(stage))[2]++;
                         (geneMap.get(stage + "_NotExpressed")).add(identifier);
                     }
                 } else {
-                    int[] count = new int[3];
+                    int[] count = new int[2];
                     ArrayList<String> genesArray = new ArrayList<String>();
                     genesArray.add(identifier);
-                    if (loc.equals("localised")) {
+                    if (expressed.booleanValue()) {
                         count[0]++;
-                        geneMap.put(stage + "_Localised", genesArray);
-                        geneMap.put(stage + "_NotLocalised", new ArrayList<String>());
+                        geneMap.put(stage + "_Expressed", genesArray);
                         geneMap.put(stage + "_NotExpressed", new ArrayList<String>());
-                    } else if (loc.equals("not localised")) {
-                        count[1]++;
-                        geneMap.put(stage + "_Localised", new ArrayList<String>());
-                        geneMap.put(stage + "_NotLocalised", genesArray);
-                        geneMap.put(stage + "_NotExpressed", new ArrayList<String>());
-                    } else if (loc.equals("not expressed")) {
-                        count[2]++;
-                        geneMap.put(stage + "_Localised", new ArrayList<String>());
-                        geneMap.put(stage + "_NotLocalised", new ArrayList<String>());
-                        geneMap.put(stage + "_NotExpressed", genesArray);
                     } else {
-                        throw new RuntimeException("unknown term (" + loc + ") encountered");
+                        count[1]++;
+                        geneMap.put(stage + "_Expressed", new ArrayList<String>());
+                        geneMap.put(stage + "_NotExpressed", genesArray);
                     }
                     callTable.put(stage, count);
                 }
-            }
+            
         }
 
         // Build a map from tissue/UpDown to gene list
@@ -169,14 +158,12 @@ public class FlyFishDataSetLdr implements DataSetLdr
         for (Iterator iterator = callTable.keySet().iterator(); iterator.hasNext();) {
             String stage = (String) iterator.next();
    
-            dataSet.addValue((callTable.get(stage))[0], "Localised", stage);
-            dataSet.addValue((callTable.get(stage))[1], "NotLocalised", stage);
-            dataSet.addValue((callTable.get(stage))[2], "NotExpressed", stage);
+            dataSet.addValue((callTable.get(stage))[0], "Expressed", stage);
+            dataSet.addValue((callTable.get(stage))[1], "NotExpressed", stage);
             
-            Object[] geneSeriesArray = new Object[3];
-            geneSeriesArray[0] = geneMap.get(stage + "_Localised");
-            geneSeriesArray[1] = geneMap.get(stage + "_NotLocalised");
-            geneSeriesArray[2] = geneMap.get(stage + "_NotExpressed");
+            Object[] geneSeriesArray = new Object[2];
+            geneSeriesArray[0] = geneMap.get(stage + "_Expressed");
+            geneSeriesArray[1] = geneMap.get(stage + "_NotExpressed");
             geneCategoryArray[i] = geneSeriesArray;
             i++;
         }
