@@ -575,6 +575,7 @@ public class ChadoDBConverter extends BioDBConverter
         Map<String, List<String>> collectionsToStore = new HashMap<String, List<String>>();
 
         String subjectInterMineType = subjectData.interMineType;
+        ClassDescriptor cd = model.getClassDescriptorByName(subjectInterMineType);
         Integer intermineItemId = subjectData.intermineObjectId;
         for (Map.Entry<String, Map<String, List<FeatureData>>> entry: relTypeMap.entrySet()) {
             String relationType = entry.getKey();
@@ -584,7 +585,6 @@ public class ChadoDBConverter extends BioDBConverter
             for (Map.Entry<String, List<FeatureData>> featureDataMap: mapEntries) {
                 String objectClass = featureDataMap.getKey();
                 List<FeatureData> featureDataCollection = featureDataMap.getValue();
-                ClassDescriptor cd = model.getClassDescriptorByName(subjectInterMineType);
                 List<FieldDescriptor> fds = null;
 
                 FeatureData subjectFeatureData = features.get(chadoSubjectId);
