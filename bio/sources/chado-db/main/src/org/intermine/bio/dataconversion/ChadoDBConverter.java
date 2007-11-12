@@ -397,7 +397,7 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Make and store a new feature
+     * Make a new feature
      * @param featureId the chado feature id
      * @param chadoFeatureType the chado feature type (a SO term)
      * @param interMineType the InterMine type of the feature
