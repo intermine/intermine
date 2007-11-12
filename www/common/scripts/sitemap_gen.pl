@@ -29,30 +29,31 @@ open(FILE,">$indexfilename") || die("Cannot Open File");
 print FILE "$indexhead\n";
 foreach (@sitemaps) {
       	print FILE "<sitemap>\n";
-       	print FILE "<loc>\n";
-        	print FILE "$url$_\n";
-	     	print FILE "</loc>\n";
-         print FILE "<lastmod>\n";         
-        	print FILE "$y-$m-$mday\n";
-	     	print FILE "</lastmod>\n"; 	
+       	print FILE "<loc>";
+        print FILE "$url$_";
+	print FILE "</loc>\n";
+        print FILE "<lastmod>";         
+        print FILE "$y-$m-$mday";
+	print FILE "</lastmod>"; 	
       	print FILE "</sitemap>\n";
 }
 print FILE "</sitemapindex>";
 close(FILE);       
 
  sub crawl {	
+    
    	if ((/\.html$/) || (/\.shtml$/)){
    	
    		$f = $File::Find::name;
    		$f =~ s/$dir//g;
 
       	print FILE "<url>\n";
-       	print FILE "<loc>\n";
-        	print FILE "$url$f\n";
-	     	print FILE "</loc>\n";
-         print FILE "<lastmod>\n";         
-        	print FILE "$y-$m-$mday\n";
-	     	print FILE "</lastmod>\n"; 	
+       	print FILE "<loc>";
+       	print FILE "$url$f";
+     	print FILE "</loc>\n";
+        print FILE "<lastmod>";         
+       	print FILE "$y-$m-$mday";
+     	print FILE "</lastmod>\n"; 	
       	print FILE "</url>\n";
 	  }
  }
