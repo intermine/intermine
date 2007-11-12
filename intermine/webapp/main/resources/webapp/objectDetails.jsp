@@ -118,7 +118,7 @@
                         </span>
                       </c:when>
                       <c:otherwise>
-                        <span class="value">${entry.value}</span>
+                        <im:value>${entry.value}</im:value>
                       </c:otherwise>
                     </c:choose>
                   </td>
