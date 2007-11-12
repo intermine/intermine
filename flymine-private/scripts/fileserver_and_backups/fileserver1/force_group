@@ -9,3 +9,5 @@ chgrp_chmod ()
 chgrp_chmod "/export/shared_dmp_rel/*"
 chgrp_chmod /export/shared_data
 
+# for /downloads
+chmod -R o+rX /export/releases/PUBLIC/*
