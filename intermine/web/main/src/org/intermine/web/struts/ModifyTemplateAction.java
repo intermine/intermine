@@ -139,7 +139,7 @@ public class ModifyTemplateAction extends InterMineAction
         response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
 
         PrintStream out = new PrintStream(response.getOutputStream());
-        out.println("<template-list>");
+        out.println("<template-queries>");
         Map myTemplates = profile.getSavedTemplates();
         Map publicTemplates
                 = SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
@@ -157,7 +157,7 @@ public class ModifyTemplateAction extends InterMineAction
                 out.println(xml);
             }
         }
-        out.println("</template-list>");
+        out.println("</template-queries>");
         out.flush();
     }
 
