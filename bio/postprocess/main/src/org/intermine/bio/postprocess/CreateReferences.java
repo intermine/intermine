@@ -147,14 +147,6 @@ public class CreateReferences
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             DatabaseUtil.analyse(db, false);
         }
-
-        LOG.info("insertReferences stage 16");
-        createUtrRefs();
-
-        if (os instanceof ObjectStoreInterMineImpl) {
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            DatabaseUtil.analyse(db, false);
-        }
     }
 
 
@@ -191,7 +183,8 @@ public class CreateReferences
                  + connectingClassFieldName + ","
                  + destinationClass.getName() + ", "
                  + createFieldName + ")");
-
+        long startTime = System.currentTimeMillis();
+        
         Iterator resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           sourceClass, sourceClassFieldName,
@@ -226,7 +219,8 @@ public class CreateReferences
         }
 
         LOG.info("Finished: created " + count + " references in " + destinationClass.getName()
-                 + " to " + sourceClass.getName() + " via " + connectingClass.getName());
+                 + " to " + sourceClass.getName() + " via " + connectingClass.getName()
+                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
@@ -277,7 +271,8 @@ public class CreateReferences
                  + secondClass.getName() + ", "
                  + createFieldName + ", "
                  + createInFirstClass + ")");
-
+        long startTime = System.currentTimeMillis();
+        
         Iterator resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           firstClass, firstClassFieldName,
@@ -337,7 +332,8 @@ public class CreateReferences
         }
 
         LOG.info("Created " + count + " references in " + secondClass.getName() + " to "
-                 + firstClass.getName() + " via " + connectingClass.getName());
+                 + firstClass.getName() + " via " + connectingClass.getName()
+                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
@@ -368,6 +364,8 @@ public class CreateReferences
                  + collectionClass.getName() + ", " + oldCollectionName + ", "
                  + newCollectionName + ")");
 
+        long startTime = System.currentTimeMillis();
+        
         InterMineObject lastObject = null;
         Set newCollection = new HashSet();
         Iterator resIter = PostProcessUtil.findConnectedClasses(osw.getObjectStore(), thisClass,
@@ -408,7 +406,8 @@ public class CreateReferences
             osw.store(tempObject);
         }
         LOG.info("Created " + count + " " + newCollectionName + " collections in "
-                 + thisClass.getName() + " of " + collectionClass.getName());
+                 + thisClass.getName() + " of " + collectionClass.getName()
+                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
@@ -435,6 +434,7 @@ public class CreateReferences
         LOG.info("Beginning insertReferences(" + entityClass.getName() + ", "
                  + propertyClass.getName() + ", " + newCollectionName + ")");
 
+        long startTime = System.currentTimeMillis();
         InterMineObject lastObject = null;
         Set newCollection = new HashSet();
         Iterator resIter = PostProcessUtil.findProperties(osw.getObjectStore(), entityClass,
@@ -475,7 +475,8 @@ public class CreateReferences
             osw.store(tempObject);
         }
         LOG.info("Created " + count + " " + newCollectionName + " collections in "
-                 + entityClass.getName() + " of " + propertyClass.getName());
+                 + entityClass.getName() + " of " + propertyClass.getName()
+                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
@@ -502,7 +503,9 @@ public class CreateReferences
         LOG.info("Beginning insertSymmetricalReferences(" + objectClass.getName() + ", "
                  + relationClass.getName() + ", "
                  + collectionFieldName + ")");
-
+        
+        long startTime = System.currentTimeMillis();
+        
         InterMineObject lastObject = null;
         Set newCollection = new HashSet();
         // results will be:  object1, relation, object2  (ordered by object1)
@@ -548,7 +551,8 @@ public class CreateReferences
             osw.store(tempObject);
         }
         LOG.info("Created " + count + " references in " + objectClass.getName() + " to "
-                 + objectClass.getName() + " via the " + collectionFieldName + " field");
+                 + objectClass.getName() + " via the " + collectionFieldName + " field"
+                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
@@ -568,7 +572,8 @@ public class CreateReferences
     protected void insertGeneAnnotationReferences()
         throws Exception {
         LOG.debug("Beginning insertGeneAnnotationReferences()");
-
+        long startTime = System.currentTimeMillis();
+        
         osw.beginTransaction();
 
         Iterator resIter = findProteinProperties(false);
@@ -619,7 +624,8 @@ public class CreateReferences
             osw.store(lastGene);
         }
 
-        LOG.info("Created " + count + " new Go annotation collections for Genes");
+        LOG.info("Created " + count + " new Go annotation collections for Genes"
+                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
 
         // now ANALYSE tables relation to class that has been altered - may be rows added
@@ -636,6 +642,7 @@ public class CreateReferences
      * @throws Exception if anything goes wrong
      */
     protected void createUtrRefs() throws Exception {
+        long startTime = System.currentTimeMillis();
         Query q = new Query();
         q.setDistinct(false);
 
@@ -709,7 +716,8 @@ public class CreateReferences
             osw.store(tempMRNA);
             count++;
         }
-        LOG.info("Stored MRNA " + count + " times (" + count * 2 + " fields set)");
+        LOG.info("Stored MRNA " + count + " times (" + count * 2 + " fields set)"
+                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
 
 

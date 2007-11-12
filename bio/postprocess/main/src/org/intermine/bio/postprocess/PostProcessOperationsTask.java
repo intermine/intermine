@@ -100,6 +100,7 @@ public class PostProcessOperationsTask extends Task
         if (operation == null) {
             throw new BuildException("operation attribute is not set");
         }
+        long startTime = System.currentTimeMillis();
         try {
             if ("calculate-locations".equals(operation)) {
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
@@ -210,6 +211,8 @@ public class PostProcessOperationsTask extends Task
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
+            LOG.info("PP - " + operation + " took " 
+                     + (System.currentTimeMillis() - startTime) + " ms.");
         } catch (BuildException e) {
             LOG.error("Failed postprocess. Operation was: " + operation, e);
             throw e;

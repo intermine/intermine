@@ -88,6 +88,8 @@ public class TransferSequences
         throws Exception {
         ObjectStore os = osw.getObjectStore();
 
+        long startTime = System.currentTimeMillis();
+        
         Results results =
             PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Assembly.class, false);
         // could try reducing further if still OutOfMemeory problems
@@ -137,6 +139,9 @@ public class TransferSequences
             storeTempSequences(chromosomeTempFiles);
             LOG.info("finished writing temp file for Chromosome: " + currentChr.getIdentifier());
         }
+        
+        LOG.info("Finished transferring sequences to chromosomes - took "
+                 + (System.currentTimeMillis() - startTime) + " ms.");
     }
 
     private File getTempFile(Chromosome chr) throws IOException {
@@ -213,6 +218,7 @@ public class TransferSequences
      */
     public void transferToLocatedSequenceFeatures()
         throws Exception {
+        long startTime = System.currentTimeMillis();
         ObjectStore os = osw.getObjectStore();
         osw.beginTransaction();
 
@@ -271,7 +277,6 @@ public class TransferSequences
             }
 
             Chromosome chr = (Chromosome) os.getObjectById(chrId);
-            LOG.info("Chromosome id: " + chrId);
             Sequence chromosomeSequence = chr.getSequence();
 
             if (chromosomeSequence == null) {
@@ -303,6 +308,9 @@ public class TransferSequences
         }
 
         osw.commitTransaction();
+        
+        LOG.info("Finished setting " + i + " feature sequences - took "
+                 + (System.currentTimeMillis() - startTime) + " ms.");
     }
 
     private String getSubSequence(Sequence chromosomeSequence, Location locationOnChr)
@@ -395,6 +403,8 @@ public class TransferSequences
     public void transferToTranscripts()
         throws Exception {
 
+        long startTime = System.currentTimeMillis();
+        
         osw.beginTransaction();
 
         ObjectStore os = osw.getObjectStore();
@@ -487,6 +497,9 @@ public class TransferSequences
         } else {
             storeNewSequence(currentTranscript, currentTranscriptBases.toString());
         }
+        
+        LOG.info("Finished setting " + i + " Trascript sequences - took "
+                 + (System.currentTimeMillis() - startTime) + " ms.");
 
         osw.commitTransaction();
     }
