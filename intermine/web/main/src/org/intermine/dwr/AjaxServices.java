@@ -84,13 +84,13 @@ public class AjaxServices
         String nameCopy = name.replaceAll("#039;", "'");
         ProfileManager pm = (ProfileManager) request.getSession().getServletContext().getAttribute(
                 Constants.PROFILE_MANAGER);
-        
+
         // already a favourite.  turning off.
         if (isFavourite) {
-            
+
             List<Tag> tags;
             Tag tag;
-            if (type.equals(TagTypes.TEMPLATE)) {                
+            if (type.equals(TagTypes.TEMPLATE)) {
                 tags = pm.getTags("favourite", nameCopy, TagTypes.TEMPLATE, profile.getUsername());
             } else if (type.equals(TagTypes.BAG)) {
                 tags = pm.getTags("favourite", nameCopy, TagTypes.BAG, profile.getUsername());
@@ -98,8 +98,8 @@ public class AjaxServices
                 throw new RuntimeException("Unknown tag type.");
             }
             if (tags.isEmpty()) {
-                throw new RuntimeException("User error!  You tried to mark a " 
-                        + "template as favourite that doesn't seem to exist. Well done.");
+                throw new RuntimeException("User tried to mark a non-existent template "
+                                           + "as favourite");
             }
             tag = tags.get(0);
             pm.deleteTag(tag);
@@ -199,9 +199,9 @@ public class AjaxServices
         if (name.equals(newName) || StringUtils.isEmpty(newName)) {
             return name;
         }
-        if (!WebUtil.isValidName(newName)) {       
+        if (!WebUtil.isValidName(newName)) {
             String errorMsg = "<i>Invalid name.  Names may only contain letters, "
-                              + "numbers, spaces, and underscores.</i>";           
+                              + "numbers, spaces, and underscores.</i>";
             return errorMsg;
         }
         if (type.equals("history")) {
@@ -239,7 +239,7 @@ public class AjaxServices
         }
         return newName;
     }
-    
+
     /**
      * For a given bag, set its description
      * @param bagName the bag
@@ -286,7 +286,7 @@ public class AjaxServices
         }
         return descr;
     }
-    
+
     /**
      * Get the summary for the given column
      * @param summaryPath the path for the column as a String
@@ -303,29 +303,29 @@ public class AjaxServices
         WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                .getWebTable();
         PathQuery pathQuery = webTable.getPathQuery();
-        
+
         SearchRepository globalRepository =
             (SearchRepository) servletContext.getAttribute(Constants.
                                                            GLOBAL_SEARCH_REPOSITORY);
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         SearchRepository userSearchRepository = currentProfile.getSearchRepository();
-        Map<String, InterMineBag> userWsMap = 
+        Map<String, InterMineBag> userWsMap =
             (Map<String, InterMineBag>) userSearchRepository.getWebSearchableMap(TagTypes.BAG);
         Map<String, InterMineBag> globalWsMap =
             (Map<String, InterMineBag>) globalRepository.getWebSearchableMap(TagTypes.BAG);
         Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>(userWsMap);
         allBags.putAll(globalWsMap);
-        
+
         Query distinctQuery =
             MainHelper.makeSummaryQuery(pathQuery, allBags,
                                         new HashMap<String, QueryNode>(), summaryPath,
                                         servletContext);
-        
+
         Results results = os.execute(distinctQuery);
-        WebResultsSimple webResults = new WebResultsSimple(results, 
+        WebResultsSimple webResults = new WebResultsSimple(results,
                                                     Arrays.asList(new String[] {"col1", "col2"}));
         PagedTable pagedTable = new PagedTable(webResults);
-        
+
         // Start the count of results
         QueryMonitorTimeout clientState
         = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
@@ -340,7 +340,7 @@ public class AjaxServices
                     pagedTable.getRows(), qid, new Integer(pagedTable.getExactSize())
                 });
     }
-    
+
     /**
      * Return the results from the query with the given query id.  If the results aren't yet
      * available, return null.  The returned List is the visible rows from the PagedTable associated
@@ -368,7 +368,7 @@ public class AjaxServices
 
         if (controller.isCancelledWithError()) {
             LOG.debug("query qid " + qid + " error");
-            
+
             return unavailableListList;
         } else if (controller.isCancelled()) {
             LOG.debug("query qid " + qid + " cancelled");
@@ -384,12 +384,12 @@ public class AjaxServices
             return null;
         }
     }
-    
+
     /**
      * Given a scope, type, tags and some filter text, produce a list of matching WebSearchable, in
      * a format useful in JavaScript.  Each element of the returned List is a List containing a
      * WebSearchable name, a score (from Lucene) and a string with the matching parts of the
-     * description highlighted. 
+     * description highlighted.
      * @param scope the scope (from TemplateHelper.GLOBAL_TEMPLATE or TemplateHelper.USER_TEMPLATE,
      * even though not all WebSearchables are templates)
      * @param type the type (from TagTypes)
@@ -402,7 +402,7 @@ public class AjaxServices
     public static List<String> filterWebSearchables(String scope, String type,
                                                     List<String> tags, String filterText,
                                                     String filterAction, String callId) {
-        ServletContext servletContext = WebContextFactory.get().getServletContext();        
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         HttpSession session = WebContextFactory.get().getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -415,7 +415,7 @@ public class AjaxServices
             Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
             try {
                 long time =
-                    SearchRepository.runLeuceneSearch(filterText, scope, type, profile, 
+                    SearchRepository.runLeuceneSearch(filterText, scope, type, profile,
                                                     servletContext,
                                                     hitMap, scopeMap, null, highlightedDescMap);
                 LOG.info("Lucene search took " + time + " milliseconds");
@@ -430,14 +430,14 @@ public class AjaxServices
                 emptyList.add(callId);
                 return emptyList;
             }
-    
+
             //long time = System.currentTimeMillis();
-            
+
             for (WebSearchable ws: hitMap.keySet()) {
                 wsMap.put(ws.getName(), ws);
             }
         } else {
-            
+
             if (scope.equals("user")) {
                 SearchRepository searchRepository = profile.getSearchRepository();
                 wsMap = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
@@ -450,7 +450,7 @@ public class AjaxServices
                 } else {
                     // must be "all"
                     SearchRepository userSearchRepository = profile.getSearchRepository();
-                    Map<String, ? extends WebSearchable> userWsMap = 
+                    Map<String, ? extends WebSearchable> userWsMap =
                         userSearchRepository.getWebSearchableMap(type);
                     Map<String, ? extends WebSearchable> globalWsMap =
                         globalRepository.getWebSearchableMap(type);
@@ -459,9 +459,9 @@ public class AjaxServices
                 }
             }
         }
-        
 
-        Map<String, ? extends WebSearchable> filteredWsMap 
+
+        Map<String, ? extends WebSearchable> filteredWsMap
                                 = new LinkedHashMap<String, WebSearchable>();
         //Filter by aspects (defined in superuser account)
         List<String> aspectTags = new ArrayList<String>();
@@ -474,7 +474,7 @@ public class AjaxServices
             }
         }
         if (aspectTags.size() > 0) {
-            wsMap = pm.filterByTags(wsMap, aspectTags, type, 
+            wsMap = pm.filterByTags(wsMap, aspectTags, type,
                     (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT));
         }
 
@@ -483,11 +483,11 @@ public class AjaxServices
         } else {
             filteredWsMap = wsMap;
         }
-        
+
         List returnList = new ArrayList<String>();
-        
+
         returnList.add(callId);
-        
+
         for (WebSearchable ws: filteredWsMap.values()) {
             List row = new ArrayList();
             row.add(ws.getName());
@@ -503,7 +503,7 @@ public class AjaxServices
 //            time = System.currentTimeMillis() - time;
 //            LOG.info("processing in filterWebSearchables() took: " + time + " milliseconds:");
 //        }
- 
+
         return returnList;
     }
 }
