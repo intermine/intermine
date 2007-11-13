@@ -19,8 +19,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.intermine.objectstore.query.ObjectStoreBag;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -32,17 +41,6 @@ import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
 import org.stringtree.json.JSONWriter;
 
 /**
@@ -70,6 +68,7 @@ public class WebSearchableListController extends TilesAction
         String list = (String) context.getAttribute("list");
         String limit = (String) context.getAttribute("limit");
         Map filteredWebSearchables;
+        
         
         HttpSession session = request.getSession();
      
@@ -103,6 +102,8 @@ public class WebSearchableListController extends TilesAction
                 // ignore - don't shuffle 
             }
         }
+        
+        
         if (limitInt > 0) {
             filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables, limitInt);
         } else {
@@ -144,8 +145,10 @@ public class WebSearchableListController extends TilesAction
                             return bag2.getName().compareTo(bag1.getName());
                         }
                     }
-                } else {
+                } else if (!ws1.getTitle().equals(ws2.getTitle())) {
                     return ws1.getTitle().compareTo(ws2.getTitle());              
+                } else {
+                    return ws1.getName().compareTo(ws2.getName());              
                 }
                 
                 return ((Comparable) o1).compareTo(o2);
