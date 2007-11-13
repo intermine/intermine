@@ -15,6 +15,7 @@ $indexhead = "<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n<sitemapindex xmlns=\"
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime(time);
 $y = $year+1900;
 $m = $mon+1;
+$day     = sprintf("%02d",$mday);		# two digit day of month
 
 # write sitemap
 open(FILE,">$filename") || die("Cannot Open File");
@@ -33,8 +34,8 @@ foreach (@sitemaps) {
         print FILE "$url$_";
 	print FILE "</loc>\n";
         print FILE "<lastmod>";         
-        print FILE "$y-$m-$mday";
-	print FILE "</lastmod>"; 	
+        print FILE "$y-$m-$day";
+	print FILE "</lastmod>\n"; 	
       	print FILE "</sitemap>\n";
 }
 print FILE "</sitemapindex>";
@@ -52,7 +53,7 @@ close(FILE);
        	print FILE "$url$f";
      	print FILE "</loc>\n";
         print FILE "<lastmod>";         
-       	print FILE "$y-$m-$mday";
+       	print FILE "$y-$m-$day";
      	print FILE "</lastmod>\n"; 	
       	print FILE "</url>\n";
 	  }
