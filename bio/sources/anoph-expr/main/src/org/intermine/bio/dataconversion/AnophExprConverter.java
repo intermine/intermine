@@ -13,9 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -44,6 +42,7 @@ public class AnophExprConverter extends FileConverter
     private static final Logger LOG = Logger.getLogger(AnophExprConverter.class);
     private Map<String, String> reporterToGene = new HashMap<String, String>();
     private Map<String, Item> genes = new HashMap<String, Item>();
+    private Map<String, Item> assays = new HashMap<String, Item>();
     private static final String TYPE = "Geometric mean of ratios";
     Item org;
 
@@ -166,13 +165,25 @@ public class AnophExprConverter extends FileConverter
             headerArray = StringUtils.split(line, '\t');
             for (int colIndex = 1; colIndex < headerArray.length; colIndex++) {
                 if (!headerArray[lineIndex].equals("")) {
+                    
                     if (lineIndex == 0) {
                         stageNames[colIndex] = new StageName();              
                         stageNames[colIndex].age = headerArray[colIndex];
                     } else if (lineIndex == 1) { 
                         stageNames[colIndex].stage = headerArray[colIndex];   
                     } else {
-                        stageNames[colIndex].sex = headerArray[colIndex];   
+                        stageNames[colIndex].sex = headerArray[colIndex];
+                        LOG.info(" *** " + stageNames[colIndex].getStageName() + " *** " + colIndex);
+                        if (colIndex % 2 == 0) {
+                            String stageName = stageNames[colIndex].getStageName();
+                            Item assay = createItem("MicroArrayAssay");
+                            assay.setAttribute("sample1", "Sample: Reference"); 
+                            assay.setAttribute("sample2", "stage: " + stageName);
+                            assay.setAttribute("name", "stage: " + stageName);
+                            assay.setReference("experiment", experiment.getIdentifier());
+                            assays.put(stageName, assay);
+                            store(assay);
+                        }
                     }
                 }
             }
@@ -202,67 +213,49 @@ public class AnophExprConverter extends FileConverter
                 Item reporter = createItem("Reporter");
                 reporter.setAttribute("isControl", "false");
                 reporter.setReference("material", material.getIdentifier());
-                
-                for (int i = 1; i < lineBits.length; i++) {     
-                    if (stageNames[i] != null && StringUtil.allDigits(lineBits[i])) {
-                        String stageName = stageNames[i].getStageName();
-                        
-                        if (results.get(stageName) == null) {
-                            
+                int index = 1;
+                for (int i = 0; i < lineBits.length; i++) {     
+                    if (stageNames[index] != null && StringUtil.allDigits(lineBits[i])) {
+                        String stageName = stageNames[index++].getStageName();
+                        if (i % 2 != 0) {
                             Item result = createItem("AGambiaeLifeCycle");
-                            
                             result.setAttribute("type", TYPE);
                             result.setAttribute("value", lineBits[i]);
                             result.setAttribute("isControl", "false");
-                            ReferenceList experimentGenes = new ReferenceList("genes", 
-                                                            new ArrayList<String>());
-                            experimentGenes.addRefId(gene.getIdentifier());
-                            result.addCollection(experimentGenes);
-
                             ReferenceList reporters = new ReferenceList("reporters", 
                                                                         new ArrayList<String>());
                             reporters.addRefId(reporter.getIdentifier());
-                            result.addCollection(reporters);
-                            
-                            results.put(stageNames[i].getStageName(), result);
-                            
-                        } else {                            
+                            result.addCollection(reporters);                            
+                            results.put(stageName, result); 
+                        } else {
                             Item result = results.get(stageName);
                             if (result != null) {
                                 result.setAttribute("standardError", lineBits[i]);
                                 microArrayResults.addRefId(result.getIdentifier());
-
-                                Item assay = createItem("MicroArrayAssay");
-                                assay.setAttribute("sample1", "Sample: Reference"); 
-                                assay.setAttribute("sample2", "stage: " + stageName);
-                                assay.setAttribute("name", "stage: " + stageName);
-                                assay.setReference("experiment", experiment.getIdentifier());
-
-                                ReferenceList assays = new ReferenceList("assays", 
+                                Item assay = assays.get(stageName);
+                                ReferenceList assaysColl = new ReferenceList("assays", 
                                                                     new ArrayList<String>());
-                                assays.addRefId(assay.getIdentifier());
-                                result.addCollection(assays);
-                                store(result);
-                                store(assay);
+                                assaysColl.addRefId(assay.getIdentifier());
+                                result.addCollection(assaysColl);
+                                store(result);                                
                             } else {
                                 LOG.error("Couldn't store data for the following "
-                                          + "stage: " + stageName + " and gene: " + geneIdentifier);
+                                          + "stage: " +  stageName
+                                          + " and gene: " + geneIdentifier
+                                          + " and reporter: " + probe);
                             }
                         }   
                     }              
                 }
                 gene.addCollection(microArrayResults);
-
                 store(reporter);
                 store(material);
             }
         }      
         for (Item item : genes.values()) {
             store(item);
-        }
-        
+        }        
     }
-
 
     private Item getGene(String geneCG) {
         if (genes.containsKey(geneCG)) {
@@ -273,12 +266,6 @@ public class AnophExprConverter extends FileConverter
             gene.setReference("organism", org.getIdentifier());
             genes.put(geneCG, gene);         
             return gene;
-        }
-    }
-    
-    private void storeAll(Set<Item> delayedItems) throws ObjectStoreException {
-        for (Item item : delayedItems) {
-            store(item);
         }
     }
 }
