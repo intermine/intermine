@@ -5,6 +5,8 @@ Disallow: /
 
 User-agent: Googlebot
 Disallow:
+Disallow: /release-10.0/
+Disallow: /release-9.0/
 Disallow: /release-8.2/
 Disallow: /release-8.1/
 Disallow: /release-8.0/
@@ -29,6 +31,8 @@ Disallow: /plantmine-preview/
 
 User-agent: Slurp
 Disallow:
+Disallow: /release-10.0/
+Disallow: /release-9.0/
 Disallow: /release-8.2/
 Disallow: /release-8.1/
 Disallow: /release-8.0/
@@ -53,6 +57,8 @@ Disallow: /plantmine-preview/
 
 User-agent: msnbot
 Disallow:
+Disallow: /release-10.0/
+Disallow: /release-9.0/
 Disallow: /release-8.2/
 Disallow: /release-8.1/
 Disallow: /release-8.0/
