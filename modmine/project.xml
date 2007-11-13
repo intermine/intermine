@@ -42,33 +42,6 @@
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
-    <source name="flybase-dmel-translation-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
-      <property name="fasta.classAttribute" value="organismDbId"/>
-      <property name="fasta.includes" value="dmel-all-translation-*.fasta"/>
-      <property name="fasta.sequenceType" value="protein"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
-    </source>
-    <source name="flybase-dmel-transcript-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
-      <property name="fasta.classAttribute" value="organismDbId"/>
-      <property name="fasta.includes" value="dmel-all-transcript-r*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
-    </source>
-    <source name="flybase-dmel-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
-      <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
-    </source>
-    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
-      <property name="fasta.taxonId" value="6239"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
-      <property name="fasta.includes" value="*chromosome*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/wormbase/ws175"/>
-    </source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
@@ -94,7 +67,6 @@
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
-    <post-process name="transfer-sequences"/>
     <post-process name="create-overlap-relations-flymine" dump="true"/>
 
     <post-process name="set-collection-counts" dump="true"/>
