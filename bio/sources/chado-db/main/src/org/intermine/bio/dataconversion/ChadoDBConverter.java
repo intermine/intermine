@@ -311,6 +311,7 @@ public class ChadoDBConverter extends BioDBConverter
             String name = res.getString("name");
             String uniqueName = res.getString("uniquename");
             String type = res.getString("type");
+            String residues = res.getString("residues");
             int seqlen = 0;
             if (res.getObject("seqlen") != null) {
                 seqlen = res.getInt("seqlen");
@@ -369,6 +370,14 @@ public class ChadoDBConverter extends BioDBConverter
                             }
                         }
                     }
+                }
+
+                if (feature.canReference("sequence") && residues != null && residues.length() > 0) {
+                    Item sequence = createItem("Sequence");
+                    sequence.setAttribute("residues", residues);
+                    sequence.setAttribute("length", String.valueOf(seqlen));
+                    feature.setReference("sequence", sequence);
+                    store(sequence);
                 }
 
                 // don't set the evidence collection - that's done by processPubTable()
@@ -1066,7 +1075,8 @@ public class ChadoDBConverter extends BioDBConverter
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
         String query =
-            "SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen, is_analysis"
+            "SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen, is_analysis,"
+            + "     residues"
             + "   FROM feature, cvterm"
             + "   WHERE feature.type_id = cvterm.cvterm_id"
             + "        AND cvterm.name IN (" + featureTypesString + ")"

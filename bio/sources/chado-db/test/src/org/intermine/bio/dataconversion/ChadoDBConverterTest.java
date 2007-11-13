@@ -80,35 +80,46 @@ public class ChadoDBConverterTest extends ItemsTestCase
         @Override
         protected ResultSet getFeatureResultSet(@SuppressWarnings("unused") Connection connection) {
             String[] columnNames = new String[] {
-                "feature_id", "name", "uniquename", "type", "seqlen"
+                "feature_id", "name", "uniquename", "type", "seqlen", "residues"
             };
             Object[][] resObjects = new Object[][] {
                 {
-                    23269151, "4.5SRNA", "FBgn0000001", "gene", null
+                    23269151, "4.5SRNA", "FBgn0000001", "gene", null,
+                    "acgacagatcattccacttttgacagctcactcggcagtaccagaaaatcc"
                  },
                  {
-                     3117509, "CG10006", "FBgn0036461", "gene", 5023
+                     3117509, "CG10006", "FBgn0036461", "gene", 5023,
+                     "gtcatgcactactatccagttcaccaggctaaagtcggctcctat"
                  },
                  {
-                     411, "CG10000-RA", "FBtr0085315", "mRNA", 2528
+                     411, "CG10000-RA", "FBtr0085315", "mRNA", 2528,
+                     "tctgcctcccaactacaatcagatgaactccaaccccaccac"
                  },
                  {
-                     412, "CG10000-RB", "FBtr0085316", "mRNA", 3000
+                     412, "CG10000-RB", "FBtr0085316", "mRNA", 3000,
+                     "cccgcagcatgtgcatcagcagcatgtgtcatcggacgag"
                  },
                  {
-                     11494725, "3", "3L", "chromosome_arm", 24543557
+                     11494725, "3", "3L", "chromosome_arm", 24543557,
+                     "ccacgactcgcagagggtgaagcttaagcgatcacggac"
+                     + "tcaatcctggcatcccagttcccaaagtcaggtccccacgagcatg"
                  },
                  {
-                     11494726, "3", "3R", "chromosome_arm", 27905053
+                     11494726, "3", "3R", "chromosome_arm", 27905053,
+                     "ggtggaacttgagaacgagttcaagagcaacatgtact"
+                     + "gatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag"
                  },
                  {
-                     3175412, "CG10000:1", "CG10000:1", "exon", 148
+                     3175412, "CG10000:1", "CG10000:1", "exon", 148,
+                     "gattgctcagcgcgaacg"
                  },
                  {
-                     3175413, "CG10000:2", "CG10000:2", "exon", 161
+                     3175413, "CG10000:2", "CG10000:2", "exon", 161,
+                     "cttgtccctgtg"
                  },
                  {
-                     1000000, "CG10000-RA_prot", "FBpp10000", "protein", 2345
+                     1000000, "CG10000-RA_prot", "FBpp10000", "protein", 2345,
+                     "ccaggtg"
                  },
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
