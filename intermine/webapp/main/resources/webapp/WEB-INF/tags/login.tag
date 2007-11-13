@@ -22,16 +22,17 @@ if (returnToPath != null) {
 </c:if>
 <c:choose>
   <c:when test="${!empty PROFILE_MANAGER && empty PROFILE.username}">
-    <html:link action="/login.do${returnToString}">
+  
+    <a href="<html:rewrite page="/login.do${returnToString}"/>" rel="NOFOLLOW">
       <c:if test="${empty loginMessage}">
         <fmt:message var="loginMessage" key="menu.login"/>
       </c:if>
       ${loginMessage}
-    </html:link>
+    </a>
   </c:when>
   <c:otherwise>
-    <html:link action="/logout.do">
+  <a href="<html:rewrite page="/logout.do"/>" rel="NOFOLLOW">
       <fmt:message key="menu.logout"/>
-    </html:link>
+    </a>
   </c:otherwise>
 </c:choose>
