@@ -9,7 +9,6 @@
 <c:set var="seenIdentifiers" value=""/>
 
 <c:if test="${!empty object.synonyms}">
-  <fmt:message key="synonyms.external.links"/>:
   <div style="margin-left: 20px">
     <table cellpadding="4">
       <c:forEach items="${object.synonyms}" var="thisSynonym">
