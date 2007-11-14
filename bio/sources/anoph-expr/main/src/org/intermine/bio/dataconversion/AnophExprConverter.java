@@ -45,7 +45,7 @@ public class AnophExprConverter extends FileConverter
     private Map<String, Item> assays = new HashMap<String, Item>();
     private static final String TYPE = "Geometric mean of ratios";
     Item org;
-
+    private Item dataSet;
     private Item pub;
     private Item experiment;
     protected File geneFile;
@@ -64,10 +64,9 @@ public class AnophExprConverter extends FileConverter
         org.addAttribute(new Attribute("taxonId", "180454"));
         store(org);
         
-//      TODO where does this go?
-//        dataSet = createItem("DataSet");
-//        dataSet.addAttribute(new Attribute("title", "Anoph-Expr data set"));
-//        store(dataSet);
+        dataSet = createItem("DataSet");
+        dataSet.addAttribute(new Attribute("title", "Anoph-Expr data set"));
+        store(dataSet);
 
         pub = createItem("Publication");
         pub.addAttribute(new Attribute("pubMedId", "17563388"));
@@ -168,12 +167,13 @@ public class AnophExprConverter extends FileConverter
                     
                     if (lineIndex == 0) {
                         stageNames[colIndex] = new StageName();              
-                        stageNames[colIndex].age = headerArray[colIndex];
+                        String age =  headerArray[colIndex];
+                        stageNames[colIndex].age =  age.replace(" ", "_");
                     } else if (lineIndex == 1) { 
                         stageNames[colIndex].stage = headerArray[colIndex];   
                     } else {
                         stageNames[colIndex].sex = headerArray[colIndex];
-                        LOG.info(" *** " + stageNames[colIndex].getStageName() + " *** " + colIndex);
+                        LOG.error(" *** " + stageNames[colIndex].getStageName() + " *** " + colIndex);
                         if (colIndex % 2 == 0) {
                             String stageName = stageNames[colIndex].getStageName();
                             Item assay = createItem("MicroArrayAssay");
@@ -205,14 +205,16 @@ public class AnophExprConverter extends FileConverter
                 ReferenceList microArrayResults 
                                 = new ReferenceList("microArrayResults", new ArrayList<String>());
 
-                Item material = createItem("BioEntity");
+                Item material = createItem("ProbeSet");
                 material.setAttribute("name", probe);
                 material.setAttribute("identifier", probe);
                 material.setReference("organism", org.getIdentifier());
-
-                Item reporter = createItem("Reporter");
-                reporter.setAttribute("isControl", "false");
-                reporter.setReference("material", material.getIdentifier());
+                material.setReference("gene", gene.getIdentifier());
+                ReferenceList evidence = new ReferenceList("evidence", 
+                                                             new ArrayList<String>());
+                evidence.addRefId(dataSet.getIdentifier());
+                material.addCollection(evidence);
+                
                 int index = 1;
                 for (int i = 0; i < lineBits.length; i++) {     
                     if (stageNames[index] != null && StringUtil.allDigits(lineBits[i])) {
@@ -222,10 +224,7 @@ public class AnophExprConverter extends FileConverter
                             result.setAttribute("type", TYPE);
                             result.setAttribute("value", lineBits[i]);
                             result.setAttribute("isControl", "false");
-                            ReferenceList reporters = new ReferenceList("reporters", 
-                                                                        new ArrayList<String>());
-                            reporters.addRefId(reporter.getIdentifier());
-                            result.addCollection(reporters);                            
+                            result.setReference("material", material.getIdentifier());
                             results.put(stageName, result); 
                         } else {
                             Item result = results.get(stageName);
@@ -248,7 +247,6 @@ public class AnophExprConverter extends FileConverter
                     }              
                 }
                 gene.addCollection(microArrayResults);
-                store(reporter);
                 store(material);
             }
         }      
