@@ -30,6 +30,7 @@ import org.intermine.xml.full.Item;
  * DataConverter to create items from DRSC RNAi screen date files.
  *
  * @author Kim Rutherford
+ * @author Richard Smith
  */
 public class FlyRNAiScreenConverter extends FileConverter
 {
@@ -132,7 +133,6 @@ public class FlyRNAiScreenConverter extends FileConverter
             if (!readingData) {
                 
                 if (line.length == 2) {
-                    System.out.println("line (" + line.length + ") - " + Arrays.asList(line));
                     // this is the key to result symbol, put them in a map.  Strip off 'A '.
                     if (!line[0].equals("") && !line[1].equals("")) {
                         String value = line[1].trim();
@@ -278,8 +278,6 @@ public class FlyRNAiScreenConverter extends FileConverter
             item.setReference("organism", organism);
             genes.put(geneSymbol, item);
             store(item);
-            // identifier needs to be a Synonym for quick search to work
-            newSynonym(geneSymbol, item, dataSource);
         }
         return item;
     }
