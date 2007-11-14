@@ -157,6 +157,7 @@
       <fieldconfig fieldExpr="organism.name" />
     </fields>
     <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/synonymDisplayer.jsp"/>
       <displayer src="/model/flyExpressLink.jsp"/>
       <displayer src="/model/vectorBaseLink.jsp"/>
