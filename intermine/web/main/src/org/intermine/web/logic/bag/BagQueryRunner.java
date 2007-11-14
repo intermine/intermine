@@ -138,17 +138,12 @@ public class BagQueryRunner
             // run the next query on identifiers not yet resolved
             if (!unresolved.isEmpty()) {
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
-                boolean faster = false;
                 Query q = null;
                 try {
                     q = bq.getQuery(unresolved, extraFieldValue);
-                    // TODO this is hacky as default batch size is hard coded in the os
-                    if (unresolved.size() > 1000) {
-                        os.goFaster(q);
-                        faster = true;
-                    }
                     Results res = os.execute(q);
                     res.setNoPrefetch();
+                    res.setBatchSize(10000);
                     Iterator resIter = res.iterator();
                     while (resIter.hasNext()) {
                         ResultsRow row = (ResultsRow) resIter.next();
@@ -181,10 +176,6 @@ public class BagQueryRunner
                     }
                 } catch (IllegalArgumentException e) {
                     // Query couldn't handle extra value
-                } finally {
-                    if (faster) {
-                        os.releaseGoFaster(q);
-                    }
                 }
                 addResults(resMap, unresolved, bqr, bq, typeCls, false);
             }
