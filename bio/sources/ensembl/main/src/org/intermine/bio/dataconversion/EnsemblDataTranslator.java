@@ -373,6 +373,8 @@ public class EnsemblDataTranslator extends DataTranslator
             result.add(createSimpleRelation(
                     tgtItem.getIdentifier(), cds.getIdentifier()));
             result.add(cdsSyn);
+            
+            tgtItem.setReference("translation", translation);
         }
 
     }
