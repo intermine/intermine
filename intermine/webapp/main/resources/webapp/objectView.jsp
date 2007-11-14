@@ -13,6 +13,7 @@
 
 <c:set var="leafClds" value="${LEAF_DESCRIPTORS_MAP[object]}"/>
 
+<c:set var="detailsLink" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
 
 <div class="objectView">
   <c:choose>
@@ -21,12 +22,13 @@
       <c:set var="maxLength" value="60"/>
       <c:choose>
         <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength}">
-          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}">
+
+          <html:link action="${detailsLink}">
             <im:abbreviate value="${object}" length="${maxLength}"/>
           </html:link>
         </c:when>
         <c:when test="${resultElement.keyField}">
-          <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}">
+          <html:link action="${detailsLink}">
             <c:out value="${object}" default="${nullFieldText}"/>
           </html:link>
           <c:if test="${(!empty columnType) && (resultElement.typeClass != columnType)}">
@@ -34,19 +36,19 @@
  	  </c:if>
         </c:when>
         <c:otherwise>
-          <c:out value="${object}" default="${nullFieldText}"/>   <%-- for IE 6: --%> &nbsp;
+          <im:value>
+            <c:out value="${object}" default="${nullFieldText}"/>
+          </im:value>
+          <%-- for IE 6: --%> &nbsp;
         </c:otherwise>
       </c:choose>
     </c:when>
     <c:otherwise>
-
-
-      <c:set var="linkAction" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
       <span style="white-space:nowrap">
         <c:forEach var="cld" items="${leafClds}">
           <span class="type"><c:out value="${cld.unqualifiedName}"/></span>
         </c:forEach>
-        [<html:link action="${linkAction}">
+        [<html:link action="${detailsLink}">
           <fmt:message key="results.details"/>
         </html:link>]
       </span>
