@@ -734,7 +734,7 @@ public class CalculateLocations
             PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
 
-        res.setBatchSize(500);
+        res.setBatchSize(1000);
         return res.iterator();
     }
 
@@ -1258,7 +1258,7 @@ public class CalculateLocations
     public void setChromosomeLocationsAndLengths() throws Exception {
         Results results = PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
                                                         LocatedSequenceFeature.class, true);
-        results.setBatchSize(2000);
+        results.setBatchSize(10000);
         Iterator resIter = results.iterator();
 
         osw.beginTransaction();
