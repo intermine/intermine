@@ -1117,7 +1117,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             Query q) throws ObjectStoreException {
         String sql;
         try {
-            sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, bagConstraintTables);
+            sql = generateSql(c, q, 0, Integer.MAX_VALUE);
         } catch (CompletelyFalseException e) {
             return new ResultsInfo(0, 0, 0, 0, 0);
         }
@@ -1169,7 +1169,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
         String sql = null;
         try {
-            sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, bagConstraintTables);
+            sql = generateSql(c, q, 0, Integer.MAX_VALUE);
             if (everOptimise) {
                 sql = QueryOptimiser.optimise(sql, db);
             }
@@ -1405,6 +1405,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String sql = null;
         try {
             int tableNumber = getUniqueInteger(c);
+            if (getMinBagTableSize() != -1) {
+                createTempBagTables(c, q);
+                flushOldTempBagTables(c);
+            }
             if (allFields) {
                 sql = SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP,
                         Collections.EMPTY_MAP);
@@ -1526,6 +1530,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             throw new ObjectStoreException("Error - this Query is already going faster");
         }
         try {
+            if (getMinBagTableSize() != -1) {
+                createTempBagTables(c, q);
+                flushOldTempBagTables(c);
+            }
             String sql = SqlGenerator.generate(q, schema, db, null,
                     SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP);
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql), sql,
