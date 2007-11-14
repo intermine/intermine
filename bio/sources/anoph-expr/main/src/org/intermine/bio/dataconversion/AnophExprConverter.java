@@ -173,7 +173,6 @@ public class AnophExprConverter extends FileConverter
                         stageNames[colIndex].stage = headerArray[colIndex];   
                     } else {
                         stageNames[colIndex].sex = headerArray[colIndex];
-                        LOG.error(" *** " + stageNames[colIndex].getStageName() + " *** " + colIndex);
                         if (colIndex % 2 == 0) {
                             String stageName = stageNames[colIndex].getStageName();
                             Item assay = createItem("MicroArrayAssay");
