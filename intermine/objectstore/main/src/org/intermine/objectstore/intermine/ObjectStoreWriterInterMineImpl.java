@@ -1103,6 +1103,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param qc the QueryClass in which to delete - note that this must currently be a Simple
      * Object class
      * @param c the Constraint to limit the deletes, or null to delete everything
+     * @throws ObjectStoreException if something goes wrong
      */
     public void deleteWithConnection(Connection con, QueryClass qc,
             Constraint c) throws ObjectStoreException {
@@ -1126,7 +1127,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             }
             con.createStatement().execute(sql.toString());
             tablesAltered.add(tableName);
-            System.out.println("Executed " + sql);
         } catch (SQLException e) {
             throw new ObjectStoreException("Error while deleting", e);
         } finally {
