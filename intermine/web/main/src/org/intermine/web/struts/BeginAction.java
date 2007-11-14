@@ -49,8 +49,6 @@ public class BeginAction extends InterMineAction
                                 HttpServletRequest request,
                                 @SuppressWarnings("unused") HttpServletResponse response)
        throws Exception {
-       Boolean archived = (Boolean) request.getSession().getServletContext()
-           .getAttribute(Constants.ARCHIVED);
        
        HttpSession session = request.getSession();
        ServletContext servletContext = session.getServletContext();
@@ -66,14 +64,7 @@ public class BeginAction extends InterMineAction
        /* count number of templates and bags */       
        request.setAttribute("bagCount", new Integer(bagCount));
        request.setAttribute("templateCount", new Integer(templateCount));
-       
-       
-       if (archived.booleanValue()) {
-           return mapping.findForward("begin");
-       } else {
-           return new ForwardParameters(getWebProperties(request)
-                   .getProperty("project.sitePrefix"), true).forward();
-       }
-   }
 
+       return mapping.findForward("begin");      
+   }
 }
