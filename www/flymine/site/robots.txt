@@ -1,4 +1,4 @@
-Sitemap: sitemap_index.xml
+Sitemap: http://www.flymine.org/sitemap_index.xml
 
 User-agent: *
 Disallow:
