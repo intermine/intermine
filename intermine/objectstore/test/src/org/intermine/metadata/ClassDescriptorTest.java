@@ -147,11 +147,11 @@ public class ClassDescriptorTest extends TestCase
 
     public void testGetAllAttributeDescriptors() throws Exception {
         // three superclass levels with one attribute each, getAllAttributeDescriptors on cld3 should return all 3
-        AttributeDescriptor atb1 = new AttributeDescriptor("att1", "String");
+        AttributeDescriptor atb1 = new AttributeDescriptor("att1", "java.lang.String");
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, Collections.singleton(atb1), new HashSet(), new HashSet());
-        AttributeDescriptor atb2 = new AttributeDescriptor("att2", "String");
+        AttributeDescriptor atb2 = new AttributeDescriptor("att2", "java.lang.String");
         ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", false, Collections.singleton(atb2), new HashSet(), new HashSet());
-        AttributeDescriptor atb3 = new AttributeDescriptor("att3", "String");
+        AttributeDescriptor atb3 = new AttributeDescriptor("att3", "java.lang.String");
         ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2", false, Collections.singleton(atb3), new HashSet(), new HashSet());
 
         Model model = new Model("test", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
@@ -231,8 +231,8 @@ public class ClassDescriptorTest extends TestCase
 
     private Set getAttributes() {
         Set attributes = new HashSet();
-        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "String");
-        AttributeDescriptor atd2 = new AttributeDescriptor("atd2", "Integer");
+        AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");
+        AttributeDescriptor atd2 = new AttributeDescriptor("atd2", "java.lang.Integer");
         attributes.add(atd1);
         attributes.add(atd2);
         return attributes;

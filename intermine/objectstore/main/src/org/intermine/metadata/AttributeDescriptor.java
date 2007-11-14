@@ -10,6 +10,10 @@ package org.intermine.metadata;
  *
  */
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * Describes an attribute of a class - i.e. a field that is neither an object
  * reference or a collection.
@@ -20,6 +24,13 @@ package org.intermine.metadata;
 public class AttributeDescriptor extends FieldDescriptor
 {
     protected final String type;
+    /**
+     * This is a list of the valid type strings.
+     */
+    public static final Set<String> VALID_TYPES = new LinkedHashSet(Arrays.asList("short", "int",
+                "long", "float", "double", "boolean", "java.lang.Short", "java.lang.Integer",
+                "java.lang.Long", "java.lang.Float", "java.lang.Double", "java.lang.Boolean",
+                "java.lang.String", "java.util.Date", "java.math.BigDecimal"));
 
     /**
      * Construct, name and type cannot be null.
@@ -31,7 +42,11 @@ public class AttributeDescriptor extends FieldDescriptor
         throws IllegalArgumentException {
         super(name);
         if (type == null || type.equals("")) {
-            throw new IllegalArgumentException("name cannot be null or empty");
+            throw new IllegalArgumentException("Type cannot be null or empty");
+        }
+        if (!VALID_TYPES.contains(type)) {
+            throw new IllegalArgumentException("Type \"" + type + "\" is not valid - must be one"
+                    + " of " + VALID_TYPES);
         }
         this.type = type;
     }
