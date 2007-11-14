@@ -225,7 +225,7 @@ public class TransferSequences
         Results results =
             PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
                                                    LocatedSequenceFeature.class, true);
-        results.setBatchSize(500);
+        results.setBatchSize(1000);
 
         Iterator resIter = results.iterator();
 
@@ -455,7 +455,7 @@ public class TransferSequences
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
-        res.setBatchSize(200);
+        res.setBatchSize(1000);
 
         Iterator resIter = res.iterator();
 
