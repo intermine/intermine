@@ -268,6 +268,6 @@ public class TorqueModelOutput
         } else if (type.equals("java.math.BigDecimal")) {
             return "NUMERIC";
         }
-        return type;
+        throw new IllegalArgumentException("Invalid type \"" + type + "\"");
     }
 }

@@ -67,7 +67,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             boolean isInterface, Set<AttributeDescriptor> atts, Set<ReferenceDescriptor> refs,
             Set<CollectionDescriptor> cols) throws IllegalArgumentException {
 
-        if (name == null || name.equals("")) {
+        if (name == null || name.equals("") || (!name.equals(name.trim()))) {
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
         // Java only accepts names that start with a character, $ or _, some characters
@@ -86,7 +86,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         }
         this.className = name;
 
-        if (supers != null && supers.equals("")) {
+        if (supers != null && (supers.equals("") || (!supers.equals(supers.trim())))) {
             throw new IllegalArgumentException("'supers' parameter must be null or a valid"
                     + " list of interface or superclass names");
         }
