@@ -94,7 +94,6 @@ public class FlyFishDataSetLdr implements DataSetLdr
         q.addToSelect(new QueryField(mrnaResult, "expressed"));
         q.addToSelect(stageName);
         q.addToSelect(new QueryField(gene, "identifier"));
-
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (bag != null) {
@@ -112,7 +111,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
         
         q.setConstraint(cs);
         q.addToOrderBy(stageName);
-        q.addToOrderBy(mrnaResult);
+
        
         results = os.execute(q);
         results.setBatchSize(100000);
@@ -122,7 +121,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
                                                 = new LinkedHashMap<String, ArrayList<String>>();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
-            Boolean expressed = (Boolean) resRow.get(0);
+            Boolean expressed = (Boolean) resRow.get(0);            
             String stage = (String) resRow.get(1);
             String identifier = (String) resRow.get(2);
        
