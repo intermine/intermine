@@ -10,17 +10,25 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -37,15 +45,6 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.log4j.Logger;
 
 /**
  * DataConverter to read from a Chado database into items
@@ -108,18 +107,6 @@ public class ChadoDBConverter extends BioDBConverter
     private int taxonId = -1;
     private String genus;
     private String species;
-    private String sequenceFeatureTypesString = "'chromosome', 'chromosome_arm'";
-    private String featureTypesString =
-        "'gene', 'mRNA', 'transcript', 'CDS', 'intron', 'exon', "
-        + "'regulatory_region', 'enhancer', "
-        // ignore for now:        + "'EST', 'cDNA_clone', "
-        + "'miRNA', 'snRNA', 'ncRNA', 'rRNA', 'ncRNA', 'snoRNA', 'tRNA', "
-        + "'chromosome_band', 'transposable_element_insertion_site', "
-        + "'protein', 'point_mutation', "
-        + "'five_prime_untranslated_region', "
-        + "'five_prime_UTR', 'three_prime_untranslated_region', 'three_prime_UTR', "
-        + sequenceFeatureTypesString;
-
     private int chadoOrganismId;
     private Model model = Model.getInstanceByName("genomic");
     private MultiKeyMap config = null;
@@ -128,6 +115,15 @@ public class ChadoDBConverter extends BioDBConverter
 
     private static final List<Item> EMPTY_ITEM_LIST = Collections.emptyList();
 
+    private static final List<String> FEATURES = Arrays.asList(
+            "gene", "mRNA", "transcript",
+            "CDS", "intron", "exon",
+            "five_prime_untranslated_region",
+            "five_prime_UTR", "three_prime_untranslated_region",
+            "three_prime_UTR", "chromosome", "chromosome_arm"
+    );
+    
+    
     /**
      * A class that represents an action while processing synonyms, dbxrefs, etc.
      * @author Kim Rutherford
@@ -259,6 +255,25 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
+     * Convert the list of features to a string to be used in a SQL query.
+     * @return the list of features as a string (in SQL list format)
+     */
+    private String getFeaturesString() {
+        List<String> features = getFeatures();
+        StringBuffer featureListString = null;
+        Iterator<String> i = features.iterator();
+        while (i.hasNext()) {
+            String item = i.next();
+            featureListString.append("'" + item + "'");
+            if (i.hasNext()) {
+                featureListString.append(", ");
+            };
+        }
+        return featureListString.toString();
+    }
+    
+    
+    /**
      * Process the data from the Database and write to the ItemWriter.
      * {@inheritDoc}
      */
@@ -266,7 +281,7 @@ public class ChadoDBConverter extends BioDBConverter
     public void process() throws Exception {
         Connection connection;
         if (getDatabase() == null) {
-            // no Database when testing and no connectio needed
+            // no Database when testing and no connection needed
             connection = null;
         } else {
             connection = getDatabase().getConnection();
@@ -420,6 +435,16 @@ public class ChadoDBConverter extends BioDBConverter
         return createItem(interMineType);
     }
 
+    /**
+     * Get the features
+     * @return FEATURES the list of features
+     */
+    protected List<String> getFeatures() {
+        return FEATURES;
+    }
+
+    
+    
     /**
      * Fix types from the feature table, perhaps by changing non-SO type into their SO equivalent.
      * Types that don't need fixing will be returned unchanged.
@@ -1074,12 +1099,13 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
+        String featureTypesString = getFeaturesString();
         String query =
             "SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen, is_analysis,"
             + "     residues"
             + "   FROM feature, cvterm"
             + "   WHERE feature.type_id = cvterm.cvterm_id"
-            + "        AND cvterm.name IN (" + featureTypesString + ")"
+            + "        AND cvterm.name IN (" + featureTypesString  + ")"
             + "        AND organism_id = " + chadoOrganismId
             + "        AND NOT feature.is_obsolete";
         LOG.info("executing: " + query);
@@ -1115,9 +1141,10 @@ public class ChadoDBConverter extends BioDBConverter
      * Return a SQL query string the gets all non-obsolete interesting features.
      */
     private String getFeatureIdQuery() {
-        return
+        String featureTypesString = getFeaturesString();
+		return
           " SELECT feature_id FROM feature, cvterm"
-        + "             WHERE cvterm.name IN (" + featureTypesString + ")"
+        + "             WHERE cvterm.name IN (" + featureTypesString  + ")"
         + "                 AND organism_id = " + chadoOrganismId
         + "                 AND NOT feature.is_obsolete"
         + "                 AND feature.type_id = cvterm.cvterm_id";

@@ -10,19 +10,20 @@
  *
  */
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Arrays;
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
-
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import com.mockobjects.sql.MockMultiRowResultSet;
 
@@ -63,6 +64,20 @@ public class ChadoDBConverterTest extends ItemsTestCase
         assertEquals(readItemSet("ChadoDBConverterTest.xml"), itemWriter.getItems());
     }
 
+    public void testGetFeatures() throws Exception {
+
+        final List<String> minimalSet = Arrays.asList("gene", "chromosome");
+        
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        ChadoDBConverter converter =
+            new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
+        List<String> actualSet=converter.getFeatures();
+        assertTrue(actualSet.containsAll(minimalSet));
+    }
+    
+    
+    
+    
     private class TestChadoDBConverter extends FlyBaseChadoDBConverter
     {
         @Override
