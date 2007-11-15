@@ -102,7 +102,6 @@
     <put name="pageName" value="templateProblems"/>
   </definition>
   <definition name="aspect.page" extends="layout.template">
-    <put name="title" value="/aspectTitle.jsp" />
     <put name="body" value="aspect.tile"/>
     <put name="pageName" value="aspect"/>
   </definition>
