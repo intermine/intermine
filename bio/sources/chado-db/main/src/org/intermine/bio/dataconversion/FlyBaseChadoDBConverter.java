@@ -14,14 +14,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
-
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
 
 /**
  * A converter for chado that handles FlyBase specific configuration.
@@ -251,6 +250,31 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
         return feature;
     }
 
+    
+    private static final List<String> FEATURES = Arrays.asList(
+            "gene", "mRNA", "transcript",
+            "CDS", "intron", "exon",
+            "regulatory_region", "enhancer",
+            // ignore for now:        "EST", "cDNA_clone",
+            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
+            "chromosome_band", "transposable_element_insertion_site",
+            "protein", "point_mutation",
+            "five_prime_untranslated_region",
+            "five_prime_UTR", "three_prime_untranslated_region",
+            "three_prime_UTR", "chromosome", "chromosome_arm"
+    );
+    
+
+    /**
+     * Get the features
+     * @return FEATURES the list of features
+     */
+    @Override
+    protected List<String> getFeatures() {
+        return FEATURES;
+    }
+
+    
     /**
      * For objects that don't have identifier == null, set the identifier to be the name column from
      * chado.
