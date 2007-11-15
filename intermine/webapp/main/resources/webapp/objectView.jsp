@@ -35,10 +35,18 @@
  	    [<c:out value="${resultElement.type}" />]
  	  </c:if>
         </c:when>
+        <c:when test="${!empty object && fn:startsWith(fn:trim(object), 'http://')}">
+          <a href="${object}" class="value extlink">
+            ${object}
+          </a>
+        </c:when>
+        <c:when test="${empty object}">
+          ${nullFieldText}
+        </c:when>
         <c:otherwise>
-          <im:value>
+          <html:link action="${detailsLink}">
             <c:out value="${object}" default="${nullFieldText}"/>
-          </im:value>
+          </html:link>
           <%-- for IE 6: --%> &nbsp;
         </c:otherwise>
       </c:choose>
