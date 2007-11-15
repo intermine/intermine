@@ -331,7 +331,7 @@ public class XmiParser implements ModelParser
     private String qualify(String type) {
         if ((type.equals("String")) || (type.equals("Integer"))
             || (type.equals("Float")) || (type.equals("Double"))
-            || (type.equals("Boolean"))) {
+            || (type.equals("Boolean")) || (type.equals("Long"))) {
             return "java.lang." + type;
         }
         if (type.equals("Date")) {
