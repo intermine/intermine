@@ -21,6 +21,8 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 
+import org.flymine.model.genomic.Organism;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +39,13 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class AttributeLinkDisplayerController extends TilesAction
 {
+    static final String ATTR_MARKER_RE = "<<attributeValue>>";
+
+    private class ConfigMap extends HashMap<String, Object>
+    {
+        // empty
+    }
+
     /**
      * @see TilesAction#execute(ComponentContext, ActionMapping, ActionForm, HttpServletRequest,
      *                          HttpServletResponse)
@@ -49,11 +58,33 @@ public class AttributeLinkDisplayerController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response) {
         ServletContext servletContext = request.getSession().getServletContext();
         InterMineObject imo = (InterMineObject) request.getAttribute("object");
-        Map<String, Map<String, Map<String, Object>>> linkConfigs =
-            new HashMap<String, Map<String, Map<String, Object>>>();
+        String className = DynamicUtil.decomposeClass(imo.getClass()).iterator().next().getName();
+        className = TypeUtil.unqualifiedName(className);
+        Organism organismReference = null;
+
+        try {
+            organismReference = (Organism) TypeUtil.getFieldValue(imo, "organism");
+        } catch (IllegalAccessException e) {
+            // no organism field
+        }
+
+        String geneOrgKey;
+        if (organismReference == null || organismReference.getSpecies() == null
+            || organismReference.getGenus() == null) {
+            geneOrgKey = className;
+        } else {
+            geneOrgKey = className + '.' + organismReference.getGenus() + '.'
+                + organismReference.getSpecies();
+        }
+
+        // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
+        // to the configuration
+        Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        Pattern p = Pattern.compile("attributelink\\.(.*)\\.([^.]+)\\.(urlPrefix|text|imageName)");
+        final String regexp =
+            "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)\\.(url|text|imageName)";
+        Pattern p = Pattern.compile(regexp);
         for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
@@ -63,19 +94,13 @@ public class AttributeLinkDisplayerController extends TilesAction
                 String attrName = matcher.group(2);
                 String propType = matcher.group(3);
 
-                Map<String, Map<String, Object>> attrMap;
+                ConfigMap config;
                 if (linkConfigs.containsKey(configKey)) {
-                    attrMap = linkConfigs.get(configKey);
+                    config = linkConfigs.get(configKey);
                 } else {
-                    attrMap = new HashMap<String, Map<String, Object>>();
-                    linkConfigs.put(configKey, attrMap);
-                }
-                Map<String, Object> config;
-                if (attrMap.containsKey(attrName)) {
-                    config = attrMap.get(attrName);
-                } else {
-                    config = new HashMap<String, Object>();
-                    attrMap.put(attrName, config);
+                    config = new ConfigMap();
+                    config.put("attributeName", attrName);
+                    linkConfigs.put(configKey, config);
                 }
 
                 Object attrValue = null;
@@ -87,29 +112,33 @@ public class AttributeLinkDisplayerController extends TilesAction
                         config.put("attributeValue", attrValue);
                         config.put("valid", Boolean.TRUE);
                     } catch (IllegalAccessException e) {
-                        config.put("valid", Boolean.FALSE);
                         config.put("attributeValue", e);
+                        config.put("valid", Boolean.FALSE);
                     }
                 }
 
                 if (propType.equals("url")) {
                     if (attrValue != null) {
-                        config.put("url", value + attrValue);
+                        String url;
+                        if (value.contains(ATTR_MARKER_RE)) {
+                            url = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
+                        } else {
+                            url = value + attrValue;
+                        }
+                        config.put("url", url);
                     }
                 } else {
                     if (propType.equals("imageName")) {
                         config.put("imageName", value);
                     } else {
-                        String text = value.replaceAll("[[attributeValue]]",
-                                                       String.valueOf(attrValue));
+                        String text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
                         config.put("text", text);
                     }
                 }
             }
         }
         request.setAttribute("attributeLinkConfiguration", linkConfigs);
-        String className = DynamicUtil.decomposeClass(imo.getClass()).iterator().next().getName();
-        request.setAttribute("attributeLinkClassName", TypeUtil.unqualifiedName(className));
+        request.setAttribute("attributeLinkClassName", className);
         return null;
     }
 }
