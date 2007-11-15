@@ -152,6 +152,8 @@ public class FlyFishConverter extends FileConverter
                 ReferenceList resultTerms = result.getCollection("mRNALocalisationTerms");
                 if (resultTerms == null || resultTerms.getRefIds().size() == 0) {
                     result.setAttribute("expressed", "false");
+                    Item nonExpressedTerm = getMRNALocalisationTerm("Non-expressed");
+                    result.addToCollection("mRNALocalisationTerms", nonExpressedTerm);
                 } else {
                     result.setAttribute("expressed", "true");
                 }
