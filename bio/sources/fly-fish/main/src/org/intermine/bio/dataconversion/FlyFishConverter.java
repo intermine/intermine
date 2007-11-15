@@ -62,9 +62,9 @@ public class FlyFishConverter extends FileConverter
 //        dataSet.addAttribute(new Attribute("title", "Fly-FISH"));
 //        store(dataSet);
 
-//        pub = createItem("Publication");
-//        pub.addAttribute(new Attribute("pubMedId", "17923096"));
-//        store(pub);
+        pub = createItem("Publication");
+        pub.addAttribute(new Attribute("pubMedId", "17923096"));
+        store(pub);
     }
 
     private class HeaderConfig
@@ -113,6 +113,7 @@ public class FlyFishConverter extends FileConverter
             for (int stageNum = 1; stageNum <= 4; stageNum++) {
                 Item result = createItem("MRNALocalisationResult");
                 result.setReference("gene", gene);
+                result.setReference("publication", pub);
                 mRNALocalisationResults[stageNum - 1] = result;
                 if (stageNum == 1) {
                     result.setAttribute("stage", "stage 1-3");
