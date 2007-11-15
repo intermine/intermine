@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -39,6 +40,9 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class AttributeLinkDisplayerController extends TilesAction
 {
+
+    protected static final Logger LOG = Logger.getLogger(AttributeLinkDisplayerController.class);
+
     static final String ATTR_MARKER_RE = "<<attributeValue>>";
 
     private class ConfigMap extends HashMap<String, Object>
@@ -114,6 +118,9 @@ public class AttributeLinkDisplayerController extends TilesAction
                     } catch (IllegalAccessException e) {
                         config.put("attributeValue", e);
                         config.put("valid", Boolean.FALSE);
+                        LOG.error("configuration problem in AttributeLinkDisplayerController: "
+                                  + "couldn't get a value for field " + attrName
+                                  + " in class " + className);
                     }
                 }
 
