@@ -306,6 +306,7 @@ public class WriteGFFTask extends Task
         // special case for t1dmine/stemcellmine
         if (!currentChr.getIdentifier().endsWith("_random")
             && !currentChr.getIdentifier().equals("M")
+            && currentChr.getOrganism().getAbbreviation() != null
             && !currentChr.getOrganism().getAbbreviation().equals("MM")
             && !currentChr.getOrganism().getAbbreviation().equals("MD")
             && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
