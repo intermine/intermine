@@ -279,14 +279,11 @@ public class TemplateController extends TilesAction
                             // An extra constraint is possible, now check if it has already been
                             // constrained elsewhere in the query:
                             String extraPath = node.getPathString() + "." + connectFieldName;
-                            LOG.info("Checking extra constraint. editableNodesMap: "
-                                     + editableNodesMap + ", extraPath: " + extraPath);
                             boolean alreadyConstrained = constrainedNodesMap.containsKey(extraPath);
                             PathNode extraNode = template.getNode(extraPath);
                             if (extraNode != null) {
                                 for (String classKey : ClassKeyHelper.getKeyFieldNames(classKeys,
                                             extraNode.getType())) {
-                                    LOG.info("Checking path " + extraPath + "." + classKey);
                                     alreadyConstrained = alreadyConstrained || constrainedNodesMap
                                         .containsKey(extraPath + "." + classKey);
                                 }
