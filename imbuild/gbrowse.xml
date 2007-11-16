@@ -75,6 +75,7 @@
   <target name="do-action" depends="write-gff, load-gbrowse-data-mysql"/>
 
   <target name="install-gbrowse-conf"
+          depends="-init-properties"
           description="copy the GBrowse configuration file to the gbrowse.conf directory">
     <filter token="FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX"
             value="${webapp.baseurl}/${webapp.path}/${webapp.viewByID.prefix}"/>
@@ -93,40 +94,20 @@
     <filter token="PROJECT_FUNDED_BY" value="${project.funded.by}"/>
     <filter token="PROJECT_CONTACT" value="${project.contact}"/>
 
-    <copy file="${model}/genomic/resources/gbrowse/${project.title}.conf"
-          toFile="${build.gbrowse}/${gbrowse.database.source}.conf"
+    <copy file="resources/${project.title}.conf"
+          toFile="build/${gbrowse.database.source}.conf"
           filtering="true" overwrite="true"/>
 
-    <copy toDir="${build.gbrowse.images}">
-      <fileset dir="${model}/genomic/resources/gbrowse/images">
-        <include name="*.gif"/>
-      </fileset>
-    </copy>
-
-    <chmod perm="a+r">
-      <fileset dir="${build.gbrowse.images}">
-        <include name="*.gif"/>
-      </fileset>
-    </chmod>
-
-    <chmod perm="a+xr">
-      <fileset dir="${build.gbrowse.images}">
-        <include name="**"/>
-      </fileset>
-    </chmod>
-
-    <chmod perm="a+r">
-      <fileset dir="${build.gbrowse}">
-        <include name="${gbrowse.database.source}.conf"/>
-      </fileset>
-    </chmod>
-
     <exec executable="rsync">
-      <arg line="-e ssh -avz ${build.gbrowse}/${gbrowse.database.source}.conf ${gbrowse.config.directory}/" />
+      <arg line="--chmod ugo=rX -e ssh -avz build/${gbrowse.database.source}.conf ${gbrowse.config.directory}/" />
     </exec>
 
+<!--
+  -- ignore for now 
     <exec executable="rsync">
-      <arg line="-e ssh -avz ${build.gbrowse.images} ${gbrowse.www.directory}/images/buttons/" />
+      <arg line="--chmod ugo=rX -e ssh -avz resources/images/*.gif ${gbrowse.www.directory}/images/buttons/" />
     </exec>
+-->
+
   </target>
 </project>
