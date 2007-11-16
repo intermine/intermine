@@ -77,7 +77,7 @@
   <target name="install-gbrowse-conf"
           depends="-init-properties"
           description="copy the GBrowse configuration file to the gbrowse.conf directory">
-    <filter token="FLYMINE_WEBAPP_VIEW_BY_ID_PREFIX"
+    <filter token="INTERMINE_WEBAPP_VIEW_BY_ID_PREFIX"
             value="${webapp.baseurl}/${webapp.path}/${webapp.viewByID.prefix}"/>
     <filter token="WEBAPP_PREFIX" value="${webapp.baseurl}/${webapp.path}"/>
     <filter token="INTERMINE_SITE_PREFIX" value="${project.sitePrefix}"/>
