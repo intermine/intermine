@@ -91,19 +91,11 @@ public class BuildBagAction extends InterMineAction
 
         BufferedReader reader = null;
 
-         if (buildBagForm.getText() != null && buildBagForm.getText().length() != 0) {
-            String trimmedText = buildBagForm.getText().trim();
-            if (trimmedText.length() != 0) {
-                reader = new BufferedReader(new StringReader(trimmedText));
-            }
-        } else {
+        FormFile formFile = buildBagForm.getFormFile();
+        
+        if (formFile != null && formFile.getFileName() != null
+                            && formFile.getFileName().length() > 0) {
 
-            FormFile formFile = buildBagForm.getFormFile();
-            if (formFile == null || formFile.getFileName() == null
-                            || formFile.getFileName().length() == 0) {
-                recordError(new ActionMessage("bagBuild.noBagFile"), request);
-                return mapping.findForward("bags");
-            }
             String mimetype = formFile.getContentType();             
             if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
                 recordError(new ActionMessage("bagBuild.notText", 
@@ -111,7 +103,17 @@ public class BuildBagAction extends InterMineAction
                 return mapping.findForward("bags");
             } 
             reader = new BufferedReader(new InputStreamReader(formFile.getInputStream()));
+
+        } else if (buildBagForm.getText() != null && buildBagForm.getText().length() != 0) {
+            String trimmedText = buildBagForm.getText().trim();
+            if (trimmedText.length() != 0) {
+                reader = new BufferedReader(new StringReader(trimmedText));
+            }
+        } else {
+            recordError(new ActionMessage("bagBuild.noBagFile"), request);
+            return mapping.findForward("bags");
         }
+
 
         String thisLine;
         List<String> list = new ArrayList<String>();
