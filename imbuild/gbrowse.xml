@@ -103,7 +103,7 @@
     </exec>
 
 <!--
-  -- ignore for now 
+  - ignore for now 
     <exec executable="rsync">
       <arg line="--chmod ugo=rX -e ssh -avz resources/images/*.gif ${gbrowse.www.directory}/images/buttons/" />
     </exec>
