@@ -260,7 +260,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     private String getFeaturesString() {
         List<String> features = getFeatures();
-        StringBuffer featureListString = null;
+        StringBuffer featureListString = new StringBuffer();
         Iterator<String> i = features.iterator();
         while (i.hasNext()) {
             String item = i.next();
