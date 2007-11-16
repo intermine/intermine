@@ -10,11 +10,16 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Map;
+
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -64,7 +69,8 @@ public class HtmlHeadController extends TilesAction
         Model model = os.getModel();
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
                 .getAttribute(Constants.OBJECT_STORE_SUMMARY);
-
+        Map displayObjects = SessionMethods.getDisplayObjects(session);
+        
         String pageName = (String) context.getAttribute("pageName");
         String bagName = (String) context.getAttribute("bagName");
         String objectId = (String) context.getAttribute("objectId");
@@ -102,9 +108,29 @@ public class HtmlHeadController extends TilesAction
             htmlPageTitle = htmlPageTitle + templateTitle;
             
         /* object */
-        } else if (pageName.equals("objectDetails")) {
+        } else if (pageName.equals("objectDetails") && objectId != null) {
         
-            htmlPageTitle = htmlPageTitle + ":  " + objectId;
+            Integer id = new Integer(Integer.parseInt(objectId));
+            InterMineObject object = os.getObjectById(id);
+            if (object == null) {
+                return null;
+            }
+            DisplayObject dobj = (DisplayObject) displayObjects.get(id);
+            if (dobj == null) {
+                dobj = ObjectDetailsController.makeDisplayObject(session, object);
+            }
+            
+            // TODO use the class keys instead
+            String idForPageTitle = "";
+            if (dobj.getAttributes().get("organismDbId") != null) {
+                idForPageTitle = dobj.getAttributes().get("organismDbId").toString();
+            }
+            if (idForPageTitle == null && dobj.getAttributes().get("identifier") != null) {
+                idForPageTitle = dobj.getAttributes().get("identifier").toString();
+            }
+            if (idForPageTitle != null) {
+                htmlPageTitle = htmlPageTitle + ":  " + idForPageTitle;
+            }
             
         }
         request.setAttribute("htmlPageTitle", htmlPageTitle);
