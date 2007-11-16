@@ -23,7 +23,7 @@
       <property name="dataSetTitle" value="WormBase C.elegans data set"/>
     </source>
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 6239 180454"/> 
+      <property name="uniprot.organisms" value="7227 6239"/> 
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="createinterpro" value="false"/>
       <property name="use.split.files" value="true"/>
