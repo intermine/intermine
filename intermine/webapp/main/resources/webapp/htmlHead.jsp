@@ -4,6 +4,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!-- htmlHead.jsp -->
+
+<tiles:importAttribute name="htmlPageTitle" ignore="true"/>
+<tiles:importAttribute name="pageName" ignore="true"/>
+
+
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
@@ -37,15 +42,10 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
       <c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/>
     </c:when>
     <c:otherwise>
-      <fmt:message key="${pageName}.title" var="pageTitle">
-        <fmt:param value="${param.name}"/>
-      </fmt:message>
-      <c:out value="${WEB_PROPERTIES['project.title']}: ${pageTitle}" escapeXml="false"/>
+      <c:out value="${WEB_PROPERTIES['project.title']}: ${htmlPageTitle}" escapeXml="false"/>
     </c:otherwise>
   </c:choose>
 </title>
-
-     
 
 <script type="text/javascript">
 <!--
