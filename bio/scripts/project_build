@@ -23,7 +23,7 @@ sub usage
 {
   die <<"EOF";
 usage:
-  $0 [-v] [-l | -r] [-V version_number] dump_host dump_file_prefix
+  $0 [-v] [-l | -r] [-V <version>] [-a <actions>] dump_host dump_file_prefix
 
 flags:
  -v is passed to ant
@@ -31,6 +31,16 @@ flags:
  -r attempt to restart just after the last dump point _without_ loading a dump
  -n parse files and report actions, but don't execute anything
  -V set the release number to pass to ant (as -Drelease=release_number)
+ -a set the list of action to perform - the list must be a subset of the 
+    sources/postprocesses in the project.xml file.
+     - The -l and -r operate as usual.
+     - To run all steps starting at <some_action> use a dash after the action
+       name: -a <some_action>-
+     - To perform only the final dump use: -a final-dump
+     - To refer to dump step and skip it's action use the action name with
+       "-dump" appended
+            eg -a fly-fish-dump- 
+               -a fly-fish-dump,flymine-static,create-utr-references,final-dump
 
 example:
   $0 gollum /tmp/production_dump
@@ -47,10 +57,12 @@ my $load_last = 0;
 my $restart = 0;
 my $dry_run = 0;
 my $release;
+my @required_actions_list = ();
+my $start_action = undef;
 
 my %opts = ();
 
-getopts('vrlnV:', \%opts);
+getopts('vrlna:V:', \%opts);
 
 if ($opts{v}) {
   $verbose = 1;
@@ -66,6 +78,19 @@ if ($opts{r}) {
 
 if ($opts{n}) {
   $dry_run = 1;
+}
+
+if (exists $opts{a}) {
+  my $arg = $opts{a};
+  if ($arg =~ /^.*,.*-$/) {
+    warn "error: can't use commas and '-' in -a <actions> argument: $arg\n";
+    usage;
+  }
+  if ($arg =~ /(.*)-$/) {
+    $start_action = $1;
+  } else {
+    @required_actions_list = split (',', $arg);
+  }
 }
 
 if ($opts{V}) {
@@ -306,13 +331,15 @@ sub start_element
   if ($element_name eq 'source') {
     push @{$self->{actions}}, {
                                type => 'integrate',
-                               args => ["-Dsource=$action_name"]
+                               args => ["-Dsource=$action_name"],
+                               name => $action_name
                               };
   } else {
     if ($element_name eq 'post-process') {
       push @{$self->{actions}}, {
                                  type => 'postprocess',
-                                 args => ["-Daction=$action_name"]
+                                 args => ["-Daction=$action_name"],
+                                 name => $action_name
                                 };
     } else {
       return;
@@ -321,15 +348,17 @@ sub start_element
 
   if ($dump_flag) {
     push @{$self->{actions}}, {
-                              type => 'dump',
-                              args => ["$action_name"]
+                               type => 'dump',
+                               args => ["$action_name"],
+                               name => "$action_name-dump"
                              };
   }
 
   if ($index_flag) {
     push @{$self->{actions}}, {
                                type => 'index',
-                               args => ["$action_name"]
+                               args => ["$action_name"],
+                               name => "$action_name-index"
                               };
   }
 }
@@ -365,11 +394,51 @@ sub get_actions
   if (@actions && $actions[-1]{type} ne 'dump') {
     push @actions, {
                     type => 'dump',
-                    args => ["final"]
+                    args => ["final"],
+                    name => 'final-dump'
                    };
   }
 
-  return @actions;
+  my @return_actions = ();
+
+  if (defined $start_action) {
+    my $seen_start = 0;
+
+    # remove all before start_action
+    for my $action (@actions) {
+      if ($seen_start || $action->{name} eq $start_action) {
+        push @return_actions, $action;
+        $seen_start = 1;
+      }
+    }
+
+    if (!$seen_start) {
+      warn "error: start action $start_action not found in $project_file\n";
+      usage;
+    }
+  }
+
+  my @actions_not_found = @required_actions_list;
+
+  if (@required_actions_list) {
+    my %action_map = map {($_->{name}, $_)} @actions;
+
+    # remove all not in required list
+    for my $req_action_name (@required_actions_list) {
+      if (exists $action_map{$req_action_name}) {
+        push @return_actions, $action_map{$req_action_name};
+      } else {
+        die qq(no such action "$req_action_name" - from -a option);
+      }
+    }
+
+    if (!@return_actions) {
+      warn "error:  not found in $project_file\n";
+      usage;
+    }
+  }
+
+  return @return_actions;
 }
 
 # find the last existing dump file
