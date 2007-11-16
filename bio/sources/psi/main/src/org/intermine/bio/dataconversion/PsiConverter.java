@@ -281,11 +281,10 @@ public class PsiConverter extends FileConverter
                     if (organisms.containsKey(taxId)) {
                         if (protein != null) {
                             protein.setReference("organism", organisms.get(taxId));
+                            if (!validProteins.containsKey(proteinId)) {
+                                validProteins.put(proteinId, protein.getIdentifier());
+                            }
                         }
-                        if (!validProteins.containsKey(proteinId)) {
-                            validProteins.put(proteinId, protein.getIdentifier());
-                        }
-                
                     }
 
                 // <interactorList><interactor id="4"><xref><primaryRef>
