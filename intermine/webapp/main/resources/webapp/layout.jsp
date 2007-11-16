@@ -10,10 +10,13 @@
 
 <!-- layout.jsp -->
 <html:xhtml/>
+
 <html:html locale="true" xhtml="true">
+
 <c:set var="iePre7" value='<%= new Boolean(request.getHeader("user-agent").matches(".*MSIE [123456].*")) %>' scope="request"/>
-  <%-- from the tiles config file for description.jsp --%>
+
   <tiles:importAttribute name="pageName" scope="request"/>
+  
   <head>
   	<!-- for google webmaster -->
 	<meta name="verify-v1" content="hZtrkqyKEW4WN60PvB9GLrRIWMbEVxvAQ4GqmHGq3Fk=" />
@@ -22,17 +25,26 @@
 	<META name="y_key" content="05e821942b9c36fb" >
 	 
     <html:base/>
+    
     <fmt:message key="${pageName}.noFollow" var="noFollow" />
+    
     <c:if test="${noFollow == 'true'}">
 	    <META NAME="ROBOTS" CONTENT="NOFOLLOW">
 	</c:if>
-    <tiles:insert name="htmlHead.jsp">
-      <tiles:put name="title" value="${title}"/>
+	
+	<fmt:message key="${pageName}.title" var="pageNameTitle"/>
+	
+    <tiles:insert name="htmlHead.tile">
+      <tiles:put name="bagName" value="${param.bagName}"/>
+      <tiles:put name="objectId" value="${id}"/>
+      <tiles:put name="name" value="${param.name}"/>
+      <tiles:put name="pageName" value="${pageName}"/>
+      <tiles:put name="pageNameTitle" value="${pageNameTitle}"/>  
+      <tiles:put name="scope" value="${scope}"/>
     </tiles:insert>
   </head>
-
   <body>
-  
+
   <tiles:insert name="headMenu.jsp">
     <tiles:put name="header"/>
     <tiles:put name="menu"/>

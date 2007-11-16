@@ -370,6 +370,8 @@
     </action>
     <action path="/initObjectTrail" type="org.intermine.web.struts.ObjectTrailController">
     </action>
+    <action path="/initHtmlHead" type="org.intermine.web.struts.HtmlHeadController">
+    </action>
     <action path="/initTable" name="changeTableSizeForm" type="org.intermine.web.struts.TableController">
     </action>
     <action path="/initObjectDetails" type="org.intermine.web.struts.ObjectDetailsController">
