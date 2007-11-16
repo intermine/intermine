@@ -36,7 +36,7 @@
 	
     <tiles:insert name="htmlHead.tile">
       <tiles:put name="bagName" value="${param.bagName}"/>
-      <tiles:put name="objectId" value="${id}"/>
+      <tiles:put name="objectId" value="${param.id}"/>
       <tiles:put name="name" value="${param.name}"/>
       <tiles:put name="pageName" value="${pageName}"/>
       <tiles:put name="pageNameTitle" value="${pageNameTitle}"/>  
@@ -57,8 +57,6 @@
       <%-- Context help bar --%>
       <tiles:insert page="/contextHelp.jsp"/>
       
-
-
       <tiles:get name="body"/>
       
       <%-- footer (welcome logo, bottom nav, and feedback link) --%>
