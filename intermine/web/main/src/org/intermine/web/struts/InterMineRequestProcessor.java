@@ -11,9 +11,11 @@ package org.intermine.web.struts;
  */
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -77,11 +79,15 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             
             HttpSession session = request.getSession();
             String userAgent = request.getHeader("user-agent").toLowerCase(); 
-                
-            if (userAgent != null && (userAgent.contains("googlebot") 
-                                || userAgent.contains("slurp") 
-                                || userAgent.contains("msnbot"))) {
-                    session.setMaxInactiveInterval(60);
+            Set<String> bots = getBots();   
+
+            if (userAgent != null) {
+                for (String bot : bots) {
+                    if (userAgent.contains(bot)) {
+                        session.setMaxInactiveInterval(60);
+                        break;
+                    }
+                }
             }
             
             ServletContext sc = session.getServletContext();
@@ -186,5 +192,17 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
         }
         
         super.processForwardConfig(request, response, forward);
+    }
+    
+    /* TODO get this from properties file */
+    private Set<String> getBots() {
+        Set<String> bots = new HashSet<String>();
+        bots.add("googlebot");
+        bots.add("slurp");
+        bots.add("msnbot");
+        bots.add("lycos_spider");
+        bots.add("webcrawler");
+        bots.add("scooter");
+        return bots;
     }
 }
