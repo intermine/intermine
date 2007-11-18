@@ -31,7 +31,7 @@ flags:
  -r attempt to restart just after the last dump point _without_ loading a dump
  -n parse files and report actions, but don't execute anything
  -V set the release number to pass to ant (as -Drelease=release_number)
- -a set the list of action to perform - the list must be a subset of the 
+ -a set the list of action to perform - the list must be a subset of the
     sources/postprocesses in the project.xml file.
      - The -l and -r operate as usual.
      - To run all steps starting at <some_action> use a dash after the action
@@ -39,7 +39,7 @@ flags:
      - To perform only the final dump use: -a final-dump
      - To refer to dump step and skip it's action use the action name with
        "-dump" appended
-            eg -a fly-fish-dump- 
+            eg -a fly-fish-dump-
                -a fly-fish-dump,flymine-static,create-utr-references,final-dump
 
 example:
@@ -416,25 +416,28 @@ sub get_actions
       warn "error: start action $start_action not found in $project_file\n";
       usage;
     }
-  }
+  } else {
+    my @actions_not_found = @required_actions_list;
 
-  my @actions_not_found = @required_actions_list;
+    if (@required_actions_list) {
+      my %action_map = map {($_->{name}, $_)} @actions;
 
-  if (@required_actions_list) {
-    my %action_map = map {($_->{name}, $_)} @actions;
-
-    # remove all not in required list
-    for my $req_action_name (@required_actions_list) {
-      if (exists $action_map{$req_action_name}) {
-        push @return_actions, $action_map{$req_action_name};
-      } else {
-        die qq(no such action "$req_action_name" - from -a option);
+      # remove all not in required list
+      for my $req_action_name (@required_actions_list) {
+        if (exists $action_map{$req_action_name}) {
+          push @return_actions, $action_map{$req_action_name};
+        } else {
+          die qq(no such action "$req_action_name" - from -a option);
+        }
       }
-    }
 
-    if (!@return_actions) {
-      warn "error:  not found in $project_file\n";
-      usage;
+      if (!@return_actions) {
+        warn "error:  not found in $project_file\n";
+        usage;
+      }
+    } else {
+      # default - use all actions from project.xml
+      @return_actions = @actions;
     }
   }
 
