@@ -156,48 +156,12 @@
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_3/fasta"/>
     </source>
-    <source name="flybase-dmel-translation-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
-      <property name="fasta.classAttribute" value="organismDbId"/>
-      <property name="fasta.includes" value="dmel-all-translation-*.fasta"/>
-      <property name="fasta.sequenceType" value="protein"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_3/fasta"/>
-    </source>
     <source name="flybase-dpse-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
       <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_01/fasta"/>
-    </source>
-    <source name="flybase-dpse-translation-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7237"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Translation"/>
-      <property name="fasta.classAttribute" value="organismDbId"/>
-      <property name="fasta.includes" value="dpse-all-translation-*.fasta"/>
-      <property name="fasta.sequenceType" value="protein"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_01/fasta"/>
-    </source>
-    <source name="flybase-dpse-transcript-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7237"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
-      <property name="fasta.classAttribute" value="organismDbId"/>
-      <property name="fasta.includes" value="dpse-all-transcript-r*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_01/fasta"/>
-    </source>
-    <source name="flybase-dmel-transcript-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Transcript"/>
-      <property name="fasta.classAttribute" value="organismDbId"/>
-      <property name="fasta.includes" value="dmel-all-transcript-r*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_3/fasta"/>
-    </source>
-    <source name="flybase-dmel-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
-      <property name="fasta.includes" value="dmel-all-chromosome-*.fasta"/>
-      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_3/fasta"/>
     </source>
     <source name="flybase-dpse-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="7237"/>
