@@ -747,9 +747,24 @@ public class ChadoDBConverter extends BioDBConverter
 
         for (Map.Entry<String, List<String>> entry: collectionsToStore.entrySet()) {
             ReferenceList referenceList = new ReferenceList();
-            referenceList.setName(entry.getKey());
-            referenceList.setRefIds(entry.getValue());
+            String collectionName = entry.getKey();
+            referenceList.setName(collectionName);
+            List<String> idList = entry.getValue();
+            referenceList.setRefIds(idList);
             store(referenceList, intermineItemId); // Stores ReferenceList for Feature
+
+            // if there is a field called <classname>Count that matches the name of the collection
+            // we just stored, set it
+            String countName;
+            if (collectionName.endsWith("s")) {
+                countName = collectionName.substring(0, collectionName.length() - 1);
+            } else {
+                countName = collectionName;
+            }
+            countName += "Count";
+            if (cd.getAttributeDescriptorByName(countName, true) != null) {
+                setAttribute(intermineItemId, countName, String.valueOf(idList.size()));
+            }
         }
     }
 
