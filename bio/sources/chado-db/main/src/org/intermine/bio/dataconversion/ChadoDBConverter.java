@@ -10,10 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,9 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -45,6 +38,17 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
+
+import org.flymine.model.genomic.LocatedSequenceFeature;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.log4j.Logger;
 
 /**
  * DataConverter to read from a Chado database into items
@@ -120,10 +124,12 @@ public class ChadoDBConverter extends BioDBConverter
             "CDS", "intron", "exon",
             "five_prime_untranslated_region",
             "five_prime_UTR", "three_prime_untranslated_region",
-            "three_prime_UTR", "chromosome", "chromosome_arm"
+            "three_prime_UTR"
     );
-    
-    
+
+    private static final List<String> CHROMOSOME_FEATURES =
+        Arrays.asList("chromosome", "chromosome_arm");
+
     /**
      * A class that represents an action while processing synonyms, dbxrefs, etc.
      * @author Kim Rutherford
@@ -255,11 +261,13 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Convert the list of features to a string to be used in a SQL query.
+     * Convert the list of features to a string to be used in a SQL query.  The String will include
+     * the chromosome and chromosome_arm feature types.
      * @return the list of features as a string (in SQL list format)
      */
     private String getFeaturesString() {
-        List<String> features = getFeatures();
+        List<String> features = new ArrayList<String>(getFeatures());
+        features.addAll(CHROMOSOME_FEATURES);
         StringBuffer featureListString = new StringBuffer();
         Iterator<String> i = features.iterator();
         while (i.hasNext()) {
@@ -271,8 +279,7 @@ public class ChadoDBConverter extends BioDBConverter
         }
         return featureListString.toString();
     }
-    
-    
+
     /**
      * Process the data from the Database and write to the ItemWriter.
      * {@inheritDoc}
@@ -436,15 +443,14 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
-     * Get the features
-     * @return FEATURES the list of features
+     * Get a list of the chado/so types of the LocatedSequenceFeatures we wish to load.  The list
+     * will not include chromosome-like features (eg. "chromosome" and "chromosome_arm").
+     * @return the list of features
      */
     protected List<String> getFeatures() {
         return FEATURES;
     }
 
-    
-    
     /**
      * Fix types from the feature table, perhaps by changing non-SO type into their SO equivalent.
      * Types that don't need fixing will be returned unchanged.
@@ -491,8 +497,32 @@ public class ChadoDBConverter extends BioDBConverter
                 FeatureData srcFeatureData = features.get(srcFeatureId);
                 if (features.containsKey(featureId)) {
                     FeatureData featureData = features.get(featureId);
-                    makeLocation(srcFeatureData.itemIdentifier, featureData.itemIdentifier,
-                                 start, end, strand, getTaxonIdInt(), dataSet); // Stores Location
+                    Item location =
+                        makeLocation(srcFeatureData.itemIdentifier, featureData.itemIdentifier,
+                                     start, end, strand, getTaxonIdInt(), dataSet);
+
+                    final String featureClassName =
+                        model.getPackageName() + "." + featureData.interMineType;
+                    Class featureClass;
+                    try {
+                        featureClass = Class.forName(featureClassName);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException("unable to find class object for setting "
+                                                   + "a chromosome reference", e);
+                    }
+                    if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)
+                        && srcFeatureData.interMineType.equals("Chromosome")) {
+                        Reference chrReference = new Reference();
+                        chrReference.setName("chromosome");
+                        chrReference.setRefId(srcFeatureData.itemIdentifier);
+                        store(chrReference, featureData.getIntermineObjectId());
+                        Reference locReference = new Reference();
+                        locReference.setName("chromosomeLocation");
+                        locReference.setRefId(location.getIdentifier());
+                        store(locReference, featureData.getIntermineObjectId());
+                        setAttribute(featureData.intermineObjectId, "length",
+                                     String.valueOf(end - start + 1));
+                    }
                     count++;
                 } else {
                     if (featureWarnings <= 20) {
@@ -966,7 +996,7 @@ public class ChadoDBConverter extends BioDBConverter
 
     /**
      * Set an attribute in an Item by creating an Attribute object and storing it.
-     * @param fdat the data about the feature
+     * @param intermineObjectId the intermine object ID of the item to create this attribute for.
      * @param attributeName the attribute name
      * @param value the value to set
      */
@@ -1142,7 +1172,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     private String getFeatureIdQuery() {
         String featureTypesString = getFeaturesString();
-		return
+        return
           " SELECT feature_id FROM feature, cvterm"
         + "             WHERE cvterm.name IN (" + featureTypesString  + ")"
         + "                 AND organism_id = " + chadoOrganismId

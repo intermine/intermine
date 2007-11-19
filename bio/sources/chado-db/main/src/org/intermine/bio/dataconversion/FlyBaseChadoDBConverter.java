@@ -250,7 +250,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
         return feature;
     }
 
-    
+
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
             "CDS", "intron", "exon",
@@ -261,20 +261,21 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
             "protein", "point_mutation",
             "five_prime_untranslated_region",
             "five_prime_UTR", "three_prime_untranslated_region",
-            "three_prime_UTR", "chromosome", "chromosome_arm"
+            "three_prime_UTR"
     );
-    
+
 
     /**
-     * Get the features
-     * @return FEATURES the list of features
+     * Get a list of the chado/so types of the LocatedSequenceFeatures we wish to load.  The list
+     * will not include chromosome-like features.
+     * @return the list of features
      */
     @Override
     protected List<String> getFeatures() {
         return FEATURES;
     }
 
-    
+
     /**
      * For objects that don't have identifier == null, set the identifier to be the name column from
      * chado.
