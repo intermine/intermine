@@ -56,56 +56,9 @@ import org.apache.log4j.Logger;
  */
 public class ChadoDBConverter extends BioDBConverter
 {
-    /**
-     * Data about one feature from the feature table in chado.  This exists to avoid having lots of
-     * Item objects in memory.
-     *
-     * @author Kim Rutherford
-     */
-    protected static class FeatureData
-    {
-        private String uniqueName;
-        private String chadoFeatureName;
-        // the synonyms that have already been created
-        private Set<String> existingSynonyms = new HashSet<String>();
-        private String itemIdentifier;
-        private String interMineType;
-        private Integer intermineObjectId;
-
-        short flags = 0;
-        static final short EVIDENCE_CREATED_BIT = 0;
-        static final short EVIDENCE_CREATED = 1 << EVIDENCE_CREATED_BIT;
-        static final short IDENTIFIER_SET_BIT = 1;
-        static final short IDENTIFIER_SET = 1 << IDENTIFIER_SET_BIT;
-
-        /**
-         * Return the id of the Item representing this feature.
-         * @return the ID
-         */
-        public Integer getIntermineObjectId() {
-            return intermineObjectId;
-        }
-
-        /**
-         * Get the String read from the name column of the feature table.
-         * @return the name
-         */
-        public String getChadoFeatureName() {
-            return chadoFeatureName;
-        }
-
-        /**
-         * Get the String read from the uniquename column of the feature table.
-         * @return the uniquename
-         */
-        public String getChadoFeatureUniqueName() {
-            return uniqueName;
-        }
-    }
-
     protected static final Logger LOG = Logger.getLogger(ChadoDBConverter.class);
 
-    private Map<Integer, FeatureData> features = new HashMap<Integer, FeatureData>();
+    private Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
     private String dataSourceName;
     private String dataSetTitle;
     private int taxonId = -1;
@@ -129,63 +82,6 @@ public class ChadoDBConverter extends BioDBConverter
 
     private static final List<String> CHROMOSOME_FEATURES =
         Arrays.asList("chromosome", "chromosome_arm");
-
-    /**
-     * A class that represents an action while processing synonyms, dbxrefs, etc.
-     * @author Kim Rutherford
-     */
-    protected static class ConfigAction
-    {
-        protected ConfigAction() {
-            // empty
-        }
-    }
-
-    /**
-     * An action that sets an attribute in a new Item.
-     */
-    protected static class SetFieldConfigAction extends ConfigAction
-    {
-        private String thefieldName;
-        SetFieldConfigAction() {
-            thefieldName = null;
-        }
-        SetFieldConfigAction(String fieldName) {
-            this.thefieldName = fieldName;
-        }
-
-        /**
-         * Return the field name that was passed to the constructor.
-         * @return the field name
-         */
-        public String getFieldName() {
-            return thefieldName;
-        }
-    }
-
-    /**
-     *  An action that sets a Synonym.
-     */
-    protected static class CreateSynonymAction extends ConfigAction
-    {
-        private String synonymType;
-
-        // make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym
-        // type
-        CreateSynonymAction() {
-            synonymType = null;
-        }
-
-        // make a synonym and use given type as the Synonym type
-        CreateSynonymAction(String synonymType) {
-            this.synonymType = synonymType;
-        }
-    }
-
-    private static class DoNothingAction extends ConfigAction
-    {
-        // do nothing for this data
-    }
 
     /**
      * An action that make a synonym.
@@ -318,7 +214,7 @@ public class ChadoDBConverter extends BioDBConverter
         processSynonymTable(connection);
         processFeaturePropTable(connection);
         addMissingDataEvidence();
-        extraProcessing(features);
+        extraProcessing(featureMap);
     }
 
     private void processFeatureTable(Connection connection)
@@ -419,7 +315,7 @@ public class ChadoDBConverter extends BioDBConverter
                         }
                     }
                 }
-                features.put(featureId, fdat);
+                featureMap.put(featureId, fdat);
                 count++;
             }
         }
@@ -471,7 +367,7 @@ public class ChadoDBConverter extends BioDBConverter
 
     /**
      * Do any extra processing for this database, after all other processing is done
-     * @param features a map from chado feature_id to data for that feature
+     * @param featureMap a map from chado feature_id to data for that feature
      */
     protected void extraProcessing(@SuppressWarnings("unused")
                                    Map<Integer, FeatureData> featureDataMap)
@@ -493,10 +389,10 @@ public class ChadoDBConverter extends BioDBConverter
             int start = res.getInt("fmin") + 1;
             int end = res.getInt("fmax");
             int strand = res.getInt("strand");
-            if (features.containsKey(srcFeatureId)) {
-                FeatureData srcFeatureData = features.get(srcFeatureId);
-                if (features.containsKey(featureId)) {
-                    FeatureData featureData = features.get(featureId);
+            if (featureMap.containsKey(srcFeatureId)) {
+                FeatureData srcFeatureData = featureMap.get(srcFeatureId);
+                if (featureMap.containsKey(featureId)) {
+                    FeatureData featureData = featureMap.get(featureId);
                     Item location =
                         makeLocation(srcFeatureData.itemIdentifier, featureData.itemIdentifier,
                                      start, end, strand, getTaxonIdInt(), dataSet);
@@ -566,9 +462,9 @@ public class ChadoDBConverter extends BioDBConverter
                 collectionTotal += relTypeMap.size();
                 relTypeMap = new HashMap<String, Map<String, List<FeatureData>>>();
             }
-            if (features.containsKey(subjectId)) {
-                if (features.containsKey(objectId)) {
-                    FeatureData objectFeatureData = features.get(objectId);
+            if (featureMap.containsKey(subjectId)) {
+                if (featureMap.containsKey(objectId)) {
+                    FeatureData objectFeatureData = featureMap.get(objectId);
                     Map<String, List<FeatureData>> objectClassFeatureDataMap;
                     if (relTypeMap.containsKey(relationTypeName)) {
                         objectClassFeatureDataMap = relTypeMap.get(relationTypeName);
@@ -628,7 +524,7 @@ public class ChadoDBConverter extends BioDBConverter
     private void processCollectionData(Integer chadoSubjectId,
                                        Map<String, Map<String, List<FeatureData>>> relTypeMap)
         throws ObjectStoreException {
-        FeatureData subjectData = features.get(chadoSubjectId);
+        FeatureData subjectData = featureMap.get(chadoSubjectId);
         if (subjectData == null) {
             LOG.warn("unknown feature " + chadoSubjectId + " passed to processCollectionData - "
                      + "ignoring");
@@ -651,7 +547,7 @@ public class ChadoDBConverter extends BioDBConverter
                 List<FeatureData> featureDataCollection = featureDataMap.getValue();
                 List<FieldDescriptor> fds = null;
 
-                FeatureData subjectFeatureData = features.get(chadoSubjectId);
+                FeatureData subjectFeatureData = featureMap.get(chadoSubjectId);
                 // key example: ("relationship", "Translation", "producedby", "MRNA")
                 MultiKey key = new MultiKey("relationship", subjectFeatureData.interMineType,
                                             relationType, objectClass);
@@ -821,8 +717,8 @@ public class ChadoDBConverter extends BioDBConverter
                 existingAttributes = new HashSet<String>();
             }
 
-            if (features.containsKey(featureId)) {
-                FeatureData fdat = features.get(featureId);
+            if (featureMap.containsKey(featureId)) {
+                FeatureData fdat = featureMap.get(featureId);
                 accession  = fixIdentifier(fdat.interMineType, accession);
                 MultiKey key = new MultiKey("dbxref", fdat.interMineType, dbName, isCurrent);
                 List<ConfigAction> actionList = getConfig().get(key);
@@ -881,8 +777,8 @@ public class ChadoDBConverter extends BioDBConverter
             String identifier = res.getString("value");
             String propTypeName = res.getString("type_name");
 
-            if (features.containsKey(featureId)) {
-                FeatureData fdat = features.get(featureId);
+            if (featureMap.containsKey(featureId)) {
+                FeatureData fdat = featureMap.get(featureId);
                 MultiKey key = new MultiKey("prop", fdat.interMineType, propTypeName);
                 List<ConfigAction> actionList = getConfig().get(key);
                 if (actionList == null) {
@@ -942,8 +838,8 @@ public class ChadoDBConverter extends BioDBConverter
                 existingAttributes = new HashSet<String>();
             }
 
-            if (features.containsKey(featureId)) {
-                FeatureData fdat = features.get(featureId);
+            if (featureMap.containsKey(featureId)) {
+                FeatureData fdat = featureMap.get(featureId);
                 MultiKey key =
                     new MultiKey("synonym", fdat.interMineType, synonymTypeName, isCurrent);
                 List<ConfigAction> actionList = getConfig().get(key);
@@ -1036,7 +932,7 @@ public class ChadoDBConverter extends BioDBConverter
 
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
-            if (!features.containsKey(featureId)) {
+            if (!featureMap.containsKey(featureId)) {
                 if (featureWarnings <= 20) {
                     if (featureWarnings < 20) {
                         LOG.warn("feature " + featureId + " not found in features Map while "
@@ -1082,7 +978,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     private void makeFeaturePublications(Integer featureId, List<String> argPublicationIds)
         throws ObjectStoreException {
-        FeatureData fdat = features.get(featureId);
+        FeatureData fdat = featureMap.get(featureId);
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
         }
@@ -1102,7 +998,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     private void makeFeatureEvidence(Integer featureId, List<String> argEvidenceIds)
         throws ObjectStoreException {
-        FeatureData fdat = features.get(featureId);
+        FeatureData fdat = featureMap.get(featureId);
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
         }
@@ -1126,7 +1022,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     private void addMissingDataEvidence() throws ObjectStoreException {
         List<String> emptyList = Collections.emptyList();
-        for (Map.Entry<Integer, FeatureData> entry: features.entrySet()) {
+        for (Map.Entry<Integer, FeatureData> entry: featureMap.entrySet()) {
             Integer featureId = entry.getKey();
             FeatureData featureData = entry.getValue();
             if ((featureData.flags & FeatureData.EVIDENCE_CREATED) == 0) {
@@ -1343,5 +1239,110 @@ public class ChadoDBConverter extends BioDBConverter
                                         allEvidence, dataSource);
         fdat.existingSynonyms.add(identifier);
         return returnItem;
+    }
+
+    /**
+     * Data about one feature from the feature table in chado.  This exists to avoid having lots of
+     * Item objects in memory.
+     *
+     * @author Kim Rutherford
+     */
+    protected static class FeatureData
+    {
+        private String uniqueName;
+        private String chadoFeatureName;
+        // the synonyms that have already been created
+        private Set<String> existingSynonyms = new HashSet<String>();
+        private String itemIdentifier;
+        private String interMineType;
+        private Integer intermineObjectId;
+
+        short flags = 0;
+        static final short EVIDENCE_CREATED_BIT = 0;
+        static final short EVIDENCE_CREATED = 1 << EVIDENCE_CREATED_BIT;
+        static final short IDENTIFIER_SET_BIT = 1;
+        static final short IDENTIFIER_SET = 1 << IDENTIFIER_SET_BIT;
+
+        /**
+         * Return the id of the Item representing this feature.
+         * @return the ID
+         */
+        public Integer getIntermineObjectId() {
+            return intermineObjectId;
+        }
+
+        /**
+         * Get the String read from the name column of the feature table.
+         * @return the name
+         */
+        public String getChadoFeatureName() {
+            return chadoFeatureName;
+        }
+
+        /**
+         * Get the String read from the uniquename column of the feature table.
+         * @return the uniquename
+         */
+        public String getChadoFeatureUniqueName() {
+            return uniqueName;
+        }
+    }
+
+
+    /**
+     * A class that represents an action while processing synonyms, dbxrefs, etc.
+     * @author Kim Rutherford
+     */
+    protected static class ConfigAction
+    {
+        protected ConfigAction() {
+            // empty
+        }
+    }
+
+    /**
+     * An action that sets an attribute in a new Item.
+     */
+    protected static class SetFieldConfigAction extends ConfigAction
+    {
+        private String thefieldName;
+        SetFieldConfigAction() {
+            thefieldName = null;
+        }
+        SetFieldConfigAction(String fieldName) {
+            this.thefieldName = fieldName;
+        }
+
+        /**
+         * Return the field name that was passed to the constructor.
+         * @return the field name
+         */
+        public String getFieldName() {
+            return thefieldName;
+        }
+    }
+
+    /**
+     *  An action that sets a Synonym.
+     */
+    protected static class CreateSynonymAction extends ConfigAction
+    {
+        private String synonymType;
+
+        // make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym
+        // type
+        CreateSynonymAction() {
+            synonymType = null;
+        }
+
+        // make a synonym and use given type as the Synonym type
+        CreateSynonymAction(String synonymType) {
+            this.synonymType = synonymType;
+        }
+    }
+
+    private static class DoNothingAction extends ConfigAction
+    {
+        // do nothing for this data
     }
 }
