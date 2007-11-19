@@ -66,18 +66,18 @@ public class ChadoDBConverterTest extends ItemsTestCase
 
     public void testGetFeatures() throws Exception {
 
-        final List<String> minimalSet = Arrays.asList("gene", "chromosome");
-        
+        final List<String> minimalSet = Arrays.asList("gene", "exon");
+
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         ChadoDBConverter converter =
             new TestChadoDBConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         List<String> actualSet=converter.getFeatures();
         assertTrue(actualSet.containsAll(minimalSet));
     }
-    
-    
-    
-    
+
+
+
+
     private class TestChadoDBConverter extends FlyBaseChadoDBConverter
     {
         @Override
