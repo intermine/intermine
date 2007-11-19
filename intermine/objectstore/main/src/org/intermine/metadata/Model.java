@@ -167,7 +167,7 @@ public class Model
 
     /**
      * Get a ClassDescriptor by name, null if no ClassDescriptor of given name in Model.
-     * @param name fully-qualified class name of ClassDescriptor requested
+     * @param name unqualified or fully-qualified class name of ClassDescriptor requested
      * @return the requested ClassDescriptor
      */
     public ClassDescriptor getClassDescriptorByName(String name) {
