@@ -10,41 +10,33 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.FromElement;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.iql.IqlQuery;
-
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
+
+import java.lang.reflect.Constructor;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 
 /**
  * Action class to run an IQL query and constraint the results to
@@ -80,13 +72,14 @@ public class QueryForGraphAction extends InterMineAction
 
         String bagName = request.getParameter("bagName");
         String queryString = request.getParameter("query");
-
+        String urlGen = request.getParameter("urlGen");
+        String series = request.getParameter("series");
+        String category = request.getParameter("category");
+        
         InterMineBag bag;
         
         /* get bag from user profile */
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        //Map<String, InterMineBag> allBags =
-        //    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         bag = profile.getSavedBags().get(bagName);
         
         /* public bag - since user doesn't have it */
@@ -102,40 +95,31 @@ public class QueryForGraphAction extends InterMineAction
         if (bag == null) {
             return null;
         }
+
+        Class clazz = TypeUtil.instantiate(urlGen);
+        Constructor constr = clazz.getConstructor(new Class[]
+                                                            {
+            String.class
+                                                            });
+
+        GraphCategoryURLGenerator urlGenerator = (GraphCategoryURLGenerator) 
+                                                    constr.newInstance(new Object[]
+                                                                           {
+                                                        bagName
+                                                                           });
         
-        IqlQuery iqlQuery = new IqlQuery(queryString, os.getModel().getPackageName());
-        Query query = iqlQuery.toQuery();
-        Set queryFrom = query.getFrom();
-        QueryClass queryClass = null;
-        for (Iterator iter = queryFrom.iterator(); iter.hasNext();) {
-            FromElement fromElt = (FromElement) iter.next();
-            if ((fromElt instanceof QueryClass)
-                && (((QueryClass) fromElt).getType().isAssignableFrom((Class
-                    .forName(os.getModel().getPackageName() + "." + bag.getType()))))) {
-                queryClass = (QueryClass) fromElt;
-            }
-        }
-        QueryField qf = new QueryField(queryClass, "id");
-        ((ConstraintSet) query.getConstraint())
-            .addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
-
-        Results results = os.execute(query);
-
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = os.getModel();
-        WebPathCollection webPathCollection = 
-            new WebPathCollection(os, new Path(model, bag.getType()), results, model, webConfig, 
-                              classKeys);
-        PagedTable pagedColl = new PagedTable(webPathCollection);
-        String identifier = "qid" + index++;
-
-        SessionMethods.setResultsTable(session, identifier, pagedColl);
         
-        return new ForwardParameters(mapping.findForward("results"))
-                        .addParameter("table", identifier)
-                        .addParameter("size", "10")
-                        .addParameter("trail", "|bag." + bagName).forward();
+        QueryMonitorTimeout clientState
+        = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        PathQuery pathQuery = urlGenerator.generatePathQuery(os, bag, category, series);
+        String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
+
+        Thread.sleep(200); // slight pause in the hope of avoiding holding page
+
+        return new ForwardParameters(mapping.findForward("waiting"))
+        .addParameter("trail", "|bag." + bagName)
+        .addParameter("qid", qid).forward(); 
 
     }
 

@@ -10,28 +10,27 @@ package org.flymine.web.widget;
  *
  */
 
-import org.flymine.model.genomic.FlyAtlasResult;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayAssay;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.iql.IqlQuery;
-import org.jfree.chart.urls.CategoryURLGenerator;
-import org.jfree.data.category.CategoryDataset;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.intermine.objectstore.query.ConstraintOp;
+
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
+
+import org.jfree.data.category.CategoryDataset;
 /**
  * 
  * @author Xavier Watkins
  *
  */
-public class FlyAtlasGraphURLGenerator implements CategoryURLGenerator
+public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
 {
     String bagName;
 
@@ -52,39 +51,55 @@ public class FlyAtlasGraphURLGenerator implements CategoryURLGenerator
      */
     public String generateURL(CategoryDataset dataset, int series, int category) {
         StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
-
-        Query q = new Query();
-        QueryClass far = new QueryClass(FlyAtlasResult.class);
-        QueryClass maa = new QueryClass(MicroArrayAssay.class);
-        QueryClass gene = new QueryClass(Gene.class);
-
-        q.addFrom(far);
-        q.addFrom(maa);
-        q.addFrom(gene);
-
-        q.addToSelect(gene);
-
-        ConstraintSet maincs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference r = new QueryCollectionReference(far, "genes");
-        maincs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, gene));
-        QueryCollectionReference r2 = new QueryCollectionReference(far, "assays");
-        maincs.addConstraint(new ContainsConstraint(r2, ConstraintOp.CONTAINS, maa));
-
-        // Add the tissue / affycall constraints
-        maincs.addConstraint(new SimpleConstraint(new QueryField(far, "affyCall"),
-                                                  ConstraintOp.EQUALS, new QueryValue(dataset
-                                                      .getRowKey(series))));
-        maincs.addConstraint(new SimpleConstraint(new QueryField(maa, "name"), ConstraintOp.EQUALS,
-                                                  new QueryValue(dataset.getColumnKey(category))));
-
-        q.setConstraint(maincs);
-
-        IqlQuery iqlQuery = new IqlQuery(q);
-
-        sb.append("&query=" + iqlQuery.getQueryString());
-
+        sb.append("&category=" + dataset.getColumnKey(category));
+        sb.append("&series=" + dataset.getRowKey(series));
+        sb.append("&urlGen=org.flymine.web.widget.FlyAtlasGraphURLGenerator");
         return sb.toString();
     }
 
+    
+    public PathQuery generatePathQuery(ObjectStore os,
+                                       InterMineBag bag,
+                                       String series, 
+                                       String category) {
+       
+        Model model = os.getModel();
+        PathQuery q = new PathQuery(model);
+        
+        List view = new ArrayList();
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.identifier"));
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.organismDbId"));
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.assays.name"));
+        q.setView(view);
+        
+        String bagType = bag.getType();
+        ConstraintOp constraintOp = ConstraintOp.IN;
+        String constraintValue = bag.getName();
+        
+        String label = null, id = null, code = q.getUnusedConstraintCode();
+        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
+        q.addNode("FlyAtlasResult.genes.identifier").getConstraints().add(c);
+        
+        // series
+        constraintOp = ConstraintOp.EQUALS;
+        code = q.getUnusedConstraintCode();
+        PathNode seriesNode = q.addNode("FlyAtlasResult.affyCall");
+        Constraint seriesConstraint 
+                        = new Constraint(constraintOp, category, false, label, code, id, null);
+        seriesNode.getConstraints().add(seriesConstraint);
+        
+        // series
+        constraintOp = ConstraintOp.EQUALS;
+        code = q.getUnusedConstraintCode();
+        PathNode catNode = q.addNode("FlyAtlasResult.assays.name");
+        Constraint catConstraint 
+                        = new Constraint(constraintOp, series, false, label, code, id, null);
+        catNode.getConstraints().add(catConstraint);
+        
+        q.setConstraintLogic("A and B and C");
+        q.syncLogicExpression("and");
+        
+        return q; 
+    }    
+    
 }

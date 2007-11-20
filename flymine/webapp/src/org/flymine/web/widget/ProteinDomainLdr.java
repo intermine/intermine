@@ -27,12 +27,14 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 import org.flymine.model.genomic.Gene;
@@ -72,7 +74,10 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-                          
+             Model model = os.getModel();
+             PathQuery pq = new PathQuery(model);
+             
+             
              // build query constrained by bag
              Query q = new Query();
              q.setDistinct(false);
