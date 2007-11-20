@@ -227,8 +227,6 @@
     <post-process name="transfer-sequences" dump="true"/>
     <post-process name="create-overlap-relations-flymine" dump="true"/>
     <post-process name="do-sources"/>
-
-    <post-process name="set-collection-counts" dump="true"/>
     <post-process name="create-intron-features"/>
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
