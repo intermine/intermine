@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Transcript;
@@ -28,13 +27,14 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.task.CreateIndexesTask;
+import org.intermine.task.DynamicAttributeTask;
 
 /**
  * Run operations on genomic model database after DataLoading
  *
  * @author Richard Smith
  */
-public class PostProcessOperationsTask extends Task
+public class PostProcessOperationsTask extends DynamicAttributeTask
 {
     private static final Logger LOG = Logger.getLogger(PostProcessOperationsTask.class);
 
@@ -43,7 +43,7 @@ public class PostProcessOperationsTask extends Task
      */
     public static final String PRECOMPUTE_CATEGORY = "precompute";
 
-    protected String operation, objectStoreWriter, ensemblDb;
+    protected String operation, objectStoreWriter, ensemblDb, organisms = null;
     protected File outputFile;
     protected ObjectStoreWriter osw;
 
@@ -73,7 +73,7 @@ public class PostProcessOperationsTask extends Task
     public void setOutputFile(File outputFile) {
         this.outputFile = outputFile;
     }
-
+    
     /**
      * Sets the value of ensemblDb
      *
@@ -175,6 +175,7 @@ public class PostProcessOperationsTask extends Task
                 ig.createIntergenicRegionFeatures();
             } else if ("create-intron-features".equals(operation)) {
                 IntronUtil iu = new IntronUtil(getObjectStoreWriter());
+                configureDynamicAttributes(iu);
                 LOG.info("Starting IntronUtil.createIntronFeatures()");
                 iu.createIntronFeatures();
             } else if ("create-overlap-relations-flymine".equals(operation)) {
