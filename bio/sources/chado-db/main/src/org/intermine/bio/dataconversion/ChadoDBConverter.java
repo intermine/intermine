@@ -82,7 +82,7 @@ public class ChadoDBConverter extends BioDBConverter
     );
 
     private static final List<String> CHROMOSOME_FEATURES =
-        Arrays.asList("chromosome", "chromosome_arm");
+        Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
 
     /**
      * An action that make a synonym.
@@ -247,6 +247,10 @@ public class ChadoDBConverter extends BioDBConverter
                 fdat.chadoFeatureName = name;
                 fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
                 feature.setReference("organism", organismItem);
+                if (seqlen > 0) {
+                    feature.setAttribute("length", String.valueOf(seqlen));
+                    fdat.flags |= FeatureData.LENGTH_SET;
+                }
                 MultiKey nameKey =
                     new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
                 List<ConfigAction> nameActionList = getConfig().get(nameKey);
@@ -408,7 +412,8 @@ public class ChadoDBConverter extends BioDBConverter
                                                    + "a chromosome reference", e);
                     }
                     if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)
-                        && srcFeatureData.interMineType.equals("Chromosome")) {
+                        && srcFeatureData.interMineType.equals("Chromosome")
+                        && ((featureData.flags & FeatureData.LENGTH_SET) == 0)) {
                         Reference chrReference = new Reference();
                         chrReference.setName("chromosome");
                         chrReference.setRefId(srcFeatureData.itemIdentifier);
@@ -1085,7 +1090,10 @@ public class ChadoDBConverter extends BioDBConverter
             + "   WHERE feature.type_id = cvterm.cvterm_id"
             + "        AND cvterm.name IN (" + featureTypesString  + ")"
             + "        AND organism_id = " + chadoOrganismId
-            + "        AND NOT feature.is_obsolete";
+            + "        AND NOT feature.is_obsolete"
+            + (getExtraFeatureConstraint() != null
+               ? "     AND (" + getExtraFeatureConstraint() + ")"
+               : "");
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1125,7 +1133,23 @@ public class ChadoDBConverter extends BioDBConverter
         + "             WHERE cvterm.name IN (" + featureTypesString  + ")"
         + "                 AND organism_id = " + chadoOrganismId
         + "                 AND NOT feature.is_obsolete"
-        + "                 AND feature.type_id = cvterm.cvterm_id";
+        + "                 AND feature.type_id = cvterm.cvterm_id"
+        + "                 "
+        + (getExtraFeatureConstraint() != null
+           ? "AND (" + getExtraFeatureConstraint() + ")"
+           : "");
+    }
+
+    /**
+     * Return an extra constraint to be used when querying the feature table.  Any feature table
+     * column or cvterm table column can be constrained.  The cvterm will match the type_id field
+     * in the feature.
+     * eg. "uniquename not like 'BAD_ID%'"
+     * @return the constraint as SQL or nul if there is no extra constraint.
+     */
+    protected String getExtraFeatureConstraint() {
+        // no default
+        return null;
     }
 
     /**
@@ -1299,6 +1323,8 @@ public class ChadoDBConverter extends BioDBConverter
         static final short EVIDENCE_CREATED = 1 << EVIDENCE_CREATED_BIT;
         static final short IDENTIFIER_SET_BIT = 1;
         static final short IDENTIFIER_SET = 1 << IDENTIFIER_SET_BIT;
+        static final short LENGTH_SET_BIT = 1;
+        static final short LENGTH_SET = 1 << LENGTH_SET_BIT;
 
         /**
          * Return the id of the Item representing this feature.

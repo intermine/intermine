@@ -172,6 +172,16 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
     }
 
     /**
+     * {@inheritDoc}
+     */
+    protected String getExtraFeatureConstraint() {
+        return "NOT (cvterm.name = 'gene' AND uniquename LIKE 'FBal%') "
+            + "AND NOT ((cvterm.name = 'golden_path_region'"
+            + "          OR cvterm.name = 'ultra_scaffold')"
+            + "         AND (uniquename LIKE 'Unknown_%' OR uniquename LIKE '%_groupMISC'))";
+    }
+
+    /**
      * Make a new feature
      * @param featureId the chado feature id
      * @param chadoFeatureType the chado feature type (a SO term)
@@ -191,55 +201,66 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
             return null;
         }
 
-        if (getTaxonIdInt() == 7227 || getTaxonIdInt() == 7237) {
-            if (chadoFeatureType.equals("chromosome")
-                && !uniqueName.equals("dmel_mitochondrion_genome")) {
-                // ignore Chromosomes from flybase - features are located on ChromosomeArms except
-                // for mitochondrial features
-                return null;
+        // ignore unknown chromosome from dpse
+        if (uniqueName.startsWith("Unknown_")) {
+            return null;
+        }
+
+        if (getTaxonIdInt() == 7237 && chadoFeatureType.equals("chromosome_arm")) {
+            // nothing is located on a chromosome_arm
+            return null;
+        }
+
+        if (chadoFeatureType.equals("chromosome")
+            && !uniqueName.equals("dmel_mitochondrion_genome")) {
+            // ignore Chromosomes from flybase - features are located on ChromosomeArms except
+            // for mitochondrial features
+            return null;
+        } else {
+            if (chadoFeatureType.equals("chromosome_arm")
+                || chadoFeatureType.equals("golden_path_region")
+                || chadoFeatureType.equals("ultra_scaffold")) {
+                if (uniqueName.equals("dmel_mitochondrion_genome")) {
+                    // ignore - all features are on the Chromosome object with uniqueName
+                    // "dmel_mitochondrion_genome"
+                    return null;
+                } else {
+                    realInterMineType = "Chromosome";
+                }
+            }
+        }
+        if (chadoFeatureType.equals("chromosome_structure_variation")) {
+            if (uniqueName.startsWith("FBab")) {
+                realInterMineType = "ChromosomalDeletion";
             } else {
-                if (chadoFeatureType.equals("chromosome_arm")) {
-                    if (uniqueName.equals("dmel_mitochondrion_genome")) {
-                        // ignore - all features are on the Chromosome object with uniqueName
-                        // "dmel_mitochondrion_genome"
-                        return null;
-                    } else {
-                        realInterMineType = "Chromosome";
-                    }
-                }
-            }
-            if (chadoFeatureType.equals("chromosome_structure_variation")) {
-                if (uniqueName.startsWith("FBab")) {
-                    realInterMineType = "ChromosomalDeletion";
-                } else {
-                    return null;
-                }
-            }
-            if (chadoFeatureType.equals("protein")) {
-                if (uniqueName.startsWith("FBpp")) {
-                    realInterMineType = "Translation";
-                } else {
-                    return null;
-                }
-            }
-            if (chadoFeatureType.equals("transposable_element_insertion_site")
-                && name == null && !uniqueName.startsWith("FBti")) {
-                // ignore this feature as it doesn't have an FBti identifier and there will be
-                // another feature for the same transposable_element_insertion_site that does have
-                // the FBti identifier
-                return null;
-            }
-            if (chadoFeatureType.equals("mRNA") && seqlen == 0) {
-                // flybase has > 7000 mRNA features that have no sequence and don't appear in their
-                // webapp so we filter them out
-                return null;
-            }
-            if (chadoFeatureType.equals("protein") && seqlen == 0) {
-                // flybase has ~ 2100 protein features that don't appear in their webapp so we
-                // filter them out
                 return null;
             }
         }
+        if (chadoFeatureType.equals("protein")) {
+            if (uniqueName.startsWith("FBpp")) {
+                realInterMineType = "Translation";
+            } else {
+                return null;
+            }
+        }
+        if (chadoFeatureType.equals("transposable_element_insertion_site")
+                        && name == null && !uniqueName.startsWith("FBti")) {
+            // ignore this feature as it doesn't have an FBti identifier and there will be
+            // another feature for the same transposable_element_insertion_site that does have
+            // the FBti identifier
+            return null;
+        }
+        if (chadoFeatureType.equals("mRNA") && seqlen == 0) {
+            // flybase has > 7000 mRNA features that have no sequence and don't appear in their
+            // webapp so we filter them out
+            return null;
+        }
+        if (chadoFeatureType.equals("protein") && seqlen == 0) {
+            // flybase has ~ 2100 protein features that don't appear in their webapp so we
+            // filter them out
+            return null;
+        }
+
 
         Item feature = createItem(realInterMineType);
 
