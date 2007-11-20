@@ -72,7 +72,6 @@ public class SynonymUpdater
      * @throws Exception if there is a problem while processing
      */
     public void update() throws Exception {
-        // TODO Auto-generated method stub
 
         InputStream is = getClassKeysInputStream();
 
@@ -128,7 +127,8 @@ public class SynonymUpdater
             CLASSES:
                 while (classesIter.hasNext()) {
                 String className = ((Class) classesIter.next()).getName();
-                Collection<FieldDescriptor> keyFields = ClassKeyHelper.getKeyFields(classKeyMap, className);
+                Collection<FieldDescriptor> keyFields = ClassKeyHelper.getKeyFields(classKeyMap, 
+                                                                                    className);
                 for (FieldDescriptor keyField: keyFields) {
                     String fieldName = keyField.getName();
                     Object fieldValue = TypeUtil.getFieldValue(bioEntity, fieldName);

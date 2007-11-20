@@ -19,32 +19,32 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.util.DynamicUtil;
-
+import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.DataSet;
 import org.flymine.model.genomic.DataSource;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Intron;
 import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Synonym;
 import org.flymine.model.genomic.Transcript;
-
-import org.apache.log4j.Logger;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Methods for creating feature for introns.
@@ -58,7 +58,8 @@ public class IntronUtil
     private ObjectStore os;
     private DataSet dataSet;
     private DataSource dataSource;
-
+    private Set<Integer> taxonIds = new HashSet<Integer>();
+    
     protected Map intronMap = new HashMap();
 
     /**
@@ -79,6 +80,21 @@ public class IntronUtil
         }
     }
 
+    /**
+     * Set a comma separated list of taxon ids to create introns for.  If no list
+     * is provided introns will be created for all organisms.
+     * @param organisms a comma separated list of taxon ids
+     */
+    public void setOrganisms(String organisms) {
+        if (organisms != null && !organisms.equals("")) {
+            String[] array = organisms.split(",");
+            for (int i = 0; i < array.length; i++) {
+                taxonIds.add(new Integer(array[i].trim()));
+            }
+        }
+    }
+    
+    
     /**
      * Create Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
@@ -118,6 +134,20 @@ public class IntronUtil
             new ContainsConstraint(qorTranLoc, ConstraintOp.CONTAINS, qcTranLoc);
         cs.addConstraint(ccTranLoc);
 
+        // restict to taxonIds if specified
+        if (!taxonIds.isEmpty()) {
+            QueryClass qcOrg = new QueryClass(Organism.class);
+            q.addFrom(qcOrg);
+            QueryObjectReference orgRef = new QueryObjectReference(qcTran, "organism");
+            ContainsConstraint ccTranOrg = new ContainsConstraint(orgRef, 
+                                                                  ConstraintOp.CONTAINS,
+                                                                  qcOrg);
+            cs.addConstraint(ccTranOrg);
+            QueryField qfTaxonId = new QueryField(qcOrg, "taxonId");
+            BagConstraint bc = new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIds);
+            cs.addConstraint(bc);
+        }
+        
         // Include the Exon class from the Transcript.exons collection
         QueryClass qcExon = new QueryClass(Exon.class);
         q.addFrom(qcExon);
@@ -289,9 +319,10 @@ public class IntronUtil
                 intron.addEvidence(dataSet);
                 intron.setIdentifier(identifier);
 
+                
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
-                location.setStrand("1");
+                location.setStrand(tranLoc.getStrand());
                 location.setPhase(new Integer(0));
                 location.setStartIsPartial(Boolean.FALSE);
                 location.setEndIsPartial(Boolean.FALSE);
