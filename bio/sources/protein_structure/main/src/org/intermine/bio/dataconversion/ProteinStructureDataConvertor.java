@@ -131,9 +131,6 @@ public class ProteinStructureDataConvertor extends FileConverter
         return fileBuffer.toString();
     }
 
-    /**
-     * Extension of PathQueryHandler to handle parsing TemplateQueries
-     */
     class ProteinStructureHandler extends DefaultHandler
     {
 

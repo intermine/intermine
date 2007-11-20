@@ -76,9 +76,6 @@ public class UniprotKeywordConverter extends FileConverter
 
     }
 
-    /**
-     * Extension of PathQueryHandler to handle parsing TemplateQueries
-     */
     static class UniprotHandler extends DefaultHandler
     {
         private int nextClsId = 0;
