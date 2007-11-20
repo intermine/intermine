@@ -6,6 +6,17 @@
   <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
+  <item id="6_2" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="exonCount" value="2"/>
+    <attribute name="identifier" value="FBtr0085316"/>
+    <attribute name="organismDbId" value="FBtr0085316"/>
+    <attribute name="symbol" value="CG10000-RB"/>
+    <reference name="organism" ref_id="2_1"/>
+    <reference name="sequence" ref_id="4_4"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
   <item id="8_2" class="http://www.flymine.org/model/genomic#Exon">
     <attribute name="identifier" value="CG10000:2"/>
     <attribute name="length" value="161"/>
@@ -247,22 +258,28 @@
   <item id="10_3" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="2892759"/>
   </item>
+  <item id="6_1" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="exonCount" value="2"/>
+    <attribute name="identifier" value="FBtr0085315"/>
+    <attribute name="length" value="3209"/>
+    <attribute name="organismDbId" value="FBtr0085315"/>
+    <attribute name="symbol" value="CG10000-RA"/>
+    <reference name="chromosome" ref_id="7_2"/>
+    <reference name="chromosomeLocation" ref_id="11_2"/>
+    <reference name="gene" ref_id="3_2"/>
+    <reference name="organism" ref_id="2_1"/>
+    <reference name="sequence" ref_id="4_3"/>
+    <reference name="translation" ref_id="9_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
   <item id="5_9" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="CG10000:1"/>
     <reference name="source" ref_id="1_1"/>
     <reference name="subject" ref_id="8_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
-  <item id="6_2" class="http://www.flymine.org/model/genomic#MRNA">
-    <attribute name="identifier" value="FBtr0085316"/>
-    <attribute name="organismDbId" value="FBtr0085316"/>
-    <attribute name="symbol" value="CG10000-RB"/>
-    <reference name="organism" ref_id="2_1"/>
-    <reference name="sequence" ref_id="4_4"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
@@ -303,21 +320,6 @@
     <attribute name="strand" value="1"/>
     <reference name="object" ref_id="7_1"/>
     <reference name="subject" ref_id="3_2"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
-  <item id="6_1" class="http://www.flymine.org/model/genomic#MRNA">
-    <attribute name="identifier" value="FBtr0085315"/>
-    <attribute name="length" value="3209"/>
-    <attribute name="organismDbId" value="FBtr0085315"/>
-    <attribute name="symbol" value="CG10000-RA"/>
-    <reference name="chromosome" ref_id="7_2"/>
-    <reference name="chromosomeLocation" ref_id="11_2"/>
-    <reference name="gene" ref_id="3_2"/>
-    <reference name="organism" ref_id="2_1"/>
-    <reference name="sequence" ref_id="4_3"/>
-    <reference name="translation" ref_id="9_1"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
