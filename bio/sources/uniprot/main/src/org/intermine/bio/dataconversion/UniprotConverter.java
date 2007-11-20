@@ -292,9 +292,6 @@ public class UniprotConverter extends FileConverter
         }
     }
 
-    /**
-     * Extension of PathQueryHandler to handle parsing TemplateQueries
-     */
     class UniprotHandler extends DefaultHandler
     {
         private int nextClsId = 0;
