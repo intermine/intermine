@@ -86,7 +86,11 @@ public class HtmlHeadController extends TilesAction
         /* bag */
         } else if (pageName.equals("bagDetails")) {
         
-            htmlPageTitle = htmlPageTitle + ":  " + bagName;
+            if (bagName != null && !bagName.equals("")) {
+                htmlPageTitle = htmlPageTitle + ":  " + bagName;
+            } else {
+                htmlPageTitle = htmlPageTitle + ":  " + name;
+            }
         
         /* template */
         } else if (pageName.equals("template")) {

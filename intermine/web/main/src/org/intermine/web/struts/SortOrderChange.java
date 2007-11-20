@@ -47,7 +47,6 @@ public class SortOrderChange extends DispatchAction
                                         @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        //String path = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         
         query.removePathStringFromSortOrder();
