@@ -1064,8 +1064,15 @@ public class SqlGenerator
             }
         } else if (con instanceof BagConstraint) {
             BagConstraint bc = (BagConstraint) con;
-            return (bc.getBag() != null) && bc.getBag().isEmpty()
-                && (bc.getOp() == ConstraintOp.NOT_IN);
+            if ((bc.getBag() != null) && (bc.getOp() == ConstraintOp.NOT_IN)) {
+                boolean empty = true;
+                Class type = bc.getQueryNode().getType();
+                Iterator bagIter = bc.getBag().iterator();
+                while (bagIter.hasNext() && empty) {
+                    empty = !type.isInstance(bagIter.next());
+                }
+                return empty;
+            }
         }
         return false;
     }
@@ -1116,8 +1123,15 @@ public class SqlGenerator
             }
         } else if (con instanceof BagConstraint) {
             BagConstraint bc = (BagConstraint) con;
-            return (bc.getBag() != null) && bc.getBag().isEmpty()
-                && (bc.getOp() == ConstraintOp.IN);
+            if ((bc.getBag() != null) && (bc.getOp() == ConstraintOp.IN)) {
+                boolean empty = true;
+                Class type = bc.getQueryNode().getType();
+                Iterator bagIter = bc.getBag().iterator();
+                while (bagIter.hasNext() && empty) {
+                    empty = !type.isInstance(bagIter.next());
+                }
+                return empty;
+            }
         }
         return false;
     }

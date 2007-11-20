@@ -764,6 +764,17 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
     }
 
+    public void testIrrelevantBag() throws Exception {
+        QueryClass qc = new QueryClass(Employee.class);
+        QueryField qf = new QueryField(qc, "name");
+        Set bag = new HashSet();
+        bag.add(new Integer(3));
+        BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, bag);
+        assertTrue(SqlGenerator.completelyFalse(bc));
+        bag.add("hello");
+        assertFalse(SqlGenerator.completelyFalse(bc));
+    }
+
     private void assertArrayEquals(boolean arg1[], boolean arg2[]) {
         String s1 = "(" + arg1[0] + ", " + arg1[1] + ")";
         String s2 = "(" + arg2[0] + ", " + arg2[1] + ")";
