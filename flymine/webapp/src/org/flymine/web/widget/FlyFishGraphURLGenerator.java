@@ -10,21 +10,20 @@ package org.flymine.web.widget;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.iql.IqlQuery;
 
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MRNALocalisationResult;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 
-import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 
 /**
@@ -32,10 +31,10 @@ import org.jfree.data.category.CategoryDataset;
  * @author Julie Sullivan
  *
  */
-public class FlyFishGraphURLGenerator implements CategoryURLGenerator
+public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
 {
     String bagName;
-
+    
     /**
      * Creates a FlyAtlasGraphURLGenerator for the chart
      * @param bagName the bag name
@@ -53,43 +52,69 @@ public class FlyFishGraphURLGenerator implements CategoryURLGenerator
      */
     public String generateURL(CategoryDataset dataset, int series, int category) {
         StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
-
-        Query q = new Query();
-        QueryClass mrnaResult = new QueryClass(MRNALocalisationResult.class);
-        QueryClass gene = new QueryClass(Gene.class);
-       
-        q.addFrom(mrnaResult);
-        q.addFrom(gene);
-        
-        q.addToSelect(gene);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-       
-        QueryCollectionReference r = new QueryCollectionReference(gene, "mRNALocalisationResults");
-        cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
-        
+ 
         String seriesName = (String) dataset.getRowKey(series);
         seriesName = seriesName.toLowerCase();
         Boolean expressed = Boolean.FALSE;
         if (seriesName.equals("expressed")) {
             expressed = Boolean.TRUE;
         }
-        cs.addConstraint(new SimpleConstraint(new QueryField(mrnaResult, "expressed"),
-                                             ConstraintOp.EQUALS, 
-                                             new QueryValue(expressed)));
+
+        sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
+        sb.append("&category=" + dataset.getColumnKey(category));
+        sb.append("&series=" + expressed);
+        sb.append("&urlGen=org.flymine.web.widget.FlyFishGraphURLGenerator");
         
-        cs.addConstraint(new SimpleConstraint(new QueryField(mrnaResult, "stage"), 
-                                              ConstraintOp.EQUALS,
-                                              new QueryValue(dataset.getColumnKey(category))));
-
-
-        q.setConstraint(cs);
-       
-        IqlQuery iqlQuery = new IqlQuery(q);
-
-        sb.append("&query=" + iqlQuery.getQueryString());
-
         return sb.toString();
     }
 
+
+    public PathQuery generatePathQuery(ObjectStore os,
+                                       InterMineBag bag,
+                                       String series, 
+                                       String category) {
+       
+        Model model = os.getModel();
+        PathQuery q = new PathQuery(model);
+        
+        List view = new ArrayList();
+        view.add(MainHelper.makePath(model, q, "Gene.identifier"));
+        view.add(MainHelper.makePath(model, q, "Gene.symbol"));
+        view.add(MainHelper.makePath(model, q, "Gene.mRNALocalisationResults.stage"));
+
+        q.setView(view);
+        
+        String bagType = bag.getType();
+        ConstraintOp constraintOp = ConstraintOp.IN;
+        String constraintValue = bag.getName();
+        
+        String label = null, id = null, code = q.getUnusedConstraintCode();
+        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
+        q.addNode(bagType).getConstraints().add(c);
+        
+        // stage (series)
+        constraintOp = ConstraintOp.EQUALS;
+        code = q.getUnusedConstraintCode();
+        PathNode stageNode = q.addNode("Gene.mRNALocalisationResults.stage");
+        Constraint stageConstraint 
+                        = new Constraint(constraintOp, series, false, label, code, id, null);
+        stageNode.getConstraints().add(stageConstraint);
+        
+        // expressed (category)
+        constraintOp = ConstraintOp.EQUALS;
+        Boolean expressed = Boolean.FALSE;
+        if (category.equals("true")) {
+            expressed = Boolean.TRUE;
+        }
+        code = q.getUnusedConstraintCode();
+        PathNode expressedNode = q.addNode("Gene.mRNALocalisationResults.expressed");
+        Constraint expressedConstraint 
+                        = new Constraint(constraintOp, expressed, false, label, code, id, null);
+        expressedNode.getConstraints().add(expressedConstraint);
+        
+        q.setConstraintLogic("A and B and C");
+        q.syncLogicExpression("and");
+        
+        return q; 
+    }    
 }

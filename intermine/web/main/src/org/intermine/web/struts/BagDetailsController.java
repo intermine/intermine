@@ -274,12 +274,12 @@ public class BagDetailsController extends TilesAction
             Class clazz2 = TypeUtil.instantiate(graphDisplayer.getUrlGen());                    
             Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
                                                                             {
-                Model.class, InterMineBag.class
+                String.class
                                                                             });
             categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
             .newInstance(new Object[]
                                     {
-                os.getModel(), bag
+                bag.getName()
                                     });
             
         } catch (Exception err) {

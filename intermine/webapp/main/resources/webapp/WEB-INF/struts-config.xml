@@ -183,6 +183,7 @@
     </action>
     <action path="/queryForGraphAction" type="org.intermine.web.struts.QueryForGraphAction">
       <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
     </action>
     <action path="/bagTableWidgetResults" type="org.intermine.web.struts.BagTableWidgetResults">
       <forward name="results" redirect="true" path="/results.do"/>
