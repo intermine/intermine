@@ -80,11 +80,17 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             HttpSession session = request.getSession();
             String userAgent = request.getHeader("user-agent").toLowerCase(); 
             Set<String> bots = getBots();   
-
-            if (userAgent != null) {
+            
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            
+            if (userAgent != null && !profile.isLoggedIn()) {
                 for (String bot : bots) {
                     if (userAgent.contains(bot)) {
                         session.setMaxInactiveInterval(60);
+                        //TODO remove this!
+                        String msg = "Logged out robot with useragent " + userAgent 
+                        + " and username " + profile.getUsername();
+                        LOG.error(msg);
                         break;
                     }
                 }
@@ -107,7 +113,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                     }
                     session.removeAttribute("ser-username");
                 }
-                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+             
                 String queryXml = (String) session.getAttribute("ser-query");
                 if (queryXml != null) {
                     Map<String, InterMineBag> allBags =
