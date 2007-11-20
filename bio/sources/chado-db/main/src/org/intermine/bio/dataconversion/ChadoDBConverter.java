@@ -40,6 +40,7 @@ import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
 import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Transcript;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -445,7 +446,11 @@ public class ChadoDBConverter extends BioDBConverter
         ResultSet res = getFeatureRelationshipResultSet(connection);
         Integer lastSubjectId = null;
 
-        // Map from relation type to Map from object type to FeatureData
+        // a Map from transcript object id to count of exons
+        Map<Integer, Integer> countMap = new HashMap<Integer, Integer>();
+
+        // Map from relation type to Map from object type to FeatureData - used to collect up all
+        // the collection/reference information for one subject feature
         Map<String, Map<String, List<FeatureData>>> relTypeMap =
             new HashMap<String, Map<String, List<FeatureData>>>();
         int featureWarnings = 0;
@@ -483,6 +488,31 @@ public class ChadoDBConverter extends BioDBConverter
                                                       featureDataList);
                     }
                     featureDataList.add(objectFeatureData);
+
+                    // special case: collect data for setting Transcript.exonCount
+                    Class objectClass;
+                    try {
+                        objectClass = Class.forName(model.getPackageName() + "."
+                                                    + objectFeatureData.interMineType);
+                    } catch (ClassNotFoundException e) {
+                        final String message =
+                            "can't find class for " + objectFeatureData.interMineType
+                            + "while processing relation: " + featRelationshipId;
+                        throw new RuntimeException(message);
+                    }
+                    if (Transcript.class.isAssignableFrom(objectClass)) {
+                        FeatureData subjectFeatureData = featureMap.get(subjectId);
+                        if (subjectFeatureData.interMineType.equals("Exon")) {
+                            if (!countMap.containsKey(objectFeatureData.intermineObjectId)) {
+                                countMap.put(objectFeatureData.intermineObjectId, new Integer(1));
+                            } else {
+                                Integer currentVal =
+                                    countMap.get(objectFeatureData.intermineObjectId);
+                                countMap.put(objectFeatureData.intermineObjectId,
+                                             new Integer(currentVal.intValue() + 1));
+                            }
+                        }
+                    }
                 } else {
                     if (featureWarnings <= 20) {
                         if (featureWarnings < 20) {
@@ -516,6 +546,13 @@ public class ChadoDBConverter extends BioDBConverter
         LOG.info("processed " + count + " relations");
         LOG.info("total collection elements created: " + collectionTotal);
         res.close();
+
+        // set the exonCount fields
+        for (Map.Entry<Integer, Integer> entry: countMap.entrySet()) {
+            Integer featureId = entry.getKey();
+            Integer collectionCount = entry.getValue();
+            setAttribute(featureId, "exonCount", String.valueOf(collectionCount));
+        }
     }
 
     /**
