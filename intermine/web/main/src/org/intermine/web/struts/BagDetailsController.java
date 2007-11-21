@@ -188,10 +188,11 @@ public class BagDetailsController extends TilesAction
                     String fields = bagTableDisplayer.getFields();
                     String title = bagTableDisplayer.getTitle();
                     String description = bagTableDisplayer.getDescription();
+                    String urlGen = bagTableDisplayer.getUrlGen();
                     BagTableWidgetLoader bagWidgLdr =
                         new BagTableWidgetLoader(title, description, ldrType, collectionName,
                                                  imBag, os, webConfig, model,
-                                                 classKeys, fields);
+                                                 classKeys, fields, urlGen);
                     tableDisplayerArray.add(bagWidgLdr);
     
                 } catch  (Exception e) {

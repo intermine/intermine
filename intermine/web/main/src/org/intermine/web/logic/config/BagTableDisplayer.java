@@ -21,7 +21,8 @@ public class BagTableDisplayer
     private String collectionName;
     private String fields;
     private String description;
-
+    private String urlGen;
+    
     /**
      * Get the type
      * @return the type
@@ -98,6 +99,22 @@ public class BagTableDisplayer
         this.description = description;
     }
 
+    /**
+     * Get the urlGen
+     * @return the class that generates the pathquery
+     */
+    public String getUrlGen() {
+        return urlGen;
+    }
+    
+    /**
+     * Set the class that generates the pathquery
+     * @param urlGen the class that generates the pathquery used in the links 
+     */
+    public void setUrlGen(String urlGen) {
+        this.urlGen = urlGen;
+    }
+    
     /**
      * Return an XML String of this Type object
      * @return a String version of this WebConfig object

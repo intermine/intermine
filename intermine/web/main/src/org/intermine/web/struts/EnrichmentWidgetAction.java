@@ -36,6 +36,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 /**
+ * //TODO rename this class as its used by bag table widgets now too
  * Builds a query to get all the genes (in bag) associated with specified go term.
  * @author Julie Sullivan
  */
