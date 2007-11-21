@@ -73,6 +73,15 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.organism.name"));        
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.assays.name"));
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.affyCall"));
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.MRNASignal"));
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.MRNASignalSEM"));
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.presentCall"));
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.enrichment"));
+//        MRNASignal
+//        MRNASignalSEM
+//        presentCall
+//        enrichment 
+                
         q.setView(view);
         
         String bagType = bag.getType();
