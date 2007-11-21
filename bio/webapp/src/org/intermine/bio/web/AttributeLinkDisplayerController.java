@@ -73,12 +73,10 @@ public class AttributeLinkDisplayerController extends TilesAction
         }
 
         String geneOrgKey;
-        if (organismReference == null || organismReference.getSpecies() == null
-            || organismReference.getGenus() == null) {
+        if (organismReference == null || organismReference.getTaxonId() == null) {
             geneOrgKey = className;
         } else {
-            geneOrgKey = className + '.' + organismReference.getGenus() + '.'
-                + organismReference.getSpecies();
+            geneOrgKey = className + '.' + organismReference.getTaxonId();
         }
 
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
