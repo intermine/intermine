@@ -282,7 +282,7 @@
                               </html:link>
                             </c:when>
                             <c:when test="${! empty cell.otherLink}">
-                              <html:link action="/bagTableWidgetResults?${cell.otherLink}">
+                              <html:link action="/widgetAction?${cell.otherLink}">
                                 <c:out value="${cell.field}" />
                               </html:link>
                             </c:when>

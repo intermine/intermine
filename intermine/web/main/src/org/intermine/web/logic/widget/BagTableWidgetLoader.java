@@ -68,10 +68,11 @@ public class BagTableWidgetLoader
      * @param model the model
      * @param classKeys the classKeys
      * @param fields fields involved in widget
+     * @param urlGen the class that generates the pathquery used in the links from the widget
      */
     public BagTableWidgetLoader(String title, String description, String type, String
             collectionName, InterMineBag bag, ObjectStore os, WebConfig webConfig, Model model,
-            Map classKeys, String fields) {
+            Map classKeys, String fields, String urlGen) {
         this.title = title;
         this.description = description;
         Query q = new Query();
@@ -153,7 +154,8 @@ public class BagTableWidgetLoader
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             ArrayList flattenedRow = new ArrayList();
             ResultsRow resRow = (ResultsRow) iter.next();
-            Integer lastObjectId = null;
+            //Integer lastObjectId = null;
+            String key = "";
             for (Iterator iterator = resRow.iterator(); iterator.hasNext();) {
                 Object element = iterator.next();
                 if (element instanceof InterMineObject) {
@@ -166,15 +168,16 @@ public class BagTableWidgetLoader
                         String fieldName = path.getEndFieldDescriptor().getName();
                         boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, 
                                 TypeUtil.unqualifiedName(thisType.getName()), fieldName);
+                        if (isKeyField) {
+                            key = fieldValue.toString();
+                        }
                         flattenedRow.add(new ResultElement(os, fieldValue, o.getId(), thisType,
                                     path, isKeyField));
                     }
-                    lastObjectId = o.getId();
+                    //lastObjectId = o.getId();
                 } else if (element instanceof Long) {
                     flattenedRow.add(new ResultElement(String.valueOf((Long) element), "bagName="
-                                + bag.getName() + "&typeB=" + type + "&typeA=" + bag.getType()
-                                + "&collection=" + collectionName + "&id=" + lastObjectId
-                                .toString()));
+                                + bag.getName() + "&link=" + urlGen + "&key=" + key));
                 }
 
             }
