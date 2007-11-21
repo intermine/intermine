@@ -3,19 +3,17 @@
     <attribute name="length" value="161"/>
     <attribute name="residues" value="cttgtccctgtg"/>
   </item>
-  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
-    <attribute name="taxonId" value="7227"/>
-  </item>
-  <item id="6_2" class="http://www.flymine.org/model/genomic#MRNA">
-    <attribute name="exonCount" value="2"/>
-    <attribute name="identifier" value="FBtr0085316"/>
-    <attribute name="organismDbId" value="FBtr0085316"/>
-    <attribute name="symbol" value="CG10000-RB"/>
+  <item id="7_2" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value="3R"/>
+    <attribute name="length" value="27905053"/>
     <reference name="organism" ref_id="2_1"/>
-    <reference name="sequence" ref_id="4_4"/>
+    <reference name="sequence" ref_id="4_6"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+    <attribute name="taxonId" value="7227"/>
   </item>
   <item id="8_2" class="http://www.flymine.org/model/genomic#Exon">
     <attribute name="identifier" value="CG10000:2"/>
@@ -94,14 +92,6 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="7_1" class="http://www.flymine.org/model/genomic#Chromosome">
-    <attribute name="identifier" value="3L"/>
-    <reference name="organism" ref_id="2_1"/>
-    <reference name="sequence" ref_id="4_5"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
   <item id="4_6" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="27905053"/>
     <attribute name="residues" value="ggtggaacttgagaacgagttcaagagcaacatgtactgatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag"/>
@@ -139,20 +129,24 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
+  <item id="6_2" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="exonCount" value="2"/>
+    <attribute name="identifier" value="FBtr0085316"/>
+    <attribute name="length" value="3000"/>
+    <attribute name="organismDbId" value="FBtr0085316"/>
+    <attribute name="symbol" value="CG10000-RB"/>
+    <reference name="organism" ref_id="2_1"/>
+    <reference name="sequence" ref_id="4_4"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
   <item id="5_17" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="fullname"/>
     <attribute name="value" value="FBgn0000001_fullname_synonym"/>
     <reference name="source" ref_id="1_1"/>
     <reference name="subject" ref_id="3_1"/>
-    <collection name="evidence">
-      <reference ref_id="0_1"/>
-    </collection>
-  </item>
-  <item id="7_2" class="http://www.flymine.org/model/genomic#Chromosome">
-    <attribute name="identifier" value="3R"/>
-    <reference name="organism" ref_id="2_1"/>
-    <reference name="sequence" ref_id="4_6"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
@@ -255,13 +249,10 @@
       <reference ref_id="0_1"/>
     </collection>
   </item>
-  <item id="10_3" class="http://www.flymine.org/model/genomic#Publication">
-    <attribute name="pubMedId" value="2892759"/>
-  </item>
   <item id="6_1" class="http://www.flymine.org/model/genomic#MRNA">
     <attribute name="exonCount" value="2"/>
     <attribute name="identifier" value="FBtr0085315"/>
-    <attribute name="length" value="3209"/>
+    <attribute name="length" value="2528"/>
     <attribute name="organismDbId" value="FBtr0085315"/>
     <attribute name="symbol" value="CG10000-RA"/>
     <reference name="chromosome" ref_id="7_2"/>
@@ -273,6 +264,9 @@
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
+  </item>
+  <item id="10_3" class="http://www.flymine.org/model/genomic#Publication">
+    <attribute name="pubMedId" value="2892759"/>
   </item>
   <item id="5_9" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
@@ -290,6 +284,15 @@
     <attribute name="value" value="FBgn0000001_symbol_synonym"/>
     <reference name="source" ref_id="1_1"/>
     <reference name="subject" ref_id="3_1"/>
+    <collection name="evidence">
+      <reference ref_id="0_1"/>
+    </collection>
+  </item>
+  <item id="7_1" class="http://www.flymine.org/model/genomic#Chromosome">
+    <attribute name="identifier" value="3L"/>
+    <attribute name="length" value="24543557"/>
+    <reference name="organism" ref_id="2_1"/>
+    <reference name="sequence" ref_id="4_5"/>
     <collection name="evidence">
       <reference ref_id="0_1"/>
     </collection>
