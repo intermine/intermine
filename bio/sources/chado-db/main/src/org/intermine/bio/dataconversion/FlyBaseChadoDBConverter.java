@@ -14,13 +14,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
+
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 
 /**
  * A converter for chado that handles FlyBase specific configuration.
@@ -174,6 +175,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String getExtraFeatureConstraint() {
         return "NOT (cvterm.name = 'gene' AND uniquename LIKE 'FBal%') "
             + "AND NOT ((cvterm.name = 'golden_path_region'"
@@ -261,12 +263,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
             return null;
         }
 
-
         Item feature = createItem(realInterMineType);
-
-        if (getTaxonIdInt() == 7227 && chadoFeatureType.equals("protein")) {
-            feature.setAttribute("length", "" + seqlen);
-        }
 
         return feature;
     }
