@@ -10,7 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import org.intermine.objectstore.query.Query;
+import org.intermine.web.logic.query.PathQuery;
 
 /**
  * @author julie sullivan
@@ -21,6 +21,6 @@ public interface EnrichmentWidgetURLQuery
     /**
      * @return the query 
      */
-    public Query getQuery();
+    public PathQuery generatePathQuery();
     
 }

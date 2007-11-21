@@ -11,27 +11,19 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.query.Constraint;
+import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
-
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Publication;
 
 /**
  * Builds a query to get all the genes (in bag) associated with specified go term.
@@ -57,56 +49,104 @@ public class PublicationURLQuery implements EnrichmentWidgetURLQuery
     /**
      * @return Query a query to generate the results needed
      */
-    public Query getQuery() {
+    public PathQuery generatePathQuery() {
                        
-        Query q = new Query();
+//        Query q = new Query();
 
-        QueryClass qcGene = new QueryClass(Gene.class);
-        QueryClass qcPub = new QueryClass(Publication.class);
-        QueryClass qcOrganism = new QueryClass(Organism.class);
-        
-        QueryField qfGeneId = new QueryField(qcGene, "id");
-        QueryField qfId = new QueryField(qcPub, "pubMedId");
-        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-        
-        q.addFrom(qcGene);
-        q.addFrom(qcPub);
-        q.addFrom(qcOrganism);
-        
-        q.addToSelect(qcGene);
-    
-        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
-
-        // genes must be in bag
-        BagConstraint bc1 =
-            new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-        cs1.addConstraint(bc1);
-
-
+//        QueryClass qcGene = new QueryClass(Gene.class);
+//        QueryClass qcPub = new QueryClass(Publication.class);
+//        QueryClass qcOrganism = new QueryClass(Organism.class);
+//        
+//        QueryField qfGeneId = new QueryField(qcGene, "id");
+//        QueryField qfId = new QueryField(qcPub, "pubMedId");
+//        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
+//        
+//        q.addFrom(qcGene);
+//        q.addFrom(qcPub);
+//        q.addFrom(qcOrganism);
+//        
+//        q.addToSelect(qcGene);
+//    
+//        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+//
+//        // genes must be in bag
+//        BagConstraint bc1 =
+//            new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+//        cs1.addConstraint(bc1);
+//
+//
         // get organisms
         ArrayList organisms = (ArrayList) BioUtil.getOrganisms(os, bag);
-
-        // limit to organisms in the bag
-        BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-        cs1.addConstraint(bc2);
+//
+//        // limit to organisms in the bag
+//        BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
+//        cs1.addConstraint(bc2);
+//        
+//        // gene is from organism
+//        QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
+//        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
+//        cs1.addConstraint(cc1);
+//        
+//        // gene.Publications CONTAINS pub
+//        QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "publications");
+//        ContainsConstraint cc2 =
+//            new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcPub);
+//        cs1.addConstraint(cc2);
+//        
+//        SimpleConstraint sc = 
+//            new SimpleConstraint(qfId, ConstraintOp.MATCHES, new QueryValue(key));
+//        cs1.addConstraint(sc);
+//
+//        q.setConstraint(cs1);
         
-        // gene is from organism
-        QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
-        cs1.addConstraint(cc1);
+        Model model = os.getModel();
+        PathQuery q = new PathQuery(model);
         
-        // gene.Publications CONTAINS pub
-        QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "publications");
-        ContainsConstraint cc2 =
-            new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcPub);
-        cs1.addConstraint(cc2);
+        List view = new ArrayList();
+        view.add(MainHelper.makePath(model, q, "Gene.identifier"));
+        view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
+        view.add(MainHelper.makePath(model, q, "Gene.name"));
+        view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
+        view.add(MainHelper.makePath(model, q, "Gene.publications.title"));
+        view.add(MainHelper.makePath(model, q, "Gene.publications.firstAuthor"));
+        view.add(MainHelper.makePath(model, q, "Gene.publications.journal"));
+        view.add(MainHelper.makePath(model, q, "Gene.publications.year"));
+        view.add(MainHelper.makePath(model, q, "Gene.publications.pubMedId"));
         
-        SimpleConstraint sc = 
-            new SimpleConstraint(qfId, ConstraintOp.MATCHES, new QueryValue(key));
-        cs1.addConstraint(sc);
-
-        q.setConstraint(cs1);
+//        (1) Publication > title
+//        (2) Publication > firstAuthor
+//        (3) Publication > journal
+//        (4) Publication > year
+//        (5) Publication > pubMedId 
         
+        q.setView(view);
+        
+        String bagType = bag.getType();
+        ConstraintOp constraintOp = ConstraintOp.IN;
+        String constraintValue = bag.getName();        
+        String label = null, id = null, code = q.getUnusedConstraintCode();
+        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
+        q.addNode(bagType).getConstraints().add(c);
+        
+        // constrain to be in organism
+//        constraintOp = ConstraintOp.IN;
+//        code = q.getUnusedConstraintCode();
+//        PathNode orgNode = q.addNode("Gene.organism.taxonId");
+//        Constraint orgConstraint 
+//                        = new Constraint(constraintOp, organisms, false, label, code, id, null);
+//        orgNode.getConstraints().add(orgConstraint);
+        
+        // pubmedid
+        constraintOp = ConstraintOp.EQUALS;
+        code = q.getUnusedConstraintCode();
+        PathNode expressedNode = q.addNode("Gene.publications.pubMedId");
+        Constraint expressedConstraint 
+                        = new Constraint(constraintOp, key, false, label, code, id, null);
+        expressedNode.getConstraints().add(expressedConstraint);
+        
+        q.setConstraintLogic("A and B");
+        q.syncLogicExpression("and");
+                
         return q;
     }
 }
