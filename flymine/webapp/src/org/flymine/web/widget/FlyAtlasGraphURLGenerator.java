@@ -69,6 +69,8 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         List view = new ArrayList();
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.identifier"));
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.organismDbId"));
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.name"));        
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.organism.name"));        
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.assays.name"));
         q.setView(view);
         

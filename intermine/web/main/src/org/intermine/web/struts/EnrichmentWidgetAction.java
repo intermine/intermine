@@ -12,18 +12,14 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
-import org.intermine.objectstore.query.Results;
-
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
 
@@ -34,9 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 /**
  * Builds a query to get all the genes (in bag) associated with specified go term.
  * @author Julie Sullivan
@@ -88,25 +86,17 @@ public class EnrichmentWidgetAction extends InterMineAction
                                                                                       });
                 
                 
-        Results results = os.execute(urlQuery.getQuery());
+        QueryMonitorTimeout clientState
+        = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        PathQuery pathQuery = urlQuery.generatePathQuery();
+        String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
 
-        String columnName = bag.getType();
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = os.getModel();
-        WebPathCollection webPathCollection =
-            new WebPathCollection(os, new Path(model, columnName), results, model, webConfig,
-                              classKeys);
-        PagedTable pagedColl = new PagedTable(webPathCollection);
+        Thread.sleep(200); // slight pause in the hope of avoiding holding page
 
-        String identifier = "qid" + index++;
-        SessionMethods.setResultsTable(session, identifier, pagedColl);
-
-        return new ForwardParameters(mapping.findForward("results"))
-                        .addParameter("table", identifier)
-                        .addParameter("size", "10")
-                        .addParameter("trail", "|bag." + bagName).forward();
-
+        return new ForwardParameters(mapping.findForward("waiting"))
+        .addParameter("trail", "|bag." + bagName)
+        .addParameter("qid", qid).forward(); 
 
 
     }
