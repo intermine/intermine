@@ -145,10 +145,10 @@ public class WebSearchableListController extends TilesAction
                             return bag2.getName().compareTo(bag1.getName());
                         }
                     }
-                } else if (!ws1.getTitle().equals(ws2.getTitle())) {
-                    return ws1.getTitle().compareTo(ws2.getTitle());              
-                } else {
+                } else if (ws1.getTitle().equals(ws2.getTitle())) {
                     return ws1.getName().compareTo(ws2.getName());              
+                } else {
+                    return ws1.getTitle().compareTo(ws2.getTitle());              
                 }
                 
                 return ((Comparable) o1).compareTo(o2);
