@@ -72,6 +72,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.name"));        
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.organism.name"));        
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.assays.name"));
+        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.affyCall"));
         q.setView(view);
         
         String bagType = bag.getType();
@@ -79,24 +80,23 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         String constraintValue = bag.getName();
         
         String label = null, id = null, code = q.getUnusedConstraintCode();
+        PathNode geneNode = q.addNode("FlyAtlasResult.genes");
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        q.addNode("FlyAtlasResult.genes.identifier").getConstraints().add(c);
-        
-        // series
+        geneNode.getConstraints().add(c);
+
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode seriesNode = q.addNode("FlyAtlasResult.affyCall");
-        Constraint seriesConstraint 
+        PathNode categoryNode = q.addNode("FlyAtlasResult.affyCall");
+        Constraint categoryConstraint 
                         = new Constraint(constraintOp, category, false, label, code, id, null);
-        seriesNode.getConstraints().add(seriesConstraint);
-        
-        // series
+        categoryNode.getConstraints().add(categoryConstraint);
+
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode catNode = q.addNode("FlyAtlasResult.assays.name");
-        Constraint catConstraint 
+        PathNode seriesNode = q.addNode("FlyAtlasResult.assays.name");
+        Constraint seriesConstraint 
                         = new Constraint(constraintOp, series, false, label, code, id, null);
-        catNode.getConstraints().add(catConstraint);
+        seriesNode.getConstraints().add(seriesConstraint);
         
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
