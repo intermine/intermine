@@ -412,8 +412,7 @@ public class ChadoDBConverter extends BioDBConverter
                                                    + "a chromosome reference", e);
                     }
                     if (LocatedSequenceFeature.class.isAssignableFrom(featureClass)
-                        && srcFeatureData.interMineType.equals("Chromosome")
-                        && ((featureData.flags & FeatureData.LENGTH_SET) == 0)) {
+                        && srcFeatureData.interMineType.equals("Chromosome")) {
                         Reference chrReference = new Reference();
                         chrReference.setName("chromosome");
                         chrReference.setRefId(srcFeatureData.itemIdentifier);
@@ -422,8 +421,11 @@ public class ChadoDBConverter extends BioDBConverter
                         locReference.setName("chromosomeLocation");
                         locReference.setRefId(location.getIdentifier());
                         store(locReference, featureData.getIntermineObjectId());
-                        setAttribute(featureData.intermineObjectId, "length",
-                                     String.valueOf(end - start + 1));
+
+                        if ((featureData.flags & FeatureData.LENGTH_SET) == 0) {
+                            setAttribute(featureData.intermineObjectId, "length",
+                                         String.valueOf(end - start + 1));
+                        }
                     }
                     count++;
                 } else {
