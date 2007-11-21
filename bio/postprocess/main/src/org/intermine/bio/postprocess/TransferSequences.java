@@ -89,7 +89,7 @@ public class TransferSequences
         ObjectStore os = osw.getObjectStore();
 
         long startTime = System.currentTimeMillis();
-        
+
         Results results =
             PostProcessUtil.findLocationAndObjects(os, Chromosome.class, Assembly.class, false);
         // could try reducing further if still OutOfMemeory problems
@@ -139,7 +139,7 @@ public class TransferSequences
             storeTempSequences(chromosomeTempFiles);
             LOG.info("finished writing temp file for Chromosome: " + currentChr.getIdentifier());
         }
-        
+
         LOG.info("Finished transferring sequences to chromosomes - took "
                  + (System.currentTimeMillis() - startTime) + " ms.");
     }
@@ -308,7 +308,7 @@ public class TransferSequences
         }
 
         osw.commitTransaction();
-        
+
         LOG.info("Finished setting " + i + " feature sequences - took "
                  + (System.currentTimeMillis() - startTime) + " ms.");
     }
@@ -404,7 +404,7 @@ public class TransferSequences
         throws Exception {
 
         long startTime = System.currentTimeMillis();
-        
+
         osw.beginTransaction();
 
         ObjectStore os = osw.getObjectStore();
@@ -473,6 +473,11 @@ public class TransferSequences
                    storeNewSequence(currentTranscript,
                                     currentTranscriptBases.toString());
                    i++;
+                   if (i % 100 == 0) {
+                       long now = System.currentTimeMillis();
+                       LOG.info("Set sequences for " + i + " Transcripts"
+                                + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
+                   }
                }
                currentTranscriptBases = new StringBuffer();
                currentTranscript = transcript;
@@ -486,18 +491,13 @@ public class TransferSequences
            } else {
                currentTranscriptBases.append(exonSequence.getResidues());
            }
-           if (i % 100 == 0) {
-               long now = System.currentTimeMillis();
-               LOG.info("Set sequences for " + i + " Transcripts"
-                        + " (avg = " + ((60000L * i) / (now - start)) + " per minute)");
-           }
         }
         if (currentTranscript == null) {
             LOG.error("in transferToTranscripts(): no Transcripts found");
         } else {
             storeNewSequence(currentTranscript, currentTranscriptBases.toString());
         }
-        
+
         LOG.info("Finished setting " + i + " Trascript sequences - took "
                  + (System.currentTimeMillis() - startTime) + " ms.");
 
