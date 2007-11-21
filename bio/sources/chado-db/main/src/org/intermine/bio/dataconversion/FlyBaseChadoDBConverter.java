@@ -275,9 +275,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
             // ignore for now:        "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
-            "protein", "point_mutation",
-            "five_prime_untranslated_region",
-            "three_prime_untranslated_region"
+            "protein", "point_mutation"
     );
 
     /**
