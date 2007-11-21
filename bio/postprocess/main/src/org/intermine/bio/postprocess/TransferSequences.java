@@ -146,7 +146,7 @@ public class TransferSequences
 
     private File getTempFile(Chromosome chr) throws IOException {
         String prefix = "transfer_sequences_temp_" + chr.getId() + "_" + chr.getIdentifier();
-        return File.createTempFile(prefix, null, new File ("build"));
+        return File.createTempFile(prefix, null, new File ("/tmp/"));
     }
 
     /**
@@ -298,6 +298,7 @@ public class TransferSequences
             osw.store(sequence);
             feature.proxySequence(new ProxyReference(osw.getObjectStore(),
                                                      sequence.getId(), Sequence.class));
+            feature.setLength(new Integer(featureSeq.length()));
             osw.store(feature);
             i++;
             if (i % 1000 == 0) {
