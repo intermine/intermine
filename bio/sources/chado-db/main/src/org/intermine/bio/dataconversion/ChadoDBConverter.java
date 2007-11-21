@@ -1325,7 +1325,7 @@ public class ChadoDBConverter extends BioDBConverter
         static final short EVIDENCE_CREATED = 1 << EVIDENCE_CREATED_BIT;
         static final short IDENTIFIER_SET_BIT = 1;
         static final short IDENTIFIER_SET = 1 << IDENTIFIER_SET_BIT;
-        static final short LENGTH_SET_BIT = 1;
+        static final short LENGTH_SET_BIT = 2;
         static final short LENGTH_SET = 1 << LENGTH_SET_BIT;
 
         /**
