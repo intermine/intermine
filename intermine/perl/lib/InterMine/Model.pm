@@ -100,6 +100,7 @@ sub start_element
       my @extends = ();
       if (exists $args->{Attributes}{extends}) {
         @extends = split /\s+/, $args->{Attributes}{extends};
+        @extends = grep { $_ ne 'java.lang.Object' } @extends;
         map { s/.*\.(.*)/$1/ } @extends;
       }
       $self->{current_class} =

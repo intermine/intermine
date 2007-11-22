@@ -9,7 +9,7 @@ use InterMine::Model;
 
 my $model = new InterMine::Model(file => '../objectstore/model/testmodel/testmodel_model.xml');
 
-ok(scalar($model->get_all_classdescriptors()) == 17);
+ok(scalar($model->get_all_classdescriptors()) == 18);
 
 my $department_cd = $model->get_classdescriptor_by_name("Department");
 my $name_field = $department_cd->get_field_by_name("name");
