@@ -31,7 +31,7 @@ flags:
  -r attempt to restart just after the last dump point _without_ loading a dump
  -n parse files and report actions, but don't execute anything
  -V set the release number to pass to ant (as -Drelease=release_number)
- -a set the list of action to perform - the list must be a subset of the
+ -a set the list of actions to perform - the list must be a subset of the
     sources/postprocesses in the project.xml file.
      - The -l and -r operate as usual.
      - To run all steps starting at <some_action> use a dash after the action
