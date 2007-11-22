@@ -37,7 +37,7 @@ flags:
      - To run all steps starting at <some_action> use a dash after the action
        name: -a <some_action>-
      - To perform only the final dump use: -a final-dump
-     - To refer to dump step and skip its coresponding action use the action
+     - To refer to dump step and skip its corresponding action use the action
        name with "-dump" appended
           eg -a fly-fish-dump-
              -a fly-fish-dump,flymine-static,create-utr-references,final-dump
