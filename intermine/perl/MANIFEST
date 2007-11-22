@@ -3,8 +3,8 @@ MANIFEST
 META.yml # Will be created by "make dist"
 Makefile.PL
 README
-lib/InterMine.pm
+lib/InterMine/Model.pm
+lib/InterMine/ItemFactory.pm
 t/00-load.t
-t/boilerplate.t
-t/pod-coverage.t
-t/pod.t
+t/model.t
+t/item.t
