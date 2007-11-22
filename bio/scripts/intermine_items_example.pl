@@ -69,14 +69,6 @@ $pub2_item->set('pubMedId', 16248207);
 # set a collection - no reverse reference
 $protein1_item->set('evidence', [$pub1_item, $pub2_item]);
 
-my $protein_region_item = make_item('ProteinRegion');
-$protein_region_item->set('curated', 'true');
-$protein_region_item->set('identifier', 'protein_region_1');
-
-# set a collection and automatically set the reverse reference
-$protein1_item->set('regions', [$protein_region_item]);
-
-
 my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3);
 $writer->startTag('items');
 for my $item (@items_to_write) {
