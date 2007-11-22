@@ -1,8 +1,35 @@
 package InterMine::ItemFactory;
 
+=head1 NAME
+
+InterMine::ItemFactory - factory for creating Item objects that match a given 
+Model
+
+=head1 SYNOPSIS
+
+  use InterMine::ItemFactory;
+
+  my $model = new InterMine::Model(file => $model_file);
+
+  my $item_factory = new InterMine::ItemFactory(model => $model);
+
+  
+
+=head1 DESCRIPTION
+
+C<compare()> compares two files or arrays of strings and returns a MatchMap
+object holding the results.
+
+=cut
+
+=head1 FUNCTIONS
+
+=cut
+
 use strict;
 
 use InterMine::Item;
+
 
 sub new
 {
@@ -22,7 +49,14 @@ sub new
 sub make_item
 {
   my $self = shift;
-  my %args = @_;
+  my %args;
+
+  if (@_ == 1) {
+    $args{implements} = $_[0];
+  } else {
+    %args = @_;
+  }
+
   $self->{id_counter}++;
 
   my $classname = "";
