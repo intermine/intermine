@@ -5,8 +5,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME                => 'InterMine',
     AUTHOR              => 'FlyMine <perl@flymine.org>',
-    VERSION_FROM        => 'lib/InterMine.pm',
-    ABSTRACT_FROM       => 'lib/InterMine.pm',
+    VERSION_FROM        => 'lib/InterMine/ItemFactory.pm',
     PL_FILES            => {},
     PREREQ_PM => {
                   'Test::More' => 0,
