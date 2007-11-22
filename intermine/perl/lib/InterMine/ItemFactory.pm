@@ -61,6 +61,8 @@ http://trac.flymine.org/wiki/ItemsAPIPerl
 
 use strict;
 
+our $VERSION = '0.01';
+
 use InterMine::Item;
 
 =head2 new
