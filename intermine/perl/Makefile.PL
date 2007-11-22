@@ -4,10 +4,13 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME                => 'InterMine',
-    AUTHOR              => 'FlyMine <perl@flymine.org>',
+    AUTHOR              => 'FlyMine <info@flymine.org>',
     VERSION_FROM        => 'lib/InterMine/ItemFactory.pm',
     PL_FILES            => {},
     PREREQ_PM => {
+                  'Test::XML' => 0,
+                  'XML::Parser::PerlSAX' => 0,
+                  'XML::Writer' => 0,
                   'Test::More' => 0,
                   'Config::Properties' => 0,
                  },
