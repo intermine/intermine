@@ -1,6 +1,47 @@
 package InterMine::Model;
 
+=head1 NAME
+
+InterMine::Model - the representation of an InterMine model
+
+=head1 SYNOPSIS
+
+  use InterMine::Model;
+  use InterMine::ItemFactory;
+
+  my $model_file = 'flymine/dbmodel/build/model/genomic_model.xml';
+  my $model = new InterMine::Model(file => $model_file);
+  my $factory = new InterMine::ItemFactory(model => $model);
+
+  ...
+
+=head1 DESCRIPTION
+
+The class is the Perl representation of an InterMine data model.  The
+new() method can parse the model file.  The
+get_classdescriptor_by_name() method will return an
+InterMine::Model::ClassDescriptor object for the class with the given
+name.
+
+For an example model see: 
+http://trac.flymine.org/browser/trunk/intermine/objectstore/model/testmodel/testmodel_model.xml
+
+=cut
+
+=head1 FUNCTIONS
+
+=cut
+
 use strict;
+
+=head2 new
+
+ Title   : new
+ Usage   : $factory = new InterMine::Model(file => $model_file);
+ Function: return a Model object for the given file
+ Args    : file - the InterMine model XML file
+
+=cut
 
 sub new
 {
@@ -31,7 +72,8 @@ package InterMine::Model::Handler;
 
 use vars qw{ $AUTOLOAD };
 
-sub new {
+sub new
+{
   my $type = shift;
   my $self = ( $#_ == 0 ) ? shift : { @_ };
 
@@ -192,7 +234,15 @@ sub _get_fields
   return @fields;
 }
 
+=head2 get_classdescriptor_by_name
 
+ Title   : get_classdescriptor_by_name
+ Usage   : $cd = $model->get_classdescriptor_by_name("Gene");
+ Function: return the InterMine::Model::ClassDescriptor for the given class or
+           undef if the class isn't in the model
+ Args    : the classname
+
+=cut
 sub get_classdescriptor_by_name
 {
   my $self = shift;
@@ -206,25 +256,59 @@ sub get_classdescriptor_by_name
   }
 }
 
+=head2 get_all_classdescriptors
+
+ Title   : get_all_classdescriptors
+ Usage   : @cds = $model->get_all_classdescriptors();
+ Function: return all the InterMine::Model::ClassDescriptor objects for this
+           model
+ Args    : none
+
+=cut
 sub get_all_classdescriptors
 {
   my $self = shift;
   return values %{$self->{class_hash}};
 }
 
+=head2 name_space
 
+ Title   : name_space
+ Usage   : $name_space = $model->name_space();
+ Function: return the name space from the model file
+           eg. "http://www.intermine.org/model/testmodel#"
+ Args    : none
+
+=cut
 sub name_space
 {
   my $self = shift;
   return $self->{name_space};
 }
 
+=head2 package_name
+
+ Title   : package_name
+ Usage   : $package_name = $model->package_name();
+ Function: return the package name derived from the name space
+           eg. "org.intermine.model"
+ Args    : none
+
+=cut
 sub package_name
 {
   my $self = shift;
   return $self->{package_name};
 }
 
+=head2 model_name
+
+ Title   : model_name
+ Usage   : $model_name = $model->model_name();
+ Function: return the model name from the model file eg. "testmodel"
+ Args    : none
+
+=cut
 sub model_name
 {
   my $self = shift;

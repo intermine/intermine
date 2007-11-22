@@ -49,6 +49,10 @@ Model
 The class implements factory objects for create XML in InterMine Items XML
 format for use as input for sources.
 
+=head1 SEE ALSO
+
+http://trac.flymine.org/wiki/ItemsAPIPerl
+
 =cut
 
 =head1 FUNCTIONS
