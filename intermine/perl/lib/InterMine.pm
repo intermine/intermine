@@ -5,7 +5,11 @@ use strict;
 
 =head1 NAME
 
-InterMine - perl code for accessing an InterMine data warehouse
+InterMine - Perl code for accessing an InterMine data warehouse
+
+B<NOTE>: This database access code is experimental and unsupported, see
+L<http://trac.flymine.org/wiki/ItemsAPIPerl> for documentation about the supported
+InterMine Perl code.
 
 =head1 VERSION
 
@@ -15,17 +19,13 @@ Version 0.01
 
 our $VERSION = '0.01';
 
-=head1 SYNOPSIS
-
-=head1 EXPORT
-
 =head1 AUTHOR
 
-FlyMine, C<< <perl@flymine.org> >>
+FlyMine <info@flymine.org>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<< <perl@flymine.org> >>.
+Please report any bugs or feature requests to <info@flymine.org>.
 
 =head1 SUPPORT
 
@@ -41,29 +41,11 @@ You can also look for information at:
 
 L<http://www.flymine.org>
 
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/InterMine>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/InterMine>
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=InterMine>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/InterMine>
-
 =back
-
-=head1 ACKNOWLEDGEMENTS
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2006 FlyMine, all rights reserved.
+Copyright 2006,2007 FlyMine, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
