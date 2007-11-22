@@ -2,23 +2,52 @@ package InterMine::ItemFactory;
 
 =head1 NAME
 
-InterMine::ItemFactory - factory for creating Item objects that match a given 
+InterMine::ItemFactory - factory for creating Item objects that match a given
 Model
 
 =head1 SYNOPSIS
 
+  use XML::Writer;
+  use InterMine::Model;
+  use InterMine::Item;
   use InterMine::ItemFactory;
 
+  my $model_file = $ARGV[0];
+  die unless defined $model_file;
   my $model = new InterMine::Model(file => $model_file);
+  my $factory = new InterMine::ItemFactory(model => $model);
 
-  my $item_factory = new InterMine::ItemFactory(model => $model);
+  my $gene = $factory->make_item("Gene");
+  # set an attribute
+  $gene->set("identifier", "CG10811");
 
-  
+  my $organism = $factory->make_item("Organism");
+  $organism->set("taxonId", 7227);
+
+  # set a reference
+  $gene->set("organism", $organism);
+
+  my $pub1 = $factory->make_item("Publication");
+  $pub1->set("pubMedId", 11700288);
+  my $pub2 = $factory->make_item("Publication");
+  $pub2->set("pubMedId", 16496002);
+
+  # set a collection
+  $gene->set("publications", [$pub1, $pub2]);
+
+  # write as InterMine Items XML
+  my @items_to_write = ($gene, $organism, $pub1, $pub2);
+  my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3);
+  $writer->startTag("items");
+  for my $item (@items_to_write) {
+    $item->as_xml($writer);
+  }
+  $writer->endTag("items");
 
 =head1 DESCRIPTION
 
-C<compare()> compares two files or arrays of strings and returns a MatchMap
-object holding the results.
+The class implements factory objects for create XML in InterMine Items XML
+format for use as input for sources.
 
 =cut
 
@@ -30,6 +59,14 @@ use strict;
 
 use InterMine::Item;
 
+=head2 new
+
+ Title   : new
+ Usage   : $factory = new InterMine::ItemFactory($model);
+ Function: return a factory that can be used to create Item objects
+ Args    : model - the InterMine::Model object to use to check field validity
+
+=cut
 
 sub new
 {
@@ -45,6 +82,15 @@ sub new
   bless $self, $class;
   return $self;
 }
+
+=head2 make_item
+
+ Title   : make_item
+ Usage   : $item = $factory->make_item("Gene");
+ Function: return a new Item object of the given type
+ Args    : the classname of the new Item
+
+=cut
 
 sub make_item
 {
