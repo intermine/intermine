@@ -27,7 +27,7 @@ message to incoming users from your site.  It also helps us keep track of incomi
 Let us know what you want to use.
 </p>
 <p style="">
-As an option, you can specify an organism name by using <strong>organism</strong> in the URL. The organism name must be the <strong>shortName</strong> as defined in FlyMine, for instance <em>D.%20melanogaster</em>.
+As an option, you can specify an organism name by using <strong>organism</strong> in the URL, this is useful when linking with symbols that are used acros organisms. The organism name must be the <strong>shortName</strong> as defined in FlyMine, for instance <em>D.%20melanogaster</em>.
 </p>
 <p style="">
 A typical URL to link to a gene report page:
@@ -75,16 +75,16 @@ A typical URL to link to a gene report page:
 </p>
 
 <h3>Converting data types</h3>
-<p>When linking to a report page or a list analysis page you can convert the data type, for instance if you provide a Gene identifier and want to link to the corresponding Protein, you need to specify the class as Protein.</p>
+<p>When linking to a report page or a list analysis page you can convert the data type, for instance if you provide a Protein identifier and want to link to the corresponding Gene, you need to specify the class as Gene.</p>
 <p style="">
 The URL to use takes the form:
 
-<strong>www.flymine.org/query/portal.do?externalid=geneId&amp;class=proteinId</strong>
+<strong>www.flymine.org/query/portal.do?externalid=proteinId&amp;class=Gene</strong>
 </p>
 <p>
 Examples:
 <ul>
-  <li><a href="http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Protein" title="Running Query...">http://www.flymine.org/query/portal.do?externalid=FBgn0004053&amp;class=Protein</a></li>
+  <li><a href="http://www.flymine.org/query/portal.do?externalid=EVE_DROME&amp;class=Gene" title="Running Query...">http://www.flymine.org/query/portal.do?externalid=EVE_DROME&amp;class=Gene</a></li>
   <li><a href="http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Protein" title="Running Query...">http://www.flymine.org/query/portal.do?externalids=CG2262,CG3069,CG2859,CG5041,FBgn0036513&amp;class=Protein</a></li>
 </ul>
 </p>
