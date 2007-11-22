@@ -13,15 +13,9 @@ package org.intermine.bio.web;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.intermine.model.InterMineObject;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-
-import org.flymine.model.genomic.Organism;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +27,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.flymine.model.genomic.Organism;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
 
 /**
  *
@@ -62,21 +63,35 @@ public class AttributeLinkDisplayerController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response) {
         ServletContext servletContext = request.getSession().getServletContext();
         InterMineObject imo = (InterMineObject) request.getAttribute("object");
-        String className = DynamicUtil.decomposeClass(imo.getClass()).iterator().next().getName();
-        className = TypeUtil.unqualifiedName(className);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
+        Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
+        StringBuffer sb = new StringBuffer();
+        for (ClassDescriptor cd : classDescriptors) {
+            if (sb.length() <= 0) {
+                // (?: is a non-matching group
+                sb.append("(");
+            } else {
+                sb.append("|");
+            }
+            sb.append(TypeUtil.unqualifiedName(cd.getName()));
+        }
+        sb.append(")");
         Organism organismReference = null;
 
+        
         try {
             organismReference = (Organism) TypeUtil.getFieldValue(imo, "organism");
         } catch (IllegalAccessException e) {
             // no organism field
         }
 
-        String geneOrgKey;
+        String geneOrgKey = sb.toString() + "(\\.(";
         if (organismReference == null || organismReference.getTaxonId() == null) {
-            geneOrgKey = className;
+            geneOrgKey += null + "|\\*))?";
         } else {
-            geneOrgKey = className + '.' + organismReference.getTaxonId();
+            // we need to check against * as well in case we want it to work for all taxonIds
+            geneOrgKey += organismReference.getTaxonId() + "|\\*))?";
         }
 
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
@@ -87,14 +102,16 @@ public class AttributeLinkDisplayerController extends TilesAction
         final String regexp =
             "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)\\.(url|text|imageName)";
         Pattern p = Pattern.compile(regexp);
+        String className = null;
         for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
             Matcher matcher = p.matcher(key);
             if (matcher.matches()) {
                 String configKey = matcher.group(1);
-                String attrName = matcher.group(2);
-                String propType = matcher.group(3);
+                className = matcher.group(2);
+                String attrName = matcher.group(5);
+                String propType = matcher.group(6);
 
                 ConfigMap config;
                 if (linkConfigs.containsKey(configKey)) {
