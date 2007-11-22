@@ -114,7 +114,10 @@ sub set
       for my $other_item (@items) {
         if ($other_item->instance_of($field->referenced_classdescriptor())) {
           if ($field->is_one_to_many()) {
-            $other_item->set($field->reverse_reference_name(), $self);
+            my $current_rev_ref = $other_item->get($field->reverse_reference_name());
+            if (!defined $current_rev_ref || $current_rev_ref != $self) {
+              $other_item->set($field->reverse_reference_name(), $self);
+            }
           } else {
             if ($field->is_many_to_many()) {
               my @other_collection = @{$other_item->get($field->reverse_reference_name())};
@@ -134,6 +137,15 @@ sub set
       if (ref $field ne 'InterMine::Model::Reference') {
         die "tried to set field '$name' in class '", $self->to_string(),
            "' to something other than type: ", $field->field_type(), "\n";
+      }
+
+      if ($field->is_many_to_one()) {
+        # add this Item to the collection in the other Item
+        my @current_collection = @{$value->get($field->reverse_reference_name())};
+        if (!grep {$_ == $self} @current_collection) {
+          push @current_collection, $self;
+          $value->set($field->reverse_reference_name(), [@current_collection]);
+        }
       }
     }
   } else {
