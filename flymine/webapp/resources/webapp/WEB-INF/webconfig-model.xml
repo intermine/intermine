@@ -12,7 +12,7 @@
       <fieldconfig fieldExpr="description"/>
     </fields>
     <longdisplayers>
-      <displayer src="/model/diseaseLong.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -38,7 +38,7 @@
       <fieldconfig fieldExpr="alignment" showInResults="false" />
     </fields>
     <longdisplayers>
-      <displayer src="/model/pdbLink.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/modelledStructure.jsp"/>
     </longdisplayers>
   </class>
@@ -630,7 +630,7 @@
       <fieldconfig fieldExpr="name" />
     </fields>
     <longdisplayers>
-      <displayer src="/model/pathwayLink.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
