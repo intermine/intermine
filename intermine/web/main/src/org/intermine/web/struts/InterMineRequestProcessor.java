@@ -57,7 +57,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
         Arrays.asList(new String[] {
                           LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild",
                           "/objectDetails", "/examples", "/browseAction",
-                          "/collectionDetails", "/iqlQuery", "/login", "/feedback", "/portal",
+                          "/collectionDetails", "/iqlQuery", "/login", "/contact", "/portal",
                           "/templates", "/templateSearch", "/template", "/aspect",
                           "/ping", "/standalone", "/quickStart", "/importQuery", "/tree",
                           "/headMenu", "/htmlHead", "/dataCategories", "/bagDetails"

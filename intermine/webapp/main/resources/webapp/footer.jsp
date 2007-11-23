@@ -9,19 +9,19 @@
 
 
 
-      <c:if test="${pageName != 'feedback'}">
-        <div id="feedbackFormDivButton">
+      <c:if test="${pageName != 'contact'}">
+        <div id="contactFormDivButton">
           <im:vspacer height="11"/>
-          <div class="feedbackButton">
-             <a href="#" onclick="showFeedbackForm();return false">
-               <b>${WEB_PROPERTIES["feedback.title"]}</b>
+          <div class="contactButton">
+             <a href="#" onclick="showContactForm();return false">
+               <b>${WEB_PROPERTIES["contact.title"]}</b>
              </a>
           </div>
         </div>
       
-      <div id="feedbackFormDiv" style="display:none;">
+      <div id="contactFormDiv" style="display:none;">
             <im:vspacer height="11"/>
-              <tiles:get name="feedbackForm"/>
+              <tiles:get name="contactForm"/>
         </div>
       </c:if>
            

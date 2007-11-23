@@ -49,10 +49,10 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 
 <script type="text/javascript">
 <!--
-  function showFeedbackForm()
+  function showContactForm()
   {
-    document.getElementById('feedbackFormDiv').style.display='';
-    document.getElementById('feedbackFormDivButton').style.display='none';
+    document.getElementById('contactFormDiv').style.display='';
+    document.getElementById('contactFormDivButton').style.display='none';
     window.scrollTo(0, 99999);
     document.getElementById("fbname").focus();
   }
