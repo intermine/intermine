@@ -654,7 +654,7 @@
   <class className="org.flymine.model.genomic.MRNALocalisationResult">
     <fields>
       <fieldconfig fieldExpr="stage"/>
-      <fieldconfig fieldExpr="localisation"/>
+      <fieldconfig fieldExpr="expressed"/>
     </fields>
   </class>
 
