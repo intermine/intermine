@@ -83,18 +83,18 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             
-            if (userAgent != null && !profile.isLoggedIn()) {
-                for (String bot : bots) {
-                    if (userAgent.contains(bot)) {
-                        session.setMaxInactiveInterval(60);
-                        //TODO remove this!
-                        String msg = "Logged out robot with useragent " + userAgent 
-                        + " and username " + profile.getUsername();
-                        LOG.error(msg);
-                        break;
-                    }
-                }
-            }
+//            if (userAgent != null && !profile.isLoggedIn()) {
+//                for (String bot : bots) {
+//                    if (userAgent.contains(bot)) {
+//                        session.setMaxInactiveInterval(60);
+//                        //TODO remove this!
+//                        String msg = "Logged out robot with useragent " + userAgent 
+//                        + " and username " + profile.getUsername();
+//                        LOG.error(msg);
+//                        break;
+//                    }
+//                }
+//            }
             
             ServletContext sc = session.getServletContext();
             ProfileManager pm = (ProfileManager) sc.getAttribute(Constants.PROFILE_MANAGER);
@@ -144,6 +144,9 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 request.setAttribute(Globals.ERROR_KEY, messages);
                 processForwardConfig(request, response,
                                      new ActionForward(LOGON_PATH + ".do", true));
+                
+                
+                
             }
         } catch (Exception e) {
             request.getSession().invalidate(); // safer?
