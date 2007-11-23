@@ -65,10 +65,10 @@ public class ContactAction extends InterMineAction
             MessageResources strings = getResources(request);
             String host = (String) ((Map) session.getServletContext().
                         getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");
-            String from = ff.getEmail();
+            String from = ff.getMonkey();
             String subject = ff.getSubject();
             String text = MessageFormat.format(strings.getMessage("contact.template"),
-                                new Object[] {ff.getName(), ff.getEmail(), ff.getMessage()});
+                                new Object[] {ff.getName(), ff.getMonkey(), ff.getMessage()});
             String dest = (String) webProperties.get("feedback.destination");
             Properties properties = System.getProperties();
             properties.put("mail.smtp.host", host);
