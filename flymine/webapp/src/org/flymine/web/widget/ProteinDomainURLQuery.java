@@ -51,69 +51,8 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
      */
     public PathQuery generatePathQuery() {
 
-//        Query q = new Query();
-//        q.setDistinct(true);
-//        QueryClass qcGene = new QueryClass(Gene.class);
-//        QueryClass qcProtein = new QueryClass(Protein.class);
-//        QueryClass qcOrganism = new QueryClass(Organism.class);
-//        QueryClass qcProteinFeature = new QueryClass(ProteinFeature.class);
-//
-//        QueryField qfGeneId = new QueryField(qcGene, "id");
-//        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-//        QueryField qfInterpro = new QueryField(qcProteinFeature, "identifier");
-//
-//        q.addFrom(qcGene);
-//        q.addFrom(qcProtein);
-//        q.addFrom(qcOrganism);
-//        q.addFrom(qcProteinFeature);
-//
-//        q.addToSelect(qcGene);
-//
-//        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
-//
-//        // genes must be in bag
-//        BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-//        cs1.addConstraint(bc1);
-//
-//        // get organisms
-//        ArrayList organisms = (ArrayList) BioUtil.getOrganisms(os, bag);
-//
-//        // limit to organisms in the bag
-//        BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-//        cs1.addConstraint(bc2);
-//
-//        // gene is from organism
-//        QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-//        ContainsConstraint cc1 
-//        = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
-//        cs1.addConstraint(cc1);
-//
-//        // gene.Proteins CONTAINS protein
-//        QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "proteins");
-//        ContainsConstraint cc2 =
-//            new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcProtein);
-//        cs1.addConstraint(cc2);
-//
-//        // protein.ProteinFeatures CONTAINS proteinFeature
-//        QueryCollectionReference qr3 
-//        = new QueryCollectionReference(qcProtein, "proteinFeatures");
-//        ContainsConstraint cc3 =
-//            new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcProteinFeature);
-//        cs1.addConstraint(cc3);
-//
-//        SimpleConstraint sc = 
-//            new SimpleConstraint(qfInterpro, ConstraintOp.MATCHES, new QueryValue(key));
-//        cs1.addConstraint(sc);
-//
-//        q.setConstraint(cs1);
-
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-        
-//        (1) ProteinFeature > interpro ID
-//        (2) ProteinFeature > interpro name
-//        (3) ProteinFeature > objects > start
-//        (4) ProteinFeature > objects > end 
         
         List view = new ArrayList();
         view.add(MainHelper.makePath(model, q, "Gene.identifier"));

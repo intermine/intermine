@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
-import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -50,54 +49,6 @@ public class PathwayURLQuery implements EnrichmentWidgetURLQuery
      * @return Query a query to generate the results needed
      */
     public PathQuery generatePathQuery() {
-                       
-//        Query q = new Query();
-
-//        QueryClass qcGene = new QueryClass(Gene.class);
-//        QueryClass qcPub = new QueryClass(Publication.class);
-//        QueryClass qcOrganism = new QueryClass(Organism.class);
-//        
-//        QueryField qfGeneId = new QueryField(qcGene, "id");
-//        QueryField qfId = new QueryField(qcPub, "pubMedId");
-//        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-//        
-//        q.addFrom(qcGene);
-//        q.addFrom(qcPub);
-//        q.addFrom(qcOrganism);
-//        
-//        q.addToSelect(qcGene);
-//    
-//        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
-//
-//        // genes must be in bag
-//        BagConstraint bc1 =
-//            new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-//        cs1.addConstraint(bc1);
-//
-//
-        // get organisms
-        ArrayList organisms = (ArrayList) BioUtil.getOrganisms(os, bag);
-//
-//        // limit to organisms in the bag
-//        BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-//        cs1.addConstraint(bc2);
-//        
-//        // gene is from organism
-//        QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-//        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
-//        cs1.addConstraint(cc1);
-//        
-//        // gene.Publications CONTAINS pub
-//        QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "publications");
-//        ContainsConstraint cc2 =
-//            new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcPub);
-//        cs1.addConstraint(cc2);
-//        
-//        SimpleConstraint sc = 
-//            new SimpleConstraint(qfId, ConstraintOp.MATCHES, new QueryValue(key));
-//        cs1.addConstraint(sc);
-//
-//        q.setConstraint(cs1);
         
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);

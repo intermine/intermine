@@ -85,11 +85,6 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         view.add(MainHelper.makePath(model, q, "Gene.mRNALocalisationResults.stage"));
         view.add(MainHelper.makePath(model, q, "Gene.mRNALocalisationResults.expressed"));
         
-//        Gene > identifier
-//        Gene > organismDbId
-//        Gene > name
-//        Gene > organism > name 
-        
         q.setView(view);
         
         String bagType = bag.getType();

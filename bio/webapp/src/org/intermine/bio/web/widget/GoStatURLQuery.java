@@ -49,56 +49,6 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
      * @return Query a query to generate the results needed
      */
      public PathQuery generatePathQuery() {
-
-//        Query q = new Query();
-//
-//        QueryClass qcGene = new QueryClass(Gene.class);
-//        QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
-//        QueryClass qcOrganism = new QueryClass(Organism.class);
-//        QueryClass qcGo = new QueryClass(GOTerm.class);
-//
-//        QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
-//        QueryField qfGeneId = new QueryField(qcGene, "id");
-//        QueryField qfGoTerm = new QueryField(qcGo, "identifier");
-//
-//        q.addFrom(qcGene);
-//        q.addFrom(qcGoAnnotation);
-//        q.addFrom(qcOrganism);
-//        q.addFrom(qcGo);
-//
-//        q.addToSelect(qcGene);
-//
-//        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-//
-//        // genes must be in bag
-//        BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-//        cs.addConstraint(bc1);
-//
-//        // gene.goAnnotation CONTAINS GOAnnotation
-//        QueryCollectionReference qr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
-//        ContainsConstraint cc1 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcGoAnnotation);
-//        cs.addConstraint(cc1);
-//
-//        // gene is from organism
-//        QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
-//        ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
-//        cs.addConstraint(cc2);
-//
-//        // goannotation contains go term
-//        QueryObjectReference qr3 = new QueryObjectReference(qcGoAnnotation, "property");
-//        ContainsConstraint cc3 = new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcGo);
-//        cs.addConstraint(cc3);
-//
-//        // can't be a NOT relationship!
-//        SimpleConstraint sc1 = new SimpleConstraint(qfQualifier,
-//                                                    ConstraintOp.IS_NULL);
-//        cs.addConstraint(sc1);
-//
-//        SimpleConstraint sc2 = new SimpleConstraint(qfGoTerm,
-//                                                    ConstraintOp.EQUALS,
-//                                                    new QueryValue(key));
-//        cs.addConstraint(sc2);
-//        q.setConstraint(cs);
         
          Model model = os.getModel();
          PathQuery q = new PathQuery(model);
@@ -110,8 +60,6 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
          view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
          view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.identifier"));
          view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.name"));
-//         (1)  GO term
-//         (2)  GO term ID 
          
          q.setView(view);
          
