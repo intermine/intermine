@@ -22,7 +22,9 @@
       <displayer src="/model/employeeName.jsp" aspects="People"/>
     </longdisplayers>
     <bagdisplayers>
-      <bagtabledisplayer title="Department information" type="Department" collectionName="department" description="Most popular Departments for this bag" />
+      <bagtabledisplayer title="Department information" type="Department" collectionName="department" 
+      urlGen="org.intermine.model.testmodel.web.widget.EmployeeURLQuery" 
+      description="Most popular Departments for this bag" />
     </bagdisplayers>
   </class>
 
