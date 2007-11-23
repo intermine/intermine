@@ -12,10 +12,13 @@ INSTALLATION
 
 To install this module, run the following commands:
 
-    sudo cpan -i Test::XML Test::More XML::Parser::PerlSAX XML::Writer
+    sudo cpan -i XML::Parser::PerlSAX XML::Writer 
     perl Makefile.PL
     make
     make test
+
+To run the tests:
+    sudo cpan -i Test::XML Test::More IO::String
     make install   (or: sudo make install)
 
 
