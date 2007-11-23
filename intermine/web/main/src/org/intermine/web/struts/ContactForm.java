@@ -27,15 +27,15 @@ import org.intermine.web.logic.query.PathQueryBinding;
  *
  * @author  Thomas Riley
  */
-public class FeedbackForm extends ValidatorForm
+public class ContactForm extends ValidatorForm
 {
     private String name;
     private String email;
     private String subject;
     private String message;
     
-    /** Creates a new instance of FeedbackForm */
-    public FeedbackForm() {
+    /** Creates a new instance of ContactForm */
+    public ContactForm() {
     }
     
     /**
@@ -144,7 +144,7 @@ public class FeedbackForm extends ValidatorForm
                 errors = new ActionErrors();
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE,
-                    new ActionMessage("errors.feedback.invalidmessage"));
+                    new ActionMessage("errors.contact.invalidmessage"));
         }
         
         return errors;

@@ -36,9 +36,9 @@ import org.intermine.web.logic.Constants;
  *
  * @author Thomas Riley
  */
-public class FeedbackAction extends InterMineAction
+public class ContactAction extends InterMineAction
 {
-    protected static final Logger LOG = Logger.getLogger(FeedbackAction.class);
+    protected static final Logger LOG = Logger.getLogger(ContactAction.class);
     
     /** 
      * Method called when user has submitted valid feedback form
@@ -57,7 +57,7 @@ public class FeedbackAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        FeedbackForm ff = (FeedbackForm) form;
+        ContactForm ff = (ContactForm) form;
         
         try {
             Map webProperties = (Map) session.getServletContext()
@@ -67,7 +67,7 @@ public class FeedbackAction extends InterMineAction
                         getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");
             String from = ff.getEmail();
             String subject = ff.getSubject();
-            String text = MessageFormat.format(strings.getMessage("feedback.template"),
+            String text = MessageFormat.format(strings.getMessage("contact.template"),
                                 new Object[] {ff.getName(), ff.getEmail(), ff.getMessage()});
             String dest = (String) webProperties.get("feedback.destination");
             Properties properties = System.getProperties();
@@ -80,17 +80,17 @@ public class FeedbackAction extends InterMineAction
             message.setText(text);
             Transport.send(message);
             
-            recordMessage(new ActionMessage("feedback.sent"), request);
+            recordMessage(new ActionMessage("contact.sent"), request);
             
             // avoid showing form
             request.setAttribute("sent", Boolean.TRUE);
             ff.reset(mapping, request); // clear bean (we don't clear it if an error occurs)
         
         } catch (Exception e) {
-            recordError(new ActionMessage("feedback.failed", e), request, e, LOG);
+            recordError(new ActionMessage("contact.failed", e), request, e, LOG);
         }
 
-        return mapping.findForward("feedback");
+        return mapping.findForward("contact");
     }
 
 }

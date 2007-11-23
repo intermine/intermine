@@ -10,6 +10,6 @@ window.onload = function() {
 // -->
 </script>
 
-<tiles:get name="feedbackForm.jsp"/>
+<tiles:get name="contactForm.jsp"/>
 
 <!-- /feedback.jsp -->

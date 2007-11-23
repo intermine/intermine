@@ -4,29 +4,32 @@
 
 <!-- feedbackForm.jsp -->
 
+
+
+
 <html:xhtml/>
-<link rel="stylesheet" type="text/css" href="css/feedbackForm.css"/>
+<link rel="stylesheet" type="text/css" href="css/contactForm.css"/>
 <div class="body">
-  <html:form action="/feedbackAction" styleId="feedbackForm">
+  <html:form action="/contactAction" styleId="contactForm">
   <table cellspacing="0" cellpadding="3" border="0">
   <tr>
-    <td align="right"><fmt:message key="feedback.name"/></td>
+    <td align="right"><fmt:message key="contact.name"/></td>
     <td>
       <html:text property="name" size="40" styleId="fbname"/>
     </td>
   </tr>
   <tr>
-    <td align="right"><fmt:message key="feedback.email"/></td>
+    <td align="right"><fmt:message key="contact.email"/></td>
     <td>
       <html:text property="email" size="40"/>
     </td>
   </tr>
   <tr>
-    <td align="right"><fmt:message key="feedback.subject"/></td>
+    <td align="right"><fmt:message key="contact.subject"/></td>
     <td><html:text property="subject" size="40"/></td>
   </tr>
   <tr>
-    <td align="right" valign="top"><fmt:message key="feedback.message"/></td>
+    <td align="right" valign="top"><fmt:message key="contact.message"/></td>
     <td><html:textarea property="message" cols="80" rows="10" style="width: 100%" styleId="fbcomment"/></td>
   </tr>
   <tr>
