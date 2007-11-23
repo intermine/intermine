@@ -12,8 +12,10 @@ package org.intermine.bio.postprocess;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -22,6 +24,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -221,18 +224,53 @@ public class TransferSequences
         long startTime = System.currentTimeMillis();
         ObjectStore os = osw.getObjectStore();
         osw.beginTransaction();
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcObj = new QueryClass(Chromosome.class);
+        QueryField qfObj = new QueryField(qcObj, "id");
+        q.addFrom(qcObj);
+        q.addToSelect(qfObj);
 
-        Results results =
-            PostProcessUtil.findLocationAndObjects(os, Chromosome.class,
-                                                   LocatedSequenceFeature.class, true);
+        QueryClass qcSub = new QueryClass(LocatedSequenceFeature.class);
+        q.addFrom(qcSub);
+        q.addToSelect(qcSub);
+
+        q.addToOrderBy(qcSub);
+
+        QueryClass qcLoc = new QueryClass(Location.class);
+        q.addFrom(qcLoc);
+        q.addToSelect(qcLoc);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
+        cs.addConstraint(cc1);
+        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
+        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
+        cs.addConstraint(cc2);
+
+        QueryObjectReference lsfSeqRef = new QueryObjectReference(qcSub, "sequence");
+        ContainsConstraint lsfSeqRefNull = new ContainsConstraint(lsfSeqRef, ConstraintOp.IS_NULL);
+
+        cs.addConstraint(lsfSeqRefNull);
+
+        q.setConstraint(cs);
+
+        Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
+        indexesToCreate.add(qfObj);
+        indexesToCreate.add(qcLoc);
+        indexesToCreate.add(qcSub);
+        ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
+                                                   PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+        Results results = os.execute(q);
+
         results.setBatchSize(1000);
 
-        Iterator resIter = results.iterator();
+        Iterator<ResultsRow> resIter = results.iterator();
 
         long start = System.currentTimeMillis();
         int i = 0;
         while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
+            ResultsRow rr = resIter.next();
 
             Integer chrId = (Integer) rr.get(0);
             LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(1);
@@ -450,6 +488,12 @@ public class TransferSequences
         ContainsConstraint cc3 =
             new ContainsConstraint(sequenceRef, ConstraintOp.CONTAINS, qcExonSequence);
         cs.addConstraint(cc3);
+
+        QueryObjectReference transcriptSeqRef = new QueryObjectReference(qcTranscript, "sequence");
+        ContainsConstraint lsfSeqRefNull =
+            new ContainsConstraint(transcriptSeqRef, ConstraintOp.IS_NULL);
+
+        cs.addConstraint(lsfSeqRefNull);
 
         q.setConstraint(cs);
 
