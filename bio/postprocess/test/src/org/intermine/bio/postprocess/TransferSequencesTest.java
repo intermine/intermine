@@ -55,8 +55,7 @@ public class TransferSequencesTest extends TestCase
     private RepeatRegion [] storedRepeatRegions;
 
     private String expectedExonSequence0 =
-        "tatgactgtaacgttaatagcaaagtgagtgttaataatgataaaatagcagcaaaatct" +
-        "cttttccgagtaagacgttttccagtc";
+        "ctctctctctaaagagaggggaggaggaggactctctctct";
 
     private String expectedExonSequence4 =
         "caagtagtaagaaagacggatataaaaaaatagcctacagcaccccggattcccatgttg" +
@@ -101,6 +100,9 @@ public class TransferSequencesTest extends TestCase
         "tggtgagcgtg";
 
     private static final Logger LOG = Logger.getLogger(TransferSequencesTest.class);
+
+    private static final String EXPECTED_TRANSCRIPT_0_RESIDUES =
+        "tcaaatcaaattgataacttgtcaagtatccctatgcttgtcaagataaacct";
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
@@ -250,35 +252,27 @@ public class TransferSequencesTest extends TestCase
 
         Exon resExon0 = (Exon) os.getObjectById(storedExons[0].getId());
         Assert.assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues());
-        Assert.assertEquals(new Integer(expectedExonSequence0.length()), resExon0.getLength());
 
         Exon resExon4 = (Exon) os.getObjectById(storedExons[4].getId());
         Assert.assertEquals(expectedExonSequence4, resExon4.getSequence().getResidues());
-        Assert.assertEquals(new Integer(expectedExonSequence4.length()), resExon4.getLength());
 
         Exon resExon1 = (Exon) os.getObjectById(storedExons[1].getId());
         Assert.assertEquals(expectedExonSequence1, resExon1.getSequence().getResidues());
-        Assert.assertEquals(new Integer(expectedExonSequence1.length()), resExon1.getLength());
 
         Exon resExon2 = (Exon) os.getObjectById(storedExons[2].getId());
         Assert.assertEquals(expectedExonSequence2, resExon2.getSequence().getResidues());
-        Assert.assertEquals(new Integer(expectedExonSequence2.length()), resExon2.getLength());
 
         Exon resExon5 = (Exon) os.getObjectById(storedExons[5].getId());
         Assert.assertEquals(expectedExonSequence5, resExon5.getSequence().getResidues());
-        Assert.assertEquals(new Integer(expectedExonSequence5.length()), resExon5.getLength());
 
         Exon resExon3 = (Exon) os.getObjectById(storedExons[3].getId());
         Assert.assertEquals(expectedExonSequence3, resExon3.getSequence().getResidues());
-        Assert.assertEquals(new Integer(expectedExonSequence3.length()), resExon3.getLength());
 
         Exon resExon6 = (Exon) os.getObjectById(storedExons[6].getId());
         Assert.assertEquals(expectedExonSequence6, resExon6.getSequence().getResidues());
-        Assert.assertEquals(new Integer(expectedExonSequence6.length()), resExon6.getLength());
 
         Exon resExon7 = (Exon) os.getObjectById(storedExons[7].getId());
         Assert.assertEquals(expectedExonSequence7, resExon7.getSequence().getResidues());
-        Assert.assertEquals(new Integer(expectedExonSequence7.length()), resExon7.getLength());
 
         RepeatRegion resRepeatRegion0 =
             (RepeatRegion) os.getObjectById(storedRepeatRegions[0].getId());
@@ -307,9 +301,7 @@ public class TransferSequencesTest extends TestCase
 
         Transcript resTranscript0 =
             (Transcript) os.getObjectById(storedTranscripts[0].getId());
-        String expectedResidues0 = expectedExonSequence1
-            + expectedExonSequence2 + expectedExonSequence3;
-        assertEquals(expectedResidues0, resTranscript0.getSequence().getResidues());
+        assertEquals(EXPECTED_TRANSCRIPT_0_RESIDUES, resTranscript0.getSequence().getResidues());
 
         Transcript resTranscript1 =
             (Transcript) os.getObjectById(storedTranscripts[1].getId());
@@ -447,8 +439,9 @@ public class TransferSequencesTest extends TestCase
 
         Sequence transcriptSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        transcriptSequence.setResidues("tcaaatcaaattgataacttgtcaagtatccctatgcttgtcaagataaacct");
+        transcriptSequence.setResidues(EXPECTED_TRANSCRIPT_0_RESIDUES);
         storedTranscripts[0].setSequence(transcriptSequence);
+        toStore.add(transcriptSequence);
 
         storedExons = new Exon [8];
         for (int i = 0 ; i < storedExons.length ; i++) {
@@ -459,8 +452,9 @@ public class TransferSequencesTest extends TestCase
 
         Sequence exonSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        exonSequence.setResidues("ctctctctctaaagagaggggaggaggaggactctctctct");
+        exonSequence.setResidues(expectedExonSequence0);
         storedExons[0].setSequence(exonSequence);
+        toStore.add(exonSequence);
 
         List transcript0Exons = Arrays.asList(new Object[] {storedExons[1], storedExons[2],
             storedExons[3]});
