@@ -178,7 +178,7 @@
  		      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;fly-FISH&lt;/a&gt;.  Note that not all genes have yet been assayed by &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;fly-FISH&lt;/a&gt;"
 		      graphType="StackedBarChart" /> 
       
-      <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways" 
+      <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways" urlGen="org.intermine.bio.web.widget.PathwayURLQuery" 
 	 	         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." /> 
       
       <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"  
