@@ -14,7 +14,7 @@
           <im:vspacer height="11"/>
           <div class="contactButton">
              <a href="#" onclick="showContactForm();return false">
-               <b>${WEB_PROPERTIES["contact.title"]}</b>
+               <b>${WEB_PROPERTIES["feedback.title"]}</b>
              </a>
           </div>
         </div>

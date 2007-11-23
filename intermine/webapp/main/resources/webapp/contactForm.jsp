@@ -18,12 +18,15 @@
       <html:text property="name" size="40" styleId="fbname"/>
     </td>
   </tr>
-  <tr>
-    <td align="right"><fmt:message key="contact.email"/></td>
-    <td>
-      <html:text property="email" size="40"/>
-    </td>
-  </tr>
+  <fmt:message key="contact.email" var="emailLabel" />
+  
+  
+  <script type="text/javascript">
+  <!--
+	document.write("<tr><td align=\"right\">${emailLabel}</td><td><input type=\"text\" name=\"monkey\" size=\"40\"/></td></tr>");
+     -->
+</script>
+    
   <tr>
     <td align="right"><fmt:message key="contact.subject"/></td>
     <td><html:text property="subject" size="40"/></td>

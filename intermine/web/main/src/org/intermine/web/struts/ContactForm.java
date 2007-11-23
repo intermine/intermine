@@ -30,7 +30,7 @@ import org.intermine.web.logic.query.PathQueryBinding;
 public class ContactForm extends ValidatorForm
 {
     private String name;
-    private String email;
+    private String monkey;
     private String subject;
     private String message;
     
@@ -55,15 +55,15 @@ public class ContactForm extends ValidatorForm
     /**
      * @return email address of sender
      */
-    public String getEmail() {
-        return email;
+    public String getMonkey() {
+        return monkey;
     }
 
     /**
      * @param email address of sender
      */
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMonkey(String monkey) {
+        this.monkey = monkey;
     }
 
     /**
@@ -106,11 +106,11 @@ public class ContactForm extends ValidatorForm
 
         ActionErrors errors = super.validate(mapping, request);
         
-        if ((errors == null || errors.size() == 0) && getEmail().indexOf('@') == -1) {
+        if ((errors == null || errors.size() == 0) && getMonkey().indexOf('@') == -1) {
             if (errors == null) {
                 errors = new ActionErrors();
             }
-            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("errors.email", getEmail()));
+            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("errors.email", getMonkey()));
         }
         
         StringBuffer buffer = new StringBuffer();
@@ -122,8 +122,8 @@ public class ContactForm extends ValidatorForm
         }
         
         buffer = new StringBuffer();
-        if (containsHeaders(getEmail(), buffer)) {
-            email = buffer.toString();
+        if (containsHeaders(getMonkey(), buffer)) {
+            monkey = buffer.toString();
             badMessage = true;
         }
         
@@ -192,11 +192,11 @@ public class ContactForm extends ValidatorForm
         name = "";
         subject = "";
         message = createDefaultFeedbackMsg(request);
-        email = "";
+        monkey = "";
         
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
         if (profile != null) {
-            email = profile.getUsername();
+            monkey = profile.getUsername();
         }
     }
     
