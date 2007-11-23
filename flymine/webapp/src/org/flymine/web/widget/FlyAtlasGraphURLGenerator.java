@@ -77,10 +77,6 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.MRNASignalSEM"));
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.presentCall"));
         view.add(MainHelper.makePath(model, q, "FlyAtlasResult.enrichment"));
-//        MRNASignal
-//        MRNASignalSEM
-//        presentCall
-//        enrichment 
                 
         q.setView(view);
         
