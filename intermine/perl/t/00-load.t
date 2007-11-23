@@ -3,7 +3,7 @@
 use Test::More tests => 1;
 
 BEGIN {
-	use_ok( 'InterMine' );
+	use_ok( 'InterMine::ItemFactory' );
 }
 
-diag( "Testing InterMine $InterMine::VERSION, Perl $], $^X" );
+diag( "Testing InterMine $InterMine::ItemFactory::VERSION, Perl $], $^X" );
