@@ -106,8 +106,8 @@
                     <c:choose>
                       <c:when test="${entry.value.class.name ==
                                     'java.lang.String' && fn:length(entry.value) > maxLength
-                                    && ! object.fieldConfigMap[entry.key].doNotTruncate}
-                                    && ! fn:startsWith(fn:trim(object), 'http://')">
+                                    && ! object.fieldConfigMap[entry.key].doNotTruncate
+                                    && ! fn:startsWith(fn:trim(object), 'http://')}">
                         <im:value>
                           ${fn:substring(entry.value, 0, maxLength/2)}
                         </im:value>
