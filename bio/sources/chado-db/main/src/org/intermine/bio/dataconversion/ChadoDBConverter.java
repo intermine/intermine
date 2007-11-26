@@ -220,9 +220,6 @@ public class ChadoDBConverter extends BioDBConverter
 
     private void processFeatureTable(Connection connection)
         throws SQLException, ObjectStoreException {
-        Item dataSet = getDataSetItem(dataSetTitle); // Stores DataSet
-        Item dataSource = getDataSourceItem(dataSourceName); // Stores DataSource
-        Item organismItem = getOrganismItem(getTaxonIdInt()); // Stores Organism
         ResultSet res = getFeatureResultSet(connection);
         int count = 0;
         while (res.next()) {
@@ -241,91 +238,111 @@ public class ChadoDBConverter extends BioDBConverter
             uniqueName = fixIdentifier(interMineType, uniqueName);
             Item feature =  makeFeature(featureId, type, interMineType, name, uniqueName, seqlen);
             if (feature != null) {
-                FeatureData fdat = new FeatureData();
-                fdat.itemIdentifier = feature.getIdentifier();
-                fdat.uniqueName = uniqueName;
-                fdat.chadoFeatureName = name;
-                fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
-                feature.setReference("organism", organismItem);
-                if (seqlen > 0) {
-                    feature.setAttribute("length", String.valueOf(seqlen));
-                    fdat.flags |= FeatureData.LENGTH_SET;
-                }
-                MultiKey nameKey =
-                    new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
-                List<ConfigAction> nameActionList = getConfig().get(nameKey);
-
-                if (name != null) {
-                    if (nameActionList == null || nameActionList.size() == 0) {
-                        if (feature.checkAttribute("symbol")) {
-                            feature.setAttribute("symbol", name);
-                        } else {
-                            // do nothing, if the name needs to go in a different attribute
-                            // it will need to be configured
-                        }
-                    } else {
-                        for (ConfigAction action: nameActionList) {
-                            if (action instanceof SetFieldConfigAction) {
-                                SetFieldConfigAction attrAction =
-                                    (SetFieldConfigAction) action;
-                                feature.setAttribute(attrAction.getFieldName(), name);
-                                if (attrAction.getFieldName().equals("identifier")) {
-                                    fdat.flags |= FeatureData.IDENTIFIER_SET;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                MultiKey uniqueNameKey =
-                    new MultiKey("feature", fdat.interMineType, dataSourceName, "uniquename");
-                List<ConfigAction> uniqueNameActionList = getConfig().get(uniqueNameKey);
-                if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
-                    feature.setAttribute("identifier", uniqueName);
-                    fdat.flags |= FeatureData.IDENTIFIER_SET;
-                } else {
-                    for (ConfigAction action: uniqueNameActionList) {
-                        if (action instanceof SetFieldConfigAction) {
-                            SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
-                            feature.setAttribute(attrAction.getFieldName(), uniqueName);
-                            if (attrAction.getFieldName().equals("identifier")) {
-                                fdat.flags |= FeatureData.IDENTIFIER_SET;
-                            }
-                        }
-                    }
-                }
-
-                if (feature.canReference("sequence") && residues != null && residues.length() > 0) {
-                    Item sequence = createItem("Sequence");
-                    sequence.setAttribute("residues", residues);
-                    sequence.setAttribute("length", String.valueOf(seqlen));
-                    feature.setReference("sequence", sequence);
-                    store(sequence);
-                }
-
-                // don't set the evidence collection - that's done by processPubTable()
-                fdat.intermineObjectId = store(feature); // Stores Feature
-
-                // always create a synonym for the uniquename
-                createSynonym(fdat, "identifier", uniqueName, true, dataSet, EMPTY_ITEM_LIST,
-                              dataSource); // Stores Synonym
-
-                if (name != null) {
-                    if (nameActionList == null || nameActionList.size() == 0
-                        || nameActionList.contains(CREATE_SYNONYM_ACTION)) {
-                        name = fixIdentifier(interMineType, name);
-                        if (!fdat.existingSynonyms.contains(name)) {
-                            createSynonym(fdat, "name", name, false, dataSet, EMPTY_ITEM_LIST,
-                                          dataSource); // Stores Synonym
-                        }
-                    }
-                }
-                featureMap.put(featureId, fdat);
+                processAndStoreFeature(feature, featureId, uniqueName, name, seqlen, residues,
+                                       interMineType);
                 count++;
             }
         }
         LOG.info("created " + count + " features");
         res.close();
+    }
+
+    /**
+     * Create and store a new InterMineObject given data from a row of the feature table in a
+     * Chado database.
+     * @param uniqueName the uniquename from Chado
+     * @param name the name from Chado
+     * @param seqlen the sequence length from Chado
+     * @param residues the residues from Chado
+     * @param interMineType the genomic model class name to use for the new feature
+     * @throws ObjectStoreException if there is a problem while storing
+     */
+    private void processAndStoreFeature(Item feature, Integer featureId, String uniqueName,
+                                        String name, int seqlen, String residues,
+                                        String interMineType) throws ObjectStoreException {
+        Item dataSet = getDataSetItem(dataSetTitle); // Stores DataSet
+        Item dataSource = getDataSourceItem(dataSourceName); // Stores DataSource
+        Item organismItem = getOrganismItem(getTaxonIdInt()); // Stores Organism
+        FeatureData fdat = new FeatureData();
+        fdat.itemIdentifier = feature.getIdentifier();
+        fdat.uniqueName = uniqueName;
+        fdat.chadoFeatureName = name;
+        fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
+        feature.setReference("organism", organismItem);
+        if (seqlen > 0) {
+            feature.setAttribute("length", String.valueOf(seqlen));
+            fdat.flags |= FeatureData.LENGTH_SET;
+        }
+        MultiKey nameKey =
+            new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
+        List<ConfigAction> nameActionList = getConfig().get(nameKey);
+
+        if (name != null) {
+            if (nameActionList == null || nameActionList.size() == 0) {
+                if (feature.checkAttribute("symbol")) {
+                    feature.setAttribute("symbol", name);
+                } else {
+                    // do nothing, if the name needs to go in a different attribute
+                    // it will need to be configured
+                }
+            } else {
+                for (ConfigAction action: nameActionList) {
+                    if (action instanceof SetFieldConfigAction) {
+                        SetFieldConfigAction attrAction =
+                            (SetFieldConfigAction) action;
+                        feature.setAttribute(attrAction.getFieldName(), name);
+                        if (attrAction.getFieldName().equals("identifier")) {
+                            fdat.flags |= FeatureData.IDENTIFIER_SET;
+                        }
+                    }
+                }
+            }
+        }
+
+        MultiKey uniqueNameKey =
+            new MultiKey("feature", fdat.interMineType, dataSourceName, "uniquename");
+        List<ConfigAction> uniqueNameActionList = getConfig().get(uniqueNameKey);
+        if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
+            feature.setAttribute("identifier", uniqueName);
+            fdat.flags |= FeatureData.IDENTIFIER_SET;
+        } else {
+            for (ConfigAction action: uniqueNameActionList) {
+                if (action instanceof SetFieldConfigAction) {
+                    SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
+                    feature.setAttribute(attrAction.getFieldName(), uniqueName);
+                    if (attrAction.getFieldName().equals("identifier")) {
+                        fdat.flags |= FeatureData.IDENTIFIER_SET;
+                    }
+                }
+            }
+        }
+
+        if (feature.canReference("sequence") && residues != null && residues.length() > 0) {
+            Item sequence = createItem("Sequence");
+            sequence.setAttribute("residues", residues);
+            sequence.setAttribute("length", String.valueOf(seqlen));
+            feature.setReference("sequence", sequence);
+            store(sequence);
+        }
+
+        // don't set the evidence collection - that's done by processPubTable()
+        fdat.intermineObjectId = store(feature); // Stores Feature
+
+        // always create a synonym for the uniquename
+        createSynonym(fdat, "identifier", uniqueName, true, dataSet, EMPTY_ITEM_LIST,
+                      dataSource); // Stores Synonym
+
+        if (name != null) {
+            if (nameActionList == null || nameActionList.size() == 0
+                || nameActionList.contains(CREATE_SYNONYM_ACTION)) {
+                name = fixIdentifier(interMineType, name);
+                if (!fdat.existingSynonyms.contains(name)) {
+                    createSynonym(fdat, "name", name, false, dataSet, EMPTY_ITEM_LIST,
+                                  dataSource); // Stores Synonym
+                }
+            }
+        }
+        featureMap.put(featureId, fdat);
     }
 
     /**
