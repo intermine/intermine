@@ -35,7 +35,7 @@
          <ul>
          <li>
             <dt>
-              <i>Drosophila melanogaster</i> - Genome annotation release 5.3 from <a href="http://www.flybase.org" target="_new">
+              <i>Drosophila melanogaster</i> - Genome annotation release 5.4 from <a href="http://www.flybase.org" target="_new">
                 <html:img src="model/images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website" /> </a>.
             </dt></dl>
           <li>
