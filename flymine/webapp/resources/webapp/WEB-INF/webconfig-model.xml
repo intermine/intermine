@@ -585,7 +585,7 @@
       <fieldconfig fieldExpr="available"/>
     </fields>
     <longdisplayers>
-      <displayer src="/model/synonymDisplayer.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
