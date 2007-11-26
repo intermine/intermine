@@ -50,6 +50,12 @@
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
+		<source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
+			<property name="fasta.taxonId" value="6239"/>
+			<property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
+			<property name="fasta.includes" value="*chromosome*.fasta"/>
+			<property name="src.data.dir" location="/shared/data/wormbase/ws175"/>
+		</source>
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
@@ -67,7 +73,7 @@
            items DB, then into the final objectstore -->
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
-  </sources>
+	</sources>
   <post-processing>
     <post-process name="create-utr-references" dump="true"/>
     <post-process name="create-references" dump="true"/>
