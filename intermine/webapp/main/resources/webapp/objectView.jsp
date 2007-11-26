@@ -22,14 +22,13 @@
       <c:set var="maxLength" value="60"/>
       <c:choose>
         <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength}">
-
-          <html:link action="${detailsLink}">
-            <im:abbreviate value="${object}" length="${maxLength}"/>
+		 <html:link action="${detailsLink}">
+            <im:abbreviate value="${object}" length="${maxLength}"/>A
           </html:link>
         </c:when>
         <c:when test="${resultElement.keyField}">
           <html:link action="${detailsLink}">
-            <c:out value="${object}" default="${nullFieldText}"/>
+            <c:out value="${object}" default="${nullFieldText}"/>B
           </html:link>
           <c:if test="${(!empty columnType) && (resultElement.typeClass != columnType)}">
  	    [<c:out value="${resultElement.type}" />]
@@ -37,16 +36,16 @@
         </c:when>
         <c:when test="${!empty object && fn:startsWith(fn:trim(object), 'http://')}">
           <a href="${object}" class="value extlink">
-            ${object}
+            ${object}C
           </a>
         </c:when>
         <c:when test="${empty object}">
-          ${nullFieldText}
+          ${nullFieldText}D
         </c:when>
         <c:otherwise>
-          <html:link action="${detailsLink}">
-            <c:out value="${object}" default="${nullFieldText}"/>
-          </html:link>
+     
+            <c:out value="${object}" default="${nullFieldText}"/>E
+        
           <%-- for IE 6: --%> &nbsp;
         </c:otherwise>
       </c:choose>
