@@ -56,6 +56,7 @@
     <copy todir="${dist.www}">
       <fileset dir="${src.www}">
         <include name="images/*"/>
+        <include name="favicon.ico"/>
       </fileset>
     </copy>
 
@@ -94,7 +95,7 @@
   <target name="generate-help" depends="prepare" 
           description="Generate html for tour and copy images to build directory">
  
- 		<mkdir dir="${dist.www}/help"/>
+     <mkdir dir="${dist.www}/help"/>
  
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/help/whatcanidoonthispage/whatcanido.html"/>
