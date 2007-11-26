@@ -56,7 +56,7 @@ class ProfileHandler extends DefaultHandler
     private Map savedTemplates;
     private Set tags;
     private List<Item> items;
-    private Map idObjectMap;
+    private Map<Integer, InterMineObject> idObjectMap;
     private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
 
@@ -81,7 +81,7 @@ class ProfileHandler extends DefaultHandler
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
      */
-    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader, 
+    public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
                           ServletContext servletContext, ObjectStoreWriter osw,
                           boolean abortOnError) {
         this(profileManager, idUpgrader, null, null, new HashSet(), servletContext, osw,
@@ -103,7 +103,7 @@ class ProfileHandler extends DefaultHandler
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
                           String defaultUsername, String defaultPassword, Set tags,
-                          ServletContext servletContext, ObjectStoreWriter osw, 
+                          ServletContext servletContext, ObjectStoreWriter osw,
                           boolean abortOnError) {
         super();
         this.profileManager = profileManager;
@@ -119,7 +119,7 @@ class ProfileHandler extends DefaultHandler
     }
 
     /**
-     * Create a new ProfileHandler.  Throw an exception if there is a problem while reading 
+     * Create a new ProfileHandler.  Throw an exception if there is a problem while reading
      * @param profileManager the ProfileManager to pass to the Profile constructor
      * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
      * correspond to object in old bags.
@@ -141,7 +141,7 @@ class ProfileHandler extends DefaultHandler
      * @return the new Profile
      */
     public Profile getProfile() {
-        Profile retval = new Profile(profileManager, username, null, password, savedQueries, 
+        Profile retval = new Profile(profileManager, username, null, password, savedQueries,
                                      savedBags, savedTemplates);
         return retval;
     }
@@ -200,24 +200,14 @@ class ProfileHandler extends DefaultHandler
             items = ((FullHandler) subHandler).getItems();
             idObjectMap = new HashMap();
             Model model = profileManager.getObjectStore().getModel();
-            List<InterMineObject> objects = new ArrayList();
-            for (Item item: items) {
-                try {
-                    List<Item> oneItemList = new ArrayList<Item>();
-                    oneItemList.add(item);
-                    objects.addAll(FullParser.realiseObjects(oneItemList, model, true, false));
-                } catch (ClassNotFoundException e) {
-                    String message = "cannot turn item into object";
-                    if (abortOnError) {
-                        throw new RuntimeException(message, e);
-                    } else {
-                        LOG.warn(message + ": " + item);
-                    }
-                }
+            List<InterMineObject> objects;
+            try {
+                objects = FullParser.realiseObjects(items, model, true, false);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("unexpected exception", e);
             }
-            Iterator objectIter = objects.iterator();
-            while (objectIter.hasNext()) {
-                InterMineObject object = (InterMineObject) objectIter.next();
+
+            for (InterMineObject object: objects) {
                 idObjectMap.put(object.getId(), object);
             }
         }
