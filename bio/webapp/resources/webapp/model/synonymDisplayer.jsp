@@ -3,6 +3,8 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
+<!-- THID IS NOW OBSOLETE AND SHOULD USE AN attributeLinkDisplayer INSTEAD -->
+
 <!-- synonymDisplayer.jsp -->
 <fmt:setBundle basename="model"/>
 
