@@ -73,7 +73,7 @@ public class ChadoDBConverter extends BioDBConverter
 
     private static final List<Item> EMPTY_ITEM_LIST = Collections.emptyList();
 
-    private static final List<String> FEATURES = Arrays.asList(
+    private static final List<String> DEFAULT_FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
             "CDS", "intron", "exon",
             "five_prime_untranslated_region",
@@ -366,7 +366,7 @@ public class ChadoDBConverter extends BioDBConverter
      * @return the list of features
      */
     protected List<String> getFeatures() {
-        return FEATURES;
+        return DEFAULT_FEATURES;
     }
 
     /**
