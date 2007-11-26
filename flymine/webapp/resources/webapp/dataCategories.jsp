@@ -34,7 +34,7 @@
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
-    <td> Genome annotation - Release 5.3</td>
+    <td> Genome annotation - Release 5.4</td>
     <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
@@ -286,7 +286,7 @@
   </tr>
 
 
-  <tr><td rowspan="3" class="leftcol">
+  <tr><td rowspan="4" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
         <p> <img src="model/images/marray.gif" /></p>
         <p> Gene Expression</p></html:link></td>
@@ -313,6 +313,13 @@
     <td> &nbsp;</td>
   </tr>
 
+  <tr>
+    <td> <i>A. gambiae</i> </td>
+    <td> Microarray-based gene expression data for the life cycle of <i>A. gambiae</i></td>
+    <td> <a href="http://www.ebi.ac.uk/arrayexpress/" target="_new"> ArrayExpress </a> - Experiment E-TABM-186</td>
+    <td> Koutsos et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 17563388" target="_new">PubMed: 17563388</a></td>
+    <td> &nbsp;</td>
+  </tr>
 
 
   <tr><td rowspan="4" class="leftcol">
@@ -397,7 +404,7 @@
         <p> Resources</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions and deletions</td>
-    <td> <a href="http://www.drosdel.org.uk/" target="_new">DrosDel; loaded from FlyBase v.5.3</a></td>
+    <td> <a href="http://www.drosdel.org.uk/" target="_new">DrosDel</a></td>
     <td> Ryder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15238529" target="_new">PubMed: 15238529</a></td>
 
 	  <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
