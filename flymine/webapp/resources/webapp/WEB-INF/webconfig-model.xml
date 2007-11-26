@@ -61,7 +61,7 @@
     </fields>
 
     <longdisplayers>
-      <displayer src="/model/publication.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -96,7 +96,7 @@
       <fieldconfig fieldExpr="taxonId" />
     </fields>
     <longdisplayers>
-      <displayer src="/model/organismLong.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -264,15 +264,6 @@
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
     <tabledisplayer src="/model/proteinShortDisplayer.jsp"/>
-  </class>
-
-  <class className="org.flymine.model.genomic.ProteinSequenceFamily">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-    <longdisplayers>
-      <displayer src="/model/pfamNameLink.jsp"/>
-    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Transcript">
