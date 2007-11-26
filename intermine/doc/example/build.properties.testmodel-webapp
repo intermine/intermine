@@ -14,4 +14,3 @@ superuser.account=you@yourdomain.com
 # You don't need to change these
 webapp.os.alias=os.unittest
 webapp.userprofile.os.alias=osw.userprofile-test
-project.standalone=true
