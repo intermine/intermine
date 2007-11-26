@@ -86,6 +86,33 @@ Arbeitman et al reported gene expression patterns for nearly one third of all <i
 </dl>
 </div>
 
+
+
+<h4>
+  <a href="javascript:toggleDiv('hiddenDiv4');">
+    <img id='hiddenDiv4Toggle' src="images/disclosed.gif"/>
+     <i>A. gambiae</i>  - Gene expression data from ArrayExpress ...
+   </a>
+</h4>
+
+
+
+<div id="hiddenDiv4" class="dataSetDescription"> 
+<dl>
+<dt>
+Koutsos et al (2007) PNAS 104:11304-11309 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17563388" target="_new">PubMed: 17563388</a>) - Life cycle transcriptome of the malaria mosquito <i>A. gambiae</i> and comparison with the fruitfly <i>Drosophila melanogaster</i> - ArrayExpress: <a href="http://www.ebi.ac.uk/microarray-as/aer/result?queryFor=Experiment&eAccession=E-TABM-186/" target="_new">E-TABM-186</a>
+
+</dt>
+
+<dd>
+Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determine genome-wide expression profiles during the <i>A. gambiae</i> life cycle.
+</dd>
+
+</dl>
+</div>
+
+
+
 </div>
 </td>
 
