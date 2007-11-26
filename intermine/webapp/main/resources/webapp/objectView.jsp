@@ -42,11 +42,9 @@
         <c:when test="${empty object}">
           ${nullFieldText}
         </c:when>
-        <c:otherwise>
-     
+        <c:otherwise>     
             <c:out value="${object}" default="${nullFieldText}"/>
-        
-          <%-- for IE 6: --%> &nbsp;
+            <%-- for IE 6: --%> &nbsp;
         </c:otherwise>
       </c:choose>
     </c:when>
