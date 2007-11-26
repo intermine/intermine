@@ -77,7 +77,8 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         view.add(MainHelper.makePath(model, q, "Gene.name"));
         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
         view.add(MainHelper.makePath(model, q, "Gene.chromosome.identifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.chromosome.length"));
+        view.add(MainHelper.makePath(model, q, "Gene.chromosomeLocation.start"));
+        view.add(MainHelper.makePath(model, q, "Gene.chromosomeLocation.end"));
         
         q.setView(view);
 
