@@ -301,10 +301,11 @@
                       break;
                     }
                   }
-                  if (!set)
+                  // we don't want to do this if it's a CONTAINS constraint
+/*                 if (!set)
                   {
                     document.templateForm["attributeValues(${index})"].value = select.value;
-                  }
+                  }*/
                   updateConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"],
                                        document.templateForm["attributeOptions(${index})"],
                                        document.templateForm["attributeValues(${index})"]);
