@@ -17,9 +17,11 @@ import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
@@ -66,21 +68,32 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
         
-        List view = new ArrayList();
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.identifier"));
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.organismDbId"));
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.name"));        
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.genes.organism.name"));        
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.assays.name"));
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.affyCall"));
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.MRNASignal"));
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.MRNASignalSEM"));
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.presentCall"));
-        view.add(MainHelper.makePath(model, q, "FlyAtlasResult.enrichment"));
-                
-        q.setView(view);
+        Path identifier = MainHelper.makePath(model, q, "FlyAtlasResult.genes.identifier");
+        Path organismDbId = MainHelper.makePath(model, q, "FlyAtlasResult.genes.organismDbId");
+        Path name = MainHelper.makePath(model, q, "FlyAtlasResult.genes.name");
+        Path org = MainHelper.makePath(model, q, "FlyAtlasResult.genes.organism.name");
+        Path assays = MainHelper.makePath(model, q, "FlyAtlasResult.assays.name");
+        Path enrichment = MainHelper.makePath(model, q, "FlyAtlasResult.enrichment");
+        Path affyCall = MainHelper.makePath(model, q, "FlyAtlasResult.affyCall");
+        Path signal = MainHelper.makePath(model, q, "FlyAtlasResult.MRNASignal");
+        Path sem = MainHelper.makePath(model, q, "FlyAtlasResult.MRNASignalSEM");
+        Path presentCall = MainHelper.makePath(model, q, "FlyAtlasResult.presentCall");
         
-        String bagType = bag.getType();
+        List<Path> view = new ArrayList<Path>();
+                
+        view.add(identifier);
+        view.add(organismDbId);
+        view.add(name);
+        view.add(org);
+        view.add(assays);
+        view.add(affyCall);
+        view.add(enrichment);        
+        view.add(signal);
+        view.add(sem);
+        view.add(presentCall);
+        
+        q.setView(view);
+
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
         
@@ -104,6 +117,23 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         seriesNode.getConstraints().add(seriesConstraint);
         
         q.setConstraintLogic("A and B and C");
+
+        String direction = "asc";
+        if (category.toLowerCase().equals("up")) {
+            direction = "desc";
+        }
+        
+        List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
+        
+        sortOrder.add(new OrderBy(enrichment, direction));        
+        sortOrder.add(new OrderBy(identifier, "asc"));
+        sortOrder.add(new OrderBy(organismDbId, "asc"));
+        sortOrder.add(new OrderBy(name, "asc"));
+        sortOrder.add(new OrderBy(assays, "asc"));
+        sortOrder.add(new OrderBy(affyCall, "asc"));      
+        
+        q.setSortOrder(sortOrder);
+        
         q.syncLogicExpression("and");
         
         return q; 
