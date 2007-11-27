@@ -11,34 +11,34 @@
 
 <ul id="nav">
   <li id="home" <c:if test="${tab == 'begin'}">class="activelink"</c:if>>
-    <html:link action="/begin">
+    <a href="/${WEB_PROPERTIES['webapp.path']}/begin.do">
       <fmt:message key="menu.begin"/>
-    </html:link>
+    </a>
   </li>
   <li id="templates"  <c:if test="${tab == 'templates'}">class="activelink"</c:if>>
-     <html:link action="/templates">
+     <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">
       <fmt:message key="menu.templates"/>
-    </html:link>
+    </a>
   </li>
   <li id="bags" <c:if test="${tab == 'bag'}">class="activelink"</c:if>>
-    <html:link action="/bag">
+    <a href="/${WEB_PROPERTIES['webapp.path']}/bag.do">
       <fmt:message key="menu.bag"/>
-    </html:link>
+    </a>
   </li>
   <li id="query"  <c:if test="${tab == 'customQuery'}">class="activelink"</c:if>>
-    <html:link action="/customQuery">
+    <a href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do">
       <fmt:message key="menu.customQuery"/>&nbsp;
-    </html:link>
+    </a>
   </li>
   <li id="category"  <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
-    <html:link action="/dataCategories.do">
+    <a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do">
       <fmt:message key="menu.dataCategories"/>
-    </html:link>
+    </a>
   </li>
   <li id="mymine"  <c:if test="${tab == 'mymine'}">class="activelink"</c:if>>
-    <html:link action="/mymine.do">
+    <a href="/${WEB_PROPERTIES['webapp.path']}/mymine.do">
       <fmt:message key="menu.mymine"/>
-    </html:link>
+    </a>
   </li>
   </ul>
 

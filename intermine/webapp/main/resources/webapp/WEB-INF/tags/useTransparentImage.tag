@@ -41,9 +41,9 @@
   </c:otherwise>
 </c:choose>
 
-<html:link action="${link}" >
+<a href="${link}" rel="NOFOLLOW">
   <div class="${id}" style="float:${floatValue}" title="${title}">&nbsp</div>
-</html:link>
+</a>
 <c:if test="${! empty breakFloat && breakFloat == 'true'}">
   <div style="clear:${floatValue};width:${width}"></div>
 </c:if>

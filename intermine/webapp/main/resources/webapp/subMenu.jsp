@@ -44,7 +44,7 @@
       </li>
     </c:when>
     <c:otherwise>
-      <li><html:link action="${tab}?subtab=${tabArray[2]}"><fmt:message key="${tabArray[1]}"/></html:link></li>
+      <li><a href="/${WEB_PROPERTIES['webapp.path']}/${tab}?subtab=${tabArray[2]}"><fmt:message key="${tabArray[1]}"/></a></li>
     </c:otherwise>
   </c:choose>
   <c:set var="count" value="${count+1}"/>

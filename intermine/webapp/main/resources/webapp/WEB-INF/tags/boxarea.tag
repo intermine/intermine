@@ -26,7 +26,7 @@
     <dt><h1 id="${htmlId}">
       <c:choose>
         <c:when test="${!empty titleLink}">
-          <html:link action="${titleLink}">${title}</html:link>
+          <a href="${titleLink}" rel="NOFOLLOW">${title}</a>
         </c:when>
         <c:otherwise>
           <c:out value="${title}"/>

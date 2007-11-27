@@ -23,7 +23,7 @@ if (returnToPath != null) {
 <c:choose>
   <c:when test="${!empty PROFILE_MANAGER && empty PROFILE.username}">
   
-    <a href="<html:rewrite page="/login.do${returnToString}"/>" rel="NOFOLLOW">
+    <a href="/${WEB_PROPERTIES['webapp.path']}/login.do${returnToString}" rel="NOFOLLOW">
       <c:if test="${empty loginMessage}">
         <fmt:message var="loginMessage" key="menu.login"/>
       </c:if>
