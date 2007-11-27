@@ -17,11 +17,11 @@
   <c:set target="${linkParams}" property="trail" value="|query" />
 </jsp:useBean>
 
-<a href="/${WEB_PROPERTIES['webapp.path']}/loadQuery.do" name="linkParams" rel="NOFOLLOW">
+<html:link action="/loadQuery" name="linkParams">
   <span>
     ${text}
     <c:if test="${showArrow}">
       <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
     </c:if>
   </span>
-</a>
+</html:link>
