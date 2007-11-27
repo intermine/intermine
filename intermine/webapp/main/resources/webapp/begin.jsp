@@ -19,14 +19,14 @@
 	         <c:set var="set" value="${entry.value}"/>
 	         <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
                    <td style="height:80px;padding:4px">
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect?name=${set.name}">
+                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
                        <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon"
                             title="Click here to view the ${set.name} Data Category"
                             width="40px" height="40px" />
                      </a>
                    </td>
                    <td>
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect?name=${set.name}">
+                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
                        ${set.name}
                      </a>
                    </td>
