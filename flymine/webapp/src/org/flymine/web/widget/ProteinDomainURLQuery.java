@@ -75,7 +75,7 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
         // can't be a NOT relationship!
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode interproNode = q.addNode("Gene.proteins.proteinFeatures.interproId");
+        PathNode interproNode = q.addNode("Gene.proteins.proteinFeatures.identifier");
         Constraint interproConstraint 
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         interproNode.getConstraints().add(interproConstraint);
