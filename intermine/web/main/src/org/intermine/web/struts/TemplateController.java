@@ -176,12 +176,12 @@ public class TemplateController extends TilesAction
         Map<String, InterMineBag> searchBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
 
-        Map<String, PathNode> editableNodesMap = new HashMap();
+        Map<String, PathNode> editableNodesMap = new HashMap<String, PathNode>();
         for (PathNode node : template.getEditableNodes()) {
             editableNodesMap.put(node.getPathString(), node);
         }
 
-        Map<String, PathNode> constrainedNodesMap = new HashMap();
+        Map<String, PathNode> constrainedNodesMap = new HashMap<String, PathNode>();
         for (Map.Entry<String, PathNode> nodeEntry : template.getNodes().entrySet()) {
             PathNode node = nodeEntry.getValue();
             if (node.getConstraints().size() > 0) {
