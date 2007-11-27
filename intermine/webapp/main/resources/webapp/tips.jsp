@@ -8,7 +8,7 @@
 <c:forEach begin="1" end="${n}" var="tipno"> 
   <p>
     <jsp:include page="tips/tip${tipno}_short.jsp"/><br/>
-    <html:link action="/tip?id=${tipno}" target="_top">Read more &gt;&gt;</html:link>
+    <a href="/${WEB_PROPERTIES['webapp.path']}/tip.do?id=${tipno}" target="_top">Read more &gt;&gt;</a>
   </p>
 </c:forEach>
 </div>

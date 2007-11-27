@@ -11,7 +11,7 @@
 <div class="body">
         
 <!-- First column -->
-     <im:boxarea title="Data Categories" titleLink="dataCategories" stylename="plainbox" floatValue="left" fixedWidth="300px">
+     <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
      <em><p><fmt:message key="begin.data"/></p></em>
      <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
           <table cellpadding="0" cellspacing="0" border="0"><tr>
@@ -19,16 +19,16 @@
 	         <c:set var="set" value="${entry.value}"/>
 	         <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
                    <td style="height:80px;padding:4px">
-                     <html:link action="/aspect?name=${set.name}">
+                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect?name=${set.name}">
                        <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon"
                             title="Click here to view the ${set.name} Data Category"
                             width="40px" height="40px" />
-                     </html:link>
+                     </a>
                    </td>
                    <td>
-                     <html:link action="/aspect?name=${set.name}">
+                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect?name=${set.name}">
                        ${set.name}
-                     </html:link>
+                     </a>
                    </td>
              </c:forEach>
           </tr></table>
@@ -52,11 +52,11 @@
       <div style="clear:right;height:1em"></div>
   </im:boxarea>	
 
-      <im:boxarea title="Templates" titleLink="/templates.do" stylename="gradientbox">
+      <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>
         <br/>
         <div>
-          Example templates (<html:link action="/templates.do">${templateCount} total</html:link>):
+          Example templates (<a href="/${WEB_PROPERTIES['webapp.path']}/templates.do">${templateCount} total</a>):
         </div>
         <div id="templatesList" class="frontBoxList">
           <tiles:insert name="webSearchableList.tile">
@@ -72,14 +72,14 @@
             <tiles:put name="showSearchBox" value="false"/>
           </tiles:insert>
         </div>
-        <im:useTransparentImage src="/theme/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" link="templates" height="22px" width="153px" floatValue="right" breakFloat="true" />
+        <im:useTransparentImage src="/theme/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" link="/${WEB_PROPERTIES['webapp.path']}/templates.do" height="22px" width="153px" floatValue="right" breakFloat="true" />
       </im:boxarea>
      
-      <im:boxarea title="Lists" titleLink="/bag.do" stylename="gradientbox">
+      <im:boxarea title="Lists" titleLink="/${WEB_PROPERTIES['webapp.path']}/bag.do" stylename="gradientbox">
         <p><em><fmt:message key="begin.bags"/></em></p>
         <br/>
         <div>
-          Example lists (<html:link action="/bag.do?subtab=view">${bagCount} total</html:link>):
+          Example lists (<a href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view">${bagCount} total</a>):
         </div>
         <div id="bagsList" class="frontBoxList">
         <tiles:insert name="webSearchableList.tile">
@@ -94,26 +94,26 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         </div>
-        <im:useTransparentImage src="/theme/view_lists.png" id="view_lists" title="Click here to View Lists" link="bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
-        <im:useTransparentImage src="/theme/create_lists.png" id="create_lists" title="Click here to Upload Lists" link="bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/theme/view_lists.png" id="view_lists" title="Click here to View Lists" link="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" height="32px" width="115px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/theme/create_lists.png" id="create_lists" title="Click here to Upload Lists" link="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:boxarea>
 
-      <im:boxarea title="Query Builder" titleLink="/customQuery.do" stylename="gradientbox">
+      <im:boxarea title="Query Builder" titleLink="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" stylename="gradientbox">
         <p><em><fmt:message key="begin.querybuilder"/></em></p>
         <br/>
         <div>
           <div id="qbStartQuery">
             Start a query from:
             <!-- loop through starting classes -->
-            <c:forEach var="entry" items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status"><c:if test="${status.count != 1}">,</c:if>&nbsp;<a href="<html:rewrite page="/queryClassSelect.do"/>?action=Select&className=${entry}" rel="NOFOLLOW">${entry}</a></c:forEach>
+            <c:forEach var="entry" items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status"><c:if test="${status.count != 1}">,</c:if>&nbsp;<a href="/${WEB_PROPERTIES['webapp.path']}/queryClassSelect.do?action=Select&className=${entry}" rel="NOFOLLOW">${entry}</a></c:forEach>
           </div>
         </div>
         <div id="qbImport">
-          <html:link action="/importQueries.do?query_builder=yes">
+          <a href="/${WEB_PROPERTIES['webapp.path']}/importQueries.do?query_builder=yes">
             <fmt:message key="begin.importQuery"/>
-          </html:link>
+          </a>
         </div>
-        <im:useTransparentImage src="/theme/build_a_query.png" id="build_a_query" title="Click here to Build A Query" link="customQuery" height="22px" width="120px" floatValue="right" breakFloat="true"/>
+        <im:useTransparentImage src="/theme/build_a_query.png" id="build_a_query" title="Click here to Build A Query" link="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" height="22px" width="120px" floatValue="right" breakFloat="true"/>
       </im:boxarea>
 </div>
 
