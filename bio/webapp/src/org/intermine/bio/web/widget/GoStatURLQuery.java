@@ -60,6 +60,8 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
          view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
          view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.identifier"));
          view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.name"));
+         view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.actualGoTerms.identifier"));
+         view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.actualGoTerms.name"));
          
          q.setView(view);
          
