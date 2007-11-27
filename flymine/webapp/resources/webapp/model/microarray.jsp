@@ -139,6 +139,23 @@ Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determ
              </im:querylink>
             </li>
 
+            <li>
+             <im:querylink text="All results from Koutsos et al for <i>A. gambiae genes</i> " skipBuilder="true">
+            <query name="" model="genomic" view="Gene.identifier Gene.microArrayResults.material.identifier Gene.microArrayResults.value Gene.microArrayResults.standardError Gene.microArrayResults.type Gene.microArrayResults.assays.name" sortOrder="Gene.identifier asc">
+  <node path="Gene" type="Gene">
+  </node>
+  <node path="Gene.organism" type="Organism">
+  </node>
+  <node path="Gene.organism.name" type="String">
+    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+  <node path="Gene.microArrayResults" type="AGambiaeLifeCycle">
+  </node>
+</query>
+             </im:querylink>
+            </li>
+
           </ul>
         </div>
       </td>
