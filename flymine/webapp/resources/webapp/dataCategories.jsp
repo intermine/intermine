@@ -455,7 +455,7 @@
         <p> Literature</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 17th October 2007</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 14th November 2007</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -471,7 +471,7 @@
   <tr>
     <td> <i>S. cerevisiae</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 17th October 2007</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 14th November 2007</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
