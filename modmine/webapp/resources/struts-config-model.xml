@@ -14,7 +14,7 @@
             type="org.flymine.web.GeneMicroArrayDisplayerController"/>
 
     <action path="/proteinInteractionRenderer"
-            type="org.flymine.web.ProteinInteractionImgRenderer"/>
+            type="org.intermine.bio.web.widget.ProteinInteractionImgRenderer"/>
     
 	<action path="/initOrthologueDisplayer" 
 		type="org.flymine.web.OrthologueDisplayerController"/>
