@@ -38,7 +38,7 @@ if (${!empty constrainOnBag}) {
 <html:form action="/mainAction" styleId="mainForm">
 
   <html:hidden property="path" value="${editingNode.pathString}"/>
-
+	<html:hidden property="editingConstraintEditable" value="${editingConstraintEditable}"/>
   <c:if test="${editingConstraintIndex != null}">
     <html:hidden property="cindex" value="${editingConstraintIndex}"/>
   </c:if>

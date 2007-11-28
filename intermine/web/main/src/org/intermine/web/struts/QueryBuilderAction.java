@@ -62,9 +62,10 @@ public class QueryBuilderAction extends InterMineAction
                 .getParameter("cindex")) : null;
 
         String label = null, id = null, code = query.getUnusedConstraintCode();
-        boolean editable = false;
-
-
+        //boolean editable = false;
+        String editingConstraintEditable = request.getParameter("editingConstraintEditable");
+        boolean editable = Boolean.parseBoolean(editingConstraintEditable);
+            
         if (cindex != null) {
             // We're updating an existing constraint, just remove the old one
             Constraint c = node.getConstraints().get(cindex.intValue());
