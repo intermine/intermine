@@ -49,7 +49,7 @@ function swapInputs(open) {
        * user picks an operator contained in fixedOptionsOps then
        * the input box is hidden and the user can only choose
        **********************************************************/
-      function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
+      function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement, fixedOps)
       {
         if (attrOptsElement == null)
           return;
@@ -73,13 +73,13 @@ function swapInputs(open) {
        * Init attribute value with selected item and hide input box if
        * required
        **********************************************************/
-      function initConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
+      function initConstraintForm(index, attrOpElement, attrOptsElement, attrValElement, fixedOps)
       {
         if (attrOptsElement == null)
           return;
 
-        var init = '${editingConstraintValue}';
+        var init = attrValElement.value;
         attrValElement.value = (init != '') ? init : attrOptsElement.value;
 
-        updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
+        updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement, fixedOps);
       }
