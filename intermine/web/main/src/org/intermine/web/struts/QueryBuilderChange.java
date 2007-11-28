@@ -281,10 +281,12 @@ public class QueryBuilderChange extends DispatchAction
             session.setAttribute("editingConstraintValue", c.getDisplayValue());
             session.setAttribute("editingConstraintOperand", c.getOp().getIndex());
             session.setAttribute("editingConstraintExtraValue", c.getExtraValue());
+            session.setAttribute("editingConstraintEditable", Boolean.valueOf(c.isEditable()));
         } else {
             session.removeAttribute("editingConstraintValue");
             session.removeAttribute("editingConstraintOperand");
             session.removeAttribute("editingConstraintExtraValue");
+            session.removeAttribute("editingConstraintEditable");
         }
 
         return mapping.findForward("query");
