@@ -10,7 +10,6 @@
 
 <c:set var="note1" value="Also orthologues from these 5 organisms to <i>C. familiaris</i>, <i>D. discoideum</i>, <i>D. rerio</i>, <i>G. gallus</i>, <i>H. sapiens</i>, <i>M. musculus</i>, <i>P. troglodytes</i>, <i>R. norvegicus</i>, <i>S. cerevisiae</i>, <i>S. pombe</i>" />
 <c:set var="note2" value="These data have been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0"/>
-<c:set var="note3" value="Coordinates for the Exelixis set are still to genomce sequence release 4.0. These will be updated to release 5.0 in the next release of FlyMine"/>
 
 
 <html:xhtml/>
@@ -416,8 +415,7 @@
     <td> <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis; loaded from FlyBase v.5.3</a></td>
     <td> &nbsp;</td>
 
-      <td><html:link action="/dataCategories" anchor="note3" title="${note3}">#3</html:link></td> 
-  </tr>
+   </tr>
 
   <tr>
     <td> <i>D. melanogaster</i> </td>
@@ -465,7 +463,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 17th October 2007</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 14th November 2007</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -484,7 +482,6 @@
 <ol>
 	<li><a name="note1">${note1}</a></li>
 	<li><a name="note2">${note2}</a></li>
-	<li><a name="note3">${note3}</a></li>
 </ol>
 </div>
 
