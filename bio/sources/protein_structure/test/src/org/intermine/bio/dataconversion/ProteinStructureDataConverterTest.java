@@ -23,9 +23,9 @@ import org.intermine.dataconversion.MockItemWriter;
  * @author Xavier Watkins
  *
  */
-public class ProteinStructureDataConvertorTest extends ItemsTestCase
+public class ProteinStructureDataConverterTest extends ItemsTestCase
 {
-    public ProteinStructureDataConvertorTest(String arg) {
+    public ProteinStructureDataConverterTest(String arg) {
         super(arg);
     }
 
@@ -39,7 +39,7 @@ public class ProteinStructureDataConvertorTest extends ItemsTestCase
                                               .getResourceAsStream("ProteinStructureConverterTest_src.xml"));
         
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        MockProteinStructureDataConvertor converter = new MockProteinStructureDataConvertor(itemWriter);
+        MockProteinStructureDataConverter converter = new MockProteinStructureDataConverter(itemWriter);
         File f = new File("10102.xml");
         converter.setCurrentFile(f);
         converter.setSrcDataDir("resouces/");

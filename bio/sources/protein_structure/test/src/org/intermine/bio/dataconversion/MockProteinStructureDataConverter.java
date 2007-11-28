@@ -22,9 +22,9 @@ import org.intermine.metadata.Model;
  * @author Xavier Watkins
  *
  */
-public class MockProteinStructureDataConvertor extends ProteinStructureDataConvertor
+public class MockProteinStructureDataConverter extends ProteinStructureDataConverter
 {
-    public MockProteinStructureDataConvertor(ItemWriter writer) {
+    public MockProteinStructureDataConverter(ItemWriter writer) {
         super(writer, Model.getInstanceByName("genomic"));
     }
     

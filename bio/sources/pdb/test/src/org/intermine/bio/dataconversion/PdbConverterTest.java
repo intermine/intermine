@@ -21,14 +21,14 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 
 /**
- * Test for the PdbConvertor
+ * Test for the PdbConverter
  * @author Xavier Watkins
  *
  */
-public class PdbConvertorTest extends ItemsTestCase
+public class PdbConverterTest extends ItemsTestCase
 {
 
-    public PdbConvertorTest(String arg) {
+    public PdbConverterTest(String arg) {
         super(arg);
     }
 
@@ -41,7 +41,7 @@ public class PdbConvertorTest extends ItemsTestCase
                                               .getResourceAsStream("1AZE.pdb"));
         
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        PdbConvertor converter = new PdbConvertor(itemWriter, Model.getInstanceByName("genomic"));
+        PdbConverter converter = new PdbConverter(itemWriter, Model.getInstanceByName("genomic"));
         File f = new File("1AZE.pdb");
         converter.setCurrentFile(f);
         converter.setSrcDataDir("resouces/");

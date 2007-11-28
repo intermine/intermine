@@ -36,7 +36,7 @@ import org.intermine.xml.full.ReferenceList;
  *
  * @author Xavier Watkins
  */
-public class KeggPathwayConvertor extends FileConverter
+public class KeggPathwayConverter extends FileConverter
 {
     protected Item dataSource, dataSet;
     protected Map<String, String> keggOrganismToTaxonId = new HashMap<String, String>();
@@ -50,7 +50,7 @@ public class KeggPathwayConvertor extends FileConverter
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
-    public KeggPathwayConvertor(ItemWriter writer, Model model)
+    public KeggPathwayConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException {
         super(writer, model);
 

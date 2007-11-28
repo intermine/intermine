@@ -29,7 +29,7 @@
 
   source.model       - source model name
   target.model       - target model name
-  convertor.class    - if retrieving from file, file convertor class
+  converter.class    - if retrieving from file, file converter class
   translator.class   - data translator class
   organism           - organism passed to translator
 
@@ -151,11 +151,11 @@
   </target>
 
   <!--
-    Retrieve from a file in a src items db with the convertor specified via the property
-    convertor.class
+    Retrieve from a file in a src items db with the converter specified via the property
+    converter.class
   -->
   <target name="-retrieve-src-from-custom-file" if="have.file.custom.src">
-    <convert-file clsName="${convertor.class}"
+    <convert-file clsName="${converter.class}"
                   osName="osw.${common.os.prefix}-src-items"
                   modelName="${target.model}">
       <fileset dir="${src.data.dir}"/>
@@ -169,10 +169,10 @@
 
 
   <!--
-    Retrieve files from a custom directory and process them with the supplied convertor class
+    Retrieve files from a custom directory and process them with the supplied converter class
   - ->
   <target name="-retrieve-src-from-custom-dir" if="custom.src.dir">
-    <convert-file clsName="${convertor.class}"
+    <convert-file clsName="${converter.class}"
                   osName="osw.${common.os.prefix}-src-items"
                   modelName="${target.model}">
       <fileset dir="${custom.src.data.dir}"/>
@@ -190,13 +190,13 @@
   </target>
 
   <!--
-    Retrieve from a file in a tgt items db with the convertor specified via the property
-    convertor.class
+    Retrieve from a file in a tgt items db with the converter specified via the property
+    converter.class
   -->
   <target name="-retrieve-tgt-from-custom-file"
           depends="-set-custom-file-includes, -set-custom-file-excludes" 
           if="have.file.custom.tgt">
-    <convert-file clsName="${convertor.class}"
+    <convert-file clsName="${converter.class}"
                   osName="osw.${common.os.prefix}-tgt-items"
                   modelName="${target.model}">
       <fileset dir="${src.data.dir}">
@@ -207,12 +207,12 @@
   </target>
 
   <!--
-    Retrieve from a database in a tgt items db with the convertor specified via the property
-    convertor.class
+    Retrieve from a database in a tgt items db with the converter specified via the property
+    converter.class
   -->
   <target name="-retrieve-tgt-from-db"
           if="have.db.tgt">
-    <convert-db clsName="${convertor.class}"
+    <convert-db clsName="${converter.class}"
                 dbAlias="db.${source.db.name}"
                 modelName="${target.model}"
                 osName="osw.${common.os.prefix}-tgt-items">
