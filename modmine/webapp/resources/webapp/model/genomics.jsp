@@ -19,7 +19,7 @@
   <tr>
     <td valign="top">
       <div class="body">
-
+<%--
         <h4>
           <a href="javascript:toggleDiv('hiddenDiv1');">
             <img id='hiddenDiv1Toggle' src="images/disclosed.gif" title="Click here to view the datasets" />
@@ -28,9 +28,11 @@
         </h4>
 
         <div id="hiddenDiv1" class="dataSetDescription">
-          <p>
-            <a href="/">FlyMine</a> is a resource aimed at the <i>Drosophila</i> and
-            <i>Anopheles</i> research communities hence the focus is on those organisms.
+--%>
+    <div>
+      <p>
+            <a href="/">FlyMine</a> is a resource aimed especially at the <i>Drosophila</i> 
+            research community.
           </p>
          <ul>
          <li>
@@ -38,6 +40,7 @@
               <i>Drosophila melanogaster</i> - Genome annotation release 5.1 from <a href="http://www.flybase.org" target="_new">
                 <html:img src="images/FlyBase_logo_mini.png" title="Click here to view FlyBase's website" /> </a>.
             </dt></dl>
+<%--
           <li>
             <dt>
               <i>Drosophila pseudoobscura</i> - Genome annotation release 2.0 from
@@ -58,9 +61,18 @@
               <html:img src="images/ensembl_logo_mini.png" title="Click here to view EnSembl's website"/>
             </a>.
           </dt></li>
-        </ul>
+--%>
+
+    </ul>
+          <p>
+            <a href="/">WormBase</a> is a resource aimed especially at the <i>Caenorhabditis elegans</i>
+            research community.
+          </p>
+            <ul><li><i>Caenorhabditis elegans</i> - Genome information from <a href="http://www.wormbase.org" target="_new">WormBase</a>
+            </li></ul>
         </div>
 
+<%--
         <h4>
           <a href="javascript:toggleDiv('hiddenDiv2');">
             <img id='hiddenDiv2Toggle' src="images/disclosed.gif" title="Click here to view more datasets"/>
@@ -96,7 +108,7 @@
           </li></ul>
         </div>
       </div>
-
+--%>
 
    </td>
     <td width="40%" valign="top">
@@ -117,7 +129,7 @@
               </query>
             </im:querylink>
           </li>
-
+<%--
           <li>
             <im:querylink text="All <i> Drosophila pseudoobscura</i> gene identifiers and chromosomal positions " skipBuilder="true">
               <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
@@ -183,7 +195,9 @@
               </query>
             </im:querylink>
           </li>
-        </ul>
+--%>
+
+    </ul>
       </div>
     </td>
   </tr>

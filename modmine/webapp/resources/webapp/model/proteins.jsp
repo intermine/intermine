@@ -28,10 +28,7 @@
 
           <ul>             
               <li><i>D. melanogaster</i></li>
-              <li><i>A. gambiae</i></li>
               <li><i>C. elegans</i></li>
-              <li><i>H. sapiens</i></li>
-              <li><i>M. musculus</i></li>
           </ul>
           <p>           
             For each protein record in UniProt for each species the following
@@ -64,7 +61,6 @@
             href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> for the following organisms:</p>
           <ul> 
               <li><i>D. melanogaster</i></li>
-              <li><i>A. gambiae</i></li>
               <li><i>C. elegans</i></li>
           </ul> 
 </div>
@@ -179,6 +175,7 @@
     </td>
   </tr>
 
+<%--
   <tr>
     <td width="40%" valign="top">
       <div class="heading2">
@@ -188,7 +185,8 @@
         <ul>
           <li>
               <im:querylink text="<i>A. gambiae</i> proteins and corresponding genes " skipBuilder="true">
-<query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier"> <node path="Protein" type="Protein"> </node> <node path="Protein.organism" type="Organism"> </node> <node path="Protein.organism.name" type="String">   <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">   </constraint> </node></query> 
+<query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier"> <node path="Protein" type="Protein"> </node> <node path="Protein.organism" type="Organism"> </node> <node path="Protein.organism.name" type="String">   <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">   </constraint>
+ </node></query> 
               </im:querylink>
           </li>
 
@@ -271,4 +269,5 @@
       </div>
     </td>
   </tr>
+--%>
 </table>

@@ -12,16 +12,14 @@
       <div class="body">
         <p>
           Orthologue and paralogue relationships calculated by <A
-          href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</A> - Version 5.1 - between the following organisms:
+          href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</A> - Version 5.1 - between:
         </p>
         <ul>
           <li><I>D. melanogaster</I></li>
-          <li><I>D. pseudoobscura</I></li>
-          <li><I>A. gambiae</I></li>
-          <li><I>A. mellifera</I></li>
           <li><I>C. elegans</I></li>
         </ul>
-        <p>
+
+<%--        <p>
           In addition, orthologues from these five species to several others:
         </p>
         <p>
@@ -30,7 +28,8 @@
           <im:querylink text="Show all pairs of organisms linked by orthologues" skipBuilder="true">
             <query name="" model="genomic" view="Orthologue.gene.organism.shortName Orthologue.orthologue.organism.shortName"><node path="Orthologue" type="Orthologue"></node></query>
           </im:querylink>
-      </div>
+--%>
+  </div>
     </td>
 
     <td width="40%" valign="top">
@@ -39,6 +38,7 @@
       </div>
       <div class="body">
         <ul>
+<%--
           <li>
             <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>A. gambiae</i> " skipBuilder="true">
              <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
@@ -63,7 +63,7 @@
 			 </query>
             </im:querylink>
           </li> 
-
+--%>
           <li>            
             <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>C. elegans</i> " skipBuilder="true">
               <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
@@ -88,7 +88,7 @@
 </query>
             </im:querylink>
           </li>
-
+<%--
           <li>
            <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>H. sapiens</i> " skipBuilder="true">
             <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="C and A">
@@ -188,7 +188,7 @@
 </query>
             </im:querylink>
           </li>
-
+--%>
         </ul>
       </div>
     </td>

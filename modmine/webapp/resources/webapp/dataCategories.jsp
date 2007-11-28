@@ -19,18 +19,17 @@
 <im:boxarea title="Data" stylename="plainbox"><p><fmt:message key="dataCategories.intro"/></p></im:boxarea>
 
 
-<table cellpadding="0" cellpadding="0" border="0" class="dbsources">
+<table cellpadding="0" cellspacing="5" border="0" class="dbsources">
   <tr>
-    <th>Data Category</th>
-    <th>Organism</th>
-    <th>Data</th>
-    <th>Source</th>
-    <th>PubMed</th>
-    <th>Note</th>
-
+    <td><b>Data Category</td>
+    <td><b>Organism</td>
+    <td><b>Data</td>
+    <td><b>Source</td>
+    <td><b>PubMed</td>
+    <td><b>Note</td>
   </tr>
 
-  <tr><td rowspan="5" class="leftcol">
+  <tr><td rowspan="1" class="leftcol">
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
@@ -40,6 +39,7 @@
     <td> &nbsp;</td>
   </tr>
 
+<%--
   <tr>
     <td> <i>D. pseudoobscura</i></td>
     <td> Genome annotation - Release 2.0</td>
@@ -64,8 +64,6 @@
     <td> &nbsp;</td>
   </tr>
 
-
-
   <tr>
     <td> <i>A. mellifera</i></td>
     <td> Genome annotation - Release 2</td>
@@ -73,6 +71,7 @@
     <td> Hubbard et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17148474 " target="_new">PubMed: 17148474</a></td>
     <td> &nbsp; </td>
   </tr>
+--%>
 
   <tr><td rowspan="1"  class="leftcol">
         <html:link action="/aspect?name=Comparative%20Genomics">
@@ -80,19 +79,21 @@
           <p> Comparative Genomics </p></html:link></td>
     <td>
        <p><i>D. melanogaster</i></p>
+<%--
        <p><i>D. pseudoobscura</i></p>
        <p><i>A. gambiae</i></p>
        <p><i>A. mellifera</i></p>
-       <p><i>C. elegans</i></p>
+--%>
+<p><i>C. elegans</i></p>
     </td>
-    <td> Orthologue and paralogue relationships between these 5 organisms</td>
+    <td> Orthologue and paralogue relationships between these 2 organisms</td>
     <td> <a href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</a> - Version 5.1</td>
     <td> O'Brien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15608241" target="_new">PubMed: 15608241</a></td>
     <td><html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>    
   </tr>
 
 
-  <tr><td rowspan="8"  class="leftcol">
+  <tr><td rowspan="4"  class="leftcol">
         <html:link action="/aspect?name=Proteins">
         <p> <img src="model/images/proteins.png" /></p>
         <p> Proteins </p></html:link></td>
@@ -103,6 +104,7 @@
     <td> &nbsp;</td>
   </tr>
 
+<%--
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein annotation</td>
@@ -110,6 +112,7 @@
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
+--%>
 
   <tr>
     <td> <i>C. elegans</i> </td>
@@ -118,7 +121,7 @@
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
-
+<%--
   <tr>
     <td> <i>H. sapiens</i></td>
     <td> Protein annotation</td>
@@ -134,6 +137,7 @@
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
+--%>
 
   <tr>
     <td> <i>D. melanogaster</i></td>
@@ -143,6 +147,7 @@
     <td> &nbsp;</td>
   </tr>
 
+<%--
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein family and domain assignments to proteins</td>
@@ -150,6 +155,7 @@
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
+--%>
 
   <tr>
     <td> <i>C. elegans</i> </td>
@@ -159,7 +165,7 @@
     <td> &nbsp;</td>
   </tr>
 
-
+<%--
   <tr><td rowspan="2"  class="leftcol">
         <html:link action="/aspect?name=Protein%20Structure">
         <p> <img src="model/images/pstructure.gif" /></p>
@@ -206,9 +212,9 @@
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
+--%>
 
-
-  <tr><td rowspan="8"  class="leftcol">
+  <tr><td rowspan="2"  class="leftcol">
 
         <html:link action="/aspect?name=Gene%20Ontology">
          <p> <img src="model/images/geneOntology.png" /></p>
@@ -228,6 +234,7 @@
     <td> &nbsp;</td>
   </tr>
 
+<%--
   <tr>
     <td> <i>M. musculus</i></td>
     <td> GO annotations </td>
@@ -275,7 +282,7 @@
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14681408" target="_new">PubMed: 14681408</a></td>
     <td> &nbsp;</td>
   </tr>
-
+--%>
 
   <tr><td rowspan="2" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
@@ -298,16 +305,19 @@
 
 
 
-  <tr><td rowspan="4" class="leftcol">
+  <tr><td rowspan="1" class="leftcol">
        <html:link action="/aspect?name=Transcriptional%20Regulation">
         <p> <img src="model/images/bindingSites.png" /></p>
         <p> Transcriptional Regulation</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
+
+<%--
     <td> Transcriptional cis-regulatory modules (CRMs)</td>
     <td> <a href="http://redfly.ccr.buffalo.edu/" target="_new">REDfly</a> - 25th June 2006</td>
     <td> Gallo et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16303794" target="_new">PubMed: 16303794</a></td>
     <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
+
 
   <tr>
     <td> <i>D. melanogaster</i> </td>
@@ -319,12 +329,14 @@
 
   <tr>
     <td> <i>D. melanogaster</i> </td>
+--%>
+
     <td> Regulatory elements</td>
     <td> <a href="http://www.flybase.org" target="_new">Flybase</a></td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
-
+<%--
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Binding site predictions</td>
@@ -332,7 +344,8 @@
     <td> Down et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17238282" target="_new">PubMed: 17238282</a></td>
     <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
-
+--%>
+<%--
   <tr><td rowspan="2" class="leftcol">
        <html:link action="/aspect?name=RNAi">
         <p> <img src="model/images/rnai.png" /></p>
@@ -426,8 +439,9 @@
     <td> &nbsp; </td>
     <td> &nbsp;</td>
   </tr>
+--%>
 
-  <tr><td rowspan="3" class="leftcol">
+  <tr><td rowspan="2" class="leftcol">
        <html:link action="/aspect?name=Literature">
         <p> <img src="model/images/book.png" /></p>
         <p> Literature</p></html:link></td>
@@ -446,6 +460,7 @@
     <td> &nbsp;</td>
   </tr>
 
+<%--
   <tr>
     <td> <i>S. cerevisiae</i> </td>
     <td> Gene versus publications</td>
@@ -453,7 +468,7 @@
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
-
+--%>
 </table>
 
 <div class="body">

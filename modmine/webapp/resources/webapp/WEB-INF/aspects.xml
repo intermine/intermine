@@ -4,8 +4,8 @@
     <icon-image>model/images/genomics.gif</icon-image>
     <large-image>model/images/genomics.gif</large-image>
     <intro-text>
-      The gene structure and other genome annotation in FlyMine are provided by
-      a variety of source databases.  In most cases FlyMine includes
+      The gene structure and other genome annotation in modENCODEMine are provided by
+      a variety of source databases.  In most cases modENCODEMine includes
       all genome features that have chromosomal locations (e.g. genes and repeat regions).
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
@@ -68,6 +68,7 @@
     <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
   </aspect>
 
+<!--
   <aspect name="Transcriptional Regulation">
     <subtitle>Regulatory regions and&lt;br/&gt;transcription factor binding sites</subtitle>
     <icon-image>model/images/bindingSites.png</icon-image>
@@ -97,7 +98,8 @@
     <tile-name>model/RNAi.jsp</tile-name>
     <aspect-source name="Drosophila&lt;/i&gt; RNAi Screening Center" url="http://www.flyrnai.org/"/>
   </aspect>
-
+-->
+	
   <aspect name="Literature">
     <subtitle></subtitle>
     <icon-image>model/images/book.png</icon-image>
