@@ -194,7 +194,7 @@ public class DBRetrieverTest extends TestCase {
         refs.addRefId(converter.alias("Contractor") + "_1");
         refs.addRefId(converter.alias("Contractor") + "_2");
         item.addCollection(refs);
-        // this is a bit dodgy - problem is that DBConvertor doesn't handle named collections
+        // this is a bit dodgy - problem is that DBConverter doesn't handle named collections
         refs = new ReferenceList();
         refs.setName("oldContracts");
         refs.addRefId(converter.alias("Contractor") + "_1");

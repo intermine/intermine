@@ -30,11 +30,11 @@ import org.intermine.xml.full.Item;
  * @author Xavier Watkins
  *
  */
-public class PdbConvertor extends FileConverter
+public class PdbConverter extends FileConverter
 {
 
     private static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    private static final Logger LOG = Logger.getLogger(PdbConvertor.class);
+    private static final Logger LOG = Logger.getLogger(PdbConverter.class);
     private String dataLocation;
     protected static final String ENDL = System.getProperty("line.separator");
     private Item dataSource, dataSet;
@@ -42,7 +42,7 @@ public class PdbConvertor extends FileConverter
     /**
      * @param writer
      */
-    public PdbConvertor(ItemWriter writer, Model model) throws ObjectStoreException {
+    public PdbConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
         dataSource = createItem("DataSource");
         dataSource.setAttribute("name", "The RCSB Protein Data Bank (PDB)");

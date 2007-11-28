@@ -29,7 +29,7 @@
   <target name="-retrieve-tgt-from-custom-file-split" depends="-retrieve-tgt-from-custom-file-split-condition" if="have.file.custom.tgt.use.split.files">
     <convert-file      
        modelName="${target.model}"
-       clsName="${convertor.class}"
+       clsName="${converter.class}"
        osName="osw.${common.os.prefix}-tgt-items">
       <fileset dir="${src.data.dir}/split" includes="*.xml"/>
     </convert-file>
@@ -38,7 +38,7 @@
   <target name="-retrieve-tgt-from-custom-file-nosplit" if="have.file.custom.tgt" unless="use.split.files">
     <convert-file      
        modelName="${target.model}"
-       clsName="${convertor.class}"
+       clsName="${converter.class}"
        osName="osw.${common.os.prefix}-tgt-items">
       <fileset dir="${build.data.dir}" includes="*.xml"/>
     </convert-file>

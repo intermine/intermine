@@ -40,9 +40,9 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Xavier Watkins
  *
  */
-public class ProteinStructureDataConvertor extends FileConverter
+public class ProteinStructureDataConverter extends FileConverter
 {
-    private static final Logger LOG = Logger.getLogger(ProteinStructureDataConvertor.class);
+    private static final Logger LOG = Logger.getLogger(ProteinStructureDataConverter.class);
     private String dataLocation;
     protected static final String ENDL = System.getProperty("line.separator");
     private Item dataSet;
@@ -56,7 +56,7 @@ public class ProteinStructureDataConvertor extends FileConverter
      * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public ProteinStructureDataConvertor(ItemWriter writer, Model model) {
+    public ProteinStructureDataConverter(ItemWriter writer, Model model) {
         super(writer, model);
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "Kenji Mizuguchi - NIBIO, Japan");

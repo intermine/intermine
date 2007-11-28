@@ -11,7 +11,7 @@
       <property name="taxonId" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
-      <property name="convertor.class"
+      <property name="converter.class"
                 value="org.intermine.bio.dataconversion.FlyBaseChadoDBConverter"/>
     </source>
     <source name="chado-db-flybase-dpse" type="chado-db" dump="true">
@@ -21,7 +21,7 @@
       <property name="taxonId" value="7237"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="dataSetTitle" value="FlyBase Drosophila pseudoobscura data set"/>
-      <property name="convertor.class"
+      <property name="converter.class"
                 value="org.intermine.bio.dataconversion.FlyBaseChadoDBConverter"/>
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">

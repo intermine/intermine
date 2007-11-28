@@ -41,7 +41,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         Collection<File> allfiles = listFiles(resources, null, true);
         
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        KeggPathwayConvertor converter = new KeggPathwayConvertor(itemWriter,
+        KeggPathwayConverter converter = new KeggPathwayConverter(itemWriter,
                                                         Model.getInstanceByName("genomic"));
         converter.setSrcDataDir("resources/");
 
