@@ -63,7 +63,7 @@ public class QueryBuilderAction extends InterMineAction
 
         String label = null, id = null, code = query.getUnusedConstraintCode();
         boolean editable = false;
-        int previousConstraintCount = query.getAllConstraints().size();
+
 
         if (cindex != null) {
             // We're updating an existing constraint, just remove the old one
