@@ -8,7 +8,9 @@ webapp.deploy.url=http://localhost:8080
 webapp.path=intermine-test
 webapp.manager=manager
 webapp.password=manager
+# It doesn't work now, logs are saved in bin directory of tomcat
 webapp.logdir=/var/logs
+# It must be valid email address
 superuser.account=you@yourdomain.com
 
 # You don't need to change these
