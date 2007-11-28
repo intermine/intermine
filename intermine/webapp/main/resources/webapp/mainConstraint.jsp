@@ -142,7 +142,7 @@ if (${!empty constrainOnBag}) {
                 </c:when>
                 <c:otherwise>
                   <td valign="top">
-                    <html:select property="attributeOp" styleId="attribute5" onchange="updateConstraintForm(0, this.form.attributeOp, this.form.attributeOptions, this.form.attributeValue)">
+                    <html:select property="attributeOp" styleId="attribute5" onchange="updateConstraintForm(0, this.form.attributeOp, this.form.attributeOptions, this.form.attributeValue, fixedOps)">
                       <c:forEach items="${validOps}" var="op">
                         <c:if test="${!(editingNode.type == 'String' && (op.value == '<=' || op.value == '>='))}">
                           <option value="${op.key}"
@@ -399,7 +399,8 @@ if (${!empty constrainOnBag}) {
     initConstraintForm(0,
         $('mainForm').attributeOp,
         $('mainForm').attributeOptions,
-        $('mainForm').attributeValue);
+        $('mainForm').attributeValue,
+        fixedOps);
     //-->
     </script>
 

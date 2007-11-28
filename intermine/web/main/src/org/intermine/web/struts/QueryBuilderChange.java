@@ -277,8 +277,7 @@ public class QueryBuilderChange extends DispatchAction
         Constraint c = pn.getConstraints().get(index);
         ConstraintOp op = c.getOp();
 
-        if (op != ConstraintOp.IS_NOT_NULL && op != ConstraintOp.IS_NULL
-            && op != ConstraintOp.CONTAINS && op != ConstraintOp.DOES_NOT_CONTAIN) {
+        if (op != ConstraintOp.IS_NOT_NULL && op != ConstraintOp.IS_NULL) {
             session.setAttribute("editingConstraintValue", c.getDisplayValue());
             session.setAttribute("editingConstraintOperand", c.getOp().getIndex());
             session.setAttribute("editingConstraintExtraValue", c.getExtraValue());
