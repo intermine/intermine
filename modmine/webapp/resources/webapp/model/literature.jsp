@@ -13,8 +13,8 @@
       <div class="body">
 
 
-          <p>A mapping between genes and publications for <i>D. melanogaster</i>, 
-            <i>C. elegans</i> and <i>S. cerevisiae</i> from NCBI (till 14th December 2006)</p>
+          <p>A mapping between genes and publications for <i>D. melanogaster</i> and 
+            <i>C. elegans</i> from NCBI (till 14th December 2006)</p>
 
       </div>
     </dl>

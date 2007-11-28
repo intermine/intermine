@@ -14,7 +14,7 @@
  <h4>
    <a href="javascript:toggleDiv('hiddenDiv1');">
     <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
-    GO annotation in FlyMine ...
+    GO annotation in modENCODEMine ...
    </a>
  </h4>
 
@@ -27,16 +27,21 @@
       processes, cellular components and molecular functions in a species-independent manner.
       </p>
       <p>
-      FlyMine has GO annotations for <i>Drosophila</i>,
-      <i>C. elegans</i> and <i>A. gambiae</i>.  GO annotation for
+      modENCODEMine has GO annotations for <i>Drosophila</i> and
+      <i>C. elegans</i>.
+<%--
+  GO annotation for
       other organisms is also included and is accessible via orthologues.
+--%>
       </p>      
         <ul>
          <li><i>D. melanogaster</i> - GO annotations for <i>D. melanogaster</i> gene products assigned by <a href="http://www.ebi.ac.uk/GOA/" target="_new">FlyBase</a></li><br/>
-         <li><i>A. gambiae</i> - GO annotations for <i>A. gambiae</i> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/" target="_new">GO annotation@EBI</a> project.</li><br/>
          <li><i>C. elegans</i> - GO annotations for <i>C. elegans</i> gene products assigned by <a href="http://www.wormbase.org" target="_new">WormBase</a>.</li><br/>
+<%--
+         <li><i>A. gambiae</i> - GO annotations for <i>A. gambiae</i> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/" target="_new">GO annotation@EBI</a> project.</li><br/>
          <li><i>S. cerevisiae</i> - GO annotations for <i>S. cerevisiae</i> gene products assigned by <a href="http://www.yeastgenome.org/" target="_new">SGD</a>.</li><br/>
          <li><i>M. musculus</i> - GO annotations for <i>M. musculus</i> gene products assigned by <a href="http://www.informatics.jax.org" target="_new">MGI</a>.</li><br/>
+--%>
        </ul>
       </div>
 
@@ -114,7 +119,7 @@
            </query>
           </im:querylink>
          </li>
-
+<%--
          <li>
            <im:querylink text="All gene/GO annotation pairs from <i>A. gambiae</i> " skipBuilder="true">
             <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.annotations.identifier Gene.annotations.name">
@@ -131,7 +136,7 @@
           </query>
          </im:querylink>
         </li>
-
+--%>
         <li>
          <im:querylink text="All GO Term identifiers with names and descriptions " skipBuilder="true">
           <query name="" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.description">
