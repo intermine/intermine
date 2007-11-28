@@ -119,45 +119,6 @@ if (${!empty constrainOnBag}) {
           fixedOps[0][${status.count}] = "<c:out value="${op}"/>";
         </c:forEach>
 
-      /***********************************************************
-       * Called when user chooses a constraint operator. If the
-       * user picks an operator contained in fixedOptionsOps then
-       * the input box is hidden and the user can only choose
-       **********************************************************/
-      function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
-      {
-        if (attrOptsElement == null)
-          return;
-
-        for (var i=0 ; i<fixedOps[index].length ; i++)
-        {
-          if (attrOpElement.value == fixedOps[index][i])
-          {
-            document.getElementById("operandEditSpan" + index).style.display = "none";
-            attrValElement.value = attrOptsElement.value; // constrain value
-            return;
-          }
-        }
-
-		if (document.getElementById("operandEditSpan" + index)) {
-	        document.getElementById("operandEditSpan" + index).style.display = "";
-	    }
-      }
-
-      /***********************************************************
-       * Init attribute value with selected item and hide input box if
-       * required
-       **********************************************************/
-      function initConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
-      {
-        if (attrOptsElement == null)
-          return;
-
-        var init = '${editingConstraintValue}';
-        attrValElement.value = (init != '') ? init : attrOptsElement.value;
-
-        updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
-      }
 
       //-->
       </script>
