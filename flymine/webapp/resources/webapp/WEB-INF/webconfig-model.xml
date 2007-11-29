@@ -252,7 +252,6 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
-    <tabledisplayer src="/model/proteinShortDisplayer.jsp"/>
   </class>
 
   <class className="org.flymine.model.genomic.Transcript">

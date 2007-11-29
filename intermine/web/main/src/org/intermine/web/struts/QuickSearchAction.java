@@ -82,7 +82,7 @@ public class QuickSearchAction extends InterMineAction
             Map<String, Object> valuesMap = new HashMap <String, Object> ();
             Map <String, ConstraintOp> constraintOpsMap = new HashMap <String, ConstraintOp> ();
 
-            PathNode node =   ((PathNode) template.getEditableNodes().get(0));
+            PathNode node = ((PathNode) template.getEditableNodes().get(0));
 
             valuesMap.put(node.getPathString(), qsf.getParsedValue());
             constraintOpsMap.put(node.getPathString(), ConstraintOp.EQUALS);
