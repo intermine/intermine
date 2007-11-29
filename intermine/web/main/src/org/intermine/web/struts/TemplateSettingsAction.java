@@ -10,15 +10,18 @@ package org.intermine.web.struts;
  *
  */
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.template.TemplateBuildState;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.template.TemplateBuildState;
+import org.apache.struts.action.ActionMessages;
 
 /**
  * Action invoked when user submits general template settings form.
@@ -39,22 +42,24 @@ public class TemplateSettingsAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
+    throws Exception {
         HttpSession session = request.getSession();
         TemplateSettingsForm tsf = (TemplateSettingsForm) form;
+
+        ActionErrors errors = tsf.validate(mapping, request);
+        saveErrors(request, (ActionMessages) errors);
+
         TemplateBuildState tbs
-            = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
-        
+        = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+
         tbs.setDescription(tsf.getDescription());
         tbs.setName(tsf.getName());
         tbs.setTitle(tsf.getTitle());
         tbs.setComment(tsf.getComment());
-        tbs.setKeywords(tsf.getKeywords());
-        tbs.setImportant(tsf.isImportant());
         
-        return new ForwardParameters(mapping.findForward("query")).addAnchor("showing").forward();
+        return new ForwardParameters(mapping.findForward("query")).forward();
     }
 }

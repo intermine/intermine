@@ -33,8 +33,6 @@ public class TemplateSettingsForm extends ActionForm
     private String name = "";
     private String title = "";
     private String comment = "";
-    private String keywords = "";
-    private boolean important;
     
     /**
      * Return the description.
@@ -85,35 +83,6 @@ public class TemplateSettingsForm extends ActionForm
     }
     
     /**
-     * @return Returns the important.
-     */
-    public boolean isImportant() {
-        return important;
-    }
-    
-    /**
-     * @param important The important to set.
-     */
-    public void setImportant(boolean important) {
-        this.important = important;
-    }
-    
-    /**
-     * @return Returns the keywords.
-     */
-    
-    public String getKeywords() {
-        return keywords;
-    }
-    
-    /**
-     * @param keywords The keywords to set.
-     */
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
-    }
-    
-    /**
      * @return Returns the name.
      */
     public String getName() {
@@ -138,8 +107,6 @@ public class TemplateSettingsForm extends ActionForm
             (TemplateBuildState) request.getSession().getAttribute(Constants.TEMPLATE_BUILD_STATE);
         setName(tbs.getName());
         setTitle(tbs.getTitle());
-        setKeywords(tbs.getKeywords());
-        setImportant(tbs.isImportant());
         setDescription(tbs.getDescription());
         setComment(tbs.getComment());
     }
