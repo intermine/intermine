@@ -84,9 +84,9 @@
   <html:hidden property="templateButton" value="export"/>
 </c:when>
 <c:otherwise>
-<c:set var="textForBox">
-  <fmt:message key="history.savedbags.newbag" />
-</c:set>
+
+<c:set var="textForBox" value="${WEB_PROPERTIES['lists.input.example']}" />
+
 <script language="javascript">
   function clearBagName(element) {
      if(element.value == '${textForBox}'){

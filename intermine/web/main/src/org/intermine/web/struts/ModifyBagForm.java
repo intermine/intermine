@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.intermine.web.logic.Constants;
@@ -22,6 +23,7 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.SavedQuery;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -129,7 +131,7 @@ public class ModifyBagForm extends ActionForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
+        ServletContext servletContext = session.getServletContext();
         ActionErrors errors = new ActionErrors();
         
         if (request.getParameter("newName") == null && selectedBags.length == 0) {
@@ -148,11 +150,10 @@ public class ModifyBagForm extends ActionForm
                 }
             }
         } 
-        
-        
-        // This is a hack, see #1399.
-        String defaultName = "new list name";
 
+        Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String defaultName = properties.getProperty("lists.input.example");
+        
         if (request.getParameter("newName") == null
             && (request.getParameter("union") != null
                 || request.getParameter("intersect") != null
