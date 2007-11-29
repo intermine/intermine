@@ -374,7 +374,6 @@ public class SessionMethods
     public static void saveQueryToHistory(HttpSession session,
                                           String queryName,
                                           PathQuery query) {
-        LOG.debug("saving history " + queryName);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         SavedQuery sq = new SavedQuery(queryName, new Date(), query.clone());
         profile.saveHistory(sq);
