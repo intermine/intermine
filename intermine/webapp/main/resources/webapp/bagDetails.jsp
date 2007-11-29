@@ -155,6 +155,10 @@
   <tr>
   <td>
 
+<tiles:insert name="convertBag.tile">
+     <tiles:put name="bag" beanName="bag" />
+</tiles:insert>
+
 <table cellpadding="0" cellspacing="30"><tr>
 <td valign="top">  	
   <span style="font-size:+2em;">Use</span><br/>		

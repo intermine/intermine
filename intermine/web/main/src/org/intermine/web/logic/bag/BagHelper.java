@@ -14,10 +14,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.InterMineException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.search.WebSearchable;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Helper methods for bags.
@@ -67,5 +74,34 @@ public class BagHelper
             }
         }
         return false;
+    }
+    
+    /**
+     * For a given bag name, return the bag whether it's in the profile or
+     * is a shared bag
+     * 
+     * @param profile the user profile
+     * @param searchRepository the SearchRepository
+     * @param bagName the bag name
+     * @return the InterMineBag
+     * @throws InterMineException
+     */
+    public static InterMineBag getBag(Profile profile, SearchRepository searchRepository,
+                                      String bagName) throws InterMineException {
+        InterMineBag imBag = null;
+        if (profile != null && profile.getSavedBags() != null) {
+            imBag = profile.getSavedBags().get(bagName);
+        }
+        if (imBag == null) {
+            Map<String, ? extends WebSearchable> publicBagMap = searchRepository
+                                                               .getWebSearchableMap(TagTypes.BAG);
+            if (publicBagMap.get(bagName) != null) {
+                imBag = (InterMineBag) publicBagMap.get(bagName);
+            }
+        }
+        if (imBag == null) {
+            throw new InterMineException("Bag not found with name:" + bagName);
+        }
+        return imBag;
     }
 }

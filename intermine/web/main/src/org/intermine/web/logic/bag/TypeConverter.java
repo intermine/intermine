@@ -114,7 +114,7 @@ public class TypeConverter
      */
     public static TemplateQuery getConversionTemplate(ServletContext servletContext, Class typeA,
                                                       Class typeB) {
-        return getConversionTemplate(servletContext, typeA).get(typeB);
+        return getConversionTemplates(servletContext, typeA).get(typeB);
     }
 
     /**
@@ -124,7 +124,7 @@ public class TypeConverter
      * @param typeA the type to convert from
      * @return a Map from Class to TemplateQuery
      */
-    public static Map<Class, TemplateQuery> getConversionTemplate(ServletContext servletContext, 
+    public static Map<Class, TemplateQuery> getConversionTemplates(ServletContext servletContext, 
                                                                   Class typeA) {
         String sup = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);

@@ -29,6 +29,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.BagTableDisplayer;
 import org.intermine.web.logic.config.EnrichmentWidgetDisplayer;
 import org.intermine.web.logic.config.GraphDisplayer;
@@ -40,6 +41,7 @@ import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
@@ -218,10 +220,11 @@ public class BagDetailsController extends TilesAction
             q.setDistinct(false);
             SingletonResults res = os.executeSingleton(q);
     
-            WebPathCollection webPathCollection =
-                new WebPathCollection(os, new Path(model, imBag.getType()), res, model, webConfig,
-                                      classKeys);
-    
+            WebPathCollection webPathCollection = new WebPathCollection(os, new Path(model,
+                                                                                 imBag.getType()),
+                                                                    res, model, webConfig,
+                                                                    classKeys);
+
             int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
     
             PagedTable pagedColl = new PagedTable(webPathCollection, pageSize);
@@ -232,6 +235,7 @@ public class BagDetailsController extends TilesAction
             request.setAttribute("graphDisplayerArray", graphDisplayerArray);
             request.setAttribute("tableDisplayerArray", tableDisplayerArray);
             request.setAttribute("enrichmentWidgetDisplayerArray", enrichmentWidgetDisplayerArray);
+            
             return null;
     }
 

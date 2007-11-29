@@ -227,6 +227,7 @@
   <definition name="dataCategories.tile" path="/dataCategories.jsp" />
   <definition name="subMenu.tile" path="subMenu.jsp" controllerUrl="/initSubMenu.do" />  
   <definition name="bagRunnerMsg.tile" path="/bagRunnerMsg.jsp" />
+  <definition name="convertBag.tile" path="convertBag.jsp" controllerUrl="/initConvertBag.do" />  
 
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
