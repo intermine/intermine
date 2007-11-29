@@ -396,7 +396,7 @@ public class TemplateHelper
      * Try to fill the TemplateForm argument using the attribute values in the InterMineObject
      * arg and return true if successful (ie. all constraints are filled in)
      */
-    private static boolean fillTemplateForm(TemplateQuery template, InterMineObject object,
+    public static boolean fillTemplateForm(TemplateQuery template, InterMineObject object,
                                             InterMineBag bag, TemplateForm templateForm, 
                                             Model model) {
         String equalsString = ConstraintOp.EQUALS.getIndex().toString();
@@ -488,7 +488,7 @@ public class TemplateHelper
      * Make and return an InlineTemplateTable for the given template and interMineObjectId or
      * InterMineIdBag
      */
-    private static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
+    public static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
                                                                TemplateQuery template,
                                                                InterMineObject object, 
                                                                InterMineBag bag) {

@@ -10,22 +10,33 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.path.Path;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -36,15 +47,6 @@ import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * @author Xavier Watkins
@@ -78,10 +80,9 @@ public class ModifyBagDetailsAction extends InterMineAction
         if (request.getParameter("remove") != null) {
             removeFromBag(mbdf.getBagName(), profile, mbdf, pm.getUserProfileObjectStore(), os,
                     session);
-        } else {
-            if (request.getParameter("showInResultsTable") != null) {
-                return showBagInResultsTable(mbdf.getBagName(), mapping, session);
-            } else if (request.getParameter("useBagInQuery").equals("true")) {
+        } else if (request.getParameter("showInResultsTable") != null) {
+            return showBagInResultsTable(mbdf.getBagName(), mapping, session);
+        } else if (request.getParameter("useBagInQuery") != null) {
                 
                 String bagName = mbdf.getBagName();
 
@@ -126,7 +127,36 @@ public class ModifyBagDetailsAction extends InterMineAction
                 session.setAttribute("prefix", imBag.getType());
                 
                 return mapping.findForward("query");
+        } else if (request.getParameter("convert") != null 
+                        && request.getParameter("bagName") != null) {
+            String type2 = request.getParameter("convert");
+            Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+            WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+            Map savedBags = profile.getSavedBags();
+            Model model = os.getModel();
+            InterMineBag imBag = (InterMineBag) savedBags.get(request.getParameter("bagName"));
+            Map<InterMineObject, List<InterMineObject>> convertedMap = TypeConverter
+                                                                .convertObjects(servletContext, 
+                           TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
+                           TypeUtil.instantiate(model.getPackageName() + "." + type2), 
+                           imBag);
+            List<InterMineObject> newList = new ArrayList<InterMineObject>();
+            for (List<InterMineObject> mapValues:convertedMap.values()) {
+                for (InterMineObject imObject : mapValues) {
+                    newList.add(imObject);
+                }
             }
+            WebPathCollection webPathCollection = new WebPathCollection(os, new Path(model,
+                type2), newList, model, webConfig, classKeys);
+            String identifier = "convert." + type2 + imBag.getName();
+            PagedTable pc = new PagedTable(webPathCollection);
+            SessionMethods.setResultsTable(session, identifier, pc);
+            String trail = "|bag." + imBag.getName();
+            return new ForwardParameters(mapping.findForward("results"))
+                            .addParameter("table", identifier)
+                            .addParameter("size", "25")
+                            .addParameter("trail", trail).forward();
+            
         }
         return new ForwardParameters(mapping.findForward("bagDetails"))
                     .addParameter("bagName", mbdf.getBagName()).forward();

@@ -321,6 +321,7 @@
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
       <forward name="bagResultsTable" redirect="true" path="/bagResultsTable.do"/>
       <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="results" redirect="true" path="/results.do"/>
       <forward name="errors" redirect="true" path="/bag.do"/>
     </action>
     <action path="/bagResultsTable" type="org.intermine.web.struts.BagDetailsAction">
@@ -412,6 +413,7 @@
 	</action>
     <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
+    <action path="/initConvertBag" type="org.intermine.web.struts.ConvertBagController"/>
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>

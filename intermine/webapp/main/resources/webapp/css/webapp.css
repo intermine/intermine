@@ -181,6 +181,9 @@ div#quicksearch {
  	display:block;margin-left:20px;
  }
 
+.dashedBox {
+    margin:10px; padding: 10px;
+    border: 1px dashed #999;}
 
 
 
