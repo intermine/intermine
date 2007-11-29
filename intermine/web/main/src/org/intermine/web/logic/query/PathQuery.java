@@ -490,6 +490,7 @@ public class PathQuery
         }
         query.pathDescriptions = new HashMap<Path, String>(pathDescriptions);
         query.setConstraintLogic(getConstraintLogic());
+        query.info = info;
         return query;
     }
 
