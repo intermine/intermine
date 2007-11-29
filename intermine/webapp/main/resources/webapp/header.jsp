@@ -7,10 +7,19 @@
 <!-- header.jsp -->
 <c:set value="${WEB_PROPERTIES['header.links']}" var="headerLinks"/>
 <c:if test="${fn:length(headerLinks) > 0}">
-<div id="topnav">
-	<c:forEach var="entry" items="${headerLinks}" varStatus="status">
-		<c:if test="${status.count != 1}">&nbsp;|&nbsp;</c:if><a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml">${entry}</a>
-	</c:forEach>  
+  <div id="topnav">
+    <c:forEach var="entry" items="${headerLinks}" varStatus="status">
+      <c:if test="${status.count != 1}">&nbsp;|&nbsp;</c:if>
+      <c:set value="header.links.${entry}" var="linkProp"/>
+      <c:choose>
+        <c:when test="${!empty WEB_PROPERTIES[linkProp]}">
+                <a href="${WEB_PROPERTIES[linkProp]}">${entry}</a>
+        </c:when>
+        <c:otherwise>
+          <a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml">${entry}</a>
+        </c:otherwise>
+      </c:choose>
+    </c:forEach> 
 </div>
 </c:if>
 
