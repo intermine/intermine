@@ -7,16 +7,7 @@
 
 <!-- convertBag.jsp -->
 
-<script type="text/javascript" charset="utf-8">
-    function getConvertCountForBag(bagName, type) {
-        AjaxServices.getConvertCountForBag(bagName, type, function(count) {
-            dwr.util.setValue(type + '_convertcount', count)
-        });
-    }
-</script>
-
-<div class="dashedBox">
-    <h3>Convert</h3>
+<div>
     <c:forEach items="${conversionTypes}" var="type">
       <script type="text/javascript" charset="utf-8">
         getConvertCountForBag('${bag.name}','${type}');
