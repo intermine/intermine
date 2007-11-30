@@ -405,8 +405,7 @@
     <td> Insertions and deletions</td>
     <td> <a href="http://www.drosdel.org.uk/" target="_new">DrosDel</a></td>
     <td> Ryder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15238529" target="_new">PubMed: 15238529</a></td>
-
-	  <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
+    <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr>
@@ -414,7 +413,7 @@
     <td> Insertions</td>
     <td> <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis; loaded from FlyBase v.5.3</a></td>
     <td> &nbsp;</td>
-
+    <td> &nbsp;</td>
    </tr>
 
   <tr>

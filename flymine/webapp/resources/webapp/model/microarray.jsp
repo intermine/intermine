@@ -118,13 +118,6 @@ Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determ
 
 
 
-
-
-
-
-
-
-
      <td width="40%" valign="top">
       <div class="heading2">
         Bulk download
@@ -133,14 +126,14 @@ Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determ
           
           <ul>
             <li>
-             <im:querylink text="All FlyAtlas results for <i>D. melanogaster genes</i> " skipBuilder="true">
+             <im:querylink text="All FlyAtlas results for <i>D. melanogaster</i> genes " skipBuilder="true">
              <query name="" model="genomic" view="FlyAtlasResult.genes.identifier FlyAtlasResult.material.identifier FlyAtlasResult.MRNASignal FlyAtlasResult.MRNASignalSEM FlyAtlasResult.enrichment FlyAtlasResult.presentCall FlyAtlasResult.affyCall FlyAtlasResult.assays.name">
              </query>
              </im:querylink>
             </li>
 
             <li>
-             <im:querylink text="All results from Koutsos et al for <i>A. gambiae genes</i> " skipBuilder="true">
+             <im:querylink text="All results from Koutsos et al for <i>A. gambiae</i> genes " skipBuilder="true">
             <query name="" model="genomic" view="Gene.identifier Gene.microArrayResults.material.identifier Gene.microArrayResults.value Gene.microArrayResults.standardError Gene.microArrayResults.type Gene.microArrayResults.assays.name" sortOrder="Gene.identifier asc">
   <node path="Gene" type="Gene">
   </node>
