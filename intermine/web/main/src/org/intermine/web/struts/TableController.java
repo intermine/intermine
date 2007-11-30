@@ -157,16 +157,19 @@ public class TableController extends TilesAction
         }
         
         int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
-        int size = (sizeStr == null ? pt.getPageSize() : Integer.parseInt(sizeStr));
         
-        try {
-            pt.setPageAndPageSize(page, size);
-        } catch (PageOutOfRangeException e) {
-            ActionMessages actionMessages = getErrors(request);
-            actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
-                               new ActionMessage("results.maxoffsetreached"));
-            saveErrors(request, actionMessages);
+        int newPageSize;
+        if (sizeStr != null) {
+        	newPageSize = Integer.parseInt(sizeStr);
+        } else {
+        	if (session.getAttribute(Constants.RESULTS_TABLE_SIZE) != null) {
+        		newPageSize = (Integer) session.getAttribute(Constants.RESULTS_TABLE_SIZE);
+        	} else {
+        		newPageSize = pt.getPageSize();
+        	}
         }
+        pt.setPageAndPageSize(page, newPageSize);
+        session.setAttribute(Constants.RESULTS_TABLE_SIZE, newPageSize);
         
         List<Column> columns = pt.getColumns();
         

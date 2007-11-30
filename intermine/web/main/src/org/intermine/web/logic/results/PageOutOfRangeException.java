@@ -16,7 +16,7 @@ package org.intermine.web.logic.results;
  * @author Kim Rutherford
  */
 
-public class PageOutOfRangeException extends Exception
+public class PageOutOfRangeException extends RuntimeException
 {
     /**
      * Create a new PageOutOfRangeException.
@@ -26,4 +26,8 @@ public class PageOutOfRangeException extends Exception
     public PageOutOfRangeException (String message, Throwable t) {
         super(message, t);
     }
+
+	public PageOutOfRangeException(String message) {
+		super(message);
+	}
 }

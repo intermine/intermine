@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.intermine.web.logic.Constants;
 
 /**
  * A pageable and configurable table of data.
@@ -32,7 +33,7 @@ public class PagedTable
     private List<List<ResultElement>> resultElementRows = null;
     private int startRow = 0;
     
-    private int pageSize = 10;  
+    private int pageSize = Constants.DEFAULT_TABLE_SIZE;  
     private List<Column> columns;
 
     private List<List<Object>> rows = null;
@@ -131,15 +132,13 @@ public class PagedTable
      * Set the page size of the table
      *
      * @param pageSize the page size
-     * @throws PageOutOfRangeException if the page is out of range for this source collection
-     * (ie. is past the offset limit for the objectstore)
      */    
-    public void setPageSize(int pageSize) throws PageOutOfRangeException {
+    public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
         startRow = (startRow / pageSize) * pageSize;
         updateResultElementRows();
     }
-
+    
     /**
      * Get the page size of the current page
      *
@@ -170,24 +169,11 @@ public class PagedTable
      * 
      * @param page page number
      * @param size page size
-     * @throws PageOutOfRangeException if the page is out of range for this source collection
-     * (ie. is past the offset limit for the objectstore)
      */
-    public void setPageAndPageSize(int page, int size)
-        throws PageOutOfRangeException {
-        int oldStartRow = this.startRow;
-        int oldPageSize = this.pageSize;
-        
-        try {
-            this.pageSize = size;
-            this.startRow = size * page;
-            updateResultElementRows();
-        } catch (PageOutOfRangeException e) {
-            // reset state
-            this.startRow = oldStartRow;
-            this.pageSize = oldPageSize;
-            throw e;
-        }
+    public void setPageAndPageSize(int page, int size) {
+        this.pageSize = size;
+        this.startRow = size * page;
+        updateResultElementRows();
     }
     
     /**
@@ -203,11 +189,7 @@ public class PagedTable
      */
     public void firstPage() {
         startRow = 0;
-        try {
-            updateResultElementRows();
-        } catch (PageOutOfRangeException e) {
-            throw new RuntimeException("failed to go to the first page in PagedTable", e);
-        }
+        updateResultElementRows();
     }
 
     /**
@@ -220,19 +202,10 @@ public class PagedTable
 
     /**
      * Go to the last page
-     * @throws PageOutOfRangeException if the page is out of range for this source collection
-     * (ie. is past the offset limit for the objectstore)
      */
-    public void lastPage() throws PageOutOfRangeException {
-        int oldStartRow = startRow;
-        try {
-            startRow = ((getExactSize() - 1) / pageSize) * pageSize;
-            updateResultElementRows();
-        } catch (PageOutOfRangeException e) {
-            // go back to where we were
-            startRow = oldStartRow;
-            throw e;
-        }
+    public void lastPage() {
+        startRow = ((getExactSize() - 1) / pageSize) * pageSize;
+        updateResultElementRows();
     }
 
     /**
@@ -250,33 +223,15 @@ public class PagedTable
         if (startRow >= pageSize) {
             startRow -= pageSize;
         }
-        try {
-            updateResultElementRows();
-        } catch (PageOutOfRangeException e) {
-            LOG.error("OutOfRangeException exception in PagedTable: " + e.getStackTrace());
-
-            // if we get here a previous call to nextPage() or lastPage() didn't through
-            // OutOfRangeException as it should.  return to first page in the hope that that doesn't
-            // cause another exception
-            firstPage();
-        }
+        updateResultElementRows();
     }
 
     /**
      * Go to the next page
-     * @throws PageOutOfRangeException if the page is out of range for this source collection
-     * (ie. is past the offset limit for the objectstore)
      */
-    public void nextPage() throws PageOutOfRangeException {
-        int oldStartRow = startRow;
-        try {
-            startRow += pageSize;
-            updateResultElementRows();
-        } catch (PageOutOfRangeException e) {
-            // go back to where we were
-            startRow = oldStartRow;
-            throw e;
-        }
+    public void nextPage() {
+        startRow += pageSize;
+        updateResultElementRows();
     }
 
     /**
@@ -296,15 +251,7 @@ public class PagedTable
      */    
     public List<List<ResultElement>> getResultElementRows() {
         if (resultElementRows == null) {
-            try {
-                updateResultElementRows();
-            } catch (PageOutOfRangeException e) {
-                LOG.error(e);
-                throw new RuntimeException("unexpected exception while getting rows", e);
-            } catch (RuntimeException e) {
-                LOG.error(e);
-                throw e;
-            }
+            updateResultElementRows();
         }
         return resultElementRows;
     }
@@ -369,10 +316,12 @@ public class PagedTable
 
     /**
      * Update the internal row list
-     * @throws PageOutOfRangeException if update is unable to get the page we want
      */
-    private void updateResultElementRows() throws PageOutOfRangeException {
+    private void updateResultElementRows() {
         List<List<ResultElement>> newRows = new ArrayList<List<ResultElement>>();
+        if (getStartRow() > getExactSize() - 1) {
+        	throw new PageOutOfRangeException("Invalid start row of table.");
+        }
         for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
             try {
                 List<ResultElement> resultsRow = getAllRows().getResultElements(i);

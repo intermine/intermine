@@ -211,4 +211,14 @@ public interface Constants
      * Servlet attribute.  Contains the SearchRepository for global/public WebSearchable objects.
      */
     public static final String GLOBAL_SEARCH_REPOSITORY = "GLOBAL_SEARCH_REPOSITORY";
+
+    /**
+     * Default size of table implemented by PagedTable. 
+     */
+	public static final int DEFAULT_TABLE_SIZE = 10;
+	
+	/**
+     * Session attribute used to store the size of table with results.
+     */
+	public static final String RESULTS_TABLE_SIZE = "RESULTS_TABLE_SIZE";
 }

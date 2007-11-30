@@ -18,9 +18,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-
-import org.intermine.web.logic.results.PageOutOfRangeException;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -49,11 +46,8 @@ public class ChangeTableSizeAction extends InterMineAction
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         
-        try {
-            pt.setPageSize(Integer.parseInt(request.getParameter("pageSize")));
-        } catch (PageOutOfRangeException e) {
-            recordMessage(new ActionMessage("results.maxoffsetreached"), request);
-        }
+    	int pageSize = Integer.parseInt(request.getParameter("pageSize"));
+    	pt.setPageSize(pageSize);
         
         return new ForwardParameters(mapping.findForward("results"))
                 .addParameter("table", request.getParameter("table"))
