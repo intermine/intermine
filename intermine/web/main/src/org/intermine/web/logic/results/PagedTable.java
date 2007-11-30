@@ -319,7 +319,7 @@ public class PagedTable
      */
     private void updateResultElementRows() {
         List<List<ResultElement>> newRows = new ArrayList<List<ResultElement>>();
-        if (getStartRow() > getExactSize() - 1) {
+        if (getStartRow() < 0|| getStartRow() > getExactSize()) {
         	throw new PageOutOfRangeException("Invalid start row of table.");
         }
         for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
