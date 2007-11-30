@@ -105,7 +105,7 @@
             <html:form action="/changeTableSize">
               <%-- Page size controls --%>
               <fmt:message key="results.changepagesize"/>
-              <html:select property="pageSize" onchange="changePageSize()">
+              <html:select property="pageSize" onchange="changePageSize()" value="${resultsTable.pageSize}">
                 <html:option value="10">10</html:option>
                 <html:option value="25">25</html:option>
                 <html:option value="50">50</html:option>

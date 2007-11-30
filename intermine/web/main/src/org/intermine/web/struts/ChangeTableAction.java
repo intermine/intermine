@@ -48,11 +48,7 @@ public class ChangeTableAction extends InterMineDispatchAction
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         int page = ((pt.getExactSize() - 1) / pt.getPageSize());
-        try {
-            pt.setPageAndPageSize(page, pt.getPageSize());
-        } catch (PageOutOfRangeException e) {
-            recordError(new ActionMessage("results.maxoffsetreached"), request);
-        }
+        pt.setPageAndPageSize(page, pt.getPageSize());
 
         return makeResultsForward(mapping.findForward("results"), request, pt);
     }
