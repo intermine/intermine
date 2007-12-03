@@ -85,8 +85,8 @@ public class PathQueryHandler extends DefaultHandler
                 viewStrings = StringUtil.tokenize(attrs.getValue("view"));
                 
             }
-            if (attrs.getValue("sortField") != null) {
-               String[] s = (attrs.getValue("sortField")).split(" ");
+            if (attrs.getValue("sortOrder") != null) {
+               String[] s = (attrs.getValue("sortOrder")).split(" ");
                sortOrderString = s[0];
                directionString = s[1];
             }
