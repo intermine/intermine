@@ -63,4 +63,12 @@ public class OrderBy
         this.field = field;
     }
     
+    /**
+     * Returns a representation of the Path and direction as a String 
+     * @return a String version of the order by
+     */
+    public String toString() {
+        return field + " " + direction;
+    }
+    
 }
