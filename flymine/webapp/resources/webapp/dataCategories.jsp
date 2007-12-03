@@ -459,6 +459,20 @@
     <td> &nbsp;</td>
   </tr>
 
+    <td> <i>D. melanogaster</i> </td>
+    <td> Gene versus publications</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
+    <td> &nbsp;</td>
+  </tr>
+
+    <td> <i>D. pseudoobscura</i> </td>
+    <td> Gene versus publications</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
+    <td> &nbsp;</td>
+  </tr>
+
   <tr>
     <td> <i>C. elegans</i></td>
     <td> Gene versus publications</td>
