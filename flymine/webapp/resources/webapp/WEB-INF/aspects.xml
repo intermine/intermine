@@ -26,7 +26,7 @@
       taxon. Paralogues are the result of gene duplication.
     </intro-text>
     <tile-name>model/inparanoid.jsp</tile-name>
-    <aspect-source name="Inparanoid" url="http://inparanoid.cgb.ki.se/"/>
+    <aspect-source name="Inparanoid" url="http://inparanoid.sbc.su.se/cgi-bin/index.cgi"/>
   </aspect>
 
   <aspect name="Proteins">
