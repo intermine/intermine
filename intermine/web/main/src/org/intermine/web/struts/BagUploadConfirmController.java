@@ -52,7 +52,7 @@ public class BagUploadConfirmController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response) 
     throws Exception {
         HttpSession session = request.getSession();
-        BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult");
+        BagQueryResult bagQueryResult = (BagQueryResult) request.getAttribute("bagQueryResult");
         request.setAttribute("matches", bagQueryResult.getMatches());
         Map<String, Map<String, Map<String, List>>> issues = bagQueryResult.getIssues();
         request.setAttribute("issues", issues);
@@ -136,6 +136,7 @@ public class BagUploadConfirmController extends TilesAction
         bagUploadConfirmForm.setExtraFieldValue(TypeUtil.unqualifiedName(extraClassName));
         request.setAttribute("matchCount", new Integer(matchCount));
         request.setAttribute("jsArray", flattenedArray);
+      
         return null;
     }
     
