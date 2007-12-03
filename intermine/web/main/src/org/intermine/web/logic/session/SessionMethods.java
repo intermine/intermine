@@ -343,7 +343,6 @@ public class SessionMethods
                                  String queryName,
                                  PathQuery query,
                                  Date created) {
-        LOG.debug("saving query " + queryName);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         SavedQuery sq = new SavedQuery(queryName, (created != null ? created : new Date()),
                                        query.clone());
