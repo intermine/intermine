@@ -138,8 +138,12 @@ public class GFF3Record
         this.start = start;
         this.end = end;
         this.score = score;
-        this.strand = strand.trim();
-        this.phase = phase.trim();
+        if (strand != null) {
+            this.strand = strand.trim();
+        }
+        if (phase != null) {
+            this.phase = phase.trim();
+        }
         this.attributes = attributes;
     }
 
