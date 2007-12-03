@@ -3,6 +3,50 @@
 
   <div style="clear:" class="box">
 
+<div class="heading2">FlyMine version 10.0 - release notes (4th December 2007)</div>
+<div class="body">
+<p style="font-size: +1.1em;">
+Release 10.0 of FlyMine includes an update of data from FlyBase, a new <i>A. gambiae</i> gene expression data set and some user interface changes.
+</p>
+<h3>Data</h3>
+<p>
+The <i>D. melanogaster</i> genome has been updated to release 5.4 from FlyBase.  We have added a new microarray-based gene expression data set for the life cycle of <i>A. gambiae</i>.  'Life cycle transcriptome of the malaria mosquito Anopheles gambiae and comparison with the fruitfly Drosophila melanogaster.' (Koutsos et al 2007 - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids=%2017563388">PubMed</a>).  
+</p>
+<p>
+Other data changes:
+<ul>
+  <li>FIX - duplicate introns have been removed for <i>D. melanogaster</i> and <i>D. pseudoobscura</i>, FlyMine used to infer introns but they are now imported from FlyBase.</li>
+  <li>FIX - introns are now created on the correct strand for <i>A. gambiae</i> and <i>A. mellifera</i>.</li>
+  <li>FIX - orthologues for <i>A. gambiae</i>, <i>A. mellifera</i> and <i>A. aegypti</i> now reference genes as well as translations, they will now appear in results of more template queries.</li>
+  <li>FIX - <i>D. pseudoobscura</i> 'Unknown' assembly groups are no longer created as chromosomes.</li>
+  <li>FIX - the 'localised' category has been removed for fly-FISH expression data, the data now just shows whether a gene is expressed or not at a particular stage.</li>
+</ul> 
+</p>
+<h3>List Conversion</h3>
+<p>The List analysis page has a new 'Convert' section for instant conversion between common types (genes, proteins, transcripts amd exons).  Counts of each type are displayed for a list - e.g. the numbers of proteins, transcripts and exons found for a list of genes.  Clicking on the type will bring up a results table from which you can export identifiers, sequence or create a new list.
+</p>
+
+<h3>External links</h3>
+<p>We have added links to more external databases from report pages - e.g. to model organism databases and REDfly.  We now have a simple configuration system for links so if you have suggestions of other databases it would by useful to link to please let us know - support[at]flymine.org.
+</p>
+
+<h3>Tutorial and FAQ</h3>
+<p>We have added a tutorial on creating and using lists in FlyMine, see the <a href="/help.shtml">help page</a>.  There is also a list of <a href="http://www.intermine.org/wiki/FlyMineFAQ">Frequently Asked Questions</a> linked to from the header.
+</p>
+
+<h3>User interface changes</h3>
+<ul>
+  <li>NEW - the queries run when clicking on graphs or tables in list analysis widgets now include more information.</li>
+  <li>NEW - number of rows shown in results tables is remembered.</li>
+  <li>FIX - performance improvement for uploading lists with more than 1000 elements.</li>
+  <li>FIX - fixed problem where user was logged out or history was lost when returning to the home page.</li>
+  <li>FIX - uploading a list from a file is fixed on Safari.</li>
+  <li>FIX - it is now more obvious when long text entries have been truncated in results tables.</li>
+  <li>FIX - fixed 'div has no properties' error in templates tab if user created two templates with the same title.</li>
+</ul>
+</div>
+
+
 <div class="heading2">FlyMine version 9.0 - release notes (8th November 2007)</div>
 <div class="body">
 <p style="font-size: +1.1em;">
