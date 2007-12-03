@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.intermine.web.logic.Constants;
 
 /**
@@ -26,14 +25,12 @@ import org.intermine.web.logic.Constants;
  */
 public class PagedTable
 {
-    private static final Logger LOG = Logger.getLogger(PagedTable.class);
-
     private WebTable webTable;
     private List<String> columnNames = null;
     private List<List<ResultElement>> resultElementRows = null;
     private int startRow = 0;
-    
-    private int pageSize = Constants.DEFAULT_TABLE_SIZE;  
+
+    private int pageSize = Constants.DEFAULT_TABLE_SIZE;
     private List<Column> columns;
 
     private List<List<Object>> rows = null;
@@ -58,7 +55,7 @@ public class PagedTable
         this.pageSize = pageSize;
     }
 
-    
+
     /**
      * Get the list of column configurations
      *
@@ -82,9 +79,9 @@ public class PagedTable
     public List<String> getColumnNames() {
         if (columnNames == null) {
             columnNames = new ArrayList<String>();
-            Iterator iter = getColumns().iterator();
+            Iterator<Column> iter = getColumns().iterator();
             while (iter.hasNext()) {
-                String columnName = ((Column) iter.next()).getName();
+                String columnName = iter.next().getName();
                 columnNames.add(columnName);
             }
         }
@@ -105,7 +102,7 @@ public class PagedTable
         }
         return count;
     }
-    
+
     /**
      * Move a column left
      *
@@ -116,7 +113,7 @@ public class PagedTable
             getColumnsInternal().add(index - 1, getColumnsInternal().remove(index));
         }
     }
-    
+
     /**
      * Move a column right
      *
@@ -132,13 +129,13 @@ public class PagedTable
      * Set the page size of the table
      *
      * @param pageSize the page size
-     */    
+     */
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
         startRow = (startRow / pageSize) * pageSize;
         updateResultElementRows();
     }
-    
+
     /**
      * Get the page size of the current page
      *
@@ -163,10 +160,10 @@ public class PagedTable
     public int getPage() {
         return (startRow / pageSize);
     }
-    
+
     /**
      * Set the page size and page together.
-     * 
+     *
      * @param page page number
      * @param size page size
      */
@@ -175,7 +172,7 @@ public class PagedTable
         this.startRow = size * page;
         updateResultElementRows();
     }
-    
+
     /**
      * Get the index of the last row of this page
      * @return the index
@@ -237,7 +234,7 @@ public class PagedTable
     /**
      * Return the currently visible rows of the table as a List of Lists of ResultElement objects.
      * @return the resultElementRows of the table
-     */    
+     */
     public List<List<Object>> getRows() {
         if (rows == null) {
             updateRows();
@@ -248,7 +245,7 @@ public class PagedTable
     /**
      * Return the currently visible rows of the table as a List of Lists of raw values/Objects.
      * @return the ResultElement of the table as rows
-     */    
+     */
     public List<List<ResultElement>> getResultElementRows() {
         if (resultElementRows == null) {
             updateResultElementRows();
@@ -272,7 +269,7 @@ public class PagedTable
     public Class<? extends WebTable> getWebTableClass() {
         return webTable.getClass();
     }
-    
+
     /**
      * Get the (possibly estimated) number of resultElementRows of this table
      * @return the number of resultElementRows
@@ -296,7 +293,7 @@ public class PagedTable
     public int getExactSize() {
         return webTable.getExactSize();
     }
-    
+
     /**
      * Set the rows fields to be a List of Lists of values from ResultElement objects from
      * getResultElementRows().
@@ -319,8 +316,8 @@ public class PagedTable
      */
     private void updateResultElementRows() {
         List<List<ResultElement>> newRows = new ArrayList<List<ResultElement>>();
-        if (getStartRow() < 0|| getStartRow() > getExactSize()) {
-        	throw new PageOutOfRangeException("Invalid start row of table.");
+        if (getStartRow() < 0 || getStartRow() > getExactSize()) {
+            throw new PageOutOfRangeException("Invalid start row of table.");
         }
         for (int i = getStartRow(); i < getStartRow() + getPageSize(); i++) {
             try {
@@ -345,7 +342,7 @@ public class PagedTable
     public int getMaxRetrievableIndex() {
         return webTable.getMaxRetrievableIndex();
     }
-    
+
     /**
      * Return the class from the data model for the data displayed in indexed column.
      * This may be the parent class of a field e.g. if column displays A.field where
@@ -356,7 +353,7 @@ public class PagedTable
     public Class getTypeForColumn(int index) {
         return webTable.getColumns().get(index).getType();
     }
-    
+
     /**
      * Set the column names
      * @param columnNames a list of Strings
