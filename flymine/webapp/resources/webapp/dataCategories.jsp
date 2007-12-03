@@ -448,7 +448,7 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><td rowspan="3" class="leftcol">
+  <tr><td rowspan="5" class="leftcol">
        <html:link action="/aspect?name=Literature">
         <p> <img src="model/images/book.png" /></p>
         <p> Literature</p></html:link></td>
