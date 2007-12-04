@@ -87,11 +87,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 for (String bot : bots) {
                     if (userAgent.contains(bot)) {
                         session.setMaxInactiveInterval(60);
-                        //TODO remove this!
-                        String msg = "Logged out robot with useragent " + userAgent 
-                        + " and username " + profile.getUsername();
-                        LOG.error(msg);
-                        break;
+                         break;
                     }
                 }
             }
