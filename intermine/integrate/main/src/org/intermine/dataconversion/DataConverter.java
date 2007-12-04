@@ -82,6 +82,7 @@ public abstract class DataConverter
      * @param collection collection name
      * @param addition item to add to collection
      * @throws ObjectStoreException if something goes wrong
+     * @deprecated should use Item.addToCollection() instead
      */
     protected void addToCollection(Item item, String collection, Item addition)
         throws ObjectStoreException {
