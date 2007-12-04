@@ -52,7 +52,6 @@ public class ChangeTableSizeAction extends InterMineAction
         return new ForwardParameters(mapping.findForward("results"))
                 .addParameter("table", request.getParameter("table"))
                 .addParameter("page", "" + pt.getPage())
-                .addParameter("size", "" + pt.getPageSize())
                 .addParameter("trail", request.getParameter("trail")).forward();
     }
 }

@@ -88,7 +88,6 @@ public class OrthologueAction extends InterMineAction
         if (id != null && id.length() > 0) {
             return new ForwardParameters(mapping.findForward("details"))
                 .addParameter("id", id)
-                .addParameter("size", "10")
                 .addParameter("trail", "").forward();
         }
                 
@@ -129,9 +128,7 @@ public class OrthologueAction extends InterMineAction
         
         return new ForwardParameters(mapping.findForward("results"))
             .addParameter("table", identifier)
-            .addParameter("size", "10")
-            .addParameter("trail", "").forward();    
-         
+            .addParameter("trail", "").forward();             
     }
 
 }

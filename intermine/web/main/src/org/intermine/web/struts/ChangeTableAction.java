@@ -150,7 +150,6 @@ public class ChangeTableAction extends InterMineDispatchAction
         ForwardParameters forward = new ForwardParameters(results)
                 .addParameter("table", request.getParameter("table"))
                 .addParameter("page", "" + pt.getPage())
-                .addParameter("size", "" + pt.getPageSize());
         if (request.getParameter("trail") != null) {
             forward.addParameter("trail", request.getParameter("trail"));
         }

@@ -233,7 +233,6 @@ public class PortalQueryAction extends InterMineAction
               SessionMethods.setResultsTable(session, identifier, pc);
               return new ForwardParameters(mapping.findForward("results"))
               .addParameter("table", identifier)
-              .addParameter("size", "10")
               .addParameter("trail", "").forward();
         // Make a bag
         } else if (bagList.size() > 1) {
@@ -257,7 +256,6 @@ public class PortalQueryAction extends InterMineAction
             return new ForwardParameters(mapping.findForward("results"))
             .addParameter("noSelect", "true")
             .addParameter("table", identifier)
-            .addParameter("size", "10")
             .addParameter("trail", "").forward();
         }
     }
