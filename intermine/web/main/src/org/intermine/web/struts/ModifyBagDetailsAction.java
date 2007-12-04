@@ -35,6 +35,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.WebConfig;
@@ -132,9 +133,12 @@ public class ModifyBagDetailsAction extends InterMineAction
             String type2 = request.getParameter("convert");
             Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-            Map savedBags = profile.getSavedBags();
+            SearchRepository globalRepository =
+                (SearchRepository) servletContext.getAttribute(Constants.
+                                                               GLOBAL_SEARCH_REPOSITORY);
+            InterMineBag imBag = BagHelper.getBag(profile, globalRepository, 
+                request.getParameter("bagName"));
             Model model = os.getModel();
-            InterMineBag imBag = (InterMineBag) savedBags.get(request.getParameter("bagName"));
             Map<InterMineObject, List<InterMineObject>> convertedMap = TypeConverter
                                                                 .convertObjects(servletContext, 
                            TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
