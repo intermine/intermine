@@ -149,7 +149,7 @@ public class ChangeTableAction extends InterMineDispatchAction
                                                              PagedTable pt) {
         ForwardParameters forward = new ForwardParameters(results)
                 .addParameter("table", request.getParameter("table"))
-                .addParameter("page", "" + pt.getPage())
+                .addParameter("page", "" + pt.getPage());
         if (request.getParameter("trail") != null) {
             forward.addParameter("trail", request.getParameter("trail"));
         }
