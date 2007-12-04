@@ -110,7 +110,6 @@ public class ModifyDetails extends DispatchAction
                         .addParameter("templateQueryTitle", template.getTitle())
                         .addParameter("templateQueryDescription", template.getDescription())        
                         .addParameter("table", identifier)
-                        .addParameter("size", "10")
                         .addParameter("trail", trail).forward();
     }
 

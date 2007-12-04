@@ -106,7 +106,6 @@ public class BagDetailsAction extends Action
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("bagName", bagName)
                         .addParameter("table", identifier)
-                        .addParameter("size", "25")
                         .addParameter("trail", trail).forward();
     }
 }
