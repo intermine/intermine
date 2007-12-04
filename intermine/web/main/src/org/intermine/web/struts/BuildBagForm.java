@@ -10,7 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 
 /**
@@ -27,8 +30,7 @@ public class BuildBagForm extends ActionForm
     private String type;
     private String extraFieldValue;
     private String whichInput;
-      
-    
+
     /**
      * Get the bag type
      * @return the bag type string
@@ -127,5 +129,15 @@ public class BuildBagForm extends ActionForm
 //        }
 //        return errors;
 //    }
+    
+    @Override
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
+        super.reset(mapping, request);
+        formFile = null;
+        text = "";
+        type = "";
+        extraFieldValue = "";
+        whichInput = "";
+    }
 
 }
