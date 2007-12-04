@@ -20,7 +20,7 @@
   </tr>
 	<tr>
 		<td align="right"><fmt:message key="contact.email"/></td>
-		<td><input type="text" name="monkey" size="40"/></td>
+		<td><span id="monkey"></span></td>
 	</tr>
   <tr>
     <td align="right"><fmt:message key="contact.subject"/></td>
@@ -36,6 +36,13 @@
   </table>
   </html:form>
 </div>
+
+      <script language="JavaScript">
+      <!--
+		 $('monkey').innerHTML='<input type=\"text\" name=\"monkey\" size=\"40\"/>';
+      //-->
+      </script>
+
 
 <!-- /feedbackForm.jsp -->
 
