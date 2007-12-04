@@ -58,11 +58,12 @@ public class ContactAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         ContactForm ff = (ContactForm) form;
+       
         
         try {
             Map webProperties = (Map) session.getServletContext()
                 .getAttribute(Constants.WEB_PROPERTIES);
-            MessageResources strings = getResources(request);
+            MessageResources strings = getResources(request);            
             String host = (String) ((Map) session.getServletContext().
                         getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");
             String from = ff.getMonkey();

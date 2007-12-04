@@ -30,9 +30,10 @@ import org.intermine.web.logic.query.PathQueryBinding;
 public class ContactForm extends ValidatorForm
 {
     private String name;
-    private String monkey;
+    private String monkey; // email address
     private String subject;
     private String message;
+
     
     /** Creates a new instance of ContactForm */
     public ContactForm() {
@@ -60,12 +61,12 @@ public class ContactForm extends ValidatorForm
     }
 
     /**
-     * @param email address of sender
+     * @param monkey email address of sender
      */
     public void setMonkey(String monkey) {
         this.monkey = monkey;
     }
-
+    
     /**
      * @return feedback subject
      */
