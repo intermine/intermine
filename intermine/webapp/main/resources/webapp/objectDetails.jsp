@@ -251,7 +251,7 @@
          
 
        <im:body id="Misc">
-       <c:if test="${! empty bagsWithThisObject}">
+   
         <div style="width:50%;float:left; border:1px solid #CCC;padding:10px;margin:0px 10px 10px 10px">
         Lists in which this can be found:
  	  <tiles:insert name="webSearchableList.tile">
@@ -263,7 +263,7 @@
             <tiles:put name="showSearchBox" value="false"/>
           </tiles:insert>
   	</div>
-  	</c:if>
+ 
 	   <%-- Add to bag --%>
              <c:if test="${!empty PROFILE.savedBags}">
                <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
