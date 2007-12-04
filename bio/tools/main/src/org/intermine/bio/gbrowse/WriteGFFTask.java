@@ -572,25 +572,7 @@ public class WriteGFFTask extends Task
         } catch (ClassNotFoundException e) {
             // ignore - PCRProduct is not in the model
         }
-        
-        try {
-            if (TypeUtil.isInstanceOf(bioEntity, "org.flymine.model.genomic.ArtificialDeletion")) {
-                Boolean fieldValue;
-                try {
-                    fieldValue = (Boolean) TypeUtil.getFieldValue(bioEntity, "available");
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("can't access 'available' field in: " + bioEntity);
-                }
-                if (fieldValue != null) {
-                    ArrayList availableFlagList = new ArrayList();
-                    availableFlagList.add(fieldValue.toString());
-                    attributes.put("available", availableFlagList);
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            // ignore - ArtificialDeletion is not in the model
-        }
-        
+
         lineBuffer.append(stringifyAttributes(attributes));
         gffWriter.println(lineBuffer.toString());
     }
