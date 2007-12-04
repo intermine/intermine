@@ -88,7 +88,11 @@ public class PathQueryHandler extends DefaultHandler
             if (attrs.getValue("sortOrder") != null) {
                String[] s = (attrs.getValue("sortOrder")).split(" ");
                sortOrderString = s[0];
-               directionString = s[1];
+               if ((s.length > 1) && (s[1].equalsIgnoreCase("desc"))) { 
+                   directionString = "desc";
+               } else {
+                   directionString = "asc";
+               }
             }
             if (attrs.getValue("constraintLogic") != null) {
                 query.setConstraintLogic(attrs.getValue("constraintLogic"));
