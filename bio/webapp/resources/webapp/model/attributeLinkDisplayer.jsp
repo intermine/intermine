@@ -6,28 +6,26 @@
 <!-- attributeLinkDisplayer.jsp -->
 <fmt:setBundle basename="model"/>
 
-<div style="margin-left: 20px">
+<table class="lookupReport" cellspacing="5" cellpadding="0">
   <c:forEach var="confMapEntry" items="${attributeLinkConfiguration}">
     <c:set var="href" value="${confMapEntry.value.url}"/>
     <c:set var="imageName" value="${confMapEntry.value.imageName}"/>
     <c:set var="text" value="${confMapEntry.value.text}"/>
 
     <c:if test="${!empty confMapEntry.value.valid && !empty confMapEntry.value.attributeValue}">
-      <div>
-        <c:if test="${!empty href}">
-          <a href="${href}">
-        </c:if>
+    <tr>
+        <td align="right">
         <c:if test="${!empty imageName}">
-          <html:img src="model/images/${imageName}"/>
+          <a href="${href}"><html:img src="model/images/${imageName}"/></a>
         </c:if>
+        </td>
+        <td>
         <c:if test="${!empty text}">
-          ${text}
+          <a href="${href}">${text}&nbsp;<img src="images/ext_link.png" alt="Link out" title="Link out"></a>
         </c:if>
-        <c:if test="${!empty href}">
-        </a>
-        </c:if>
-      </div>
+        </td>
+    </tr>
     </c:if>
   </c:forEach>
-</div>
+</table>
 <!-- /attributeLinkDisplayer.jsp -->
