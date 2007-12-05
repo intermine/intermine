@@ -129,10 +129,21 @@ public class SaveBagAction extends InterMineAction
         if (bag != null) {
             objectTypes.add(bag.getType());
         }
-        
+
+        boolean seenAllRows = false;
+        if (allRows.size() < 10 && !allRows.isSizeEstimate()) {
+            // hack to avoid problems with results from quick search - ignore the column type
+            // if all rows are selected
+            seenAllRows = true;
+        }
+
         // First pass through, just to check types are compatible.
         for (int i = 0; i < crf.getSelectedObjects().length; i++) {
             String selectedObjectString = crf.getSelectedObjects()[i];
+            if (!selectedObjectString.matches(".*,.*,.*") && seenAllRows) {
+                // ignore the column type as we're going to iterate over all rows
+                continue;
+            }
             int indexOfFirstComma = selectedObjectString.indexOf(",");
             String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
             int columnIndex = Integer.parseInt(columnIndexString);
@@ -153,7 +164,7 @@ public class SaveBagAction extends InterMineAction
             recordError(actionMessage, request);
             return mapping.findForward("results");
         }
-        
+
         ObjectStoreWriter osw = null;
         try {
             if (bag == null) {
@@ -166,7 +177,7 @@ public class SaveBagAction extends InterMineAction
             // Second pass through, to actually copy the data.
             for (int i = 0; i < crf.getSelectedObjects().length; i++) {
                 String selectedObjectString = crf.getSelectedObjects()[i];
-                
+
                 int indexOfFirstComma = selectedObjectString.indexOf(',');
                 String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
                 int columnIndex = Integer.parseInt(columnIndexString);
@@ -174,7 +185,7 @@ public class SaveBagAction extends InterMineAction
                 int indexOfLastComma = selectedObjectString.lastIndexOf(',');
                 if (indexOfFirstComma == indexOfLastComma) {
                     // there's just one comma eg. "1,Gene", so save the whole column
-                
+
                     if (allRows instanceof WebResults) {
                         Query q = QueryCloner.cloneQuery(((WebResults) allRows)
                                 .getInterMineResults().getQuery());
@@ -185,9 +196,9 @@ public class SaveBagAction extends InterMineAction
                         }
                         q.clearSelect();
                         q.addToSelect(qs);
-                
+
                         osw.addToBagFromQuery(bag.getOsb(), q);
-                
+
                     } else {
                         if (allRows instanceof WebPathCollection) {
                             List allRowsList = ((WebPathCollection) allRows).getList();
@@ -243,7 +254,7 @@ public class SaveBagAction extends InterMineAction
     {
         private List list;
 
-        /** 
+        /**
          * Create a new SingleColumnResults object
          * @param list the list of lists to act on
          */
