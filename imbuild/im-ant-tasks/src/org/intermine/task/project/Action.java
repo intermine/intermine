@@ -1,6 +1,6 @@
 package org.intermine.task.project;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -26,6 +26,11 @@ public abstract class Action
      * @param userProperty the property
      */
     public void addUserProperty(UserProperty userProperty) {
+        if (userProperty.getName().equals("src.data.dir.includes")
+            && userProperty.getValue() == null) {
+            throw new RuntimeException(userProperty.getName()
+                                       + " property must have a value attribute");
+        }
         properties.add(userProperty);
     }
 
