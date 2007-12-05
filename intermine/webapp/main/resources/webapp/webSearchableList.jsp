@@ -181,6 +181,15 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
               <li id='${wsListId}_${type}_item_${entry.value.name}'>
                 <div class="wsListElement">
                   <a href="/${WEB_PROPERTIES['webapp.path']}/gotows.do?type=${type}&amp;scope=${scope}&amp;name=${entry.key}">${entry.value.title}</a>
+                 (<c:out value="${entry.value.size}"/>
+				  <b><c:choose>
+				  <c:when test="${entry.value.size != 1}">
+				  <c:out value="${entry.value.type}s" />
+				  </c:when>
+				  <c:otherwise>
+				  <c:out value="${entry.value.type}" />
+				  </c:otherwise>
+				  </c:choose></b>)                  
                   <tiles:insert name="setFavourite.tile" flush="false">
                     <tiles:put name="name" value="${entry.value.title}"/>
                     <tiles:put name="type" value="${type}"/>
