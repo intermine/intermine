@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.session.SessionMethods;
@@ -68,7 +69,7 @@ public class AspectController extends TilesAction
         context.putAttribute("aspect", set);
         // look up the classes for this aspect
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
-        List tags = new ArrayList(SessionMethods.getProfileManager(servletContext)
+        List<Tag> tags = new ArrayList<Tag>(SessionMethods.getProfileManager(servletContext)
             .getTags(ASPECT_PREFIX + request.getParameter("name"), null, "class", superuser));
         CollectionUtils.transform(tags,
                 TransformerUtils.invokerTransformer("getObjectIdentifier"));

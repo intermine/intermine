@@ -51,7 +51,7 @@ public class FavouritesController extends TilesAction
                                  @SuppressWarnings("unused") ActionForm form,
             HttpServletRequest request, 
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
-        ArrayList favouriteTemplates = new ArrayList();
+        ArrayList<TemplateQuery> favouriteTemplates = new ArrayList<TemplateQuery>();
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -62,7 +62,7 @@ public class FavouritesController extends TilesAction
             String sup = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
             Profile superuserProfile = pm.getProfile(sup);
 
-            Map savedTemplates = new HashMap();
+            Map<String, TemplateQuery> savedTemplates = new HashMap<String, TemplateQuery>();
             savedTemplates.putAll(superuserProfile.getSavedTemplates());
             savedTemplates.putAll(profile.getSavedTemplates());
 
@@ -70,7 +70,7 @@ public class FavouritesController extends TilesAction
             for (Iterator iter = userTags.iterator(); iter.hasNext();) {
                 Tag element = (Tag) iter.next();
                 TemplateQuery templateQuery =
-                    (TemplateQuery) savedTemplates.get(element.getObjectIdentifier());
+                    savedTemplates.get(element.getObjectIdentifier());
                 if (templateQuery != null) {
                     favouriteTemplates.add(templateQuery);
                 }

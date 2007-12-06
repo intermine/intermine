@@ -28,7 +28,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
+
 
 /**
  * Action to save a single object o an existing bag.
@@ -54,15 +54,13 @@ public class AddToBagAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(Constants
-                    .PROFILE_MANAGER)).getUserProfileObjectStore();
         String bagName = request.getParameter("bag");
         
-        InterMineBag existingBag = (InterMineBag) profile.getSavedBags().get(bagName);
+        InterMineBag existingBag = profile.getSavedBags().get(bagName);
         if (existingBag != null) {
             ObjectStoreWriter osw = null;
             try {
-                InterMineObject o = (InterMineObject) os.getObjectById(new Integer(id));
+                InterMineObject o = os.getObjectById(new Integer(id));
                 if (BagHelper.isOfBagType(existingBag, o, os)) {
                     osw = new ObjectStoreWriterInterMineImpl(os);
                     osw.addToBag(existingBag.getOsb(), new Integer(id));
@@ -82,6 +80,7 @@ public class AddToBagAction extends InterMineAction
                         osw.close();
                     }
                 } catch (ObjectStoreException e) {
+                    // oops
                 }
             }
         } else {

@@ -102,7 +102,8 @@ public class ChangePasswordForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+                                 HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);

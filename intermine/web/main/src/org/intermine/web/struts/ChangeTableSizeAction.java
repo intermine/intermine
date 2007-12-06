@@ -10,7 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletException;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
+
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,8 +21,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Changes the size of the results displayed.
@@ -41,13 +42,12 @@ public class ChangeTableSizeAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-        throws ServletException {
+                                 @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         
-    	int pageSize = Integer.parseInt(request.getParameter("pageSize"));
-    	pt.setPageSize(pageSize);
+        int pageSize = Integer.parseInt(request.getParameter("pageSize"));
+        pt.setPageSize(pageSize);
         
         return new ForwardParameters(mapping.findForward("results"))
                 .addParameter("table", request.getParameter("table"))

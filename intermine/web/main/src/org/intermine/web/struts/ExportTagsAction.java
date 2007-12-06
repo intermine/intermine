@@ -14,7 +14,6 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -56,7 +55,6 @@ public class ExportTagsAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
         StringWriter sw = new StringWriter();

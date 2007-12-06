@@ -37,6 +37,8 @@ public class DisplayLookup
      * @param duplicates a Set of the identifiers that matched multiple useful objects
      * @param translated a Set of the identifiers that only matched objects of the wrong type
      * @param extraConstraint the String for the value of the extra constraint
+     * @param lowQuality a Set of the identifiers that match objects probably not of interest
+     * @param wildcards
      */
     public DisplayLookup(String type, int matches, Set<String> unresolved, Set<String> duplicates,
             Set<String> translated, Set<String> lowQuality, Map<String, List> wildcards,
