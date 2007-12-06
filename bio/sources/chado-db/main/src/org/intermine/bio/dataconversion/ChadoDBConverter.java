@@ -277,9 +277,13 @@ public class ChadoDBConverter extends BioDBConverter
             new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
         List<ConfigAction> nameActionList = getConfig().get(nameKey);
 
+        Set<String> fieldValuesSet = new HashSet<String>();
+
         if (name != null) {
             if (nameActionList == null || nameActionList.size() == 0) {
                 if (feature.checkAttribute("symbol")) {
+                    // default action
+                    fieldValuesSet.add(name);
                     feature.setAttribute("symbol", name);
                 } else {
                     // do nothing, if the name needs to go in a different attribute
@@ -291,6 +295,7 @@ public class ChadoDBConverter extends BioDBConverter
                         SetFieldConfigAction attrAction =
                             (SetFieldConfigAction) action;
                         feature.setAttribute(attrAction.getFieldName(), name);
+                        fieldValuesSet.add(name);
                         if (attrAction.getFieldName().equals("identifier")) {
                             fdat.flags |= FeatureData.IDENTIFIER_SET;
                         }
@@ -304,12 +309,14 @@ public class ChadoDBConverter extends BioDBConverter
         List<ConfigAction> uniqueNameActionList = getConfig().get(uniqueNameKey);
         if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
             feature.setAttribute("identifier", uniqueName);
+            fieldValuesSet.add(uniqueName);
             fdat.flags |= FeatureData.IDENTIFIER_SET;
         } else {
             for (ConfigAction action: uniqueNameActionList) {
                 if (action instanceof SetFieldConfigAction) {
                     SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
                     feature.setAttribute(attrAction.getFieldName(), uniqueName);
+                    fieldValuesSet.add(uniqueName);
                     if (attrAction.getFieldName().equals("identifier")) {
                         fdat.flags |= FeatureData.IDENTIFIER_SET;
                     }
@@ -329,7 +336,11 @@ public class ChadoDBConverter extends BioDBConverter
         fdat.intermineObjectId = store(feature); // Stores Feature
 
         // always create a synonym for the uniquename
-        createSynonym(fdat, "identifier", uniqueName, true, dataSet, EMPTY_ITEM_LIST,
+        boolean uniqueNameSet = false;
+        if (fieldValuesSet.contains(uniqueName)) {
+            uniqueNameSet = true;
+        }
+        createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, dataSet, EMPTY_ITEM_LIST,
                       dataSource); // Stores Synonym
 
         if (name != null) {
@@ -337,7 +348,11 @@ public class ChadoDBConverter extends BioDBConverter
                 || nameActionList.contains(CREATE_SYNONYM_ACTION)) {
                 name = fixIdentifier(interMineType, name);
                 if (!fdat.existingSynonyms.contains(name)) {
-                    createSynonym(fdat, "name", name, false, dataSet, EMPTY_ITEM_LIST,
+                    boolean nameSet = false;
+                    if (fieldValuesSet.contains(name)) {
+                        nameSet = true;
+                    }
+                    createSynonym(fdat, "name", name, nameSet, dataSet, EMPTY_ITEM_LIST,
                                   dataSource); // Stores Synonym
                 }
             }
@@ -794,6 +809,9 @@ public class ChadoDBConverter extends BioDBConverter
                     // no actions configured for this synonym
                     continue;
                 }
+
+                Set<String> fieldsSet = new HashSet<String>();
+
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
@@ -801,20 +819,28 @@ public class ChadoDBConverter extends BioDBConverter
                             setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
                                          accession);
                             existingAttributes.add(setAction.getFieldName());
+                            fieldsSet.add(accession);
                             if (setAction.getFieldName().equals("identifier")) {
                                 fdat.flags |= FeatureData.IDENTIFIER_SET;
                             }
                         }
-                    } else {
-                        if (action instanceof CreateSynonymAction) {
-                            if (fdat.existingSynonyms.contains(accession)) {
-                                continue;
-                            } else {
-                                createSynonym(fdat, "identifier", accession, false, dataSet,
-                                              EMPTY_ITEM_LIST, dataSource); // Stores Synonym
-                                count++;
+                    }
+                }
+
+                for (ConfigAction action: actionList) {
+                    if (action instanceof CreateSynonymAction) {
+                        if (fdat.existingSynonyms.contains(accession)) {
+                            continue;
+                        } else {
+                            boolean isPrimary = false;
+                            if (fieldsSet.contains(accession)) {
+                                isPrimary = true;
                             }
+                            createSynonym(fdat, "identifier", accession, isPrimary, dataSet,
+                                          EMPTY_ITEM_LIST, dataSource); // Stores Synonym
+                            count++;
                         }
+
                     }
                 }
             }
@@ -847,29 +873,39 @@ public class ChadoDBConverter extends BioDBConverter
                     continue;
                 }
 
+                Set<String> fieldsSet = new HashSet<String>();
+
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         setAttribute(fdat.intermineObjectId, setAction.getFieldName(), identifier);
+                        fieldsSet.add(identifier);
                         if (setAction.getFieldName().equals("identifier")) {
                             fdat.flags |= FeatureData.IDENTIFIER_SET;
                         }
-                    } else {
-                        if (action instanceof CreateSynonymAction) {
-                            CreateSynonymAction synonymAction = (CreateSynonymAction) action;
-                            Set<String> existingSynonyms = fdat.existingSynonyms;
-                            if (existingSynonyms.contains(identifier)) {
-                                continue;
-                            } else {
-                                String synonymType = synonymAction.synonymType;
-                                if (synonymType == null) {
-                                    synonymType = propTypeName;
-                                }
-                                createSynonym(fdat, synonymType, identifier, false, dataSet,
-                                              EMPTY_ITEM_LIST, dataSource); // Stores Synonym
-                                count++;
+                    }
+                }
+
+                for (ConfigAction action: actionList) {
+                    if (action instanceof CreateSynonymAction) {
+                        CreateSynonymAction synonymAction = (CreateSynonymAction) action;
+                        Set<String> existingSynonyms = fdat.existingSynonyms;
+                        if (existingSynonyms.contains(identifier)) {
+                            continue;
+                        } else {
+                            String synonymType = synonymAction.synonymType;
+                            if (synonymType == null) {
+                                synonymType = propTypeName;
                             }
+                            boolean isPrimary = false;
+                            if (fieldsSet.contains(identifier)) {
+                                isPrimary = true;
+                            }
+                            createSynonym(fdat, synonymType, identifier, isPrimary, dataSet,
+                                          EMPTY_ITEM_LIST, dataSource); // Stores Synonym
+                            count++;
                         }
+
                     }
                 }
             }
@@ -915,6 +951,9 @@ public class ChadoDBConverter extends BioDBConverter
                     // no actions configured for this synonym
                     continue;
                 }
+
+                boolean setField = false;
+
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
@@ -922,19 +961,22 @@ public class ChadoDBConverter extends BioDBConverter
                             setAttribute(fdat.intermineObjectId, setAction.getFieldName(),
                                          identifier);
                             existingAttributes.add(setAction.getFieldName());
+                            setField = true;
                             if (setAction.getFieldName().equals("identifier")) {
                                 fdat.flags |= FeatureData.IDENTIFIER_SET;
                             }
                         }
-                    } else {
-                        if (action instanceof CreateSynonymAction) {
-                            if (fdat.existingSynonyms.contains(identifier)) {
-                                continue;
-                            } else {
-                                createSynonym(fdat, synonymTypeName, identifier, false, dataSet,
-                                              EMPTY_ITEM_LIST, dataSource); // Stores Synonym
-                                count++;
-                            }
+                    }
+                }
+
+                for (ConfigAction action: actionList) {
+                    if (action instanceof CreateSynonymAction) {
+                        if (fdat.existingSynonyms.contains(identifier)) {
+                            continue;
+                        } else {
+                            createSynonym(fdat, synonymTypeName, identifier, setField, dataSet,
+                                          EMPTY_ITEM_LIST, dataSource); // Stores Synonym
+                            count++;
                         }
                     }
                 }

@@ -7,7 +7,7 @@
     <attribute name="residues" value="cttgtccctgtg"/>
   </item>
   <item id="5_18" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
+    <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="FBgn0000001_symbol_synonym"/>
     <reference name="source" ref_id="2_1"/>
@@ -50,7 +50,7 @@
     </collection>
   </item>
   <item id="5_13" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
+    <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBgn0000001_dbxref1"/>
     <reference name="source" ref_id="2_1"/>
@@ -118,7 +118,7 @@
     </collection>
   </item>
   <item id="5_4" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
+    <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG10000-RA"/>
     <reference name="source" ref_id="2_1"/>
@@ -311,7 +311,7 @@
     <attribute name="residues" value="ccacgactcgcagagggtgaagcttaagcgatcacggactcaatcctggcatcccagttcccaaagtcaggtccccacgagcatg"/>
   </item>
   <item id="5_17" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
+    <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="fullname"/>
     <attribute name="value" value="FBgn0000001_fullname_synonym"/>
     <reference name="source" ref_id="2_1"/>
@@ -356,7 +356,7 @@
     </collection>
   </item>
   <item id="5_12" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
+    <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG10000-RA_prot"/>
     <reference name="source" ref_id="2_1"/>
@@ -382,7 +382,7 @@
     </collection>
   </item>
   <item id="5_6" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="false"/>
+    <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG10000-RB"/>
     <reference name="source" ref_id="2_1"/>
