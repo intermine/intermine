@@ -22,8 +22,10 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -101,6 +103,11 @@ public class SynonymUpdater
                 new ContainsConstraint(synonymsRef, ConstraintOp.CONTAINS, synonymQC);
         cs.addConstraint(synonymConstraint);
 
+        QueryField isPrimaryQF = new QueryField(synonymQC, "isPrimary");
+        SimpleConstraint isPrimaryNotSetConstraint =
+            new SimpleConstraint(isPrimaryQF, ConstraintOp.IS_NULL);
+        cs.addConstraint(isPrimaryNotSetConstraint);
+
         q.setConstraint(cs);
 
         ObjectStore os = osw.getObjectStore();
@@ -127,7 +134,7 @@ public class SynonymUpdater
             CLASSES:
                 while (classesIter.hasNext()) {
                 String className = ((Class) classesIter.next()).getName();
-                Collection<FieldDescriptor> keyFields = ClassKeyHelper.getKeyFields(classKeyMap, 
+                Collection<FieldDescriptor> keyFields = ClassKeyHelper.getKeyFields(classKeyMap,
                                                                                     className);
                 for (FieldDescriptor keyField: keyFields) {
                     String fieldName = keyField.getName();
