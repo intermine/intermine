@@ -45,6 +45,7 @@ public interface EnrichmentWidgetLdr
     public Collection getReferencePopulation();
 
     /**
+     * @param os
      * @return the query representing the sample population (the bag)
      */
     public int getTotal(ObjectStore os);

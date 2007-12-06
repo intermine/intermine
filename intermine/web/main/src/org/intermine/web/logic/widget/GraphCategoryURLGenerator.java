@@ -26,6 +26,14 @@ public interface GraphCategoryURLGenerator extends CategoryURLGenerator
 
     public String generateURL(CategoryDataset dataset, int series, int category);
     
+    /**
+     * 
+     * @param os
+     * @param bag
+     * @param series
+     * @param category
+     * @return PathQuery
+     */
     public PathQuery generatePathQuery(ObjectStore os,  
                                        InterMineBag bag,
                                        String series, 
