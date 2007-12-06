@@ -135,7 +135,7 @@ public class BuildBagForm extends ActionForm
         super.reset(mapping, request);
         formFile = null;
         text = "";
-        type = "";
+        //type = "";
         extraFieldValue = "";
         whichInput = "";
     }
