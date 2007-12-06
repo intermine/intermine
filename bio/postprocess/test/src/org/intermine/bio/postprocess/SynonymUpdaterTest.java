@@ -69,16 +69,21 @@ public class SynonymUpdaterTest extends TestCase {
 
     public void testUpdateSynonyms() throws Exception {
         osw.beginTransaction();
-        Protein storedProtein1 = 
+        Protein storedProtein1 =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         storedProtein1.setIdentifier("Protein1");
         storedProtein1.setName("Protein name");
         osw.store(storedProtein1);
-        Protein storedProtein2 = 
+        Protein storedProtein2 =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         storedProtein2.setIdentifier("Protein2");
         osw.store(storedProtein2);
-        
+        Protein storedProtein3 =
+            (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        storedProtein3.setIdentifier("Protein3");
+        storedProtein3.setName("Protein name 3");
+        osw.store(storedProtein3);
+
         Synonym prot1Synonym1 =
             (Synonym) DynamicUtil.createObject(Collections.singleton(Synonym.class));
         prot1Synonym1.setValue("Protein1");
@@ -100,7 +105,24 @@ public class SynonymUpdaterTest extends TestCase {
         prot2Synonym1.setSubject(storedProtein2);
         osw.store(prot2Synonym1);
         osw.commitTransaction();
-        
+        Synonym prot3Synonym1 =
+            (Synonym) DynamicUtil.createObject(Collections.singleton(Synonym.class));
+        prot3Synonym1.setValue("random name");
+        prot3Synonym1.setSubject(storedProtein3);
+        prot3Synonym1.setIsPrimary(Boolean.TRUE);
+        osw.store(prot3Synonym1);
+        Synonym prot3Synonym2 =
+            (Synonym) DynamicUtil.createObject(Collections.singleton(Synonym.class));
+        prot3Synonym2.setValue("non-primary name");
+        prot3Synonym2.setSubject(storedProtein3);
+        prot3Synonym2.setIsPrimary(Boolean.FALSE);
+        osw.store(prot3Synonym2);
+        Synonym prot3Synonym3 =
+            (Synonym) DynamicUtil.createObject(Collections.singleton(Synonym.class));
+        prot3Synonym3.setValue("Protein name 3");
+        prot3Synonym3.setSubject(storedProtein3);
+        prot3Synonym3.setIsPrimary(Boolean.TRUE);
+        osw.store(prot3Synonym3);
 
         SynonymUpdater synonymUpdater = new SynonymUpdater() {
             protected InputStream getClassKeysInputStream() {
@@ -117,10 +139,10 @@ public class SynonymUpdaterTest extends TestCase {
         q.addToSelect(qcSynonym);
 
         ObjectStore os = osw.getObjectStore();
-        
+
         Results res = os.execute(q);
         Iterator iter = res.iterator();
-        
+
         while (iter.hasNext()) {
             ResultsRow row = (ResultsRow) iter.next();
             Synonym synonym = (Synonym) row.get(0);
@@ -135,7 +157,24 @@ public class SynonymUpdaterTest extends TestCase {
                     if (synonym.getValue().equals("Protein2")) {
                         assertTrue(synonym.getIsPrimary().booleanValue());
                     } else {
-                        assertFalse(synonym.getIsPrimary().booleanValue());
+                        if (synonym.getValue().equals("non match")) {
+                            assertFalse(synonym.getIsPrimary().booleanValue());
+                        } else {
+                            if (synonym.getValue().equals("random name")) {
+                                assertTrue(synonym.getIsPrimary().booleanValue());
+                            } else {
+                                if (synonym.getValue().equals("non-primary name")) {
+                                    assertFalse(synonym.getIsPrimary().booleanValue());
+                                } else {
+                                    if (synonym.getValue().equals("Protein name 3")) {
+                                        assertTrue(synonym.getIsPrimary().booleanValue());
+                                    } else {
+                                        throw new RuntimeException("unknown synonym: "
+                                                                   + synonym.getValue());
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
