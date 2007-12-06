@@ -250,59 +250,9 @@ public class SessionMethods
         }
         session.removeAttribute("prefix");
 
-        setHasQueryCookie(session, response, true);
     }
 
-    /**
-     * Give cookie to client to indicate that there is a current query (used by the
-     * website to display the 'current query' link).
-     * @param session session
-     * @param response current response
-     * @param value the cookie value
-     */
-    public static void setHasQueryCookie(HttpSession session, HttpServletResponse response,
-                                         boolean value) {
-        Properties webProps = (Properties) session.getServletContext()
-            .getAttribute(Constants.WEB_PROPERTIES);
-        String version = webProps.getProperty("project.releaseVersion");
-        Cookie cookie = new Cookie("have-query-" + version, "" + value);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-    }
 
-    /**
-     * Give cookie to client to indicate that there user is logged in.
-     * @param session session
-     * @param response current response
-     */
-    public static void setLoggedInCookie(HttpSession session, HttpServletResponse response) {
-        setLoggedInCookie(session, response, true);
-    }
-
-    /**
-     * Give cookie to client to indicate that there user is logged out.
-     * @param session session
-     * @param response current response
-     */
-    public static void setLoggedOutCookie(HttpSession session, HttpServletResponse response) {
-        setLoggedInCookie(session, response, false);
-    }
-
-    /**
-     * Give cookie to client to indicate that there user is logged in.
-     * @param session session
-     * @param response current response
-     * @param value cookie value, true or flase
-     */
-    public static void setLoggedInCookie(HttpSession session, HttpServletResponse response,
-            boolean value) {
-        Properties webProps = (Properties) session.getServletContext()
-            .getAttribute(Constants.WEB_PROPERTIES);
-        String version = webProps.getProperty("project.releaseVersion");
-        Cookie cookie = new Cookie("logged-in-" + version, "" + value);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-    }
 
     /**
      * Get the view list that the user is currently editing.

@@ -48,14 +48,13 @@ public class CurrentQueryAction extends InterMineAction
    public ActionForward execute(ActionMapping mapping,
                                 @SuppressWarnings("unused") ActionForm form,
                                 HttpServletRequest request,
-                                HttpServletResponse response)
+                                @SuppressWarnings("unused") HttpServletResponse response)
        throws Exception {
        HttpSession session = request.getSession();
        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
        boolean showTemplate = (request.getParameter("showTemplate") != null);
 
        if (query == null) {
-           SessionMethods.setHasQueryCookie(session, response, false);
            return new ForwardParameters(getWebProperties(request)
                    .getProperty("project.sitePrefix"), true).forward();
        }

@@ -54,7 +54,7 @@ public class QueryClassSelectAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 HttpServletResponse response)
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String className = ((QueryClassSelectForm) form).getClassName();
@@ -65,7 +65,6 @@ public class QueryClassSelectAction extends InterMineAction
             return mapping.findForward("classChooser");
         } else {
             newQuery(className, session);
-            SessionMethods.setHasQueryCookie(session, response, true);
             return mapping.findForward("query");
         }
     }

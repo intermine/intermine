@@ -108,7 +108,6 @@ public abstract class LoginHandler extends InterMineAction
                 throw new RuntimeException(iex.getMessage());
             }
         }
-        SessionMethods.setLoggedInCookie(session, response);
     }
 
     private String makeUniqueQueryName(String name, Set names) {
