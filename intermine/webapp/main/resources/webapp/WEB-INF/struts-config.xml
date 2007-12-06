@@ -365,8 +365,6 @@
     </action>
     <action path="/initWebSearchableList" type="org.intermine.web.struts.WebSearchableListController">
     </action>
-    <action path="/initQueryHistory" type="org.intermine.web.struts.HistoryController">
-    </action>
     <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController">
     </action>
     <action path="/initObjectTrail" type="org.intermine.web.struts.ObjectTrailController">
@@ -392,8 +390,6 @@
     <action path="/initBagUploadConfirmIssue" type="org.intermine.web.struts.BagUploadConfirmIssueController">
     </action>
     <action path="/initTemplate" name="templateForm" type="org.intermine.web.struts.TemplateController" validate="false">
-    </action>
-    <action path="/initFavourites" type="org.intermine.web.struts.FavouritesController">
     </action>
     <action path="/initSetFavourite" type="org.intermine.web.struts.SetFavouriteController">
     </action>
