@@ -24,7 +24,6 @@ import org.intermine.web.logic.template.TemplateQuery;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -37,8 +36,6 @@ import org.apache.struts.tiles.actions.TilesAction;
  */
 public class InlineTagEditorController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(InlineTagEditorController.class);
-    
     /**
      * {@inheritDoc}
      */

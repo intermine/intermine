@@ -54,9 +54,9 @@ public class TreeController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        Set openClasses = (Set) session.getAttribute("openClasses");
+        Set<String> openClasses = (Set<String>) session.getAttribute("openClasses");
         if (openClasses == null) {
-            openClasses = new HashSet();
+            openClasses = new HashSet<String>();
             openClasses.add("org.intermine.model.InterMineObject");
             session.setAttribute("openClasses", openClasses);
         }
@@ -66,7 +66,7 @@ public class TreeController extends TilesAction
         Model model = os.getModel();
 
         String rootClass = (String) request.getAttribute("rootClass");
-        List<ClassDescriptor> rootClasses = new ArrayList();
+        List<ClassDescriptor> rootClasses = new ArrayList<ClassDescriptor>();
         if (rootClass != null) {
             rootClasses.add(model.getClassDescriptorByName(rootClass));
         } else {

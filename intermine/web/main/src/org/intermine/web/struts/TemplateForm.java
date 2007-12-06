@@ -26,13 +26,10 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
-
-import org.apache.log4j.Logger;
 
 /**
  * Form to handle input from the template page
@@ -40,11 +37,15 @@ import org.apache.log4j.Logger;
  */
 public class TemplateForm extends ActionForm
 {
-    private static final Logger LOG = Logger.getLogger(TemplateForm.class);
 
     /** Maps containing form state for each constraint. */
-    protected Map attributeOps, attributeValues, parsedAttributeValues, useBagConstraint;
-    protected Map extraValues, selectedBags, bagOps;
+    protected Map<String, Object> attributeOps;
+    protected Map<String, Object> attributeValues; 
+    protected Map<String, Object> parsedAttributeValues;
+    protected Map<String, Boolean> useBagConstraint;
+    protected Map<String, Object> extraValues;
+    protected Map<String, Object> selectedBags;
+    protected Map<String, String> bagOps;
     protected String templateType, templateName;
     protected String view;
     
@@ -60,7 +61,7 @@ public class TemplateForm extends ActionForm
      * Set the attribute ops
      * @param attributeOps the attribute ops
      */
-    public void setAttributeOps(Map attributeOps) {
+    public void setAttributeOps(Map<String, Object> attributeOps) {
         this.attributeOps = attributeOps;
     }
 
@@ -94,7 +95,7 @@ public class TemplateForm extends ActionForm
      * Set the attribute values
      * @param attributeValues the attribute values
      */
-    public void setAttributeValues(Map attributeValues) {
+    public void setAttributeValues(Map<String, Object> attributeValues) {
         this.attributeValues = attributeValues;
     }
 
@@ -128,7 +129,7 @@ public class TemplateForm extends ActionForm
      * Sets the extra values
      * @param extraValues the extra values
      */
-    public void setExtraValues(Map extraValues) {
+    public void setExtraValues(Map<String, Object> extraValues) {
         this.extraValues = extraValues;
     }
 
@@ -200,7 +201,7 @@ public class TemplateForm extends ActionForm
      * @return the bag operation selected
      */
     public String getBagOp(String key) {
-        return (String) bagOps.get(key);
+        return bagOps.get(key);
     }
     
     /**
@@ -314,8 +315,6 @@ public class TemplateForm extends ActionForm
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
             for (Iterator ci = template.getEditableConstraints(node).iterator(); ci.hasNext();) {
-                Constraint c = (Constraint) ci.next();
-                
                 String key = "" + (j + 1);
                 Class fieldClass;
                 if (node.isAttribute()) {
@@ -344,7 +343,7 @@ public class TemplateForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
                       @SuppressWarnings("unused") HttpServletRequest request) {
         reset();
     }
@@ -353,13 +352,13 @@ public class TemplateForm extends ActionForm
      * Reset the form
      */
     protected void reset() {
-        attributeOps = new HashMap();
-        attributeValues = new HashMap();
-        parsedAttributeValues = new HashMap();
-        useBagConstraint = new HashMap();
-        selectedBags = new HashMap();
-        bagOps = new HashMap();
-        extraValues = new HashMap();
+        attributeOps = new HashMap<String, Object>();
+        attributeValues = new HashMap<String, Object>();
+        parsedAttributeValues = new HashMap<String, Object>();
+        useBagConstraint = new HashMap<String, Boolean>();
+        selectedBags = new HashMap<String, Object>();
+        bagOps = new HashMap<String, String>();
+        extraValues = new HashMap<String, Object>();
         templateName = null;
         templateType = null;
         view = "";

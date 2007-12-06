@@ -91,7 +91,8 @@ public class InitialiserPlugin implements PlugIn
      * @throws ServletException if this <code>PlugIn</code> cannot
      * be successfully initialized
      */
-    public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
+    public void init(ActionServlet servlet, 
+                     @SuppressWarnings("unused") ModuleConfig config) throws ServletException {
         final ServletContext servletContext = servlet.getServletContext();
  
         System.setProperty("java.awt.headless", "true");
@@ -169,7 +170,8 @@ public class InitialiserPlugin implements PlugIn
      * @param servletContext the servlet cnotext
      * @param os the main objectstore
      */
-    private void loadAspectsConfig(ServletContext servletContext, ObjectStore os) {
+    private void loadAspectsConfig(ServletContext servletContext, 
+                                   @SuppressWarnings("unused") ObjectStore os) {
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
         if (is == null) {
             LOG.info("Unable to find /WEB-INF/aspects.xml, there will be no aspects");
@@ -390,67 +392,6 @@ public class InitialiserPlugin implements PlugIn
         TemplateHelper.registerTemplateTableCreator(cache, servletContext);
         servletContext.setAttribute(Constants.GLOBAL_CACHE, cache);
     }
-    /**
-     * Load the CATEGORY_CLASSES and CATEGORIES servlet context attribute. Loads cateogires and
-     * subcateogires from roperties file /WEB-INF/classCategories.properties<p>
-     *
-     * The properties file should look something like:
-     * <pre>
-     *   category.0.name = People
-     *   category.0.classes = Employee Manager CEO Contractor Secretary
-     *   category.1.name = Entities
-     *   category.1.classes = Bank Address Department
-     * </pre>
-     *
-     * If a specified class cannot be found in the model, the class is ignored and not added to
-     * the category.
-     *
-     * @param servletContext  the servlet context
-     * @param os              the main object store
-     *
-    private void loadClassCategories(ServletContext servletContext, ObjectStore os)
-        throws ServletException {
-        List categories = new ArrayList();
-        Map subcategories = new HashMap();
-        InputStream in = servletContext.getResourceAsStream("/WEB-INF/classCategories.properties");
-        if (in == null) {
-            return;
-        }
-        Properties properties = new Properties();
-        
-        try {
-            properties.load(in);
-        } catch (IOException err) {
-            throw new ServletException(err);
-        }
-        
-        int n = 0;
-        String catname;
-        
-        while ((catname = properties.getProperty("category." + n + ".name")) != null) {
-            String sc = properties.getProperty("category." + n + ".classes");
-            String subcats[] = StringUtils.split(sc, ' ');
-            List subcatlist = new ArrayList();
-            
-            subcats = StringUtils.stripAll(subcats);
-            
-            for (int i = 0; subcats != null && i < subcats.length; i++) {
-                String className = os.getModel().getPackageName() + "." + subcats[i];
-                if (os.getModel().hasClassDescriptor(className)) {
-                    subcatlist.add(subcats[i]);
-                } else {
-                    LOG.warn("Category \"" + catname + "\" contains unknown class \"" + subcats[i]
-                        + "\"");
-                }
-            }
-            categories.add(catname);
-            subcategories.put(catname, subcatlist);
-            n++;
-        }
-        
-        //servletContext.setAttribute(Constants.CATEGORIES, categories);
-        //servletContext.setAttribute(Constants.CATEGORY_CLASSES, subcategories);
-    }*/
 
     /**
      * Create the profile manager and place it into to the servlet context.

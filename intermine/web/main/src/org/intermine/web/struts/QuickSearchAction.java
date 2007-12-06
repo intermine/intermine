@@ -82,13 +82,13 @@ public class QuickSearchAction extends InterMineAction
             Map<String, Object> valuesMap = new HashMap <String, Object> ();
             Map <String, ConstraintOp> constraintOpsMap = new HashMap <String, ConstraintOp> ();
 
-            PathNode node = ((PathNode) template.getEditableNodes().get(0));
+            PathNode node = (template.getEditableNodes().get(0));
 
             valuesMap.put(node.getPathString(), qsf.getParsedValue());
             constraintOpsMap.put(node.getPathString(), ConstraintOp.EQUALS);
             
             TemplateQuery queryCopy = TemplateHelper.editTemplate(valuesMap,
-                    constraintOpsMap, template, null, new HashMap());
+                    constraintOpsMap, template, null, new HashMap<String, String>());
             String qid = SessionMethods.startQuery(clientState, session, messages, 
                                                    false, queryCopy);
             Thread.sleep(200);

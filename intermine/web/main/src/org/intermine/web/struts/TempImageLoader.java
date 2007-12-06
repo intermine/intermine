@@ -40,14 +40,14 @@ public class TempImageLoader extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
+    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
         OutputStream out = response.getOutputStream();
         try {
-            String fileName = (String) request.getParameter("fileName");
+            String fileName = request.getParameter("fileName");
             File file = new File(System.getProperty("java.io.tmpdir"), fileName);
             if (!file.exists()) {
                         throw new InterMineException("File '" + file.getAbsolutePath() 

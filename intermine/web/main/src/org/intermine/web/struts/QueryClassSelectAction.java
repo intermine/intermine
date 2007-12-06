@@ -19,7 +19,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.session.SessionMethods;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;

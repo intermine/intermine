@@ -220,7 +220,7 @@ public class QueryBuilderController extends TilesAction
      * @return Map from list element values to list index Integer
      */
     protected static Map createIndexMap(List list) {
-        HashMap map = new HashMap();
+        HashMap<Object, Integer> map = new HashMap<Object, Integer>();
         for (int i = 0; i < list.size(); i++) {
             map.put(list.get(i), new Integer(i));
         }
@@ -236,7 +236,7 @@ public class QueryBuilderController extends TilesAction
      * @return list of paths (as Strings) that cannot be removed by the user
      */
     protected static List findLockedPaths(PathQuery pathquery) {
-        ArrayList paths = new ArrayList();
+        ArrayList<String> paths = new ArrayList<String>();
         Iterator iter = pathquery.getNodes().values().iterator();
         while (iter.hasNext()) {
             PathNode node = (PathNode) iter.next();
@@ -319,7 +319,7 @@ public class QueryBuilderController extends TilesAction
      * @return a map that maps every item in list to Boolean.TRUE
      */
     protected static Map listToMap(List list) {
-        Map map = new HashMap();
+        Map<Object, Boolean> map = new HashMap<Object, Boolean>();
         int n = list.size();
         for (int i = 0; i < n; i++) {
             map.put(list.get(i), Boolean.TRUE);

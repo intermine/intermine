@@ -12,10 +12,8 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.DisplayObject;
@@ -64,11 +62,7 @@ public class HtmlHeadController extends TilesAction
 
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
-        ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
-                .getAttribute(Constants.OBJECT_STORE_SUMMARY);
         Map displayObjects = SessionMethods.getDisplayObjects(session);
         
         String pageName = (String) context.getAttribute("pageName");

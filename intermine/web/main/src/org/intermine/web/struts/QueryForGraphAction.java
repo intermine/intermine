@@ -47,7 +47,6 @@ import org.apache.struts.util.MessageResources;
  */
 public class QueryForGraphAction extends InterMineAction
 {
-    private static int index = 0;
     
     /**
      * Action class to run an IQL query and constraint the results to
@@ -71,7 +70,6 @@ public class QueryForGraphAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         String bagName = request.getParameter("bagName");
-        String queryString = request.getParameter("query");
         String urlGen = request.getParameter("urlGen");
         String series = request.getParameter("series");
         String category = request.getParameter("category");
