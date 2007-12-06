@@ -446,7 +446,7 @@ public class WriteGFFTask extends Task
     }
 
     /**
-     * @param bioEntity the obejct to write
+     * @param bioEntity the object to write
      * @param chromosomeLocation the location of the object on the chromosome
      * @param featureType the type (third output column) to be used when writing - null means create
      * the featureType automatically from the java class name on the object to write
@@ -817,9 +817,13 @@ public class WriteGFFTask extends Task
     }
 
     private String chromosomeFileNamePrefix(Chromosome chr) {
-        return chr.getOrganism().getGenus() + "_"
-            + chr.getOrganism().getSpecies().replaceAll(" ", "_")
-            + "_chr_" + chr.getIdentifier();
-
+        String orgPrefix;
+        if (chr.getOrganism().getGenus() == null) {
+            orgPrefix = "Unknown_organism";
+        } else {
+            orgPrefix = chr.getOrganism().getGenus() + "_"
+            + chr.getOrganism().getSpecies().replaceAll(" ", "_");
+        }
+        return orgPrefix + "_chr_" + chr.getIdentifier();
     }
 }
