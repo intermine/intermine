@@ -428,12 +428,12 @@ public class AjaxServices
                 LOG.info("Lucene search took " + time + " milliseconds");
             } catch (ParseException e) {
                 LOG.error("couldn't run lucene filter", e);
-                ArrayList emptyList = new ArrayList();
+                ArrayList<String> emptyList = new ArrayList<String>();
                 emptyList.add(callId);
                 return emptyList;
             } catch (IOException e) {
                 LOG.error("couldn't run lucene filter", e);
-                ArrayList emptyList = new ArrayList();
+                ArrayList<String> emptyList = new ArrayList<String>();
                 emptyList.add(callId);
                 return emptyList;
             }
