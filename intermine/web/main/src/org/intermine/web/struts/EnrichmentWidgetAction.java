@@ -42,8 +42,6 @@ import org.apache.struts.util.MessageResources;
  */
 public class EnrichmentWidgetAction extends InterMineAction
 {
-   private int index = 0;
-
     /**
 
      *

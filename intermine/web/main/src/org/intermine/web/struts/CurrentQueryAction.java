@@ -23,7 +23,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**

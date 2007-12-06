@@ -29,7 +29,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.BagTableDisplayer;
 import org.intermine.web.logic.config.EnrichmentWidgetDisplayer;
 import org.intermine.web.logic.config.GraphDisplayer;
@@ -41,7 +40,6 @@ import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.widget.BagGraphWidget;
 import org.intermine.web.logic.widget.BagTableWidgetLoader;
 import org.intermine.web.logic.widget.DataSetLdr;
@@ -240,7 +238,7 @@ public class BagDetailsController extends TilesAction
     }
 
 
-    private void setBarGraph(ObjectStore os,
+    private void setBarGraph(@SuppressWarnings("unused") ObjectStore os,
                              HttpSession session, 
                              GraphDisplayer graphDisplayer, 
                              GraphDataSet graphDataSet,                          

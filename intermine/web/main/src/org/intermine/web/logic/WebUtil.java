@@ -29,7 +29,6 @@ import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.SearchRepository;

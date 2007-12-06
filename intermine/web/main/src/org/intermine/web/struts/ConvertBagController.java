@@ -10,7 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.awt.List;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -42,7 +42,7 @@ public class ConvertBagController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context,
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,

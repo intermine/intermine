@@ -37,6 +37,7 @@ public class ContactForm extends ValidatorForm
     
     /** Creates a new instance of ContactForm */
     public ContactForm() {
+        // Creates a new instance of ContactForm
     }
     
     /**
