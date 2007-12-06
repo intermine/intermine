@@ -128,7 +128,8 @@ public class ModifyBagForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+                                 HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
@@ -138,7 +139,7 @@ public class ModifyBagForm extends ActionForm
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyBag.none"));
         } else if (request.getParameter("delete") != null) {
             for (int i = 0; i < getSelectedBags().length; i++) {
-                Set queries = new HashSet();
+                Set<String> queries = new HashSet<String>();
                 queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
                         getSelectedBags()[i]));
                 queries.addAll(queriesThatMentionBag(profile.getHistory(),
@@ -178,8 +179,8 @@ public class ModifyBagForm extends ActionForm
      * @param bagName the name of a bag
      * @return the list of queries
      */
-    public List queriesThatMentionBag(Map savedQueries, String bagName) {
-        List queries = new ArrayList();
+    public List<String> queriesThatMentionBag(Map savedQueries, String bagName) {
+        List<String> queries = new ArrayList<String>();
         for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
             String queryName = (String) i.next();
             SavedQuery query = (SavedQuery) savedQueries.get(queryName);

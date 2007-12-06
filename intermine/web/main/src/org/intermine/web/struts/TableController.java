@@ -26,8 +26,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.path.Path;
@@ -36,7 +34,6 @@ import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PageOutOfRangeException;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -160,16 +157,17 @@ public class TableController extends TilesAction
         
         int newPageSize;
         if (sizeStr != null) {
-        	newPageSize = Integer.parseInt(sizeStr);
+            newPageSize = Integer.parseInt(sizeStr);
         } else {
-        	if (session.getAttribute(Constants.RESULTS_TABLE_SIZE) != null) {
-        		newPageSize = (Integer) session.getAttribute(Constants.RESULTS_TABLE_SIZE);
-        	} else {
-        		newPageSize = pt.getPageSize();
-        	}
+            if (session.getAttribute(Constants.RESULTS_TABLE_SIZE) != null) {
+                newPageSize = ((Integer) 
+                                session.getAttribute(Constants.RESULTS_TABLE_SIZE)).intValue();
+            } else {
+                newPageSize = pt.getPageSize();
+            }
         }
         pt.setPageAndPageSize(page, newPageSize);
-        session.setAttribute(Constants.RESULTS_TABLE_SIZE, newPageSize);
+        session.setAttribute(Constants.RESULTS_TABLE_SIZE, Integer.valueOf(newPageSize));
         
         List<Column> columns = pt.getColumns();
         

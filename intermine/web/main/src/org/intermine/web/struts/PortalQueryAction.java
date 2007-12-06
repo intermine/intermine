@@ -110,7 +110,7 @@ public class PortalQueryAction extends InterMineAction
 
         // Set collapsed/uncollapsed state of object details UI
         // TODO This might not be used anymore
-        Map collapsed = SessionMethods.getCollapsedMap(session);
+        Map<String, Boolean> collapsed = SessionMethods.getCollapsedMap(session);
         collapsed.put("fields", Boolean.TRUE);
         collapsed.put("further", Boolean.FALSE);
         collapsed.put("summary", Boolean.FALSE);
