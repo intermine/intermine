@@ -34,6 +34,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.widget.Bonferroni;
+import org.intermine.web.logic.widget.ErrorCorrection;
 import org.intermine.web.logic.widget.Hypergeometric;
 
 import java.io.BufferedReader;
@@ -434,7 +435,7 @@ public abstract class WebUtil
         return buf.toString();
     }
 
-    private static Map<String, List> statsCalcCache = new HashMap();
+    private static Map<String, List> statsCalcCache = new HashMap<String, List>();
 
     /**
      * Takes two queries.  Runs both and compares the results.
@@ -445,11 +446,18 @@ public abstract class WebUtil
      * @param total total number of the entire population
      * @param maxValue maximum value to return
      * @param significanceValue significance value
+     * @param errorCorrection which error correction algorithm to use, Bonferroni 
+     * or Benjamini Hochberg
      * @return array of three results maps
      * @throws Exception
      */
-    public static ArrayList statsCalc(ObjectStoreInterMineImpl os, Query queryPopulation,
-            Query querySample, InterMineBag bag, int total, Double maxValue) {
+    public static ArrayList statsCalc(ObjectStoreInterMineImpl os, 
+                                      Query queryPopulation,            
+                                      Query querySample, 
+                                      InterMineBag bag, 
+                                      int total, 
+                                      Double maxValue, 
+                                      String errorCorrection) {
 
             ArrayList<Map> maps = new ArrayList<Map>();
             int numberOfGenesInBag;
@@ -463,8 +471,8 @@ public abstract class WebUtil
             Results r = os.execute(querySample);
             r.setBatchSize(10000);
             Iterator iter = r.iterator();
-            HashMap<String, Long> countMap = new HashMap();
-            HashMap<String, String> idMap = new HashMap();
+            HashMap<String, Long> countMap = new HashMap<String, Long>();
+            HashMap<String, String> idMap = new HashMap<String, String>();
 
             while (iter.hasNext()) {
 
@@ -515,11 +523,18 @@ public abstract class WebUtil
                     resultsMap.put(id, new Double(p));
                 }
             }
-            
-            Bonferroni b = new Bonferroni(resultsMap);
-            b.calculate(maxValue);
-            HashMap adjustedResultsMap = b.getAdjustedMap();
+            HashMap adjustedResultsMap;
+            ErrorCorrection e = null;
 
+            if (errorCorrection != null && errorCorrection.equals("Bonferroni")) {
+                e = new Bonferroni(resultsMap);
+            } else {
+                // TODO benjamini hochberg
+                e = new Bonferroni(resultsMap);
+            }
+            e.calculate(maxValue);            
+            adjustedResultsMap = e.getAdjustedMap();
+            
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
             

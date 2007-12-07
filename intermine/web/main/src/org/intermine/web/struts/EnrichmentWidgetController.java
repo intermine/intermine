@@ -73,6 +73,7 @@ public class EnrichmentWidgetController extends TilesAction
              String description = request.getParameter("description");
              String link = request.getParameter("link");
              String filterLabel = request.getParameter("filterLabel");
+             String errorCorrection = request.getParameter("errorCorrection");
              String externalLink = request.getParameter("externalLink");
              String append = request.getParameter("append");
              String max = request.getParameter("max");
@@ -111,7 +112,7 @@ public class EnrichmentWidgetController extends TilesAction
                           
              // run both queries and compare the results 
              ArrayList results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(), bag, 
-                                       ldr.getTotal(os), maxValue);
+                                       ldr.getTotal(os), maxValue, errorCorrection);
                         
              request.setAttribute("title", title);
              request.setAttribute("description", description);
@@ -119,6 +120,7 @@ public class EnrichmentWidgetController extends TilesAction
              request.setAttribute("max", max);
              request.setAttribute("controller", controller);
              request.setAttribute("filterLabel", filterLabel);
+             request.setAttribute("errorCorrection", errorCorrection);
              request.setAttribute("externalLink", externalLink);
              request.setAttribute("append", append);
              if (results.isEmpty()) {

@@ -18,7 +18,7 @@ import java.util.Iterator;
  *
  * @author Julie Sullivan
  */
-public class Bonferroni
+public class Bonferroni implements ErrorCorrection
 {
     private HashMap originalMap = new HashMap();
     private HashMap<String, Double> adjustedMap = new HashMap<String, Double>();
@@ -26,7 +26,6 @@ public class Bonferroni
 
     /**
      * @param originalMap Hashmap of go terms and their pvalues.
-     * @param significanceValue significance Value.
      */
     public Bonferroni(HashMap originalMap) {
         this.originalMap = originalMap;
