@@ -35,9 +35,9 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
 <center><h2>${title}</h2></center>
 
 <c:out value='${description}'/>  Smaller p-values show greater enrichment. Method: Hypergeometric test with Bonferroni error correction (using a significance value of 0.05).
-<br><br>
+<br/><br/>
 Reference population: <c:out value='${referencePopulation}'/>.
-<br><br>
+<br/><br/>
 
 
 	
@@ -49,13 +49,20 @@ Reference population: <c:out value='${referencePopulation}'/>.
 
 	<form action="enrichmentWidget.do" method="get" name="goStatForm">
 	<table>
+	<tr>
+		<td>Error Correction</td>
+		<td><select name="errorCorrection">
+				<option value="Bonferroni">Bonferroni</option>
+			</select>
+		</td>
+	</tr>
       <tr>
       	<td>${filterLabel}</td>
       	<td>
       		<select name="filter">
      		 <c:forEach items="${filters}" var="name">
 				<option value="${name}" <c:if test="${filter == name}">SELECTED</c:if>>${name}</option>
-    		 </c:forEach>
+    		 </c:forEach>    		 
       		</select>	
 			&nbsp;
       			<input type="hidden" name="bagName" value="${bagName}"/>
@@ -82,9 +89,9 @@ Reference population: <c:out value='${referencePopulation}'/>.
 		<c:when test="${!empty pvalues}">
 			<table cellpadding="5" border="0" cellspacing="0" class="results">
 		  	<tr>	
-  				<th>${label}</td>
-	  			<th>p-value</td>
-  				<th>&nbsp;</td>
+  				<th>${label}</th>
+	  			<th>p-value</th>
+  				<th>&nbsp;</th>
 			</tr>
 	  		<c:forEach items="${pvalues}" var="results">
     			<tr>  	    			
