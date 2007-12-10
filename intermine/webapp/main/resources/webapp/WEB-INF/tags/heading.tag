@@ -14,7 +14,7 @@
 
 <div class="listHeading">
   <c:if test="${!empty id}">
-    <a href="javascript:toggleHidden('${id}');">
+    <a href="javascript:toggleHiddenAndRemember('${id}');">
   	<c:choose>
       <c:when test="${COLLAPSED[id]}">
         <img border="0" src="images/undisclosed.gif" alt="-" id="${id}Toggle" />

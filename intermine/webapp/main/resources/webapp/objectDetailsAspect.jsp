@@ -40,7 +40,7 @@
   	
     <im:heading id="template${index}">    
 
-       <a href="javascript:toggleHidden('template${index}');">${aspect}</a>&nbsp;&nbsp;<span class="templateResultsToggle">${templateHeaderMsg}</span>
+       <a href="javascript:toggleHiddenAndRemember('template${index}');">${aspect}</a>&nbsp;&nbsp;<span class="templateResultsToggle">${templateHeaderMsg}</span>
 
     </im:heading>
 	<div class="body">

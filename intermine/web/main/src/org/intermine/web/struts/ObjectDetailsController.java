@@ -19,16 +19,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.objectstore.query.ObjectStoreBagsForObject;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.ObjectStoreBagsForObject;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -39,19 +48,11 @@ import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayReference;
+import org.intermine.web.logic.results.DisplayType;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an object.
@@ -61,6 +62,9 @@ import org.apache.struts.action.ActionMapping;
  */
 public class ObjectDetailsController extends InterMineAction
 {
+	
+	protected static final Logger LOG = Logger.getLogger(ObjectDetailsController.class);
+	
     /**
      * {@inheritDoc}
      */
@@ -160,12 +164,37 @@ public class ObjectDetailsController extends InterMineAction
                              + ((publicBagsWithThisObject.length() != 0 
                                && myBagsWithThisObject.length() != 0) ? "," :"") 
                              + myBagsWithThisObject);
-        request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
+        request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);        
+       
+        setAtributesForDisplayType(request, session, object);
         
         return null;
     }
     
     /**
+     * Set request attributes, that are required for correct displaying which aspects will be
+     * opened at page.
+     * @param request request
+     * @param session session
+     * @param object object for which is page displayed
+     */
+    private void setAtributesForDisplayType(HttpServletRequest request, HttpSession session, InterMineObject object) {
+        DisplayType displayType = (DisplayType) session.getAttribute(Constants.DISPLAY_TYPE);
+        if (displayType == null) {
+        	displayType = new DisplayType();
+        	session.setAttribute(Constants.DISPLAY_TYPE, displayType);
+        }
+        Set<Class> cls = DynamicUtil.decomposeClass(object.getClass());
+        String type = null;
+        for (Class class1 : cls) {
+			type =  class1.getCanonicalName();
+		}
+    	Set<String> asps = displayType.getOpenedAspects(type);
+    	request.setAttribute("objectType", type);
+    	request.setAttribute("openedAspectIds", asps);
+	}
+
+	/**
      * For a given FieldDescriptor, look up its 'aspect:' tags and place it in the correct
      * map within placementRefsAndCollections. If categorised, remove it from the supplied
      * miscRefs map.

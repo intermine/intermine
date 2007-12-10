@@ -573,3 +573,7 @@ function getConvertCountForBag(bagName, type) {
         dwr.util.setValue(type + '_convertcount', count)
     });
 }
+
+function saveToggleState(type, aspectId, opened) {
+	AjaxServices.saveToggleState(type, aspectId, opened);
+} 
