@@ -125,7 +125,7 @@ public class BagUploadConfirmAction extends InterMineAction
         }
         
         profile.saveBag(bagName, bag);
-        
+        session.removeAttribute("bagQueryResult"); 
         ForwardParameters forwardParameters = 
             new ForwardParameters(mapping.findForward("bagDetails"));
         return forwardParameters.addParameter("bagName", bagName).forward();

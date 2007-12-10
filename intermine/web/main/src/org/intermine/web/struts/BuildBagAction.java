@@ -141,7 +141,7 @@ public class BuildBagAction extends InterMineAction
 
         BagQueryResult bagQueryResult = 
             bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue(), false);
-        request.setAttribute("bagQueryResult", bagQueryResult);
+        session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagType", type);
 
         return mapping.findForward("bagUploadConfirm");
