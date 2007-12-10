@@ -25,7 +25,7 @@ public class ObjectStoreBag implements QuerySelectable
      * which can provide a suitable valid bagId. Once the bag has been created, elements can
      * be added to it through the ObjectStoreWriter.
      *
-     * @param bagId the identifier of the bag.
+     * @param bagId the identifier of the bag
      */
     public ObjectStoreBag(int bagId) {
         this.bagId = bagId;

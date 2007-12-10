@@ -651,16 +651,16 @@ public class SqlGenerator
                 if (individualOsbs) {
                     tablenames.add(selectable);
                 } else {
-                    tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                    tablenames.add(INT_BAG_TABLE_NAME);
                 }
             } else if (selectable instanceof ObjectStoreBagCombination) {
                 if (individualOsbs) {
                     tablenames.addAll(((ObjectStoreBagCombination) selectable).getBags());
                 } else {
-                    tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                    tablenames.add(INT_BAG_TABLE_NAME);
                 }
             } else if (selectable instanceof ObjectStoreBagsForObject) {
-                tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                tablenames.add(INT_BAG_TABLE_NAME);
             } else {
                 throw new ObjectStoreException("Illegal entry in SELECT list: "
                         + selectable.getClass());
@@ -711,7 +711,7 @@ public class SqlGenerator
                 if (individualOsbs) {
                     tablenames.add(((BagConstraint) c).getOsb());
                 } else {
-                    tablenames.add(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
+                    tablenames.add(INT_BAG_TABLE_NAME);
                 }
             }
         } else if (!((c == null) || (c instanceof SimpleConstraint)
@@ -1609,18 +1609,15 @@ public class SqlGenerator
                         && (c.getOp() == ConstraintOp.NOT_IN))) {
                 // We can move the temporary bag table to the FROM list.
                 String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
-                state.addToFrom(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + " AS "
+                state.addToFrom(INT_BAG_TABLE_NAME + " AS "
                         + indirectTableAlias);
-                buffer.append(" = " + indirectTableAlias + "."
-                        + ObjectStoreInterMineImpl.BAGVAL_COLUMN);
-                buffer.append(" AND " + indirectTableAlias + "."
-                        + ObjectStoreInterMineImpl.BAGID_COLUMN + " = " + osb.getBagId());
+                buffer.append(" = " + indirectTableAlias + "." + BAGVAL_COLUMN);
+                buffer.append(" AND " + indirectTableAlias + "." + BAGID_COLUMN + " = "
+                        + osb.getBagId());
             } else {
-                buffer.append(" IN (SELECT " + ObjectStoreInterMineImpl.BAGVAL_COLUMN
-                        + " FROM ");
-                buffer.append(ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME);
-                buffer.append(" WHERE " + ObjectStoreInterMineImpl.BAGID_COLUMN + " = "
-                        + osb.getBagId() + ")");
+                buffer.append(" IN (SELECT " + BAGVAL_COLUMN + " FROM ");
+                buffer.append(INT_BAG_TABLE_NAME);
+                buffer.append(" WHERE " + BAGID_COLUMN + " = " + osb.getBagId() + ")");
             }
             if (c.getOp() == ConstraintOp.NOT_IN) {
                 buffer.append("))");

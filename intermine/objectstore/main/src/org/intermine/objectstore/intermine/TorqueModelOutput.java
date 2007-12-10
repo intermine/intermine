@@ -26,6 +26,13 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStoreException;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGID_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGVAL_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_TABLE_NAME;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBID_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBPAGE_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBVAL_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME;
 import org.intermine.sql.DatabaseUtil;
 
 import org.apache.log4j.Logger;
@@ -131,24 +138,33 @@ public class TorqueModelOutput
             .append(INDENT + "</unique>" + ENDL)
             .append(INDENT + "</table>" + ENDL);
         // Create the integer bag table
-        sb.append(INDENT + "<table name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + "\">"
-                + ENDL)
-            .append(generateColumn(ObjectStoreInterMineImpl.BAGID_COLUMN, "java.lang.Integer"))
-            .append(generateColumn(ObjectStoreInterMineImpl.BAGVAL_COLUMN, "java.lang.Integer"))
-            .append(INDENT + INDENT + "<unique name=\""
-                    + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME + "_index1\">" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<unique-column name=\""
-                    + ObjectStoreInterMineImpl.BAGID_COLUMN + "\"/>" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<unique-column name=\""
-                    + ObjectStoreInterMineImpl.BAGVAL_COLUMN + "\"/>" + ENDL)
+        sb.append(INDENT + "<table name=\"" + INT_BAG_TABLE_NAME + "\">" + ENDL)
+            .append(generateColumn(BAGID_COLUMN, "java.lang.Integer"))
+            .append(generateColumn(BAGVAL_COLUMN, "java.lang.Integer"))
+            .append(INDENT + INDENT + "<unique name=\"" + INT_BAG_TABLE_NAME + "_index1\">" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<unique-column name=\"" + BAGID_COLUMN + "\"/>"
+                    + ENDL)
+            .append(INDENT + INDENT + INDENT + "<unique-column name=\"" + BAGVAL_COLUMN + "\"/>"
+                    + ENDL)
             .append(INDENT + INDENT + "</unique>" + ENDL)
-            .append(INDENT + INDENT + "<index name=\"" + ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME
-                    + "_index2\">" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<index-column name=\""
-                    + ObjectStoreInterMineImpl.BAGVAL_COLUMN + "\"/>" + ENDL)
-            .append(INDENT + INDENT + INDENT + "<index-column name=\""
-                    + ObjectStoreInterMineImpl.BAGID_COLUMN + "\"/>" + ENDL)
+            .append(INDENT + INDENT + "<index name=\"" + INT_BAG_TABLE_NAME + "_index2\">" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\"" + BAGVAL_COLUMN + "\"/>"
+                    + ENDL)
+            .append(INDENT + INDENT + INDENT + "<index-column name=\"" + BAGID_COLUMN + "\"/>"
+                    + ENDL)
             .append(INDENT + INDENT + "</index>" + ENDL)
+            .append(INDENT + "</table>" + ENDL);
+        // Create the Clob table
+        sb.append(INDENT + "<table name=\"" + CLOB_TABLE_NAME + "\">" + ENDL)
+            .append(generateColumn(CLOBID_COLUMN, "java.lang.Integer"))
+            .append(generateColumn(CLOBPAGE_COLUMN, "java.lang.Integer"))
+            .append(generateColumn(CLOBVAL_COLUMN, "java.lang.String"))
+            .append(INDENT + INDENT + "<unique name=\"" + CLOB_TABLE_NAME + "_index\">" + ENDL)
+            .append(INDENT + INDENT + INDENT + "<unique-column name=\"" + CLOBID_COLUMN + "\"/>"
+                    + ENDL)
+            .append(INDENT + INDENT + INDENT + "<unique-column name=\"" + CLOBPAGE_COLUMN + "\"/>"
+                    + ENDL)
+            .append(INDENT + INDENT + "</unique>" + ENDL)
             .append(INDENT + "</table>" + ENDL);
 
         sb.append("</database>" + ENDL);
