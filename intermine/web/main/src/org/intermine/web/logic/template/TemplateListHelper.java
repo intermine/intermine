@@ -86,7 +86,7 @@ public class TemplateListHelper
         }
         
         List<TemplateQuery> retList = new ArrayList<TemplateQuery>(templates.values());
-
+        Collections.sort(retList, TEMPLATE_COMPARATOR);
         return retList;
     }
 
