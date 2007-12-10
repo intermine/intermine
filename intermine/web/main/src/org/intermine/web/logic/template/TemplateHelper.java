@@ -33,6 +33,7 @@ import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -508,7 +509,10 @@ public class TemplateHelper
             
             Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
             Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode,
-                    servletContext, null, false);
+                    servletContext, null, false,
+                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
             Results results = os.execute(query);
             Model model = os.getModel();
             WebResults webResults =
@@ -756,7 +760,7 @@ public class TemplateHelper
         Query query = null;
         try {
             query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null, 
-                                         null, false);
+                                         null, false, null, null, null);
         } catch (ObjectStoreException e) {
             // Not possible if last argument is null
         }

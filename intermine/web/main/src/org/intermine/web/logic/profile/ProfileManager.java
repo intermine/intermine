@@ -563,11 +563,11 @@ public class ProfileManager
      * @param userName the user name to pass to getTags()
      * @return the filtered Map
      */
-    public Map<String, WebSearchable>
-        filterByTags(Map<String, ? extends WebSearchable> webSearchables, 
+    public <W extends WebSearchable> Map<String, W>
+        filterByTags(Map<String, W> webSearchables, 
                      List<String> tagNames, String tagType, String userName) {
-        Map<String, WebSearchable> returnMap = 
-            new LinkedHashMap<String, WebSearchable>(webSearchables);
+        Map<String, W> returnMap = 
+            new LinkedHashMap<String, W>(webSearchables);
 
         // prime the cache
         for (String tagName: tagNames) {
@@ -577,7 +577,7 @@ public class ProfileManager
             if (StringUtils.isEmpty(tagName)) {
                 continue;
             }
-            for (Map.Entry<String, ? extends WebSearchable> entry: webSearchables.entrySet()) {
+            for (Map.Entry<String, W> entry: webSearchables.entrySet()) {
                 String webSearchableName = entry.getKey();
                 List tags = getTags(tagName, webSearchableName, tagType, userName);
                 if (tags.size() == 0) {

@@ -77,7 +77,10 @@ public class TypeConverter
 
         Query q;
         try {
-            q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null, servletContext, null, false);
+            q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null, servletContext, null, false,
+                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
         } catch (ObjectStoreException e) {
             throw new InterMineException(e);
         }

@@ -41,6 +41,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.AspectBinding;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryHelper;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -52,6 +53,7 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 import java.io.InputStream;
 
@@ -134,10 +136,10 @@ public class InitialiserPlugin implements PlugIn
         
         final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
         
-        AbstractMap<String, WebSearchable> templateSearchableMap =
-            new AbstractMap<String, WebSearchable>() {
+        AbstractMap<String, TemplateQuery> templateSearchableMap =
+            new AbstractMap<String, TemplateQuery>() {
                 @Override
-                public Set<Map.Entry<String, WebSearchable>> entrySet() {
+                public Set<Map.Entry<String, TemplateQuery>> entrySet() {
                     return pm.filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG_LIST,
                                            TagTypes.TEMPLATE,
                                            superProfile.getUsername()).entrySet();
@@ -145,10 +147,10 @@ public class InitialiserPlugin implements PlugIn
             };
         searchRepository.addWebSearchables(TagTypes.TEMPLATE, templateSearchableMap);
         
-        AbstractMap<String, WebSearchable> bagSearchableMap =
-            new AbstractMap<String, WebSearchable>() {
+        AbstractMap<String, InterMineBag> bagSearchableMap =
+            new AbstractMap<String, InterMineBag>() {
                 @Override
-                public Set<Map.Entry<String, WebSearchable>> entrySet() {
+                public Set<Map.Entry<String, InterMineBag>> entrySet() {
                     return pm.filterByTags(superProfile.getSavedBags(), PUBLIC_TAG_LIST,
                                            TagTypes.BAG,
                                            superProfile.getUsername()).entrySet();
