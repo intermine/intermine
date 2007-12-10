@@ -281,16 +281,36 @@
         </im:body>
      </div>
 
-  <script type="text/javascript">
-  <!--//<![CDATA[    
+  	<script type="text/javascript">
+  	<!--//<![CDATA[    
 
 	toggleAll(${aspectCount}, 'template', 'collapse', 'misc');
+				
+	function toggleHiddenAndRemember(elementId) {
+		opened = toggleHidden(elementId);
+		type = "${requestScope.objectType}";
+		if (type.length > 0) {
+			saveToggleState(type, elementId, opened);
+		}
+	}
+    //]]>-->
+	</script>
+	
+	<script type="text/javascript">
+		<c:forEach items="${requestScope.openedAspectIds}" var="openedAspectId">
+				toggleHidden("${openedAspectId}");
+		</c:forEach>
+	</script>
+ 	
+
+  	<script type="text/javascript">
+  	<!--//<![CDATA[    
 		
 	// open first one	
 	if (${aspectCount} > 0)	
 		toggleAll(1, 'template','expand');
       //]]>-->
-</script>
+	</script>
   
 </c:if>
 

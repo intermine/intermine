@@ -215,10 +215,15 @@ public interface Constants
     /**
      * Default size of table implemented by PagedTable. 
      */
-    public static final int DEFAULT_TABLE_SIZE = 10;
-    
-    /**
+	public static final int DEFAULT_TABLE_SIZE = 10;
+	
+	/**
      * Session attribute used to store the size of table with results.
      */
-    public static final String RESULTS_TABLE_SIZE = "RESULTS_TABLE_SIZE";
+	public static final String RESULTS_TABLE_SIZE = "RESULTS_TABLE_SIZE";
+
+	/**
+     * Session attribute used to store the DisplayType object
+     */
+	public static final String DISPLAY_TYPE = "DISPLAY_TYPE";
 }
