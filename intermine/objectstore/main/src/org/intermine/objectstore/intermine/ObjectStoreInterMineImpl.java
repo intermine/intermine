@@ -132,10 +132,18 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     public static final String UNIQUE_INTEGER_SEQUENCE_NAME = "objectstore_unique_integer";
     /** The name of the table that holds the integer ObjectStoreBag elements. */
     public static final String INT_BAG_TABLE_NAME = "osbag_int";
-    /** The name of the bagid column in the osbag table */
+    /** The name of the bagid column in the osbag table. */
     public static final String BAGID_COLUMN = "bagid";
-    /** The name of the value column in the osbag table */
+    /** The name of the value column in the osbag table. */
     public static final String BAGVAL_COLUMN = "value";
+    /** The name of the table that stores Clobs. */
+    public static final String CLOB_TABLE_NAME = "clob";
+    /** The name of the clobid column in the clob table. */
+    public static final String CLOBID_COLUMN = "clobid";
+    /** The name of the page number column in the clob table. */
+    public static final String CLOBPAGE_COLUMN = "clobpage";
+    /** The name of the value column in the clob table. */
+    public static final String CLOBVAL_COLUMN = "value";
 
     /**
      * Constructs an ObjectStoreInterMineImpl.
@@ -1212,6 +1220,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     iter.remove();
                 }
             }
+            // We have just removed the ObjectStoreBags from the Set of altered things. This means
+            // that although the DataChangedException stuff is ObjectStoreBag-specific, the dropping
+            // precomputed tables bit is not. Changing any ObjectStoreBag will result in all
+            // Precomputed tables that have an ObjectStoreBag being dropped.
             if ((tablesAltered.size() > 1) || (!tablesAltered.contains(INT_BAG_TABLE_NAME))) {
                 flushObjectById();
             }
