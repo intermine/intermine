@@ -41,6 +41,7 @@ import org.intermine.path.Path;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
@@ -502,10 +503,12 @@ public class SessionMethods
                                 = new HashMap<String, BagQueryResult>();
                         Map<String, InterMineBag> allBags =
                             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-                        Query q =
-                            MainHelper.makeQuery(pathQuery, allBags,
-                                                 pathToQueryNode, servletContext,
-                                                 pathToBagQueryResult, false);
+                        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode,
+                            servletContext, pathToBagQueryResult, false,
+                            (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                            (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                            (BagQueryConfig) servletContext.getAttribute(Constants
+                                .BAG_QUERY_CONFIG));
                         Results results = TableHelper.makeResults(os, q);
                         results.setNoPrefetch();
 

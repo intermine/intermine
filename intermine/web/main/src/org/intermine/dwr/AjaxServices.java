@@ -32,6 +32,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagHelper;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.profile.Profile;
@@ -539,7 +540,10 @@ public class AjaxServices
             PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, tq,
                 new HashMap());
             Query query = MainHelper.makeQuery(pathQuery, bagMap, pathToQueryNode, 
-                servletContext, null, false);
+                servletContext, null, false,
+                (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
             count = os.count(query, ObjectStore.SEQUENCE_IGNORE);
         } catch (Exception e) {
             throw new RuntimeException(e);

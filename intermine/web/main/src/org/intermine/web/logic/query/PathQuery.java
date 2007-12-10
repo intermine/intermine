@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ResultsInfo;
 
@@ -27,6 +28,8 @@ import org.intermine.metadata.Model;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
 import org.intermine.util.CollectionUtil;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 
 import java.io.StringReader;
@@ -565,8 +568,11 @@ public class PathQuery
         try {
 //            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext),
 //                                 servletContext, null);
-            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext), 
-                                 null, servletContext, null, true);
+            MainHelper.makeQuery(this, WebUtil.getAllBags(savedBags, servletContext),
+                    null, servletContext, null, true,
+                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
         } catch (Exception err) {
             addProblem(err);
         }

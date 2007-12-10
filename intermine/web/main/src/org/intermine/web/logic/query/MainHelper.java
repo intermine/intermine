@@ -207,7 +207,10 @@ public class MainHelper
      */
     public static Query makeQuery(PathQuery query, Map savedBags, ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
-        return makeQuery(query, savedBags, null, servletContext, returnBagQueryResults, false);
+        return makeQuery(query, savedBags, null, servletContext, returnBagQueryResults, false,
+                (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
     }
     
     /**
@@ -219,12 +222,15 @@ public class MainHelper
      * @param returnBagQueryResults optional parameter in which any BagQueryResult objects can be
      * @param checkOnly we're only checking the validity of the query, optimised to take less time
      * returned
+     * @param os the ObjectStore that this will be run on
+     * @param classKeys the class keys
      * @return an InterMine Query
      * @throws ObjectStoreException if something goes wrong
      */
     public static Query makeQuery(PathQuery pathQueryOrig, Map savedBags,
             Map<String, QueryNode> pathToQueryNode, ServletContext servletContext,
-            Map returnBagQueryResults, boolean checkOnly) throws ObjectStoreException {
+            Map returnBagQueryResults, boolean checkOnly, ObjectStore os,
+            Map classKeys, BagQueryConfig bagQueryConfig) throws ObjectStoreException {
         PathQuery pathQuery = pathQueryOrig.clone();
         Map qNodes = pathQuery.getNodes();
         List<Path> view = pathQuery.getView();
@@ -401,11 +407,6 @@ public class MainHelper
                         continue;
                     }
                     String identifiers = (String) c.getValue();
-                    ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants
-                            .OBJECTSTORE);
-                    Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-                    BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext.getAttribute(
-                            Constants.BAG_QUERY_CONFIG);
                     BagQueryRunner bagQueryRunner = new BagQueryRunner(os, classKeys,
                             bagQueryConfig, servletContext);
                     BagQueryResult bagQueryResult;
@@ -979,7 +980,9 @@ public class MainHelper
         Query subQ = null;
         try {
             subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, servletContext, null,
-                    false);
+                    false, (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
         } catch (ObjectStoreException e) {
             // Not possible if second-last argument is null
         }
