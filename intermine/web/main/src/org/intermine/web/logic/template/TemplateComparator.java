@@ -13,27 +13,25 @@ package org.intermine.web.logic.template;
 import java.util.Comparator;
 
 /**
- * Comparator used for ordering templates by description length.
+ * Comparator used for ordering templates by title
  * @author kmr
  */
 public class TemplateComparator implements Comparator
 {
     /**
-     * Compare two TemplateQuery objects by length of description.
+     * Compare two TemplateQuery objects by title.
      * {@inheritDoc}
      */
     public int compare(Object arg0, Object arg1) {
+        
+        
         TemplateQuery template0 = (TemplateQuery) arg0;
         TemplateQuery template1 = (TemplateQuery) arg1;
         
-        if (template0.title.length() < template1.title.length()) {
-            return -1;
+        if (template0.getTitle().equals(template1.getTitle())) {
+            return template0.getName().compareTo(template1.getName());              
         } else {
-            if (template0.title.length() > template1.title.length()) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return template0.getTitle().compareTo(template1.getTitle());              
         }
     }
 }
