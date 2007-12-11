@@ -12,7 +12,7 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <!-- enrichmentWidget -->
-
+<tiles:importAttribute/>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -34,7 +34,7 @@ String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+
 
 <center><h2>${title}</h2></center>
 
-<c:out value='${description}'/>  Smaller p-values show greater enrichment. Method: Hypergeometric test with Bonferroni error correction (using a significance value of 0.05).
+<c:out value='${enrichmentWidgetForm.description}'/>  Smaller p-values show greater enrichment. Method: Hypergeometric test.
 <br/><br/>
 Reference population: <c:out value='${referencePopulation}'/>.
 <br/><br/>
@@ -43,45 +43,56 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	
 <table>	
 
-<c:if test="${!empty filters}">
+
 <tr>
 	<td valign="top" align="center">
 
-	<form action="enrichmentWidget.do" method="get" name="goStatForm">
+	<html:form action="/enrichmentWidget" method="get">
 	<table>
 	<tr>
 		<td>Error Correction</td>
-		<td><select name="errorCorrection">
-				<option value="Bonferroni">Bonferroni</option>
-			</select>
+		<td><html:select property="errorCorrection">
+				<html:option value="Bonferroni">Bonferroni</html:option>
+			</html:select>
 		</td>
 	</tr>
+	<c:if test="${!empty enrichmentWidgetForm.filters}">
       <tr>
-      	<td>${filterLabel}</td>
+      	<td>${enrichmentWidgetForm.filterLabel}</td>
       	<td>
-      		<select name="filter">
-     		 <c:forEach items="${filters}" var="name">
-				<option value="${name}" <c:if test="${filter == name}">SELECTED</c:if>>${name}</option>
+      	
+    <c:set value="${enrichmentWidgetForm.filters}" var="filters" />
+	<c:set var="list" value='${fn:split(filters, ",")}' />
+      	
+      		<html:select property="filter">
+     		 <c:forEach items="${list}" var="name">
+				<html:option value="${name}">${name}</html:option>
     		 </c:forEach>    		 
-      		</select>	
+      		</html:select>	
 			&nbsp;
-      			<input type="hidden" name="bagName" value="${bagName}"/>
-      		    <input type="hidden" name="filters" value="${filters}"/>
-      		    <input type="hidden" name="controller" value="${controller}"/>
-      		   	<input type="hidden" name="title" value="${title}"/>
-      		   	<input type="hidden" name="link" value="${link}"/>
-      		  	<input type="hidden" name="max" value="${max}"/>
-      		  	<input type="hidden" name="description" value="${description}"/>
-      		  	<input type="hidden" name="filterLabel" value="${filterLabel}"/>
-			<input type="submit" name="filterSubmit" value="Update results">
 	    </td>
-	   </tr>
-	</table>
-	</form>	
+	   </tr>	   
+	   </c:if>	   
+	   <tr>
+	   	<td></td>
+	   	<td><html:submit property="filterSubmit" value="Update results" /></td>
+	   	</tr>
+	</table>	
+   		<html:hidden property="bagName"/>
+      		    <html:hidden property="filters"/>
+      		    <html:hidden property="controller"/>
+      		   	<html:hidden property="title" />
+      		    <html:hidden property="link" />
+      		  	<html:hidden property="max" />
+      		  	<html:hidden property="description" />
+      		  	<html:hidden property="filterLabel"/>
+      		  	<html:hidden property="label"/>
+	
+	</html:form>	
 	
 	</td>
 </tr>
-</c:if>
+
 
 <tr>
 	<td>
@@ -89,7 +100,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
 		<c:when test="${!empty pvalues}">
 			<table cellpadding="5" border="0" cellspacing="0" class="results">
 		  	<tr>	
-  				<th>${label}</th>
+  				<th>${enrichmentWidgetForm.label}</th>
 	  			<th>p-value</th>
   				<th>&nbsp;</th>
 			</tr>
@@ -117,7 +128,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
     				    </c:choose>
   					</td>
   					<td align="left" nowrap>
-  		   				<html:link action="/widgetAction?key=${results.key}&bagName=${bagName}&link=${link}" target="_top">
+  		   				<html:link action="/widgetAction?key=${results.key}&bagName=${enrichmentWidgetForm.bagName}&link=${enrichmentWidgetForm.link}" target="_top">
   		   					[<c:out value='${totals[results.key]}'/>  ${bagType}s]
        					</html:link>  	
 	       			</td>

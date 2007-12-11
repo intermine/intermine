@@ -51,89 +51,58 @@ public class EnrichmentWidgetController extends TilesAction
      *  an exception
      */
      public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                  @SuppressWarnings("unused") ActionForm form,
-                                  @SuppressWarnings("unused") HttpServletRequest request,
-                                  @SuppressWarnings("unused") HttpServletResponse response) 
+                                  ActionForm form,
+                                  HttpServletRequest request,
+                                  @SuppressWarnings("unused") HttpServletResponse response)
      throws Exception {
-
+    
+         HttpSession session = request.getSession();
+         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+         ServletContext servletContext = session.getServletContext();
+         ObjectStoreInterMineImpl os =
+             (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
+    
+         EnrichmentWidgetForm ewf = (EnrichmentWidgetForm) form;
         
-             HttpSession session = request.getSession();
-             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-             ServletContext servletContext = session.getServletContext();
-             ObjectStoreInterMineImpl os =
-                 (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
-
-             String bagName = request.getParameter("bagName");
-             Map<String, InterMineBag> allBags =
-                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-             InterMineBag bag = allBags.get(bagName);
-                                       
-             String title = request.getParameter("title");
-             String controller = request.getParameter("controller");
-             String description = request.getParameter("description");
-             String link = request.getParameter("link");
-             String filterLabel = request.getParameter("filterLabel");
-             String errorCorrection = request.getParameter("errorCorrection");
-             String externalLink = request.getParameter("externalLink");
-             String append = request.getParameter("append");
-             String max = request.getParameter("max");
-             Double maxValue = new Double(0.10);
-             try {
-                 maxValue = new Double(max);
-             } catch (NumberFormatException e) {
-                 throw new RuntimeException("Please define a maximum value for your "
-                                            + "enrichmentWidgetDisplayers in webconfig-model.xml");
-             }
-             String filters = request.getParameter("filters");
-             // filters
-             if (filters != null) {                 
-                 if (filters.contains(",")) {
-                     String[] filterList = filters.split(",");                   
-                     String filter = (request.getParameter("filter") != null
-                                 ? request.getParameter("filter") : filterList[0]);
-                     request.setAttribute("filter", filter);
-                     request.setAttribute("filters", filters);
-                 }
-             }
-             
-             request.setAttribute("bagName", bagName);
-             request.setAttribute("bagType", bag.getType());
-             Class clazz = TypeUtil.instantiate(controller);
-             Constructor constr = clazz.getConstructor(new Class[]
-                                                                 {
-                 HttpServletRequest.class
-                                                                 });
-
-             EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[]
-                                                                                {
-                 request
-                                                                                });
-             
-                          
-             // run both queries and compare the results 
-             ArrayList results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(), bag, 
-                                       ldr.getTotal(os), maxValue, errorCorrection);
-                        
-             request.setAttribute("title", title);
-             request.setAttribute("description", description);
-             request.setAttribute("link", link);
-             request.setAttribute("max", max);
-             request.setAttribute("controller", controller);
-             request.setAttribute("filterLabel", filterLabel);
-             request.setAttribute("errorCorrection", errorCorrection);
-             request.setAttribute("externalLink", externalLink);
-             request.setAttribute("append", append);
-             if (results.isEmpty()) {
-                 return null;
-             }
-             request.setAttribute("pvalues", results.get(0));
-             request.setAttribute("totals", results.get(1));
-             request.setAttribute("labelToId", results.get(2));
- 
-             request.setAttribute("referencePopulation", "All genes from:  " 
-                                  + ldr.getReferencePopulation().toString());
-                          
+         // TODO only do this if new bag page!         
+         String bagName = ewf.getBagName();
+         Map<String, InterMineBag> allBags =
+             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+         InterMineBag bag = allBags.get(bagName);
+         if (bag == null) {
              return null;
-     }
+         }
+         ewf.setBag(bag);
+      
+         Class clazz = TypeUtil.instantiate(ewf.getController());
+         Constructor constr = clazz.getConstructor(new Class[]
+                                                             {
+             HttpServletRequest.class
+                                                             });
+    
+         EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[]
+                                                                                       {
+             request
+                                                                                       });
+    
+    
+         // run both queries and compare the results 
+         ArrayList results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(), 
+                                               ewf.getBag(), ldr.getTotal(os), ewf.getMax(), 
+                                               ewf.getErrorCorrection());
+    
+    
+         if (results.isEmpty()) {
+             return null;
+         }
+         request.setAttribute("pvalues", results.get(0));
+         request.setAttribute("totals", results.get(1));
+         request.setAttribute("labelToId", results.get(2));
+    
+         request.setAttribute("referencePopulation", "All " + ewf.getBag().getType() + "s from  " 
+                              + ldr.getReferencePopulation().toString());
+    
+         return null;
+     }   
 }
 

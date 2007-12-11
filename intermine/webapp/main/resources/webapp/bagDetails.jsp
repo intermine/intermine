@@ -327,7 +327,7 @@
       	</fmt:param>
       </fmt:message> 
       <br/><br/>
-			<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&externalLink=${enrichmentWidgetResults.externalLink}&append=${enrichmentWidgetResults.append}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
+			<iframe src="enrichmentWidget.do?bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&label=${enrichmentWidgetResults.label}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
 		</div>
 	 	<c:set var="widgetCount" value="${widgetCount+1}" />
 	 	 </div>

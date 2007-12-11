@@ -28,6 +28,7 @@
     <form-bean name="createAccountForm" type="org.intermine.web.struts.CreateAccountForm"/>
     <form-bean name="changePasswordForm" type="org.intermine.web.struts.ChangePasswordForm"/>
     <form-bean name="modifyBagDetailsForm" type="org.intermine.web.struts.ModifyBagDetailsForm"/>
+    <form-bean name="enrichmentWidgetForm" type="org.intermine.web.struts.EnrichmentWidgetForm"/>
   </form-beans>
   <!-- ========== Exceptions Configuration ================================ -->
   <global-exceptions>
@@ -105,7 +106,7 @@
     </action>
     <action path="/showStatic" forward="showStatic.page">
     </action>
-    <action path="/enrichmentWidget" forward="enrichmentWidget.tile">
+    <action path="/enrichmentWidget" name="enrichmentWidgetForm" forward="enrichmentWidget.tile" validate="false">
     </action>
 		
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
@@ -405,7 +406,7 @@
     </action>
     <action path="/initSubMenu" type="org.intermine.web.struts.SubMenuController">
     </action>
-	<action path="/initEnrichmentWidget" type="org.intermine.web.struts.EnrichmentWidgetController">
+	<action path="/initEnrichmentWidget" name="enrichmentWidgetForm" type="org.intermine.web.struts.EnrichmentWidgetController" validate="false">
 	</action>
     <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
