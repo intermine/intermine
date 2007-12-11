@@ -70,7 +70,9 @@ public class InterMineBagHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void startElement(String uri, String localName, String qName,
+    public void startElement(@SuppressWarnings("unused") String uri, 
+                             @SuppressWarnings("unused") String localName, 
+                             String qName,
             Attributes attrs) throws SAXException {
         try {
             if (qName.equals("bag")) {
@@ -114,7 +116,9 @@ public class InterMineBagHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(@SuppressWarnings("unused") String uri, 
+                           @SuppressWarnings("unused") String localName, 
+                           String qName) throws SAXException {
         try {
             if (qName.equals("bag")) {
                 //if (bag.size() > 0) {
