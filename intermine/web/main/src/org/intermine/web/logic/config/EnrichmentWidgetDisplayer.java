@@ -15,16 +15,23 @@ package org.intermine.web.logic.config;
  */
 public class EnrichmentWidgetDisplayer
 {
-    private String title;
-    private String link;
-    private String controller;
-    private String description;
-    private String max;
-    private String filters;
-    private String filterLabel;
-    private String externalLink;
-    private String append;
+    private String title, link, controller, description, max, filters, filterLabel;
+    private String label;
     
+    /**
+     * @return the label
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * @param label the label to set
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     /**
      * Get the link
      * @return the link
@@ -126,36 +133,6 @@ public class EnrichmentWidgetDisplayer
      */
     public void setMax(String max) {
         this.max = max;
-    }
-    
-    /**
-     * Get the link
-     * @return the link
-     */
-    public String getExternalLink() {
-        return externalLink;
-    }
-    
-    /**
-     * Set the link
-     * @param externalLink the external link
-     */
-    public void setExternalLink(String externalLink) {
-        this.externalLink = externalLink;
-    }
-    
-    /**
-     * @return the string to append to the end of the external link
-     */
-    public String getAppend() {
-        return append;
-    }
-    
-    /**
-     * @param append the string to append to the end of the link
-     */
-    public void setAppend(String append) {
-        this.append = append;
     }
     
     
