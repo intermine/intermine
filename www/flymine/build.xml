@@ -132,6 +132,7 @@
   <target name="generate-tutorials" depends="prepare" 
           description="Generate html for tour and copy images to build directory">
      <mkdir dir="${dist.www}/help/tutorial1"/>
+     <mkdir dir="${dist.www}/help/tutorial2"/>
 
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/help/tutorials/tutorial1/tutorial1-lists.txt"/>
@@ -139,8 +140,21 @@
        <arg value="${dist.www}/help/tutorial1/"/>
      </exec>
 
+     <exec executable="${common.scripts}/process_help.pl">
+       <arg value="${src.www}/help/tutorials/tutorial2/tutorial2.txt"/>
+       <arg value="FlyMine Tutorial 2: Using the QueryBuilder and Editing Templates"/>
+       <arg value="${dist.www}/help/tutorial2/"/>
+     </exec>
+
     <copy todir="${dist.www}/help/tutorial1">
       <fileset dir="${src.www}/help/tutorials/tutorial1">
+        <include name="*.png"/>
+        <include name="*.gif"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist.www}/help/tutorial2">
+      <fileset dir="${src.www}/help/tutorials/tutorial2">
         <include name="*.png"/>
         <include name="*.gif"/>
       </fileset>
