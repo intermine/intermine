@@ -26,7 +26,6 @@ public class GraphDisplayer
     private String urlGen;
     private String description;
     private String graphType;
-    private String clazz;
 
     /**
      * @return the description
