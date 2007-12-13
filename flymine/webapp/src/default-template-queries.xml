@@ -728,7 +728,7 @@
   </query>
 </template>
 <template name="GeneTissue_FlyAtlas" title="Gene [D. melanogaster] + Tissue [D. melanogaster] --&gt; FlyAtlas data." longDescription="For a given D. melanogaster gene, show expression data for a particular tissue from FlyAtlas." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="GeneTissue_FlyAtlas" model="genomic" view="Gene.identifier Gene.probeSets.identifier Gene.microArrayResults.assays.name Gene.microArrayResults.MRNASignal Gene.microArrayResults.MRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall" constraintLogic="B and C and A">
+  <query name="GeneTissue_FlyAtlas" model="genomic" view="Gene.identifier Gene.probeSets.identifier Gene.microArrayResults.assays.name Gene.microArrayResults.mRNASignal Gene.microArrayResults.mRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall" constraintLogic="B and C and A">
     <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
     </pathDescription>
     <pathDescription pathString="Gene.microArrayResults" description="Microarray result">
@@ -850,7 +850,7 @@
   </query>
 </template>
 <template name="Gene_FlyAtlas" title="Gene [D. melanogaster] --&gt; FlyAtlas data." longDescription="For a given D. melanogaster gene, show expression data from FlyAtlas." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_FlyAtlas" model="genomic" view="Gene.identifier Gene.microArrayResults.assays.name Gene.microArrayResults.MRNASignal Gene.microArrayResults.MRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall Gene.probeSets.identifier" constraintLogic="A and B">
+  <query name="Gene_FlyAtlas" model="genomic" view="Gene.identifier Gene.microArrayResults.assays.name Gene.microArrayResults.mRNASignal Gene.microArrayResults.mRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall Gene.probeSets.identifier" constraintLogic="A and B">
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG9652" description="For the following gene:" identifier="Gene.class" editable="true" code="A">
       </constraint>
@@ -866,7 +866,7 @@
   </query>
 </template>
 <template name="Gene_FlyAtlasGO" title="Gene [D. melanogaster] --&gt; FlyAtlas + GO." longDescription="For a given D. melanogaster gene, show the FlyAtlas results and the GO terms applied to the gene." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_FlyAtlasGO" model="genomic" view="Gene.identifier Gene.microArrayResults.assays.name Gene.microArrayResults.MRNASignal Gene.microArrayResults.MRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall Gene.probeSets.identifier Gene.goAnnotation.identifier Gene.goAnnotation.name" constraintLogic="A and B">
+  <query name="Gene_FlyAtlasGO" model="genomic" view="Gene.identifier Gene.microArrayResults.assays.name Gene.microArrayResults.mRNASignal Gene.microArrayResults.mRNASignalSEM Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall Gene.probeSets.identifier Gene.goAnnotation.identifier Gene.goAnnotation.name" constraintLogic="A and B">
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG9652" description="" identifier="" editable="true" code="A">
       </constraint>
@@ -1780,7 +1780,7 @@
   </query>
 </template>
 <template name="Gene_upstreamAdjacent_FlyAtlas" title="Gene --&gt; upstream adjacent gene + FlyAtlas data" longDescription="For a particular gene or set of genes, give the upstream adjacent gene and FlyAtlas data that satisifies certain constraints." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_upstreamAdjacent_FlyAtlas" model="genomic" view="Gene.identifier Gene.upstreamIntergenicRegion.adjacentGenes.identifier Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.MRNASignal Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name" constraintLogic="B and C and D and A">
+  <query name="Gene_upstreamAdjacent_FlyAtlas" model="genomic" view="Gene.identifier Gene.upstreamIntergenicRegion.adjacentGenes.identifier Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.mRNASignal Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name" constraintLogic="B and C and D and A">
     <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays" description="Upstream adjacent gene &gt; microarray assay">
     </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes" description="Upstream adjacent gene">
@@ -1797,7 +1797,7 @@
     </node>
     <node path="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults" type="FlyAtlasResult">
     </node>
-    <node path="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.MRNASignal" type="Double">
+    <node path="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.mRNASignal" type="Double">
       <constraint op="&gt;=" value="100.0" description="mRNA signal:" identifier="" editable="true" code="B">
       </constraint>
     </node>
@@ -2332,7 +2332,7 @@
   </query>
 </template>
 <template name="ProbeSet_FlyAtlas" title="Probe [D. melanogaster] --&gt; FlyAtlas data." longDescription="Show the expression data of the following probe in the FlyAtlas experiments." comment="">
-  <query name="ProbeSet_FlyAtlas" model="genomic" view="ProbeSet.identifier ProbeSet.gene.identifier ProbeSet.transcript.identifier ProbeSet.results.assays.name ProbeSet.results.MRNASignal ProbeSet.results.MRNASignalSEM ProbeSet.results.presentCall ProbeSet.results.enrichment ProbeSet.results.affyCall">
+  <query name="ProbeSet_FlyAtlas" model="genomic" view="ProbeSet.identifier ProbeSet.gene.identifier ProbeSet.transcript.identifier ProbeSet.results.assays.name ProbeSet.results.mRNASignal ProbeSet.results.mRNASignalSEM ProbeSet.results.presentCall ProbeSet.results.enrichment ProbeSet.results.affyCall">
     <pathDescription pathString="ProbeSet.transcript" description="Transcript">
     </pathDescription>
     <pathDescription pathString="ProbeSet.gene" description="Gene">
@@ -2976,7 +2976,7 @@
   </query>
 </template>
 <template name="Tissue_Flyatlas" title="Tissue [D. melanogaster] --&gt; FlyAtlas data." longDescription="Show gene expression in the following tissue from D. melanogaster, according to FlyAtlas." comment="">
-  <query name="Tissue_Flyatlas" model="genomic" view="FlyAtlasResult.assays.name FlyAtlasResult.MRNASignal FlyAtlasResult.MRNASignalSEM FlyAtlasResult.presentCall FlyAtlasResult.enrichment FlyAtlasResult.affyCall FlyAtlasResult.genes.identifier FlyAtlasResult.genes.symbol FlyAtlasResult.genes.probeSets.identifier" constraintLogic="A and C and B and D and E">
+  <query name="Tissue_Flyatlas" model="genomic" view="FlyAtlasResult.assays.name FlyAtlasResult.mRNASignal FlyAtlasResult.mRNASignalSEM FlyAtlasResult.presentCall FlyAtlasResult.enrichment FlyAtlasResult.affyCall FlyAtlasResult.genes.identifier FlyAtlasResult.genes.symbol FlyAtlasResult.genes.probeSets.identifier" constraintLogic="A and C and B and D and E">
     <pathDescription pathString="FlyAtlasResult.genes.probeSets" description="Probe">
     </pathDescription>
     <pathDescription pathString="FlyAtlasResult.genes" description="Gene">
@@ -2997,7 +2997,7 @@
       <constraint op="&gt;" value="1.0" description="with the following enrichment" identifier="" editable="true" code="B">
       </constraint>
     </node>
-    <node path="FlyAtlasResult.MRNASignal" type="Double">
+    <node path="FlyAtlasResult.mRNASignal" type="Double">
       <constraint op="&gt;=" value="100.0" description="and the following mRNA signal." identifier="" editable="true" code="D">
       </constraint>
     </node>
@@ -3112,7 +3112,7 @@
   </query>
 </template>
 <template name="gene_adjacentgenes_allflyatlas" title="Gene --&gt; adjacent genes + all FlyAtlas data" longDescription="For a particular gene or set of genes give the upstream and downstream adjacent genes and show the FlyAtlas data for these genes." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="gene_adjacentgenes_allflyatlas" model="genomic" view="Gene.identifier Gene.downstreamIntergenicRegion.adjacentGenes.identifier Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.MRNASignal Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name Gene.upstreamIntergenicRegion.adjacentGenes.identifier Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.MRNASignal Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name">
+  <query name="gene_adjacentgenes_allflyatlas" model="genomic" view="Gene.identifier Gene.downstreamIntergenicRegion.adjacentGenes.identifier Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.mRNASignal Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name Gene.upstreamIntergenicRegion.adjacentGenes.identifier Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.mRNASignal Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name">
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG10007" description="Gene:" identifier="" editable="true" code="A">
       </constraint>
@@ -3132,7 +3132,7 @@
   </query>
 </template>
 <template name="gene_downstreamAdjacentgene_FlyAtlas" title="Gene --&gt; downstream adjacent gene --&gt; FlyAtlas data" longDescription="For a particular gene or set of genes, give the downstream adjacent gene and any FlyAtlas data that have certain constraints." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="gene_downstreamAdjacentgene_FlyAtlas" model="genomic" view="Gene.identifier Gene.downstreamIntergenicRegion.adjacentGenes.identifier Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.MRNASignal Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name" constraintLogic="B and C and D and A">
+  <query name="gene_downstreamAdjacentgene_FlyAtlas" model="genomic" view="Gene.identifier Gene.downstreamIntergenicRegion.adjacentGenes.identifier Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.mRNASignal Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name" constraintLogic="B and C and D and A">
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG10007" description="Gene:" identifier="Gene.class" editable="true" code="A">
       </constraint>
@@ -3143,7 +3143,7 @@
     </node>
     <node path="Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults" type="FlyAtlasResult">
     </node>
-    <node path="Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.MRNASignal" type="Double">
+    <node path="Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.mRNASignal" type="Double">
       <constraint op="&gt;=" value="100.0" description="mRNA signal" identifier="" editable="true" code="B">
       </constraint>
     </node>

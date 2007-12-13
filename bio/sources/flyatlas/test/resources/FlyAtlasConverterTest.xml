@@ -14,8 +14,8 @@
     <attribute name="name" value="Whole Fly"/>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#FlyAtlasResult">
-    <attribute name="MRNASignal" value="1016.15"/>
-    <attribute name="MRNASignalSEM" value="23.17"/>
+    <attribute name="mRNASignal" value="1016.15"/>
+    <attribute name="mRNASignalSEM" value="23.17"/>
     <attribute name="affyCall" value="Down"/>
     <attribute name="enrichment" value="0.7"/>
     <attribute name="presentCall" value="4"/>
@@ -40,8 +40,8 @@
     <attribute name="name" value="Ovary"/>
   </item>
   <item id="5_3" class="http://www.flymine.org/model/genomic#FlyAtlasResult">
-    <attribute name="MRNASignal" value="1458"/>
-    <attribute name="MRNASignalSEM" value="127.78"/>
+    <attribute name="mRNASignal" value="1458"/>
+    <attribute name="mRNASignalSEM" value="127.78"/>
     <attribute name="presentCall" value="4"/>
     <reference name="experiment" ref_id="2_1"/>
     <reference name="material" ref_id="4_1"/>
@@ -60,8 +60,8 @@
     <attribute name="name" value="Testis"/>
   </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#FlyAtlasResult">
-    <attribute name="MRNASignal" value="1874.55"/>
-    <attribute name="MRNASignalSEM" value="85.34"/>
+    <attribute name="mRNASignal" value="1874.55"/>
+    <attribute name="mRNASignalSEM" value="85.34"/>
     <attribute name="affyCall" value="Up"/>
     <attribute name="enrichment" value="1.29"/>
     <attribute name="presentCall" value="4"/>

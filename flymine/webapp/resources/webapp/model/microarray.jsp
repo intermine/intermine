@@ -127,7 +127,7 @@ Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determ
           <ul>
             <li>
              <im:querylink text="All FlyAtlas results for <i>D. melanogaster</i> genes " skipBuilder="true">
-             <query name="" model="genomic" view="FlyAtlasResult.genes.identifier FlyAtlasResult.material.identifier FlyAtlasResult.MRNASignal FlyAtlasResult.MRNASignalSEM FlyAtlasResult.enrichment FlyAtlasResult.presentCall FlyAtlasResult.affyCall FlyAtlasResult.assays.name">
+             <query name="" model="genomic" view="FlyAtlasResult.genes.identifier FlyAtlasResult.material.identifier FlyAtlasResult.mRNASignal FlyAtlasResult.mRNASignalSEM FlyAtlasResult.enrichment FlyAtlasResult.presentCall FlyAtlasResult.affyCall FlyAtlasResult.assays.name">
              </query>
              </im:querylink>
             </li>

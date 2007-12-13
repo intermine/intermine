@@ -113,8 +113,8 @@ public class FlyAtlasConverter extends FileConverter
         if (results[0] != null) {
             result.setAttribute("affyCall", results[0]);
         }
-        result.setAttribute("MRNASignal", round(results[1], 2));
-        result.setAttribute("MRNASignalSEM", round(results[2], 2));
+        result.setAttribute("mRNASignal", round(results[1], 2));
+        result.setAttribute("mRNASignalSEM", round(results[2], 2));
         result.setAttribute("presentCall", results[3]);
         if (results[4] != null) {
             result.setAttribute("enrichment", round(results[4], 2));
