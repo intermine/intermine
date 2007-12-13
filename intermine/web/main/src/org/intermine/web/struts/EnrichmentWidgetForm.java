@@ -10,10 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
 
-import org.intermine.web.logic.SortableMap;
 import org.intermine.web.logic.bag.InterMineBag;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +31,7 @@ public class EnrichmentWidgetForm extends ActionForm
         private InterMineBag bag;
         private String bagName;
         private Double max;
-        private Map pvalues, totals, labelToId;
+
         /**
          * Constructor
          */
@@ -58,9 +55,6 @@ public class EnrichmentWidgetForm extends ActionForm
            bag = null;
            bagName = "";
            max = new Double(0.10);
-           pvalues = new SortableMap();
-           totals = new HashMap();
-           labelToId = new HashMap();
         }
        
         /**
@@ -120,6 +114,9 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
         /**
+        /**
+
+       
          * @param filterLabel the filterLabel to set
          */
         public void setFilterLabel(String filterLabel) {
@@ -263,49 +260,4 @@ public class EnrichmentWidgetForm extends ActionForm
             super.reset(mapping, request);
             initialise();
         }
-
-        /**
-         * @return the pvalues
-         */
-        public Map getPvalues() {
-            return pvalues;
-        }
-
-        /**
-         * @param pvalues the pvalues to set
-         */
-        public void setPvalues(Map pvalues) {
-            this.pvalues = pvalues;
-        }
-
-
-        /**
-         * @return the labelToId
-         */
-        public Map getLabelToId() {
-            return labelToId;
-        }
-
-        /**
-         * @param labelToId the labelToId to set
-         */
-        public void setLabelToId(Map labelToId) {
-            this.labelToId = labelToId;
-        }
-
-        
-        /**
-         * @return the totals
-         */
-        public Map getTotals() {
-            return totals;
-        }
-
-        /**
-         * @param totals the totals to set
-         */
-        public void setTotals(Map totals) {
-            this.totals = totals;
-        }
-       
 }
