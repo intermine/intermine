@@ -29,10 +29,12 @@ import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.widget.BenjaminiHochberg;
 import org.intermine.web.logic.widget.Bonferroni;
 import org.intermine.web.logic.widget.ErrorCorrection;
 import org.intermine.web.logic.widget.Hypergeometric;
@@ -523,17 +525,15 @@ public abstract class WebUtil
                     resultsMap.put(id, new Double(p));
                 }
             }
-            HashMap adjustedResultsMap;
             ErrorCorrection e = null;
 
             if (errorCorrection != null && errorCorrection.equals("Bonferroni")) {
                 e = new Bonferroni(resultsMap);
             } else {
-                // TODO benjamini hochberg
-                e = new Bonferroni(resultsMap);
+                e = new BenjaminiHochberg(resultsMap);
             }
             e.calculate(maxValue);            
-            adjustedResultsMap = e.getAdjustedMap();
+            HashMap adjustedResultsMap = e.getAdjustedMap();
             
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
