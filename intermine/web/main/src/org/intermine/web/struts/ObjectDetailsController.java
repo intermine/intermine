@@ -62,9 +62,9 @@ import org.intermine.web.logic.tagging.TagTypes;
  */
 public class ObjectDetailsController extends InterMineAction
 {
-	
-	protected static final Logger LOG = Logger.getLogger(ObjectDetailsController.class);
-	
+
+    protected static final Logger LOG = Logger.getLogger(ObjectDetailsController.class);
+
     /**
      * {@inheritDoc}
      */
@@ -76,10 +76,10 @@ public class ObjectDetailsController extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Map displayObjects = SessionMethods.getDisplayObjects(session);
+        Map<Integer, DisplayObject> displayObjects = SessionMethods.getDisplayObjects(session);
 
         String idString = request.getParameter("id");
-        
+
         Integer id = new Integer(Integer.parseInt(idString));
         InterMineObject object = os.getObjectById(id);
         if (object == null) {
@@ -89,19 +89,19 @@ public class ObjectDetailsController extends InterMineAction
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         String superuser = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
 
-        DisplayObject dobj = (DisplayObject) displayObjects.get(id);
+        DisplayObject dobj = displayObjects.get(id);
         if (dobj == null) {
             dobj = makeDisplayObject(session, object);
             displayObjects.put(id, dobj);
         }
         request.setAttribute("object", dobj);
-        
+
         if (session.getAttribute(Constants.PORTAL_QUERY_FLAG) != null) {
             session.removeAttribute(Constants.PORTAL_QUERY_FLAG);
             setVerboseCollections(session, dobj);
         }
-        
-        Map placementRefsAndCollections = new TreeMap();
+
+        Map<String, Map> placementRefsAndCollections = new TreeMap<String, Map>();
         Set aspects = new HashSet((Set) servletContext.getAttribute(Constants.CATEGORIES));
 
         Map placementMap = new TreeMap(String.CASE_INSENSITIVE_ORDER);
@@ -116,7 +116,7 @@ public class ObjectDetailsController extends InterMineAction
 
             // get all placement:summary tags for all refs and collections of this class
             List placementTags =
-                new ArrayList(pm.getTags("placement:summary", cd.getUnqualifiedName() 
+                new ArrayList(pm.getTags("placement:summary", cd.getUnqualifiedName()
                                          + ".%", "reference", superuser));
             placementTags.addAll(pm.getTags("placement:summary", cd.getUnqualifiedName() + ".%",
                                             "collection", superuser));
@@ -143,7 +143,7 @@ public class ObjectDetailsController extends InterMineAction
 
         Map miscRefs = new TreeMap(dobj.getRefsAndCollections());
         placementRefsAndCollections.put(SearchRepository.MISC, miscRefs);
-        
+
         for (Iterator iter = dobj.getRefsAndCollections().entrySet().iterator();
             iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
@@ -156,21 +156,21 @@ public class ObjectDetailsController extends InterMineAction
                                       df, miscRefs, pm, superuser, placementRefsAndCollections);
             }
         }
-        
+
         String publicBagsWithThisObject = getBags(os, session, servletContext, id, true);
         String myBagsWithThisObject = getBags(os, session, servletContext, id, false);
-        
-        request.setAttribute("bagsWithThisObject", publicBagsWithThisObject 
-                             + ((publicBagsWithThisObject.length() != 0 
-                               && myBagsWithThisObject.length() != 0) ? "," :"") 
+
+        request.setAttribute("bagsWithThisObject", publicBagsWithThisObject
+                             + ((publicBagsWithThisObject.length() != 0
+                               && myBagsWithThisObject.length() != 0) ? "," :"")
                              + myBagsWithThisObject);
-        request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);        
-       
+        request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
+
         setAtributesForDisplayType(request, session, object);
-        
+
         return null;
     }
-    
+
     /**
      * Set request attributes, that are required for correct displaying which aspects will be
      * opened at page.
@@ -178,27 +178,28 @@ public class ObjectDetailsController extends InterMineAction
      * @param session session
      * @param object object for which is page displayed
      */
-    private void setAtributesForDisplayType(HttpServletRequest request, HttpSession session, InterMineObject object) {
+    private void setAtributesForDisplayType(HttpServletRequest request, HttpSession session,
+                                            InterMineObject object) {
         DisplayType displayType = (DisplayType) session.getAttribute(Constants.DISPLAY_TYPE);
         if (displayType == null) {
-        	displayType = new DisplayType();
-        	session.setAttribute(Constants.DISPLAY_TYPE, displayType);
+            displayType = new DisplayType();
+            session.setAttribute(Constants.DISPLAY_TYPE, displayType);
         }
         Set<Class> cls = DynamicUtil.decomposeClass(object.getClass());
         String type = null;
         for (Class class1 : cls) {
-			type =  class1.getCanonicalName();
-		}
-    	Set<String> asps = displayType.getOpenedAspects(type);
-    	request.setAttribute("objectType", type);
-    	request.setAttribute("openedAspectIds", asps);
-	}
+            type =  class1.getCanonicalName();
+        }
+        Set<String> asps = displayType.getOpenedAspects(type);
+        request.setAttribute("objectType", type);
+        request.setAttribute("openedAspectIds", asps);
+    }
 
-	/**
+    /**
      * For a given FieldDescriptor, look up its 'aspect:' tags and place it in the correct
      * map within placementRefsAndCollections. If categorised, remove it from the supplied
      * miscRefs map.
-     * 
+     *
      * @param fd the FieldDecriptor (a references or collection)
      * @param taggedType 'reference' or 'collection'
      * @param dispRef the corresponding DisplayReference or DisplayCollection
@@ -213,14 +214,14 @@ public class ObjectDetailsController extends InterMineAction
                                              Map miscRefs,
                                              ProfileManager pm,
                                              String sup,
-                                             Map placementRefsAndCollections) {
-        List tags = pm.getTags(null, fd.getClassDescriptor().getUnqualifiedName() + "." 
+                                             Map<String, Map> placementRefsAndCollections) {
+        List tags = pm.getTags(null, fd.getClassDescriptor().getUnqualifiedName() + "."
                                + fd.getName(), taggedType, sup);
         for (Iterator ti = tags.iterator(); ti.hasNext(); ) {
             Tag tag = (Tag) ti.next();
             String tagName = tag.getTagName();
             if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
-                Map refs = (Map) placementRefsAndCollections.get(tagName);
+                Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
                 if (refs != null) {
                     refs.put(fd.getName(), dispRef);
                     miscRefs.remove(fd.getName());
@@ -280,17 +281,17 @@ public class ObjectDetailsController extends InterMineAction
         return new DisplayObject(object, os.getModel(), webConfig,
                                  webPropertiesMap, classKeys);
     }
-    
-    private String getBags(ObjectStore os, 
-                           HttpSession session, 
-                           ServletContext servletContext, 
-                           Integer id, 
+
+    private String getBags(ObjectStore os,
+                           HttpSession session,
+                           ServletContext servletContext,
+                           Integer id,
                            boolean isGlobal) {
-        
+
         Map webSearchables = null;
         // get all of the bags with this object
         if (isGlobal) {
-            SearchRepository searchRepository = 
+            SearchRepository searchRepository =
             (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
             webSearchables = searchRepository.getWebSearchableMap(TagTypes.BAG);
         } else {
@@ -298,23 +299,23 @@ public class ObjectDetailsController extends InterMineAction
             webSearchables = profile.getSavedBags();
         }
         Collection<WebSearchable> webSearchableColl = webSearchables.values();
-        Collection<ObjectStoreBag> objectStoreBags = new ArrayList();
-        
-        
+        Collection<ObjectStoreBag> objectStoreBags = new ArrayList<ObjectStoreBag>();
+
+
         // loop though and convert InterMineBag to ObjectStoreBag
         for (WebSearchable o : webSearchableColl) {
             InterMineBag bag = (InterMineBag) o;
             ObjectStoreBag osb = bag.getOsb();
             objectStoreBags.add(osb);
         }
-        
+
         // this searches bags for an object
         ObjectStoreBagsForObject osbo = new ObjectStoreBagsForObject(id, objectStoreBags);
-        
+
         // run query
-        Query q = new Query();       
+        Query q = new Query();
         q.addToSelect(osbo);
-        
+
         // this should return all bags with that object
         Results results = os.execute(q);
         StringBuffer sb = new StringBuffer();
