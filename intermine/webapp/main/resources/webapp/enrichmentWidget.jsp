@@ -1,38 +1,17 @@
-<%
-String path = request.getContextPath();
-String basePath = "http://"+request.getServerName()+":"+request.getServerPort()+path+"/layout.jsp";
-%>
-
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
-
-<!-- enrichmentWidget -->
-<tiles:importAttribute/>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-
-  <head>
-
-    <base href="<%=basePath%>" />
-    <link rel="stylesheet" type="text/css" href="css/enrichmentWidget.css"/>
-    <title>List Analysis Page</title>
-  </head>
-
-  
-  <body> 
-
+<!-- enrichmentWidget.jsp -->
 <html:xhtml/>
 
+<link rel="stylesheet" type="text/css" href="css/enrichmentWidget.css"/>
 
 <div class="body">
 
-<center><h2>${title}</h2></center>
+<center><h2>${enrichmentWidgetForm.title}</h2></center>
 
 <c:out value='${enrichmentWidgetForm.description}'/>  Smaller p-values show greater enrichment. Method: Hypergeometric test.
 <br/><br/>
@@ -146,7 +125,4 @@ Reference population: <c:out value='${referencePopulation}'/>.
 </table>
             
  </div>
- </body>
- </html>
- 
-<!-- /enrichmentWidget -->
+<!-- /enrichmentWidget.jsp -->

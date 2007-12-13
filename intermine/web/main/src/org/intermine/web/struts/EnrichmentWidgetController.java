@@ -31,10 +31,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 
 /**
- * calculates p-values of goterms
+ * 
  * @author Julie Sullivan
  */
 public class EnrichmentWidgetController extends TilesAction
@@ -50,21 +51,19 @@ public class EnrichmentWidgetController extends TilesAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
+     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+                                  @SuppressWarnings("unused") ActionMapping mapping,
                                   ActionForm form,
                                   HttpServletRequest request,
-                                  @SuppressWarnings("unused") HttpServletResponse response)
+                                  @SuppressWarnings("unused") HttpServletResponse response)   
      throws Exception {
-    
+         EnrichmentWidgetForm ewf = (EnrichmentWidgetForm) form;
          HttpSession session = request.getSession();
          Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
          ServletContext servletContext = session.getServletContext();
          ObjectStoreInterMineImpl os =
              (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
-    
-         EnrichmentWidgetForm ewf = (EnrichmentWidgetForm) form;
-        
-         // TODO only do this if new bag page!         
+           
          String bagName = ewf.getBagName();
          Map<String, InterMineBag> allBags =
              WebUtil.getAllBags(profile.getSavedBags(), servletContext);
@@ -84,21 +83,18 @@ public class EnrichmentWidgetController extends TilesAction
                                                                                        {
              request
                                                                                        });
-    
-    
-         // run both queries and compare the results 
+        
          ArrayList results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(), 
                                                ewf.getBag(), ldr.getTotal(os), ewf.getMax(), 
                                                ewf.getErrorCorrection());
-    
-    
+        
          if (results.isEmpty()) {
              return null;
          }
          request.setAttribute("pvalues", results.get(0));
          request.setAttribute("totals", results.get(1));
          request.setAttribute("labelToId", results.get(2));
-    
+         request.setAttribute("bagType", bag.getType());
          request.setAttribute("referencePopulation", "All " + ewf.getBag().getType() + "s from  " 
                               + ldr.getReferencePopulation().toString());
     

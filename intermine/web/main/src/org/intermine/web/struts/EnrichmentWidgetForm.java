@@ -10,9 +10,16 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.intermine.web.logic.SortableMap;
 import org.intermine.web.logic.bag.InterMineBag;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 
 /**
  *
@@ -27,7 +34,35 @@ public class EnrichmentWidgetForm extends ActionForm
         private InterMineBag bag;
         private String bagName;
         private Double max;
-
+        private Map pvalues, totals, labelToId;
+        /**
+         * Constructor
+         */
+        public EnrichmentWidgetForm() {
+            initialise();
+        }
+        
+        /**
+         * Initialiser
+         */
+       public void initialise() {
+           controller = "";
+           title  = "";
+           link = "";
+           description = "";
+           filterLabel = "";
+           label = "";
+           errorCorrection = "Bonferroni";
+           filter = "";
+           filters = "";
+           bag = null;
+           bagName = "";
+           max = new Double(0.10);
+           pvalues = new SortableMap();
+           totals = new HashMap();
+           labelToId = new HashMap();
+        }
+       
         /**
          * @return the controller
          */
@@ -221,4 +256,56 @@ public class EnrichmentWidgetForm extends ActionForm
             this.filters = filters;
         }
 
+
+        @Override
+        public void reset(ActionMapping mapping, HttpServletRequest request) {
+
+            super.reset(mapping, request);
+            initialise();
+        }
+
+        /**
+         * @return the pvalues
+         */
+        public Map getPvalues() {
+            return pvalues;
+        }
+
+        /**
+         * @param pvalues the pvalues to set
+         */
+        public void setPvalues(Map pvalues) {
+            this.pvalues = pvalues;
+        }
+
+
+        /**
+         * @return the labelToId
+         */
+        public Map getLabelToId() {
+            return labelToId;
+        }
+
+        /**
+         * @param labelToId the labelToId to set
+         */
+        public void setLabelToId(Map labelToId) {
+            this.labelToId = labelToId;
+        }
+
+        
+        /**
+         * @return the totals
+         */
+        public Map getTotals() {
+            return totals;
+        }
+
+        /**
+         * @param totals the totals to set
+         */
+        public void setTotals(Map totals) {
+            this.totals = totals;
+        }
+       
 }
