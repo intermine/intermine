@@ -55,7 +55,7 @@ public class InlineResultsTable
     /**
      * Construct a new InlineResultsTable object
      * @param results the List to display object
-     * @param model the current Model 
+     * @param model the current Model
      * @param webConfig the WebConfig object for this webapp
      * @param webProperties the web properties from the session
      * @param classKeys Map of class name to set of keys
@@ -63,7 +63,7 @@ public class InlineResultsTable
      *   display all rows
      */
     public InlineResultsTable(Collection results, Model model,
-                              WebConfig webConfig, Map webProperties, 
+                              WebConfig webConfig, Map webProperties,
                               Map classKeys, int size) {
         this.results = results;
         this.classKeys = classKeys;
@@ -133,7 +133,7 @@ public class InlineResultsTable
         }
         return types;
     }
-    
+
     /**
      * Get the ids of the objects in the rows
      * @return a List of ids, one per row
@@ -171,10 +171,10 @@ public class InlineResultsTable
      * fieldConfigs List.
      */
     protected void initialise() {
-        fieldConfigs = new ArrayList(); 
+        fieldConfigs = new ArrayList();
         columnFullNames = new ArrayList();
         subList = new ArrayList();
-        
+
         Iterator resultsIter;
         if (getSize() == -1) {
             resultsIter = resultsAsList.iterator();
@@ -203,7 +203,7 @@ public class InlineResultsTable
             while (objectFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) objectFieldConfigIter.next();
 
-                if (!fieldConfigs.contains(fc) && fc.getShowInResults()) {
+                if (!fieldConfigs.contains(fc) && fc.getShowInInlineCollection()) {
                     fieldConfigs.add(fc);
 
                     String expr = fc.getFieldExpr();
@@ -255,7 +255,7 @@ public class InlineResultsTable
     protected List getClassFieldConfigs(ClassDescriptor cd) {
         return FieldConfigHelper.getClassFieldConfigs(webConfig, cd);
     }
-    
+
     /**
      * Return the size that was passed to the constructor.
      */
