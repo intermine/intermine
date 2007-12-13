@@ -667,8 +667,9 @@
   
   <class className="org.flymine.model.genomic.TFmodule">
     <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="/model/redflyDisplayer.jsp"/>
     </longdisplayers>
+        
   </class>
 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
