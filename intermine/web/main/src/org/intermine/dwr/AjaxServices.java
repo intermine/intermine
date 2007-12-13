@@ -513,6 +513,14 @@ public class AjaxServices
         return returnList;
     }
     
+    /**
+     * For a given bag name and a type different from the bag type, give the number of 
+     * converted objects
+     * 
+     * @param bagName the name of the bag
+     * @param type the type to convert to
+     * @return the number of converted objects
+     */
     public static int getConvertCountForBag(String bagName, String type) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
@@ -550,19 +558,21 @@ public class AjaxServices
     }
 
     /**
-     * Save information, that aspect of some object was opened or closed at page with object details. 
+     * Save information, that aspect of some object was opened or closed at page with object
+     * details.
+     * 
      * @param type type of object
      * @param aspectId aspect id
      * @param opened new aspect state
      */
     public static void saveToggleState(String type, String aspectId, boolean opened) {
-    	LOG.debug("type: " + type + " aspectId:" + aspectId + "opened: " + opened);
-    	HttpSession session = WebContextFactory.get().getSession();
-    	DisplayType displayType = (DisplayType) session.getAttribute(Constants.DISPLAY_TYPE);
-    	if (displayType == null) {
-    		displayType = new DisplayType();
-    		session.setAttribute(Constants.DISPLAY_TYPE, displayType);
-    	}
-    	displayType.toggleAspect(type, aspectId, opened);
+        LOG.debug("type: " + type + " aspectId:" + aspectId + "opened: " + opened);
+        HttpSession session = WebContextFactory.get().getSession();
+        DisplayType displayType = (DisplayType) session.getAttribute(Constants.DISPLAY_TYPE);
+        if (displayType == null) {
+            displayType = new DisplayType();
+            session.setAttribute(Constants.DISPLAY_TYPE, displayType);
+        }
+        displayType.toggleAspect(type, aspectId, opened);
     }
 }
