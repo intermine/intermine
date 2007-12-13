@@ -189,19 +189,24 @@
 	 	                 filters="biological_process,cellular_component,molecular_function"  
 	 	                 filterLabel="ontology" 
 	 	                 max="0.10" /> 
+
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment"  
 	 	                 link="org.flymine.web.widget.ProteinDomainURLQuery"  
 	 	                 controller="org.flymine.web.widget.ProteinDomainLdr"  
 	 	                 label="Protein Domain"
 	 	                 description="Protein Domains enriched for genes in this list."  
+	 	                 filters=""  
+	 	                 filterLabel="" 
 	 	                 max="0.10"  /> 
       <enrichmentwidgetdisplayer title="Publication Enrichment"  
 	 	                 link="org.intermine.bio.web.widget.PublicationURLQuery"  
 	 	                 controller="org.intermine.bio.web.widget.PublicationLdr"  
 	 	                 label="Publication"
-	 	                 description="Publications enriched for genes in this list."  
+	 	                 description="Publications enriched for genes in this list."
+	 	                 filters=""  
+	 	                 filterLabel="" 	                 
 	 	                 max="0.10"  /> 
-	 	              
+	 	            
       <!-- removed until we can optimise the query  
 	   <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"  
 	 	                      link="org.flymine.web.widget.TiffinURLQuery"  

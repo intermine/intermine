@@ -106,7 +106,7 @@
     </action>
     <action path="/showStatic" forward="showStatic.page">
     </action>
-    <action path="/enrichmentWidget" name="enrichmentWidgetForm" forward="enrichmentWidget.tile" validate="false">
+    <action path="/enrichmentWidget" name="enrichmentWidgetForm" forward="enrichmentWidget.tile"  scope="request">
     </action>
 		
     <action path="/modifyQueryChange" type="org.intermine.web.struts.ModifyQueryChangeAction" parameter="method">
