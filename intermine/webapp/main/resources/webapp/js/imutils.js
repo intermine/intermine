@@ -49,10 +49,8 @@ function toggleHidden(elementId) {
     var display = element.style.display;
      if(display=='none') {
 		toggleOpen(element, elementId);
-		return true;
      } else {
 		toggleClose(element, elementId);
-		return false;
      }
 }
 
