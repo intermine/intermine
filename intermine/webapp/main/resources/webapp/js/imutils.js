@@ -43,6 +43,7 @@ function disableEnterKey(e)
     return (keyCode != 13);
 }
 
+// Redefined in objectDetails.jsp page
 function toggleHidden(elementId) {
     var element = document.getElementById(elementId);
     var display = element.style.display;

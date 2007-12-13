@@ -17,7 +17,25 @@
 //]]>-->
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js">
-  var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
+	var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';  
+</script>
+
+<script type="text/javascript">
+	function toggleHidden(elementId) {
+		var element = document.getElementById(elementId);
+		var display = element.style.display;
+	    if(display=='none') {
+			toggleOpen(element, elementId);
+			opened = true;
+	    } else {
+			toggleClose(element, elementId);
+			opened = false;
+	    }
+		var type = "${requestScope.objectType}";
+		if (type.length > 0) {
+			saveToggleState(type, elementId, opened);
+		}
+	}
 </script>
 
 <%-- figure out whether we should show templates or not --%>
@@ -286,13 +304,6 @@
 
 	toggleAll(${aspectCount}, 'template', 'collapse', 'misc');
 				
-	function toggleHiddenAndRemember(elementId) {
-		opened = toggleHidden(elementId);
-		type = "${requestScope.objectType}";
-		if (type.length > 0) {
-			saveToggleState(type, elementId, opened);
-		}
-	}
     //]]>-->
 	</script>
 	
