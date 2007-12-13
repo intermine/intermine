@@ -49,7 +49,7 @@ public class EnrichmentWidgetForm extends ActionForm
            description = "";
            filterLabel = "";
            label = "";
-           errorCorrection = "Bonferroni";
+           errorCorrection = "Benjamini and Hochberg";
            filter = "";
            filters = "";
            bag = null;

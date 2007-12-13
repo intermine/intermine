@@ -31,6 +31,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	<tr>
 		<td>Error Correction</td>
 		<td><html:select property="errorCorrection">
+				<html:option value="Benjamini and Hochberg">Benjamini and Hochberg</html:option>
 				<html:option value="Bonferroni">Bonferroni</html:option>
 			</html:select>
 		</td>

@@ -20,8 +20,12 @@ import java.math.BigDecimal;
  *
  * @author Julie Sullivan
  */
-public class BenjaminiHochberg  
+public class BenjaminiHochberg  implements ErrorCorrection
 {
+    
+    private HashMap originalMap = new HashMap();
+
+    
 
     private HashEntry[] hash;
     /**
@@ -49,7 +53,7 @@ public class BenjaminiHochberg
     /**
      * hashmap with the results (adjusted p-values) as values and the GO labels as keys.
      */
-    private static HashMap correctionMap;
+    private static HashMap adjustedMap;
 
     /**
      * the significance level.
@@ -58,14 +62,11 @@ public class BenjaminiHochberg
     /**
      * the number of tests.
      */
-    private static int m;
+    private static int numberOfTests;
     /**
      * scale for the division in de method 'runFDR'.
      */
     private static final int RESULT_SCALE = 100;
-
-
-    private final static double MAX = 0.10;
 
 
     
@@ -76,20 +77,18 @@ public class BenjaminiHochberg
      */
 
     public BenjaminiHochberg(HashMap originalMap) {
-        //Get all the go labels and their corresponding pvalues from the map
-
-        Iterator iteratorGoLabelsSet = originalMap.keySet().iterator();
         this.hash = new HashEntry [originalMap.size()];
         this.pvalues = new String [originalMap.size()];
         this.goLabels = new String [originalMap.size()];
-        for (int i = 0; iteratorGoLabelsSet.hasNext(); i++) {
-            goLabels[i] = iteratorGoLabelsSet.next().toString();
-            pvalues[i] = originalMap.get(new Integer(goLabels[i])).toString();
+        int i = 0;
+        for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
+            goLabels[i] = iter.next().toString();
+            pvalues[i] = originalMap.get(goLabels[i]).toString();
             hash[i] = new HashEntry(goLabels[i], pvalues[i]);
         }
-        this.m = pvalues.length;
-        this.adjustedPvalues = new String[m];
-        this.correctionMap = null;
+        this.numberOfTests = pvalues.length;
+        this.adjustedPvalues = new String[numberOfTests];
+        this.adjustedMap = null;
     }
 
 /**
@@ -133,14 +132,14 @@ public class BenjaminiHochberg
      * the false discovery rate
      * NOTE : convert array indexes [0..m-1] to ranks [1..m].
      * orden raw p-values low .. high
-     * test p<(i/m)*alpha from high to low (for i=m..1)
+     * test p<(i/numberOfTests)*alpha from high to low (for i=numberOfTests..1)
      * i* (istar) first i such that the inequality is correct.
      * reject hypothesis for i=1..i* : labels 1..i* are overrepresented
      * <p/>
-     * adjusted p-value for i-th ranked p-value p_i^adj = min(k=i..m)[min(1,m/k p_k)]
+     * adjusted p-value for i-th ranked p-value p_i^adj = min(k=i..m)[min(1,numberOfTests/k p_k)]
      */
 
-    public void calculate() {
+    public void calculate(Double max) {
 
         // ordening the pvalues.
 
@@ -149,21 +148,22 @@ public class BenjaminiHochberg
         // calculating adjusted p-values.
         BigDecimal min = new BigDecimal("" + 1);
         BigDecimal mkprk;
-        for (int i = m; i > 0; i--) {
-            mkprk = (new BigDecimal("" 
-                                    + m).multiply(
-                                    new BigDecimal(ordenedPvalues[i 
-                                     - 1]))).divide(new BigDecimal("" + i), 
-                                      RESULT_SCALE, BigDecimal.ROUND_HALF_UP);
+        for (int i = numberOfTests; i > 0; i--) {
+            
+            BigDecimal newNumberOftests = new BigDecimal("" + numberOfTests);
+            BigDecimal pvalue = new BigDecimal(ordenedPvalues[i - 1]);
+            BigDecimal index = new BigDecimal("" + i);            
+            mkprk = newNumberOftests.multiply(pvalue);
+            mkprk = mkprk.divide(index, RESULT_SCALE, BigDecimal.ROUND_HALF_UP);
             if (mkprk.compareTo(min) < 0) {
                 min = mkprk;
             }
             adjustedPvalues[i - 1] = min.toString();
 
         }
-        correctionMap = new HashMap();
+        adjustedMap = new HashMap();
         for (int i = 0; i < adjustedPvalues.length && i < ordenedGOLabels.length; i++) {
-            correctionMap.put(ordenedGOLabels[i], adjustedPvalues[i]);
+            adjustedMap.put(ordenedGOLabels[i], adjustedPvalues[i]);
         }
     }
 
@@ -179,14 +179,6 @@ public class BenjaminiHochberg
         return values;
     }
 
-    /**
-     * getter for the map of corrected p-values.
-     *
-     * @return HashMap correctionMap.
-     */
-    public HashMap getCorrectionMap() {
-        return correctionMap;
-    }
 
     /**
      * getter for the ordened p-values.
@@ -217,21 +209,11 @@ public class BenjaminiHochberg
 
 
     /**
-     * Run the Task.
+     * @return adjusted map
      */
-    public void run() {
-        calculate();
+    public HashMap getAdjustedMap() {
+        return adjustedMap;
     }
-
-    /**
-     * Gets the Task Title.
-     *
-     * @return human readable task title.
-     */
-    public String getTitle() {
-        return new String("Calculating FDR correction");
-    }
-
 
 }
 
