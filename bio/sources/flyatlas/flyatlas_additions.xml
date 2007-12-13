@@ -4,7 +4,7 @@
   <attribute name="affyCall" type="java.lang.String"/>
   <attribute name="presentCall" type="java.lang.Integer"/>
   <attribute name="enrichment" type="java.lang.Double"/>
-  <attribute name="MRNASignal" type="java.lang.Double"/>
-  <attribute name="MRNASignalSEM" type="java.lang.Double"/>
+  <attribute name="mRNASignal" type="java.lang.Double"/>
+  <attribute name="mRNASignalSEM" type="java.lang.Double"/>
 </class>
 </classes>

@@ -441,8 +441,8 @@
     <fields>
       <fieldconfig fieldExpr="affyCall"/>
       <fieldconfig fieldExpr="enrichment"/>
-      <fieldconfig fieldExpr="MRNASignal"/>
-      <fieldconfig fieldExpr="MRNASignalSEM"/>
+      <fieldconfig fieldExpr="mRNASignal"/>
+      <fieldconfig fieldExpr="mRNASignalSEM"/>
       <fieldconfig fieldExpr="presentCall"/>
     </fields>
   </class>
