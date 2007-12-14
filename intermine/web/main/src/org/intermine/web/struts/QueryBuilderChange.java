@@ -174,10 +174,36 @@ public class QueryBuilderChange extends DispatchAction
                         }
                     }
                 }
+                if (pathQuery.getSortOrder() != null) {
+                    Iterator<OrderBy> sortOrderPathIter = pathQuery.getSortOrder().iterator();
+
+                    while (sortOrderPathIter.hasNext()) {
+                        String sortOrderPath 
+                        = sortOrderPathIter.next().getField().toStringNoConstraints();
+
+                        if (sortOrderPath.startsWith(path) && !sortOrderPath.equals(path)) {
+                            String fieldName = sortOrderPath.substring(path.length() + 1);
+
+                            if (fieldName.indexOf(".") != -1) {
+                                fieldName = fieldName.substring(0, fieldName.indexOf("."));
+                            }
+
+                            if (realClassDescriptor.getFieldDescriptorByName(fieldName) == null) {
+                                // the field must be in a sub-class rather than the base class 
+                                // so remove the sortPath
+                                sortOrderPathIter.remove();
+                            }
+                        }
+                    }
+                }
             }
         }
 
         pathQuery.getNodes().remove(path);
+        List<OrderBy> sortOrder = pathQuery.getSortOrder();
+        if (sortOrder != null && sortOrder.contains(path)) {
+            pathQuery.getSortOrder().remove(path);
+        }
     }
 
     /**
