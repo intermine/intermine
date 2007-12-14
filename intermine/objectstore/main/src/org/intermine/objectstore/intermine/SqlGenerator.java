@@ -63,6 +63,7 @@ import org.intermine.objectstore.query.QueryForeignKey;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QueryPathExpression;
@@ -617,7 +618,7 @@ public class SqlGenerator
                     Class cls = (Class) classIter.next();
                     ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
                     if (cld == null) {
-                        throw new ObjectStoreException(cls.toString() + " is not in the model");
+                        throw new ObjectStoreException(cls + " is not in the model");
                     }
                     ClassDescriptor tableMaster = schema.getTableMaster(cld);
                     tablenames.add(DatabaseUtil.getTableName(tableMaster));
@@ -643,7 +644,8 @@ public class SqlGenerator
             } else if (selectable instanceof QueryEvaluable) {
                 // Do nothing
             } else if ((selectable instanceof QueryFieldPathExpression)
-                    && ("id".equals(((QueryFieldPathExpression) selectable).getFieldName()))) {
+                    && ("id".equals(((QueryFieldPathExpression) selectable).getFieldName()))
+                    && (((QueryFieldPathExpression) selectable).getQueryClass() != null)) {
                 // Do nothing
             } else if (selectable instanceof QueryForeignKey) {
                 // Do nothing
@@ -661,6 +663,21 @@ public class SqlGenerator
                 }
             } else if (selectable instanceof ObjectStoreBagsForObject) {
                 tablenames.add(INT_BAG_TABLE_NAME);
+            } else if (selectable instanceof QueryPathExpression) {
+                if (selectable instanceof QueryFieldPathExpression) {
+                    selectable = ((QueryFieldPathExpression) selectable).getParent();
+                }
+                QueryObjectPathExpression qope = (QueryObjectPathExpression) selectable;
+                while (qope != null) {
+                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(qope
+                            .getType().getName());
+                    if (cld == null) {
+                        throw new ObjectStoreException(cld + " is not in the model");
+                    }
+                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                    tablenames.add(DatabaseUtil.getTableName(tableMaster));
+                    qope = qope.getQope();
+                }
             } else {
                 throw new ObjectStoreException("Illegal entry in SELECT list: "
                         + selectable.getClass());

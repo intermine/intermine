@@ -231,6 +231,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("NotSubqueryExistsConstraint", notSubqueryExistsConstraint());
         queries.put("SubqueryExistsConstraintNeg", subqueryExistsConstraintNeg());
         queries.put("ObjectPathExpression", objectPathExpression());
+        queries.put("ObjectPathExpression2", objectPathExpression2());
         queries.put("FieldPathExpression", fieldPathExpression());
         queries.put("ForeignKey", foreignKey());
         queries.put("ForeignKey2", foreignKey2());
@@ -1534,6 +1535,19 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.addToSelect(new QueryObjectPathExpression(qc, "department"));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.address AS a2_ FROM HasAddress AS a1_
+     */
+    public static Query objectPathExpression2() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryObjectPathExpression(qc, "address"));
         q.setDistinct(false);
         return q;
     }
