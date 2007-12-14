@@ -13,6 +13,8 @@ package org.intermine.web.logic.widget;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import java.math.BigDecimal;
+
 
 /**
  *
@@ -21,9 +23,9 @@ import java.util.Iterator;
 public class Bonferroni implements ErrorCorrection
 {
     private HashMap originalMap = new HashMap();
-    private HashMap<String, Double> adjustedMap = new HashMap<String, Double>();
+    private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
     private double numberOfTests;
-
+    private double significanceValue = 0.05;
     /**
      * @param originalMap Hashmap of go terms and their pvalues.
      */
@@ -33,26 +35,25 @@ public class Bonferroni implements ErrorCorrection
     }
 
     /**
-     * @param maxValue maximum value to display
+     * @param max maximum value to display
      */
-    public void calculate(Double maxValue) {
+    public void calculate(Double max) {
 
-        //double bonferroni = significanceValue.doubleValue() / numberOfTests;
+        double bonferroni = significanceValue / numberOfTests;
 
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext();) {
 
             // get original values
-            String goTerm = (String) iter.next();
-            Double p = (Double) originalMap.get(goTerm);
+            String label = (String) iter.next();
+            BigDecimal p = new BigDecimal("" + originalMap.get(label));
 
             // calc new value
-            Double adjustedP = new Double(numberOfTests * p.doubleValue());
-            //Double adjustedP = new Double(bonferroni + p.doubleValue());
+            //BigDecimal adjustedP = p.multiply(new BigDecimal ("" + numberOfTests));
+            BigDecimal adjustedP = p.add(new BigDecimal(bonferroni));
 
             // don't store values >= maxValue
-            if (adjustedP.compareTo(maxValue) < 0) {
-                // put new values into map
-                adjustedMap.put(goTerm, adjustedP);
+            if (adjustedP.doubleValue() < max.doubleValue()) {
+                adjustedMap.put(label, adjustedP);
             }
         }
     }
