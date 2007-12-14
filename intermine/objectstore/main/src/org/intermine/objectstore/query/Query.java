@@ -35,7 +35,7 @@ public class Query implements FromElement
     private boolean distinct = true;
     private Constraint constraint = null;
     private Set queryClasses = new LinkedHashSet(); // @element-type FromElement
-    private List select = new ArrayList(); // @element-type QueryNode
+    private List<QuerySelectable> select = new ArrayList();
     private List orderBy = new ArrayList(); // @element-type QueryNode
     private Set groupBy = new LinkedHashSet(); // @element-type QueryNode
     private Map aliases = new HashMap();
@@ -320,7 +320,7 @@ public class Query implements FromElement
      *
      * @return the (unmodifiable) list
      */
-    public List getSelect() {
+    public List<QuerySelectable> getSelect() {
         return Collections.unmodifiableList(select);
     }
 

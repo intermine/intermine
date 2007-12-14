@@ -449,18 +449,23 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("NotSubqueryExistsConstraint", Collections.EMPTY_LIST);
         results.put("SubqueryExistsConstraintNeg", Collections.EMPTY_LIST);
 
-        //r = new Object[][] { { data.get("EmployeeA1"), data.get("DepartmentA1") },
-        //                     { data.get("EmployeeA2"), data.get("DepartmentA1") },
-        //                     { data.get("EmployeeA3"), data.get("DepartmentA2") },
-        //                     { data.get("EmployeeB1"), data.get("DepartmentB1") },
-        //                     { data.get("EmployeeB2"), data.get("DepartmentB1") },
-        //                     { data.get("EmployeeB3"), data.get("DepartmentB1") } };
-        //results.put("ObjectPathExpression", toList(r));
-        //r = new Object[][] { { data.get("CompanyA"), "3fred"},
-        //                     { data.get("CompanyB"), "EmployeeB1"} };
-        //results.put("FieldPathExpression", toList(r));
-        results.put("ObjectPathExpression", NO_RESULT);
-        results.put("FieldPathExpression", NO_RESULT);
+        r = new Object[][] { { data.get("EmployeeA1"), data.get("DepartmentA1") },
+                             { data.get("EmployeeA2"), data.get("DepartmentA1") },
+                             { data.get("EmployeeA3"), data.get("DepartmentA1") },
+                             { data.get("EmployeeB1"), data.get("DepartmentB1") },
+                             { data.get("EmployeeB2"), data.get("DepartmentB1") },
+                             { data.get("EmployeeB3"), data.get("DepartmentB2") } };
+        results.put("ObjectPathExpression", toList(r));
+        r = new Object[][] { { data.get("EmployeeA1"), data.get("Employee Street, AVille") },
+                             { data.get("EmployeeA2"), data.get("Employee Street, AVille") },
+                             { data.get("EmployeeA3"), data.get("Employee Street, AVille") },
+                             { data.get("EmployeeB1"), null },
+                             { data.get("EmployeeB2"), data.get("Employee Street, BVille") },
+                             { data.get("EmployeeB3"), data.get("Employee Street, BVille") } };
+        results.put("ObjectPathExpression2", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), "3fred"},
+                             { data.get("CompanyB"), "EmployeeB1"} };
+        results.put("FieldPathExpression", toList(r));
         r = new Object[][] { { data.get("CompanyA"), null},
                              { data.get("CompanyB"), ((Employee) data.get("EmployeeB1")).getId()} };
         results.put("ForeignKey", toList(r));
@@ -912,6 +917,14 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         storeDataWriter.delete(qc, con);
         res = os.executeSingleton(q);
         assertEquals(0, res.size());
+    }
+
+    public void testNullFields() throws Exception {
+        Employee ex = new Employee();
+        ex.setName("EmployeeB1");
+        Employee e = (Employee) os.getObjectByExample(ex, Collections.singleton("name"));
+        assertNull(e.proxGetAddress());
+        assertNull(e.getAddress());
     }
 
     // helper method
