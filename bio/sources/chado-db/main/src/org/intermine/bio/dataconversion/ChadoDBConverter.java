@@ -493,6 +493,7 @@ public class ChadoDBConverter extends BioDBConverter
         Map<String, Map<String, List<FeatureData>>> relTypeMap =
             new HashMap<String, Map<String, List<FeatureData>>>();
         int featureWarnings = 0;
+        int collectionWarnings = 0;
         int count = 0;
         int collectionTotal = 0;
         while (res.next()) {
@@ -502,7 +503,13 @@ public class ChadoDBConverter extends BioDBConverter
             String relationTypeName = res.getString("type_name");
 
             if (lastSubjectId != null && !subjectId.equals(lastSubjectId)) {
-                processCollectionData(lastSubjectId, relTypeMap); // Stores stuff
+                if (!processCollectionData(lastSubjectId, relTypeMap, collectionWarnings)) {
+                    collectionWarnings++;
+                    if (collectionWarnings == 20) {
+                        LOG.warn("ignoring further unknown feature warnings from " +
+                                "processCollectionData()");
+                    }
+                }
                 collectionTotal += relTypeMap.size();
                 relTypeMap = new HashMap<String, Map<String, List<FeatureData>>>();
             }
@@ -579,7 +586,7 @@ public class ChadoDBConverter extends BioDBConverter
             lastSubjectId = subjectId;
         }
         if (lastSubjectId != null) {
-            processCollectionData(lastSubjectId, relTypeMap); // Stores stuff
+            processCollectionData(lastSubjectId, relTypeMap, collectionWarnings); // Stores stuff
             collectionTotal += relTypeMap.size();
         }
         LOG.info("processed " + count + " relations");
@@ -596,15 +603,19 @@ public class ChadoDBConverter extends BioDBConverter
 
     /**
      * Create collections and references for the Item given by chadoSubjectId.
+     * @param collectionWarnings
      */
-    private void processCollectionData(Integer chadoSubjectId,
-                                       Map<String, Map<String, List<FeatureData>>> relTypeMap)
+    private boolean processCollectionData(Integer chadoSubjectId,
+                                       Map<String, Map<String, List<FeatureData>>> relTypeMap,
+                                       int collectionWarnings)
         throws ObjectStoreException {
         FeatureData subjectData = featureMap.get(chadoSubjectId);
         if (subjectData == null) {
-            LOG.warn("unknown feature " + chadoSubjectId + " passed to processCollectionData - "
-                     + "ignoring");
-            return;
+            if (collectionWarnings < 20) {
+                LOG.warn("unknown feature " + chadoSubjectId + " passed to processCollectionData - "
+                         + "ignoring");
+            }
+            return false;
         }
 
         // map from collection name to list of item ids
@@ -738,6 +749,8 @@ public class ChadoDBConverter extends BioDBConverter
                 setAttribute(intermineItemId, countName, String.valueOf(idList.size()));
             }
         }
+
+        return true;
     }
 
     /**
