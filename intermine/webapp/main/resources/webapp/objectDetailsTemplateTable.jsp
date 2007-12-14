@@ -161,7 +161,7 @@
         $('img_'+id).parentNode.href='#';
         $('img_'+id).parentNode.onclick = function(){return false;};
       } else {
-        $('count_'+id).innerHTML='<a href=\"modifyDetails.do?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}\" title=\"View in table\">${table.resultsSize} results</a>';
+        $('count_'+id).innerHTML='<a href=\"modifyDetails.do?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=global${extra}&amp;trail=${param.trail}\" title=\"View results of this template in a table\">${table.resultsSize} results</a>';
       }
     </script>
   </c:otherwise>
