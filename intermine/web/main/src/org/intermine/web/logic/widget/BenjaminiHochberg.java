@@ -24,37 +24,21 @@ public class BenjaminiHochberg  implements ErrorCorrection
 {
     
     private HashMap originalMap = new HashMap();
-  /**
-     * the GO labels that have been tested (constructor input).
-     */
-    private static String [] goLabels;
-    /**
-     * the raw p-values that were given as input for the constructor, 
-     * order corresponds to String [] goLabels.
-     */
-    private static String [] pvalues;
-  
-    private static String [] adjustedPvalues;
-
+    
     /**
      * hashmap with the results (adjusted p-values) as values and the GO labels as keys.
      */
-    private static HashMap adjustedMap;
-
-    /**
-     * the significance level.
-     */
-    private static BigDecimal alpha;
+    private static HashMap<String, Double> adjustedMap;
+    
     /**
      * the number of tests.
      */
     private static int numberOfTests;
+    
     /**
      * scale for the division in de method 'runFDR'.
      */
     private static final int RESULT_SCALE = 100;
-
-
     
     /**
      * Constructor.
@@ -63,16 +47,8 @@ public class BenjaminiHochberg  implements ErrorCorrection
      */
 
     public BenjaminiHochberg(HashMap originalMap) {     
-        this.pvalues = new String [originalMap.size()];
-        this.goLabels = new String [originalMap.size()];
-        int i = 0;
-        for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
-            goLabels[i] = iter.next().toString();
-            pvalues[i] = originalMap.get(goLabels[i]).toString();           
-        }
-        this.numberOfTests = pvalues.length;
-        this.adjustedPvalues = new String[numberOfTests];
-        this.adjustedMap = null;
+        this.numberOfTests = originalMap.size();
+        this.originalMap = originalMap;
     }
 
 
@@ -91,25 +67,24 @@ public class BenjaminiHochberg  implements ErrorCorrection
 
     public void calculate(Double max) {
 
-        BigDecimal min = new BigDecimal("" + 1);
+        adjustedMap = new HashMap<String, Double>();
         BigDecimal adjustedP;
-        for (int i = 1; i <= numberOfTests; i++) {
+        int i = 0;
+        
+        for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
             
+            String label = (String) iter.next();
             BigDecimal newNumberOftests = new BigDecimal("" + numberOfTests);
-            BigDecimal pvalue = new BigDecimal(pvalues[i]);
-            BigDecimal index = new BigDecimal("" + i);            
+   
+            BigDecimal index = new BigDecimal("" + i + 1); // don't divide by zero     
+            BigDecimal pvalue = BigDecimal.valueOf(((Double) originalMap.get(label)).doubleValue());
+            
             adjustedP = newNumberOftests.multiply(pvalue);
-
             adjustedP = adjustedP.divide(index, RESULT_SCALE, BigDecimal.ROUND_HALF_UP);
-            if (adjustedP.compareTo(min) < 0) {
-                min = adjustedP;
-            }
-            adjustedPvalues[i + 1] = min.toString();
 
-        }
-        adjustedMap = new HashMap();
-        for (int i = 0; i < adjustedPvalues.length && i < goLabels.length; i++) {
-            adjustedMap.put(goLabels[i], adjustedPvalues[i]);
+            if (adjustedP.doubleValue() < max.doubleValue()) {
+                adjustedMap.put(label, new Double(adjustedP.doubleValue()));
+            }
         }
     }
 
