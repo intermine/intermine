@@ -55,13 +55,13 @@
       <fmt:message key="aspect.sources.from"/>
       <ul>
         <c:forEach items="${aspect.aspectSources}" var="source">
-          <li><a href="${source.url}" target="_blank" class="extlink">${source.name}</a></li>
+          <li><a href="${source.url}" target="_new" class="extlink">${source.name}</a></li>
         </c:forEach>
       </ul>
     </div>
   </c:if>
 
-  <img src="${ASPECTS[aspect.name].iconImage}" title="${ASPECTS[aspect.name]}" class="aspectPageIcon" align="left"/>
+  <img src="${ASPECTS[aspect.name].iconImage}" title="${aspect.name} queries, databases, datasources and data downloads" class="aspectPageIcon" align="left"/>
   <div class="body aspectIntro">
     ${aspect.introText}
   </div>
