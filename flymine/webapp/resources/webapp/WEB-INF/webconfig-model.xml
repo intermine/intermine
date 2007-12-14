@@ -79,6 +79,18 @@
     </fields>
   </class>
 
+  <class className="org.flymine.model.genomic.Clone">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.ProbeSet">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+    </fields>
+  </class>
+
   <class className="org.flymine.model.genomic.DataSource">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -121,10 +133,9 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosomeLocation"  displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="gene.identifier" showInInlineCollection="false"/>
-      <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
 
@@ -154,7 +165,6 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="organism.name" />
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
@@ -254,7 +264,6 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="primaryAccession"/>
-      <fieldconfig fieldExpr="organism.name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
     <longdisplayers>
@@ -269,7 +278,6 @@
       <fieldconfig fieldExpr="exonCount"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
 
@@ -367,7 +375,6 @@
 
   <class className="org.flymine.model.genomic.OntologyTerm">
     <fields>
-      <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description" doNotTruncate="true" />
     </fields>
@@ -439,6 +446,7 @@
 
   <class className="org.flymine.model.genomic.FlyAtlasResult">
     <fields>
+      <fieldconfig fieldExpr="assays.name"/>
       <fieldconfig fieldExpr="affyCall"/>
       <fieldconfig fieldExpr="enrichment"/>
       <fieldconfig fieldExpr="mRNASignal"/>
@@ -552,6 +560,15 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="cellLine"/>
       <fieldconfig fieldExpr="publication.title"/>
+    </fields>
+  </class>
+
+  <class className="org.flymine.model.genomic.RNAiScreenHit">
+    <fields>
+      <fieldconfig fieldExpr="analysis.name"/>
+      <fieldconfig fieldExpr="analysis.analysisDescription"/>
+      <fieldconfig fieldExpr="result"/>
+      <fieldconfig fieldExpr="analysis.publication.pubMedId"/>
     </fields>
   </class>
 
