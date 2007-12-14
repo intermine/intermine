@@ -13,7 +13,7 @@
   <div class="body">
     <c:forEach items="${externalLinkPrefixes}" var="entry">
       <div>
-        <html:link href="${entry.value}">
+        <html:link href="${entry.value}" target="_new">
           ${entry.key}
         </html:link>
       </div>
