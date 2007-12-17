@@ -89,12 +89,6 @@ public class CreateReferencesTest extends TestCase {
     private RankedRelation storedExonRankedRelation = null;
     private GOTerm storedGOTerm = null;
     private OverlapRelation storedOverlapRelation = null;
-    private MRNA storedMRNA1 = null;
-    private MRNA storedMRNA2 = null;
-    private UTR storedUTR1 = null;
-    private UTR storedUTR2 = null;
-    private UTR storedUTR3 = null;
-    private UTR storedUTR4 = null;
 
     private ItemFactory itemFactory;
 
@@ -219,21 +213,34 @@ public class CreateReferencesTest extends TestCase {
     }*/
 
     public void testCreateUtrRefs() throws Exception {
-        storedMRNA1 = (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
+        MRNA storedMRNA1 = (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedMRNA1.setIdentifier("mrna1");
         storedMRNA1.setId(new Integer(1000));
-        storedMRNA2 = (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
+        MRNA storedMRNA2 = (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedMRNA2.setIdentifier("mrna2");
         storedMRNA2.setId(new Integer(1001));
 
-        storedUTR1 = (UTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
+        ThreePrimeUTR storedUTR1 =
+            (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
         storedUTR1.setIdentifier("utr1-threePrimeUTR");
-        storedUTR2 = (UTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
+        FivePrimeUTR storedUTR2 =
+            (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
         storedUTR2.setIdentifier("utr2-fivePrimeUTR");
-        storedUTR3 = (UTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
+        ThreePrimeUTR storedUTR3  =
+            (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
         storedUTR3.setIdentifier("utr3-threePrimeUTR");
-        storedUTR4 = (UTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
+        FivePrimeUTR storedUTR4 =
+            (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
         storedUTR4.setIdentifier("utr4-fivePrimeUTR");
+
+        ThreePrimeUTR stored3UTR =
+            (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
+        stored3UTR.setIdentifier("utr1-threePrimeUTR-orig");
+        storedMRNA1.setThreePrimeUTR(stored3UTR);
+        FivePrimeUTR stored5UTR =
+            (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
+        stored5UTR.setIdentifier("utr2-fivePrimeUTR-orig");
+        storedMRNA1.setFivePrimeUTR(stored5UTR);
 
         storedMRNA1.setuTRs(new HashSet(Arrays.asList(new Object[] {
                                                           storedUTR1, storedUTR2
@@ -249,6 +256,8 @@ public class CreateReferencesTest extends TestCase {
                                                     storedUTR2,
                                                     storedUTR3,
                                                     storedUTR4,
+                                                    stored3UTR,
+                                                    stored5UTR
                                                 }));
 
         Iterator i = toStore.iterator();
@@ -265,8 +274,8 @@ public class CreateReferencesTest extends TestCase {
         MRNA dbMRNA1 = (MRNA) osw.getObjectStore().getObjectById(new Integer(1000));
         MRNA dbMRNA2 = (MRNA) osw.getObjectStore().getObjectById(new Integer(1001));
 
-        Assert.assertEquals(storedUTR1.getIdentifier(), dbMRNA1.getThreePrimeUTR().getIdentifier());
-        Assert.assertEquals(storedUTR2.getIdentifier(), dbMRNA1.getFivePrimeUTR().getIdentifier());
+        Assert.assertEquals(stored3UTR.getIdentifier(), dbMRNA1.getThreePrimeUTR().getIdentifier());
+        Assert.assertEquals(stored5UTR.getIdentifier(), dbMRNA1.getFivePrimeUTR().getIdentifier());
         Assert.assertEquals(storedUTR3.getIdentifier(), dbMRNA2.getThreePrimeUTR().getIdentifier());
         Assert.assertEquals(storedUTR4.getIdentifier(), dbMRNA2.getFivePrimeUTR().getIdentifier());
     }

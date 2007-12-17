@@ -184,7 +184,7 @@ public class CreateReferences
                  + destinationClass.getName() + ", "
                  + createFieldName + ")");
         long startTime = System.currentTimeMillis();
-        
+
         Iterator resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           sourceClass, sourceClassFieldName,
@@ -272,7 +272,7 @@ public class CreateReferences
                  + createFieldName + ", "
                  + createInFirstClass + ")");
         long startTime = System.currentTimeMillis();
-        
+
         Iterator resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           firstClass, firstClassFieldName,
@@ -365,7 +365,7 @@ public class CreateReferences
                  + newCollectionName + ")");
 
         long startTime = System.currentTimeMillis();
-        
+
         InterMineObject lastObject = null;
         Set newCollection = new HashSet();
         Iterator resIter = PostProcessUtil.findConnectedClasses(osw.getObjectStore(), thisClass,
@@ -503,9 +503,9 @@ public class CreateReferences
         LOG.info("Beginning insertSymmetricalReferences(" + objectClass.getName() + ", "
                  + relationClass.getName() + ", "
                  + collectionFieldName + ")");
-        
+
         long startTime = System.currentTimeMillis();
-        
+
         InterMineObject lastObject = null;
         Set newCollection = new HashSet();
         // results will be:  object1, relation, object2  (ordered by object1)
@@ -573,7 +573,7 @@ public class CreateReferences
         throws Exception {
         LOG.debug("Beginning insertGeneAnnotationReferences()");
         long startTime = System.currentTimeMillis();
-        
+
         osw.beginTransaction();
 
         Iterator resIter = findProteinProperties(false);
@@ -661,7 +661,19 @@ public class CreateReferences
         ContainsConstraint mrnaUtrsConstraint =
             new ContainsConstraint(mrnaUtrsRef, ConstraintOp.CONTAINS, qcUTR);
 
-        q.setConstraint(mrnaUtrsConstraint);
+        QueryObjectReference fivePrimeRef = new QueryObjectReference(qcMRNA, "fivePrimeUTR");
+        ContainsConstraint fivePrimeNullConstraint =
+            new ContainsConstraint(fivePrimeRef, ConstraintOp.IS_NULL);
+        QueryObjectReference threePrimeRef = new QueryObjectReference(qcMRNA, "threePrimeUTR");
+        ContainsConstraint threePrimeNullConstraint =
+            new ContainsConstraint(threePrimeRef, ConstraintOp.IS_NULL);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(mrnaUtrsConstraint);
+        cs.addConstraint(fivePrimeNullConstraint);
+        cs.addConstraint(threePrimeNullConstraint);
+
+        q.setConstraint(cs);
 
         ObjectStore os = osw.getObjectStore();
 
