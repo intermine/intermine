@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -61,8 +60,6 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
         view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.interproId"));
         view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.name"));
-//        view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.objects.start"));
-//        view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.objects.end"));
         q.setView(view);
         
         String bagType = bag.getType();
@@ -71,8 +68,7 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-        
-        // can't be a NOT relationship!
+
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode interproNode = q.addNode("Gene.proteins.proteinFeatures.identifier");
