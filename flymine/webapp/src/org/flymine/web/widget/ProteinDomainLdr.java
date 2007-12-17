@@ -202,7 +202,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
           * @return the query representing the sample population (the bag)
           */
          public int getTotal(ObjectStore os) {
-             return BioUtil.getGeneTotal(os, organisms);
+             return BioUtil.getTotal(os, organisms, "Gene");
          }
          
          /**
