@@ -47,7 +47,7 @@ import org.flymine.model.genomic.Protein;
 public abstract class BioUtil
 {
     /**
-     * For a bag of genes, returns a list of organisms
+     * For a bag of objects, returns a list of organisms
      * @param os ObjectStore
      * @param bag InterMineBag
      * @return collection of organism names
@@ -56,18 +56,18 @@ public abstract class BioUtil
 
         Query q = new Query();
         Model model = os.getModel();
-        QueryClass qcGene = null;
+        QueryClass qcObject = null;
         try {
-            qcGene  = new QueryClass(Class.forName(model.getPackageName() + "." + bag.getType()));
+            qcObject  = new QueryClass(Class.forName(model.getPackageName() + "." + bag.getType()));
         } catch (ClassNotFoundException e) {
             return null;
         }
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-        QueryField qfGeneId = new QueryField(qcGene, "id");
+        QueryField qfGeneId = new QueryField(qcObject, "id");
 
-        q.addFrom(qcGene);
+        q.addFrom(qcObject);
         q.addFrom(qcOrganism);
 
         q.addToSelect(qfOrganismName);
@@ -76,7 +76,7 @@ public abstract class BioUtil
         BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
         cs.addConstraint(bc);
 
-        QueryObjectReference qr = new QueryObjectReference(qcGene, "organism");
+        QueryObjectReference qr = new QueryObjectReference(qcObject, "organism");
         ContainsConstraint cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcOrganism);
         cs.addConstraint(cc);
 
@@ -175,6 +175,8 @@ public abstract class BioUtil
            Query q = new Query();
            q.setDistinct(false);
            QueryClass qcObject = null;
+           
+           //TODO fix this to work with any class
            if (c.toLowerCase().equals("protein")) {
                qcObject = new QueryClass(Protein.class);
            } else {
