@@ -265,7 +265,11 @@ public class IqlQuery
             return q.getAliases().get(key.getQueryClass()) + "." + key.getFieldName() + ".id";
         } else if (qn instanceof QueryObjectPathExpression) {
             QueryObjectPathExpression ref = (QueryObjectPathExpression) qn;
-            return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName();
+            if (ref.getQope() != null) {
+                return nodeToString(q, ref.getQope(), parameters) + "." + ref.getFieldName();
+            } else {
+                return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName();
+            }
         } else if (qn instanceof QueryFieldPathExpression) {
             QueryFieldPathExpression ref = (QueryFieldPathExpression) qn;
             String objRepresentation = "null";
@@ -277,8 +281,13 @@ public class IqlQuery
             } else if (ref.getDefaultValue() != null) {
                 objRepresentation = ref.getDefaultValue().toString();
             }
-            return q.getAliases().get(ref.getQueryClass()) + "." + ref.getReferenceName() + "."
-                + ref.getFieldName() + "(DEF " + objRepresentation + ")";
+            if (ref.getQope() != null) {
+                return nodeToString(q, ref.getQope(), parameters) + "." + ref.getReferenceName()
+                    + "." + ref.getFieldName() + "(DEF " + objRepresentation + ")";
+            } else {
+                return q.getAliases().get(ref.getQueryClass()) + "." + ref.getReferenceName() + "."
+                    + ref.getFieldName() + "(DEF " + objRepresentation + ")";
+            }
         } else if (qn instanceof ObjectStoreBag) {
             return "BAG(" + ((ObjectStoreBag) qn).getBagId() + ")";
         } else if (qn instanceof ObjectStoreBagCombination) {

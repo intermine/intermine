@@ -208,8 +208,14 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ObjectPathExpression", new HashSet(Arrays.asList(new String[] {"Employee", "Department"})));
         results.put("ObjectPathExpression2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
         results2.put("ObjectPathExpression2", new HashSet(Arrays.asList("Employee", "Address")));
+        results.put("ObjectPathExpression3", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("ObjectPathExpression3", new HashSet(Arrays.asList(new String[] {"Employee", "Department", "Company"})));
+        results.put("ObjectPathExpression4", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("ObjectPathExpression4", new HashSet(Arrays.asList("Employee", "Department", "Company", "Address")));
         results.put("FieldPathExpression", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("FieldPathExpression", new HashSet(Arrays.asList(new String[] {"Company", "CEO"})));
+        results.put("FieldPathExpression2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("FieldPathExpression2", new HashSet(Arrays.asList("Employee", "Department", "Company", "Address")));
         results.put("ForeignKey", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("ForeignKey", Collections.singleton("Company"));
         results.put("ForeignKey2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");

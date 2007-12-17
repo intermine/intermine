@@ -463,9 +463,30 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB2"), data.get("Employee Street, BVille") },
                              { data.get("EmployeeB3"), data.get("Employee Street, BVille") } };
         results.put("ObjectPathExpression2", toList(r));
+        r = new Object[][] { { data.get("EmployeeA1"), data.get("CompanyA") },
+                             { data.get("EmployeeA2"), data.get("CompanyA") },
+                             { data.get("EmployeeA3"), data.get("CompanyA") },
+                             { data.get("EmployeeB1"), data.get("CompanyB") },
+                             { data.get("EmployeeB2"), data.get("CompanyB") },
+                             { data.get("EmployeeB3"), data.get("CompanyB") } };
+        results.put("ObjectPathExpression3", toList(r));
+        r = new Object[][] { { data.get("EmployeeA1"), data.get("Company Street, AVille") },
+                             { data.get("EmployeeA2"), data.get("Company Street, AVille") },
+                             { data.get("EmployeeA3"), data.get("Company Street, AVille") },
+                             { data.get("EmployeeB1"), data.get("Company Street, BVille") },
+                             { data.get("EmployeeB2"), data.get("Company Street, BVille") },
+                             { data.get("EmployeeB3"), data.get("Company Street, BVille") } };
+        results.put("ObjectPathExpression4", toList(r));
         r = new Object[][] { { data.get("CompanyA"), "3fred"},
                              { data.get("CompanyB"), "EmployeeB1"} };
         results.put("FieldPathExpression", toList(r));
+        r = new Object[][] { { data.get("EmployeeA1"), "Company Street, AVille" },
+                             { data.get("EmployeeA2"), "Company Street, AVille" },
+                             { data.get("EmployeeA3"), "Company Street, AVille" },
+                             { data.get("EmployeeB1"), "Company Street, BVille" },
+                             { data.get("EmployeeB2"), "Company Street, BVille" },
+                             { data.get("EmployeeB3"), "Company Street, BVille" } };
+        results.put("FieldPathExpression2", toList(r));
         r = new Object[][] { { data.get("CompanyA"), null},
                              { data.get("CompanyB"), ((Employee) data.get("EmployeeB1")).getId()} };
         results.put("ForeignKey", toList(r));

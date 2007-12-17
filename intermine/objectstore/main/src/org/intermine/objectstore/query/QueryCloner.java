@@ -152,13 +152,24 @@ public class QueryCloner
                         fromElementMap), ((QueryCast) orig).getType());
         } else if (orig instanceof QueryObjectPathExpression) {
             QueryObjectPathExpression origC = (QueryObjectPathExpression) orig;
-            return new QueryObjectPathExpression((QueryClass) fromElementMap
-                    .get(origC.getQueryClass()), origC.getFieldName());
+            if (origC.getQope() != null) {
+                return new QueryObjectPathExpression((QueryObjectPathExpression) cloneThing(origC
+                            .getQope(), fromElementMap), origC.getFieldName());
+            } else {
+                return new QueryObjectPathExpression((QueryClass) fromElementMap
+                        .get(origC.getQueryClass()), origC.getFieldName());
+            }
         } else if (orig instanceof QueryFieldPathExpression) {
             QueryFieldPathExpression origC = (QueryFieldPathExpression) orig;
-            return new QueryFieldPathExpression((QueryClass) fromElementMap
-                    .get(origC.getQueryClass()), origC.getReferenceName(), origC.getFieldName(),
-                    origC.getDefaultValue());
+            if (origC.getQope() != null) {
+                return new QueryFieldPathExpression((QueryObjectPathExpression) cloneThing(origC
+                            .getQope(), fromElementMap), origC.getReferenceName(),
+                        origC.getFieldName(), origC.getDefaultValue());
+            } else {
+                return new QueryFieldPathExpression((QueryClass) fromElementMap
+                        .get(origC.getQueryClass()), origC.getReferenceName(), origC.getFieldName(),
+                        origC.getDefaultValue());
+            }
         } else if (orig instanceof SimpleConstraint) {
             SimpleConstraint origC = (SimpleConstraint) orig;
             if ((origC.getOp() == ConstraintOp.IS_NULL)
