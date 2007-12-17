@@ -103,11 +103,6 @@ public abstract class BioUtil
      */
     public static Collection getChromosomes(ObjectStore os, String organism) {
 
-//        SELECT DISTINCT o
-//        FROM org.flymine.model.genomic.Chromosome AS c,
-//        org.flymine.model.genomic.Organism AS o
-//        WHERE c.organism CONTAINS o
-
         /* TODO put this in a config file */
         // TODO this may well go away once chromosomes sorted out in #1186
         if (organism.equals("Drosophila melanogaster")) {

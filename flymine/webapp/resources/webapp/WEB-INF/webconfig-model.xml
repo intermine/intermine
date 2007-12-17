@@ -270,6 +270,20 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
+    
+        <bagdisplayers>
+        
+              <enrichmentwidgetdisplayer title="UniProt Keywords"  
+	 	                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"  
+	 	                 controller="org.intermine.bio.web.widget.UniProtKeywordsLdr"  
+	 	                 label="Keyword"
+	 	                 description="UniProt keywords enriched for proteins in this list."
+	 	                 filters=""  
+	 	                 filterLabel="" 	                 
+	 	                 max="0.10"  /> 
+
+      
+    </bagdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Transcript">
