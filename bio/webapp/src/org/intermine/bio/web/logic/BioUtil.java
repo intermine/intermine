@@ -36,6 +36,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Protein;
 
 
 
@@ -166,19 +167,25 @@ public abstract class BioUtil
      *
      * @param os
      * @param organisms
-     * @return total number of genes in the database for selected organims
+     * @param c which class to test for - Gene or Protein
+     * @return total number of objects in the database for selected organims
      */
-    public static int getGeneTotal(ObjectStore os, Collection organisms) {
+    public static int getTotal(ObjectStore os, Collection organisms, String c) {
 
            Query q = new Query();
            q.setDistinct(false);
-           QueryClass qcGene = new QueryClass(Gene.class);
+           QueryClass qcObject = null;
+           if (c.toLowerCase().equals("protein")) {
+               qcObject = new QueryClass(Protein.class);
+           } else {
+               qcObject = new QueryClass(Gene.class);
+           }
            QueryClass qcOrganism = new QueryClass(Organism.class);
 
            QueryField qfOrganism = new QueryField(qcOrganism, "name");
            QueryFunction geneCount = new QueryFunction();
 
-           q.addFrom(qcGene);
+           q.addFrom(qcObject);
 
            q.addFrom(qcOrganism);
 
@@ -192,7 +199,7 @@ public abstract class BioUtil
            cs.addConstraint(bc2);
 
            /* gene is from organism */
-           QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
+           QueryObjectReference qr2 = new QueryObjectReference(qcObject, "organism");
            ContainsConstraint cc2 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
            cs.addConstraint(cc2);
 
