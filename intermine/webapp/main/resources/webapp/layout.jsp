@@ -22,14 +22,14 @@
 	<meta name="verify-v1" content="hZtrkqyKEW4WN60PvB9GLrRIWMbEVxvAQ4GqmHGq3Fk=" />
 	
 	<!-- for yahoo -->
-	<META name="y_key" content="05e821942b9c36fb" >
+	<META name="y_key" content="05e821942b9c36fb" />
 	 
     <html:base/>
     
     <fmt:message key="${pageName}.noFollow" var="noFollow" />
     
     <c:if test="${noFollow == 'true'}">
-	    <META NAME="ROBOTS" CONTENT="NOFOLLOW">
+	    <META NAME="ROBOTS" CONTENT="NOFOLLOW"/>
 	</c:if>
 	
 	<fmt:message key="${pageName}.title" var="pageNameTitle"/>
