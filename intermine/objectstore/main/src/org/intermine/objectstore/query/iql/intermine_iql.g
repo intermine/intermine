@@ -190,7 +190,7 @@ constant:
     ;
 
 field_path_expression:
-        IDENTIFIER DOT! IDENTIFIER DOT! IDENTIFIER OPEN_PAREN! "def"! constant CLOSE_PAREN!
+        ( IDENTIFIER DOT! )* IDENTIFIER DOT! IDENTIFIER DOT! IDENTIFIER OPEN_PAREN! "def"! constant CLOSE_PAREN!
         { #field_path_expression = #([FIELD_PATH_EXPRESSION, "FIELD_PATH_EXPRESSION"], #field_path_expression); }
     ;
 

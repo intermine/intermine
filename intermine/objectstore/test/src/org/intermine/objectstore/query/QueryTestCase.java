@@ -65,85 +65,93 @@ public class QueryTestCase extends OneTimeTestCase
             Object qc1 = i1.next();
             Object qc2 = i2.next();
 
-            if (qc1 instanceof QueryNode) {
-                if (qc2 instanceof QueryNode) {
-                    checkQueryNodes(msg + ": query nodes are not the same", (QueryNode) qc1, (QueryNode) qc2, q1, q2);
-                } else {
-                    fail(msg + ": QueryNode does not match " + qc2.getClass().getName());
-                }
-            } else if (qc1 instanceof Query) {
-                if (qc2 instanceof Query) {
-                    assertEquals(msg + ": subquery", (Query) qc1, (Query) qc2);
-                } else {
-                    fail(msg + ": Subquery does not match " + qc2.getClass().getName());
-                }
-            } else if (qc1 instanceof QueryClassBag) {
-                if (qc2 instanceof QueryClassBag) {
-                    checkQueryClassBags(msg + ": QueryClassBags are not equivalent", (QueryClassBag) qc1, (QueryClassBag) qc2, q1, q2);
-                } else {
-                    fail(msg + ": QueryClassBag does not match  " + qc2.getClass().getName());
-                }
-            } else if (qc1 instanceof QueryObjectPathExpression) {
-                if (qc2 instanceof QueryObjectPathExpression) {
-                    QueryObjectPathExpression pe1 = (QueryObjectPathExpression) qc1;
-                    QueryObjectPathExpression pe2 = (QueryObjectPathExpression) qc2;
-                    checkQueryNodes(msg + ": QueryClasses of QueryObjectPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
-                    assertEquals(msg + ": QueryObjectPathExpression fieldnames are not equal", pe1.getFieldName(), pe2.getFieldName());
-                } else {
-                    fail(msg + ": QueryObjectPathExpression does not match " + qc2.getClass().getName());
-                }
-            } else if (qc1 instanceof QueryFieldPathExpression) {
-                if (qc2 instanceof QueryFieldPathExpression) {
-                    QueryFieldPathExpression pe1 = (QueryFieldPathExpression) qc1;
-                    QueryFieldPathExpression pe2 = (QueryFieldPathExpression) qc2;
-                    checkQueryNodes(msg + ": QueryClasses of QueryFieldPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
-                    assertEquals(msg + ": QueryFieldPathExpression referenceNames are not equal", pe1.getReferenceName(), pe2.getReferenceName());
-                    assertEquals(msg + ": QueryFieldPathExpression fieldNames are not equal", pe1.getFieldName(), pe2.getFieldName());
-                    assertEquals(msg + ": QueryFieldPathExpression defaultValues are not equal", pe1.getDefaultValue(), pe2.getDefaultValue());
-                } else {
-                    fail(msg + ": QueryFieldPathExpression does not match " + qc2.getClass().getName());
-                }
-            } else if (qc1 instanceof ObjectStoreBag) {
-                if (qc2 instanceof ObjectStoreBag) {
-                    if (((ObjectStoreBag) qc1).getBagId() != ((ObjectStoreBag) qc2).getBagId()) {
-                        fail(msg + ": ObjectStoreBag ids are not equal");
-                    }
-                } else {
-                    fail(msg + ": ObjectStoreBag does not match " + qc2.getClass().getName());
-                }
-            } else if (qc1 instanceof OrderDescending) {
-                if (qc2 instanceof OrderDescending) {
-                    checkQueryNodes(msg + ": OrderDescending element does not match", ((OrderDescending) qc1).getQueryOrderable(), ((OrderDescending) qc2).getQueryOrderable(), q1, q2);
-                } else {
-                    fail(msg + ": OrderDescending does not match " + qc2.getClass().getName());
-                }
-            } else if (qc1 instanceof QueryReference) {
-                if (qc2 instanceof QueryReference) {
-                    checkQueryReferences(msg, (QueryReference) qc1, (QueryReference) qc2, q1, q2);
-                } else {
-                    fail(msg + ": QueryReference does not match " + qc2.getClass().getName());
-                }
-            } else if (qc1 instanceof ObjectStoreBagCombination) {
-                if (qc2 instanceof ObjectStoreBagCombination) {
-                    if (!qc1.equals(qc2)) {
-                        fail(msg + ": ObjectStoreBagCombinations are not equal");
-                    }
-                } else {
-                    fail(msg + ": ObjectStoreBagCombination does not match " + qc2.getClass().getName());
-                }
-            } else if (qc1 instanceof ObjectStoreBagsForObject) {
-                if (qc2 instanceof ObjectStoreBagsForObject) {
-                    if (!qc1.equals(qc2)) {
-                        fail(msg + ": ObjectStoreBagsForObjects are not equal");
-                    }
-                } else {
-                    fail(msg + ": ObjectStoreBagsForObject does not match " + qc2.getClass().getName());
+            checkObjects(msg, qc1, qc2, q1, q2);
+        }
+    }
+
+    protected void checkObjects(String msg, Object qc1, Object qc2, Query q1, Query q2) {
+        if ((qc1 == null) && (qc2 == null)) {
+            return;
+        }
+        if (qc1 instanceof QueryNode) {
+            if (qc2 instanceof QueryNode) {
+                checkQueryNodes(msg + ": query nodes are not the same", (QueryNode) qc1, (QueryNode) qc2, q1, q2);
+            } else {
+                fail(msg + ": QueryNode does not match " + qc2.getClass().getName());
+            }
+        } else if (qc1 instanceof Query) {
+            if (qc2 instanceof Query) {
+                assertEquals(msg + ": subquery", (Query) qc1, (Query) qc2);
+            } else {
+                fail(msg + ": Subquery does not match " + qc2.getClass().getName());
+            }
+        } else if (qc1 instanceof QueryClassBag) {
+            if (qc2 instanceof QueryClassBag) {
+                checkQueryClassBags(msg + ": QueryClassBags are not equivalent", (QueryClassBag) qc1, (QueryClassBag) qc2, q1, q2);
+            } else {
+                fail(msg + ": QueryClassBag does not match  " + qc2.getClass().getName());
+            }
+        } else if (qc1 instanceof QueryObjectPathExpression) {
+            if (qc2 instanceof QueryObjectPathExpression) {
+                QueryObjectPathExpression pe1 = (QueryObjectPathExpression) qc1;
+                QueryObjectPathExpression pe2 = (QueryObjectPathExpression) qc2;
+                checkQueryNodes(msg + ": QueryClasses of QueryObjectPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
+                checkObjects(msg + ": Qopes of QueryObjectPathExpressions don't match", pe1.getQope(), pe2.getQope(), q1, q2);
+                assertEquals(msg + ": QueryObjectPathExpression fieldnames are not equal", pe1.getFieldName(), pe2.getFieldName());
+            } else {
+                fail(msg + ": QueryObjectPathExpression does not match " + qc2.getClass().getName());
+            }
+        } else if (qc1 instanceof QueryFieldPathExpression) {
+            if (qc2 instanceof QueryFieldPathExpression) {
+                QueryFieldPathExpression pe1 = (QueryFieldPathExpression) qc1;
+                QueryFieldPathExpression pe2 = (QueryFieldPathExpression) qc2;
+                checkQueryNodes(msg + ": QueryClasses of QueryFieldPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
+                checkObjects(msg + ": Qopes of QueryFieldPathExpressions don't match", pe1.getQope(), pe2.getQope(), q1, q2);
+                assertEquals(msg + ": QueryFieldPathExpression referenceNames are not equal", pe1.getReferenceName(), pe2.getReferenceName());
+                assertEquals(msg + ": QueryFieldPathExpression fieldNames are not equal", pe1.getFieldName(), pe2.getFieldName());
+                assertEquals(msg + ": QueryFieldPathExpression defaultValues are not equal", pe1.getDefaultValue(), pe2.getDefaultValue());
+            } else {
+                fail(msg + ": QueryFieldPathExpression does not match " + qc2.getClass().getName());
+            }
+        } else if (qc1 instanceof ObjectStoreBag) {
+            if (qc2 instanceof ObjectStoreBag) {
+                if (((ObjectStoreBag) qc1).getBagId() != ((ObjectStoreBag) qc2).getBagId()) {
+                    fail(msg + ": ObjectStoreBag ids are not equal");
                 }
             } else {
-                fail(msg + ": Unknown type of Object in list: " + qc1.getClass().getName());
+                fail(msg + ": ObjectStoreBag does not match " + qc2.getClass().getName());
             }
+        } else if (qc1 instanceof OrderDescending) {
+            if (qc2 instanceof OrderDescending) {
+                checkQueryNodes(msg + ": OrderDescending element does not match", ((OrderDescending) qc1).getQueryOrderable(), ((OrderDescending) qc2).getQueryOrderable(), q1, q2);
+            } else {
+                fail(msg + ": OrderDescending does not match " + qc2.getClass().getName());
+            }
+        } else if (qc1 instanceof QueryReference) {
+            if (qc2 instanceof QueryReference) {
+                checkQueryReferences(msg, (QueryReference) qc1, (QueryReference) qc2, q1, q2);
+            } else {
+                fail(msg + ": QueryReference does not match " + qc2.getClass().getName());
+            }
+        } else if (qc1 instanceof ObjectStoreBagCombination) {
+            if (qc2 instanceof ObjectStoreBagCombination) {
+                if (!qc1.equals(qc2)) {
+                    fail(msg + ": ObjectStoreBagCombinations are not equal");
+                }
+            } else {
+                fail(msg + ": ObjectStoreBagCombination does not match " + qc2.getClass().getName());
+            }
+        } else if (qc1 instanceof ObjectStoreBagsForObject) {
+            if (qc2 instanceof ObjectStoreBagsForObject) {
+                if (!qc1.equals(qc2)) {
+                    fail(msg + ": ObjectStoreBagsForObjects are not equal");
+                }
+            } else {
+                fail(msg + ": ObjectStoreBagsForObject does not match " + qc2.getClass().getName());
+            }
+        } else {
+            fail(msg + ": Unknown type of Object in list: " + qc1.getClass().getName());
         }
-
     }
 
     protected void checkQueryNodes(String msg, Object qn1, Object qn2, Query q1, Query q2) {

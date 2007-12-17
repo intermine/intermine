@@ -556,8 +556,14 @@ public class IqlQueryParser
      * @return a QueryFieldPathExpression object
      */
     private static QueryFieldPathExpression processNewQueryFieldPathExpression(AST ast, Query q) {
-        if (ast == null) {
-            throw new IllegalArgumentException("Field path expression cut short");
+        AST countAst = ast;
+        int count = -4;
+        while (countAst != null) {
+            count++;
+            countAst = countAst.getNextSibling();
+        }
+        if (count < 0) {
+            throw new IllegalArgumentException("Field path expression too short");
         }
         if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
             throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
@@ -570,6 +576,19 @@ public class IqlQueryParser
                     + " attempting to create a QueryFieldPathExpression");
         }
         ast = ast.getNextSibling();
+        for (int i = 0; i < count; i++) {
+            if (ast.getType() != IqlTokenTypes.IDENTIFIER) {
+                throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                        + ast.getType() + "]");
+            }
+            if (qcObj instanceof QueryClass) {
+                qcObj = new QueryObjectPathExpression((QueryClass) qcObj, unescape(ast.getText()));
+            } else {
+                qcObj = new QueryObjectPathExpression((QueryObjectPathExpression) qcObj,
+                        unescape(ast.getText()));
+            }
+            ast = ast.getNextSibling();
+        }
         if (ast == null) {
             throw new IllegalArgumentException("Field path expression cut short");
         }
@@ -605,8 +624,13 @@ public class IqlQueryParser
             throw new IllegalArgumentException("Expected expression to end while creating a"
                     + " QueryFieldPathExpression");
         }
-        return new QueryFieldPathExpression((QueryClass) qcObj, referenceName, fieldName,
-                defaultValue);
+        if (qcObj instanceof QueryClass) {
+            return new QueryFieldPathExpression((QueryClass) qcObj, referenceName, fieldName,
+                    defaultValue);
+        } else {
+            return new QueryFieldPathExpression((QueryObjectPathExpression) qcObj, referenceName,
+                    fieldName, defaultValue);
+        }
     }
 
     /**
@@ -629,40 +653,54 @@ public class IqlQueryParser
                     + ast.getType() + "]");
         }
         Object obj = q.getReverseAliases().get(unescape(ast.getText()));
+        String text = ast.getText();
 
         if ((obj instanceof QueryClass) || (obj instanceof QueryClassBag)) {
-            AST secondAst = ast.getNextSibling();
-            if (secondAst == null) {
+            ast = ast.getNextSibling();
+            if (ast == null) {
                 return (QueryClass) obj;
             } else {
-                AST thirdAst = secondAst.getNextSibling();
-                if (thirdAst == null) {
-                    if (obj instanceof QueryClass) {
-                        try {
-                            return new QueryField((QueryClass) obj, unescape(secondAst.getText()));
-                        } catch (IllegalArgumentException e) {
-                            if (isSelect) {
-                                return new QueryObjectPathExpression((QueryClass) obj, unescape(
-                                            secondAst.getText()));
-                            } else {
-                                return new QueryObjectReference((QueryClass) obj, unescape(secondAst
-                                            .getText()));
-                            }
-                        }
-                    } else if ("id".equals(secondAst.getText())) {
+                if (obj instanceof QueryClassBag) {
+                    if ("id".equals(ast.getText()) && (ast.getNextSibling() == null)) {
                         return new QueryField((QueryClassBag) obj);
                     } else {
                         throw new IllegalArgumentException("Can only access the \"id\" attribute of"
-                                + " a QueryClassBag");
+                                + " QueryClassBag \"" + text + "\"");
                     }
-                } else if ("id".equals(thirdAst.getText())) {
-                    return new QueryForeignKey((QueryClass) obj, unescape(secondAst
-                                .getText()));
-                } else {
-                    throw new IllegalArgumentException("Path expression " + ast.getText() + "."
-                            + secondAst.getText() + "." + thirdAst.getText() + " extends beyond a "
-                            + "field");
                 }
+                while (ast != null) {
+                    text += "." + ast.getText();
+                    if (obj instanceof QueryClass) {
+                        try {
+                            obj = new QueryField((QueryClass) obj, unescape(ast.getText()));
+                        } catch (IllegalArgumentException e) {
+                            if (isSelect) {
+                                obj = new QueryObjectPathExpression((QueryClass) obj, unescape(
+                                            ast.getText()));
+                            } else {
+                                obj = new QueryObjectReference((QueryClass) obj, unescape(ast
+                                            .getText()));
+                            }
+                        }
+                    } else if (obj instanceof QueryObjectPathExpression) {
+                        if ("id".equals(ast.getText())) {
+                            obj = new QueryForeignKey(((QueryObjectPathExpression) obj)
+                                    .getQueryClass(), ((QueryObjectPathExpression) obj)
+                                    .getFieldName());
+                        } else {
+                            obj = new QueryObjectPathExpression((QueryObjectPathExpression) obj,
+                                    unescape(ast.getText()));
+                        }
+                    } else if (obj instanceof QueryField) {
+                        throw new IllegalArgumentException("Path expression " + text + " extends "
+                                + "beyond a field");
+                    } else if (obj instanceof QueryForeignKey) {
+                        throw new IllegalArgumentException("Path expression " + text + " extends "
+                                + "beyond a foreign key");
+                    }
+                    ast = ast.getNextSibling();
+                }
+                return obj;
             }
         } else if (obj instanceof Query) {
             AST secondAst = ast.getNextSibling();

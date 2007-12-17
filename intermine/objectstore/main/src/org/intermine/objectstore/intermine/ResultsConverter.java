@@ -329,23 +329,20 @@ public class ResultsConverter
             Map<QueryPathExpression, Map<Integer, InterMineObject>> fetchedObjects)
     throws ObjectStoreException {
         if (fetchedObjects.get(qope) == null) {
+            int startingPoint;
+            // This is a Map from the starting point ID to the ID of the referenced object
+            Map<Integer, Integer> objectIds = new HashMap();
+            // This is a Map from the starting point ID to the referenced object
+            Map<Integer, InterMineObject> objects = new HashMap();
+            Set<Integer> idsToFetch = new HashSet();
             if (qope.getQueryClass() != null) {
                 QueryClass qc = qope.getQueryClass();
                 // Search for starting point.
-                int startingPoint = q.getSelect().indexOf(qc);
-                if (startingPoint == -1) {
-                    startingPoint = q.getSelect().indexOf(new QueryField(qc, "id"));
-                }
+                startingPoint = q.getSelect().indexOf(qc);
                 if (startingPoint == -1) {
                     throw new ObjectStoreException("Path Expression " + qope + " needs QueryClass "
                             + qc + " to be in the SELECT list");
                 }
-                startingPoints.put(qope, new Integer(startingPoint));
-                // This is a Map from the starting point ID to the ID of the referenced object
-                Map<Integer, Integer> objectIds = new HashMap();
-                // This is a Map from the starting point ID to the referenced object
-                Map<Integer, InterMineObject> objects = new HashMap();
-                Set<Integer> idsToFetch = new HashSet();
                 Method getter = TypeUtil.getProxyGetter(qc.getType(), qope.getFieldName());
                 for (ResultsRow row : retval) {
                     InterMineObject o = (InterMineObject) row.get(startingPoint);
@@ -354,38 +351,62 @@ public class ResultsConverter
                         InterMineObject ref = (InterMineObject) getter.invoke(o);
                         if (ref != null) {
                             refId = ref.getId();
-                        }
-                        if (ref instanceof ProxyReference) {
-                            idsToFetch.add(refId);
-                            objectIds.put(o.getId(), refId);
-                        } else {
-                            objects.put(o.getId(), ref);
+                            if (ref instanceof ProxyReference) {
+                                idsToFetch.add(refId);
+                                objectIds.put(o.getId(), refId);
+                            } else {
+                                objects.put(o.getId(), ref);
+                            }
                         }
                     } catch (Exception e) {
                         // Shouldn't ever happen
                         throw new ObjectStoreException(e);
                     }
                 }
-                Map<Integer, InterMineObject> fetched = fetchByIds(os, c, sequence, qope.getType(),
-                        idsToFetch);
-                for (Map.Entry<Integer, Integer> objectIdsEntry : objectIds.entrySet()) {
-                    InterMineObject ref = fetched.get(objectIdsEntry.getValue());
-                    if (ref == null) {
-                        throw new ObjectStoreException("Error - could not fetch object with ID of "
-                                + objectIdsEntry.getValue() + " for path expression " + qope
-                                + " for starting point " + objectIdsEntry.getKey());
-                    }
-                    objects.put(objectIdsEntry.getKey(), ref);
-                }
-                fetchedObjects.put(qope, objects);
-                int rowToReplace = q.getSelect().indexOf(qope);
-                if (rowToReplace != -1) {
-                    for (ResultsRow row : retval) {
-                        row.set(rowToReplace, objects.get(((InterMineObject) row.get(startingPoint))
-                                    .getId()));
-                    }
-                }
             } else {
+                QueryObjectPathExpression parent = qope.getQope();
+                fetchObjectPathExpression(os, c, sequence, q, parent, startingPoints, retval,
+                        fetchedObjects);
+                startingPoint = startingPoints.get(parent).intValue();
+                Map<Integer, InterMineObject> previousObjects = fetchedObjects.get(parent);
+                Method getter = TypeUtil.getProxyGetter(parent.getType(), qope.getFieldName());
+                for (Map.Entry<Integer, InterMineObject> entry : previousObjects.entrySet()) {
+                    Integer refId = null;
+                    try {
+                        InterMineObject ref = (InterMineObject) getter.invoke(entry.getValue());
+                        if (ref != null) {
+                            refId = ref.getId();
+                            if (ref instanceof ProxyReference) {
+                                idsToFetch.add(refId);
+                                objectIds.put(entry.getKey(), refId);
+                            } else {
+                                objects.put(entry.getKey(), ref);
+                            }
+                        }
+                    } catch (Exception e) {
+                        // Shouldn't ever happen
+                    }
+                }
+            }
+            startingPoints.put(qope, new Integer(startingPoint));
+            Map<Integer, InterMineObject> fetched = fetchByIds(os, c, sequence, qope.getType(),
+                    idsToFetch);
+            for (Map.Entry<Integer, Integer> objectIdsEntry : objectIds.entrySet()) {
+                InterMineObject ref = fetched.get(objectIdsEntry.getValue());
+                if (ref == null) {
+                    throw new ObjectStoreException("Error - could not fetch object with ID of "
+                            + objectIdsEntry.getValue() + " for path expression " + qope
+                            + " for starting point " + objectIdsEntry.getKey());
+                }
+                objects.put(objectIdsEntry.getKey(), ref);
+            }
+            fetchedObjects.put(qope, objects);
+            int rowToReplace = q.getSelect().indexOf(qope);
+            if (rowToReplace != -1) {
+                for (ResultsRow row : retval) {
+                    row.set(rowToReplace, objects.get(((InterMineObject) row.get(startingPoint))
+                                .getId()));
+                }
             }
         }
     }
@@ -441,6 +462,7 @@ public class ResultsConverter
      * @param clazz the class of the table to search in
      * @param idsToFetch a Collection of IDs to fetch
      * @return a Map from ID to object
+     * @throws ObjectStoreException if an error occurs
      */
     protected static Map<Integer, InterMineObject> fetchByIds(ObjectStoreInterMineImpl os,
             Connection c, Map<Object, Integer> sequence, Class clazz,

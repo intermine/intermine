@@ -258,8 +258,14 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ObjectPathExpression", Collections.singleton("InterMineObject"));
         results.put("ObjectPathExpression2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
         results2.put("ObjectPathExpression2", Collections.singleton("InterMineObject"));
+        results.put("ObjectPathExpression3", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
+        results2.put("ObjectPathExpression3", Collections.singleton("InterMineObject"));
+        results.put("ObjectPathExpression4", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
+        results2.put("ObjectPathExpression4", Collections.singleton("InterMineObject"));
         results.put("FieldPathExpression", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
         results2.put("FieldPathExpression", Collections.singleton("InterMineObject"));
+        results.put("FieldPathExpression2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
+        results2.put("FieldPathExpression2", Collections.singleton("InterMineObject"));
         results.put("ForeignKey", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
         results2.put("ForeignKey", Collections.singleton("InterMineObject"));
         results.put("ForeignKey2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
