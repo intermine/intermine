@@ -166,7 +166,7 @@ public class ObjectDetailsController extends InterMineAction
                              + myBagsWithThisObject);
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
-        setAtributesForDisplayType(request, session, object);
+        setAttributesForDisplayType(request, session, object);
 
         return null;
     }
@@ -178,7 +178,7 @@ public class ObjectDetailsController extends InterMineAction
      * @param session session
      * @param object object for which is page displayed
      */
-    private void setAtributesForDisplayType(HttpServletRequest request, HttpSession session,
+    private void setAttributesForDisplayType(HttpServletRequest request, HttpSession session,
                                             InterMineObject object) {
         DisplayType displayType = (DisplayType) session.getAttribute(Constants.DISPLAY_TYPE);
         if (displayType == null) {
