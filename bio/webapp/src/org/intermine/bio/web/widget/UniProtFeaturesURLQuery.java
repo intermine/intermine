@@ -28,7 +28,7 @@ import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
  * Builds a query to get all the genes (in bag) associated with specified go term.
  * @author Julie Sullivan
  */
-public class UniProtKeywordsURLQuery implements EnrichmentWidgetURLQuery
+public class UniProtFeaturesURLQuery implements EnrichmentWidgetURLQuery
 {
 
     InterMineBag bag;
@@ -39,7 +39,7 @@ public class UniProtKeywordsURLQuery implements EnrichmentWidgetURLQuery
      * @param bag
      * @param os
      */
-    public UniProtKeywordsURLQuery(ObjectStore os, InterMineBag bag, String key) {
+    public UniProtFeaturesURLQuery(ObjectStore os, InterMineBag bag, String key) {
         this.bag = bag;
         this.key = key;
         this.os = os;
@@ -57,8 +57,10 @@ public class UniProtKeywordsURLQuery implements EnrichmentWidgetURLQuery
         view.add(MainHelper.makePath(model, q, "Protein.identifier"));
         view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
         view.add(MainHelper.makePath(model, q, "Protein.organism.name"));
-        view.add(MainHelper.makePath(model, q, "Protein.keywords.name"));
-        view.add(MainHelper.makePath(model, q, "Protein.keywords.description"));
+        view.add(MainHelper.makePath(model, q, "Protein.features.type"));
+        view.add(MainHelper.makePath(model, q, "Protein.features.description"));
+        view.add(MainHelper.makePath(model, q, "Protein.features.begin"));
+        view.add(MainHelper.makePath(model, q, "Protein.features.end"));
         q.setView(view);
         
         String bagType = bag.getType();
@@ -70,7 +72,7 @@ public class UniProtKeywordsURLQuery implements EnrichmentWidgetURLQuery
 
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode keywordNode = q.addNode("Protein.keywords.name");
+        PathNode keywordNode = q.addNode("Protein.features.type");
         Constraint c = new Constraint(constraintOp, key, false, label, code, id, null);
         keywordNode.getConstraints().add(c);
                 

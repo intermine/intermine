@@ -272,6 +272,15 @@
     </longdisplayers>
     
         <bagdisplayers>
+       
+                     <enrichmentwidgetdisplayer title="UniProt Features"  
+	 	                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"  
+	 	                 controller="org.intermine.bio.web.widget.UniProtFeaturesLdr"  
+	 	                 label="Feature"
+	 	                 description="UniProt features enriched for proteins in this list."
+	 	                 filters=""  
+	 	                 filterLabel="" 	                 
+	 	                 max="0.10"  /> 
         
               <enrichmentwidgetdisplayer title="UniProt Keywords"  
 	 	                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"  
