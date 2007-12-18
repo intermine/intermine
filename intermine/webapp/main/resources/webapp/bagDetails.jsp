@@ -210,7 +210,7 @@
   
       <fmt:message key="bagDetails.widgetsHelp">
       	<fmt:param>
-            	<img src="images/undisclosed.gif"/> / <img src="images/disclosed.gif"/>  
+            	<img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/>  
       	</fmt:param>
       </fmt:message>
     
@@ -351,11 +351,10 @@
 <div class="body">
   <fmt:message key="bagDetails.templatesHelp">
     <fmt:param>
-            	<img src="images/undisclosed.gif"/> / <img src="images/disclosed.gif"/>  
+            	<img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/>  
       </fmt:param>
   </fmt:message>
-  <br/>
-  <br/>
+
   <%-- Each aspect --%>
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
   <div class="body">
