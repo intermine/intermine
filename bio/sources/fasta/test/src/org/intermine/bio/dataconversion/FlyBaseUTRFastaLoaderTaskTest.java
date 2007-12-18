@@ -30,10 +30,12 @@ import org.flymine.model.genomic.FivePrimeUTR;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.ThreePrimeUTR;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -55,51 +57,11 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         osw.getObjectStore().flushObjectById();
     }
 
-    public void testFastaLoad() throws Exception {
-        FastaLoaderTask flt = new FlyBaseUTRFastaLoaderTask();
-        flt.setFastaTaxonId(new Integer(36329));
-        flt.setIgnoreDuplicates(true);
-        flt.setClassName("org.flymine.model.genomic.FivePrimeUTR");
-        flt.setClassAttribute("identifier");
-        flt.setIntegrationWriterAlias("integration.bio-test");
-        flt.setSourceName("fasta-test");
+    public void testFasta5PrimeLoad() throws Exception {
+        executeLoaderTask("org.flymine.model.genomic.FivePrimeUTR",
+                          "dmel-all-five_prime_UTR.fasta");
 
-
-        File tmpFile = File.createTempFile("FlyBaseUTRFastaLoaderTaskTest", "tmp");
-        FileWriter fw = new FileWriter(tmpFile);
-        InputStream is =
-            getClass().getClassLoader().getResourceAsStream("dmel-all-five_prime_UTR.fasta");
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            fw.write(line + "\n");
-        }
-
-        fw.close();
-        tmpFile.deleteOnExit();
-
-        File[] files = new File[1];
-        files[0] = tmpFile;
-        flt.setFileArray(files);
-        flt.execute();
-        //Check the results to see if we have some data...
-        ObjectStore os = osw.getObjectStore();
-
-        Query q = new Query();
-        QueryClass lsfQueryClass = new QueryClass(LocatedSequenceFeature.class);
-        QueryClass seqQueryClass = new QueryClass(Sequence.class);
-        q.addToSelect(lsfQueryClass);
-        q.addToSelect(seqQueryClass);
-        q.addFrom(lsfQueryClass);
-        q.addFrom(seqQueryClass);
-
-        QueryObjectReference qor = new QueryObjectReference(lsfQueryClass, "sequence");
-        ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS, seqQueryClass);
-
-        q.setConstraint(cc);
-
-        Results r = os.execute(q);
+        Results r = getResults();
 
         boolean seenFBtr0112632 = false;
         boolean seenFBtr0100521 = false;
@@ -135,6 +97,105 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
             throw new RuntimeException("FBtr0112632 5' UTR not seen");
         }
         assertEquals(5, r.size());
+    }
+
+    public void testFasta3PrimeLoad() throws Exception {
+        executeLoaderTask("org.flymine.model.genomic.ThreePrimeUTR",
+                          "dmel-all-three_prime_UTR.fasta");
+
+        Results r = getResults();
+
+        boolean seenFBtr0071764 = false;
+        boolean seenFBtr0082533 = false;
+
+        for (Object rr: r) {
+            ThreePrimeUTR utr = (ThreePrimeUTR) ((ResultsRow) rr).get(0);
+            assertNotNull(utr.getChromosomeLocation());
+            if (utr.getIdentifier().equals("FBtr0071764-3-prime-utr")) {
+                seenFBtr0071764 = true;
+                Location loc = utr.getChromosomeLocation();
+                assertEquals(18060033, loc.getStart().intValue());
+                assertEquals(18060346, loc.getEnd().intValue());
+                assertEquals("2R", loc.getObject().getIdentifier());
+                assertEquals("FBtr0071764", utr.getmRNA().getIdentifier());
+                assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
+            } else {
+                if (utr.getIdentifier().equals("FBtr0082533-3-prime-utr")) {
+                    seenFBtr0082533 = true;
+                    Location loc = utr.getChromosomeLocation();
+                    assertEquals(7594335, loc.getStart().intValue());
+                    assertEquals(7595561, loc.getEnd().intValue());
+                    assertEquals("3R", loc.getObject().getIdentifier());
+                    assertEquals("FBtr0082533", utr.getmRNA().getIdentifier());
+                    assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
+                }
+            }
+        }
+
+        if (!seenFBtr0071764) {
+            throw new RuntimeException("FBtr0071764 3' UTR not seen");
+        }
+        if (!seenFBtr0082533) {
+            throw new RuntimeException("FBtr0082533 3' UTR not seen");
+        }
+        assertEquals(2, r.size());
+    }
+
+    /**
+     * @throws IOException
+     */
+    private void executeLoaderTask(String className, String utrFastaFile) throws IOException {
+        FastaLoaderTask flt = new FlyBaseUTRFastaLoaderTask();
+        flt.setFastaTaxonId(new Integer(36329));
+        flt.setIgnoreDuplicates(true);
+        flt.setClassName(className);
+        flt.setClassAttribute("identifier");
+        flt.setIntegrationWriterAlias("integration.bio-test");
+        flt.setSourceName("fasta-test");
+
+        File tmpFile = File.createTempFile("FlyBaseUTRFastaLoaderTaskTest", "tmp");
+        FileWriter fw = new FileWriter(tmpFile);
+
+        InputStream is =
+            getClass().getClassLoader().getResourceAsStream(utrFastaFile);
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            fw.write(line + "\n");
+        }
+
+        fw.close();
+        tmpFile.deleteOnExit();
+
+        File[] files = new File[1];
+        files[0] = tmpFile;
+        flt.setFileArray(files);
+        flt.execute();
+    }
+
+    /**
+     * @return
+     */
+    private Results getResults() {
+        //Check the results to see if we have some data...
+        ObjectStore os = osw.getObjectStore();
+
+        Query q = new Query();
+        QueryClass lsfQueryClass = new QueryClass(LocatedSequenceFeature.class);
+        QueryClass seqQueryClass = new QueryClass(Sequence.class);
+        q.addToSelect(lsfQueryClass);
+        q.addToSelect(seqQueryClass);
+        q.addFrom(lsfQueryClass);
+        q.addFrom(seqQueryClass);
+
+        QueryObjectReference qor = new QueryObjectReference(lsfQueryClass, "sequence");
+        ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS, seqQueryClass);
+
+        q.setConstraint(cc);
+
+        Results r = os.execute(q);
+        return r;
     }
 
     public void tearDown() throws Exception {

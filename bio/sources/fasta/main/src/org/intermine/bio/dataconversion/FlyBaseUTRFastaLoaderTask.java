@@ -38,6 +38,7 @@ import org.biojava.bio.seq.Sequence;
  */
 public class FlyBaseUTRFastaLoaderTask extends FastaLoaderTask
 {
+
     Map<String, Chromosome> chrMap = new HashMap<String, Chromosome>();
 
     /**
@@ -61,15 +62,8 @@ public class FlyBaseUTRFastaLoaderTask extends FastaLoaderTask
                                        + "UTR");
         }
 
-        String utrIdentifier;
+        String utrIdentifier = utr.getIdentifier();
 
-        if (interMineObject instanceof FivePrimeUTR) {
-            utrIdentifier = mrnaIdentifier + "-5-prime-utr";
-            interMineObject.setIdentifier(utrIdentifier);
-        } else {
-            utrIdentifier = mrnaIdentifier + "-3-prime-utr";
-            interMineObject.setIdentifier(utrIdentifier);
-        }
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
         utr.setmRNA(mrna);
 
@@ -102,6 +96,18 @@ public class FlyBaseUTRFastaLoaderTask extends FastaLoaderTask
         } else {
             throw new RuntimeException("header doesn't match pattern \"" + regexp + "\": "
                                        + header);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getIdentifier(Sequence bioJavaSequence) {
+        if (getClassName().endsWith(".FivePrimeUTR")) {
+            return bioJavaSequence.getName() + "-5-prime-utr";
+        } else {
+            return bioJavaSequence.getName() + "-3-prime-utr";
         }
     }
 
