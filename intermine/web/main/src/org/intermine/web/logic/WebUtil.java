@@ -462,9 +462,9 @@ public abstract class WebUtil
                                       String errorCorrection) {
 
             ArrayList<Map> maps = new ArrayList<Map>();
-            int numberOfGenesInBag;
+            int numberOfObjectsInBag;
             try {
-                numberOfGenesInBag = bag.size();
+                numberOfObjectsInBag = bag.size();
             } catch (Exception e) {
                 return null;
             }
@@ -520,7 +520,7 @@ public abstract class WebUtil
                     Long countBag = countMap.get(id);
                     Long countAll = (java.lang.Long) rrAll.get(1);
 
-                    double p = h.calculateP(numberOfGenesInBag, countBag.intValue(), 
+                    double p = h.calculateP(numberOfObjectsInBag, countBag.intValue(), 
                                             countAll.intValue(), total);
                     resultsMap.put(id, new Double(p));
                 }
