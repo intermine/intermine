@@ -56,7 +56,7 @@
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" ordered="true" reverse-reference="MRNA"/>
     <collection name="codons" referenced-type="org.flymine.model.genomic.Codon" ordered="true" reverse-reference="MRNAs"/>
     <collection name="ESTs" referenced-type="org.flymine.model.genomic.EST" ordered="true" reverse-reference="MRNAs"/>
-    <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" ordered="true" reverse-reference="MRNAs"/>
+    <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" ordered="true" reverse-reference="MRNA"/>
   </class>
   <class name="org.flymine.model.genomic.TRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
   <class name="org.flymine.model.genomic.GroupIIntron" extends="org.flymine.model.genomic.Intron" is-interface="true"/>
@@ -270,7 +270,7 @@
   <class name="org.flymine.model.genomic.ScRNA" extends="org.flymine.model.genomic.NcRNA" is-interface="true"/>
   <class name="org.flymine.model.genomic.UTR" extends="org.flymine.model.genomic.GenePart" is-interface="true">
     <collection name="ribosomeEntrySites" referenced-type="org.flymine.model.genomic.RibosomeEntrySite" ordered="true" reverse-reference="UTRs"/>
-    <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" ordered="true" reverse-reference="UTRs"/>
+    <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="UTRs"/>
   </class>
   <class name="org.flymine.model.genomic.U4SnRNA" extends="org.flymine.model.genomic.SnRNA" is-interface="true"/>
   <class name="org.flymine.model.genomic.Regulon" extends="org.flymine.model.genomic.GeneGroup" is-interface="true"/>
