@@ -18,7 +18,7 @@
     <attribute name="organismDbId" type="java.lang.String"/>
     <reference name="fivePrimeUTR" referenced-type="org.flymine.model.genomic.FivePrimeUTR"/>
     <reference name="threePrimeUTR" referenced-type="org.flymine.model.genomic.ThreePrimeUTR"/>
-    <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="MRNAs" ordered="true"/>
+    <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="MRNA" ordered="true"/>
     <collection name="cDNAClones" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="MRNA" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.Transcript" is-interface="true">
@@ -40,7 +40,7 @@
   <class name="org.flymine.model.genomic.UTR" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="UTRs"/>
-    <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="UTRs" ordered="true"/>
+    <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="UTRs"/>
   </class>
   <class name="org.flymine.model.genomic.ThreePrimeUTR" is-interface="true">
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>

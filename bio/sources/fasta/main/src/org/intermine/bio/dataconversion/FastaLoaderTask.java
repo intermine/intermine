@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.util.NoSuchElementException;
 
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.util.TypeUtil;
@@ -20,15 +19,14 @@ import org.intermine.util.TypeUtil;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.DataSource;
 import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Synonym;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
@@ -54,7 +52,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private int storeCount = 0;
     private String synonymSource = null;
     private DataSource dataSource = null;
-    
+
     /**
      * Append this suffix to the identifier of the LocatedSequenceFeatures that are stored.
      */
@@ -112,15 +110,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * If a value is specified a Synonym will be created for the feature with value of the
-     * 
-     * @param synonymSource
-     */
-    public void setSynonymSource(String synonymSource) {
-        this.synonymSource = synonymSource;
-    }
-    
-    /**
      * Directly set the array of files to read from.  Use this for testing with junit.
      * @param files the File objects
      */
@@ -134,10 +123,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     public void process() {
         long start = System.currentTimeMillis();
         try {
-            Class orgClass = Organism.class;
-            org = (Organism) getDirectDataLoader().createObject(orgClass);
-            org.setTaxonId(fastaTaxonId);
-            getDirectDataLoader().store(org);
             storeCount++;
             super.process();
             getIntegrationWriter().commitTransaction();
@@ -193,7 +178,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             }
 
             while (iter.hasNext()) {
-                setSequence(org, iter.nextSequence());
+                processSequence(getOrganism(), iter.nextSequence());
             }
         } catch (BioException e) {
             throw new BuildException("sequence not in fasta format or wrong alphabet for: "
@@ -208,16 +193,30 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * Create a FlyMine Sequence and an object of type className for the given BioJava Sequence.
+     * Get the Organism object to reference when creating new objects.
+     * @throws ObjectStoreException
      */
-    private void setSequence(Organism org, Sequence bioJavaSequence) throws ObjectStoreException {
+    protected Organism getOrganism() throws ObjectStoreException {
+        org = (Organism) getDirectDataLoader().createObject(Organism.class);
+        org.setTaxonId(fastaTaxonId);
+        getDirectDataLoader().store(org);
+        return org;
+    }
+
+    /**
+     * Create a FlyMine Sequence and an object of type className for the given BioJava Sequence.
+     * @param organism the Organism to reference from new objects
+     * @param bioJavaSequence the Sequence object
+     * @throws ObjectStoreException if store() fails
+     */
+    private void processSequence(Organism organism, Sequence bioJavaSequence)
+        throws ObjectStoreException {
         Class sequenceClass = org.flymine.model.genomic.Sequence.class;
         org.flymine.model.genomic.Sequence flymineSequence =
             (org.flymine.model.genomic.Sequence) getDirectDataLoader().createObject(sequenceClass);
 
         flymineSequence.setResidues(bioJavaSequence.seqString());
         flymineSequence.setLength(bioJavaSequence.length());
-
 
         Class c;
         try {
@@ -226,10 +225,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new RuntimeException("unknown class: " + className
                                        + " while creating new Sequence object");
         }
-        InterMineObject imo = getDirectDataLoader().createObject(c);
+        BioEntity imo = (BioEntity) getDirectDataLoader().createObject(c);
 
-        
-        String attributeValue = bioJavaSequence.getName() + idSuffix;
+        String attributeValue = getIdentifier(bioJavaSequence);
         try {
             TypeUtil.setFieldValue(imo, classAttribute, attributeValue);
         } catch (Exception e) {
@@ -238,34 +236,52 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
                                                + ". Does the attribute exist?");
         }
         TypeUtil.setFieldValue(imo, "sequence", flymineSequence);
-        TypeUtil.setFieldValue(imo, "organism", org);
+        imo.setOrganism(organism);
         if (TypeUtil.getSetter(c, "length") != null) {
             TypeUtil.setFieldValue(imo, "length", new Integer(flymineSequence.getLength()));
         }
 
-        Synonym synonym = null;
-        if (synonymSource != null && !synonymSource.equals("")) {
-            synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
-            synonym.setValue(attributeValue);
-            synonym.setType(classAttribute);
-            synonym.setSubject((BioEntity) imo);
-            synonym.setSource(getDataSource(synonymSource));
-        }
-        
+        extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSource());
+
         try {
             getDirectDataLoader().store(flymineSequence);
             getDirectDataLoader().store(imo);
             storeCount += 2;
-            if (synonym != null) {
-                getDirectDataLoader().store(synonym);
-                storeCount += 1;
-            }
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
         }
     }
-    
-    private DataSource getDataSource(String sourceName) throws ObjectStoreException {
+
+    /**
+     * Do any extra processing needed for this record (extra attributes, objects, references etc.)
+     * This method is called before the new objects are store
+     * @param bioJavaSequence the BioJava Sequence
+     * @param flymineSequence the FlyMine Sequence
+     * @param interMineObject the object that references the flymineSequence
+     * @param organism the Organism object for the new InterMineObject
+     * @param dataSource the DataSource object
+     * @throws ObjectStoreException if a store() fails during processing
+     */
+    @SuppressWarnings("unused")
+    protected void extraProcessing(Sequence bioJavaSequence,
+                                   org.flymine.model.genomic.Sequence flymineSequence,
+                                   BioEntity interMineObject, Organism organism,
+                                   DataSource dataSource)
+        throws ObjectStoreException {
+        // default - no extra processing
+    }
+
+    /**
+     * For the given BioJava Sequence object, return an identifier to be used when creating
+     * the corresponding BioEntity.
+     * @param bioJavaSequence the Sequenece
+     * @return an identifier
+     */
+    protected String getIdentifier(Sequence bioJavaSequence) {
+        return bioJavaSequence.getName() + idSuffix;
+    }
+
+    private DataSource getDataSource() throws ObjectStoreException {
         if (dataSource == null) {
             dataSource = (DataSource) getDirectDataLoader().createObject(DataSource.class);
             dataSource.setName(sourceName);
