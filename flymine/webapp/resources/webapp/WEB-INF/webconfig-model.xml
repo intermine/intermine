@@ -273,7 +273,16 @@
     
         <bagdisplayers>
        
-                     <enrichmentwidgetdisplayer title="UniProt Features"  
+             <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"  
+	 	                 link="org.intermine.bio.web.widget.GoStatURLQuery"  
+	 	                 controller="org.intermine.bio.web.widget.GoStatLdr"  
+	 	                 description="Go terms enriched for proteins in this list."    
+	 	                 label="GO Term"
+	 	                 filters="biological_process,cellular_component,molecular_function"  
+	 	                 filterLabel="ontology" 
+	 	                 max="0.10" /> 
+       
+             <enrichmentwidgetdisplayer title="UniProt Features"  
 	 	                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"  
 	 	                 controller="org.intermine.bio.web.widget.UniProtFeaturesLdr"  
 	 	                 label="Feature"

@@ -40,6 +40,7 @@ import org.flymine.model.genomic.GOAnnotation;
 import org.flymine.model.genomic.GOTerm;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Protein;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -68,11 +69,12 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              ObjectStoreInterMineImpl os =
                  (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
+            
              String bagName = request.getParameter("bagName");
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-     
+             String bagType = bag.getType();
              String namespace = (request.getParameter("filter") != null
                                ? request.getParameter("filter") : "biological_process");
                           
@@ -86,29 +88,39 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
              QueryClass qcOrganism = new QueryClass(Organism.class);
              QueryClass qcGo = new QueryClass(GOTerm.class);
-
+             QueryClass qcProtein = new QueryClass(Protein.class);
+             
              QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
              QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
              QueryField qfGeneId = new QueryField(qcGene, "id");
              QueryField qfNamespace = new QueryField(qcGo, "namespace");
              QueryField qfGoTermId = new QueryField(qcGo, "identifier");
              QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-
-             QueryFunction geneCount = new QueryFunction();
+             QueryField qfProteinId = new QueryField(qcProtein, "id");
+    
+             QueryFunction objectCount = new QueryFunction();
 
              q.addFrom(qcGene);
              q.addFrom(qcGoAnnotation);
              q.addFrom(qcOrganism);
              q.addFrom(qcGo);
+             if (bagType.toLowerCase().equals("protein")) {
+                 q.addFrom(qcProtein);
+             }
 
              q.addToSelect(qfGoTermId);
-             q.addToSelect(geneCount);
+             q.addToSelect(objectCount);
              q.addToSelect(qfGoTerm);
 
              ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-             // genes must be in bag
-             BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+             // objects (genes, proteins) must be in bag
+             BagConstraint bc1 = null;
+             if (bagType.toLowerCase().equals("protein")) {
+                 bc1 = new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb());
+             } else {
+                 bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+             }
              cs.addConstraint(bc1);
 
              // get organisms
@@ -116,8 +128,17 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
              // limit to organisms in the bag
              BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
+                          
              cs.addConstraint(bc2);
 
+             ContainsConstraint cc = null;
+             if (bagType.toLowerCase().equals("protein")) {
+                 // constrain gene to protein
+                 QueryCollectionReference qr = new QueryCollectionReference(qcProtein, "genes");
+                 cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcGene);
+                 cs.addConstraint(cc);
+             }
+                          
              // ignore main 3 ontologies
              BagConstraint bc3 = new BagConstraint(qfGoTermId, ConstraintOp.NOT_IN, badOntologies);
              cs.addConstraint(bc3);
@@ -163,9 +184,12 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              q.addFrom(qcGoAnnotation);
              q.addFrom(qcOrganism);
              q.addFrom(qcGo);
-
+             if (bagType.toLowerCase().equals("protein")) {
+                 q.addFrom(qcProtein);
+             }
+             
              q.addToSelect(qfGoTermId);
-             q.addToSelect(geneCount);
+             q.addToSelect(objectCount);
 
              cs = new ConstraintSet(ConstraintOp.AND);
              cs.addConstraint(cc1);
@@ -175,6 +199,9 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              cs.addConstraint(sc2);
              cs.addConstraint(bc2);
              cs.addConstraint(bc3);
+             if (bagType.toLowerCase().equals("protein")) {
+                 cs.addConstraint(cc);
+             }
              q.setConstraint(cs);
 
              q.addToGroupBy(qfGoTermId);

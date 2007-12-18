@@ -17,6 +17,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
@@ -53,18 +54,58 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
          Model model = os.getModel();
          PathQuery q = new PathQuery(model);
          
-         List view = new ArrayList();
-         view.add(MainHelper.makePath(model, q, "Gene.identifier"));
-         view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
-         view.add(MainHelper.makePath(model, q, "Gene.name"));
-         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
-         view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.identifier"));
-         view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.name"));
-         view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.actualGoTerms.identifier"));
-         view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.actualGoTerms.name"));
+         List<Path> view = new ArrayList<Path>();
          
+         Path geneIdentifier = null;
+         Path geneDbId =  null;
+         Path geneName =  null;
+         Path organismName =  null;
+         Path goId = null;
+         Path goName = null;
+         Path actualGoName = null;
+         Path actualGoId = null;
+
+         if (bag.getType().toLowerCase().equals("protein")) {
+
+             geneIdentifier = MainHelper.makePath(model, q, "Protein.gene.identifier");
+             geneDbId = MainHelper.makePath(model, q, "Protein.gene.organismDbId");
+             geneName = MainHelper.makePath(model, q, "Protein.gene.name");
+             organismName = MainHelper.makePath(model, q, "Protein.gene.organism.name");
+             goId = MainHelper.makePath(model, q, "Protein.gene.allGoAnnotation.identifier");
+             goName = MainHelper.makePath(model, q, "Protein.gene.allGoAnnotation.name");
+             actualGoName = MainHelper.makePath(
+                            model, q, "Protein.gene.allGoAnnotation.actualGoTerms.name");
+             actualGoId = MainHelper.makePath(
+                          model, q, "Protein.gene.allGoAnnotation.actualGoTerms.identifier");
+             
+             view.add(MainHelper.makePath(model, q, "Protein.identifier"));
+             view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
+             
+         } else {
+
+             geneIdentifier = MainHelper.makePath(model, q, "Gene.identifier");
+             geneDbId = MainHelper.makePath(model, q, "Gene.organismDbId");
+             geneName = MainHelper.makePath(model, q, "Gene.name");
+             organismName = MainHelper.makePath(model, q, "Gene.organism.name");
+             goId = MainHelper.makePath(model, q, "Gene.allGoAnnotation.identifier");
+             goName = MainHelper.makePath(model, q, "Gene.allGoAnnotation.name");
+             actualGoName = MainHelper.makePath(model, 
+                                                q, "Gene.allGoAnnotation.actualGoTerms.name");
+             actualGoId = MainHelper.makePath(model, 
+                                              q, "Gene.allGoAnnotation.actualGoTerms.identifier");
+         }
+
+         view.add(geneIdentifier);
+         view.add(geneDbId);
+         view.add(geneName);
+         view.add(organismName);
+         view.add(goId);
+         view.add(goName);
+         view.add(actualGoName);
+         view.add(actualGoId);
+
          q.setView(view);
-         
+
          String bagType = bag.getType();
          ConstraintOp constraintOp = ConstraintOp.IN;
          String constraintValue = bag.getName();        
@@ -75,15 +116,26 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
          // can't be a NOT relationship!
          constraintOp = ConstraintOp.IS_NULL;
          code = q.getUnusedConstraintCode();
-         PathNode qualifierNode = q.addNode("Gene.allGoAnnotation.qualifier");
+         
+         PathNode qualifierNode = null;
+         if (bag.getType().toLowerCase().equals("protein")) {
+             qualifierNode = q.addNode("Protein.gene.allGoAnnotation.qualifier");
+         } else {
+             qualifierNode = q.addNode("Gene.allGoAnnotation.qualifier"); 
+         }
          Constraint qualifierConstraint 
-                         = new Constraint(constraintOp, null, false, label, code, id, null);
+         = new Constraint(constraintOp, null, false, label, code, id, null);
          qualifierNode.getConstraints().add(qualifierConstraint);
          
          // go term
          constraintOp = ConstraintOp.EQUALS;
          code = q.getUnusedConstraintCode();
          PathNode goTermNode = q.addNode("Gene.allGoAnnotation.identifier");
+         if (bag.getType().toLowerCase().equals("protein")) {
+             goTermNode = q.addNode("Protein.gene.allGoAnnotation.identifier");
+         } else {
+             goTermNode  = q.addNode("Gene.allGoAnnotation.identifier"); 
+         }
          Constraint goTermConstraint 
                          = new Constraint(constraintOp, key, false, label, code, id, null);
          goTermNode.getConstraints().add(goTermConstraint);
