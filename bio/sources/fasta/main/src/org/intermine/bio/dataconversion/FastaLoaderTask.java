@@ -101,6 +101,14 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
+     * Return the class name set with setClassName().
+     * @return the class name
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
      * The attribute of the class created to set with the identifying field.  If not set will
      * be 'identifier'.
      * @param classAttribute the class name
