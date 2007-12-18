@@ -29,7 +29,6 @@ import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.SearchRepository;
@@ -468,7 +467,6 @@ public abstract class WebUtil
             } catch (Exception e) {
                 return null;
             }
-            
             // run bag query
             Results r = os.execute(querySample);
             r.setBatchSize(10000);
@@ -525,15 +523,8 @@ public abstract class WebUtil
                     resultsMap.put(id, new Double(p));
                 }
             }
-            ErrorCorrection e = null;
 
-            if (errorCorrection != null && errorCorrection.equals("Bonferroni")) {
-                e = new Bonferroni(resultsMap);
-            } else {
-                e = new BenjaminiHochberg(resultsMap);
-            }
-            e.calculate(maxValue);            
-            HashMap adjustedResultsMap = e.getAdjustedMap();
+            HashMap adjustedResultsMap = calcEnrichment(errorCorrection, maxValue, resultsMap);
             
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
@@ -543,4 +534,18 @@ public abstract class WebUtil
             maps.add(2, idMap);   
             return maps;
         }
+    
+    private static HashMap calcEnrichment(String errorCorrection, Double maxValue, 
+                               HashMap<String, Double> resultsMap) {
+        
+        ErrorCorrection e = null;
+
+        if (errorCorrection != null && errorCorrection.equals("Bonferroni")) {
+            e = new Bonferroni(resultsMap);
+        } else {
+            e = new BenjaminiHochberg(resultsMap);
+        }
+        e.calculate(maxValue);            
+        return e.getAdjustedMap();
+    }    
 }
