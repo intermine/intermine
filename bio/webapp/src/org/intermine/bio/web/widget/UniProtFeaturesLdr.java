@@ -23,7 +23,6 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;

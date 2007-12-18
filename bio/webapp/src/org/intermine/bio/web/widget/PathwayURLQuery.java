@@ -17,6 +17,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.path.Path;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
@@ -53,7 +54,7 @@ public class PathwayURLQuery implements EnrichmentWidgetURLQuery
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
         
-        List view = new ArrayList();
+        List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Gene.identifier"));
         view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
         view.add(MainHelper.makePath(model, q, "Gene.name"));

@@ -40,7 +40,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
     /**
      * Creates a ChromosomeDistributionGraphURLGenerator for the chart
      * @param model
-     * @param bag the bag
+     * @param bagName name of bag for which to render this widget
      */
     public ChromosomeDistributionGraphURLGenerator(String bagName) {
         super();
@@ -67,7 +67,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag imBag,
                                        @SuppressWarnings("unused") String series, 
-                                       String category) {
+                                       @SuppressWarnings("unused") String category) {
        
         Model model = os.getModel();
         InterMineBag bag = imBag;
