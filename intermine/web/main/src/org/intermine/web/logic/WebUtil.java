@@ -524,7 +524,7 @@ public abstract class WebUtil
                 }
             }
 
-            HashMap adjustedResultsMap = calcEnrichment(errorCorrection, maxValue, resultsMap);
+            HashMap adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
             
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
@@ -535,7 +535,7 @@ public abstract class WebUtil
             return maps;
         }
     
-    private static HashMap calcEnrichment(String errorCorrection, Double maxValue, 
+    protected static HashMap calcErrorCorrection(String errorCorrection, Double maxValue, 
                                HashMap<String, Double> resultsMap) {
         
         ErrorCorrection e = null;

@@ -65,7 +65,7 @@ public class Hypergeometric
 
     /** 
      * The p-value is the sum from j=k to n of MCj*(N-M)C(n-j)/(NCn)
-     *      
+     *     
      * @param n Number of genes in bag (n)
      * @param k Number of genes in the bag annotated with this go term (k)
      * @param bigM Total number of genes annotated with this term (M)

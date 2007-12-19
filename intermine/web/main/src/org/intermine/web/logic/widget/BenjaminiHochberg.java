@@ -16,13 +16,10 @@ import java.util.Iterator;
 import java.math.BigDecimal;
 
 /**
- * 
- *
  * @author Julie Sullivan
  */
-public class BenjaminiHochberg  implements ErrorCorrection
-{
-    
+public class BenjaminiHochberg implements ErrorCorrection
+{    
     private HashMap originalMap = new HashMap();
     private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
     private double numberOfTests;
