@@ -26,18 +26,18 @@ public class WebUtilTest extends TestCase
     public void setUp() throws Exception {
         
         id[0] = "notEnriched";
-        taggedSample[0] = 1;       // 10%
-        taggedPopulation[0] = 10; // 10%
+        taggedSample[0] = 1;     
+        taggedPopulation[0] = 10;
         expectedResults[0] = 0.6695237889132329;
 
         id[1] = "underrepresented";
-        taggedSample[1] = 1;            // 1%
-        taggedPopulation[1] = 50;    // 75%
+        taggedSample[1] = 1;     
+        taggedPopulation[1] = 50; 
         expectedResults[1] = 0.9994065803273947;
                 
         id[2] = "overrepresented";
         taggedSample[2] = 10;
-        taggedPopulation[2] = 10;// 1%
+        taggedPopulation[2] = 10;
         expectedResults[2] = 5.776904234533623E-14;
     }
     

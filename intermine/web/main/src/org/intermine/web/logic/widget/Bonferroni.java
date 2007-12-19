@@ -48,7 +48,6 @@ public class Bonferroni implements ErrorCorrection
             BigDecimal p = new BigDecimal("" + originalMap.get(label));
 
             // calc new value
-            //BigDecimal adjustedP = p.multiply(new BigDecimal ("" + numberOfTests));
             BigDecimal adjustedP = p.add(new BigDecimal(bonferroni));
 
             // don't store values >= maxValue
