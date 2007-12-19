@@ -216,6 +216,10 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("FieldPathExpression", new HashSet(Arrays.asList(new String[] {"Company", "CEO"})));
         results.put("FieldPathExpression2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
         results2.put("FieldPathExpression2", new HashSet(Arrays.asList("Employee", "Department", "Company", "Address")));
+        results.put("CollectionPathExpression", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
+        results2.put("CollectionPathExpression", new HashSet(Arrays.asList(new String[] {"Employee", "Department"})));
+        results.put("CollectionPathExpression2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("CollectionPathExpression2", new HashSet(Arrays.asList(new String[] {"Employee", "Department"})));
         results.put("ForeignKey", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("ForeignKey", Collections.singleton("Company"));
         results.put("ForeignKey2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");

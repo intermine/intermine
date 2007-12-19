@@ -113,6 +113,16 @@ public class QueryTestCase extends OneTimeTestCase
             } else {
                 fail(msg + ": QueryFieldPathExpression does not match " + qc2.getClass().getName());
             }
+        } else if (qc1 instanceof QueryCollectionPathExpression) {
+            if (qc2 instanceof QueryCollectionPathExpression) {
+                QueryCollectionPathExpression pe1 = (QueryCollectionPathExpression) qc1;
+                QueryCollectionPathExpression pe2 = (QueryCollectionPathExpression) qc2;
+                checkQueryNodes(msg + ": QueryClasses of QueryCollectionPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
+                checkObjects(msg + ": Qopes of QueryCollectionPathExpressions don't match", pe1.getQope(), pe2.getQope(), q1, q2);
+                assertEquals(msg + ": QueryCollectionPathExpression collectionNames are not equal", pe1.getCollectionName(), pe2.getCollectionName());
+            } else {
+                fail(msg + ": QueryCollectionPathExpression does not match " + qc2.getClass().getName());
+            }
         } else if (qc1 instanceof ObjectStoreBag) {
             if (qc2 instanceof ObjectStoreBag) {
                 if (((ObjectStoreBag) qc1).getBagId() != ((ObjectStoreBag) qc2).getBagId()) {

@@ -675,8 +675,13 @@ public class IqlQueryParser
                             obj = new QueryField((QueryClass) obj, unescape(ast.getText()));
                         } catch (IllegalArgumentException e) {
                             if (isSelect) {
-                                obj = new QueryObjectPathExpression((QueryClass) obj, unescape(
-                                            ast.getText()));
+                                try {
+                                    obj = new QueryObjectPathExpression((QueryClass) obj, unescape(
+                                                ast.getText()));
+                                } catch (IllegalArgumentException e2) {
+                                    obj = new QueryCollectionPathExpression((QueryClass) obj,
+                                            unescape(ast.getText()));
+                                }
                             } else {
                                 obj = new QueryObjectReference((QueryClass) obj, unescape(ast
                                             .getText()));
@@ -688,8 +693,13 @@ public class IqlQueryParser
                                     .getQueryClass(), ((QueryObjectPathExpression) obj)
                                     .getFieldName());
                         } else {
-                            obj = new QueryObjectPathExpression((QueryObjectPathExpression) obj,
-                                    unescape(ast.getText()));
+                            try {
+                                obj = new QueryObjectPathExpression((QueryObjectPathExpression) obj,
+                                        unescape(ast.getText()));
+                            } catch (IllegalArgumentException e) {
+                                obj = new QueryCollectionPathExpression((QueryObjectPathExpression)
+                                        obj, unescape(ast.getText()));
+                            }
                         }
                     } else if (obj instanceof QueryField) {
                         throw new IllegalArgumentException("Path expression " + text + " extends "

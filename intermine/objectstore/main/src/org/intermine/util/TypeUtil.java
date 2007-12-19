@@ -136,7 +136,7 @@ public class TypeUtil
     }
 
     /**
-     * Sets the value of a public or protected Field of an Object given the field name
+     * Sets the value of a public or protected Field of an Object given the field name.
      *
      * @param o the Object
      * @param fieldName the name of the relevant Field
@@ -166,7 +166,37 @@ public class TypeUtil
     }
 
     /**
-     * Returns the Method object that is the getter for the field name
+     * Adds an element to a public or protected collection of an Object given the field name.
+     *
+     * @param o the Object
+     * @param fieldName the name of the relevant collection
+     * @param element the element to add to the collection
+     */
+    public static void addCollectionElement(Object o, String fieldName, Object element) {
+        try {
+            getAdder(o.getClass(), fieldName).invoke(o, element);
+        } catch (Exception e) {
+            String type = null;
+            try {
+                type = getFieldInfo(o.getClass(), fieldName).getElementType().getName();
+            } catch (Exception e3) {
+                IllegalArgumentException e2 = new IllegalArgumentException("Couldn't add element to"
+                        + " collection \"" + DynamicUtil.getFriendlyName(o.getClass()) + "."
+                        + fieldName + "\"" + " - not an accessible collection");
+                e2.initCause(e);
+                throw e2;
+            }
+            IllegalArgumentException e2 = new IllegalArgumentException("Couldn't add element to"
+                    + " collection \"" + DynamicUtil.getFriendlyName(o.getClass()) + "."
+                    + fieldName + "\"" + " (a " + type + ") with \"" + element + "\" (a "
+                    + element.getClass().getName() + ")");
+            e2.initCause(e);
+            throw e2;
+        }
+    }
+
+    /**
+     * Returns the Method object that is the getter for the field name.
      *
      * @param c the Class
      * @param fieldName the name of the relevant field
@@ -226,6 +256,58 @@ public class TypeUtil
     }
 
     /**
+     * Returns the Method object that is the adder for the field name
+     *
+     * @param c the Class
+     * @param fieldName the name of the relevant collection
+     * @return the adder, or null if it is not present or if the field is not found
+     */
+    public static Method getAdder(Class c, String fieldName) {
+        FieldInfo info = getFieldInfo(c, fieldName);
+        if (info != null) {
+            return info.getAdder();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the type of a field given the field name.
+     *
+     * @param c the Class
+     * @param fieldName the name of the relevant field
+     * @return the class of the field, or null if the field is not found
+     */
+    public static Class getFieldType(Class c, String fieldName) {
+        FieldInfo info = getFieldInfo(c, fieldName);
+        if (info != null) {
+            return info.getType();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the element type of a collection given the field name.
+     *
+     * @param c the Class
+     * @param fieldName the name of the relevant collection
+     * @return the class of the field, or null if the field is not found
+     * @throws IllegalArgumentException if the field is not a collection
+     */
+    public static Class getElementType(Class c, String fieldName) {
+        FieldInfo info = getFieldInfo(c, fieldName);
+        if (info != null) {
+            try {
+                return info.getElementType();
+            } catch (NullPointerException e) {
+                IllegalArgumentException e2 = new IllegalArgumentException("Field "
+                        + DynamicUtil.getFriendlyName(c) + "." + fieldName
+                        + " is not a collection");
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the Map from field name to TypeUtil.FieldInfo objects for all the fields in a
      * given class.
      *
@@ -252,11 +334,13 @@ public class TypeUtil
                         String setterName = "set" + getterName.substring(3);
                         String proxySetterName = "proxy" + getterName.substring(3);
                         String proxyGetterName = "proxGet" + getterName.substring(3);
+                        String adderName = "add" + getterName.substring(3);
                         if (methods.containsKey(setterName)) {
                             Method getter = methods.get(getterName);
                             Method setter = methods.get(setterName);
                             Method proxySetter = methods.get(proxySetterName);
                             Method proxyGetter = methods.get(proxyGetterName);
+                            Method adder = methods.get(adderName);
                             String fieldName = getterName.substring(3);
                             fieldName = StringUtil.reverseCapitalisation(fieldName);
                             
@@ -264,7 +348,7 @@ public class TypeUtil
                             if (!getter.getName().equals("getClass")
                                 && !getter.getName().startsWith("getCallback")) {
                                 FieldInfo info = new FieldInfo(fieldName, getter, setter,
-                                        proxySetter, proxyGetter);
+                                        proxySetter, proxyGetter, adder);
                                 infos.put(fieldName, info);
                             }
                         }
@@ -509,6 +593,7 @@ public class TypeUtil
         private Method setter;
         private Method proxySetter;
         private Method proxyGetter;
+        private Method adder;
 
         /**
          * Construct a new FieldInfo object.
@@ -519,14 +604,16 @@ public class TypeUtil
          * @param proxySetter the setter Method to set the value to a ProxyReference
          * @param proxyGetter the getter Method to get the value without dereferencing
          * ProxyReferences
+         * @param adder the adder Method to add elements to a collection
          */
         public FieldInfo(String name, Method getter, Method setter, Method proxySetter,
-                Method proxyGetter) {
+                Method proxyGetter, Method adder) {
             this.name = name;
             this.getter = getter;
             this.setter = setter;
             this.proxySetter = proxySetter;
             this.proxyGetter = proxyGetter;
+            this.adder = adder;
         }
 
         /**
@@ -575,12 +662,30 @@ public class TypeUtil
         }
 
         /**
+         * Returns the adder Method.
+         *
+         * @return an adder Method
+         */
+        public Method getAdder() {
+            return adder;
+        }
+
+        /**
          * Returns the type of the field.
          *
          * @return a Class object
          */
         public Class getType() {
             return getter.getReturnType();
+        }
+
+        /**
+         * Returns the collection element type of the field.
+         *
+         * @return a Class
+         */
+        public Class getElementType() {
+            return adder.getParameterTypes()[0];
         }
     }
 }

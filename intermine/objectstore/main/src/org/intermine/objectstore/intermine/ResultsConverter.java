@@ -37,6 +37,7 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFieldPathExpression;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
@@ -184,8 +185,9 @@ public class ResultsConverter
                     }
                 }
             }
-            Map<QueryPathExpression, Integer> startingPoints = new HashMap();
-            Map<QueryPathExpression, Map<Integer, InterMineObject>> fetchedObjects = new HashMap();
+            Map<QueryObjectPathExpression, Integer> startingPoints = new HashMap();
+            Map<QueryObjectPathExpression, Map<Integer, InterMineObject>> fetchedObjects
+                = new HashMap();
             if (needPathExpressions) {
                 for (QuerySelectable node : q.getSelect()) {
                     if (node instanceof QueryFieldPathExpression) {
@@ -197,11 +199,14 @@ public class ResultsConverter
                             fetchFieldPathExpression(os, c, sequence, q, qfpe, startingPoints,
                                     retval, fetchedObjects);
                         }
-                    }
-                    if (node instanceof QueryObjectPathExpression) {
+                    } else if (node instanceof QueryObjectPathExpression) {
                         // TODO: Fetch the objects
                         fetchObjectPathExpression(os, c, sequence, q,
                                 (QueryObjectPathExpression) node, startingPoints, retval,
+                                fetchedObjects);
+                    } else if (node instanceof QueryCollectionPathExpression) {
+                        fetchCollectionPathExpression(os, c, sequence, q,
+                                (QueryCollectionPathExpression) node, startingPoints, retval,
                                 fetchedObjects);
                     }
                 }
@@ -317,16 +322,16 @@ public class ResultsConverter
      * @param q the Query
      * @param qope the QueryObjectPathExpression to fetch data for
      * @param startingPoints a map for locating the data that the reference is from. A Map from
-     * QueryPathExpression to an Integer giving the column number
+     * QueryObjectPathExpression to an Integer giving the column number
      * @param retval the array of results that will be returned
      * @param fetchedObjects a map containing the data that has been fetched, to reuse. A Map from
-     * QueryPathExpression to a Map from starting point object ID to result object
+     * QueryObjectPathExpression to a Map from starting point object ID to result object
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void fetchObjectPathExpression(ObjectStoreInterMineImpl os, Connection c,
             Map<Object, Integer> sequence, Query q, QueryObjectPathExpression qope,
-            Map<QueryPathExpression, Integer> startingPoints, List<ResultsRow> retval,
-            Map<QueryPathExpression, Map<Integer, InterMineObject>> fetchedObjects)
+            Map<QueryObjectPathExpression, Integer> startingPoints, List<ResultsRow> retval,
+            Map<QueryObjectPathExpression, Map<Integer, InterMineObject>> fetchedObjects)
     throws ObjectStoreException {
         if (fetchedObjects.get(qope) == null) {
             int startingPoint;
@@ -420,16 +425,16 @@ public class ResultsConverter
      * @param q the Query
      * @param qfpe the QueryFieldPathExpression to fetch data for
      * @param startingPoints a map for locating the data that the reference is from. A Map from
-     * QueryPathExpression to an Integer giving the column number
+     * QueryObjectPathExpression to an Integer giving the column number
      * @param retval the array of results that will be returned
      * @param fetchedObjects a map containing the data that has been fetched, to reuse. A Map from
-     * QueryPathExpression to a Map from starting point object ID to result object
+     * QueryObjectPathExpression to a Map from starting point object ID to result object
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void fetchFieldPathExpression(ObjectStoreInterMineImpl os, Connection c,
             Map<Object, Integer> sequence, Query q, QueryFieldPathExpression qfpe,
-            Map<QueryPathExpression, Integer> startingPoints, List<ResultsRow> retval,
-            Map<QueryPathExpression, Map<Integer, InterMineObject>> fetchedObjects)
+            Map<QueryObjectPathExpression, Integer> startingPoints, List<ResultsRow> retval,
+            Map<QueryObjectPathExpression, Map<Integer, InterMineObject>> fetchedObjects)
     throws ObjectStoreException {
         QueryObjectPathExpression parent = qfpe.getParent();
         fetchObjectPathExpression(os, c, sequence, q, parent, startingPoints, retval,
@@ -450,6 +455,111 @@ public class ResultsConverter
         } catch (Exception e) {
             // Shouldn't ever happen
             throw new ObjectStoreException(e);
+        }
+    }
+
+    /**
+     * Fetches the QueryCollectionPathExpression data for a query.
+     *
+     * @param os the ObjectStoreInterMineImpl
+     * @param c the Connection
+     * @param sequence an object representing the state of the database
+     * @param q the Query
+     * @param qcpe the QueryCollectionPathExpression to fetch data for
+     * @param startingPoints a map for locating the data that the reference is from. A Map from
+     * QueryObjectPathExpression to an Integer giving the column number
+     * @param retval the array of results that will be returned
+     * @param fetchedObjects a map containing the data that has been fetched, to reuse. A Map from
+     * QueryObjectPathExpression to a Map from starting point object ID to result object
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected static void fetchCollectionPathExpression(ObjectStoreInterMineImpl os, Connection c,
+            Map<Object, Integer> sequence, Query q, QueryCollectionPathExpression qcpe,
+            Map<QueryObjectPathExpression, Integer> startingPoints, List<ResultsRow> retval,
+            Map<QueryObjectPathExpression, Map<Integer, InterMineObject>> fetchedObjects)
+    throws ObjectStoreException {
+        int startingPoint;
+        Map<Integer, List> idsToFetch = new HashMap();
+        Set<InterMineObject> objectsToFetch = new HashSet();
+        int rowToReplace = q.getSelect().indexOf(qcpe);
+        if (qcpe.getQueryClass() != null) {
+            QueryClass qc = qcpe.getQueryClass();
+            startingPoint = q.getSelect().indexOf(qc);
+            if (startingPoint == -1) {
+                throw new ObjectStoreException("Path Expression " + qcpe + " needs QueryClass "
+                        + qc + " to be in the SELECT list");
+            }
+            for (ResultsRow row : retval) {
+                InterMineObject o = (InterMineObject) row.get(startingPoint);
+                if (!idsToFetch.containsKey(o.getId())) {
+                    idsToFetch.put(o.getId(), new ArrayList());
+                    objectsToFetch.add(o);
+                }
+            }
+            Query subQ = qcpe.getQuery(objectsToFetch);
+            List<ResultsRow> results = os.executeWithConnection(c, subQ, 0, Integer.MAX_VALUE,
+                    false, false, sequence);
+            boolean singleton = qcpe.isSingleton();
+            for (ResultsRow row : results) {
+                Integer id = (Integer) row.get(0);
+                List list = idsToFetch.get(id);
+                if (singleton) {
+                    list.add(row.get(1));
+                } else {
+                    ResultsRow newRow = new ResultsRow();
+                    Iterator iter = row.iterator();
+                    iter.next();
+                    while (iter.hasNext()) {
+                        newRow.add(iter.next());
+                    }
+                    list.add(newRow);
+                }
+            }
+            for (ResultsRow row : retval) {
+                InterMineObject o = (InterMineObject) row.get(startingPoint);
+                row.set(rowToReplace, idsToFetch.get(o.getId()));
+            }
+        } else {
+            QueryObjectPathExpression parent = qcpe.getQope();
+            fetchObjectPathExpression(os, c, sequence, q, parent, startingPoints, retval,
+                    fetchedObjects);
+            startingPoint = startingPoints.get(parent).intValue();
+            Map<Integer, InterMineObject> previousObjects = fetchedObjects.get(parent);
+            for (Map.Entry<Integer, InterMineObject> entry : previousObjects.entrySet()) {
+                InterMineObject o = entry.getValue();
+                if (!idsToFetch.containsKey(o.getId())) {
+                    idsToFetch.put(o.getId(), new ArrayList());
+                    objectsToFetch.add(o);
+                }
+            }
+            Query subQ = qcpe.getQuery(objectsToFetch);
+            List<ResultsRow> results = os.executeWithConnection(c, subQ, 0, Integer.MAX_VALUE,
+                    false, false, sequence);
+            boolean singleton = qcpe.isSingleton();
+            for (ResultsRow row : results) {
+                Integer id = (Integer) row.get(0);
+                List list = idsToFetch.get(id);
+                if (singleton) {
+                    list.add(row.get(1));
+                } else {
+                    ResultsRow newRow = new ResultsRow();
+                    Iterator iter = row.iterator();
+                    iter.next();
+                    while (iter.hasNext()) {
+                        newRow.add(iter.next());
+                    }
+                    list.add(newRow);
+                }
+            }
+            for (ResultsRow row : retval) {
+                InterMineObject o = (InterMineObject) row.get(startingPoint);
+                o = previousObjects.get(o.getId());
+                if (o == null) {
+                    row.set(rowToReplace, null);
+                } else {
+                    row.set(rowToReplace, idsToFetch.get(o.getId()));
+                }
+            }
         }
     }
 

@@ -170,6 +170,15 @@ public class QueryCloner
                         .get(origC.getQueryClass()), origC.getReferenceName(), origC.getFieldName(),
                         origC.getDefaultValue());
             }
+        } else if (orig instanceof QueryCollectionPathExpression) {
+            QueryCollectionPathExpression origC = (QueryCollectionPathExpression) orig;
+            if (origC.getQope() != null) {
+                return new QueryCollectionPathExpression((QueryObjectPathExpression) cloneThing(
+                            origC.getQope(), fromElementMap), origC.getCollectionName());
+            } else {
+                return new QueryCollectionPathExpression((QueryClass) fromElementMap
+                        .get(origC.getQueryClass()), origC.getCollectionName());
+            }
         } else if (orig instanceof SimpleConstraint) {
             SimpleConstraint origC = (SimpleConstraint) orig;
             if ((origC.getOp() == ConstraintOp.IS_NULL)
