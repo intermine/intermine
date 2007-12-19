@@ -10,23 +10,23 @@ package org.intermine.web.logic.config;
  *
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.digester.*;
-
-import org.xml.sax.SAXException;
-
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.digester.Digester;
+import org.apache.log4j.Logger;
+import org.xml.sax.SAXException;
 
 /**
  * Configuration object for web site
@@ -37,7 +37,7 @@ public class WebConfig
 {
     private Map types = new HashMap();
     private Map tableExportConfigs = new HashMap();
-
+    private static final Logger LOG = Logger.getLogger(WebConfig.class);
     /**
      * Parse a WebConfig XML file
      *
@@ -190,10 +190,10 @@ public class WebConfig
      * Model
      */
     void setSubClassConfig(Model model) throws ClassNotFoundException {
-        for (Iterator modelIter = new TreeSet(model.getClassNames()).iterator();
-             modelIter.hasNext();) {
-            String className = (String) modelIter.next();
+        TreeSet<String> classes = new TreeSet<String>(model.getClassNames());
+        for (Iterator modelIter = classes.iterator(); modelIter.hasNext();) {
             
+            String className = (String) modelIter.next();            
             Type thisClassType = (Type) types.get(className);
 
             if (thisClassType == null) {
@@ -213,7 +213,7 @@ public class WebConfig
                 }
 
                 Type superClassType = (Type) types.get(cd.getName());
-
+                
                 if (superClassType != null) {
                     if (thisClassType.getFieldConfigs().size() == 0) {
                         // copy any FieldConfigs from the super class
@@ -237,6 +237,42 @@ public class WebConfig
                     
                     if (thisClassType.getTableDisplayer() == null) {
                         thisClassType.setTableDisplayer(superClassType.getTableDisplayer());
+                    }
+                    
+                    if (thisClassType.getBagTableDisplayers().size() == 0
+                                    && superClassType.getBagTableDisplayers() != null
+                                    && superClassType.getBagTableDisplayers().size() > 0) {
+                        Iterator bagDisplayerIter 
+                        = superClassType.getBagTableDisplayers().iterator();
+
+                        while (bagDisplayerIter.hasNext()) {
+                            BagTableDisplayer d = (BagTableDisplayer) bagDisplayerIter.next();
+                            thisClassType.addBagTableDisplayer(d);
+                        }
+                    }
+                    if (thisClassType.getGraphDisplayers().size() == 0
+                                    && superClassType.getGraphDisplayers() != null
+                                    && superClassType.getGraphDisplayers().size() > 0) {
+                        Iterator graphDisplayerIter 
+                        = superClassType.getGraphDisplayers().iterator();
+
+                        while (graphDisplayerIter.hasNext()) {
+                            GraphDisplayer d = (GraphDisplayer) graphDisplayerIter.next();
+                            thisClassType.addGraphDisplayer(d);
+                        }
+                    }
+                    
+                    if (thisClassType.getEnrichmentWidgetDisplayers().size() == 0
+                                    && superClassType.getEnrichmentWidgetDisplayers() != null
+                                    && superClassType.getEnrichmentWidgetDisplayers().size() > 0) {
+                        Iterator enrichmentWidgetDisplayerIter 
+                        = superClassType.getEnrichmentWidgetDisplayers().iterator();
+
+                        while (enrichmentWidgetDisplayerIter.hasNext()) {
+                            EnrichmentWidgetDisplayer d 
+                            = (EnrichmentWidgetDisplayer) enrichmentWidgetDisplayerIter.next();
+                            thisClassType.addEnrichmentWidgetDisplayer(d);
+                        }
                     }
                 }
             }
