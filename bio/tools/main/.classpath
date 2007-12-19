@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="dist/bio-tools.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/colt.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/coltginy.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/com-nerius-math-xform.jar"/>
