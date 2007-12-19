@@ -49,7 +49,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 {
    
-    private Object[] geneCategoryArray;
+    private Object[] objectCategoryArray;
     private LinkedHashMap<String, GraphDataSet> dataSets 
                                                         = new LinkedHashMap<String, GraphDataSet>();
     private ObjectStore os;
@@ -134,7 +134,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             addExpected(resultsTable, totalWithLocation, organismName);
             
             // Build a map from chromosome to gene list
-            geneCategoryArray = new Object[resultsTable.size()];
+            objectCategoryArray = new Object[resultsTable.size()];
             int i = 0;
             for (Iterator iterator = resultsTable.keySet().iterator(); iterator.hasNext();) {
                 String chromosome = (String) iterator.next();
@@ -144,11 +144,11 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 geneSeriesArray[0] = geneMap.get(chromosome);   // actual
                 // expected shouldn't be a link
                 // geneSeriesArray[1] = geneMap.get(chromosome);   // expected
-                geneCategoryArray[i] = geneSeriesArray;
+                objectCategoryArray[i] = geneSeriesArray;
                 i++;
             }
 
-            GraphDataSet graphDataSet = new GraphDataSet(dataSet, geneCategoryArray);
+            GraphDataSet graphDataSet = new GraphDataSet(dataSet, objectCategoryArray);
             if (hasResults) {
                 dataSets.put(organismName, graphDataSet);
             }
