@@ -26,6 +26,7 @@ import org.intermine.objectstore.query.*;
  * OQL representation of an object-based Query
  *
  * @author Andrew Varley
+ * @author Matthew Wakeling
  */
 public class IqlQuery
 {
@@ -269,6 +270,13 @@ public class IqlQuery
                 return nodeToString(q, ref.getQope(), parameters) + "." + ref.getFieldName();
             } else {
                 return q.getAliases().get(ref.getQueryClass()) + "." + ref.getFieldName();
+            }
+        } else if (qn instanceof QueryCollectionPathExpression) {
+            QueryCollectionPathExpression col = (QueryCollectionPathExpression) qn;
+            if (col.getQope() != null) {
+                return nodeToString(q, col.getQope(), parameters) + "." + col.getCollectionName();
+            } else {
+                return q.getAliases().get(col.getQueryClass()) + "." + col.getCollectionName();
             }
         } else if (qn instanceof QueryFieldPathExpression) {
             QueryFieldPathExpression ref = (QueryFieldPathExpression) qn;

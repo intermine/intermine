@@ -236,6 +236,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ObjectPathExpression4", objectPathExpression4());
         queries.put("FieldPathExpression", fieldPathExpression());
         queries.put("FieldPathExpression2", fieldPathExpression2());
+        queries.put("CollectionPathExpression", collectionPathExpression());
+        queries.put("CollectionPathExpression2", collectionPathExpression2());
         queries.put("ForeignKey", foreignKey());
         queries.put("ForeignKey2", foreignKey2());
         queries.put("OrSubquery", orSubquery());
@@ -1603,6 +1605,32 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.addToSelect(new QueryFieldPathExpression(new QueryObjectPathExpression(new QueryObjectPathExpression(qc, "department"), "company"), "address", "address", "Nowhere"));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.employees AS a2_ FROM Department AS a1_
+     */
+    public static Query collectionPathExpression() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryCollectionPathExpression(qc, "employees"));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.department.employees AS a2_ FROM Employee AS a1_
+     */
+    public static Query collectionPathExpression2() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryCollectionPathExpression(new QueryObjectPathExpression(qc, "department"), "employees"));
         q.setDistinct(false);
         return q;
     }

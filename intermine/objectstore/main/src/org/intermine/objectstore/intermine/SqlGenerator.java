@@ -55,6 +55,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryClassBag;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryField;
@@ -667,12 +668,23 @@ public class SqlGenerator
                 if (selectable instanceof QueryFieldPathExpression) {
                     selectable = ((QueryFieldPathExpression) selectable).getParent();
                 }
+                if (selectable instanceof QueryCollectionPathExpression) {
+                    Class cls = ((QueryCollectionPathExpression) selectable).getDefaultClass()
+                        .getType();
+                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
+                    if (cld == null) {
+                        throw new ObjectStoreException(cls + " is not in the model");
+                    }
+                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                    tablenames.add(DatabaseUtil.getTableName(tableMaster));
+                    selectable = ((QueryCollectionPathExpression) selectable).getQope();
+                }
                 QueryObjectPathExpression qope = (QueryObjectPathExpression) selectable;
                 while (qope != null) {
-                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(qope
-                            .getType().getName());
+                    Class cls = qope.getType();
+                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
                     if (cld == null) {
-                        throw new ObjectStoreException(cld + " is not in the model");
+                        throw new ObjectStoreException(cls + " is not in the model");
                     }
                     ClassDescriptor tableMaster = schema.getTableMaster(cld);
                     tablenames.add(DatabaseUtil.getTableName(tableMaster));
