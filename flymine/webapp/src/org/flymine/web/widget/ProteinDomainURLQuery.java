@@ -52,33 +52,56 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
 
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-        
+
         List view = new ArrayList();
-        view.add(MainHelper.makePath(model, q, "Gene.identifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
-        view.add(MainHelper.makePath(model, q, "Gene.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
-        view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.interproId"));
-        view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.name"));
-        q.setView(view);
-        
         String bagType = bag.getType();
+
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();        
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-
-        constraintOp = ConstraintOp.EQUALS;
-        code = q.getUnusedConstraintCode();
-        PathNode interproNode = q.addNode("Gene.proteins.proteinFeatures.identifier");
-        Constraint interproConstraint 
-                        = new Constraint(constraintOp, key, false, label, code, id, null);
-        interproNode.getConstraints().add(interproConstraint);
                 
+        if (bagType.equalsIgnoreCase("gene")) {
+
+            view.add(MainHelper.makePath(model, q, "Gene.identifier"));
+            view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
+            view.add(MainHelper.makePath(model, q, "Gene.name"));
+            view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
+            view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.interproId"));
+            view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.name"));
+            q.setView(view);
+
+            constraintOp = ConstraintOp.EQUALS;
+            code = q.getUnusedConstraintCode();
+            PathNode interproNode = q.addNode("Gene.proteins.proteinFeatures.identifier");
+            Constraint interproConstraint 
+            = new Constraint(constraintOp, key, false, label, code, id, null);
+            interproNode.getConstraints().add(interproConstraint);
+        }
+        else if (bagType.equalsIgnoreCase("protein")) {
+            view.add(MainHelper.makePath(model, q, "Protein.identifier"));
+            view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
+            view.add(MainHelper.makePath(model, q, "Protein.name"));
+            view.add(MainHelper.makePath(model, q, "Protein.organism.name"));
+            view.add(MainHelper.makePath(model, q, "Protein.proteinFeatures.interproId"));
+            view.add(MainHelper.makePath(model, q, "Protein.proteinFeatures.name"));
+            q.setView(view);
+
+            constraintOp = ConstraintOp.EQUALS;
+            code = q.getUnusedConstraintCode();
+            PathNode interproNode = q.addNode("Protein.proteinFeatures.identifier");
+            Constraint interproConstraint 
+            = new Constraint(constraintOp, key, false, label, code, id, null);
+            interproNode.getConstraints().add(interproConstraint);
+        }
+        else {
+            //?
+        }
+        
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-        
+
         return q;
     }
 }

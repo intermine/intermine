@@ -281,6 +281,15 @@
 	 	                 filters="biological_process,cellular_component,molecular_function"  
 	 	                 filterLabel="ontology" 
 	 	                 max="0.10" /> 
+      
+      <enrichmentwidgetdisplayer title="Protein Domain Enrichment"  
+                     link="org.flymine.web.widget.ProteinDomainURLQuery"  
+                     controller="org.flymine.web.widget.ProteinDomainLdr"  
+                     label="Protein Domain"
+                     description="Protein Domains enriched for proteins in this list."  
+                     filters=""  
+                     filterLabel="" 
+                     max="0.10"  /> 
        
              <enrichmentwidgetdisplayer title="UniProt Features"  
 	 	                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"  

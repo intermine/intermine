@@ -55,118 +55,183 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     Collection organisms;
     int total;
     String externalLink, append;
+    InterMineBag bag;   
+    
     
     /**
      * @param request The HTTP request we are processing
      */
-     public ProteinDomainLdr(HttpServletRequest request) {
+    public ProteinDomainLdr(HttpServletRequest request) {
 
+
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ServletContext servletContext = session.getServletContext();
+        ObjectStoreInterMineImpl os =
+            (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
+
+        String bagName = request.getParameter("bagName");
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        bag = allBags.get(bagName);
         
-             HttpSession session = request.getSession();
-             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-             ServletContext servletContext = session.getServletContext();
-             ObjectStoreInterMineImpl os =
-                 (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
+        // get organisms
+        organisms = BioUtil.getOrganisms(os, bag);
 
-             String bagName = request.getParameter("bagName");
-             Map<String, InterMineBag> allBags =
-                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-             InterMineBag bag = allBags.get(bagName);
+        QueryClass qcGene = new QueryClass(Gene.class);
+        QueryClass qcProtein = new QueryClass(Protein.class);
+        QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryClass qcProteinFeature = new QueryClass(ProteinFeature.class);
+
+        QueryField qfProteinId = new QueryField(qcProtein, "id");
+        QueryField qfGeneId = new QueryField(qcGene, "id");
+        QueryField qfName = new QueryField(qcProteinFeature, "name");
+        QueryField qfId = new QueryField(qcProteinFeature, "interproId");
+        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
+        QueryField qfInterpro = new QueryField(qcProteinFeature, "identifier");
+
+        QueryFunction objectCount = new QueryFunction();
+        
+        // constraints
+        ConstraintSet csSample = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet csPopulation = new ConstraintSet(ConstraintOp.AND);
+
+        // common constraints
+        // limit to organisms in the bag
+        BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
+        
+        // protein.ProteinFeatures CONTAINS proteinFeature
+        QueryCollectionReference qr3 
+        = new QueryCollectionReference(qcProtein, "proteinFeatures");
+        ContainsConstraint cc3 =
+            new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcProteinFeature);
+
+        SimpleConstraint sc = 
+            new SimpleConstraint(qfInterpro, ConstraintOp.MATCHES, new QueryValue("IPR%"));
+
+        //set the common constraints
+        csSample.addConstraint(bc2);
+        csSample.addConstraint(cc3);
+        csSample.addConstraint(sc);
+        
+        // build sample (constrained by list) and population queries
+        Query q = new Query();
+        q.setDistinct(false);
+        
+        if (bag.getType().equalsIgnoreCase("gene")) {
+            // further constraints for genes
+            // genes must be in bag
+            BagConstraint bc1 =
+                new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+            csSample.addConstraint(bc1);
+
+            // gene is from organism
+            QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
+            ContainsConstraint cc1 
+            = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
+            csSample.addConstraint(cc1);
+
+            // gene.Proteins CONTAINS protein
+            QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "proteins");
+            ContainsConstraint cc2 =
+                new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcProtein);
+            csSample.addConstraint(cc2);
+
             
-             // build query constrained by bag
-             Query q = new Query();
-             q.setDistinct(false);
-             QueryClass qcGene = new QueryClass(Gene.class);
-             QueryClass qcProtein = new QueryClass(Protein.class);
-             QueryClass qcOrganism = new QueryClass(Organism.class);
-             QueryClass qcProteinFeature = new QueryClass(ProteinFeature.class);
+            // sample query
+            q.addFrom(qcGene);
+            q.addFrom(qcProtein);
+            q.addFrom(qcOrganism);
+            q.addFrom(qcProteinFeature);
 
+            q.addToSelect(qfId);
+            q.addToSelect(objectCount);
+            q.addToSelect(qfName);            
 
-             QueryField qfGeneId = new QueryField(qcGene, "id");
-             QueryField qfName = new QueryField(qcProteinFeature, "name");
-             QueryField qfId = new QueryField(qcProteinFeature, "interproId");
-             QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-             QueryField qfInterpro = new QueryField(qcProteinFeature, "identifier");
+            q.setConstraint(csSample);
+            q.addToGroupBy(qfId);
+            q.addToGroupBy(qfName);
+
+            sampleQuery = q;
+
+            // population query
+            q = new Query();
+            q.setDistinct(false);
+
+            q.addFrom(qcGene);
+            q.addFrom(qcProtein);
+            q.addFrom(qcOrganism);
+            q.addFrom(qcProteinFeature);
+
+            q.addToSelect(qfId);
+            q.addToSelect(objectCount);
+
+            csPopulation.addConstraint(cc1);
+            csPopulation.addConstraint(cc2);
+            csPopulation.addConstraint(cc3);
+            csPopulation.addConstraint(bc2);
+            csPopulation.addConstraint(sc);
+            q.setConstraint(csPopulation);
+
+            q.addToGroupBy(qfId);
+
+            populationQuery = q;
+
+        }
+        else if (bag.getType().equalsIgnoreCase("protein")) {
+
+            // further constraints for proteins
+            // proteins must be in bag
+            BagConstraint bc1 =
+                new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb());
+            csSample.addConstraint(bc1);
+
+            // protein is from organism
+            QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
+            ContainsConstraint cc1 
+            = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
+            csSample.addConstraint(cc1);
+            
+            // sample query
+            q.addFrom(qcProtein);
+            q.addFrom(qcOrganism);
+            q.addFrom(qcProteinFeature);
+
+            q.addToSelect(qfId);
+            q.addToSelect(objectCount);
+            q.addToSelect(qfName);
              
-             QueryFunction geneCount = new QueryFunction();
+            q.setConstraint(csSample);
+            q.addToGroupBy(qfId);
+            q.addToGroupBy(qfName);
 
-             q.addFrom(qcGene);
-             q.addFrom(qcProtein);
-             q.addFrom(qcOrganism);
-             q.addFrom(qcProteinFeature);
+            sampleQuery = q;
 
-             q.addToSelect(qfId);
-             q.addToSelect(geneCount);
-             q.addToSelect(qfName);
+            // population query
+            q = new Query();
+            q.setDistinct(false);
 
-             ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+            q.addFrom(qcProtein);
+            q.addFrom(qcOrganism);
+            q.addFrom(qcProteinFeature);
 
-         
-                 // genes must be in bag
-                 BagConstraint bc1 =
-                     new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-                 cs1.addConstraint(bc1);
+            q.addToSelect(qfId);
+            q.addToSelect(objectCount);
 
-             // get organisms
-             organisms = BioUtil.getOrganisms(os, bag);
+            csPopulation.addConstraint(cc1);
+            csPopulation.addConstraint(cc3);
+            csPopulation.addConstraint(bc2);
+            csPopulation.addConstraint(sc);
+            q.setConstraint(csPopulation);
+            q.addToGroupBy(qfId);
+            populationQuery = q;
+            
+        }
+        else {
+            //error?
+        }
 
-             // limit to organisms in the bag
-             BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-             cs1.addConstraint(bc2);
-
-             // gene is from organism
-             QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-             ContainsConstraint cc1 
-                                 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
-             cs1.addConstraint(cc1);
-             
-
-             // gene.Proteins CONTAINS protein
-             QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "proteins");
-             ContainsConstraint cc2 =
-                 new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcProtein);
-             cs1.addConstraint(cc2);
-
-
-             // protein.ProteinFeatures CONTAINS proteinFeature
-             QueryCollectionReference qr3 
-                 = new QueryCollectionReference(qcProtein, "proteinFeatures");
-             ContainsConstraint cc3 =
-                 new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcProteinFeature);
-             cs1.addConstraint(cc3);
-
-             SimpleConstraint sc = 
-                 new SimpleConstraint(qfInterpro, ConstraintOp.MATCHES, new QueryValue("IPR%"));
-             cs1.addConstraint(sc);
-             
-             q.setConstraint(cs1);
-             q.addToGroupBy(qfId);
-             q.addToGroupBy(qfName);
-             
-             sampleQuery = q;
-             
-             // construct population query
-             q = new Query();
-             q.setDistinct(false);
-
-             q.addFrom(qcGene);
-             q.addFrom(qcProtein);
-             q.addFrom(qcOrganism);
-             q.addFrom(qcProteinFeature);
-
-             q.addToSelect(qfId);
-             q.addToSelect(geneCount);
-
-             ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
-             cs2.addConstraint(cc1);
-             cs2.addConstraint(cc2);
-             cs2.addConstraint(cc3);
-             cs2.addConstraint(bc2);
-             cs2.addConstraint(sc);
-             q.setConstraint(cs2);
-             q.addToGroupBy(qfId);
-             populationQuery = q;
-     }
+    }
 
          /**
           * @return the query representing the sample population (the bag)
@@ -197,7 +262,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
           * @return the query representing the sample population (the bag)
           */
          public int getTotal(ObjectStore os) {
-             return BioUtil.getTotal(os, organisms, "Gene");
+             return BioUtil.getTotal(os, organisms, bag.getType());
          }
          
          /**
