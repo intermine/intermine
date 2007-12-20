@@ -177,8 +177,12 @@ public class QueryCloner
                 retval = new QueryCollectionPathExpression((QueryObjectPathExpression) cloneThing(
                             origC.getQope(), fromElementMap), origC.getCollectionName());
             } else {
-                retval = new QueryCollectionPathExpression((QueryClass) fromElementMap
-                        .get(origC.getQueryClass()), origC.getCollectionName());
+                try {
+                    retval = new QueryCollectionPathExpression((QueryClass) fromElementMap
+                            .get(origC.getQueryClass()), origC.getCollectionName());
+                } catch (NullPointerException e) {
+                    throw new NullPointerException("oldQc: " + origC.getQueryClass() + ", fromElementMap: " + fromElementMap);
+                }
             }
             Map subFromElementMap = new HashMap();
             for (FromElement origFrom : origC.getFrom()) {
@@ -202,6 +206,7 @@ public class QueryCloner
                 retval.addFrom(newFrom);
                 subFromElementMap.put(origFrom, newFrom);
             }
+            subFromElementMap.put(origC.getDefaultClass(), retval.getDefaultClass());
             for (QuerySelectable selectable : origC.getSelect()) {
                 retval.addToSelect((QuerySelectable) cloneThing(selectable, subFromElementMap));
             }

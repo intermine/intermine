@@ -677,6 +677,9 @@ public class SqlGenerator
                     }
                     ClassDescriptor tableMaster = schema.getTableMaster(cld);
                     tablenames.add(DatabaseUtil.getTableName(tableMaster));
+                    Collection<InterMineObject> empty = Collections.emptySet();
+                    findTableNames(tablenames, ((QueryCollectionPathExpression) selectable)
+                            .getQuery(empty), schema, addInterMineObject, individualOsbs);
                     selectable = ((QueryCollectionPathExpression) selectable).getQope();
                 }
                 QueryObjectPathExpression qope = (QueryObjectPathExpression) selectable;
