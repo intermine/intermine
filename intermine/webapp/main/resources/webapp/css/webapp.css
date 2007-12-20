@@ -127,15 +127,11 @@ div.templateDetails {
      http://www.positioniseverything.net/explorer/peekaboo.html */
   height: 0.01%;}
 
-.listHeading {
-  height: 1.5em; /* needed to prevent the peekaboo bug on IE: http://www.positioniseverything.net/explorer/peekaboo.html */
-  margin: 0px 8px 4px 8px; padding:5px 0px 0px 10px;
-  font-size: 14px; font-weight:bold; white-space: nowrap; background-color: #eee;}
-
 .boxTopRight {
   float: right;}
 
-.body {
+/* disclosure style is default style of <disclosure> element*/
+.body, .disclosure {
   margin:10px 12px 10px 12px;
   font-size: 12px; color: #333;}
 
@@ -176,14 +172,22 @@ div#quicksearch {
 	padding:0px; margin:0 0 5px 0; padding-left:15px;height:3em;
 	color:#CCC;	font-size: 12px;}
 
-/* used on the details page to indent widgets and templates */
-.tog {
- 	display:block;margin-left:20px;
- }
-
 .dashedBox {
     margin:10px; padding: 10px;
     border: 1px dashed #999;}
+
+/* Default style of <disclosureBody> element*/
+.disclosureBody {
+  margin-left: 20px;
+}
+ 
+/* Default style of element disclosureHead is style disclosureHead and it should be same as listHeading*/  
+.listHeading, .disclosureHead {
+  height: 1.5em; /* needed to prevent the peekaboo bug on IE: http://www.positioniseverything.net/explorer/peekaboo.html */
+  margin: 0px 0px 4px 0px; 
+  padding:5px 0px 0px 10px;
+  font-size: 14px; font-weight:bold; white-space: nowrap; background-color: #eee;
+ }
 
 
 

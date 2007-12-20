@@ -4,16 +4,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
 
 <!-- templatePreview.jsp -->
 
 <c:if test="${TEMPLATE_BUILD_STATE != null}">
 	<link rel="stylesheet" type="text/css" href="css/templatePreview.css"/>
-  <im:heading id="template-preview" initial="${true}">
-    Template preview
-  </im:heading>
-
-  <div class="body" id="template-preview" align="center">
+  
+  <imutil:disclosure id="template-preview" opened="true" styleClass="body">
+  			Template preview
+	<imutil:disclosureBody style="align:center;">
       <div id="tmplPreview">
         <div class="previewTitle">
           <fmt:message key="templateBuilder.previewtitle"/>
@@ -21,8 +21,9 @@
         <tiles:insert name="template.tile">
           <tiles:put name="builder" value="yes"/>
         </tiles:insert>
-      </div>
-  </div>
+      </div>	
+	</imutil:disclosureBody>
+  </imutil:disclosure>
   
     <div align="center">
       <table border="0">

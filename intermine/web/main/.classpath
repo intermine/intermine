@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="lib/mail.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.10.jar"/>
+	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

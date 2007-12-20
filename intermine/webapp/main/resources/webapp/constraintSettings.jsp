@@ -8,9 +8,9 @@
 
 <html:xhtml/>
 
-<im:heading>
+<div class="listHeading">
   Template constraint settings
-</im:heading>
+</div>
 
 <c:set var="editable" value="${constraint.editable}"/>
 <c:set var="label" value="${constraint.description}"/>
@@ -18,7 +18,7 @@
 	<c:set var="label" value="${editingNodePath}"/>
 </c:if>
 
-<im:body>
+<div style="body">
     <table border="0" width="100%">
       <tr>
         <td align="right"><fmt:message key="templateBuilder.editable"/></td>
@@ -47,6 +47,6 @@
         </tr>
       </c:if>
     </table>
-</im:body>
+</div>
 
 <!-- /constraintSettings.jsp -->

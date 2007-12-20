@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
 
 <!-- bagDetails.jsp -->
 <html:xhtml/>
@@ -197,6 +198,7 @@
 <br/>
 
 <!-- widget table -->
+<c:set var="widgetIdPrefix" value="bagDetailsWidget${bag.type}"/>
 <c:set var="widgetTotal" value="${fn:length(graphDisplayerArray) 
 								+ fn:length(tableDisplayerArray)  
 								+ fn:length(enrichmentWidgetDisplayerArray) }"/>
@@ -204,7 +206,7 @@
   <c:if test="${widgetTotal > 0}">
     <div class="heading">
       <a id="widgets">Widgets displaying properties of '${bag.name}'</a>&nbsp;&nbsp;<span style="font-size:0.8em;">
-		(<a href="javascript:toggleAll(${widgetTotal}, 'widget', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, 'widget', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
+		(<a href="javascript:toggleAll(${widgetTotal}, '${widgetIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${widgetTotal}, '${widgetIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
     </div>
     <div class="body">
   
@@ -217,124 +219,128 @@
       <c:set var="widgetCount" value="0"/>
       
       <%-- graphs --%>
-      <c:forEach items="${graphDisplayerArray}" var="htmlContent">
-      <div class="body">
-		<im:heading id="widget${widgetCount}">    
-			<a href="javascript:toggleHidden('widget${widgetCount}');">${htmlContent[1]}</a>
-		</im:heading><div class="tog" id="widget${widgetCount}">
-		  
-		  <br/>		
-		<fmt:message key="bagDetails.widgetHelp">
-      	<fmt:param>
-            	<fmt:message key="bagDetails.widgetHelpGraph"/>
-      	</fmt:param>
-      </fmt:message>
-        <br/><br/>	
-	
-        <div class="widget">
-          <c:out value="${htmlContent[0]}" escapeXml="false"/>
-          <p><c:out value="${htmlContent[2]}" escapeXml="false"/></p>
-        </div>
-        </div>      
-        <c:set var="widgetCount" value="${widgetCount+1}" />
-         </div>
+      <c:forEach items="${graphDisplayerArray}" var="htmlContent">      
+			<imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="${widgetCount == 0}" type="consistent">
+				<imutil:disclosureHead>
+					<imutil:disclosureTitle>
+						${htmlContent[1]}
+					</imutil:disclosureTitle>
+				</imutil:disclosureHead>
+				<imutil:disclosureBody>
+					  <br/>		
+					<fmt:message key="bagDetails.widgetHelp">
+			      	<fmt:param>
+			            	<fmt:message key="bagDetails.widgetHelpGraph"/>
+			      	</fmt:param>
+			      </fmt:message>
+			        <br/><br/>	
+				
+			        <div class="widget">
+			          <c:out value="${htmlContent[0]}" escapeXml="false"/>
+			          <p><c:out value="${htmlContent[2]}" escapeXml="false"/></p>
+			        </div>
+        			<c:set var="widgetCount" value="${widgetCount+1}" />				
+				</imutil:disclosureBody>
+			</imutil:disclosure>
       </c:forEach>
 
 	<%-- tables --%>
       <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
-      	<div class="body">
-			<im:heading id="widget${widgetCount}"> 
-      			<a href="javascript:toggleHidden('widget${widgetCount}');"><c:out value="${bagTableDisplayerResults.title}"/></a>
-    		</im:heading>
-    		<div id="widget${widgetCount}" class="tog">
-    		
-    		<br/>
-    	<fmt:message key="bagDetails.widgetHelp">
-      	<fmt:param>
-            	<fmt:message key="bagDetails.widgetHelpTable"/>
-      	</fmt:param>
-      </fmt:message>
-    		<br/><br/>
-    	  
-          <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
-          <c:choose>
-            <c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
-                <div class="widget_slide">
-                <table class="results" cellspacing="0">
-                  <tr>
-                    <c:forEach var="column" items="${bagTableDisplayerResults.columns}" varStatus="status">
-                      <th align="center" valign="top">
-                        <div>
-                          <c:out value="${fn:replace(column, '.', '&nbsp;> ')}" escapeXml="false"/>
-                        </div>
-                      </th>
-                    </c:forEach>
-                  </tr>
-
-                  <c:forEach items="${bagTableDisplayerResults.flattenedResults}" var="row" varStatus="status">
-                    <c:set var="rowClass">
-                      <c:choose>
-                        <c:when test="${status.count % 2 == 1}">odd</c:when>
-                        <c:otherwise>even</c:otherwise>
-                      </c:choose>
-                    </c:set>
-                    <tr class="${rowClass}">
-                      <c:forEach var="cell" items="${row}" varStatus="status2">
-                        <td>
-                          <c:choose>
-                            <c:when test="${cell.keyField}">
-                              <html:link action="/objectDetails?id=${cell.id}&amp;trail=|bag.${bag.name}|${cell.id}">
-                                <c:out value="${cell.field}" />
-                              </html:link>
-                            </c:when>
-                            <c:when test="${! empty cell.otherLink}">
-                              <html:link action="/widgetAction?${cell.otherLink}">
-                                <c:out value="${cell.field}" />
-                              </html:link>
-                            </c:when>
-                            <c:otherwise>
-                              <c:out value="${cell.field}" />
-                            </c:otherwise>
-                          </c:choose>
-                        </td>
-                      </c:forEach>
-                    </tr>
-                  </c:forEach>
-                </table>
-                <p><c:out value="${bagTableDisplayerResults.description}" escapeXml="false"/></p>
-              </div>
-            </c:when>
-            <c:otherwise><i>No results for ${bagTableDisplayerResults.title}</i></c:otherwise>
-          </c:choose>
-        </div>
-        <c:set var="widgetCount" value="${widgetCount+1}" />
-        </div>
+      	
+      	<imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="false" type="consistent">
+			<imutil:disclosureHead>
+				<imutil:disclosureTitle>
+					<c:out value="${bagTableDisplayerResults.title}"/>
+				</imutil:disclosureTitle>
+			</imutil:disclosureHead>
+			<imutil:disclosureBody>
+			    		<br/>
+		    	<fmt:message key="bagDetails.widgetHelp">
+		      	<fmt:param>
+		            	<fmt:message key="bagDetails.widgetHelpTable"/>
+		      	</fmt:param>
+		      </fmt:message>
+		    		<br/><br/>
+		    	  
+		          <div><strong><font size="+1"><c:out value="${bagTableDisplayerResults.title}"/></font></strong></div>
+		          <c:choose>
+		            <c:when test="${!empty bagTableDisplayerResults.flattenedResults}">
+		                <div class="widget_slide">
+		                <table class="results" cellspacing="0">
+		                  <tr>
+		                    <c:forEach var="column" items="${bagTableDisplayerResults.columns}" varStatus="status">
+		                      <th align="center" valign="top">
+		                        <div>
+		                          <c:out value="${fn:replace(column, '.', '&nbsp;> ')}" escapeXml="false"/>
+		                        </div>
+		                      </th>
+		                    </c:forEach>
+		                  </tr>
+		
+		                  <c:forEach items="${bagTableDisplayerResults.flattenedResults}" var="row" varStatus="status">
+		                    <c:set var="rowClass">
+		                      <c:choose>
+		                        <c:when test="${status.count % 2 == 1}">odd</c:when>
+		                        <c:otherwise>even</c:otherwise>
+		                      </c:choose>
+		                    </c:set>
+		                    <tr class="${rowClass}">
+		                      <c:forEach var="cell" items="${row}" varStatus="status2">
+		                        <td>
+		                          <c:choose>
+		                            <c:when test="${cell.keyField}">
+		                              <html:link action="/objectDetails?id=${cell.id}&amp;trail=|bag.${bag.name}|${cell.id}">
+		                                <c:out value="${cell.field}" />
+		                              </html:link>
+		                            </c:when>
+		                            <c:when test="${! empty cell.otherLink}">
+		                              <html:link action="/widgetAction?${cell.otherLink}">
+		                                <c:out value="${cell.field}" />
+		                              </html:link>
+		                            </c:when>
+		                            <c:otherwise>
+		                              <c:out value="${cell.field}" />
+		                            </c:otherwise>
+		                          </c:choose>
+		                        </td>
+		                      </c:forEach>
+		                    </tr>
+		                  </c:forEach>
+		                </table>
+		                <p><c:out value="${bagTableDisplayerResults.description}" escapeXml="false"/></p>
+		              </div>
+		            </c:when>
+		            <c:otherwise><i>No results for ${bagTableDisplayerResults.title}</i></c:otherwise>
+		          </c:choose>
+		        <c:set var="widgetCount" value="${widgetCount+1}" />
+			</imutil:disclosureBody>
+		</imutil:disclosure>
       </c:forEach>
 
     
 	 <%-- enrichment --%>
 	<c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
-	<div class="body">
-		<im:heading id="widget${widgetCount}"> 
-			<a href="javascript:toggleHidden('widget${widgetCount}');"><c:out value="${enrichmentWidgetResults.title}"/></a>
-		</im:heading>
-		<div id="widget${widgetCount}" class="tog">
-	 
-	 <br/>
-	 <fmt:message key="bagDetails.widgetHelp">
-      	<fmt:param>
-            	<fmt:message key="bagDetails.widgetHelpTable"/>
-      	</fmt:param>
-      </fmt:message> 
-      <br/><br/>
-      <c:set var="enrichmentWidgetParams" value="bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&label=${enrichmentWidgetResults.label}"/>
-      
-      
-			<iframe src="enrichmentWidget.do?${enrichmentWidgetParams}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
-		<br/><a href="enrichmentWidget.do?${enrichmentWidgetParams}" target="_new" class="extlink">open widget in new window</a>
-		</div>
-	 	<c:set var="widgetCount" value="${widgetCount+1}" />
-	 	 </div>
+	
+		<imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="false" type="consistent">
+			<imutil:disclosureHead>
+				<imutil:disclosureTitle>
+					<c:out value="${enrichmentWidgetResults.title}"/>
+				</imutil:disclosureTitle>
+			</imutil:disclosureHead>
+		<imutil:disclosureBody>
+			 <br/>
+			 <fmt:message key="bagDetails.widgetHelp">
+		      	<fmt:param>
+		            	<fmt:message key="bagDetails.widgetHelpTable"/>
+		      	</fmt:param>
+		      </fmt:message> 
+		      <br/><br/>
+		      <c:set var="enrichmentWidgetParams" value="bagName=${bag.name}&controller=${enrichmentWidgetResults.controller}&title=${enrichmentWidgetResults.title}&description=${enrichmentWidgetResults.description}&max=${enrichmentWidgetResults.max}&link=${enrichmentWidgetResults.link}&filters=${enrichmentWidgetResults.filters}&filterLabel=${enrichmentWidgetResults.filterLabel}&label=${enrichmentWidgetResults.label}"/>
+					<iframe src="enrichmentWidget.do?${enrichmentWidgetParams}" id="window" frameborder="0" width="475" height="500" scrollbars="auto"></iframe>
+				<br/><a href="enrichmentWidget.do?${enrichmentWidgetParams}" target="_new" class="extlink">open widget in new window</a>
+	 		<c:set var="widgetCount" value="${widgetCount+1}" />
+		</imutil:disclosureBody>
+		</imutil:disclosure>
 	</c:forEach>
 	</div>
 </c:if>
@@ -342,10 +348,11 @@
 <!-- /widgets -->
 
 
+<c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
    <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;"> 
-  (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', null);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', null);">collapse all <img src="images/undisclosed.gif"/></a>)</span></div>
+  (<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span></div>
 </div>
 
 <div class="body">
@@ -357,28 +364,14 @@
 
   <%-- Each aspect --%>
   <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
-  <div class="body">
     <tiles:insert name="objectDetailsAspect.tile">
       <tiles:put name="placement" value="aspect:${aspect}"/>
       <tiles:put name="trail" value="|bag.${bag.name}"/>
       <tiles:put name="interMineIdBag" beanName="bag"/>
-      <tiles:put name="index" value="${status.index}" />
+      <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+      <tiles:put name="opened" value="${status.index == 0}" />
     </tiles:insert>
-    </div>
   </c:forEach>
 </div>
-
-<script type="text/javascript">
-  <!--//<![CDATA[    
-	toggleAll(${widgetTotal}, 'widget', 'collapse', null);
-	toggleAll(${aspectCount}, 'template', 'collapse', null);
-		
-	// open first one	
-	if (${widgetTotal} > 0)
-		toggleAll(1, 'widget', 'expand', null);
-	if (${aspectCount} > 0)	
-		toggleAll(1, 'template','expand', null);
-      //]]>-->
-</script>
 
 <!-- /bagDetails.jsp -->

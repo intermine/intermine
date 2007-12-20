@@ -64,7 +64,7 @@ function toggleOpen(element, elementId) {
 	document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
 }
 
-function toggleAll(count, prefix, display, extraField) {
+function toggleAll(count, prefix, display, extraField, saveState) {
 	for (i = 0; i < count; i++) {
 		var elementId = prefix + i;
 		var element = document.getElementById(elementId);
@@ -75,6 +75,9 @@ function toggleAll(count, prefix, display, extraField) {
 				toggleClose(element, elementId);
 			}
      	}
+     	if (saveState == true && element != null && window.saveToggleState /* function exists*/) {
+     		saveToggleState(elementId);
+     	}
      }
      if (extraField != null  && (element = document.getElementById(extraField)) != null) {
       		if(display=='expand') {
@@ -82,6 +85,9 @@ function toggleAll(count, prefix, display, extraField) {
 			} else {
 				toggleClose(element, extraField);
 			}		
+			if (window.saveToggleState /* function exists*/) {
+				saveToggleState(extraField);
+			}
      }
 }
 

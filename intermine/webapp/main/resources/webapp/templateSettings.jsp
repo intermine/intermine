@@ -10,7 +10,7 @@
 
 <c:if test="${TEMPLATE_BUILD_STATE != null}">
 
-  <im:heading>
+  <div class="listHeading">
   <c:choose>
     <c:when test="${TEMPLATE_BUILD_STATE.updatingTemplate != null}">
       <fmt:message key="templateBuilder.editingTemplate">
@@ -21,9 +21,9 @@
       <fmt:message key="templateBuilder.new"/>
     </c:otherwise>
   </c:choose>
-  </im:heading>
+  </div>
 
-  <im:body>
+  <div class="body">
 
   <fmt:message key="templateBuilder.save.msg"/>
 
@@ -74,7 +74,7 @@
     </p>
     </div>
   </html:form>
-  </im:body>
+  </div>
 
 </c:if>
 
