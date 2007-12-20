@@ -103,6 +103,9 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                           Arrays.asList(new SetFieldConfigAction("cytoLocation")));
                config.put(new MultiKey("prop", "Gene", "symbol"),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
+               config.put(new MultiKey("prop", "TransposableElementInsertionSite",
+                                       "curated_cytological_location"),
+                          Arrays.asList(new SetFieldConfigAction("cytoLocation")));
 
                // feature configuration example: for features of class "Exon", from "FlyBase",
                // set the Gene.symbol to be the "name" field from the chado feature
