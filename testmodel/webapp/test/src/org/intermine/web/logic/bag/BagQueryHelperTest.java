@@ -17,8 +17,8 @@ public class BagQueryHelperTest extends TestCase {
 	
 	Model model;
 	Map classKeys;
-    BagQueryConfig bagQueryConfig = new BagQueryConfig(new HashMap());
-    BagQueryConfig bagQueryConfigWithExtraConstraint = new BagQueryConfig(new HashMap());
+    BagQueryConfig bagQueryConfig = new BagQueryConfig(new HashMap(), new HashMap());
+    BagQueryConfig bagQueryConfigWithExtraConstraint = new BagQueryConfig(new HashMap(), new HashMap());
     
 	public BagQueryHelperTest(String arg0) {
 		super(arg0);

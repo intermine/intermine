@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -30,6 +31,9 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.Type;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -52,16 +56,26 @@ public class ConvertBagController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         InterMineBag imBag = (InterMineBag) request.getAttribute("bag");
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
         
         Map<Class, TemplateQuery> conversionTypesMap = TypeConverter.getConversionTemplates(
             servletContext, TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));
         ArrayList<String> conversionTypes = new ArrayList<String>();
+        Map fastaMap = new HashMap();
         for (Class clazz : conversionTypesMap.keySet()) {
             conversionTypes.add(TypeUtil.unqualifiedName(clazz.getName()));
+            Type type = (Type) webConfig.getTypes().get(clazz.getName());
+            FieldConfig fieldConfig = (FieldConfig) type.getFieldConfigMap().get("length");
+            if (fieldConfig != null && fieldConfig.getDisplayer() != null) {
+                fastaMap.put(type, true);
+            } else {
+                fastaMap.put(type, false);
+            }
         }
 
         request.setAttribute("conversionTypes", conversionTypes);
+        request.setAttribute("fastaMap", fastaMap);
         return null;
     }
 
