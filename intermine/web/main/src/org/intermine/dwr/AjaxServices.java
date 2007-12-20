@@ -52,7 +52,7 @@ import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.results.DisplayType;
+import org.intermine.web.logic.results.GuiObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebResultsSimple;
 import org.intermine.web.logic.results.WebTable;
@@ -558,21 +558,18 @@ public class AjaxServices
     }
 
     /**
-     * Save information, that aspect of some object was opened or closed at page with object
-     * details.
+     * Saves information, that some element was toggled - displayed or hidden. 
      * 
-     * @param type type of object
-     * @param aspectId aspect id
+     * @param elementId element id
      * @param opened new aspect state
      */
-    public static void saveToggleState(String type, String aspectId, boolean opened) {
-        LOG.debug("type: " + type + " aspectId:" + aspectId + "opened: " + opened);
+    public static void saveToggleState(String elementId, boolean opened) {
         HttpSession session = WebContextFactory.get().getSession();
-        DisplayType displayType = (DisplayType) session.getAttribute(Constants.DISPLAY_TYPE);
-        if (displayType == null) {
-            displayType = new DisplayType();
-            session.setAttribute(Constants.DISPLAY_TYPE, displayType);
+        GuiObject guiObject = (GuiObject) session.getAttribute(Constants.GUI_OBJECT);
+        if (guiObject == null) {
+            guiObject = new GuiObject();        	
+            session.setAttribute(Constants.GUI_OBJECT, guiObject);
         }
-        displayType.toggleAspect(type, aspectId, opened);
+        guiObject.getToggledElements().put(elementId, opened);
     }
 }

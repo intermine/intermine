@@ -48,7 +48,6 @@ import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayReference;
-import org.intermine.web.logic.results.DisplayType;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -166,33 +165,14 @@ public class ObjectDetailsController extends InterMineAction
                              + myBagsWithThisObject);
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
-        setAttributesForDisplayType(request, session, object);
-
-        return null;
-    }
-
-    /**
-     * Set request attributes, that are required for correct displaying which aspects will be
-     * opened at page.
-     * @param request request
-     * @param session session
-     * @param object object for which is page displayed
-     */
-    private void setAttributesForDisplayType(HttpServletRequest request, HttpSession session,
-                                            InterMineObject object) {
-        DisplayType displayType = (DisplayType) session.getAttribute(Constants.DISPLAY_TYPE);
-        if (displayType == null) {
-            displayType = new DisplayType();
-            session.setAttribute(Constants.DISPLAY_TYPE, displayType);
-        }
         Set<Class> cls = DynamicUtil.decomposeClass(object.getClass());
         String type = null;
         for (Class class1 : cls) {
             type =  class1.getCanonicalName();
         }
-        Set<String> asps = displayType.getOpenedAspects(type);
         request.setAttribute("objectType", type);
-        request.setAttribute("openedAspectIds", asps);
+
+        return null;
     }
 
     /**

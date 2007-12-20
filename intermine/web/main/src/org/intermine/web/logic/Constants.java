@@ -223,7 +223,7 @@ public interface Constants
 	public static final String RESULTS_TABLE_SIZE = "RESULTS_TABLE_SIZE";
 
 	/**
-     * Session attribute used to store the DisplayType object
+     * Session attribute used to store GuiObject. 
      */
-	public static final String DISPLAY_TYPE = "DISPLAY_TYPE";
+	public static final String GUI_OBJECT = "GUI_OBJECT";
 }

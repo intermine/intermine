@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
 
 <!-- objectDetails.jsp -->
 <html:xhtml/>
@@ -18,24 +19,6 @@
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js">
 	var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';  
-</script>
-
-<script type="text/javascript">
-	function toggleHidden(elementId) {
-		var element = document.getElementById(elementId);
-		var display = element.style.display;
-	    if(display=='none') {
-			toggleOpen(element, elementId);
-			opened = true;
-	    } else {
-			toggleClose(element, elementId);
-			opened = false;
-	    }
-		var type = "${requestScope.objectType}";
-		if (type.length > 0) {
-			saveToggleState(type, elementId, opened);
-		}
-	}
 </script>
 
 <%-- figure out whether we should show templates or not --%>
@@ -164,9 +147,6 @@
 
         </im:body>
         
-
-
-
       </td>
 
       <td valign="top" width="66%">
@@ -185,32 +165,35 @@
         <%-- Fields that are set to 'sectionOnRight' --%>
         <c:forEach items="${object.attributes}" var="entry">
           <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
-            <im:heading id="right-${entry.key}">
-              ${object.fieldConfigMap[entry.key].sectionTitle}
-            </im:heading>
-            <im:body id="right-${entry.key}">
-
-              <c:set var="maxLength" value="80"/>
-              <c:choose>
-                <c:when test="${entry.value.class.name ==
-                              'java.lang.String' && fn:length(entry.value) > maxLength
-                              && ! object.fieldConfigMap[entry.key].doNotTruncate}">
-                  <span class="value">
-                    ${fn:substring(entry.value, 0, maxLength/2)}
-                  </span>
-                  <span class="value" style="white-space:nowrap">
-                    ${fn:substring(entry.value, maxLength/2, maxLength)}
-                    <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
-                      <fmt:message key="objectDetails.viewall"/>
-                    </html:link>
-                  </span>
-                </c:when>
-                <c:otherwise>
-                  <span class="value">${entry.value}</span>
-                </c:otherwise>
-              </c:choose>
-
-            </im:body>
+            
+            <imutil:disclosure id="${objectType}objectDetailsRight-${entry.key}" opened="false" type="consistent">
+            	<imutil:disclosureHead>
+            		<imutil:disclosureTitle>
+            			${object.fieldConfigMap[entry.key].sectionTitle}
+            		</imutil:disclosureTitle>
+            	</imutil:disclosureHead>
+            	<imutil:disclosureBody>
+					 <c:set var="maxLength" value="80"/>
+					 <c:choose>
+					   <c:when test="${entry.value.class.name ==
+					                 'java.lang.String' && fn:length(entry.value) > maxLength
+					                 && ! object.fieldConfigMap[entry.key].doNotTruncate}">
+					     <span class="value">
+					       ${fn:substring(entry.value, 0, maxLength/2)}
+					     </span>
+					     <span class="value" style="white-space:nowrap">
+					       ${fn:substring(entry.value, maxLength/2, maxLength)}
+					       <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
+					         <fmt:message key="objectDetails.viewall"/>
+					       </html:link>
+					     </span>
+					   </c:when>
+					   <c:otherwise>
+					     <span class="value">${entry.value}</span>
+					   </c:otherwise>
+					</c:choose>            		
+            	</imutil:disclosureBody>
+            </imutil:disclosure>
           </c:if>
         </c:forEach>
 
@@ -235,9 +218,11 @@
   <im:vspacer height="12"/>
 
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
+<c:set var="templateIdPrefix" value="objectDetailsTemplate${objectType}"/>
+<c:set var="miscId" value="objectDetailsMisc${objectType}"/>
 
 <div class="heading">Further Information by Category&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">
- (<a href="javascript:toggleAll(${aspectCount}, 'template', 'expand', 'misc');">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, 'template', 'collapse', 'misc');">collapse all <img src="images/undisclosed.gif"/></a>)</span></div>
+ (<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', '${miscId}', true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', '${miscId}', true);">collapse all <img src="images/undisclosed.gif"/></a>)</span></div>
 
     <%-- Each aspect --%>
     <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
@@ -245,21 +230,28 @@
         <tiles:put name="placement" value="aspect:${aspect}"/>
         <tiles:put name="displayObject" beanName="object"/>
         <tiles:put name="trail" value="${request.trail}"/>
-        <tiles:put name="index" value="${status.index}" />
+        <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+        <tiles:put name="opened" value="${status.index == 0}" />        
       </tiles:insert>
     </c:forEach>
 
     <%-- All other references and collections --%>
-    <im:heading id="misc">
-      <a href="javascript:toggleHidden('misc');">Miscellaneous</a>&nbsp;&nbsp;<span class="templateResultsToggle">(Expand this section for more information)</span>
-    </im:heading>
-	<div class="body">
-    <div id="misc" style="display:block;margin-left:25px;">
-      <tiles:insert page="/objectDetailsRefsCols.jsp">
-        <tiles:put name="object" beanName="object"/>
-        <tiles:put name="placement" value="aspect:Miscellaneous"/>
-      </tiles:insert>
-</div>
+	<imutil:disclosure id="${miscId}" opened="false" type="consistent">
+		<imutil:disclosureHead>
+			<imutil:disclosureTitle>
+				Miscellaneous
+			</imutil:disclosureTitle>
+			<imutil:disclosureDetails styleClass="templateResultsToggle">
+				(Expand this section for more information)
+			</imutil:disclosureDetails>
+		</imutil:disclosureHead>
+		<imutil:disclosureBody styleClass="disclosureBody">
+		    <tiles:insert page="/objectDetailsRefsCols.jsp">
+	        	<tiles:put name="object" beanName="object"/>
+	        	<tiles:put name="placement" value="aspect:Miscellaneous"/>
+      		</tiles:insert>		
+		</imutil:disclosureBody>
+	</imutil:disclosure>
 </div>
 
        <%-- bags that contain this object --%>
@@ -297,32 +289,7 @@
                </form>
              </c:if>
         </im:body>
-     </div>
-
-  	<script type="text/javascript">
-  	<!--//<![CDATA[    
-
-	toggleAll(${aspectCount}, 'template', 'collapse', 'misc');
-				
-    //]]>-->
-	</script>
-	
-	<script type="text/javascript">
-		<c:forEach items="${requestScope.openedAspectIds}" var="openedAspectId">
-				toggleHidden("${openedAspectId}");
-		</c:forEach>
-	</script>
- 	
-
-  	<script type="text/javascript">
-  	<!--//<![CDATA[    
-		
-	// open first one	
-	if (${aspectCount} > 0)	
-		toggleAll(1, 'template','expand');
-      //]]>-->
-	</script>
-  
+     </div> 	  
 </c:if>
 
 <!-- /objectDetails.jsp -->

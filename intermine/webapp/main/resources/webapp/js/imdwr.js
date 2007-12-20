@@ -574,6 +574,13 @@ function getConvertCountForBag(bagName, type) {
     });
 }
 
-function saveToggleState(type, aspectId, opened) {
-	AjaxServices.saveToggleState(type, aspectId, opened);
+function saveToggleState(elementId) {
+    var display = document.getElementById(elementId).style.display;
+	var opened;
+     if(display=='none') {
+		opened = false;
+     } else {
+     	opened = true;
+     }
+	AjaxServices.saveToggleState(elementId, opened);
 } 
