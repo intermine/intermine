@@ -172,13 +172,41 @@ public class QueryCloner
             }
         } else if (orig instanceof QueryCollectionPathExpression) {
             QueryCollectionPathExpression origC = (QueryCollectionPathExpression) orig;
+            QueryCollectionPathExpression retval;
             if (origC.getQope() != null) {
-                return new QueryCollectionPathExpression((QueryObjectPathExpression) cloneThing(
+                retval = new QueryCollectionPathExpression((QueryObjectPathExpression) cloneThing(
                             origC.getQope(), fromElementMap), origC.getCollectionName());
             } else {
-                return new QueryCollectionPathExpression((QueryClass) fromElementMap
+                retval = new QueryCollectionPathExpression((QueryClass) fromElementMap
                         .get(origC.getQueryClass()), origC.getCollectionName());
             }
+            Map subFromElementMap = new HashMap();
+            for (FromElement origFrom : origC.getFrom()) {
+                FromElement newFrom = null;
+                if (origFrom instanceof QueryClass) {
+                    newFrom = origFrom;
+                } else if (origFrom instanceof Query) {
+                    newFrom = cloneQuery((Query) origFrom);
+                } else if (origFrom instanceof QueryClassBag) {
+                    Collection bag = ((QueryClassBag) origFrom).getBag();
+                    Class type = ((QueryClassBag) origFrom).getType();
+                    if (bag == null) {
+                        newFrom = new QueryClassBag(type, ((QueryClassBag) origFrom).getOsb());
+                    } else {
+                        newFrom = new QueryClassBag(type, (Collection) cloneThing(((QueryClassBag)
+                                        origFrom).getBag(), null));
+                    }
+                } else {
+                    throw new IllegalArgumentException("Unknown type of FromElement " + origFrom);
+                }
+                retval.addFrom(newFrom);
+                subFromElementMap.put(origFrom, newFrom);
+            }
+            for (QuerySelectable selectable : origC.getSelect()) {
+                retval.addToSelect((QuerySelectable) cloneThing(selectable, subFromElementMap));
+            }
+            retval.setConstraint((Constraint) cloneThing(origC.getConstraint(), subFromElementMap));
+            return retval;
         } else if (orig instanceof SimpleConstraint) {
             SimpleConstraint origC = (SimpleConstraint) orig;
             if ((origC.getOp() == ConstraintOp.IS_NULL)

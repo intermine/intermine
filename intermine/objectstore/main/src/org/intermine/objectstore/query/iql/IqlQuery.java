@@ -13,14 +13,16 @@ package org.intermine.objectstore.query.iql;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.util.Util;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.*;
+import org.intermine.util.Util;
 
 /**
  * OQL representation of an object-based Query
@@ -273,11 +275,59 @@ public class IqlQuery
             }
         } else if (qn instanceof QueryCollectionPathExpression) {
             QueryCollectionPathExpression col = (QueryCollectionPathExpression) qn;
+            StringBuffer retval = new StringBuffer();
             if (col.getQope() != null) {
-                return nodeToString(q, col.getQope(), parameters) + "." + col.getCollectionName();
+                retval.append(nodeToString(q, col.getQope(), parameters))
+                    .append(".")
+                    .append(col.getCollectionName());
             } else {
-                return q.getAliases().get(col.getQueryClass()) + "." + col.getCollectionName();
+                retval.append(q.getAliases().get(col.getQueryClass()))
+                    .append(".")
+                    .append(col.getCollectionName());
             }
+            if ((!col.getSelect().isEmpty()) || (!col.getFrom().isEmpty())
+                    || (col.getConstraint() != null)) {
+                Set<InterMineObject> empty = Collections.emptySet();
+                Query subQ = col.getQuery(empty);
+                retval.append("(");
+                boolean needSpace = false;
+                if (!col.getSelect().isEmpty()) {
+                    retval.append("SELECT ");
+                    boolean needComma = false;
+                    for (QuerySelectable selectable : col.getSelect()) {
+                        if (needComma) {
+                            retval.append(", ");
+                        }
+                        needComma = true;
+                        retval.append(nodeToString(subQ, selectable, parameters));
+                    }
+                    needSpace = true;
+                }
+                if (!col.getFrom().isEmpty()) {
+                    if (needSpace) {
+                        retval.append(" ");
+                    }
+                    retval.append("FROM ");
+                    boolean needComma = false;
+                    for (FromElement node : col.getFrom()) {
+                        if (needComma) {
+                            retval.append(", ");
+                        }
+                        needComma = true;
+                        retval.append(nodeToString(subQ, node, parameters));
+                    }
+                    needSpace = true;
+                }
+                if (col.getConstraint() != null) {
+                    if (needSpace) {
+                        retval.append(" ");
+                    }
+                    retval.append("WHERE ")
+                        .append(constraintToString(subQ, col.getConstraint(), parameters));
+                }
+                retval.append(")");
+            }
+            return retval.toString();
         } else if (qn instanceof QueryFieldPathExpression) {
             QueryFieldPathExpression ref = (QueryFieldPathExpression) qn;
             String objRepresentation = "null";
