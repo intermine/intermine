@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -33,13 +34,16 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.path.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
@@ -217,6 +221,33 @@ public class PortalQueryAction extends InterMineAction
         lookupResults.add(displayLookup);
         request.setAttribute("lookupResults", lookupResults);
 
+        // Use custom converters
+        Map<String, String> additionalConverters = bagQueryConfig.getAdditionalConverters();
+        for (String converterClassName : additionalConverters.keySet()) {
+            Class clazz = Class.forName(converterClassName);
+            Constructor constructor = clazz.getConstructor();
+            String addparameter = request.getParameter(additionalConverters
+                                                                .get(converterClassName));
+            if (addparameter != null && addparameter.length() != 0) {
+                BagConverter bagConverter = (BagConverter) constructor.newInstance();
+                List<ResultsRow> result = bagConverter.getConvertedObjects(session, addparameter, 
+                                                bagList, className);
+                imBag = new InterMineBag(bagName, className , null , new Date() ,
+                                         os , profile.getUserId() , uosw);
+                ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+                List<Integer> converted = new ArrayList<Integer>();
+                for (ResultsRow resRow:result) {
+                    converted.add(((InterMineObject) resRow.get(0)).getId());
+                }
+                osw.addAllToBag(imBag.getOsb(), converted);
+                osw.close();
+                profile.saveBag(imBag.getName(), imBag);
+                return new ForwardParameters(mapping.findForward("bagDetails"))
+                .addParameter("bagName", imBag.getName()).forward();
+            }
+        }
+
+        
         // Go to the object details page
         if ((bagList.size() == 1) && (idList.length == 1)) {
             return new ForwardParameters(mapping.findForward("objectDetails"))
