@@ -875,6 +875,11 @@ public class ChadoDBConverter extends BioDBConverter
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             String identifier = res.getString("value");
+
+            if (identifier == null) {
+                continue;
+            }
+
             String propTypeName = res.getString("type_name");
 
             if (featureMap.containsKey(featureId)) {
