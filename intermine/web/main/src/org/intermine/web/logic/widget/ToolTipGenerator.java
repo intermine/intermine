@@ -1,4 +1,4 @@
-package org.intermine.bio.web.widget;
+package org.intermine.web.logic.widget;
 
 /* 
  * Copyright (C) 2002-2007 FlyMine
@@ -12,7 +12,6 @@ package org.intermine.bio.web.widget;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.data.category.CategoryDataset;
@@ -20,7 +19,7 @@ import org.jfree.data.category.CategoryDataset;
  *
  * @author Julie Sullivan
  */
-public class ChromosomeDistributionToolTipGenerator implements CategoryToolTipGenerator
+public class ToolTipGenerator implements CategoryToolTipGenerator
 {
     Object [] geneMap;
     
@@ -28,7 +27,7 @@ public class ChromosomeDistributionToolTipGenerator implements CategoryToolTipGe
      * Constructs a ToolTipGenerator
      * @param geneMap the map of genes
      */
-    public ChromosomeDistributionToolTipGenerator(Object[] geneMap) {
+    public ToolTipGenerator(Object[] geneMap) {
         super();
         this.geneMap = geneMap;
     }
@@ -46,15 +45,6 @@ public class ChromosomeDistributionToolTipGenerator implements CategoryToolTipGe
         if (geneList == null) {
             return null;
         }
-        StringBuffer sb = new StringBuffer();
-        for (Iterator iter = geneList.iterator(); iter.hasNext();) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append((String) iter.next());
-        }
-        return sb.toString();
+        return "Click here to view all " + geneList.size() + " objects";
     }
-    
-    
 }

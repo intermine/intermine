@@ -123,7 +123,7 @@
     </longdisplayers>
     <bagdisplayers>
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
-                      toolTipGen="org.intermine.bio.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+                      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
                       description="Actual: number of features in this list found on each chromosome.  Expected: given the total number of featres on the chromosome and the number in this list, the number of features expected to be found on each chromosome." 
                       graphType="BarChart"/>
     </bagdisplayers>
@@ -174,19 +174,19 @@
     <bagdisplayers>
 
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Gene Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr" 
-	 	      toolTipGen="org.intermine.bio.web.widget.ChromosomeDistributionToolTipGenerator" urlGen="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator" 
+	 	      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator" 
 	 	      description="Actual: number of genes in this list found on each chromosome.  Expected: given the total number of genes on the chromosome and the number of genes in this list, the number of genes expected to be found on each chromosome."  
 	 	      graphType="BarChart"/> 
       
       <graphdisplayer title="Gene Expression in the Adult Fly (FlyAtlas)" domainLabel="Tissue" rangeLabel="Up (+) or Down (-) gene count" dataSetLoader="org.flymine.web.widget.FlyAtlasDataSetLdr" 
-	 	      toolTipGen="org.flymine.web.widget.FlyAtlasToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator" 
+	 	      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.flymine.web.widget.FlyAtlasGraphURLGenerator" 
 	 	      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."   
 	 	      graphType="StackedBarChart" /> 
 
       <graphdisplayer title="mRNA subcellular localisation (fly-FISH)" domainLabel="Stage" rangeLabel="Gene count" dataSetLoader="org.flymine.web.widget.FlyFishDataSetLdr" 
- 		      toolTipGen="org.flymine.web.widget.FlyFishToolTipGenerator" urlGen="org.flymine.web.widget.FlyFishGraphURLGenerator" 
+ 		      toolTipGen="org.intermine.web.logic.widget.ToolTipGenerator" urlGen="org.flymine.web.widget.FlyFishGraphURLGenerator" 
  		      description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;fly-FISH&lt;/a&gt;.  Note that not all genes have yet been assayed by &lt;a href=&quot;http://www.utoronto.ca/krause/&quot; target=&quot;_new&quot;&gt;fly-FISH&lt;/a&gt;"
-		      graphType="StackedBarChart" /> 
+		      graphType="BarChart" /> 
       
       <bagtabledisplayer title="Pathway Information (KEGG)" type="Pathway" collectionName="pathways" urlGen="org.intermine.bio.web.widget.PathwayURLQuery" 
 	 	         description="Most common &lt;a href=&quot;http://www.genome.jp/kegg/&quot; target=&quot;_new&quot;&gt;KEGG pathways&lt;/a&gt; for this list." /> 
