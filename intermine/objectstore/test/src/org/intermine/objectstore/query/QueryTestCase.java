@@ -120,6 +120,9 @@ public class QueryTestCase extends OneTimeTestCase
                 checkQueryNodes(msg + ": QueryClasses of QueryCollectionPathExpressions don't match", pe1.getQueryClass(), pe2.getQueryClass(), q1, q2);
                 checkObjects(msg + ": Qopes of QueryCollectionPathExpressions don't match", pe1.getQope(), pe2.getQope(), q1, q2);
                 assertEquals(msg + ": QueryCollectionPathExpression collectionNames are not equal", pe1.getCollectionName(), pe2.getCollectionName());
+                checkQueryClassLists(msg + ": QueryCollectionPathExpression SELECT lists are not equal", pe1.getSelect(), pe2.getSelect(), q1, q2);
+                checkQueryClassLists(msg + ": QueryCollectionPathExpression FROM lists are not equal", pe1.getFrom(), pe2.getFrom(), q1, q2);
+                checkConstraints(msg + ": QueryCollectionPathExpression constraints are not equal", pe1.getConstraint(), pe2.getConstraint(), q1, q2);
             } else {
                 fail(msg + ": QueryCollectionPathExpression does not match " + qc2.getClass().getName());
             }

@@ -257,6 +257,7 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("FieldPathExpression2", new IqlQuery("SELECT a1_, a1_.department.company.address.address(DEF 'Nowhere') AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
         results.put("CollectionPathExpression", new IqlQuery("SELECT a1_, a1_.employees AS a2_ FROM org.intermine.model.testmodel.Department AS a1_", null));
         results.put("CollectionPathExpression2", new IqlQuery("SELECT a1_, a1_.department.employees AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
+        results.put("CollectionPathExpression3", new IqlQuery("SELECT a1_, a1_.departments(SELECT default, default.employees) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("ForeignKey", new IqlQuery("SELECT a1_, a1_.CEO.id(DEF null) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("ForeignKey2", new IqlQuery("SELECT a1_, a1_.CEO.id(DEF 3) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("OrSubquery", new IqlQuery("SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE (a1_ IN (SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_) OR a1_ IN (SELECT a1_ FROM org.intermine.model.testmodel.Broke AS a1_))", null));

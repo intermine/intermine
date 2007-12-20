@@ -487,17 +487,20 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB2"), "Company Street, BVille" },
                              { data.get("EmployeeB3"), "Company Street, BVille" } };
         results.put("FieldPathExpression2", toList(r));
-        r = new Object[][] { { data.get("DepartmentA1"), new ArrayList(Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))) },
-                             { data.get("DepartmentB1"), new ArrayList(Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"))) },
+        r = new Object[][] { { data.get("DepartmentA1"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3")) },
+                             { data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2")) },
                              { data.get("DepartmentB2"), Collections.singletonList(data.get("EmployeeB3")) } };
         results.put("CollectionPathExpression", toList(r));
-        r = new Object[][] { { data.get("EmployeeA1"), new ArrayList(Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))) },
-                             { data.get("EmployeeA2"), new ArrayList(Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))) },
-                             { data.get("EmployeeA3"), new ArrayList(Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3"))) },
-                             { data.get("EmployeeB1"), new ArrayList(Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"))) },
-                             { data.get("EmployeeB2"), new ArrayList(Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"))) },
+        r = new Object[][] { { data.get("EmployeeA1"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3")) },
+                             { data.get("EmployeeA2"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3")) },
+                             { data.get("EmployeeA3"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3")) },
+                             { data.get("EmployeeB1"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2")) },
+                             { data.get("EmployeeB2"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2")) },
                              { data.get("EmployeeB3"), Collections.singletonList(data.get("EmployeeB3")) } };
         results.put("CollectionPathExpression2", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), Collections.singletonList(Arrays.asList(data.get("DepartmentA1"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3")))) },
+                             { data.get("CompanyB"), Arrays.asList(Arrays.asList(data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"))), Arrays.asList(data.get("DepartmentB2"), Collections.singletonList(data.get("EmployeeB3")))) } };
+        results.put("CollectionPathExpression3", toList(r));
         r = new Object[][] { { data.get("CompanyA"), null},
                              { data.get("CompanyB"), ((Employee) data.get("EmployeeB1")).getId()} };
         results.put("ForeignKey", toList(r));
