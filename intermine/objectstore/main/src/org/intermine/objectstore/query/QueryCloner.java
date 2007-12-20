@@ -184,6 +184,7 @@ public class QueryCloner
                     throw new NullPointerException("oldQc: " + origC.getQueryClass() + ", fromElementMap: " + fromElementMap);
                 }
             }
+            retval.setSingleton(origC.isSingleton());
             Map subFromElementMap = new HashMap();
             for (FromElement origFrom : origC.getFrom()) {
                 FromElement newFrom = null;

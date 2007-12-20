@@ -293,6 +293,9 @@ public class IqlQuery
                 boolean needSpace = false;
                 if (!col.getSelect().isEmpty()) {
                     retval.append("SELECT ");
+                    if (col.isSingleton()) {
+                        retval.append("SINGLETON ");
+                    }
                     boolean needComma = false;
                     for (QuerySelectable selectable : col.getSelect()) {
                         if (needComma) {
@@ -314,7 +317,20 @@ public class IqlQuery
                             retval.append(", ");
                         }
                         needComma = true;
-                        retval.append(nodeToString(subQ, node, parameters));
+                        String classAlias = escapeReservedWord((String) subQ.getAliases()
+                                .get(node));
+                        if (node instanceof QueryClass) {
+                            retval.append(node.toString())
+                                .append(classAlias == null ? "" : " AS " + classAlias);
+                        } else if (node instanceof QueryClassBag) {
+                            retval.append(node.toString())
+                                .append(classAlias == null ? "" : " AS " + classAlias);
+                        } else {
+                            retval.append("(")
+                                .append(node.toString())
+                                .append(")")
+                                .append(classAlias == null ? "" : " AS " + classAlias);
+                        }
                     }
                     needSpace = true;
                 }

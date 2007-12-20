@@ -123,6 +123,7 @@ public class QueryTestCase extends OneTimeTestCase
                 checkQueryClassLists(msg + ": QueryCollectionPathExpression SELECT lists are not equal", pe1.getSelect(), pe2.getSelect(), q1, q2);
                 checkQueryClassLists(msg + ": QueryCollectionPathExpression FROM lists are not equal", pe1.getFrom(), pe2.getFrom(), q1, q2);
                 checkConstraints(msg + ": QueryCollectionPathExpression constraints are not equal", pe1.getConstraint(), pe2.getConstraint(), q1, q2);
+                assertEquals(msg + ": QueryCollectionPathExpression isSingleton is not equal", pe1.isSingleton(), pe2.isSingleton());
             } else {
                 fail(msg + ": QueryCollectionPathExpression does not match " + qc2.getClass().getName());
             }
