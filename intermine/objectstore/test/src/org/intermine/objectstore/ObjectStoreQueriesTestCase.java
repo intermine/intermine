@@ -1666,6 +1666,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryClass qc2 = new QueryClass(Employee.class);
         qcpe.addFrom(qc2);
         qcpe.addToSelect(qc2);
+        qcpe.setSingleton(true);
         qcpe.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcpe.getDefaultClass(), "employees"), ConstraintOp.CONTAINS, qc2));
         q.addToSelect(qcpe);
         q.setDistinct(false);

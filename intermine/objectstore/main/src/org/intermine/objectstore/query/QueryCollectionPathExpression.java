@@ -24,9 +24,7 @@ import org.intermine.util.TypeUtil;
  * to reference further into this collection, this class contains many of the features of Query.
  * That is, you can add QueryFields and QueryPathExpressions to the SELECT list. You can also add
  * QueryClasses to the FROM list and constraints to the WHERE clause. A default QueryClass
- * corresponding to the collection is available from the getDefaultClass() method. If the SELECT
- * list is left empty, then the results will be Collections of objects - otherwise, they will be
- * Collections of ResultsRows.
+ * corresponding to the collection is available from the getDefaultClass() method.
  *
  * @author Matthew Wakeling
  */
@@ -40,6 +38,7 @@ public class QueryCollectionPathExpression implements QueryPathExpression
     private List<QuerySelectable> selectList = new ArrayList();
     private List<FromElement> additionalFromList = new ArrayList();
     private Constraint constraint = null;
+    private boolean singleton = false;
 
     /**
      * Constructs a QueryCollectionPathExpression representing a collection reference from the given
@@ -151,6 +150,10 @@ public class QueryCollectionPathExpression implements QueryPathExpression
      * @param selectable a QuerySelectable
      */
     public void addToSelect(QuerySelectable selectable) {
+        if (singleton && (selectList.size() >= 1)) {
+            throw new IllegalArgumentException("Cannot have a singleton collection with more than"
+                    + " one element on the SELECT list");
+        }
         selectList.add(selectable);
     }
 
@@ -209,8 +212,11 @@ public class QueryCollectionPathExpression implements QueryPathExpression
     public Query getQuery(Collection<InterMineObject> bag) {
         Query q = new Query();
         QueryClassBag qcb = new QueryClassBag(qc == null ? qope.getType() : qc.getType(), bag);
-        q.addFrom(qcb);
+        q.addFrom(qcb, "bag");
         q.addFrom(defaultClass, "default");
+        for (FromElement node : additionalFromList) {
+            q.addFrom(node);
+        }
         q.addToSelect(new QueryField(qcb));
         if (selectList.isEmpty()) {
             q.addToSelect(defaultClass);
@@ -218,9 +224,6 @@ public class QueryCollectionPathExpression implements QueryPathExpression
             for (QuerySelectable selectable : selectList) {
                 q.addToSelect(selectable);
             }
-        }
-        for (FromElement node : additionalFromList) {
-            q.addFrom(node);
         }
         if (constraint == null) {
             q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
@@ -237,11 +240,25 @@ public class QueryCollectionPathExpression implements QueryPathExpression
     }
 
     /**
-     * Returns true if the SELECT list is empty
+     * Returns true if the SELECT list is empty or if singleton results are requested.
      *
      * @return a boolean
      */
     public boolean isSingleton() {
-        return selectList.isEmpty();
+        return singleton || selectList.isEmpty();
+    }
+
+    /**
+     * Sets whether the collection should be a singleton collection, or whether it should be a
+     * collection of ResultRows.
+     *
+     * @param singleton true if the collection should be singletons
+     */
+    public void setSingleton(boolean singleton) {
+        if (singleton && (selectList.size() > 1)) {
+            throw new IllegalArgumentException("Cannot have a singleton collection with more than"
+                    + " one element on the SELECT list");
+        }
+        this.singleton = singleton;
     }
 }
