@@ -272,6 +272,10 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("CollectionPathExpression2", Collections.singleton("InterMineObject"));
         results.put("CollectionPathExpression3", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
         results2.put("CollectionPathExpression3", Collections.singleton("InterMineObject"));
+        results.put("CollectionPathExpression4", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
+        results2.put("CollectionPathExpression4", Collections.singleton("InterMineObject"));
+        results.put("CollectionPathExpression5", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
+        results2.put("CollectionPathExpression5", Collections.singleton("InterMineObject"));
         results.put("ForeignKey", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
         results2.put("ForeignKey", Collections.singleton("InterMineObject"));
         results.put("ForeignKey2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.CEOId AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
