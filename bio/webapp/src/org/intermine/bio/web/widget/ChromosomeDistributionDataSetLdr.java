@@ -140,11 +140,11 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 String chromosome = (String) iterator.next();
                 dataSet.addValue((resultsTable.get(chromosome))[0], "Actual", chromosome);
                 dataSet.addValue((resultsTable.get(chromosome))[1], "Expected", chromosome);
-                Object[] geneSeriesArray = new Object[2];              
-                geneSeriesArray[0] = geneMap.get(chromosome);   // actual
+                Object[] objectSeriesArray = new Object[2];              
+                objectSeriesArray[0] = geneMap.get(chromosome);   // actual
                 // expected shouldn't be a link
                 // geneSeriesArray[1] = geneMap.get(chromosome);   // expected
-                objectCategoryArray[i] = geneSeriesArray;
+                objectCategoryArray[i] = objectSeriesArray;
                 i++;
             }
 
