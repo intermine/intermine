@@ -348,6 +348,10 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("CollectionPathExpression2", new HashSet(Arrays.asList("InterMineObject", "Employee", "Department")));
         results.put("CollectionPathExpression3", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("CollectionPathExpression3", new HashSet(Arrays.asList("InterMineObject", "Company", "Department", "Employee")));
+        results.put("CollectionPathExpression4", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("CollectionPathExpression4", new HashSet(Arrays.asList("InterMineObject", "Company", "Department", "Employee")));
+        results.put("CollectionPathExpression5", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("CollectionPathExpression5", new HashSet(Arrays.asList("InterMineObject", "Company", "Department")));
         results.put("ForeignKey", "SELECT a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("ForeignKey", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
         results.put("ForeignKey2", "SELECT a1_.id AS a1_id, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");

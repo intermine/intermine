@@ -239,6 +239,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("CollectionPathExpression", collectionPathExpression());
         queries.put("CollectionPathExpression2", collectionPathExpression2());
         queries.put("CollectionPathExpression3", collectionPathExpression3());
+        queries.put("CollectionPathExpression4", collectionPathExpression4());
+        queries.put("CollectionPathExpression5", collectionPathExpression5());
         queries.put("ForeignKey", foreignKey());
         queries.put("ForeignKey2", foreignKey2());
         queries.put("OrSubquery", orSubquery());
@@ -1647,6 +1649,39 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         QueryCollectionPathExpression qcpe = new QueryCollectionPathExpression(qc, "departments");
         qcpe.addToSelect(qcpe.getDefaultClass());
         qcpe.addToSelect(new QueryCollectionPathExpression(qcpe.getDefaultClass(), "employees"));
+        q.addToSelect(qcpe);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.departments(SELECT a1_ FROM Employee AS a1_ WHERE default.employees CONTAINS a1_) AS a2_ FROM Company AS a1_
+     */
+    public static Query collectionPathExpression4() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryCollectionPathExpression qcpe = new QueryCollectionPathExpression(qc, "departments");
+        QueryClass qc2 = new QueryClass(Employee.class);
+        qcpe.addFrom(qc2);
+        qcpe.addToSelect(qc2);
+        qcpe.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcpe.getDefaultClass(), "employees"), ConstraintOp.CONTAINS, qc2));
+        q.addToSelect(qcpe);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.departments(WHERE default.name LIKE '%1') AS a2_ FROM Company AS a1_
+     */
+    public static Query collectionPathExpression5() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryCollectionPathExpression qcpe = new QueryCollectionPathExpression(qc, "departments");
+        qcpe.setConstraint(new SimpleConstraint(new QueryField(qcpe.getDefaultClass(), "name"), ConstraintOp.MATCHES, new QueryValue("%1")));
         q.addToSelect(qcpe);
         q.setDistinct(false);
         return q;

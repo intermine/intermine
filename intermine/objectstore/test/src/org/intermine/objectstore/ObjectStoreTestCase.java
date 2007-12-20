@@ -501,6 +501,12 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("CompanyA"), Collections.singletonList(Arrays.asList(data.get("DepartmentA1"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3")))) },
                              { data.get("CompanyB"), Arrays.asList(Arrays.asList(data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"))), Arrays.asList(data.get("DepartmentB2"), Collections.singletonList(data.get("EmployeeB3")))) } };
         results.put("CollectionPathExpression3", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), Arrays.asList(data.get("EmployeeA1"), data.get("EmployeeA2"), data.get("EmployeeA3")) },
+                             { data.get("CompanyB"), Arrays.asList(data.get("EmployeeB1"), data.get("EmployeeB2"), data.get("EmployeeB3")) } };
+        results.put("CollectionPathExpression4", toList(r));
+        r = new Object[][] { { data.get("CompanyA"), Collections.singletonList(data.get("DepartmentA1")) },
+                             { data.get("CompanyB"), Collections.singletonList(data.get("DepartmentB1")) } };
+        results.put("CollectionPathExpression5", toList(r));
         r = new Object[][] { { data.get("CompanyA"), null},
                              { data.get("CompanyB"), ((Employee) data.get("EmployeeB1")).getId()} };
         results.put("ForeignKey", toList(r));

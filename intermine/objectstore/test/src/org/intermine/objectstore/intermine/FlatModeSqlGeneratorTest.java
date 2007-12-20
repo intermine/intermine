@@ -221,6 +221,10 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("CollectionPathExpression2", new HashSet(Arrays.asList("Employee", "Department")));
         results.put("CollectionPathExpression3", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("CollectionPathExpression3", new HashSet(Arrays.asList("Company", "Department", "Employee")));
+        results.put("CollectionPathExpression4", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("CollectionPathExpression4", new HashSet(Arrays.asList("Company", "Department", "Employee")));
+        results.put("CollectionPathExpression5", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("CollectionPathExpression5", new HashSet(Arrays.asList("Company", "Department")));
         results.put("ForeignKey", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("ForeignKey", Collections.singleton("Company"));
         results.put("ForeignKey2", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a1_.CEOId AS a2_ FROM Company AS a1_ ORDER BY a1_.id");
