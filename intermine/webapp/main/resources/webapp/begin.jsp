@@ -70,6 +70,7 @@
             <tiles:put name="tags" value="im:frontpage"/>
             <tiles:put name="showDescriptions" value="false"/>
             <tiles:put name="showSearchBox" value="false"/>
+            <tiles:put name="showCount" value="false"/>
           </tiles:insert>
         </div>
         <im:useTransparentImage src="/theme/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" link="/${WEB_PROPERTIES['webapp.path']}/templates.do" height="22px" width="153px" floatValue="right" breakFloat="true" />
@@ -91,6 +92,7 @@
           <tiles:put name="scope" value="all"/>
           <tiles:put name="tags" value="im:frontpage"/>
           <tiles:put name="showSearchBox" value="false"/>
+          <tiles:put name="showCount" value="true"/>
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         </div>
