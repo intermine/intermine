@@ -27,11 +27,16 @@
     <property name="fasta.synonymSource" value=""/>
   </target>
 
+  <target name="-init-loader-classname" unless="fasta.synonymSource">
+    <!-- set the default -->
+    <property name="fasta.loaderClassName"
+              value="org.intermine.bio.dataconversion.FastaLoaderTask"/>
+  </target>
 
   <!-- NOTE: we can do this with dynamic properties -->
   <target name="load" depends="-init-suffix, -init-attribute, -init-synonym, init, -init-deps">
     <taskdef name="read-fasta"
-      classname="org.intermine.bio.dataconversion.FastaLoaderTask"
+      classname="${fasta.loaderClassName}"
       classpathref="task.class.path"/>
     <read-fasta integrationWriterAlias="integration.production"
                 sourceName="${source.name}"
