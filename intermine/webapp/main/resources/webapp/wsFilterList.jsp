@@ -23,6 +23,7 @@
 <tiles:importAttribute name="limit" ignore="true"/>
 <tiles:importAttribute name="initialFilterText" ignore="true"/>
 <tiles:importAttribute name="loginMessageKey" ignore="true"/>
+<tiles:importAttribute name="showCount" ignore="true"/>
 
 <html:xhtml/>
 
@@ -140,6 +141,7 @@
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
   <tiles:put name="delayDisplay" value="${!empty initialFilterText}"/>
   <tiles:put name="loginMessageKey" value="${loginMessageKey}"/>
+  <tiles:put name="showCount" value="${showCount}"/>
 </tiles:insert>
 
  <script type="text/javascript">

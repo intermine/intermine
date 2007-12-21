@@ -39,6 +39,7 @@
   <tiles:put name="height" value="${height}"/>
   <tiles:put name="showSearchBox" value="${showSearchBox}"/>
   <tiles:put name="loginMessageKey" value="lists.notlogged"/>
+  <tiles:put name="showCount" value="true"/>
 </tiles:insert>
 <html:link anchor="liststop" action="bag"><img src="images/go_to_top.png" title="Click here to jump to the top of the page"/>top</html:link>
 <c:if test="${(fn:length(PROFILE.savedBags) > 0) && (scope == 'user')}">

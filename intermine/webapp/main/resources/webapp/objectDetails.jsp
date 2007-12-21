@@ -271,6 +271,7 @@
             <tiles:put name="scope" value="all"/>
             <tiles:put name="showDescriptions" value="true"/>
             <tiles:put name="showSearchBox" value="false"/>
+            <tiles:put name="showCount" value="true"/>
           </tiles:insert>
   	</div>
  
