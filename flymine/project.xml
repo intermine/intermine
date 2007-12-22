@@ -180,7 +180,7 @@
     <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.FivePrimeUTR"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.ThreePrimeUTR"/>
       <property name="fasta.classAttribute" value="identifier"/>
       <property name="fasta.includes" value="dmel-all-three_prime_UTR-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
