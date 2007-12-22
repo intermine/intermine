@@ -27,7 +27,7 @@
     <property name="fasta.synonymSource" value=""/>
   </target>
 
-  <target name="-init-loader-classname" unless="fasta.synonymSource">
+  <target name="-init-loader-classname" unless="fasta.loaderClassName">
     <!-- set the default -->
     <property name="fasta.loaderClassName"
               value="org.intermine.bio.dataconversion.FastaLoaderTask"/>
