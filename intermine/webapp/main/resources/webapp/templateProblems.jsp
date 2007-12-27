@@ -6,13 +6,13 @@
 
 <html:xhtml/>
 
-<c:if test="${param.type == 'user'}">
+<c:if test="${param.scope == 'user'}">
   <c:set var="template" value="${PROFILE.savedTemplates[param.name]}"/>
 </c:if>
-<c:if test="${param.type == 'global'}">
+<c:if test="${param.scope == 'global'}">
   <c:set var="template" value="${GLOBAL_TEMPLATE_QUERIES[param.name]}"/>
 </c:if>
-<c:if test="${param.type == 'saved'}">
+<c:if test="${param.scope == 'saved'}">
   <c:set var="template" value="${PROFILE.savedQueries[param.name].pathQuery}"/>
 </c:if>
 
