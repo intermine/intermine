@@ -91,10 +91,10 @@
     </source>
 	</sources>
   <post-processing>
-    <post-process name="create-utr-references" dump="true"/>
+    <post-process name="create-utr-references"/>
     <post-process name="create-references" dump="true"/>
     <post-process name="create-intergenic-region-features"/>
-    <post-process name="create-overlap-relations-flymine" dump="true"/>
+    <post-process name="create-overlap-relations-flymine"/>
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
   </post-processing>
