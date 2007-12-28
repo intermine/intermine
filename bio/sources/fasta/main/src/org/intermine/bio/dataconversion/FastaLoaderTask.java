@@ -138,6 +138,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     /**
      * Process and load all of the fasta files.
      */
+    @Override
     public void process() {
         long start = System.currentTimeMillis();
         try {
@@ -157,6 +158,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     /**
      * @throws BuildException if an ObjectStore method fails
      */
+    @Override
     public void execute() throws BuildException {
         if (fastaTaxonId == null) {
             throw new RuntimeException("fastaTaxonId needs to be set");
@@ -181,6 +183,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param file the File to process.
      * @throws BuildException if the is a problem
      */
+    @Override
     public void processFile(File file) throws BuildException {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -231,14 +234,14 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     private void processSequence(Organism organism, Sequence bioJavaSequence)
         throws ObjectStoreException {
-        Class sequenceClass = org.flymine.model.genomic.Sequence.class;
+        Class<?> sequenceClass = org.flymine.model.genomic.Sequence.class;
         org.flymine.model.genomic.Sequence flymineSequence =
             (org.flymine.model.genomic.Sequence) getDirectDataLoader().createObject(sequenceClass);
 
         flymineSequence.setResidues(bioJavaSequence.seqString());
         flymineSequence.setLength(bioJavaSequence.length());
 
-        Class c;
+        Class<?> c;
         try {
             c = Class.forName(className);
         } catch (ClassNotFoundException e1) {
@@ -269,7 +272,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
             synonym.setValue(attributeValue);
             synonym.setType(classAttribute);
-            synonym.setSubject((BioEntity) imo);
+            synonym.setSubject(imo);
             synonym.setSource(getDataSource());
         }
 
@@ -293,14 +296,14 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param flymineSequence the FlyMine Sequence
      * @param interMineObject the object that references the flymineSequence
      * @param organism the Organism object for the new InterMineObject
-     * @param dataSource the DataSource object
+     * @param dataSrc the DataSource object
      * @throws ObjectStoreException if a store() fails during processing
      */
     @SuppressWarnings("unused")
     protected void extraProcessing(Sequence bioJavaSequence,
                                    org.flymine.model.genomic.Sequence flymineSequence,
                                    BioEntity interMineObject, Organism organism,
-                                   DataSource dataSource)
+                                   DataSource dataSrc)
         throws ObjectStoreException {
         // default - no extra processing
     }
