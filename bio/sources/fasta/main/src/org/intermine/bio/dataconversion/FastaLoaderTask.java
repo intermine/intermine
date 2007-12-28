@@ -19,6 +19,7 @@ import org.intermine.util.TypeUtil;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.DataSource;
 import org.flymine.model.genomic.Organism;
+import org.flymine.model.genomic.Synonym;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -115,6 +116,15 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     public void setClassAttribute(String classAttribute) {
         this.classAttribute = classAttribute;
+    }
+
+    /**
+     * If a value is specified a Synonym will be created for the feature with value of the
+     *
+     * @param synonymSource
+     */
+    public void setSynonymSource(String synonymSource) {
+        this.synonymSource = synonymSource;
     }
 
     /**
@@ -238,6 +248,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         BioEntity imo = (BioEntity) getDirectDataLoader().createObject(c);
 
         String attributeValue = getIdentifier(bioJavaSequence);
+
         try {
             TypeUtil.setFieldValue(imo, classAttribute, attributeValue);
         } catch (Exception e) {
@@ -253,10 +264,23 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
         extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSource());
 
+        Synonym synonym = null;
+        if (synonymSource != null && !synonymSource.equals("")) {
+            synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
+            synonym.setValue(attributeValue);
+            synonym.setType(classAttribute);
+            synonym.setSubject((BioEntity) imo);
+            synonym.setSource(getDataSource());
+        }
+
         try {
             getDirectDataLoader().store(flymineSequence);
             getDirectDataLoader().store(imo);
             storeCount += 2;
+            if (synonym != null) {
+                getDirectDataLoader().store(synonym);
+                storeCount += 1;
+            }
         } catch (ObjectStoreException e) {
             throw new BuildException("store failed", e);
         }
@@ -264,7 +288,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     /**
      * Do any extra processing needed for this record (extra attributes, objects, references etc.)
-     * This method is called before the new objects are store
+     * This method is called before the new objects are stored
      * @param bioJavaSequence the BioJava Sequence
      * @param flymineSequence the FlyMine Sequence
      * @param interMineObject the object that references the flymineSequence
@@ -294,7 +318,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private DataSource getDataSource() throws ObjectStoreException {
         if (dataSource == null) {
             dataSource = (DataSource) getDirectDataLoader().createObject(DataSource.class);
-            dataSource.setName(sourceName);
+            dataSource.setName(synonymSource);
             getDirectDataLoader().store(dataSource);
             storeCount += 1;
         }
