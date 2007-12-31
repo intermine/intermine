@@ -129,7 +129,8 @@ Couldn't find ${build.properties.file}
     <tomcat-undeploy url="${webapp.deploy.url}/manager"
                      username="${webapp.manager}" 
                      password="${webapp.password}"
-                     path="/${webapp.path}"/>
+                     path="/${webapp.path}"
+                     failOnError="false"/>
   </target>
   
   <!-- PRECOMPUTING -->
