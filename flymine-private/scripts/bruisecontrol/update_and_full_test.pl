@@ -4,7 +4,8 @@ use strict;
 
 use Date::Manip;
 use File::Path;
-use Email::Simple;
+use Email::Send;
+use File::Copy;
 
 my $debug = 0;
 
@@ -15,6 +16,8 @@ if (@ARGV > 0) {
     die "unknown args: @ARGV\n";
   }
 }
+
+umask 0002;
 
 # time in minutes between updates
 my $UPDATE_TIME = 10;
@@ -128,8 +131,6 @@ if (!defined $local_version) {
   die "can't find the local revision in the output of svn info\n";
 }
 
-print "local version: $local_version\n";
-
 my @blame = ('kmr');
 
 {
@@ -155,7 +156,7 @@ if (@blame == 0) {
 
 print "BLAME = @blame\n";
 
-mkpath ($ARCHIVE_TO, {verbose => 1});
+mkpath ($ARCHIVE_TO, 1, 0775);
 
 my $ANT_LOG_NAME = "$ARCHIVE_TO/ant_log.txt";
 open my $ant_log, '>', $ANT_LOG_NAME or die "can't open log file ($ANT_LOG_NAME): $!\n";
@@ -163,7 +164,7 @@ open my $ant_log, '>', $ANT_LOG_NAME or die "can't open log file ($ANT_LOG_NAME)
 sub log_and_print
 {
   my $message = shift;
-  print $message, "\n";
+  print $message, "\n" if $debug;
   print $ant_log $message, "\n";
 }
 
@@ -204,7 +205,7 @@ sub pipe_to_log
       print $ant_log $line;
     }
 
-    close $pipe or die "can't close pipe to $command: $!\n";
+    close $pipe or warn "warning while closing pipe to $command: $!\n";
   }
 
   return $?;
@@ -219,21 +220,21 @@ for my $test_project (@TEST_PROJECTS) {
   pipe_to_log ("createdb $test_project");
 }
 
-# the "true" is beacuse the dropdb will fail if /intermine-query webapp exists
+# the "true" is because the dropdb will fail if /intermine-query webapp exists
 pipe_to_log("dropdb testmodel-webapp; createdb testmodel-webapp; true");
 pipe_to_log("dropdb testmodel-webapp-userprofile; createdb testmodel-webapp-userprofile; true");
 
 
 log_and_print ("testmodel build-db ...");
-pipe_to_log("cd testmodel/dbmodel; ant build-db");
+my $build_result = pipe_to_log("cd testmodel/dbmodel; ant build-db");
 
 # intermine tests
 
 log_and_print ("intermine fulltest ...");
-my $build_result = 0; #pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND fulltest");
+pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND fulltest");
 
 log_and_print ("intermine test-report ...");
-#pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND test-report");
+pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND test-report");
 
 # testmodel webapp tests
 
@@ -244,38 +245,60 @@ pipe_to_log(["(cd $TRUNK_DIR/testmodel/dbmodel; $ANT_COMMAND build-db)",
 
 # bio tests
 
-# pipe_to_log(["(cd dbmodel; $ANT_COMMAND build-db)",
-#             "cd $TRUNK_DIR/bio/test-all; ant clean",
-#             "cd $TRUNK_DIR/bio/test-all; date; $ANT_COMMAND fulltest",
-#             "cd $TRUNK_DIR/bio/test-all; date; $ANT_COMMAND test-report"]);
-
+pipe_to_log(["cd $TRUNK_DIR/bio/test-all/dbmodel; $ANT_COMMAND build-db",
+             "cd $TRUNK_DIR/bio/test-all; $ANT_COMMAND clean",
+             "cd $TRUNK_DIR/bio/test-all; date; $ANT_COMMAND fulltest",
+             "cd $TRUNK_DIR/bio/test-all; date; $ANT_COMMAND test-report"]);
 
 my @junit_failures = ();
 
 close $ant_log or die "can't close $ANT_LOG_NAME: $!\n";
 
-open $ant_log, '>', $ANT_LOG_NAME or die "can't open log file ($ANT_LOG_NAME): $!\n";
+open $ant_log, $ANT_LOG_NAME or die "can't open log file ($ANT_LOG_NAME): $!\n";
 open my $junit_fail_file, ">$JUNIT_FAIL_FILE_NAME";
 
 my $build_failed = 0;
 my $test_failures = 0;
 
+my @failure_lines = ();
+
 {
+  my @prev_lines = ();
+  my $failure_line_count = 0;
   while (my $ant_log_line = <$ant_log>) {
     if ($ant_log_line =~ /\[junit\].*FAILED/ ) {
-      print $ant_log_line;
+      print $ant_log_line if $debug;
       print $junit_fail_file $ant_log_line;
       push @junit_failures, $ant_log_line;
       ++$test_failures;
     } else {
       if ($ant_log_line =~ /BUILD FAILED/) {
+        push @failure_lines, @prev_lines;
+        $failure_line_count = 50;
         $build_failed = 1;
       }
     }
+
+    if ($failure_line_count > 0) {
+      push @failure_lines, $ant_log_line;
+      --$failure_line_count;
+    }
+
+    if (@prev_lines > 20) {
+      shift @prev_lines;
+    }
+    push @prev_lines, $ant_log_line;
   }
 }
 
+close $ant_log or die "can't close $ANT_LOG_NAME: $!\n";
+
+open $ant_log, '>>', $ANT_LOG_NAME or die "can't open log file ($ANT_LOG_NAME): $!\n";
+
 my $checkstyle_exitcode = pipe_to_log("cd $BUILD_PROJ; ant checkstyle");
+
+close $ant_log or die "can't close $ANT_LOG_NAME: $!\n";
+
 
 if ($build_failed) {
   print "*** build failed - see log for errors ***\n";
@@ -296,7 +319,7 @@ if ($checkstyle_exitcode) {
 }
 
 if (-f "$BUILD_PROJ/build/test/results/index.html") {
-  mkpath "$ARCHIVE_TO/junit" or die "can't mkpath $ARCHIVE_TO/junit: $!\n";
+  mkpath "$ARCHIVE_TO/junit", 1, 0775 or die "can't mkpath $ARCHIVE_TO/junit: $!\n";
   system "cp -r $BUILD_PROJ/build/test/results/* $ARCHIVE_TO/junit/";
 } else {
   print "There don't seem to be any intermine results\n";
@@ -304,7 +327,7 @@ if (-f "$BUILD_PROJ/build/test/results/index.html") {
 
 my $testmodel_results_dir = "$BUILD_PROJ/../../testmodel/webapp/test/build/test/results";
 if (-f "$testmodel_results_dir/index.html") {
-  mkpath "$ARCHIVE_TO/junit_testmodel" or die "can't mkpath $ARCHIVE_TO/junit_testmodel: $!\n";
+  mkpath "$ARCHIVE_TO/junit_testmodel", 1, 0775 or die "can't mkpath $ARCHIVE_TO/junit_testmodel: $!\n";
   system "cp -r $testmodel_results_dir/* $ARCHIVE_TO/junit_testmodel";
 } else {
   print "There don't seem to be any testmodel results\n";
@@ -312,14 +335,14 @@ if (-f "$testmodel_results_dir/index.html") {
 
 my $bio_results_dir = "$BUILD_PROJ/../../bio/test-all/build/test/results";
 if (-f "$bio_results_dir/index.html") {
-  mkpath "$ARCHIVE_TO/junit_bio" or die "can't mkpath $ARCHIVE_TO/junit_bio: $!\n";
+  mkpath "$ARCHIVE_TO/junit_bio", 1, 0775 or die "can't mkpath $ARCHIVE_TO/junit_bio: $!\n";
   system "cp -r $bio_results_dir/* $ARCHIVE_TO/junit_bio";
 } else {
   print "There don't seem to be any bio results\n";
 }
 
 if (-f "$BUILD_PROJ/build/checkstyle/index.html") {
-  mkpath "$ARCHIVE_TO/checkstyle" or die "can't mkpath $ARCHIVE_TO/checkstyle: $!\n";
+  mkpath "$ARCHIVE_TO/checkstyle", 1, 0775 or die "can't mkpath $ARCHIVE_TO/checkstyle: $!\n";
   system "cp -r $BUILD_PROJ/build/checkstyle/* $ARCHIVE_TO/checkstyle/";
 } else {
   print "There don't seem to be any checkstyle results\n";
@@ -337,9 +360,17 @@ if ($build_failed) {
   }
 }
 
+my @previous_junit_failures = ();
+
+open my $prev_junit_failures, '<', $PREVIOUS_JUNIT_FAIL_FILE;
+
+@previous_junit_failures = <$prev_junit_failures>;
+
+close $prev_junit_failures or die "can't close $PREVIOUS_JUNIT_FAIL_FILE\n";
+
 my $recipients = join ', ', @blame;
 
-my $message = <<"__MESSAGE__";
+my $message = <<"__START__";
 To: $recipients
 From: Bruise Control <$BRUISER_EMAIL>
 Subject: $subject
@@ -352,40 +383,50 @@ Ant output: $URL_PREFIX/$TIME_STAMP/ant_log.txt
 Last update:
 $update_output
 
+__START__
+
+if (@failure_lines > 0) {
+  $message .= <<"__BUILD_FAILURES__";
+
+------------------------------------------------------------
+Build failures:
+ @failure_lines
+__BUILD_FAILURES__
+}
+
+$message .= <<"__MESSAGE_MIDDLE__";
 ------------------------------------------------------------
 Test failures now:
 
-@junit_failures
+ @junit_failures
 
 ------------------------------------------------------------
 Previous test failures:
 
-   @ previous_junit_failures
+ @previous_junit_failures
 
 ------------------------------------------------------------
 Test differences:
-__MESSAGE__
+
+__MESSAGE_MIDDLE__
 
 {
-  open my $diff_pipe, "diff $PREVIOUS_JUNIT_FAIL_FILE $JUNIT_FAIL_FILE_NAME"
-    or die "can't open diff pipe\n";
+  open my $diff_pipe, "diff $PREVIOUS_JUNIT_FAIL_FILE $JUNIT_FAIL_FILE_NAME|"
+    or die "can't open diff pipe: $!\n";
 
   while (my $diff_line = <$diff_pipe>) {
     $message .= $diff_line;
   }
 
-  close $diff_pipe or die "can't close diff pipe\n";
+  close $diff_pipe or warn "can't close diff pipe: $!\n";
 }
 
 my $sender = Email::Send->new({mailer => 'SMTP'});
 $sender->mailer_args([Host => 'mail.flymine.org']);
 $sender->send($message);
 
-# Update previous failures file
-#cat $ARCHIVE_TO/junit_failures.txt > $JUNIT_FAIL_FILE
+copy($JUNIT_FAIL_FILE_NAME, $PREVIOUS_JUNIT_FAIL_FILE);
 
 print "*** Finished build $TIME_STAMP at ", now(), " ***\n";
-
-close $ant_log or die "can't close $ANT_LOG_NAME: $!\n";
 
 unlink $RUNNING_FILE or die "can't unlink $RUNNING_FILE: $!\n";
