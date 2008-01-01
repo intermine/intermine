@@ -129,7 +129,7 @@ if (!defined $local_version) {
   die "can't find the local revision in the output of svn info\n";
 }
 
-my @blame = ('kmr');
+my @blame = ();
 
 {
   warn "svn log -r $local_version:HEAD\n";
