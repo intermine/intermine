@@ -68,8 +68,6 @@ my $updates_available = 0;
   close $svn_status or die "couldn't close pipe to svn: $!\n";
 }
 
-$updates_available = 1;   # XXX
-
 if (!$updates_available) {
   print "*** ", now(), " no updates in repository ***\n";
   exit(0);
