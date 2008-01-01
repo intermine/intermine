@@ -274,7 +274,7 @@ my @failure_lines = ();
     } else {
       if ($ant_log_line =~ /BUILD FAILED/) {
         push @failure_lines, @prev_lines;
-        $failure_line_count = 50;
+        $failure_line_count = 10;
         $build_failed = 1;
       }
     }
