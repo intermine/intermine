@@ -173,15 +173,15 @@ log_and_print ("updating ...");
 
 my $update_output = "";
 
-# {
-#   open my $svn_update, "svn update|" or die "couldn't open pipe to svn: $!\n";
+{
+  open my $svn_update, "svn update|" or die "couldn't open pipe to svn: $!\n";
 
-#   while (my $update_line = <$svn_update>) {
-#     $update_output .= $update_line;
-#   }
+  while (my $update_line = <$svn_update>) {
+    $update_output .= $update_line;
+  }
 
-#   close $svn_update or die "couldn't close pipe to svn: $!\n";
-# }
+  close $svn_update or die "couldn't close pipe to svn: $!\n";
+}
 
 sub pipe_to_log
 {
