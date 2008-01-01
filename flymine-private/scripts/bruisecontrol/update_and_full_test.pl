@@ -17,11 +17,14 @@ if (@ARGV > 0) {
   }
 }
 
+# make sure files and directories are readable by all
 umask 0002;
 
 # time in minutes between updates
 my $UPDATE_TIME = 10;
-my @TEST_PROJECTS = qw(bio-fulldata-test bio-test webservice-test unittest
+
+# databases to build-db
+my @DATABASES = qw(bio-fulldata-test bio-test webservice-test unittest
                        notxmltest truncunittest fulldatatest flatmodetest genomictest);
 
 my $RUNNING_FILE="$ENV{'HOME'}/public_html/tests/.running";
@@ -47,9 +50,9 @@ sub now
   return UnixDate("now", "%g");
 }
 
-if (-f "$RUNNING_FILE" ) {
+if (-f $RUNNING_FILE) {
   print now(), ": Not starting tests because $RUNNING_FILE exists\n";
-  exit
+  exit(0);
 }
 
 chdir $TRUNK_DIR or die "couldn't change to $TRUNK_DIR\n";
@@ -107,12 +110,8 @@ if ($diff < 60 * $UPDATE_TIME) {
   close $run_file or die "failed to close $RUNNING_FILE: $!\n";
 }
 
-# -------------------------------------------------------------------------- #
-# Find out who to blame when things go wrong
-# -------------------------------------------------------------------------- #
-
+# find the current checkout version
 my $local_version = undef;
-
 {
   open my $svn_info, "svn info|" or die "can't open pipe to svn: $!\n";
 
@@ -129,8 +128,8 @@ if (!defined $local_version) {
   die "can't find the local revision in the output of svn info\n";
 }
 
+# find who has made changes since the last run
 my @blame = ();
-
 {
   warn "svn log -r $local_version:HEAD\n";
   open my $svn_log, "svn log -r $local_version:HEAD|" or die "can't open pipe to svn: $!\n";
@@ -213,7 +212,7 @@ log_and_print ("cleaning ...");
 pipe_to_log("cd $BUILD_PROJ; ant clean-all");
 
 log_and_print ("creating databases ...");
-for my $test_project (@TEST_PROJECTS) {
+for my $test_project (@DATABASES) {
   pipe_to_log ("dropdb $test_project");
   pipe_to_log ("createdb $test_project");
 }
@@ -258,8 +257,8 @@ open my $junit_fail_file, ">$JUNIT_FAIL_FILE_NAME";
 my $build_failed = 0;
 my $test_failures = 0;
 
+# find build failures and their context
 my @failure_lines = ();
-
 {
   my @prev_lines = ();
   my $failure_line_count = 0;
