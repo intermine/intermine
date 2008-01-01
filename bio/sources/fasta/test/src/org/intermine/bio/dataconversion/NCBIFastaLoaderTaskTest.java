@@ -49,7 +49,7 @@ import org.apache.log4j.Logger;
 public class NCBIFastaLoaderTaskTest extends TestCase {
 
     private ObjectStoreWriter osw;
-    private static final Logger LOG = Logger.getLogger(FlyBaseUTRFastaLoaderTaskTest.class);
+    private static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTaskTest.class);
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
