@@ -1,5 +1,11 @@
 #!/usr/bin/perl -w
 
+# BruiseControl
+#
+# runs all intermine core, webapp and bio tests and sends a report of failing 
+# junit and checkstyle tests to those users who have checked in a file since 
+# the last run
+
 use strict;
 
 use Date::Manip;
@@ -22,7 +28,7 @@ $ENV{ANT_OPTS} = '-XX:MaxPermSize=200M -Xmx800M -server -XX:+UseParallelGC';
 # make sure files and directories are readable by all
 umask 0002;
 
-# 
+# wait at least this many minutes from the last check in before starting tests
 my $MIN_TIME_FROM_LAST_CHECKIN = 5;
 
 # databases to build-db
