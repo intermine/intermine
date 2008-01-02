@@ -401,7 +401,7 @@ Test differences:
 __DIFF_HEADER__
 
 {
-  open my $diff_pipe, "diff $PREVIOUS_JUNIT_FAIL_FILE $JUNIT_FAIL_FILE_NAME|"
+  open my $diff_pipe, "diff -c $PREVIOUS_JUNIT_FAIL_FILE $JUNIT_FAIL_FILE_NAME|"
     or die "can't open diff pipe: $!\n";
 
   while (my $diff_line = <$diff_pipe>) {
