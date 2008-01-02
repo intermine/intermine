@@ -55,6 +55,7 @@ public class PdbConverter extends FileConverter
     /**
      * @see FileConverter#process(Reader)
      */
+    @Override
     public void process(Reader reader) throws Exception {
         File currentFile = getCurrentFile();
         if (currentFile.getName().endsWith(".pdb")) {
@@ -65,21 +66,25 @@ public class PdbConverter extends FileConverter
             Structure structure = pdbfileparser.parsePDBFile(pdbBuffReader);
             String atm = structure.toPDB();
 
-            proteinStructure.setAttribute("identifier", (String) structure.getHeader().get("idCode"));
+            proteinStructure.setAttribute("identifier",
+                                          (String) structure.getHeader().get("idCode"));
 
             List<String> proteins = new ArrayList<String>();
             List<String> dbrefs = pdbBuffReader.getDbrefs();
-            for(String accnum: dbrefs) {
+            for (String accnum: dbrefs) {
                 Item protein = getAndStoreItemOnce("Protein", "primaryAccession", accnum);
                 proteins.add(protein.getIdentifier());
             }
 
             proteinStructure.setAttribute("title", (String) structure.getHeader().get("title"));
-            proteinStructure.setAttribute("technique", (String) structure.getHeader().get("technique"));
-            proteinStructure.setAttribute("classification", (String) structure.getHeader().get("classification"));
+            proteinStructure.setAttribute("technique",
+                                          (String) structure.getHeader().get("technique"));
+            proteinStructure.setAttribute("classification",
+                                          (String) structure.getHeader().get("classification"));
             Object resolution = structure.getHeader().get("resolution");
             if (resolution instanceof Float) {
-                proteinStructure.setAttribute("resolution", Float.toString((Float) structure.getHeader().get("resolution")));
+                final Float resolutionFloat = (Float) structure.getHeader().get("resolution");
+                proteinStructure.setAttribute("resolution", Float.toString(resolutionFloat));
             }
 
             proteinStructure.setAttribute("atm", atm);
@@ -105,7 +110,7 @@ public class PdbConverter extends FileConverter
      * @author Xavier Watkins
      *
      */
-    public class PdbBufferedReader extends BufferedReader{
+    public class PdbBufferedReader extends BufferedReader {
 
         private List<String> dbrefs = new ArrayList<String>();
 

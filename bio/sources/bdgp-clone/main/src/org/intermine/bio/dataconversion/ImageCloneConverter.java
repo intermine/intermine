@@ -44,6 +44,7 @@ public class ImageCloneConverter extends CDNACloneConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
@@ -68,7 +69,7 @@ public class ImageCloneConverter extends CDNACloneConverter
     /**
      * Read each line from flat file.
      *
-     * @see DataConverter#process
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
 

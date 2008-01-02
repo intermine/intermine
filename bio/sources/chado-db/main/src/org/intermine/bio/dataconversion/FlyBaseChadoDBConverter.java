@@ -33,14 +33,17 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
 
     /**
      * Create a new FlyBaseChadoDBConverter.
-     * @param database
-     * @param tgtModel
-     * @param writer
+     * @param database the Database object representing the chado db
+     * @param tgtModel the target Model
+     * @param writer the ItemWriter
      */
     public FlyBaseChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected Map<MultiKey, List<ConfigAction>> getConfig() {
@@ -194,6 +197,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
      * @param name the name
      * @param uniqueName the uniquename
      * @param seqlen the sequence length (if known)
+     * @return the new Item
      */
     @Override
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,

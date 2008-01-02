@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
@@ -174,16 +173,17 @@ public class Drosophila2ProbeConverter extends FileConverter
     }
 
     /**
-     * @param clsName = target class name
-     * @param id = identifier
-     * @param ordId = ref id for organism
-     * @param datasourceId = ref id for datasource item
-     * @param datasetId = ref id for dataset item
-     * @param writer = itemWriter write item to objectstore
+     * @param clsName target class name
+     * @param id identifier
+     * @param ordId ref id for organism
+     * @param datasourceId ref id for datasource item
+     * @param datasetId ref id for dataset item
+     * @param writer itemWriter write item to objectstore
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-    private Item createProbeSet(String probeSetId, List<Item> delayedItems) throws ObjectStoreException {
+    private Item createProbeSet(String probeSetId, List<Item> delayedItems)
+        throws ObjectStoreException {
         Item probeSet = createItem("ProbeSet");
         probeSet.setAttribute("identifier", probeSetId);
         probeSet.setAttribute("name", probeSetId);

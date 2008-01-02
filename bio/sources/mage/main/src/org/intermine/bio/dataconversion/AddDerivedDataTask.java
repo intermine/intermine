@@ -65,7 +65,7 @@ public class AddDerivedDataTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (srcFile == null || tgtFile == null || (extension == null && fileName == null)) {

@@ -101,6 +101,10 @@ public class ChadoDBConverter extends BioDBConverter
         super(database, tgtModel, writer);
     }
 
+    /**
+     * Return the config Map.
+     * @return the Map
+     */
     @SuppressWarnings("unchecked")
     protected Map<MultiKey, List<ConfigAction>> getConfig() {
         if (config == null) {
@@ -368,6 +372,7 @@ public class ChadoDBConverter extends BioDBConverter
      * @param name the name
      * @param uniqueName the uniquename
      * @param seqlen the sequence length (if known)
+     * @return the new feature
      */
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
                                String name, String uniqueName,
@@ -404,7 +409,8 @@ public class ChadoDBConverter extends BioDBConverter
 
     /**
      * Do any extra processing for this database, after all other processing is done
-     * @param featureMap a map from chado feature_id to data for that feature
+     * @param featureDataMap a map from chado feature_id to data for that feature
+     * @throws ObjectStoreException if there is a problem while storing
      */
     protected void extraProcessing(@SuppressWarnings("unused")
                                    Map<Integer, FeatureData> featureDataMap)
@@ -506,8 +512,8 @@ public class ChadoDBConverter extends BioDBConverter
                 if (!processCollectionData(lastSubjectId, relTypeMap, collectionWarnings)) {
                     collectionWarnings++;
                     if (collectionWarnings == 20) {
-                        LOG.warn("ignoring further unknown feature warnings from " +
-                                "processCollectionData()");
+                        LOG.warn("ignoring further unknown feature warnings from "
+                                 + "processCollectionData()");
                     }
                 }
                 collectionTotal += relTypeMap.size();
@@ -1010,7 +1016,7 @@ public class ChadoDBConverter extends BioDBConverter
     /**
      * Process the identifier and return a "cleaned" version.  Implement in sub-classes to fix
      * data problem.
-     * @param the (SO) type of the feature that this identifier came from
+     * @param type the (SO) type of the feature that this identifier came from
      * @param identifier the identifier
      * @return a cleaned identifier
      */
@@ -1031,6 +1037,7 @@ public class ChadoDBConverter extends BioDBConverter
      * @param intermineObjectId the intermine object ID of the item to create this attribute for.
      * @param attributeName the attribute name
      * @param value the value to set
+     * @throws ObjectStoreException if there is a problem while storing
      */
     protected void setAttribute(Integer intermineObjectId, String attributeName, String value)
         throws ObjectStoreException {
@@ -1437,9 +1444,7 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected static class ConfigAction
     {
-        protected ConfigAction() {
-            // empty
-        }
+        // empty
     }
 
     /**
@@ -1448,9 +1453,10 @@ public class ChadoDBConverter extends BioDBConverter
     protected static class SetFieldConfigAction extends ConfigAction
     {
         private String thefieldName;
-        SetFieldConfigAction() {
-            thefieldName = null;
-        }
+
+        /**
+         * Create a new SetFieldConfigAction that sets the given field.
+         */
         SetFieldConfigAction(String fieldName) {
             this.thefieldName = fieldName;
         }
@@ -1471,13 +1477,17 @@ public class ChadoDBConverter extends BioDBConverter
     {
         private String synonymType;
 
-        // make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym
-        // type
+        /**
+         * Make a synonym and use the type from chado ("symbol", "identifier" etc.) as the Synonym
+         * type
+         */
         CreateSynonymAction() {
             synonymType = null;
         }
 
-        // make a synonym and use given type as the Synonym type
+        /**
+         * Make a synonym and use given type as the Synonym type
+         */
         CreateSynonymAction(String synonymType) {
             this.synonymType = synonymType;
         }

@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.io.Reader;
 
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
@@ -36,6 +35,7 @@ public abstract class CDNACloneConverter extends FileConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      */
@@ -49,7 +49,7 @@ public abstract class CDNACloneConverter extends FileConverter
     /**
      * Read each line from flat file.
      *
-     * @see DataConverter#process
+     * {@inheritDoc}
      */
     public abstract void process(Reader reader) throws Exception;
 
