@@ -257,7 +257,7 @@ open my $junit_fail_file, ">$JUNIT_FAIL_FILE_NAME";
 my $build_failed = 0;
 my $test_failures = 0;
 
-# find build failures and their context
+# find and save junit failures and find build failures and their context
 my @failure_lines = ();
 {
   my @prev_lines = ();
