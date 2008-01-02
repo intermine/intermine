@@ -392,8 +392,9 @@ JUnit results:
  intermine webapp: $URL_PREFIX/$TIME_STAMP/junit_testmodel_webapp/
  intermine bio:    $URL_PREFIX/$TIME_STAMP/junit_bio/
 
-Checkstyle results: $URL_PREFIX/$TIME_STAMP/checkstyle/
-Ant output: $URL_PREFIX/$TIME_STAMP/ant_log.txt
+ Checkstyle:       $URL_PREFIX/$TIME_STAMP/checkstyle/
+ Ant output:       $URL_PREFIX/$TIME_STAMP/ant_log.txt
+
 Last update:
 $update_output
 
