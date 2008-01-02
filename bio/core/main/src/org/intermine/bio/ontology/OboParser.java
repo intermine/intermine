@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections.MultiHashMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -170,7 +170,7 @@ public class OboParser
      */
     public void readTerms(BufferedReader in) throws IOException {
         String line;
-        Map tagValues = new MultiHashMap();
+        Map tagValues = new MultiValueMap();
         List tagValuesList = new ArrayList();
 
         Pattern tagValuePattern = Pattern.compile("(.+?[^\\\\]):(.+)");
@@ -189,7 +189,7 @@ public class OboParser
 
             if (headMatcher.matches()) {
                 String stanzaType = headMatcher.group(1);
-                tagValues = new MultiHashMap(); // cut loose
+                tagValues = new MultiValueMap(); // cut loose
                 if (stanzaType.equals("Term")) {
                     tagValuesList.add(tagValues);
                     LOG.debug("recorded term with " + tagValues.size() + " tag values");

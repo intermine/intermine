@@ -19,7 +19,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.collections.MultiHashMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.io.IOUtils;
 
 public class OboParserTest extends TestCase
@@ -60,7 +60,7 @@ public class OboParserTest extends TestCase
 
     public void testSynonyms() throws Exception {
         String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        Set terms = parser.processForLabellingOntology(new StringReader(test));
+        parser.processForLabellingOntology(new StringReader(test));
 
         DagTerm dt3 = (DagTerm) parser.terms.get("GO:0000003");
 
@@ -78,7 +78,7 @@ public class OboParserTest extends TestCase
 
     public void testDescriptions() throws Exception {
         String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        Set terms = parser.processForLabellingOntology(new StringReader(test));
+        parser.processForLabellingOntology(new StringReader(test));
 
         OboTerm dt1 = (OboTerm) parser.terms.get("GO:0000001");
         OboTerm dt2 = (OboTerm) parser.terms.get("GO:0000002");
@@ -91,7 +91,7 @@ public class OboParserTest extends TestCase
 
     public void testNamespaces() throws Exception {
         String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        Set terms = parser.processForLabellingOntology(new StringReader(test));
+        parser.processForLabellingOntology(new StringReader(test));
 
         OboTerm dt1 = (OboTerm) parser.terms.get("GO:0000001");
         OboTerm dt2 = (OboTerm) parser.terms.get("GO:0000002");
@@ -185,33 +185,33 @@ public class OboParserTest extends TestCase
     public void testIsObsolete() {
         Map tagValues;
 
-        tagValues = new MultiHashMap();
+        tagValues = new MultiValueMap();
         tagValues.put("is_obsolete", "true");
-        assertTrue(parser.isObsolete(tagValues));
+        assertTrue(OboParser.isObsolete(tagValues));
 
-        tagValues = new MultiHashMap();
+        tagValues = new MultiValueMap();
         tagValues.put("is_obsolete", "TRUE");
-        assertTrue(parser.isObsolete(tagValues));
+        assertTrue(OboParser.isObsolete(tagValues));
 
-        tagValues = new MultiHashMap();
+        tagValues = new MultiValueMap();
         tagValues.put("is_obsolete", "true");
         tagValues.put("is_obsolete", "false");
-        assertTrue(parser.isObsolete(tagValues));
+        assertTrue(OboParser.isObsolete(tagValues));
 
-        tagValues = new MultiHashMap();
+        tagValues = new MultiValueMap();
         tagValues.put("is_obsolete", "FALSE");
-        assertFalse(parser.isObsolete(tagValues));
+        assertFalse(OboParser.isObsolete(tagValues));
 
-        tagValues = new MultiHashMap();
+        tagValues = new MultiValueMap();
         tagValues.put("is_obsolete", "false");
-        assertFalse(parser.isObsolete(tagValues));
+        assertFalse(OboParser.isObsolete(tagValues));
 
-        tagValues = new MultiHashMap();
+        tagValues = new MultiValueMap();
         tagValues.put("is_obsolete", "FALSE");
         tagValues.put("is_obsolete", "true");
-        assertFalse(parser.isObsolete(tagValues));
+        assertFalse(OboParser.isObsolete(tagValues));
 
-        tagValues = new MultiHashMap();
-        assertFalse(parser.isObsolete(tagValues));
+        tagValues = new MultiValueMap();
+        assertFalse(OboParser.isObsolete(tagValues));
     }
 }
