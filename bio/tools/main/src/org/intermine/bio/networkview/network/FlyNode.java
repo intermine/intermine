@@ -15,9 +15,9 @@ package org.intermine.bio.networkview.network;
  * @author Florian Reisinger
  *
  */
-public class FlyNode extends FlyHashGraphElement 
+public class FlyNode extends FlyHashGraphElement
     {
-    
+
     private static final long serialVersionUID = 9999902903901L;
 
     /**

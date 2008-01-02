@@ -27,14 +27,14 @@ import org.apache.struts.action.ActionMapping;
 
 /**
  * Display the query builder (if there is a curernt query) or redirect to project.sitePrefix.
- * 
+ *
  * @author Tom Riley
  */
 public class BeginAction extends InterMineAction
 {
    /**
     * Either display the query builder or redirect to project.sitePrefix.
-    * 
+    *
     * @param mapping The ActionMapping used to select this instance
     * @param form The optional ActionForm bean for this request (if any)
     * @param request The HTTP request we are processing
@@ -49,22 +49,22 @@ public class BeginAction extends InterMineAction
                                 HttpServletRequest request,
                                 @SuppressWarnings("unused") HttpServletResponse response)
        throws Exception {
-       
+
        HttpSession session = request.getSession();
        ServletContext servletContext = session.getServletContext();
-       SearchRepository searchRepository = (SearchRepository) 
+       SearchRepository searchRepository = (SearchRepository)
                                servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-       
+
        Map<String, ? extends WebSearchable> webSearchables =
                                                        searchRepository.getWebSearchableMap("bag");
        int bagCount = webSearchables.size();
        webSearchables = searchRepository.getWebSearchableMap("template");
        int templateCount = webSearchables.size();
-       
-       /* count number of templates and bags */       
+
+       /* count number of templates and bags */
        request.setAttribute("bagCount", new Integer(bagCount));
        request.setAttribute("templateCount", new Integer(templateCount));
 
-       return mapping.findForward("begin");      
+       return mapping.findForward("begin");
    }
 }

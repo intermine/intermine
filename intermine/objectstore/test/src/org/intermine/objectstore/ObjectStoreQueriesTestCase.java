@@ -1167,7 +1167,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.setConstraint(cs);
         return q1;
     }
-    
+
     /*
       select a1_, a2_, a3_ from (Department, Broke) as a1_, Company as a2_, Bank as a3_
       where a1_.company contains a2_ and a1_.bank contains a3_
@@ -1217,7 +1217,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.setConstraint(cs);
         return q1;
     }
- 
+
     /*
       select a1_, a2_, a3_ from (Company, Bank) as a1_, Department as a2_, Broke as a3_
       where a2_.company contains a1_ and a3_.bank contains a1_
@@ -1517,7 +1517,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.setDistinct(false);
         return q1;
     }
-    
+
     /*
      * SELECT 'hello' AS a1_ WHERE EXISTS (SELECT a1_ FROM Bank AS a1_)
      */

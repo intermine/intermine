@@ -31,9 +31,9 @@ import org.intermine.web.logic.tagging.TagTypes;
 /**
  * Controller for the starTemplate tile. This tile handles the display of the
  * star which lets you set a template as a favourite, using DWR Ajax.
- * 
+ *
  * @author Xavier Watkins
- * 
+ *
  */
 public class SetFavouriteController extends TilesAction
 {
@@ -41,11 +41,11 @@ public class SetFavouriteController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context, 
-                                 @SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionForward execute(ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request, 
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         String name = (String) context.getAttribute("name");
         String type = (String) context.getAttribute("type");

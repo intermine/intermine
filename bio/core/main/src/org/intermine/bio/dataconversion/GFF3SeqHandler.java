@@ -1,6 +1,6 @@
 package org.intermine.bio.dataconversion;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -33,6 +33,6 @@ public class GFF3SeqHandler
     }
 
     private Item createItem(GFF3Converter converter) {
-        return converter.createItem(converter.getSeqClsName());       
+        return converter.createItem(converter.getSeqClsName());
     }
 }

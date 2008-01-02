@@ -27,14 +27,14 @@ import org.apache.struts.action.ActionMapping;
 
 /**
  * Action to handle button presses on the main tile
- * 
+ *
  * @author Mark Woodbridge
  */
 public class QueryBuilderAction extends InterMineAction
 {
     /**
      * Method called when user has finished updating a constraint
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -47,10 +47,10 @@ public class QueryBuilderAction extends InterMineAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward execute(ActionMapping mapping, 
-                                 ActionForm form,            
-                                 HttpServletRequest request, 
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
@@ -65,7 +65,7 @@ public class QueryBuilderAction extends InterMineAction
         //boolean editable = false;
         String editingConstraintEditable = request.getParameter("editingConstraintEditable");
         boolean editable = Boolean.parseBoolean(editingConstraintEditable);
-            
+
         if (cindex != null) {
             // We're updating an existing constraint, just remove the old one
             Constraint c = node.getConstraints().get(cindex.intValue());
@@ -121,7 +121,7 @@ public class QueryBuilderAction extends InterMineAction
             // if no other constraints on the original node, remove it
             if (node.getConstraints().size() == 0) {
                 query.getNodes().remove(node.getPathString());
-            } 
+            }
         } else if (request.getParameter("loop") != null) {
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getLoopQueryOp()));

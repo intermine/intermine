@@ -56,7 +56,7 @@ public class GetAttributeAsFileAction extends Action
         String fileType = request.getParameter("type");
         InterMineObject object = os.getObjectById(objectId);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        
+
         FieldExporter fieldExporter = null;
 
         Set classes = DynamicUtil.decomposeClass(object.getClass());
@@ -69,7 +69,7 @@ public class GetAttributeAsFileAction extends Action
             Type thisTypeConfig = (Type) webConfig.getTypes().get(c.getName());
 
             FieldConfig fc = (FieldConfig) thisTypeConfig.getFieldConfigMap().get(fieldName);
-            
+
             if (fc != null) {
                 String fieldExporterClassName = fc.getFieldExporter();
                 if (fieldExporterClassName != null) {
@@ -84,11 +84,11 @@ public class GetAttributeAsFileAction extends Action
             Object fieldValue = TypeUtil.getFieldValue(object, fieldName);
             if (fileType == null || fileType.length() == 0) {
                 response.setContentType("text/plain");
-                response.setHeader("Content-Disposition ", 
+                response.setHeader("Content-Disposition ",
                                    "inline; filename=" + fieldName + ".txt");
             } else {
                 response.setContentType("text/" + fileType);
-                response.setHeader("Content-Disposition ", "inline; filename=" 
+                response.setHeader("Content-Disposition ", "inline; filename="
                                    + fieldName + "." + fileType);
             }
             PrintStream out = new PrintStream(response.getOutputStream());

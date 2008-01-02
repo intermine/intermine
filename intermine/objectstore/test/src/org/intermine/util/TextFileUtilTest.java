@@ -53,7 +53,7 @@ public class TextFileUtilTest extends TestCase
                                }));
         rows.add(Arrays.asList(new Object [] {
                                    new Integer(201), map,
-                                   "string 203", "string 204\t with tab", 
+                                   "string 203", "string 204\t with tab",
                                }));
         return rows;
     }
@@ -107,7 +107,7 @@ public class TextFileUtilTest extends TestCase
         results = baos.toString();
         assertEquals(expected, results);
 
-        
+
         baos = new ByteArrayOutputStream();
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {3, 2, 1, 0},
@@ -117,7 +117,7 @@ public class TextFileUtilTest extends TestCase
         results = baos.toString();
         assertEquals(expected, results);
 
-        
+
         baos = new ByteArrayOutputStream();
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
                                             new int[] {3, 2, 1, 0},
@@ -126,7 +126,7 @@ public class TextFileUtilTest extends TestCase
         expected = "\"\t,\"\n\"\t,\"\n";
         results = baos.toString();
         assertEquals(expected, results);
-        
+
         // test writing a limited number of rows
         baos = new ByteArrayOutputStream();
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
@@ -135,8 +135,8 @@ public class TextFileUtilTest extends TestCase
                                             1, objectFormatter);
         expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n";
         results = baos.toString();
-        assertEquals(expected, results);        
-        
+        assertEquals(expected, results);
+
         // test writing all rows (-1 as maxRows)
         baos = new ByteArrayOutputStream();
         TextFileUtil.writeTabDelimitedTable(baos, getTestRows(),
@@ -146,7 +146,7 @@ public class TextFileUtilTest extends TestCase
         expected = "101\t\"\t,\"\tstring 103\tstring 104, with comma\n"
             + "201\t\"\t,\"\tstring 203\t\"string 204\t with tab\"\n";;
         results = baos.toString();
-        assertEquals(expected, results);     
+        assertEquals(expected, results);
     }
 
     public void testWriteCommaDelimitedTable() throws Exception {
@@ -186,7 +186,7 @@ public class TextFileUtilTest extends TestCase
         results = baos.toString();
         assertEquals(expected, results);
 
-        
+
         baos = new ByteArrayOutputStream();
         TextFileUtil.writeCSVTable(baos, getTestRows(),
                                    new int[] {3, 2, 1, 0},
@@ -196,7 +196,7 @@ public class TextFileUtilTest extends TestCase
         results = baos.toString();
         assertEquals(expected, results);
 
-        
+
         baos = new ByteArrayOutputStream();
         TextFileUtil.writeCSVTable(baos, getTestRows(),
                                    new int[] {3, 2, 1, 0},

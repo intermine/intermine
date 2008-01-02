@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * A Filter that modifies response headers of outgoing pages.
  * @author Kim Rutherford
  */
-public class HeaderFilter implements Filter 
+public class HeaderFilter implements Filter
 {
     private FilterConfig fc;
 

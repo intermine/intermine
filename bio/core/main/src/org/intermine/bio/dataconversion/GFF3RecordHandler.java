@@ -576,7 +576,7 @@ public class GFF3RecordHandler
     public void setDataSet(Item dataSet) {
         this.dataSet = dataSet;
     }
-    
+
 
     /**
      * Create and add a synonym Item from the given information.

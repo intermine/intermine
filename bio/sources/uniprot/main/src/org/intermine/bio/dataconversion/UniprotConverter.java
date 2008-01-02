@@ -84,7 +84,6 @@ public class UniprotConverter extends FileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException if an error occurs in storing
      */
     public UniprotConverter(ItemWriter writer, Model model) {
         super(writer, model);
@@ -103,7 +102,7 @@ public class UniprotConverter extends FileConverter
                 doProcess = true;
                 doneTaxonIds.add(taxonId);
             } else {
-                System .out.println("Not reading from " + fileName 
+                System .out.println("Not reading from " + fileName
                                     + " - not in list of organisms.");
                 LOG.error("Not reading from " + fileName + " - not in list of organisms.");
             }
@@ -125,7 +124,7 @@ public class UniprotConverter extends FileConverter
     }
 
     /**
-     * {@inheritDocs}
+     * {@inheritDoc}
      */
     public void close() throws Exception {
         if (useSplitFiles) {
@@ -356,7 +355,7 @@ public class UniprotConverter extends FileConverter
         private boolean createInterpro = false;
         private ArrayList<Item> delayedItems = new ArrayList();
         private boolean isProtein = false;
-        
+
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
@@ -404,10 +403,10 @@ public class UniprotConverter extends FileConverter
                         // will be tremble or swiss-prot
                         dataset = getDataSet(attrs.getValue("dataset"));
                     } else {
-                        isProtein = false;                       
+                        isProtein = false;
                     }
-                } 
-                
+                }
+
                 if (isProtein) {
                 // <entry><protein>
                 if (qName.equals("protein")) {
@@ -611,7 +610,7 @@ public class UniprotConverter extends FileConverter
                         if (syn != null) {
                             writer.store(ItemHelper.convert(syn));
                         }
-                    }    
+                    }
                 //    <dbreference><property type="organism name" value="Homo sapiens"/>
                 } else if (qName.equals("property") && stack.peek().equals("dbReference")
                            && attrs.getValue("type").equals("organism name")
@@ -636,7 +635,7 @@ public class UniprotConverter extends FileConverter
                 if (qName.equals("uniprot")) {
                    initData();
                 }
-           
+
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
@@ -647,7 +646,7 @@ public class UniprotConverter extends FileConverter
 
 
         /**
-         * @see DefaultHandler#endElement
+         * {@inheritDoc}
          */
         public void characters(char[] ch, int start, int length) {
             if (attName != null) {
@@ -683,7 +682,7 @@ public class UniprotConverter extends FileConverter
 
 
         /**
-         * @see DefaultHandler#endElement
+         * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
@@ -701,7 +700,7 @@ public class UniprotConverter extends FileConverter
                         ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
                         protein.addCollection(evidenceColl);
                         evidenceColl.addRefId(dataset.getIdentifier());
-                        
+
                         // now that we know the taxonID, we can store the genes
                         if (hasPrimary && !genes.isEmpty()) {
                             Iterator i = genes.values().iterator();
@@ -710,7 +709,7 @@ public class UniprotConverter extends FileConverter
                                 finaliseGene(gene, protein.getReference("organism").getRefId());
                             }
                         }
-                        
+
                         // <entry><name> is a synonym
                         Item syn = createSynonym(protein.getIdentifier(), "identifier",
                                                  protein.getAttribute("identifier").getValue(),
@@ -850,7 +849,7 @@ public class UniprotConverter extends FileConverter
                 }
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
-            }        
+            }
        }
 
         private void initData()
@@ -1340,6 +1339,9 @@ public class UniprotConverter extends FileConverter
                 return identifierSrc;
             }
 
+            /**
+             * {@inheritDoc}
+             */
             public String toString() {
                 return "attribute: " + attribute
                 + ", source: " + source

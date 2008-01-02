@@ -56,7 +56,7 @@ public class TemplateListHelper
 {
     private static final Logger LOG = Logger.getLogger(TemplateListHelper.class);
     private static final TemplateComparator TEMPLATE_COMPARATOR = new TemplateComparator();
-    
+
     /**
      * Get the Set of templates for a given aspect.
      * @param aspect aspect name
@@ -67,10 +67,10 @@ public class TemplateListHelper
         String sup = (String) context.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(context);
         Profile p = pm.getProfile(sup);
-        
+
         Map<String, TemplateQuery> templates = new TreeMap<String, TemplateQuery>();
         List tags = pm.getTags(null, null, TagTypes.TEMPLATE, sup);
-        
+
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
             if (tag.getTagName().startsWith(AspectController.ASPECT_PREFIX)) {
@@ -84,7 +84,7 @@ public class TemplateListHelper
                 }
             }
         }
-        
+
         List<TemplateQuery> retList = new ArrayList<TemplateQuery>(templates.values());
         Collections.sort(retList, TEMPLATE_COMPARATOR);
         return retList;
@@ -106,7 +106,7 @@ public class TemplateListHelper
         if (aspect.startsWith(AspectController.ASPECT_PREFIX)) {
             aspect = aspect.substring(7).trim();
         }
-            
+
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         List<TemplateQuery> all = getAspectTemplates(aspect, context);
@@ -118,8 +118,8 @@ public class TemplateListHelper
             types.add(sc);
             sc = sc.getSuperclass();
         }
-        
-        
+
+
         Model model = os.getModel();
       TEMPLATE:
         for (Iterator<TemplateQuery> iter = all.iterator(); iter.hasNext();) {
@@ -145,7 +145,7 @@ public class TemplateListHelper
                         } catch (ClassNotFoundException err) {
                             LOG.error(err);
                             continue TEMPLATE;
-                        } 
+                        }
                     } else {
                         String constraintIdentifier = c.getIdentifier();
                         String[] bits = constraintIdentifier.split("\\.");
@@ -186,19 +186,19 @@ public class TemplateListHelper
                 fieldExprsOut.put(template, fieldExprs);
             }
         }
-        
+
         Collections.sort(templates, TEMPLATE_COMPARATOR);
-        
+
         return templates;
     }
-    
+
     /**
      * Get all the templates for a given type
      * @param context the servlet context
      * @param bag the bag from which to get the type from
      * @return a Map containing the templates of the given type
      */
-    public static Map<TemplateQuery, String> getTemplateListForType (ServletContext context, 
+    public static Map<TemplateQuery, String> getTemplateListForType (ServletContext context,
                                                                      InterMineBag bag) {
         String type = bag.getType();
         HashMap<TemplateQuery, String> templates = new HashMap<TemplateQuery, String>();
@@ -217,7 +217,7 @@ public class TemplateListHelper
                     Map<String, List<FieldDescriptor>> classKeys =
                         (Map<String, List<FieldDescriptor>>) context.getAttribute(
                                 Constants.CLASS_KEYS);
-                    if (ClassKeyHelper.isKeyField(classKeys, 
+                    if (ClassKeyHelper.isKeyField(classKeys,
                                                    node.getParentType(), node.getFieldName())) {
                         if (type.equals(name)) {
                             templates.put(templateQuery, TemplateHelper.GLOBAL_TEMPLATE);
@@ -229,7 +229,7 @@ public class TemplateListHelper
         }
         return templates;
     }
-    
+
     /**
      * Get the Set of templates for a given aspect and a given type
      * @param aspect aspect name
@@ -238,8 +238,8 @@ public class TemplateListHelper
      * @param fieldExprsOut a map to populate with matching node names
      * @return the List of templates
      */
-    public static List<TemplateQuery> getAspectTemplatesForType(String aspect, 
-                              ServletContext context, InterMineBag bag, Map<TemplateQuery, 
+    public static List<TemplateQuery> getAspectTemplatesForType(String aspect,
+                              ServletContext context, InterMineBag bag, Map<TemplateQuery,
                               List<String>> fieldExprsOut) {
         if (aspect.startsWith(AspectController.ASPECT_PREFIX)) {
             aspect = aspect.substring(7).trim();
@@ -255,31 +255,31 @@ public class TemplateListHelper
             LOG.error("Could not find class for type of bag: " + bag.getQualifiedType());
             return Collections.emptyList();
         }
-       
-        SearchRepository searchRepository  = 
+
+        SearchRepository searchRepository  =
             (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-       
-        Map<String, ? extends WebSearchable> globalTemplates = 
+
+        Map<String, ? extends WebSearchable> globalTemplates =
             searchRepository.getWebSearchableMap(TagTypes.TEMPLATE);
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
         List tags = pm.getTags(null, null, TagTypes.TEMPLATE, sup);
-        
-       
+
+
       TAGS:
         for (Iterator iter = tags.iterator(); iter.hasNext(); ) {
             Tag tag = (Tag) iter.next();
 
             if (tag.getTagName().startsWith(AspectController.ASPECT_PREFIX)) {
                 String aspectFromTagName = tag.getTagName().substring(7).trim();
-           
+
 
                 if (StringUtils.equals(aspect, aspectFromTagName)) {
-                    TemplateQuery templateQuery = 
+                    TemplateQuery templateQuery =
                         (TemplateQuery) globalTemplates.get(tag.getObjectIdentifier());
                     if (templateQuery != null) {
-           
+
                         List<String> fieldExprs = new ArrayList<String>();
                         if (templateQuery.getAllEditableConstraints().size() > 1) {
                             continue;
@@ -300,7 +300,7 @@ public class TemplateListHelper
                                         LOG.error(e);
                                         continue;
                                     }
-           
+
                                     if (pathNodeType.isAssignableFrom(bagClass)) {
                                         templates.add(templateQuery);
                                     }
@@ -348,13 +348,13 @@ public class TemplateListHelper
                 }
             }
         }
-        
+
         return templates;
     }
 
     /**
-     * Return true if and only if the ba 
-     * @throws IllegalAccessException 
+     * Return true if and only if the ba
+     * @throws IllegalAccessException
      */
     /*private static boolean allNull(ObjectStore os, InterMineBag bag, String fieldName) {
 

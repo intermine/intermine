@@ -1,6 +1,6 @@
 package org.intermine.web.logic.results;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -36,7 +36,7 @@ public class WebCollection extends AbstractList implements WebTable
     private List list = null;
     private List<Column> columns;
     private final Collection collection;
- 
+
     /**
      * Create a new WebPathCollection object.
      * @param columnName the String to use when displaying this collection - used as the column name
@@ -98,7 +98,7 @@ public class WebCollection extends AbstractList implements WebTable
 
         return list;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -129,12 +129,7 @@ public class WebCollection extends AbstractList implements WebTable
         if (collection instanceof LazyCollection) {
             LazyCollection lazy = (LazyCollection) collection;
             try {
-                if( lazy.getInfo().getStatus() == 
-                    ResultsInfo.SIZE) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return lazy.getInfo().getStatus() != ResultsInfo.SIZE;
             } catch (ObjectStoreException e) {
                 LOG.error("unexpected exception while getting ResultsInfo for collection", e);
                 return false;

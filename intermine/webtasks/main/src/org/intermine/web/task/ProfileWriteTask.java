@@ -61,7 +61,7 @@ public class ProfileWriteTask extends Task
     public void setOSAlias(String osAlias) {
         this.osAlias = osAlias;
     }
-    
+
     /**
      * Set the alias of the userprofile object store.
      * @param userProfileAlias the object store alias of the userprofile database
@@ -69,7 +69,7 @@ public class ProfileWriteTask extends Task
     public void setUserProfileAlias(String userProfileAlias) {
         this.userProfileAlias = userProfileAlias;
     }
-    
+
     /**
      * Execute the task - write the profiles as XML.
      * @throws BuildException if there is a problem while writing to the file or reading the
@@ -86,7 +86,7 @@ public class ProfileWriteTask extends Task
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         FileWriter fw = null;
-        
+
         try {
             fw = new FileWriter(fileName);
         } catch (IOException e) {

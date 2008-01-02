@@ -33,7 +33,7 @@ public class InlineTemplateTable implements Serializable
     private int resultsSize = -1;
     private int maxInlineTableSize = 10;
     private PagedTable pagedTable;
-    
+
     /**
      * Construct a new InlineTemplateTable
      * @param pagedResults the Results of running the template query
@@ -51,7 +51,7 @@ public class InlineTemplateTable implements Serializable
             LOG.warn("Failed to parse " + Constants.INLINE_TABLE_SIZE + " property: "
                      + maxInlineTableSizeString);
         }
-        
+
         inlineSize = maxInlineTableSize;
 
         inlineResults = new ArrayList<Object>(inlineSize);
@@ -70,7 +70,7 @@ public class InlineTemplateTable implements Serializable
 
         if (resultsSize < inlineSize) {
             inlineSize = resultsSize;
-        }   
+        }
     }
 
     /**
@@ -89,7 +89,7 @@ public class InlineTemplateTable implements Serializable
     public List getInlineResults() {
         return inlineResults;
     }
-    
+
     /**
      * Return the number of rows in the Results object that was passed to the constructor.
      * @return the row count
@@ -113,5 +113,5 @@ public class InlineTemplateTable implements Serializable
     public void setPagedTable(PagedTable pagedTable) {
         this.pagedTable = pagedTable;
     }
-    
+
 }

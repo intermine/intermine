@@ -42,7 +42,6 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.FieldExporter;
 
@@ -83,7 +82,7 @@ public class ResidueFieldExporter implements FieldExporter
             BioEntity bioEntity = lsf;
 
             Protein protein = null;
-            
+
             if (bioEntity == null) {
                 protein = getProteinForSequence(os, sequence);
                 bioEntity = protein;
@@ -101,13 +100,13 @@ public class ResidueFieldExporter implements FieldExporter
             }
 
             BioSequence bioSequence;
-            
+
             if (lsf != null) {
                 bioSequence = BioSequenceFactory.make(lsf);
             } else {
                 bioSequence = BioSequenceFactory.make(protein);
             }
-            
+
             // avoid opening the OutputStream until we have all the data - this avoids some problems
             // that occur when getOutputStream() is called twice (once by this method and again to
             // write the error)
@@ -164,8 +163,8 @@ public class ResidueFieldExporter implements FieldExporter
             return null;
         }
     }
-  
-    
+
+
     /**
      * Find the Protein that references the given Sequence.
      * @param os the ObjectStore
@@ -198,7 +197,7 @@ public class ResidueFieldExporter implements FieldExporter
             return null;
         }
     }
-    
+
     /**
      * Find the IntermineObject that references the given Sequence.
      * @param os the ObjectStore
@@ -206,10 +205,10 @@ public class ResidueFieldExporter implements FieldExporter
      * @param sequence the Sequence
      * @return the IntermineObject
      */
-    public static InterMineObject getIMObjectForSequence(ObjectStore os, Class clazz, 
+    public static InterMineObject getIMObjectForSequence(ObjectStore os, Class clazz,
                                                 Sequence sequence) {
         Query q = new Query();
-        
+
         QueryClass queryClass = new QueryClass(clazz);
         q.addFrom(queryClass);
         q.addToSelect(queryClass);

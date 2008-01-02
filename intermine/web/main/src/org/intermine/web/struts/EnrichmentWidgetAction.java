@@ -66,7 +66,7 @@ public class EnrichmentWidgetAction extends InterMineAction
         String bagName = request.getParameter("bagName");
         String key = request.getParameter("key");
         String link = request.getParameter("link");
-        
+
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(currentProfile.getSavedBags(), servletContext);
@@ -78,13 +78,13 @@ public class EnrichmentWidgetAction extends InterMineAction
             ObjectStore.class, InterMineBag.class, String.class
                                                             });
 
-        EnrichmentWidgetURLQuery urlQuery 
+        EnrichmentWidgetURLQuery urlQuery
                             = (EnrichmentWidgetURLQuery) constr.newInstance(new Object[]
                                                                                       {
             os, bag, key
                                                                                       });
-                
-                
+
+
         QueryMonitorTimeout clientState
         = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
@@ -95,7 +95,7 @@ public class EnrichmentWidgetAction extends InterMineAction
 
         return new ForwardParameters(mapping.findForward("waiting"))
         .addParameter("trail", "|bag." + bagName)
-        .addParameter("qid", qid).forward(); 
+        .addParameter("qid", qid).forward();
 
 
     }

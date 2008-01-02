@@ -33,7 +33,7 @@ public interface BagConverter
      * @throws ClassNotFoundException
      * @throws ObjectStoreException
      */
-    public List<ResultsRow> getConvertedObjects(HttpSession session, String parameters, 
-                                    List<Integer> fromList, String type) 
-                                    throws ClassNotFoundException, ObjectStoreException;    
+    public List<ResultsRow> getConvertedObjects(HttpSession session, String parameters,
+                                    List<Integer> fromList, String type)
+                                    throws ClassNotFoundException, ObjectStoreException;
 }

@@ -428,7 +428,7 @@ public class BatchingFetcher extends HintingFetcher
             }
         }
     }
- 
+
     private class NoseyObjectStore extends ObjectStorePassthruImpl implements Shutdownable
     {
         public NoseyObjectStore(ObjectStore os) {

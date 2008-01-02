@@ -14,14 +14,14 @@ import java.io.Serializable;
 
 /**
  * Wrapper to the attribute values
- * this is used to add a flag that can indicate what to do if a 
+ * this is used to add a flag that can indicate what to do if a
  * attribute value already exists when updating the network
  * TODO: !currently does NOT support lists!
  * @author Florian Reisinger
  */
 public class FlyValueWrapper implements Serializable
 {
-    
+
     /**
      * own declaration of the serialVersionUID, as recommended
      */
@@ -45,43 +45,43 @@ public class FlyValueWrapper implements Serializable
      * This will create a new attribute that counts the elements of a list attribute
      */
     public static final int COUNT = 3;
-    
+
     private Object value;
     private int flag;
-    
+
     /**
      * Constructor with default setting to overwrite existing values
      * @param value the actual value of a attribute
      */
     public FlyValueWrapper(Object value) {
-        if (value instanceof Integer || value instanceof Double 
+        if (value instanceof Integer || value instanceof Double
          || value instanceof Boolean || value instanceof String) {
             this.value = value;
         } else {
-            throw new IllegalArgumentException("Only objects of types: " 
-                    + "Boolean, Integer, Double and String allowed!" 
+            throw new IllegalArgumentException("Only objects of types: "
+                    + "Boolean, Integer, Double and String allowed!"
                     + "\nThis value is of type: " + value.getClass().toString());
         }
         this.flag = FlyValueWrapper.OVERWRITE;
     }
-    
+
     /**
      * Constructor
      * @param value the actual value of a attribute
      * @param flag indicates what to do with this value
      */
     public FlyValueWrapper(Object value, int flag) {
-        if (value instanceof Integer || value instanceof Double 
+        if (value instanceof Integer || value instanceof Double
          || value instanceof Boolean || value instanceof String) {
             this.value = value;
         } else {
-            throw new IllegalArgumentException("Only objects of types: " 
-                    + "Boolean, Integer, Double and String allowed!" 
+            throw new IllegalArgumentException("Only objects of types: "
+                    + "Boolean, Integer, Double and String allowed!"
                     + "\nThis value is of type: " + value.getClass().toString());
         }
         this.flag = flag;
     }
-    
+
     /**
      * Getter for the flag
      * @return an int representing the flag
@@ -115,7 +115,7 @@ public class FlyValueWrapper implements Serializable
     }
 
     //TODO: add equals() and hashcode()
-    
+
     /**
      * String representation of this wrappers value
      * @return the String representing this wrappers value

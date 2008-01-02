@@ -35,7 +35,7 @@ public class StaticMethodTask extends Task
     public void setClassName(String className) {
         this.className = className;
     }
-    
+
     /**
      * Name of method to call.
      * @param method method to call
@@ -43,7 +43,7 @@ public class StaticMethodTask extends Task
     public void setMethod(String method) {
         this.method = method;
     }
-    
+
     /**
      * Set the os alias.
      * @param alias os alias
@@ -51,7 +51,7 @@ public class StaticMethodTask extends Task
     public void setOsAlias(String alias) {
         osAlias = alias;
     }
-    
+
     /**
      * @throws BuildException if a problem occurs
      * @see Task#execute

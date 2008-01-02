@@ -31,7 +31,7 @@ public class ObjectStoreWriterFactoryTest extends TestCase
         } catch (NullPointerException e) {
         }
     }
-    
+
     public void testEmpty() throws Exception {
         try {
             ObjectStoreWriterFactory.getObjectStoreWriter("");

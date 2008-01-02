@@ -32,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class InterMineBagHandler extends DefaultHandler
 {
     private static final Logger LOG = Logger.getLogger(InterMineBagHandler.class);
-    
+
     private ObjectStoreWriter uosw;
     private ObjectStoreWriter osw;
     private Map bags;
@@ -45,7 +45,7 @@ public class InterMineBagHandler extends DefaultHandler
     private Map idToObjectMap;
     private IdUpgrader idUpgrader;
     private int elementsInOldBag;
-    
+
     /**
      * Create a new InterMineBagHandler object.
      *
@@ -70,8 +70,8 @@ public class InterMineBagHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void startElement(@SuppressWarnings("unused") String uri, 
-                             @SuppressWarnings("unused") String localName, 
+    public void startElement(@SuppressWarnings("unused") String uri,
+                             @SuppressWarnings("unused") String localName,
                              String qName,
             Attributes attrs) throws SAXException {
         try {
@@ -85,7 +85,7 @@ public class InterMineBagHandler extends DefaultHandler
                 } catch (NumberFormatException e) {
                     dateCreated = null;
                 }
-                bag = new InterMineBag(bagName, bagType, bagDescription, 
+                bag = new InterMineBag(bagName, bagType, bagDescription,
                                        dateCreated, osw.getObjectStore(), userId, uosw);
             }
 
@@ -116,15 +116,15 @@ public class InterMineBagHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    public void endElement(@SuppressWarnings("unused") String uri, 
-                           @SuppressWarnings("unused") String localName, 
+    public void endElement(@SuppressWarnings("unused") String uri,
+                           @SuppressWarnings("unused") String localName,
                            String qName) throws SAXException {
         try {
             if (qName.equals("bag")) {
                 //if (bag.size() > 0) {
                     bags.put(bagName, bag);
                 //}
-                LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag 
+                LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag
                           + " elements, created bag with " + (bag == null ? "null"
                               : "" + bag.size()) + " elements");
                 bag = null;

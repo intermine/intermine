@@ -303,7 +303,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("SimpleConstraintNull", toList(r));
 
         r = new Object[][] { { data.get("EmployeeB1") },
-                			 { data.get("EmployeeB3") } };
+                             { data.get("EmployeeB3") } };
         results.put("SimpleConstraintNotNull", toList(r));
 
         r = new Object[][] { { "10" },

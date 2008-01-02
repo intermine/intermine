@@ -86,7 +86,7 @@ public class ChartRenderer extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Map graphImageCache = (Map) servletContext.getAttribute(Constants.GRAPH_CACHE);
         String filename = (String) graphImageCache.get(request.getQueryString());
-        
+
         if (filename != null) {
             ServletUtilities.sendTempFile(filename, response);
             return null;
@@ -120,7 +120,7 @@ public class ChartRenderer extends InterMineAction
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         Map<String, String> graphImageCache = new HashMap<String, String>();
-        graphImageCache.putAll((Map<String, String>) 
+        graphImageCache.putAll((Map<String, String>)
                                session.getServletContext().getAttribute(Constants.GRAPH_CACHE));
         ObjectStore os = (ObjectStore) session.getServletContext()
             .getAttribute(Constants.OBJECTSTORE);
@@ -172,12 +172,12 @@ public class ChartRenderer extends InterMineAction
         File cacheFile = new File(System.getProperty("java.io.tmpdir"), "flymine_" + filename);
         FileChannel in = null;
         FileChannel out = null;
-        try {          
+        try {
             in = new FileInputStream(oldFile).getChannel();
             out = new FileOutputStream(cacheFile).getChannel();
             // note java bug #5056395
-            out.transferFrom(in, 0, in.size()); 
-            //in.transferTo (0, in.size(), out); 
+            out.transferFrom(in, 0, in.size());
+            //in.transferTo (0, in.size(), out);
         } finally {
             if (in != null) {
                 in.close();
@@ -192,7 +192,7 @@ public class ChartRenderer extends InterMineAction
         return null;
     }
 
-    private void configureRenderer(AbstractRenderer renderer, 
+    private void configureRenderer(AbstractRenderer renderer,
                                    @SuppressWarnings("unused") HttpServletRequest request) {
         Color barColor = new Color(100, 149, 237);
         renderer.setSeriesPaint(0, barColor);
@@ -209,12 +209,12 @@ public class ChartRenderer extends InterMineAction
         }
     }
 
-    private void configureYaxis(Axis axis, 
+    private void configureYaxis(Axis axis,
                                 @SuppressWarnings("unused") HttpServletRequest request) {
         axis.setTickLabelFont(AbstractRenderer.DEFAULT_VALUE_LABEL_FONT.deriveFont(8));
     }
 
-    private void configureChart(JFreeChart chart, 
+    private void configureChart(JFreeChart chart,
                                 @SuppressWarnings("unused") HttpServletRequest request) {
         chart.setBackgroundPaint(java.awt.Color.white);
         chart.setAntiAlias(false);

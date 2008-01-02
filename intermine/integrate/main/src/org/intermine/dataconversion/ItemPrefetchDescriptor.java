@@ -182,7 +182,7 @@ public class ItemPrefetchDescriptor
 
     /**
      * Get the display name of this descriptor.
-     * 
+     *
      * @return the arbitrary display name
      */
     public String getDisplayName() {

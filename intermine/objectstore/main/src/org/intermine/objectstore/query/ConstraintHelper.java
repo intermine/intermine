@@ -31,7 +31,7 @@ import java.util.HashSet;
  *                     right = the query
  * ConstraintSet: N/A
  * <br>
- * 
+ *
  * @author Matthew Wakeling
  * @author Richard Smith
  */

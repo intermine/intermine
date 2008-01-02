@@ -61,7 +61,7 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
     public static Test suite() {
         return buildSuite(AcceptanceTestTaskTest.class);
     }
-    
+
     public void testReadOneTest1() throws Exception {
         String expSql = "select * from intermineobject";
 
@@ -69,11 +69,11 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
             "no-results {\n"
             + "  sql: " + expSql + "\n"
             + "}\n";
-        
+
         StringReader sr = new StringReader(testConf);
         LineNumberReader reader = new LineNumberReader(sr);
         AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
-        
+
         assertEquals(expSql, test.getSql());
         assertNull(test.getNote());
     }
@@ -86,15 +86,15 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
             + "  sql: " + expSql + "\n"
             + "  note: " + expNote + "\n"
             + "}\n";
-        
+
         StringReader sr = new StringReader(testConf);
         LineNumberReader reader = new LineNumberReader(sr);
         AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
-        
+
         assertEquals(expSql, test.getSql());
         assertEquals(expNote, test.getNote());
     }
-    
+
     public void testReadOneTest3() throws Exception {
         String expSql = "select * from intermineobject";
         String expNote = "some note referring to ticket #123";
@@ -105,32 +105,32 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
             + "  note: " + expNote + "\n"
             + "  max-results: " + expMaxResults + "\n"
             + "}\n";
-        
+
         StringReader sr = new StringReader(testConf);
         LineNumberReader reader = new LineNumberReader(sr);
         AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
-        
+
         assertEquals(expSql, test.getSql());
         assertEquals(expNote, test.getNote());
-        assertEquals(new Integer(10), test.getMaxResults());  
+        assertEquals(new Integer(10), test.getMaxResults());
     }
-    
+
     public void testHyperlinking() throws Exception {
         String note = "some note referring to ticket #123";
-        String expNote = "some note referring to ticket <a href=\"" 
+        String expNote = "some note referring to ticket <a href=\""
             + AcceptanceTestTask.TRAC_TICKET_URL_PREFIX + "123\">#123</a>";
         String hyperlinkedNote = AcceptanceTestTask.hyperLinkNote(note);
         assertEquals(expNote, hyperlinkedNote);
     }
-    
+
     public void testReadOneTestError1() throws Exception {
         String testConf =
-            "no-results {\n"            
+            "no-results {\n"
              + "}\n";
-        
+
         StringReader sr = new StringReader(testConf);
         LineNumberReader reader = new LineNumberReader(sr);
-        
+
         try {
             AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
             fail("expected IOException");
@@ -138,15 +138,15 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
             // expected
         }
     }
-    
+
     public void testReadOneTestError2() throws Exception {
         String testConf =
             "no-results {\n"
              + "}\n";
-        
+
         StringReader sr = new StringReader(testConf);
         LineNumberReader reader = new LineNumberReader(sr);
-        
+
         try {
             AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
             fail("expected IOException");
@@ -160,10 +160,10 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
             "bogus_type {\n"
              + "  sql: select * from intermineobject\n"
              + "}\n";
-        
+
         StringReader sr = new StringReader(testConf);
         LineNumberReader reader = new LineNumberReader(sr);
-        
+
         try {
             AcceptanceTest test = AcceptanceTestTask.readOneTestConfig(reader);
             fail("expected IOException");
@@ -171,28 +171,28 @@ public class AcceptanceTestTaskTest extends StoreDataTestCase
             // expected
         }
     }
-    
+
     public void testAcceptanceTestReadAll() throws Exception {
         String configFile = "acceptance_test.conf";
 
         AcceptanceTestTask task = new AcceptanceTestTask();
-        
+
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(configFile);
 
         if (inputStream == null) {
-            throw new BuildException("cannot find config file (" + configFile 
+            throw new BuildException("cannot find config file (" + configFile
                                      + ") in the class path");
         }
-        
+
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(inputStream));
         List testResults = task.runAllTests(db, reader);
-        
+
         assertEquals(5, testResults.size());
 
         for (int i = 0; i < testResults.size(); i++) {
             AcceptanceTestResult atr = (AcceptanceTestResult) testResults.get(i);
-            
+
             if (i < 4) {
                 if (!atr.isSuccessful()) {
                     fail("test for " + atr.getTest().getSql() + " failed");

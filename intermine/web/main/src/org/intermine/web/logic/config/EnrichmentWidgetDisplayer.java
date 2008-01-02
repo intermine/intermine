@@ -1,6 +1,6 @@
 package org.intermine.web.logic.config;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -17,7 +17,7 @@ public class EnrichmentWidgetDisplayer
 {
     private String title, link, controller, description, max, filters, filterLabel;
     private String label;
-    
+
     /**
      * @return the label
      */
@@ -39,7 +39,7 @@ public class EnrichmentWidgetDisplayer
     public String getLink() {
         return link;
     }
-    
+
     /**
      * Set the link
      * @param link the link
@@ -106,7 +106,7 @@ public class EnrichmentWidgetDisplayer
     public void setFilters(String filters) {
         this.filters = filters;
     }
-    
+
     /**
      * @return the label for the filters
      */
@@ -120,7 +120,7 @@ public class EnrichmentWidgetDisplayer
     public void setFilterLabel(String filterLabel) {
         this.filterLabel = filterLabel;
     }
-    
+
     /**
      * @return the maximum value this widget will display
      */
@@ -134,8 +134,8 @@ public class EnrichmentWidgetDisplayer
     public void setMax(String max) {
         this.max = max;
     }
-    
-    
+
+
     /**
      * Return an XML String of this Type object
      * @return a String version of this WebConfig object

@@ -62,7 +62,7 @@ public class SOClassNameMapMakerTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         Reader reader;
@@ -71,7 +71,7 @@ public class SOClassNameMapMakerTask extends Task
         } catch (FileNotFoundException e) {
             throw new BuildException("cannot file SO file: " + soFile, e);
         }
-        
+
         OboParser oboParser = new OboParser();
         Map termIdNameMap;
         try {
@@ -79,9 +79,9 @@ public class SOClassNameMapMakerTask extends Task
         } catch (IOException e) {
             throw new BuildException("error while reading SO file: " + soFile, e);
         }
-        
+
         Iterator termNameIter = termIdNameMap.values().iterator();
-        
+
         try {
             FileWriter fw = new FileWriter(outputFile);
             PrintWriter pw = new PrintWriter(fw);

@@ -46,7 +46,7 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * Query all objects of the class given by the className specified in the configurationFile. 
+     * Query all objects of the class given by the className specified in the configurationFile.
      * Set fields in the objects by using the tab separated files as input.
      * @param file the File to process
      * @throws BuildException if an ObjectStore method fails
@@ -85,16 +85,16 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
         String className = dfc.getConfigClassDescriptor().getName();
 
         System.err .println("Processing file: " + file.getName());
-                    
+
         Iterator tsvIter;
         try {
             tsvIter = TextFileUtil.parseTabDelimitedReader(new FileReader(file));
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + file, e);
         }
-                    
+
         List fieldClasses = dfc.getColumnFieldClasses();
-        
+
         while (tsvIter.hasNext()) {
             String[] thisRow = (String[]) tsvIter.next();
 
@@ -104,10 +104,10 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
             } catch (ClassNotFoundException e) {
                 throw new BuildException("cannot find class while reading: " + file, e);
             } catch (ObjectStoreException e) {
-                throw new BuildException("exception while creating object of type: " 
+                throw new BuildException("exception while creating object of type: "
                                          + className, e);
             }
-                        
+
             for (int columnIndex = 0; columnIndex < thisRow.length; columnIndex++) {
                 if (dfc.getColumnFieldDescriptors().size() <= columnIndex) {
                     // ignore - no configuration for this column

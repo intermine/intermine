@@ -48,7 +48,7 @@ import org.stringtree.json.JSONWriter;
 public class TableController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(TableController.class);
-    
+
     /**
      * Set up table tile.
      *
@@ -72,20 +72,20 @@ public class TableController extends TilesAction
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
         String trail = request.getParameter("trail");
-        
+
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         if (query != null) {
-            HashMap<String, String> sortOrderMap = setSortOrderMap(query);        
+            HashMap<String, String> sortOrderMap = setSortOrderMap(query);
             request.setAttribute("sortOrderMap", sortOrderMap);
         }
-                
+
         request.setAttribute("trail", trail);
-        
+
         SaveBagForm bagForm = (SaveBagForm) session.getAttribute("saveBagForm");
         if (bagForm != null) {
             bagForm.reset(mapping, request);
         }
-        
+
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         if (pt == null) {
             LOG.error("PagedTable for " + request.getParameter("table") + " is null");
@@ -93,7 +93,7 @@ public class TableController extends TilesAction
         }
         request.setAttribute("resultsTable", pt);
         if (request.getAttribute("lookupResults") != null) {
-          //Do nothing  
+          //Do nothing
         } else if (pt.getAllRows().getPathToBagQueryResult() != null) {
             Map<String, BagQueryResult> pathToBagQueryResult = pt.getAllRows()
                 .getPathToBagQueryResult();
@@ -138,7 +138,7 @@ public class TableController extends TilesAction
                         wildcards.putAll(queries.getValue());
                     }
                 }
-                
+
                 lookupResults.add(new DisplayLookup(type, matches, unresolved, duplicates,
                             translated, lowQuality, wildcards, extraConstraint));
             }
@@ -152,15 +152,15 @@ public class TableController extends TilesAction
                 request.setAttribute("templateQuery", session.getAttribute(Constants.QUERY));
             }
         }
-        
+
         int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
-        
+
         int newPageSize;
         if (sizeStr != null) {
             newPageSize = Integer.parseInt(sizeStr);
         } else {
             if (session.getAttribute(Constants.RESULTS_TABLE_SIZE) != null) {
-                newPageSize = ((Integer) 
+                newPageSize = ((Integer)
                                 session.getAttribute(Constants.RESULTS_TABLE_SIZE)).intValue();
             } else {
                 newPageSize = pt.getPageSize();
@@ -168,9 +168,9 @@ public class TableController extends TilesAction
         }
         pt.setPageAndPageSize(page, newPageSize);
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Integer.valueOf(newPageSize));
-        
+
         List<Column> columns = pt.getColumns();
-        
+
         // a Map from column index to List of column indexes - if any element in a column is
         // selected then all the columns in the coresponding list should be disabled
         Map<String, List<String>> columnsToDisableMap = new HashMap<String, List<String>>();
@@ -183,10 +183,10 @@ public class TableController extends TilesAction
                 Class columnEndType = columnPath.getLastClassDescriptor().getType();
                 if (columnEndType != null) {
                     List<String> columnsToDisable = new ArrayList<String>();
-                    // find columns that should be disabled if an object from this column is 
+                    // find columns that should be disabled if an object from this column is
                     // selected
-                    for (int otherColumnIndex = 0; 
-                        otherColumnIndex < columns.size(); 
+                    for (int otherColumnIndex = 0;
+                        otherColumnIndex < columns.size();
                         otherColumnIndex++) {
                         Column otherColumn = columns.get(otherColumnIndex);
                         if (otherColumn.equals(column) || !otherColumn.isSelectable()) {
@@ -194,7 +194,7 @@ public class TableController extends TilesAction
                         } else {
                             Path otherColumnPath = otherColumn.getPath();
                             if (otherColumnPath != null) {
-                                Class otherColumnEndType = 
+                                Class otherColumnEndType =
                                     otherColumnPath.getLastClassDescriptor().getType();
                                 if (otherColumnEndType != null) {
                                     if (!columnEndType.equals(otherColumnEndType)) {
@@ -208,22 +208,22 @@ public class TableController extends TilesAction
                 }
             }
         }
-        
+
         JSONWriter jsonWriter = new JSONWriter();
         request.setAttribute("columnsToDisable", jsonWriter.write(columnsToDisableMap));
 
         // a Map from column index to List of column indexes - if an element in row R and column C
-        // is selected then the elements in the columns in the coresponding list should be 
+        // is selected then the elements in the columns in the coresponding list should be
         // highlighted if they are in row R (because they are fields from the object)
         Map<String, List<String>> columnsToHighlightMap = new HashMap<String, List<String>>();
-        
+
         for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
             Column column = columns.get(columnIndex);
             Path columnPath = column.getPath();
             if (columnPath != null) {
                 List<String> columnsToHighlight = new ArrayList<String>();
                 for (int otherColumnIndex = 0;
-                     otherColumnIndex < columns.size(); 
+                     otherColumnIndex < columns.size();
                      otherColumnIndex++) {
                     Column otherColumn = columns.get(otherColumnIndex);
                     Path otherColumnPath = otherColumn.getPath();
@@ -237,12 +237,12 @@ public class TableController extends TilesAction
                 columnsToHighlightMap.put("" + columnIndex, columnsToHighlight);
             }
         }
-        
+
         request.setAttribute("columnsToHighlight", jsonWriter.write(columnsToHighlightMap));
         request.setAttribute("pathQuery", pt.getWebTable().getPathQuery());
         request.setAttribute("table", request.getParameter("table"));
 
-        Map<Path, String> pathNames = new HashMap<Path, String> (); 
+        Map<Path, String> pathNames = new HashMap<Path, String> ();
         for (Column column : columns) {
             Path path = column.getPath();
             pathNames.put(path, path.toStringNoConstraints());
@@ -251,7 +251,7 @@ public class TableController extends TilesAction
 
         return null;
     }
-    
+
     private HashMap<String, String> setSortOrderMap(PathQuery q) {
         HashMap<String, String> mappy = new HashMap<String, String>();
         String sortBy, direction = null;
@@ -268,16 +268,16 @@ public class TableController extends TilesAction
             sortBy = sortOrderList.get(0).getField().toStringNoConstraints();
             direction = sortOrderList.get(0).getDirection();
         }
-        
+
         // loop through query and populate map
         for (String s:  selectList) {
             if (s.equals(sortBy)) {
                 mappy.put(s, direction);
             } else {
-                mappy.put(s, null);                
+                mappy.put(s, null);
             }
         }
-            
+
         return mappy;
     }
 }

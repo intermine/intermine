@@ -52,11 +52,11 @@ public class BagHelper
             }
         }
     }
-    
+
     /**
      * For a given InterMineObject and an InterMineIdBag return true if
      * the types correspond
-     * 
+     *
      * @param bag the InterMineIdBag
      * @param o the InterMineObject
      * @param os the ObjectStore
@@ -73,11 +73,11 @@ public class BagHelper
         }
         return false;
     }
-    
+
     /**
      * For a given bag name, return the bag whether it's in the profile or
      * is a shared bag
-     * 
+     *
      * @param profile the user profile
      * @param searchRepository the SearchRepository
      * @param bagName the bag name

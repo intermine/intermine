@@ -305,7 +305,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                             .getId()) : null);
                                                 String idToAddIdentifer =
                                                     itot.idToIdentifier(idToAdd);
-                                                String message = 
+                                                String message =
                                                     "Collection " + collectionName + " in object "
                                                     + (objToPopulate instanceof InterMineObject
                                                             ? ((InterMineObject) objToPopulate)

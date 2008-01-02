@@ -32,13 +32,13 @@ public class ResultsInfo
     /** Denotes that the result of getRows() is a pure estimate that is not contradicted by the min
      * or max */
     public static final int ESTIMATE = 3;
-    
+
     /**
      * No-arg constructor to allow serialization
      */
     public ResultsInfo() {
     }
-    
+
     /**
      * Constructs an instance of ResultsInfo with all new parameters, without min and max.
      *
@@ -122,7 +122,7 @@ public class ResultsInfo
     public void setRows(int rows) {
         this.rows = rows;
     }
-    
+
     /**
      * Returns the estimated amount of time taken to produce the first row of the results.
      *
@@ -141,7 +141,7 @@ public class ResultsInfo
     public void setStart(long start) {
         this.start = start;
     }
-    
+
     /**
      * Returns the estimated amount of time taken to produce the entire set of results.
      *
@@ -160,7 +160,7 @@ public class ResultsInfo
     public void setComplete(long complete) {
         this.complete = complete;
     }
-    
+
     /**
      * Returns the minimum possible number of rows in the results.
      *
@@ -179,7 +179,7 @@ public class ResultsInfo
     public void setMin(int min) {
         this.min = min;
     }
-    
+
     /**
      * Returns the maximum possible number of rows in the results.
      *

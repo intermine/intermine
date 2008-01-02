@@ -39,7 +39,7 @@ public class SavedQueryBinding
     public static void marshal(SavedQuery query, XMLStreamWriter writer) {
         try {
             writer.writeStartElement("saved-query");
-            
+
             writer.writeAttribute("name", query.getName());
             if (query.getDateCreated() != null) {
                 writer.writeAttribute("date-created", "" + query.getDateCreated().getTime());
@@ -53,7 +53,7 @@ public class SavedQueryBinding
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Convert a TemplateQuery to XML
      *
@@ -70,7 +70,7 @@ public class SavedQueryBinding
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-        
+
         return sw.toString();
     }
 
@@ -81,11 +81,11 @@ public class SavedQueryBinding
      * @param savedBags Map from bag name to bag
      * @param servletContext global ServletContext object
      */
-    public static Map<String, SavedQuery> unmarshal(Reader reader, Map savedBags, 
+    public static Map<String, SavedQuery> unmarshal(Reader reader, Map savedBags,
                                                     ServletContext servletContext) {
         Map<String, SavedQuery> queries = new LinkedHashMap<String, SavedQuery>();
         try {
-            SAXParser.parse(new InputSource(reader), new SavedQueryHandler(queries, savedBags, 
+            SAXParser.parse(new InputSource(reader), new SavedQueryHandler(queries, savedBags,
                                                                            servletContext));
         } catch (Exception e) {
             e.printStackTrace();

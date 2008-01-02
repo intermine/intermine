@@ -78,7 +78,7 @@ public class ModifyBagForm extends ActionForm
     public String[] getSelectedBags() {
         return selectedBags;
     }
-    
+
     /**
      * Set the new bag name.
      * @param name the new bag name
@@ -86,7 +86,7 @@ public class ModifyBagForm extends ActionForm
     public void setNewBagName(String name) {
         newBagName = name;
     }
-    
+
     /**
      * Get the new bag name.
      * @return the new bag name
@@ -108,17 +108,17 @@ public class ModifyBagForm extends ActionForm
     public void setPageName(String pageName) {
         this.pageName = pageName;
     }
-    
+
     /**
-     * 
+     *
      * @return listsButton
      */
     public String getListsButton() {
         return listsButton;
     }
-    
+
     /**
-     * 
+     *
      * @param listsButton lists button
      */
     public void setListsButton(String listsButton) {
@@ -128,13 +128,13 @@ public class ModifyBagForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
         ActionErrors errors = new ActionErrors();
-        
+
         if (request.getParameter("newName") == null && selectedBags.length == 0) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.modifyBag.none"));
         } else if (request.getParameter("delete") != null) {
@@ -150,25 +150,25 @@ public class ModifyBagForm extends ActionForm
                     errors.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
                 }
             }
-        } 
+        }
 
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String defaultName = properties.getProperty("lists.input.example");
-        
+
         if (request.getParameter("newName") == null
             && (request.getParameter("union") != null
                 || request.getParameter("intersect") != null
                 || request.getParameter("subtract") != null)) {
-            if (StringUtils.isEmpty(getNewBagName()) 
+            if (StringUtils.isEmpty(getNewBagName())
                             || (getNewBagName().trim().equalsIgnoreCase(defaultName))) {
                 ActionMessage actionMessage =
                     new ActionMessage("errors.required", "New list name");
                 errors.add(ActionMessages.GLOBAL_MESSAGE, actionMessage);
-            } else if (!WebUtil.isValidName(getNewBagName())) { 
+            } else if (!WebUtil.isValidName(getNewBagName())) {
                 errors.add(ActionMessages.GLOBAL_MESSAGE,
-                       new ActionMessage("errors.badChars"));    
+                       new ActionMessage("errors.badChars"));
             }
-        } 
+        }
 
         return errors;
     }
@@ -197,7 +197,7 @@ public class ModifyBagForm extends ActionForm
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }

@@ -30,7 +30,7 @@ public interface QueryMonitor
      * @return false if the query should be cancelled, otherwise true
      */
     public boolean shouldCancelQuery();
-    
+
     /**
      * Called when the query has completed.
      */

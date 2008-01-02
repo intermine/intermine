@@ -125,7 +125,7 @@ public class BagConstraint extends Constraint
     public int hashCode() {
         return (bag == null ? osb.hashCode() : bag.hashCode()) + 5 * qn.hashCode();
     }
-    
+
     /** List of possible operations */
     public static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.IN,
         ConstraintOp.NOT_IN});

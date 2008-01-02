@@ -21,13 +21,13 @@ import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Implements getItemByPath and getItemsByPath.
- * 
+ *
  * @author Thomas Riley
  */
 public abstract class AbstractItemReader implements ItemReader
 {
     private static final Logger LOG = Logger.getLogger(AbstractItemReader.class);
-    
+
     /**
      * {@inheritDoc}
      */
@@ -35,7 +35,7 @@ public abstract class AbstractItemReader implements ItemReader
             throws ObjectStoreException {
         ItemPrefetchDescriptor ipd = path.getItemPrefetchDescriptor();
         List items = getItemsByPath(path, ipd, startingPoint, variables);
-        
+
         if (items == null || items.size() == 0) {
             return null;
         } else if (items.size() > 1) {
@@ -46,7 +46,7 @@ public abstract class AbstractItemReader implements ItemReader
             return (Item) items.get(0);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -54,11 +54,11 @@ public abstract class AbstractItemReader implements ItemReader
             throws ObjectStoreException {
         return getItemByPath(path, startingPoint, new Object[0]);
     }
-    
+
     /**
-     * Generalised method for traversing a path and returning the items found at the 
+     * Generalised method for traversing a path and returning the items found at the
      * end of the path.
-     * 
+     *
      * @param path the ItemPath being traversed
      * @param ipd the root ItemPrefetchDescriptor
      * @param startingPoint the item to start traversing from
@@ -70,7 +70,7 @@ public abstract class AbstractItemReader implements ItemReader
                                 Item startingPoint, Object variables[])
             throws ObjectStoreException {
         Item currentItem = startingPoint;
-        
+
         while (ipd != null) {
             Set constraints;
             try {
@@ -81,7 +81,7 @@ public abstract class AbstractItemReader implements ItemReader
             }
             constraints.addAll(path.getFieldValueConstrainsts(ipd, variables));
             List items = getItemsByDescription(constraints);
-            
+
             Set subPathConstraints = path.getSubItemPathConstraints(ipd);
             for (Iterator iiter = items.iterator(); iiter.hasNext(); ) {
                 Item start = (Item) iiter.next();
@@ -94,7 +94,7 @@ public abstract class AbstractItemReader implements ItemReader
                     }
                 }
             }
-            
+
             if (items.size() == 1 && ipd.getPaths().size() > 0) {
                 currentItem = (Item) items.get(0);
             } else if (items.size() == 0) {
@@ -106,17 +106,17 @@ public abstract class AbstractItemReader implements ItemReader
             } else {
                 return items;
             }
-            
+
             if (ipd.getPaths().size() > 0) {
                 ipd = (ItemPrefetchDescriptor) ipd.getPaths().iterator().next();
             } else {
                 ipd = null;
             }
         }
-        
+
         throw new IllegalStateException("should not get here");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -125,7 +125,7 @@ public abstract class AbstractItemReader implements ItemReader
         ItemPrefetchDescriptor ipd = path.getItemPrefetchDescriptor();
         return getItemsByPath(path, ipd, startingPoint, variables);
     }
-    
+
     /**
      * {@inheritDoc}
      */

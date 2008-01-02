@@ -54,7 +54,7 @@ public class BagQueryHandler extends DefaultHandler
     private String className;
 
     private String constrainField;
-    
+
 
     /**
      * Create a new BagQueryHandler object.
@@ -81,7 +81,7 @@ public class BagQueryHandler extends DefaultHandler
      * {@inheritDoc}
      */
     public void startElement(@SuppressWarnings("unused") String uri,
-                             @SuppressWarnings("unused") String localName, 
+                             @SuppressWarnings("unused") String localName,
                              String qName, Attributes attrs)
               throws SAXException {
         if (qName.equals("extra-bag-query-class")) {

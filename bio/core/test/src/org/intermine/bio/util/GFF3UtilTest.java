@@ -45,7 +45,7 @@ public class GFF3UtilTest extends TestCase
         geneLocation.setStart(new Integer(100));
         geneLocation.setEnd(new Integer(800));
         geneLocation.setStrand("1");
-        
+
         exon.setChromosome(chromosome);
         exon.setChromosomeLocation(exonLocation);
         exon.setIdentifier("exon1");
@@ -53,10 +53,10 @@ public class GFF3UtilTest extends TestCase
         exonLocation.setStart(new Integer(200));
         exonLocation.setEnd(new Integer(300));
         exonLocation.setStrand("-1");
-        
+
         chromosome.setIdentifier("4");
         chromosome.setLength(new Integer(1000));
- 
+
         Map extraAttributes = new LinkedHashMap();
 
         // test adding strings
@@ -70,11 +70,11 @@ public class GFF3UtilTest extends TestCase
         extraAttributes.put("name3", valList);
 
         Map soClassNameMap = new LinkedHashMap();
-        
+
         soClassNameMap.put("Gene", "gene");
         soClassNameMap.put("Exon", "exon");
         soClassNameMap.put("Chromosome", "chromosome");
-        
+
         GFF3Record gff3Gene = GFF3Util.makeGFF3Record(gene, soClassNameMap, extraAttributes);
 
         GFF3Record gff3Exon = GFF3Util.makeGFF3Record(exon, soClassNameMap, new HashMap());
@@ -89,11 +89,11 @@ public class GFF3UtilTest extends TestCase
         System.err.println (gff3Exon.toGFF3());
         System.err.println (gff3Chromosome.toGFF3());
 
-        assertEquals("4	FlyMine	gene	100	800	.	+	.	name1=value1;name2=2;name3=3,4;ID=gene1",
+        assertEquals("4    FlyMine    gene    100    800    .    +    .    name1=value1;name2=2;name3=3,4;ID=gene1",
                      gff3Gene.toGFF3());
-        assertEquals("4	FlyMine	exon	200	300	.	-	.	ID=exon1",
+        assertEquals("4    FlyMine    exon    200    300    .    -    .    ID=exon1",
                      gff3Exon.toGFF3());
-        assertEquals("4	FlyMine	chromosome	1	1000	.	.	.	ID=4",
+        assertEquals("4    FlyMine    chromosome    1    1000    .    .    .    ID=4",
                      gff3Chromosome.toGFF3());
     }
 }

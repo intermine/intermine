@@ -18,7 +18,7 @@ import java.util.Set;
 public class AttributeDescriptorTest extends TestCase
 {
     private static final Set EMPTY_SET = Collections.EMPTY_SET;
-    
+
     public AttributeDescriptorTest(String arg) {
         super(arg);
     }
@@ -70,7 +70,7 @@ public class AttributeDescriptorTest extends TestCase
         assertFalse(attr1.equals(attr3));
         assertFalse(attr1.equals(attr4));
     }
-    
+
     public void testToString() throws Exception {
         AttributeDescriptor attr = new AttributeDescriptor("attr", "int");
         String expected = "<attribute name=\"attr\" type=\"int\"/>";

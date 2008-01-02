@@ -66,7 +66,7 @@ public class DefaultDeserializer extends DeserializerImpl
         if (context.isNil(attributes)) {
             return null;
         }
-        
+
         Method field = TypeUtil.getGetter(javaType, localName);
 
         if (field == null) {
@@ -76,7 +76,7 @@ public class DefaultDeserializer extends DeserializerImpl
         QName childXMLType = context.getTypeFromXSITypeAttr(namespace, localName, attributes);
 
         String href = attributes.getValue(soapConstants.getAttrHref());
-        
+
         Deserializer dSer = getDeserializer(childXMLType, field.getReturnType(), href, context);
 
         if (dSer == null) {
@@ -93,8 +93,8 @@ public class DefaultDeserializer extends DeserializerImpl
     /**
      * {@inheritDoc}
      */
-    protected Deserializer getDeserializer(QName xmlType, 
-                                           Class javaType, 
+    protected Deserializer getDeserializer(QName xmlType,
+                                           Class javaType,
                                            String href,
                                            DeserializationContext context) {
         Deserializer dSer = null;

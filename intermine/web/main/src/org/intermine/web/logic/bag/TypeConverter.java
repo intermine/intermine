@@ -58,7 +58,7 @@ public class TypeConverter
      * @throws InterMineException if an error occurs
      */
     public static Map<InterMineObject, List<InterMineObject>>
-    convertObjects(ServletContext servletContext, Class typeA, Class typeB, Object bag) 
+    convertObjects(ServletContext servletContext, Class typeA, Class typeB, Object bag)
     throws InterMineException {
         TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
         if (tq == null) {
@@ -86,7 +86,7 @@ public class TypeConverter
         }
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Results r;
-        Map<InterMineObject, List<InterMineObject>> retval = 
+        Map<InterMineObject, List<InterMineObject>> retval =
             new HashMap<InterMineObject, List<InterMineObject>>();
         r = os.execute(q);
         Iterator iter = r.iterator();
@@ -127,7 +127,7 @@ public class TypeConverter
      * @param typeA the type to convert from
      * @return a Map from Class to TemplateQuery
      */
-    public static Map<Class, TemplateQuery> getConversionTemplates(ServletContext servletContext, 
+    public static Map<Class, TemplateQuery> getConversionTemplates(ServletContext servletContext,
                                                                   Class typeA) {
         String sup = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);

@@ -210,7 +210,7 @@ public class GFF3ConverterTask extends Task
                 }
                 Class [] types = new Class[] {};
                 Object [] args = new Object[] {};
-                sequenceHandler = 
+                sequenceHandler =
                     (GFF3SeqHandler) handlerClass.getConstructor(types).newInstance(args);
             }
 

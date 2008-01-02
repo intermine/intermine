@@ -20,25 +20,25 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.xml.full.FullParser;
 
 public class ProteinInteractionRetrieverTest extends TestCase {
-	Model model;
-	String xmlResource = "FlyNetworkCreatorTest.xml";
-	ObjectStore os;
-	ObjectStoreWriter osw;
-	
-	protected void setUp() throws Exception {
-		model = Model.getInstanceByName("genomic");
-		osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
-		os = osw.getObjectStore();
-		osw.beginTransaction();
-		Collection c = getExpectedObjects();
-		for (Iterator iter = c.iterator(); iter.hasNext();) {
-			InterMineObject element = (InterMineObject) iter.next();
-			osw.store(element);
-		}
-		osw.commitTransaction();
-	}
-	
-	protected void tearDown() throws Exception {
+    Model model;
+    String xmlResource = "FlyNetworkCreatorTest.xml";
+    ObjectStore os;
+    ObjectStoreWriter osw;
+
+    protected void setUp() throws Exception {
+        model = Model.getInstanceByName("genomic");
+        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
+        os = osw.getObjectStore();
+        osw.beginTransaction();
+        Collection c = getExpectedObjects();
+        for (Iterator iter = c.iterator(); iter.hasNext();) {
+            InterMineObject element = (InterMineObject) iter.next();
+            osw.store(element);
+        }
+        osw.commitTransaction();
+    }
+
+    protected void tearDown() throws Exception {
         if (osw.isInTransaction()) {
             osw.abortTransaction();
         }
@@ -57,36 +57,36 @@ public class ProteinInteractionRetrieverTest extends TestCase {
         osw.commitTransaction();
         osw.close();
 
-	}
+    }
 
-	public void testExpandNetworkFromProteins(){
-		ProteinInteractionRetriever ret = new ProteinInteractionRetriever(os);
-		ArrayList list = new ArrayList();
-		list.add("Q9W5X1");
-		list.add("P09956");
+    public void testExpandNetworkFromProteins(){
+        ProteinInteractionRetriever ret = new ProteinInteractionRetriever(os);
+        ArrayList list = new ArrayList();
+        list.add("Q9W5X1");
+        list.add("P09956");
 
-		FlyNetwork net = ret.expandNetworkFromProteins(list,2);
-		Collection nodes = net.getNodes();
-		System.out.println("");
-		for (Iterator iter = nodes.iterator(); iter.hasNext();) {
-			FlyNode node = (FlyNode) iter.next();
-			System.out.println(node.getLabel());
-		}
-	}
-	
-	private Collection getExpectedObjects() {
-		Collection c = null;
-		try {
-			c = FullParser.realiseObjects(getExpectedItems(), model, false);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return c;
-	}
-	
-	private Collection getExpectedItems() throws Exception {
-			return FullParser.parse(getClass().getClassLoader().
-	    			getResourceAsStream(xmlResource));
-	}
+        FlyNetwork net = ret.expandNetworkFromProteins(list,2);
+        Collection nodes = net.getNodes();
+        System.out.println("");
+        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
+            FlyNode node = (FlyNode) iter.next();
+            System.out.println(node.getLabel());
+        }
+    }
+
+    private Collection getExpectedObjects() {
+        Collection c = null;
+        try {
+            c = FullParser.realiseObjects(getExpectedItems(), model, false);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return c;
+    }
+
+    private Collection getExpectedItems() throws Exception {
+            return FullParser.parse(getClass().getClassLoader().
+                    getResourceAsStream(xmlResource));
+    }
 
 }

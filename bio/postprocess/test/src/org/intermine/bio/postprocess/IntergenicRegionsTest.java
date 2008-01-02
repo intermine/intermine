@@ -113,10 +113,10 @@ public class IntergenicRegionsTest extends TestCase
             assertEquals(3, intergenicRegions.size());
         }
     }
- 
+
     public void testCreateIntergenicRegionFeaturesRefs() throws Exception {
         IntergenicRegionUtil iru = new IntergenicRegionUtil(osw);
-        
+
         List chrXgeneLocList =  new ArrayList();
         Map chrXlocMap = new HashMap();
         createChrX(chrXgeneLocList, chrXlocMap, 3000);
@@ -125,10 +125,10 @@ public class IntergenicRegionsTest extends TestCase
         Integer chr1Id = createChr1(chr1geneLocList, chr1locMap, 4000);
 
         iru.createIntergenicRegionFeatures();
-        
+
         ObjectStore os = osw.getObjectStore();
         os.flushObjectById();
-        
+
         Query q = new Query();
 
         QueryClass qc = new QueryClass(IntergenicRegion.class);
@@ -146,7 +146,7 @@ public class IntergenicRegionsTest extends TestCase
 
             while(irIter.hasNext()) {
                 IntergenicRegion ir = (IntergenicRegion) irIter.next();
-                
+
                 assertNotNull(ir.getChromosome());
                 assertNotNull(ir.getOrganism());
                 assertNotNull(ir.getLength());
@@ -173,13 +173,13 @@ public class IntergenicRegionsTest extends TestCase
                         prevGeneIds = getByLoc(newLoc, chrXlocMap);
                     }
                     Iterator prevGeneIdsIter = prevGeneIds.iterator();
-                    
+
                     while (prevGeneIdsIter.hasNext()) {
                         Gene prevGene = (Gene) os.getObjectById((Integer) prevGeneIdsIter.next());
 
                         assertTrue(prevGene.getUpstreamIntergenicRegion() != null
                                || prevGene.getDownstreamIntergenicRegion() != null);
-                        
+
                         Set adjacentGenes = new HashSet(ir.getAdjacentGenes());
                         assertTrue(adjacentGenes.contains(prevGene));
                         if (loc.getStrand().equals("1")) {
@@ -204,7 +204,7 @@ public class IntergenicRegionsTest extends TestCase
                    }
                     assertTrue(nextGeneIds.size() > 0);
                     Iterator nextGeneIdsIter = nextGeneIds.iterator();
-                    
+
                     while (nextGeneIdsIter.hasNext()) {
                         Gene nextGene = (Gene) os.getObjectById((Integer) nextGeneIdsIter.next());
 
@@ -253,7 +253,7 @@ public class IntergenicRegionsTest extends TestCase
         while (iter.hasNext()) {
             retList.add(((Gene) iter.next()).getId());
         }
-        // return IDs that will be looked up in the on disk objectstore rather than using the 
+        // return IDs that will be looked up in the on disk objectstore rather than using the
         // Genes created by createChrX() and createChr1(), which have null IDs
         return retList;
     }

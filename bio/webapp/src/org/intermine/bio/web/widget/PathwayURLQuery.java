@@ -50,10 +50,10 @@ public class PathwayURLQuery implements EnrichmentWidgetURLQuery
      * @return Query a query to generate the results needed
      */
     public PathQuery generatePathQuery() {
-        
+
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-        
+
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Gene.identifier"));
         view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
@@ -61,27 +61,27 @@ public class PathwayURLQuery implements EnrichmentWidgetURLQuery
         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
         view.add(MainHelper.makePath(model, q, "Gene.pathways.identifier"));
         view.add(MainHelper.makePath(model, q, "Gene.pathways.name"));
-        
+
         q.setView(view);
-        
+
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();        
+        String constraintValue = bag.getName();
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-        
+
         // pubmedid
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode expressedNode = q.addNode("Gene.pathways.identifier");
-        Constraint expressedConstraint 
+        Constraint expressedConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         expressedNode.getConstraints().add(expressedConstraint);
-        
+
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-                
+
         return q;
     }
 }

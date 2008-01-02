@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -21,7 +21,7 @@ import java.util.Map;
  *
  */
 public interface DataSetLdr
-{    
+{
     /**
      * @return the map [String, GraphDataSet]
      */

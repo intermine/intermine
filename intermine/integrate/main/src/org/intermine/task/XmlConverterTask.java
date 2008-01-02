@@ -72,7 +72,7 @@ public class XmlConverterTask extends ConverterTask
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         File toRead = null;
-        
+
         try {
             Model m = Model.getInstanceByName(getModelName());
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());

@@ -156,7 +156,7 @@ public class GFF3Record
             if (attVal.length() == 0) {
                 continue;
             }
-            
+
             String attName;
             List valList = new ArrayList();
             int spaceIndx = attVal.indexOf("=");
@@ -227,7 +227,7 @@ public class GFF3Record
     public String getType () {
         return type;
     }
-    
+
     /**
      * Set the type of this record.
      * @param type the new type

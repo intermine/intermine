@@ -98,7 +98,7 @@ public class InterproDataTranslator extends DataTranslator
     public InterproDataTranslator(ItemReader itemReader, Properties properties,
                                   Model sourceModel, Model targetModel) {
         super(itemReader, properties, sourceModel, targetModel);
-        
+
         interproDataSource = createItem("DataSource");
         interproDataSource.addAttribute(new Attribute("name", "UniProtKB"));
         interproDataSourceReference =

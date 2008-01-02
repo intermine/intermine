@@ -52,7 +52,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class ModifyBagAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(InterMineAction.class);
-    
+
     /**
      * Forward to the correct method based on the button pressed
      * @param mapping The ActionMapping used to select this instance
@@ -70,16 +70,16 @@ public class ModifyBagAction extends InterMineAction
         throws Exception {
         ModifyBagForm mbf = (ModifyBagForm) form;
         ActionErrors errors = mbf.validate(mapping, request);
-        if (errors.isEmpty()) {       
-            if (request.getParameter("union") != null 
+        if (errors.isEmpty()) {
+            if (request.getParameter("union") != null
                 || (mbf.getListsButton() != null && mbf.getListsButton().equals("union"))) {
                 combine(mapping, form, request, ObjectStoreBagCombination.UNION, "UNION");
-            } else if (request.getParameter("intersect") != null  
+            } else if (request.getParameter("intersect") != null
                 || (mbf.getListsButton() != null && mbf.getListsButton().equals("intersect"))) {
                 combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT, "INTERSECT");
-            } else if (request.getParameter("subtract") != null  
+            } else if (request.getParameter("subtract") != null
                 || (mbf.getListsButton() != null && mbf.getListsButton().equals("substract"))) {
-                combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT, 
+                combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT,
                         "SUBTRACT");
             } else if (request.getParameter("delete") != null) {
                 delete(mapping, form, request);
@@ -107,9 +107,9 @@ public class ModifyBagAction extends InterMineAction
         ModifyBagForm mbf = (ModifyBagForm) form;
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        
-        Map<String, InterMineBag> allBags = 
-            WebUtil.getAllBags(profile.getSavedBags(), servletContext); 
+
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
 
         String[] selectedBags = mbf.getSelectedBags();
 
@@ -117,7 +117,7 @@ public class ModifyBagAction extends InterMineAction
         if (type == null) {
             // TODO this didn't get message from message bundle correctly
             SessionMethods.recordError("You can only perform operations on lists of the same type."
-                    + " Lists " 
+                    + " Lists "
                     + StringUtil.prettyList(Arrays.asList(selectedBags))
                     + " don't match.", session);
             return getReturn(mbf.getPageName(), mapping);
@@ -126,7 +126,7 @@ public class ModifyBagAction extends InterMineAction
         // Now combine
         String name = BagHelper.findNewBagName(allBags, mbf.getNewBagName());
         ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
-        InterMineBag combined = new InterMineBag(name, type, null, new Date(), os, 
+        InterMineBag combined = new InterMineBag(name, type, null, new Date(), os,
                                                  profile.getUserId(), uosw);
         ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(op);
         for (int i = 0; i < selectedBags.length; i++) {
@@ -156,13 +156,13 @@ public class ModifyBagAction extends InterMineAction
 
         if (combined.size() > 0) {
             profile.saveBag(name, combined);
-            SessionMethods.recordMessage("Created list '" + combined.getName() + "' as " + opText 
-                                         + " of  " 
+            SessionMethods.recordMessage("Created list '" + combined.getName() + "' as " + opText
+                                         + " of  "
                                        + StringUtil.prettyList(Arrays.asList(selectedBags))
                                        + ".", session);
         } else {
             deleteBag(session, profile, combined);
-            SessionMethods.recordError(opText + " operation on lists " 
+            SessionMethods.recordError(opText + " operation on lists "
                                        + StringUtil.prettyList(Arrays.asList(selectedBags))
                                        + " produced no results.", session);
         }
@@ -172,7 +172,7 @@ public class ModifyBagAction extends InterMineAction
 
     /**
      * Given a set of bag names, find out whether they are all of the same type.
-     * 
+     *
      * @param bags map from bag name to InterMineIdBag subclass
      * @param selectedBags names of bags to match
      * @param os the obejct store
@@ -231,9 +231,9 @@ public class ModifyBagAction extends InterMineAction
 
         return getReturn(mbf.getPageName(), mapping);
     }
-    
+
     // Remove a bag from userprofile database and session cache
-    private void deleteBag(HttpSession session, Profile profile, InterMineBag bag) 
+    private void deleteBag(HttpSession session, Profile profile, InterMineBag bag)
     throws ObjectStoreException {
         ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
         // removed a cached bag table from the session
@@ -241,7 +241,7 @@ public class ModifyBagAction extends InterMineAction
         bag.setProfileId(null, uosw); // Deletes from database
         profile.deleteBag(bag.getName());
     }
-    
+
     private ActionForward getReturn(String pageName, ActionMapping mapping) {
         if (pageName != null && pageName.equals("MyMine")) {
             return new ForwardParameters(mapping.findForward("mymine"))

@@ -405,7 +405,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     public void setEdited(boolean edited) {
         this.edited = edited;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -32,7 +32,7 @@ public class QueryObjectReference extends QueryReference implements QueryOrderab
      * @param fieldName the name of the relevant field
      * @throws NullPointerException if the field name is null
      * @throws IllegalArgumentException if the field is not a reference, or does not exist
-     */    
+     */
     public QueryObjectReference(QueryClass qc, String fieldName) {
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");

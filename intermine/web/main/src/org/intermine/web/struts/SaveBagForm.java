@@ -73,7 +73,7 @@ public class SaveBagForm extends ActionForm
     public String[] getSelectedObjects() {
         return selectedObjects;
     }
- 
+
     /**
      * Gets the value of existingBagName
      *
@@ -113,14 +113,14 @@ public class SaveBagForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+
         Map savedBags = profile.getSavedBags();
         ActionErrors errors = null;
-        
+
         if ((request.getParameter("addToExistingBag") != null
              || request.getParameter("saveNewBag") != null)
             && selectedObjects.length == 0) {
@@ -128,13 +128,13 @@ public class SaveBagForm extends ActionForm
             errors.add(ActionMessages.GLOBAL_MESSAGE,
                        new ActionMessage("errors.savebag.nothingSelected"));
         }
-        
+
         if (request.getParameter("saveNewBag") != null) {
             if (newBagName.equals("")) {
                 errors = new ActionErrors();
                 errors.add(ActionMessages.GLOBAL_MESSAGE,
                            new ActionMessage("errors.savebag.blank"));
-            } else if (!WebUtil.isValidName(newBagName)) { 
+            } else if (!WebUtil.isValidName(newBagName)) {
                 errors = new ActionErrors();
                 errors.add(ActionMessages.GLOBAL_MESSAGE,
                            new ActionMessage("errors.badChars"));
@@ -146,7 +146,7 @@ public class SaveBagForm extends ActionForm
                 ServletContext servletContext = request.getSession().getServletContext();
                 SearchRepository searchRepository =
                     SearchRepository.getGlobalSearchRepository(servletContext);
-                Map<String, ? extends WebSearchable> publicBagMap = 
+                Map<String, ? extends WebSearchable> publicBagMap =
                     searchRepository.getWebSearchableMap(TagTypes.BAG);
                 if (publicBagMap.get(newBagName) != null) {
                     errors = new ActionErrors();
@@ -165,7 +165,7 @@ public class SaveBagForm extends ActionForm
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }

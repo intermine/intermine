@@ -15,7 +15,7 @@ import junit.framework.*;
 public class TableTest extends TestCase
 {
     private Table t1, t2, t3, t4, t5, t6;
-    
+
     public TableTest(String arg1) {
         super(arg1);
     }
@@ -29,7 +29,7 @@ public class TableTest extends TestCase
         t5 = new Table("value2", "alias3");
         t6 = new Table("value1");
     }
- 
+
     public void testTableWithAlias() throws Exception {
         Table t = new Table("mytable", "myalias");
         assertEquals("mytable AS myalias", t.getSQLString());

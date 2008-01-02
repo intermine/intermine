@@ -63,7 +63,7 @@ public class FullRendererTest extends XMLTestCase
             + "</item>";
 
         String got = FullRenderer.render(item1);
-        
+
         assertXMLEqual(expected, got);
     }
 
@@ -295,7 +295,7 @@ public class FullRendererTest extends XMLTestCase
     public List getExampleItems() {
         return getExampleItems(true);
     }
-    
+
     public List getExampleItems(boolean reverseCollection) {
         String id1 = "1";
         String id2 = "2";

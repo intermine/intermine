@@ -50,18 +50,18 @@ import org.apache.struts.action.ActionMapping;
 /**
  * Action class to run an IQL query and constraint the results to
  * be in a bag, allowing the results to be displayed
- * 
+ *
  * @author Xavier Watkins
  * @author Julie Sullivan
  */
 public class OrthologueAction extends InterMineAction
 {
     private static int index = 0;
-    
+
     /**
      * Action class to run an IQL query and constraint the results to
      * be in a bag, allowing the results to be displayed
-     * 
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -79,7 +79,7 @@ public class OrthologueAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+
         String bagName = request.getParameter("bagName");
         String queryString = request.getParameter("query");
         String id = request.getParameter("id");
@@ -90,7 +90,7 @@ public class OrthologueAction extends InterMineAction
                 .addParameter("id", id)
                 .addParameter("trail", "").forward();
         }
-                
+
         // rebuild query with IDs from bag
         IqlQuery iqlQuery = new IqlQuery(queryString, os.getModel().getPackageName());
         Query query = iqlQuery.toQuery();
@@ -104,7 +104,7 @@ public class OrthologueAction extends InterMineAction
                 FromElement fromElt = (FromElement) iter.next();
                 if ((fromElt instanceof QueryClass)
                         && (((QueryClass) fromElt).getType().isAssignableFrom((Class
-                                    .forName(os.getModel().getPackageName() 
+                                    .forName(os.getModel().getPackageName()
                                         + "." + bag.getType()))))) {
                     queryClass = (QueryClass) fromElt;
                 }
@@ -119,16 +119,16 @@ public class OrthologueAction extends InterMineAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
-        WebPathCollection webPathCollection = 
+        WebPathCollection webPathCollection =
             new WebPathCollection(os, new Path(model, columnName), results, model, webConfig,
                               classKeys);
         PagedTable pagedColl = new PagedTable(webPathCollection);
         String identifier = "qid" + index++;
         SessionMethods.setResultsTable(session, identifier, pagedColl);
-        
+
         return new ForwardParameters(mapping.findForward("results"))
             .addParameter("table", identifier)
-            .addParameter("trail", "").forward();             
+            .addParameter("trail", "").forward();
     }
 
 }

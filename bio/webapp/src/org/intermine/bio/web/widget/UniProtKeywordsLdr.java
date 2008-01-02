@@ -55,12 +55,12 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     Collection organisms;
     int total;
     String externalLink, append;
-    
+
     /**
      * @param request The HTTP request we are processing
      */
      public UniProtKeywordsLdr(HttpServletRequest request) {
-        
+
              HttpSession session = request.getSession();
              Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
              ServletContext servletContext = session.getServletContext();
@@ -71,7 +71,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-             
+
              Query q = new Query();
              q.setDistinct(false);
              QueryClass qcProtein = new QueryClass(Protein.class);
@@ -83,7 +83,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
              QueryField qfName = new QueryField(qcOntoTerm, "name");
              QueryField qfOrganismName = new QueryField(qcOrganism, "name");
              QueryField qfOnto = new QueryField(qcOntology, "title");
-             
+
              QueryFunction protCount = new QueryFunction();
 
              q.addFrom(qcProtein);
@@ -106,10 +106,10 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
              cs1.addConstraint(bc2);
 
              QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
-             ContainsConstraint cc1 
+             ContainsConstraint cc1
                                  = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
              cs1.addConstraint(cc1);
-             
+
              QueryCollectionReference qr2 = new QueryCollectionReference(qcProtein, "keywords");
              ContainsConstraint cc2 =
                  new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOntoTerm);
@@ -120,25 +120,25 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
                  new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcOntology);
              cs1.addConstraint(cc3);
 
-             SimpleConstraint sc = new 
+             SimpleConstraint sc = new
                  SimpleConstraint(qfOnto, ConstraintOp.MATCHES, new QueryValue("UniProtKeyword"));
              cs1.addConstraint(sc);
-             
+
              q.setConstraint(cs1);
              q.addToGroupBy(qfName);
-             
-//             SELECT DISTINCT a1_, a2_ FROM org.flymine.model.genomic.Protein AS a1_, 
-//             org.flymine.model.genomic.OntologyTerm AS a2_, 
-//             org.flymine.model.genomic.Ontology AS a3_ 
-//             WHERE (a1_.keywords CONTAINS a2_ 
-//                    AND a2_.ontology CONTAINS a3_ 
-//                    AND LOWER(a3_.title) = 'uniprotkeyword') 
+
+//             SELECT DISTINCT a1_, a2_ FROM org.flymine.model.genomic.Protein AS a1_,
+//             org.flymine.model.genomic.OntologyTerm AS a2_,
+//             org.flymine.model.genomic.Ontology AS a3_
+//             WHERE (a1_.keywords CONTAINS a2_
+//                    AND a2_.ontology CONTAINS a3_
+//                    AND LOWER(a3_.title) = 'uniprotkeyword')
 //             ORDER BY a1_.identifier, a1_.primaryAccession, a1_.length, a2_.name
 
-             
-             
+
+
              sampleQuery = q;
-             
+
              // construct population query
              q = new Query();
              q.setDistinct(false);
@@ -168,7 +168,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
          public Query getSample() {
              return sampleQuery;
          }
-         
+
          /**
           * @return the query representing the entire population (all the items in the database)
           */
@@ -177,7 +177,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
          }
 
          /**
-          * 
+          *
           * @param os
           * @param bag
           * @return description of reference population, ie "Accounting dept"
@@ -185,24 +185,24 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
          public Collection getReferencePopulation() {
              return organisms;
          }
-         
-         /** 
-          * @param os     
+
+         /**
+          * @param os
           * @return the query representing the sample population (the bag)
           */
          public int getTotal(ObjectStore os) {
              return BioUtil.getTotal(os, organisms, "Protein");
          }
-         
+
          /**
           * @return if the widget should have an external link, where it should go to
           */
          public String getExternalLink() {
              return externalLink;
          }
-         
+
          /**
-          * 
+          *
           * @return the string to append to the end of external link
           */
          public String getAppendage() {

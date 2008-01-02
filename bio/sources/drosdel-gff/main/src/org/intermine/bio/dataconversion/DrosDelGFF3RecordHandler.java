@@ -28,7 +28,7 @@ import org.intermine.xml.full.Item;
 public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
 {
     private Map elementsMap = new HashMap();
-    
+
     /**
      * Create a new DrosDelGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
@@ -64,7 +64,7 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
                 Item elem2 = (Item) elementsMap.get(elem2Identifier);
                 if (elem2 == null) {
                     throw new RuntimeException("TransposableElementInsertionSite features must "
-                                               + "be first in the GFF file - can't find: " 
+                                               + "be first in the GFF file - can't find: "
                                                + elem2Identifier);
                 }
                 elem2.setAttribute("identifier", elem2Identifier);
@@ -86,10 +86,10 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
             removeFeature();
         }
     }
-    
+
     /**
      * Return items that need extra processing that can only be done after all other GFF features
-     * have been read.  For this class TransposableElementInsertionSite items 
+     * have been read.  For this class TransposableElementInsertionSite items
      * @return the final Items
      */
     public Collection getFinalItems() {

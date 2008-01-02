@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  * in order to make the class reusable, it's properties are factored out into either a config or a
  * build file. The task subclass can use the configureDynamicAttributes method, along with some
  * properties that have been set at runtime to initialize the helper/worker class.
- *  
+ *
  * @author Peter Mclaren
  * @author Richard Smith
  * */
@@ -55,7 +55,7 @@ public class DynamicAttributeTask extends Task
                 Class propType = desc.getPropertyType();
                 String propName = setter.getName().substring(3).toLowerCase();
                 Object propValue = projectProps.get(propName);
-                
+
                 if (propValue == null) {
                     // there is not all-lowercase property in projectProps, so try the camelCase
                     // version
@@ -65,7 +65,7 @@ public class DynamicAttributeTask extends Task
                     propName = camelCasePropName;
                     propValue = projectProps.get(camelCasePropName);
                 }
-                
+
                 if (propValue == null) {
                     // still not found, try replacing each capital (after first) in camelCase
                     // to be a dot - i.e. setSrcDataDir -> src.data.dir

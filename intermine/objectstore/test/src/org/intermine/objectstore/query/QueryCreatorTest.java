@@ -56,7 +56,7 @@ public class QueryCreatorTest extends QueryTestCase
         }
     }
 
-    
+
     public void testQueryForExampleObjectKeyAttributes() throws Exception {
         // Address's key is "address" field
         Address a = new Address();
@@ -195,7 +195,7 @@ public class QueryCreatorTest extends QueryTestCase
         assertEquals(expected, q);
     }
 
-    
+
     public void testQueryForExampleObjectAttributeMissing() throws Exception {
         // Employee's key is "name", "address", "fullTime" fields
 

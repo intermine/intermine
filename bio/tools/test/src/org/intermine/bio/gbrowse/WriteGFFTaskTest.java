@@ -128,8 +128,8 @@ public class WriteGFFTaskTest extends TestCase
         List oneValue = new ArrayList();
         oneValue.add("v1");
         attMap.put("k1", oneValue);
-        
-        List twoValues = new ArrayList(); 
+
+        List twoValues = new ArrayList();
         twoValues.add("v2");
         twoValues.add("v3");
         attMap.put("k2", twoValues);
@@ -195,7 +195,7 @@ public class WriteGFFTaskTest extends TestCase
         storedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         storedGene.setIdentifier("gene1");
         storedGene.setLength(new Integer(420));
-        
+
         storedTranscript1 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         storedTranscript1.setIdentifier("trans1");

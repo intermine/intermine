@@ -28,7 +28,7 @@ public class LongOligoPostProcess extends PostProcessor
 {
     /**
      * Create a new instance of LongOligoPostProcess
-     * @param osw 
+     * @param osw
      *
      * @param  osw object store writer
      */

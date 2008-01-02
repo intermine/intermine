@@ -45,7 +45,7 @@ public class CollectionDescriptor extends ReferenceDescriptor
             return M_N_RELATION;
         } else {
             return ONE_N_RELATION;
-        } 
+        }
     }
 
     /**

@@ -44,13 +44,13 @@ public class ObjectViewController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        /*  
+        /*
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         Object o = request.getAttribute("object");
-      
+
         if (o == null) {
             String objectId = (String) request.getParameter("id");
             if (objectId != null) {
@@ -61,7 +61,7 @@ public class ObjectViewController extends TilesAction
                 }
             }
         }
-        
+
         if (o == null) {
             //this wouldn't be necessary if objectdetails was tidier
             session.removeAttribute("object");

@@ -1,8 +1,8 @@
 package org.intermine.web.logic;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
- * 
+ *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
  * be distributed with the code.  See the LICENSE file for more
@@ -30,18 +30,18 @@ import org.intermine.util.TypeUtil;
 /**
  * Methods to read and manage keys for classes. Keys define how certain classes
  * are identified and are used in defining bag creation.
- * 
+ *
  * @author rns
- * 
+ *
  */
-public class ClassKeyHelper 
+public class ClassKeyHelper
 {
     private static final Logger LOG = Logger.getLogger(ClassKeyHelper.class);
 
     /**
      * Read class keys from a properties into a map from classname to set of
      * available keys.
-     * 
+     *
      * @param model
      *            the data model
      * @param props
@@ -84,7 +84,7 @@ public class ClassKeyHelper
 
     /**
      * Add a key to set of keys for a given class.
-     * 
+     *
      * @param classKeys
      *            existing map of classname to set of keys
      * @param clsName
@@ -106,7 +106,7 @@ public class ClassKeyHelper
      * For a given class/field return true if it is an 'identifying' field. An
      * identifying field is an attribute (not a reference or collection) of the
      * class that is part of any key defined for that class.
-     * 
+     *
      * @param classKeys
      *            map of classname to set of keys
      * @param clsName
@@ -136,7 +136,7 @@ public class ClassKeyHelper
      * For a given classreturn true if it has any identifying fields. An
      * identifying field is an attribute (not a reference or collection) of the
      * class that is part of any key defined for that class.
-     * 
+     *
      * @param classKeys
      *            map of classname to set of keys
      * @param clsName
@@ -171,7 +171,7 @@ public class ClassKeyHelper
         return classKeys.get(className);
     }
 
-    
+
     /**
      * Return names of the key fields for a given class.
      * @param classKeys map of classname to set of keys
@@ -198,7 +198,7 @@ public class ClassKeyHelper
      * For a given object/field return true if it is an 'identifying' field. An
      * identifying field is an attribute (not a reference or collection) of the
      * class that is part of any key defined for that class.
-     * 
+     *
      * @param classKeys
      *            map of classname to set of keys
      * @param o
@@ -208,7 +208,7 @@ public class ClassKeyHelper
      * @return true if the field is an 'identifying' field for one of the
      *         classes that the object is
      */
-    public static boolean isKeyField(Map<String, List<FieldDescriptor>> classKeys, 
+    public static boolean isKeyField(Map<String, List<FieldDescriptor>> classKeys,
                                      InterMineObject o,
                                      String fieldName) {
         return getKeyFieldClass(classKeys, o, fieldName) != null;
@@ -217,7 +217,7 @@ public class ClassKeyHelper
     /**
      * For a given object/field name combination, if the field is a key field of
      * one of the Class that the object is, return that Class.
-     * 
+     *
      * @param classKeys
      *            map of classname to set of keys
      * @param o

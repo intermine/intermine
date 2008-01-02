@@ -37,7 +37,7 @@ public class UniprotConverterTest extends ItemsTestCase
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         UniprotConverter converter = new UniprotConverter(itemWriter,
                                                           Model.getInstanceByName("genomic"));
-        converter.setCreateinterpro("true"); 
+        converter.setCreateinterpro("true");
         converter.process(reader);
         converter.close();
 
@@ -45,7 +45,7 @@ public class UniprotConverterTest extends ItemsTestCase
         //writeItemsFile(itemWriter.getItems(), "uniprot-tgt-items.xml");
 
         Set expected = readItemSet("UniprotConverterTest_tgt.xml");
-        
+
         assertEquals(expected, itemWriter.getItems());
     }
 }

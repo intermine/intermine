@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -23,9 +23,9 @@ public class GraphDataSet
 
     CategoryDataset dataset;
     Object[] categoryArray;
-    
+
     /**
-     * 
+     *
      * @param dataset Dataset to be displayed on chart
      * @param categoryArray labels to be displayed on the x-axis
      */
@@ -33,16 +33,16 @@ public class GraphDataSet
         this.dataset = dataset;
         this.categoryArray = categoryArray;
     }
- 
+
     /**
-     * 
+     *
      * @return the dataset
      */
-    
+
     public CategoryDataset getDataSet() {
         return dataset;
     }
-    
+
     /**
      * labels to be displayed on the x-axis
      * @return categoryArray
@@ -50,5 +50,5 @@ public class GraphDataSet
     public Object[] getCategoryArray() {
         return categoryArray;
     }
-    
+
 }

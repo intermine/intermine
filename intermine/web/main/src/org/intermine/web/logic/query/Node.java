@@ -49,13 +49,13 @@ public class Node
         this.parent = parent;
         prefix = parent.getPathString();
         pathString = prefix + "." + fieldName;
-        
+
         indentation = pathString.split("[.]").length - 1;
     }
-    
+
     /**
      * Attach the model. Throws IllegalArgumentExceptions if node doesn't map onto the model.
-     * 
+     *
      * @param model model to attach
      * @throws IllegalArgumentException if class or field are not found in the model
      * @throws ClassNotFoundException if the class name is not in the model

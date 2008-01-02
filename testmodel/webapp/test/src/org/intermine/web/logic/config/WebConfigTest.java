@@ -58,12 +58,12 @@ public class WebConfigTest extends TestCase
         managerDisplayer.setAspects("Aspect1, Aspect2");
         Displayer tdisp = new Displayer();
         tdisp.setSrc("/model/tableManager.jsp");
-        
+
         Type managerType = new Type();
         managerType.setClassName("org.intermine.model.testmodel.Manager");
         managerType.addLongDisplayer(managerDisplayer);
         managerType.setTableDisplayer(tdisp);
-        
+
         FieldConfig df3 = new FieldConfig();
         df3.setFieldExpr("name");
         df3.setShowInInlineCollection(true);
@@ -102,7 +102,7 @@ public class WebConfigTest extends TestCase
         wc2.addType(thingType);
         wc2.addTableExportConfig(tableExportConfig);
         wc2.setSubClassConfig(Model.getInstanceByName("testmodel"));
-        
+
         HashMap displayerAspects = new HashMap();
         displayerAspects.put("Aspect1", Arrays.asList(
                 new Object[]{managerType.getLongDisplayers().iterator().next()}));
@@ -110,7 +110,7 @@ public class WebConfigTest extends TestCase
                 new Object[]{managerType.getLongDisplayers().iterator().next()}));
         assertEquals(displayerAspects, ((Type) wc1.getTypes().get("org.intermine.model.testmodel.Manager"))
                 .getAspectDisplayers());
-        
+
         assertEquals(wc2, wc1);
 
     }

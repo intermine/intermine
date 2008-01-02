@@ -34,7 +34,7 @@ public class QueryExpressionTest extends TestCase
         } catch (ClassCastException e) {
         }
     }
-    
+
     public void testInvalidOp() {
         QueryValue arg1 = new QueryValue(new Integer(3));
         QueryValue arg2 = new QueryValue(new Integer(4));
@@ -44,7 +44,7 @@ public class QueryExpressionTest extends TestCase
         } catch (ClassCastException e) {
         }
     }
-    
+
     public void testNumberSubstring() {
         try {
             QueryField field = new QueryField(new QueryClass(Company.class), "vatNumber");

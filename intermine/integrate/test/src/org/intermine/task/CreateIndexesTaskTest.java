@@ -56,7 +56,7 @@ public class CreateIndexesTaskTest extends TestCase
         expected.add("create index HasSecretarysSecretarys__HasSecretarys on HasSecretarysSecretarys(HasSecretarys, Secretarys)");
 
         CreateIndexesTask task = new CreateIndexesTask();
-        
+
         Map statements = new LinkedHashMap();
         task.getStandardIndexStatements(m.getClassDescriptorByName("org.intermine.model.testmodel.HasSecretarys"),
                                    statements);
@@ -127,13 +127,13 @@ public class CreateIndexesTaskTest extends TestCase
         Iterator statementsIter = statements.keySet().iterator();
 
         while (statementsIter.hasNext()) {
-            String indexName = (String) statementsIter.next();  
+            String indexName = (String) statementsIter.next();
 
             IndexStatement indexStatement = (IndexStatement) statements.get(indexName);
-            
+
             returnList.add(indexStatement.getStatementString(indexName));
         }
-        
+
         return returnList;
     }
 }

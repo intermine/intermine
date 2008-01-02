@@ -78,9 +78,9 @@ public class SaveQueryAction extends InterMineAction
              recordError(new ActionMessage("errors.query.badquery"), request);
             return mapping.findForward("query");
         }
-        
+
         try {
-            
+
             if (query.getInfo() == null) {
                 Map<String, InterMineBag> allBags =
                     WebUtil.getAllBags(profile.getSavedBags(), servletContext);
@@ -90,7 +90,7 @@ public class SaveQueryAction extends InterMineAction
         } catch (ObjectStoreException e) {
             recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
         }
-        
+
         SessionMethods.saveQuery(session, queryName, query);
 
         ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
@@ -101,7 +101,7 @@ public class SaveQueryAction extends InterMineAction
         request.setAttribute(Globals.MESSAGE_KEY, messages);
         return new ForwardParameters(mapping.findForward("mymine"))
         .addParameter("subtab", "saved").forward();
-        
-       
+
+
     }
 }

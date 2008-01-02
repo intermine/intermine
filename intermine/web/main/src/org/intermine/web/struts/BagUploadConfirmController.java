@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -46,10 +46,10 @@ public class BagUploadConfirmController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping, 
-                                 ActionForm form, 
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
+                                 @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         HttpSession session = request.getSession();
         BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult");
@@ -59,12 +59,12 @@ public class BagUploadConfirmController extends TilesAction
         request.setAttribute("unresolved", bagQueryResult.getUnresolved());
         ServletContext servletContext = session.getServletContext();
         StringBuffer flattenedArray = new StringBuffer();
-        
-        // get all of the "low quality" matches ie. those found by queries other than matching 
+
+        // get all of the "low quality" matches ie. those found by queries other than matching
         // class keys
-        Map<String, ArrayList<String>> lowQualityMatches 
+        Map<String, ArrayList<String>> lowQualityMatches
                                             = new LinkedHashMap<String, ArrayList<String>>();
-        Map<String, Map<String, List>> otherMatchMap 
+        Map<String, Map<String, List>> otherMatchMap
                                             = bagQueryResult.getIssues().get(BagQueryResult.OTHER);
         if (otherMatchMap != null) {
             Iterator otherMatchesIter = otherMatchMap.values().iterator();
@@ -75,26 +75,26 @@ public class BagUploadConfirmController extends TilesAction
         }
         request.setAttribute("lowQualityMatches", lowQualityMatches);
         flattenedArray.append(setJSArray(lowQualityMatches, "lowQ"));
-        
+
         // find all input strings that match more than one object
         Map<String, ArrayList<String>> duplicates = new LinkedHashMap<String, ArrayList<String>>();
-        Map<String, Map<String, List>> duplicateMap 
+        Map<String, Map<String, List>> duplicateMap
                                     = bagQueryResult.getIssues().get(BagQueryResult.DUPLICATE);
         if (duplicateMap != null) {
             Iterator duplicateMapIter = duplicateMap.values().iterator();
             while (duplicateMapIter.hasNext()) {
-                Map<String, ArrayList<String>> inputToObjectsMap 
+                Map<String, ArrayList<String>> inputToObjectsMap
                 = (Map) duplicateMapIter.next();
                 duplicates.putAll(inputToObjectsMap);
             }
         }
         request.setAttribute("duplicates", duplicates);
         flattenedArray.append(setJSArray(duplicates, "duplicate"));
-        
+
         // make a List of [input string, ConvertedObjectPair]
-        Map<String, ArrayList<String>> convertedObjects 
+        Map<String, ArrayList<String>> convertedObjects
                                                 = new LinkedHashMap<String, ArrayList<String>>();
-        Map<String, Map<String, List>> convertedMap 
+        Map<String, Map<String, List>> convertedMap
         = bagQueryResult.getIssues().get(BagQueryResult.TYPE_CONVERTED);
         if (convertedMap != null) {
             Iterator convertedMapIter = convertedMap.values().iterator();
@@ -105,7 +105,7 @@ public class BagUploadConfirmController extends TilesAction
         }
         request.setAttribute("convertedObjects", convertedObjects);
         flattenedArray.append(setJSArray(convertedObjects, "converted"));
-        
+
         // create a string containing the ids of the high-quality matches
         StringBuffer matchesStringBuffer = new StringBuffer();
         BagUploadConfirmForm bagUploadConfirmForm = ((BagUploadConfirmForm) form);
@@ -136,24 +136,24 @@ public class BagUploadConfirmController extends TilesAction
         bagUploadConfirmForm.setExtraFieldValue(TypeUtil.unqualifiedName(extraClassName));
         request.setAttribute("matchCount", new Integer(matchCount));
         request.setAttribute("jsArray", flattenedArray);
-      
+
         return null;
     }
-    
+
     // takes all the issues and puts them in a flattened array that the javascript can use for
     // the "add all" and "remove all" buttons
     private String setJSArray(Map<String, ArrayList<String>> issues, String issueType) {
 
         StringBuffer sb = new StringBuffer();
-        Map<String, ArrayList<String>> orderedIssuesMap 
+        Map<String, ArrayList<String>> orderedIssuesMap
             = new LinkedHashMap<String, ArrayList<String>>(issues);
 
         // Make a Map from identifier to a List of rows for display.  Each row will contain
         // information about one object.  The row List will contain (first) the class name, then
         // a ResultElement object for each field to display.
-        
+
         // a map from identifiers to indexes into objectList (and hence into the InlineResultsTable)
-        Map<String, ArrayList<String>> identifierResultElementMap 
+        Map<String, ArrayList<String>> identifierResultElementMap
                                                    = new LinkedHashMap<String, ArrayList<String>>();
 
         int objectListIndex = 0;
@@ -171,13 +171,13 @@ public class BagUploadConfirmController extends TilesAction
                 } else {
                     o = (InterMineObject) obj;
                 }
-                sb.append(o.getId() + "," + objectListIndex + "," 
-                          + identifier + "," + issueType + "|");                
+                sb.append(o.getId() + "," + objectListIndex + ","
+                          + identifier + "," + issueType + "|");
                 objectListIndex++;
             }
         }
-     
+
         return sb.toString();
     }
-    
+
 }

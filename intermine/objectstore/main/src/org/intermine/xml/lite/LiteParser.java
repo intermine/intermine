@@ -214,10 +214,10 @@ public class LiteParser
                     q.addFrom(qc2);
                     q.addToSelect(qc2);
                     ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                    
+
                     QueryCollectionReference queryCollectionRef =
                         new QueryCollectionReference(qc1, coll.getName());
-                    cs.addConstraint(new ContainsConstraint(queryCollectionRef, 
+                    cs.addConstraint(new ContainsConstraint(queryCollectionRef,
                                      ConstraintOp.CONTAINS, qc2));
                     cs.addConstraint(new SimpleConstraint(new QueryField(qc1, "id"),
                                                           ConstraintOp.EQUALS,

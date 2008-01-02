@@ -22,7 +22,7 @@ public class QueryFunctionTest extends TestCase
 
     public void setUp() {
     }
-        
+
     public void testInvalidCount() throws Exception {
         try {
             QueryField field = new QueryField(new QueryClass(Company.class), "name");
@@ -31,7 +31,7 @@ public class QueryFunctionTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
     }
-    
+
     public void testValidCount() {
         QueryFunction function = new QueryFunction();
         assertTrue(Number.class.isAssignableFrom(function.getType()));

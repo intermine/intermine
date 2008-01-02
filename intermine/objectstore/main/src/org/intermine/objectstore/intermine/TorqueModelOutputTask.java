@@ -39,7 +39,7 @@ public class TorqueModelOutputTask extends Task
 
     /**
      * Set the ObjectStore for which to generate the data.
-     * 
+     *
      * @param osName the ObjectStore name to be used
      */
     public void setOsName(String osName) {

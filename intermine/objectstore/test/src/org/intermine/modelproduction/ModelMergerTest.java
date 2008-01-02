@@ -109,11 +109,11 @@ public class ModelMergerTest extends TestCase
         String addition = "<class name=\"A\" extends=\"C\" is-interface=\"false\"></class>";
         ClassDescriptor cld1 = model.getClassDescriptorByName("A");
         ClassDescriptor cld2 = parseClass(addition);
-        
+
         ClassDescriptor res = ModelMerger.mergeClass(cld1, cld2, model, Collections.singleton(cld2));
         Set supers = new HashSet();
         supers.add("C");
-        
+
         assertEquals(supers, res.getSuperclassNames());
     }
 
@@ -133,18 +133,18 @@ public class ModelMergerTest extends TestCase
         ClassDescriptor cld1 = parseClass(modelStr);
         ClassDescriptor cld2 = parseClass(addition);
         ClassDescriptor expected = parseClass(expXml);
-        
+
         Set result = ModelMerger.mergeReferences(cld1, cld2);
         assertEquals(expected.getReferenceDescriptors(), result);
     }
 
-    
+
     private ClassDescriptor parseClass(String xml) throws Exception {
         return (ClassDescriptor) parser
                     .generateClassDescriptors(new StringReader(xml))
                     .iterator().next();
     }
-    
+
     public void testMergeReferenceSettingReverseRef() throws Exception {
         String modelStr =
                 "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
@@ -159,16 +159,16 @@ public class ModelMergerTest extends TestCase
         String expXml = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
             + "<reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"dept\"/>"
             + "</class>";
-        
+
         ClassDescriptor cld1 = parseClass(modelStr);
         ClassDescriptor cld2 = parseClass(addition);
         ClassDescriptor expected = parseClass(expXml);
-        
+
         Set result = ModelMerger.mergeReferences(cld1, cld2);
 
         assertEquals(expected.getReferenceDescriptors(), result);
     }
-    
+
     public void testMergeCollectionSettingReverseRef() throws Exception {
         String modelStr =
                 "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
@@ -183,16 +183,16 @@ public class ModelMergerTest extends TestCase
         String expXml = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
             + "<collection name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"dept\"/>"
             + "</class>";
-        
+
         ClassDescriptor cld1 = parseClass(modelStr);
         ClassDescriptor cld2 = parseClass(addition);
         ClassDescriptor expected = parseClass(expXml);
-        
+
         Set result = ModelMerger.mergeCollections(cld1, cld2);
 
         assertEquals(expected.getCollectionDescriptors(), result);
     }
-    
+
     public void testMergeClassReferencesWithReverseRefs() throws Exception {
         String modelStr =
                 "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">"
@@ -212,7 +212,7 @@ public class ModelMergerTest extends TestCase
         ClassDescriptor cld1 = parseClass(modelStr);
         ClassDescriptor cld2 = parseClass(addition);
         ClassDescriptor expected = parseClass(expXml);
-        
+
         Set result = ModelMerger.mergeReferences(cld1, cld2);
 
         assertEquals(expected.getReferenceDescriptors(), result);
@@ -263,12 +263,12 @@ public class ModelMergerTest extends TestCase
         ClassDescriptor cld1 = parseClass(modelStr);
         ClassDescriptor cld2 = parseClass(addition);
         ClassDescriptor expected = parseClass(expXml);
-        
+
         Set result = ModelMerger.mergeCollections(cld1, cld2);
-        
+
         System.out.println(result.toString());
         System.out.println(expected.toString());
-        
+
         assertEquals(expected.getCollectionDescriptors(), result);
 
         // test bad reverse reference
@@ -298,7 +298,7 @@ public class ModelMergerTest extends TestCase
             //e.printStackTrace();
         }
     }
-    
+
     public void testCheckInheritance() throws Exception {
         String modelStr = "<model name=\"testmodel\" namespace=\"testmodel#\">"
                             + "<class name=\"A\" extends=\"C Ai\" is-interface=\"false\"></class>"
@@ -323,7 +323,7 @@ public class ModelMergerTest extends TestCase
                             + "<class name=\"Ai\" is-interface=\"true\"></class>"
                         + "</model>";
         Set dodgyClds = parser.generateClassDescriptors(new StringReader(dodgyStr));
-        
+
         String expectedStr = "<model name=\"testmodel\" namespace=\"testmodel#\">"
             + "<class name=\"A\" extends=\"B C Ai\" is-interface=\"false\"></class>"
             + "<class name=\"B\" extends=\"C\" is-interface=\"false\"></class>"

@@ -53,7 +53,7 @@ public class UniProtKeywordsURLQuery implements EnrichmentWidgetURLQuery
 
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-     
+
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Protein.identifier"));
         view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
@@ -61,10 +61,10 @@ public class UniProtKeywordsURLQuery implements EnrichmentWidgetURLQuery
         view.add(MainHelper.makePath(model, q, "Protein.keywords.name"));
         view.add(MainHelper.makePath(model, q, "Protein.keywords.description"));
         q.setView(view);
-        
+
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();        
+        String constraintValue = bag.getName();
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint bc = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(bc);
@@ -74,10 +74,10 @@ public class UniProtKeywordsURLQuery implements EnrichmentWidgetURLQuery
         PathNode keywordNode = q.addNode("Protein.keywords.name");
         Constraint c = new Constraint(constraintOp, key, false, label, code, id, null);
         keywordNode.getConstraints().add(c);
-                
+
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-        
+
         return q;
     }
 }

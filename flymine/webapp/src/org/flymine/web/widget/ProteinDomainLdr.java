@@ -55,9 +55,9 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     Collection organisms;
     int total;
     String externalLink, append;
-    InterMineBag bag;   
-    
-    
+    InterMineBag bag;
+
+
     /**
      * @param request The HTTP request we are processing
      */
@@ -74,7 +74,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         bag = allBags.get(bagName);
-        
+
         // get organisms
         organisms = BioUtil.getOrganisms(os, bag);
 
@@ -91,7 +91,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         QueryField qfInterpro = new QueryField(qcProteinFeature, "identifier");
 
         QueryFunction objectCount = new QueryFunction();
-        
+
         // constraints
         ConstraintSet csSample = new ConstraintSet(ConstraintOp.AND);
         ConstraintSet csPopulation = new ConstraintSet(ConstraintOp.AND);
@@ -99,25 +99,25 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         // common constraints
         // limit to organisms in the bag
         BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-        
+
         // protein.ProteinFeatures CONTAINS proteinFeature
-        QueryCollectionReference qr3 
+        QueryCollectionReference qr3
         = new QueryCollectionReference(qcProtein, "proteinFeatures");
         ContainsConstraint cc3 =
             new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcProteinFeature);
 
-        SimpleConstraint sc = 
+        SimpleConstraint sc =
             new SimpleConstraint(qfInterpro, ConstraintOp.MATCHES, new QueryValue("IPR%"));
 
         //set the common constraints
         csSample.addConstraint(bc2);
         csSample.addConstraint(cc3);
         csSample.addConstraint(sc);
-        
+
         // build sample (constrained by list) and population queries
         Query q = new Query();
         q.setDistinct(false);
-        
+
         if (bag.getType().equalsIgnoreCase("gene")) {
             // further constraints for genes
             // genes must be in bag
@@ -127,7 +127,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
 
             // gene is from organism
             QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-            ContainsConstraint cc1 
+            ContainsConstraint cc1
             = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
             csSample.addConstraint(cc1);
 
@@ -137,7 +137,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
                 new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcProtein);
             csSample.addConstraint(cc2);
 
-            
+
             // sample query
             q.addFrom(qcGene);
             q.addFrom(qcProtein);
@@ -146,7 +146,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
 
             q.addToSelect(qfId);
             q.addToSelect(objectCount);
-            q.addToSelect(qfName);            
+            q.addToSelect(qfName);
 
             q.setConstraint(csSample);
             q.addToGroupBy(qfId);
@@ -188,10 +188,10 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
 
             // protein is from organism
             QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
-            ContainsConstraint cc1 
+            ContainsConstraint cc1
             = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
             csSample.addConstraint(cc1);
-            
+
             // sample query
             q.addFrom(qcProtein);
             q.addFrom(qcOrganism);
@@ -200,7 +200,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
             q.addToSelect(qfId);
             q.addToSelect(objectCount);
             q.addToSelect(qfName);
-             
+
             q.setConstraint(csSample);
             q.addToGroupBy(qfId);
             q.addToGroupBy(qfName);
@@ -225,7 +225,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
             q.setConstraint(csPopulation);
             q.addToGroupBy(qfId);
             populationQuery = q;
-            
+
         }
         else {
             //error?
@@ -239,7 +239,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
          public Query getSample() {
              return sampleQuery;
          }
-         
+
          /**
           * @return the query representing the entire population (all the items in the database)
           */
@@ -248,7 +248,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
          }
 
          /**
-          * 
+          *
           * @param os
           * @param bag
           * @return description of reference population, ie "Accounting dept"
@@ -256,24 +256,24 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
          public Collection getReferencePopulation() {
              return organisms;
          }
-         
-         /** 
-          * @param os     
+
+         /**
+          * @param os
           * @return the query representing the sample population (the bag)
           */
          public int getTotal(ObjectStore os) {
              return BioUtil.getTotal(os, organisms, bag.getType());
          }
-         
+
          /**
           * @return if the widget should have an external link, where it should go to
           */
          public String getExternalLink() {
              return externalLink;
          }
-         
+
          /**
-          * 
+          *
           * @return the string to append to the end of external link
           */
          public String getAppendage() {

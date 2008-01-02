@@ -36,7 +36,7 @@ import servletunit.ServletContextSimulator;
 
 /**
  * Dump templates and configuration tags.
- * 
+ *
  * @author Thomas Riley
  */
 public class DumpDefaultTemplatesTask extends Task
@@ -46,7 +46,7 @@ public class DumpDefaultTemplatesTask extends Task
     private String osAlias;
     private String userProfileAlias;
     private String username;
-    
+
 
     /**
      * Set the account name to laod template to.
@@ -71,7 +71,7 @@ public class DumpDefaultTemplatesTask extends Task
     public void setOSAlias(String osAlias) {
         this.osAlias = osAlias;
     }
-    
+
     /**
      * Set the alias of the userprofile object store.
      * @param userProfileAlias the object store alias of the userprofile database
@@ -79,7 +79,7 @@ public class DumpDefaultTemplatesTask extends Task
     public void setUserProfileAlias(String userProfileAlias) {
         this.userProfileAlias = userProfileAlias;
     }
-    
+
     /**
      * Write templates and tags to a file.
      * {@inheritDoc}
@@ -94,13 +94,13 @@ public class DumpDefaultTemplatesTask extends Task
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         FileWriter fw = null;
-        
+
         try {
             fw = new FileWriter(fileName);
         } catch (IOException e) {
             throw new BuildException("failed to open output file: " + fileName, e);
         }
-        
+
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
@@ -116,16 +116,16 @@ public class DumpDefaultTemplatesTask extends Task
             if (!pm.hasProfile(username)) {
                 throw new BuildException("no such user " + username);
             }
-            
+
             Profile superProfile = pm.getProfile(username, pm.getPassword(username));
-            
+
             StringWriter sw = new StringWriter();
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
-            
+
             write(writer, superProfile, os);
             writer.close();
-            
+
             fw.write(XmlUtil.indentXmlSimple(sw.toString()));
             fw.close();
         } catch (Exception e) {
@@ -138,9 +138,9 @@ public class DumpDefaultTemplatesTask extends Task
                 throw new BuildException("failed to close output file: " + fileName, e);
             }
         }
-        
+
     }
-    
+
     /**
      * Write template-queries and tags elements.
      * @param writer xml writer to write to
@@ -150,7 +150,7 @@ public class DumpDefaultTemplatesTask extends Task
      */
     protected void write(XMLStreamWriter writer, Profile superProfile, ObjectStore os)
         throws Exception {
-        
+
         log("Writing tags and templates...");
         ProfileBinding.marshal(superProfile, os, writer, false, false, true, false, true, true);
         log("Done.");

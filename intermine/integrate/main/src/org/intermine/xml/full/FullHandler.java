@@ -46,7 +46,7 @@ public class FullHandler extends DefaultHandler
     public List<Item> getItems() {
         return items;
     }
-    
+
 
     /**
      * {@inheritDoc}

@@ -155,7 +155,7 @@ public class QueryOptimiser
         }
         Set precomputedTables = ptm.getPrecomputedTables();
         OptimiserCache cache = OptimiserCache.getInstance(database);
-        return optimiseWith(query, originalQuery, database, explainConnection, context, 
+        return optimiseWith(query, originalQuery, database, explainConnection, context,
                             precomputedTables, cache);
     }
 

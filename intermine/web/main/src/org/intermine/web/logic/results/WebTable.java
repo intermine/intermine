@@ -1,6 +1,6 @@
 package org.intermine.web.logic.results;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -28,13 +28,13 @@ public interface WebTable extends List
      * @return the results row
      */
     public List<ResultElement> getResultElements(int index);
-    
+
     /**
      * Returns the Column objects for this table.
      * @return the columns
      */
     public List<Column> getColumns();
-    
+
     /**
      * Check whether the result of size() is an estimate
      * @return true if the size is an estimate
@@ -46,7 +46,7 @@ public interface WebTable extends List
      * @return the number of rows
      */
     public int getExactSize();
-    
+
     /**
      * Return the maximum retrievable index for this PagedTable.  This will only ever return less
      * than getExactSize() if the underlying data source has a restriction on the maximum index
@@ -54,18 +54,18 @@ public interface WebTable extends List
      * @return the maximum retrieved index
      */
     public int getMaxRetrievableIndex();
-    
+
     /**
      * Returns the pathToBagQueryResult Map.
      *
      * @return a Map
      */
     public Map<String, BagQueryResult> getPathToBagQueryResult();
-    
+
     /**
      * Get the PathQuery associated with this WebTable
      * @return the PathQuery
      */
     public PathQuery getPathQuery();
-    
+
 }

@@ -119,9 +119,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * If a value is specified a Synonym will be created for the feature with value of the
-     *
-     * @param synonymSource
+     * If a value is specified a Synonym will be created for the feature with this attribute used
+     * as the name of the DataSource.
+     * @param synonymSource the name of the synonym DataSource
      */
     public void setSynonymSource(String synonymSource) {
         this.synonymSource = synonymSource;
@@ -214,8 +214,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * Get the Organism object to reference when creating new objects.
-     * @throws ObjectStoreException
+     * Get and store() the Organism object to reference when creating new objects.
+     * @throws ObjectStoreException if there is a problem
+     * @return the new Organism
      */
     protected Organism getOrganism() throws ObjectStoreException {
         if (org == null) {

@@ -73,7 +73,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
     public void setOutputFile(File outputFile) {
         this.outputFile = outputFile;
     }
-    
+
     /**
      * Sets the value of ensemblDb
      *
@@ -94,7 +94,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
     }
 
     /**
-     * @see Task#execute()
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (operation == null) {
@@ -212,7 +212,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
-            LOG.info("PP - " + operation + " took " 
+            LOG.info("PP - " + operation + " took "
                      + (System.currentTimeMillis() - startTime) + " ms.");
         } catch (BuildException e) {
             LOG.error("Failed postprocess. Operation was: " + operation, e);

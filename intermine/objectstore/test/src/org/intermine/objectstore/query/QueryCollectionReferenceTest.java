@@ -33,7 +33,7 @@ public class QueryCollectionReferenceTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
     }
-    
+
     public void testEmptyField() {
         try {
             new QueryCollectionReference(qc, "");
@@ -41,7 +41,7 @@ public class QueryCollectionReferenceTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
     }
-    
+
     public void testNullField() throws Exception {
         try {
             new QueryCollectionReference(qc, (String)null);

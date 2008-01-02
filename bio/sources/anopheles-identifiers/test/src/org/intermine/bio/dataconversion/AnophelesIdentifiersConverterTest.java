@@ -30,18 +30,18 @@ public class AnophelesIdentifiersConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-  
+
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         FileConverter converter = new AnophelesIdentifiersConverter(itemWriter,
                                                                     Model.getInstanceByName("genomic"));
-        
+
         File srcFile1 = new File(getClass().getClassLoader().getResource("New_IDs_to_Old_IDs-Genes.tsv").toURI());
         converter.setCurrentFile(srcFile1);
         converter.process(new FileReader(srcFile1));
 
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "anopheles-ids_tgt.xml");
-        
+
         assertEquals(readItemSet("AnophelesIdentifiersConverterTest.xml"), itemWriter.getItems());
     }
 }

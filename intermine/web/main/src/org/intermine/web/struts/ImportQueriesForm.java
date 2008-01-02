@@ -39,16 +39,16 @@ public class ImportQueriesForm extends ValidatorForm
     private String xml;
     private Map map;
     private String queryBuilder;
-    
+
     /**
      * Creates a new instance of ImportQueriesForm.
      */
     public ImportQueriesForm() {
         reset();
     }
-    
-    
-    
+
+
+
     /**
      * Return a Map from query name to Query object.
      * @param savedBags map from bag name to bag
@@ -61,7 +61,7 @@ public class ImportQueriesForm extends ValidatorForm
                 map = PathQueryBinding.unmarshal(new StringReader(getXml()), savedBags,
                                                  servletContext);
             } catch (Exception e) {
-                map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml() 
+                map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml()
                                                                   + "</queries>"), savedBags,
                                                                   servletContext);
             }
@@ -85,7 +85,7 @@ public class ImportQueriesForm extends ValidatorForm
         String s = xml.replace("&", "_AND_");
         this.xml = s;
     }
-    
+
     /**
      * Get the queryBuilder field.  If true and there is only one query submitted, the action will
      * redirect to the query builder rather than the saved query history page.
@@ -102,7 +102,7 @@ public class ImportQueriesForm extends ValidatorForm
     public void setQueryBuilder(String queryBuilder) {
         this.queryBuilder = queryBuilder;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -110,7 +110,7 @@ public class ImportQueriesForm extends ValidatorForm
         super.reset(mapping, request);
         reset();
     }
-    
+
     /**
      * Reset the form.
      */
@@ -132,7 +132,7 @@ public class ImportQueriesForm extends ValidatorForm
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+
         try {
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);

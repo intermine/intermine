@@ -94,7 +94,7 @@ public class OboToModel
         if (tagValues != null) {
             subsets = (List) tagValues.get("subset");
         } else {
-            System.err.println("No tag values for term " + term.getName());
+            System.err. println("No tag values for term " + term.getName());
         }
         include = include || ((subsets != null) && subsets.contains("SOFA"));
         if (include) {
@@ -191,9 +191,9 @@ public class OboToModel
                     }
                 }
                 clds.add(new ClassDescriptor(className,
-                                             (entry.getValue().isEmpty() ?
-                                              null :
-                                              supers.toString()),
+                                             (entry.getValue().isEmpty()
+                                              ? null
+                                              : supers.toString()),
                                              true, fakeAttributes, fakeReferences, collections));
             }
             Model model = new Model("name", "whatever", clds);

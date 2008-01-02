@@ -31,13 +31,13 @@ import org.apache.struts.actions.DispatchAction;
 /**
  * Controller for the inline tag editing tile - all actions here are called via
  * javascript.
- * 
+ *
  * @author Thomas Riley
  */
 public class InlineTagEditorChange extends DispatchAction
 {
     private static final Logger LOG = Logger.getLogger(InlineTagEditorChange.class);
-    
+
     /**
      * {@inheritDoc}
      */
@@ -49,14 +49,14 @@ public class InlineTagEditorChange extends DispatchAction
         ProfileManager pm = (ProfileManager) request.getSession()
             .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
-        
+
         String uid = request.getParameter("uid");
         String type = request.getParameter("type");
         String tagName = request.getParameter("tag");
         tagName = tagName.trim();
-        
+
         LOG.info("adding tag " + tagName + " uid " + uid + " type " + type);
-        
+
         if (profile.getUsername() != null && !StringUtils.isEmpty(tagName)
             && !StringUtils.isEmpty(type)
             && !StringUtils.isEmpty(uid)) {
@@ -71,7 +71,7 @@ public class InlineTagEditorChange extends DispatchAction
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -83,7 +83,7 @@ public class InlineTagEditorChange extends DispatchAction
         ProfileManager pm = (ProfileManager) request.getSession()
             .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
-        
+
         String tagid = request.getParameter("tagid");
         if (!StringUtils.isEmpty(tagid)) {
             Tag tag = pm.getTagById(Integer.parseInt(tagid));
@@ -102,7 +102,7 @@ public class InlineTagEditorChange extends DispatchAction
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -114,10 +114,10 @@ public class InlineTagEditorChange extends DispatchAction
         ProfileManager pm = (ProfileManager) request.getSession()
             .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
-        
+
         String uid = request.getParameter("uid");
         String type = request.getParameter("type");
-        
+
         if (profile.getUsername() != null
             && !StringUtils.isEmpty(type)
             && !StringUtils.isEmpty(uid)) {

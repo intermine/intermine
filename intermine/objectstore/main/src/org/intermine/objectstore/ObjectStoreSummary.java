@@ -53,7 +53,7 @@ import org.apache.log4j.Logger;
 public class ObjectStoreSummary
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreSummary.class);
-    
+
     private final Map classCountsMap = new HashMap();
     private final Map fieldValuesMap = new HashMap();
     protected final Map emptyFieldsMap = new HashMap();
@@ -173,7 +173,7 @@ public class ObjectStoreSummary
     public List getFieldValues(String className, String fieldName) {
         return (List) fieldValuesMap.get(className + "." + fieldName);
     }
-    
+
     /**
      * Get a list of the reference and collection names that, for a given class, are always
      * null or empty.
@@ -257,7 +257,7 @@ public class ObjectStoreSummary
             fieldValuesMap.put(cld.getName() + "." + fieldName, fieldValues);
         }
     }
-    
+
     /**
      * Look for empty fields and collections on all instanceof of a particular class. This method
      * will recurse into subclasses in order to improve performance.
@@ -305,15 +305,15 @@ public class ObjectStoreSummary
             } else {
                 Query q = new Query();
                 q.setDistinct(false);
-                
+
                 QueryClass qc1 = new QueryClass(Class.forName(cld.getName()));
                 QueryClass qc2 = new QueryClass(Class.forName(desc.getReferencedClassName()));
-                
+
                 q.addFrom(qc1);
                 q.addFrom(qc2);
-                
+
                 q.addToSelect(qc2);
-                
+
                 ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
                 QueryReference qd;
                 if (desc instanceof CollectionDescriptor) {
@@ -323,17 +323,17 @@ public class ObjectStoreSummary
                 }
                 ContainsConstraint gdc = new ContainsConstraint(qd, ConstraintOp.CONTAINS, qc2);
                 cs.addConstraint(gdc);
-                
+
                 q.setConstraint(cs);
-                
+
                 Query q2 = new Query();
                 q2.setDistinct(false);
                 q2.addToSelect(new QueryValue(new Integer(1)));
-                
+
                 ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
                 cs2.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q));
                 q2.setConstraint(cs2);
-                
+
                 Results results = os.execute(q2);
                 results.setBatchSize(1);
                 results.setNoExplain();

@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class SubqueryExistsConstraint extends Constraint
 {
-    protected Query subquery;  
+    protected Query subquery;
 
     /**
      * Construct a SubqueryExistsConstraint
@@ -33,7 +33,7 @@ public class SubqueryExistsConstraint extends Constraint
         if (query == null) {
             throw new NullPointerException("query cannot be null");
         }
-  
+
         if (op == null) {
             throw new NullPointerException("op cannot be null");
         }
@@ -81,7 +81,7 @@ public class SubqueryExistsConstraint extends Constraint
     }
 
     //-------------------------------------------------------------------------
-    
+
     protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.EXISTS,
         ConstraintOp.DOES_NOT_EXIST});
 }

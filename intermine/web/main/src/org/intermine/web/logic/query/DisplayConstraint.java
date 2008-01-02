@@ -87,7 +87,7 @@ public class DisplayConstraint
                 simpleConstraintOps.remove(ConstraintOp.DOES_NOT_MATCH);
                 // We're slightly abusing "CONTAINS" here because in the object store it only
                 // means "contained in a bag".  Here we're using it to mean "contained as a
-                // substring" 
+                // substring"
                 int notEqualsIndex = simpleConstraintOps.indexOf(ConstraintOp.NOT_EQUALS);
                 simpleConstraintOps.add(notEqualsIndex + 1, ConstraintOp.CONTAINS);
             }
@@ -174,7 +174,7 @@ public class DisplayConstraint
 
         return optionsList;
     }
-    
+
     /**
      * Return whether the node is an attribute.
      * @return true if node is an attribute

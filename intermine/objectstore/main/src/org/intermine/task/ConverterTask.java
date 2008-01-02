@@ -42,7 +42,7 @@ public class ConverterTask extends DynamicAttributeTask
 
     /**
      * Sets the list of classes to NOT try and convert
-     * @param excludeList the suitably formatted list of classs to exclude. 
+     * @param excludeList the suitably formatted list of classs to exclude.
      */
     public void setExcludeList(String excludeList) {
         this.excludeList = excludeList;
@@ -57,21 +57,21 @@ public class ConverterTask extends DynamicAttributeTask
     }
 
     /**
-     * Return the model name 
+     * Return the model name
      * @return the Model name
      */
     public String getModelName() {
         return modelName;
     }
-    
+
     /**
-     * Set the target model name 
+     * Set the target model name
      * @param modelName the Model name
      */
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
-    
+
 
     /**
      * Return the object store alias set by setOsName().

@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
  * When an entry is garbage-collected, its key is removed from the Map on the next Map activity.
  * <p>
  * The entrySet() and values() methods of this class do not work.
- * 
+ *
  * @see java.lang.ref.SoftReference
  * @author Matthew Wakeling
  */
@@ -59,7 +59,7 @@ public abstract class ReferenceMap implements Map
             LOG.debug(name + ": Expunged stale entries - size " + oldSize + " -> " + newSize);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -221,7 +221,7 @@ public abstract class ReferenceMap implements Map
     public int hashCode() {
         throw new UnsupportedOperationException();
     }
-    
+
     /**
      * {@inheritDoc}
      */

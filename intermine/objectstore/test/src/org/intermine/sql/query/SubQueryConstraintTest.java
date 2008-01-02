@@ -43,7 +43,7 @@ public class SubQueryConstraintTest extends TestCase
 
         v1 = new Constant("5");
         v2 = new Constant("7");
-        
+
         c1 = new SubQueryConstraint(v1, q1);
         c2 = new SubQueryConstraint(v1, q2);
         c3 = new SubQueryConstraint(v2, q1);

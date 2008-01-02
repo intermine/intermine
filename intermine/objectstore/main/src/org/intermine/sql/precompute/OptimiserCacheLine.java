@@ -15,7 +15,7 @@ import java.util.Set;
 
 /**
  * A class that provides an implementation of a cache line, encapsulating several pieces of data.
- * 
+ *
  * @author Matthew Wakeling
  */
 public class OptimiserCacheLine
@@ -26,7 +26,7 @@ public class OptimiserCacheLine
                                                        // constant LIMIT, optimise this many times.
     private static final int OFFSET_GRACE = 1000; // The difference in offset may be this large
                                                   // before any score is produced.
-    
+
     private String optimised;
     private int limit;
     private int offset;
@@ -34,7 +34,7 @@ public class OptimiserCacheLine
     protected Date expires;
     private Set lineSet;
     private String original;
-    
+
 
     /**
      * Constructor for this object.

@@ -39,11 +39,11 @@ public class SubMenuController extends TilesAction
         String subtab = request.getParameter("subtab");
         String pageName = (String) request.getAttribute("pageName");
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
-        
+
         if (subtab != null && subtab.length() != 0) {
             profile.setUserOption("subtab" + pageName, subtab);
         }
-        
+
         request.setAttribute("userOptionMap", profile.getUserOptionsMap());
         return null;
     }

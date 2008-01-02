@@ -51,7 +51,7 @@ public class PathQueryHandler extends DefaultHandler
     private String directionString = ""; // will be asc or desc
     private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
     private final ServletContext servletContext;
-    
+
     /**
      * Constructor
      * @param queries Map from query name to PathQuery
@@ -83,12 +83,12 @@ public class PathQueryHandler extends DefaultHandler
             query = new PathQuery(model);
             if (attrs.getValue("view") != null) {
                 viewStrings = StringUtil.tokenize(attrs.getValue("view"));
-                
+
             }
             if (attrs.getValue("sortOrder") != null) {
                String[] s = (attrs.getValue("sortOrder")).split(" ");
                sortOrderString = s[0];
-               if ((s.length > 1) && (s[1].equalsIgnoreCase("desc"))) { 
+               if ((s.length > 1) && (s[1].equalsIgnoreCase("desc"))) {
                    directionString = "desc";
                } else {
                    directionString = "asc";
@@ -121,7 +121,7 @@ public class PathQueryHandler extends DefaultHandler
                 // b) otherwise throw an exception to disable query
                 if (node.isAttribute()) {
                     Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-                    if (ClassKeyHelper.isKeyField(classKeys, node.getParentType(), 
+                    if (ClassKeyHelper.isKeyField(classKeys, node.getParentType(),
                                                   node.getFieldName())) {
                         constrainParent = true;
                     } else {
@@ -193,11 +193,11 @@ public class PathQueryHandler extends DefaultHandler
             }
             queries.put(queryName, query);
             viewStrings = new ArrayList<String>();
-           
+
             pathStringDescriptions = new HashMap<String, String>();
         }
     }
-    
+
     /**
      * Convert a List of Objects to a List of Strings using toString
      * @param list the Object List
@@ -210,7 +210,7 @@ public class PathQueryHandler extends DefaultHandler
         }
         return strings;
     }
-    
+
     /**
      * Checks that the query has a name and that there's no name duplicates
      * and appends a number to the name if there is.

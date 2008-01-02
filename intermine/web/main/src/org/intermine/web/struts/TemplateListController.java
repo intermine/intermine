@@ -58,7 +58,7 @@ public class TemplateListController extends TilesAction
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
         List templates = null;
-        
+
         if (StringUtils.equals("global", scope)) {
             if (interMineIdBag != null) {
                 templates = TemplateListHelper.getAspectTemplatesForType(aspect, servletContext,
@@ -75,9 +75,9 @@ public class TemplateListController extends TilesAction
         } else if (StringUtils.equals("user", scope)) {
             //templates = profile.get
         }
-        
+
         request.setAttribute("templates", templates);
-        
+
         return null;
     }
 }

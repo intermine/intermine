@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
@@ -76,7 +75,7 @@ public class KeggPathwayConverter extends FileConverter
     /**
      * Read each line from flat file, create genes and synonyms.
      *
-     * @see DataConverter#process
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
@@ -99,16 +98,17 @@ public class KeggPathwayConverter extends FileConverter
             if (currentFile.getName().startsWith("map_title")) {
                 String mapIdentifier = line[0];
                 String mapName = line[1];
-                Item pathway = getAndStoreItemOnce("Pathway","identifier", mapIdentifier);
+                Item pathway = getAndStoreItemOnce("Pathway", "identifier", mapIdentifier);
                 pathway.setAttribute("name", mapName);
-                pathway.setCollection("evidence", new ArrayList(Collections
-                                                                .singleton(dataSet.getIdentifier())));
+                pathway.setCollection("evidence",
+                                      new ArrayList(Collections
+                                                    .singleton(dataSet.getIdentifier())));
                 store(pathway);
-            } else if (matcher.find()){
+            } else if (matcher.find()) {
                 String keggOrgName = matcher.group(1);
                 String taxonId = keggOrganismToTaxonId.get(keggOrgName);
 
-                if (taxonId != null && taxonId.length() !=0 ) {
+                if (taxonId != null && taxonId.length() != 0) {
                     Item organism = getAndStoreItemOnce("Organism", "taxonId", taxonId);
 
                     String geneName = line[0];
@@ -123,8 +123,8 @@ public class KeggPathwayConverter extends FileConverter
                     ReferenceList referenceList = new ReferenceList("pathways");
                     String [] mapArray = mapIdentifiers.split(" ");
                     for (int i = 0; i < mapArray.length; i++) {
-                        referenceList.addRefId(getAndStoreItemOnce("Pathway","identifier", mapArray[i])
-                                               .getIdentifier());
+                        referenceList.addRefId(getAndStoreItemOnce("Pathway", "identifier",
+                                                                   mapArray[i]).getIdentifier());
                     }
                     Item gene = createItem("Gene");
                     gene.setAttribute("identifier", geneName);

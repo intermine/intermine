@@ -92,7 +92,7 @@ public class WormBaseIdentifiersConverter extends FileConverter
             String identifier = line[1];
             String symbol = line[2];
             List synonyms = new ArrayList();
-            
+
             Item gene = createItem("Gene");
             if (organismdbid != null && !organismdbid.equals("")) {
                 gene.setAttribute("organismDbId", organismdbid);
@@ -108,7 +108,7 @@ public class WormBaseIdentifiersConverter extends FileConverter
             }
 
             gene.setReference("organism", worm.getIdentifier());
-            gene.setCollection("evidence", 
+            gene.setCollection("evidence",
                                new ArrayList(Collections.singleton(dataSet.getIdentifier())));
             store(gene);
             store(synonyms);

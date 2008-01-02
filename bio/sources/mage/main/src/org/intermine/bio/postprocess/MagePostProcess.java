@@ -70,7 +70,7 @@ public class MagePostProcess extends PostProcessor
      * Creates a collection of MicroArrayResult objects on Genes.
      * Creates a collection of MicroArrayResult objects on CDNAClone.
      * Creates a collection of MicroArrayResult objects on CompositeSequence.
-     * @throws Exception 
+     * @throws Exception
      */
     public void postProcess() {
         try {
@@ -88,9 +88,9 @@ public class MagePostProcess extends PostProcessor
 
     /**
      * Creates a collection of MicroArrayResult objects on Genes.
-     * @throws ObjectStoreException 
-     * @throws IllegalAccessException 
-     * @throws SQLException 
+     * @throws ObjectStoreException
+     * @throws IllegalAccessException
+     * @throws SQLException
      */
     protected void createMicroArrayResultsCollection()
              throws ObjectStoreException, IllegalAccessException, SQLException {

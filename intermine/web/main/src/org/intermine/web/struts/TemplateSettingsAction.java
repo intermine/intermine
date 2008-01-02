@@ -25,14 +25,14 @@ import org.apache.struts.action.ActionMessages;
 
 /**
  * Action invoked when user submits general template settings form.
- * 
+ *
  * @author Thomas Riley
  */
 public class TemplateSettingsAction extends InterMineAction
 {
     /**
      * Edit template constraint properties.
-     * 
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -59,7 +59,7 @@ public class TemplateSettingsAction extends InterMineAction
         tbs.setName(tsf.getName());
         tbs.setTitle(tsf.getTitle());
         tbs.setComment(tsf.getComment());
-        
+
         return new ForwardParameters(mapping.findForward("query")).forward();
     }
 }

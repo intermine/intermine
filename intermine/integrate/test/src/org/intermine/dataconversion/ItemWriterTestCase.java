@@ -31,7 +31,7 @@ public class ItemWriterTestCase extends TestCase {
     protected List items = new ArrayList();
     protected ItemWriter itemWriter;
     protected ObjectStoreWriter osw;
-    
+
     public ItemWriterTestCase(String arg1) {
         super(arg1);
     }
@@ -49,7 +49,7 @@ public class ItemWriterTestCase extends TestCase {
         }
         itemWriter.close();
     }
-    
+
     public void tearDown() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
@@ -66,7 +66,7 @@ public class ItemWriterTestCase extends TestCase {
         osw.commitTransaction();
         osw.close();
     }
-    
+
     public void testGetItems() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Item.class);

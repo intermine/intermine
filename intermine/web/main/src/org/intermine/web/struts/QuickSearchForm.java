@@ -30,15 +30,15 @@ public class QuickSearchForm extends ActionForm
 
     private String value, parsedValue;
     private String quickSearchType;
-    
+
     /**
-     * 
+     *
      */
     public QuickSearchForm() {
         reset();
     }
-    
-   
+
+
     /**
      * @return the quickSearchType
      */
@@ -70,7 +70,7 @@ public class QuickSearchForm extends ActionForm
         this.value = value;
     }
 
-    
+
     /**
      * @return the parsed value
      */
@@ -90,11 +90,11 @@ public class QuickSearchForm extends ActionForm
         Object o =
             QueryBuilderForm.parseValue(value, String.class, ConstraintOp.EQUALS, locale, errors);
         parsedValue = o.toString();
-        
+
         return errors;
     }
-    
-    
+
+
     /**
      * Reset form bean.
      *
@@ -106,9 +106,9 @@ public class QuickSearchForm extends ActionForm
         super.reset(mapping, request);
         reset();
     }
-    
+
     /**
-     * 
+     *
      */
     public void reset() {
         value = "";

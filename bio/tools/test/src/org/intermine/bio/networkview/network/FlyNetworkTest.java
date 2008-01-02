@@ -31,7 +31,7 @@ public class FlyNetworkTest extends TestCase
         nx = new FlyNode("xxx");
         e1 = new FlyEdge(n2, n3, "pn"); // test ability to have edges between same nodes
         e2 = new FlyEdge(n3, n2, "pn"); // with same type just opposite directions
-        // does NOT work with cytoscape networks 
+        // does NOT work with cytoscape networks
         e3 = new FlyEdge(n3, n1, "xx");
 
         a1 = "attribute1";
@@ -102,13 +102,13 @@ public class FlyNetworkTest extends TestCase
         assertFalse("addEdge(FlyEdge): ", fnw.addEdge(e3));
 
         // the egde itself is not added to the network, but a copy
-        // therefore a later change on the edge does not have to 
+        // therefore a later change on the edge does not have to
         // effect the edge added to the network
         FlyEdge tmpEdge = fnw.getEdge(e3.getLabel());
         assertTrue("equaltity test: ", e3.isEqual(tmpEdge));
         e3.setAttribute(a1, "newValue");
         assertFalse("equaltity test: ", e3.isEqual(tmpEdge));
-        // nevertheless the label was not altered, but it has to be 
+        // nevertheless the label was not altered, but it has to be
         // unique within the network, hence you are not allowed to add
         // the altered edge:
         assertFalse("addEdge(FlyEdge): ", fnw.addEdge(tmpEdge));

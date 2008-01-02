@@ -30,14 +30,14 @@ import org.apache.struts.action.ActionForward;
 public class ForwardParameters
 {
     private static final Logger LOG = Logger.getLogger(ForwardParameters.class);
-    
+
     /** Original ActionForward. */
     protected ActionForward af;
     /** Map from parameter name to parameter value. */
     protected Map params = new LinkedHashMap();
     /** Anchor name. */
     protected String anchor;
-    
+
     /**
      * Creates a new instance of ForwardParameters.
      *
@@ -46,7 +46,7 @@ public class ForwardParameters
     public ForwardParameters(ActionForward af) {
         this.af = af;
     }
-    
+
     /**
      * Creates a new instance of ForwardParameters with a given path and
      * redirect settings.
@@ -57,7 +57,7 @@ public class ForwardParameters
     public ForwardParameters(String path, boolean redirect) {
         af = new ActionForward(path, redirect);
     }
-    
+
     /**
      * Add a parameter to the path.
      *
@@ -69,10 +69,10 @@ public class ForwardParameters
         params.put(name, value);
         return this;
     }
-    
+
     /**
      * Add an anchor to the path.
-     * 
+     *
      * @param newAnchor  anchor name
      * @return        this ForwardParameters object
      */
@@ -80,10 +80,10 @@ public class ForwardParameters
         this.anchor = newAnchor;
         return this;
     }
-    
+
     /**
      * Construct the resulting ActionForward.
-     * 
+     *
      * @return  ActionForward with parameters in path
      */
     public ActionForward forward() {

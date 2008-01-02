@@ -23,7 +23,7 @@ public class QueryTestCaseTest extends QueryTestCase
     public static Test suite() {
         return OneTimeTestCase.buildSuite(QueryTestCaseTest.class);
     }
-    
+
     private boolean failed;
 
     public void testEmptyQueries() throws Exception {
@@ -335,7 +335,7 @@ public class QueryTestCaseTest extends QueryTestCase
         QueryField f2 = new QueryField(q2Sub2, c4, "name");
         q1.addToSelect(f1);
         q2.addToSelect(f2);
-        
+
         failed = false;
         try {
             assertEquals(q1, q2);

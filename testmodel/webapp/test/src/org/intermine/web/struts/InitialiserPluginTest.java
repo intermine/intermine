@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -56,7 +56,7 @@ public class InitialiserPluginTest extends TestCase
     private Integer bobId = new Integer(101);
     private String bobPass = "bob_pass";
     private Map classKeys;
-    
+
     public InitialiserPluginTest(String arg) {
         super(arg);
     }
@@ -72,7 +72,7 @@ public class InitialiserPluginTest extends TestCase
         classKeyProps.load(getClass().getClassLoader()
                            .getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-        
+
         ServletContext servletContext = new ServletContextSimulator();
         servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
         pm = new NonCheckingProfileManager(os, userProfileOSW, servletContext);
@@ -83,7 +83,7 @@ public class InitialiserPluginTest extends TestCase
                                          ServletContext servletContext) {
             super(os, userProfileOSW, servletContext);
         }
-        
+
         // override to prevent the checker from objecting to
         // "org.intermine.model.testmodel.Wibble" in testCleanTags()
         protected Map makeTagCheckers(final Model model) {
@@ -154,14 +154,14 @@ public class InitialiserPluginTest extends TestCase
             userProfileOSW.delete(o);
         }
     }
-    
+
 
     public void testCleanTags() throws Exception {
         setUpUserProfiles();
         pm.addTag("test-tag1", "org.intermine.model.testmodel.Department", "class", "bob");
         pm.addTag("test-tag2", "org.intermine.model.testmodel.Department", "class", "bob");
         pm.addTag("test-tag2", "org.intermine.model.testmodel.Employee", "class", "bob");
-        
+
         List tags = pm.getTags("test_tag_", null, "class", null);
         assertEquals(3, tags.size());
 
@@ -170,7 +170,7 @@ public class InitialiserPluginTest extends TestCase
         pm.addTag("test-tag", "org.intermine.model.testmodel.Aardvark", "class", "bob");
 
         InitialiserPlugin.cleanTags(pm);
-        
+
         tags = pm.getTags("test_tag%", null, "class", null);
         assertEquals(3, tags.size());
     }

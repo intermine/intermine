@@ -77,7 +77,7 @@ public class ImportQueriesAction extends InterMineAction
                 while (iter.hasNext()) {
                     String queryName = (String) iter.next();
                     PathQuery query = (PathQuery) queries.get(queryName);
-                    queryName = validateQueryName(queryName, profile);                    
+                    queryName = validateQueryName(queryName, profile);
                     SessionMethods.saveQuery(session, queryName, query);
                     if (sb.length() > 0) {
                         sb.append(", ");
@@ -87,7 +87,7 @@ public class ImportQueriesAction extends InterMineAction
                 recordMessage(new ActionMessage("query.imported", sb.toString()), request);
                 return new ForwardParameters(mapping.findForward("mymine"))
                 .addParameter("subtab", "saved").forward();
-                
+
             } finally {
                 profile.enableSaving();
             }
@@ -102,7 +102,7 @@ public class ImportQueriesAction extends InterMineAction
      * @return a validated name for the query
      */
     private String validateQueryName(String queryName, Profile profile) {
-        
+
         String newQueryName = queryName;
 
         if (!WebUtil.isValidName(queryName)) {

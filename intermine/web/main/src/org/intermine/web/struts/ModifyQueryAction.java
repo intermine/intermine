@@ -38,7 +38,7 @@ import org.intermine.web.logic.query.SavedQuery;
 public class ModifyQueryAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(ModifyQueryAction.class);
-    
+
     /**
      * Forward to the correct method based on the button pressed.
      * @param mapping The ActionMapping used to select this instance
@@ -109,7 +109,7 @@ public class ModifyQueryAction extends InterMineAction
             .addParameter("subtab", "saved").forward();
         }
     }
-    
+
     /**
      * Export the selected queries
      * @param mapping The ActionMapping used to select this instance
@@ -132,15 +132,15 @@ public class ModifyQueryAction extends InterMineAction
 
         response.setContentType("text/plain; charset=us-ascii");
         response.setHeader("Content-Disposition ", "inline; filename=saved-queries.xml");
-        
+
         Map<String, SavedQuery> map;
-        
+
         if ("history".equals(type)) {
             map = profile.getHistory();
         } else {
             map = profile.getSavedQueries();
         }
-        
+
         PrintStream out = new PrintStream(response.getOutputStream());
         out.println("<queries>");
         for (int i = 0; i < mqf.getSelectedQueries().length; i++) {
@@ -152,7 +152,7 @@ public class ModifyQueryAction extends InterMineAction
             out.println(xml);
         }
         out.println("</queries>");
-        
+
         return null;
     }
 }

@@ -30,7 +30,7 @@ public class AttributeDescriptor extends FieldDescriptor
     public static final Set<String> VALID_TYPES = new LinkedHashSet(Arrays.asList("short", "int",
                 "long", "float", "double", "boolean", "java.lang.Short", "java.lang.Integer",
                 "java.lang.Long", "java.lang.Float", "java.lang.Double", "java.lang.Boolean",
-                "java.lang.String", "java.util.Date", "java.math.BigDecimal", 
+                "java.lang.String", "java.util.Date", "java.math.BigDecimal",
                 "java.lang.Character"));
 
     /**
@@ -60,7 +60,7 @@ public class AttributeDescriptor extends FieldDescriptor
     public String getType() {
         return this.type;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -74,7 +74,7 @@ public class AttributeDescriptor extends FieldDescriptor
     public boolean equals(Object obj) {
         if (obj instanceof AttributeDescriptor) {
             AttributeDescriptor attr = (AttributeDescriptor) obj;
-            return name.equals(attr.name) 
+            return name.equals(attr.name)
                 && type.equals(attr.type);
         }
         return false;

@@ -99,7 +99,7 @@ public class InterMineExceptionHandler extends ExceptionHandler
             storeException(request, property, error, forward, ae.getScope());
         } while ((t = t.getCause()) != null);
 */
-        
+
         return forward;
     }
 

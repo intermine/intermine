@@ -66,7 +66,7 @@ public abstract class FieldDescriptor
         for (int i = 0; i < name.length(); i++) {
             if (!Character.isJavaIdentifierPart(name.charAt(i))) {
                 throw new IllegalArgumentException("Java field names may not contain character: "
-                                                   + name.charAt(i) + " but field name was: " 
+                                                   + name.charAt(i) + " but field name was: "
                                                    + name);
             }
         }

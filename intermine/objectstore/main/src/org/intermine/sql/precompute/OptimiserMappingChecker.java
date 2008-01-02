@@ -38,7 +38,7 @@ public class OptimiserMappingChecker implements MappingUtilChecker
         this.set1 = set1;
         this.set2 = set2;
     }
-    
+
     /**
      * Checks a partial mapping.
      *

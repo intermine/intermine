@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -39,7 +39,7 @@ public class Hypergeometric
     /**
      * Compute the logarithm of nCk (n choose k)
      * @param n
-     * @param k  
+     * @param k
      * @return double the logarithm of nCk
      */
     private static double logChoose(int n, int k) {
@@ -63,9 +63,9 @@ public class Hypergeometric
     }
 
 
-    /** 
+    /**
      * The p-value is the sum from j=k to n of MCj*(N-M)C(n-j)/(NCn)
-     *     
+     *
      * @param n Number of genes in bag (n)
      * @param k Number of genes in the bag annotated with this go term (k)
      * @param bigM Total number of genes annotated with this term (M)

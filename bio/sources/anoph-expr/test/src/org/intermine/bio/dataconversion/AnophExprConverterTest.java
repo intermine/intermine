@@ -41,15 +41,15 @@ public class AnophExprConverterTest extends ItemsTestCase
 
 
     public void testProcess() throws Exception {
-        
+
 
         File genes = File.createTempFile("genes", "");
         FileOutputStream out = new FileOutputStream(genes);
         IOUtils.copy(getClass().getClassLoader().getResourceAsStream("reporter_gene_mappingFile.txt"), out);
         out.close();
-        
+
         String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("AnophExprConverterTest_src.txt"));
-        
+
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         AnophExprConverter converter = new AnophExprConverter(itemWriter, Model.getInstanceByName("genomic"));
         converter.setGenefile(genes);

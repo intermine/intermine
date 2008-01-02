@@ -28,14 +28,14 @@ import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 
 /**
- * 
+ *
  * @author Julie Sullivan
  *
  */
 public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
 {
     String bagName;
-    
+
     /**
      * Creates a FlyAtlasGraphURLGenerator for the chart
      * @param bagName the bag name
@@ -53,7 +53,7 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
      */
     public String generateURL(CategoryDataset dataset, int series, int category) {
         StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
- 
+
         String seriesName = (String) dataset.getRowKey(series);
         seriesName = seriesName.toLowerCase();
         Boolean expressed = Boolean.FALSE;
@@ -65,19 +65,19 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         sb.append("&category=" + dataset.getColumnKey(category));
         sb.append("&series=" + expressed);
         sb.append("&urlGen=org.flymine.web.widget.FlyFishGraphURLGenerator");
-        
+
         return sb.toString();
     }
 
 
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
-                                       String series, 
+                                       String series,
                                        String category) {
-       
+
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-        
+
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Gene.identifier"));
         view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
@@ -85,25 +85,25 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
         view.add(MainHelper.makePath(model, q, "Gene.mRNALocalisationResults.stage"));
         view.add(MainHelper.makePath(model, q, "Gene.mRNALocalisationResults.expressed"));
-        
+
         q.setView(view);
-        
+
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
-        
+
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-        
+
         // stage (series)
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode stageNode = q.addNode("Gene.mRNALocalisationResults.stage");
-        Constraint stageConstraint 
+        Constraint stageConstraint
                         = new Constraint(constraintOp, series, false, label, code, id, null);
         stageNode.getConstraints().add(stageConstraint);
-        
+
         // expressed (category)
         constraintOp = ConstraintOp.EQUALS;
         Boolean expressed = Boolean.FALSE;
@@ -112,13 +112,13 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         }
         code = q.getUnusedConstraintCode();
         PathNode expressedNode = q.addNode("Gene.mRNALocalisationResults.expressed");
-        Constraint expressedConstraint 
+        Constraint expressedConstraint
                         = new Constraint(constraintOp, expressed, false, label, code, id, null);
         expressedNode.getConstraints().add(expressedConstraint);
-        
+
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
-        
-        return q; 
-    }    
+
+        return q;
+    }
 }

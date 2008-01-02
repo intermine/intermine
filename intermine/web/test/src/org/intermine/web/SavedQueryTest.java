@@ -22,7 +22,7 @@ public class SavedQueryTest extends TestCase
 {
     private Model model;
     private Date created;
-    
+
     protected void setUp() throws Exception {
         super.setUp();
         model = Model.getInstanceByName("testmodel");
@@ -35,7 +35,7 @@ public class SavedQueryTest extends TestCase
         assertEquals(sq.getName(), "hello");
         assertEquals(sq.getPathQuery(), query);
         assertEquals(sq.getDateCreated(), created);
-        
+
         assertEquals(new SavedQuery("hello", new Date(created.getTime()), query), sq);
     }
 }

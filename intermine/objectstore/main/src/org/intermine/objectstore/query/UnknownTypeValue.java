@@ -32,7 +32,7 @@ public class UnknownTypeValue
     public static final int TYPE_BOOLEAN = 1;
     /** A value that indicates that the value represents a String or Date. */
     public static final int TYPE_STRING = 2;
-    
+
     private String value;
 
     /**
@@ -46,7 +46,7 @@ public class UnknownTypeValue
 
     /**
      * Returns the value.
-     * 
+     *
      * @return the value
      */
     public String getValue() {

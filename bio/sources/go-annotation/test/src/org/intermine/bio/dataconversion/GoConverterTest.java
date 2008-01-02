@@ -69,7 +69,7 @@ public class GoConverterTest extends ItemsTestCase
 
         // uncomment to write a new target items file
         //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
-        
+
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
 
@@ -95,8 +95,8 @@ public class GoConverterTest extends ItemsTestCase
         assertEquals(expected, new HashSet(converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "10_10")));
     }
-    
-    
+
+
     // if we see the same product id twice but not in order process should fail
     public void testFileNotOrdered() throws Exception {
         MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
@@ -107,7 +107,7 @@ public class GoConverterTest extends ItemsTestCase
             getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
 
         converter.productIds.add("FBgn0020002");
-                
+
         try {
             converter.process(reader);
             fail("Expected an exception due to unordered file");

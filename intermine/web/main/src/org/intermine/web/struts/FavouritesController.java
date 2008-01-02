@@ -36,9 +36,9 @@ import org.intermine.web.logic.template.TemplateQuery;
 /**
  * Controller for the favourites tile responsible for getting and displaying the
  * list of favourite templates
- * 
+ *
  * @author Xavier Watkins
- * 
+ *
  */
 public class FavouritesController extends TilesAction
 {
@@ -46,10 +46,10 @@ public class FavouritesController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context, 
-                                 @SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
-            HttpServletRequest request, 
+            HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         ArrayList<TemplateQuery> favouriteTemplates = new ArrayList<TemplateQuery>();
         HttpSession session = request.getSession();

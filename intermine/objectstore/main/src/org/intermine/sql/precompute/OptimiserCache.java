@@ -60,7 +60,7 @@ public class OptimiserCache
     protected TreeMap evictionQueue;
     protected int sequence = 0;
     protected int untilNextExpiration = EXPIRE_INTERVAL;
-    
+
     /**
      * Constructor for this object.
      */
@@ -147,7 +147,7 @@ public class OptimiserCache
             //LOG.debug("Cache didn't have anything near enough");
             return null;
         }
-        //LOG.debug("Cache hit"); 
+        //LOG.debug("Cache hit");
         return (originalWasExplain ? "EXPLAIN " : "") + bestLine.getOptimised();
     }
 
@@ -178,7 +178,7 @@ public class OptimiserCache
 
     /**
      * Removes a particular cache line.
-     * 
+     *
      * @param line the cache line to remove
      */
     private void expire(OptimiserCacheLine line) {

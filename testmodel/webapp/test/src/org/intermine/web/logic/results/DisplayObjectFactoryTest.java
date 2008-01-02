@@ -59,7 +59,7 @@ public class DisplayObjectFactoryTest extends MockStrutsTestCase
         getSession().getServletContext().setAttribute(Constants.WEBCONFIG, webConfig);
 
         DisplayObjectFactory doc = new DisplayObjectFactory(getSession());
-        
+
         Company company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company1.setName("Company1");
         company1.setId(new Integer(1));

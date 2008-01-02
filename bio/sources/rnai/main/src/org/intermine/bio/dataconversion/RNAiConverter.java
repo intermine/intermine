@@ -63,7 +63,7 @@ public class RNAiConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#process(Reader)
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);

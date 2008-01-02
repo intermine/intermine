@@ -102,11 +102,11 @@ public class GFF3ParserTest extends TestCase
                 "dbxref_2nd=FlyBase:FBgn0025691,FlyBase:FBgn0032544,GB:CG15288;gbunit=AE003643;synonym=wb;" +
                 "synonym_2nd=A1,BEST:CK02229,BG:DS03792.1,CK02229,CT35236,DLAM,D-laminin+%26agr%3B2,l(2)09437," +
                 "l(2)34Fb,l(2)br1,l34Fb,laminin,laminin+%26agr%3B1%2C2,Laminin+%26agr%3B1%2C2,LM-A/%26agr%3B2,wing+blistered";
-        
+
         GFF3Record record = new GFF3Record(input);
-        record.toString();  // avoid eclipse warning    
+        record.toString();  // avoid eclipse warning
         }
-    
+
     public void testFixGreek() {
         String input = "<br/>&agr;<br/>&Agr;<br/>&bgr;<br/>&Bgr;<br/>&ggr;" +
                 "<br/>&Ggr;<br/>&dgr;<br/>&Dgr;<br/>&egr;<br/>&Egr;<br/>&zgr;" +
@@ -135,7 +135,7 @@ public class GFF3ParserTest extends TestCase
         assertEquals(Arrays.asList(new Object[]{"C+D"}), record.getAttributes().get("Target"));
         assertEquals(Arrays.asList(new Object[]{"E F"}), record.getAttributes().get("Other"));
     }
-    
+
     public void testToGFF3() throws Exception {
         String original="4\t.\texon\t22335\t22528\t.\t-\t.\tID=CG32013%3A2;Parent=CG32013-RA\n"
             + "4\t.\texon\t22335\t22528\t1000.0\t-\t1\tID=CG32013%3A2;Parent=CG32013-RA\n";

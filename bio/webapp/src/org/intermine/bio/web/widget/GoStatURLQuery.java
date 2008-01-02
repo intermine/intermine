@@ -45,17 +45,17 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
          this.key = key;
          this.os = os;
      }
-    
+
     /**
      * @return Query a query to generate the results needed
      */
      public PathQuery generatePathQuery() {
-        
+
          Model model = os.getModel();
          PathQuery q = new PathQuery(model);
-         
+
          List<Path> view = new ArrayList<Path>();
-         
+
          Path geneIdentifier = null;
          Path geneDbId =  null;
          Path geneName =  null;
@@ -77,10 +77,10 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
                             model, q, "Protein.gene.allGoAnnotation.actualGoTerms.name");
              actualGoId = MainHelper.makePath(
                           model, q, "Protein.gene.allGoAnnotation.actualGoTerms.identifier");
-             
+
              view.add(MainHelper.makePath(model, q, "Protein.identifier"));
              view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
-             
+
          } else {
 
              geneIdentifier = MainHelper.makePath(model, q, "Gene.identifier");
@@ -89,9 +89,9 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
              organismName = MainHelper.makePath(model, q, "Gene.organism.name");
              goId = MainHelper.makePath(model, q, "Gene.allGoAnnotation.identifier");
              goName = MainHelper.makePath(model, q, "Gene.allGoAnnotation.name");
-             actualGoName = MainHelper.makePath(model, 
+             actualGoName = MainHelper.makePath(model,
                                                 q, "Gene.allGoAnnotation.actualGoTerms.name");
-             actualGoId = MainHelper.makePath(model, 
+             actualGoId = MainHelper.makePath(model,
                                               q, "Gene.allGoAnnotation.actualGoTerms.identifier");
          }
 
@@ -108,25 +108,25 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
 
          String bagType = bag.getType();
          ConstraintOp constraintOp = ConstraintOp.IN;
-         String constraintValue = bag.getName();        
+         String constraintValue = bag.getName();
          String label = null, id = null, code = q.getUnusedConstraintCode();
          Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
          q.addNode(bagType).getConstraints().add(c);
-         
+
          // can't be a NOT relationship!
          constraintOp = ConstraintOp.IS_NULL;
          code = q.getUnusedConstraintCode();
-         
+
          PathNode qualifierNode = null;
          if (bag.getType().toLowerCase().equals("protein")) {
              qualifierNode = q.addNode("Protein.gene.allGoAnnotation.qualifier");
          } else {
-             qualifierNode = q.addNode("Gene.allGoAnnotation.qualifier"); 
+             qualifierNode = q.addNode("Gene.allGoAnnotation.qualifier");
          }
-         Constraint qualifierConstraint 
+         Constraint qualifierConstraint
          = new Constraint(constraintOp, null, false, label, code, id, null);
          qualifierNode.getConstraints().add(qualifierConstraint);
-         
+
          // go term
          constraintOp = ConstraintOp.EQUALS;
          code = q.getUnusedConstraintCode();
@@ -134,15 +134,15 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
          if (bag.getType().toLowerCase().equals("protein")) {
              goTermNode = q.addNode("Protein.gene.allGoAnnotation.identifier");
          } else {
-             goTermNode  = q.addNode("Gene.allGoAnnotation.identifier"); 
+             goTermNode  = q.addNode("Gene.allGoAnnotation.identifier");
          }
-         Constraint goTermConstraint 
+         Constraint goTermConstraint
                          = new Constraint(constraintOp, key, false, label, code, id, null);
          goTermNode.getConstraints().add(goTermConstraint);
-         
+
          q.setConstraintLogic("A and B and C");
          q.syncLogicExpression("and");
-        
+
         return q;
     }
 }

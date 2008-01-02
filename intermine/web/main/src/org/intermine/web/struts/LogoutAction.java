@@ -22,13 +22,13 @@ import org.apache.struts.action.ActionMessage;
 /**
  * Action that invalidates the user session effectively logging the user out of
  * intermine.
- * 
+ *
  * @author Thomas Riley
  */
 public class LogoutAction extends InterMineAction
 {
-    /** 
-     * 
+    /**
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -45,7 +45,7 @@ public class LogoutAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         session.invalidate();
-        recordMessage(new ActionMessage("login.loggedout"), request);       
+        recordMessage(new ActionMessage("login.loggedout"), request);
         return mapping.findForward("begin");
     }
 }

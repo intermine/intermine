@@ -51,10 +51,10 @@ public class InlineTagEditorController extends TilesAction
         ProfileManager pm = (ProfileManager) request.getSession()
             .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
-        
+
         String uid = null;
         String type = null;
-        
+
         if (taggable instanceof FieldDescriptor) {
             FieldDescriptor fd = (FieldDescriptor) taggable;
             uid = fd.getClassDescriptor().getUnqualifiedName() + "." + fd.getName();
@@ -75,11 +75,11 @@ public class InlineTagEditorController extends TilesAction
             type = TagTypes.BAG;
             uid = ((InterMineBag) taggable).getName();
         }
-        
+
         request.setAttribute("uid", uid);
         request.setAttribute("type", type);
         request.setAttribute("currentTags", pm.getTags(null, uid, type, profile.getUsername()));
-        
+
         return null;
     }
 }

@@ -18,7 +18,7 @@ import java.util.Iterator;
 import cytoscape.data.Semantics;
 
 /**
- * flymine representation of a network 
+ * flymine representation of a network
  * used as container for network information used by cytoscape
  * @author Florian Reisinger
  */
@@ -26,7 +26,7 @@ public class FlyNetwork implements Serializable
 {
 
     private static final long serialVersionUID = 9999902905901L;
-    
+
     /**
      * name of the interaction type attribute -> "interaction"
      * needs to be the same as the one used by cytoscape
@@ -73,7 +73,7 @@ public class FlyNetwork implements Serializable
     }
 
     /**
-     * Creates new node with specified label and will add it to the network, 
+     * Creates new node with specified label and will add it to the network,
      * if not already existing.
      * @param label the label that will be asigned to the new node
      * @return true if adding was successful, false otherwise
@@ -84,9 +84,9 @@ public class FlyNetwork implements Serializable
     }
 
     /**
-     * Will add a new edge to the network, if not already existing. Target and 
+     * Will add a new edge to the network, if not already existing. Target and
      * source node have to be present in the network. To create the edge a default
-     * label of the form "source_label (interaction_type) target_label" and the 
+     * label of the form "source_label (interaction_type) target_label" and the
      * default interaction type FlyNetwork.DEFAULT_INTERACTION_TYPE are used.
      * @param e edge to be added
      * @return true if edge was successfully added, false otherwise
@@ -96,8 +96,8 @@ public class FlyNetwork implements Serializable
                 && !this.containsEdge(e)) {
 
             // add a copy of the specified edge:
-            // create a new Edge with references to the Nodes 
-            // already contained in the network instead of 
+            // create a new Edge with references to the Nodes
+            // already contained in the network instead of
             // references to objects with the same context
             FlyEdge newEdge = new FlyEdge(this.getNode(e.getSource().getLabel()), this
                     .getNode(e.getTarget().getLabel()), null, e.getLabel());
@@ -117,7 +117,7 @@ public class FlyNetwork implements Serializable
 
     /**
      * will add a new FlyEdge to the FlyNetwork, if not already existing.
-     * This method will use a default label of the form 
+     * This method will use a default label of the form
      * "source_label (interaction_type) target_label"
      * and the default interaction type FlyNetwork.DEFAULT_INTERACTION_TYPE.
      * @param source source node of edge
@@ -222,7 +222,7 @@ public class FlyNetwork implements Serializable
     /**
      * Compares two FlyNetworkS.
      * This will check if the networks contain the same elements.
-     * Each element in one network need to have the same attributes 
+     * Each element in one network need to have the same attributes
      * as it's corresponding element in the other network.
      * This is not equal to the equals() method and does not change the hashcode() method
      * @param net the network to compare with
@@ -269,11 +269,11 @@ public class FlyNetwork implements Serializable
         // iterate over all edges (interactions) and add a SIF line for each
         for (Iterator iter = edges.values().iterator(); iter.hasNext();) {
             FlyEdge edge = (FlyEdge) iter.next();
-            sb.append(edge.getSource().getLabel() 
-                    + "\t" + edge.getAttributeValue(FlyNetwork.INTERACTION) 
+            sb.append(edge.getSource().getLabel()
+                    + "\t" + edge.getAttributeValue(FlyNetwork.INTERACTION)
                     + "\t" + edge.getTarget().getLabel() + "\n");
-            // remove the source and target nodes from temp. list 
-            // because they already have been processed -> already in the SIF 
+            // remove the source and target nodes from temp. list
+            // because they already have been processed -> already in the SIF
             if (tmpNodes.contains(edge.getSource())) {
                 tmpNodes.remove(edge.getSource());
             }
@@ -289,10 +289,10 @@ public class FlyNetwork implements Serializable
                 sb.append(node.getLabel() + "\n");
             }
         }
-        
+
         return sb.toString();
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      * @return a String representing this FlyNetwork

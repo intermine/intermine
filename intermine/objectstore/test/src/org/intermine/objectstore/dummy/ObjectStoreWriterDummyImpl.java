@@ -211,7 +211,7 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
     public Map getStoredObjects() {
         return storedObjects;
     }
- 
+
     /**
      * Returns a new empty ObjectStoreBag object that is valid for this ObjectStore.
      *

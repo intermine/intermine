@@ -72,9 +72,9 @@ public class SummariseAllTemplatesAction extends InterMineAction
                 recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
             }
         }
-        
+
         return new ForwardParameters(mapping.findForward("mymine"))
         .addParameter("subtab", "templates").forward();
-       
+
     }
 }

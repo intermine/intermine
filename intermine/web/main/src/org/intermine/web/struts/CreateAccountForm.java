@@ -27,9 +27,9 @@ import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Form bean to represent the inputs to create a new user account
- * 
+ *
  * @author Xavier Watkins
- * 
+ *
  */
 public class CreateAccountForm extends ActionForm
 {
@@ -83,7 +83,7 @@ public class CreateAccountForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -113,7 +113,7 @@ public class CreateAccountForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         username = null;
         password = null;

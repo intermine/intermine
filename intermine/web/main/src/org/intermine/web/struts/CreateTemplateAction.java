@@ -76,7 +76,7 @@ public class CreateTemplateAction extends InterMineAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         TemplateBuildState tbs =
             (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
-        
+
         boolean seenProblem = false;
 
         // Check whether query has at least one constraint and at least one output
@@ -101,7 +101,7 @@ public class CreateTemplateAction extends InterMineAction
             recordError(new ActionMessage("errors.createtemplate.noconstraints"), request);
             seenProblem = true;
         }
-        
+
         // Check for a name clash with system templates
         Profile superUser = SessionMethods.getSuperUserProfile(servletContext);
         if (!superUser.equals(profile)) {
@@ -111,7 +111,7 @@ public class CreateTemplateAction extends InterMineAction
                 seenProblem = true;
             }
         }
-        
+
         // Check whether there is a template name clash
         if (profile.getSavedTemplates().containsKey(tbs.getName())
                 && (tbs.getUpdatingTemplate() == null
@@ -120,15 +120,15 @@ public class CreateTemplateAction extends InterMineAction
                     request);
             seenProblem = true;
         }
-        
+
         if (StringUtils.isEmpty(tbs.getName())) {
             recordError(new ActionMessage("errors.required", "Template name"), request);
             seenProblem = true;
-        } else if (!WebUtil.isValidName(tbs.getName())) { 
+        } else if (!WebUtil.isValidName(tbs.getName())) {
             recordError(new ActionMessage("errors.badChars"), request);
             seenProblem = true;
         }
-           
+
         // Ensure that we can actually execute the query
         if (!seenProblem) {
             try {
@@ -143,19 +143,19 @@ public class CreateTemplateAction extends InterMineAction
                 seenProblem = true;
             }
         }
-        
+
         if (seenProblem) {
             return mapping.findForward("query");
         }
-        
+
         TemplateQuery template = TemplateHelper.buildTemplateQuery(tbs, query);
         TemplateQuery editing = tbs.getUpdatingTemplate();
-        
+
         String key = (editing == null) ? "templateBuilder.templateCreated"
                                        : "templateBuilder.templateUpdated";
-        
+
         recordMessage(new ActionMessage(key, template.getName()), request);
-        
+
         // Replace template if needed
         if (editing != null) {
             profile.deleteTemplate(editing.getName());
@@ -171,11 +171,11 @@ public class CreateTemplateAction extends InterMineAction
                 tr.webSearchableAdded(template);
             }
         }
-        
+
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
 
         cleanCache(servletContext, template);
-        
+
         return new ForwardParameters(mapping.findForward("mymine"))
         .addParameter("subtab", "templates").forward();
     }

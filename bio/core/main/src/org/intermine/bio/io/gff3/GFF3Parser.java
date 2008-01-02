@@ -54,7 +54,7 @@ public class GFF3Parser
             public boolean hasNext() {
                 return currentLine != null && !currentLine.startsWith(">");
             }
-            
+
             public Object next() {
                 if (currentLine == null) {
                     throw new NoSuchElementException();

@@ -102,7 +102,7 @@ public class QueryFunction implements QueryEvaluable
         if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX || op == STDDEV)) {
             throw new IllegalArgumentException("Invalid operation for specified argument");
         }
-        if (!(Number.class.isAssignableFrom(qe.getType()) 
+        if (!(Number.class.isAssignableFrom(qe.getType())
               || qe.getType().equals(UnknownTypeValue.class))) {
             throw new IllegalArgumentException("Invalid argument type for specified operation");
         }

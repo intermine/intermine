@@ -113,7 +113,7 @@ public class DatabaseSchemaTest extends TestCase
         got = schema.getTableFields(importantPerson);
         assertEquals(importantPersonAttributes, got.getAttributes());
         assertEquals(importantPersonReferences, got.getReferences());
- 
+
         truncated = new ArrayList();
         truncated.add(employee);
         truncated.add(importantPerson);
@@ -261,7 +261,7 @@ public class DatabaseSchemaTest extends TestCase
         got = schema.getTableFields(importantPerson);
         assertEquals(importantPersonAttributes, got.getAttributes());
         assertEquals(importantPersonReferences, got.getReferences());
- 
+
         truncated = new ArrayList();
         truncated.add(employee);
         truncated.add(importantPerson);

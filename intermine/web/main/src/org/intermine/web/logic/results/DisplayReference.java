@@ -33,7 +33,7 @@ public class DisplayReference extends DisplayField
     ProxyReference proxy;
     Map keyAttributes;
     ReferenceDescriptor desc;
-    
+
     /**
      * Create a new DisplayReference object.
      * @param proxy proxy for the referenced object
@@ -44,7 +44,7 @@ public class DisplayReference extends DisplayField
      * @throws Exception if an error occurs
      */
     public DisplayReference(ProxyReference proxy, ReferenceDescriptor ref,
-                            WebConfig webConfig, Map webProperties, Map classKeys) 
+                            WebConfig webConfig, Map webProperties, Map classKeys)
         throws Exception {
         super(getProxyList(proxy), ref, webConfig, webProperties, classKeys);
         this.proxy = proxy;
@@ -66,7 +66,7 @@ public class DisplayReference extends DisplayField
     public int getId() {
         return proxy.getId().intValue();
     }
-    
+
     /**
      * Get the referenced object
      * @return the object

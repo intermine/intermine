@@ -80,13 +80,13 @@ public class DagConverter extends DataConverter
         synToItem = new HashMap();
         process(findRootTerms(new File(dagFilename)));
     }
-    
+
     /**
      * Parse root DagTerms from the input ontology.
-     * 
+     *
      * @param inputFile input dag file
      * @return collection of root DagTerms
-     * @throws IOException if something goes 
+     * @throws IOException if something goes
      */
     protected Collection findRootTerms(File inputFile) throws IOException {
         return new DagParser().processForLabellingOntology(new FileReader(inputFile));
@@ -141,14 +141,14 @@ public class DagConverter extends DataConverter
         }
         return item;
     }
-    
+
     /**
      * Set up attributes and references for the Item created from a DagTerm. Subclasses
      * can override this method to perform extra setup, for example by casting the
      * DagTerm to some someclass and retrieving extra attributes. Subclasses should call this
      * inherited method first. This method will call process() for each child/component term,
      * resulting in recursion.
-     * 
+     *
      * @param termId the term id
      * @param item the Item created (see termClass field for type)
      * @param term the source DagTerm
@@ -189,13 +189,13 @@ public class DagConverter extends DataConverter
             addToCollection(item, "synonyms", synItem);
         }
     }
-    
+
     /**
      * Set up attributes and references for the Item created from a DagTermSynonym. Subclasses
      * can override this method to perform extra setup, for example by casting the
      * DagTermSynonym to some someclass and retrieving extra attributes. Subclasses should call this
      * inherited method first.
-     * 
+     *
      * @param syn the DagTermSynonym object (or a subclass of)
      * @param item the Item created to store the synonym
      * @param term the source DagTerm
@@ -205,7 +205,7 @@ public class DagConverter extends DataConverter
         throws ObjectStoreException {
         item.addAttribute(new Attribute("name", syn.getName()));
     }
-    
+
     /**
      * Create (and store) a relation between two DagTerms.
      *

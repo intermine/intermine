@@ -20,7 +20,7 @@ import org.intermine.sql.DatabaseFactory;
 public class DataTrackingTest extends TestCase {
     protected DataTracker dt;
     protected Source source1, source2;
-    
+
     public void setUp() throws Exception {
         dt = new DataTracker(DatabaseFactory.getDatabase("db.unittest"), 30, 10);
         source1 = dt.stringToSource("Source1");
@@ -45,7 +45,7 @@ public class DataTrackingTest extends TestCase {
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }
-        
+
         try {
             dt.setSource(new Integer(46), "name", new Source());
             fail("Expected NullPointerException");

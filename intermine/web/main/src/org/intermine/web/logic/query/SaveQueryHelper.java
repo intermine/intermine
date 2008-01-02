@@ -30,7 +30,7 @@ public class SaveQueryHelper
     public static String findNewQueryName(Map savedQueries) {
         return findNewQueryName(savedQueries, null);
     }
-    
+
     /**
      * Return a query name that isn't currently in use, returning the given name
      * if it is available.

@@ -47,7 +47,7 @@ public class Batch
 
     private List flushJobs = Collections.EMPTY_LIST;
     private SQLException problem = null;
-    
+
     private volatile int lastDutyCycle = 100;
     private boolean closed = false;
     private static final List CLOSE_DOWN_COMMAND = new ArrayList();
@@ -416,7 +416,7 @@ public class Batch
     public synchronized void clearProblem() {
         problem = null;
     }
-    
+
     private class BatchFlusher implements Runnable
     {
         public BatchFlusher() {

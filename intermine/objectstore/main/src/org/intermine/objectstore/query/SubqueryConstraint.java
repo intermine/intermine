@@ -26,7 +26,7 @@ public class SubqueryConstraint extends Constraint
 {
     protected Query subquery;
     protected QueryEvaluable qe;
-    protected QueryClass cls;    
+    protected QueryClass cls;
 
     /**
      * Construct a SubqueryConstraint with a QueryEvaluable
@@ -39,7 +39,7 @@ public class SubqueryConstraint extends Constraint
         if (query == null) {
             throw new NullPointerException("query cannot be null");
         }
-  
+
         if (op == null) {
             throw new NullPointerException("op cannot be null");
         }
@@ -192,7 +192,7 @@ public class SubqueryConstraint extends Constraint
     }
 
     //-------------------------------------------------------------------------
-    
+
     protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.IN,
         ConstraintOp.NOT_IN});
 }

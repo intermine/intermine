@@ -52,12 +52,12 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
     Collection organisms;
     int total;
     String externalLink, append;
-    
+
     /**
      * @param request The HTTP request we are processing
      */
      public UniProtFeaturesLdr(HttpServletRequest request) {
-        
+
              HttpSession session = request.getSession();
              Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
              ServletContext servletContext = session.getServletContext();
@@ -68,7 +68,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-             
+
              Query q = new Query();
              q.setDistinct(false);
              QueryClass qcProtein = new QueryClass(Protein.class);
@@ -78,7 +78,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
              QueryField qfProtId = new QueryField(qcProtein, "id");
              QueryField qfOrganismName = new QueryField(qcOrganism, "name");
              QueryField qfName = new QueryField(qcUniProtFeature, "type");
-             
+
              QueryFunction protCount = new QueryFunction();
 
              q.addFrom(qcProtein);
@@ -100,10 +100,10 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
              cs1.addConstraint(bc2);
 
              QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
-             ContainsConstraint cc1 
+             ContainsConstraint cc1
                                  = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
              cs1.addConstraint(cc1);
-             
+
              QueryCollectionReference qr2 = new QueryCollectionReference(qcProtein, "features");
              ContainsConstraint cc2 =
                  new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcUniProtFeature);
@@ -111,9 +111,9 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
 
              q.setConstraint(cs1);
              q.addToGroupBy(qfName);
-             
+
              sampleQuery = q;
-             
+
              // construct population query
              q = new Query();
              q.setDistinct(false);
@@ -140,7 +140,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
          public Query getSample() {
              return sampleQuery;
          }
-         
+
          /**
           * @return the query representing the entire population (all the items in the database)
           */
@@ -149,7 +149,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
          }
 
          /**
-          * 
+          *
           * @param os
           * @param bag
           * @return description of reference population, ie "Accounting dept"
@@ -157,24 +157,24 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
          public Collection getReferencePopulation() {
              return organisms;
          }
-         
-         /** 
-          * @param os     
+
+         /**
+          * @param os
           * @return the query representing the sample population (the bag)
           */
          public int getTotal(ObjectStore os) {
              return BioUtil.getTotal(os, organisms, "Protein");
          }
-         
+
          /**
           * @return if the widget should have an external link, where it should go to
           */
          public String getExternalLink() {
              return externalLink;
          }
-         
+
          /**
-          * 
+          *
           * @return the string to append to the end of external link
           */
          public String getAppendage() {

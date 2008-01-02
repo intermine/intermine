@@ -112,8 +112,8 @@ public class TemplateHelper
         } else if (USER_TEMPLATE.equals(type)) {
             return profile.getSavedTemplates().get(templateName);
         } else if (ALL_TEMPLATE.equals(type)) {
-            TemplateQuery tq = 
-                findTemplate(servletContext, session, userName, templateName, USER_TEMPLATE); 
+            TemplateQuery tq =
+                findTemplate(servletContext, session, userName, templateName, USER_TEMPLATE);
             if (tq == null) {
                 return findTemplate(servletContext, session, userName,
                                     templateName, GLOBAL_TEMPLATE);
@@ -210,7 +210,7 @@ public class TemplateHelper
                     if (c.getOp().equals(ConstraintOp.LOOKUP)
                         && constraintOp.equals(ConstraintOp.EQUALS)) {
                         // special case: for inline templates we put the object ID in the form
-                        // because we don't want to do a lookup - we already know the object 
+                        // because we don't want to do a lookup - we already know the object
                         nodeCopy.removeConstraint(c);
                         PathNode newNode = queryCopy.addNode(nodeCopy.getPathString() + ".id");
                         Integer valueAsInteger = Integer.valueOf((String) constraintValue);
@@ -295,7 +295,7 @@ public class TemplateHelper
                     if (c.getOp().equals(ConstraintOp.LOOKUP)
                         && constraintOp.equals(ConstraintOp.EQUALS)) {
                         // special case: for inline templates we put the object ID in the form
-                        // because we don't want to do a lookup - we already know the object 
+                        // because we don't want to do a lookup - we already know the object
                         nodeCopy.removeConstraint(c);
                         PathNode newNode = queryCopy.addNode(nodeCopy.getPathString() + ".id");
                         Integer valueAsInteger = Integer.valueOf((String) constraintValue);
@@ -315,7 +315,7 @@ public class TemplateHelper
         queryCopy.setEdited(true);
         return queryCopy;
     }
-    
+
     /**
      * Make a Query from a TemplateQuery and the corresponding TemplateForm.
      * @param tq the TemplateQuery
@@ -324,12 +324,12 @@ public class TemplateHelper
      */
 /* needs testing:
     public Query queryFromTemplateAndForm(TemplateQuery tq, TemplateForm tf) {
-        TemplateQuery filledInTemplate = 
+        TemplateQuery filledInTemplate =
             templateFormToTemplateQuery(tf, tq, Collections.EMPTY_MAP);
         Map pathToQueryNode = new HashMap();
         return MainHelper.makeQuery(filledInTemplate, Collections.EMPTY_MAP, pathToQueryNode);
     }
-*/    
+*/
     /**
      * Given a Map of TemplateQuerys (mapping from template name to TemplateQuery)
      * return a string containing each template seriaised as XML. The root element
@@ -371,7 +371,7 @@ public class TemplateHelper
     public static Map xmlToTemplateMap(String xml, Map savedBags, ServletContext servletContext)
     throws Exception {
         Reader templateQueriesReader = new StringReader(xml);
-        return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags, 
+        return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags,
                                                     servletContext);
     }
 
@@ -398,12 +398,12 @@ public class TemplateHelper
      * arg and return true if successful (ie. all constraints are filled in)
      */
     public static boolean fillTemplateForm(TemplateQuery template, InterMineObject object,
-                                            InterMineBag bag, TemplateForm templateForm, 
+                                            InterMineBag bag, TemplateForm templateForm,
                                             Model model) {
         String equalsString = ConstraintOp.EQUALS.getIndex().toString();
         String inString = ConstraintOp.IN.getIndex().toString();
         String lookupOpString = ConstraintOp.LOOKUP.getIndex().toString();
-        
+
         int editableConstraintCount = template.getAllEditableConstraints().size();
         if (editableConstraintCount > 1) {
             return false;
@@ -437,7 +437,7 @@ public class TemplateHelper
                                 return true;
                             }
                         }
-                    } else if (c.getOp().equals(ConstraintOp.EQUALS) 
+                    } else if (c.getOp().equals(ConstraintOp.EQUALS)
                                     || c.getOp().equals(ConstraintOp.IN)) {
                         String constraintIdentifier = c.getIdentifier();
                         String[] bits = constraintIdentifier.split("\\.");
@@ -445,7 +445,7 @@ public class TemplateHelper
                         if (bits.length == 2) {
                             String className = model.getPackageName() + "." + bits[0];
                             String fieldName = bits[1];
-                            
+
                             Class testClass = Class.forName(className);
 
                             if (object != null && testClass.isInstance(object)) {
@@ -479,7 +479,7 @@ public class TemplateHelper
                     LOG.error(e);
 
                 }
-            }        
+            }
         }
         return false;
     }
@@ -491,7 +491,7 @@ public class TemplateHelper
      */
     public static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
                                                                TemplateQuery template,
-                                                               InterMineObject object, 
+                                                               InterMineObject object,
                                                                InterMineBag bag) {
         try {
             TemplateForm templateForm = new TemplateForm();
@@ -506,7 +506,7 @@ public class TemplateHelper
 
             PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
                     new HashMap());
-            
+
             Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
             Query query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP, pathToQueryNode,
                     servletContext, null, false,
@@ -519,7 +519,7 @@ public class TemplateHelper
                 new WebResults(pathQuery, results, model, pathToQueryNode,
                         (Map) servletContext.getAttribute(Constants.CLASS_KEYS), null);
             PagedTable pagedResults = new PagedTable(webResults);
-            
+
             InlineTemplateTable itt =
                 new InlineTemplateTable(pagedResults, webProperties);
 
@@ -744,7 +744,7 @@ public class TemplateHelper
                 // so we don't want to add it again here.while (ecsIter.hasNext()) {
                 Constraint c = (Constraint) ecsIter.next();
                 String path = node.getPathString();
-                if (!c.getOp().equals(ConstraintOp.LOOKUP)) {        
+                if (!c.getOp().equals(ConstraintOp.LOOKUP)) {
                     if (!templateClone.viewContains(path)) {
                         templateClone.getView().add(MainHelper.makePath(templateClone.getModel(),
                                                                         templateClone, path));
@@ -759,7 +759,7 @@ public class TemplateHelper
         HashMap<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
         Query query = null;
         try {
-            query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null, 
+            query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null,
                                          null, false, null, null, null);
         } catch (ObjectStoreException e) {
             // Not possible if last argument is null

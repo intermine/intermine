@@ -27,7 +27,7 @@ public class ModifyTemplateForm extends ActionForm
     protected String[] selected;
     protected String pageName; // can modify template from templates and mymine pages
     protected String templateButton;
-    
+
     /**
      * Constructor
      */
@@ -73,26 +73,26 @@ public class ModifyTemplateForm extends ActionForm
     public void setPageName(String pageName) {
         this.pageName = pageName;
     }
-    
+
     /**
      * @param templateButton the template button pressed
      */
     public void setTemplateButton(String templateButton) {
         this.templateButton = templateButton;
     }
-    
+
     /**
      * @return the template button
      */
     public String getTemplateButton() {
         return templateButton;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") HttpServletRequest request) {
         ActionErrors errors = null;
         if (selected.length == 0) {
@@ -109,7 +109,7 @@ public class ModifyTemplateForm extends ActionForm
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }

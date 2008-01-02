@@ -93,7 +93,7 @@ public class ExportAction extends InterMineAction
             HttpSession session = request.getSession();
             ServletContext servletContext = session.getServletContext();
             PagedTable pt;
-            
+
             if (tableType.equals("bag")) {
                 Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                 ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -105,7 +105,7 @@ public class ExportAction extends InterMineAction
                 Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
                 WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
                 Model model = os.getModel();
-                
+
                 Query q = new Query();
                 QueryClass qc = new QueryClass(InterMineObject.class);
                 q.addFrom(qc);
@@ -114,11 +114,11 @@ public class ExportAction extends InterMineAction
                 q.setDistinct(false);
                 SingletonResults res = os.executeSingleton(q);
 
-                WebPathCollection webPathCollection = 
-                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model, 
+                WebPathCollection webPathCollection =
+                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model,
                                           webConfig, classKeys);
                 pt = new PagedTable(webPathCollection);
-                
+
             } else {
                 pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
                 rowList = pt.getAllRows();
@@ -126,7 +126,7 @@ public class ExportAction extends InterMineAction
                     ((WebResults) rowList).goFaster();
                 }
             }
-            
+
             if (type.equals("excel")) {
                 return excel(mapping, request, response, pt);
             } else if (type.equals("csv")) {
@@ -137,7 +137,7 @@ public class ExportAction extends InterMineAction
 
             WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
-            TableExportConfig tableExportConfig = 
+            TableExportConfig tableExportConfig =
                 (TableExportConfig) wc.getTableExportConfigs().get(type);
 
             if (tableExportConfig == null) {
@@ -154,7 +154,7 @@ public class ExportAction extends InterMineAction
             }
         }
     }
- 
+
     /**
      * Export the RESULTS_TABLE to Excel format by writing it to the OutputStream of the Response.
      * @param mapping The ActionMapping used to select this instance
@@ -182,9 +182,9 @@ public class ExportAction extends InterMineAction
         if (pt == null) {
             return mapping.getInputForward();
         }
-        
+
         TextFileUtil.ObjectFormatter objectFormatter = getObjectFormatter(model, webConfig);
-        
+
         int defaultMax = 10000;
 
         int maxExcelSize =
@@ -247,28 +247,28 @@ public class ExportAction extends InterMineAction
                         excelRow.createCell(outputColumnIndex).setCellValue("");
                         continue;
                     }
-                    
+
                     if (thisObject instanceof Number) {
                         float objectAsFloat = ((Number) thisObject).floatValue();
                         excelRow.createCell(outputColumnIndex).setCellValue(objectAsFloat);
                         continue;
                     }
-                    
+
                     if (thisObject instanceof Date) {
                         Date objectAsDate = (Date) thisObject;
                         excelRow.createCell(outputColumnIndex).setCellValue(objectAsDate);
                         continue;
                     }
-                    
+
                     String stringifiedObject = objectFormatter.format(thisObject);
-                    
+
                     if (stringifiedObject == null) {
                         // default
                         excelRow.createCell(outputColumnIndex).setCellValue("" + thisObject);
                     } else {
                         excelRow.createCell(outputColumnIndex).setCellValue(stringifiedObject);
                     }
-                        
+
                 }
             }
 
@@ -334,7 +334,7 @@ public class ExportAction extends InterMineAction
         response.setHeader("Content-Disposition", "inline; filename=\"results-table.tsv\"");
 
         List allRows = pt.getAllRows();
-        
+
         TextFileUtil.writeTabDelimitedTable(response.getOutputStream(), allRows,
                                             getOrder(pt), getVisible(pt),
                                             pt.getMaxRetrievableIndex() + 1,

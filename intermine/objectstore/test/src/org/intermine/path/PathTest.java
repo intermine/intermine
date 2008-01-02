@@ -85,7 +85,7 @@ public class PathTest extends TestCase
 
         checkConstrainedPath(path);
     }
-    
+
     public void testNotValidWithClassConstraintMap() {
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
@@ -245,7 +245,7 @@ public class PathTest extends TestCase
         Path path2 = new Path(model, "Department.manager.name");
         assertEquals(path1, path2);
     }
-    
+
     public void testGetPrefix() {
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
@@ -253,7 +253,7 @@ public class PathTest extends TestCase
 
         String stringPath = "Department.manager.company.departments.employees.seniority";
         Path path = new Path(model, stringPath, constraintMap);
-        
+
         Path prefix = path.getPrefix();
         assertEquals("Department.manager[CEO].company.departments.employees[Manager]",
                      prefix.toString());

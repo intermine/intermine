@@ -51,13 +51,13 @@ public class ObjectDetailsTemplateController extends TilesAction
         if (displayObject == null && interMineIdBag == null) {
             return null;
         }
-        
-        TemplateQuery templateQuery = (TemplateQuery) context.getAttribute("templateQuery");        
+
+        TemplateQuery templateQuery = (TemplateQuery) context.getAttribute("templateQuery");
         String templateName = templateQuery.getName();
-        
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();        
+
+        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
         InlineTemplateTable itt = null;
-        
+
         if (displayObject != null) {
             Integer objectId = displayObject.getObject().getId();
             itt =
@@ -68,11 +68,11 @@ public class ObjectDetailsTemplateController extends TilesAction
                 TemplateHelper.getInlineTemplateTable(servletContext, templateName,
                                                   interMineIdBag, userName);
         }
-        
+
         if (itt != null) {
             context.putAttribute("table", itt);
         }
-        
+
         return null;
     }
 }

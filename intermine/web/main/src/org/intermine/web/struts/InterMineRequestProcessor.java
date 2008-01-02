@@ -46,7 +46,7 @@ import org.apache.struts.util.MessageResources;
 public class InterMineRequestProcessor extends TilesRequestProcessor
 {
     private static final Logger LOG = Logger.getLogger(InterMineRequestProcessor.class);
-    
+
     private static final String LOGON_PATH = "/begin";
     private static final String LOGON_INIT_PATH = "/initBegin";
 
@@ -63,26 +63,26 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                           "/headMenu", "/htmlHead", "/dataCategories", "/bagDetails"
                           , "/results"
                       });
-    
+
     /**
      * This is called during the processing of every controller
      * {@inheritDoc}
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
-        
+
         try {
             String processPath = processPath(request, response);
             // Avoid creating a session for each page accessed via SSI
             if (processPath.startsWith("/standalone")) {
                 return true;
             }
-            
+
             HttpSession session = request.getSession();
-            String userAgent = request.getHeader("user-agent").toLowerCase(); 
-            Set<String> bots = getBots();   
-            
+            String userAgent = request.getHeader("user-agent").toLowerCase();
+            Set<String> bots = getBots();
+
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            
+
             if (userAgent != null && !profile.isLoggedIn()) {
                 for (String bot : bots) {
                     if (userAgent.contains(bot)) {
@@ -91,14 +91,14 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                     }
                 }
             }
-            
+
             ServletContext sc = session.getServletContext();
             ProfileManager pm = (ProfileManager) sc.getAttribute(Constants.PROFILE_MANAGER);
 
             if (session.getAttribute("ser") != null) {
                 session.removeAttribute("ser");
                 SessionMethods.initSession(session);
-                
+
                 String user = (String) session.getAttribute("ser-username");
                 if (user != null) {
                     // Replace default anon UserProfile
@@ -109,14 +109,14 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                     }
                     session.removeAttribute("ser-username");
                 }
-             
+
                 String queryXml = (String) session.getAttribute("ser-query");
                 if (queryXml != null) {
                     Map<String, InterMineBag> allBags =
                         WebUtil.getAllBags(profile.getSavedBags(), sc);
                     PathQuery pq = PathQuery.fromXml(queryXml, allBags, sc);
                     if (pq.isValid()) {
-                        session.setAttribute(Constants.QUERY, 
+                        session.setAttribute(Constants.QUERY,
                                              PathQuery.fromXml(queryXml, profile.getSavedBags(),
                                                                sc));
                     } else {
@@ -125,11 +125,11 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                     session.removeAttribute("ser-query");
                 }
             }
-            
+
             if (request.getSession().getAttribute(Constants.PROFILE) == null) {
                 request.getSession().invalidate();
             }
-            
+
             if (!request.isRequestedSessionIdValid()
                 && request.getAttribute(Globals.MESSAGE_KEY) == null
                 && !START_PATHS.contains(processPath)
@@ -140,15 +140,15 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 request.setAttribute(Globals.ERROR_KEY, messages);
                 processForwardConfig(request, response,
                                      new ActionForward(LOGON_PATH + ".do", true));
-                
-                
-                
+
+
+
             }
         } catch (Exception e) {
             request.getSession().invalidate(); // safer?
             throw new RuntimeException(e);
         }
-        
+
         return true;
     }
 
@@ -164,7 +164,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                                         throws java.io.IOException, javax.servlet.ServletException {
         ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
         ActionMessages errors = (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
-        
+
         if (forward != null && forward.getRedirect()) {
             MessageResources resources
                 = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
@@ -195,10 +195,10 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 forward = new ForwardConfig("dummy", path, true);
             }
         }
-        
+
         super.processForwardConfig(request, response, forward);
     }
-    
+
     /* TODO get this from properties file */
     private Set<String> getBots() {
         Set<String> bots = new HashSet<String>();

@@ -49,7 +49,11 @@ public class DrosdelDataTranslator extends DataTranslator
     protected static final Logger LOG = Logger.getLogger(DrosdelDataTranslator.class);
 
     /**
-     * {@inheritDoc}
+     * Create a new DrosdelDataTranslator object.
+     * @param srcItemReader the source of items
+     * @param mapping the model mappings
+     * @param srcModel the source Model
+     * @param tgtModel the target Model
      */
     public DrosdelDataTranslator(ItemReader srcItemReader, Properties mapping, Model srcModel,
                                  Model tgtModel) {

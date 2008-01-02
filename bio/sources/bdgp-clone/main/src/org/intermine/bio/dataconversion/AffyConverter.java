@@ -89,9 +89,9 @@ public class AffyConverter extends CDNACloneConverter
             //String geneSymbol= array[14];//this is hugo identifier
             String geneEnsembl = array[17];
             //don't create probe if no ensembl id is given in the file
-            if (geneEnsembl.startsWith("ENSG")) {               
-                Item probe = createProbe("CompositeSequence", probeId.trim(), 
-                                 organism.getIdentifier(), dataSource.getIdentifier(), 
+            if (geneEnsembl.startsWith("ENSG")) {
+                Item probe = createProbe("CompositeSequence", probeId.trim(),
+                                 organism.getIdentifier(), dataSource.getIdentifier(),
                                  dataSet.getIdentifier(), getItemWriter());
                 StringTokenizer st = new StringTokenizer(geneEnsembl, "///");
                 ReferenceList rf = new ReferenceList("genes");
@@ -140,7 +140,7 @@ public class AffyConverter extends CDNACloneConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-     private Item createProbe(String clsName, String id, String orgId, 
+     private Item createProbe(String clsName, String id, String orgId,
                               String datasourceId, String datasetId, ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);

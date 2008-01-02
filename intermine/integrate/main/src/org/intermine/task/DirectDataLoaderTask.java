@@ -79,7 +79,7 @@ public abstract class DirectDataLoaderTask extends Task
     }
 
     /**
-     * Return the DirectDataLoader for this Task.  Must be called only after execute() has been 
+     * Return the DirectDataLoader for this Task.  Must be called only after execute() has been
      * called.
      * @return the DirectDataLoader
      * @throws ObjectStoreException if there is an ObjectStore problem when creating the
@@ -93,7 +93,7 @@ public abstract class DirectDataLoaderTask extends Task
     }
 
     /**
-     * Called by execute() to process the data.  This implementation should call 
+     * Called by execute() to process the data.  This implementation should call
      * DirectDataLoader.createObject() and then DirectDataLoader.store() while processing.
      */
     public abstract void process();
@@ -114,9 +114,9 @@ public abstract class DirectDataLoaderTask extends Task
         try {
             getIntegrationWriter().beginTransaction();
             getIntegrationWriter().setIgnoreDuplicates(ignoreDuplicates);
-            
+
             process();
-            
+
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().close();
         } catch (ObjectStoreException e) {

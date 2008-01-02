@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -22,7 +22,7 @@ import org.jfree.data.category.CategoryDataset;
 public class ToolTipGenerator implements CategoryToolTipGenerator
 {
     Object [] geneMap;
-    
+
     /**
      * Constructs a ToolTipGenerator
      * @param geneMap the map of genes

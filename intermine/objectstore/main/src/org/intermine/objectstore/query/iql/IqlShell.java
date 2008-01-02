@@ -187,7 +187,7 @@ public class IqlShell
         String modelPackage = TypeUtil.packageName(((ClassDescriptor) os.getModel()
                                                     .getClassDescriptors().iterator().next())
                                                    .getName());
-        
+
         boolean doDots = false;
         boolean noExplain = false;
         String optimiseMode = QueryOptimiserContext.MODE_NORMAL;

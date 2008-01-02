@@ -29,7 +29,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Action to edit a user template query. The action expect a <code>name</code>
- * parameter identifying the template to edit. 
+ * parameter identifying the template to edit.
  *
  * @author Thomas Riley
  */
@@ -62,7 +62,7 @@ public class EditTemplateAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session,
                 profile.getUsername(), queryName, TemplateHelper.ALL_TEMPLATE);
-        
+
         PathQuery queryClone = template.clone();
         SessionMethods.loadQuery(queryClone, session, response);
         session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState(template));

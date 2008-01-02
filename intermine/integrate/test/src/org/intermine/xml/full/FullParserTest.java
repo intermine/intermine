@@ -134,7 +134,7 @@ public class FullParserTest extends TestCase
         assertEquals("Department2", d2.getName());
         assertEquals(new Integer(4), d2.getId());
     }
-    
+
     public void testRealiseObjectsWithUnderscoreID() throws Exception {
         departmentItem.setIdentifier("1_4");
         try {

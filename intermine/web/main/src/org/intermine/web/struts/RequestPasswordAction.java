@@ -28,7 +28,7 @@ import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Action to handle button presses RequestPasswordForm
- * 
+ *
  * @author Mark Woodbridge
  */
 public class RequestPasswordAction extends InterMineAction
@@ -39,7 +39,7 @@ public class RequestPasswordAction extends InterMineAction
 
     /**
      * Method called when user has finished updating a constraint
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -53,10 +53,10 @@ public class RequestPasswordAction extends InterMineAction
      *                if the application business logic throws an exception
      */
     @Override
-    public ActionForward execute(ActionMapping mapping, 
-                                 ActionForm form,            
-                                 HttpServletRequest request, 
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -79,7 +79,7 @@ public class RequestPasswordAction extends InterMineAction
 
     /**
      * Generate a random 8-letter String of lower-case characters
-     * 
+     *
      * @return the String
      */
     public static String generatePassword() {

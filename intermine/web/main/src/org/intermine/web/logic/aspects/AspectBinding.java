@@ -26,18 +26,18 @@ import org.xml.sax.SAXException;
 
 /**
  * Routines for unmarshaling Aspect objects from XML.
- * 
+ *
  * @see org.intermine.web.dataset.Aspect
  * @author Thomas Riley
  */
 public class AspectBinding
 {
     private static final Logger LOG = Logger.getLogger(AspectBinding.class);
-    
+
     /**
      * Read in data set configuration from XML. The keys (set names) in the returned map
      * are ordered to match the ordering in the XML file.
-     * 
+     *
      * @param reader data set xml reader
      * @return Map from set name to Aspect object
      * @throws SAXException if there is a problem parsing XML
@@ -75,10 +75,10 @@ public class AspectBinding
         return map;
 
     }
-    
+
     /**
      * Read data set configuration from an input stream.
-     * 
+     *
      * @param is an InputStream to the XML document
      * @return Map from data set name to Aspect object
      * @throws SAXException if there is a problem parsing XML

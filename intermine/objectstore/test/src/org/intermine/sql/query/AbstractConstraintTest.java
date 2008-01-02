@@ -122,6 +122,6 @@ public class AbstractConstraintTest extends TestCase
         assertTrue(!AbstractConstraint.checkComparisonEquals(AbstractConstraint.LEFT_TRUE_RIGHT_FALSE));
         assertTrue(!AbstractConstraint.checkComparisonEquals(AbstractConstraint.EXCLUDES));
     }
-        
+
 }
 

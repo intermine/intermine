@@ -190,7 +190,7 @@ public class TypeUtilTest extends TestCase
             // expected
         }
     }
-    
+
     //===========================
 
     private class NoGetSet {

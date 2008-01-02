@@ -37,7 +37,7 @@ public abstract class FileConverter extends DataConverter
         super(writer, model);
         itemsMap = new MultiKeyMap();
     }
-    
+
     /**
      * Perform the currentFile conversion
      * @param reader BufferedReader used as input
@@ -60,7 +60,7 @@ public abstract class FileConverter extends DataConverter
     public void setCurrentFile(File currentFile) {
         this.currentFile = currentFile;
     }
-    
+
     /**
      * Return the File that is currently being converted.
      * @return the current File
@@ -68,7 +68,7 @@ public abstract class FileConverter extends DataConverter
     public File getCurrentFile() {
         return currentFile;
     }
-    
+
     /**
      * Get an item and if it doesn't already exist create it and store it
      * @param className the name of the class
@@ -89,8 +89,8 @@ public abstract class FileConverter extends DataConverter
             } catch (ObjectStoreException e) {
                 throw new RuntimeException("error while storing: " + identifier, e);
             }
-        }   
+        }
         return item;
     }
-    
+
 }

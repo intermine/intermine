@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 /**
- * This is a map that maps from int to int. All non-existent mappings automatically map onto -1 - 
+ * This is a map that maps from int to int. All non-existent mappings automatically map onto -1 -
  * inserting a mapping merely redefines the mapping. This class is designed to use as little RAM as
  * possible, and assumes that the mappings are from reasonably closely-spaced ints. In the case
  * where the mappings are from consecutive ints, this class will use not much more than four bytes

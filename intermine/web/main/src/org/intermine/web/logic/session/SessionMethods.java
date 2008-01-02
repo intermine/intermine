@@ -142,7 +142,7 @@ public class SessionMethods
                         pt.getResultElementRows();
                     } catch (IndexOutOfBoundsException err) {
                         // no results - ignore
-                        // we don't call size() first to avoid this exception because that could be 
+                        // we don't call size() first to avoid this exception because that could be
                         // very slow on a large results set
                     } catch (RuntimeException e) {
                         if (e.getCause() instanceof ObjectStoreException) {
@@ -485,7 +485,7 @@ public class SessionMethods
             final ServletContext servletContext = session.getServletContext();
             final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             final Model model = os.getModel();
-            
+
             Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
             if (queries == null) {
                 queries = new HashMap();
@@ -520,7 +520,7 @@ public class SessionMethods
                         SessionMethods.runQuery(session, messages, qid, pr);
 
                         if (saveQuery) {
-                            String queryName = 
+                            String queryName =
                                 SaveQueryHelper.findNewQueryName(profile.getHistory());
                             pathQuery.setInfo(webResults.getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
@@ -551,7 +551,7 @@ public class SessionMethods
     /**
      * Start a query running in the background that will return the row count of the query argument.
      * A new query id will be created and added to the RUNNING_QUERIES session attriute.
-     * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to 
+     * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to
      * update the QueryMonitor.
      * @param monitor the monitor for this query - controls cancelling and receives feedback
      *                about how the query concluded
@@ -566,7 +566,7 @@ public class SessionMethods
                                          final Query query) {
         final ServletContext servletContext = session.getServletContext();
         final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        
+
         // this List calls os.count() on the query and returns it as the first element
         List countList = new AbstractList() {
             private int count = -1;
@@ -585,7 +585,7 @@ public class SessionMethods
                     try {
                         count = os.count(query, ObjectStore.SEQUENCE_IGNORE);
                     } catch (ObjectStoreException e) {
-                        String message = "object store exception while getting " 
+                        String message = "object store exception while getting "
                             + "row count of query";
                         throw new RuntimeException(message, e);
                     }
@@ -600,11 +600,11 @@ public class SessionMethods
 
         return startCollectionQuery(monitor, session, messages, countList);
     }
-    
+
     /**
      * Start a query running in the background that will return the row count of the collection.
      * A new query id will be created and added to the RUNNING_QUERIES session attriute.
-     * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to 
+     * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to
      * update the QueryMonitor.
      * @param monitor the monitor for this query - controls cancelling and receives feedback
      *                about how the query concluded
@@ -614,7 +614,7 @@ public class SessionMethods
      * @return the new query id
      */
     public static String startCollectionCount(final QueryMonitor monitor, final HttpSession session,
-                                              final MessageResources messages, 
+                                              final MessageResources messages,
                                               final Collection collection) {
         synchronized (session) {
             Map queries = (Map) session.getAttribute("RUNNING_QUERIES");
@@ -654,7 +654,7 @@ public class SessionMethods
                 }
             };
 
-            
+
             new Thread(new Runnable() {
                 public void run () {
                     try {
@@ -682,13 +682,13 @@ public class SessionMethods
 
             return qid;
         }
-        
+
     }
 
     /**
      * Start a thread that will get the first row from the given collection.
      * A new query id will be created and added to the RUNNING_QUERIES session attriute.
-     * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to 
+     * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to
      * update the QueryMonitor.
      * @param monitor the monitor for this query - controls cancelling and receives feedback
      *                about how the query concluded
@@ -710,7 +710,7 @@ public class SessionMethods
             }
             final String qid = "" + topQueryId++;
             queries.put(qid, monitor);
-            
+
             new Thread(new Runnable() {
                 public void run () {
                     try {
@@ -838,10 +838,6 @@ public class SessionMethods
      */
     public static boolean isSuperUser(HttpSession session) {
         Boolean superUserAttribute = (Boolean) session.getAttribute(Constants.IS_SUPERUSER);
-        if (superUserAttribute != null && superUserAttribute.equals(Boolean.TRUE)) {
-            return true;
-        } else {
-            return false;
-        }
+        return superUserAttribute != null && superUserAttribute.equals(Boolean.TRUE);
     }
 }

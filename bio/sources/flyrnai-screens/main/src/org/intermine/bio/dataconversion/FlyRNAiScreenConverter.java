@@ -36,10 +36,10 @@ public class FlyRNAiScreenConverter extends FileConverter
 {
     protected Item dataSource, organism, hfaSource;
 
-    private Map<String,Item> genes = new HashMap<String,Item>();
-    private Map<String,Item> publications = new HashMap<String,Item>();
-    private Map<String,Item> screenMap = new HashMap<String,Item>();
-    private Map<String, String> resultValues = new HashMap<String,String>();
+    private Map<String, Item> genes = new HashMap<String, Item>();
+    private Map<String, Item> publications = new HashMap<String, Item>();
+    private Map<String, Item> screenMap = new HashMap<String, Item>();
+    private Map<String, String> resultValues = new HashMap<String, String>();
     protected String taxonId = "7227";
     // access to current file for error messages
     private String fileName;
@@ -48,15 +48,16 @@ public class FlyRNAiScreenConverter extends FileConverter
     private Item dataSet;
 
     /**
-     * Constructor
+     * Create a new FlyRNAiScreenConverter object.
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the Model
      */
     public FlyRNAiScreenConverter(ItemWriter writer, Model model) {
         super(writer, model);
     }
 
     /**
-     * @see FileConverter#process(Reader)
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         // set up common items
@@ -87,9 +88,9 @@ public class FlyRNAiScreenConverter extends FileConverter
         }
     }
 
-    /*
+    /**
      * Check that we have seen the same screen names in the hits and details files.
-     * @see org.intermine.dataconversion.FileConverter#close()
+     * {@inheritDoc}
      */
     public void close() throws Exception {
         Set<String> noDetails = new HashSet<String>();
@@ -98,18 +99,22 @@ public class FlyRNAiScreenConverter extends FileConverter
                 noDetails.add(screenName);
             }
         }
-        
+
         Set<String> noHits = new HashSet<String>();
         for (String screenName : detailsScreenNames) {
             if (!hitScreenNames.contains(screenName)) {
                 noHits.add(screenName);
             }
         }
-        
+
         if (!noHits.isEmpty() || !noDetails.isEmpty()) {
             throw new RuntimeException("Screen names from hits file and details file did not match."
-                    + (noHits.isEmpty() ? "" : "  No hits found for screen detail: " + noHits)
-                    + (noDetails.isEmpty() ? "" : "  No details found for screen hit: " + noDetails));
+                    + (noHits.isEmpty()
+                       ? ""
+                       : "  No hits found for screen detail: " + noHits)
+                    + (noDetails.isEmpty()
+                       ? ""
+                       : "  No details found for screen hit: " + noDetails));
         }
         super.close();
     }
@@ -119,7 +124,7 @@ public class FlyRNAiScreenConverter extends FileConverter
         boolean readingData = false;
         int headerLength = 0;
         Item[] screens = null;
-        
+
         Iterator tsvIter;
         try {
             tsvIter = TextFileUtil.parseTabDelimitedReader(reader);
@@ -131,7 +136,7 @@ public class FlyRNAiScreenConverter extends FileConverter
             String [] line = (String[]) tsvIter.next();
 
             if (!readingData) {
-                
+
                 if (line.length == 2) {
                     // this is the key to result symbol, put them in a map.  Strip off 'A '.
                     if (!line[0].equals("") && !line[1].equals("")) {
@@ -147,7 +152,7 @@ public class FlyRNAiScreenConverter extends FileConverter
                     screens = new Item[headerLength - 2];
                     for (int i = 2; i < line.length; i++) {
                         // create an array of screen item identifers (first two slots empty)
-                        screens[i-2] = getScreen(line[i], "hits");
+                        screens[i - 2] = getScreen(line[i], "hits");
                         hitScreenNames.add(line[i]);
                     }
                 }
@@ -169,7 +174,7 @@ public class FlyRNAiScreenConverter extends FileConverter
                 newSynonym(ampliconIdentifier, amplicon, dataSource);
 
                 // the amplicon may target zero or more genes, a gene can be targeted
-                // by more than one amplicon.  
+                // by more than one amplicon.
                 if (!(line[1] == null || line[1].equals(""))) {
                     String [] geneNames = line[1].split(",");
 
@@ -181,16 +186,16 @@ public class FlyRNAiScreenConverter extends FileConverter
 
                 // loop over screens to create results
                 for (int j = 0; j < screens.length; j++) {
-                    String resultValue = resultValues.get(line[j+2]);
+                    String resultValue = resultValues.get(line[j + 2]);
                     if (resultValue == null) {
-                        throw new RuntimeException("Unrecogised result symbol '" + line[j+2]
+                        throw new RuntimeException("Unrecogised result symbol '" + line[j + 2]
                             + "' in line: " + Arrays.asList(line));
                     }
                     if (genes.isEmpty()) {
                         // create a hit that doesn't reference a gene
                         Item screenHit = createItem("RNAiScreenHit");
                         screenHit.setReference("analysis", screens[j]);
-                        
+
                         screenHit.setAttribute("result", resultValue);
                         screenHit.setReference("amplicon", amplicon);
                         store(screenHit);
@@ -263,7 +268,7 @@ public class FlyRNAiScreenConverter extends FileConverter
 
     /**
      * Convenience method to create a new gene Item
-     * @param geneName the gene name
+     * @param geneSymbol the gene symbol
      * @return a new gene Item
      * @throws ObjectStoreException if an error occurs when storing the Item
      */
@@ -288,9 +293,10 @@ public class FlyRNAiScreenConverter extends FileConverter
      * @param subject the synonym's subject item
      * @param source the source of the Synonym
      * @return a new synonym Item
+     * @throws ObjectStoreException if the is an ObjectStore problem
      */
-    protected Item newSynonym(String synonymName, Item subject, Item source) 
-    throws ObjectStoreException {
+    protected Item newSynonym(String synonymName, Item subject, Item source)
+        throws ObjectStoreException {
         if (synonymName == null) {
             throw new RuntimeException("synonymName can't be null");
         }

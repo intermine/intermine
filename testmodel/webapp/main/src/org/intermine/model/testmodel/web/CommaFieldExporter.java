@@ -30,10 +30,10 @@ import org.intermine.web.logic.export.FieldExporter;
 
 public class CommaFieldExporter implements FieldExporter
 {
-   /** 
+   /**
      * Example FieldExporter that splits the a String field at the first comma and outputs each bit
      * on a new line.
-     * @param o the object of interest 
+     * @param o the object of interest
      * @param fieldName the field of the object
      * @param os the ObjectStore that contains the object
      * @param response The HTTP response we are creating - used to get the OutputStream to write to
@@ -50,7 +50,7 @@ public class CommaFieldExporter implements FieldExporter
             PrintStream printStream = new PrintStream(outputStream);
 
             String fieldValue = (String) TypeUtil.getFieldValue(o, fieldName);
-            
+
             int commaPos = fieldValue.indexOf(",");
 
             String firstPart = fieldValue.substring(0, commaPos + 1);

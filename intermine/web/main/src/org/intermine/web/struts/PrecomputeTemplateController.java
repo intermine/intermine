@@ -41,11 +41,11 @@ public class PrecomputeTemplateController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context, 
-                                 @SuppressWarnings("unused") ActionMapping mapping, 
-                                 @SuppressWarnings("unused") ActionForm form,            
-                                 HttpServletRequest request, 
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    public ActionForward execute(ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         String templateName = (String) context.getAttribute("templateName");
         HttpSession session = request.getSession();

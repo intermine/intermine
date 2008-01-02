@@ -51,13 +51,13 @@ public class QueryExpression implements QueryEvaluable
      * Upper case version of the given string
      */
     public static final int UPPER = 7;
-    
+
     private QueryEvaluable arg1;
     private int op;
     private QueryEvaluable arg2;
     private QueryEvaluable arg3;
     private Class type;
-    
+
     /**
      * Constructs an arithmetic QueryExpression from two evaluable items
      *
@@ -66,11 +66,11 @@ public class QueryExpression implements QueryEvaluable
      * @param arg2 the second argument
      * @throws IllegalArgumentException if there is a mismatch between any of the argument
      * types and the specified operation
-     */    
-    public QueryExpression(QueryEvaluable arg1, int op, QueryEvaluable arg2) 
+     */
+    public QueryExpression(QueryEvaluable arg1, int op, QueryEvaluable arg2)
             throws IllegalArgumentException {
         if (op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE) {
-            if (Number.class.isAssignableFrom(arg1.getType()) 
+            if (Number.class.isAssignableFrom(arg1.getType())
                     && Number.class.isAssignableFrom(arg2.getType())
                     && arg1.getType().equals(arg2.getType())) {
                 this.type = arg1.getType();
@@ -133,7 +133,7 @@ public class QueryExpression implements QueryEvaluable
         this.op = op;
         this.arg2 = arg2;
     }
-    
+
     /**
      * Constructs a substring QueryExpression from a QueryEvaluable and start and length
      * QueryEvaluables
@@ -141,10 +141,10 @@ public class QueryExpression implements QueryEvaluable
      * @param arg A QueryEvaluable representing a String
      * @param pos start index
      * @param len length in characters
-     * @throws IllegalArgumentException if there is a mismatch between the argument type 
+     * @throws IllegalArgumentException if there is a mismatch between the argument type
      * and the specified operation
-     */    
-    public QueryExpression(QueryEvaluable arg, QueryEvaluable pos, QueryEvaluable len) 
+     */
+    public QueryExpression(QueryEvaluable arg, QueryEvaluable pos, QueryEvaluable len)
         throws IllegalArgumentException {
         if (arg.getType().equals(UnknownTypeValue.class)) {
             arg.youAreType(String.class);
@@ -202,7 +202,7 @@ public class QueryExpression implements QueryEvaluable
         this.op = op;
         type = String.class;
     }
-    
+
     /**
        * {@inheritDoc}
        */

@@ -170,7 +170,7 @@ public abstract class BioUtil
            Query q = new Query();
            q.setDistinct(false);
            QueryClass qcObject = null;
-           
+
            //TODO fix this to work with any class
            if (c.toLowerCase().equals("protein")) {
                qcObject = new QueryClass(Protein.class);

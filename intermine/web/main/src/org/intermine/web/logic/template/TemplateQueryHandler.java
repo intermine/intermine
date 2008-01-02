@@ -71,7 +71,7 @@ public class TemplateQueryHandler extends PathQueryHandler
         }
         super.startElement(uri, localName, qName, attrs);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -97,7 +97,7 @@ public class TemplateQueryHandler extends PathQueryHandler
             reset();
         }
     }
-    
+
     private void reset() {
         keywords = "";
         templateCat = "";

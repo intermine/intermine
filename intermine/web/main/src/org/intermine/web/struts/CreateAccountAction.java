@@ -65,7 +65,7 @@ public class CreateAccountAction extends LoginHandler
             // TODO I don't think this displays the error msg to the user
             recordMessage(new ActionMessage("createAccount.badmail"), request);
         }
-        
+
         /*
          * This code generates an MD5 key for the given username which is then
          * encoded in Hexadecimal. This could later be used for account

@@ -29,6 +29,7 @@ import org.intermine.objectstore.query.ResultsRow;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.SearchRepository;
@@ -241,7 +242,7 @@ public abstract class WebUtil
     public static boolean isValidName(String name) {
         if (name == null) {
             return false;
-        } else { 
+        } else {
             Pattern p = Pattern.compile("[^\\w\\s\\.:]");
             Matcher m = p.matcher(name);
             return !m.find();
@@ -328,7 +329,7 @@ public abstract class WebUtil
         specCharToText.put("/", new String("FORWARD_SLASH"));
         specCharToText.put("\\", new String("BACK_SLASH"));
         specCharToText.put("*", new String("STAR"));
-        
+
         return specCharToText;
     }
 
@@ -343,11 +344,11 @@ public abstract class WebUtil
         List<String> keys = new ArrayList<String>(map.keySet());
 
         Collections.shuffle(keys);
-        
+
         if (keys.size() > max) {
             keys = keys.subList(0, max);
         }
-        
+
         Map<String, V> returnMap = new HashMap<String, V>();
 
         for (String key: keys) {
@@ -358,7 +359,7 @@ public abstract class WebUtil
 
     /**
      * Returns all bags of a given type
-     * @param bagMap a Map from bag name to InterMineBag 
+     * @param bagMap a Map from bag name to InterMineBag
      * @param type the type
      * @param model the Model
      * @return a Map of bag name to bag
@@ -371,7 +372,7 @@ public abstract class WebUtil
         while (subIter.hasNext()) {
             classAndSubs.add(((ClassDescriptor) subIter.next()).getType().getName());
         }
-    
+
         TreeMap map = new TreeMap();
         for (Iterator iter = bagMap.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
@@ -381,24 +382,24 @@ public abstract class WebUtil
             }
         }
         return map;
-    
+
     }
 
     /**
      * @param servletContext
-     * @param userBags 
+     * @param userBags
      * @param profile
      * @return map containing all bags
      */
     public static Map<String, InterMineBag> getAllBags(Map<String, InterMineBag> userBags,
-                                                       ServletContext servletContext) {        
+                                                       ServletContext servletContext) {
         Map<String, InterMineBag> searchBags = new HashMap<String, InterMineBag>();
-        
+
         SearchRepository searchRepository =
             SearchRepository.getGlobalSearchRepository(servletContext);
-        Map<String, InterMineBag> publicBagMap = 
+        Map<String, InterMineBag> publicBagMap =
             (Map<String, InterMineBag>) searchRepository.getWebSearchableMap(TagTypes.BAG);
-        
+
         if (publicBagMap != null) {
             searchBags.putAll(publicBagMap);
         }
@@ -406,8 +407,8 @@ public abstract class WebUtil
         // user bags override public ones
         searchBags.putAll(userBags);
         return searchBags;
-    }    
-    
+    }
+
     /**
      * Return the contents of the page given by prefixURLString + '/' + path as a String.  Any
      * relative links in the page will be modified to go via showStatic.do
@@ -417,10 +418,10 @@ public abstract class WebUtil
      * @return the contents of the page
      * @throws IOException if there is a problem while reading
      */
-    public static String getStaticPage(String prefixURLString, String path) 
+    public static String getStaticPage(String prefixURLString, String path)
         throws IOException {
         StringBuffer buf = new StringBuffer();
-        
+
         URL url = new URL(prefixURLString + '/' + path);
         URLConnection connection = url.openConnection();
         InputStream is = connection.getInputStream();
@@ -447,17 +448,17 @@ public abstract class WebUtil
      * @param total total number of the entire population
      * @param maxValue maximum value to return
      * @param significanceValue significance value
-     * @param errorCorrection which error correction algorithm to use, Bonferroni 
+     * @param errorCorrection which error correction algorithm to use, Bonferroni
      * or Benjamini Hochberg
      * @return array of three results maps
      * @throws Exception
      */
-    public static ArrayList statsCalc(ObjectStoreInterMineImpl os, 
-                                      Query queryPopulation,            
-                                      Query querySample, 
-                                      InterMineBag bag, 
-                                      int total, 
-                                      Double maxValue, 
+    public static ArrayList statsCalc(ObjectStoreInterMineImpl os,
+                                      Query queryPopulation,
+                                      Query querySample,
+                                      InterMineBag bag,
+                                      int total,
+                                      Double maxValue,
                                       String errorCorrection) {
 
             ArrayList<Map> maps = new ArrayList<Map>();
@@ -483,7 +484,7 @@ public abstract class WebUtil
                 String id = (String) rr.get(0);
 
                 // count of item
-                Long count = (Long) rr.get(1);  
+                Long count = (Long) rr.get(1);
 
                 // id & count
                 countMap.put(id, count);
@@ -492,7 +493,7 @@ public abstract class WebUtil
                 idMap.put(id, (String) rr.get(2));
 
             }
-            
+
             // run population query
             List rAll = statsCalcCache.get(queryPopulation.toString());
             if (rAll == null) {
@@ -503,7 +504,7 @@ public abstract class WebUtil
             }
 
             Iterator itAll = rAll.iterator();
-            
+
             Hypergeometric h = new Hypergeometric(total);
             HashMap<String, Double> resultsMap = new HashMap<String, Double>();
 
@@ -518,26 +519,26 @@ public abstract class WebUtil
                     Long countBag = countMap.get(id);
                     Long countAll = (java.lang.Long) rrAll.get(1);
 
-                    double p = h.calculateP(numberOfObjectsInBag, countBag.intValue(), 
+                    double p = h.calculateP(numberOfObjectsInBag, countBag.intValue(),
                                             countAll.intValue(), total);
                     resultsMap.put(id, new Double(p));
                 }
             }
 
             HashMap adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
-            
+
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
-            
-            maps.add(0, sortedMap);  
-            maps.add(1, countMap); 
-            maps.add(2, idMap);   
+
+            maps.add(0, sortedMap);
+            maps.add(1, countMap);
+            maps.add(2, idMap);
             return maps;
         }
-    
-    protected static HashMap calcErrorCorrection(String errorCorrection, Double maxValue, 
+
+    protected static HashMap calcErrorCorrection(String errorCorrection, Double maxValue,
                                HashMap<String, Double> resultsMap) {
-        
+
         ErrorCorrection e = null;
 
         if (errorCorrection != null && errorCorrection.equals("Bonferroni")) {
@@ -545,7 +546,7 @@ public abstract class WebUtil
         } else {
             e = new BenjaminiHochberg(resultsMap);
         }
-        e.calculate(maxValue);            
+        e.calculate(maxValue);
         return e.getAdjustedMap();
-    }    
+    }
 }

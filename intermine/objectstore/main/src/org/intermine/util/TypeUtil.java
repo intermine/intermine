@@ -343,7 +343,7 @@ public class TypeUtil
                             Method adder = methods.get(adderName);
                             String fieldName = getterName.substring(3);
                             fieldName = StringUtil.reverseCapitalisation(fieldName);
-                            
+
                             // cglib Factory interface has getCallBack() and getCallBacks() methods
                             if (!getter.getName().equals("getClass")
                                 && !getter.getName().startsWith("getCallback")) {

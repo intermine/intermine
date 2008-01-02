@@ -23,14 +23,14 @@ import org.apache.struts.action.ActionMapping;
 public class ImportTagsForm extends ActionForm
 {
     private String xml;
-    
+
     /**
      * Creates a new instance of ImportTagsForm.
      */
     public ImportTagsForm() {
         reset();
     }
-    
+
     /**
      * Get the xml.
      * @return tags in xml format
@@ -46,7 +46,7 @@ public class ImportTagsForm extends ActionForm
     public void setXml(String xml) {
         this.xml = xml;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -54,7 +54,7 @@ public class ImportTagsForm extends ActionForm
         super.reset(mapping, request);
         reset();
     }
-    
+
     /**
      * Reset the form.
      */

@@ -43,7 +43,7 @@ public class FlyBaseIdentifiersConverterTest extends ItemsTestCase
 
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(),"flybase-identifiers-tgt.xml");
-        
+
         assertEquals(readItemSet("FlyBaseIdentifiersConverterTest.xml"), itemWriter.getItems());
     }
 }

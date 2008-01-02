@@ -54,7 +54,7 @@ public class SetCollectionCountsTest extends TestCase
         Exon exon3 =
             (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon3.setId(new Integer(500));
-        
+
         transcript1.addExons(exon1);
         transcript2.addExons(exon2);
         transcript2.addExons(exon3);

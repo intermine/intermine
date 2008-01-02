@@ -67,7 +67,7 @@ public class OptimiserCacheTest extends TestCase
         assertEquals("hello", cache.lookup("long", 1000, 0));
         assertEquals("optimised0", cache.lookup("line0", 1000, 0));
         assertEquals("optimised1199", cache.lookup("line1199", 1000, 0));
-        
+
         cache.untilNextExpiration = 0;
         cache.expire();
 
@@ -81,7 +81,7 @@ public class OptimiserCacheTest extends TestCase
 
     public void test3() throws Exception {
         OptimiserCache cache = new OptimiserCache();
-        
+
         HashSet pastSet = new HashSet();
         OptimiserCacheLine pastLine = new OptimiserCacheLine("hello", 1000, 0, 1000, pastSet,
                 "past");

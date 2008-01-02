@@ -79,7 +79,7 @@ public class InListConstraint extends AbstractConstraint
     public Set getRight() {
         return Collections.unmodifiableSet(right);
     }
-    
+
     /**
      * Returns a String representation of this InListConstraint object, suitable for forming part
      * of an SQL Query.

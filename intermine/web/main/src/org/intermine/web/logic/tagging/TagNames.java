@@ -1,6 +1,6 @@
 package org.intermine.web.logic.tagging;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -20,10 +20,10 @@ public interface TagNames
      * Tag for pubic things (bags, templates).
      */
     public static final String IM_PUBLIC = "im:public";
-    
+
     /**
      * String used to tag converter templates in the webapp.
      */
     public static final String IM_CONVERTER = "im:converter";
-    
+
 }

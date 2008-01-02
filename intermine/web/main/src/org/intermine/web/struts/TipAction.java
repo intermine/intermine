@@ -19,7 +19,7 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.web.logic.Constants;
 /**
  * Action to forward to display full tip text
- * 
+ *
  * @author Julie Sullivan
  */
 public class TipAction extends InterMineAction
@@ -39,13 +39,13 @@ public class TipAction extends InterMineAction
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {   
+        throws Exception {
         HttpSession session = request.getSession();
         String tipCount = (String) ((Map) session.getServletContext().
                         getAttribute(Constants.WEB_PROPERTIES)).get("tips.size");
         request.setAttribute("tipcount", tipCount);
         request.setAttribute("id", request.getParameter("id"));
-        
-        return mapping.findForward("display");                                
+
+        return mapping.findForward("display");
     }
 }

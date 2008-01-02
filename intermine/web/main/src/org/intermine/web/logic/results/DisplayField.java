@@ -37,10 +37,10 @@ public class DisplayField
     Collection collection = null;
     WebConfig webConfig = null;
     Map webProperties = null;
-    
+
     protected static final Logger LOG = Logger.getLogger(DisplayField.class);
     private final Map classKeys;
-    
+
     /**
      * Create a new DisplayField object.
      * @param collection the List the holds the object(s) to display
@@ -68,7 +68,7 @@ public class DisplayField
         if (table == null && collection.size() > 0) {
             // default
             int maxInlineTableSize = 30;
-            String maxInlineTableSizeString = 
+            String maxInlineTableSizeString =
                 (String) webProperties.get(Constants.INLINE_TABLE_SIZE);
 
             try {
@@ -99,7 +99,7 @@ public class DisplayField
         }
         return table;
     }
-    
+
     /**
      * Return true if the collection is empty or reference null.
      * @return true if collection/reference is empty

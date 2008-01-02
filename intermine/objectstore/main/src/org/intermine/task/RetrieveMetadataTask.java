@@ -42,7 +42,7 @@ public class RetrieveMetadataTask extends Task
     public void setDestDir(File destDir) {
         this.destDir = destDir;
     }
-    
+
     /**
      * Sets the os alias
      * @param osname the os alias
@@ -74,29 +74,29 @@ public class RetrieveMetadataTask extends Task
             String keyDefs = MetadataManager.retrieve(db, MetadataManager.KEY_DEFINITIONS);
             //String classKeys = MetadataManager.retrieve(db, MetadataManager.CLASS_KEYS);
             //String classDescs = MetadataManager.retrieve(db, MetadataManager.CLASS_DESCRIPTIONS);
-            
+
             Model model = new InterMineModelParser().process(new StringReader(modelXml));
             File localModel = new File(destDir,
                     MetadataManager.getFilename(MetadataManager.MODEL, model.getName()));
-            
+
             if (keyDefs != null) {
                 MetadataManager.saveKeyDefinitions(keyDefs, destDir, model.getName());
             }
-            
+
             /*if (classKeys != null) {
                 MetadataManager.saveClassKeys(classKeys, destDir);
             }*/
-            
+
             if (localModel.exists()
                 && IOUtils.contentEquals(new FileReader(localModel), new StringReader(modelXml))) {
                 System.err .println("Model in database is identical to local model.");
                 return;
             }
-            
+
             MetadataManager.saveModel(model, destDir);
             //MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
         } catch (Exception e) {
-            System.err .println("Failed to retrieve metadata from " + database 
+            System.err .println("Failed to retrieve metadata from " + database
                                 + " - maybe you need to run build-db?");
             throw new BuildException(e);
         }

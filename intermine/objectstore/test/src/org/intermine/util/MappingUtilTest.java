@@ -20,7 +20,7 @@ import java.util.HashMap;
 public class MappingUtilTest extends TestCase
 {
     private MappingUtilTestObject a1, b1, c1, c2, d2, e1, f1, g2, h2, c3, d4, f2, g3, h4, e4, f3, h1, g1, b2;
-    
+
     public MappingUtilTest(String arg1) {
         super(arg1);
     }
@@ -186,7 +186,7 @@ public class MappingUtilTest extends TestCase
         result.put(c3, g3);
         result.put(d4, h4);
         resultSet.add(result);
-        
+
         Comparator comparator = new MappingUtilTestComparator();
         assertEquals(resultSet, MappingUtil.findCombinations(firstSet, secondSet, comparator));
     }
@@ -210,7 +210,7 @@ public class MappingUtilTest extends TestCase
         result.put(c3, f3);
         result.put(d4, e4);
         resultSet.add(result);
-        
+
         Comparator comparator = new MappingUtilTestComparator();
         assertEquals(resultSet, MappingUtil.findCombinations(firstSet, secondSet, comparator));
     }
@@ -263,7 +263,7 @@ public class MappingUtilTest extends TestCase
         resultSet.add(result);
 
         Set resultSet2 = new HashSet();
-        
+
         Comparator comparator = new MappingUtilTestComparator();
         assertEquals(resultSet, MappingUtil.findCombinations(firstSet, secondSet, comparator));
         assertEquals(resultSet2, MappingUtil.findCombinations(secondSet, firstSet, comparator));
@@ -295,7 +295,7 @@ public class MappingUtilTest extends TestCase
         result.add(firstCombination);
         result.add(secondCombination);
         result.add(thirdCombination);
-        
+
         assertEquals(result, multiCombinations);
     }
 

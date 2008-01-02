@@ -28,7 +28,7 @@ import org.intermine.xml.full.Item;
 
 /**
  * Convert tree of OboTerms into Items.
- * 
+ *
  * @author Thomas Riley
  * @see DagConverter
  */
@@ -52,7 +52,7 @@ public class OboConverter extends DagConverter
 
     /**
      * Cast the DagTerm to an OboTerm and set the namespace, description and obsolete attributes.
-     * 
+     *
      * {@inheritDoc}
      */
     protected void configureItem(String termId, Item item, DagTerm term)
@@ -67,7 +67,7 @@ public class OboConverter extends DagConverter
     /**
      * Cast DagTermSynonym to OboTermSynonym and set the type attribute on the
      * synonym item.
-     * 
+     *
      * {@inheritDoc}
      */
     protected void configureSynonymItem(DagTermSynonym syn, Item item, DagTerm term)
@@ -76,7 +76,7 @@ public class OboConverter extends DagConverter
         OboTermSynonym osyn = (OboTermSynonym) syn;
         item.addAttribute(new Attribute("type", osyn.getType()));
     }
-    
+
     /**
      * Get all root terms for an OBO format file.
      * @param oboFile the OBO file

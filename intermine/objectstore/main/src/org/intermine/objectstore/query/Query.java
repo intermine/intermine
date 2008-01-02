@@ -200,7 +200,7 @@ public class Query implements FromElement
         return this;
     }
 
-    
+
     /**
      * Remove a QueryOrderable from the ORDER BY clause
      *

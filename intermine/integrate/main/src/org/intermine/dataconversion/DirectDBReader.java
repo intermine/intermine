@@ -57,7 +57,7 @@ public class DirectDBReader implements DBReader
         batch = null;
         queryNo = 0;
     }
-    
+
     /**
      * {@inheritDoc}
      */

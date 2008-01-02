@@ -1,6 +1,6 @@
 package org.intermine.web.logic.search;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -20,7 +20,7 @@ public interface Scope
      * Global scope for public bags, templates, etc.
      */
     public static final String GLOBAL = "global";
-    
+
     /**
      * User scope for private bag, templates, etc.
      */

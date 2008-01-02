@@ -24,7 +24,7 @@ import org.apache.struts.action.ActionMessages;
 
 /**
  * Form used when building a template.
- * 
+ *
  * @author Thomas Riley
  */
 public class TemplateSettingsForm extends ActionForm
@@ -33,7 +33,7 @@ public class TemplateSettingsForm extends ActionForm
     private String name = "";
     private String title = "";
     private String comment = "";
-    
+
     /**
      * Return the description.
      * @return the description.
@@ -41,7 +41,7 @@ public class TemplateSettingsForm extends ActionForm
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * Set the description
      * @param description The description to set.
@@ -65,7 +65,7 @@ public class TemplateSettingsForm extends ActionForm
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     /**
      * Return the comment
      * @return the comment
@@ -73,7 +73,7 @@ public class TemplateSettingsForm extends ActionForm
     public String getComment() {
         return comment;
     }
-    
+
     /**
      * Set the comment
      * @param comment the comment
@@ -81,14 +81,14 @@ public class TemplateSettingsForm extends ActionForm
     public void setComment(String comment) {
         this.comment = comment;
     }
-    
+
     /**
      * @return Returns the name.
      */
     public String getName() {
         return name;
     }
-    
+
     /**
      * @param name The name to set.
      */
@@ -101,7 +101,7 @@ public class TemplateSettingsForm extends ActionForm
      * attribute.
      * {@inheritDoc}
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       HttpServletRequest request) {
         TemplateBuildState tbs =
             (TemplateBuildState) request.getSession().getAttribute(Constants.TEMPLATE_BUILD_STATE);
@@ -110,15 +110,15 @@ public class TemplateSettingsForm extends ActionForm
         setDescription(tbs.getDescription());
         setComment(tbs.getComment());
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused")  ActionMapping mapping, 
+    public ActionErrors validate(@SuppressWarnings("unused")  ActionMapping mapping,
                                  @SuppressWarnings("unused") HttpServletRequest request) {
          ActionErrors errors = null;
 
-        if (!WebUtil.isValidName(name)) { 
+        if (!WebUtil.isValidName(name)) {
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE,
                        new ActionMessage("errors.badChars"));

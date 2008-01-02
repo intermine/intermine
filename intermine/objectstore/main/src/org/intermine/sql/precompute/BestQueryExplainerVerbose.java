@@ -24,7 +24,7 @@ import java.sql.SQLException;
 public class BestQueryExplainerVerbose extends BestQueryExplainer
 {
     private int unexplained = 0;
-    
+
     /**
      * Constructs an empty BestQueryExplainerVerbose.
      *

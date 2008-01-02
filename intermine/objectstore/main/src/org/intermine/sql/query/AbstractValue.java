@@ -65,7 +65,7 @@ public abstract class AbstractValue implements SQLStringable
      * @return an arbitrary integer based on the contents of the object
      */
     public abstract int hashCode();
- 
+
     /**
      * Compare the value of this AbstractValue with another.
      *

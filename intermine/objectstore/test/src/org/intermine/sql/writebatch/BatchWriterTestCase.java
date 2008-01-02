@@ -677,7 +677,7 @@ public abstract class BatchWriterTestCase extends TestCase
             }
         }
     }
-    
+
     public void testManyIndirectionDeletes() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
         Connection con = db.getConnection();
@@ -732,7 +732,7 @@ public abstract class BatchWriterTestCase extends TestCase
             }
         }
     }
- 
+
     public void testPartialFlush() throws Exception {
         Database db = DatabaseFactory.getDatabase("db.unittest");
         Connection con = db.getConnection();
@@ -894,7 +894,7 @@ public abstract class BatchWriterTestCase extends TestCase
             }
         }
     }
-*/   
+*/
     private Set getGot(Connection con) throws SQLException {
         Statement s = con.createStatement();
         ResultSet r = s.executeQuery("SELECT a, b FROM table1");

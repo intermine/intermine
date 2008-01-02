@@ -48,7 +48,7 @@ public class SortOrderChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        
+
         query.removePathStringFromSortOrder();
 
         return new ForwardParameters(mapping.findForward("query"))
@@ -73,7 +73,7 @@ public class SortOrderChange extends DispatchAction
         String path = request.getParameter("pathString");
         String direction = request.getParameter("direction");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        
+
         if (direction == null) {
             direction = "asc";
         }
@@ -97,7 +97,7 @@ public class SortOrderChange extends DispatchAction
                                          HttpServletRequest request,
                                          @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
-        HttpSession session = request.getSession();      
+        HttpSession session = request.getSession();
         String direction = request.getParameter("direction");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
@@ -109,8 +109,8 @@ public class SortOrderChange extends DispatchAction
         return new ForwardParameters(mapping.findForward("query"))
         .addAnchor("showing").forward();
     }
-    
-    
+
+
     /**
      * Shift a Node left in the view
      * @param mapping The ActionMapping used to select this instance

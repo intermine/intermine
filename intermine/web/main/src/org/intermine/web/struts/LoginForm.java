@@ -81,7 +81,7 @@ public class LoginForm extends ActionForm
     public String getReturnToString() {
         return returnToString;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -93,7 +93,7 @@ public class LoginForm extends ActionForm
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
 
         ActionErrors errors = new ActionErrors();
-        
+
         if (username.equals("")) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.emptyusername"));
         } else {
@@ -107,7 +107,7 @@ public class LoginForm extends ActionForm
                            new ActionMessage("login.invalidusername", username));
             }
         }
-        
+
         return errors;
     }
 

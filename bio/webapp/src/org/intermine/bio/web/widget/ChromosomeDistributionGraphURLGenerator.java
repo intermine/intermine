@@ -1,6 +1,6 @@
 package org.intermine.bio.web.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -46,29 +46,29 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         super();
         this.bagName = bagName;
     }
-    
+
     /**
      * {@inheritDoc}
      * @see org.jfree.chart.urls.CategoryURLGenerator#generateURL(
      *      org.jfree.data.category.CategoryDataset,
      *      int, int)
      */
-    public String generateURL(CategoryDataset dataset, 
+    public String generateURL(CategoryDataset dataset,
                               @SuppressWarnings("unused") int series,
                               int category) {
         StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
         sb.append("&category=" + dataset.getColumnKey(category));
         sb.append("&series=");
         sb.append("&urlGen=org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator");
-        
+
         return sb.toString();
     }
-    
+
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag imBag,
-                                       @SuppressWarnings("unused") String series, 
+                                       @SuppressWarnings("unused") String series,
                                        @SuppressWarnings("unused") String category) {
-       
+
         Model model = os.getModel();
         InterMineBag bag = imBag;
         PathQuery q = new PathQuery(model);
@@ -80,9 +80,9 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         Path start = MainHelper.makePath(model, q, "Gene.chromosomeLocation.start");
         Path end = MainHelper.makePath(model, q, "Gene.chromosomeLocation.end");
         Path strand = MainHelper.makePath(model, q, "Gene.chromosomeLocation.strand");
-        
-        List<Path> view = new ArrayList<Path>();        
-        
+
+        List<Path> view = new ArrayList<Path>();
+
         view.add(identifier);
         view.add(organismDbId);
         view.add(name);
@@ -90,29 +90,29 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         view.add(start);
         view.add(end);
         view.add(strand);
-        
+
         q.setView(view);
 
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
-        
+
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-        
+
         //  constrain to be specific chromosome
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode chromosomeNode = q.addNode("Gene.chromosome.identifier");
-        Constraint chromosomeConstraint 
+        Constraint chromosomeConstraint
                         = new Constraint(constraintOp, series, false, label, code, id, null);
         chromosomeNode.getConstraints().add(chromosomeConstraint);
-           
+
         q.setConstraintLogic("A and B");
-        
+
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-      
+
         sortOrder.add(new OrderBy(start, "asc"));
         sortOrder.add(new OrderBy(identifier, "asc"));
         sortOrder.add(new OrderBy(organismDbId, "asc"));
@@ -120,11 +120,11 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         sortOrder.add(new OrderBy(chromoIdentifier, "asc"));
         sortOrder.add(new OrderBy(end, "asc"));
         sortOrder.add(new OrderBy(strand, "asc"));
-        
+
         q.setSortOrder(sortOrder);
-        
+
         q.syncLogicExpression("and");
-        
-        return q; 
-    }    
+
+        return q;
+    }
 }

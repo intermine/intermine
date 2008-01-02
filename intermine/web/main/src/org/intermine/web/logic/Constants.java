@@ -213,17 +213,17 @@ public interface Constants
     public static final String GLOBAL_SEARCH_REPOSITORY = "GLOBAL_SEARCH_REPOSITORY";
 
     /**
-     * Default size of table implemented by PagedTable. 
+     * Default size of table implemented by PagedTable.
      */
-	public static final int DEFAULT_TABLE_SIZE = 10;
-	
-	/**
+    public static final int DEFAULT_TABLE_SIZE = 10;
+
+    /**
      * Session attribute used to store the size of table with results.
      */
-	public static final String RESULTS_TABLE_SIZE = "RESULTS_TABLE_SIZE";
+    public static final String RESULTS_TABLE_SIZE = "RESULTS_TABLE_SIZE";
 
-	/**
-     * Session attribute used to store GuiObject. 
+    /**
+     * Session attribute used to store GuiObject.
      */
-	public static final String GUI_OBJECT = "GUI_OBJECT";
+    public static final String GUI_OBJECT = "GUI_OBJECT";
 }

@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -31,7 +31,7 @@ public class BagUploadConfirmForm extends ActionForm
     private String matchIDs;
     private String[] selectedObjects;
     private String extraFieldValue;
-    
+
     /**
      * Constructor
      */
@@ -52,10 +52,10 @@ public class BagUploadConfirmForm extends ActionForm
     * Set the bag name.
     * @param name the bag name
     */
-   public void setBagName(String name) {       
+   public void setBagName(String name) {
        bagName = name.trim();
    }
-   
+
    /**
     * Get the bag name.
     * @return the bag name
@@ -80,7 +80,7 @@ public class BagUploadConfirmForm extends ActionForm
    public String[] getSelectedObjects() {
        return selectedObjects;
    }
-   
+
    /**
     * Get the encoded match ids (hidden form field).
     * @return the match IDs
@@ -112,7 +112,7 @@ public class BagUploadConfirmForm extends ActionForm
    public void setBagType(String bagType) {
        this.bagType = bagType;
    }
-   
+
    /**
     * Set the extra field value - the optional constraint on the bag upload page
     * @return the extra field value
@@ -128,23 +128,23 @@ public class BagUploadConfirmForm extends ActionForm
    public void setExtraFieldValue(String extraFieldValue) {
        this.extraFieldValue = extraFieldValue;
    }
-   
+
    /**
     * {@inheritDoc}
     */
-   public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+   public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                 HttpServletRequest request) {
        ActionErrors errors = new ActionErrors();
        if (bagName.equals("") && request.getParameter("goBack") == null) {
-           
+
            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.savebag.blank"));
-           
-       } else if (!WebUtil.isValidName(bagName)) { 
-   
+
+       } else if (!WebUtil.isValidName(bagName)) {
+
            errors.add(ActionMessages.GLOBAL_MESSAGE,
-                      new ActionMessage("errors.badChars"));    
-           
-       } 
+                      new ActionMessage("errors.badChars"));
+
+       }
        return errors;
    }
 }

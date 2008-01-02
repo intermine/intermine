@@ -223,7 +223,7 @@ public class DatabaseUtilTest extends TestCase
         bag.add(new String());
         bag.add(new String("a String with spaces"));
         bag.add(new String("123456"));
-        bag.add(new String("123456.7")); 
+        bag.add(new String("123456.7"));
         bag.add(new Boolean(true));
         bag.add(new Boolean(false));
         bag.add(new Date(999999));
@@ -237,7 +237,7 @@ public class DatabaseUtilTest extends TestCase
         Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setId(new Integer(6000));
         bag.add(company);
-        
+
         // this shouldn't appear in any table
         bag.add(BigInteger.ONE);
 

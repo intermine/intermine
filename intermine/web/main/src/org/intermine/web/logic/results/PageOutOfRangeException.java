@@ -27,7 +27,11 @@ public class PageOutOfRangeException extends RuntimeException
         super(message, t);
     }
 
-	public PageOutOfRangeException(String message) {
-		super(message);
-	}
+    /**
+     * Create a new PageOutOfRangeException.
+     * @param message the message to pass to the Exception constructor
+     */
+    public PageOutOfRangeException(String message) {
+        super(message);
+    }
 }

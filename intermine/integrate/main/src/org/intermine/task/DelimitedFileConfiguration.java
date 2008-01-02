@@ -89,12 +89,12 @@ public class DelimitedFileConfiguration
                     }
 
                     if (!columnFD.isAttribute()) {
-                        String message = "field: " + fieldName + " in " 
+                        String message = "field: " + fieldName + " in "
                                 + className + " is not an attribute field so cannot be used as a "
                                 + "className in DelimitedFileConfiguration";
                         throw new IllegalArgumentException(message);
                     }
-                    
+
                     columnFieldDescriptorMap.put(new Integer(keyColumnNumber), columnFD);
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("column number (" + key + ") not parsable "
@@ -155,7 +155,7 @@ public class DelimitedFileConfiguration
     }
 
     /**
-     * Return a List of Class objects corresponding to the fields returned by 
+     * Return a List of Class objects corresponding to the fields returned by
      * getColumnFieldDescriptors().
      * @return the Class objects
      */
@@ -172,7 +172,7 @@ public class DelimitedFileConfiguration
                 }
             }
         }
-        
+
         return columnFieldClasses;
     }
 }

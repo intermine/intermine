@@ -42,7 +42,7 @@ public class DiseaseRegionGFF3HandlerTest extends ItemsTestCase
     public DiseaseRegionGFF3HandlerTest(String arg) {
         super(arg);
     }
-    
+
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new DiseaseRegionGFF3RecordHandler(tgtModel);

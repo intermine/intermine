@@ -35,7 +35,7 @@ public class GenerateWSDDTask extends Task
     private static final Logger LOG = Logger.getLogger(GenerateWSDDTask.class);
     protected static final String INDENT = "    ";
     protected static final String ENDL = System.getProperty("line.separator");
-    
+
     protected File destFile;
 
     /**
@@ -74,7 +74,7 @@ public class GenerateWSDDTask extends Task
 
     /**
      * Iterate through the mapped types generating an XML element for each
-     * 
+     *
      * @return an XML fragment of type mappings
      */
     protected String generate() {
@@ -112,12 +112,12 @@ public class GenerateWSDDTask extends Task
             prefix = namespace.substring(namespace.lastIndexOf("/") + 1,
                                          namespace.length());
         }
-        
+
         String type = "java:" + cls.getName();
         String serializer = tm.getSerializer(cls).getClass().getName();
         String deserializer = tm.getDeserializer(qname).getClass().getName();
         String encoding = "http://schemas.xmlsoap.org/soap/encoding/";
-       
+
         StringBuffer sb = new StringBuffer();
         sb.append("<typeMapping qname=\"")
             .append(prefix != null ? prefix + ":" : "")

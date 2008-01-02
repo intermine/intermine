@@ -55,7 +55,7 @@ import servletunit.ServletContextSimulator;
 public class PrecomputeTemplatesTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PrecomputeTemplatesTask.class);
-    
+
     /**
      * The precomputede category to use for templates.
      */
@@ -71,7 +71,7 @@ public class PrecomputeTemplatesTask extends Task
     protected String ignore = "";
     protected Set ignoreNames = new HashSet();
     protected boolean doSummarise = true;
-    
+
     /**
      * Set the ObjectStore alias
      * @param alias the ObjectStore alias
@@ -113,6 +113,10 @@ public class PrecomputeTemplatesTask extends Task
         username = user;
     }
 
+    /**
+     * Set the summarise flag.
+     * @param summarise if true, summarise while precomputing
+     */
     public void setSummarise(String summarise) {
         if (summarise.equals("false")) {
             doSummarise = false;
@@ -120,7 +124,7 @@ public class PrecomputeTemplatesTask extends Task
             doSummarise = true;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -171,7 +175,7 @@ public class PrecomputeTemplatesTask extends Task
                 LOG.warn("template was in ignore list: " + template.getName());
                 continue;
             }
-            
+
             List indexes = new ArrayList();
             Query q = TemplateHelper.getPrecomputeQuery(template, indexes, null);
 
@@ -218,7 +222,7 @@ public class PrecomputeTemplatesTask extends Task
      * @param query the query to precompute
      * @param indexes the index QueryNodes
      * @param name the name of the query we are precomputing (used for documentation is an exception
-     * is thrown 
+     * is thrown
      * @throws BuildException if the query cannot be precomputed.
      */
     protected void precompute(ObjectStore os, Query query, Collection indexes,

@@ -42,7 +42,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
      * @return an instance of this class
      * @throws ObjectStoreException sometimes
      */
-    public static IntegrationWriterSingleSourceImpl getInstance(String osAlias, Properties props) 
+    public static IntegrationWriterSingleSourceImpl getInstance(String osAlias, Properties props)
             throws ObjectStoreException {
         String writerAlias = props.getProperty("osw");
         if (writerAlias == null) {
@@ -53,7 +53,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
         ObjectStoreWriter writer = ObjectStoreWriterFactory.getObjectStoreWriter(writerAlias);
         return new IntegrationWriterSingleSourceImpl(writer);
     }
-    
+
     /**
      * Constructs a new instance of IntegrationWriterSingleSourceImpl.
      *
@@ -142,7 +142,7 @@ public class IntegrationWriterSingleSourceImpl extends IntegrationWriterAbstract
             copyFields(o, newObj, source, skelSource, type);
         }
         store(newObj);
- 
+
         while (equivalentIter.hasNext()) {
             InterMineObject objToDelete = (InterMineObject) equivalentIter.next();
             delete(objToDelete);

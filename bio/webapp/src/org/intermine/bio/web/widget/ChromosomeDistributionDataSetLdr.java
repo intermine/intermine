@@ -1,6 +1,6 @@
 package org.intermine.bio.web.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -48,14 +48,14 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 {
-   
+
     private Object[] objectCategoryArray;
-    private LinkedHashMap<String, GraphDataSet> dataSets 
+    private LinkedHashMap<String, GraphDataSet> dataSets
                                                         = new LinkedHashMap<String, GraphDataSet>();
     private ObjectStore os;
     private Model model;
     private String bagType;
-    
+
     /**
      * Creates a ChromosomeDistributionDataSetLdr used to retrieve, organise
      * and structure the data to create a graph
@@ -64,8 +64,8 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
      * @param c the class being compared
      * @throws Exception
      */
-    
-    public ChromosomeDistributionDataSetLdr(InterMineBag bag, ObjectStore os) 
+
+    public ChromosomeDistributionDataSetLdr(InterMineBag bag, ObjectStore os)
         throws Exception {
         super();
         this.os = os;
@@ -79,20 +79,20 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         }
 
         for (Iterator it = organisms.iterator(); it.hasNext();) {
-            
+
             String organismName = (String) it.next();
             DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-                        
+
             // chromosome, count of genes
-            LinkedHashMap<String, int[]> resultsTable = new LinkedHashMap<String, int[]> (); 
+            LinkedHashMap<String, int[]> resultsTable = new LinkedHashMap<String, int[]> ();
             // chromosome --> list of genes
             HashMap<String, ArrayList<String>> geneMap = new HashMap<String, ArrayList<String>>();
-            
-            // get all chromosomes for this organism 
-            ArrayList<String> chromosomes 
+
+            // get all chromosomes for this organism
+            ArrayList<String> chromosomes
                 = (ArrayList<String>) BioUtil.getChromosomes(os, organismName);
             Iterator iter = chromosomes.iterator();
-            
+
             while (iter.hasNext()) {
                 int[] count = new int[2];
                 count[0] = 0;
@@ -101,30 +101,30 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 ArrayList<String> genesArray = new ArrayList<String>();
                 geneMap.put(chromosome, genesArray);
             }
-            
-            // run query 
-            Query q = createQuery(organismName, "actual", bag);            
+
+            // run query
+            Query q = createQuery(organismName, "actual", bag);
             Results results = os.execute(q);
             results.setBatchSize(50000);
             boolean hasResults = false;
             if (results.size() > 0) {
                 hasResults = true;
             }
-            
+
             // find out how many genes in the bag have a chromosome location, use this
             // to work out the expected number for each chromosome.  This is a hack to
             // deal with the proportion of genes not assigned to a chromosome, it would
             // be easier of they were located on an 'unknown' chromosome.
             int totalWithLocation = 0;
-            
+
             // put results in maps
             iter = results.iterator();
             while (iter.hasNext()) {
                 ResultsRow resRow = (ResultsRow) iter.next();
                 String chromosome = (String) resRow.get(0);     // chromosome
                 String geneIdentifier = (String) resRow.get(1); // gene
-                if (resultsTable.get(chromosome) != null) { 
-                    (resultsTable.get(chromosome))[0]++;    
+                if (resultsTable.get(chromosome) != null) {
+                    (resultsTable.get(chromosome))[0]++;
                     (geneMap.get(chromosome)).add(geneIdentifier);
                     totalWithLocation++;
                 }
@@ -132,7 +132,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
             // update results with expected results
             addExpected(resultsTable, totalWithLocation, organismName);
-            
+
             // Build a map from chromosome to gene list
             objectCategoryArray = new Object[resultsTable.size()];
             int i = 0;
@@ -140,7 +140,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                 String chromosome = (String) iterator.next();
                 dataSet.addValue((resultsTable.get(chromosome))[0], "Actual", chromosome);
                 dataSet.addValue((resultsTable.get(chromosome))[1], "Expected", chromosome);
-                Object[] objectSeriesArray = new Object[2];              
+                Object[] objectSeriesArray = new Object[2];
                 objectSeriesArray[0] = geneMap.get(chromosome);   // actual
                 // expected shouldn't be a link
                 // geneSeriesArray[1] = geneMap.get(chromosome);   // expected
@@ -152,7 +152,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             if (hasResults) {
                 dataSets.put(organismName, graphDataSet);
             }
-        }       
+        }
     }
 
     /**
@@ -163,18 +163,18 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     }
 
     /* select count(*) from genes where chromosomeLocation != null; */
-    private long getTotal(String organismName) 
+    private long getTotal(String organismName)
     throws ClassNotFoundException {
 
-        Query q = createQuery(organismName, "total", null);        
-        Results results = os.execute(q);          
+        Query q = createQuery(organismName, "total", null);
+        Results results = os.execute(q);
         Iterator iter = results.iterator();
         ResultsRow rr = (ResultsRow) iter.next();
         return ((Long) rr.get(0)).longValue();
     }
 
-    private void addExpected(HashMap resultsTable, 
-                             int bagSize, String organismName) 
+    private void addExpected(HashMap resultsTable,
+                             int bagSize, String organismName)
         throws ClassNotFoundException {
         // totals
         long total = getTotal(organismName);
@@ -184,39 +184,39 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         Results results = os.execute(q);
         Iterator iter = results.iterator();
         int i = 0;
-        
+
         // loop through, calc, and put in map
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
-        
+
             String chromosome = (String) resRow.get(0);         // chromosome
             Long geneCount = (java.lang.Long) resRow.get(1);    // genecount
-            
+
             double expectedValue = 0;
-            double proportion = 0.0000000000; 
-            double count = geneCount.intValue();            
-            if (total > 0) { 
+            double proportion = 0.0000000000;
+            double count = geneCount.intValue();
+            if (total > 0) {
                 proportion = count / total;
-            } 
+            }
             expectedValue = bagSize * proportion;
-            if (resultsTable.get(chromosome) != null) {  
-                ((int[]) resultsTable.get(chromosome))[1] = 
-                    (int) Math.round(expectedValue);             
+            if (resultsTable.get(chromosome) != null) {
+                ((int[]) resultsTable.get(chromosome))[1] =
+                    (int) Math.round(expectedValue);
             }
             i++;
         }
-    }    
-    
-    private Query createQuery(String organismName, String resultsType, InterMineBag bag) 
+    }
+
+    private Query createQuery(String organismName, String resultsType, InterMineBag bag)
         throws ClassNotFoundException {
-        
+
         Query q = new Query();
-        
+
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);
-        QueryClass geneQC 
-            = new QueryClass(Class.forName(model.getPackageName() + "." + bagType)); 
+        QueryClass geneQC
+            = new QueryClass(Class.forName(model.getPackageName() + "." + bagType));
         QueryClass organismQC = new QueryClass(Organism.class);
-        
+
         QueryField chromoQF = new QueryField(chromosomeQC, "identifier");
         QueryFunction countQF = new QueryFunction();
         QueryField organismNameQF = new QueryField(organismQC, "name");
@@ -224,7 +224,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
         if (resultsType.equals("actual")) {
             q.addToSelect(chromoQF);
-            q.addToSelect(geneIdentifierQF);            
+            q.addToSelect(geneIdentifierQF);
         } else if (resultsType.equals("expected")) {
             q.addToSelect(chromoQF);
             q.addToSelect(countQF);
@@ -235,46 +235,46 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         q.addFrom(chromosomeQC);
         q.addFrom(geneQC);
         q.addFrom(organismQC);
-        
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryObjectReference r = new QueryObjectReference(geneQC, "chromosome");
         ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, chromosomeQC);
         cs.addConstraint(cc);
-        
+
         // constrain to be in chosen list of chomosomes, this may not be all chromosomes
         Collection chrs = BioUtil.getChromosomes(os, organismName);
         if (chrs != null && !chrs.isEmpty()) {
             QueryField qfChrId = new QueryField(chromosomeQC, "identifier");
-            BagConstraint bagChr = new BagConstraint(qfChrId, ConstraintOp.IN, 
-                                                     BioUtil.getChromosomes(os, organismName)); 
+            BagConstraint bagChr = new BagConstraint(qfChrId, ConstraintOp.IN,
+                                                     BioUtil.getChromosomes(os, organismName));
             cs.addConstraint(bagChr);
         }
-        
+
         QueryObjectReference r2 = new QueryObjectReference(geneQC, "organism");
         ContainsConstraint cc2 = new ContainsConstraint(r2, ConstraintOp.CONTAINS, organismQC);
         cs.addConstraint(cc2);
-        
+
         SimpleConstraint sc = new SimpleConstraint(organismNameQF,
                                                    ConstraintOp.EQUALS,
                                                    new QueryValue(organismName));
-        cs.addConstraint(sc);       
-       
+        cs.addConstraint(sc);
+
         if (resultsType.equals("actual")) {
             QueryField qf = new QueryField(geneQC, "id");
-            BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()); 
+            BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb());
             cs.addConstraint(bagC);
         }
-        
-        q.setConstraint(cs);       
-        
+
+        q.setConstraint(cs);
+
         if (resultsType.equals("expected")) {
             q.addToGroupBy(chromoQF);
         }
-        
+
         if (!resultsType.equals("total")) {
           q.addToOrderBy(chromoQF);
         }
         return q;
-    }    
+    }
 }

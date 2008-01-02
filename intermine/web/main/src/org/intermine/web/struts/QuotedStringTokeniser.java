@@ -1,6 +1,5 @@
 package org.intermine.web.struts;
 
-
 /*
  * Copyright (C) 2002-2007 FlyMine
  *
@@ -13,6 +12,7 @@ package org.intermine.web.struts;
 
 /**
  * String tokenizer.
+ * @author Julie Sullivan
  */
 public class QuotedStringTokeniser
 {
@@ -22,7 +22,7 @@ public class QuotedStringTokeniser
     int index, length;
     String str;
     String delims;
-    
+
     /**
      * Create a tokenizer from a string.
      * Start from the front.
@@ -100,7 +100,7 @@ public class QuotedStringTokeniser
             }
             index++;
         }
-        
+
         // Create the string
         return buffer.toString();
     }
@@ -147,5 +147,5 @@ public class QuotedStringTokeniser
             arg = readString();
         }
         return arg;
-    }   
+    }
 }

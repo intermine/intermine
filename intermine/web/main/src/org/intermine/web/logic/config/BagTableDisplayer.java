@@ -1,6 +1,6 @@
 package org.intermine.web.logic.config;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -22,7 +22,7 @@ public class BagTableDisplayer
     private String fields;
     private String description;
     private String urlGen;
-    
+
     /**
      * Get the type
      * @return the type
@@ -30,7 +30,7 @@ public class BagTableDisplayer
     public String getType() {
         return type;
     }
-    
+
     /**
      * Set the type
      * @param type the type
@@ -106,15 +106,15 @@ public class BagTableDisplayer
     public String getUrlGen() {
         return urlGen;
     }
-    
+
     /**
      * Set the class that generates the pathquery
-     * @param urlGen the class that generates the pathquery used in the links 
+     * @param urlGen the class that generates the pathquery used in the links
      */
     public void setUrlGen(String urlGen) {
         this.urlGen = urlGen;
     }
-    
+
     /**
      * Return an XML String of this Type object
      * @return a String version of this WebConfig object

@@ -58,7 +58,7 @@ public class PathNode extends Node
     public Constraint getConstraint(int index) {
         return constraints.get(index);
     }
-    
+
     /**
      * Sets the value of constraints
      *
@@ -67,10 +67,10 @@ public class PathNode extends Node
     public void setConstraints(List<Constraint> constraints) {
         this.constraints = constraints;
     }
-    
+
     /**
      * Change a constraint value.
-     * 
+     *
      * @param constraint an existing constrain under this node
      * @param value constraint value
      * @return the new Constraint object

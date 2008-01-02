@@ -34,7 +34,7 @@ public class XmlDataLoader extends DataLoader
 {
     private static final Logger LOG = Logger.getLogger(XmlDataLoader.class);
     private static int idCounter = 1;
-    
+
     /**
      * @see DataLoader#DataLoader(IntegrationWriter)
      *
@@ -114,12 +114,12 @@ public class XmlDataLoader extends DataLoader
             throw new InterMineException("Problem with store method", e);
         }
     }
-    
+
     /**
      * Perform any necessary clean-up and close the integration writer
      * @throws Exception if an error occurs
      */
     public void close() throws Exception {
-        getIntegrationWriter().close();    
+        getIntegrationWriter().close();
     }
 }

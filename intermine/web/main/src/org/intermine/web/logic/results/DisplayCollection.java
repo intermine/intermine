@@ -24,7 +24,7 @@ import org.intermine.web.logic.config.WebConfig;
 public class DisplayCollection extends DisplayField
 {
     CollectionDescriptor desc;
-    
+
     /**
      * Construct a new DisplayCollection object
      * @param collection the actual collection
@@ -35,7 +35,7 @@ public class DisplayCollection extends DisplayField
      * @throws Exception if an error occurs
      */
     public DisplayCollection(Collection collection, CollectionDescriptor desc,
-                             WebConfig webConfig, Map webProperties, Map classKeys) 
+                             WebConfig webConfig, Map webProperties, Map classKeys)
         throws Exception {
         super(collection, desc, webConfig, webProperties, classKeys);
         this.desc = desc;

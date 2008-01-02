@@ -55,7 +55,7 @@ public class AddToBagAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String bagName = request.getParameter("bag");
-        
+
         InterMineBag existingBag = profile.getSavedBags().get(bagName);
         if (existingBag != null) {
             ObjectStoreWriter osw = null;

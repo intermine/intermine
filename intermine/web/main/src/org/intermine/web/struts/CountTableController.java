@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -48,7 +48,7 @@ public class CountTableController extends TilesAction
                 = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PagedTable pt = (PagedTable) request.getAttribute("resultsTable");
-        String qid = SessionMethods.startCollectionCount(clientState, session, messages, 
+        String qid = SessionMethods.startCollectionCount(clientState, session, messages,
                                                          pt.getAllRows());
         request.setAttribute("qid", qid);
         request.setAttribute("POLL_REFRESH_SECONDS", new Integer(Constants.POLL_REFRESH_SECONDS));

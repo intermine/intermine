@@ -122,7 +122,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     public Translator getTranslator() {
         return translator;
     }
-    
+
     private long timeSpentQuery = 0;
     private long timeSpentExecute = 0;
     private long timeSpentTranslate = 0;

@@ -29,7 +29,7 @@ public class CollatedResultTest extends QueryTestCase
     public static Test suite() {
         return OneTimeTestCase.buildSuite(CollatedResultTest.class);
     }
-    
+
     public void testConstructNullRow() throws Exception {
         try {
             CollatedResult res = new CollatedResult(null, new QueryClass(Department.class), new Query(), new ObjectStoreDummyImpl());

@@ -51,7 +51,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
     Collection organisms;
     int total;
     String externalLink, append;
-    
+
     /**
      * @param request The HTTP request we are processing
      */
@@ -67,26 +67,26 @@ public class PublicationLdr implements EnrichmentWidgetLdr
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-             
-                        
+
+
              // build query constrained by bag
              Query q = new Query();
              q.setDistinct(false);
              QueryClass qcGene = new QueryClass(Gene.class);
              QueryClass qcPub = new QueryClass(Publication.class);
              QueryClass qcOrganism = new QueryClass(Organism.class);
-          
+
              QueryField qfGeneId = new QueryField(qcGene, "id");
              QueryField qfOrganismName = new QueryField(qcOrganism, "name");
              QueryField qfId = new QueryField(qcPub, "pubMedId");
              QueryField qfPubTitle = new QueryField(qcPub, "title");
-             
+
              QueryFunction geneCount = new QueryFunction();
 
              q.addFrom(qcGene);
              q.addFrom(qcPub);
              q.addFrom(qcOrganism);
-             
+
              q.addToSelect(qfId);
              q.addToSelect(geneCount);
              q.addToSelect(qfPubTitle);
@@ -106,22 +106,22 @@ public class PublicationLdr implements EnrichmentWidgetLdr
 
              // gene is from organism
              QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-             ContainsConstraint cc1 
+             ContainsConstraint cc1
                                  = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
              cs1.addConstraint(cc1);
-             
+
              // gene.Proteins CONTAINS pub
              QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "publications");
              ContainsConstraint cc2 =
                  new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcPub);
              cs1.addConstraint(cc2);
              q.setConstraint(cs1);
-             
-             q.addToGroupBy(qfId);             
+
+             q.addToGroupBy(qfId);
              q.addToGroupBy(qfPubTitle);
-             
+
              sampleQuery = q;
-             
+
              // construct population query
              q = new Query();
              q.setDistinct(false);
@@ -129,21 +129,21 @@ public class PublicationLdr implements EnrichmentWidgetLdr
              q.addFrom(qcGene);
              q.addFrom(qcPub);
              q.addFrom(qcOrganism);
-            
+
              q.addToSelect(qfId);
              q.addToSelect(geneCount);
-              
+
              ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
              cs2.addConstraint(cc1);
-             cs2.addConstraint(cc2);      
+             cs2.addConstraint(cc2);
              cs2.addConstraint(bc2);
              q.setConstraint(cs2);
-             
+
              q.addToGroupBy(qfId);
-                          
+
              populationQuery = q;
      }
-     
+
 
      /**
       * @return the query representing the sample population (the bag)
@@ -151,7 +151,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
      public Query getSample() {
          return sampleQuery;
      }
-     
+
      /**
       * @return the query representing the entire population (all the items in the database)
       */
@@ -160,7 +160,7 @@ public class PublicationLdr implements EnrichmentWidgetLdr
      }
 
      /**
-      * 
+      *
       * @param os
       * @param bag
       * @return description of reference population, ie "Accounting dept"
@@ -168,9 +168,9 @@ public class PublicationLdr implements EnrichmentWidgetLdr
      public Collection getReferencePopulation() {
          return organisms;
      }
-     
-     /** 
-      * @param os     
+
+     /**
+      * @param os
       * @return the query representing the sample population (the bag)
       */
      public int getTotal(ObjectStore os) {
@@ -182,9 +182,9 @@ public class PublicationLdr implements EnrichmentWidgetLdr
      public String getExternalLink() {
          return externalLink;
      }
-     
+
      /**
-      * 
+      *
       * @return the string to append to the end of external link
       */
      public String getAppendage() {

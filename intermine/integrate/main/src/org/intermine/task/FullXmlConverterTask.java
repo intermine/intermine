@@ -47,7 +47,7 @@ public class FullXmlConverterTask extends ConverterTask
     public void addFileSet(FileSet fileSet) {
         this.fileSet = fileSet;
     }
-    
+
     /**
      * Set a file name to load from
      * @param file name of file to load
@@ -55,7 +55,7 @@ public class FullXmlConverterTask extends ConverterTask
     public void setFile(String file) {
         this.file = file;
     }
-    
+
     /**
      * Set XML resource name (to load data from classloader).
      * @param resName classloader resource name
@@ -72,7 +72,7 @@ public class FullXmlConverterTask extends ConverterTask
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -83,7 +83,7 @@ public class FullXmlConverterTask extends ConverterTask
         if (sourceName == null) {
             throw new BuildException("sourceName attribute is not set");
         }
-        
+
         ObjectStoreWriter osw = null;
         ItemWriter writer = null;
         File toRead = null;
@@ -93,17 +93,17 @@ public class FullXmlConverterTask extends ConverterTask
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());
             writer = new ObjectStoreItemWriter(osw);
             FullXmlConverter converter = new FullXmlConverter(writer, model);
-            
+
             List<File> files = new ArrayList<File>();
 
             // read an InputStream from the classpath
             if (xmlRes != null) {
                 InputStream is = getClass().getClassLoader().getResourceAsStream(xmlRes);
                 if (is == null) {
-                    throw new BuildException("Failed to find resource '" + xmlRes 
+                    throw new BuildException("Failed to find resource '" + xmlRes
                                              + "' on classpath.");
                 }
-                converter.process(new InputStreamReader(is));  
+                converter.process(new InputStreamReader(is));
             } else {
                 if (file != null && !file.equals("")) {
                     files = new ArrayList<File>(Collections.singleton(new File(file)));
@@ -122,7 +122,7 @@ public class FullXmlConverterTask extends ConverterTask
                 }
                 Iterator<File> fileIter = files.iterator();
                 while (fileIter.hasNext()) {
-                    toRead = fileIter.next();              
+                    toRead = fileIter.next();
                     System.out .println("Processing file " + toRead.toString());
                     converter.process(new FileReader(toRead));
                 }

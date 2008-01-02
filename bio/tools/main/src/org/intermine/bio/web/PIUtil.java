@@ -23,18 +23,18 @@ public class PIUtil
      * @return String representing the jnlp file
      */
     public static String buildJNLP(String sif) {
-        String tmp = "" 
-            + "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" 
+        String tmp = ""
+            + "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
             + "<jnlp\n"
               + "\tcodebase=\"http://aragorn:8080/cytoscape-production\">\n"
               + "\t<information>\n"
                 + "\t\t<title>Cytoscape WebStart</title>\n"
                 + "\t\t<vendor>Cytoscape Collaboration</vendor>\n"
-                + "\t\t<offline-allowed/>\n" 
-              + "\t</information>\n" 
+                + "\t\t<offline-allowed/>\n"
+              + "\t</information>\n"
               + "\t<security>\n"
-                + "\t\t<all-permissions/>\n" 
-              + "\t</security>\n" 
+                + "\t\t<all-permissions/>\n"
+              + "\t</security>\n"
               + "\t<resources>\n"
                 + "\t\t<j2se version=\"1.4+\" max-heap-size=\"400M\"/>\n"
                 + "\t\t<jar href=\"cytoscape.jar\"/>\n"
@@ -84,8 +84,8 @@ public class PIUtil
                 + "\t\t<extension name=\"Info\" href=\"info.jnlp\"/>\n"
               + "\t</resources>\n"
               + "\t<application-desc main-class=\"cytoscape.CyMain\">\n"
-                + "\t\t<argument>-i</argument>\n" 
-                + "\t\t<argument>jar://" + sif + "</argument>\n" 
+                + "\t\t<argument>-i</argument>\n"
+                + "\t\t<argument>jar://" + sif + "</argument>\n"
                 + "\t\t<argument>-rp</argument>\n"
                 + "\t\t<argument>filter.cytoscape.CsFilter</argument>\n"
                 + "\t\t<argument>-rp</argument>\n"
@@ -96,7 +96,7 @@ public class PIUtil
                 + "\t\t<argument>browser.BrowserPlugin</argument>\n"
                 + "\t\t<argument>-rp</argument>\n"
                 + "\t\t<argument>rowan.RowanPlugin</argument>\n"
-              + "\t</application-desc>\n" 
+              + "\t</application-desc>\n"
             + "</jnlp>";
         return tmp;
 

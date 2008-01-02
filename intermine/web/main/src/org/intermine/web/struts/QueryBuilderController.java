@@ -53,7 +53,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 /**
  * Controller for the main query builder tile. Generally, request attributes that are required by
  * multiple tiles on the query builder are synthesized here.
- * 
+ *
  * @author Mark Woodbridge
  * @author Thomas Riley
  * @see org.intermine.web.struts.QueryBuilderConstraintController
@@ -64,10 +64,10 @@ public class QueryBuilderController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context, 
-                                 @SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+                                 @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request, 
+                                 HttpServletRequest request,
                                  HttpServletResponse response)
                     throws Exception {
         populateRequest(request, response);
@@ -77,14 +77,14 @@ public class QueryBuilderController extends TilesAction
     /**
      * Populate the request with the necessary attributes to render the query builder page. This
      * method is static so that it can be called from the AJAX actions in MainChange.java
-     * 
+     *
      * @param request
      *            the current request
      * @param response
      *            the current response
      * {@inheritDoc}
      */
-    public static void populateRequest(HttpServletRequest request, 
+    public static void populateRequest(HttpServletRequest request,
                                        @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -95,21 +95,21 @@ public class QueryBuilderController extends TilesAction
         // constraint display values
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
         List<Path> pathView = SessionMethods.getEditingView(session);
-        
+
         // sort order
         List<OrderBy> sortOrder = SessionMethods.getEditingSortOrder(session);
         //List<String> sortOrderStrings = new ArrayList<String>();
         LinkedHashMap<String, String> sortOrderMap = new LinkedHashMap<String, String>();
-        
-        // create a map of fields to direction 
+
+        // create a map of fields to direction
         if (sortOrder != null) {
             for (OrderBy o: sortOrder) {
                 sortOrderMap.put(o.getField().toStringNoConstraints(), o.getDirection());
             }
         }
-        
+
         Integer sortByIndex = new Integer(0); // sort-by-field's index in the select list
-        
+
         // select list
         List<String> viewStrings = new ArrayList<String>();
         for (Path viewPath: pathView) {
@@ -121,17 +121,17 @@ public class QueryBuilderController extends TilesAction
         }
         request.setAttribute("viewStrings", viewStrings);
         request.setAttribute("sortByIndex", sortByIndex);
-        
+
         /* if sortOrderStrings are empty (probably a template), add first item in select */
         if (sortOrderMap.isEmpty() && !viewStrings.isEmpty()) {
             sortOrderMap.put(viewStrings.get(0), "asc");
         }
-        
+
         request.setAttribute("sortOrderMap", sortOrderMap);
         //request.setAttribute("sortOrderStrings", );
         //request.setAttribute("sortOrderDirections", listToMap());
 
-        
+
         List<String> errorPaths = new ArrayList<String>();
         Throwable[] messages = query.getProblems();
         for (Throwable thr: messages) {
@@ -140,17 +140,17 @@ public class QueryBuilderController extends TilesAction
             }
         }
         request.setAttribute("errorPaths", errorPaths);
-        
+
         request.setAttribute("viewPaths", listToMap(viewStrings));
         request.setAttribute("viewPathOrder", createIndexMap(viewStrings));
         //request.setAttribute("viewPathTypes", getPathTypes(viewStrings, query));
-        
+
         // set up the metadata
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         boolean isSuperUser = SessionMethods.isSuperUser(session);
-        
+
         String prefix = (String) session.getAttribute("prefix");
-        Collection nodes = 
+        Collection nodes =
             MainHelper.makeNodes((String) session.getAttribute("path"), model, isSuperUser);
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             MetadataNode node = (MetadataNode) iter.next();
@@ -173,7 +173,7 @@ public class QueryBuilderController extends TilesAction
                     || path.endIsCollection()) {
                     if (viewStrings.contains(path)) {
                         ClassDescriptor cld = path.getEndClassDescriptor();
-                        List cldFieldConfigs = 
+                        List cldFieldConfigs =
                             FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
                         Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
                         while (cldFieldConfigIter.hasNext()) {
@@ -214,7 +214,7 @@ public class QueryBuilderController extends TilesAction
 
     /**
      * Given a input List, return a Map from list element value to list index.
-     * 
+     *
      * @param list
      *            a List
      * @return Map from list element values to list index Integer
@@ -230,7 +230,7 @@ public class QueryBuilderController extends TilesAction
     /**
      * Get a list of paths that should not be removed from the query by the user. This is usually
      * because they are involved in a loop query constraint.
-     * 
+     *
      * @param pathquery
      *            the PathQuery containing the paths
      * @return list of paths (as Strings) that cannot be removed by the user
@@ -263,7 +263,7 @@ public class QueryBuilderController extends TilesAction
 
     /**
      * Return a Map from path to unqualified type name.
-     * 
+     *
      * @param paths
      *            collection of paths
      * @param pathquery
@@ -289,7 +289,7 @@ public class QueryBuilderController extends TilesAction
      * Return a Map from path to path/subpath pointing to the nearest not attribute for each path on
      * the select list. practise this results in the same path or the path with an attribute name
      * chopped off the end.
-     * 
+     *
      * @param pathquery
      *            the path query
      * @return mapping from select list path to non-attribute path
@@ -313,7 +313,7 @@ public class QueryBuilderController extends TilesAction
 
     /**
      * Returns a map where every item in <code>list</code> maps to Boolean TRUE.
-     * 
+     *
      * @param list
      *            the list of map keys
      * @return a map that maps every item in list to Boolean.TRUE

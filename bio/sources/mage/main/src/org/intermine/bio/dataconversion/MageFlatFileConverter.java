@@ -56,17 +56,17 @@ public class MageFlatFileConverter extends FileConverter
     public MageFlatFileConverter(ItemWriter writer, Model model)
         throws ObjectStoreException, MetaDataException, IOException {
         super(writer, model);
-    
+
         init(writer);
     }
-    
+
     protected MageFlatFileConverter(ItemWriter writer, Model model, String propertiesFileName)
     throws ObjectStoreException, MetaDataException, IOException {
         super(writer, model);
         this.propertiesFileName = propertiesFileName;
         init(writer);
-    }   
-    
+    }
+
     private void init(ItemWriter writer) throws IOException, ObjectStoreException {
         readConfig();
         LOG.info("config " + config);
@@ -79,10 +79,10 @@ public class MageFlatFileConverter extends FileConverter
         dataSet = createItem("DataSet");
         dataSet.setReference("dataSource", dataSource.getIdentifier());
         dataSet.setAttribute("title", "E-SMDB-3450");
-        dataSet.setAttribute("description", 
-                "Rossi et al, 2005: Compare blood stem cells from young vs old mice");     
-        
-        dataSet.setAttribute("url", 
+        dataSet.setAttribute("description",
+                "Rossi et al, 2005: Compare blood stem cells from young vs old mice");
+
+        dataSet.setAttribute("url",
         "http://www.pnas.org/content/vol0/issue2005/images/data/0503280102/DC1/03280Table4.xls");
         store(dataSet);
 
@@ -97,14 +97,14 @@ public class MageFlatFileConverter extends FileConverter
         if (experimentName != null) {
             experiment.setAttribute("name", experimentName);
         }
-        String description = null; 
+        String description = null;
         description = getConfig(expName, "description");
         if (description != null) {
             experiment.setAttribute("description", description);
         }
         String pmid = getConfig(expName, "pmid");
         if (pmid != null && !pmid.equals("")) {
-            Item pub = getPublication(pmid.trim()); 
+            Item pub = getPublication(pmid.trim());
             store(pub);
             experiment.setReference("publication", pub.getIdentifier());
         }
@@ -130,12 +130,12 @@ public class MageFlatFileConverter extends FileConverter
                 continue;
             }
 
-           
+
             String probeId = array[0].trim();
             String foldChange = array[1];
 
             Item probe = createProbe("ProbeSet", PROBEPREFIX, probeId,
-                                     organismMM.getIdentifier(), dataSource.getIdentifier(), 
+                                     organismMM.getIdentifier(), dataSource.getIdentifier(),
                                      dataSet.getIdentifier(), getItemWriter());
             Item result = createItem("MicroArrayResult");
             result.setAttribute("type", "Fold Change");
@@ -144,10 +144,10 @@ public class MageFlatFileConverter extends FileConverter
             result.setAttribute("value", foldChange);
             result.setReference("experiment", experiment.getIdentifier());
             store(result);
-            probe.addCollection(new ReferenceList("results", 
+            probe.addCollection(new ReferenceList("results",
                                 new ArrayList(Collections.singleton(result.getIdentifier()))));
 
-            store(probe);                    
+            store(probe);
         }
     }
 
@@ -162,7 +162,7 @@ public class MageFlatFileConverter extends FileConverter
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
      */
-     private Item createProbe(String clsName, String probePre, String id, String orgId, 
+     private Item createProbe(String clsName, String probePre, String id, String orgId,
                               String datasourceId, String datasetId, ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);
@@ -210,8 +210,8 @@ public class MageFlatFileConverter extends FileConverter
             String value = (String) entry.getValue();
             String exptName = key.substring(0, key.indexOf("."));
             String propName = key.substring(key.indexOf(".") + 1);
-            
-            addToMap(config, exptName, propName, value);            
+
+            addToMap(config, exptName, propName, value);
         }
     }
 
@@ -250,7 +250,7 @@ public class MageFlatFileConverter extends FileConverter
      */
     private Item getPublication(String pmid) {
         Item pub = createItem("Publication");
-        pub.setAttribute("pubMedId", pmid);        
+        pub.setAttribute("pubMedId", pmid);
         return pub;
-    }    
+    }
 }

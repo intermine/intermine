@@ -187,7 +187,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         exampleCEOA.setName("Fred");
         CEO exampleCEOB = new CEO();
         exampleCEOB.setName("EmployeeB1");
-        
+
         Company rCompanyA = (Company) iw.getObjectByExample(exampleCompanyA, Collections.singleton("name"));
         Company rCompanyB = (Company) iw.getObjectByExample(exampleCompanyB, Collections.singleton("name"));
         CEO rCEOA = (CEO) iw.getObjectByExample(exampleCEOA, Collections.singleton("name"));
@@ -201,7 +201,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertEquals(rCompanyB, rCEOB.getCompany());
         assertEquals(rCEOA, rCompanyA.getcEO());
         assertEquals(rCEOB, rCompanyB.getcEO());
-        
+
         {
             Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
             Address a = new Address();
@@ -310,10 +310,10 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertNotNull(re);
 
         Department rd = re.getDepartment();
-        
+
         assertNotNull(rd);                          // Employee has a department
         assertEquals(d.getName(), rd.getName());    // Department is the right one
-        
+
         assertTrue(rd.getEmployees().contains(re)); // And that department has the employee
 
         Department exampleOD = new Department();
@@ -348,7 +348,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         assertNotNull(re);
 
         assertNull(re.getDepartment());             // Employee no longer has a department
-        
+
         Department exampleOD = new Department();
         exampleOD.setName("DepartmentA1");
         Department od = (Department) iw.getObjectByExample(exampleOD, Collections.singleton("name"));
@@ -489,7 +489,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         exampleCB.setName("CompanyB");
         Company dbCB = (Company) iw.getObjectByExample(exampleCB, Collections.singleton("name"));
         conA.addCompanys(dbCB);
-        
+
         Contractor conC = new Contractor();
         conC.setName("ContractorC");
         conC.setSeniority(new Integer(2784112));
@@ -499,7 +499,7 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         conD.setName("ContractorD");
         conD.setSeniority(new Integer(276423341));
         conD.addCompanys(ca);
-        
+
         iw.store(ca);
         iw.store(conA);
         iw.store(conC);
@@ -529,13 +529,13 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
             fail("Expected an exception, because there are multiple objects matching this pattern");
         } catch (IllegalArgumentException e) {
         }
-        
+
         try {
             Contractor rconA = (Contractor) iw.getObjectByExample(conA, Collections.singleton("name"));
             fail("Expected an exception, because there are multiple objects matching this pattern");
         } catch (IllegalArgumentException e) {
         }
-        
+
         iw.store(con, source, skelSource); // method we are testing
 
         // Get objects (and test that there is only one copy of everything).
@@ -575,9 +575,9 @@ public class IntegrationWriterSingleSourceImplTest extends StoreDataTestCase
         Source skelSource = new Source();
         skelSource.setName("testsource");
         skelSource.setSkeleton(true);
-        
+
         iw.store(e, source, skelSource);
-        
+
         InterMineObject re = iw.getObjectByExample(e, Collections.singleton("name"));
         assertNotNull(re);
         assertTrue(re instanceof Broke);

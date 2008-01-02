@@ -37,7 +37,7 @@ public class ProteinStructureDataConverterTest extends ItemsTestCase
 
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                                               .getResourceAsStream("ProteinStructureConverterTest_src.xml"));
-        
+
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         MockProteinStructureDataConverter converter = new MockProteinStructureDataConverter(itemWriter);
         File f = new File("10102.xml");

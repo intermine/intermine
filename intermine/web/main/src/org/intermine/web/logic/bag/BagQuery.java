@@ -67,7 +67,7 @@ public class BagQuery
      * @param matchesAreIssues true if matches for this bag query should be treated as issues (aka
      * low quality matches)
      */
-    public BagQuery(BagQueryConfig bagQueryConfig, Model model, String queryString, 
+    public BagQuery(BagQueryConfig bagQueryConfig, Model model, String queryString,
                     String message, String packageName, boolean matchesAreIssues) {
         if (bagQueryConfig == null) {
             throw new IllegalArgumentException("bagQueryConfig argument cannot be null");
@@ -125,7 +125,7 @@ public class BagQuery
                 lowerCaseBag.add(o);
             }
         }
-        
+
         if (query == null) {
             IqlQuery q = new IqlQuery(queryString, packageName,
                                       new ArrayList(Collections.singleton(lowerCaseBag)));
@@ -235,11 +235,11 @@ public class BagQuery
                         try {
                             extraClass = Class.forName(extraClassName);
                         } catch (ClassNotFoundException e) {
-                            throw new RuntimeException("can't find Class for extraClassName: " 
+                            throw new RuntimeException("can't find Class for extraClassName: "
                                                        + extraClassName);
                         }
                         QueryClass newQC = new QueryClass(extraClass);
-                        QueryReference connectFieldQF = 
+                        QueryReference connectFieldQF =
                             new QueryObjectReference(queryClass, connectFieldName);
                         queryCopy.addFrom(newQC);
                         Constraint oldConstraint = queryCopy.getConstraint();
@@ -251,14 +251,14 @@ public class BagQuery
                         Constraint connectFieldConstraint =
                             new ContainsConstraint(connectFieldQF, ConstraintOp.CONTAINS, newQC);
                         newConstraint.addConstraint(connectFieldConstraint);
-                        Constraint extraConstraint = 
-                            new SimpleConstraint(constrainField, ConstraintOp.EQUALS, 
+                        Constraint extraConstraint =
+                            new SimpleConstraint(constrainField, ConstraintOp.EQUALS,
                                                  extraFieldValueQF);
                         newConstraint.addConstraint(extraConstraint);
                     } else {
                         String exceptionMessage =
                             "found a FieldDescriptor for " + queryClass.getType().getName() + "."
-                            + connectFieldName 
+                            + connectFieldName
                             + " but it isn't a ReferenceDescriptor";
                         throw new RuntimeException(exceptionMessage);
                     }

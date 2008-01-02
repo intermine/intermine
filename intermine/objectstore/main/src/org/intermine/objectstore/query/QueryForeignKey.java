@@ -33,7 +33,7 @@ public class QueryForeignKey implements QueryEvaluable
      * @param fieldName the name of the relevant field
      * @throws NullPointerException if the field name is null
      * @throws IllegalArgumentException if the field is not a reference, or does not exist
-     */    
+     */
     public QueryForeignKey(QueryClass qc, String fieldName) {
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
@@ -53,12 +53,12 @@ public class QueryForeignKey implements QueryEvaluable
         this.qc = qc;
         this.fieldName = fieldName;
     }
-    
+
     /**
      * Gets the QueryClass of which this reference is an member.
      *
      * @return the QueryClass
-     */    
+     */
     public QueryClass getQueryClass() {
         return qc;
     }
@@ -67,7 +67,7 @@ public class QueryForeignKey implements QueryEvaluable
      * Gets the Java class of this QueryReference.
      *
      * @return the class name
-     */    
+     */
     public Class getType() {
         return Integer.class;
     }

@@ -25,7 +25,7 @@ import org.apache.struts.action.ActionMapping;
  */
 public class ConfirmAction extends InterMineAction
 {
-    /** 
+    /**
      * Copy the request parameters to request attributes for rendering in the JSP.
      *
      * @param mapping The ActionMapping used to select this instance
@@ -43,8 +43,8 @@ public class ConfirmAction extends InterMineAction
         throws Exception {
         request.setAttribute("confirmAction", request.getParameter("confirmAction"));
         request.setAttribute("cancelAction", request.getParameter("cancelAction"));
-        request.setAttribute("message", request.getParameter("message"));    
-        
+        request.setAttribute("message", request.getParameter("message"));
+
         return mapping.findForward("confirm");
     }
 

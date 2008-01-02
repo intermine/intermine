@@ -33,7 +33,7 @@ public class QueryObjectReferenceTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
     }
-    
+
     public void testEmptyField() {
         try {
             new QueryObjectReference(qc, "");
@@ -41,7 +41,7 @@ public class QueryObjectReferenceTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
     }
-    
+
     public void testNullField() throws Exception {
         try {
             new QueryObjectReference(qc, (String)null);

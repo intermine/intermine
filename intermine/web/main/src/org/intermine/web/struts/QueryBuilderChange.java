@@ -51,7 +51,7 @@ import org.apache.struts.actions.DispatchAction;
 
 /**
  * Action to handle links on main query builder tile.
- * 
+ *
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
@@ -59,7 +59,7 @@ public class QueryBuilderChange extends DispatchAction
 {
     /**
      * Remove all nodes under a given path
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -72,9 +72,9 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward removeNode(ActionMapping mapping, 
+    public ActionForward removeNode(ActionMapping mapping,
                                     @SuppressWarnings("unused") ActionForm form,
-                                    HttpServletRequest request, 
+                                    HttpServletRequest request,
                                     @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
@@ -102,7 +102,7 @@ public class QueryBuilderChange extends DispatchAction
      * Remove the PathNode specified by the given (constraint) path, and it's children, from the
      * PathQuery. Also remove any view nodes would be illegal because they depend on a type
      * constraint that will be removed.
-     * 
+     *
      * @param pathQuery
      *            the PathQuery
      * @param path
@@ -126,7 +126,7 @@ public class QueryBuilderChange extends DispatchAction
      * Remove the PathNode specified by the given (constraint) path, but not it's children from the
      * PathQuery. Also remove any view nodes would be illegal because they depend on a type
      * constraint that will be removed.
-     * 
+     *
      * @param pathQuery
      *            the PathQuery
      * @param path
@@ -178,7 +178,7 @@ public class QueryBuilderChange extends DispatchAction
                     Iterator<OrderBy> sortOrderPathIter = pathQuery.getSortOrder().iterator();
 
                     while (sortOrderPathIter.hasNext()) {
-                        String sortOrderPath 
+                        String sortOrderPath
                         = sortOrderPathIter.next().getField().toStringNoConstraints();
 
                         if (sortOrderPath.startsWith(path) && !sortOrderPath.equals(path)) {
@@ -189,7 +189,7 @@ public class QueryBuilderChange extends DispatchAction
                             }
 
                             if (realClassDescriptor.getFieldDescriptorByName(fieldName) == null) {
-                                // the field must be in a sub-class rather than the base class 
+                                // the field must be in a sub-class rather than the base class
                                 // so remove the sortPath
                                 sortOrderPathIter.remove();
                             }
@@ -208,7 +208,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * Add a new constraint to this Node
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -221,9 +221,9 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward addConstraint(ActionMapping mapping, 
+    public ActionForward addConstraint(ActionMapping mapping,
                                        @SuppressWarnings("unused") ActionForm form,
-                                       HttpServletRequest request, 
+                                       HttpServletRequest request,
                                        @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
@@ -231,7 +231,7 @@ public class QueryBuilderChange extends DispatchAction
         String path = request.getParameter("path");
 
         session.setAttribute("editingNode", query.getNodes().get(path));
-        
+
         session.removeAttribute("editingConstraintIndex");
         session.removeAttribute("editingConstraintValue");
         session.removeAttribute("editingConstraintOperand");
@@ -242,7 +242,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * Remove a constraint (identified by index) from a Node
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -255,9 +255,9 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward removeConstraint(ActionMapping mapping, 
+    public ActionForward removeConstraint(ActionMapping mapping,
                                           @SuppressWarnings("unused") ActionForm form,
-                                          HttpServletRequest request, 
+                                          HttpServletRequest request,
                                           @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
@@ -267,13 +267,13 @@ public class QueryBuilderChange extends DispatchAction
 
         query.getNodes().get(path).getConstraints().remove(index);
         query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
-        
+
         return mapping.findForward("query");
     }
 
     /**
      * Edit a constraint (identified by index) from a Node
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -286,9 +286,9 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward editConstraint(ActionMapping mapping, 
+    public ActionForward editConstraint(ActionMapping mapping,
                                         @SuppressWarnings("unused") ActionForm form,
-                                        HttpServletRequest request, 
+                                        HttpServletRequest request,
                                         @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
@@ -320,7 +320,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * Edit a constraint's template settings (identified by index) from a Node
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -353,7 +353,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * Add a Node to the query
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -367,7 +367,7 @@ public class QueryBuilderChange extends DispatchAction
      *                if the application business logic throws
      */
     public ActionForward addPath(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request, 
+                                 HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
@@ -408,7 +408,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * Change the currently active metadata Node
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -423,7 +423,7 @@ public class QueryBuilderChange extends DispatchAction
      */
     public ActionForward changePath(ActionMapping mapping,
                                     @SuppressWarnings("unused") ActionForm form,
-                                    HttpServletRequest request, 
+                                    HttpServletRequest request,
                                     @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
@@ -440,7 +440,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * Put query builder in template building mode.
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -456,7 +456,7 @@ public class QueryBuilderChange extends DispatchAction
     public ActionForward startTemplateBuild(ActionMapping mapping,
                                             @SuppressWarnings("unused") ActionForm form,
                                             HttpServletRequest request,
-                                            @SuppressWarnings("unused") 
+                                            @SuppressWarnings("unused")
                                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
@@ -467,7 +467,7 @@ public class QueryBuilderChange extends DispatchAction
     /**
      * Being the query builder out of template building mode and discard any unfinished template
      * building.
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -480,9 +480,9 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward stopTemplateBuild(ActionMapping mapping, 
+    public ActionForward stopTemplateBuild(ActionMapping mapping,
                                            @SuppressWarnings("unused") ActionForm form,
-                                           HttpServletRequest request, 
+                                           HttpServletRequest request,
                                            @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
@@ -492,7 +492,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * Add a Node to the results view
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -505,9 +505,9 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward addToView(ActionMapping mapping, 
+    public ActionForward addToView(ActionMapping mapping,
                                    @SuppressWarnings("unused") ActionForm form,
-                                   HttpServletRequest request, 
+                                   HttpServletRequest request,
                                    @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
@@ -522,13 +522,13 @@ public class QueryBuilderChange extends DispatchAction
         String prefix = (String) session.getAttribute("prefix");
         String fullPathName = MainHelper.toPath(prefix, pathName);
         Path path = MainHelper.makePath(model, query, fullPathName);
-        
-        /* this test can't just rely on the sort order being empty 
+
+        /* this test can't just rely on the sort order being empty
            because sort order may have been populated by javascript by default
            especially if it's a template
          */
         boolean newQuery = (view.isEmpty() && sortOrder.isEmpty());
-        
+
         // If an object has been selected, select its fields instead
         if (path.getEndFieldDescriptor() == null || path.endIsReference()
             || path.endIsCollection()) {
@@ -544,7 +544,7 @@ public class QueryBuilderChange extends DispatchAction
                     view.add(pathToAdd);
                     newQuery = false;
                 }
-                // if sort order is empty, then add first element to sort order 
+                // if sort order is empty, then add first element to sort order
                 if (newQuery) {
                     OrderBy o = new OrderBy(pathToAdd, "asc");
                     sortOrder.add(o);
@@ -552,7 +552,7 @@ public class QueryBuilderChange extends DispatchAction
             }
         } else {
             view.add(path);
-            // if sort order is empty, then add first element to sort order 
+            // if sort order is empty, then add first element to sort order
             if (newQuery) {
                 OrderBy o = new OrderBy(path, "asc");
                 sortOrder.add(o);
@@ -566,7 +566,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * AJAX request - expand
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -602,7 +602,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * AJAX request - collapse
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -624,7 +624,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * AJAX request - show constraint panel
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -646,7 +646,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * AJAX request - edit an existing constraint
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -669,7 +669,7 @@ public class QueryBuilderChange extends DispatchAction
 
     /**
      * AJAX request - render query paths
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -682,7 +682,7 @@ public class QueryBuilderChange extends DispatchAction
      * @exception Exception
      *                if the application business logic throws
      */
-    public ActionForward ajaxRenderPaths(ActionMapping mapping, 
+    public ActionForward ajaxRenderPaths(ActionMapping mapping,
                                          @SuppressWarnings("unused") ActionForm form,
                                          HttpServletRequest request, HttpServletResponse response)
         throws Exception {

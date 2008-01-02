@@ -87,7 +87,7 @@ public class TemplateAction extends InterMineAction
         Map savedBags = WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
-            TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template, 
+            TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
                                                                                  savedBags);
             SessionMethods.loadQuery(queryCopy.getPathQuery(), request.getSession(), response);
             session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
@@ -108,7 +108,7 @@ public class TemplateAction extends InterMineAction
         }
 
         // Otherwise show the results: load the modified query from the template
-        TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template, 
+        TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
                                                                              savedBags);
         if (saveQuery) {
             SessionMethods.loadQuery(queryCopy, request.getSession(), response);
@@ -118,12 +118,12 @@ public class TemplateAction extends InterMineAction
         QueryMonitorTimeout clientState = new QueryMonitorTimeout(
                 Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages, 
+        String qid = SessionMethods.startQuery(clientState, session, messages,
                                                saveQuery, queryCopy);
         Thread.sleep(200);
-        
+
         String trail = "";
-        
+
         // only put query on the trail if we are saving the query
         // otherwise its a "super top secret" query, e.g. quick search
         // also, note we are not saving any previous trails.  trail resets at queries and bags
@@ -133,7 +133,7 @@ public class TemplateAction extends InterMineAction
             trail = "";
             //session.removeAttribute(Constants.QUERY);
         }
-                        
+
         return new ForwardParameters(mapping.findForward("waiting"))
                 .addParameter("qid", qid)
                 .addParameter("trail", trail)

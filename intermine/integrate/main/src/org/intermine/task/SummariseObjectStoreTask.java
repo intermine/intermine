@@ -34,7 +34,7 @@ public class SummariseObjectStoreTask extends Task
     protected File outputFile, inputFile;
 
     /**
-     * Set the ObjectStore alias 
+     * Set the ObjectStore alias
      * @param alias the ObjectStore alias
      */
     public void setAlias(String alias) {

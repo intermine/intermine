@@ -51,7 +51,7 @@ public class TableExportConfig
     public void setActionPath(String actionPath) {
         this.actionPath = actionPath;
     }
-    
+
     /**
      * Get the className
      * @return the className
@@ -77,7 +77,7 @@ public class TableExportConfig
     public boolean equals (Object obj) {
         if (obj instanceof TableExportConfig) {
             TableExportConfig exporterObj = (TableExportConfig) obj;
-            return exporterObj.id.equals(id) && exporterObj.actionPath.equals(actionPath) 
+            return exporterObj.id.equals(id) && exporterObj.actionPath.equals(actionPath)
                 && exporterObj.className.equals(className);
         } else {
             return false;

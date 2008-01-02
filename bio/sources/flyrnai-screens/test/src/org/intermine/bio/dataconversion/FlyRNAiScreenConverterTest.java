@@ -21,8 +21,8 @@ import org.intermine.metadata.Model;
 
 public class FlyRNAiScreenConverterTest extends ItemsTestCase
 {
-    
-    
+
+
     public FlyRNAiScreenConverterTest(String arg) {
         super(arg);
     }
@@ -34,7 +34,7 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         File srcFile = new File(getClass().getClassLoader().getResource("RNAi_screen_details").toURI());
         converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));
-        
+
         srcFile = new File(getClass().getClassLoader().getResource("RNAi_all_hits.txt").toURI());
         converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));

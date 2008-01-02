@@ -49,7 +49,7 @@ public class Constraint
      * @param description the description of this constraint
      * @param code the constraint code
      * @param identifier a label for this Constraint used for refering to this it in a
-     * template. null means that this Constraint has no identifier. 
+     * template. null means that this Constraint has no identifier.
      * @param extraValue an extra value, for LOOKUP constraints
      */
     public Constraint(ConstraintOp op, Object value, boolean editable, String description,
@@ -82,7 +82,7 @@ public class Constraint
     }
 
     /**
-     * Return true if and only if this constraint should be editable in a template. 
+     * Return true if and only if this constraint should be editable in a template.
      * @return the editable flag
      */
     public boolean isEditable() {
@@ -128,7 +128,7 @@ public class Constraint
      * @return  constraint value translated for the user as a string
      */
     public String getDisplayValue() {
-        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH 
+        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
             || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS) {
             return WebUtil.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {
@@ -146,7 +146,7 @@ public class Constraint
      * @return a String
      */
     public String getReallyDisplayValue() {
-        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH 
+        if (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH
             || op == ConstraintOp.EQUALS || op == ConstraintOp.NOT_EQUALS) {
             return WebUtil.wildcardSqlToUser(getValue().toString());
         } else if (op == ConstraintOp.IS_NOT_NULL || op == ConstraintOp.IS_NULL) {

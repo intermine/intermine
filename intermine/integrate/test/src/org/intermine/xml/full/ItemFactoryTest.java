@@ -32,12 +32,12 @@ public class ItemFactoryTest extends TestCase
 
     public void testMakeItem1() throws Exception {
         ItemFactory itemFactory1 = new ItemFactory();
-        
+
         Item item1FromItemFactory1 = itemFactory1.makeItem();
         Item item2FromItemFactory1 = itemFactory1.makeItem();
         Item item3FromItemFactory1 = itemFactory1.makeItem("some_id_from_itemFactory1");
         Item item4FromItemFactory1 = itemFactory1.makeItem();
-        
+
         assertEquals("0_1", item1FromItemFactory1.getIdentifier());
         assertEquals("0_2", item2FromItemFactory1.getIdentifier());
         assertEquals("some_id_from_itemFactory1", item3FromItemFactory1.getIdentifier());
@@ -49,7 +49,7 @@ public class ItemFactoryTest extends TestCase
         Item item2FromItemFactory2 = itemFactory2.makeItem();
         Item item3FromItemFactory2 = itemFactory2.makeItem("some_id_from_itemFactory2");
         Item item4FromItemFactory2 = itemFactory2.makeItem();
-        
+
         assertEquals("0_1", item1FromItemFactory2.getIdentifier());
         assertEquals("0_2", item2FromItemFactory2.getIdentifier());
         assertEquals("some_id_from_itemFactory2", item3FromItemFactory2.getIdentifier());
@@ -61,7 +61,7 @@ public class ItemFactoryTest extends TestCase
         Item item2FromItemFactory3 = itemFactory3.makeItem();
         Item item3FromItemFactory3 = itemFactory3.makeItem("some_id_from_itemFactory3");
         Item item4FromItemFactory3 = itemFactory3.makeItem();
-        
+
         assertEquals("prefix_1", item1FromItemFactory3.getIdentifier());
         assertEquals("prefix_2", item2FromItemFactory3.getIdentifier());
         assertEquals("some_id_from_itemFactory3", item3FromItemFactory3.getIdentifier());
@@ -73,7 +73,7 @@ public class ItemFactoryTest extends TestCase
         Item item2FromItemFactory4 = itemFactory4.makeItem();
         Item item3FromItemFactory4 = itemFactory4.makeItem("some_id_from_itemFactory4");
         Item item4FromItemFactory4 = itemFactory4.makeItem();
-        
+
         assertEquals("prefix_1", item1FromItemFactory4.getIdentifier());
         assertEquals("prefix_2", item2FromItemFactory4.getIdentifier());
         assertEquals("some_id_from_itemFactory4", item3FromItemFactory4.getIdentifier());
@@ -90,7 +90,7 @@ public class ItemFactoryTest extends TestCase
         } catch (IllegalArgumentException e) {
             // expected
         }
-        
+
         try {
             Item item = itemFactory.makeItemForClass("http://www.intermine.org/model/testmodel#Foo");
             fail("expected IllegalArgumentException");

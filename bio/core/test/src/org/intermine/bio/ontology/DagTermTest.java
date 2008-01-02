@@ -28,37 +28,37 @@ public class DagTermTest extends TestCase
 
         d1.addSynonym(new DagTermSynonym("s1"));
         d1.addSynonym(new DagTermSynonym("s2"));
-        
+
         assertFalse(equalDagTerms(d1, d2));
         assertFalse(equalDagTerms(d2, d1));
-        
+
         d2.addSynonym(new DagTermSynonym("s1"));
         d2.addSynonym(new DagTermSynonym("s2"));
-        
+
         assertTrue(equalDagTerms(d1, d2));
         assertTrue(equalDagTerms(d2, d1));
-        
+
         d1.addChild(d3);
-        
+
         assertFalse(equalDagTerms(d1, d2));
         assertFalse(equalDagTerms(d2, d1));
-        
+
         d2.addChild(d3);
-        
+
         assertTrue(equalDagTerms(d1, d2));
         assertTrue(equalDagTerms(d2, d1));
-        
+
         d1.addComponent(d3);
-        
+
         assertFalse(equalDagTerms(d1, d2));
         assertFalse(equalDagTerms(d2, d1));
-        
+
         d2.addComponent(d3);
-        
+
         assertTrue(equalDagTerms(d1, d2));
         assertTrue(equalDagTerms(d2, d1));
     }
-    
+
     public static boolean equalDagTerms(DagTerm t1, DagTerm t2) {
         return t1.getId().equals(t2.getId()) && t1.getName().equals(t2.getName()) &&
             t1.getChildren().equals(t2.getChildren()) &&

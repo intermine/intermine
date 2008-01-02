@@ -67,24 +67,24 @@ public class TSVFileReaderTaskTest extends TestCase
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("TSVFileReaderTaskTest.tsv");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        
+
         String line = null;
         while ((line = br.readLine()) != null) {
             fw.write(line + "\n");
         }
-        
+
         fw.close();
-        
+
         FileSet fileSet = new FileSet();
 
         fileSet.setFile(tempFile);
-        
+
         tsvTask.addFileSet(fileSet);
 
-        InputStream confInputStream = 
+        InputStream confInputStream =
             getClass().getClassLoader().getResourceAsStream("TSVFileReaderTaskTest.properties");
         DelimitedFileConfiguration dfc = new DelimitedFileConfiguration(model, confInputStream);
-        
+
         tsvTask.executeInternal(dfc, tempFile);
 
         //Check the results to see if we have some data...
@@ -100,9 +100,9 @@ public class TSVFileReaderTaskTest extends TestCase
         q.addToSelect(qf1);
         q.addToSelect(qf2);
         q.addFrom(empQueryClass);
-        
+
         q.addToOrderBy(qf1);
-        
+
         Results r = os.execute(q);
 
         assertEquals(3, r.size());
@@ -142,6 +142,6 @@ public class TSVFileReaderTaskTest extends TestCase
         osw.close();
         LOG.info("closed objectstore");
     }
-    
+
 }
 

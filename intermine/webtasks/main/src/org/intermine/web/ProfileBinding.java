@@ -196,7 +196,7 @@ public class ProfileBinding
     private static void getProfileObjectIds(Profile profile, ObjectStore os, Set idsToSerialise) {
         List idsToPreFetch = new ArrayList();
         try {
-            
+
             for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
                 Map.Entry entry = (Map.Entry) i.next();
                 InterMineBag bag = (InterMineBag) entry.getValue();
@@ -206,13 +206,13 @@ public class ProfileBinding
 
             // pre-fetch objects from all bags into the cache
             os.getObjectsByIds(idsToPreFetch);
-        
+
             for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
                 Map.Entry entry = (Map.Entry) i.next();
                 InterMineBag bag = (InterMineBag) entry.getValue();
-                
+
                 Iterator iter = bag.getContentsAsIds().iterator();
-                
+
                 while (iter.hasNext()) {
                     Integer id = (Integer) iter.next();
                     InterMineObject object;
@@ -222,12 +222,12 @@ public class ProfileBinding
                         throw new RuntimeException("Unable to find object for id: " + id, e);
                     }
                     if (object == null) {
-                        LOG.error("Unable to find object for id: " + id 
+                        LOG.error("Unable to find object for id: " + id
                                                    + " profile: " + profile.getUsername()
                                                    + " bag: " + bag.getName());
                     } else {
                         getIdsFromObject(object, os.getModel(), idsToSerialise);
-                
+
                     }
                 }
             }
@@ -275,7 +275,7 @@ public class ProfileBinding
 
                         if (referencedObject != null) {
                             // recurse
-                            //LOG.error("recursing for: " + pk.getName() + " object: " 
+                            //LOG.error("recursing for: " + pk.getName() + " object: "
                             //+ object.getId() + " field " + fieldName);
                             getIdsFromObject(referencedObject, model, idsToSerialise);
                         }

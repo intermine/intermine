@@ -58,10 +58,10 @@ public class DisplayLookup
      * @return true if there are any issues
      */
     public boolean isIssues() {
-        return (!unresolved.isEmpty() || !duplicates.isEmpty() || !translated.isEmpty() 
+        return (!unresolved.isEmpty() || !duplicates.isEmpty() || !translated.isEmpty()
                         || !wildcards.isEmpty() || !lowQuality.isEmpty());
     }
-    
+
     /**
      * Returns the number of identifiers that matched useful objects.
      *
@@ -105,7 +105,7 @@ public class DisplayLookup
     public Set<String> getTranslated() {
         return translated;
     }
-    
+
     /**
      * Returns a Set of the identifiers that were low quality matches - e.g. matched an
      * alternate identifier.
@@ -114,7 +114,7 @@ public class DisplayLookup
     public Set<String> getLowQuality() {
         return lowQuality;
     }
-    
+
     /**
      * Return a map of any wildcards used and the number of identifiers they matched.
      * @return map of wildcards to the number of matches.

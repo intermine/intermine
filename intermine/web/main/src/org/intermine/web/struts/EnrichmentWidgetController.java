@@ -35,27 +35,20 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 
 /**
- * 
+ *
  * @author Julie Sullivan
  */
 public class EnrichmentWidgetController extends TilesAction
 {
 
     /**
-     *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
+     * {@inheritDoc}
      */
      public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                   @SuppressWarnings("unused") ActionMapping mapping,
                                   ActionForm form,
                                   HttpServletRequest request,
-                                  @SuppressWarnings("unused") HttpServletResponse response)   
+                                  @SuppressWarnings("unused") HttpServletResponse response)
      throws Exception {
          EnrichmentWidgetForm ewf = (EnrichmentWidgetForm) form;
          HttpSession session = request.getSession();
@@ -63,7 +56,7 @@ public class EnrichmentWidgetController extends TilesAction
          ServletContext servletContext = session.getServletContext();
          ObjectStoreInterMineImpl os =
              (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
-           
+
          String bagName = ewf.getBagName();
          Map<String, InterMineBag> allBags =
              WebUtil.getAllBags(profile.getSavedBags(), servletContext);
@@ -72,22 +65,22 @@ public class EnrichmentWidgetController extends TilesAction
              return null;
          }
          ewf.setBag(bag);
-      
+
          Class clazz = TypeUtil.instantiate(ewf.getController());
          Constructor constr = clazz.getConstructor(new Class[]
                                                              {
              HttpServletRequest.class
                                                              });
-    
+
          EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[]
                                                                                        {
              request
                                                                                        });
-        
-         ArrayList results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(), 
-                                               ewf.getBag(), ldr.getTotal(os), ewf.getMax(), 
+
+         ArrayList results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(),
+                                               ewf.getBag(), ldr.getTotal(os), ewf.getMax(),
                                                ewf.getErrorCorrection());
-        
+
          if (results.isEmpty()) {
              return null;
          }
@@ -95,10 +88,10 @@ public class EnrichmentWidgetController extends TilesAction
          request.setAttribute("totals", results.get(1));
          request.setAttribute("labelToId", results.get(2));
          request.setAttribute("bagType", bag.getType());
-         request.setAttribute("referencePopulation", "All " + ewf.getBag().getType() + "s from  " 
+         request.setAttribute("referencePopulation", "All " + ewf.getBag().getType() + "s from  "
                               + ldr.getReferencePopulation().toString());
-    
+
          return null;
-     }   
+     }
 }
 

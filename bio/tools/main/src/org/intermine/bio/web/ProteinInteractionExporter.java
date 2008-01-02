@@ -14,7 +14,7 @@ package org.intermine.bio.web;
  * Export protein interaction information as SIF file suitable for use with
  * CytoScape if there are ProteinInteraction objects on the select list of
  * the query.
- * 
+ *
  * @author Florian Reisinger
  * @author Richard Smith
  */
@@ -53,7 +53,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
 /**
- * An implementation of TableExporter that exports protein interactions 
+ * An implementation of TableExporter that exports protein interactions
  * in cytoscape SIF format
  *
  * @author Florian Reisinger
@@ -63,7 +63,7 @@ public class ProteinInteractionExporter implements TableExporter
     static final boolean DEBUG = false;
 
     /**
-     * Method called to export a PagedTable object using the BioJava 
+     * Method called to export a PagedTable object using the BioJava
      * sequence and feature writers.
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
@@ -92,10 +92,10 @@ public class ProteinInteractionExporter implements TableExporter
         int writtenInteractionsCount = 0; //flo
         Set exported = new HashSet();
         PrintWriter printWriter = null;
-        
+
         try {
             WebTable rowList = pt.getAllRows(); // get all the data in rows
-            
+
             // loop over the rows
             for (int rowIndex = 0; rowIndex < rowList.size()
                     && rowIndex <= pt.getMaxRetrievableIndex(); rowIndex++) {
@@ -114,11 +114,11 @@ public class ProteinInteractionExporter implements TableExporter
                 // get object of interest - ProteinInteraction
                 InterMineObject object =
                     (InterMineObject) row.get(realFeatureIndex).getInterMineObject();
-                
+
                 if (!exported.contains(object.getId())) {
                     // cast to ProteinInteraction
                     ProteinInteraction feature = (ProteinInteraction) object;
-                    
+
                     if (outputStream == null) {
                         // try to avoid opening the OutputStream until we know that the query is
                         // going to work - this avoids some problems that occur when
@@ -128,7 +128,7 @@ public class ProteinInteractionExporter implements TableExporter
                         printWriter = new PrintWriter(outputStream, true);
                     }
 
-                    Set<ProteinInteraction> interactions = 
+                    Set<ProteinInteraction> interactions =
                         (Set<ProteinInteraction>) Collections.singleton(feature);
                     printWriter.write(getSifLines(interactions));
                     printWriter.flush();
@@ -137,12 +137,12 @@ public class ProteinInteractionExporter implements TableExporter
                     exported.add(object.getId());
                 }
             }
-            
+
             if (printWriter != null) {
                 printWriter.flush();
                 printWriter.close();
             }
-            
+
             if (outputStream != null) {
                 outputStream.close();
             }
@@ -153,8 +153,8 @@ public class ProteinInteractionExporter implements TableExporter
                 ActionMessage error = new ActionMessage("errors.export.nothingtoexport");
                 messages.add(ActionMessages.GLOBAL_MESSAGE, error);
                 request.setAttribute(Globals.ERROR_KEY, messages);
-               
-                
+
+
                 return mapping.findForward("results");
             }
         //} catch (ObjectStoreException e) {
@@ -169,7 +169,7 @@ public class ProteinInteractionExporter implements TableExporter
 
     /**
      * {@inheritDoc}
-     * @param pt the PagedTable containing the results 
+     * @param pt the PagedTable containing the results
      * @return true if exportable results were found
      * @see org.intermine.web.logic.export.TableExporter#canExport
      * @see org.intermine.bio.web.PIUtil#canExport
@@ -177,7 +177,7 @@ public class ProteinInteractionExporter implements TableExporter
     public boolean canExport(PagedTable pt) {
         return ExportHelper.canExport(pt, ProteinInteraction.class);
     }
-    
+
     /**
      * Create lines in sif format
      * @param interactions the interactions
@@ -187,7 +187,7 @@ public class ProteinInteractionExporter implements TableExporter
         FlyNetwork fn = FlyNetworkCreator.createFlyNetwork(interactions);
         return fn.toSIF();
     }
-        
+
         /**
      * create lines in sif format
      * @param interactors list of interactors

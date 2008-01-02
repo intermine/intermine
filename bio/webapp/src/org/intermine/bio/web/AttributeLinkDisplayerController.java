@@ -79,7 +79,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         sb.append(")");
         Organism organismReference = null;
 
-        
+
         try {
             organismReference = (Organism) TypeUtil.getFieldValue(imo, "organism");
         } catch (IllegalAccessException e) {

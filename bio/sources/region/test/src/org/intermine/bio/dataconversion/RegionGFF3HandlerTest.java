@@ -38,7 +38,7 @@ public class RegionGFF3HandlerTest extends ItemsTestCase
     String orgTaxonId= "9606";
     String dataSourceName = "UCSC";
     String dataSetTitle = "UCSC data set";
-    
+
     public RegionGFF3HandlerTest(String arg) {
         super(arg);
     }

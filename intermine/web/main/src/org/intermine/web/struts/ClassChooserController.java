@@ -50,7 +50,7 @@ public class ClassChooserController extends TilesAction
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
+                                 @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
 
         HttpSession session = request.getSession();
@@ -59,7 +59,7 @@ public class ClassChooserController extends TilesAction
         ObjectStoreSummary oss =
             (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-        
+
         Collection qualifiedTypes = os.getModel().getClassNames();
         Map classDescrs = (Map) servletContext.getAttribute("classDescriptions");
         StringBuffer sb = new StringBuffer();
@@ -67,7 +67,7 @@ public class ClassChooserController extends TilesAction
         String superUserName = (String) servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT);
 
         List preferredBagTypeTags = pm.getTags("im:preferredBagType", null, "class", superUserName);
-        
+
         ArrayList<String> typeList = new ArrayList<String>();
         ArrayList<String> preferedTypeList = new ArrayList<String>();
 
@@ -77,7 +77,7 @@ public class ClassChooserController extends TilesAction
         }
 
         for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
-           
+
             String className = (String) iter.next();
             String unqualifiedName = TypeUtil.unqualifiedName(className);
 
@@ -86,7 +86,7 @@ public class ClassChooserController extends TilesAction
                 String helpKey = unqualifiedName;
                 String helpText = (String) classDescrs.get(helpKey);
 
-                if (helpText != null) {                                 
+                if (helpText != null) {
                     String escaped = helpText.replaceAll("'", "\\\\'");
                     sb.append("'" + helpKey + "': '" + escaped + "', ");
                 }
@@ -102,7 +102,7 @@ public class ClassChooserController extends TilesAction
         request.setAttribute("preferredTypeList", preferedTypeList);
 
         if (sb.length() >= 2) {
-            sb.deleteCharAt(sb.length() - 2);    
+            sb.deleteCharAt(sb.length() - 2);
         }
         request.setAttribute("helpMap", sb);
         return null;

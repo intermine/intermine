@@ -39,7 +39,7 @@ public class OcGFF3HandlerTest extends ItemsTestCase
     String dataSourceName = "UCSC";
     String dataSetTitle = "UCSC opossum chain";
 
-    
+
     public OcGFF3HandlerTest(String arg) {
         super(arg);
     }
@@ -59,7 +59,7 @@ public class OcGFF3HandlerTest extends ItemsTestCase
 
         // uncomment to write out a new target items file
         //writeItemsFile(writer.getItems(), "opposum-tgt-items.xml");
-        
+
         Set expected = readItemSet("opposumTgt.xml");
         assertEquals(expected, writer.getItems());
     }

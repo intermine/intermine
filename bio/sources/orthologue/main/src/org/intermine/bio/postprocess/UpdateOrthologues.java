@@ -58,7 +58,7 @@ public class UpdateOrthologues extends PostProcessor
     /**
      * Find orthologues with objectTranslation and subjectTranslation set and, where possible,
      * set object and subject to corresponding genes.
-     * @throws Exception if anything goes wrong
+     * @throws ObjectStoreException if anything goes wrong
      */
     public void postProcess() throws ObjectStoreException {
         os.flushObjectById();
@@ -93,7 +93,7 @@ public class UpdateOrthologues extends PostProcessor
                         || refType.equals("paralogueTranslation"))) {
             throw new IllegalArgumentException("refType was '" + refType + "'"
                                                + " but must be 'translation', "
-                                               + "'orthologueTranslation or " 
+                                               + "'orthologueTranslation or "
                                                + "'paralogueTranslation'");
         }
 
@@ -123,7 +123,7 @@ public class UpdateOrthologues extends PostProcessor
         q.addToOrderBy(qcRel);
         q.addToOrderBy(qcTranslation);
         q.addToOrderBy(qcGene);
-        
+
         Results res = os.execute(q);
         res.setBatchSize(500);
 

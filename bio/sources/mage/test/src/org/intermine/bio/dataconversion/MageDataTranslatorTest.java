@@ -117,7 +117,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         Map srcMap = writeItems(src);
 
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
-                                                               mapping, srcModel, getTargetModel(tgtNs), 
+                                                               mapping, srcModel, getTargetModel(tgtNs),
                                                                "mage_config_test.properties");
         translator.propertiesFileName = "mage_config_test.properties";
         Item expectedItem = createTgtItem("MicroArrayExperiment", "-1_1", "");
@@ -177,7 +177,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         MageDataTranslator translator = new MageDataTranslator(new MockItemReader(srcMap),
                                                                mapping, srcModel, getTargetModel(tgtNs),
                                                                "mage_config_test.properties");
-        
+
         Item expItem1 = createTgtItem("MicroArrayAssay", "2_1", "");
         expItem1.setReference("experiment", "-1_1");
         expItem1.setAttribute("name", "Day0(3)");

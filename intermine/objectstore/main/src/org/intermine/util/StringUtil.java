@@ -25,7 +25,7 @@ public class StringUtil
 {
     private static final char HEX_CHARS[]
         = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-    
+
     private StringUtil() {
     }
 
@@ -89,7 +89,7 @@ public class StringUtil
         }
         return l;
     }
-    
+
     /**
      * Convert a byte buffer to a hexadecimal string.
      * @param buffer byte buffer
@@ -105,7 +105,7 @@ public class StringUtil
         }
         return sb.toString();
     }
-    
+
     /**
      * Returns a list of tokens delimited by delim in String str.
      * eg. split("abc@#def@#", "@#") returns a 3 element array containing "abc", "def" and ""
@@ -215,7 +215,7 @@ public class StringUtil
         }
         return str;
     }
-    
+
     /**
      * Returns a pluralised version of the given String
      *
@@ -321,11 +321,11 @@ public class StringUtil
             if (!Character.isWhitespace(s.charAt(i))) {
                 return s.substring(i);
             }
-        } 
+        }
         return s;
-        
+
     }
-    
+
     /**
      * Return true if all characters in a given String are digits.  Null or empty string
      * will return false.  Ignores negative sign and decimal point.
@@ -348,18 +348,18 @@ public class StringUtil
     }
     /**
      * Take a collection of Strings and return a combined string as a comma separated list
-     * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c". 
+     * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c".
      * @param elements a collection of strings to put in the list.
      * @return a string with all the elements suitable for inclusion in a sentence.
      */
     public static String prettyList(Collection<String> elements) {
         return StringUtil.prettyList(elements, false);
-        
+
     }
-    
+
     /**
      * Take a collection of Strings and return a combined string as a comma separated list
-     * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c". 
+     * with 'and' between the final pair.  For example: [a, b, c] -> "a, b and c".
      * @param elements a collection of strings to put in the list.
      * @param sort if true then order the strings alpabetically
      * @return a string with all the elements suitable for inclusion in a sentence.
@@ -367,7 +367,7 @@ public class StringUtil
     public static String prettyList(Collection<String> elements, boolean sort) {
         Collection<String> col;
         if (sort) {
-            col = new TreeSet<String>(elements); 
+            col = new TreeSet<String>(elements);
         } else {
             col = elements;
         }

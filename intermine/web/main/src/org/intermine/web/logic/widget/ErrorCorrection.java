@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -22,7 +22,7 @@ public interface ErrorCorrection
      * @param maxValue maximum value to display
      */
     public void calculate(Double maxValue);
-    
+
     /**
      * @return adjusted map
      */

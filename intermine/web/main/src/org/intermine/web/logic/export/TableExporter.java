@@ -27,7 +27,7 @@ import org.intermine.web.logic.results.PagedTable;
 
 public interface TableExporter
 {
-    /** 
+    /**
      * Method called to export a PagedTable object
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)

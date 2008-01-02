@@ -28,7 +28,7 @@ import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 
 import org.jfree.data.category.CategoryDataset;
 /**
- * 
+ *
  * @author Xavier Watkins
  *
  */
@@ -59,15 +59,15 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         return sb.toString();
     }
 
-    
+
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
-                                       String series, 
+                                       String series,
                                        String category) {
-       
+
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-        
+
         Path identifier = MainHelper.makePath(model, q, "FlyAtlasResult.genes.identifier");
         Path organismDbId = MainHelper.makePath(model, q, "FlyAtlasResult.genes.organismDbId");
         Path name = MainHelper.makePath(model, q, "FlyAtlasResult.genes.name");
@@ -78,25 +78,25 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         Path signal = MainHelper.makePath(model, q, "FlyAtlasResult.mRNASignal");
         Path sem = MainHelper.makePath(model, q, "FlyAtlasResult.mRNASignalSEM");
         Path presentCall = MainHelper.makePath(model, q, "FlyAtlasResult.presentCall");
-        
+
         List<Path> view = new ArrayList<Path>();
-                
+
         view.add(identifier);
         view.add(organismDbId);
         view.add(name);
         view.add(org);
         view.add(assays);
         view.add(affyCall);
-        view.add(enrichment);        
+        view.add(enrichment);
         view.add(signal);
         view.add(sem);
         view.add(presentCall);
-        
+
         q.setView(view);
 
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
-        
+
         String label = null, id = null, code = q.getUnusedConstraintCode();
         PathNode geneNode = q.addNode("FlyAtlasResult.genes");
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
@@ -105,38 +105,38 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode categoryNode = q.addNode("FlyAtlasResult.affyCall");
-        Constraint categoryConstraint 
+        Constraint categoryConstraint
                         = new Constraint(constraintOp, category, false, label, code, id, null);
         categoryNode.getConstraints().add(categoryConstraint);
 
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode seriesNode = q.addNode("FlyAtlasResult.assays.name");
-        Constraint seriesConstraint 
+        Constraint seriesConstraint
                         = new Constraint(constraintOp, series, false, label, code, id, null);
         seriesNode.getConstraints().add(seriesConstraint);
-        
+
         q.setConstraintLogic("A and B and C");
 
         String direction = "asc";
         if (category.toLowerCase().equals("up")) {
             direction = "desc";
         }
-        
+
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-        
-        sortOrder.add(new OrderBy(enrichment, direction));        
+
+        sortOrder.add(new OrderBy(enrichment, direction));
         sortOrder.add(new OrderBy(identifier, "asc"));
         sortOrder.add(new OrderBy(organismDbId, "asc"));
         sortOrder.add(new OrderBy(name, "asc"));
         sortOrder.add(new OrderBy(assays, "asc"));
-        sortOrder.add(new OrderBy(affyCall, "asc"));      
-        
+        sortOrder.add(new OrderBy(affyCall, "asc"));
+
         q.setSortOrder(sortOrder);
-        
+
         q.syncLogicExpression("and");
-        
-        return q; 
-    }    
-    
+
+        return q;
+    }
+
 }

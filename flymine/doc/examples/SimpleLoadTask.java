@@ -155,12 +155,12 @@ public class SimpleLoadTask extends Task
                 if (line.trim().length() == 0) {
                     continue;
                 }
-                
+
                 String bits[] = StringUtil.split(line, " ");
                 String proteinName = bits[0];
 
                 Set proteins = getProteinsForName(proteinName);
-                
+
                 String proteinStart = bits[1];
                 String proteinEnd = bits[2];
                 String proteinFeatureIdentifier = bits[3];
@@ -185,7 +185,7 @@ public class SimpleLoadTask extends Task
                     try {
                         featureLocation.setStart(new Integer(Integer.parseInt(proteinStart)));
                     } catch (NumberFormatException e) {
-                        throw new RuntimeException("failed to parse start position: " 
+                        throw new RuntimeException("failed to parse start position: "
                                                    + proteinStart, e);
                     }
                     try {
@@ -194,7 +194,7 @@ public class SimpleLoadTask extends Task
                         throw new RuntimeException("failed to parse end position: "
                                                    + proteinEnd, e);
                     }
-                
+
                     featureLocation.setSubject(proteinFeature);
                     featureLocation.setObject(thisProtein);
                     osw.store(featureLocation);
@@ -221,7 +221,7 @@ public class SimpleLoadTask extends Task
         QueryField qf = new QueryField(qc, "identifier");
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
         q.setConstraint(sc);
-        
+
         Set returnList = new HashSet();
         try {
             Results res = osw.getObjectStore().execute(q);

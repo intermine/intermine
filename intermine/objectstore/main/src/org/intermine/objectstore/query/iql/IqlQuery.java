@@ -552,7 +552,7 @@ public class IqlQuery
     public void setQueryString(String queryString) {
         this.queryString = queryString;
     }
-    
+
     /**
      * Get the package name
      *

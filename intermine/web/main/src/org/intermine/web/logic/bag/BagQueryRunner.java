@@ -127,7 +127,7 @@ public class BagQueryRunner
         // or just leave as a list of identifiers and objects of the qrong type
         // CollectionUtil.groupByClass will sort out the strings and types
         Class typeCls = Class.forName(model.getPackageName() + "." + type);
-        List<BagQuery> queries = 
+        List<BagQuery> queries =
             getBagQueriesForType(bagQueryConfig.getBagQueries(), typeCls.getName(), cleanInput);
         Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
         Set wildcardUnresolved = new LinkedHashSet(wildcardInput);
@@ -235,7 +235,7 @@ public class BagQueryRunner
      *
      * @throws InterMineException
      */
-    private void addResults(Map<String, Set<Integer>> resMap, Set<String> unresolved, 
+    private void addResults(Map<String, Set<Integer>> resMap, Set<String> unresolved,
                             BagQueryResult bqr, BagQuery bq, Class<?> type, boolean areWildcards)
     throws InterMineException {
         Map<String, Set<Object>> objsOfWrongType = new HashMap<String, Set<Object>>();
@@ -323,7 +323,7 @@ public class BagQueryRunner
         throws InterMineException {
         if (!objsOfWrongType.isEmpty()) {
             // group objects by class
-            Map<InterMineObject, Set<String> > objectToInput = 
+            Map<InterMineObject, Set<String> > objectToInput =
                 new HashMap<InterMineObject, Set<String> >();
             Iterator iter = objsOfWrongType.entrySet().iterator();
             while (iter.hasNext()) {
@@ -363,7 +363,7 @@ public class BagQueryRunner
                 if (objs.isEmpty()) {
                     continue;
                 }
-                
+
                 // try to convert objects to target type
                 Map convertedObjsMap = TypeConverter.convertObjects(context, fromClass, type, objs);
                 if (convertedObjsMap == null) {

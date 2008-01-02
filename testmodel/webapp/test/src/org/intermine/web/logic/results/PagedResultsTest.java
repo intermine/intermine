@@ -145,7 +145,7 @@ public class PagedResultsTest extends TestCase
         Department d1 = new Department();
         d1.setName("DepartmentA1");
         d1.setId(new Integer(201));
-       
+
         Company c1 = (Company) DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
         c1.setName("Company1");
         c1.setId(new Integer(301));
@@ -153,14 +153,14 @@ public class PagedResultsTest extends TestCase
         e1.setDepartment(d1);
         d1.setCompany(c1);
         d1.setEmployees(new HashSet(toList(new Object [] {e2})));
-        
+
         ObjectStore os = new ObjectStoreDummyImpl();
         results.put("employeeName", toList(new Object[][] { { e1 } }));
         expected.put("employeeName", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), Employee.class, new Path(model, "Employee.name"), false)}));
         headers.put("employeeName", toList(new Object[] {new Path(model, "Employee.name")}));
 
         results.put("employeeDepartmentName", toList(new Object[][] { { e1, d1 } }));
-        expected.put("employeeDepartmentName", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), Employee.class, new Path(model, "Employee.name"), false), 
+        expected.put("employeeDepartmentName", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), Employee.class, new Path(model, "Employee.name"), false),
                 new ResultElement(os,e1.getDepartment().getName(),e1.getDepartment().getId(), Department.class, new Path(model, "Employee.department.name"), false)}));
         headers.put("employeeDepartmentName", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.name")}));
 
@@ -169,23 +169,23 @@ public class PagedResultsTest extends TestCase
                 new ResultElement(os, e1.getDepartment().getName(),e1.getDepartment().getId(), Department.class, new Path(model, "Department.name"), false),
                 new ResultElement(os, e1.getDepartment().getCompany().getName(),e1.getDepartment().getCompany().getId(), Company.class, new Path(model, "Company.name"), false)}));
         headers.put("employeeDepartmentCompany", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.name"), new Path(model, "Employee.department.company.name")}));
-        
+
         results.put("employeeCompany", toList(new Object[][] { { e1, c1 } }));
         expected.put("employeeCompany", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), Employee.class, new Path(model, "Employee.name"), false),
                 new ResultElement(os, e1.getDepartment().getCompany().getName(),e1.getDepartment().getCompany().getId(), Company.class, new Path(model, "Company.name"), false)}));
         headers.put("employeeCompany", toList(new Object[] {new Path(model, "Employee.name"), new Path(model, "Employee.department.company.name")}));
-        
+
 //        results.put("employeeDepartmentEmployees", toList(new Object[][] { { e1, d1, e2 } } ));
 //        expected.put("employeeDepartmentEmployees", Arrays.asList(new Object[] {new ResultElement(os,e1.getName(),e1.getId(), "Employee", new Path(model, "Employee.name"), false),
 //                new ResultElement(os, e1.getDepartment().getName(),e1.getDepartment().getId(),"Department", new Path(model, "Department.name"), false),
 //                new ResultElement(os, Employee (e1.getDepartment().getEmployees().iterator().next()).getName(),e2.getId(),"Employee", new Path(model, "Employee.name"), false)}));
 //        headers.put("employeeDepartmentEmployees", toList(new Object[] {new Path(model, "Employee"), new Path(model, "Employee.department"), new Path(model, "Employee.department.employees")}));
-        
+
         // check all queries, fail if no expected values set
         Iterator queryIter = queries.entrySet().iterator();
         while (queryIter.hasNext()) {
-        	Map.Entry entry = (Map.Entry) queryIter.next();
-        	String queryName = (String) entry.getKey();
+            Map.Entry entry = (Map.Entry) queryIter.next();
+            String queryName = (String) entry.getKey();
             if (!expected.containsKey(queryName)) {
                 fail("no expected column indexes set up for query: " + queryName);
             }
@@ -207,7 +207,7 @@ public class PagedResultsTest extends TestCase
 
         public DummyResults(ObjectStore os, Query query, List rows) {
             super(query, os, ObjectStore.SEQUENCE_IGNORE);
-            this.rows = rows;	
+            this.rows = rows;
         }
 
         public Object get(int index) {
@@ -222,7 +222,7 @@ public class PagedResultsTest extends TestCase
         }
         return rows;
     }
-    
+
     private List toList(Object array[]) {
         List rows = new ArrayList();
         for(int i=0;i<array.length;i++) {
@@ -235,7 +235,7 @@ public class PagedResultsTest extends TestCase
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
         return PathQueryBinding.unmarshal(new InputStreamReader(is), null, null);
     }
-    
+
 //     public void testSizeLow() throws Exception {
 //         PagedTable dr = getEstimateTooLowResults();
 //         dr.setPageSize(10);
@@ -418,7 +418,7 @@ public class PagedResultsTest extends TestCase
     public void testMoveColumnLeft4() throws Exception {
         PagedTable dr = getExactResults();
         List columns = new LinkedList();
-        
+
         Column col = new Column(new Path(model,"Company.name"), 0, Company.class);
         columns.add(col);
         col = new Column(new Path(model,"Department.name"), 1, Company.class);
@@ -527,5 +527,5 @@ public class PagedResultsTest extends TestCase
         dr.moveColumnRight(4);
         assertEquals(columns, dr.getColumns());
     }
-    
+
 }

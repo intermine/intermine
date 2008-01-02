@@ -15,7 +15,7 @@ import junit.framework.*;
 public class FunctionTest extends TestCase
 {
     private Function f1, f2, f3, f4, f5, f6, f7, f8, f9;
-    
+
     public FunctionTest(String arg1) {
         super(arg1);
     }
@@ -62,7 +62,7 @@ public class FunctionTest extends TestCase
             assertTrue(iter.next() != null);
         }
     }
-    
+
     public void testGetSQLString() throws Exception {
         assertEquals("COUNT(*)", f1.getSQLString());
         assertEquals("MAX(3)", f2.getSQLString());

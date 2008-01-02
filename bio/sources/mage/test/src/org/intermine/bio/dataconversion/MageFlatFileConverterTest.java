@@ -29,8 +29,8 @@ import org.intermine.metadata.Model;
 public class MageFlatFileConverterTest extends ItemsTestCase {
     MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
 
-    
-    
+
+
     public MageFlatFileConverterTest(String arg) {
         super(arg);
     }
@@ -50,7 +50,7 @@ public class MageFlatFileConverterTest extends ItemsTestCase {
 
         // uncomment to write a new target items file
         //writeItemsFile(writer.getItems(), "mage-flat-tgt-items.xml");
-        
+
         Set expected = readItemSet("mageFlatTgt.xml");
 
         assertEquals(expected, writer.getItems());

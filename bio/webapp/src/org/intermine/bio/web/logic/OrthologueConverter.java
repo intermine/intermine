@@ -47,7 +47,7 @@ import org.intermine.web.logic.results.TableHelper;
  */
 public class OrthologueConverter implements BagConverter
 {
-    
+
     /**
      * The Constructor
      */
@@ -59,9 +59,9 @@ public class OrthologueConverter implements BagConverter
      * @see org.intermine.web.logic.bag.BagConverter#getConvertedObjects(
      * javax.servlet.http.HttpSession, java.lang.String, java.util.List, java.lang.String)
      */
-    public List<ResultsRow> getConvertedObjects (HttpSession session, String organism, 
-                                      List<Integer> fromList, String type) 
-                                      throws ClassNotFoundException, 
+    public List<ResultsRow> getConvertedObjects (HttpSession session, String organism,
+                                      List<Integer> fromList, String type)
+                                      throws ClassNotFoundException,
                                       ObjectStoreException {
         ServletContext servletContext = session.getServletContext();
         Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
@@ -69,13 +69,13 @@ public class OrthologueConverter implements BagConverter
         Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
         Map<String, BagQueryResult> pathToBagQueryResult = new HashMap<String, BagQueryResult>();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        
+
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
 
         PathQuery pathQuery = new PathQuery(model);
-        
+
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, pathQuery, "Gene.orthologues.orthologue.id"));
         pathQuery.setView(view);
@@ -86,12 +86,12 @@ public class OrthologueConverter implements BagConverter
             ResultsRow resRow = (ResultsRow) object;
             newList.add((InterMineObject) resRow.get(0));
         }
-        Constraint c = new Constraint(ConstraintOp.IN, newList, 
+        Constraint c = new Constraint(ConstraintOp.IN, newList,
                                         false, label, code, id, null);
         pathQuery.addNode(type).getConstraints().add(c);
 
         code = pathQuery.getUnusedConstraintCode();
-        Constraint c2 = new Constraint(ConstraintOp.MATCHES, organism, 
+        Constraint c2 = new Constraint(ConstraintOp.MATCHES, organism,
                                         false, label, code, id, null);
         pathQuery.addNode("Gene.orthologues.orthologue.organism.shortName")
                                 .getConstraints().add(c2);

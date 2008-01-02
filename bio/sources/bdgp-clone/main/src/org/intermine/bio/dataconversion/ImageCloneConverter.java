@@ -88,7 +88,7 @@ public class ImageCloneConverter extends CDNACloneConverter
             // if clone points to more than one gene, or points to a gene without identifier
             // don't create gene
             if (geneId.length == 1 && geneId[0].length() > 1 && StringUtil.allDigits(cloneId)) {
-                Item gene = createGene("Gene", geneId[0], organism.getIdentifier(), 
+                Item gene = createGene("Gene", geneId[0], organism.getIdentifier(),
                                        getItemWriter());
                 createClone("CDNAClone", cloneId, organism.getIdentifier(),
                             gene.getIdentifier(), dataSource.getIdentifier(),

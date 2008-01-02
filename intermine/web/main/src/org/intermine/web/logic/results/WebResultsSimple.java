@@ -1,6 +1,6 @@
 package org.intermine.web.logic.results;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -32,12 +32,12 @@ public class WebResultsSimple extends AbstractList implements WebTable
     private Results results;
     private List<String> columnNames;
     private List<Column> columns;
-    
+
     /**
      * Make a new WebResultsSimple object - a simple wrapper around an arbitrary Results object
      * @param results the Results
      * @param columnNames the columns names
-     * 
+     *
      */
     public WebResultsSimple(Results results, List<String> columnNames) {
         this.results = results;
@@ -51,8 +51,8 @@ public class WebResultsSimple extends AbstractList implements WebTable
         throw new UnsupportedOperationException();
     }
 
-    /** 
-     * {@inheritDoc} 
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Object get(int index) {

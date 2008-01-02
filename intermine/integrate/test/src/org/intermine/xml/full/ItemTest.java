@@ -28,7 +28,7 @@ import org.intermine.metadata.Model;
 public class ItemTest extends TestCase
 {
     Model model;
-    
+
     public ItemTest(String arg) throws Exception {
         super(arg);
         model = Model.getInstanceByName("testmodel");
@@ -126,9 +126,9 @@ public class ItemTest extends TestCase
 
     public void testCreateClassCheck() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
-        
+
         Item item1 = itemFactory.makeItem();
-        
+
         item1.setClassName(model.getNameSpace() + "Company");
 
         try {
@@ -143,14 +143,14 @@ public class ItemTest extends TestCase
 
     public void testAddAttribute() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
-        
+
         Item item1 = itemFactory.makeItem();
         item1.setClassName(model.getNameSpace() + "Company");
 
         item1.addAttribute(new Attribute("vatNumber", "1000"));
 
         assertEquals("1000", item1.getAttribute("vatNumber").getValue());
-        
+
         try {
             item1.addAttribute(new Attribute("illegalAttribute", "1000"));
             fail("expected RuntimeException");
@@ -172,9 +172,9 @@ public class ItemTest extends TestCase
 
     public void testAddReference() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
-        
+
         Item item1 = itemFactory.makeItem();
-        
+
         item1.setClassName(model.getNameSpace() + "Company");
 
         item1.addReference(new Reference("address", "address_id_1"));
@@ -198,24 +198,24 @@ public class ItemTest extends TestCase
         } catch (RuntimeException _) {
             // expected
         }
-        
+
         Item item2 = itemFactory.makeItem();
-        
+
         item2.setClassName(model.getNameSpace() + "CEO");
-        
+
         item2.setIdentifier("item_2");
-        
+
         item1.setReference("CEO", item2);
-        
+
         assertEquals(item1.getReference("CEO").getRefId(), "item_2");
-        
+
     }
 
     public void testAddCollection() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
-        
+
         Item item1 = itemFactory.makeItem();
-        
+
         item1.setClassName(model.getNameSpace() + "Company");
 
         item1.addToCollection("contractors", "contractor_id_1");
@@ -224,7 +224,7 @@ public class ItemTest extends TestCase
 
         List resultContractors = item1.getCollection("contractors").getRefIds();
 
-        assertEquals(3, resultContractors.size());        
+        assertEquals(3, resultContractors.size());
 
         List expected = new ArrayList();
 
@@ -241,25 +241,25 @@ public class ItemTest extends TestCase
             // expected
         }
     }
-    
+
     public void testAddCollectionShortCut() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
-        
+
         Item item1 = itemFactory.makeItem();
-        
+
         item1.setClassName(model.getNameSpace() + "Company");
 
         List idsToAdd = new ArrayList();
-        
+
         idsToAdd.add("contractor_id_1");
         idsToAdd.add("contractor_id_2");
         idsToAdd.add("contractor_id_3");
-        
+
         item1.setCollection("contractors", idsToAdd);
 
         List resultContractors = item1.getCollection("contractors").getRefIds();
 
-        assertEquals(3, resultContractors.size());        
+        assertEquals(3, resultContractors.size());
 
         List expected = new ArrayList();
 
@@ -276,19 +276,19 @@ public class ItemTest extends TestCase
             // expected
         }
     }
-    
+
     public void testAddCollectionShortCutWrongType() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
-        
+
         Item item1 = itemFactory.makeItem();
-        
+
         item1.setClassName(model.getNameSpace() + "Company");
 
         List idsToAdd = new ArrayList();
 
         idsToAdd.add("contractor_id_1");
         idsToAdd.add(new Integer(10));
-        
+
         try {
             item1.setCollection("contractors", idsToAdd);
             fail("expected RuntimeException");

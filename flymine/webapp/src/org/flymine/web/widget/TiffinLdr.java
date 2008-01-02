@@ -58,8 +58,8 @@ public class TiffinLdr implements EnrichmentWidgetLdr
     Collection organisms;
     int total;
     String externalLink;
-    String append; 
-    
+    String append;
+
     /**
      * @param request The HTTP request we are processing
      */
@@ -75,11 +75,11 @@ public class TiffinLdr implements EnrichmentWidgetLdr
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
              InterMineBag bag = allBags.get(bagName);
-                        
+
              sampleQuery = getQuery(os, bag, true);
              populationQuery = getQuery(os, bag, false);
      }
-     
+
 
      /**
       * @return the query representing the sample population (the bag)
@@ -87,7 +87,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      public Query getSample() {
          return sampleQuery;
      }
-     
+
      /**
       * @return the query representing the entire population (all the items in the database)
       */
@@ -96,7 +96,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      }
 
      /**
-      * 
+      *
       * @param os
       * @param bag
       * @return description of reference population, ie "Accounting dept"
@@ -104,9 +104,9 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      public Collection getReferencePopulation() {
          return organisms;
      }
-     
-     /** 
-      * @param os     
+
+     /**
+      * @param os
       * @return the query representing the sample population (the bag)
       */
      public int getTotal(ObjectStore os) {
@@ -162,23 +162,23 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 
          // gene is from organism
          QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-         ContainsConstraint cc1 = 
+         ContainsConstraint cc1 =
              new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
          cs.addConstraint(cc1);
 
-         QueryObjectReference qr2 = 
+         QueryObjectReference qr2 =
              new QueryObjectReference(qcGene, "upstreamIntergenicRegion");
-         ContainsConstraint cc2 = 
+         ContainsConstraint cc2 =
              new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcIntergenicRegion);
          cs.addConstraint(cc2);
 
-         QueryCollectionReference qr3 = 
+         QueryCollectionReference qr3 =
              new QueryCollectionReference(qcIntergenicRegion, "overlappingFeatures");
-         ContainsConstraint cc3 = 
+         ContainsConstraint cc3 =
              new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcTFBindingSite);
          cs.addConstraint(cc3);
 
-         QueryCollectionReference qr4 = 
+         QueryCollectionReference qr4 =
              new QueryCollectionReference(qcTFBindingSite, "evidence");
          ContainsConstraint cc4 = new ContainsConstraint(qr4, ConstraintOp.CONTAINS, qcDataSet);
          cs.addConstraint(cc4);
@@ -187,39 +187,39 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          ContainsConstraint cc5 = new ContainsConstraint(qr5, ConstraintOp.CONTAINS, qcMotif);
          cs.addConstraint(cc5);
 
-         SimpleConstraint sc = 
+         SimpleConstraint sc =
              new SimpleConstraint(qfDataSet, ConstraintOp.EQUALS, new QueryValue("Tiffin"));
          cs.addConstraint(sc);
 
          subQ.setConstraint(cs);
-     
+
          Query q = new Query();
          q.addFrom(subQ);
-         
+
          QueryFunction geneCount = new QueryFunction();
-         
+
          QueryField qfMotif = new QueryField(subQ, qfId);
-         
+
          q.addToSelect(qfMotif);
          q.addToSelect(geneCount);
-         if (useBag) { 
+         if (useBag) {
              q.addToSelect(qfMotif);
          }
-         
-         q.addToGroupBy(qfMotif);  
-         
+
+         q.addToGroupBy(qfMotif);
+
          return q;
      }
-     
+
      /**
       * @return if the widget should have an external link, where it should go to
       */
      public String getExternalLink() {
          return externalLink;
      }
-     
+
      /**
-      * 
+      *
       * @return the string to append to the end of external link
       */
      public String getAppendage() {
