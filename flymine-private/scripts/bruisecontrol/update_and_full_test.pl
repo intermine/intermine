@@ -17,6 +17,8 @@ if (@ARGV > 0) {
   }
 }
 
+$ENV{ANT_OPTS} = '-XX:MaxPermSize=200M -Xmx800M -server -XX:+UseParallelGC';
+
 # make sure files and directories are readable by all
 umask 0002;
 
