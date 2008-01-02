@@ -5,4 +5,8 @@
         <file-match-pattern match-pattern=".*build/" include-pattern="false"/>
         <file-match-pattern match-pattern=".*Test\.java$" include-pattern="false"/>
     </fileset>
+    <filter name="FileTypesFilter" enabled="true">
+        <filter-data value="properties"/>
+        <filter-data value="java"/>
+    </filter>
 </fileset-config>
