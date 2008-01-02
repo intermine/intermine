@@ -41,7 +41,7 @@ my $ANT_COMMAND="ant -v -lib /software/noarch/junit/";
 my $JUNIT_FAIL_FILE_NAME = "/tmp/bc_$$.junit_failures";
 my $BRUISER_EMAIL = 'bruiser@flymine.org';
 
-print "--------------------------------------------------------------------------\n"
+print "--------------------------------------------------------------------------\n";
 print "Trying new build\n";
 
 # -------------------------------------------------------------------------- #
