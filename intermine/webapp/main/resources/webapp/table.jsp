@@ -394,7 +394,7 @@
               <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
               <input type="hidden" name="table" value="${param.table}"/>
               <html:submit property="saveNewBag">
-                <fmt:message key="button.save"/>
+                                    <fmt:message key="results.saveButton.selected"/>
               </html:submit>
             </li>
             <c:if test="${!empty PROFILE.savedBags}">
@@ -408,7 +408,7 @@
                   </c:forEach>
                 </html:select>
                 <html:submit property="addToExistingBag">
-                  <fmt:message key="button.add"/>
+                  <fmt:message key="results.addButton.selected"/>
                 </html:submit>
               </li>
             </c:if>
