@@ -158,6 +158,10 @@ print "BLAME = @blame\n";
 
 mkpath ($ARCHIVE_TO, 1, 0775);
 
+unlink "$ARCHIVED_DIR/latest";
+symlink $ARCHIVE_TO, "$ARCHIVED_DIR/latest" 
+  or die "can't create symlink to $ARCHIVED_DIR/latest: $!\n";
+
 my $ANT_LOG_NAME = "$ARCHIVE_TO/ant_log.txt";
 open my $ant_log, '>', $ANT_LOG_NAME or die "can't open log file ($ANT_LOG_NAME): $!\n";
 
