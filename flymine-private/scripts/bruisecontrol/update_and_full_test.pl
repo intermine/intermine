@@ -331,8 +331,9 @@ if (-f "$BUILD_PROJ/build/test/results/index.html") {
 
 my $testmodel_results_dir = "$BUILD_PROJ/../../testmodel/webapp/test/build/test/results";
 if (-f "$testmodel_results_dir/index.html") {
-  mkpath "$ARCHIVE_TO/junit_testmodel", 1, 0775 or die "can't mkpath $ARCHIVE_TO/junit_testmodel: $!\n";
-  system "cp -r $testmodel_results_dir/* $ARCHIVE_TO/junit_testmodel";
+  mkpath "$ARCHIVE_TO/junit_testmodel_webapp", 1, 0775 
+    or die "can't mkpath $ARCHIVE_TO/junit_testmodel_webapp: $!\n";
+  system "cp -r $testmodel_results_dir/* $ARCHIVE_TO/junit_testmodel_webapp";
 } else {
   print "There don't seem to be any testmodel results\n";
 }
@@ -379,9 +380,12 @@ To: $recipients
 From: Bruise Control <$BRUISER_EMAIL>
 Subject: $subject
 
-JUnit results: $URL_PREFIX/$TIME_STAMP/junit/
-               $URL_PREFIX/$TIME_STAMP/junit_testmodel/
-               $URL_PREFIX/$TIME_STAMP/junit_bio/\n\n
+JUnit results:
+
+ intermine core:   $URL_PREFIX/$TIME_STAMP/junit/
+ intermine webapp: $URL_PREFIX/$TIME_STAMP/junit_testmodel_webapp/
+ intermine bio:    $URL_PREFIX/$TIME_STAMP/junit_bio/
+
 Checkstyle results: $URL_PREFIX/$TIME_STAMP/checkstyle/
 Ant output: $URL_PREFIX/$TIME_STAMP/ant_log.txt
 Last update:
@@ -406,7 +410,7 @@ Test differences:
 __DIFF_HEADER__
 
 {
-  open my $diff_pipe, "diff -c $PREVIOUS_JUNIT_FAIL_FILE $JUNIT_FAIL_FILE_NAME|"
+  open my $diff_pipe, "diff -u $PREVIOUS_JUNIT_FAIL_FILE $JUNIT_FAIL_FILE_NAME|"
     or die "can't open diff pipe: $!\n";
 
   while (my $diff_line = <$diff_pipe>) {
