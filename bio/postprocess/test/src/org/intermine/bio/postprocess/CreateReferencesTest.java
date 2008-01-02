@@ -223,15 +223,20 @@ public class CreateReferencesTest extends TestCase {
         ThreePrimeUTR storedUTR1 =
             (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
         storedUTR1.setIdentifier("utr1-threePrimeUTR");
+        storedUTR1.setmRNA(storedMRNA1);
         FivePrimeUTR storedUTR2 =
             (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
         storedUTR2.setIdentifier("utr2-fivePrimeUTR");
+        storedUTR2.setmRNA(storedMRNA1);
+
         ThreePrimeUTR storedUTR3  =
             (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
         storedUTR3.setIdentifier("utr3-threePrimeUTR");
+        storedUTR3.setmRNA(storedMRNA2);
         FivePrimeUTR storedUTR4 =
             (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
         storedUTR4.setIdentifier("utr4-fivePrimeUTR");
+        storedUTR4.setmRNA(storedMRNA2);
 
         ThreePrimeUTR stored3UTR =
             (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
@@ -241,13 +246,6 @@ public class CreateReferencesTest extends TestCase {
             (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
         stored5UTR.setIdentifier("utr2-fivePrimeUTR-orig");
         storedMRNA1.setFivePrimeUTR(stored5UTR);
-
-        storedMRNA1.setuTRs(new HashSet(Arrays.asList(new Object[] {
-                                                          storedUTR1, storedUTR2
-                                                      })));
-        storedMRNA2.setuTRs(new HashSet(Arrays.asList(new Object[] {
-                                                          storedUTR3, storedUTR4
-                                                      })));
 
         Set toStore = new HashSet(Arrays.asList(new Object[] {
                                                     storedMRNA1,
