@@ -30,7 +30,6 @@ import java.util.Stack;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.bio.ontology.DagParser;
 import org.intermine.bio.ontology.OboParser;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -164,9 +163,7 @@ public class GoConverter extends FileConverter
             throw new BuildException("ontology must be specified");
         }
         try {
-            if (ontology.getName().endsWith(".ontology") || ontology.getName().endsWith(".dag")) {
-                termIdNameMap = new DagParser().getTermIdNameMap(new FileReader(ontology));
-            } else if (ontology.getName().endsWith(".obo")) {
+            if (ontology.getName().endsWith(".obo")) {
                 oboParser = new OboParser();
                 termIdNameMap = oboParser.getTermIdNameMap(new FileReader(ontology));
             } else {
