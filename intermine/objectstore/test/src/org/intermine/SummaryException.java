@@ -19,7 +19,7 @@ package org.intermine;
 public class SummaryException extends Exception
 {
     private String summary = "";
-    
+
     public SummaryException() {
         super();
     }
@@ -27,7 +27,7 @@ public class SummaryException extends Exception
     public SummaryException(String msg) {
         super(msg);
     }
-    
+
     public SummaryException(String msg, String summary) {
         super(msg);
         this.summary = summary;

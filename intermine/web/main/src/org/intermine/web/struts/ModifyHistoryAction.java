@@ -31,7 +31,7 @@ import org.intermine.web.logic.session.SessionMethods;
 /**
  * Actions for links on the history page. There are bag and query specific
  * subclasses.
- * 
+ *
  * @author Thomas Riley
  */
 public abstract class ModifyHistoryAction extends InterMineAction
@@ -60,7 +60,7 @@ public abstract class ModifyHistoryAction extends InterMineAction
             return null;
         }
     }
-    
+
     /**
      * Rename a bag or query.
      * @param mapping The ActionMapping used to select this instance
@@ -84,14 +84,14 @@ public abstract class ModifyHistoryAction extends InterMineAction
         ActionForward historyForward = mapping.findForward("history");
         SavedQuery sq;
 
-        if (name.equals(newName)) { 
-            return historyForward; 
-        } 
+        if (name.equals(newName)) {
+            return historyForward;
+        }
         if (StringUtils.isEmpty(newName)) {
             recordError(new ActionMessage("errors.required", "New name"), request);
             return editForward(historyForward, type, name);
         }
-        
+
         if (type.equals("history")) {
             if (profile.getHistory().get(newName) != null) {
                 recordError(new ActionMessage("errors.modifyQuery.queryExists", newName), request);
@@ -125,7 +125,7 @@ public abstract class ModifyHistoryAction extends InterMineAction
 
         return mapping.findForward("history");
     }
-    
+
     /**
      * Construct an ActionForward that redirects the user to edit particular item
      * on the history page.

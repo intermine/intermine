@@ -25,7 +25,6 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.model.InterMineObject;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
@@ -47,7 +46,7 @@ public class Path
     private boolean containsCollections = false;
     private Map<String, String> subClassConstraintPaths;
     private List<ClassDescriptor> elementClassDescriptors;
-    
+
     /**
      * Create a new Path object. The Path must start with a class name.
      * @param model the Model used to check ClassDescriptors and FieldDescriptors
@@ -69,9 +68,9 @@ public class Path
             throw new IllegalArgumentException("path argument is blank");
         }
         subClassConstraintPaths = new HashMap<String, String>();
-        
+
         Pattern p = Pattern.compile("([^\\[\\]]+)\\[(.*)\\]");
-        
+
         List<String> newPathBits = new ArrayList<String>();
         String[] bits = StringUtil.split(path, ".");
         for (int i = 0; i < bits.length; i++) {
@@ -110,7 +109,7 @@ public class Path
         this.path = stringPath;
         this.subClassConstraintPaths = new HashMap<String, String>(constraintMap);
         if (path.indexOf("[") != -1) {
-            throw new IllegalArgumentException("path: " + stringPath 
+            throw new IllegalArgumentException("path: " + stringPath
                                                + " contains illegal character '['");
         }
         initialise();
@@ -129,7 +128,7 @@ public class Path
             throw new PathError("Unable to resolve path '" + path + "': class '" + clsName
                                 + "' not found in model '" + model.getName() + "'", path);
         }
-        
+
         StringBuffer currentPath = new StringBuffer(parts[0]);
 
         for (int i = 1; i < parts.length; i++) {
@@ -160,7 +159,7 @@ public class Path
                                         + model.getName() + "'", path);
                 }
             } else {
-                this.endFld = fld; 
+                this.endFld = fld;
             }
             if (!fld.isAttribute()) {
                 String constrainedClassName =
@@ -225,7 +224,7 @@ public class Path
     }
 
     /**
-     * Return the ClassDescriptor of the first element in the path.  eg. for Department.name, 
+     * Return the ClassDescriptor of the first element in the path.  eg. for Department.name,
      * return the Department descriptor.
      * @return the starting ClassDescriptor
      */
@@ -242,7 +241,7 @@ public class Path
     public FieldDescriptor getEndFieldDescriptor() {
         return endFld;
     }
-    
+
     /**
      * If the last element in the path is a reference or collection return the ClassDescriptor that
      * the reference or collection references.  If the path has one element (eg. "Employee"),
@@ -253,7 +252,7 @@ public class Path
         if (getEndFieldDescriptor() == null) {
             return getStartClassDescriptor();
         }
-        
+
         if (!getEndFieldDescriptor().isAttribute()) {
             if (getEndFieldDescriptor().isCollection()) {
                 CollectionDescriptor collDesc = (CollectionDescriptor) getEndFieldDescriptor();
@@ -264,7 +263,7 @@ public class Path
                 return refDesc.getReferencedClassDescriptor();
             }
         }
-        
+
         return null;
     }
 
@@ -281,7 +280,7 @@ public class Path
             return new Path(model, pathString.substring(0, pathString.lastIndexOf('.')));
         }
     }
-    
+
     /**
      * If the last element in the path is an attribute, return the Class of the attribute,
      * otherwise return null
@@ -311,9 +310,9 @@ public class Path
         List<ClassDescriptor> l = getElementClassDescriptors();
         return l.get(l.size() - 1);
     }
-    
+
     /**
-     * Return the object at the end of the pat, starting from the given object. 
+     * Return the object at the end of the pat, starting from the given object.
      * @param o the start object
      * @return the attribute, object or collection at the end of the path
      */
@@ -328,7 +327,7 @@ public class Path
         Iterator<FieldDescriptor> iter = elements.iterator();
 
         Object current = o;
-        
+
         while (iter.hasNext()) {
             FieldDescriptor element = iter.next();
             String fieldName = element.getName();
@@ -342,10 +341,10 @@ public class Path
                                            + "field \"" + fieldName + "\" in object: " + o, e);
             }
         }
-        
+
         return current;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -374,11 +373,11 @@ public class Path
             FieldDescriptor fieldDescriptor = elements.get(i);
             returnStringBuffer.append(fieldDescriptor.getName());
             simplePath.append(fieldDescriptor.getName());
-            String constraintClassName = 
+            String constraintClassName =
                 subClassConstraintPaths.get(simplePath.toString());
             if (constraintClassName != null
                 && (fieldDescriptor.isReference() || fieldDescriptor.isCollection())) {
-                String referencedClassName = 
+                String referencedClassName =
                     ((ReferenceDescriptor) fieldDescriptor).getReferencedClassName();
                 if (!TypeUtil.unqualifiedName(referencedClassName).equals(constraintClassName)) {
                     returnStringBuffer.append('[');
@@ -414,7 +413,7 @@ public class Path
     public List<ClassDescriptor> getElementClassDescriptors() {
         return elementClassDescriptors;
     }
-    
+
     /**
      * Returns a representation of the Path as a String, with no class constraint markers.  eg.
      * "Department.employees.seniority"

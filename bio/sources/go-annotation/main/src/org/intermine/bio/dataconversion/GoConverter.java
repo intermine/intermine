@@ -66,7 +66,7 @@ public class GoConverter extends FileConverter
     protected Map holderMap = new LinkedHashMap();
     private OboParser oboParser = null;
     protected Set productIds = new HashSet();
-    
+
     /*Some Debugging vars*/
     private static final String STORE_ONE = "store_1";
     //private static final String STORE_TWO = "store_2";
@@ -201,12 +201,12 @@ public class GoConverter extends FileConverter
 
             // parse the line into the different fields
             String productId = array[1];
-            
-            
+
+
             if (lastProductId != null && !lastProductId.equals(productId)) {
                 // we have moved onto the next product, store the previous one
                 storeGoAnnotation();
-                
+
                 if (productIds.contains(productId)) {
                     throw new IllegalArgumentException("Product was found twice in file but not in "
                                                + "consecutive entries: " + productId + " in file: "
@@ -214,12 +214,12 @@ public class GoConverter extends FileConverter
                                                + " we assume the file is ordered");
                 }
                 productIds.add(productId);
-                
+
                 // Free up some memory now we have finished this product
                 holderMap = new LinkedHashMap();
                 goAnnoItems = new LinkedHashMap();
             }
-            
+
             lastProductId = productId;
             String goId = array[4];
             String qualifier = array[3];
@@ -259,7 +259,7 @@ public class GoConverter extends FileConverter
                         newProductWrapper, newGoTerm, array[7], newOrganism);
 
                 holderMap.put(key, newPlaceHolder);
-            
+
 
             } else {
 
@@ -279,15 +279,15 @@ public class GoConverter extends FileConverter
                         goEvidenceColl = new ReferenceList("goEvidenceCodes", new ArrayList());
                     }
                     goEvidenceColl.addRefId(evidence.getIdentifier());
-                }               
+                }
             }
         }
-     
+
         // store the final product
         storeGoAnnotation();
     }
 
-        
+
     // Store GoAnnotation items, need to keep products (genes/proteins) until the end.
     private void storeGoAnnotation() throws ObjectStoreException {
 
@@ -436,7 +436,7 @@ public class GoConverter extends FileConverter
                                                                           currentGoItem);
         } else {
             LOG.debug("Skipping setting go & allGo annotation collection for a:"
-                      + placeHolder.getGeneProductWrapper().getItem().getClassName() 
+                      + placeHolder.getGeneProductWrapper().getItem().getClassName()
                       + " with ident:"
                       + placeHolder.getGeneProductWrapper().getItem().getIdentifier());
         }

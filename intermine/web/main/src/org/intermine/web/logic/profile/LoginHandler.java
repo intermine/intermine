@@ -21,7 +21,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 
 import javax.servlet.ServletContext;
@@ -33,14 +32,14 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Xavier Watkins
- * 
+ *
  */
 public abstract class LoginHandler extends InterMineAction
 {
     /**
      * Abstract class containing the methods for login in and copying current
      * history, bags,... into profile
-     * 
+     *
      * @param servletContext
      *            The servlet context
      * @param request

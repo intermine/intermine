@@ -95,26 +95,26 @@ public class ObjectTrailController extends TilesAction
                  */
                 String resultsTableId = breadcrumbs[1];
                 String prepend = "";
-                
-                //(String label, String trail, int id)                
+
+                //(String label, String trail, int id)
                 if (resultsTableId.startsWith("itt")) {
                     // inline template
                     String table = breadcrumbs[1] + "." + breadcrumbs[2] + "." + breadcrumbs[3];
-                    TrailElement e 
+                    TrailElement e
                         = new TrailElement(table, elementTrail, "results");
                     elements.add(e);
                 } else {
-                    /* results.do?table=col0&trail=|results.col0                    
+                    /* results.do?table=col0&trail=|results.col0
                      * results.do?table=results.1636&trail=|results.1636
                      * sometimes you need to re-add "results." to the tablename in the trail
                      */
                     try {
                         Integer.parseInt(resultsTableId);
                         prepend = "results.";
-                    } catch (Exception e)  { 
+                    } catch (Exception e)  {
                         // nothing to do
-                    }                    
-                    TrailElement e 
+                    }
+                    TrailElement e
                         = new TrailElement(prepend + resultsTableId, elementTrail, "results");
                     elements.add(e);
                 }

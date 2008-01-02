@@ -78,29 +78,29 @@ public class BagDetailsController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context, 
+    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
-    
+
             HttpSession session = request.getSession();
             ServletContext servletContext = session.getServletContext();
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-    
+
             String bagName = request.getParameter("bagName");
             Boolean myBag = Boolean.FALSE;
             if (bagName == null) {
                 bagName = request.getParameter("name");
             }
-            
+
             InterMineBag imBag = null;
             String scope = request.getParameter("scope");
             if (scope == null) {
                 scope = TemplateHelper.ALL_TEMPLATE;
             }
-            
+
             if (scope.equals(TemplateHelper.USER_TEMPLATE)
                 || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
                 Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -109,36 +109,36 @@ public class BagDetailsController extends TilesAction
                     myBag = Boolean.TRUE;
                 }
             }
-            
+
             if (scope.equals(TemplateHelper.GLOBAL_TEMPLATE)
                 || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
                 // scope == all or global
                 SearchRepository searchRepository =
                     SearchRepository.getGlobalSearchRepository(servletContext);
-                Map<String, ? extends WebSearchable> publicBagMap = 
+                Map<String, ? extends WebSearchable> publicBagMap =
                     searchRepository.getWebSearchableMap(TagTypes.BAG);
                 if (publicBagMap.get(bagName) != null) {
                     imBag = (InterMineBag) publicBagMap.get(bagName);
                 }
             }
-            
+
             /* forward to bag page if this is an invalid bag */
             if (imBag == null) {
-                return null; 
+                return null;
             }
-    
+
             Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
             Model model = os.getModel();
-            Type type = (Type) webConfig.getTypes().get(model.getPackageName() 
+            Type type = (Type) webConfig.getTypes().get(model.getPackageName()
                                                         + "." + imBag.getType());
-    
+
             Set graphDisplayers = type.getGraphDisplayers();
             ArrayList<String[]> graphDisplayerArray = new ArrayList<String[]>();
             for (Iterator iter = graphDisplayers.iterator(); iter.hasNext();) {
-    
+
                 try {
-    
+
                     GraphDisplayer graphDisplayer = (GraphDisplayer) iter.next();
                     String dataSetLoader = graphDisplayer.getDataSetLoader();
                     Class clazz = TypeUtil.instantiate(dataSetLoader);
@@ -146,28 +146,28 @@ public class BagDetailsController extends TilesAction
                                                                         {
                         InterMineBag.class, ObjectStore.class
                                                                         });
-    
+
                     DataSetLdr dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
                                                                                        {
                         imBag, os
                                                                                        });
-    
+
                     //TODO use caching here
                     if (!dataSetLdr.getDataSets().isEmpty()) {
-                        for (Iterator it 
+                        for (Iterator it
                                   = dataSetLdr.getDataSets().keySet().iterator(); it.hasNext();) {
-                            String key = (String) it.next();            
-                            GraphDataSet graphDataSet 
+                            String key = (String) it.next();
+                            GraphDataSet graphDataSet
                                                 = (GraphDataSet) dataSetLdr.getDataSets().get(key);
                             /* stacked bar chart */
                             if (graphDisplayer.getGraphType().equals("StackedBarChart")) {
-                                setStackedBarGraph(session, graphDisplayer, graphDataSet, 
+                                setStackedBarGraph(session, graphDisplayer, graphDataSet,
                                                    graphDisplayerArray, imBag);
                             /* regular bar chart */
                             } else {
-                                setBarGraph(os, session, graphDisplayer, graphDataSet, 
+                                setBarGraph(os, session, graphDisplayer, graphDataSet,
                                             graphDisplayerArray, imBag, key);
-                            } 
+                            }
                         }
                     }
                 } catch  (Exception e) {
@@ -176,8 +176,8 @@ public class BagDetailsController extends TilesAction
                     //throw new Exception(e);
                 }
             }
-    
-            ArrayList<BagTableWidgetLoader> tableDisplayerArray 
+
+            ArrayList<BagTableWidgetLoader> tableDisplayerArray
                                                            = new ArrayList<BagTableWidgetLoader>();
             Set bagTabledisplayers = type.getBagTableDisplayers();
             for (Iterator iter = bagTabledisplayers.iterator(); iter.hasNext();) {
@@ -194,22 +194,22 @@ public class BagDetailsController extends TilesAction
                                                  imBag, os, webConfig, model,
                                                  classKeys, fields, urlGen);
                     tableDisplayerArray.add(bagWidgLdr);
-    
+
                 } catch  (Exception e) {
                     // TODO do something clever
                     //return null;
                     //throw new Exception();
                 }
             }
-    
-            ArrayList<EnrichmentWidgetDisplayer> enrichmentWidgetDisplayerArray 
+
+            ArrayList<EnrichmentWidgetDisplayer> enrichmentWidgetDisplayerArray
             = new ArrayList<EnrichmentWidgetDisplayer>();
             Set enrichmentWidgetDisplayers = type.getEnrichmentWidgetDisplayers();
             for (Iterator iter = enrichmentWidgetDisplayers.iterator(); iter.hasNext();) {
                 EnrichmentWidgetDisplayer d = (EnrichmentWidgetDisplayer) iter.next();
                 enrichmentWidgetDisplayerArray.add(d);
             }
-            
+
             Query q = new Query();
             QueryClass qc = new QueryClass(InterMineObject.class);
             q.addFrom(qc);
@@ -217,14 +217,14 @@ public class BagDetailsController extends TilesAction
             q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, imBag.getOsb()));
             q.setDistinct(false);
             SingletonResults res = os.executeSingleton(q);
-    
+
             WebPathCollection webPathCollection = new WebPathCollection(os, new Path(model,
                                                                                  imBag.getType()),
                                                                     res, model, webConfig,
                                                                     classKeys);
 
             int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
-    
+
             PagedTable pagedColl = new PagedTable(webPathCollection, pageSize);
             request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);
@@ -233,15 +233,15 @@ public class BagDetailsController extends TilesAction
             request.setAttribute("graphDisplayerArray", graphDisplayerArray);
             request.setAttribute("tableDisplayerArray", tableDisplayerArray);
             request.setAttribute("enrichmentWidgetDisplayerArray", enrichmentWidgetDisplayerArray);
-            
+
             return null;
     }
 
 
     private void setBarGraph(@SuppressWarnings("unused") ObjectStore os,
-                             HttpSession session, 
-                             GraphDisplayer graphDisplayer, 
-                             GraphDataSet graphDataSet,                          
+                             HttpSession session,
+                             GraphDisplayer graphDisplayer,
+                             GraphDataSet graphDataSet,
                              ArrayList<String[]> graphDisplayerArray,
                              InterMineBag bag,
                              String subtitle) {
@@ -253,17 +253,17 @@ public class BagDetailsController extends TilesAction
                 graphDisplayer.getTitle(),          // chart title
                 graphDisplayer.getDomainLabel(),    // domain axis label
                 graphDisplayer.getRangeLabel(),     // range axis label
-                graphDataSet.getDataSet(),            // data 
-                PlotOrientation.VERTICAL, 
-                true, 
-                true,                               // tooltips? 
-                false                               // URLs? 
-        );    
-       
+                graphDataSet.getDataSet(),            // data
+                PlotOrientation.VERTICAL,
+                true,
+                true,                               // tooltips?
+                false                               // URLs?
+        );
+
         TextTitle subtitleText = new TextTitle(subtitle);
         subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
         chart.addSubtitle(subtitleText);
-                
+
         plot = chart.getCategoryPlot();
 
         BarRenderer renderer = new BarRenderer();
@@ -274,7 +274,7 @@ public class BagDetailsController extends TilesAction
         // set series 0 to have URLgenerator specified in config file
         // set series 1 to have no URL generator.
         try {
-            Class clazz2 = TypeUtil.instantiate(graphDisplayer.getUrlGen());                    
+            Class clazz2 = TypeUtil.instantiate(graphDisplayer.getUrlGen());
             Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
                                                                             {
                 String.class
@@ -284,19 +284,19 @@ public class BagDetailsController extends TilesAction
                                     {
                 bag.getName()
                                     });
-            
+
         } catch (Exception err) {
             err.printStackTrace();
         }
-        renderer.setItemURLGenerator(null);    
+        renderer.setItemURLGenerator(null);
         renderer.setSeriesItemURLGenerator(0, categoryUrlGen);
         renderer.setSeriesItemURLGenerator(1, null);
-        
+
         // integers only
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-                       
-        bagGraphWidget = new BagGraphWidget(session, 
+
+        bagGraphWidget = new BagGraphWidget(session,
                          graphDataSet.getCategoryArray(),
                          bag.getName(),
                          graphDisplayer.getToolTipGen(),
@@ -307,48 +307,48 @@ public class BagDetailsController extends TilesAction
 
         graphDisplayerArray.add(new String[] {
             bagGraphWidget.getHTML(), graphDisplayer.getTitle(), graphDisplayer.getDescription()
-        });        
+        });
     }
-    
-    private void setStackedBarGraph(HttpSession session, 
-                                    GraphDisplayer graphDisplayer, 
-                                    GraphDataSet graphDataSet,                                  
+
+    private void setStackedBarGraph(HttpSession session,
+                                    GraphDisplayer graphDisplayer,
+                                    GraphDataSet graphDataSet,
                                     ArrayList<String[]> graphDisplayerArray,
                                     InterMineBag bag) {
-        
+
         JFreeChart chart = null;
         CategoryPlot plot = null;
         BagGraphWidget bagGraphWidget = null;
-        
+
         chart = ChartFactory.createStackedBarChart(
                 graphDisplayer.getTitle(),       // chart title
                 graphDisplayer.getDomainLabel(), // domain axis label
                 graphDisplayer.getRangeLabel(),  // range axis label
-                graphDataSet.getDataSet(),         // data 
-                PlotOrientation.VERTICAL, 
-                true, 
-                true,                            // tooltips? 
-                false                            // URLs? 
-        );    
+                graphDataSet.getDataSet(),         // data
+                PlotOrientation.VERTICAL,
+                true,
+                true,                            // tooltips?
+                false                            // URLs?
+        );
         plot = chart.getCategoryPlot();
         StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
-        
+
         // integers only
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        
+
         bagGraphWidget = new BagGraphWidget(session,
                          graphDataSet.getCategoryArray(),
-                         bag.getName(), 
+                         bag.getName(),
                          graphDisplayer.getToolTipGen(),
-                         graphDisplayer.getUrlGen(), 
+                         graphDisplayer.getUrlGen(),
                          chart,
                          plot,
                          renderer);
-        
+
         graphDisplayerArray.add(new String[] {
             bagGraphWidget.getHTML(), graphDisplayer.getTitle(), graphDisplayer.getDescription()
-        });  
+        });
     }
 }
 

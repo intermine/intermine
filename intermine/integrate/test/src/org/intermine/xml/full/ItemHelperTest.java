@@ -23,12 +23,12 @@ public class ItemHelperTest extends TestCase
 {
     Item item;
     org.intermine.model.fulldata.Item dbItem;
-    
+
     ReferenceList referenceList;
     org.intermine.model.fulldata.ReferenceList dbReferenceList;
 
     ObjectStore os;
-    
+
     public void setUp() throws Exception {
         os = ObjectStoreFactory.getObjectStore("os.unittest");
 
@@ -83,7 +83,7 @@ public class ItemHelperTest extends TestCase
         referenceList = new ReferenceList();
         referenceList.setName("employees");
         referenceList.setRefIds(Arrays.asList("3", "4"));
-        
+
         dbReferenceList = new org.intermine.model.fulldata.ReferenceList();
         dbReferenceList.setName("employees");
         dbReferenceList.setRefIds("3 4");
@@ -93,12 +93,12 @@ public class ItemHelperTest extends TestCase
 
     public void testConvertFromDbItem() throws Exception {
         assertEquals(item, ItemHelper.convert(dbItem));
-    } 
+    }
 
     public void testConvertToDbItem() throws Exception {
         assertEquals(item, ItemHelper.convert(ItemHelper.convert(item)));
     }
-    
+
     public void testConvertReferenceList() throws Exception {
         org.intermine.model.fulldata.ReferenceList resRefList = ItemHelper.convert(referenceList);
         resRefList.setId(2002);

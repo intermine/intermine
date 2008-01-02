@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class ConstraintOp
 {
     private static List values = new ArrayList();
-    private final String name; 
+    private final String name;
 
     /** Require that the two arguments are equal */
     public static final ConstraintOp EQUALS = new ConstraintOp("=");
@@ -57,8 +57,8 @@ public class ConstraintOp
     public static final ConstraintOp EXISTS = CONTAINS;
     /** Subquery does not exist */
     public static final ConstraintOp DOES_NOT_EXIST = DOES_NOT_CONTAIN;
-    
-    
+
+
     /** Combine constraints with the AND operation */
     public static final ConstraintOp AND = new ConstraintOp("AND");
     /** Combine constraints with the OR operation */
@@ -71,11 +71,11 @@ public class ConstraintOp
     /** Special operation indicating a bag upload step should be used, for the webapp only. */
     public static final ConstraintOp LOOKUP = new ConstraintOp("LOOKUP");
 
-    private ConstraintOp(String name) { 
+    private ConstraintOp(String name) {
         this.name = name;
         values.add(this);
-    } 
-    
+    }
+
     /**
      * Get the String representation of this ConstraintOp
      * @return a String
@@ -83,7 +83,7 @@ public class ConstraintOp
     public String toString() {
         return name;
     }
-    
+
     /**
      * Get an index for this ConstraintOp
      * (Only for use in webapp)

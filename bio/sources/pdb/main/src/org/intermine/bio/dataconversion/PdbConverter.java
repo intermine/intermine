@@ -38,7 +38,7 @@ public class PdbConverter extends FileConverter
     private String dataLocation;
     protected static final String ENDL = System.getProperty("line.separator");
     private Item dataSource, dataSet;
-    
+
     /**
      * @param writer
      */
@@ -51,7 +51,7 @@ public class PdbConverter extends FileConverter
         dataSet.setAttribute("url", "http://www.rcsb.org/pdb/");
         store(dataSet);
     }
-    
+
     /**
      * @see FileConverter#process(Reader)
      */
@@ -59,21 +59,21 @@ public class PdbConverter extends FileConverter
         File currentFile = getCurrentFile();
         if (currentFile.getName().endsWith(".pdb")) {
             Item proteinStructure = createItem("ProteinStructure");
-           
+
             PDBFileParser pdbfileparser = new PDBFileParser();
             PdbBufferedReader pdbBuffReader = new PdbBufferedReader(reader);
             Structure structure = pdbfileparser.parsePDBFile(pdbBuffReader);
             String atm = structure.toPDB();
-            
+
             proteinStructure.setAttribute("identifier", (String) structure.getHeader().get("idCode"));
-    
+
             List<String> proteins = new ArrayList<String>();
             List<String> dbrefs = pdbBuffReader.getDbrefs();
             for(String accnum: dbrefs) {
                 Item protein = getAndStoreItemOnce("Protein", "primaryAccession", accnum);
                 proteins.add(protein.getIdentifier());
             }
-            
+
             proteinStructure.setAttribute("title", (String) structure.getHeader().get("title"));
             proteinStructure.setAttribute("technique", (String) structure.getHeader().get("technique"));
             proteinStructure.setAttribute("classification", (String) structure.getHeader().get("classification"));
@@ -81,15 +81,15 @@ public class PdbConverter extends FileConverter
             if (resolution instanceof Float) {
                 proteinStructure.setAttribute("resolution", Float.toString((Float) structure.getHeader().get("resolution")));
             }
-            
+
             proteinStructure.setAttribute("atm", atm);
             proteinStructure.setCollection("proteins", proteins);
             proteinStructure.addToCollection("evidence", dataSet);
-            
+
             store(proteinStructure);
         }
     }
-    
+
     /**
      * Pick up the data location from the ant, the translator needs to open some more files.
      * @param srcdatadir location of the source data
@@ -97,18 +97,18 @@ public class PdbConverter extends FileConverter
     public void setSrcDataDir(String srcdatadir) {
         this.dataLocation = srcdatadir;
     }
-    
+
     /**
      * BioJava doesn't support getting DBREF so
      * we get it as the file is read.
-     * 
+     *
      * @author Xavier Watkins
      *
      */
     public class PdbBufferedReader extends BufferedReader{
 
         private List<String> dbrefs = new ArrayList<String>();
-        
+
         public PdbBufferedReader(Reader reader) {
             super(reader);
         }
@@ -127,13 +127,13 @@ public class PdbConverter extends FileConverter
             }
             return line;
         }
-        
+
         public List getDbrefs() {
             return dbrefs;
         }
-        
-        
+
+
     }
 
-    
+
 }

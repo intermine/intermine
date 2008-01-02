@@ -39,7 +39,7 @@ public class XmlDataLoaderTask extends Task
     protected String sourceName;
     protected boolean ignoreDuplicates = false;
     protected String file, xmlRes;
-    
+
     /**
      * Set the IntegrationWriter.
      *
@@ -56,7 +56,7 @@ public class XmlDataLoaderTask extends Task
     public void addFileSet(FileSet fileSet) {
         this.fileSet = fileSet;
     }
-    
+
     /**
      * Set a file name to load from
      * @param file name of file to load
@@ -64,7 +64,7 @@ public class XmlDataLoaderTask extends Task
     public void setFile(String file) {
         this.file = file;
     }
-    
+
     /**
      * Set XML resource name (to load data from classloader).
      *
@@ -73,7 +73,7 @@ public class XmlDataLoaderTask extends Task
     public void setXmlResource(String xmlRes) {
         this.xmlRes = xmlRes;
     }
-    
+
     /**
      * Set the source name, as used by primary key priority config.
      *
@@ -115,12 +115,12 @@ public class XmlDataLoaderTask extends Task
             if (xmlRes != null) {
                 InputStream is = getClass().getClassLoader().getResourceAsStream(xmlRes);
                 if (is == null) {
-                    throw new BuildException("Failed to find resource '" + xmlRes 
+                    throw new BuildException("Failed to find resource '" + xmlRes
                                              + "' on classpath.");
                 }
                 loader.processXml(is,
                                   iw.getMainSource(sourceName),
-                                  iw.getSkeletonSource(sourceName));  
+                                  iw.getSkeletonSource(sourceName));
                 loader.close();
             } else {
 
@@ -141,11 +141,11 @@ public class XmlDataLoaderTask extends Task
                 }
                 Iterator<File> fileIter = files.iterator();
                 while (fileIter.hasNext()) {
-                    toRead = fileIter.next();              
+                    toRead = fileIter.next();
                     System.out .println("Processing file " + toRead.toString());
                     loader.processXml(new FileInputStream(toRead),
                                       iw.getMainSource(sourceName),
-                                      iw.getSkeletonSource(sourceName)); 
+                                      iw.getSkeletonSource(sourceName));
                 }
                 loader.close();
             }

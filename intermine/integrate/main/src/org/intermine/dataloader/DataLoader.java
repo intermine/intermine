@@ -21,7 +21,7 @@ package org.intermine.dataloader;
 public class DataLoader
 {
     private IntegrationWriter iw;
-    
+
     /**
      * No-arg constructor for testing purposes
      */
@@ -31,7 +31,7 @@ public class DataLoader
 
     /**
      * Construct a DataLoader
-     * 
+     *
      * @param iw an IntegrationWriter to write to
      */
     public DataLoader(IntegrationWriter iw) {

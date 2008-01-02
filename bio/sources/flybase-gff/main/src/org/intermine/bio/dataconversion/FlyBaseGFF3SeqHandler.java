@@ -1,6 +1,6 @@
 package org.intermine.bio.dataconversion;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the

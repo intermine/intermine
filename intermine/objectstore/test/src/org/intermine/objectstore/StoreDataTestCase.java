@@ -25,7 +25,7 @@ import org.intermine.objectstore.query.SingletonResults;
 public abstract class StoreDataTestCase extends SetupDataTestCase
 {
     protected static ObjectStoreWriter storeDataWriter;
-    
+
     public StoreDataTestCase(String arg) {
         super(arg);
     }
@@ -53,9 +53,9 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
         storeDataWriter = null;
     }
 
-    public static void storeData() throws Exception {    	
-    	//checkIsEmpty();
-    	System.out.println("Storing data");
+    public static void storeData() throws Exception {
+        //checkIsEmpty();
+        System.out.println("Storing data");
         if (storeDataWriter == null) {
             throw new NullPointerException("storeDataWriter must be set before trying to store data");
         }
@@ -85,18 +85,18 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
     }
 
     public static void checkIsEmpty() throws Exception {
-    	Query q = new Query();
-    	QueryClass qc = new QueryClass(InterMineObject.class);
-    	q.addToSelect(qc);
-    	q.addFrom(qc);
-    	ObjectStore os = storeDataWriter.getObjectStore();
-    	Results res = os.execute(q);
-    	Iterator resIter = res.iterator();
-    	if (resIter.hasNext()) {
-    		System.out.println("WARNING - database was not empty before storing data");
-    	}
+        Query q = new Query();
+        QueryClass qc = new QueryClass(InterMineObject.class);
+        q.addToSelect(qc);
+        q.addFrom(qc);
+        ObjectStore os = storeDataWriter.getObjectStore();
+        Results res = os.execute(q);
+        Iterator resIter = res.iterator();
+        if (resIter.hasNext()) {
+            System.out.println("WARNING - database was not empty before storing data");
+        }
     }
-    
+
     public static void removeDataFromStore() throws Exception {
         System.out.println("Removing data");
         long start = new Date().getTime();

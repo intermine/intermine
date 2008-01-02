@@ -31,8 +31,8 @@ import org.intermine.xml.full.FullParser;
  */
 public class EntrezPublicationRetrieverTest extends ItemsTestCase
 {
-    
-    
+
+
     public EntrezPublicationRetrieverTest(String arg) {
         super(arg);
     }
@@ -49,7 +49,7 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         eor.setOutputFile(temp.getPath());
 
         eor.setCacheDirName("build/");
-       
+
         eor.execute();
 
         Set expected = readItemSet("EntrezPublicationsRetrieverTest_tgt.xml");

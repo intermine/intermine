@@ -19,7 +19,7 @@ package org.intermine.objectstore.query;
 public class Clob implements QuerySelectable
 {
     private final int clobId;
-    
+
     /**
      * Constructs a new Clob. This method should only be called from an ObjectStore which can
      * provide a suitable valid clobId. Once the Clob has been created, content can be added to it

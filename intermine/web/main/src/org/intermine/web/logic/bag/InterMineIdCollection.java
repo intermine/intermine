@@ -23,13 +23,13 @@ public interface InterMineIdCollection
      * @param id intermine id
      */
     public void addId(int id);
-    
+
     /**
      * Remove an id.
      * @param id an intermine id
      */
     public void removeId(int id);
-    
+
     /**
      * Return a List of InterMineObjects corresponding to the ids in the Collection.
      * @return List of InterMineObjects

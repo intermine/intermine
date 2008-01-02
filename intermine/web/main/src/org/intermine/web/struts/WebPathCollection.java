@@ -231,11 +231,7 @@ public class WebPathCollection extends AbstractList implements WebTable
         if (list instanceof LazyCollection) {
             LazyCollection lazy = (LazyCollection) list;
             try {
-                if (lazy.getInfo().getStatus() == ResultsInfo.SIZE) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return lazy.getInfo().getStatus() != ResultsInfo.SIZE;
             } catch (ObjectStoreException e) {
                 LOG.error("unexpected exception while getting ResultsInfo for collection", e);
                 return false;

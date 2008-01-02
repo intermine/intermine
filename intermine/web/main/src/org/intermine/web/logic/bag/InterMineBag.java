@@ -49,7 +49,7 @@ public class InterMineBag implements WebSearchable
     private final Date dateCreated;
     private ObjectStoreBag osb;
     private ObjectStore os;
-    
+
     /**
      * Constructs a new InterMineIdBag, and saves it in the UserProfile database.
      *
@@ -63,7 +63,7 @@ public class InterMineBag implements WebSearchable
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-                        ObjectStore os, Integer profileId, ObjectStoreWriter uosw) 
+                        ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
       throws ObjectStoreException {
         this.name = name;
         this.type = type;
@@ -219,7 +219,7 @@ public class InterMineBag implements WebSearchable
         this.name = name;
         store(uosw);
     }
-    
+
     /**
      * Return the description of this bag.
      * @return the description
@@ -262,7 +262,7 @@ public class InterMineBag implements WebSearchable
     public String getType() {
         return type;
     }
-    
+
     /**
      * Get the fully qualifie type of this bag
      * @return the type of objects in this bag

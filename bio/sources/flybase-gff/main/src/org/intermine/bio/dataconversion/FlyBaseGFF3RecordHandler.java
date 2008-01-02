@@ -83,10 +83,7 @@ public class FlyBaseGFF3RecordHandler extends GFF3RecordHandler
     }
 
     /**
-     * This method does the following transformations.
-     *
-     * For all
-     * @see GFF3RecordHandler#process(GFF3Record)
+     * {@inheritDoc}
      */
     public void process(GFF3Record record) {
         Item feature = getFeature();

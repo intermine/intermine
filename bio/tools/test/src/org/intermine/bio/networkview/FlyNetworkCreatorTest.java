@@ -36,7 +36,7 @@ public class FlyNetworkCreatorTest extends TestCase
         ArrayList l2 = new ArrayList();
         Collection interactions = getFilteredList();
 
-        // creating a Collection of all protein ids (primary accession) 
+        // creating a Collection of all protein ids (primary accession)
         // from the collection of protein interactions
         for (Iterator iter = interactions.iterator(); iter.hasNext();) {
             ProteinInteraction ion = (ProteinInteraction) iter.next();

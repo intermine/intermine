@@ -87,7 +87,7 @@ public class BagGraphWidget
 
             ChartColor darkBlue = new ChartColor(39, 77,  216);
             renderer.setSeriesPaint(2, darkBlue);
-            
+
             //renderer.setDrawBarOutline(false);
             renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
 
@@ -119,14 +119,14 @@ public class BagGraphWidget
                                         });
                 plot.getRenderer().setBaseItemURLGenerator(categoryUrlGen);
             }
-          
+
             renderer.setNegativeItemLabelPositionFallback(new ItemLabelPosition(ItemLabelAnchor
-                                                           .OUTSIDE3, TextAnchor.BASELINE_LEFT)); 
-            
+                                                           .OUTSIDE3, TextAnchor.BASELINE_LEFT));
+
             NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
             rangeAxis.setUpperMargin(0.15);
             rangeAxis.setLowerMargin(0.15);
-            
+
             Font labelFont = new Font("SansSerif", Font.BOLD, 12);
             plot.getDomainAxis().setLabelFont(labelFont);
             rangeAxis.setLabelFont(labelFont);

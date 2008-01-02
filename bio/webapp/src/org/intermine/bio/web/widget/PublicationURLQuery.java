@@ -50,10 +50,10 @@ public class PublicationURLQuery implements EnrichmentWidgetURLQuery
      * @return Query a query to generate the results needed
      */
     public PathQuery generatePathQuery() {
-        
+
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-        
+
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Gene.identifier"));
         view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
@@ -66,33 +66,33 @@ public class PublicationURLQuery implements EnrichmentWidgetURLQuery
         view.add(MainHelper.makePath(model, q, "Gene.publications.pubMedId"));
 
         q.setView(view);
-        
+
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();        
+        String constraintValue = bag.getName();
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-        
+
         // constrain to be in organism
 //        constraintOp = ConstraintOp.IN;
 //        code = q.getUnusedConstraintCode();
 //        PathNode orgNode = q.addNode("Gene.organism.taxonId");
-//        Constraint orgConstraint 
+//        Constraint orgConstraint
 //                        = new Constraint(constraintOp, organisms, false, label, code, id, null);
 //        orgNode.getConstraints().add(orgConstraint);
-        
+
         // pubmedid
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode expressedNode = q.addNode("Gene.publications.pubMedId");
-        Constraint expressedConstraint 
+        Constraint expressedConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         expressedNode.getConstraints().add(expressedConstraint);
-        
+
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-                
+
         return q;
     }
 }

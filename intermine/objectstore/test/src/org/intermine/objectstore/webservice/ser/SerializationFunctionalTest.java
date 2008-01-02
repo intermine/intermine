@@ -51,10 +51,10 @@ public class SerializationFunctionalTest extends TestCase
 
         RPCElement body = new RPCElement("urn:myNamespace", "method1", params.toArray());
         msg.addBodyElement(body);
-        
+
         Writer stringWriter = new StringWriter();
         SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
-            
+
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) reg.getTypeMapping(Constants.URI_SOAP11_ENC);
         if (tm == null) {
@@ -63,16 +63,16 @@ public class SerializationFunctionalTest extends TestCase
         }
         MappingUtil.registerDefaultMappings(tm);
         msg.output(context);
-            
+
         String msgString = stringWriter.toString();
         System.out.println(msgString);
-            
+
         DeserializationContext dser = new DeserializationContextImpl(
                                                                      new InputSource(new StringReader(msgString)),
                                                                      msgContext, Message.REQUEST);
         dser.parse();
         SOAPEnvelope env = dser.getEnvelope();
-            
+
         RPCElement rpcElem = (RPCElement) env.getFirstBody();
         for (int i = 0; i < args.size(); i++) {
             assertEquals(args.get(i), rpcElem.getParam("arg" + i).getValue());
@@ -101,7 +101,7 @@ public class SerializationFunctionalTest extends TestCase
 
         Model m = Model.getInstanceByName("testmodel");
         args.add(m);
-         
+
         return args;
     }
 }

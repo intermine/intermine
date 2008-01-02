@@ -30,13 +30,13 @@ public class CacheTestClass2 implements Serializable
 
     public boolean equals(Object other) {
         if (other instanceof CacheTestClass2) {
-            return intArg.equals(((CacheTestClass2) other).intArg) 
+            return intArg.equals(((CacheTestClass2) other).intArg)
                 && stringArg.equals(((CacheTestClass2) other).stringArg);
         } else {
             return false;
         }
     }
-    
+
     public int hashCode() {
         return stringArg.hashCode() ^ intArg.intValue();
     }

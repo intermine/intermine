@@ -34,7 +34,7 @@ public class CurrentQueryAction extends InterMineAction
 {
    /**
     * Either display the query builder or redirect to project.sitePrefix.
-    * 
+    *
     * @param mapping The ActionMapping used to select this instance
     * @param form The optional ActionForm bean for this request (if any)
     * @param request The HTTP request we are processing

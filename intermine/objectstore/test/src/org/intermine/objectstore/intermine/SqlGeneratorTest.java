@@ -688,8 +688,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         q.addToSelect(f);
         assertEquals("SELECT DISTINCT a1_.name AS a2_ FROM " + getRegisterOffset3() + " ORDER BY a1_.name", SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));
         SqlGenerator.registerOffset(q, 5, schema, db, "flibble", Collections.EMPTY_MAP);
-        String expected = "SELECT DISTINCT a1_.name AS a2_ FROM " 
-            + getRegisterOffset3() + " " + getRegisterOffset4() 
+        String expected = "SELECT DISTINCT a1_.name AS a2_ FROM "
+            + getRegisterOffset3() + " " + getRegisterOffset4()
             + " (a1_.name > 'flibble' OR a1_.name IS NULL) ORDER BY a1_.name OFFSET 5";
         assertEquals(expected,
                      SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, Collections.EMPTY_MAP));

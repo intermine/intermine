@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 
 /**
  * Test for ModelMergerTask.
- * 
+ *
  * @author Thomas Riley
  */
 public class ModelMergerTaskTest extends TestCase
@@ -60,9 +60,9 @@ public class ModelMergerTaskTest extends TestCase
         + "<class name=\"D\" is-interface=\"true\"></class>"
         + "<class name=\"B\" is-interface=\"false\"></class>"
     + "</model>";
-    
+
     File input, addition, output;
-    
+
     /*
      * @see TestCase#setUp()
      */
@@ -72,11 +72,11 @@ public class ModelMergerTaskTest extends TestCase
         input = File.createTempFile("input", ".xml");
         addition = File.createTempFile("additions", ".xml");
         output = File.createTempFile("output", ".xml");
-        
+
         writeToFile(input, inputModel);
         writeToFile(addition, additions);
     }
-    
+
     private void writeToFile(File file, String data) throws IOException {
         FileWriter writer = new FileWriter(file);
         writer.write(data);
@@ -98,11 +98,11 @@ public class ModelMergerTaskTest extends TestCase
         task.setAdditionsFile(addition);
         task.setInputModelFile(input);
         task.setOutputFile(output);
-        
+
         long startTime = System.currentTimeMillis();
         task.execute();
         System.out.println("" + (System.currentTimeMillis() - startTime));
-        
+
         InterMineModelParser parser = new InterMineModelParser();
         Model result = parser.process(new FileReader(output));
         Model exp = parser.process(new StringReader(expected));

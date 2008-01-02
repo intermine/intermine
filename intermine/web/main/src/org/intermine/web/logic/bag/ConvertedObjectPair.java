@@ -15,11 +15,11 @@ import org.intermine.model.InterMineObject;
 /**
  * A class to represent the mapping between an object before type conversion and the converted
  * object.  This is returned when the key of the Map returned by getIssues() is TYPE_CONVERTED.
- * ie. getIssues() returns ["TYPE_CONVERTED" -> ["some message" -> ["input string" -> List of 
+ * ie. getIssues() returns ["TYPE_CONVERTED" -> ["some message" -> ["input string" -> List of
  * ConvertedObjectPair objects]]].
  * @author Kim Rutherford
  */
-public class ConvertedObjectPair 
+public class ConvertedObjectPair
 {
     private final InterMineObject oldObject;
     private final InterMineObject newObject;
@@ -32,7 +32,7 @@ public class ConvertedObjectPair
     public ConvertedObjectPair(InterMineObject oldObject, InterMineObject newObject) {
         this.oldObject = oldObject;
         this.newObject = newObject;
-        
+
     }
 
     /**

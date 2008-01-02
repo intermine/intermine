@@ -38,7 +38,7 @@ public class SimpleQuery
         String packageName = os.getModel().getPackageName();
         String queryString = args[0];
 
-        System.err. println ("qyery: " + queryString);
+        System.err. println ("query: " + queryString);
         Query q = new IqlQuery(queryString, packageName).toQuery();
 
 // optional:

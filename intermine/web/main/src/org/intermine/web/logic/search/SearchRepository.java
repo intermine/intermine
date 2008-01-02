@@ -21,7 +21,6 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.AspectController;
 
@@ -44,7 +43,6 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searchable;
 import org.apache.lucene.search.highlight.Formatter;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -97,7 +95,7 @@ public class SearchRepository
     public void setProfile(Profile profile) {
         this.profile = profile;
     }
-    
+
     /**
      * Get the SearchRepository for global (public) objects.
      *
@@ -177,7 +175,7 @@ public class SearchRepository
     public void webSearchableUnTagged(Tag tag) {
         reindex(tag.getType());
     }
-    
+
     /**
      * Called when the description of a WebSearchable changes.
      * @param webSearchable the item that has changed
@@ -221,7 +219,7 @@ public class SearchRepository
     private RAMDirectory indexWebSearchables(Map webSearchableMap, String type) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing webSearchable queries");
-    
+
         RAMDirectory ram = new RAMDirectory();
         IndexWriter writer;
         try {
@@ -231,18 +229,18 @@ public class SearchRepository
         } catch (IOException err) {
             throw new RuntimeException("Failed to create lucene IndexWriter", err);
         }
-    
+
         // step global webSearchables, indexing a Document for each webSearchable
         Iterator iter = webSearchableMap.values().iterator();
         int indexed = 0;
-    
+
         ProfileManager pm = profile.getProfileManager();
-        
+
         while (iter.hasNext()) {
             WebSearchable webSearchable = (WebSearchable) iter.next();
-    
+
             Document doc = new Document();
-            doc.add(new Field("name", webSearchable.getName(), Field.Store.YES, 
+            doc.add(new Field("name", webSearchable.getName(), Field.Store.YES,
                               Field.Index.TOKENIZED));
             StringBuffer contentBuffer = new StringBuffer(webSearchable.getTitle() + " : "
                                                + webSearchable.getDescription());
@@ -254,13 +252,13 @@ public class SearchRepository
                     contentBuffer.append(' ').append(aspect);
                 }
             }
-            
+
             // normalise the text
             String content = contentBuffer.toString().replaceAll("[^a-zA-Z0-9]", " ");
             doc.add(new Field("content", content, Field.Store.NO,
                               Field.Index.TOKENIZED));
             doc.add(new Field("scope", scope, Field.Store.YES, Field.Index.NO));
-    
+
             try {
                 writer.addDocument(doc);
                 indexed++;
@@ -269,17 +267,17 @@ public class SearchRepository
                         + " to the index", e);
             }
         }
-    
+
         try {
             writer.close();
         } catch (IOException e) {
             LOG.error("IOException while closing IndexWriter", e);
         }
-    
+
         time = System.currentTimeMillis() - time;
         LOG.info("Indexed " + indexed + " out of " + webSearchableMap.size() + " webSearchables in "
                 + time + " milliseconds");
-    
+
         return ram;
     }
 
@@ -291,7 +289,7 @@ public class SearchRepository
     public Map<String, ? extends WebSearchable> getWebSearchableMap(String type) {
         return webSearchablesMap.get(type);
     }
-    
+
     /**
      * Return a map from type (TagTypes: "template", "bag", etc.) to Map from name to WebSearchable.
      * @return the Map
@@ -337,15 +335,15 @@ public class SearchRepository
      *    the description of the WebSearchable, marked up in HTML to highlight the matching parts
      * @return the number of milliseconds the search took
      * @throws ParseException if the origQueryString has a syntax error for a lucene string
-     * @throws IOException if there is a problem creating the Lucene IndexSearcher  
+     * @throws IOException if there is a problem creating the Lucene IndexSearcher
      */
-    public static long runLeuceneSearch(String origQueryString, String scope, String type, 
+    public static long runLeuceneSearch(String origQueryString, String scope, String type,
                                         Profile profile,
                                         ServletContext context,
-                                        Map<WebSearchable, Float> hitMap, 
+                                        Map<WebSearchable, Float> hitMap,
                                         Map<WebSearchable, String> scopeMap,
                                         Map<WebSearchable, String> highlightedTitleMap,
-                                        Map<WebSearchable, String> highlightedDescMap) 
+                                        Map<WebSearchable, String> highlightedDescMap)
         throws ParseException, IOException {
         // special case for word ending in "log" eg. "ortholog" - add "orthologue" to the search
         String queryString = origQueryString.replaceAll("(\\w+log\\b)", "$1ue $1");
@@ -374,30 +372,30 @@ public class SearchRepository
             searchables = new Searchable[]{userIndexSearcher, globalIndexSearcher};
         }
         MultiSearcher searcher = new MultiSearcher(searchables);
-    
+
         Analyzer analyzer = new SnowballAnalyzer("English", StopAnalyzer.ENGLISH_STOP_WORDS);
-    
+
         org.apache.lucene.search.Query query;
         QueryParser queryParser = new QueryParser("content", analyzer);
         query = queryParser.parse(queryString);
-    
+
         // required to expand search terms
         query = query.rewrite(IndexReader.open(globalDirectory));
         Hits hits = searcher.search(query);
-    
+
         time = System.currentTimeMillis() - time;
         SearchRepository.LOG.info("Found " + hits.length() + " document(s) that matched query '"
                 + queryString + "' in " + time + " milliseconds:");
-    
+
         QueryScorer scorer = new QueryScorer(query);
         Highlighter highlighter = new Highlighter(SearchRepository.formatter, scorer);
-    
+
         for (int i = 0; i < hits.length(); i++) {
             WebSearchable webSearchable = null;
             Document doc = hits.doc(i);
             String docScope = doc.get("scope");
             String name = doc.get("name");
-    
+
             webSearchable = userWebSearchables.get(name);
             if (webSearchable == null) {
                 webSearchable = globalWebSearchables.get(name);
@@ -405,10 +403,10 @@ public class SearchRepository
             if (webSearchable == null) {
                 throw new RuntimeException("unknown WebSearchable: " + name);
             }
-    
+
             hitMap.put(webSearchable, new Float(hits.score(i)));
             scopeMap.put(webSearchable, docScope);
-    
+
             if (highlightedTitleMap != null) {
                 String highlightString = webSearchable.getTitle();
                 TokenStream tokenStream =
@@ -417,7 +415,7 @@ public class SearchRepository
                 highlightedTitleMap.put(webSearchable,
                                    highlighter.getBestFragment(tokenStream, highlightString));
             }
-            
+
             if (highlightedDescMap != null) {
                 String highlightString = webSearchable.getDescription();
                 if (highlightString == null) {

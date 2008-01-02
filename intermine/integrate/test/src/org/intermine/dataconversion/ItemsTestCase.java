@@ -48,7 +48,7 @@ public abstract class ItemsTestCase extends TestCase
         compatibleCollections(a, b);
         TestCase.assertEquals(a, b);
     }
-    
+
     public static void assertEquals(Set a, Set b) throws Exception
     {
         // check that these are both items sets
@@ -66,7 +66,7 @@ public abstract class ItemsTestCase extends TestCase
     public static String compareItemSets(Set a, Set b) {
         return compareItemSets(a, b, true);
     }
-    
+
     private static boolean checkItemSet(Set set) {
         Iterator iter = set.iterator();
         while (iter.hasNext()) {
@@ -76,14 +76,14 @@ public abstract class ItemsTestCase extends TestCase
         }
         return true;
     }
-    
+
     private static String compareItemSets(Set a, Set b, boolean checkItems) {
         // check these are both item sets
         if (checkItems && (!checkItemSet(a) || !checkItemSet(b))) {
             throw new IllegalArgumentException("Comparing sets that contains objects that "
                                                + "aren't Items: a = " + a + ", b = " + b);
         }
-        
+
         // now have compatible collections of items, compare them
         StringBuffer message = new StringBuffer();
         Set inAnotB = diffItemSets(a, b);
@@ -117,7 +117,7 @@ public abstract class ItemsTestCase extends TestCase
         }
         return message.toString();
     }
-    
+
     /**
      * Given two sets of Items (a and b) return a set of Items that are present in a
      * but not b.
@@ -157,16 +157,16 @@ public abstract class ItemsTestCase extends TestCase
             }
             clsItems.add(item.getIdentifier());
         }
-        
+
         StringBuffer sb = new StringBuffer();
         for (Map.Entry<String, List> entry : counts.entrySet()) {
-            sb.append(entry.getKey() + " - " + entry.getValue().size() + " " 
+            sb.append(entry.getKey() + " - " + entry.getValue().size() + " "
                       + entry.getValue() + ENDL);
         }
         return sb.toString();
     }
-    
-    
+
+
     // fail with helpful message if e.g. we are asserting a Set .equals a List
     private static void compatibleCollections(Collection a, Collection b) {
         if (a.getClass().isAssignableFrom(b.getClass())
@@ -178,12 +178,12 @@ public abstract class ItemsTestCase extends TestCase
                           + b.getClass() + " (" + b.toString() + ").");
         }
     }
-    
+
     public Set readItemSet(String fileName) throws Exception {
         return new HashSet(FullParser.parse(getClass().getClassLoader()
                                 .getResourceAsStream(fileName)));
     }
-    
+
     public void writeItemsFile(Collection items, String fileName) throws IOException {
         FileWriter fw = new FileWriter(new File(fileName));
         fw.write(FullRenderer.render(items));

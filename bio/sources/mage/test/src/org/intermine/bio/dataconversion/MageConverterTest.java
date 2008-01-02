@@ -35,8 +35,8 @@ public class MageConverterTest extends ItemsTestCase
     String ns = "http://www.intermine.org/model/mage#";
     File f = null;
     Model model;
-    
-    
+
+
     public MageConverterTest(String arg) {
         super(arg);
     }
@@ -56,7 +56,7 @@ public class MageConverterTest extends ItemsTestCase
     public void testConvertMageML() throws Exception {
         HashMap map = new HashMap();
         MockItemWriter itemWriter = new MockItemWriter(map);
-        MageConverter mc = new MageConverter(itemWriter, model);   
+        MageConverter mc = new MageConverter(itemWriter, model);
         mc.seenMap = new LinkedHashMap();
         mc.refMap = new LinkedHashMap();
         File srcFile1 = new File(getClass().getClassLoader().getResource("mage_ml_example.xml").toURI());
@@ -74,10 +74,10 @@ public class MageConverterTest extends ItemsTestCase
         mc.close();
 
         Set expected = readItemSet("MAGEConverterTest.xml");
-        
+
         // uncomment to write a new target items file
         //writeItemsFile(itemWriter.getItems(), "mage-converter-items.xml");
-        
+
         assertEquals(expected, itemWriter.getItems());
     }
 

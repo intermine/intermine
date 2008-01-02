@@ -60,7 +60,7 @@ public class Column
         setColumnId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
                     + TypeUtil.unqualifiedName(type.getName()));
     }
-    
+
     /**
      * Constructor that takes a Path object.  The human readable name for getName() will be
      * generated from the path.
@@ -184,7 +184,7 @@ public class Column
     public Path getPath() {
         return path;
     }
-    
+
     /**
      * Get the name (title) of the column.
      *

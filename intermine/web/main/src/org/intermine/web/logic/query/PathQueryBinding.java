@@ -55,7 +55,7 @@ public class PathQueryBinding
 
         return sw.toString();
     }
-    
+
     /**
      * Marshal to an XMLStreamWriter.
      *
@@ -64,7 +64,7 @@ public class PathQueryBinding
      * @param modelName the model name
      * @param writer the xml stream writer to write to
      */
-    public static void marshal(PathQuery query, String queryName, String modelName, 
+    public static void marshal(PathQuery query, String queryName, String modelName,
                                XMLStreamWriter writer) {
         try {
             writer.writeStartElement("query");
@@ -72,10 +72,10 @@ public class PathQueryBinding
             writer.writeAttribute("model", modelName);
             writer.writeAttribute("view", StringUtil.join(query.getViewStrings(), " "));
             if (query.getSortOrderStrings() != null && !query.getSortOrderStrings().isEmpty()) {
-                writer.writeAttribute("sortOrder", 
+                writer.writeAttribute("sortOrder",
                                       StringUtil.join(query.getSortOrderStrings(), " "));
             } else {
-                writer.writeAttribute("sortOrder", 
+                writer.writeAttribute("sortOrder",
                                       StringUtil.join(query.getViewStrings(), " "));
             }
             if (query.getConstraintLogic() != null) {
@@ -102,7 +102,7 @@ public class PathQueryBinding
                     if (c.getIdentifier() != null) {
                         writer.writeAttribute("identifier", "" + c.getIdentifier());
                     } else {
-                        writer.writeAttribute("identifier", "");                        
+                        writer.writeAttribute("identifier", "");
                     }
                     if (c.isEditable()) {
                         writer.writeAttribute("editable", "true");
@@ -110,7 +110,7 @@ public class PathQueryBinding
                     if (c.getCode() != null) {
                         writer.writeAttribute("code", c.getCode());
                     } else {
-                        writer.writeAttribute("code", "");                        
+                        writer.writeAttribute("code", "");
                     }
                     if (c.getExtraValue() != null) {
                         writer.writeAttribute("extraValue", "" + c.getExtraValue());
@@ -125,16 +125,16 @@ public class PathQueryBinding
         }
     }
 
-    
+
     /**
      * Create XML for the path descriptions in a PathQuery.
      */
-    private static void marshalPathQueryDescriptions(PathQuery query, XMLStreamWriter writer) 
+    private static void marshalPathQueryDescriptions(PathQuery query, XMLStreamWriter writer)
         throws XMLStreamException {
         for (Map.Entry<Path, String> entry : query.getPathDescriptions().entrySet()) {
             Path path = entry.getKey();
             String description = entry.getValue();
-            
+
             writer.writeStartElement("pathDescription");
             writer.writeAttribute("pathString", path.toStringNoConstraints());
             writer.writeAttribute("description", description);
@@ -159,6 +159,6 @@ public class PathQueryBinding
             throw new RuntimeException(e);
         }
         return queries;
-    }  
+    }
 }
 

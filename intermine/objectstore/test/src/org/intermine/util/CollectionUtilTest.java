@@ -67,14 +67,14 @@ public class CollectionUtilTest extends TestCase
         Set expectedKeys = new HashSet(Arrays.asList(new Object[] {
                                                          "newKey",
                                                          "key1", "key2", "key3", "key4"}));
-                                                     
+
         assertEquals(expectedKeys, newMap.keySet());
 
         Set expectedValues = new HashSet(Arrays.asList(new Object[] {
                                                            "newValue",
                                                            "value1", "value2",
                                                            "value3", "value4"}));
-                                                       
+
         assertEquals(expectedValues, new HashSet(newMap.values()));
     }
 
@@ -91,13 +91,13 @@ public class CollectionUtilTest extends TestCase
         Set expectedKeys = new HashSet(Arrays.asList(new Object[] {
                                                          "key1", "newKey", "key2", "key3", "key4"
                                                          }));
-                                                     
+
         assertEquals(expectedKeys, newMap.keySet());
 
         Set expectedValues = new HashSet(Arrays.asList(new Object[] {
                                                            "value1", "newValue", "value2", "value3",
                                                            "value4"}));
-                                                       
+
         assertEquals(expectedValues, new HashSet(newMap.values()));
     }
 
@@ -114,16 +114,16 @@ public class CollectionUtilTest extends TestCase
         Set expectedKeys = new HashSet(Arrays.asList(new Object[] {
                                                          "key1", "key2", "key3", "key4",
                                                          "newKey"}));
-                                                     
+
         assertEquals(expectedKeys, newMap.keySet());
 
         Set expectedValues = new HashSet(Arrays.asList(new Object[] {
                                                            "value1", "value2", "value3",
                                                            "value4", "newValue"}));
-                                                       
+
         assertEquals(expectedValues, new HashSet(newMap.values()));
     }
-    
+
     public void testLinkedHashMapSameKey() throws Exception {
         LinkedHashMap map = new LinkedHashMap();
 
@@ -136,13 +136,13 @@ public class CollectionUtilTest extends TestCase
 
         Set expectedKeys = new HashSet(Arrays.asList(new Object[] {
                                                          "key1", "key2", "key3", "key4"}));
-                                                     
+
         assertEquals(expectedKeys, newMap.keySet());
 
         Set expectedValues = new HashSet(Arrays.asList(new Object[] {
                                                            "value1", "newValue", "value3",
                                                            "value4"}));
-                                                       
+
         assertEquals(expectedValues, new HashSet(newMap.values()));
     }
 

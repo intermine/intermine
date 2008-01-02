@@ -37,7 +37,7 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
     /**
      * @param key
      * @param bag
-     * 
+     *
      */
     public ProteinDomainURLQuery(ObjectStore os, InterMineBag bag, String key) {
         this.bag = bag;
@@ -57,11 +57,11 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
         String bagType = bag.getType();
 
         ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();        
+        String constraintValue = bag.getName();
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-                
+
         if (bagType.equalsIgnoreCase("gene")) {
 
             view.add(MainHelper.makePath(model, q, "Gene.identifier"));
@@ -75,7 +75,7 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
             constraintOp = ConstraintOp.EQUALS;
             code = q.getUnusedConstraintCode();
             PathNode interproNode = q.addNode("Gene.proteins.proteinFeatures.identifier");
-            Constraint interproConstraint 
+            Constraint interproConstraint
             = new Constraint(constraintOp, key, false, label, code, id, null);
             interproNode.getConstraints().add(interproConstraint);
         }
@@ -91,14 +91,14 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
             constraintOp = ConstraintOp.EQUALS;
             code = q.getUnusedConstraintCode();
             PathNode interproNode = q.addNode("Protein.proteinFeatures.identifier");
-            Constraint interproConstraint 
+            Constraint interproConstraint
             = new Constraint(constraintOp, key, false, label, code, id, null);
             interproNode.getConstraints().add(interproConstraint);
         }
         else {
             //?
         }
-        
+
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
 

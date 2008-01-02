@@ -116,7 +116,7 @@ public class MageConverter extends FileConverter
                 return;
             }
         }
-        
+
         createItem(MageConverter.readMage(reader), true);
         LOG.info("refMap.size: " + refMap.size());
         LOG.info("seenMap.size: " + seenMap.size());

@@ -43,7 +43,7 @@ public class FileConverterTask extends ConverterTask
 
     protected FileSet fileSet;
     protected String clsName;
-    
+
     /**
      * Set the source specific subclass of FileConverter to run
      * @param clsName name of converter class to run
@@ -51,7 +51,7 @@ public class FileConverterTask extends ConverterTask
     public void setClsName(String clsName) {
         this.clsName = clsName;
     }
-    
+
     /**
      * Set the data fileset
      * @param fileSet the fileset
@@ -96,7 +96,7 @@ public class FileConverterTask extends ConverterTask
             }
 
             Constructor m = c.getConstructor(new Class[] {ItemWriter.class, Model.class});
-            FileConverter converter = 
+            FileConverter converter =
                 (FileConverter) m.newInstance(new Object[] {writer, model});
 
             configureDynamicAttributes(converter);

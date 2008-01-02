@@ -23,7 +23,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
@@ -120,7 +119,8 @@ public class RandomDataGenerator extends FileConverter
         Set<String> itemFieldNames = new TreeSet<String>();
         Set<String> collectionFieldNames = new TreeSet<String>();
         Class clazz = Class.forName("org.intermine.model.performancetest1." + className);
-        for (Map.Entry<String, TypeUtil.FieldInfo> entry : TypeUtil.getFieldInfos(clazz).entrySet()) {
+        for (Map.Entry<String, TypeUtil.FieldInfo> entry :
+                 TypeUtil.getFieldInfos(clazz).entrySet()) {
             if ("id".equals(entry.getKey())) {
                 // Do nothing
             } else if (Integer.TYPE.equals(entry.getValue().getType())) {

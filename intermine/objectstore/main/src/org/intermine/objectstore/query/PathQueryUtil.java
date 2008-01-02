@@ -31,7 +31,7 @@ public class PathQueryUtil
      * Given a class return a set with the unqualified class name in and if preceded by
      * a '+' also the unqualified names of all subclasses.
      * @param clsName an unqullified class name
-     * @param model the Model use to find meta data   
+     * @param model the Model use to find meta data
      * @return a set of class names
      */
     protected static Set getClassNames(Model model, String clsName) {
@@ -40,16 +40,16 @@ public class PathQueryUtil
             clsName = clsName.substring(1);
             useSubClasses = true;
         }
-    
+
         ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName()
                                                              + "." + clsName);
         if (cld == null) {
             throw new IllegalArgumentException("cannot find ClassDescriptor for " + clsName);
         }
-    
+
         Set clsNames = new LinkedHashSet();
         clsNames.add(clsName);
-    
+
         if (useSubClasses) {
             Set clds = model.getAllSubs(cld);
             Iterator cldIter = clds.iterator();
@@ -76,18 +76,18 @@ public class PathQueryUtil
             throw new IllegalArgumentException("Construct query path does not have valid "
                                                + " number of elements: " + path);
         }
-    
+
         for (int i = 0; i + 2 < queryBits.length; i += 2) {
             String start = model.getPackageName() + "." + queryBits[i];
             String refName = queryBits[i + 1];
             String end = model.getPackageName() + "." + queryBits[i + 2];
-    
+
             if (!model.hasClassDescriptor(start)) {
                 throw new IllegalArgumentException("Class not found in model: " + start);
             } else if (!model.hasClassDescriptor(end)) {
                 throw new IllegalArgumentException("Class not found in model: " + end);
             }
-    
+
             ClassDescriptor startCld = model.getClassDescriptorByName(start);
             if ((startCld.getReferenceDescriptorByName(refName, true) == null)
                 && (startCld.getCollectionDescriptorByName(refName, true) == null)) {
@@ -120,7 +120,7 @@ public class PathQueryUtil
             // at end, this is last clsName
             clsName = path;
         }
-    
+
         Set subs;
         try {
             subs = getClassNames(model, clsName);
@@ -148,7 +148,7 @@ public class PathQueryUtil
 
     /**
      * Construct an objectstore query represented by the given path.
-     * @param model the Model use to find meta data 
+     * @param model the Model use to find meta data
      * @param path path to construct query for
      * @return the constructed query
      * @throws ClassNotFoundException if problem processing path
@@ -157,7 +157,7 @@ public class PathQueryUtil
     public static Query constructQuery(Model model, String path)
         throws ClassNotFoundException, IllegalArgumentException {
         String[] queryBits = path.split("[ \t]");
-    
+
         // validate path against model
         validatePath(path, model);
 
@@ -174,7 +174,7 @@ public class PathQueryUtil
             }
             qcLast = addReferenceConstraint(model, q, qcStart, refName, qcEnd, (i == 0));
         }
-    
+
         return q;
     }
 
@@ -201,11 +201,11 @@ public class PathQueryUtil
         q.addToSelect(qcEnd);
         q.addFrom(qcEnd);
         q.addToOrderBy(qcEnd);
-    
+
         // already validated against model
         ClassDescriptor startCld = model.getClassDescriptorByName(qcStart.getType().getName());
         FieldDescriptor fd = startCld.getFieldDescriptorByName(refName);
-    
+
         QueryReference qRef;
         if (fd.isReference()) {
             qRef = new QueryObjectReference(qcStart, refName);
@@ -214,7 +214,7 @@ public class PathQueryUtil
         }
         ContainsConstraint cc = new ContainsConstraint(qRef, ConstraintOp.CONTAINS, qcEnd);
         QueryHelper.addConstraint(q, cc);
-    
+
         return qcEnd;
     }
 

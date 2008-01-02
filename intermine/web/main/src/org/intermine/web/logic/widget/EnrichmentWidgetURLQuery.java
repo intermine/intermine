@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -17,10 +17,10 @@ import org.intermine.web.logic.query.PathQuery;
  *
  */
 public interface EnrichmentWidgetURLQuery
-{    
+{
     /**
-     * @return the query 
+     * @return the query
      */
     public PathQuery generatePathQuery();
-    
+
 }

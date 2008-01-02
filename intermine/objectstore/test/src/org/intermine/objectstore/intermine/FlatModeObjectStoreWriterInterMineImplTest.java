@@ -86,7 +86,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
             writer.delete(o);
         }
     }
-    
+
     public void testWriteCleaner() throws Exception {
         InterMineObject o = new Cleaner();
         try {
@@ -98,7 +98,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
             writer.delete(o);
         }
     }
- 
+
     public void testWriteBigDepartment() throws Exception {
         InterMineObject o = new BigDepartment();
         try {

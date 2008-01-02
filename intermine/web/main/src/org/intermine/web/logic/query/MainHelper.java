@@ -100,7 +100,7 @@ public class MainHelper
      * @param isSuperUser true if the user is the superuser
      * @return an ordered Set of nodes
      */
-    public static Collection<MetadataNode> makeNodes(String path, Model model, 
+    public static Collection<MetadataNode> makeNodes(String path, Model model,
                                                      boolean isSuperUser) {
         String className, subPath;
         if (path.indexOf(".") == -1) {
@@ -212,7 +212,7 @@ public class MainHelper
                 (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
     }
-    
+
     /**
      * Make an InterMine query from a path query
      * @param pathQueryOrig the PathQuery
@@ -285,7 +285,7 @@ public class MainHelper
             QueryReference qr = null;
             String finalPath = loops.get(path);
 
-            if (finalPath == null) {           
+            if (finalPath == null) {
                 if (path.indexOf(".") == -1) {
                     QueryClass qc;
                     try {
@@ -437,7 +437,7 @@ public class MainHelper
                         LOG.error("cs is null. codeToCS = " + codeToCS + ", code = " + code
                                 + ", pathQuery: " + pathQueryOrig);
                     }
-                    cs.addConstraint(new BagConstraint(new QueryField(qc, "id"), 
+                    cs.addConstraint(new BagConstraint(new QueryField(qc, "id"),
                                 ConstraintOp.IN, bagQueryResult.getMatchAndIssueIds()));
                     // TODO: The code that
                     // does a lookup for ifs should be moved out of this method. See #1284.
@@ -450,8 +450,8 @@ public class MainHelper
             queueDeferred = 0;
         }
 
-        // Now process loop constraints. The constraint parameter refers backwards and 
-        // forwards in the query so we can't process these in the above loop. 
+        // Now process loop constraints. The constraint parameter refers backwards and
+        // forwards in the query so we can't process these in the above loop.
         makeQueryProcessLoopsHelper(pathQuery, codeToCS, loops, queryBits);
 
         if (andcs.getConstraints().isEmpty()) {
@@ -460,7 +460,7 @@ public class MainHelper
             q.setConstraint((org.intermine.objectstore.query.Constraint)
                     (andcs.getConstraints().iterator().next()));
         }
-        
+
         // build the SELECT list
         for (Iterator<Path> i = view.iterator(); i.hasNext();) {
             PathNode pn = pathQuery.getNodes().get(i.next().toStringNoConstraints());
@@ -483,22 +483,22 @@ public class MainHelper
             OrderBy o = i.next();
             PathNode pn = pathQuery.getNodes().get(o.getField().toStringNoConstraints());
             QueryNode qn = queryBits.get(pn.getPathString());
-            
-            if (!q.getOrderBy().contains(qn)) {           
+
+            if (!q.getOrderBy().contains(qn)) {
                 q.addToOrderBy(qn, o.getDirection());
             }
         }
 
-        // put rest of select list in order by 
+        // put rest of select list in order by
         for (Iterator<Path> i = view.iterator(); i.hasNext();) {
             String ps = i.next().toStringNoConstraints();
             PathNode pn = pathQuery.getNodes().get(ps);
-            QueryNode selectNode = queryBits.get(pn.getPathString()); 
-            if (!q.getOrderBy().contains(selectNode)) { 
-                q.addToOrderBy(selectNode); 
+            QueryNode selectNode = queryBits.get(pn.getPathString());
+            if (!q.getOrderBy().contains(selectNode)) {
+                q.addToOrderBy(selectNode);
             }
         }
-            
+
         // caller might want path to query node map (e.g. PrecomputeTask)
         if (pathToQueryNode != null) {
             pathToQueryNode.putAll(queryBits);
@@ -508,7 +508,7 @@ public class MainHelper
     }
 
     /**
-     * Make a SimpleConstraint for the given Constraint obejct.  The Constraint will be 
+     * Make a SimpleConstraint for the given Constraint obejct.  The Constraint will be
      * case-insensitive.  If the Constraint value contains a wildcard and the operation is "=" or
      * "&lt;&gt;" then the operation will be changed to "LIKE" or "NOT_LIKE" as appropriate.
      */
@@ -517,7 +517,7 @@ public class MainHelper
         String lowerCaseValue = ((String) c.getValue()).toLowerCase();
         if (lowerCaseValue.indexOf('%') != -1 || lowerCaseValue.indexOf('_') != -1) {
             if (c.getOp().equals(ConstraintOp.EQUALS)) {
-                return new SimpleConstraint(qf, ConstraintOp.MATCHES, 
+                return new SimpleConstraint(qf, ConstraintOp.MATCHES,
                                             new QueryValue(lowerCaseValue));
             } else {
                 if (c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
@@ -536,33 +536,33 @@ public class MainHelper
     }
 
     /**
-     * Process loop constraints. The constraint parameter refers backwards and 
+     * Process loop constraints. The constraint parameter refers backwards and
      * forwards in the query so we can't process these in the main makeQuery loop
      */
-    private static void makeQueryProcessLoopsHelper(PathQuery pathQuery, 
-                                                    Map<String, ConstraintSet> codeToCS, 
+    private static void makeQueryProcessLoopsHelper(PathQuery pathQuery,
+                                                    Map<String, ConstraintSet> codeToCS,
                                                     Map<String, String> loops,
                                                     Map<String, QueryNode> queryBits) {
-        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) { 
-            PathNode node = (PathNode) i.next(); 
+        for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
+            PathNode node = (PathNode) i.next();
             if (node.isReference() || node.isCollection()) {
-                String path = node.getPathString(); 
-                QueryNode qn = queryBits.get(path); 
+                String path = node.getPathString();
+                QueryNode qn = queryBits.get(path);
 
-                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) { 
-                    Constraint c = (Constraint) j.next(); 
-                    ConstraintSet cs = codeToCS.get(c.getCode()); 
+                for (Iterator j = node.getConstraints().iterator(); j.hasNext();) {
+                    Constraint c = (Constraint) j.next();
+                    ConstraintSet cs = codeToCS.get(c.getCode());
                     if ((c.getOp() == ConstraintOp.NOT_EQUALS)
                         || ((c.getOp() == ConstraintOp.EQUALS)
                             && (!loops.containsKey(path))
-                            && (!loops.containsKey(c.getValue())))) { 
-                        QueryClass refQc = (QueryClass) queryBits.get(c.getValue()); 
+                            && (!loops.containsKey(c.getValue())))) {
+                        QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
                         if (refQc == null) {
                             throw new NullPointerException("Could not find QueryClass for "
                                     + c.getValue() + " in querybits: " + queryBits);
                         }
-                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc)); 
-                    } 
+                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
+                    }
                 }
             }
         }
@@ -571,8 +571,8 @@ public class MainHelper
     /**
      * Build a map to collapse nodes in loop queries
      */
-    private static Map<String, String> makeLoopsMap(PathQuery pathQuery, 
-                                                    Map<String, ConstraintSet> codeToCS, 
+    private static Map<String, String> makeLoopsMap(PathQuery pathQuery,
+                                                    Map<String, ConstraintSet> codeToCS,
                                                     ConstraintSet andcs) {
         Map<String, String> loops = new HashMap<String, String>();
         for (Iterator i = pathQuery.getNodes().values().iterator(); i.hasNext();) {
@@ -622,7 +622,7 @@ public class MainHelper
         return retList;
     }
      */
-    
+
     /**
      * Given a LogicExpression, generate a tree of ConstraintSets that reflects the
      * expression and add entries to the codeToConstraintSet Map from map from
@@ -652,7 +652,7 @@ public class MainHelper
 
     /**
      * Given a Node in the expression logic and set of constraints, generate a tree of
-     * ConstraintSets that reflects the expression and add entries to the codeToConstraintSet Map 
+     * ConstraintSets that reflects the expression and add entries to the codeToConstraintSet Map
      * from map from constraint code to ConstraintSet.
      * @param node a Node in the expression
      * @param set the constraints under this node
@@ -692,7 +692,7 @@ public class MainHelper
      * @param className the name of the class
      * @param model the Model used to resolve class names
      * @return the relevant Class
-     * @throws ClassNotFoundException if the class name is not in the model 
+     * @throws ClassNotFoundException if the class name is not in the model
      */
     public static Class getClass(String className, Model model)
         throws ClassNotFoundException {
@@ -736,7 +736,7 @@ public class MainHelper
      * @param className the name of the class
      * @param model the Model used to resolve class names
      * @return the relevant ClassDescriptor
-     * @throws ClassNotFoundException if the class name is not in the model 
+     * @throws ClassNotFoundException if the class name is not in the model
      */
     public static ClassDescriptor getClassDescriptor(String className, Model model)
         throws ClassNotFoundException {
@@ -934,14 +934,14 @@ public class MainHelper
      */
     public static Path makePath(Model model, PathQuery query, String fullPathName) {
         Map<String, String> subClassConstraintMap = new HashMap<String, String>();
-        
+
         Iterator viewPathNameIter = query.getNodes().keySet().iterator();
         while (viewPathNameIter.hasNext()) {
             String viewPathName = (String) viewPathNameIter.next();
             PathNode pathNode = query.getNode(viewPathName);
             subClassConstraintMap.put(viewPathName, pathNode.getType());
         }
-        
+
         Path path = new Path(model, fullPathName, subClassConstraintMap);
         return path;
     }
@@ -1027,7 +1027,7 @@ public class MainHelper
         }
         return q;
     }
-    
+
     /**
      * For a given PagedTable, return the corresponding PathQuery
      * TODO this only works for bags at the moment but need to be extended to work with anything
@@ -1036,7 +1036,7 @@ public class MainHelper
      * @param bag the InterMineBag
      * @return a PathQuery
      */
-    public static PathQuery webTableToPathQuery(PagedTable pagedTable, Model model, 
+    public static PathQuery webTableToPathQuery(PagedTable pagedTable, Model model,
                                                 InterMineBag bag) {
         PathQuery pathQuery = new PathQuery(model);
         List columns = pagedTable.getColumns();
@@ -1046,13 +1046,13 @@ public class MainHelper
             view.add((Path) column.getPath());
         }
         pathQuery.setView(view);
-         
+
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         pathQuery.addNode(bagType).getConstraints().add(c);
-        return pathQuery;    
+        return pathQuery;
     }
 }

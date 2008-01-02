@@ -41,7 +41,7 @@ import org.apache.struts.action.ActionMessages;
 
 public class EmployeeExporter implements TableExporter
 {
-    /** 
+    /**
      * Method called to export a RESULTS_TABLE containing an Employee by writing it to the
      * OutputStream of the Response.
      * @param mapping The ActionMapping used to select this instance
@@ -89,7 +89,7 @@ public class EmployeeExporter implements TableExporter
                     if (!thisColumn.isVisible()) {
                         continue;
                     }
-                    
+
                     // the column order from PagedTable.getList() isn't necessarily the order that
                     // the user has chosen for the columns
                     int realColumnIndex = thisColumn.getIndex();
@@ -109,7 +109,7 @@ public class EmployeeExporter implements TableExporter
             ActionMessage error = new ActionMessage("errors.query.objectstoreerror");
             messages.add(ActionMessages.GLOBAL_MESSAGE, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
-     
+
         }
 
         return null;
@@ -126,11 +126,11 @@ public class EmployeeExporter implements TableExporter
             for (int i = 0; i < columns.size(); i++) {
                 if (((Column) columns.get(i)).isVisible()) {
                     Object columnType = ((Column) columns.get(i)).getType();
-                    
+
                     if (columnType instanceof ClassDescriptor) {
-                        
+
                         ClassDescriptor cd = (ClassDescriptor) columnType;
-                        
+
                         if (Employee.class.isAssignableFrom(cd.getType())) {
                             return true;
                         }

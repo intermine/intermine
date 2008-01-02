@@ -98,7 +98,7 @@ public class PrecomputeTaskTest extends QueryTestCase
             "SELECT DISTINCT emp, add FROM org.intermine.model.testmodel.Employee AS emp, org.intermine.model.testmodel.Address AS add WHERE emp.address CONTAINS add",
             "SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Employee AS a2_ WHERE a1_.employees CONTAINS a2_"
         };
-  
+
         String[] expectedSql = new String[] {
             "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.companyId AS a2_companyId, a2_.id AS a2_id, a2_.managerId AS a2_managerId, a2_.name AS a2_name, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.departmentId AS a3_departmentId, a3_.departmentThatRejectedMeId AS a3_departmentThatRejectedMeId, a3_.fullTime AS a3_fullTime, a3_.id AS a3_id, a3_.intermine_end AS a3_intermine_end, a3_.name AS a3_name FROM Company AS a1_, Department AS a2_, Employee AS a3_ WHERE a1_.id = a2_.companyId AND a2_.id = a3_.departmentId ORDER BY a1_.id, a2_.id, a3_.id",
             "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.companyId AS a2_companyId, a2_.id AS a2_id, a2_.managerId AS a2_managerId, a2_.name AS a2_name, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.companyId AS a3_companyId, a3_.departmentId AS a3_departmentId, a3_.departmentThatRejectedMeId AS a3_departmentThatRejectedMeId, a3_.fullTime AS a3_fullTime, a3_.id AS a3_id, a3_.intermine_end AS a3_intermine_end, a3_.name AS a3_name, a3_.salary AS a3_salary, a3_.seniority AS a3_seniority, a3_.title AS a3_title FROM Company AS a1_, Department AS a2_, CEO AS a3_ WHERE a1_.id = a2_.companyId AND a2_.id = a3_.departmentId ORDER BY a1_.id, a2_.id, a3_.id",
@@ -122,7 +122,7 @@ public class PrecomputeTaskTest extends QueryTestCase
             assertEquals(expectedSql[i], generatedSql);
         }
     }
- 
+
     public void testConstructQueries() throws Exception {
         PrecomputeTask pt = new PrecomputeTask();
         pt.os = os;
@@ -190,7 +190,7 @@ public class PrecomputeTaskTest extends QueryTestCase
         compareQueryLists(queries, pt.getOrderedQueries(q1));
     }
 
-    
+
     protected void compareQueryLists(List a, List b) {
         assertEquals(a.size(), b.size());
         for (int i = 0; i< a.size(); i++) {

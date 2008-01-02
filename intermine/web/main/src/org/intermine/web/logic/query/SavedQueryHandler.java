@@ -35,7 +35,7 @@ public class SavedQueryHandler extends PathQueryHandler
      * @param savedBags Map from bag name to bag
      * @param servletContext global ServletContext object
      */
-    public SavedQueryHandler(Map<String, SavedQuery> queries, Map savedBags, 
+    public SavedQueryHandler(Map<String, SavedQuery> queries, Map savedBags,
                              ServletContext servletContext) {
         super(new HashMap<String, PathQuery> (), savedBags, servletContext);
         this.queries = queries;
@@ -54,7 +54,7 @@ public class SavedQueryHandler extends PathQueryHandler
         }
         super.startElement(uri, localName, qName, attrs);
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -464,7 +464,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             // However, they should be in the WRITER.
             res = writer.execute(q);
             assertEquals(2, res.size());
-            
+
             writer.commitTransaction();
             assertFalse(writer.isInTransaction());
             res = realOs.execute(q);
@@ -532,7 +532,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
 
         writer.flushObjectById();
         realOs.flushObjectById();
-        
+
         try {
             writer.store(address1);
             Integer id = address1.getId();
@@ -556,7 +556,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             assertEquals("Address 2", ((Address) writer.getObjectById(id, Address.class)).getAddress());
             assertNotNull(realOs.getObjectById(id, Address.class));
             assertEquals("Address 2", ((Address) realOs.getObjectById(id, Address.class)).getAddress());
-            
+
             writer.delete(address2);
             assertNull(writer.getObjectById(id, Address.class));
             assertNull(realOs.getObjectById(id, Address.class));
@@ -580,7 +580,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             assertNull(writer.getObjectById(id, Address.class));
             assertNotNull(realOs.getObjectById(id, Address.class));
             assertEquals("Address 2", ((Address) realOs.getObjectById(id, Address.class)).getAddress());
-            
+
             writer.abortTransaction();
             assertNotNull(writer.getObjectById(id, Address.class));
             assertEquals("Address 2", ((Address) writer.getObjectById(id, Address.class)).getAddress());
@@ -649,7 +649,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             writer.delete(o);
         }
     }
-    
+
     public void testWriteCleaner() throws Exception {
         InterMineObject o = new Cleaner();
         try {

@@ -30,7 +30,7 @@ import org.intermine.web.logic.tagging.TagBinding;
 
 /**
  * Import tags.
- * 
+ *
  * @author Thomas Riley
  */
 public class ImportTagsAction extends InterMineAction
@@ -38,7 +38,7 @@ public class ImportTagsAction extends InterMineAction
 
     /**
      * Import user's tags.
-     * 
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -66,5 +66,5 @@ public class ImportTagsAction extends InterMineAction
         recordMessage(new ActionMessage("history.importedTags", new Integer(count)), request);
         return mapping.findForward("success");
     }
-    
+
 }

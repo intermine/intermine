@@ -140,7 +140,7 @@ public class CalculateLocationsTest extends TestCase {
             exonLocs[i] = createLocation(chr, exons[i], "1", start, end, Location.class);
             exonLocs[i].setId(new Integer(1000 + exonId));
         }
-        
+
         ReversePrimer rp =
             (ReversePrimer) DynamicUtil.createObject(Collections.singleton(ReversePrimer.class));
         rp.setId(new Integer(3000));
@@ -179,7 +179,7 @@ public class CalculateLocationsTest extends TestCase {
 
     public void testCreateOverlapFull () throws Exception {
         createOverlapTestData();
-        
+
         CalculateLocations cl = new CalculateLocations(osw);
         List classesToIgnore = new ArrayList();
         classesToIgnore.add("Primer=Exon");
@@ -249,10 +249,10 @@ public class CalculateLocationsTest extends TestCase {
                  + " in expected results");
         }
     }
-    
+
     public void testCreateOverlapIgnoreSelfMatches () throws Exception {
         createOverlapTestData();
-        
+
         CalculateLocations cl = new CalculateLocations(osw);
         List classesToIgnore = new ArrayList();
         classesToIgnore.add("Primer");
@@ -410,7 +410,7 @@ public class CalculateLocationsTest extends TestCase {
         Exon exon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon3.setId(new Integer(109));
 
-        Location exon1OnChr = createLocation(getChromosome(), exon1, "1", 51, 100, Location.class); 
+        Location exon1OnChr = createLocation(getChromosome(), exon1, "1", 51, 100, Location.class);
         exon1OnChr.setId(new Integer(1010));
         Location exon2OnChr = createLocation(getChromosome(), exon2, "1", 201, 250, Location.class);
         exon2OnChr.setId(new Integer(1011));

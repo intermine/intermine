@@ -47,7 +47,7 @@ public class TemplatesExportAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String name = request.getParameter("name");
         String scope = request.getParameter("scope");
-        
+
         String xml = null;
 
         if (name == null) {
@@ -57,7 +57,7 @@ public class TemplatesExportAction extends InterMineAction
                 xml = TemplateHelper.templateMapToXml(SessionMethods
                         .getSuperUserProfile(servletContext).getSavedTemplates());
             } else {
-                throw new IllegalArgumentException("Cannot export all templates for scope " 
+                throw new IllegalArgumentException("Cannot export all templates for scope "
                                                    + scope);
             }
         } else {
@@ -71,10 +71,10 @@ public class TemplatesExportAction extends InterMineAction
             }
         }
         xml = XmlUtil.indentXmlSimple(xml);
-        
+
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
-        
+
         PrintStream out = new PrintStream(response.getOutputStream());
         out.print(xml);
         out.flush();

@@ -117,7 +117,7 @@ public class LiteRenderer
             charLen += f.getValue().toString().length() + 200;
         }
         charLen += item.getReferences().size() * 200;
-        
+
         StringBuffer sb = new StringBuffer(charLen);
 
         sb.append(item.getClassName())

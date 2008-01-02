@@ -66,7 +66,7 @@ public class ExportQueryAction extends InterMineAction
         String type = request.getParameter("type");
         String name = request.getParameter("name");
         PathQuery query = null;
-        
+
         if (StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
             query = (PathQuery) session.getAttribute(Constants.QUERY);
         } else if ("history".equals(type)) {
@@ -77,14 +77,14 @@ public class ExportQueryAction extends InterMineAction
             LOG.error("Bad type parameter: " + type);
             return null;
         }
-        
+
         if (query == null) {
             LOG.error("Failed to find query " + name + " of type " + type);
             return null;
         }
-        
+
         response.setContentType("text/plain; charset=us-ascii");
-        
+
         if (StringUtils.isEmpty(request.getParameter("as"))
             || request.getParameter("as").toLowerCase().equals("xml")) {
             String modelName = query.getModel().getName();
@@ -111,7 +111,7 @@ public class ExportQueryAction extends InterMineAction
         } else {
             response.getWriter().println("Unknown export type: " + request.getParameter("as"));
         }
-        
+
         return null;
     }
 }

@@ -26,12 +26,12 @@ public class DirectDataLoader extends DataLoader
 {
     private int idCounter = 0;
     private String sourceName;
-    
+
     /**
      * Create a new DirectDataLoader using the given IntegrationWriter and source name.
      * @param iw an IntegrationWriter
      * @param sourceName the source name
-     * 
+     *
      */
     public DirectDataLoader (IntegrationWriter iw, String sourceName) {
         super(iw);
@@ -50,7 +50,7 @@ public class DirectDataLoader extends DataLoader
 
         getIntegrationWriter().store(o, source, skelSource);
     }
-    
+
     /**
      * Create a new object of the given class name and give it a unique ID.
      * @param className the class name
@@ -60,7 +60,7 @@ public class DirectDataLoader extends DataLoader
     public InterMineObject createObject(String className) throws ClassNotFoundException {
         return createObject(Class.forName(className));
     }
-    
+
     /**
      * Create a new object of the given class and give it a unique ID.
      * @param c the class

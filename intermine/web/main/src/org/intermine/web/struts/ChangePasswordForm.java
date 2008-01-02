@@ -25,7 +25,7 @@ import org.intermine.web.logic.profile.ProfileManager;
 /**
  * Form bean to represent the inputs needed to change a password from user input.
  * @author Xavier Watkins
- * 
+ *
  */
 public class ChangePasswordForm extends ActionForm
 {
@@ -102,7 +102,7 @@ public class ChangePasswordForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -129,7 +129,7 @@ public class ChangePasswordForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         username = null;
         oldpassword = null;

@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 public class ConstantTest extends TestCase
 {
     private Constant c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13;
-    
+
     public ConstantTest(String arg1) {
         super(arg1);
     }
@@ -36,7 +36,7 @@ public class ConstantTest extends TestCase
         c12 = new Constant(new BigDecimal((new Float(5.1)).doubleValue()).toString());
         c13 = new Constant("1.3432E-11");
     }
-        
+
     public void testGetSQLString() throws Exception {
         Constant c = new Constant("'A constant'");
         assertEquals("'A constant'", c.getSQLString());

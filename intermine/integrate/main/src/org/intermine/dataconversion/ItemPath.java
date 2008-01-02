@@ -27,9 +27,9 @@ import antlr.collections.AST;
 /**
  * ItemPaths provide an easy way to load single or multiple items from an ItemReader given a
  * starting Item and destination (the path).
- * 
+ *
  * <h3>Basic paths</h3>
- * 
+ *
  * Examples of path expressions:
  * <pre>
  *   Company.ceo.address
@@ -37,9 +37,9 @@ import antlr.collections.AST;
  * </pre>
  * The path should end with a reference to an object or a collection. It should not end with an
  * attribute name.
- * 
+ *
  * <h3>Constraints</h3>
- * 
+ *
  * You can also add constraints at points in the path. You can constrain an attribute to be a
  * certain value. Often you will want to put a constraint on a collection in order to pick
  * a single element to traverse through. For example:
@@ -55,9 +55,9 @@ import antlr.collections.AST;
  * <pre>
  *   Company.departments[manager.name='Bob'].employees
  * </pre>
- * 
+ *
  * <h3>Variables in constraints</h3>
- * 
+ *
  * As well as having fixed values operands for constraints, you can make an operand a variable.
  * The actual values used for traversal are provided when the path is used (see ItemReader).
  * A variable constraint is used by inserting $n in the path for a constraint operand. n is the
@@ -67,14 +67,14 @@ import antlr.collections.AST;
  *   Company.departments[manager.name=$0].employees
  *   Employee.company[address.postcode=$0].departments[name=$1]
  * </pre>
- * 
+ *
  * @see org.intermine.dataconversion.ItemReader
  * @author Thomas Riley
  */
 public class ItemPath
 {
     private static final Logger LOG = Logger.getLogger(ItemPath.class);
-    
+
     /** The abstract syntax tree produced by the parser. */
     private AST ast;
     /** Namespace. */
@@ -87,16 +87,16 @@ public class ItemPath
     private String startType;
     /** Root ItemPrefetchDescriptor. */
     private ItemPrefetchDescriptor ipd;
-    
+
     /**
      * Construct a new instance of ItemPath for a given path expression.
-     * 
+     *
      * @param path the path expression
      * @param namespace the namespace that this path
      */
     public ItemPath(String path, String namespace) {
         this.namespace = namespace;
-        
+
         try {
             InputStream is = new ByteArrayInputStream(path.getBytes());
             ItemPathLexer lexer = new ItemPathLexer(is);
@@ -105,7 +105,7 @@ public class ItemPath
             parser.expr();
             ast = parser.getAST();
             computePrefetchDescriptors();
-            
+
             if (ast == null || getItemPrefetchDescriptor() == null) {
                 throw new IllegalArgumentException("Invalid path " + path);
             }
@@ -124,27 +124,27 @@ public class ItemPath
             throw e;
         }
     }
-    
+
     /**
      * Walk over the AST building ItemPrefetchDescriptors and parsing constraints.
      */
     protected void computePrefetchDescriptors() {
         processASTExpression(ast, null);
     }
-    
+
     private ItemPrefetchDescriptor processASTExpression(AST expression,
                                                         ItemPrefetchDescriptor parent) {
         AST type = expression.getFirstChild();
         AST fieldPath = type.getNextSibling();
-        
+
         parent = processASTType(type, parent);
         return processASTFieldPath(fieldPath, parent);
     }
-    
+
     private ItemPrefetchDescriptor processASTType(AST type, ItemPrefetchDescriptor parent) {
         AST child = type.getFirstChild();
         // identifier or revref
-        
+
         // if identifier, process identifier as class type
         switch (child.getType()) {
             case ItemPathTokenTypes.IDENTIFIER:
@@ -159,19 +159,19 @@ public class ItemPath
                         + type.getType() + "]");
         }
     }
-    
+
     private ItemPrefetchDescriptor processASTFieldPath(AST type, ItemPrefetchDescriptor parent) {
         // step through field identifiers calling processASTIdentifier
         AST child = type.getFirstChild();
-        
+
         while (child != null) {
             parent = processASTField(child, parent);
             child = child.getNextSibling();
         }
-        
+
         return parent;
     }
-    
+
     private ItemPrefetchDescriptor processASTField(AST type, ItemPrefetchDescriptor parent) {
         // field might be followed by constraint
         AST identifier = type.getFirstChild();
@@ -182,7 +182,7 @@ public class ItemPath
         }
         return parent;
     }
-    
+
     private void processASTConstraint(AST constraint, ItemPrefetchDescriptor collection) {
         // field might be followed by constraint
         AST field = constraint.getFirstChild();
@@ -206,7 +206,7 @@ public class ItemPath
             field = value.getNextSibling();
         }
     }
-    
+
     /**
      * @return root IPD for the subpath.
      */
@@ -215,7 +215,7 @@ public class ItemPath
         AST child = type.getFirstChild();
         ItemPrefetchDescriptor parent = null;
         ItemPrefetchDescriptor root = null;
-        
+
         // avoid processing field name at the end
         while (child.getNextSibling() != null) {
             parent = processASTIdentifier(child, parent);
@@ -224,7 +224,7 @@ public class ItemPath
             }
             child = child.getNextSibling();
         }
-        
+
         // record actual field constraint on last IPD
         String cvalue = value.getText();
         if (cvalue.charAt(0) == '\'') {
@@ -233,23 +233,23 @@ public class ItemPath
         } else {
             recordConstraint(parent, child.getText(), Integer.parseInt(cvalue.substring(1)));
         }
-        
+
         return root;
     }
-    
+
     private ItemPrefetchDescriptor processASTRevRef(AST revref, ItemPrefetchDescriptor parent) {
         AST expr = revref.getFirstChild();
         AST typeFieldPath = expr.getNextSibling();
-        
+
         parent = processASTExpression(expr, parent);
         return processASTTypeFieldPath(typeFieldPath, parent);
     }
-    
+
     private ItemPrefetchDescriptor processASTTypeFieldPath(AST typeFieldPath,
                                                            ItemPrefetchDescriptor parent) {
         AST type = typeFieldPath.getFirstChild();
         AST field = type.getNextSibling();
-     
+
         ItemPrefetchDescriptor desc2 = new ItemPrefetchDescriptor("("
                 + (parent != null ? parent.getDisplayName() : getStartType()) + " <- "
                 + type.getText() + "." + field.getText() + ")");
@@ -268,7 +268,7 @@ public class ItemPath
         }
         return desc2;
     }
-    
+
     private ItemPrefetchDescriptor processASTIdentifier(AST identifier,
                                                         ItemPrefetchDescriptor parent) {
         ItemPrefetchDescriptor desc
@@ -284,10 +284,10 @@ public class ItemPath
         }
         return desc;
     }
-    
+
     /**
      * Record a new field value constraint for a given descriptor.
-     * 
+     *
      * @param collection the prefetch descriptor
      * @param attrib the name of attribute to constrain
      * @param value the value for constraining the attribute
@@ -300,11 +300,11 @@ public class ItemPath
         set.add(new Constraint(attrib, value));
         constraints.put(collection, set);
     }
-    
+
     /**
      * Record a new field value constraint for a given descriptor that has a variable
      * operand.
-     * 
+     *
      * @param collection the prefetch descriptor
      * @param attrib the name of attribute to constrain
      * @param index the variable index
@@ -317,10 +317,10 @@ public class ItemPath
         set.add(new Constraint(attrib, index));
         constraints.put(collection, set);
     }
-    
+
     /**
      * Record a subpath constraint at a given point in the main path.
-     * 
+     *
      * @param parent the point in the main path that the constraint applies
      * @param constraint the constrant in the form of a path that should return items
      */
@@ -332,7 +332,7 @@ public class ItemPath
         set.add(constraint);
         subPathConstraints.put(parent, set);
     }
-    
+
     /**
      * For the prefetch descriptor that will load a collection of objects, get the extra, simple
      * field constraints to impose. These are expressed in the path as:
@@ -345,7 +345,7 @@ public class ItemPath
      * </pre>
      * ... stored as IPDs (with at least one field value constraint) and are accessed via
      * getSubItemPathConstraints.
-     * 
+     *
      * @param collection item prefetch descriptor
      * @param values the variable values to use
      * @return Set of FieldNameAndValue constraints or an empty set
@@ -365,11 +365,11 @@ public class ItemPath
         }
         return favc;
     }
-    
+
     /**
      * For a given step along the main, path get the PIDs that represent constraints on the
      * items collected at this point.
-     * 
+     *
      * @param descriptor the descriptor from the main path
      * @return Set of ItemPrefetchDescriptors that constraint items at this point
      */
@@ -377,19 +377,19 @@ public class ItemPath
         // descriptor may load a single item or a collection
         return (Set) MapUtils.getObject(subPathConstraints, descriptor, new HashSet());
     }
-    
+
     /**
      * Get the ItemPrefetchDescriptors for this path.
-     * 
+     *
      * @return an ItemPrefetchDescriptor for this path
      */
     public ItemPrefetchDescriptor getItemPrefetchDescriptor() {
         return ipd;
     }
-    
+
     /**
      * Set the root ItemPrefetchDescriptor for the current context.
-     * 
+     *
      * @param ipd root ItemPrefetchDescriptor for current context
      */
     private void setItemPrefetchDescriptor(ItemPrefetchDescriptor ipd) {
@@ -399,19 +399,19 @@ public class ItemPath
         this.ipd = ipd;
         LOG.debug("set root IPD " + ipd.getDisplayName());
     }
-    
+
     /**
      * Get the starting class that this path starts at.
-     * 
+     *
      * @return starting point of this path
      */
     public String getStartType() {
         return startType;
     }
-    
+
     /**
      * Set the startType of the current context.
-     * 
+     *
      * @param startType class type
      */
     private void setStartType(String startType) {
@@ -421,19 +421,19 @@ public class ItemPath
         this.startType = startType;
         LOG.debug("found start type " + startType);
     }
-    
+
     /**
      * Get the namespace that this path operates within.
-     * 
+     *
      * @return namespace of the path
      */
     public String getNamespace() {
         return namespace;
     }
-    
+
     /**
      * Test two ItemPaths for equality.
-     * 
+     *
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
@@ -445,14 +445,14 @@ public class ItemPath
                 && getStartType().equals(((ItemPath) obj).getStartType())
                 && namespace.equals(((ItemPath) obj).namespace));
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public int hashCode() {
         return getItemPrefetchDescriptor().hashCode() + 3 * namespace.hashCode();
     }
-    
+
     /**
      * Represents a FieldNameAndValue constraint. The operand value of the constraint might
      * be a variable so the actual FieldNameAndValue is created when variable values are
@@ -463,10 +463,10 @@ public class ItemPath
         private String attrib;
         private String value;
         private int index = -1;
-        
+
         /**
          * Create a constraint with a fixed operand.
-         * 
+         *
          * @param attrib the attribute name
          * @param value the value for the constraint
          */
@@ -480,10 +480,10 @@ public class ItemPath
                 throw new NullPointerException("value");
             }
         }
-        
+
         /**
          * Create a constraint with a variable operand.
-         * 
+         *
          * @param attrib the attribute name
          * @param varIndex the index of the variable as specified in the path expression ($0 etc)
          */
@@ -494,10 +494,10 @@ public class ItemPath
                 throw new IllegalArgumentException("varIndex");
             }
         }
-        
+
         /**
          * Get the actual FieldNameAndValue item reader constraint.
-         * 
+         *
          * @param variables set of variables being used for this path traversal
          * @return FieldNameAndValue constraint
          */
@@ -516,7 +516,7 @@ public class ItemPath
             } else {
                 return new FieldNameAndValue(attrib, value, false);
             }
-            
+
         }
     }
 }

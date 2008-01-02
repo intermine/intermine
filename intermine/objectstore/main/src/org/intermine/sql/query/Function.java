@@ -96,11 +96,11 @@ public class Function extends AbstractValue
      * STDDEV operator - takes one operand
      */
     public static final int STDDEV = 18;
-    
+
     private static final String REPRESENTATIONS[] = {"", "COUNT(*)", "MAX(", "MIN(",
         "SUM(", "AVG(", " + ", " - ", " * ", " / ", " ^ ", " % ", "::", "STRPOS(", "SUBSTR(",
         "COALESCE(", "LOWER(", "UPPER(", "STDDEV("};
-    
+
     /**
      * Constructor for this Function object.
      *

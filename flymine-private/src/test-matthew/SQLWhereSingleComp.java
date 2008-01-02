@@ -1,19 +1,19 @@
 
 public class SQLWhereSingleComp extends SQLWhereComparison
 {
-	private SQLQueryField left;
-	private int op;
-	private Object right;
+    private SQLQueryField left;
+    private int op;
+    private Object right;
 
-	public SQLWhereSingleComp (SQLQueryField aLeft, int aOp, Object aRight)
-	{
-		left = aLeft;
-		op = aOp;
-		right = aRight;
-	}
+    public SQLWhereSingleComp (SQLQueryField aLeft, int aOp, Object aRight)
+    {
+        left = aLeft;
+        op = aOp;
+        right = aRight;
+    }
 
-	public String toString()
-	{
-		return left.getCanonicalName()+OPS[op]+right.toString();
-	}
+    public String toString()
+    {
+        return left.getCanonicalName()+OPS[op]+right.toString();
+    }
 }

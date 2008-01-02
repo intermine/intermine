@@ -64,4 +64,4 @@ public class QueryClonerTest extends SetupDataTestCase
         assertEquals("SELECT DISTINCT a1_, a2_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_", cloned.toString());
     }
 }
-    
+

@@ -1,6 +1,6 @@
 package org.intermine.dataconversion;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -20,7 +20,7 @@ import org.intermine.sql.Database;
 public abstract class DBConverter extends DataConverter
 {
     private final Database database;
-    
+
     /**
      * Constructor
      * @param writer an ItemWriter used to handle the resultant Items
@@ -37,7 +37,7 @@ public abstract class DBConverter extends DataConverter
      * @throws Exception if there is a problem while processing
      */
     public abstract void process() throws Exception;
-    
+
     /**
      * Get the Database that was passed to the constructor.
      * @return the Database

@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
  * Configuration for a single data set. A data set describes a particular category of data/classes/
  * templates/example queries that are displayed on a 'data set homepage' that acts as a starting
  * point for users interested in a particular aspect of the data.
- * 
+ *
  * @author Thomas Riley
  */
 public class Aspect
@@ -41,7 +41,7 @@ public class Aspect
     private List aspectSources = new ArrayList();
     /** Comma seperated list of starting-point class names. */
     private List startingPoints = new ArrayList();
-    
+
     /**
      * Get the name of the data set.
      * @return the data set name
@@ -57,7 +57,7 @@ public class Aspect
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * Get the subtitle
      * @return the subtitle
@@ -65,8 +65,8 @@ public class Aspect
     public String getSubTitle() {
         return subTitle;
     }
-    
-    /** 
+
+    /**
      * Set the subtitle.
      * @param subTitle the subtitle for the data set
      */
@@ -154,7 +154,7 @@ public class Aspect
     public void setTileName(String tileName) {
         this.tileName = tileName;
     }
-    
+
     /**
      * Set the starting point class names as a space seperated list.
      * @param classnames class names as a space seperated list
@@ -164,7 +164,7 @@ public class Aspect
         classes = StringUtils.stripAll(classes);
         startingPoints = Arrays.asList(classes);
     }
-    
+
     /**
      * Get a List of starting point class names.
      * @return List of class names

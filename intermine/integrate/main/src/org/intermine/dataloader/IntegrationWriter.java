@@ -66,7 +66,7 @@ public interface IntegrationWriter extends ObjectStoreWriter
      * appear in the destination database. Data that differs in primary keys may result in
      * an exception being thrown during data loading. Note that setting a field to null differs
      * from another copy with the field set to a value.
-     * 
+     *
      * @param ignoreDuplicates the value of ignoreDuplicates
      */
     public void setIgnoreDuplicates(boolean ignoreDuplicates);

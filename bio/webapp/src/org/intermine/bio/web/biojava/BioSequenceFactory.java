@@ -27,12 +27,12 @@ import org.flymine.model.genomic.Translation;
 public abstract class BioSequenceFactory
 {
     public enum SequenceType { DNA, PROTEIN, RNA }
-    
+
     /**
      * Create a new BioSequence from a LocatedSequenceFeature
      * @param feature the LocatedSequenceFeature
      * @return a new BioSequence object or null if the LocatedSequenceFeature doesn't have a
-     * Sequence 
+     * Sequence
      * @throws IllegalSymbolException if any of the residues of the LocatedSequenceFeature can't be
      * turned into DNA symbols.
      */
@@ -62,7 +62,7 @@ public abstract class BioSequenceFactory
             return new BioSequence(ProteinTools.createProtein(residues), translation);
         }
     }
- 
+
     /**
      * Create a new BioSequence from a Protein
      * @param protein the Protein
@@ -79,7 +79,7 @@ public abstract class BioSequenceFactory
             return new BioSequence(ProteinTools.createProtein(residues), protein);
         }
     }
-    
+
     /**
      * Create a new BioSequence from a Protein
      * @param protein the Protein

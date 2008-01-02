@@ -100,26 +100,26 @@ public class SequenceExporter extends InterMineAction implements TableExporter
         if (classNames != null && classNames.length() != 0) {
             String [] classArray = classNames.split(",");
             for (int i = 0; i < classArray.length; i++) {
-                classList.add(TypeUtil.instantiate(os.getModel().getPackageName() + "." 
+                classList.add(TypeUtil.instantiate(os.getModel().getPackageName() + "."
                                                    + classArray[i]));
             }
         } else {
-            classList.addAll(Arrays.asList(new Class[] {Protein.class, 
-                LocatedSequenceFeature.class, 
+            classList.addAll(Arrays.asList(new Class[] {Protein.class,
+                LocatedSequenceFeature.class,
                 Translation.class}));
         }
         InterMineObject obj = os.getObjectById(new Integer(request.getParameter("object")));
         if (obj instanceof Sequence) {
             Sequence sequence = (Sequence) obj;
             for (Class clazz : classList) {
-                obj = ResidueFieldExporter.getIMObjectForSequence(os, clazz, 
+                obj = ResidueFieldExporter.getIMObjectForSequence(os, clazz,
                                                                   sequence);
                 if (obj != null) {
                     break;
                 }
             }
         }
-        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein 
+        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein
                         || obj instanceof Translation) {
             BioEntity bioEntity = (BioEntity) obj;
             bioSequence = BioSequenceFactory.make(bioEntity, SequenceType.DNA);

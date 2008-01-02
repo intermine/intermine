@@ -76,7 +76,7 @@ public class QueryBuilderConstraintController extends TilesAction
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
-        
+
         //set up the node on which we are editing constraints
         if (session.getAttribute("editingNode") != null) {
 
@@ -106,7 +106,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 request.setAttribute ("loopQueryOps", attributeOps);
                 request.setAttribute ("loopQueryPaths", paths);
             }
-            
+
             // work out the parent class of node if it is a key field or the class
             // of object/reference/collection
             String nodeType;
@@ -153,7 +153,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 String keyFieldStr = StringUtil.prettyList(keyFields, true);
                 request.setAttribute("keyFields", keyFieldStr);
             }
-            
+
             if (useBags) {
                 Map<String, InterMineBag> allBags =
                     WebUtil.getAllBags(profile.getSavedBags(), servletContext);

@@ -65,9 +65,9 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         q.addFrom(far);
         q.addFrom(maa);
         q.addFrom(gene);
-        
+
         QueryField tissueName = new QueryField(maa, "name");
-        
+
         // q.addToSelect(new QueryField(far,"enrichment"));
         q.addToSelect(new QueryField(far, "affyCall"));
         q.addToSelect(tissueName);
@@ -76,7 +76,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryField qf = new QueryField(gene, "id");
-        BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()); 
+        BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb());
         cs.addConstraint(bagC);
 
         QueryCollectionReference r = new QueryCollectionReference(far, "genes");
@@ -88,12 +88,12 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         cs.addConstraint(cc2);
         q.setConstraint(cs);
         q.addToOrderBy(tissueName);
-        
+
         results = os.execute(q);
         results.setBatchSize(100000);
         Iterator iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
-        LinkedHashMap<String, ArrayList<String>> geneMap 
+        LinkedHashMap<String, ArrayList<String>> geneMap
                                                 = new LinkedHashMap<String, ArrayList<String>>();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
@@ -168,5 +168,5 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         return dataSets;
     }
 
-    
+
 }

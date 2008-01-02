@@ -96,10 +96,10 @@ public class BagQueryConfig
     public Map getBagQueries() {
         return bagQueries;
     }
-    
+
     /**
      * Return a Map from converter Class name to field name to use in the url to get that field
-     * 
+     *
      * @return the additionalConverters
      */
     public Map getAdditionalConverters() {

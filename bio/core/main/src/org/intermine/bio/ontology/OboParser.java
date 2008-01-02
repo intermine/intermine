@@ -256,7 +256,7 @@ public class OboParser
                     if (pt == null) {
                         LOG.warn("child term (" + term + ") in OBO file refers to a non-existent "
                                 + "parent (" + isa + ")");
-                        System.err.println("Child term (" + term + ") in OBO file refers to a non-"
+                        System.err. println("Child term (" + term + ") in OBO file refers to a non-"
                                 + "existent parent (" + isa + ")");
                         continue;
                     }

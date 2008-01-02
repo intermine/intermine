@@ -21,7 +21,7 @@ public interface TagTypes
      * Collection.
      */
     public static final String COLLECTION = "collection";
-    
+
     /**
      * Reference.
      */
@@ -31,7 +31,7 @@ public interface TagTypes
      * Template.
      */
     public static final String TEMPLATE = "template";
-    
+
     /**
      * Bag.
      */

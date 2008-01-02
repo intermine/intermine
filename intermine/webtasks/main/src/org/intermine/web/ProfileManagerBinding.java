@@ -40,7 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class ProfileManagerBinding
 {
     private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
-    
+
     /**
      * Convert the contents of a ProfileManager to XML and write the XML to the given writer.
      * @param profileManager the ProfileManager
@@ -57,11 +57,11 @@ public class ProfileManagerBinding
                 Profile profile = profileManager.getProfile((String) iter.next());
                 LOG.info("Writing profile: " + profile.getUsername());
                 long startTime = System.currentTimeMillis();
-                
+
                 ProfileBinding.marshal(profile, profileManager.getObjectStore(), writer);
-                
+
                 long totalTime = System.currentTimeMillis() - startTime;
-                LOG.info("Finished writing profile: " + profile.getUsername() 
+                LOG.info("Finished writing profile: " + profile.getUsername()
                          + " took " + totalTime + "ms.");
             }
             writer.writeEndElement();
@@ -125,7 +125,7 @@ class ProfileManagerHandler extends DefaultHandler
     private boolean abortOnError;
     private long startTime = 0;
     private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
-    
+
     /**
      * Create a new ProfileManagerHandler
      * @param profileManager the ProfileManager to store the unmarshalled Profile to

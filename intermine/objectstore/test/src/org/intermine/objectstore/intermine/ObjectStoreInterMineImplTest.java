@@ -717,7 +717,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             }
         }
     }
-    
+
     public void testIsPrecomputed() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);

@@ -19,7 +19,7 @@ import java.util.Iterator;
  * Class representing the elements of the FlyNetwork
  * @author Florian Reisinger
  */
-public abstract class FlyHashGraphElement implements Serializable 
+public abstract class FlyHashGraphElement implements Serializable
     {
 
     protected String label;
@@ -60,7 +60,7 @@ public abstract class FlyHashGraphElement implements Serializable
             return null;
         }
     }
-    
+
     /**
      * @param name the name of the attribute
      * @return the flag for this value or -1 if non was found for the specified name
@@ -75,9 +75,9 @@ public abstract class FlyHashGraphElement implements Serializable
     }
 
     /**
-     * Adds a name-value-pair attribute to this element. This will 
+     * Adds a name-value-pair attribute to this element. This will
      * update/overwrite values for already existing attributes and use a default flag.
-     * The default flag is currently set to FlyValueWrapper.OVERWRITE. Other values 
+     * The default flag is currently set to FlyValueWrapper.OVERWRITE. Other values
      * for this flag are: FlyValueWrapper.NOT_OVERWRITE and FlyValueWrapper.ADD
      * @param name name of the attribute
      * @param value value of the attribute
@@ -87,7 +87,7 @@ public abstract class FlyHashGraphElement implements Serializable
     public boolean setAttribute(String name, Object value) {
         return this.setAttribute(name, value, FlyValueWrapper.OVERWRITE, true);
     }
-    
+
     /**
      * Adds a name-value-pair attribute to this element.
      * @param name name of the attribute
@@ -98,7 +98,7 @@ public abstract class FlyHashGraphElement implements Serializable
     public boolean setAttribute(String name, Object value, int flag) {
         return this.setAttribute(name, value, flag, true);
     }
-    
+
     /**
      * Adds a name-value-pair attribute to this element.
      * @param name name of the attribute
@@ -110,7 +110,7 @@ public abstract class FlyHashGraphElement implements Serializable
         // TODO: do we need the update flag?
         return this.setAttribute(name, value, FlyValueWrapper.OVERWRITE, update);
     }
-    
+
     /**
      * Adds a name-value-pair attribute to this element.
      * @param name name of the attribute
@@ -166,9 +166,9 @@ public abstract class FlyHashGraphElement implements Serializable
         }
         return true;
     }
-    
+
     //TODO: change to equals() and hashcode()
-    
+
     /**
      * @see java.lang.Object#toString()
      * @return a String representing this element

@@ -33,7 +33,7 @@ public class QueryFieldTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
     }
-    
+
     public void testEmptyField() throws Exception {
         try {
             new QueryField(qc, "");
@@ -41,7 +41,7 @@ public class QueryFieldTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
     }
-    
+
     public void testNullField() throws Exception {
         try {
             new QueryField(qc, (String)null);

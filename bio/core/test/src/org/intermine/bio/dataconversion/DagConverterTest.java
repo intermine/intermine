@@ -30,7 +30,7 @@ public class DagConverterTest extends TestCase {
     String NAMESPACE = "http://www.flymine.org/model/genomic#";
     MockItemWriter itemWriter;
     Model model = Model.getInstanceByName("genomic");
-    
+
     private ItemFactory itemFactory = new ItemFactory();
 
     public void setUp() throws Exception {

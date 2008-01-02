@@ -179,7 +179,7 @@ public class MappingUtil
      * <ol><li>{{a1-&gt;b1}}</li>
      *     <li>{{a1-&gt;c1}}</li>
      *     <li>{{a1-&gt;b1}, {a1-&gt;c1}}</li></ol>
-     * 
+     *
      * @param combinations a Set of Maps, each of which is a mapping from one set of items onto
      * another set of items
      * @return a Set of Sets of Maps, where each Set of Maps is a set of mappings that have all

@@ -41,8 +41,8 @@ public class QueryBuilderPathsController extends TilesAction
         populateRequest(request, response);
         return null;
     }
-    
-    private static void populateRequest(HttpServletRequest request, 
+
+    private static void populateRequest(HttpServletRequest request,
                                         @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);

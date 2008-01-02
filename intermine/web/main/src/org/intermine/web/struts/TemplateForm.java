@@ -45,7 +45,7 @@ public class TemplateForm extends ActionForm
     protected Map extraValues, selectedBags, bagOps;
     protected String templateType, templateName;
     protected String view;
-    
+
     /**
      * Constructor
      */
@@ -78,7 +78,7 @@ public class TemplateForm extends ActionForm
     public void setAttributeOps(String key, Object value) {
         attributeOps.put(key, value);
     }
-    
+
     /**
      * Get an attribute op
      * @param key the key
@@ -164,7 +164,7 @@ public class TemplateForm extends ActionForm
     public void setUseBagConstraint(String key, boolean value) {
         useBagConstraint.put(key, value ? Boolean.TRUE : Boolean.FALSE);
     }
-    
+
     /**
      * Get the value of useBagConstraint for given constraint key.
      * @param key the key
@@ -173,7 +173,7 @@ public class TemplateForm extends ActionForm
     public boolean getUseBagConstraint(String key) {
         return Boolean.TRUE.equals(useBagConstraint.get(key));
     }
-    
+
     /**
      * Set the bag name.
      * @param key the key
@@ -182,7 +182,7 @@ public class TemplateForm extends ActionForm
     public void setBag(String key, Object bag) {
         selectedBags.put(key, bag);
     }
-    
+
     /**
      * Get the bag name selected.
      * @param key the key
@@ -191,7 +191,7 @@ public class TemplateForm extends ActionForm
     public Object getBag(String key) {
         return selectedBags.get(key);
     }
-    
+
     /**
      * Get the bag operation selected.
      * @param key the key
@@ -200,7 +200,7 @@ public class TemplateForm extends ActionForm
     public String getBagOp(String key) {
         return (String) bagOps.get(key);
     }
-    
+
     /**
      * Set bag operation.
      * @param bagOp the bag operation selected
@@ -209,7 +209,7 @@ public class TemplateForm extends ActionForm
     public void setBagOp(String key, String bagOp) {
         bagOps.put(key, bagOp);
     }
-    
+
     /**
      * Get a parsed attribute value
      * @param key the key
@@ -218,7 +218,7 @@ public class TemplateForm extends ActionForm
     public Object getParsedAttributeValues(String key) {
         return parsedAttributeValues.get(key);
     }
-    
+
     /**
      * Get the template name.
      * @return the template name
@@ -242,7 +242,7 @@ public class TemplateForm extends ActionForm
     public String getView() {
         return view;
     }
-    
+
     /**
      * Set the selected alternative view name.
      * @param view selected alternative view name
@@ -250,7 +250,7 @@ public class TemplateForm extends ActionForm
     public void setView(String view) {
         this.view = view;
     }
-    
+
     /**
      * Get the template type.
      * @return the template type
@@ -270,22 +270,22 @@ public class TemplateForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         String queryName = getTemplateName();
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-        
+
         TemplateQuery template =
-            TemplateHelper.findTemplate(servletContext, session, userName, 
+            TemplateHelper.findTemplate(servletContext, session, userName,
                                         queryName, getTemplateType());
         ActionErrors errors = new ActionErrors();
-        
-        boolean appendWildcard = (request.getParameter("appendWildcard") != null 
+
+        boolean appendWildcard = (request.getParameter("appendWildcard") != null
                                   && !request.getParameter("appendWildcard").equals("no"));
         parseAttributeValues(template, session, errors, appendWildcard);
-               
+
 
         return errors;
     }
@@ -293,7 +293,7 @@ public class TemplateForm extends ActionForm
     /**
      * For each value entered, parse the value into a format that can be
      * applied to the particular constraint.
-     * 
+     *
      * @param template the related template query
      * @param session the current session
      * @param errors a place to store any parse errors
@@ -313,7 +313,7 @@ public class TemplateForm extends ActionForm
             PathNode node = (PathNode) i.next();
             for (Iterator ci = template.getEditableConstraints(node).iterator(); ci.hasNext();) {
                 Constraint c = (Constraint) ci.next();
-                
+
                 String key = "" + (j + 1);
                 Class fieldClass;
                 if (node.isAttribute()) {
@@ -321,7 +321,7 @@ public class TemplateForm extends ActionForm
                 } else {
                     fieldClass = String.class;
                 }
-                
+
                 if (getUseBagConstraint(key)) {
                     // validate choice of bag in some way?
                 } else {
@@ -342,11 +342,11 @@ public class TemplateForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(ActionMapping mapping, 
+    public void reset(ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         reset();
     }
-    
+
     /**
      * Reset the form
      */

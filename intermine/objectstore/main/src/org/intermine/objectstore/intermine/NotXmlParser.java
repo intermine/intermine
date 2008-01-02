@@ -49,7 +49,7 @@ public class NotXmlParser
      */
     public static InterMineObject parse(String xml, ObjectStore os) throws ClassNotFoundException {
         String a[] = StringUtil.split(xml, DELIM);
-        
+
         Set classes = new HashSet();
         if (!"".equals(a[0])) {
             classes.add(Class.forName(a[0]));
@@ -61,7 +61,7 @@ public class NotXmlParser
             }
         }
         InterMineObject retval = (InterMineObject) DynamicUtil.createObject(classes);
-        
+
         Map fields = os.getModel().getFieldDescriptorsForClass(retval.getClass());
         for (int i = 2; i < a.length; i += 2) {
             if (a[i].startsWith("a")) {

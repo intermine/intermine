@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -25,18 +25,18 @@ public interface GraphCategoryURLGenerator extends CategoryURLGenerator
 {
 
     public String generateURL(CategoryDataset dataset, int series, int category);
-    
+
     /**
-     * 
+     *
      * @param os
      * @param bag
      * @param series
      * @param category
      * @return PathQuery
      */
-    public PathQuery generatePathQuery(ObjectStore os,  
+    public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
-                                       String series, 
+                                       String series,
                                        String category);
-    
+
 }

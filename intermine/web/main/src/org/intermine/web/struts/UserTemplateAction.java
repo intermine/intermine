@@ -51,7 +51,7 @@ public class UserTemplateAction extends InterMineDispatchAction
         ServletContext servletContext = session.getServletContext();
         String templateName = request.getParameter("name");
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+
         TemplateQuery template = profile.getSavedTemplates().get(templateName);
         if (template != null) {
             recordMessage(new ActionMessage("templateList.deleted", templateName), request);
@@ -66,10 +66,10 @@ public class UserTemplateAction extends InterMineDispatchAction
         } else {
             recordError(new ActionMessage("errors.template.nosuchtemplate"), request);
         }
-        
+
          return new ForwardParameters(mapping.findForward("begin"))
         .addParameter("subtab", "templates").forward();
-        
+
     }
-    
+
 }

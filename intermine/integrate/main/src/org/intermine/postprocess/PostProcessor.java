@@ -19,7 +19,7 @@ import org.intermine.objectstore.ObjectStoreException;
  * @author Richard Smith
  * */
 
-public abstract class PostProcessor 
+public abstract class PostProcessor
 {
     protected ObjectStoreWriter osw;
 
@@ -34,12 +34,12 @@ public abstract class PostProcessor
 
     /**
      * Return the ObjectStoreWriter that was passed to the constructor.
-     * @return the ObjectStoreWriter 
+     * @return the ObjectStoreWriter
      */
     public ObjectStoreWriter getObjectStoreWriter () {
         return osw;
     }
-    
+
     /**
      * All subclasses should override this method so they can be called in a generic fashion.
      *

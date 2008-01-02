@@ -21,12 +21,12 @@ public abstract class QueryReference
     protected QueryClass qc = null;
     protected String fieldName;
     protected Class type;
-    
+
     /**
      * Gets the QueryClass of which this reference is an member.
      *
      * @return the QueryClass
-     */    
+     */
     public QueryClass getQueryClass() {
         return qc;
     }
@@ -35,7 +35,7 @@ public abstract class QueryReference
      * Gets the Java class of this QueryReference.
      *
      * @return the class name
-     */    
+     */
     public Class getType() {
         return type;
     }

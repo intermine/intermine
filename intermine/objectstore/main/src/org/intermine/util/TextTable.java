@@ -28,7 +28,7 @@ public class TextTable
     private boolean leftBound;
     private boolean columnSeparators;
     private boolean rightBound;
-    
+
     /**
      * Creates a new TextTable object, with or without column separating lines.
      *

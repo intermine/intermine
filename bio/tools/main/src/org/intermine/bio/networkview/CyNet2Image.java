@@ -102,8 +102,8 @@ public class CyNet2Image
         // create view of the network
         pnv = new PhoebeNetworkView(net, "tmpview");
         int nodeCount = pnv.getNodeViewCount();
-        
-        // do not create network image if there is just a single node that 
+
+        // do not create network image if there is just a single node that
         // has no interactions
         // instead create default image
         if (nodeCount == 1) {
@@ -196,9 +196,9 @@ public class CyNet2Image
         g.drawString(protein, 60, 165);
         return img;
     }
-    
+
     /**
-     * Applies a default style 
+     * Applies a default style
      * @param pnv networkview to apply the default style to
      */
     private static void applyDefaultStyle(PhoebeNetworkView pnv) {
@@ -209,7 +209,7 @@ public class CyNet2Image
             nv.setShape(NodeView.ROUNDED_RECTANGLE);
             nv.setUnselectedPaint(Color.YELLOW);
             nv.setBorderPaint(Color.black);
-            Font x = new Font(nv.getLabel().getFont().getFontName(), 
+            Font x = new Font(nv.getLabel().getFont().getFontName(),
                     Font.BOLD, 26);
             nv.setBorderWidth(0.5f);
             nv.setHeight(30);
@@ -232,7 +232,7 @@ public class CyNet2Image
      * saves a image to a file in png format
      * @param img image to save
      * @param filepath location to save the file to
-     * 
+     *
      * @throws IOException IOException
      */
     public static void image2File(Image img, String filepath) throws IOException {
@@ -278,7 +278,7 @@ public class CyNet2Image
         // TODO: almost same code as in SampleFlyPlugin!!! watch changes
         // TODO: maybe change PhoebeNetworkView to CyNetworkView
         SpringEmbeddedLayouter lay;
-        // need the same size as in CyNet2Image, so the result of the layouter 
+        // need the same size as in CyNet2Image, so the result of the layouter
         // will look the same as the image created with the CyNet2Image utility
         int size = 350;
         pnv.getCanvas().setSize(size, size);
@@ -295,10 +295,10 @@ public class CyNet2Image
         for (Iterator in = pnv.getNodeViewsIterator(); in.hasNext();) {
             NodeView nv = (NodeView) in.next();
 
-            //spread node positions before layout so that they don't  
-            //all layout in a line (-> they don't fall into a local minimum 
+            //spread node positions before layout so that they don't
+            //all layout in a line (-> they don't fall into a local minimum
             //for the SpringEmbedder)
-            //If the SpringEmbedder implementation changes, this code  
+            //If the SpringEmbedder implementation changes, this code
             //may need to be removed
             nv.setXPosition(wPos);
             nv.setYPosition(hPos);
@@ -325,7 +325,7 @@ public class CyNet2Image
         int iSmallSize = 200;
 //        String vizFile = "/home/flo/.cytoscape/vizmap.props";
 //        String netFile = "/home/flo/FlyMine/Cytoscape/cytoscape_testdata2.sif";
-//        
+//
 //        try {
 //            CyNetwork net = Cytoscape.createNetworkFromFile(netFile);
 ////            Image i1 = CyNet2Image.convertNetwork2Image(net, 500, 500, vizFile, "test1");
@@ -362,7 +362,7 @@ public class CyNet2Image
 //        fn.addEdge(e3);
 //        fn.addEdge(e4);
 //        fn.addEdge(e5);
-        
+
         Collection nc = FlyNetworkIntegrator.convertNodesFly2Cy(fn.getNodes());
         Collection ec = FlyNetworkIntegrator.convertEdgesFly2Cy(fn.getEdges());
         CyNetwork net = Cytoscape.createNetwork(nc, ec, "testnet");

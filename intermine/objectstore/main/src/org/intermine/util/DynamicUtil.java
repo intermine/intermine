@@ -207,7 +207,7 @@ public class DynamicUtil
      * @param className the class name
      * @param implementations a space separated list of interface names
      * @return the materialised business object
-     * @throws ClassNotFoundException if className can't be found 
+     * @throws ClassNotFoundException if className can't be found
      */
     public static Object instantiateObject(String className, String implementations)
         throws ClassNotFoundException {

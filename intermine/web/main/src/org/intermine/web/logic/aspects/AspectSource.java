@@ -13,7 +13,7 @@ package org.intermine.web.logic.aspects;
 /**
  * Describes a source of data contributing to some data set. The sources names and
  * hyperlinks are displayed on data set homepages.
- * 
+ *
  * @author Thomas Riley
  * @see org.intermine.web.dataset.Aspect
  */

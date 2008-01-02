@@ -44,7 +44,7 @@ public class CacheHoldingArrayList extends ArrayList
     public CacheHoldingArrayList(Collection col) {
         super(col);
     }
-    
+
     /**
      * Constructs a new instance with the given initial capacity.
      *

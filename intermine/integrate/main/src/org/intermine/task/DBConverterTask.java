@@ -1,6 +1,6 @@
 package org.intermine.task;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -42,7 +42,7 @@ public class DBConverterTask extends ConverterTask
 
     /**
      * Set the Database to read from
-     * @param dbAlias the database alias 
+     * @param dbAlias the database alias
      */
     public void setDbAlias(String dbAlias) {
         this.dbAlias = dbAlias;
@@ -77,10 +77,10 @@ public class DBConverterTask extends ConverterTask
                                              + DBConverter.class.getName());
             }
 
-            Constructor<?> m = c.getConstructor(new Class[] {Database.class, Model.class, 
+            Constructor<?> m = c.getConstructor(new Class[] {Database.class, Model.class,
                                                              ItemWriter.class});
             Model model = Model.getInstanceByName(getModelName());
-            DBConverter converter = 
+            DBConverter converter =
                 (DBConverter) m.newInstance(new Object[] {database, model, writer});
             configureDynamicAttributes(converter);
             converter.process();

@@ -23,7 +23,7 @@ public class FlyEdge extends FlyHashGraphElement
     private FlyNode target;
 
     /**
-     * Constructs a FlyEdge linking two FlyNodeS. 
+     * Constructs a FlyEdge linking two FlyNodeS.
      * Will use the default interaction type FlyNetwork.DEFAULT_INTERACTION_TYPE
      * and will construct a default label
      * @param source source node
@@ -41,7 +41,7 @@ public class FlyEdge extends FlyHashGraphElement
     }
 
     /**
-     * Constructs a FlyEdge linking two FlyNodeS. 
+     * Constructs a FlyEdge linking two FlyNodeS.
      * Will construct a default label
      * @param source source node
      * @param target target node
@@ -57,7 +57,7 @@ public class FlyEdge extends FlyHashGraphElement
     }
 
     /**
-     * Constructs a FlyEdge linking two FlyNodeS. 
+     * Constructs a FlyEdge linking two FlyNodeS.
      * If interactionType is null the default is used
      * @param source source node
      * @param target target node
@@ -90,8 +90,8 @@ public class FlyEdge extends FlyHashGraphElement
 
     /**
      * Compares the specified edge with this edge for equality.
-     * This will check if both edges have the same target and source 
-     * nodes and will call the inherited equals method from 
+     * This will check if both edges have the same target and source
+     * nodes and will call the inherited equals method from
      * FlyHashGraphElement to compare the labels and attributes.
      * @param e edge to compare with
      * @return true if both edges contain the same information

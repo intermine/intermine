@@ -141,7 +141,7 @@ public class SimpleConstraint extends Constraint
     @Override
     public int hashCode() {
         return qe1.hashCode()
-            + 3 * op.hashCode() 
+            + 3 * op.hashCode()
             + 7 * Util.hashCode(qe2);
     }
 
@@ -235,7 +235,7 @@ public class SimpleConstraint extends Constraint
         }
         return null;
     }
-    
+
     /**
      * For an argument type which an enumerated value set, return the list of
      * operators for which it makes sense only to provide the enumerated values

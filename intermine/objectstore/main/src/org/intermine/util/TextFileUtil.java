@@ -129,7 +129,7 @@ public abstract class TextFileUtil
             List row = (List) rowIterator.next();
 
             List realRow = new ArrayList();
-            
+
             for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
                 int realColumnIndex;
 
@@ -147,7 +147,7 @@ public abstract class TextFileUtil
 
                 realRow.add(o);
             }
-            
+
             for (int columnIndex = 0; columnIndex < realRow.size(); columnIndex++) {
                 Object o = realRow.get(columnIndex);
 

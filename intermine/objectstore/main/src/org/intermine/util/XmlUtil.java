@@ -138,14 +138,14 @@ public class XmlUtil
             throw new IllegalArgumentException("Unrecognised XML data type: " + xmlType);
         }
     }
-    
+
     /**
      * Apply some indentiation to some XML. This method is not very sophisticated and will
      * not cope well with anything but the simplest XML (no CDATA etc). The algorithm used does
      * not look at element names and does not actually parse the XML. It also assumes that the
      * forward slash and greater-than at the end of a self-terminating tag and not seperated by
      * ant whitespace.
-     * 
+     *
      * @param xmlString input XML fragment
      * @return indented XML fragment
      */
@@ -166,13 +166,13 @@ public class XmlUtil
             } else if (bytes[i] == '/' && bytes[i + 1] == '>') {
                 indent--;
             } else if (bytes[i] == '>') {
-                
+
             }
             os.write(bytes[i++]);
         }
         return os.toString();
     }
-    
+
     private static void writeIndentation(ByteArrayOutputStream os, int indent) {
         for (int j = 0; j < indent; j++) {
             os.write(' ');

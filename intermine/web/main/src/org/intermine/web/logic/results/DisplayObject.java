@@ -25,7 +25,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
@@ -40,7 +39,7 @@ import org.intermine.web.logic.config.WebConfig;
  * are calculated here the first time an object is viewed and cached for later use. Only
  * information that remains static throughout the session should be precalcualted here.
  * Anything dynamic is computed in ObjectDetailsController.
- * 
+ *
  * @author Mark Woodbridge
  */
 public class DisplayObject
@@ -49,7 +48,7 @@ public class DisplayObject
     private WebConfig webConfig;
     private Map webProperties;
     private Model model;
-    
+
     private Set clds;
 
     private Map attributes = null;
@@ -63,7 +62,7 @@ public class DisplayObject
     //private HttpSession session;
     private Map verbosity = new HashMap();
     private final Map classKeys;
-    
+
     /**
      * Create a new DisplayObject.
      * @param object the object to display
@@ -85,9 +84,9 @@ public class DisplayObject
         this.classKeys = classKeys;
 
         //ServletContext servletContext = session.getServletContext();
-        /*this.classTemplateExprs = 
+        /*this.classTemplateExprs =
             (Map) servletContext.getAttribute(Constants.CLASS_TEMPLATE_EXPRS);*/
-        
+
         clds = getLeafClds(object.getClass(), model);
     }
 
@@ -144,7 +143,7 @@ public class DisplayObject
         }
         return attributeDescriptors;
     }
-    
+
     /**
      * Get the attribute fields and values for this object
      * @return the attributes
@@ -207,7 +206,7 @@ public class DisplayObject
             return templateCounts;
         }
         Map newTemplateCounts = new TreeMap();
-        
+
         Map templateExprMap = new HashMap();
 
         for (Iterator i = clds.iterator(); i.hasNext();) {
@@ -299,7 +298,7 @@ public class DisplayObject
             try {
                 results = os.execute(query);
             } catch (ObjectStoreException e) {
-                throw new RuntimeException("cannot find results of template query " 
+                throw new RuntimeException("cannot find results of template query "
                                            + templateName + " for object " + object.getId());
             }
 
@@ -366,7 +365,7 @@ public class DisplayObject
     public void setVerbosity(String fieldName, boolean verbose) {
         verbosity.put(fieldName, verbose ? fieldName : null);
     }
-    
+
     /**
      * Get verbosity of a field
      * @param placementAndField a String that combines the name of the current placement/aspect and
@@ -386,11 +385,11 @@ public class DisplayObject
         collections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
         refsAndCollections = new TreeMap(String.CASE_INSENSITIVE_ORDER);
         attributeDescriptors = new HashMap();
-        
+
         try {
             for (Iterator i = clds.iterator(); i.hasNext();) {
                 ClassDescriptor cld = (ClassDescriptor) i.next();
-                
+
                 for (Iterator j = cld.getAllFieldDescriptors().iterator(); j.hasNext();) {
                     FieldDescriptor fd = (FieldDescriptor) j.next();
 

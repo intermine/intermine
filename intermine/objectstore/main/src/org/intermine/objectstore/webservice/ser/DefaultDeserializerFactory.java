@@ -28,7 +28,7 @@ public class DefaultDeserializerFactory extends BaseDeserializerFactory
      * @param xmlType the corresponding QName in the XML
      */
     public DefaultDeserializerFactory(Class javaType, QName xmlType) {
-        super(DefaultDeserializer.class, xmlType, javaType);      
+        super(DefaultDeserializer.class, xmlType, javaType);
     }
 
     /**

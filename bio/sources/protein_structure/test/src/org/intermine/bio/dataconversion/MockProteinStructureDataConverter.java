@@ -27,19 +27,19 @@ public class MockProteinStructureDataConverter extends ProteinStructureDataConve
     public MockProteinStructureDataConverter(ItemWriter writer) {
         super(writer, Model.getInstanceByName("genomic"));
     }
-    
+
     protected String getFileContent(String fileName, String extention) throws InterMineException {
         String str;
         StringBuffer atm = new StringBuffer();
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getClassLoader()
                                                                                         .getResourceAsStream(fileName)));
-            
+
             boolean firstLine = true;
             while ((str = in.readLine()) != null) {
                 if (!firstLine ) {
                     atm.append(ENDL);
-                }    
+                }
                 atm.append(str);
                 firstLine = false;
             }

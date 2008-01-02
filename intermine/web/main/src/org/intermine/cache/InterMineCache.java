@@ -34,7 +34,7 @@ public class InterMineCache
 {
     private Map objectCreators = new HashMap();
     private Map objectCaches = new HashMap();
-    
+
     /**
      * Create a new cache.
      */
@@ -54,7 +54,7 @@ public class InterMineCache
         }
 
         objectCreators.put(cacheTag, objectCreator);
-        
+
         Map objectCache = (Map) objectCaches.get(cacheTag);
         if (objectCache == null) {
             objectCache = new CacheMap();
@@ -71,11 +71,11 @@ public class InterMineCache
             throw new IllegalArgumentException("called unregister(" + cacheTag + ") but "
                                                + cacheTag + " isn't registered");
         }
-        
+
         objectCreators.remove(cacheTag);
         objectCaches.remove(cacheTag);
     }
-    
+
     /**
      * Return a new object associated with cacheTag.  If no object matching arg1 is found one will
      * be created, cached and returned.
@@ -92,7 +92,7 @@ public class InterMineCache
             object = create(cacheTag, new Object[] {arg1});
             objectCache.put(arg1, object);
         }
-        
+
         return object;
     }
 
@@ -114,7 +114,7 @@ public class InterMineCache
             object = create(cacheTag, new Object[] {arg1, arg2});
             objectCache.put(mkey, object);
         }
-        
+
         return object;
     }
 
@@ -137,10 +137,10 @@ public class InterMineCache
             object = create(cacheTag, new Object[] {arg1, arg2, arg3});
             objectCache.put(mkey, object);
         }
-        
-        return object;        
+
+        return object;
     }
-    
+
     /**
      * Return a new object associated with cacheTag.  If no object matching arg1 is found one will
      * be created, cached and returned.
@@ -161,10 +161,10 @@ public class InterMineCache
             object = create(cacheTag, new Object[] {arg1, arg2, arg3, arg4});
             objectCache.put(mkey, object);
         }
-        
-        return object;        
+
+        return object;
     }
-    
+
     private CacheMap getObjectCache(String cacheTag) {
         CacheMap ret = (CacheMap) objectCaches.get(cacheTag);
         if (ret == null) {
@@ -197,7 +197,7 @@ public class InterMineCache
     /**
      * Remove objects from the cache that match the given keys.  The length of the keys array
      * argument should be the same as the number of keys used when storing the object.  Any nulls
-     * in the keys array will be treated as wildcards.  Eg.  If the cache contains keys: 
+     * in the keys array will be treated as wildcards.  Eg.  If the cache contains keys:
      * ("foo", "123"), ("foo", "456"), ("bar", "456") then calling flushByKey with {null, "456"}
      * will delete two entries, leaving ("foo", "123").
      * @param cacheTag the cache tag
@@ -233,7 +233,7 @@ public class InterMineCache
     public void flush(String cacheTag) {
         getObjectCache(cacheTag).clear();
     }
-    
+
     /**
      * Remove all objects from the cache.
      */
@@ -252,7 +252,7 @@ public class InterMineCache
     public Set getTags() {
         return objectCreators.keySet();
     }
-    
+
     /**
      * Return the number of objects associated with the given cache tag.
      * @param cacheTag the cache tag

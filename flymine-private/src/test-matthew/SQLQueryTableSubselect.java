@@ -1,17 +1,17 @@
 
 public class SQLQueryTableSubselect extends SQLQueryTable
 {
-	private SQLQuery subQuery;
-	private SQLQuery parent;
-	
-	public SQLQueryTableSubselect(SQLQuery aSubQuery, SQLQuery aParent)
-	{
-		subQuery = aSubQuery;
-		parent = aParent;
-	}
+    private SQLQuery subQuery;
+    private SQLQuery parent;
 
-	public String getCanonicalName()
-	{
-		return "("+subQuery.createSelect()+") as "+alias;
-	}
+    public SQLQueryTableSubselect(SQLQuery aSubQuery, SQLQuery aParent)
+    {
+        subQuery = aSubQuery;
+        parent = aParent;
+    }
+
+    public String getCanonicalName()
+    {
+        return "("+subQuery.createSelect()+") as "+alias;
+    }
 }

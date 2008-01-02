@@ -57,7 +57,7 @@ public class WebResultsTest extends TestCase
     private Manager man2;
     private Manager man3;
     private WebResults webResults;
-    
+
     public WebResultsTest (String arg) {
         super(arg);
     }
@@ -71,7 +71,7 @@ public class WebResultsTest extends TestCase
                     " org.intermine.model.testmodel.CEO AS a2_, org.intermine.model.testmodel.Company " +
                     "AS a3_, org.intermine.model.testmodel.Manager AS a4_ " +
                     "WHERE (a1_.manager CONTAINS a2_ AND a2_.company CONTAINS a3_ " +
-                    "AND a1_.employees CONTAINS a4_)", 
+                    "AND a1_.employees CONTAINS a4_)",
                     "org.intermine.model.testmodel");
 /*        "SELECT DISTINCT a3_, a4_ FROM org.intermine.model.testmodel.Department AS a1_, " +
         "org.intermine.model.testmodel.CEO AS a2_, org.intermine.model.testmodel.Company AS a3_, " +
@@ -148,18 +148,18 @@ public class WebResultsTest extends TestCase
         pathToQueryNode.put("Department", deptQC);
         QueryField deptNameQF = new QueryField(deptQC, "name");
         pathToQueryNode.put("Department.name", deptNameQF);
-        
+
         QueryClass compQC = (QueryClass) query.getSelect().get(1);
         pathToQueryNode.put("Department.manager.company", compQC);
         QueryField compNameQF = new QueryField(compQC, "name");
         pathToQueryNode.put("Department.manager.company.name", compNameQF );
         QueryField compVatNumQF = new QueryField(compQC, "vatNumber");
         pathToQueryNode.put("Department.manager.company.vatNumber", compVatNumQF);
-        
+
         QueryClass manQC = (QueryClass) query.getSelect().get(2);
         QueryField manSeniority = new QueryField(manQC, "seniority");
         pathToQueryNode.put("Department.employees.seniority", manSeniority);
-        
+
         Map classKeys = new HashMap();
         FieldDescriptor fd = model.getClassDescriptorByName("org.intermine.model.testmodel.Company").getFieldDescriptorByName("name");
         HashSet keys = new HashSet();
@@ -167,7 +167,7 @@ public class WebResultsTest extends TestCase
         classKeys.put("Company", keys);
         webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
     }
-    
+
     public void test() {
         assertEquals("Department1", ((List) webResults.get(0)).get(0));
         assertEquals("Company1", ((List) webResults.get(0)).get(1));

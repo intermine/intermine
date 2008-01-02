@@ -129,7 +129,7 @@ public class InterMineModelParser implements ModelParser
         Set<AttributeDescriptor> attributes = new LinkedHashSet<AttributeDescriptor>();
         Set<ReferenceDescriptor> references = new LinkedHashSet<ReferenceDescriptor>();
         Set<CollectionDescriptor> collections = new LinkedHashSet<CollectionDescriptor>();
-        
+
         /**
          * Constructor
          * @param name the fully qualified name of the described class

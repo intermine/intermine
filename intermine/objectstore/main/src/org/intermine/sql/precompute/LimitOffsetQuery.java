@@ -37,7 +37,7 @@ public class LimitOffsetQuery
     private static final int LIMIT_L = 12;
     private static final int FINISHED = 13;
     private static final int FINISHED_WELL = 14;
-    
+
     /**
      * Creates a new LimitOffsetQuery object from this query string.
      *
@@ -56,7 +56,7 @@ public class LimitOffsetQuery
             pos--;
             switch (state) {
                 case START:
-                    if (c == ' ') { 
+                    if (c == ' ') {
                         state = START;
                     } else if ((c >= '0') && (c <= '9')) {
                         state = NUMBER;

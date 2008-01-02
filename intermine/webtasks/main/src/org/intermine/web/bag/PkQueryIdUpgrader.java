@@ -41,7 +41,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
     private Source source = null;
     EquivalentObjectFetcher eof;
     private Map<Integer, Set> newIdsCache = new HashMap<Integer, Set>();
-    
+
     /**
      * No argument constructor - will use all available keyDefs to upgrade bags.
      * @param os the ObjectStore to query
@@ -88,7 +88,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
             LOG.error("No usable primary key query found for object: " + oldObject);
             return Collections.EMPTY_SET;
         }
-        
+
         SingletonResults results = os.executeSingleton(query);
 
         // faster just to execute the query immediately:

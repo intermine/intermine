@@ -20,6 +20,7 @@ import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.OntologyUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
@@ -43,15 +44,15 @@ public class ChadoXmlConverter extends FileConverter
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     protected static final String PROP_FILE = "uniprot_config.properties";
     private static final Logger LOG = Logger.getLogger(ChadoXmlConverter.class);
-   
-    
+
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public ChadoXmlConverter(ItemWriter writer, Model model) throws ObjectStoreException {
-        super(writer, model);
+    public ChadoXmlConverter(ItemWriter writer) throws ObjectStoreException {
+        super(writer);
     }
 
 
@@ -77,19 +78,20 @@ public class ChadoXmlConverter extends FileConverter
     {
         private int nextClsId = 0;
         private ItemFactory itemFactory;
+
         private Map ids = new HashMap();
         private Map aliases = new HashMap();
         private Map<String, Item> organisms = new HashMap<String, Item>();
-        
+
         private ItemWriter writer;
 
         private MatchableStack stack = new MatchableStack();
         private Stack<ObjectHolder> objects = new Stack<ObjectHolder>();
         private String attName = null;
         private StringBuffer charBuffer = null;
-        
+
         private Model model = Model.getInstanceByName("genomic");
-        
+
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
@@ -118,7 +120,7 @@ public class ChadoXmlConverter extends FileConverter
                     objects.push(flh);
                 }
             }
- 
+
             // TODO not sure what attName is for
             attName = qName;
             super.startElement(uri, localName, qName, attrs);
@@ -174,15 +176,15 @@ public class ChadoXmlConverter extends FileConverter
 
             if (qName.equals("accession")) {
                 if (stack.matches("dbxref>dbxref_id>feature")) {
-                    // TODO - for FlyBase genes this is the same as uniquename, ignore it? 
+                    // TODO - for FlyBase genes this is the same as uniquename, ignore it?
                 } else if (stack.matches("dbxref>dbxref_id>cvterm>type_id>feature")) {
                     // this is the SO term identifier of the feature type
                 } else if (stack.matches("dbxref>dbxref_id>cvterm_dbxref>cvterm>type_id>feature")) {
-                    
+
                 } else if (stack.matches("dbxref>dbxref_id>cvterm>cvterm_id>feature_cvterm>feature")) {
-                
+
                 } else if (stack.matches("dbxref>dbxref_id>feature_dbxref>feature")) {
-                    
+
                 } else {
                     throw new SAXException("LOST: " + stack);
                 }
@@ -222,21 +224,21 @@ public class ChadoXmlConverter extends FileConverter
                 } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm>type_id>feature")) {
                     // this is the SO term identifier
                 } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm_dbxref>cvterm>type_id>feature")) {
-                    
+
                 } else if (stack.matches("cv>cv_id>cvterm>type_id>featureprop>feature")) {
                     // type of featureprop
                 } else if (stack.matches("cvterm")) {
 
                 } else if (stack.matches("cv>cv_id>cvterm>cvterm_id>feature_cvterm>feature")) {
-                    
+
                 } else if (stack.matches("cv>cv_id>cvterm>type_id>cvtermprop>cvterm>cvterm_id>feature_cvterm>feature")) {
-                    
+
                 } else if (stack.matches("cv>cv_id>cvterm>type_id>feature_cvtermprop>feature_cvterm>feature")) {
-                               
+
                 } else if (stack.matches("cvterm>type_id>cvtermprop>cvterm>cvterm_id>feature_cvterm>feature")) {
-                    
+
                 } else if (stack.matches("cvterm>cvterm_id>feature_cvterm>feature")) {
-                    
+
                 } else if (stack.matches("cvterm>type_id>pub>pub_id>feature_cvterm>feature")) {
 
                 } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm>cvterm_id>feature_cvterm>feature")) {
@@ -266,7 +268,7 @@ public class ChadoXmlConverter extends FileConverter
                     LOG.error("creating feature: " + holder.uniquename);
                     // TODO this should be an error!
                     if (holder.genus != null && holder.species != null) {
-                        f.setReference("organism", getOrganism(holder.genus + " " 
+                        f.setReference("organism", getOrganism(holder.genus + " "
                                                                + holder.species));
                     }
                     try {
@@ -281,7 +283,7 @@ public class ChadoXmlConverter extends FileConverter
                         }
                         writer.store(ItemHelper.convert(f));
                     } catch (ObjectStoreException e) {
-                        throw new SAXException(e); 
+                        throw new SAXException(e);
                     }
                     if (!objects.isEmpty()) {
                         ObjectHolder next = objects.peek();
@@ -293,7 +295,7 @@ public class ChadoXmlConverter extends FileConverter
             } else if (qName.equals("featureloc")) {
                 FeatureLocHolder holder = (FeatureLocHolder) objects.pop();
                 ((FeatureHolder) objects.peek()).locations.add(holder);
-                
+
             } else if (qName.equals("strand")) {
                 if (stack.matches("featureloc>feature")) {
                     ((FeatureLocHolder) objects.peek()).strand = charBuffer.toString();
@@ -331,10 +333,10 @@ public class ChadoXmlConverter extends FileConverter
                 }
                     organisms.put(taxonId, organism);
             }
-            return organism;        
+            return organism;
         }
-        
-        
+
+
         /**
          * Convenience method for creating a new Item
          * @param className the name of the class
@@ -371,8 +373,8 @@ public class ChadoXmlConverter extends FileConverter
             aliases.put(className, nextIndex);
             return nextIndex;
         }
-        
-        
+
+
         private class MatchableStack extends Stack<String>
         {
             public boolean matches(String pattern) {
@@ -385,10 +387,10 @@ public class ChadoXmlConverter extends FileConverter
                 return true;
             }
         }
-        
-        
+
+
         private abstract class ObjectHolder {};
-        
+
         private class FeatureHolder extends ObjectHolder
         {
             List<FeatureLocHolder> locations = new ArrayList<FeatureLocHolder>();
@@ -400,12 +402,12 @@ public class ChadoXmlConverter extends FileConverter
             public String name;
             public String type;
         }
-        
+
         private class RelationshipHolder extends ObjectHolder
         {
             String type;
         }
-        
+
         private class FeatureLocHolder extends ObjectHolder
         {
             public String strand;

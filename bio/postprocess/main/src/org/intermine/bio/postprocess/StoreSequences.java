@@ -65,7 +65,7 @@ public class StoreSequences
         ObjectStore os = osw.getObjectStore();
         SingletonResults res = os.executeSingleton(q);
 
-        
+
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
             osw.beginTransaction();
@@ -92,7 +92,7 @@ public class StoreSequences
     protected String getSequence(String contigId) throws SQLException {
         Connection connection = db.getConnection();
         String sequence = null;
-        
+
         Statement statement = connection.createStatement();
         ResultSet rs = null;
         String query = null;

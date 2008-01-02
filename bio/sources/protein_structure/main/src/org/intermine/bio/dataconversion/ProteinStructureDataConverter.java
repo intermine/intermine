@@ -28,7 +28,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.xml.sax.Attributes;
@@ -49,12 +48,11 @@ public class ProteinStructureDataConverter extends FileConverter
     private final Map<String, Item> featureMap = new HashMap<String, Item>();
     private final Map<String, String> proteinMap = new HashMap<String, String>();
     private String parentDir;
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException if an error occurs in storing
      */
     public ProteinStructureDataConverter(ItemWriter writer, Model model) {
         super(writer, model);
@@ -76,9 +74,9 @@ public class ProteinStructureDataConverter extends FileConverter
     public void setSrcDataDir(String srcdatadir) {
         this.dataLocation = srcdatadir;
     }
-    
+
     /**
-     * @see FileConverter#process(Reader)
+     * {@inheritDoc}
      */
     @Override
     public void process(Reader reader) throws Exception {
@@ -100,7 +98,7 @@ public class ProteinStructureDataConverter extends FileConverter
 
         }
     }
-    
+
     protected String getFileContent(String fileName, String extention) throws InterMineException {
         String str;
         StringBuffer fileBuffer = new StringBuffer();
@@ -110,7 +108,7 @@ public class ProteinStructureDataConverter extends FileConverter
                             ? parentDir
                             : parentDir + "/")
                             + fileName;
-            
+
             if (new File(filename).exists()) {
                 BufferedReader in = new BufferedReader(new FileReader(filename));
                 boolean firstLine = true;
@@ -145,7 +143,7 @@ public class ProteinStructureDataConverter extends FileConverter
         private Map<String, Item> featureMap;
         private Map<String, String> proteinMap;
         private String protId, strId, pfamId;
-        
+
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
@@ -157,6 +155,9 @@ public class ProteinStructureDataConverter extends FileConverter
             this.featureMap = featureMap;
         }
 
+        /**
+         * {@inheritDoc}
+         */  
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
@@ -175,6 +176,9 @@ public class ProteinStructureDataConverter extends FileConverter
             stack.push(attName);
         }
 
+        /**
+         * {@inheritDoc}
+         */  
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             super.endElement(uri, localName, qName);
@@ -236,7 +240,7 @@ public class ProteinStructureDataConverter extends FileConverter
                 throw new SAXException(e);
             }
         }
-        
+
         private String getProtein(String identifier) {
             String proteinIdentifier = proteinMap.get(identifier);
             if (proteinIdentifier == null) {
@@ -266,8 +270,8 @@ public class ProteinStructureDataConverter extends FileConverter
         }
 
         /**
-         * @see DefaultHandler#endElement
-         */
+         * {@inheritDoc}
+         */  
         public void characters(char[] ch, int start, int length) throws SAXException
         {
 

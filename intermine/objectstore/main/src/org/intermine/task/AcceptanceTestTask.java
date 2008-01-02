@@ -161,11 +161,11 @@ public class AcceptanceTestTask extends Task
         pw.println("<head><title>Acceptance Test Results</title></head>");
         pw.println("<body>");
         pw.println("<h1>Acceptance Test Results</h1>");
-        
+
         int testCount = 0;
-        
+
         int failingTestsCount = 0;
-        
+
         for (Iterator testResultsIter = testResults.iterator(); testResultsIter.hasNext();) {
             AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
 
@@ -177,18 +177,18 @@ public class AcceptanceTestTask extends Task
 
             testCount++;
         }
-        
+
         pw.println("<h2>Total tests: " + testCount + "</h2>");
         if (testCount == 0) {
             pw.println("</body></html>");
             return;
         }
         pw.println("<h2>Failing tests: " + failingTestsCount + "</h2>");
-        pw.println("<h2>Percentage passed: " 
-                   + 100 * (testCount - failingTestsCount) / testCount + "%</h2>");        
-        
+        pw.println("<h2>Percentage passed: "
+                   + 100 * (testCount - failingTestsCount) / testCount + "%</h2>");
+
         int count = 0;
-        
+
         if (failingTestsCount > 0) {
             pw.println("<hr/><h2>Failing tests:</h2>");
             pw.println("<p>");
@@ -283,7 +283,7 @@ public class AcceptanceTestTask extends Task
             Iterator columnHeadingsIter = columnHeadings.iterator();
             while (columnHeadingsIter.hasNext()) {
                 pw.println("<th>" + columnHeadingsIter.next() + "</th>");
-            }            
+            }
             pw.println("</tr>");
         }
         Iterator resultsIter = results.iterator();
@@ -576,19 +576,19 @@ class AcceptanceTestResult
             while (rs.next()) {
                 resultCount++;
             }
-            
+
             ResultSetMetaData metadata = rs.getMetaData();
             columnLabels = new ArrayList();
             for (int i = 1; i <= metadata.getColumnCount(); i++) {
                 columnLabels.add(metadata.getColumnLabel(i));
             }
-            
+
             DatabaseMetaData dbMetadata = con.getMetaData();
             ResultSet trackerTableResults = dbMetadata.getTables(null, null, "tracker", null);
-            
+
             if (trackerTableResults.next()) {
                 // we have a tracker table
-            
+
                 for (int i = 1; i <= metadata.getColumnCount(); i++) {
                     if (metadata.getColumnType(i) == Types.INTEGER
                         && metadata.getColumnLabel(i).equals("id")) {
@@ -598,8 +598,8 @@ class AcceptanceTestResult
                             List row = (List) rowIter.next();
                             Integer id = (Integer) row.get(i - 1);
                             List trackerRows = getTrackerRows(id, con);
-                        
-                            trackerMap.put(id, trackerRows);                            
+
+                            trackerMap.put(id, trackerRows);
                         }
                     }
                 }
@@ -625,7 +625,7 @@ class AcceptanceTestResult
     public long getTime() {
         return time;
     }
-    
+
     /**
      * Return the number of rows the test produced.
      * @return the number of rows
@@ -633,7 +633,7 @@ class AcceptanceTestResult
     public int getResultsCount() {
         return resultCount;
     }
-    
+
     /**
      * Get the rows from the tracker table that refer to the given id
      * @return the results as a List of Lists or null if there is an SQLException (which is stored
@@ -713,7 +713,7 @@ class AcceptanceTestResult
     public List getResults() {
         return results;
     }
-    
+
     /**
      * Return a List of the column labels.
      * @return the column labels.
@@ -721,7 +721,7 @@ class AcceptanceTestResult
     public List getColumnLabels() {
         return columnLabels;
     }
-    
+
     /**
      * Return the SQLException exception (if any) that occurred when the test SQL was run.
      * @return the SQLException or null if there was no exception

@@ -39,13 +39,13 @@ public class ObjectDetailsAspectController extends TilesAction
         throws Exception {
         DisplayObject dobj = (DisplayObject) context.getAttribute("displayObject");
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
-        
+
         ComponentContext cc = new ComponentContext();
         cc.putAttribute("scope", "global");
         cc.putAttribute("placement", context.getAttribute("placement"));
         cc.putAttribute("displayObject", dobj);
         cc.putAttribute("interMineIdBag", interMineIdBag);
-        
+
         new TemplateListController().execute(cc, mapping, form, request, response);
         return null;
     }

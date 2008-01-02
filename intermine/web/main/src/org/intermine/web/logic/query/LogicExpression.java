@@ -27,7 +27,7 @@ import antlr.collections.AST;
  * provided to the constructor. Use the toString method to convert the expression
  * back to text. An IllegalArgumentException will be thrown from the constructor
  * if a parse error occurs (use the cause exception to find out why).
- * 
+ *
  * @author Thomas Riley
  * @see org.intermine.web.logic.query.PathQuery
  */
@@ -37,7 +37,7 @@ public class LogicExpression
     private AST ast;
     /** Root node - always an operator. */
     private Node root;
-    
+
     /**
      * Create a new instance of LogicExpression parsing the given
      * expression.
@@ -47,7 +47,7 @@ public class LogicExpression
     public LogicExpression(String expression) throws IllegalArgumentException {
         root = parse(expression);
     }
-    
+
     /**
      * Parse a logic expression.
      * @param expression logic expression
@@ -93,7 +93,7 @@ public class LogicExpression
     public String toString() {
         return root.toString();
     }
-    
+
     /**
      * Get the root node.
      * @return the root node
@@ -101,7 +101,7 @@ public class LogicExpression
     public Node getRootNode() {
         return root;
     }
-    
+
     /**
      * Remove a variable from the expression.
      * @param name variable to remove
@@ -127,7 +127,7 @@ public class LogicExpression
             }
         }
     }
-    
+
     /**
      * Remove any variables that aren't in the given set.
      * @param variables set of variable names
@@ -137,7 +137,7 @@ public class LogicExpression
         String logic = toString();
         root = parse(logic);
     }
-    
+
     /**
      * Remove any variables that aren't in the given set.
      * @param variables set of variable names
@@ -153,7 +153,7 @@ public class LogicExpression
             }
         }
     }
-    
+
     /**
      * Get the Set of variable names.
      * @return set of variable names in this expression
@@ -163,7 +163,7 @@ public class LogicExpression
         getVariableNames(variables, root);
         return variables;
     }
-    
+
     private void getVariableNames(Set variables, Node node) {
         for (Iterator iter = new LinkedHashSet(node.getChildren()).iterator(); iter.hasNext(); ) {
             Node child = (Node) iter.next();
@@ -181,7 +181,7 @@ public class LogicExpression
     public abstract class Node
     {
         private Set children = new LinkedHashSet();
-        
+
         private Node(AST ast) {
             if (ast != null) {
                 AST child = ast.getFirstChild();
@@ -197,7 +197,7 @@ public class LogicExpression
                 }
             }
         }
-        
+
         /**
          * Get an unmodifiable copy of the node's children.
          * @return unmodifiable set of node children
@@ -205,30 +205,30 @@ public class LogicExpression
         public Set getChildren() {
             return Collections.unmodifiableSet(children);
         }
-        
+
         private void removeChild(Node child) {
             children.remove(child);
         }
     }
-    
+
     /**
      * An operator node.
      */
     public abstract class Operator extends Node
     {
         boolean root = false;
-        
+
         private Operator(AST ast, boolean root) {
             super(ast);
             this.root = root;
         }
-                
+
         /**
          * Override to provide text symbol for this operator. Used in toString.
          * @return operator name
          */
         protected abstract String getOperator();
-        
+
         /**
          * Produce an expression for this branch of the tree.
          * @return expression representing this branch
@@ -252,9 +252,9 @@ public class LogicExpression
             //    expr = "(" + expr + ")";
             //}
             return expr;
-        }        
+        }
     }
-    
+
     /**
      * An AND operator node.
      */
@@ -267,8 +267,8 @@ public class LogicExpression
         private And(AST ast) {
             this(ast, false);
         }
-        
-        /** 
+
+        /**
          * {@inheritDoc}
          */
         @Override
@@ -276,7 +276,7 @@ public class LogicExpression
             return "and";
         }
     }
-    
+
     /**
      * An OR operator node.
      */
@@ -285,12 +285,12 @@ public class LogicExpression
         private Or(AST ast, boolean root) {
             super(ast, root);
         }
-        
+
         private Or(AST ast) {
             this(ast, false);
         }
-        
-        /** 
+
+        /**
          * {@inheritDoc}
          */
         @Override
@@ -298,19 +298,19 @@ public class LogicExpression
             return "or";
         }
     }
-    
+
     /**
      * A variable node.
      */
     public class Variable extends Node
     {
         private String name;
-        
+
         private Variable(String name) {
             super(null);
             this.name = name;
         }
-        
+
         /**
          * Get variable name.
          * @return variable name
@@ -318,7 +318,7 @@ public class LogicExpression
         public String getName() {
             return name;
         }
-        
+
         /**
          * Just returns the variable name.
          * @return string representation of this node

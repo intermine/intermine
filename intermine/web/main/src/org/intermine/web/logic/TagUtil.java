@@ -1,6 +1,6 @@
 package org.intermine.web.logic;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -15,8 +15,6 @@ import java.util.Properties;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.profile.Profile;
 
-import java.lang.String;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -30,7 +28,7 @@ public abstract class TagUtil
     /**
      * Look at the current webapp page and subtab and return the help page and tab.
      * @param request the request object
-     * @return 
+     * @return
      */
     public static String[] getHelpPage(HttpServletRequest request) {
         HttpSession session = request.getSession();
@@ -46,7 +44,7 @@ public abstract class TagUtil
         } else {
             prop = webProps.getProperty("help.page." + pageName + "." + subTab);
         }
-        
+
         if (prop == null) {
             return new String[0];
         } else {

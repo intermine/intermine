@@ -14,13 +14,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Object representing a DagTerm synonym.
- * 
+ *
  * @author Thomas Riley
  */
 public class DagTermSynonym
 {
     private String name;
-    
+
     /**
      * Create a new instance of DagTermSynonym.
      * @param name the synoym name
@@ -28,7 +28,7 @@ public class DagTermSynonym
     public DagTermSynonym(String name) {
         this.name = name;
     }
-    
+
     /**
      * Get the synonym name.
      * @return synonym name
@@ -36,7 +36,7 @@ public class DagTermSynonym
     public String getName() {
         return name;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -50,7 +50,7 @@ public class DagTermSynonym
     public int hashCode() {
         return name.hashCode();
     }
-    
+
     /**
      * {@inheritDoc}
      */

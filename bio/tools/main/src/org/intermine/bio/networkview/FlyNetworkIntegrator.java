@@ -105,14 +105,14 @@ public abstract class FlyNetworkIntegrator
             Object o = ge.getAttributeValue(name);
             int flag = ge.getAttributeFlag(name);
 
-            if (o instanceof Boolean) { // the object is boolean! 
+            if (o instanceof Boolean) { // the object is boolean!
                 LOG.debug("object is of type Boolean! Flag is of value: " + flag);
                 // now we have to check the flag to see what have to do with it
                 if (flag == FlyValueWrapper.NOT_OVERWRITE
                     && cyAtts.getBooleanAttribute(ge.getLabel(), name) != null) {
                     // do nothing! there is already a value for that attribute
                     // and we do not want to overwrite it!
-                } else { 
+                } else {
                     // there is no value for this attribute or the flag is set to OVERWRITE or
                     // the flag is set to ADD/COUNT -> no use adding boolean values -> overwrite
                     cyAtts.setAttribute(ge.getLabel(), name, (Boolean) o);
@@ -133,7 +133,7 @@ public abstract class FlyNetworkIntegrator
                     // if there is already a value present in cytoscape for that attribute
                     // than add that value to the new value
                     if (i != null) {
-                        LOG.debug("adding value: '" + i.intValue() 
+                        LOG.debug("adding value: '" + i.intValue()
                                 + "' and value: '" + value + "'");
                         value += i.intValue();
                     }
@@ -145,7 +145,7 @@ public abstract class FlyNetworkIntegrator
                     // the flag is set to overwrite
                     cyAtts.setAttribute(ge.getLabel(), name, (Integer) o);
                 }
-            } else 
+            } else
             if (o instanceof Double) { // the object is a Double!
                 LOG.debug("object is of type Double! Flag is of value: " + flag);
                 // now we have to check the flag to see what have to do with it
@@ -169,7 +169,7 @@ public abstract class FlyNetworkIntegrator
                     LOG.debug("updating (OVERWRITE) Double value of attribute " + name);
                     cyAtts.setAttribute(ge.getLabel(), name, (Double) o);
                 }
-            } else 
+            } else
             if (o instanceof String) {
                 LOG.debug("object is of type String! Flag is of value: " + flag);
                 // now we have to check the flag to see what have to do with it
@@ -196,10 +196,10 @@ public abstract class FlyNetworkIntegrator
                                     cyAtts.setAttributeList(ge.getLabel(), name, attList);
                                 }
                             } else {
-                                // there is a attribute with the specified name, but 
+                                // there is a attribute with the specified name, but
                                 // it is not a list
-                                LOG.error("expected type " + CyAttributes.TYPE_SIMPLE_LIST 
-                                        + " for attribute '" + name 
+                                LOG.error("expected type " + CyAttributes.TYPE_SIMPLE_LIST
+                                        + " for attribute '" + name
                                         +  "', but found type: " + cyAtts.getType(name));
                             }
                         } else {
@@ -212,7 +212,7 @@ public abstract class FlyNetworkIntegrator
                         // check if attribute already exists
                         if (cyAtts.hasAttribute(ge.getLabel(), name)) {
                             // there is already a attribute with that name, but not in a list!
-                            // so, since we want to ADD, we will create a new attribute with the 
+                            // so, since we want to ADD, we will create a new attribute with the
                             // correct syntax and add both values to it
                             if (cyAtts.getType(name) == CyAttributes.TYPE_STRING) {
                                 String s = cyAtts.getStringAttribute(ge.getLabel(), name);
@@ -221,8 +221,8 @@ public abstract class FlyNetworkIntegrator
                                 list.add(value);
                                 cyAtts.setAttributeList(ge.getLabel(), name + "_LIST", list);
                             } else {
-                                LOG.error("expected type " + CyAttributes.TYPE_STRING 
-                                        + " for attribute '" + name 
+                                LOG.error("expected type " + CyAttributes.TYPE_STRING
+                                        + " for attribute '" + name
                                         +  "', but found type: " + cyAtts.getType(name));
                             }
                         } else {
@@ -245,50 +245,50 @@ public abstract class FlyNetworkIntegrator
                                 List attList = cyAtts.getAttributeList(ge.getLabel(), name);
                                 if (!attList.contains(value)) {
                                     attList.add(value);
-                                    // update the list 
+                                    // update the list
                                     cyAtts.setAttributeList(ge.getLabel(), name, attList);
                                     // update the corresponding counter
-                                    cyAtts.setAttribute(ge.getLabel(), 
-                                            name.replaceAll("_LIST", "_COUNT"), 
+                                    cyAtts.setAttribute(ge.getLabel(),
+                                            name.replaceAll("_LIST", "_COUNT"),
                                             new Integer(attList.size()));
                                 }
                             } else {
-                                // there is a attribute with the specified name, but 
+                                // there is a attribute with the specified name, but
                                 // it is not a list
-                                LOG.error("expected type " + CyAttributes.TYPE_SIMPLE_LIST 
-                                        + " for attribute '" + name 
+                                LOG.error("expected type " + CyAttributes.TYPE_SIMPLE_LIST
+                                        + " for attribute '" + name
                                         +  "', but found type: " + cyAtts.getType(name));
                             }
                         } else {
                             // there is no attribute with that name -> create a new List
                             ArrayList list = new ArrayList();
                             list.add(value);
-                            // update the list 
+                            // update the list
                             cyAtts.setAttributeList(ge.getLabel(), name, list);
                             // update the corresponding counter
-                            cyAtts.setAttribute(ge.getLabel(), 
-                                    name.replaceAll("_LIST", "_COUNT"), 
+                            cyAtts.setAttribute(ge.getLabel(),
+                                    name.replaceAll("_LIST", "_COUNT"),
                                     new Integer(list.size()));
                         }
                     } else { // should not be a list
                         // check if attribute already exists
                         if (cyAtts.hasAttribute(ge.getLabel(), name)) {
                             // there is already a attribute with that name, but NOT in a list!
-                            // -> since we want to COUNT, we have to create a new list attribute 
-                            // with the correct syntax, add both values to it and add a new 
-                            // counter attribute 
+                            // -> since we want to COUNT, we have to create a new list attribute
+                            // with the correct syntax, add both values to it and add a new
+                            // counter attribute
                             if (cyAtts.getType(name) == CyAttributes.TYPE_STRING) {
                                 String s = cyAtts.getStringAttribute(ge.getLabel(), name);
                                 ArrayList list = new ArrayList();
                                 list.add(s);
                                 list.add(value);
                                 cyAtts.setAttributeList(ge.getLabel(), name + "_LIST", list);
-                                cyAtts.setAttribute(ge.getLabel(), 
-                                        name.replaceAll("_LIST", "_COUNT"), 
+                                cyAtts.setAttribute(ge.getLabel(),
+                                        name.replaceAll("_LIST", "_COUNT"),
                                         new Integer(list.size()));
                             } else {
-                                LOG.error("expected type " + CyAttributes.TYPE_STRING 
-                                        + " for attribute '" + name 
+                                LOG.error("expected type " + CyAttributes.TYPE_STRING
+                                        + " for attribute '" + name
                                         +  "', but found type: " + cyAtts.getType(name));
                             }
                         } else {
@@ -303,14 +303,14 @@ public abstract class FlyNetworkIntegrator
                     cyAtts.setAttribute(ge.getLabel(), name, (String) o);
                 }
             } else {
-                LOG.error("Discovered illegal value type: " + o.getClass().toString() 
+                LOG.error("Discovered illegal value type: " + o.getClass().toString()
                         + " for attribute: " + name);
                 LOG.error("allowed types are: Boolean, Integer, Double and String!");
             }
         }
     }
     */
-    
+
     /**
      * This will insert all ge's attributes into cytoscape's CyAttributes
      * @param cyAtts cytoscape CyAttributes to insert the attributes into
@@ -347,7 +347,7 @@ public abstract class FlyNetworkIntegrator
                         ArrayList list = new ArrayList();
                         list.add(o);
                         cyAtts.setAttributeList(element, name, list);
-                    } else { 
+                    } else {
                         setAttribute(cyAtts, element, name, o);
                     }
                 } else { // not String
@@ -370,7 +370,7 @@ public abstract class FlyNetworkIntegrator
                             flyValue += cyValue.intValue();
                             cyAtts.setAttribute(element, name, new Integer(flyValue));
                         } else {    // type check failed
-                            LOG.error("Wrong value type! Found: " + b 
+                            LOG.error("Wrong value type! Found: " + b
                                     + "expected: " + CyAttributes.TYPE_INTEGER + " (Integer).");
                         }
                     } else if (o instanceof Double) {
@@ -381,7 +381,7 @@ public abstract class FlyNetworkIntegrator
                             flyValue += cyValue.doubleValue();
                             cyAtts.setAttribute(element, name, new Double(flyValue));
                         } else {    // type check failed
-                            LOG.error("Wrong value type! Found: " + b 
+                            LOG.error("Wrong value type! Found: " + b
                                     + "expected: " + CyAttributes.TYPE_FLOATING + " (Double).");
                         }
                     } else if (o instanceof String) {
@@ -394,7 +394,7 @@ public abstract class FlyNetworkIntegrator
                                 // we just have to check the first one
                                 list.add(flyValue);
                             } else {
-                                LOG.error("Error trying to ADD String value to attribute: " 
+                                LOG.error("Error trying to ADD String value to attribute: "
                                         + name + ". This attribute is not a List of StringS!");
                             }
                         } else if (cyAtts.getType(name) == CyAttributes.TYPE_STRING) {
@@ -402,7 +402,7 @@ public abstract class FlyNetworkIntegrator
                             // create a new attribute that can hold multiple StringS
                             ArrayList list = new ArrayList();
                             list.add(flyValue);
-                            // check if there already exists a attriute "name + _LIST" and 
+                            // check if there already exists a attriute "name + _LIST" and
                             // if it's of type TYPE_SIMPLE_LIST
                             if (cyAtts.getType(name + "_LIST") == CyAttributes.TYPE_SIMPLE_LIST) {
                                 // (potential) list of Strings -> just add another value
@@ -412,7 +412,7 @@ public abstract class FlyNetworkIntegrator
                                     // we just have to check the first one
                                     tmpList.add(flyValue);
                                 } else {
-                                    LOG.error("Error trying to ADD String value to attribute: " 
+                                    LOG.error("Error trying to ADD String value to attribute: "
                                             + name + ". This attribute is not a List of StringS!");
                                 }
                             } else {
@@ -421,12 +421,12 @@ public abstract class FlyNetworkIntegrator
                             }
                         } else {
                             //error
-                            LOG.error("Error while trying to ADD String value to attribute: " 
+                            LOG.error("Error while trying to ADD String value to attribute: "
                                     + name + ". Unexpected value type found!");
                         }
                     } else {
                         // other types are not supported yet!
-                        LOG.error("Discovered unsupported value type " + o.getClass().toString() 
+                        LOG.error("Discovered unsupported value type " + o.getClass().toString()
                                 + " (attribute: " + name + ") for flag: " + flag);
                     }
                 } else if (flag == FlyValueWrapper.COUNT) {
@@ -440,9 +440,9 @@ public abstract class FlyNetworkIntegrator
                                 // since all values in a list have to be of the same type
                                 // we just have to check the first one
                                 if (list.contains(flyValue)) { // prevent duplicate entries
-                                    LOG.warn("List attached to attribute '" + name 
+                                    LOG.warn("List attached to attribute '" + name
                                             + "' of element '" + element
-                                            + "' already contains value '"  + flyValue 
+                                            + "' already contains value '"  + flyValue
                                             + "'. Skipping value!");
                                 } else {
                                     list.add(flyValue);
@@ -457,7 +457,7 @@ public abstract class FlyNetworkIntegrator
                                 // TODO: check attribute exists and has propper type -> error else
                                 cyAtts.setAttribute(element, counterName, new Integer(list.size()));
                             } else {
-                                LOG.error("Error trying to add (COUNT) String value to attribute: " 
+                                LOG.error("Error trying to add (COUNT) String value to attribute: "
                                         + name + ". This attribute is not a List of StringS!");
                             }
                         } else if (cyAtts.getType(name) == CyAttributes.TYPE_STRING) {
@@ -465,12 +465,12 @@ public abstract class FlyNetworkIntegrator
                             LOG.warn("operation currently not supported!");
                         } else {
                             // supports only lists of StringS -> else error
-                            LOG.error("Error trying to add (COUNT) String value to attribute: " 
+                            LOG.error("Error trying to add (COUNT) String value to attribute: "
                                     + name + ". Invalid value type found!");
                         }
                     } else { // instanceof String
                         // COUNT flag supports only String values
-                        LOG.error("Value for attribute '" + name + "' is not of type String! " 
+                        LOG.error("Value for attribute '" + name + "' is not of type String! "
                                 + "Other types are not supported, ignoring value!");
                     }
                 } else { // unknown flag type or no flag at all
@@ -479,38 +479,38 @@ public abstract class FlyNetworkIntegrator
             }
         }
     }
-    
+
     /**
      * method to set a name value pair for a specified element.
      * currently handels just the 4 basic Datatyps: Boolean, Integer, Double, String
      * @param cyAtts the cytoscape attributes to add the new values
      * @param element the element of the graph that has these attributes
-     * @param name attribute name 
+     * @param name attribute name
      * @param value attribute value
      */
-    private static void setAttribute(CyAttributes cyAtts, String element, 
+    private static void setAttribute(CyAttributes cyAtts, String element,
             String name, Object value) {
         // determine type of the value to set, check type of an potentially existing value
         // (if there exists no attribute with that name the getType method returns TYPE_UNDEFINED)
         // call the appropriate setAttribute method accordinng to the type of the value
-        if (value instanceof Boolean 
-                && (cyAtts.getType(name) == CyAttributes.TYPE_BOOLEAN 
+        if (value instanceof Boolean
+                && (cyAtts.getType(name) == CyAttributes.TYPE_BOOLEAN
                         || cyAtts.getType(name) == CyAttributes.TYPE_UNDEFINED)) {
             cyAtts.setAttribute(element, name, (Boolean) value);
-        } else if (value instanceof Integer 
-                && (cyAtts.getType(name) == CyAttributes.TYPE_INTEGER 
+        } else if (value instanceof Integer
+                && (cyAtts.getType(name) == CyAttributes.TYPE_INTEGER
                         || cyAtts.getType(name) == CyAttributes.TYPE_UNDEFINED)) {
             cyAtts.setAttribute(element, name, (Integer) value);
-        } else if (value instanceof Double 
+        } else if (value instanceof Double
                 && (cyAtts.getType(name) == CyAttributes.TYPE_FLOATING
                         || cyAtts.getType(name) == CyAttributes.TYPE_UNDEFINED)) {
             cyAtts.setAttribute(element, name, (Double) value);
-        } else if (value instanceof String 
+        } else if (value instanceof String
                 && (cyAtts.getType(name) == CyAttributes.TYPE_STRING
                         || cyAtts.getType(name) == CyAttributes.TYPE_UNDEFINED)) {
             cyAtts.setAttribute(element, name, (String) value);
         } else {  // set list as well ?
-            LOG.error("Error setting value " + value + " for attribute: " + name 
+            LOG.error("Error setting value " + value + " for attribute: " + name
                     + ". Possible value type missmatch or unhandled type.");
         }
     }

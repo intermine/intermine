@@ -49,7 +49,7 @@ public class ClassConstraint extends Constraint
         if (op == null) {
             throw new NullPointerException("op cannot be null");
         }
-        
+
         if (!VALID_OPS.contains(op)) {
             throw new IllegalArgumentException("op cannot be " + op);
         }
@@ -57,7 +57,7 @@ public class ClassConstraint extends Constraint
         if (qc2 == null) {
             throw new NullPointerException("qc2 cannot be null");
         }
-        
+
         Class c1 = qc1.getType();
         Class c2 = qc2.getType();
         Set cs1 = DynamicUtil.decomposeClass(c1);
@@ -68,7 +68,7 @@ public class ClassConstraint extends Constraint
                         + c1 + " " + op + " " + c2);
             }
         }
-        
+
         this.qc1 = qc1;
         this.op = op;
         this.qc2 = qc2;
@@ -104,7 +104,7 @@ public class ClassConstraint extends Constraint
                                                + " " + op
                                                + " " + obj.getClass());
         }
-        
+
         this.qc1 = qc;
         this.op = op;
         this.obj = obj;

@@ -51,12 +51,12 @@ public class ModelViewer extends JPanel implements TreeSelectionListener
      */
     public ModelViewer(Model model) {
         super(new BorderLayout());
-        
+
         this.model = model;
         DefaultMutableTreeNode top =
             new DefaultMutableTreeNode(model.getName());
         createNodes(top);
-        
+
         //Create a tree that allows one selection at a time.
         tree = new JTree(top);
         tree.getSelectionModel().setSelectionMode

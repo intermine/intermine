@@ -174,7 +174,7 @@ public class QueryFieldPathExpression implements QueryPathExpression
     public Object getDefaultValue() {
         return defaultValue;
     }
-    
+
     /**
      * {@inheritDoc}
      */

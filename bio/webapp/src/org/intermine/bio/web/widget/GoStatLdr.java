@@ -57,7 +57,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     Collection organisms;
     int total;
     String externalLink, append;
-    
+
     /**
      * @param request The HTTP request we are processing
      */
@@ -69,7 +69,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              ObjectStoreInterMineImpl os =
                  (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-            
+
              String bagName = request.getParameter("bagName");
              Map<String, InterMineBag> allBags =
                  WebUtil.getAllBags(profile.getSavedBags(), servletContext);
@@ -77,9 +77,9 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              String bagType = bag.getType();
              String namespace = (request.getParameter("filter") != null
                                ? request.getParameter("filter") : "biological_process");
-                          
+
              // list of ontologies to ignore
-             Collection badOntologies = getOntologies(); 
+             Collection badOntologies = getOntologies();
 
              // build query constrained by bag
              Query q = new Query();
@@ -89,7 +89,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              QueryClass qcOrganism = new QueryClass(Organism.class);
              QueryClass qcGo = new QueryClass(GOTerm.class);
              QueryClass qcProtein = new QueryClass(Protein.class);
-             
+
              QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
              QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
              QueryField qfGeneId = new QueryField(qcGene, "id");
@@ -97,7 +97,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              QueryField qfGoTermId = new QueryField(qcGo, "identifier");
              QueryField qfOrganismName = new QueryField(qcOrganism, "name");
              QueryField qfProteinId = new QueryField(qcProtein, "id");
-    
+
              QueryFunction objectCount = new QueryFunction();
 
              q.addFrom(qcGene);
@@ -128,7 +128,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
              // limit to organisms in the bag
              BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-                          
+
              cs.addConstraint(bc2);
 
              ContainsConstraint cc = null;
@@ -138,7 +138,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
                  cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcGene);
                  cs.addConstraint(cc);
              }
-                          
+
              // ignore main 3 ontologies
              BagConstraint bc3 = new BagConstraint(qfGoTermId, ConstraintOp.NOT_IN, badOntologies);
              cs.addConstraint(bc3);
@@ -151,7 +151,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
 
              // gene is from organism
              QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
-             ContainsConstraint cc2 
+             ContainsConstraint cc2
                                  = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
              cs.addConstraint(cc2);
 
@@ -187,7 +187,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              if (bagType.toLowerCase().equals("protein")) {
                  q.addFrom(qcProtein);
              }
-             
+
              q.addToSelect(qfGoTermId);
              q.addToSelect(objectCount);
 
@@ -205,7 +205,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
              q.setConstraint(cs);
 
              q.addToGroupBy(qfGoTermId);
-             
+
              populationQuery = q;
 
      }
@@ -230,7 +230,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         public Query getSample() {
             return sampleQuery;
         }
-        
+
         /**
          * @return the query representing the entire population (all the items in the database)
          */
@@ -239,7 +239,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         }
 
         /**
-         * 
+         *
          * @param os
          * @param bag
          * @return description of reference population, ie "Accounting dept"
@@ -247,24 +247,24 @@ public class GoStatLdr implements EnrichmentWidgetLdr
         public Collection getReferencePopulation() {
             return organisms;
         }
-        
-        /** 
-         * @param os     
+
+        /**
+         * @param os
          * @return the query representing the sample population (the bag)
          */
         public int getTotal(ObjectStore os) {
             return BioUtil.getTotal(os, organisms, "Gene");
         }
-        
+
         /**
          * @return if the widget should have an external link, where it should go to
          */
         public String getExternalLink() {
             return externalLink;
         }
-        
+
         /**
-         * 
+         *
          * @return the string to append to the end of external link
          */
         public String getAppendage() {

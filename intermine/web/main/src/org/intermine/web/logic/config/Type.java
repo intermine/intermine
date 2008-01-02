@@ -43,7 +43,7 @@ public class Type
     private Displayer tableDisplayer;
     private Map aspectDisplayers = new HashMap();
 
-    
+
     /**
      * Set the fully-qualified class name for this Type
      * @param className the name of the Type
@@ -106,8 +106,8 @@ public class Type
             displayers.add(disp);
         }
     }
-    
-    
+
+
     /**
      * Get the GraphDisplayers for this type
      * @return the List of GraphDisplayers
@@ -115,7 +115,7 @@ public class Type
     public ListOrderedSet getGraphDisplayers() {
         return graphDisplayers;
     }
-    
+
     /**
      * Get the BagTableDisplayers for this type
      * @return the List of BagTableDisplayers
@@ -131,7 +131,7 @@ public class Type
     public ListOrderedSet getEnrichmentWidgetDisplayers() {
         return enrichmentWidgetDisplayers;
     }
-    
+
     /**
      * Add a GraphDisplayer to the List of GraphDisplayers
      * for that type
@@ -158,8 +158,8 @@ public class Type
     public void addEnrichmentWidgetDisplayer(EnrichmentWidgetDisplayer ewDisp) {
         enrichmentWidgetDisplayers.add(ewDisp);
     }
-    
-    
+
+
     /**
      * Set the table displayer for this Type
      * @param disp the Displayer
@@ -175,7 +175,7 @@ public class Type
     public Set getLongDisplayers() {
         return Collections.unmodifiableSet(this.longDisplayers);
     }
-    
+
     /**
      * Get the table Displayer
      * @return the table Displayer
@@ -183,7 +183,7 @@ public class Type
     public Displayer getTableDisplayer() {
         return tableDisplayer;
     }
-    
+
     /**
      * {@inheritDoc}
      * @param obj the Object to compare with
@@ -195,7 +195,7 @@ public class Type
         }
 
         Type typeObj = (Type) obj;
-        
+
         return fieldConfigMap.equals(typeObj.fieldConfigMap)
             && longDisplayers.equals(typeObj.longDisplayers)
             && ObjectUtils.equals(tableDisplayer, typeObj.tableDisplayer);

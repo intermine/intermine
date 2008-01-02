@@ -63,9 +63,9 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward runTemplate(ActionMapping mapping, 
+    public ActionForward runTemplate(ActionMapping mapping,
                                      @SuppressWarnings("unused") ActionForm form,
-                                     HttpServletRequest request, 
+                                     HttpServletRequest request,
                                      @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();
@@ -81,7 +81,7 @@ public class ModifyDetails extends DispatchAction
                                                              name, scope);
         String trail = request.getParameter("trail");
         InlineTemplateTable itt = null;
-        
+
         if (idForLookup != null && idForLookup.length() != 0) {
             Integer objectId = new Integer(idForLookup);
             itt =
@@ -91,24 +91,24 @@ public class ModifyDetails extends DispatchAction
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
             InterMineBag interMineBag = allBags.get(bagName);
-            itt = TemplateHelper.getInlineTemplateTable(servletContext, name, 
+            itt = TemplateHelper.getInlineTemplateTable(servletContext, name,
                                                         interMineBag, userName);
         }
         String identifier = "itt." + template.getName() + "." + idForLookup;
         SessionMethods.setResultsTable(session, identifier, itt.getPagedTable());
 
-        
-        // add results table to trail 
+
+        // add results table to trail
         if (trail != null) {
             trail += "|results." + identifier;
         } else {
             trail = "|results." + identifier;
         }
-        
+
 
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("templateQueryTitle", template.getTitle())
-                        .addParameter("templateQueryDescription", template.getDescription())        
+                        .addParameter("templateQueryDescription", template.getDescription())
                         .addParameter("table", identifier)
                         .addParameter("trail", trail).forward();
     }
@@ -126,22 +126,22 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward verbosify(ActionMapping mapping, 
+    public ActionForward verbosify(ActionMapping mapping,
                                    @SuppressWarnings("unused") ActionForm form,
-                                   HttpServletRequest request, 
+                                   HttpServletRequest request,
                                    @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();
         if (session == null) {
             return null;
         }
-        
+
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
         String placement = request.getParameter("placement");
         DisplayObject object = getDisplayObject(session, request.getParameter("id"));
-        
-        
+
+
         if (object != null) {
             object.setVerbosity(placement + "_" + fieldName, true);
         }
@@ -191,9 +191,9 @@ public class ModifyDetails extends DispatchAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward ajaxVerbosify(ActionMapping mapping, 
+    public ActionForward ajaxVerbosify(ActionMapping mapping,
                                        @SuppressWarnings("unused") ActionForm form,
-                                       HttpServletRequest request, 
+                                       HttpServletRequest request,
                                        @SuppressWarnings("unused") HttpServletResponse response)
                     throws Exception {
         HttpSession session = request.getSession();

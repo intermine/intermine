@@ -36,9 +36,9 @@ import org.xml.sax.InputSource;
  * @author Richard Smith
  */
 public class FullParser
-{    
+{
     private static final Logger LOG = Logger.getLogger(FullParser.class);
-    
+
     /**
      * Parse a InterMine Full XML file
      *
@@ -67,7 +67,7 @@ public class FullParser
      * @param useIdentifier if true, set the id of each new object using the identifier of the Item
      * problem and continue if possible
      * @return a collection of realised business objects
-     * @throws ClassNotFoundException if one of the items has a class that isn't in the model 
+     * @throws ClassNotFoundException if one of the items has a class that isn't in the model
      */
     public static List<InterMineObject> realiseObjects(Collection<Item> items, Model model,
                                                        boolean useIdentifier)
@@ -83,7 +83,7 @@ public class FullParser
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible
      * @return a collection of realised business objects
-     * @throws ClassNotFoundException if one of the items has a class that isn't in the model 
+     * @throws ClassNotFoundException if one of the items has a class that isn't in the model
      */
     public static List<InterMineObject> realiseObjects(Collection<Item> items, Model model,
                                                        boolean useIdentifier, boolean abortOnError)

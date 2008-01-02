@@ -362,7 +362,7 @@ public class QueryBuilderForm extends ActionForm
     public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
                                     Locale locale, ActionMessages errors) {
         Object parsedValue = null;
-        
+
         if (value == null || value.length() == 0) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.emptyField"));
             return null;
@@ -415,7 +415,7 @@ public class QueryBuilderForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       HttpServletRequest request) {
         bagOp = null;
         bagValue = null;

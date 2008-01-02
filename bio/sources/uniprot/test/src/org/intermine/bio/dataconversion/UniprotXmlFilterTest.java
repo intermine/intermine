@@ -58,11 +58,11 @@ public class UniprotXmlFilterTest extends XMLTestCase
 
     public void testEscape() throws Exception {
         String in ="Novel protein\\n\\";
-        
+
         String out = StringUtil.escapeBackslash(in);
         String expected = "Novel protein/n/";
         System.out.println("escapeOut " + out);
         assertEquals(expected, out);
     }
-    
+
 }

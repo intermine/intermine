@@ -93,7 +93,7 @@ public class BuildDbTask extends Task
         if (schemaFile == null) {
             throw new BuildException("schemaFile attribute is not set");
         }
-       
+
         {
             Connection c = null;
             try {
@@ -127,7 +127,7 @@ public class BuildDbTask extends Task
         if (schemaFileInputStream == null) {
             throw new BuildException("cannot open schema file (" + schemaFile + ")");
         }
-        
+
         File tempFile;
 
         try {
@@ -136,7 +136,7 @@ public class BuildDbTask extends Task
             PrintWriter writer = new PrintWriter(new FileWriter(tempFile));
             BufferedReader reader =
                 new BufferedReader(new InputStreamReader(schemaFileInputStream));
-            
+
             while (true) {
                 String line = reader.readLine();
                 if (line == null) {
@@ -243,7 +243,7 @@ class SQL extends TorqueSQLTask
  *
  * @author Mark Woodbridge
  */
-class InsertSQL extends TorqueSQLExec 
+class InsertSQL extends TorqueSQLExec
 {
     /**
      * Default constructor

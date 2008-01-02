@@ -36,14 +36,14 @@ public class TemplatesImportForm extends ValidatorForm
 {
     private String xml;
     private boolean overwriting = false;
-    
+
     /**
      * Creates a new instance of TemplatesImportForm.
      */
     public TemplatesImportForm() {
         reset();
     }
-    
+
     /**
      * Get the xml.
      * @return templates in xml format
@@ -59,7 +59,7 @@ public class TemplatesImportForm extends ValidatorForm
     public void setXml(String xml) {
         this.xml = xml;
     }
-    
+
     /**
      * Get the overwrite flag.
      * @return  true to overwrite existing template, false to add
@@ -67,7 +67,7 @@ public class TemplatesImportForm extends ValidatorForm
     public boolean isOverwriting() {
         return overwriting;
     }
-    
+
     /**
      * Set the overwriting flag.
      * @param overwriting true to overwrite existing templates, false to add
@@ -75,7 +75,7 @@ public class TemplatesImportForm extends ValidatorForm
     public void setOverwriting(boolean overwriting) {
         this.overwriting = overwriting;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -83,7 +83,7 @@ public class TemplatesImportForm extends ValidatorForm
         super.reset(mapping, request);
         reset();
     }
-    
+
     /**
      * Reset the form.
      */

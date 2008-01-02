@@ -99,7 +99,7 @@ public class TagHandler extends DefaultHandler
         tagObjectIdentifier = "";
         tagType = "";
     }
-    
+
     /**
      * Return a count of the number of tags read.
      * @return the number of tags read

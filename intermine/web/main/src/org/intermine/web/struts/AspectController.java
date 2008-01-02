@@ -37,7 +37,7 @@ import org.apache.struts.tiles.actions.TilesAction;
  * Contoller for a single data set tile embedded in a page. Expects the request parameter
  * "name" to refer to a data set name. Places a reference to the corresponding DataSet object
  * in the tile ComponentContext.
- * 
+ *
  * @author Thomas Riley
  */
 public class AspectController extends TilesAction
@@ -48,7 +48,7 @@ public class AspectController extends TilesAction
     public static final String ASPECT_PREFIX = "aspect:";
 
     private static final Logger LOG = Logger.getLogger(AspectController.class);
-    
+
     /**
      * {@inheritDoc}
      */

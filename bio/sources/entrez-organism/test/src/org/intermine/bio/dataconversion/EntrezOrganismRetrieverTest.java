@@ -38,7 +38,7 @@ public class EntrezOrganismRetrieverTest extends ItemsTestCase
     public EntrezOrganismRetrieverTest(String arg) {
         super(arg);
     }
-    
+
     public void testEntrezOrganismRetriever() throws Exception {
         EntrezOrganismRetriever eor = new TestEntrezOrganismRetriever();
         eor.setOsAlias("os.bio-test");
@@ -52,7 +52,7 @@ public class EntrezOrganismRetrieverTest extends ItemsTestCase
 
         eor.execute();
 
-        Set expected = readItemSet("EntrezOrganismRetrieverTest_tgt.xml"); 
+        Set expected = readItemSet("EntrezOrganismRetrieverTest_tgt.xml");
         Collection actual = FullParser.parse(new FileInputStream(temp));
 
         Assert.assertEquals(expected, new HashSet(actual));

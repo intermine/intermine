@@ -54,7 +54,7 @@ public class GFF3RecordTest extends TestCase
 
         assertEquals(expectedAttributes, gff3Record.getAttributes());
     }
-    
+
     /**
      * Test that we throw an exception if an attribute contains an unescaped semicolon (FlyBase was
      * doing this for a while)
@@ -79,7 +79,7 @@ public class GFF3RecordTest extends TestCase
         List synonym2ndList = (List) gff3Record.getAttributes().get("synonym_2nd");
 
         assertEquals("tRNA<up>Tyr</up><down>1&gamma;</down>", synonym2ndList.get(3));
-        
+
         assertEquals(gff, gff3Record.toGFF3());
     }
 

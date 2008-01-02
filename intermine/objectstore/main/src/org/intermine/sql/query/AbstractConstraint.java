@@ -104,7 +104,7 @@ public abstract class AbstractConstraint implements SQLStringable
      * Describes two constraints, where the right is always false.
      */
     public static final int RIGHT_FALSE = 5;
-    
+
     /**
      * Returns a String representation of this AbstractConstraint object, suitable for forming
      * part of an SQL query.
@@ -158,7 +158,7 @@ public abstract class AbstractConstraint implements SQLStringable
      */
     @Override
     public abstract int hashCode();
-    
+
     /**
      * Take an integer as if it is a value returned by compare, and return the value that compare
      * would have returned if first constraint (this) had been NOTed.
@@ -231,7 +231,7 @@ public abstract class AbstractConstraint implements SQLStringable
         boolean thisNB = ((compB & 4) == 4);
         boolean thisB = ((compB & 8) == 8);
 
-        return (nThisNA && nThisNB ? 1 : 0) + (nThisA || nThisB ? 2 : 0) 
+        return (nThisNA && nThisNB ? 1 : 0) + (nThisA || nThisB ? 2 : 0)
             + (thisNA && thisNB ? 4 : 0) + (thisA || thisB ? 8 : 0);
     }
 
@@ -258,7 +258,7 @@ public abstract class AbstractConstraint implements SQLStringable
         boolean thisNB = ((compB & 4) == 4);
         boolean thisB = ((compB & 8) == 8);
 
-        return (nThisNA && nThisNB ? 1 : 0) + (nThisA && nThisB ? 2 : 0) 
+        return (nThisNA && nThisNB ? 1 : 0) + (nThisA && nThisB ? 2 : 0)
             + (thisNA && thisNB ? 4 : 0) + (thisA && thisB ? 8 : 0);
     }
 

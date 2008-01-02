@@ -22,17 +22,17 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.xml.full.ItemHelper;
 
 public class BioJavaFlatFileConverterTest extends ItemsTestCase {
-    
-    
+
+
     public BioJavaFlatFileConverterTest(String arg) {
         super(arg);
     }
 
     // test fails because biojava returns features in a random order
     public void testProcess1() throws Exception {
-        String input = 
+        String input =
             IOUtils.toString(getClass().getClassLoader().getResourceAsStream("embl_test_1.embl"));
-        
+
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         BioJavaFlatFileConverter converter = new BioJavaFlatFileConverter(itemWriter);
         converter.process(new StringReader(input));
@@ -41,12 +41,12 @@ public class BioJavaFlatFileConverterTest extends ItemsTestCase {
         Set expected = readItemSet("embl_test_1.xml");
         assertEquals(expected, itemWriter.getItems());
     }
-    
+
     // test fails because biojava returns features in a random order
     public void testProcess2() throws Exception {
-        String input = 
+        String input =
             IOUtils.toString(getClass().getClassLoader().getResourceAsStream("embl_test_2.embl"));
-        
+
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         BioJavaFlatFileConverter converter = new BioJavaFlatFileConverter(itemWriter);
         converter.process(new StringReader(input));

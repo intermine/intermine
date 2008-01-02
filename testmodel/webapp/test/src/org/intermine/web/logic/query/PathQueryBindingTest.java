@@ -39,7 +39,7 @@ import junit.framework.TestCase;
 public class PathQueryBindingTest extends MockStrutsTestCase
 {
     Map savedQueries, expected, classKeys;
-    
+
     public void setUp() throws Exception {
         super.setUp();
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
@@ -48,11 +48,11 @@ public class PathQueryBindingTest extends MockStrutsTestCase
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
-        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(), 
+        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(),
                                                   getActionServlet().getServletContext());
         expected = getExpectedQueries();
     }
-    
+
     public PathQueryBindingTest(String arg) {
         super(arg);
     }
@@ -60,7 +60,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
 
     public Map getExpectedQueries() {
         Map expected = new LinkedHashMap();
-        
+
         Model model = Model.getInstanceByName("testmodel");
         // allCompanies
         PathQuery allCompanies = new PathQuery(model);
@@ -68,13 +68,13 @@ public class PathQueryBindingTest extends MockStrutsTestCase
         view.add(MainHelper.makePath(model, allCompanies, "Company"));
         allCompanies.setView(view);
         expected.put("allCompanies", allCompanies);
-        
+
         // managers
         PathQuery managers = new PathQuery(model);
         PathNode employee = managers.addNode("Employee");
         employee.setType("Manager");
         expected.put("managers", managers);
-        
+
         view = new ArrayList();
         // employeesWithOldManagers
         PathQuery employeesWithOldManagers = new PathQuery(model);
@@ -82,16 +82,16 @@ public class PathQueryBindingTest extends MockStrutsTestCase
         view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.name"));
         view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.age"));
         view.add(MainHelper.makePath(model, employeesWithOldManagers, "Employee.department.name"));
-        view.add(MainHelper.makePath(model, employeesWithOldManagers, 
+        view.add(MainHelper.makePath(model, employeesWithOldManagers,
                                      "Employee.department.manager.age"));
         employeesWithOldManagers.setView(view);
         PathNode age = employeesWithOldManagers.addNode("Employee.department.manager.age");
         age.getConstraints().add(new Constraint(ConstraintOp.GREATER_THAN, new Integer(10),
                                                 true, "age is greater than 10", null, "age_gt_10", null));
-        employeesWithOldManagers.addPathStringDescription("Employee.department", 
+        employeesWithOldManagers.addPathStringDescription("Employee.department",
                                                           "Department of the Employee");
         expected.put("employeesWithOldManagers", employeesWithOldManagers);
-        
+
         // vatNumberInBag
         PathQuery vatNumberInBag = new PathQuery(model);
         view = new ArrayList();
@@ -101,7 +101,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
         company.getConstraints().add(new Constraint(ConstraintOp.IN, "bag1"));
         PathNode vatNumber = vatNumberInBag.addNode("Company.vatNumber");
         expected.put("vatNumberInBag", vatNumberInBag);
-        
+
         // queryWithConstraint
         PathQuery queryWithConstraint = new PathQuery(model);
         view = new ArrayList();
@@ -116,7 +116,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
 
         queryWithConstraint.setView(view);
         expected.put("queryWithConstraint", queryWithConstraint);
-        
+
         // employeesInBag
         PathQuery employeesInBag = new PathQuery(model);
         view = new ArrayList();
@@ -128,10 +128,10 @@ public class PathQueryBindingTest extends MockStrutsTestCase
                                     + "constrained to be in bags.");
         employeesInBag.problems.add(e);
         expected.put("employeeEndInBag", employeesInBag);
-        
+
         return expected;
     }
-    
+
     public void testAllCompanies() throws Exception {
         assertEquals(expected.get("allCompanies"), savedQueries.get("allCompanies"));
     }
@@ -141,12 +141,12 @@ public class PathQueryBindingTest extends MockStrutsTestCase
     public void testEmployeesWithOldManagers() throws Exception {
         assertEquals(expected.get("employeesWithOldManagers"), savedQueries.get("employeesWithOldManagers"));
     }
-    
+
     // will move vatNumber bag constraint to parent node
     public void testVatNumberInBag() throws Exception {
         assertEquals(expected.get("vatNumberInBag"), savedQueries.get("vatNumberInBag"));
     }
-    
+
     // this won't move bag constraint to parent, will not produce a valid query
     public void employeeEndInBag() throws Exception {
         assertEquals(expected.get("employeeEndInBag"), savedQueries.get("employeeEndInBag"));
@@ -154,7 +154,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
         assertEquals(((PathQuery) expected.get("employeeEndInBag")).problems,
                 ((PathQuery) savedQueries.get("employeeEndInBag")));
     }
-    
+
     public void testMarshallings() throws Exception {
         // Test marshallings
         String xml = PathQueryBinding.marshal((PathQuery) expected.get("employeesWithOldManagers"),
@@ -166,7 +166,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
         assertEquals(expectedQuery, readFromXml);
-        
+
         xml = PathQueryBinding.marshal((PathQuery) expected.get("queryWithConstraint"),
                                        "queryWithConstraint", "testmodel");
         readFromXml = new LinkedHashMap();

@@ -41,7 +41,7 @@ public class FlushJobPostgresCopyImpl implements FlushJob
         this.data = data;
         this.size = size;
     }
-    
+
     /**
      * {@inheritDoc}
      */

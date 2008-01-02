@@ -38,14 +38,14 @@ import org.intermine.util.StringUtil;
 public class ModelMerger
 {
     private static final Logger LOG = Logger.getLogger(ModelMerger.class);
-    
+
     /**
      * Creates a new instance of ModelMerger.
      */
     private ModelMerger() {
        // empty
     }
-    
+
     /**
      * 'Merges' the information from the set of ClassDescriptors <code>classes</code>
      * into the model <code>target</code>. This method does not actually modify
@@ -94,20 +94,20 @@ public class ModelMerger
             Model newModel = new Model(original.getName(), original.getNameSpace().toString(),
                     new HashSet<ClassDescriptor>(newClasses.values()));
             return newModel;
-        
+
         } catch (URISyntaxException err) {
             throw new ModelMergerException(err);
         } catch (MetaDataException err) {
             throw new ModelMergerException(err);
         }
     }
-    
+
     /**
      * When changes are made to the inheritance hierarchy (especially the addition of
      * superinterfaces), fields may be defined on superinterfaces making previous definitions
      * further down the inheritance hierarchy redundant. This method removes those redundant
      * fields.
-     * 
+     *
      * @param classes starting collection of ClassDescriptors
      * @return a new mapping from class name to ClassDescriptors
      * @throws ModelMergerException if an error occurs during model merging
@@ -115,7 +115,7 @@ public class ModelMerger
     protected static Map<String, ClassDescriptor> removeRedundancy(Map<String,
             ClassDescriptor> classes) throws ModelMergerException {
         Map<String, ClassDescriptor> newSet = new HashMap<String, ClassDescriptor>();
-        
+
         for (ClassDescriptor cd : classes.values()) {
             Set<CollectionDescriptor> cdescs = cloneCollectionDescriptors(
                     cd.getCollectionDescriptors());
@@ -129,7 +129,7 @@ public class ModelMerger
             // in a superclass/superinterface
             for (String sup : supers) {
                 ClassDescriptor scd = classes.get(sup);
-                
+
                 // Check attributes
                 for (Iterator<AttributeDescriptor> aiter = adescs.iterator(); aiter.hasNext();) {
                     AttributeDescriptor ad = aiter.next();
@@ -140,7 +140,7 @@ public class ModelMerger
                         aiter.remove();
                     }
                 }
-                
+
                 // Check references
                 for (Iterator<ReferenceDescriptor> riter = rdescs.iterator(); riter.hasNext();) {
                     ReferenceDescriptor rd = riter.next();
@@ -151,7 +151,7 @@ public class ModelMerger
                         riter.remove();
                     }
                 }
-                
+
                 // Check collections
                 for (Iterator<CollectionDescriptor> citer = cdescs.iterator(); citer.hasNext();) {
                     CollectionDescriptor cold = citer.next();
@@ -163,18 +163,18 @@ public class ModelMerger
                     }
                 }
             }
-            
+
             String supersStr = toSupersString(cd.getSuperclassNames());
-            
+
             newSet.put(cd.getName(), new ClassDescriptor(cd.getName(), supersStr, cd.isInterface(),
                                                 cloneAttributeDescriptors(adescs),
                                                 cloneReferenceDescriptors(rdescs),
                                                 cloneCollectionDescriptors(cdescs)));
         }
-        
+
         return newSet;
     }
-    
+
     private static String toSupersString(Set<String> supers) {
         String supersStr = StringUtil.join(supers, " ");
         if (supersStr != null && supersStr.equals("")) {
@@ -182,7 +182,7 @@ public class ModelMerger
         }
         return supersStr;
     }
-    
+
     private static void findAllSuperclasses(ClassDescriptor cd,
             Map<String, ClassDescriptor> classes, Set<String> names) throws ModelMergerException {
         Set<String> supers = cd.getSuperclassNames();
@@ -200,17 +200,17 @@ public class ModelMerger
             }
         }
     }
-    
+
     /**
      * Merge the attributes, collections and references from ClassDescriptor <code>merge</code>
      * into the ClassDescriptor <code>original</code>. The two are different in that inheritance
      * settings on the merge class can override the inheritance present in the original class.
      * This method will throw a ModelMergerException if the two class descriptors return different
      * values from <code>isInterface</code>.<p>
-     * 
+     *
      * If the original class extends a superclass, and the <code>merge</code> also specifies
      * a superclass then the merge superclass will override the old superclass.<p>
-     * 
+     *
      * This method requires <code>originalModel</code> and <code>mergeClasses</code> so it can
      * determine whether the superclass names in <code>merge</code> represente classes or
      * interfaces.
@@ -232,7 +232,7 @@ public class ModelMerger
         Set<AttributeDescriptor> attrs = mergeAttributes(original, merge);
         Set<CollectionDescriptor> cols = mergeCollections(original, merge);
         Set<ReferenceDescriptor> refs = mergeReferences(original, merge);
-        
+
         Set<String> supers = new TreeSet<String>();
         boolean replacingSuperclass = false;
         // Figure out if we're replacing the superclass
@@ -264,7 +264,7 @@ public class ModelMerger
         return new ClassDescriptor(original.getName(), supersStr,
                 merge.isInterface(), attrs, refs, cols);
     }
-    
+
     /**
      * Merge the attributes of a target model class descriptor <code>original</code> with
      * the attributes present in class descriptor <code>merge</code>. Returns a new set of
@@ -289,13 +289,13 @@ public class ModelMerger
                 }
             }
         }
-        
+
         Set<AttributeDescriptor> newSet = new HashSet<AttributeDescriptor>();
         newSet.addAll(cloneAttributeDescriptors(original.getAttributeDescriptors()));
         newSet.addAll(cloneAttributeDescriptors(merge.getAttributeDescriptors()));
         return newSet;
     }
-    
+
     /**
      * Merge the collections of a target model class descriptor <code>original</code> with
      * the collections present in class descriptor <code>merge</code>. Returns a new set of
@@ -313,9 +313,9 @@ public class ModelMerger
         for (CollectionDescriptor merg : merge.getCollectionDescriptors()) {
             // nb: does not look for references in superclasses/superinterfaces
             CollectionDescriptor orig = original.getCollectionDescriptorByName(merg.getName());
-            
+
             if (orig != null) {
-                
+
                 // New descriptor may add a reverse reference field name
                 if (merg.getReverseReferenceFieldName() != null
                     && orig.getReverseReferenceFieldName() == null) {
@@ -324,7 +324,7 @@ public class ModelMerger
                     newSet.add(cloneCollectionDescriptor(merg));
                     continue;
                 }
-                
+
                 // Check for inconsistencies and throw exceptions if inconsistencies are found
                 if (!StringUtils.equals(merg.getReverseReferenceFieldName(),
                                         orig.getReverseReferenceFieldName())) {
@@ -333,7 +333,7 @@ public class ModelMerger
                             + fldName + "<-" + merg.getReverseReferenceFieldName() + " != "
                             + fldName + "<-" + orig.getReverseReferenceFieldName());
                 }
-                
+
                 if (!merg.getReferencedClassName().equals(orig.getReferencedClassName())) {
                     String fldName = original.getName() + "." + orig.getName();
                     throw new ModelMergerException("type mismatch between collection types: "
@@ -341,13 +341,13 @@ public class ModelMerger
                             + fldName + ":" + orig.getReferencedClassName());
                 }
             }
-            
+
             // New descriptor of no differences, so add merg to newSet
             newSet.add(cloneCollectionDescriptor(merg));
         }
         return newSet;
     }
-    
+
     /**
      * Merge the references of a target model class descriptor <code>original</code> with
      * the references present in class descriptor <code>merge</code>. Returns a new set of
@@ -366,7 +366,7 @@ public class ModelMerger
             // nb: does not look for references in superclasses/superinterfaces
             ReferenceDescriptor orig = original.getReferenceDescriptorByName(merg.getName());
             if (orig != null) {
-                
+
                 // New descriptor may add a reverse reference field name
                 if (merg.getReverseReferenceFieldName() != null
                     && orig.getReverseReferenceFieldName() == null) {
@@ -374,8 +374,8 @@ public class ModelMerger
                     removeFieldDescriptor(newSet, orig.getName());
                     newSet.add(cloneReferenceDescriptor(merg));
                     continue;
-                }                
-                
+                }
+
                 if (!merg.getReferencedClassName().equals(orig.getReferencedClassName())) {
                     String fldName = original.getName() + "." + orig.getName();
                     throw new ModelMergerException("type mismatch between reference types: "
@@ -390,14 +390,14 @@ public class ModelMerger
                             + fldName + "<-" + orig.getReverseReferenceFieldName());
                 }
             }
-            
+
             // New descriptor of no differences, so add merg to newSet
             newSet.add(cloneReferenceDescriptor(merg));
         }
-        
+
         return newSet;
     }
-    
+
     /**
      * Clone a set of ReferenceDescriptors.
      *
@@ -412,12 +412,12 @@ public class ModelMerger
         }
         return copy;
     }
-    
+
     private static ReferenceDescriptor cloneReferenceDescriptor(ReferenceDescriptor ref) {
         return new ReferenceDescriptor(ref.getName(), ref.getReferencedClassName(),
                 ref.getReverseReferenceFieldName());
     }
-    
+
     /**
      * Clone a set of CollectionDescriptors.
      *
@@ -432,15 +432,15 @@ public class ModelMerger
         }
         return copy;
     }
-    
+
     private static CollectionDescriptor cloneCollectionDescriptor(CollectionDescriptor ref) {
         return new CollectionDescriptor(ref.getName(), ref.getReferencedClassName(),
                 ref.getReverseReferenceFieldName());
     }
-    
+
     /**
      * Remove a FieldDescriptor from a Set of FieldDescriptors by name.
-     * 
+     *
      * @param fields set of FieldDescriptors
      * @param name the field name
      */
@@ -454,7 +454,7 @@ public class ModelMerger
             }
         }
     }
-    
+
     /**
      * Clone a set of AttributeDescriptors.
      *
@@ -469,11 +469,11 @@ public class ModelMerger
         }
         return copy;
     }
-    
+
     /**
      * Construct a ClassDescriptor that takes on all the properties of <code>cld</code>
      * without attaching to a particular Model.
-     * 
+     *
      * @param cld the ClassDescriptor to clone
      * @return cloned ClassDescriptor
      */
@@ -488,7 +488,7 @@ public class ModelMerger
                 cloneReferenceDescriptors(cld.getReferenceDescriptors()),
                 cloneCollectionDescriptors(cld.getCollectionDescriptors()));
     }
-    
+
     /**
      * Find ClassDescriptor in set with given name.
      */

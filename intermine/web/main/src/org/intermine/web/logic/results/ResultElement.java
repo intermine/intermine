@@ -22,7 +22,7 @@ import org.intermine.util.Util;
 /**
  * Cell of results table containing information
  * for the parent Object
- * 
+ *
  * @author Xavier Watkins
  */
 public class ResultElement implements Serializable
@@ -35,7 +35,7 @@ public class ResultElement implements Serializable
     private final boolean keyField;
     private final ObjectStore os;
     private final Path path;
-    
+
 
     /**
      * Constructs a new ResultCell object
@@ -54,10 +54,10 @@ public class ResultElement implements Serializable
         this.typeCls = typeCls;
         this.keyField = isKeyField;
         this.path = path;
-        setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_" 
+        setHtmlId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"
                   + TypeUtil.unqualifiedName(typeCls.getName()));
     }
-    
+
     /**
      * Constructor used to create other types of results (like coming from counts)
      * with a custom link
@@ -71,7 +71,7 @@ public class ResultElement implements Serializable
         this.path = null;
         this.os = null;
     }
-    
+
     /**
      * Create a ResultElement that displays a single raw value.
      * @param fieldValue the value to hold in this object
@@ -90,7 +90,7 @@ public class ResultElement implements Serializable
     public Object getField() {
         return field;
     }
-    
+
     /**
      * Set the field value
      * @param field the field
@@ -98,7 +98,7 @@ public class ResultElement implements Serializable
     public void setField(Object field) {
         this.field = field;
     }
-    
+
     /**
      * Get the type
      * @return the type
@@ -106,7 +106,7 @@ public class ResultElement implements Serializable
     public String getType() {
         return TypeUtil.unqualifiedName(typeCls.getName());
     }
-   
+
     /**
      * Get the type
      * @return the type
@@ -122,7 +122,7 @@ public class ResultElement implements Serializable
     public void setTypeClass(Class typeCls) {
         this.typeCls = typeCls;
     }
-    
+
     /**
      * Get the action/page link
      * @return a String
@@ -147,7 +147,7 @@ public class ResultElement implements Serializable
     public boolean isKeyField() {
         return keyField;
     }
-    
+
     /**
      * Get the Id
      * @return the id
@@ -163,7 +163,7 @@ public class ResultElement implements Serializable
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     /**
      * @return the path
      */
@@ -171,7 +171,7 @@ public class ResultElement implements Serializable
         return path;
     }
 
-    
+
     /**
      * @return the htmlId
      */
@@ -194,7 +194,7 @@ public class ResultElement implements Serializable
     public InterMineObject getInterMineObject() throws ObjectStoreException {
         return os.getObjectById(getId());
     }
-    
+
     /**
      * Returns a String reprtesentation of the ResultElement
      * @return a String
@@ -202,7 +202,7 @@ public class ResultElement implements Serializable
     public String toString() {
         return " " + field + " " + id + " " + TypeUtil.unqualifiedName(typeCls.getName());
     }
-    
+
     /**
      * (non-Javadoc)
      * {@inheritDoc}
@@ -220,7 +220,7 @@ public class ResultElement implements Serializable
                     + TypeUtil.unqualifiedName(typeCls.getName()));
         }
     }
-    
+
     /**
      * (non-Javadoc)
      * {@inheritDoc}
@@ -229,5 +229,5 @@ public class ResultElement implements Serializable
         return (field == null ? 0 : field.hashCode()) + 3 * id.hashCode()
         + 7 * typeCls.hashCode();
     }
-    
+
 }

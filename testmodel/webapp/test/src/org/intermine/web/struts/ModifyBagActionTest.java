@@ -80,7 +80,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         UserProfile profile4ID = (UserProfile) uos.getObjectByExample(realProfile, fieldNames);
         userId = new Integer(profile4ID.getId());
 
-        
+
         HttpSession session = getSession();
         session.setAttribute(Constants.PROFILE, profile);
 
@@ -89,7 +89,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
         query.getView().add(MainHelper.makePath(model, query, "Employee"));
         query.getView().add(MainHelper.makePath(model, query, "Employee.name"));
         queryBag = new PathQuery(model);
-        
+
         queryBag.getView().add(MainHelper.makePath(model, query, "Employee"));
         queryBag.getView().add(MainHelper.makePath(model, query, "Employee.name"));
         queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));

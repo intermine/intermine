@@ -25,14 +25,14 @@ import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Action to handle button presses on the main tile
- * 
+ *
  * @author Mark Woodbridge
  */
 public class LoginAction extends LoginHandler
 {
     /**
      * Method called for login in
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -47,7 +47,7 @@ public class LoginAction extends LoginHandler
      */
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse response) 
+                                 HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -57,10 +57,10 @@ public class LoginAction extends LoginHandler
         doLogin(servletContext, request, response, session, pm, lf.getUsername(), lf.getPassword());
 
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
-        
-        if (lf.returnToString != null && lf.returnToString.startsWith("/") 
+
+        if (lf.returnToString != null && lf.returnToString.startsWith("/")
             && lf.returnToString.indexOf("error") == -1) {
-            return new ActionForward(lf.returnToString);            
+            return new ActionForward(lf.returnToString);
         } else {
             return mapping.findForward("mymine");
         }

@@ -22,7 +22,7 @@ public class BagElement implements Serializable
 {
     protected String type;
     protected Integer id;
-    
+
     /**
      * Constructs an element to be stored in a bag
      * @param id the InterMineObject id
@@ -41,10 +41,10 @@ public class BagElement implements Serializable
         this.id = resElt.getId();
         this.type = resElt.getType();
     }
-    
+
     /**
      * Returns the InterMineObject id
-     * @return the InterMineObject id as an Integer 
+     * @return the InterMineObject id as an Integer
      */
     public Integer getId() {
         return id;
@@ -73,7 +73,7 @@ public class BagElement implements Serializable
     public void setType(String type) {
         this.type = type;
     }
-    
+
     /**
      * Returns a String representation of the BagElement
      * @return a String
@@ -81,17 +81,17 @@ public class BagElement implements Serializable
     public String toString() {
         return " " + id + " " + type;
     }
-    
+
     /**
      * (non-Javadoc)
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         BagElement bagElt = (BagElement) obj;
-        return (id.equals(bagElt.getId()) 
+        return (id.equals(bagElt.getId())
                         && type.equals(bagElt.getType()));
     }
-    
+
     /**
      * (non-Javadoc)
      * {@inheritDoc}

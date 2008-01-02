@@ -14,13 +14,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Object representing aa OboTerm synonym.
- * 
+ *
  * @author Thomas Riley
  */
 public class OboTermSynonym extends DagTermSynonym
 {
     private String type;
-    
+
     /**
      * Create a new instance of DagTermSynonym.
      * @param name the synonym name
@@ -30,7 +30,7 @@ public class OboTermSynonym extends DagTermSynonym
         super(name);
         this.type = type;
     }
-    
+
     /**
      * Get the synonym type.
      * @return synonym type
@@ -38,7 +38,7 @@ public class OboTermSynonym extends DagTermSynonym
     public String getType() {
         return type;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -53,7 +53,7 @@ public class OboTermSynonym extends DagTermSynonym
     public int hashCode() {
         return super.hashCode() + 3 * type.hashCode();
     }
-    
+
     /**
      * {@inheritDoc}
      */

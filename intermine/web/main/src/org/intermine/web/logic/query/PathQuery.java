@@ -241,7 +241,7 @@ public class PathQuery
         }
         return retList;
     }
-    
+
     /**
      * Add a path to the view
      * @param viewString the String version of the path to add - should not include any class
@@ -307,7 +307,7 @@ public class PathQuery
             addProblem(e);
         }
     }
-    
+
     /**
      * Add a path to the sort order
      * @param sortOrderString the String version of the path to add - should not include any class
@@ -324,8 +324,8 @@ public class PathQuery
             addProblem(e);
         }
     }
-  
-    
+
+
     /**
      * Clear the order by list and replace with first item on select list.
      */
@@ -343,13 +343,13 @@ public class PathQuery
     }
 
     /**
-     * Remove a path from the sort order.  If on the order by list, replace with first item 
+     * Remove a path from the sort order.  If on the order by list, replace with first item
      * on select list.
      * @param viewString The string being removed from the view list
      */
     public void removePathStringFromSortOrder(String viewString) {
         Iterator<OrderBy> iter = sortOrder.iterator();
-        while (iter.hasNext()) {            
+        while (iter.hasNext()) {
             OrderBy sort = iter.next();
             if (sort.getField().toStringNoConstraints().equals(viewString)) {
                 // this is the field on the sort order, so clear and add first item on view list
@@ -358,8 +358,8 @@ public class PathQuery
             }
         }
     }
-    
-    
+
+
     /**
      * Return true if and only if the view contains a Path that has pathString as its String
      * representation.
@@ -715,7 +715,7 @@ public class PathQuery
         }
         return retMap;
     }
-    
+
     /**
      * Add a description to a path in the view.  If the viewString isn't a valid view path, add an
      * exception to the problems list.

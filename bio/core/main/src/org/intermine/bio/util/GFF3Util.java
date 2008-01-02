@@ -7,7 +7,7 @@ package org.intermine.bio.util;
  * terms of the GNU Lesser General Public Licence.  This should
  * be distributed with the code.  See the LICENSE file for more
  * information or http://www.gnu.org/copyleft/lesser.html.
- * 
+ *
  */
 
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -43,13 +43,13 @@ public abstract class GFF3Util
     public static GFF3Record makeGFF3Record(LocatedSequenceFeature lsf, Map soClassNameMap,
                                             Map extraAttributes) {
         Set classes = DynamicUtil.decomposeClass(lsf.getClass());
-        
+
         String type = null;
         String sequenceID = null;
         int start = -1;
         int end = -1;
         String strand = null;
-        
+
         if (lsf instanceof Chromosome) {
             sequenceID = lsf.getIdentifier();
             type = "chromosome";
@@ -60,17 +60,17 @@ public abstract class GFF3Util
             if (chr == null) {
                 return null;
             }
-            
+
             Location chrLocation = lsf.getChromosomeLocation();
-            
+
             if (chrLocation == null) {
                 return null;
             }
-            
+
             sequenceID = chr.getIdentifier();
 
             Iterator iter = classes.iterator();
-            while (iter.hasNext()) {                
+            while (iter.hasNext()) {
                 Class c = (Class) iter.next();
                 if (LocatedSequenceFeature.class.isAssignableFrom(c)) {
                     String className = TypeUtil.unqualifiedName(c.getName());
@@ -84,7 +84,7 @@ public abstract class GFF3Util
                     break;
                 }
             }
-            
+
             if (type == null) {
                 throw new IllegalArgumentException("argument to makeGFF3Record isn't a "
                                                    + "LocatedSequenceFeature");

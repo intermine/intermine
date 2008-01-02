@@ -2,5 +2,5 @@ import java.util.*;
 
 public abstract class SQLQueryField
 {
-	public abstract String getCanonicalName();
+    public abstract String getCanonicalName();
 }

@@ -26,14 +26,14 @@ import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * @author Xavier Watkins
- * 
+ *
  */
 public class ChangePasswordAction extends InterMineAction
 {
 
     /**
      * Method called when user has finished updating a constraint
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -46,9 +46,9 @@ public class ChangePasswordAction extends InterMineAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward execute(ActionMapping mapping, 
+    public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
-            HttpServletRequest request, 
+            HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();

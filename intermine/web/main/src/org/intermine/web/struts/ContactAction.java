@@ -39,8 +39,8 @@ import org.intermine.web.logic.Constants;
 public class ContactAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(ContactAction.class);
-    
-    /** 
+
+    /**
      * Method called when user has submitted valid feedback form
      *
      * @param mapping The ActionMapping used to select this instance
@@ -58,12 +58,12 @@ public class ContactAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         ContactForm ff = (ContactForm) form;
-       
-        
+
+
         try {
             Map webProperties = (Map) session.getServletContext()
                 .getAttribute(Constants.WEB_PROPERTIES);
-            MessageResources strings = getResources(request);            
+            MessageResources strings = getResources(request);
             String host = (String) ((Map) session.getServletContext().
                         getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");
             String from = ff.getMonkey();
@@ -73,20 +73,20 @@ public class ContactAction extends InterMineAction
             String dest = (String) webProperties.get("feedback.destination");
             Properties properties = System.getProperties();
             properties.put("mail.smtp.host", host);
-            
+
             MimeMessage message = new MimeMessage(Session.getDefaultInstance(properties, null));
             message.setFrom(new InternetAddress(from));
             message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(dest, true)[0]);
             message.setSubject(subject);
             message.setText(text);
             Transport.send(message);
-            
+
             recordMessage(new ActionMessage("contact.sent"), request);
-            
+
             // avoid showing form
             request.setAttribute("sent", Boolean.TRUE);
             ff.reset(mapping, request); // clear bean (we don't clear it if an error occurs)
-        
+
         } catch (Exception e) {
             recordError(new ActionMessage("contact.failed", e), request, e, LOG);
         }

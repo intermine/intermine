@@ -77,7 +77,7 @@ public class InterMineAction extends Action
             logger.error(exception);
         }
     }
-    
+
     /**
      * Get the web proprties.
      * @param request current request (from which we fetch the servlet context).

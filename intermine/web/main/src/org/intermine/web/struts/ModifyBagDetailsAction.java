@@ -77,32 +77,32 @@ public class ModifyBagDetailsAction extends InterMineAction
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
-    
+
         if (request.getParameter("remove") != null) {
             removeFromBag(mbdf.getBagName(), profile, mbdf, pm.getUserProfileObjectStore(), os,
                     session);
         } else if (request.getParameter("showInResultsTable") != null) {
             return showBagInResultsTable(mbdf.getBagName(), mapping, session);
         } else if (request.getParameter("useBagInQuery") != null) {
-                
+
                 String bagName = mbdf.getBagName();
 
                 Map savedBags = profile.getSavedBags();
                 InterMineBag imBag = (InterMineBag) savedBags.get(bagName);
 
-                
+
                 if (imBag == null) {
                     SearchRepository searchRepository =
                         SearchRepository.getGlobalSearchRepository(servletContext);
-                    Map<String, ? extends WebSearchable> publicBagMap = 
+                    Map<String, ? extends WebSearchable> publicBagMap =
                         searchRepository.getWebSearchableMap(TagTypes.BAG);
                     if (publicBagMap.get(bagName) != null) {
                         imBag = (InterMineBag) publicBagMap.get(bagName);
                     }
                 }
-                
+
                 if (imBag == null) {
-                    return mapping.findForward("errors");                    
+                    return mapping.findForward("errors");
                 }
                 Query q = new Query();
                 QueryClass qc = new QueryClass(InterMineObject.class);
@@ -115,20 +115,20 @@ public class ModifyBagDetailsAction extends InterMineAction
                 Model model = os.getModel();
                 Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
                 WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-                
+
                 WebPathCollection webPathCollection =
-                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model, 
+                    new WebPathCollection(os, new Path(model, imBag.getType()), res, model,
                                           webConfig, classKeys);
 
                 PagedTable pagedColl = new PagedTable(webPathCollection);
-                
+
                 PathQuery pathQuery = MainHelper.webTableToPathQuery(pagedColl, model, imBag);
                 session.setAttribute(Constants.QUERY, pathQuery);
                 session.setAttribute("path", imBag.getType());
                 session.setAttribute("prefix", imBag.getType());
-                
+
                 return mapping.findForward("query");
-        } else if (request.getParameter("convert") != null 
+        } else if (request.getParameter("convert") != null
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
             Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
@@ -136,13 +136,13 @@ public class ModifyBagDetailsAction extends InterMineAction
             SearchRepository globalRepository =
                 (SearchRepository) servletContext.getAttribute(Constants.
                                                                GLOBAL_SEARCH_REPOSITORY);
-            InterMineBag imBag = BagHelper.getBag(profile, globalRepository, 
+            InterMineBag imBag = BagHelper.getBag(profile, globalRepository,
                 request.getParameter("bagName"));
             Model model = os.getModel();
             Map<InterMineObject, List<InterMineObject>> convertedMap = TypeConverter
-                                                                .convertObjects(servletContext, 
+                                                                .convertObjects(servletContext,
                            TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
-                           TypeUtil.instantiate(model.getPackageName() + "." + type2), 
+                           TypeUtil.instantiate(model.getPackageName() + "." + type2),
                            imBag);
             List<InterMineObject> newList = new ArrayList<InterMineObject>();
             for (List<InterMineObject> mapValues:convertedMap.values()) {
@@ -160,12 +160,12 @@ public class ModifyBagDetailsAction extends InterMineAction
                             .addParameter("table", identifier)
                             .addParameter("size", "25")
                             .addParameter("trail", trail).forward();
-            
+
         }
         return new ForwardParameters(mapping.findForward("bagDetails"))
                     .addParameter("bagName", mbdf.getBagName()).forward();
     }
-    
+
     /**
      * remove the selected elements from the bag
      *

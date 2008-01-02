@@ -117,10 +117,10 @@ public class EnsemblDataTranslator extends DataTranslator
      */
     public void translate(ItemWriter tgtItemWriter)
             throws ObjectStoreException, InterMineException {
-        
+
         tgtItemWriter.store(ItemHelper.convert(config.getOrganism()));
         tgtItemWriter.store(ItemHelper.convert(config.getEnsemblDataSet()));
-        
+
         super.translate(tgtItemWriter);
 
         for (Iterator dsIt = config.getDataSrcItemIterator(); dsIt.hasNext(); ) {
@@ -373,7 +373,7 @@ public class EnsemblDataTranslator extends DataTranslator
             result.add(createSimpleRelation(
                     tgtItem.getIdentifier(), cds.getIdentifier()));
             result.add(cdsSyn);
-            
+
             tgtItem.setReference("translation", translation);
         }
 
@@ -1123,7 +1123,7 @@ public class EnsemblDataTranslator extends DataTranslator
     }
 
     /**
-     * @see org.intermine.task.DataTranslatorTask#execute
+     * {@inheritDoc}
      */
     public static Map getPrefetchDescriptors() {
         Map paths = new HashMap();

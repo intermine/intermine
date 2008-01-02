@@ -46,8 +46,8 @@ public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
     String tgtNs;
     ItemFactory itemFactory;
 
-    
-    
+
+
     public FlyBaseGFF3RecordHandlerTest(String arg) {
         super(arg);
     }
@@ -212,7 +212,7 @@ public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
         converter.close();
         // uncomment to write out a new target items file
         //writeItemsFile(tgtIw.getItems(), "flybase_cds_tgt.xml");
-        Set expected = readItemSet("FlyBaseGFF3RecordHandlerTest_cds_tgt.xml"); 
+        Set expected = readItemSet("FlyBaseGFF3RecordHandlerTest_cds_tgt.xml");
         assertEquals(expected, tgtIw.getItems());
     }
 
@@ -242,7 +242,7 @@ public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
 
         handler.process(record);
 
-        handler.setReferences(handler.references); 
+        handler.setReferences(handler.references);
 
         Item expectedGene = itemFactory.makeItem(null, tgtNs + "Gene", "");
         expectedGene.setAttribute("identifier", "CG2671");
@@ -268,7 +268,7 @@ public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
         }
         assertEquals(expectedSequenceVariant, actualSequenceVariant);
     }
-    
+
     public void testHandleSynonyms() throws Exception{
 //        String ENDL = System.getProperty("line.separator");
 //        String gff = "4\tFlyBase\tCDS\t100\t200\t.\t+\t.\tID=CDS_CG17469:2_742;Name=Mitf-cds;Parent=FBtr0100347;" + ENDL
@@ -281,7 +281,7 @@ public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
         converter.close();
         System.out.println(FullRenderer.render(tgtIw.getItems()));
     }
-    
+
     public void testUnknownChromosomes() throws Exception{
       String gff = "Unknown_4\tFlyBase\tmRNA\t3871513\t3872386\t.\t-\t.\tID=FBtr0077514;Name=symbol-RA;Parent=FBgn0051957;Dbxref=FlyBase_Annotation_IDs:CG31957-RA;";
       BufferedReader srcReader = new BufferedReader(new StringReader(gff));
@@ -290,7 +290,7 @@ public class FlyBaseGFF3RecordHandlerTest extends ItemsTestCase
       converter.close();
       // uncomment to write out a new target items file
       writeItemsFile(tgtIw.getItems(), "flybase_cds_tgt.xml");
-      Set expected = readItemSet("FlyBaseGFF3RecordHandlerTest_unknown_chr_tgt.xml"); 
+      Set expected = readItemSet("FlyBaseGFF3RecordHandlerTest_unknown_chr_tgt.xml");
       assertEquals(expected, tgtIw.getItems());
   }
 }

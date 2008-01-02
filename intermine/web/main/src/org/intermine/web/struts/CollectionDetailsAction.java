@@ -102,20 +102,20 @@ public class CollectionDetailsAction extends Action
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         String referencedClassName = TypeUtil.unqualifiedName(refDesc.getReferencedClassName());
-        WebPathCollection webPathCollection = 
+        WebPathCollection webPathCollection =
             new WebPathCollection(os, new Path(model, referencedClassName), c, model, webConfig,
                               classKeys);
         PagedTable pc = new PagedTable(webPathCollection);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
-        
-        // add results table to trail 
+
+        // add results table to trail
         if (trail != null) {
             trail += "|results." + identifier;
         } else {
             trail = "|results." + identifier;
         }
-        
+
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("noSelect", "true")
                         .addParameter("table", identifier)

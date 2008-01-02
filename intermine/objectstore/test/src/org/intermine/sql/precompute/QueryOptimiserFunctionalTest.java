@@ -254,7 +254,7 @@ public class QueryOptimiserFunctionalTest extends DatabaseTestCase
         Connection con1 = null;
         Connection con2 = null;
         String sql = null;
-        
+
         try {
             // The original query
             con1 = getDatabase().getConnection();

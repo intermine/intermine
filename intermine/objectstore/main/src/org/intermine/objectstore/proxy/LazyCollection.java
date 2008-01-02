@@ -36,7 +36,7 @@ public interface LazyCollection extends Lazy, Set
 
     /**
      * Returns the Query used by this LazyCollection
-     * 
+     *
      * @return a Query
      */
     public Query getQuery();
@@ -48,7 +48,7 @@ public interface LazyCollection extends Lazy, Set
      * @return a List
      */
     public List asList();
-    
+
     /**
      * Returns Returns the current best estimate of the characteristics of the LazyCollection
      *

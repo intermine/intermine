@@ -157,7 +157,7 @@ public class MetadataManager
     public static Properties loadClassKeyDefinitions(String classKeys) {
         return PropertiesUtil.loadProperties(getFilename(CLASS_KEYS, null));
     }
-    
+
     /**
      * Save the key definitions, in serialized form, to the specified directory
      * @param properties the key definitions
@@ -179,7 +179,7 @@ public class MetadataManager
     public static void saveClassKeys(String properties, File destDir) throws IOException {
         write(properties, new File(destDir, getFilename(CLASS_KEYS, null)));
     }
-    
+
     /**
      * Load the class descriptions file for the named model from the classpath
      * @param modelName the model name

@@ -26,20 +26,20 @@ import java.util.TreeMap;
  * SortableMap extends a LinkedHashMap with some useful sorting features.
  * By default it behaves identical to a LinkedHashMap. When you want to sort
  * keys or values, then invoke the sorting as follows:
- * 
+ *
  * sortableMap.sortKeys(); or sortableMap.sortValues();
  *
  * By default the objects are sorted ascending on their natural order. For
- * strings that is "111", "22", "3". If you want to check numeric strings and 
+ * strings that is "111", "22", "3". If you want to check numeric strings and
  * force them  to be sorted on numeric order "3", "22", "111", then invoke the
  * sorting as follows:
- * 
+ *
  * sortableMap.sortKeys(true, true); or sortableMap.sortValues(true, true);
  *
  * The boolean 2nd parameter indicates the sort order. If true, then the map
  * will be sorted ascending. If false, then the map will be sorted descending.
  * The following example will sort the objects descending on natural order.
- * 
+ *
  * sortableMap.sortKeys(false, false); or sortableMap.sortValues(false, false);
  *
  * @author balusc@xs4all.nl
@@ -51,7 +51,7 @@ extends LinkedHashMap
     // Constructors -----------------------------------------------------------
 
     /**
-     * Default constructor. 
+     * Default constructor.
      */
     public SortableMap() {
         // Keep it alive.

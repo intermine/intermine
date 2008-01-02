@@ -24,8 +24,8 @@ import org.intermine.metadata.Model;
  */
 public class BDGPCloneConverterTest extends ItemsTestCase
 {
-    
-    
+
+
     public BDGPCloneConverterTest(String arg) {
         super(arg);
     }

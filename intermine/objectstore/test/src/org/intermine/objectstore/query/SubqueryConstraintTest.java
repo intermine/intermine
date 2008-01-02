@@ -36,7 +36,7 @@ public class SubqueryConstraintTest extends TestCase {
         } catch (NullPointerException e) {
         }
     }
-    
+
     public void testNullTypeConstructor() throws Exception {
         try {
             new SubqueryConstraint(qc1, null, subquery);

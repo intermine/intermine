@@ -36,19 +36,18 @@ public class ChangeTableSizeAction extends InterMineAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception ServletException if the application business logic throws
-     *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-        
+
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));
         pt.setPageSize(pageSize);
-        
+
         return new ForwardParameters(mapping.findForward("results"))
                 .addParameter("table", request.getParameter("table"))
                 .addParameter("page", "" + pt.getPage())

@@ -38,7 +38,7 @@ import org.apache.struts.util.MessageResources;
 public class ModifyQueryChangeAction extends InterMineDispatchAction
 {
     private static final Logger LOG = Logger.getLogger(ModifyQueryChangeAction.class);
-    
+
     /**
      * Load a query.
      * @param mapping The ActionMapping used to select this instance
@@ -57,27 +57,27 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String queryName = request.getParameter("name");
-        
+
         SavedQuery sq;
-        
+
         if (request.getParameter("type").equals("history")) {
             sq = profile.getHistory().get(queryName);
         } else {
             sq = profile.getSavedQueries().get(queryName);
         }
-        
+
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
-        
+
         if (sq.getPathQuery() instanceof TemplateQuery) {
             return new ForwardParameters(mapping.findForward("template"))
                         .addParameter("loadModifiedTemplate",
-                                      "true")                       
+                                      "true")
                         .addParameter("name", sq.getName())
                                       .forward();
-        }        
+        }
         return mapping.findForward("query");
     }
-    
+
     /**
      * Excecute a query.
      * @param mapping The ActionMapping used to select this instance
@@ -98,31 +98,31 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         String queryName = request.getParameter("name");
         String trail = request.getParameter("trail");
         SavedQuery sq;
-        
+
         if (request.getParameter("type").equals("history")) {
             sq = profile.getHistory().get(queryName);
         } else {
             sq = profile.getSavedQueries().get(queryName);
         }
-        
+
         if (sq == null) {
             LOG.error("No such query " + queryName + " type=" + request.getParameter("type"));
             return null;
         }
-        
+
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
         QueryMonitorTimeout clientState
             = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messageResources = 
+        MessageResources messageResources =
             (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messageResources, 
+        String qid = SessionMethods.startQuery(clientState, session, messageResources,
                                                false, sq.getPathQuery());
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting"))
                     .addParameter("trail", trail)
                     .addParameter("qid", qid).forward();
     }
-    
+
     /**
      * Save a query from the history.
      * @param mapping The ActionMapping used to select this instance

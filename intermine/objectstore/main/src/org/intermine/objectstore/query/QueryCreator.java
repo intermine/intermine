@@ -46,7 +46,7 @@ public class QueryCreator
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "id"), ConstraintOp.EQUALS,
                                              new QueryValue(id)));
         return q;
-    }   
+    }
 
     /**
      * Create a query that will retrieve all objects with the given IDs from the objectstore.
@@ -62,12 +62,12 @@ public class QueryCreator
         QueryClass qc = new QueryClass(clazz);
         q.addFrom(qc);
         q.addToSelect(qc);
-        
+
         QueryField qf = new QueryField(qc, "id");
         q.setConstraint(new BagConstraint(qf, ConstraintOp.IN, ids));
-        
+
         return q;
-    }   
+    }
 
     /**
      * Create a query that will list the options for a particular
@@ -164,7 +164,7 @@ public class QueryCreator
                     q.addFrom(subQc);
                     QueryObjectReference qor = new QueryObjectReference(qc, fieldName);
                     cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, subQc));
-                    cs.addConstraint(new ClassConstraint(subQc, ConstraintOp.EQUALS, 
+                    cs.addConstraint(new ClassConstraint(subQc, ConstraintOp.EQUALS,
                                 (InterMineObject) TypeUtil.getFieldValue(obj, fieldName)));
                 } else {
                     throw new IllegalArgumentException("Illegal field name for example: "

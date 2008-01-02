@@ -59,7 +59,7 @@ public class IntronUtil
     private DataSet dataSet;
     private DataSource dataSource;
     private Set<Integer> taxonIds = new HashSet<Integer>();
-    
+
     protected Map intronMap = new HashMap();
 
     /**
@@ -93,8 +93,8 @@ public class IntronUtil
             }
         }
     }
-    
-    
+
+
     /**
      * Create Intron objects
      * @throws ObjectStoreException if there is an ObjectStore problem
@@ -110,16 +110,16 @@ public class IntronUtil
         dataSet.setDataSource(dataSource);
 
         // Documented as an example of how to use the query API
-        
+
         // This query finds all transcripts and their chromosome locations and exons
         // for each transcript with the exon chromosome location.  This is then used
         // to calculate intron locations.
-        
-       
+
+
         // Construct a new query and a set to hold constraints that will be ANDed together
         Query q = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        
+
         // Add Transcript to the from and select lists
         QueryClass qcTran = new QueryClass(Transcript.class);
         q.addFrom(qcTran);
@@ -139,7 +139,7 @@ public class IntronUtil
             QueryClass qcOrg = new QueryClass(Organism.class);
             q.addFrom(qcOrg);
             QueryObjectReference orgRef = new QueryObjectReference(qcTran, "organism");
-            ContainsConstraint ccTranOrg = new ContainsConstraint(orgRef, 
+            ContainsConstraint ccTranOrg = new ContainsConstraint(orgRef,
                                                                   ConstraintOp.CONTAINS,
                                                                   qcOrg);
             cs.addConstraint(ccTranOrg);
@@ -147,7 +147,7 @@ public class IntronUtil
             BagConstraint bc = new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIds);
             cs.addConstraint(bc);
         }
-        
+
         // Include the Exon class from the Transcript.exons collection
         QueryClass qcExon = new QueryClass(Exon.class);
         q.addFrom(qcExon);
@@ -167,7 +167,7 @@ public class IntronUtil
 
         // Set the constraint of the query
         q.setConstraint(cs);
-        
+
         // Force an order by transcripts to make processing easier
         q.addToOrderBy(qcTran);
 
@@ -175,14 +175,14 @@ public class IntronUtil
         // all the results.  The will make all batches after the first faster to fetch
         ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask
                                                    .PRECOMPUTE_CATEGORY);
-        
+
         // Set up the results, the query isn't actually executed until we begin
         // iterating through the results
         Results results = os.execute(q);
-        
+
         // Concerned about memory usage so set a small batch size
         results.setBatchSize(500);
-        
+
         // When we start interating the query will be executed
         Iterator resultsIter = results.iterator();
 
@@ -191,7 +191,7 @@ public class IntronUtil
         Location lastTranLoc = null;
         int tranCount = 0, exonCount = 0, intronCount = 0;
 
-        
+
         osw.beginTransaction();
         while (resultsIter.hasNext()) {
             // Results is a list of ResultsRows, each ResultsRow contains the objects/fields
@@ -319,7 +319,7 @@ public class IntronUtil
                 intron.addEvidence(dataSet);
                 intron.setIdentifier(identifier);
 
-                
+
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
                 location.setStrand(tranLoc.getStrand());

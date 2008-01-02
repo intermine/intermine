@@ -163,8 +163,8 @@ public class ExplainResult
             return false;
         }
         ExplainResult e = (ExplainResult) o;
-        return e.rows == rows 
-            && e.start == start 
+        return e.rows == rows
+            && e.start == start
             && e.complete == complete
             && e.width == width;
     }

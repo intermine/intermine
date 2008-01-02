@@ -49,7 +49,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
     private Results results;
     private Object[] geneCategoryArray;
     private HashMap<String, GraphDataSet> dataSets = new HashMap<String, GraphDataSet>();
-    
+
     /**
      * Creates a FlyAtlasDataSetLdr used to retrieve, organise
      * and structure the FlyAtlas data to create a graph
@@ -71,7 +71,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
         super();
         buildDataSets(bag, null, os);
     }
-    
+
     /**
      * @see org.intermine.web.logic.widget.DataSetLdr#getDataSet()
      */
@@ -85,10 +85,10 @@ public class FlyFishDataSetLdr implements DataSetLdr
         Query q = new Query();
         QueryClass mrnaResult = new QueryClass(MRNALocalisationResult.class);
         QueryClass gene = new QueryClass(Gene.class);
-       
+
         q.addFrom(mrnaResult);
         q.addFrom(gene);
-        
+
         QueryField stageName = new QueryField(mrnaResult, "stage");
 
         q.addToSelect(new QueryField(mrnaResult, "expressed"));
@@ -102,29 +102,29 @@ public class FlyFishDataSetLdr implements DataSetLdr
         }
         if (geneIdentifier != null) {
             cs.addConstraint(new SimpleConstraint(new QueryField(gene, "identifier"),
-                                                  ConstraintOp.EQUALS, 
+                                                  ConstraintOp.EQUALS,
                                                   new QueryValue(geneIdentifier)));
         }
 
         QueryCollectionReference r = new QueryCollectionReference(gene, "mRNALocalisationResults");
         cs.addConstraint(new ContainsConstraint(r, ConstraintOp.CONTAINS, mrnaResult));
-        
+
         q.setConstraint(cs);
         q.addToOrderBy(stageName);
 
-       
+
         results = os.execute(q);
         results.setBatchSize(100000);
         Iterator iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
-        LinkedHashMap<String, ArrayList<String>> geneMap 
+        LinkedHashMap<String, ArrayList<String>> geneMap
                                                 = new LinkedHashMap<String, ArrayList<String>>();
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
-            Boolean expressed = (Boolean) resRow.get(0);            
+            Boolean expressed = (Boolean) resRow.get(0);
             String stage = (String) resRow.get(1);
             String identifier = (String) resRow.get(2);
-       
+
                 if (callTable.get(stage) != null) {
                     if (expressed.booleanValue()) {
                         (callTable.get(stage))[0]++;
@@ -148,7 +148,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
                     }
                     callTable.put(stage, count);
                 }
-            
+
         }
 
         // Build a map from tissue/UpDown to gene list
@@ -156,10 +156,10 @@ public class FlyFishDataSetLdr implements DataSetLdr
         int i = 0;
         for (Iterator iterator = callTable.keySet().iterator(); iterator.hasNext();) {
             String stage = (String) iterator.next();
-   
+
             dataSet.addValue((callTable.get(stage))[0], "Expressed", stage);
             dataSet.addValue((callTable.get(stage))[1], "NotExpressed", stage);
-            
+
             Object[] geneSeriesArray = new Object[2];
             geneSeriesArray[0] = geneMap.get(stage + "_Expressed");
             geneSeriesArray[1] = geneMap.get(stage + "_NotExpressed");
@@ -171,5 +171,5 @@ public class FlyFishDataSetLdr implements DataSetLdr
             dataSets.put("anyOrganism", graphDataSet);
         }
     }
-    
+
 }

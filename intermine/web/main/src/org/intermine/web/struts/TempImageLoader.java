@@ -50,7 +50,7 @@ public class TempImageLoader extends InterMineAction
             String fileName = request.getParameter("fileName");
             File file = new File(System.getProperty("java.io.tmpdir"), fileName);
             if (!file.exists()) {
-                        throw new InterMineException("File '" + file.getAbsolutePath() 
+                        throw new InterMineException("File '" + file.getAbsolutePath()
                                  + "' does not exist");
             }
 

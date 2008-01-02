@@ -236,7 +236,7 @@ public interface ObjectStore
      */
     public int getMaxLimit();
 
-    /** 
+    /**
      * Get the maximum range start index a that can be accessed in a Results object without throwing
      * an ObjectStoreLimitReachedException
      * @return the maximum offset
@@ -256,7 +256,7 @@ public interface ObjectStore
      * @throws ObjectStoreException if a problem occurs
      */
     public Integer getSerial() throws ObjectStoreException;
-    
+
     /**
      * Returns a new empty ObjectStoreBag object that is valid for this ObjectStore.
      *

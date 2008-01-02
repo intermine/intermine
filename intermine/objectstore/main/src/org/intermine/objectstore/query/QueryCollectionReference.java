@@ -86,7 +86,7 @@ public class QueryCollectionReference extends QueryReference
      * @param fieldName the name of the relevant field
      * @throws NullPointerException if the field name is null
      * @throws IllegalArgumentException if the field is not a collection or does not exist
-     */    
+     */
     public QueryCollectionReference(InterMineObject qcObj, String fieldName) {
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");

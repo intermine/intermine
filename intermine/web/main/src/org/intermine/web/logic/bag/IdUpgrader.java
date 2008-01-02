@@ -17,7 +17,7 @@ import org.intermine.objectstore.ObjectStore;
 
 /**
  * Bag object id upgrader - find old objects in a new ObjectStore.
- * 
+ *
  * @author Kim Rutherford
  */
 public interface IdUpgrader

@@ -98,7 +98,7 @@ public class ObjectDescription
         }
         return null;
     }
-        
+
     /**
      * Returns whether this ObjectDescription is dirty.
      *

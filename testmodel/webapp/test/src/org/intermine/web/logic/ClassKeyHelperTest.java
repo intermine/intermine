@@ -23,7 +23,7 @@ import org.intermine.web.logic.ClassKeyHelper;
 public class ClassKeyHelperTest extends TestCase {
     private Model model;
     private String pkg = "org.intermine.model.testmodel.";
-    
+
     public ClassKeyHelperTest(String arg0) {
         super(arg0);
     }
@@ -37,8 +37,8 @@ public class ClassKeyHelperTest extends TestCase {
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
 
-        
-        
+
+
         Map<String, List<FieldDescriptor>> expected = new HashMap();
         ClassDescriptor cldEmp = model.getClassDescriptorByName(pkg + "Employee");
         ClassDescriptor cldMan = model.getClassDescriptorByName(pkg + "Manager");
@@ -47,20 +47,20 @@ public class ClassKeyHelperTest extends TestCase {
         ClassDescriptor cldAdd = model.getClassDescriptorByName(pkg + "Address");
         ClassDescriptor cldCon = model.getClassDescriptorByName(pkg + "Contractor");
         ClassDescriptor cldEmb = model.getClassDescriptorByName(pkg + "Employable");
-        
+
         ClassKeyHelper.addKey(expected, "Employee", cldEmp.getFieldDescriptorByName("name"));
         ClassKeyHelper.addKey(expected, "Employable", cldEmb.getFieldDescriptorByName("name"));
         ClassKeyHelper.addKey(expected, "Contractor", cldCon.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("name"));                
-        ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("name"));          
-        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("title")); 
+        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("title"));
         ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("title"));
         ClassKeyHelper.addKey(expected, "Company", cldCom.getFieldDescriptorByName("name"));
         ClassKeyHelper.addKey(expected, "Company", cldCom.getFieldDescriptorByName("vatNumber"));
         ClassKeyHelper.addKey(expected, "Address", cldAdd.getFieldDescriptorByName("address"));
         assertEquals(expected, ClassKeyHelper.readKeys(model, props));
     }
-    
+
     public void testIsKeyField() throws Exception {
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
@@ -72,7 +72,7 @@ public class ClassKeyHelperTest extends TestCase {
         assertFalse(ClassKeyHelper.isKeyField(classKeys, "Company", "address"));
         assertTrue(ClassKeyHelper.isKeyField(classKeys, "Company", "vatNumber"));
     }
-    
+
     public void testIsKeyFieldFromObject() throws Exception {
         Set classNames = new HashSet();
         classNames.add(Employee.class);
@@ -88,7 +88,7 @@ public class ClassKeyHelperTest extends TestCase {
         assertFalse(ClassKeyHelper.isKeyField(classKeys, o, "address"));
         assertTrue(ClassKeyHelper.isKeyField(classKeys, o, "vatNumber"));
     }
-    
+
     public void testGetKeyFieldClass() throws Exception {
         Set classNames = new HashSet();
         classNames.add(Employee.class);

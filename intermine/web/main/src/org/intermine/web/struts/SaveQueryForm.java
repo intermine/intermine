@@ -55,7 +55,7 @@ public class SaveQueryForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -66,13 +66,13 @@ public class SaveQueryForm extends ActionForm
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE,
                        new ActionMessage("errors.savequery.blank", queryName));
-            
-        } else if (!WebUtil.isValidName(queryName)) { 
-            
+
+        } else if (!WebUtil.isValidName(queryName)) {
+
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE,
-                       new ActionMessage("errors.badChars"));            
-            
+                       new ActionMessage("errors.badChars"));
+
         } else if (savedQueries != null && savedQueries.containsKey(queryName)) {
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE,
@@ -84,7 +84,7 @@ public class SaveQueryForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         queryName = "";
     }

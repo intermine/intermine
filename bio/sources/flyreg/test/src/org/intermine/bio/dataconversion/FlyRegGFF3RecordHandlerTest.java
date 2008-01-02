@@ -45,7 +45,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
     private ItemFactory itemFactory;
     private GFF3Converter converter;
     private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
-    
+
     public FlyRegGFF3RecordHandlerTest(String arg) {
         super(arg);
     }
@@ -62,7 +62,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
     public void tearDown() throws Exception {
         converter.close();
     }
-    
+
     public void testFlyRegHandler() throws Exception {
         String gff =
             "2L\tBergman_data\tTF_binding_site\t2452227\t2452269\t.\t.\t.\tFactor=Ubx; Target=dpp; PMID=1673656; ID=000448\n"
@@ -71,7 +71,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
         HashSet allItems = new LinkedHashSet();
-        
+
         Iterator iter = GFF3Parser.parse(srcReader);
 
         while (iter.hasNext()) {
@@ -88,12 +88,12 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
             feature.addCollection(handler.getEvidenceReferenceList());
             allItems.addAll(handler.getItems());
         }
-             
+
         // uncomment to write a new target items files
         //writeItemsFile(allItems, "flyreg-target-items.xml");
-        
+
         Set expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
-        
+
         assertEquals(expected, allItems);
     }
 

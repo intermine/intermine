@@ -41,17 +41,17 @@ import org.apache.struts.util.MessageResources;
 /**
  * Action class to run an IQL query and constraint the results to
  * be in a bag, allowing the results to be displayed
- * 
+ *
  * @author Xavier Watkins
  *
  */
 public class QueryForGraphAction extends InterMineAction
 {
-    
+
     /**
      * Action class to run an IQL query and constraint the results to
      * be in a bag, allowing the results to be displayed
-     * 
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -73,20 +73,20 @@ public class QueryForGraphAction extends InterMineAction
         String urlGen = request.getParameter("urlGen");
         String series = request.getParameter("series");
         String category = request.getParameter("category");
-        
+
         InterMineBag bag;
-        
+
         /* get bag from user profile */
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         bag = profile.getSavedBags().get(bagName);
-        
+
         /* public bag - since user doesn't have it */
         if (bag == null) {
             SearchRepository searchRepository =
                 SearchRepository.getGlobalSearchRepository(servletContext);
-            Map<String, ? extends WebSearchable> publicBagMap = 
+            Map<String, ? extends WebSearchable> publicBagMap =
                 searchRepository.getWebSearchableMap(TagTypes.BAG);
-            bag = (InterMineBag) publicBagMap.get(bagName); 
+            bag = (InterMineBag) publicBagMap.get(bagName);
         }
 
         /* its all gone horribly wrong, no one has the bag! */
@@ -100,13 +100,13 @@ public class QueryForGraphAction extends InterMineAction
             String.class
                                                             });
 
-        GraphCategoryURLGenerator urlGenerator = (GraphCategoryURLGenerator) 
+        GraphCategoryURLGenerator urlGenerator = (GraphCategoryURLGenerator)
                                                     constr.newInstance(new Object[]
                                                                            {
                                                         bagName
                                                                            });
-        
-        
+
+
         QueryMonitorTimeout clientState
         = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
@@ -117,7 +117,7 @@ public class QueryForGraphAction extends InterMineAction
 
         return new ForwardParameters(mapping.findForward("waiting"))
         .addParameter("trail", "|bag." + bagName)
-        .addParameter("qid", qid).forward(); 
+        .addParameter("qid", qid).forward();
 
     }
 

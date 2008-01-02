@@ -42,7 +42,7 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class ConvertBagController extends TilesAction
 {
-    
+
     /**
      * {@inheritDoc}
      */
@@ -58,7 +58,7 @@ public class ConvertBagController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
-        
+
         Map<Class, TemplateQuery> conversionTypesMap = TypeConverter.getConversionTemplates(
             servletContext, TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));
         ArrayList<String> conversionTypes = new ArrayList<String>();

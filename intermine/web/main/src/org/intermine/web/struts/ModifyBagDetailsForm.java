@@ -71,11 +71,11 @@ public class ModifyBagDetailsForm extends ActionForm
     public void setSelectedElements(String[] selectedElements) {
         this.selectedElements = selectedElements;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping, 
+    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") HttpServletRequest request) {
         //HttpSession session = request.getSession();
         //Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -84,19 +84,19 @@ public class ModifyBagDetailsForm extends ActionForm
         return errors;
 
     }
-    
+
     /**
      * Reset the form to the initial state
      *
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }
 
-    
-    
-    
+
+
+
 }

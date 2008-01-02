@@ -66,10 +66,10 @@ public class QuickSearchAction extends InterMineAction
         Profile profile = ((Profile) session.getAttribute(Constants.PROFILE));
         if (qsType.equals("ids")) {
             Map webPropertiesMap = (Map) context.getAttribute(Constants.WEB_PROPERTIES);
-            
+
             String templateName = (String) webPropertiesMap.get("begin.browse.template");
             String templateType = "global";
-            
+
             SessionMethods.logTemplateQueryUse(session, templateType, templateName);
             String userName = profile.getUsername();
             TemplateQuery template = TemplateHelper.findTemplate(context, session, userName,
@@ -78,7 +78,7 @@ public class QuickSearchAction extends InterMineAction
                                                                       QUERY_TIMEOUT_SECONDS * 1000);
             MessageResources messages =
                 (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-            
+
             Map<String, Object> valuesMap = new HashMap <String, Object> ();
             Map <String, ConstraintOp> constraintOpsMap = new HashMap <String, ConstraintOp> ();
 
@@ -86,10 +86,10 @@ public class QuickSearchAction extends InterMineAction
 
             valuesMap.put(node.getPathString(), qsf.getParsedValue());
             constraintOpsMap.put(node.getPathString(), ConstraintOp.EQUALS);
-            
+
             TemplateQuery queryCopy = TemplateHelper.editTemplate(valuesMap,
                     constraintOpsMap, template, null, new HashMap<String, String>());
-            String qid = SessionMethods.startQuery(clientState, session, messages, 
+            String qid = SessionMethods.startQuery(clientState, session, messages,
                                                    false, queryCopy);
             Thread.sleep(200);
             return new ForwardParameters(mapping.findForward("waiting"))
@@ -110,5 +110,5 @@ public class QuickSearchAction extends InterMineAction
         }
 
     }
-    
+
 }

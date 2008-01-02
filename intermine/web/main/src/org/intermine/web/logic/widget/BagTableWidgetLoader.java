@@ -166,7 +166,7 @@ public class BagTableWidgetLoader
                         Object fieldValue = path.resolve(o);
                         Class thisType = path.getStartClassDescriptor().getType();
                         String fieldName = path.getEndFieldDescriptor().getName();
-                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, 
+                        boolean isKeyField = ClassKeyHelper.isKeyField(classKeys,
                                 TypeUtil.unqualifiedName(thisType.getName()), fieldName);
                         if (isKeyField) {
                             key = fieldValue.toString();

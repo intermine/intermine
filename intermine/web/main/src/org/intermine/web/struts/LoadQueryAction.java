@@ -41,7 +41,7 @@ import org.apache.struts.util.MessageResources;
  */
 public class LoadQueryAction extends DispatchAction
 {
-  
+
 
     /**
      * Load a query from path query XML passed as a request parameter.
@@ -64,7 +64,7 @@ public class LoadQueryAction extends DispatchAction
         String trail = request.getParameter("trail");
         String queryXml = request.getParameter("query");
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
-        
+
         //Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         //Map<String, InterMineBag> allBags =
         //    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
@@ -73,7 +73,7 @@ public class LoadQueryAction extends DispatchAction
                                                  servletContext);
         PathQuery query = (PathQuery) queries.values().iterator().next();
         SessionMethods.loadQuery(query, session, response);
-        
+
         if (!skipBuilder.booleanValue()) {
             return mapping.findForward("query");
         } else {

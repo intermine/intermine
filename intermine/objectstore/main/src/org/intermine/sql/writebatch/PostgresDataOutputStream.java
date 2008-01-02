@@ -71,7 +71,7 @@ public class PostgresDataOutputStream extends DataOutputStream
     protected int writeLargeUTF(Collection<String> strs) throws IOException {
         int utflen = 0;
         int c, count = 0;
-        
+
         for (String str : strs) {
             int strlen = str.length();
             for (int i = 0; i < strlen; i++) {
@@ -85,17 +85,17 @@ public class PostgresDataOutputStream extends DataOutputStream
                 }
             }
         }
-        
+
         if (out instanceof SensibleByteArrayOutputStream) {
             ((SensibleByteArrayOutputStream) out).assureSize(((SensibleByteArrayOutputStream) out)
                 .size() + 4 + utflen);
         }
-        
+
         writeInt(utflen);
-        
+
         for (String str : strs) {
             int strlen = str.length();
-            int i = 0; 
+            int i = 0;
             for (i = 0; i < strlen; i++) {
                 c = str.charAt(i);
                 if (!((c >= 0x0001) && (c <= 0x007F))) {
@@ -103,7 +103,7 @@ public class PostgresDataOutputStream extends DataOutputStream
                 }
                 writeByte((byte) c);
             }
-            
+
             for (; i < strlen; i++) {
                 c = str.charAt(i);
                 if ((c >= 0x0001) && (c <= 0x007F)) {

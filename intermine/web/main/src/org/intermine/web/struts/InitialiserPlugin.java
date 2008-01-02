@@ -48,7 +48,6 @@ import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -78,10 +77,10 @@ public class InitialiserPlugin implements PlugIn
     private static final Logger LOG = Logger.getLogger(InitialiserPlugin.class);
 
     ProfileManager profileManager;
-    
+
     private static final List<String> PUBLIC_TAG_LIST =
         Arrays.asList(new String[] {TagNames.IM_PUBLIC});
-    
+
     /**
      * Init method called at Servlet initialisation
      *
@@ -93,14 +92,14 @@ public class InitialiserPlugin implements PlugIn
      * @throws ServletException if this <code>PlugIn</code> cannot
      * be successfully initialized
      */
-    public void init(ActionServlet servlet, 
+    public void init(ActionServlet servlet,
                      @SuppressWarnings("unused") ModuleConfig config) throws ServletException {
         final ServletContext servletContext = servlet.getServletContext();
- 
+
         System.setProperty("java.awt.headless", "true");
-        
+
         loadWebProperties(servletContext);
-        
+
         ObjectStore os = null;
         Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String osAlias = (String) props.get("webapp.os.alias");
@@ -110,14 +109,14 @@ public class InitialiserPlugin implements PlugIn
             e.getCause().printStackTrace();
             throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
         }
-        servletContext.setAttribute(Constants.OBJECTSTORE, os); 
-        
+        servletContext.setAttribute(Constants.OBJECTSTORE, os);
+
         loadWebConfig(servletContext, os);
         loadAspectsConfig(servletContext, os);
 
         //loadClassCategories(servletContext, os);
         loadClassDescriptions(servletContext, os);
-        
+
         summarizeObjectStore(servletContext, os);
 
         // load class keys
@@ -125,7 +124,7 @@ public class InitialiserPlugin implements PlugIn
 
         // load custom bag queries
         loadBagQueries(servletContext, os);
-        
+
         final ProfileManager pm = createProfileManager(servletContext, os);
         // Loading shared template queries requires profile manager
         loadSuperUserDetails(servletContext);
@@ -133,9 +132,9 @@ public class InitialiserPlugin implements PlugIn
         // index global webSearchables
         SearchRepository searchRepository = new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
-        
+
         final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
-        
+
         AbstractMap<String, TemplateQuery> templateSearchableMap =
             new AbstractMap<String, TemplateQuery>() {
                 @Override
@@ -146,7 +145,7 @@ public class InitialiserPlugin implements PlugIn
                 }
             };
         searchRepository.addWebSearchables(TagTypes.TEMPLATE, templateSearchableMap);
-        
+
         AbstractMap<String, InterMineBag> bagSearchableMap =
             new AbstractMap<String, InterMineBag>() {
                 @Override
@@ -157,13 +156,13 @@ public class InitialiserPlugin implements PlugIn
                 }
             };
         searchRepository.addWebSearchables(TagTypes.BAG, bagSearchableMap);
- 
+
         searchRepository.setProfile(superProfile);
-        
+
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 
         makeCache(servletContext, os);
-        
+
         cleanTags(pm);
     }
 
@@ -172,7 +171,7 @@ public class InitialiserPlugin implements PlugIn
      * @param servletContext the servlet cnotext
      * @param os the main objectstore
      */
-    private void loadAspectsConfig(ServletContext servletContext, 
+    private void loadAspectsConfig(ServletContext servletContext,
                                    @SuppressWarnings("unused") ObjectStore os) {
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
         if (is == null) {
@@ -240,7 +239,7 @@ public class InitialiserPlugin implements PlugIn
         Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
         servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
     }
-   
+
     /**
      * Load keys that describe how objects should be uniquely identified
      */
@@ -260,7 +259,7 @@ public class InitialiserPlugin implements PlugIn
             LOG.warn("No custom bag queries found - using default query");
         }
     }
-    
+
     /**
      * Read the example queries into the EXAMPLE_QUERIES servlet context attribute.
      */
@@ -310,7 +309,7 @@ public class InitialiserPlugin implements PlugIn
         Map classes = new LinkedHashMap();
         Map classCounts = new LinkedHashMap();
         for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
-            String className = (String) i.next();            
+            String className = (String) i.next();
             if (!className.equals(InterMineObject.class.getName())) {
                 classes.put(className, TypeUtil.unqualifiedName(className));
             }
@@ -425,7 +424,7 @@ public class InitialiserPlugin implements PlugIn
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Remove class tags from the user profile that refer to classes that non longer exist
      * @param pm the ProfileManager to alter
@@ -433,7 +432,7 @@ public class InitialiserPlugin implements PlugIn
     protected static void cleanTags(ProfileManager pm) {
         List classTags = pm.getTags(null, null, "class", null);
         List tagsToDelete = new ArrayList();
-        
+
         Iterator iter = classTags.iterator();
         while (iter.hasNext()) {
             Tag tag = (Tag) iter.next();
@@ -444,14 +443,14 @@ public class InitialiserPlugin implements PlugIn
                 tagsToDelete.add(tag);
             }
         }
-        
+
         iter = tagsToDelete.iterator();
         while (iter.hasNext()) {
             Tag tag = (Tag) iter.next();
             pm.deleteTag(tag);
         }
     }
-    
+
     /**
      * Get the names of the type of this ClassDescriptor and all its descendents
      * @param cld the ClassDescriptor

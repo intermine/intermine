@@ -50,7 +50,7 @@ import org.stringtree.json.JSONWriter;
 
 public class WebSearchableListController extends TilesAction
 {
-      
+
     /**
      * Set up the attributes for webSearchableList.tile
      * {@inheritDoc}
@@ -68,18 +68,18 @@ public class WebSearchableListController extends TilesAction
         String list = (String) context.getAttribute("list");
         String limit = (String) context.getAttribute("limit");
         Map filteredWebSearchables;
-        
-        
+
+
         HttpSession session = request.getSession();
-     
-        if (session.getAttribute("IS_SUPERUSER") != null 
+
+        if (session.getAttribute("IS_SUPERUSER") != null
                         && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
-            filteredWebSearchables = filterWebSearchables(request, type, 
+            filteredWebSearchables = filterWebSearchables(request, type,
                                                           TemplateHelper.USER_TEMPLATE, tags);
-        
+
         } else if (scope.equals(TemplateHelper.ALL_TEMPLATE)) {
             Map globalWebSearchables =
-                filterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags); 
+                filterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags);
             Map userWebSearchables =
                 filterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
             filteredWebSearchables = new HashMap<String, WebSearchable>(userWebSearchables);
@@ -92,43 +92,43 @@ public class WebSearchableListController extends TilesAction
         if (list != null) {
             filteredWebSearchables = filterByList(filteredWebSearchables, list);
         }
-        
+
         // shorten list to be < limit
         int limitInt = 0;
         if (limit != null) {
             try {
                 limitInt = new Integer(limit.trim()).intValue();
             } catch (NumberFormatException e) {
-                // ignore - don't shuffle 
+                // ignore - don't shuffle
             }
         }
-        
-        
+
+
         if (limitInt > 0) {
             filteredWebSearchables = WebUtil.shuffle(filteredWebSearchables, limitInt);
         } else {
             filteredWebSearchables = sortList(filteredWebSearchables);
         }
-        
+
         Map<String, Object> wsMapForJS = new HashMap<String, Object>();
-        
+
         for (String wsName: (Set<String>) filteredWebSearchables.keySet()) {
             wsMapForJS.put(wsName, new Integer(1));
         }
-        
+
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         request.setAttribute("userWebSearchables", profile.getWebSearchablesByType(type));
-        
+
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
-        
+
         JSONWriter jsonWriter = new JSONWriter();
         request.setAttribute("wsNames", jsonWriter.write(wsMapForJS));
         return null;
     }
-    
+
 
     /**
-     * Return a copy of the given Map sorted by creation date, then by name. 
+     * Return a copy of the given Map sorted by creation date, then by name.
      */
     private Map sortList(final Map filteredWebSearchables) {
         Map sortedMap = new TreeMap<String, WebSearchable>(new Comparator<String>() {
@@ -146,21 +146,21 @@ public class WebSearchableListController extends TilesAction
                         }
                     }
                 } else if (ws1.getTitle().equals(ws2.getTitle())) {
-                    return ws1.getName().compareTo(ws2.getName());              
+                    return ws1.getName().compareTo(ws2.getName());
                 } else {
-                    return ws1.getTitle().compareTo(ws2.getTitle());              
+                    return ws1.getTitle().compareTo(ws2.getTitle());
                 }
-                
+
                 return ((Comparable) o1).compareTo(o2);
             }
-            
+
         });
         sortedMap.putAll(filteredWebSearchables);
         return sortedMap;
     }
 
     /**
-     * Get all the WebSearchables in the given scope and of the given type. 
+     * Get all the WebSearchables in the given scope and of the given type.
      */
     private Map<String, ? extends WebSearchable> filterWebSearchables(HttpServletRequest request,
                                                                       String type, String scope,
@@ -171,15 +171,15 @@ public class WebSearchableListController extends TilesAction
         ServletContext servletContext = session.getServletContext();
 
         Profile profile;
-        // TODO what about "all" scopes?  
+        // TODO what about "all" scopes?
         if (scope.equals(Scope.GLOBAL)) {
-            profile = SessionMethods.getSuperUserProfile(servletContext);            
+            profile = SessionMethods.getSuperUserProfile(servletContext);
         } else {
             profile = (Profile) session.getAttribute(Constants.PROFILE);
         }
         SearchRepository searchRepository;
         if (scope.equals(Scope.GLOBAL)) {
-            searchRepository 
+            searchRepository
                = (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
         } else {
             searchRepository = profile.getSearchRepository();
@@ -187,11 +187,11 @@ public class WebSearchableListController extends TilesAction
         Map<String, ? extends WebSearchable> webSearchables =
             searchRepository.getWebSearchableMap(type);
 
-        final ProfileManager pm = 
+        final ProfileManager pm =
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
 
         filteredWebSearchables = webSearchables;
-        
+
         if (tags != null) {
             // filter by tag if there are any otherwise return all
             if (tags.length() > 0) {
@@ -203,7 +203,7 @@ public class WebSearchableListController extends TilesAction
 
         return filteredWebSearchables;
     }
-    
+
     // loops through the websearchables
     // removes item if item is not on the list
     private Map<String, ? extends WebSearchable>
@@ -211,23 +211,23 @@ public class WebSearchableListController extends TilesAction
 
         Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();
         clone.putAll(filteredWebSearchables);
-        
+
         String tmp = list.replaceAll(" ", "");
         String[] s = tmp.split(",");
         HashSet<String> set = new HashSet<String>();
         set.addAll(Arrays.asList(s));
-                
+
         // iterate through map
         for (Object o : filteredWebSearchables.values()) {
             InterMineBag bag = (InterMineBag) o;
             ObjectStoreBag osb = bag.getOsb();
             Integer i = new Integer(osb.getBagId());
            // check that this is in our list
-           if (!set.contains(i.toString())) {              
-              clone.remove(bag.getName()); 
+           if (!set.contains(i.toString())) {
+              clone.remove(bag.getName());
            }
         }
-        
+
         return clone;
     }
 }

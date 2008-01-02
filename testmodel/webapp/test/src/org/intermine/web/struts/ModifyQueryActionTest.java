@@ -38,11 +38,11 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         userprofileOS.setModel(Model.getInstanceByName("userprofile"));
         Model testmodel = Model.getInstanceByName("testmodel");
         query = new PathQuery(testmodel);
-        
+
         query.getView().add(MainHelper.makePath(testmodel, query, "Employee"));
         query.getView().add(MainHelper.makePath(testmodel, query, "Employee.name"));
         queryBag = new PathQuery(testmodel);
-        
+
         queryBag.getView().add(MainHelper.makePath(testmodel, query, "Employee"));
         queryBag.getView().add(MainHelper.makePath(testmodel, query, "Employee.name"));
         queryBag.addNode("Employee.name").getConstraints().add(new Constraint(ConstraintOp.IN, "bag2"));

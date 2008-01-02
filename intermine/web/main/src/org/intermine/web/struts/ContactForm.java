@@ -34,12 +34,12 @@ public class ContactForm extends ValidatorForm
     private String subject;
     private String message;
 
-    
+
     /** Creates a new instance of ContactForm */
     public ContactForm() {
         // Creates a new instance of ContactForm
     }
-    
+
     /**
      * @return name of person sending feedback
      */
@@ -53,7 +53,7 @@ public class ContactForm extends ValidatorForm
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * @return email address of sender
      */
@@ -67,7 +67,7 @@ public class ContactForm extends ValidatorForm
     public void setMonkey(String monkey) {
         this.monkey = monkey;
     }
-    
+
     /**
      * @return feedback subject
      */
@@ -107,40 +107,40 @@ public class ContactForm extends ValidatorForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
 
         ActionErrors errors = super.validate(mapping, request);
-        
+
         if ((errors == null || errors.size() == 0) && getMonkey().indexOf('@') == -1) {
             if (errors == null) {
                 errors = new ActionErrors();
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("errors.email", getMonkey()));
         }
-        
+
         StringBuffer buffer = new StringBuffer();
         boolean badMessage = false;
-        
+
         if (containsHeaders(getMessage(), buffer)) {
             message = buffer.toString();
             badMessage = true;
         }
-        
+
         buffer = new StringBuffer();
         if (containsHeaders(getMonkey(), buffer)) {
             monkey = buffer.toString();
             badMessage = true;
         }
-        
+
         buffer = new StringBuffer();
         if (containsHeaders(getSubject(), buffer)) {
             subject = buffer.toString();
             badMessage = true;
         }
-        
+
         buffer = new StringBuffer();
         if (containsHeaders(getName(), buffer)) {
             name = buffer.toString();
             badMessage = true;
         }
-        
+
         if (badMessage) {
             if (errors == null) {
                 errors = new ActionErrors();
@@ -148,10 +148,10 @@ public class ContactForm extends ValidatorForm
             errors.add(ActionErrors.GLOBAL_MESSAGE,
                     new ActionMessage("errors.contact.invalidmessage"));
         }
-        
+
         return errors;
     }
-    
+
     /**
      * Check part of the message for injected headers.
      * @param msg some part of the message
@@ -176,7 +176,7 @@ public class ContactForm extends ValidatorForm
         }
         return found;
     }
-    
+
     private boolean isEmailHeader(String line, String header) {
         return (line.toLowerCase().startsWith(header + ":") && line.indexOf("@") >= 0);
     }
@@ -190,21 +190,21 @@ public class ContactForm extends ValidatorForm
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
-        
+
         name = "";
         subject = "";
         message = createDefaultFeedbackMsg(request);
         monkey = "";
-        
+
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
         if (profile != null) {
             monkey = profile.getUsername();
         }
     }
-    
+
     /**
      * Create the default feedback messages. Adds URL and current query by default.
-     * 
+     *
      * @param request current http request
      * @return default feedback message
      */

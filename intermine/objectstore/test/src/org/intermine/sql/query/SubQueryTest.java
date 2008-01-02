@@ -16,7 +16,7 @@ public class SubQueryTest extends TestCase
 {
     private SubQuery t1, t2, t3, t4;
     private Query q1, q2, q3;
-    
+
     public SubQueryTest(String arg1) {
         super(arg1);
     }
@@ -54,7 +54,7 @@ public class SubQueryTest extends TestCase
         q3.addWhere(new Constraint(f, Constraint.LT, c));
         t4 = new SubQuery(q3, "alias3");
     }
- 
+
     public void testGetSQLString() throws Exception {
         assertEquals("(SELECT mytable.a FROM mytable WHERE mytable.a = 1) AS alias1",
                 t1.getSQLString());

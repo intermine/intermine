@@ -186,7 +186,7 @@ public class StringUtilTest extends TestCase
         assertFalse(StringUtil.allDigits(""));
         assertFalse(StringUtil.allDigits(null));
     }
-    
+
     public void testReverseCapitalisation() throws Exception {
         assertEquals("a", StringUtil.reverseCapitalisation("A"));
         assertEquals("A", StringUtil.reverseCapitalisation("a"));
@@ -206,5 +206,5 @@ public class StringUtilTest extends TestCase
         col = new ArrayList<String>(Arrays.asList(new String[] {"b", "c", "a"}));
         assertEquals("a, b and c", StringUtil.prettyList(col, true));
     }
-    
+
 }

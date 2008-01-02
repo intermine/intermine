@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -182,7 +181,7 @@ public class EntrezOrganismRetriever extends Task
 Example
 
   <?xml version="1.0"?>
-  <!DOCTYPE eSummaryResult PUBLIC "-//NLM//DTD eSummaryResult, 29 October 2004//EN" 
+  <!DOCTYPE eSummaryResult PUBLIC "-//NLM//DTD eSummaryResult, 29 October 2004//EN"
             "http://www.ncbi.nlm.nih.gov/entrez/query/DTD/eSummary_041029.dtd">
   <eSummaryResult>
     <DocSum>
@@ -225,7 +224,7 @@ Example
         }
 
         /**
-         * @see DefaultHandler#startElement
+         * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
             if ("ERROR".equals(qName)) {
@@ -239,14 +238,14 @@ Example
         }
 
         /**
-         * @see DefaultHandler#characters
+         * {@inheritDoc}
          */
         public void characters(char[] ch, int start, int length) {
             characters.append(new String(ch, start, length));
         }
 
         /**
-         * @see DefaultHandler#endElement
+         * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName) {
             if ("ERROR".equals(name)) {

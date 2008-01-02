@@ -17,7 +17,7 @@ package org.intermine.objectstore.query;
  * @author Mark Woodbridge
  */
 
-public abstract class Constraint 
+public abstract class Constraint
 {
     protected ConstraintOp op;
 
@@ -36,5 +36,5 @@ public abstract class Constraint
     public ConstraintOp getOp() {
         return op;
     }
-        
+
 }

@@ -55,7 +55,7 @@ public abstract class OverlapUtil
     /**
      * Creates OverlapRelations for overlapping LocatedSequenceFeature objects that are located
      * on the given subject (generally a Chromosome).
-     * 
+     *
      * @param os the ObjectStore to query
      * @param subject the LocatedSequenceFeature (eg. a Chromosome) where the LSFs are located
      * @param classNamesToIgnore a List of the names of those classes that should be ignored when

@@ -141,7 +141,7 @@ public class MageDataTranslator extends DataTranslator
         this.propertiesFileName = propertiesFileName;
         init(srcModel, tgtModel);
     }
-    
+
     private void init(Model srcModel, Model tgtModel) throws IOException {
         srcNs = srcModel.getNameSpace().toString();
         tgtNs = tgtModel.getNameSpace().toString();

@@ -236,7 +236,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             loops++;
         }
         connInUse = true;
-        
+
         //Exception trace = new Exception();
         //trace.fillInStackTrace();
         //StringWriter message = new StringWriter();

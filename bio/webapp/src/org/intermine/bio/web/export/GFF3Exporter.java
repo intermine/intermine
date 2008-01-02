@@ -64,7 +64,7 @@ public class GFF3Exporter implements TableExporter
     public static final int BIG_BATCH_SIZE = 10000;
 
     private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
-    
+
     /**
      * Method called to export a PagedTable object as GFF3.  The PagedTable can only be exported if
      * there is exactly one LocatedSequenceFeature column and the other columns (if any), are simple
@@ -84,14 +84,14 @@ public class GFF3Exporter implements TableExporter
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        
+
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ",
                            "inline; filename=table" + StringUtil.uniqueString() + ".gff3");
 
         OutputStream outputStream = null;
         PrintWriter printWriter = null;
-        
+
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 
         int realFeatureIndex = ExportHelper
@@ -100,7 +100,7 @@ public class GFF3Exporter implements TableExporter
 
         try {
             WebTable rowList = pt.getAllRows();
-            
+
             //  TODO if a query, increase the batch size - already goFaster()?
 
             for (int rowIndex = 0;
@@ -123,9 +123,9 @@ public class GFF3Exporter implements TableExporter
 
                 Map extraAttributes = new HashMap();
 
-                
+
                 // add some fields as extra attributes if the object has them
-                
+
                 List<String> extraFields = Arrays.asList(new String[] {"symbol", "organismDbId",
                     "name"});
                 for (String fieldName : extraFields) {
@@ -137,12 +137,12 @@ public class GFF3Exporter implements TableExporter
 
                 GFF3Record gff3Record =
                     GFF3Util.makeGFF3Record(lsf, getSoClassNames(servletContext), extraAttributes);
-                                                                
+
                 if (gff3Record == null) {
                     // no chromsome ref or no chromosomeLocation ref
                     continue;
                 }
-                
+
                 if (outputStream == null) {
                     // try to avoid opening the OutputStream until we know that the query is
                     // going to work - this avoids some problems that occur when
@@ -153,7 +153,7 @@ public class GFF3Exporter implements TableExporter
 
                     printWriter.println("##gff-version 3");
                 }
-                
+
                 writtenFeaturesCount++;
 
                 printWriter.println(gff3Record.toGFF3());
@@ -162,7 +162,7 @@ public class GFF3Exporter implements TableExporter
             if (printWriter != null) {
                 printWriter.close();
             }
-            
+
             if (outputStream != null) {
                 outputStream.close();
             }
@@ -185,7 +185,7 @@ public class GFF3Exporter implements TableExporter
         }
         return null;
     }
-    
+
     /**
      * Read the SO term name to class name mapping file and return it as a Map from class name to
      * SO term name.  The Map is cached as the SO_CLASS_NAMES attribute in the servlet context.
@@ -203,7 +203,7 @@ public class GFF3Exporter implements TableExporter
             } catch (Exception e) {
                 throw new ServletException("Error loading so class name mapping file", e);
             }
-            
+
             servletContext.setAttribute(soClassNames, soNameProperties);
         } else {
             soNameProperties = (Properties) servletContext.getAttribute(soClassNames);

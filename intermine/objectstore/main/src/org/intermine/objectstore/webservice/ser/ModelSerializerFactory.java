@@ -1,5 +1,5 @@
 package org.intermine.objectstore.webservice.ser;
- 
+
 /*
  * Copyright (C) 2002-2007 FlyMine
  *

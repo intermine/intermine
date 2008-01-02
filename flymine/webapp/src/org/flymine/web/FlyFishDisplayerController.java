@@ -57,15 +57,15 @@ public class FlyFishDisplayerController extends TilesAction
             ObjectStore os =
                 (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
             String identifier = (String) request.getAttribute("id");
-                    
+
             DataSetLdr dataSetLdr = new FlyFishDataSetLdr(identifier, os);
             if (!dataSetLdr.getDataSets().isEmpty()) {
-                for (Iterator it 
+                for (Iterator it
                           = dataSetLdr.getDataSets().keySet().iterator(); it.hasNext();) {
-                    String key = (String) it.next();            
+                    String key = (String) it.next();
                     GraphDataSet graphDataSet = (GraphDataSet) dataSetLdr.getDataSets().get(key);
                     GraphDisplayer graphDisplayer = new GraphDisplayer();
-                    String html = setStackedBarGraph(session, graphDisplayer, graphDataSet, 
+                    String html = setStackedBarGraph(session, graphDisplayer, graphDataSet,
                                                      identifier);
                     request.setAttribute("html", html);
                 }
@@ -77,32 +77,32 @@ public class FlyFishDisplayerController extends TilesAction
 
         return null;
     }
-    
-    private String setStackedBarGraph(HttpSession session, 
-                                     GraphDisplayer graphDisplayer, 
-                                     GraphDataSet graphDataSet,                                  
+
+    private String setStackedBarGraph(HttpSession session,
+                                     GraphDisplayer graphDisplayer,
+                                     GraphDataSet graphDataSet,
                                      String geneName) {
-         
+
          JFreeChart chart = null;
          CategoryPlot plot = null;
-         
+
          chart = ChartFactory.createStackedBarChart(
                  graphDisplayer.getTitle(),       // chart title
                  graphDisplayer.getDomainLabel(), // domain axis label
                  graphDisplayer.getRangeLabel(),  // range axis label
-                 graphDataSet.getDataSet(),         // data 
-                 PlotOrientation.VERTICAL, 
-                 true, 
-                 true,                            // tooltips? 
-                 false                            // URLs? 
-         );    
+                 graphDataSet.getDataSet(),         // data
+                 PlotOrientation.VERTICAL,
+                 true,
+                 true,                            // tooltips?
+                 false                            // URLs?
+         );
          plot = chart.getCategoryPlot();
          StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
          BagGraphWidget bagGraphWidget = new BagGraphWidget(session,
                           graphDataSet.getCategoryArray(),
-                          geneName, 
+                          geneName,
                           graphDisplayer.getToolTipGen(),
-                          graphDisplayer.getUrlGen(), 
+                          graphDisplayer.getUrlGen(),
                           chart,
                           plot,
                           renderer);

@@ -31,7 +31,7 @@ import org.intermine.web.logic.tagging.TagBinding;
 
 /**
  * Export tags.
- * 
+ *
  * @author Thomas Riley
  */
 public class ExportTagsAction extends InterMineAction
@@ -39,7 +39,7 @@ public class ExportTagsAction extends InterMineAction
 
     /**
      * Export user's tags.
-     * 
+     *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
      * @param request The HTTP request we are processing
@@ -56,11 +56,11 @@ public class ExportTagsAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
-        
+
         writer.writeStartElement("tags");
         List tags = profile.getProfileManager().getTags(null, null, null,
                                                         profile.getUsername());
@@ -70,11 +70,11 @@ public class ExportTagsAction extends InterMineAction
         }
         writer.writeEndElement();
         writer.close();
-        
+
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=tags.xml");
         response.getWriter().print(XmlUtil.indentXmlSimple(sw.getBuffer().toString()));
         return null;
     }
-    
+
 }

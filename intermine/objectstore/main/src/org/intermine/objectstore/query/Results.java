@@ -440,7 +440,7 @@ public class Results extends AbstractList implements LazyCollection
         }
         return isEmpty();
     }
-        
+
     /**
      * Gets the best current estimate of the characteristics of the query.
      *
@@ -480,14 +480,14 @@ public class Results extends AbstractList implements LazyCollection
     protected int getBatchNoForRow(int row) {
         return (int) (row / batchSize);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public List asList() {
         return this;
     }
-    
+
     /**
      * {@inheritDoc}
      */

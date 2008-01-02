@@ -38,7 +38,7 @@ public class PathNodeTest extends TestCase
     public PathNodeTest(String arg) {
         super(arg);
     }
-    
+
     public void testConstruct() {
         Node parent = new PathNode("Employee");
         Node pathNode = new PathNode(parent, "department");

@@ -39,7 +39,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
         File resources = new File ("resources");
         Collection<File> allfiles = listFiles(resources, null, true);
-        
+
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         KeggPathwayConverter converter = new KeggPathwayConverter(itemWriter,
                                                         Model.getInstanceByName("genomic"));
@@ -52,7 +52,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
             if(file.isDirectory()) {
                 continue;
             }
-            
+
             Reader reader = new FileReader(file);
             converter.setCurrentFile(file);
             converter.process(reader);
@@ -65,7 +65,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
 
         assertEquals(readItemSet("kegg-tgt-items.xml"), itemWriter.getItems());
     }
-    
+
     public static Collection<File> listFiles(File directory, FilenameFilter filter, boolean recurse) {
         Vector<File> files = new Vector<File>();
         File[] entries = directory.listFiles();

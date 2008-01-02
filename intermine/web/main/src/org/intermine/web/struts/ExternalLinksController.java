@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -49,7 +49,7 @@ public class ExternalLinksController extends TilesAction
 
     private static final String PROPERTY_PREFIX = "externalLink";
     private static final Object URL_TAG = "urlPrefix";
-    
+
     /**
      * Create a Map of external link type to URL by looking at the current object and by reading
      * the WEB_PROPERTIES.
@@ -77,9 +77,9 @@ public class ExternalLinksController extends TilesAction
         while (enumeration.hasMoreElements()) {
             String key = (String) enumeration.nextElement();
             String urlPrefix = properties.getProperty(key);
-            
+
             String[] bits = StringUtil.split(key, ".");
-            
+
             if (bits[0].equals(PROPERTY_PREFIX)) {
                 String linkType = bits[1];
                 String className = bits[2];
@@ -100,26 +100,26 @@ public class ExternalLinksController extends TilesAction
                     continue;
                 }
                 FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName);
-                
+
                 if (fd == null) {
-                    LOG.error("unknown field \"" + fieldName + "\" in class \"" + className 
+                    LOG.error("unknown field \"" + fieldName + "\" in class \"" + className
                               + "\" in property: " + key);
                     continue;
                 }
-                
+
                 Object fieldValue = TypeUtil.getFieldValue(o, fieldName);
-                
+
                 String link = urlPrefix + fieldValue;
-                
+
                 linkPrefixes.put(linkType, link);
             }
         }
-        
+
         request.setAttribute("externalLinkPrefixes", linkPrefixes);
 
         return null;
     }
-    
+
     private static ClassDescriptor getMatchedType(Model model, InterMineObject o,
                                                   String className) {
         Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());

@@ -33,7 +33,7 @@ import org.apache.struts.actions.DispatchAction;
  */
 public class ViewChange extends DispatchAction
 {
-    
+
     /**
      * Remove a Node from the results view
      * @param mapping The ActionMapping used to select this instance
@@ -51,12 +51,12 @@ public class ViewChange extends DispatchAction
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        
+
         query.removePathStringFromView(path);
 
         // remove from sort list too, only if this is the sorted field
         query.removePathStringFromSortOrder(path);
-        
+
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
     }
@@ -112,7 +112,7 @@ public class ViewChange extends DispatchAction
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
     }
-    
+
     /**
      * AJAX request - reorder view.
      * @param mapping The ActionMapping used to select this instance
@@ -130,19 +130,19 @@ public class ViewChange extends DispatchAction
         HttpSession session = request.getSession();
         String newOrder[] = request.getParameterValues("viewDivs[]");
         String oldOrder[] = request.getParameterValues("oldOrder[]");
-        
+
         List view = SessionMethods.getEditingView(session);
         ArrayList newView = new ArrayList();
-        
+
         for (int i = 0; i < view.size(); i++) {
             int newi = Integer.parseInt(newOrder[i]);
             int oldi = Arrays.asList(oldOrder).indexOf("" + newi);
             newView.add(view.get(oldi));
         }
-        
+
         view.clear();
         view.addAll(newView);
-        
+
         return null;
     }
 }

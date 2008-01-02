@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -75,18 +75,18 @@ public class BagUploadConfirmAction extends InterMineAction
 
         SearchRepository searchRepository =
             SearchRepository.getGlobalSearchRepository(servletContext);
-        Map<String, ? extends WebSearchable> publicBagMap = 
+        Map<String, ? extends WebSearchable> publicBagMap =
             searchRepository.getWebSearchableMap(TagTypes.BAG);
         if (publicBagMap.get(bagName) != null) {
             recordError(new ActionMessage("errors.savebag.existing.public", bagName), request);
             return mapping.findForward("error");
         }
-        
+
         String idsString = confirmForm.getMatchIDs().trim();
         String[] ids = StringUtil.split(idsString, " ");
 
         List<Integer> contents = new ArrayList<Integer>();
-        
+
         String bagType = confirmForm.getBagType();
         for (int i = 0; i < ids.length; i++) {
             String idString = ids[i];
@@ -101,16 +101,16 @@ public class BagUploadConfirmAction extends InterMineAction
             int id = Integer.parseInt(idString);
             contents.add(new Integer(id));
         }
-        
+
         if (contents.size() == 0) {
             recordError(new ActionMessage("bagUploadConfirm.emptyBag"), request);
             return mapping.findForward("error");
         }
-        
+
         ProfileManager profileManager =
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         ObjectStoreWriter profileOs = profileManager.getUserProfileObjectStore();
-                                                                      
+
         InterMineBag bag = new InterMineBag(bagName, bagType, null, new Date(), os,
                                             profile.getUserId(),
                 profileOs);
@@ -123,10 +123,10 @@ public class BagUploadConfirmAction extends InterMineAction
                 osw.close();
             }
         }
-        
+
         profile.saveBag(bagName, bag);
-        session.removeAttribute("bagQueryResult"); 
-        ForwardParameters forwardParameters = 
+        session.removeAttribute("bagQueryResult");
+        ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));
         return forwardParameters.addParameter("bagName", bagName).forward();
     }

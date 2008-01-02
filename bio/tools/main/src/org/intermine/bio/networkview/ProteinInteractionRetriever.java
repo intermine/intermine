@@ -32,7 +32,7 @@ import org.intermine.objectstore.query.SingletonResults;
  * @author Florian Reisinger
  *
  */
-public class ProteinInteractionRetriever 
+public class ProteinInteractionRetriever
     {
     private ObjectStore os;
 
@@ -46,7 +46,7 @@ public class ProteinInteractionRetriever
 
 
     /**
-     * This method will take a list of protein primary accessions and query 
+     * This method will take a list of protein primary accessions and query
      * the objectstore for all protein interactions containing at least one
      * of the specified proteins.
      * @param accs Collection of Strings containing protein primary accessions
@@ -59,11 +59,11 @@ public class ProteinInteractionRetriever
         // create all needed query classes
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcInteraction = new QueryClass(ProteinInteraction.class);
-                
+
         // create needed references between the classes
-        QueryCollectionReference qcrInteractions = 
+        QueryCollectionReference qcrInteractions =
             new QueryCollectionReference(qcProtein, "proteinInteractions");
-                                                                            
+
         // build up constraint
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         QueryField qf = new QueryField(qcProtein, "primaryAccession");
@@ -72,7 +72,7 @@ public class ProteinInteractionRetriever
         // join protein and interactions
         ContainsConstraint cc1 = new ContainsConstraint(qcrInteractions,
                 ConstraintOp.CONTAINS, qcInteraction);
-        
+
         // build up query
         cs.addConstraint(bc);
         cs.addConstraint(cc1);

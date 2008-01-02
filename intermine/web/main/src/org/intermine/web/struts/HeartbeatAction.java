@@ -28,7 +28,7 @@ import org.apache.struts.action.ActionMapping;
 /**
  * Takes a parameter "type" with value "webapp" or "query" and prints "OK"
  * to the client if everything is ok, otherwise something else.
- * 
+ *
  * @author tom riley
  */
 public class HeartbeatAction extends InterMineAction

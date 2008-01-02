@@ -218,7 +218,7 @@ public class ClassDescriptorTest extends TestCase
         Model model = new Model("test", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
         assertEquals(expected, cld3.toString());
     }
-    
+
     public void testToString2() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", "Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
@@ -388,7 +388,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor.findSuperClassNames(model, class4Name, supers);
         assertEquals(0, supers.size());
     }
-    
+
     public void testClassInheritanceCompare() throws Exception {
         String class1Name = "org.intermine.model.testmodel.Class1";
         String class2Name = "org.intermine.model.testmodel.Class2";
@@ -402,19 +402,19 @@ public class ClassDescriptorTest extends TestCase
 
         int comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class2Name);
         assertEquals(1, comp);
-        
+
         comp = ClassDescriptor.classInheritanceCompare(model, class2Name, class1Name);
         assertEquals(-1, comp);
-        
+
         comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class3Name);
         assertEquals(1, comp);
-        
+
         comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class4Name);
         assertEquals(1, comp);
-        
+
         comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class2Name);
         assertEquals(1, comp);
-        
+
         comp = ClassDescriptor.classInheritanceCompare(model, class2Name, class3Name);
         assertEquals(0, comp);
     }
@@ -430,13 +430,13 @@ public class ClassDescriptorTest extends TestCase
 
         int comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class2Name);
         assertEquals(1, comp);
-        
+
         comp = ClassDescriptor.classInheritanceCompare(model, class2Name, class1Name);
         assertEquals(-1, comp);
-        
+
         comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class3Name);
         assertEquals(1, comp);
-        
+
         comp = ClassDescriptor.classInheritanceCompare(model, class2Name, class3Name);
         assertEquals(1, comp);
     }

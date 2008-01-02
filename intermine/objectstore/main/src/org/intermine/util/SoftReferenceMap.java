@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
  * functionality.
  * <p>
  * The entrySet() and values() methods of this class do not work.
- * 
+ *
  * @see java.lang.ref.SoftReference
  * @author Matthew Wakeling
  */

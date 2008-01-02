@@ -42,11 +42,11 @@ public class DatabaseSchema
     private boolean noNotXml;
     private boolean flatMode;
     private Set missingTables;
-    
+
     private Set truncatedSet;
     private Map tableMasterToFieldDescriptors = new HashMap();
     private Map classDescriptorToTableClassDescriptor = new HashMap();
-    
+
     /**
      * Returns an instance of DatabaseSchema, for the given Model and and List of truncated classes.
      *
@@ -112,7 +112,7 @@ public class DatabaseSchema
     public boolean isTruncated(ClassDescriptor cld) {
         return truncatedSet.contains(cld);
     }
-    
+
     /**
      * Returns the model.
      *

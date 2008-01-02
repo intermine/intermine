@@ -145,7 +145,7 @@ public class SourcePriorityComparator implements Comparator
                         }
                         return 0;
                     }
-                } 
+                }
                 int source1Priority = srcs.indexOf(source1.getName());
                 if (source1Priority == -1) {
                     source1Priority = srcs.indexOf("*");

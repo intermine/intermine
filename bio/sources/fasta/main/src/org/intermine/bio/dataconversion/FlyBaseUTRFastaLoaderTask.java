@@ -20,7 +20,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.FivePrimeUTR;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;

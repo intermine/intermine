@@ -82,7 +82,7 @@ public class FieldConfig
 
     /**
      * Set the showInInlineCollection flag.  If true, show this field in inline collections on the
-     * object details page. 
+     * object details page.
      * @param showInInlineCollection the new value of the flag
      */
     public void setShowInInlineCollection(boolean showInInlineCollection) {
@@ -164,7 +164,7 @@ public class FieldConfig
     public int hashCode() {
         return toString().hashCode();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -230,7 +230,7 @@ public class FieldConfig
 
     /**
      * Get the displayer for that field
-     * 
+     *
      * @return the path to the jsp displayer
      */
     public String getDisplayer() {
@@ -239,7 +239,7 @@ public class FieldConfig
 
     /**
      * Set the displayer
-     * 
+     *
      * @param displayer
      *            the path to the jsp displayer
      */

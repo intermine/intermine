@@ -38,12 +38,12 @@ public class Constraint extends AbstractConstraint
      * the left is null.
      */
     public static final int GORNULL = 4;
-    
-    
+
+
     protected AbstractValue left;
     protected AbstractValue right;
     protected int operation;
-    
+
     /**
      * Constructor for a Constraint object.
      *
@@ -262,7 +262,7 @@ public class Constraint extends AbstractConstraint
      * @return an arbitrary integer based on the contents of the Constraint
      */
     public int hashCode() {
-        return (3 * left.hashCode()) + (5 * operation) 
+        return (3 * left.hashCode()) + (5 * operation)
             + ((operation == EQ ? 3 : 7) * right.hashCode());
     }
 

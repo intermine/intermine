@@ -51,37 +51,37 @@ public class EmployeeURLQuery implements EnrichmentWidgetURLQuery
      * @return Query a query to generate the results needed
      */
     public PathQuery generatePathQuery() {
-                       
-       
+
+
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-        
+
         List view = new ArrayList();
         view.add(MainHelper.makePath(model, q, "Employee.name"));
         view.add(MainHelper.makePath(model, q, "Employee.department.name"));
         view.add(MainHelper.makePath(model, q, "Employee.department.company.name"));
         view.add(MainHelper.makePath(model, q, "Employee.fullTime"));
-        
+
         q.setView(view);
-        
+
         String bagType = bag.getType();
         ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();        
+        String constraintValue = bag.getName();
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-        
+
         // dept
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
         PathNode deptNode = q.addNode("Employee.department.name");
-        Constraint deptConstraint 
+        Constraint deptConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         deptNode.getConstraints().add(deptConstraint);
-        
+
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-                
+
         return q;
     }
 }

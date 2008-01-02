@@ -68,7 +68,7 @@ public class PostProcessorTask extends DynamicAttributeTask
             PostProcessor pp = (PostProcessor) m.newInstance(new Object[] {osw});
 
             configureDynamicAttributes(pp);
-            
+
             pp.postProcess();
 
         } catch (Exception e) {

@@ -66,7 +66,7 @@ public class IntegrationWriterFactory
                                            + "' for " + alias + " (check properties file)", e);
         } catch (NoSuchMethodException e) {
             throw new ObjectStoreException("Cannot find getInstance method for "
-                                           + "IntegrationWriter: " + integrationWriterClassName 
+                                           + "IntegrationWriter: " + integrationWriterClassName
                                            + " - check properties file", e);
         } catch (Exception e) {
             throw new ObjectStoreException("Failed to instantiate IntegrationWriter "

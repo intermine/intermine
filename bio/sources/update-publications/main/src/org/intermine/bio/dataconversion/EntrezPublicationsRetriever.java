@@ -147,7 +147,7 @@ public class EntrezPublicationsRetriever
             db = env.openDatabase(null , "publications_db", dbConfig);
 
             txn = env.beginTransaction(null, null);
-            
+
             LOG.info("Starting EntrezPublicationsRetriever");
 
             Writer writer = new FileWriter(outputFile);
@@ -158,11 +158,11 @@ public class EntrezPublicationsRetriever
             writer.write(FullRenderer.getHeader() + ENDL);
             for (Iterator<Publication> iter = getPublications(os).iterator(); iter.hasNext();) {
                 String pubMedId = iter.next().getPubMedId();
-                
+
                 if (seenPubMeds.contains(pubMedId)) {
                     continue;
                 }
-                
+
                 DatabaseEntry key = new DatabaseEntry(pubMedId.getBytes());
                 DatabaseEntry data = new DatabaseEntry();
                 if (db.get(txn, key, data, null).equals(OperationStatus.SUCCESS)) {
@@ -176,7 +176,7 @@ public class EntrezPublicationsRetriever
                         seenPubMeds.add(pubMedId);
                     } catch (EOFException e) {
                         // ignore and fetch it again
-                        System.err .println("found in cache, but igored due to cache problem: " 
+                        System.err .println("found in cache, but igored due to cache problem: "
                                             + pubMedId);
                     }
                 } else {
@@ -193,7 +193,7 @@ public class EntrezPublicationsRetriever
                     try {
                         // the server may return less publications than we ask for, so keep a Map
                         Map<String, Map<String, Object>> fromServerMap = null;
-                        
+
                         for (int i = 0; i < MAX_TRIES; i++) {
                             BufferedReader br = new BufferedReader(getReader(thisBatch));
                             StringBuffer buf = new StringBuffer();
@@ -256,10 +256,10 @@ public class EntrezPublicationsRetriever
     }
 
     /**
-     * Add a Map of pubication information to the Database 
+     * Add a Map of pubication information to the Database
      */
     private void addToDb(Transaction txn, Database db,
-                         Map<String, Map<String, Object>> fromServerMap) 
+                         Map<String, Map<String, Object>> fromServerMap)
         throws IOException, DatabaseException {
         for (Map.Entry<String, Map<String, Object>> entry: fromServerMap.entrySet()) {
             String pubMedId = entry.getKey();
@@ -270,7 +270,7 @@ public class EntrezPublicationsRetriever
             ObjectOutputStream serializer = new ObjectOutputStream(arrayOutputStream);
             serializer.writeObject(dataMap);
             DatabaseEntry data = new DatabaseEntry(arrayOutputStream.toByteArray());
-            
+
             db.put(txn, key, data);
         }
     }

@@ -61,7 +61,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
 
     private boolean fetchAllFields = true;
     private Set fieldExceptions = Collections.EMPTY_SET;
-    
+
     /**
      * Creates an instance, from another ObjectStore instance.
      *

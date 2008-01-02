@@ -68,11 +68,11 @@ public class WebConfig
         digester.addObjectCreate("webconfig/class/tabledisplayer", Displayer.class);
         digester.addSetProperties("webconfig/class/tabledisplayer", "src", "src");
         digester.addSetNext("webconfig/class/tabledisplayer", "setTableDisplayer");
-        
+
         digester.addCallMethod("webconfig/class/tabledisplayer/param", "addParam", 2);
         digester.addCallParam("webconfig/class/tabledisplayer/param", 0, "name");
         digester.addCallParam("webconfig/class/tabledisplayer/param", 1, "value");
-        
+
         digester.addObjectCreate("webconfig/class/fields/fieldconfig", FieldConfig.class);
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "fieldExpr", "fieldExpr");
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "name", "name");
@@ -97,22 +97,22 @@ public class WebConfig
         digester.addSetProperties("webconfig/class/bagdisplayers/bagtabledisplayer");
         digester.addSetNext("webconfig/class/bagdisplayers/bagtabledisplayer",
                             "addBagTableDisplayer");
-        
+
         digester.addObjectCreate("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer",
                                  EnrichmentWidgetDisplayer.class);
         digester.addSetProperties("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer");
         digester.addSetNext("webconfig/class/bagdisplayers/enrichmentwidgetdisplayer",
                             "addEnrichmentWidgetDisplayer");
-        
+
         digester.addSetNext("webconfig/class", "addType");
-        
+
         digester.addObjectCreate("webconfig/tableExportConfig", TableExportConfig.class);
         digester.addSetProperties("webconfig/tableExportConfig", "id", "id");
         digester.addSetProperties("webconfig/tableExportConfig", "actionPath", "actionPath");
         digester.addSetProperties("webconfig/tableExportConfig", "className", "className");
 
         digester.addSetNext("webconfig/tableExportConfig", "addTableExportConfig");
-        
+
         WebConfig webConfig = (WebConfig) digester.parse(is);
 
         webConfig.setSubClassConfig(model);
@@ -149,7 +149,7 @@ public class WebConfig
 
     /**
      * Return a Map of TableExportConfig.id to TableExportConfig objects.
-     * @return the TableExportConfig Map 
+     * @return the TableExportConfig Map
      */
     public Map getTableExportConfigs() {
         return tableExportConfigs;
@@ -192,8 +192,8 @@ public class WebConfig
     void setSubClassConfig(Model model) throws ClassNotFoundException {
         TreeSet<String> classes = new TreeSet<String>(model.getClassNames());
         for (Iterator modelIter = classes.iterator(); modelIter.hasNext();) {
-            
-            String className = (String) modelIter.next();            
+
+            String className = (String) modelIter.next();
             Type thisClassType = (Type) types.get(className);
 
             if (thisClassType == null) {
@@ -213,7 +213,7 @@ public class WebConfig
                 }
 
                 Type superClassType = (Type) types.get(cd.getName());
-                
+
                 if (superClassType != null) {
                     if (thisClassType.getFieldConfigs().size() == 0) {
                         // copy any FieldConfigs from the super class
@@ -234,15 +234,15 @@ public class WebConfig
                             thisClassType.addLongDisplayer(ld);
                         }
                     }
-                    
+
                     if (thisClassType.getTableDisplayer() == null) {
                         thisClassType.setTableDisplayer(superClassType.getTableDisplayer());
                     }
-                    
+
                     if (thisClassType.getBagTableDisplayers().size() == 0
                                     && superClassType.getBagTableDisplayers() != null
                                     && superClassType.getBagTableDisplayers().size() > 0) {
-                        Iterator bagDisplayerIter 
+                        Iterator bagDisplayerIter
                         = superClassType.getBagTableDisplayers().iterator();
 
                         while (bagDisplayerIter.hasNext()) {
@@ -253,7 +253,7 @@ public class WebConfig
                     if (thisClassType.getGraphDisplayers().size() == 0
                                     && superClassType.getGraphDisplayers() != null
                                     && superClassType.getGraphDisplayers().size() > 0) {
-                        Iterator graphDisplayerIter 
+                        Iterator graphDisplayerIter
                         = superClassType.getGraphDisplayers().iterator();
 
                         while (graphDisplayerIter.hasNext()) {
@@ -261,15 +261,15 @@ public class WebConfig
                             thisClassType.addGraphDisplayer(d);
                         }
                     }
-                    
+
                     if (thisClassType.getEnrichmentWidgetDisplayers().size() == 0
                                     && superClassType.getEnrichmentWidgetDisplayers() != null
                                     && superClassType.getEnrichmentWidgetDisplayers().size() > 0) {
-                        Iterator enrichmentWidgetDisplayerIter 
+                        Iterator enrichmentWidgetDisplayerIter
                         = superClassType.getEnrichmentWidgetDisplayers().iterator();
 
                         while (enrichmentWidgetDisplayerIter.hasNext()) {
-                            EnrichmentWidgetDisplayer d 
+                            EnrichmentWidgetDisplayer d
                             = (EnrichmentWidgetDisplayer) enrichmentWidgetDisplayerIter.next();
                             thisClassType.addEnrichmentWidgetDisplayer(d);
                         }

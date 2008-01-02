@@ -94,7 +94,7 @@ public class FlyAtlasPostProcess extends PostProcessor
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, 
+        ((ObjectStoreInterMineImpl) os).precompute(q,
                                                    PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
        res.setBatchSize(500);

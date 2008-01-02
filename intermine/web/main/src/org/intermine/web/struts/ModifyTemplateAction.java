@@ -57,16 +57,16 @@ public class ModifyTemplateAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        
-        
+
+
         ModifyTemplateForm mtf = (ModifyTemplateForm) form;
         ActionErrors errors = mtf.validate(mapping, request);
-        if (errors == null || errors.isEmpty()) {  
+        if (errors == null || errors.isEmpty()) {
             if (request.getParameter("delete") != null) {
                 errors = delete(mapping, form, request, response);
             } else if (request.getParameter("export") != null || mtf.getTemplateButton() != null) {
                 export(mapping, form, request, response);
-            } 
+            }
         }
         saveErrors(request, (ActionMessages) errors);
         return getReturn(mtf.getPageName(), mapping);
@@ -97,7 +97,7 @@ public class ModifyTemplateAction extends InterMineAction
             for (int i = 0; i < mqf.getSelected().length; i++) {
                 String template = mqf.getSelected()[i];
                 // if this template is not one of theirs
-                if (profile.getTemplate(template) == null) {                    
+                if (profile.getTemplate(template) == null) {
                     errors.add(ActionMessages.GLOBAL_MESSAGE,
                                new ActionMessage("errors.modifyTemplate.delete"));
                 }
@@ -106,7 +106,7 @@ public class ModifyTemplateAction extends InterMineAction
         } finally {
             profile.enableSaving();
         }
-        
+
         if (profile.getUsername() != null
             && profile.getUsername()
             .equals(servletContext.getAttribute(Constants.SUPERUSER_ACCOUNT))) {
@@ -134,7 +134,7 @@ public class ModifyTemplateAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
         ServletContext servletContext = session.getServletContext();
-        
+
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
 
@@ -146,13 +146,13 @@ public class ModifyTemplateAction extends InterMineAction
         for (int i = 0; i < mqf.getSelected().length; i++) {
             String name = mqf.getSelected()[i];
             String xml = null;
-            
+
             if (publicTemplates.get(name) != null) {
                 xml = ((TemplateQuery) publicTemplates.get(name)).toXml();
             } else if (myTemplates.get(name) != null) {
                 xml = ((TemplateQuery) myTemplates.get(name)).toXml();
             }
-            if (xml != null) { 
+            if (xml != null) {
                 xml = XmlUtil.indentXmlSimple(xml);
                 out.println(xml);
             }
@@ -161,7 +161,7 @@ public class ModifyTemplateAction extends InterMineAction
         out.flush();
     }
 
-   
+
     private ActionForward getReturn(String pageName, ActionMapping mapping) {
         if (pageName != null && pageName.equals("MyMine")) {
             return mapping.findForward("mymine");

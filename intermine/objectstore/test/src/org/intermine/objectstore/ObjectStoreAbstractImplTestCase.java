@@ -15,7 +15,7 @@ import org.intermine.objectstore.query.Query;
 public class ObjectStoreAbstractImplTestCase extends ObjectStoreTestCase
 {
     protected static ObjectStoreAbstractImpl osai;
-    
+
     public ObjectStoreAbstractImplTestCase(String arg) {
         super(arg);
     }

@@ -102,7 +102,7 @@ public class PathQueryUtilTest extends StoreDataTestCase {
     }
 
 
-    
+
     public void testValidatePath() throws Exception {
         try {
             PathQueryUtil.validatePath("Company", os.getModel()); // too short

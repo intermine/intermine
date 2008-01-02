@@ -512,11 +512,11 @@ public class AjaxServices
 
         return returnList;
     }
-    
+
     /**
-     * For a given bag name and a type different from the bag type, give the number of 
+     * For a given bag name and a type different from the bag type, give the number of
      * converted objects
-     * 
+     *
      * @param bagName the name of the bag
      * @param type the type to convert to
      * @return the number of converted objects
@@ -535,7 +535,7 @@ public class AjaxServices
         try {
             imBag = BagHelper.getBag(profile, searchRepository, bagName);
             TemplateQuery tq = TypeConverter.getConversionTemplate(servletContext,
-                TypeUtil.instantiate(pckName + "." + imBag.getType()), 
+                TypeUtil.instantiate(pckName + "." + imBag.getType()),
                 TypeUtil.instantiate(pckName + "." + type));
             Map<String, QueryNode> pathToQueryNode = new HashMap<String, QueryNode>();
             Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
@@ -545,7 +545,7 @@ public class AjaxServices
             TemplateHelper.fillTemplateForm(tq, null, imBag, templateForm, os.getModel());
             PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, tq,
                 new HashMap());
-            Query query = MainHelper.makeQuery(pathQuery, bagMap, pathToQueryNode, 
+            Query query = MainHelper.makeQuery(pathQuery, bagMap, pathToQueryNode,
                 servletContext, null, false,
                 (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
                 (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
@@ -558,8 +558,8 @@ public class AjaxServices
     }
 
     /**
-     * Saves information, that some element was toggled - displayed or hidden. 
-     * 
+     * Saves information, that some element was toggled - displayed or hidden.
+     *
      * @param elementId element id
      * @param opened new aspect state
      */
@@ -567,7 +567,7 @@ public class AjaxServices
         HttpSession session = WebContextFactory.get().getSession();
         GuiObject guiObject = (GuiObject) session.getAttribute(Constants.GUI_OBJECT);
         if (guiObject == null) {
-            guiObject = new GuiObject();        	
+            guiObject = new GuiObject();
             session.setAttribute(Constants.GUI_OBJECT, guiObject);
         }
         guiObject.getToggledElements().put(elementId, opened);

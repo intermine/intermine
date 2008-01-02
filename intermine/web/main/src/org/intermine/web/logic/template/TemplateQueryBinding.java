@@ -63,7 +63,7 @@ public class TemplateQueryBinding
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Convert a TemplateQuery to XML
      *
@@ -80,7 +80,7 @@ public class TemplateQueryBinding
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-        
+
         return sw.toString();
     }
 
@@ -94,7 +94,7 @@ public class TemplateQueryBinding
     public Map unmarshal(Reader reader, Map savedBags, ServletContext servletContext) {
         Map templates = new LinkedHashMap();
         try {
-            SAXParser.parse(new InputSource(reader), 
+            SAXParser.parse(new InputSource(reader),
                             new TemplateQueryHandler(templates, savedBags, servletContext));
         } catch (Exception e) {
             e.printStackTrace();

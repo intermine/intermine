@@ -1,6 +1,6 @@
 package org.intermine.web.logic.query;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -18,12 +18,12 @@ import org.intermine.path.Path;
  */
 public class OrderBy
 {
-    
+
     Path field;
     String direction;
-    
+
     /**
-     * Construct a new instance 
+     * Construct a new instance
      * @param field A field in the query
      * @param direction Either ascending or descending
      */
@@ -47,7 +47,7 @@ public class OrderBy
     public void setDirection(String direction) {
         this.direction = direction;
     }
-   
+
     /**
      * Returns which field will be sorted
      * @return which field will be sorted
@@ -55,20 +55,20 @@ public class OrderBy
     public Path getField() {
         return field;
     }
-    
+
     /**
      * @param field Field to be sorted
      */
     public void setSortField(Path field) {
         this.field = field;
     }
-    
+
     /**
-     * Returns a representation of the Path and direction as a String 
+     * Returns a representation of the Path and direction as a String
      * @return a String version of the order by
      */
     public String toString() {
         return field + " " + direction;
     }
-    
+
 }

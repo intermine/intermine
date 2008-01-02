@@ -101,7 +101,7 @@ public class Profile
     public boolean isLoggedIn() {
         return getUsername() != null;
     }
-    
+
     /**
      * Get the value of userId
      * @return an Integer
@@ -179,7 +179,7 @@ public class Profile
     public TemplateQuery getTemplate(String name) {
         return savedTemplates.get(name);
     }
-    
+
     /**
      * Delete a template
      * @param name the template name

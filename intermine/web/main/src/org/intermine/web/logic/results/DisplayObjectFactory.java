@@ -34,7 +34,7 @@ public class DisplayObjectFactory extends CacheMap
     public DisplayObjectFactory(HttpSession session) {
         this.session = session;
     }
-    
+
     /**
      * Always returns true because get always returns an Object.
      * {@inheritDoc}
@@ -56,7 +56,7 @@ public class DisplayObjectFactory extends CacheMap
         if (displayObject == null) {
             InterMineObject interMineObject = (InterMineObject) object;
             DisplayObject newObject;
-            
+
             try {
                 newObject = ObjectDetailsController.makeDisplayObject(session, interMineObject);
             } catch (Exception e) {

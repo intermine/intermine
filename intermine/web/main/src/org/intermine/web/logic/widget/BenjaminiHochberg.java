@@ -1,6 +1,6 @@
 package org.intermine.web.logic.widget;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -19,18 +19,18 @@ import java.math.BigDecimal;
  * @author Julie Sullivan
  */
 public class BenjaminiHochberg implements ErrorCorrection
-{    
+{
     private HashMap originalMap = new HashMap();
     private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
     private double numberOfTests;
     private static final int RESULT_SCALE = 100;
-    
+
     /**
      * Constructor.
      *
      * @param originalMap Hashmap of go terms and their pvalue
      */
-    public BenjaminiHochberg(HashMap originalMap) {     
+    public BenjaminiHochberg(HashMap originalMap) {
         this.numberOfTests = originalMap.size();
         this.originalMap = originalMap;
     }
@@ -52,12 +52,12 @@ public class BenjaminiHochberg implements ErrorCorrection
         adjustedMap = new HashMap<String, BigDecimal>();
         BigDecimal adjustedP;
         int i = 0;
-        
+
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
-            
-            String label = (String) iter.next();  
+
+            String label = (String) iter.next();
             BigDecimal index = new BigDecimal("" + i + 1); // don't divide by zero
-            
+
             BigDecimal p = new BigDecimal("" + originalMap.get(label));
             adjustedP = p.multiply(new BigDecimal("" + numberOfTests));
             adjustedP = adjustedP.divide(index, RESULT_SCALE, BigDecimal.ROUND_HALF_UP);

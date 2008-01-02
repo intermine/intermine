@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  * the next Map activity.
  * <p>
  * The entrySet() and values() methods of this class do not work.
- * 
+ *
  * @see java.lang.ref.WeakReference
  * @author Matthew Wakeling
  */
@@ -78,7 +78,7 @@ public class WeakReferenceHashMap extends WeakReferenceMap
 
     /**
      * Constructs a new <tt>WeakReferenceHashMap</tt> with the same mappings as the
-     * specified <tt>Map</tt>.  The <tt>WeakReferenceHashMap</tt> is created with 
+     * specified <tt>Map</tt>.  The <tt>WeakReferenceHashMap</tt> is created with
      * default load factor, which is <tt>0.75</tt> and an initial capacity
      * sufficient to hold the mappings in the specified <tt>Map</tt>.
      *

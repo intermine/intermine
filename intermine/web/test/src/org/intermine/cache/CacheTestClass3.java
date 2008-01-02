@@ -32,14 +32,14 @@ public class CacheTestClass3 implements Serializable
 
     public boolean equals(Object other) {
         if (other instanceof CacheTestClass3) {
-            return intArg.equals(((CacheTestClass3) other).intArg) 
+            return intArg.equals(((CacheTestClass3) other).intArg)
                 && stringArg.equals(((CacheTestClass3) other).stringArg)
                 && floatArg.equals(((CacheTestClass3) other).floatArg);
         } else {
             return false;
         }
     }
-    
+
     public int hashCode() {
         return stringArg.hashCode() ^ intArg.intValue();
     }

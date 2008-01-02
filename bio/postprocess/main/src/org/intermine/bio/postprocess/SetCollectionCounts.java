@@ -37,7 +37,7 @@ public class SetCollectionCounts
     private ObjectStoreWriter osw;
 
     private ObjectStore os;
-    
+
     /**
      * Construct with an ObjectStoreWriter, read and write from same ObjectStore
      * @param osw an ObjectStore to write to
@@ -48,8 +48,8 @@ public class SetCollectionCounts
     }
 
     /**
-     * Set the count fields by looking at collection sizes (eg. set exonCount by getting 
-     * exons.size()) 
+     * Set the count fields by looking at collection sizes (eg. set exonCount by getting
+     * exons.size())
      * @throws Exception if an error occurs
      */
     public void setCollectionCount() throws Exception {
@@ -67,31 +67,31 @@ public class SetCollectionCounts
     void setCollectionCountField(Class c, String collectionName, String countFieldName)
         throws ObjectStoreException, IllegalAccessException {
         Query q = new Query();
-        
+
         QueryClass qc = new QueryClass(c);
         q.addFrom(qc);
         q.addToSelect(qc);
-        
+
         Results results = os.execute(q);
-        
+
         osw.beginTransaction();
-        
+
         Iterator resultsIter = results.iterator();
-        
+
         // TODO XXX FIXME - this is very ineffecient, we should get all the collection size in one
         // query
         while (resultsIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resultsIter.next();
-            
+
             InterMineObject o = (InterMineObject) rr.get(0);
-            
+
             Collection collection = (Collection) TypeUtil.getFieldValue(o, collectionName);
-            
+
             TypeUtil.setFieldValue(o, countFieldName, new Integer(collection.size()));
-            
+
             osw.store(o);
         }
-        
+
         osw.commitTransaction();
     }
 }

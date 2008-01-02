@@ -50,7 +50,7 @@ public class CombinedIteratorTest extends TestCase
             fail("Expected: NoSuchElementException");
         } catch (NoSuchElementException e) {
         }
-        
+
         a.add("a2");
         i = new CombinedIterator(Arrays.asList(new Iterator[] {a.iterator(), b.iterator(),
             c.iterator()}));

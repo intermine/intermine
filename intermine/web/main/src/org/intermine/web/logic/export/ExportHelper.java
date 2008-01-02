@@ -25,18 +25,18 @@ public class ExportHelper
     /**
      * Return true if the specified class or a subclass is found in a column of the
      * paged table (or is the parent class of a field displayed in the table).
-     * @param pt a table to export from 
+     * @param pt a table to export from
      * @param cls a class to look for in the results
      * @return true if the class is found
      */
     public static boolean canExport(PagedTable pt, Class cls) {
         return  (getFirstColumnForClass(pt, cls) >= 0);
     }
-    
+
     /**
      * Find the first column index for the specified class or a subclass in the
      * page table (may be a parent class of a field being displayed).
-     * @param pt a table to export from 
+     * @param pt a table to export from
      * @param cls a class to look for in the results
      * @return the first column index for the class
      */

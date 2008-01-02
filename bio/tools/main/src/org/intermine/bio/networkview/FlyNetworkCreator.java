@@ -28,7 +28,7 @@ import org.intermine.bio.networkview.network.FlyNode;
 public class FlyNetworkCreator
 {
     private static final Logger LOG = Logger.getLogger(FlyNetworkCreator.class);
-    
+
     /**
      * Creates a flymine network from a given Collection of ProteinInteractions
      * @param proteinInteractions Collection of ProteinInteractionS
@@ -38,22 +38,22 @@ public class FlyNetworkCreator
         FlyNetwork fn = new FlyNetwork();
 
         for (ProteinInteraction pIon : proteinInteractions) {
-            
+
             // TODO: do we want to use the short name? is it unique? -> label or attribute
             // !?there are more than one ProteinInteraction objects for one real interaction!?
             //String name = pIon.getShortName();
 
             if (pIon != null) {
-                
+
                 Set<Protein> interacting = (Set<Protein>) pIon.getInteractingProteins();
                 if (interacting != null && !interacting.isEmpty()) {
                     // set whether this is a binary interaction or a complex
                     String type = (interacting.size() > 1) ? FlyNetwork.COMPLEX_INTERACTION_TYPE
                                                            : FlyNetwork.DEFAULT_INTERACTION_TYPE;
-                    
+
                     FlyNode fnProtein = new FlyNode(pIon.getProtein().getPrimaryAccession());
                     fn.addNode(fnProtein);
-                
+
                     // TODO if we want to add multiple edges if an interaction is observed
                     // in more than one experiment then we should add the experiment name
                     // or pubmed id as a label.  Otherwise only one edge will be created
@@ -63,7 +63,7 @@ public class FlyNetworkCreator
                     for (Protein interact : interacting) {
                         FlyNode fnInteract = new FlyNode(interact.getPrimaryAccession());
                         fn.addNode(fnInteract);
-                        
+
                         fn.addEdge(fnProtein, fnInteract, type);
                     }
                 }

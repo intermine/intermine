@@ -64,31 +64,31 @@ public class HtmlHeadController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map displayObjects = SessionMethods.getDisplayObjects(session);
-        
+
         String pageName = (String) context.getAttribute("pageName");
         String bagName = (String) context.getAttribute("bagName");
         String objectId = (String) context.getAttribute("objectId");
-        String name = (String) context.getAttribute("name");        
+        String name = (String) context.getAttribute("name");
         String htmlPageTitle = (String) context.getAttribute("pageNameTitle");
         String scope = (String) context.getAttribute("scope");
-        
+
         /* aspect */
         if (name != null && pageName.equals("aspect")) {
-            
+
             htmlPageTitle = htmlPageTitle + ":  " + name;
 
         /* bag */
         } else if (pageName.equals("bagDetails")) {
-        
+
             if (bagName != null && !bagName.equals("")) {
                 htmlPageTitle = htmlPageTitle + ":  " + bagName;
             } else {
                 htmlPageTitle = htmlPageTitle + ":  " + name;
             }
-        
+
         /* template */
         } else if (pageName.equals("template")) {
-        
+
             String templateTitle = "";
             String username = "";
             if (scope != null && scope.equals("user")) {
@@ -104,10 +104,10 @@ public class HtmlHeadController extends TilesAction
             }
 
             htmlPageTitle = htmlPageTitle + templateTitle;
-            
+
         /* object */
         } else if (pageName.equals("objectDetails") && objectId != null) {
-        
+
             Integer id = new Integer(Integer.parseInt(objectId));
             InterMineObject object = os.getObjectById(id);
             if (object == null) {
@@ -117,7 +117,7 @@ public class HtmlHeadController extends TilesAction
             if (dobj == null) {
                 dobj = ObjectDetailsController.makeDisplayObject(session, object);
             }
-            
+
             // TODO use the class keys instead
             String idForPageTitle = "";
             if (dobj.getAttributes().get("organismDbId") != null) {
@@ -129,7 +129,7 @@ public class HtmlHeadController extends TilesAction
             if (idForPageTitle != null) {
                 htmlPageTitle = htmlPageTitle + ":  " + idForPageTitle;
             }
-            
+
         }
         request.setAttribute("htmlPageTitle", htmlPageTitle);
         return null;

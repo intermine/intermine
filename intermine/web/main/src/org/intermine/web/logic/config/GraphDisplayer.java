@@ -1,6 +1,6 @@
 package org.intermine.web.logic.config;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -50,8 +50,8 @@ public class GraphDisplayer
     public String getDataSetLoader() {
         return dataSetLoader;
     }
-    
-    
+
+
     /**
      * Set the value of dataSetLoader
      * @param dataSetLoader a String
@@ -59,8 +59,8 @@ public class GraphDisplayer
     public void setDataSetLoader(String dataSetLoader) {
         this.dataSetLoader = dataSetLoader;
     }
-    
-    
+
+
     /**
      * Get the domainLabel
      * @return the domainLabel
@@ -68,8 +68,8 @@ public class GraphDisplayer
     public String getDomainLabel() {
         return domainLabel;
     }
-    
-    
+
+
     /**
      * Set the value of domainLabel
      * @param domainLabel a String
@@ -77,8 +77,8 @@ public class GraphDisplayer
     public void setDomainLabel(String domainLabel) {
         this.domainLabel = domainLabel;
     }
-    
-    
+
+
     /**
      * Get the value of rangeLabel
      * @return the rangeLabel
@@ -86,8 +86,8 @@ public class GraphDisplayer
     public String getRangeLabel() {
         return rangeLabel;
     }
-    
-    
+
+
     /**
      * Set the value of rangeLabel
      * @param rangeLabel a String
@@ -95,8 +95,8 @@ public class GraphDisplayer
     public void setRangeLabel(String rangeLabel) {
         this.rangeLabel = rangeLabel;
     }
-    
-    
+
+
     /**
      * get the title
      * @return the title
@@ -104,8 +104,8 @@ public class GraphDisplayer
     public String getTitle() {
         return title;
     }
-    
-    
+
+
     /**
      * Set the value of title
      * @param title a String
@@ -113,8 +113,8 @@ public class GraphDisplayer
     public void setTitle(String title) {
         this.title = title;
     }
-    
-    
+
+
     /**
      * Get the value of toolTipGen
      * @return the toolTipGen
@@ -122,8 +122,8 @@ public class GraphDisplayer
     public String getToolTipGen() {
         return toolTipGen;
     }
-    
-    
+
+
     /**
      * Set the value of toolTipGen
      * @param toolTipGen a String
@@ -131,8 +131,8 @@ public class GraphDisplayer
     public void setToolTipGen(String toolTipGen) {
         this.toolTipGen = toolTipGen;
     }
-    
-    
+
+
     /**
      * Get the value of urlGen
      * @return the value of urlGen
@@ -140,8 +140,8 @@ public class GraphDisplayer
     public String getUrlGen() {
         return urlGen;
     }
-    
-    
+
+
     /**
      * Set the value of urlGen
      * @param urlGen a String
@@ -150,7 +150,7 @@ public class GraphDisplayer
         this.urlGen = urlGen;
     }
 
-    
+
     /**
      * @param graphType type of graph, e.g. BarChart, StackedBarChart
      */
@@ -158,7 +158,7 @@ public class GraphDisplayer
         this.graphType = graphType;
     }
 
-    
+
     /**
      * Get the type of this graph, e.g. BarChart, StackedBarChart
      * @return the type of this graph
@@ -166,7 +166,7 @@ public class GraphDisplayer
     public String getGraphType() {
         return graphType;
     }
-    
+
     /**
      * Return an XML String of this Type object
      * @return a String version of this WebConfig object

@@ -49,7 +49,7 @@ public class TemplateHelperTest extends MockStrutsTestCase
         Reader reader = new InputStreamReader(TemplateHelper.class.getClassLoader().getResourceAsStream("WEB-INF/classes/default-template-queries.xml"));
         templates = binding.unmarshal(reader, new HashMap(), getActionServlet().getServletContext());
     }
-    
+
     public void testPrecomputeQuery() throws Exception {
         Iterator i = templates.keySet().iterator();
         TemplateQuery t = (TemplateQuery) templates.get("employeeByName");
@@ -67,7 +67,7 @@ public class TemplateHelperTest extends MockStrutsTestCase
         List expIndexes = Arrays.asList(new Object[] {pathToQueryNode.get("Employee"), pathToQueryNode.get("Employee.name")});
         assertEquals(expIndexes.toString(), indexes.toString());
     }
-    
+
     public void testTemplateFormToTemplateQuerySimple() throws Exception {
         // Set EmployeeName != "EmployeeA1"
         TemplateQuery template = (TemplateQuery) templates.get("employeeByName");
@@ -84,11 +84,11 @@ public class TemplateHelperTest extends MockStrutsTestCase
         node.getConstraints().set(0, new Constraint(ConstraintOp.NOT_EQUALS,
                 "EmployeeA1", true, c.getDescription(), c.getCode(), c.getIdentifier(), null));
         expected.setEdited(true);
-        
+
         TemplateQuery actual = TemplateHelper.templateFormToTemplateQuery(tf, template, new HashMap());
         assertEquals(expected.toXml(), actual.toXml());
     }
-    
+
 /*    public void testTemplateFormToTemplateQueryIdBag() throws Exception {
         TemplateQuery template = (TemplateQuery) templates.get("employeeByName");
 
@@ -100,7 +100,7 @@ public class TemplateHelperTest extends MockStrutsTestCase
         InterMineBag bag1 = new InterMineBag("bag1", "Employee", "Description", os, new Integer(101), uosw);
         Map savedBags = new HashMap();
         savedBags.put("bag1", bag1);
-        
+
         TemplateQuery expected = (TemplateQuery) template.clone();
         PathNode tmpNode = (PathNode) expected.getEditableNodes().get(0);
         PathNode node = (PathNode) expected.getNodes().get(tmpNode.getPathString());
@@ -150,25 +150,25 @@ public class TemplateHelperTest extends MockStrutsTestCase
                 + "    <constraint op=\"!=\" value=\"30\" description=\"c\" identifier=\"\" code=\"C\"></constraint>"
                 + "    <constraint op=\"!=\" value=\"40\" description=\"d\" identifier=\"\" code=\"D\" editable=\"true\"></constraint>"
                 + "</node></query></template>");
-        TemplateQuery t = 
+        TemplateQuery t =
             (TemplateQuery) binding.unmarshal(reader, new HashMap(), getActionServlet().getServletContext()).values().iterator().next();
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
         System.out.println(t.getConstraintLogic() + " -> " + tc.getConstraintLogic());
         assertEquals("SELECT DISTINCT a1_, a1_.age AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age != 10 AND a1_.age != 30) ORDER BY a1_.name, a1_.age", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
     }
-    
+
     public void testGetPrecomputeLookup() throws Exception {
         TemplateQueryBinding binding = new TemplateQueryBinding();
-        Reader reader = new StringReader("<template name=\"ManagerLookup\" title=\"Search for Managers\" longDescription=\"Use a LOOKUP constraint to search for Managers.\" comment=\"\">\n" + 
-        "  <query name=\"ManagerLookup\" model=\"testmodel\" view=\"Manager.name Manager.title\">\n" + 
-        "    <node path=\"Manager\" type=\"Manager\">\n" + 
-        "      <constraint op=\"LOOKUP\" value=\"Mr.\" description=\"\" identifier=\"\" editable=\"true\" code=\"A\">\n" + 
-        "      </constraint>\n" + 
-        "    </node>\n" + 
-        "  </query>\n" + 
+        Reader reader = new StringReader("<template name=\"ManagerLookup\" title=\"Search for Managers\" longDescription=\"Use a LOOKUP constraint to search for Managers.\" comment=\"\">\n" +
+        "  <query name=\"ManagerLookup\" model=\"testmodel\" view=\"Manager.name Manager.title\">\n" +
+        "    <node path=\"Manager\" type=\"Manager\">\n" +
+        "      <constraint op=\"LOOKUP\" value=\"Mr.\" description=\"\" identifier=\"\" editable=\"true\" code=\"A\">\n" +
+        "      </constraint>\n" +
+        "    </node>\n" +
+        "  </query>\n" +
         "</template>");
         List indexes = new ArrayList();
-        TemplateQuery t = 
+        TemplateQuery t =
             (TemplateQuery) binding.unmarshal(reader, new HashMap(), getActionServlet().getServletContext()).values().iterator().next();
         Query precomputeQuery = TemplateHelper.getPrecomputeQuery(t, new ArrayList());
         assertEquals("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Manager AS a1_ ORDER BY a1_.name, a1_.title",

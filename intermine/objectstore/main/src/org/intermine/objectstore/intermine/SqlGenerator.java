@@ -2265,7 +2265,7 @@ public class SqlGenerator
             //if (where.startsWith("(") && where.endsWith(")")) {
             //    where = where.substring(1, where.length() - 1);
             //}
-            
+
             return (where.length() == 0 ? "" : " WHERE " + where);
         }
 

@@ -15,7 +15,7 @@ import java.util.Date;
 
 /**
  * Container for a saved query.
- * 
+ *
  * @author Thomas Riley
  */
 public class SavedQuery
@@ -23,7 +23,7 @@ public class SavedQuery
     private String name;
     private Date dateCreated;
     private PathQuery query;
-    
+
     /**
      * Construct a new instance of SavedQuery.
      * @param queryName the name of the saved query
@@ -60,7 +60,7 @@ public class SavedQuery
     public PathQuery getPathQuery() {
         return query;
     }
-    
+
     /**
      * Test receiver for equality with passed object.
      * {@inheritDoc}
@@ -82,6 +82,6 @@ public class SavedQuery
     public int hashCode() {
         return (name.hashCode() + 3 * dateCreated.hashCode() + 5 * query.hashCode());
     }
-    
-    
+
+
 }

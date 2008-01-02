@@ -266,8 +266,8 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                     // Whether to throw an exception here or just log a message is a business
                     // decision.  We have an object with no usable primary keys so it can't be
                     // integrated with anything (although we have defined that the class should
-                    // be integrated.  For the moment just log an error.                    
-                    LOG.warn("No valid primary key found for object: " + obj);  
+                    // be integrated.  For the moment just log an error.
+                    LOG.warn("No valid primary key found for object: " + obj);
                     //throw new IllegalArgumentException("No valid primary key found for object: "
                     //        + obj);
                 }
@@ -425,7 +425,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                 }
             }
         }
- 
+
         query.setConstraint(cs);
         returnSet.add(query);
     }

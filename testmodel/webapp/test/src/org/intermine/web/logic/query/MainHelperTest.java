@@ -51,7 +51,7 @@ import servletunit.struts.MockStrutsTestCase;
 
 public class MainHelperTest extends MockStrutsTestCase {
     private Map classKeys;
-    
+
     public MainHelperTest(String arg) {
         super(arg);
     }
@@ -263,7 +263,7 @@ public class MainHelperTest extends MockStrutsTestCase {
         q.addFrom(qc2);
         QueryField qf1 = new QueryField(qc2, "name");
         QueryExpression qFunc = new QueryExpression(QueryExpression.LOWER, (QueryField) qf1);
-        SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.MATCHES, 
+        SimpleConstraint sc1 = new SimpleConstraint(qFunc, ConstraintOp.MATCHES,
                                                     new QueryValue("departmenta%"));
         QueryObjectReference qor1 = new QueryObjectReference(qc1, "department");
         ContainsConstraint cc1 = new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qc2);
@@ -320,7 +320,7 @@ public class MainHelperTest extends MockStrutsTestCase {
 
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(), 
+        return PathQueryBinding.unmarshal(new InputStreamReader(is), new HashMap(),
                                           getActionServlet().getServletContext());
     }
     public void test1() throws Exception {
@@ -337,7 +337,7 @@ public class MainHelperTest extends MockStrutsTestCase {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\" constraintLogic=\"A and B\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.fullTime\" type=\"boolean\"><constraint op=\"=\" value=\"true\" description=\"\" identifier=\"\" code=\"B\"></constraint></node></query>",
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 AND a1_.fullTime = true) ORDER BY a1_");
     }
-    
+
     public void test4() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\" constraintLogic=\"A or B\"><node path=\"Employee\" type=\"Employee\"></node><node path=\"Employee.age\" type=\"int\"><constraint op=\"&gt;=\" value=\"10\" description=\"\" identifier=\"\" code=\"A\"></constraint></node><node path=\"Employee.fullTime\" type=\"boolean\"><constraint op=\"=\" value=\"true\" description=\"\" identifier=\"\" code=\"B\"></constraint></node></query>",
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age >= 10 OR a1_.fullTime = true) ORDER BY a1_");

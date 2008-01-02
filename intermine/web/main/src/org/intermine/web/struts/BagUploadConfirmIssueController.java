@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -56,21 +56,21 @@ public class BagUploadConfirmIssueController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         Map issuesMap = (Map) context.getAttribute("issueMap");
-        
+
         // Make a Map from identifier to a List of rows for display.  Each row will contain
         // information about one object.  The row List will contain (first) the class name, then
         // a ResultElement object for each field to display.
 
         Map orderedIssuesMap = new LinkedHashMap(issuesMap);
-        
+
         // a map from identifiers to indexes into objectList (and hence into the InlineResultsTable)
         Map identifierResultElementMap = new LinkedHashMap();
-        
+
         // a map from identifier to initial type (for converted identifiers)
         Map initialTypeMap = new HashMap();
-        
+
         List objectList = new ArrayList();
-        
+
         int objectListIndex = 0;
         Iterator identifierIter = orderedIssuesMap.keySet().iterator();
         while (identifierIter.hasNext()) {
@@ -90,7 +90,7 @@ public class BagUploadConfirmIssueController extends TilesAction
                 } else {
                     objectList.add(obj);
                 }
-                List objectListForIdentifierList = 
+                List objectListForIdentifierList =
                     (List) identifierResultElementMap.get(identifier);
                 objectListForIdentifierList.add(new Integer(objectListIndex));
                 objectListIndex++;

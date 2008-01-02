@@ -42,7 +42,7 @@ public class Displayer
     public String getAspects() {
         return this.aspects;
     }
-    
+
     /**
      * Set the aspects of this displayer
      *
@@ -51,7 +51,7 @@ public class Displayer
     public void setAspects(String aspect) {
         this.aspects = aspect;
     }
-    
+
     /**
      * Get the source of this displayer
      *

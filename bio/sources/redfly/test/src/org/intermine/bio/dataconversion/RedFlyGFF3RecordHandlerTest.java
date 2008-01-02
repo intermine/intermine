@@ -67,7 +67,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
     public void tearDown() throws Exception {
         converter.close();
     }
-    
+
     public void testFlyRegHandler() throws Exception {
         String gff =
             "2L\tREDfly\tregulatory_region\t12092691\t12095792\t.\t.\t.\tID=\"prd_A8_repressor\"; Dbxref=\"Flybase:FBgn0003145\", \"PMID:7873402\", \"REDfly:391\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00005304\",\"FBbt:00005427\",\"FBbt:00005414\"" + ENDL
@@ -99,8 +99,8 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
 
         // uncomment to write a new tgt items file
         //writeItemsFile(allItems, "redfly-tgt-items.xml");
-        
-        
+
+
         Set expected = readItemSet("RedFlyGFF3RecordHandlerTest.xml");
         System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
         assertEquals(expected, allItems);

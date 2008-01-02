@@ -90,7 +90,7 @@ public class ProfileManager
      * @param userProfileOS the object store that hold user profile information
      * @param servletContext global ServletContext object
      */
-    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS, 
+    public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS,
                           ServletContext servletContext) {
         this.os = os;
         this.servletContext = servletContext;
@@ -224,17 +224,17 @@ public class ProfileManager
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-        Map<String, org.intermine.web.logic.query.SavedQuery> savedQueries = 
+        Map<String, org.intermine.web.logic.query.SavedQuery> savedQueries =
             new HashMap<String, org.intermine.web.logic.query.SavedQuery>();
         for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
             SavedQuery query = (SavedQuery) i.next();
             try {
-                Map queries = 
-                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags, 
+                Map queries =
+                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
                                                 servletContext);
                 if (queries.size() == 0) {
-                    queries = 
-                        PathQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags, 
+                    queries =
+                        PathQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
                                                    servletContext);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
@@ -288,7 +288,7 @@ public class ProfileManager
      * @param savedTemplates Map from template name to TemplateQuery
      * @param username username under which to store tags
      */
-    public void convertTemplateKeywordsToTags(Map<String, TemplateQuery> savedTemplates, 
+    public void convertTemplateKeywordsToTags(Map<String, TemplateQuery> savedTemplates,
                                               String username) {
         for (Iterator<TemplateQuery> iter = savedTemplates.values().iterator(); iter.hasNext(); ) {
             TemplateQuery tq = iter.next();
@@ -561,12 +561,13 @@ public class ProfileManager
      * @param tagNames the tag names to use for filtering
      * @param tagType the tag type (from TagTypes)
      * @param userName the user name to pass to getTags()
+     * @param W the type of WebSearchable
      * @return the filtered Map
      */
     public <W extends WebSearchable> Map<String, W>
-        filterByTags(Map<String, W> webSearchables, 
+        filterByTags(Map<String, W> webSearchables,
                      List<String> tagNames, String tagType, String userName) {
-        Map<String, W> returnMap = 
+        Map<String, W> returnMap =
             new LinkedHashMap<String, W>(webSearchables);
 
         // prime the cache
@@ -588,14 +589,14 @@ public class ProfileManager
 
         return returnMap;
     }
-    
+
     private MultiKey makeKey(String tagName, String objectIdentifier, String type,
                              String userName) {
         return new MultiKey(tagName, objectIdentifier, type, userName);
     }
 
     private void addToCache(Map<MultiKey, List<Tag>> cache, MultiKey key, List<Tag> results) {
-        
+
         cache.put(key, new ArrayList<Tag>(results));
 
         int keyNullPartCount = 0;
@@ -655,12 +656,12 @@ public class ProfileManager
         }
         return tagCache;
     }
-    
+
     /**
      * Add a new tag.  The format of objectIdentifier depends on the tag type.
      * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
      * "ClassName.fieldName".
-     * Throw an exception if there are any problems. 
+     * Throw an exception if there are any problems.
      * @param tagName the tag name - any String
      * @param objectIdentifier an object identifier that is appropriate for the given tag type
      * (eg. "Department.name" for the "collection" type)
@@ -743,7 +744,7 @@ public class ProfileManager
     protected Map<String, TagChecker> makeTagCheckers(final Model model) {
         Map<String, TagChecker> newTagCheckers = new HashMap<String, TagChecker>();
         TagChecker fieldChecker = new TagChecker() {
-            public void isValid(@SuppressWarnings("unused") String tagName, 
+            public void isValid(@SuppressWarnings("unused") String tagName,
                                 String objectIdentifier, String type,
                                 @SuppressWarnings("unused") UserProfile userProfile) {
                 int dotIndex = objectIdentifier.indexOf('.');
@@ -784,9 +785,9 @@ public class ProfileManager
         newTagCheckers.put("attribute", fieldChecker);
 
         TagChecker templateChecker = new TagChecker() {
-            public void isValid(@SuppressWarnings("unused") String tagName, 
-                                @SuppressWarnings("unused") String objectIdentifier, 
-                                @SuppressWarnings("unused") String type,          
+            public void isValid(@SuppressWarnings("unused") String tagName,
+                                @SuppressWarnings("unused") String objectIdentifier,
+                                @SuppressWarnings("unused") String type,
                                 @SuppressWarnings("unused") UserProfile userProfile) {
                 // OK
             }
@@ -802,8 +803,8 @@ public class ProfileManager
         newTagCheckers.put("bag", bagChecker);
 
         TagChecker classChecker = new TagChecker() {
-            public void isValid(@SuppressWarnings("unused") String tagName, 
-                                String objectIdentifier, 
+            public void isValid(@SuppressWarnings("unused") String tagName,
+                                String objectIdentifier,
                                 @SuppressWarnings("unused") String type,
                                 @SuppressWarnings("unused") UserProfile userProfile) {
                 String className = objectIdentifier;

@@ -183,7 +183,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
 
         return (List<InterMineObject>) results;
     }
-    
+
     /**
      * Read the Model from the classpath.
      * @param osAlias the alias of the ObjectStore properties to get the model name from.

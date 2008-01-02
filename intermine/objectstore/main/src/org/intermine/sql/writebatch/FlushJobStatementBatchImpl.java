@@ -30,7 +30,7 @@ public class FlushJobStatementBatchImpl implements FlushJob
     public FlushJobStatementBatchImpl(Statement batch) {
         this.batch = batch;
     }
-    
+
     /**
      * {@inheritDoc}
      */

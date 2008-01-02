@@ -68,7 +68,7 @@ public class BuildBagForm extends ActionForm
      * @param formFile the FormFile
      */
     public void setFormFile(FormFile formFile) {
-        this.formFile = formFile;   
+        this.formFile = formFile;
     }
 
     /**
@@ -96,9 +96,9 @@ public class BuildBagForm extends ActionForm
     public void setExtraFieldValue(String extraFieldValue) {
         this.extraFieldValue = extraFieldValue;
     }
-    
+
     /**
-     * Set the method the user used to upload her bag.  
+     * Set the method the user used to upload her bag.
      * @param whichInput Which method the user used: paste or file
      */
     public void setWhichInput(String whichInput) {
@@ -120,16 +120,16 @@ public class BuildBagForm extends ActionForm
 //    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
 //        HttpSession session = request.getSession();
 //        ServletContext servletContext = session.getServletContext();
-//        ProfileManager pm = (ProfileManager) 
+//        ProfileManager pm = (ProfileManager)
 //   servletContext.getAttribute(Constants.PROFILE_MANAGER);
 //        ActionErrors errors = new ActionErrors();
 //        if (StringUtils.isEmpty(type)) {
-//            errors.add(ActionMessages.GLOBAL_MESSAGE, 
-//                       new ActionMessage("bagBuild.typeNotSet", request)); 
+//            errors.add(ActionMessages.GLOBAL_MESSAGE,
+//                       new ActionMessage("bagBuild.typeNotSet", request));
 //        }
 //        return errors;
 //    }
-    
+
     @Override
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);

@@ -31,7 +31,7 @@ public class PsiConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-     
+
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                                             .getResourceAsStream("PsiConverterTest_src.xml"));
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
@@ -45,7 +45,7 @@ public class PsiConverterTest extends ItemsTestCase
         //writeItemsFile(itemWriter.getItems(), "psi-tgt-items.xml");
 
         Set expected = readItemSet("PsiConverterTest_tgt.xml");
-        
+
         assertEquals(expected, itemWriter.getItems());
     }
 }

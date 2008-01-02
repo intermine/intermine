@@ -21,7 +21,7 @@ import junit.framework.AssertionFailedError;
 public class SummaryAssertionFailedError extends AssertionFailedError
 {
     private String summary = "";
-    
+
     public SummaryAssertionFailedError() {
         super();
     }
@@ -29,7 +29,7 @@ public class SummaryAssertionFailedError extends AssertionFailedError
     public SummaryAssertionFailedError(String msg) {
         super(msg);
     }
-    
+
     public SummaryAssertionFailedError(String msg, String summary) {
         super(msg);
         this.summary = summary;

@@ -29,13 +29,13 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         super.setUp();
         strictTestQueries = false;
     }
-    
+
     public static void oneTimeSetUp() throws Exception {
         StoreDataTestCase.oneTimeSetUp();
     }
 
     public void executeTest(String type) {
-        
+
     }
 
     public static Test suite() {
@@ -46,7 +46,7 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, new Properties());
         assertEquals(2, oss.getClassCount("org.intermine.model.testmodel.Company"));
-        
+
         System.out.println("" + oss.toProperties());
     }
 
@@ -70,38 +70,38 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         assertNull(oss.getFieldValues("org.intermine.model.testmodel.Thing", "id"));
         assertNull(oss.getFieldValues("org.intermine.model.InterMineObject", "id"));
     }
-    
+
     public void testLookForEmptyThings() throws Exception {
         Properties config = new Properties();
         config.put("max.field.value", "10");
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
         ClassDescriptor cld = os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.CEO");
-        
+
         oss.lookForEmptyThings(cld, os);
-        
+
         HashSet expected = new HashSet();
         expected.add("secretarys");
         expected.add("address");
         expected.add("departmentThatRejectedMe");
         expected.add("simpleObjects");
-        
+
         assertEquals(expected, (Set) oss.emptyFieldsMap.get(cld.getName()));
-        
+
         cld = os.getModel().getClassDescriptorByName("org.intermine.model.testmodel.Company");
         oss.lookForEmptyThings(cld, os);
         assertEquals(new HashSet(), (Set) oss.emptyFieldsMap.get(cld.getName()));
     }
-    
+
     public void testToProperties() throws Exception {
         Properties config = new Properties();
         config.put("max.field.value", "10");
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
-        
+
         Properties out = oss.toProperties();
         oss = new ObjectStoreSummary(out);
-        
+
         assertEquals(out, oss.toProperties());
     }
 }

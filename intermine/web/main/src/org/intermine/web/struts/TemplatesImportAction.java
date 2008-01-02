@@ -77,7 +77,7 @@ public class TemplatesImportAction extends InterMineAction
                 TemplateQuery template = (TemplateQuery) iter.next();
 
                 String templateName = template.getName();
-                if (!WebUtil.isValidName(templateName)) {  
+                if (!WebUtil.isValidName(templateName)) {
                     templateName = WebUtil.replaceSpecialChars(templateName);
                     renamed++;
                 }
@@ -94,34 +94,34 @@ public class TemplatesImportAction extends InterMineAction
             }
 
             recordMessage(new ActionMessage("importTemplates.done",
-                                            new Integer(deleted), 
-                                            new Integer(imported), 
-                                            new Integer(renamed)), 
+                                            new Integer(deleted),
+                                            new Integer(imported),
+                                            new Integer(renamed)),
                                             request);
 
             return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "templates").forward();
-            
+
         } finally {
             profile.enableSaving();
         }
     }
-    
+
     // rebuild the template, but with the new special-character-free name
     private TemplateQuery renameTemplate(String newName, TemplateQuery template) {
-     
-        TemplateQuery newTemplate = new TemplateQuery(newName, template.getTitle(), 
-                                                      template.getDescription(), 
-                                                      template.getComment(), 
+
+        TemplateQuery newTemplate = new TemplateQuery(newName, template.getTitle(),
+                                                      template.getDescription(),
+                                                      template.getComment(),
                                                       template.getPathQuery(),
                                                       template.getKeywords());
-        
+
         return newTemplate;
     }
-    
+
     /**
      * Checks that the query name doesn't already exist and returns a numbered
-     * name if it does.  
+     * name if it does.
      * @param queryName the query name
      * @param profile the user profile
      * @return a validated name for the query
@@ -129,10 +129,10 @@ public class TemplatesImportAction extends InterMineAction
     private String validateQueryName(String queryName, Profile profile) {
         String newQueryName = queryName;
 
-        if (!WebUtil.isValidName(queryName)) {   
+        if (!WebUtil.isValidName(queryName)) {
             newQueryName = WebUtil.replaceSpecialChars(newQueryName);
         }
-        
+
         if (profile.getSavedTemplates().containsKey(newQueryName)) {
             int i = 1;
             while (true) {
@@ -146,5 +146,5 @@ public class TemplatesImportAction extends InterMineAction
             return newQueryName;
         }
     }
-    
+
 }

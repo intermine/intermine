@@ -14,7 +14,7 @@ package org.intermine.web.logic.template;
 /**
  * An instance of this bean is kept in the session context while the query
  * builder is in template building mode.
- * 
+ *
  * @author Thomas Riley
  */
 public class TemplateBuildState
@@ -26,7 +26,7 @@ public class TemplateBuildState
     private String name = "";
     private boolean important;
     private TemplateQuery updating;
-    
+
     /**
      * Construct a new instance of TemplateBuildState.
      * @param template template to take initial state from
@@ -39,7 +39,7 @@ public class TemplateBuildState
         keywords = template.getKeywords();
         updating = template;
     }
-    
+
     /**
      * Construct a new instance of TemplateBuildState.
      */
@@ -60,7 +60,7 @@ public class TemplateBuildState
     public void setImportant(boolean important) {
         this.important = important;
     }
-    
+
     /**
      * Get keywords
      * @return keywords
@@ -92,7 +92,7 @@ public class TemplateBuildState
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * Get the template title
      * @return the template title
@@ -100,7 +100,7 @@ public class TemplateBuildState
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * Set the template title
      * @param title the template title
@@ -108,7 +108,7 @@ public class TemplateBuildState
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     /**
      * Get the template description
      * @return the template desccription
@@ -132,7 +132,7 @@ public class TemplateBuildState
     public String getComment() {
         return comment;
     }
-    
+
     /**
      * Set the template comment
      * @param comment the comment

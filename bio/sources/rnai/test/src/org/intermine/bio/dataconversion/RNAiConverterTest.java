@@ -20,7 +20,7 @@ import org.intermine.metadata.Model;
 
 public class RNAiConverterTest extends ItemsTestCase
 {
-    
+
     public RNAiConverterTest(String arg) {
         super(arg);
     }

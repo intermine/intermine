@@ -35,7 +35,7 @@ import servletunit.struts.MockStrutsTestCase;
 public class ObjectTrailControllerTest extends MockStrutsTestCase
 {
     ObjectStore os;
-    
+
     public void setUp() throws Exception {
         super.setUp();
         Department d = new Department();
@@ -52,7 +52,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         d.setId(new Integer(44));
         os.cacheObjectById(new Integer(44), d);
         ((ObjectStoreDummyImpl) os).setModel(Model.getInstanceByName("testmodel"));
-        
+
         SessionMethods.initSession(getSession());
     }
 
@@ -69,15 +69,15 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         Department d = new Department();
         String label = ObjectTrailController.createTrailLabel(d, os.getModel());
         assertEquals("Department", label);
-        
+
         Set classes = new HashSet();
         classes.add(CEO.class);
         classes.add(Broke.class);
         label = ObjectTrailController.createTrailLabel((InterMineObject) DynamicUtil.createObject(classes), os.getModel());
         assertEquals("CEO Broke", label);
-        
+
     }
-    
+
     public void testPopulateTrailElements() throws Exception {
         ComponentContext componentContext = new ComponentContext();
         ComponentContext.setContext(componentContext, getRequest());
@@ -87,9 +87,9 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         addRequestParameter("trail", "|42|43|44");
 
         actionPerform();
-        
+
         verifyNoActionErrors();
-        
+
         List c = (List) getRequest().getAttribute("trailElements");
         assertNotNull("trailElements attribute is null", c);
         assertEquals(3, c.size());
@@ -99,20 +99,20 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         assertNotNull(e0);
         assertNotNull(e1);
         assertNotNull(e2);
-        
+
         assertEquals("|42", e0.getTrail());
         assertEquals("|42|43", e1.getTrail());
         assertEquals("|42|43|44", e2.getTrail());
-        
+
         assertEquals("Department", e0.getLabel());
         assertEquals("Department", e1.getLabel());
         assertEquals("Department", e2.getLabel());
-        
+
         assertEquals(42, e0.getObjectId());
         assertEquals(43, e1.getObjectId());
         assertEquals(44, e2.getObjectId());
     }
-    
+
 //    public void testTableParameter() {
 //        ComponentContext componentContext = new ComponentContext();
 //        ComponentContext.setContext(componentContext, getRequest());
@@ -122,58 +122,58 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
 //        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
 //
 //        actionPerform();
-//  
+//
 //        List c = (List) getRequest().getAttribute("trailElements");
 //        assertEquals(1, c.size());
-//        
+//
 //        ObjectTrailController.TrailElement e0 = (ObjectTrailController.TrailElement) c.get(0);
 //        assertTrue(e0.isTable());
 //        assertEquals("results.0", e0.getTableId());
-//        
+//
 //        verifyNoActionErrors();
 //    }
-    
+
     public void testTableParameterDoesNotExist() {
         ComponentContext componentContext = new ComponentContext();
         ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
         addRequestParameter("table", "results.0");
-        
+
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
 
         actionPerform();
-        
+
         List c = (List) getRequest().getAttribute("trailElements");
         assertEquals(0, c.size());
-        
+
         verifyNoActionErrors();
     }
-    
+
 //    public void testTableInTrail() {
 //        ComponentContext componentContext = new ComponentContext();
 //        ComponentContext.setContext(componentContext, getRequest());
 //        setRequestPathInfo("/initObjectTrail");
 //        addRequestParameter("trail", "_results.0_42");
-//        
+//
 //        SessionMethods.setResultsTable(getSession(), "results.0", new PagedObject("", null));
 //        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
-//        
+//
 //        actionPerform();
-//               
+//
 //        List c = (List) getRequest().getAttribute("trailElements");
 //        assertEquals(2, c.size());
-//        
+//
 //        ObjectTrailController.TrailElement e0 = (ObjectTrailController.TrailElement) c.get(0);
 //        assertTrue(e0.isTable());
 //        assertEquals("results.0", e0.getTableId());
-//        
+//
 //        ObjectTrailController.TrailElement e1 = (ObjectTrailController.TrailElement) c.get(1);
 //        assertFalse(e1.isTable());
 //        assertEquals(42, e1.getObjectId());
-//        
+//
 //        verifyNoActionErrors();
 //    }
-//    
+//
     public void testTableInTrailDoesNotExist() {
         ComponentContext componentContext = new ComponentContext();
         ComponentContext.setContext(componentContext, getRequest());
@@ -183,18 +183,18 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
 
         actionPerform();
-        
+
         List c = (List) getRequest().getAttribute("trailElements");
         assertEquals(2, c.size());
-        
+
         ObjectTrailController.TrailElement e0 = (ObjectTrailController.TrailElement) c.get(0);
         assertTrue(e0.getType().equals("results"));
         ObjectTrailController.TrailElement e1 = (ObjectTrailController.TrailElement) c.get(1);
         assertEquals(42, e1.getObjectId());
-        
+
         verifyNoActionErrors();
     }
-    
+
     public void testNoTrailParameter() {
         ComponentContext componentContext = new ComponentContext();
         ComponentContext.setContext(componentContext, getRequest());
@@ -203,10 +203,10 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
 
         actionPerform();
-        
+
         verifyNoActionErrors();
     }
-    
+
     public void testEmptyTrailParameter() {
         ComponentContext componentContext = new ComponentContext();
         ComponentContext.setContext(componentContext, getRequest());
@@ -216,10 +216,10 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         addRequestParameter("trail", "");
 
         actionPerform();
-        
+
         verifyNoActionErrors();
     }
-    
+
     public void testJunkTrailParameter() {
         ComponentContext componentContext = new ComponentContext();
         ComponentContext.setContext(componentContext, getRequest());
@@ -229,10 +229,10 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         addRequestParameter("trail", "sdfklksdkasdf");
 
         actionPerform();
-        
+
         verifyNoActionErrors();
     }
-    
+
     public void testBadIdsTrailParameter() {
         ComponentContext componentContext = new ComponentContext();
         ComponentContext.setContext(componentContext, getRequest());
@@ -242,7 +242,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         addRequestParameter("trail", "_234234_2345544");
 
         actionPerform();
-        
+
         verifyNoActionErrors();
     }
 }

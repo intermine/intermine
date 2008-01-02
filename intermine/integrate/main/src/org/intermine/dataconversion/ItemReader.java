@@ -54,12 +54,12 @@ public interface ItemReader
      * @throws ObjectStoreException if something goes wrong
      */
     public List getItemsByDescription(Set constraints) throws ObjectStoreException;
-    
+
     /**
      * Returns a single item found at the end of the path. If a null reference is found
      * while traversing the path, then the method will return "null". If a collection of
      * objects is found while traversing the path, an ObjectStoreException will be thrown.
-     * 
+     *
      * @param path the path expression
      * @param startingPoint the item to start at
      * @param variables values of variables in the path
@@ -68,10 +68,10 @@ public interface ItemReader
      */
     public Item getItemByPath(ItemPath path, Item startingPoint, Object variables[])
         throws ObjectStoreException;
-    
+
     /**
      * Returns a single item found at the end of a path with no variables.
-     * 
+     *
      * @param path the path expression
      * @param startingPoint the item to start at
      * @return Item found at the end of the path
@@ -79,12 +79,12 @@ public interface ItemReader
      * @see #getItemsByPath(ItemPath, Item, Object[])
      */
     public Item getItemByPath(ItemPath path, Item startingPoint) throws ObjectStoreException;
-    
+
     /**
      * Returns a set of items found at the end of a path. Throws an exception if a collection
      * is found mid-way through the path. Returns null if null occurs at some point while
      * following the path.
-     * 
+     *
      * @param path the path expression
      * @param startingPoint the item to start at
      * @param variables values of variables in the path
@@ -93,10 +93,10 @@ public interface ItemReader
      */
     public List getItemsByPath(ItemPath path, Item startingPoint, Object variables[])
         throws ObjectStoreException;
-    
+
     /**
      * Returns a set of items found at the end of a path with no variables.
-     * 
+     *
      * @param path the path expression
      * @param startingPoint the item to start at
      * @return Item found at the end of the path

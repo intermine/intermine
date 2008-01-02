@@ -76,7 +76,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
             throw new ObjectStoreException("Calling remote service failed", e);
         }
     }
-    
+
     /**
      * Gets a ObjectStoreClient instance for the given properties
      *
@@ -177,7 +177,7 @@ public class ObjectStoreClient extends ObjectStoreAbstractImpl
         }
         return results;
     }
-    
+
     /**
      * {@inheritDoc}
      */

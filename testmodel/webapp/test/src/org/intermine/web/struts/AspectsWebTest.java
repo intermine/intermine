@@ -23,7 +23,7 @@ public class AspectsWebTest extends WebTestBase
     }
 
     public void setUp() throws Exception {
-        super.setUp();       
+        super.setUp();
         //getTestContext().setBaseUrl("http://theoden.flymine.org:8080/intermine-app2");
     }
 

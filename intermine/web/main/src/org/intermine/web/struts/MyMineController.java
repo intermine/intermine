@@ -52,14 +52,14 @@ public class MyMineController extends TilesAction
         String page = request.getParameter("page");
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+
         /* if the user is on a restricted page and they are not logged in, send them to the bags
          * page.  query history is not a restricted page.
          */
         if (page != null && !page.equals("history") && !profile.isLoggedIn()) {
             page = "lists";
         }
-        
+
         if (!StringUtils.isEmpty(page)) {
             session.setAttribute(Constants.MYMINE_PAGE, page);
         }

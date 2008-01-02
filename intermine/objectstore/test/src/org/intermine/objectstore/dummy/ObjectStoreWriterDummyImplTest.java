@@ -19,38 +19,38 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setModel(Model.getInstanceByName("testmodel"));
         ObjectStoreWriterDummyImpl osw = new ObjectStoreWriterDummyImpl(os);
-        
-        InterMineObject o1 = 
+
+        InterMineObject o1 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
         osw.store(o1);
-        
-        InterMineObject o2 = 
+
+        InterMineObject o2 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
         o2.setId(new Integer(1));
         osw.store(o2);
-        
+
         InterMineObject o3 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
         osw.store(o3);
 
-        InterMineObject o4 = 
+        InterMineObject o4 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
         o4.setId(new Integer(100));
-        // store twice to make sure we get only one copy 
+        // store twice to make sure we get only one copy
         osw.store(o4);
         osw.store(o4);
 
-        
-        InterMineObject o5 = 
+
+        InterMineObject o5 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
-        // store twice to make sure we get only one copy 
+        // store twice to make sure we get only one copy
         osw.store(o5);
         osw.store(o5);
-        
+
         Map storedObjects = osw.getStoredObjects();
-        
+
         assertEquals(5, storedObjects.size());
-        
+
         assertTrue(storedObjects.get(new Integer(0)) == o1);
         assertTrue(((Company) storedObjects.get(new Integer(0))).getId().equals(new Integer(0)));
         assertTrue(storedObjects.get(new Integer(1)) == o2);
@@ -67,18 +67,18 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setModel(Model.getInstanceByName("testmodel"));
         ObjectStoreWriterDummyImpl osw = new ObjectStoreWriterDummyImpl(os);
-        
+
         osw.beginTransaction();
 
-        InterMineObject o1 = 
+        InterMineObject o1 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
         osw.store(o1);
-        
-        InterMineObject o2 = 
+
+        InterMineObject o2 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
         o2.setId(new Integer(1));
         osw.store(o2);
-        
+
         InterMineObject o3 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
         osw.store(o3);
@@ -88,9 +88,9 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
         osw.commitTransaction();
 
         assertFalse(osw.isInTransaction());
-        
+
         Map storedObjects = osw.getStoredObjects();
-        
+
         assertEquals(3, storedObjects.size());
 
         assertTrue(storedObjects.get(new Integer(0)) == o1);
@@ -107,20 +107,20 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
 
         assertTrue(osw.isInTransaction());
 
-        InterMineObject o4 = 
+        InterMineObject o4 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
         o4.setId(new Integer(100));
         osw.store(o4);
 
-        
-        InterMineObject o5 = 
+
+        InterMineObject o5 =
             (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
         osw.store(o5);
-        
+
         storedObjects = osw.getStoredObjects();
 
         assertEquals(5, storedObjects.size());
-        
+
         osw.abortTransaction();
 
         assertFalse(osw.isInTransaction());
@@ -131,7 +131,7 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
 
 
         assertEquals(3, storedObjects.size());
-        
+
         assertTrue(storedObjects.get(new Integer(0)) == o1);
         assertTrue(((Company) storedObjects.get(new Integer(0))).getId().equals(new Integer(0)));
         assertTrue(storedObjects.get(new Integer(1)) == o2);

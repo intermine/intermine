@@ -26,7 +26,7 @@ import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action to run constructed query.
- * 
+ *
  * @author Mark Woodbridge
  * @author Tom Riley
  */
@@ -61,9 +61,9 @@ public class ViewAction extends InterMineAction
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PathQuery pathQuery = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
         String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
-        
+
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
-        
+
         return new ForwardParameters(mapping.findForward("waiting"))
                             .addParameter("trail", "|query")
                             .addParameter("qid", qid).forward();

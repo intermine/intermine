@@ -70,7 +70,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class PortalQueryAction extends InterMineAction
 {
     private static int index = 0;
-    
+
     /**
      * Link-ins from other sites end up here (after some redirection).
      *
@@ -104,7 +104,7 @@ public class PortalQueryAction extends InterMineAction
             welcomeMsg = properties.getProperty("portal.welcome");
         }
         SessionMethods.recordMessage(welcomeMsg, session);
- 
+
         if (extId == null || extId.length() == 0) {
             recordError(new ActionMessage("errors.badportalquery"), request);
             return mapping.findForward("failure");
@@ -123,21 +123,21 @@ public class PortalQueryAction extends InterMineAction
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String[] idList = extId.split(",");
-        
-        // Use the old way = quicksearch template in case some people used to link in 
+
+        // Use the old way = quicksearch template in case some people used to link in
         // without class name
         if ((idList.length == 1) && (className == null || className.length() == 0)) {
-            String qid = loadObjectDetails(servletContext, session, request, response, 
+            String qid = loadObjectDetails(servletContext, session, request, response,
                                            profile.getUsername(), extId, origin);
             return new ForwardParameters(mapping.findForward("waiting"))
             .addParameter("qid", qid).forward();
         }
-        
+
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         Model model = os.getModel();
-        BagQueryConfig bagQueryConfig = 
+        BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         BagQueryRunner bagRunner =
                 new BagQueryRunner(os, classKeys, bagQueryConfig, servletContext);
@@ -158,7 +158,7 @@ public class PortalQueryAction extends InterMineAction
         while (bagExists) {
             bagName = ".link";
             if (origin != null) {
-                bagName += origin; 
+                bagName += origin;
             }
             bagName += "_" + number;
             bagExists = false;
@@ -169,13 +169,13 @@ public class PortalQueryAction extends InterMineAction
             }
             number++;
         }
-        InterMineBag imBag = new InterMineBag(bagName, 
+        InterMineBag imBag = new InterMineBag(bagName,
                                               className , null , new Date() ,
                                               os , profile.getUserId() , uosw);
-        
-        BagQueryResult bagQueryResult = 
+
+        BagQueryResult bagQueryResult =
             bagRunner.searchForBag(className, Arrays.asList(idList), organism, false);
-        
+
         List <Integer> bagList = new ArrayList <Integer> ();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
         int matches = bagQueryResult.getMatchAndIssueIds().size();
@@ -212,9 +212,9 @@ public class PortalQueryAction extends InterMineAction
                 wildcards.putAll(queries.getValue());
             }
         }
-        
-        DisplayLookup displayLookup = new DisplayLookup(className, matches, unresolved, 
-                                                        duplicates, translated, 
+
+        DisplayLookup displayLookup = new DisplayLookup(className, matches, unresolved,
+                                                        duplicates, translated,
                           lowQuality, wildcards, null);
 
         List<DisplayLookup> lookupResults = new ArrayList<DisplayLookup>();
@@ -230,7 +230,7 @@ public class PortalQueryAction extends InterMineAction
                                                                 .get(converterClassName));
             if (addparameter != null && addparameter.length() != 0) {
                 BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                List<ResultsRow> result = bagConverter.getConvertedObjects(session, addparameter, 
+                List<ResultsRow> result = bagConverter.getConvertedObjects(session, addparameter,
                                                 bagList, className);
                 imBag = new InterMineBag(bagName, className , null , new Date() ,
                                          os , profile.getUserId() , uosw);
@@ -247,7 +247,7 @@ public class PortalQueryAction extends InterMineAction
             }
         }
 
-        
+
         // Go to the object details page
         if ((bagList.size() == 1) && (idList.length == 1)) {
             return new ForwardParameters(mapping.findForward("objectDetails"))
@@ -255,7 +255,7 @@ public class PortalQueryAction extends InterMineAction
         /// Go to results page
         } else if ((idList.length == 1)) {
               List intermineObjectList = os.getObjectsByIds(bagList);
-              WebPathCollection webPathCollection = 
+              WebPathCollection webPathCollection =
                   new WebPathCollection(os, new Path(model, className), intermineObjectList
                                         , model, webConfig,
                                         classKeys);
@@ -277,7 +277,7 @@ public class PortalQueryAction extends InterMineAction
         } else {
             recordMessage(new ActionMessage("portal.nomatches", extId), request);
 
-            WebPathCollection webPathCollection = 
+            WebPathCollection webPathCollection =
                 new WebPathCollection(os, new Path(model, className), new ArrayList()
                                       , model, webConfig,
                                   classKeys);
@@ -290,11 +290,11 @@ public class PortalQueryAction extends InterMineAction
             .addParameter("trail", "").forward();
         }
     }
-    
+
     private String loadObjectDetails(ServletContext servletContext,
                                                 HttpSession session, HttpServletRequest request,
-                                                HttpServletResponse response, String userName, 
-                                                String extId, String origin) 
+                                                HttpServletResponse response, String userName,
+                                                String extId, String origin)
                                                 throws InterruptedException {
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
@@ -313,7 +313,7 @@ public class PortalQueryAction extends InterMineAction
         tf.parseAttributeValues(template, session, new ActionErrors(), false);
 
         // Convert form to path query
-        PathQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template, 
+        PathQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
                                                                          new HashMap());
         // Convert path query to intermine query
         SessionMethods.loadQuery(queryCopy, request.getSession(), response);
@@ -325,5 +325,5 @@ public class PortalQueryAction extends InterMineAction
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return qid;
     }
-    
+
 }
