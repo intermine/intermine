@@ -346,14 +346,14 @@ public class EntrezPublicationsRetriever
 
         /**
          * Constructor
-         * @param itemFactory the factory
+         * @param fromServerMap cache of publications
          */
         public Handler(Map<String, Map<String, Object>> fromServerMap) {
             this.cache = fromServerMap;
         }
 
         /**
-         * @see DefaultHandler#startElement(String, String, String, Attributes)
+         * {@inheritDoc}
          */
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
@@ -370,7 +370,7 @@ public class EntrezPublicationsRetriever
         }
 
         /**
-         * @see DefaultHandler#characters(char[], int, int)
+         * {@inheritDoc}
          */
         @Override
         public void characters(char[] ch, int start, int length) {
@@ -378,7 +378,7 @@ public class EntrezPublicationsRetriever
         }
 
         /**
-         * @see DefaultHandler#endElement(String, String, String)
+         * {@inheritDoc}
          */
         @Override
         public void endElement(String uri, String localName, String qName) {

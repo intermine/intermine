@@ -11,24 +11,15 @@ package org.intermine.dataconversion;
  */
 
 import java.io.Reader;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 
-import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
-import org.intermine.model.InterMineObject;
-import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ItemFactory;
@@ -76,7 +67,7 @@ public class ReferenceFromToGenerator extends FileConverter
     /**
      * Produce random data.
      *
-     * @param inputFile an ignored Reader
+     * {@inheritDoc}
      */
     public void process(Reader inputFile) throws Exception {
         Random random = new Random();

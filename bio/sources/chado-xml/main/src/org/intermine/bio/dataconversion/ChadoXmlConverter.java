@@ -20,7 +20,6 @@ import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.OntologyUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
@@ -49,15 +48,16 @@ public class ChadoXmlConverter extends FileConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public ChadoXmlConverter(ItemWriter writer) throws ObjectStoreException {
-        super(writer);
+    public ChadoXmlConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+        super(writer, model);
     }
 
 
     /**
-     * @see FileConverter#process(Reader)
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         ChadoXmlHandler handler = new ChadoXmlHandler(getItemWriter());
@@ -95,8 +95,6 @@ public class ChadoXmlConverter extends FileConverter
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
-         * @param mapMaster the Map of maps
-         * @param createInterpro whether or not to create interpro items
          */
         public ChadoXmlHandler(ItemWriter writer) {
             itemFactory = new ItemFactory(model);
@@ -130,7 +128,7 @@ public class ChadoXmlConverter extends FileConverter
 
 
         /**
-         * @see DefaultHandler#endElement
+         * {@inheritDoc}
          */
         public void characters(char[] ch, int start, int length) throws SAXException
         {
@@ -168,7 +166,7 @@ public class ChadoXmlConverter extends FileConverter
 
 
         /**
-         * @see DefaultHandler#endElement
+         * {@inheritDoc}
          */
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
@@ -181,7 +179,8 @@ public class ChadoXmlConverter extends FileConverter
                     // this is the SO term identifier of the feature type
                 } else if (stack.matches("dbxref>dbxref_id>cvterm_dbxref>cvterm>type_id>feature")) {
 
-                } else if (stack.matches("dbxref>dbxref_id>cvterm>cvterm_id>feature_cvterm>feature")) {
+                } else if (stack.matches("dbxref>dbxref_id>cvterm>cvterm_id>"
+                                         + "feature_cvterm>feature")) {
 
                 } else if (stack.matches("dbxref>dbxref_id>feature_dbxref>feature")) {
 
@@ -223,7 +222,8 @@ public class ChadoXmlConverter extends FileConverter
                     }
                 } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm>type_id>feature")) {
                     // this is the SO term identifier
-                } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm_dbxref>cvterm>type_id>feature")) {
+                } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm_dbxref>"
+                                         + "cvterm>type_id>feature")) {
 
                 } else if (stack.matches("cv>cv_id>cvterm>type_id>featureprop>feature")) {
                     // type of featureprop
@@ -231,17 +231,21 @@ public class ChadoXmlConverter extends FileConverter
 
                 } else if (stack.matches("cv>cv_id>cvterm>cvterm_id>feature_cvterm>feature")) {
 
-                } else if (stack.matches("cv>cv_id>cvterm>type_id>cvtermprop>cvterm>cvterm_id>feature_cvterm>feature")) {
+                } else if (stack.matches("cv>cv_id>cvterm>type_id>cvtermprop>cvterm>"
+                                         + "cvterm_id>feature_cvterm>feature")) {
 
-                } else if (stack.matches("cv>cv_id>cvterm>type_id>feature_cvtermprop>feature_cvterm>feature")) {
+                } else if (stack.matches("cv>cv_id>cvterm>type_id>feature_cvtermprop>"
+                                         + "feature_cvterm>feature")) {
 
-                } else if (stack.matches("cvterm>type_id>cvtermprop>cvterm>cvterm_id>feature_cvterm>feature")) {
+                } else if (stack.matches("cvterm>type_id>cvtermprop>cvterm>cvterm_id>"
+                                         + "feature_cvterm>feature")) {
 
                 } else if (stack.matches("cvterm>cvterm_id>feature_cvterm>feature")) {
 
                 } else if (stack.matches("cvterm>type_id>pub>pub_id>feature_cvterm>feature")) {
 
-                } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm>cvterm_id>feature_cvterm>feature")) {
+                } else if (stack.matches("db>db_id>dbxref>dbxref_id>cvterm>cvterm_id>"
+                                         + "feature_cvterm>feature")) {
 
                 } else if (stack.matches("synonym>synonym_id>feature_synonym>feature")) {
 

@@ -77,6 +77,7 @@ public class GoConverter extends FileConverter
      * Constructor
      *
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the Model
      * @throws Exception if an error occurs in storing or finding Model
      */
     public GoConverter(ItemWriter writer, Model model) throws Exception {
@@ -100,6 +101,9 @@ public class GoConverter extends FileConverter
         readConfig();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws Exception {
         // store all gene/protein data at the end of conversion

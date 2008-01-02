@@ -35,7 +35,7 @@ public class DefaultAssayHandler implements AssayHandler
     }
 
     /**
-     * @see AssayHandler#process
+     * {@inheritDoc}
      */
     public void process(Item assay) {
         // empty

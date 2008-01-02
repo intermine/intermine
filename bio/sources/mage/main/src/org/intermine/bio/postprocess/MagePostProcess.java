@@ -45,6 +45,8 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
+import static org.intermine.bio.postprocess.PostProcessOperationsTask.PRECOMPUTE_CATEGORY;
+
 /**
  * Code to fix references in the classes from the mage source.
  *
@@ -128,7 +130,8 @@ public class MagePostProcess extends PostProcessor
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q,
+                                                   PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
 
@@ -219,7 +222,7 @@ public class MagePostProcess extends PostProcessor
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
 
@@ -311,7 +314,7 @@ public class MagePostProcess extends PostProcessor
         q.setConstraint(cs);
         ObjectStore os = osw.getObjectStore();
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, PostProcessOperationsTask.PRECOMPUTE_CATEGORY);
+        ((ObjectStoreInterMineImpl) os).precompute(q, PRECOMPUTE_CATEGORY);
         Results res = os.execute(q);
         res.setBatchSize(500);
 

@@ -93,15 +93,17 @@ public class MageConverter extends FileConverter
     protected int id = 0;
 
     /**
-     * @see FileConverter#FileConverter
+     * Create a new MageConverter.
+     * @param writer the item writer
+     * @param model the Model
+     * @throws Exception if there is a problem while converting
      */
     public MageConverter(ItemWriter writer, Model model) throws Exception {
         super(writer, model);
     }
 
-
     /**
-     * @see FileConverter#process
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         opCount = 0;
@@ -178,7 +180,7 @@ public class MageConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#process
+     * {@inheritDoc}
      */
     @Override
     public void close() throws Exception {

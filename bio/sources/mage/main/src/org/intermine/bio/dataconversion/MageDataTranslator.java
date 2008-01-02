@@ -89,8 +89,8 @@ public class MageDataTranslator extends DataTranslator
 
     //experiment E-EMBL-1
     protected Map clones = new HashMap(); //cloneItem identifier, cloneItem
-    protected Map cloneMap = new HashMap();//cloneIdentifier, cloneItem
-    protected Map cloneIds = new HashMap();//cloneItem identifier, alternative identifier
+    protected Map cloneMap = new HashMap(); //cloneIdentifier, cloneItem
+    protected Map cloneIds = new HashMap(); //cloneItem identifier, alternative identifier
     protected Map cloneToResults = new HashMap();
 
     //experiment E-MEXP-337, E-MEXP-384

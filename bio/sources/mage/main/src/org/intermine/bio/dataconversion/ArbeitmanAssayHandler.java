@@ -28,7 +28,8 @@ public class ArbeitmanAssayHandler extends DefaultAssayHandler
 {
 
     /**
-     * @see DefaultAssayHandler
+     * Create a new ArbeitmanAssayHandler object.
+     * @param translator the Translator to use
      */
     public ArbeitmanAssayHandler(MageDataTranslator translator) {
         super(translator);

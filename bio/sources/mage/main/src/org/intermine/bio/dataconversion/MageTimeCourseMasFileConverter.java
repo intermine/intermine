@@ -50,6 +50,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the Model
      * @throws ObjectStoreException if an error occurs in storing
      * @throws MetaDataException if cannot generate model
      * @throws IOException if fail to read config file
@@ -124,7 +125,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
     /**
      * Read each line from flat file.
      *
-     * @see DataConverter#process
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
 
