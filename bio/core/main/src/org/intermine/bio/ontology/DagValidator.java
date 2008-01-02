@@ -210,6 +210,7 @@ public class DagValidator
         return valid;
     }
 
+    // these methods are called by reflection so ignore eclipse warning
     private void collectSynonyms(DagTerm term) {
         synMap.put(term.getName(), term.getSynonyms());
         nameMap.put(term.getName(), term);

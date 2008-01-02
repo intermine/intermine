@@ -77,6 +77,7 @@ public class OboToModel
      * Convert a (root) DagTerm to a Resource, recursing through children.
      *
      * @param term a DagTerm
+     * @param superClassName class to set as superclass of all classes created
      * @return true if this Term was included (part of SOFA)
      */
     public boolean process(OboTerm term, String superClassName) {
@@ -94,7 +95,7 @@ public class OboToModel
         if (tagValues != null) {
             subsets = (List) tagValues.get("subset");
         } else {
-            System.err. println("No tag values for term " + term.getName());
+            System.err .println("No tag values for term " + term.getName());
         }
         include = include || ((subsets != null) && subsets.contains("SOFA"));
         if (include) {
