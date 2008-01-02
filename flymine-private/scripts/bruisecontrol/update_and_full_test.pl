@@ -388,7 +388,25 @@ if (@failure_lines > 0) {
 ------------------------------------------------------------
 Build failures:
  @failure_lines
+
 __BUILD_FAILURES__
+}
+
+$message .= <<"__DIFF_HEADER__";
+------------------------------------------------------------
+Test differences:
+
+__DIFF_HEADER__
+
+{
+  open my $diff_pipe, "diff $PREVIOUS_JUNIT_FAIL_FILE $JUNIT_FAIL_FILE_NAME|"
+    or die "can't open diff pipe: $!\n";
+
+  while (my $diff_line = <$diff_pipe>) {
+    $message .= $diff_line;
+  }
+
+  close $diff_pipe or warn "can't close diff pipe: $!\n";
 }
 
 $message .= <<"__MESSAGE_MIDDLE__";
@@ -402,21 +420,9 @@ Previous test failures:
 
  @previous_junit_failures
 
-------------------------------------------------------------
-Test differences:
-
 __MESSAGE_MIDDLE__
 
-{
-  open my $diff_pipe, "diff $PREVIOUS_JUNIT_FAIL_FILE $JUNIT_FAIL_FILE_NAME|"
-    or die "can't open diff pipe: $!\n";
 
-  while (my $diff_line = <$diff_pipe>) {
-    $message .= $diff_line;
-  }
-
-  close $diff_pipe or warn "can't close diff pipe: $!\n";
-}
 
 my $sender = Email::Send->new({mailer => 'SMTP'});
 $sender->mailer_args([Host => 'mail.flymine.org']);
