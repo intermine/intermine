@@ -22,12 +22,12 @@ $ENV{ANT_OPTS} = '-XX:MaxPermSize=200M -Xmx800M -server -XX:+UseParallelGC';
 # make sure files and directories are readable by all
 umask 0002;
 
-# time in minutes between updates
-my $UPDATE_TIME = 10;
+# 
+my $MIN_TIME_FROM_LAST_CHECKIN = 5;
 
 # databases to build-db
 my @DATABASES = qw(bio-fulldata-test bio-test webservice-test unittest
-                       notxmltest truncunittest fulldatatest flatmodetest genomictest);
+                   notxmltest truncunittest fulldatatest flatmodetest genomictest);
 
 my $RUNNING_FILE="$ENV{'HOME'}/public_html/tests/.running";
 my $TRUNK_DIR="$ENV{'HOME'}/public_html/tests/trunk";
@@ -41,7 +41,8 @@ my $ANT_COMMAND="ant -v -lib /software/noarch/junit/";
 my $JUNIT_FAIL_FILE_NAME = "/tmp/bc_$$.junit_failures";
 my $BRUISER_EMAIL = 'bruiser@flymine.org';
 
-print "trying new build\n";
+print "--------------------------------------------------------------------------\n"
+print "Trying new build\n";
 
 # -------------------------------------------------------------------------- #
 # Check whether we really need to do anything at all
@@ -99,11 +100,11 @@ my $last_change = undef;
 my $diff = UnixDate("now", "%s") - $last_change;
 print "$diff seconds since last change\n";
 
-if ($diff < 60 * $UPDATE_TIME) {
-  print now(), ": Need to wait ", (60 * $UPDATE_TIME - $diff), " more seconds\n";
+if ($diff < 60 * $MIN_TIME_FROM_LAST_CHECKIN) {
+  print now(), ": Need to wait ", (60 * $MIN_TIME_FROM_LAST_CHECKIN - $diff), " more seconds\n";
   exit(0);
 } else {
-  print now(), ": $UPDATE_TIME minutes have pasted since last update - starting tests\n";
+  print now(), ": $MIN_TIME_FROM_LAST_CHECKIN minutes have since last checkin - starting tests\n";
 }
 
 {
