@@ -12,122 +12,55 @@ package org.intermine.bio.ontology;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.Set;
+import java.util.Collection;
 
 import junit.framework.TestCase;
 
 
 public class DagValidatorTest extends TestCase
 {
-    private DagParser parser;
+    private OboParser parser;
     private DagValidator validator;
-
+    private String ENDL = System.getProperty("line.separator");
+    
     public DagValidatorTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
-        parser = new DagParser();
+        parser = new OboParser();
         validator = new DagValidator();
     }
 
-    public void testValidDag() throws Exception {
-
-    }
-
-    public void testDuplicateNamesValid() throws Exception {
-        String test1 = "!Term Ontology\n"
-            + "$Test Ontology ; id0\n"
-            + " <term1 ; id1\n"
-            + "  %term2 ; id2\n"
-            + "   %term3 ; id3\n";
-
-        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
-        assertTrue(root1.size() == 1);
-        assertTrue(validator.duplicateNames(root1));
-    }
-
-    public void testDuplicateNamesInvalid() throws Exception {
-        String test1 = "!Term Ontology\n"
-            + "$Test Ontology ; id0\n"
-            + " <term1 ; id1\n"
-            + "  %term2 ; id2\n"
-            + "   %term3 ; id1\n";
-
-        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
-        assertFalse(validator.duplicateNames(root1));
-    }
-
-
-    public void testDuplicateIdsValid() throws Exception {
-        String test1 = "!Term Ontology\n"
-            + "$Test Ontology ; id0\n"
-            + " <term1 ; id1\n"
-            + "  %term2 ; id2\n"
-            + "   %term3 ; id3\n";
-
-        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
-        assertTrue(root1.size() == 1);
-        assertTrue(validator.duplicateIds(root1));
-    }
-
-    public void testDuplicateIdsInvalid() throws Exception {
-        String test1 = "!Term Ontology\n"
-            + "$Test Ontology ; id0\n"
-            + " <term1 ; id1\n"
-            + "  %term2 ; id2\n"
-            + "   %term1 ; id3\n";
-
-        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
-        assertFalse(validator.duplicateIds(root1));
-    }
-
-
-    public void testSynonymsAreTermsValid() throws Exception {
-        String test1 = "!Term Ontology\n"
-            + "$Test Ontology ; id0\n"
-            + " <term1 ; id1 ; synonym:term8\n"
-            + "  %term2 ; id2\n"
-            + "   %term3 ; id3\n";
-
-        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
-        assertTrue(root1.size() == 1);
-        assertTrue(validator.synonymsAreTerms(root1));
-    }
-
-    public void testSynonymsAreTermsInvalid() throws Exception {
-        String test1 = "!Term Ontology\n"
-            + "$Test Ontology ; id0\n"
-            + " <term1 ; id1 ; synonym:term3\n"
-            + "  %term2 ; id2\n"
-            + "   %term3 ; id3\n";
-
-        Set root1 = parser.processForClassHeirarchy(new BufferedReader(new StringReader(test1)));
-        assertFalse(validator.synonymsAreTerms(root1));
-    }
 
     public void testOrphanPartofsValid() throws Exception {
-        String test1 = "!Term Ontology\n"
-            + "$Test Ontology ; id0\n"
-            + " %term2 ; id2\n"
-            + "  <term1 ; id1\n"
-            + " %term1 ; id1\n";
+        String test = "!Term Ontology" + ENDL
+            + "[Term]" + ENDL
+            + "id: id1" + ENDL
+            + "name: term1" + ENDL
+            + "[Term]" + ENDL
+            + "id: id2" + ENDL
+            + "name: term2" + ENDL
+            + "is_a: id1" + ENDL
+            + "relationship: part_of id1" + ENDL;
 
-
-        parser.readTerms(new BufferedReader(new StringReader(test1)));
-        Set root1 = parser.rootTerms;
+        parser.readTerms(new BufferedReader(new StringReader(test)));
+        Collection root1 = parser.rootTerms.values();
         assertTrue(validator.orphanPartOfs(root1));
     }
 
     public void testOrphanPartofsInValid() throws Exception {
-        String test1 = "!Term Ontology\n"
-            + "$Test Ontology ; id0\n"
-            + " <term1 ; id1 ; synonym:term3\n"
-            + "  <term2 ; id2\n"
-            + "  %term3 ; id3\n";
-
-        parser.readTerms(new BufferedReader(new StringReader(test1)));
-        Set root1 = parser.rootTerms;
+        String test = "!Term Ontology" + ENDL
+            + "[Term]" + ENDL
+            + "id: id1" + ENDL
+            + "name: term1" + ENDL
+            + "[Term]" + ENDL
+            + "id: id2" + ENDL
+            + "name: term2" + ENDL
+            + "relationship: part_of id1";
+ 
+        parser.readTerms(new BufferedReader(new StringReader(test)));
+        Collection root1 = parser.rootTerms.values();
         assertFalse(validator.orphanPartOfs(root1));
     }
 

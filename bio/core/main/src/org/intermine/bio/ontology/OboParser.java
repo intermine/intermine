@@ -138,7 +138,7 @@ public class OboParser
         }
         nextTerm.addToAllParentIds(parentIdsSet);
 
-        //push the incomming item onto the stack.
+        //push the incoming item onto the stack.
         currentBranchStack.push(nextTerm);
 
         //does the current term have any child terms?

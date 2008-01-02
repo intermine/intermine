@@ -41,7 +41,7 @@ public class OboConverterTest extends TestCase {
     }
 
     public void test1() throws Exception {
-        DagConverter converter = new OboConverter(itemWriter, model, "", "SO", "http://www.flymine.org",
+        OboConverter converter = new OboConverter(itemWriter, model, "", "SO", "http://www.flymine.org",
                                                   NAMESPACE + "OntologyTerm");
         DagTerm a = new OboTerm("SO:42", "parent");
         DagTerm b = new OboTerm("SO:43", "child");

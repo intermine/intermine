@@ -12,7 +12,6 @@ package org.intermine.bio.task;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.bio.dataconversion.DagConverter;
 import org.intermine.bio.dataconversion.OboConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
@@ -101,10 +100,8 @@ public class DagConverterTask extends ConverterTask
             writer = new ObjectStoreItemWriter(osw);
             Model model = Model.getInstanceByName(getModelName());
 
-            DagConverter converter;
-            if (file.endsWith(".ontology") || file.endsWith(".dag")) {
-                converter = new DagConverter(writer, model, file, dagName, url, termClass);
-            } else if (file.endsWith(".obo")) {
+            OboConverter converter;
+            if (file.endsWith(".obo")) {
                 converter = new OboConverter(writer, model, file, dagName, url, termClass);
             } else {
                 throw new IllegalArgumentException("Don't know how to deal with file " + file);
