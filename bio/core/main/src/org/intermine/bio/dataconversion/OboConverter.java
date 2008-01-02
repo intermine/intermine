@@ -32,7 +32,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
-import org.intermine.xml.full.ReferenceList;
 
 /**
  * Convert tree of OboTerms into Items.
@@ -161,10 +160,6 @@ public class OboConverter extends DataConverter
         if (term.getId() != null) {
             item.addAttribute(new Attribute("identifier", term.getId()));
         }
-        ReferenceList parentRelations = new ReferenceList("parentRelations");
-        item.addCollection(parentRelations);
-        ReferenceList childRelations = new ReferenceList("childRelations");
-        item.addCollection(childRelations);
         Iterator iter = term.getChildren().iterator();
         while (iter.hasNext()) {
             DagTerm subTerm = (DagTerm) iter.next();
@@ -189,9 +184,13 @@ public class OboConverter extends DataConverter
             item.addToCollection("synonyms", synItem);
         }
         OboTerm oboterm = (OboTerm) term;
-        item.addAttribute(new Attribute("namespace", oboterm.getNamespace()));
-        item.addAttribute(new Attribute("description", oboterm.getDescription()));
-        item.addAttribute(new Attribute("obsolete", "" + oboterm.isObsolete()));
+        if (oboterm.getNamespace() != null && !oboterm.getNamespace().equals("")) {
+            item.setAttribute("namespace", oboterm.getNamespace());
+        }
+        if (oboterm.getDescription() != null && !oboterm.getDescription().equals("")) {
+            item.setAttribute("description", oboterm.getDescription());
+        }
+        item.setAttribute("obsolete", "" + oboterm.isObsolete());
     }
     
     /**
@@ -222,13 +221,9 @@ public class OboConverter extends DataConverter
      */
     protected void relate(Item item, Item subItem, String type) throws ObjectStoreException {
         Item relation = createItem("OntologyRelation");
-        relation.addAttribute(new Attribute("type", type));
-        relation.addReference(new Reference("childTerm", subItem.getIdentifier()));
-        relation.addReference(new Reference("parentTerm", item.getIdentifier()));
-        ReferenceList parentRelations = subItem.getCollection("parentRelations");
-        parentRelations.addRefId(relation.getIdentifier());
-        ReferenceList childRelations = item.getCollection("childRelations");
-        childRelations.addRefId(relation.getIdentifier());
+        relation.setAttribute("type", type);
+        relation.setReference("childTerm", subItem.getIdentifier());
+        relation.setReference("parentTerm", item.getIdentifier());
         relations.add(relation);
     }
 }

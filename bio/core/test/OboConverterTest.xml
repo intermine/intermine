@@ -1,0 +1,56 @@
+<items>
+<item id="0_5" class="http://www.flymine.org/model/genomic#OntologyRelation">
+<attribute name="type" value="part_of"/>
+<reference name="childTerm" ref_id="0_4"/>
+<reference name="parentTerm" ref_id="0_1"/>
+</item>
+<item id="0_3" class="http://www.flymine.org/model/genomic#OntologyRelation">
+<attribute name="type" value="is_a"/>
+<reference name="childTerm" ref_id="0_2"/>
+<reference name="parentTerm" ref_id="0_1"/>
+</item>
+<item id="1_1" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
+<attribute name="name" value="syn2"/>
+<attribute name="type" value="exact_synonym"/>
+</item>
+<item id="0_4" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value=""/>
+<attribute name="identifier" value="SO:44"/>
+<attribute name="name" value="partof"/>
+<attribute name="namespace" value=""/>
+<attribute name="obsolete" value="false"/>
+<reference name="ontology" ref_id="0_0"/>
+<collection name="childRelations"></collection>
+<collection name="parentRelations"><reference ref_id="0_5"/></collection>
+<collection name="synonyms"><reference ref_id="1_1"/></collection>
+</item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value=""/>
+<attribute name="identifier" value="SO:42"/>
+<attribute name="name" value="parent"/>
+<attribute name="namespace" value=""/>
+<attribute name="obsolete" value="false"/>
+<reference name="ontology" ref_id="0_0"/>
+<collection name="childRelations"><reference ref_id="0_3"/><reference ref_id="0_5"/></collection>
+<collection name="parentRelations"></collection>
+</item>
+<item id="1_0" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
+<attribute name="name" value="syn1"/>
+<attribute name="type" value="narrow_synonym"/>
+</item>
+<item id="0_2" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="description" value=""/>
+<attribute name="identifier" value="SO:43"/>
+<attribute name="name" value="child"/>
+<attribute name="namespace" value=""/>
+<attribute name="obsolete" value="false"/>
+<reference name="ontology" ref_id="0_0"/>
+<collection name="childRelations"></collection>
+<collection name="parentRelations"><reference ref_id="0_3"/></collection>
+<collection name="synonyms"><reference ref_id="1_0"/><reference ref_id="1_1"/></collection>
+</item>
+<item id="0_0" class="http://www.flymine.org/model/genomic#Ontology">
+<attribute name="title" value="SO"/>
+<attribute name="url" value="http://www.flymine.org"/>
+</item>
+</items>

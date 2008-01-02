@@ -23,8 +23,6 @@ import org.flymine.model.genomic.Location;
 
 public class GFF3UtilTest extends TestCase
 {
-
-
     /*
      * Test method for 'org.intermine.bio.io.gff3.GFF3Util.makeGFF3Record(LocatedSequenceFeature)'
      */
@@ -89,11 +87,11 @@ public class GFF3UtilTest extends TestCase
         System.err.println (gff3Exon.toGFF3());
         System.err.println (gff3Chromosome.toGFF3());
 
-        assertEquals("4    FlyMine    gene    100    800    .    +    .    name1=value1;name2=2;name3=3,4;ID=gene1",
+        assertEquals("4\tFlyMine\tgene\t100\t800\t.\t+\t.\tname1=value1;name2=2;name3=3,4;ID=gene1",
                      gff3Gene.toGFF3());
-        assertEquals("4    FlyMine    exon    200    300    .    -    .    ID=exon1",
+        assertEquals("4\tFlyMine\texon\t200\t300\t.\t-\t.\tID=exon1",
                      gff3Exon.toGFF3());
-        assertEquals("4    FlyMine    chromosome    1    1000    .    .    .    ID=4",
+        assertEquals("4\tFlyMine\tchromosome\t1\t1000\t.\t.\t.\tID=4",
                      gff3Chromosome.toGFF3());
     }
 }

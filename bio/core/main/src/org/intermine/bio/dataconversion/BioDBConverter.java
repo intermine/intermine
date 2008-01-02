@@ -76,6 +76,7 @@ public abstract class BioDBConverter extends DBConverter
 
     /**
      * The Organism item created from the taxon id passed to the constructor.
+     * @param taxonId NCBI taxonomy id of organism to create
      * @return the Organism Item
      */
     public Item getOrganismItem(int taxonId) {
@@ -156,9 +157,10 @@ public abstract class BioDBConverter extends DBConverter
 
     /**
      * Create and return a new Synonym, but don't store it.
-     * @param subject the Synonym subject id
+     * @param subjectId the Synonym subject id
      * @param type the Synonym type
      * @param value the Synonym value
+     * @param isPrimary true if this is a primary identifier
      * @param evidence the Synonym evidence (eg. a DataSet)
      * @param dataSource the source of this synonym
      * @return the new Synonym
