@@ -42,7 +42,7 @@ public class ProteinStructureDataConverterTest extends ItemsTestCase
         MockProteinStructureDataConverter converter = new MockProteinStructureDataConverter(itemWriter);
         File f = new File("10102.xml");
         converter.setCurrentFile(f);
-        converter.setSrcDataDir("resouces/");
+        converter.setSrcDataDir("resources/");
         converter.process(reader);
         converter.close();
         // uncomment to create a new target items files
