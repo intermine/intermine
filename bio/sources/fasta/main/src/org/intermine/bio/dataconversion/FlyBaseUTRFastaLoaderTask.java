@@ -137,15 +137,15 @@ public class FlyBaseUTRFastaLoaderTask extends FastaLoaderTask
         }
     }
 
-    private boolean isComplement(String location) {
-        return location.contains("complement");
+    private boolean isComplement(String locString) {
+        return locString.contains("complement");
     }
 
-    private int getMin(String location) {
+    private int getMin(String locString) {
         int currentMin = Integer.MAX_VALUE;
         String regexp = "\\d+";
         Pattern p = Pattern.compile(regexp);
-        Matcher m = p.matcher(location);
+        Matcher m = p.matcher(locString);
         while (m.find()) {
             String posString = m.group();
             int pos = Integer.parseInt(posString);
@@ -154,16 +154,16 @@ public class FlyBaseUTRFastaLoaderTask extends FastaLoaderTask
             }
         }
         if (currentMin == Integer.MAX_VALUE) {
-            throw new RuntimeException("can't find minimum value from location: " + location);
+            throw new RuntimeException("can't find minimum value from location: " + locString);
         }
         return currentMin;
     }
 
-    private int getMax(String location) {
+    private int getMax(String locString) {
         int currentMax = Integer.MIN_VALUE;
         String regexp = "\\d+";
         Pattern p = Pattern.compile(regexp);
-        Matcher m = p.matcher(location);
+        Matcher m = p.matcher(locString);
         while (m.find()) {
             String posString = m.group();
             int pos = Integer.parseInt(posString);
@@ -172,7 +172,7 @@ public class FlyBaseUTRFastaLoaderTask extends FastaLoaderTask
             }
         }
         if (currentMax == Integer.MIN_VALUE) {
-            throw new RuntimeException("can't find minimum value from location: " + location);
+            throw new RuntimeException("can't find minimum value from location: " + locString);
         }
         return currentMax;
     }
