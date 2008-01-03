@@ -37,8 +37,6 @@ public class ClassKeyHelperTest extends TestCase {
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
 
-
-
         Map<String, List<FieldDescriptor>> expected = new HashMap();
         ClassDescriptor cldEmp = model.getClassDescriptorByName(pkg + "Employee");
         ClassDescriptor cldMan = model.getClassDescriptorByName(pkg + "Manager");
@@ -47,17 +45,19 @@ public class ClassKeyHelperTest extends TestCase {
         ClassDescriptor cldAdd = model.getClassDescriptorByName(pkg + "Address");
         ClassDescriptor cldCon = model.getClassDescriptorByName(pkg + "Contractor");
         ClassDescriptor cldEmb = model.getClassDescriptorByName(pkg + "Employable");
-
-        ClassKeyHelper.addKey(expected, "Employee", cldEmp.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "Employable", cldEmb.getFieldDescriptorByName("name"));
+        ClassDescriptor cldDep = model.getClassDescriptorByName(pkg + "Department");
+               
+        ClassKeyHelper.addKey(expected, "Employee", cldEmp.getFieldDescriptorByName("name"));        
+        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("title"));
         ClassKeyHelper.addKey(expected, "Contractor", cldCon.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "Employable", cldEmb.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("title"));
         ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("name"));
         ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("title"));
-        ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("title"));
         ClassKeyHelper.addKey(expected, "Company", cldCom.getFieldDescriptorByName("name"));
         ClassKeyHelper.addKey(expected, "Company", cldCom.getFieldDescriptorByName("vatNumber"));
         ClassKeyHelper.addKey(expected, "Address", cldAdd.getFieldDescriptorByName("address"));
+        ClassKeyHelper.addKey(expected, "Department", cldDep.getFieldDescriptorByName("name"));
         assertEquals(expected, ClassKeyHelper.readKeys(model, props));
     }
 
