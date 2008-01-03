@@ -10,20 +10,20 @@ package org.intermine.bio.io.gff3;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Iterator;
+
+import org.intermine.util.StringUtil;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-
-import org.intermine.util.StringUtil;
 
 /**
  * A class that represents one line of a GFF3 file.  Some of this code is
@@ -42,8 +42,8 @@ public class GFF3Record
     private Double score;
     private String strand;
     private String phase;
-    private Map    attributes   = new LinkedHashMap();
-    private static Map replacements;
+    private Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
+    private static Map<String, String> replacements;
 
     /**
      * Create a GFF3Record from a line of a GFF3 file
@@ -131,7 +131,8 @@ public class GFF3Record
      * @param attributes a Map from attribute name to a List of attribute values
      */
     public GFF3Record(String sequenceID, String source, String type, int start, int end,
-                      Double score, String strand, String phase, Map attributes) {
+                      Double score, String strand, String phase,
+                      Map<String, List<String>> attributes) {
         this.sequenceID = sequenceID.trim();
         this.source = source.trim();
         this.type = type.trim();
@@ -147,7 +148,8 @@ public class GFF3Record
         this.attributes = attributes;
     }
 
-    private void parseAttribute(String attributeString, String line) throws IOException {
+    private void parseAttribute(String argAttributeString, String line) throws IOException {
+        String attributeString = argAttributeString;
         StringTokenizer sTok = new StringTokenizer(attributeString, ";", false);
 
         while (sTok.hasMoreTokens()) {
@@ -158,7 +160,7 @@ public class GFF3Record
             }
 
             String attName;
-            List valList = new ArrayList();
+            List<String> valList = new ArrayList<String>();
             int spaceIndx = attVal.indexOf("=");
             if (spaceIndx == -1) {
                 throw new IOException("the attributes section must contain name=value pairs, "
@@ -193,7 +195,7 @@ public class GFF3Record
             }
             // Decode values
             for (int i = 0; i < valList.size(); i++) {
-                String value = (String) valList.get(i);
+                String value = valList.get(i);
                 if (!attName.equals("Target") && !attName.equals("Gap")) {
                     value = URLDecoder.decode(value, "UTF-8");
                 }
@@ -284,7 +286,7 @@ public class GFF3Record
      */
     public String getId () {
         if (getAttributes().containsKey("ID")) {
-            return (String) ((List) getAttributes().get("ID")).get(0);
+            return getAttributes().get("ID").get(0);
         } else {
             return null;
         }
@@ -304,7 +306,7 @@ public class GFF3Record
      */
     public List<String> getNames() {
         if (getAttributes().containsKey("Name")) {
-            return (List) getAttributes().get("Name");
+            return getAttributes().get("Name");
         } else {
             return null;
         }
@@ -316,7 +318,7 @@ public class GFF3Record
      */
     public String getAlias () {
         if (getAttributes().containsKey("Alias")) {
-            return (String) ((List) getAttributes().get("Alias")).get(0);
+            return getAttributes().get("Alias").get(0);
         } else {
             return null;
         }
@@ -328,7 +330,7 @@ public class GFF3Record
      */
     public List<String> getParents () {
         if (getAttributes().containsKey("Parent")) {
-            return (List) getAttributes().get("Parent");
+            return getAttributes().get("Parent");
         } else {
             return null;
         }
@@ -340,7 +342,7 @@ public class GFF3Record
      */
     public String getTarget() {
         if (getAttributes().containsKey("Target")) {
-            return (String) ((List) getAttributes().get("Target")).get(0);
+            return getAttributes().get("Target").get(0);
         } else {
             return null;
         }
@@ -352,7 +354,7 @@ public class GFF3Record
      */
     public String getGap() {
         if (getAttributes().containsKey("Gap")) {
-            return (String) ((List) getAttributes().get("Gap")).get(0);
+            return getAttributes().get("Gap").get(0);
         } else {
             return null;
         }
@@ -364,7 +366,7 @@ public class GFF3Record
      */
     public String getNote() {
         if (getAttributes().containsKey("Note")) {
-            return (String) ((List) getAttributes().get("Note")).get(0);
+            return getAttributes().get("Note").get(0);
         } else {
             return null;
         }
@@ -376,7 +378,7 @@ public class GFF3Record
      */
     public List<String> getDbxrefs() {
         if (getAttributes().containsKey("Dbxref")) {
-            return (List) getAttributes().get("Dbxref");
+            return getAttributes().get("Dbxref");
         } else {
             return null;
         }
@@ -388,7 +390,7 @@ public class GFF3Record
      */
     public String getOntologyTerm () {
         if (getAttributes().containsKey("Ontology_term")) {
-            return (String) ((List) getAttributes().get("Ontology_term")).get(0);
+            return getAttributes().get("Ontology_term").get(0);
         } else {
             return null;
         }
@@ -399,13 +401,14 @@ public class GFF3Record
      * values.
      * @return the attributes of this record
      */
-    public Map getAttributes () {
+    public Map<String, List<String>> getAttributes () {
         return attributes;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "<GFF3Record: sequenceID: " + sequenceID + " source: " + source + " type: "
             + type + " start: " + start + " end: " + end + " score: " + score + " strand: "
@@ -433,37 +436,27 @@ public class GFF3Record
     private String writeAttributes() {
         StringBuffer sb = new StringBuffer();
         boolean first = true;
-        Iterator iter = attributes.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
+        for (Map.Entry<String, List<String>> entry: attributes.entrySet()) {
             if (!first) {
                 sb.append(";");
             }
             first = false;
             String listValue;
-            if (entry.getValue() instanceof List) {
-                List oldList = (List) entry.getValue();
-                List encodedList = new ArrayList(oldList);
+            List<String> oldList = entry.getValue();
+            List<String> encodedList = new ArrayList<String>(oldList);
 
-                for (int i = 0; i < encodedList.size(); i++) {
-                    Object oldValue = encodedList.get(i);
-                    String newValue;
-                    try {
-                        newValue = URLEncoder.encode("" + oldValue, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException("error while encoding: " + oldValue, e);
-                    }
-                    encodedList.set(i, newValue);
-                }
-
-                listValue = StringUtil.join(encodedList, ",");
-            } else {
+            for (int i = 0; i < encodedList.size(); i++) {
+                Object oldValue = encodedList.get(i);
+                String newValue;
                 try {
-                    listValue = URLEncoder.encode("" + entry.getValue(), "UTF-8");
+                    newValue = URLEncoder.encode("" + oldValue, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("error while encoding: " + entry.getValue(), e);
+                    throw new RuntimeException("error while encoding: " + oldValue, e);
                 }
+                encodedList.set(i, newValue);
             }
+
+            listValue = StringUtil.join(encodedList, ",");
             sb.append(entry.getKey() + "=" + listValue);
         }
         return sb.toString();
@@ -475,9 +468,10 @@ public class GFF3Record
      * @return string with replacements
      */
     protected static String fixEntityNames(String value) {
+        String retVal = value;
         synchronized (GFF3Record.class) {
             if (replacements == null) {
-                replacements = new HashMap();
+                replacements = new HashMap<String, String>();
                 replacements.put("agr", "alpha");
                 replacements.put("Agr", "Alpha");
                 replacements.put("bgr", "beta");
@@ -530,13 +524,14 @@ public class GFF3Record
             }
         }
 
-        for (Iterator iter = replacements.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            if (value.indexOf('&') != -1) {
-                value = value.replaceAll("&" + entry.getKey() + ";", "&" + entry.getValue() + ";");
+        for (Map.Entry<String, String> entry: replacements.entrySet()) {
+            if (retVal.indexOf('&') != -1) {
+                final String orig = entry.getKey();
+                final String replacement = entry.getValue();
+                retVal = retVal.replaceAll("&" + orig + ";", "&" + replacement + ";");
             }
         }
 
-        return value;
+        return retVal;
     }
 }
