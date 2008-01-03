@@ -85,6 +85,11 @@ public class FlyBaseUTRFastaLoaderTask extends FastaLoaderTask
             Location loc = (Location) getDirectDataLoader().createObject(Location.class);
             loc.setStart(new Integer(min));
             loc.setEnd(new Integer(max));
+            if (isComplement(locationString)) {
+                loc.setStrand("-1");
+            } else {
+                loc.setStrand("1");
+            }
             loc.setSubject(interMineObject);
             loc.setObject(getChromosome(chromosomeId, organism));
             if (interMineObject instanceof LocatedSequenceFeature) {
@@ -130,6 +135,10 @@ public class FlyBaseUTRFastaLoaderTask extends FastaLoaderTask
             chrMap.put(chromosomeId, chr);
             return chr;
         }
+    }
+
+    private boolean isComplement(String location) {
+        return location.contains("complement");
     }
 
     private int getMin(String location) {

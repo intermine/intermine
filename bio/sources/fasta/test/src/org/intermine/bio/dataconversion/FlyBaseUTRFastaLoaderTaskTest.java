@@ -74,6 +74,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                 Location loc = utr.getChromosomeLocation();
                 assertEquals(10258903, loc.getStart().intValue());
                 assertEquals(10307410, loc.getEnd().intValue());
+                assertEquals("-1", loc.getStrand());
                 assertEquals("3R", loc.getObject().getIdentifier());
                 assertEquals("FBtr0112632", utr.getmRNA().getIdentifier());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
@@ -83,6 +84,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                     Location loc = utr.getChromosomeLocation();
                     assertEquals(18024494, loc.getStart().intValue());
                     assertEquals(18050424, loc.getEnd().intValue());
+                    assertEquals("1", loc.getStrand());
                     assertEquals("2R", loc.getObject().getIdentifier());
                     assertEquals("FBtr0100521", utr.getmRNA().getIdentifier());
                     assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
@@ -91,10 +93,10 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         }
 
         if (!seenFBtr0100521) {
-            throw new RuntimeException("FBtr0100521 5' UTR not seen");
+            fail("FBtr0100521 5' UTR not seen");
         }
         if (!seenFBtr0112632) {
-            throw new RuntimeException("FBtr0112632 5' UTR not seen");
+            fail("FBtr0112632 5' UTR not seen");
         }
         assertEquals(5, r.size());
     }
@@ -133,10 +135,10 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         }
 
         if (!seenFBtr0071764) {
-            throw new RuntimeException("FBtr0071764 3' UTR not seen");
+            fail("FBtr0071764 3' UTR not seen");
         }
         if (!seenFBtr0082533) {
-            throw new RuntimeException("FBtr0082533 3' UTR not seen");
+            fail("FBtr0082533 3' UTR not seen");
         }
         assertEquals(2, r.size());
     }
