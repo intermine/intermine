@@ -59,7 +59,7 @@ public class BagUploadConfirmController extends TilesAction
         request.setAttribute("unresolved", bagQueryResult.getUnresolved());
         ServletContext servletContext = session.getServletContext();
         StringBuffer flattenedArray = new StringBuffer();
-
+        
         // get all of the "low quality" matches ie. those found by queries other than matching
         // class keys
         Map<String, ArrayList<String>> lowQualityMatches
@@ -74,7 +74,9 @@ public class BagUploadConfirmController extends TilesAction
             }
         }
         request.setAttribute("lowQualityMatches", lowQualityMatches);
-        flattenedArray.append(setJSArray(lowQualityMatches, "lowQ"));
+        String flatLowQualityMatches = setJSArray(lowQualityMatches, "lowQ");
+        flattenedArray.append(flatLowQualityMatches);
+        request.setAttribute("flatLowQualityMatches", flatLowQualityMatches);
 
         // find all input strings that match more than one object
         Map<String, ArrayList<String>> duplicates = new LinkedHashMap<String, ArrayList<String>>();
@@ -89,8 +91,10 @@ public class BagUploadConfirmController extends TilesAction
             }
         }
         request.setAttribute("duplicates", duplicates);
-        flattenedArray.append(setJSArray(duplicates, "duplicate"));
-
+        String flatDuplicate = setJSArray(duplicates, "duplicate");
+        flattenedArray.append(flatDuplicate);
+        request.setAttribute("flatDuplicate", flatDuplicate);
+        
         // make a List of [input string, ConvertedObjectPair]
         Map<String, ArrayList<String>> convertedObjects
                                                 = new LinkedHashMap<String, ArrayList<String>>();
@@ -104,7 +108,9 @@ public class BagUploadConfirmController extends TilesAction
             }
         }
         request.setAttribute("convertedObjects", convertedObjects);
-        flattenedArray.append(setJSArray(convertedObjects, "converted"));
+        String flatConverted = setJSArray(convertedObjects, "converted");
+        flattenedArray.append(flatConverted);
+        request.setAttribute("flatConverted", flatConverted);
 
         // create a string containing the ids of the high-quality matches
         StringBuffer matchesStringBuffer = new StringBuffer();

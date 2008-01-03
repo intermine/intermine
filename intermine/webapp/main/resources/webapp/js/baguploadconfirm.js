@@ -76,7 +76,7 @@ function removeIdFromBag(id,row, parentId, issueType){
     }
 }
 
-function addAll(flatArray){
+function addAll(issue, flatArray){
 	// split string into rows
 	// a,b,c,d|e,f,g,h
 	var a = flatArray.split("|");
@@ -86,11 +86,10 @@ function addAll(flatArray){
 		var b = a[i].split(",");
 		addId2Bag(b[0],b[1],b[2],b[3]);
 	}
-	document.getElementById('addAllLink').className = "";
-	document.getElementById('removeAllLink').className = "fakelink";
+	toggleBagLinks(issue, 'add');
 }
 
-function removeAll(flatArray){
+function removeAll(issue, flatArray){
 	// split string into rows
 	// a,b,c,d|e,f,g,h
 	var a = flatArray.split("|");
@@ -100,6 +99,38 @@ function removeAll(flatArray){
 		var b = a[i].split(",");
 		removeIdFromBag(b[0],b[1],b[2],b[3]);
 	}
-	document.getElementById('addAllLink').className = "fakelink";
-	document.getElementById('removeAllLink').className = "";
+	toggleBagLinks(issue, 'remove');
 }
+
+function toggleBagLinks(issue, action) {
+
+	toggleBagLink(issue, action);
+	if (issue == 'all') {
+
+		toggleBagLink('lowQ', action);
+		toggleBagLink('duplicate', action);
+		toggleBagLink('converted', action);
+	}
+}
+
+function toggleBagLink(issue, action) {
+	
+	var addAllLink = 'addAllLink';
+	var removeAllLink = 'removeAllLink';
+	
+	if (issue != 'all') {
+		addAllLink = issue + addAllLink;
+		removeAllLink = issue + removeAllLink;
+	}
+	if (document.getElementById(addAllLink)) {
+	if (action == "remove") {
+		document.getElementById(addAllLink).className = "fakelink";
+		document.getElementById(removeAllLink).className = "";
+	} else {
+		document.getElementById(addAllLink).className = "";
+		document.getElementById(removeAllLink).className = "fakelink";
+	}
+	}
+}
+
+
