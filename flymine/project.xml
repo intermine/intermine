@@ -42,7 +42,7 @@
       <property name="src.data.dir.includes" value="keydef.xml"/>
     </source>
     <source name="rnai" type="rnai">
-      <property name="src.data.dir" location="/shared/data/rnai/wormbase/current"/>
+      <property name="src.data.dir" location="/shared/data/wormRNAi/wormbase_rnai/current"/>
     </source>
     <source name="mage" type="mage">
       <property name="src.data.dir" location="/shared/data/mage/arbeitman"/>
