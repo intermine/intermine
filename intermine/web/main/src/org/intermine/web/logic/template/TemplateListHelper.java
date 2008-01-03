@@ -135,15 +135,17 @@ public class TemplateListHelper
                     if (!c.isEditable()) {
                         continue;
                     }
-
+                    String cl = model.getPackageName() + "."  + pathNode.getType();
+                    
                     if (c.getOp().equals(ConstraintOp.LOOKUP)) {
                         try {
-                            if (TypeUtil.isInstanceOf(object, model.getPackageName() + "."
-                                                              + pathNode.getType())) {
+                            if (TypeUtil.isInstanceOf(object, cl)) {
                                 templates.add(template);
                             }
-                        } catch (ClassNotFoundException err) {
-                            LOG.error(err);
+                        } catch (ClassNotFoundException err) {                    
+                            String msg = "Can't find class " + cl + " for template "
+                            + template.getTitle();  
+                            LOG.error(msg);
                             continue TEMPLATE;
                         }
                     } else {
@@ -175,7 +177,9 @@ public class TemplateListHelper
                                 fieldExprs.add(fieldExpr);
                             }
                         } catch (ClassNotFoundException err) {
-                            LOG.error(err);
+                            String msg = "Can't find class " + className + " for template "
+                            + template.getTitle();  
+                            LOG.error(msg);
                             continue TEMPLATE;
                         }
                     }
@@ -293,11 +297,13 @@ public class TemplateListHelper
                                 }
                                 if (c.getOp().equals(ConstraintOp.LOOKUP)) {
                                     Class pathNodeType = null;
+                                    String cl = model.getPackageName() + "." + pathNode.getType();
                                     try {
-                                        pathNodeType = Class.forName(model.getPackageName()
-                                                + "." + pathNode.getType());
+                                        pathNodeType = Class.forName(cl);
                                     } catch (ClassNotFoundException e) {
-                                        LOG.error(e);
+                                        String msg = "Can't find class " + cl  + " for tag "
+                                        + tag.getTagName(); 
+                                        LOG.error(msg);
                                         continue;
                                     }
 
@@ -328,6 +334,9 @@ public class TemplateListHelper
                                     try {
                                         identifierClass = Class.forName(className);
                                     } catch (ClassNotFoundException e) {
+                                        String msg = "Can't find class " + className + " for tag "
+                                        + tag.getTagName();   
+                                        LOG.error(msg);
                                         continue TAGS;
                                     }
 
