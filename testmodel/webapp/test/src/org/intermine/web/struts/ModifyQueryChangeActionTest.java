@@ -85,7 +85,7 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         setRequestPathInfo("/modifyQueryChange");
         actionPerform();
         verifyNoActionErrors();
-        assertEquals("/mymine.do?action=rename&page=saved&name=query2", getActualForward());
+        assertEquals("/mymine.do?action=rename&subtab=saved&name=query2", getActualForward());
 
         assertEquals(2, profile.getSavedQueries().size());
         assertEquals(2, profile.getHistory().size());
@@ -101,7 +101,7 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         actionPerform();
         verifyNoActionErrors();
 
-        assertEquals("/mymine.do?action=rename&page=saved&name=query_1", getActualForward());
+        assertEquals("/mymine.do?action=rename&subtab=saved&name=query_1", getActualForward());
 
         assertEquals(2, profile.getSavedQueries().size());
         assertEquals(2, profile.getHistory().size());
