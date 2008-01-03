@@ -42,7 +42,8 @@ public class DisplayConstraintTest extends MockStrutsTestCase
     }
 
     public void testValidOps() throws Exception {
-        assertEquals(8, dc.getValidOps().size());
+        int opSize = dc.getValidOps().size();
+        assertEquals(7, opSize);
     }
 
     public void testOptionsList() throws Exception {
