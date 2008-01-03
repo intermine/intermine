@@ -78,7 +78,10 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             }
 
             HttpSession session = request.getSession();
-            String userAgent = request.getHeader("user-agent").toLowerCase();
+            String userAgent = null;
+            if (request.getHeader("user-agent") != null) {
+                userAgent = request.getHeader("user-agent").toLowerCase();
+            }
             Set<String> bots = getBots();
 
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
