@@ -13,7 +13,7 @@
 
 <center><h2>${enrichmentWidgetForm.title}</h2></center>
 
-<c:out value='${enrichmentWidgetForm.description}'/>  Smaller p-values show greater enrichment. Method: Hypergeometric test.
+<c:out value='${enrichmentWidgetForm.description}'/>  Smaller p-values show greater enrichment. Method: One-sided Hypergeometric test.
 <br/><br/>
 Reference population: <c:out value='${referencePopulation}'/>.
 <br/><br/>
