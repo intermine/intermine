@@ -46,30 +46,30 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     }
 
     /**
-     * @see GFF3RecordHandler#process(GFF3Record)
+     * {@inheritDoc}
      */
     public void process(GFF3Record record) {
         Item feature = getFeature();
 
-        feature.setClassName(tgtNs + "TFmodule");
+        feature.setClassName(tgtNs + "CRM");
 
         String name = record.getId();
 
         feature.addAttribute(new Attribute("curated", "true"));
         if (record.getAttributes().containsKey("Evidence")) {
-            List evidenceList = (List) record.getAttributes().get("Evidence");
+            List evidenceList = record.getAttributes().get("Evidence");
             String elementEvidence = (String) evidenceList.get(0);
             feature.addAttribute(new Attribute("elementEvidence", elementEvidence));
         }
 
-        List ontologyTermIds = (List) record.getAttributes().get("Ontology_term");
+        List<String> ontologyTermIds = record.getAttributes().get("Ontology_term");
 
         if (ontologyTermIds != null) {
-            Iterator ontologyTermIdsIter = ontologyTermIds.iterator();
-            List anatomyItems = new ArrayList();
+            Iterator<String> ontologyTermIdsIter = ontologyTermIds.iterator();
+            List<String> anatomyItems = new ArrayList<String>();
 
             while (ontologyTermIdsIter.hasNext()) {
-                String ontologyTermId = (String) ontologyTermIdsIter.next();
+                String ontologyTermId = ontologyTermIdsIter.next();
                 anatomyItems.add(getAnatomy(ontologyTermId).getIdentifier());
             }
 
@@ -126,7 +126,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         addEvidence(getPublication(pubmedId));
 
-        feature.setAttribute("accession", REDFLY_PREFIX + redflyID);
+        feature.setAttribute("organismDbId",  redflyID);
         feature.setAttribute("identifier", name);
     }
 

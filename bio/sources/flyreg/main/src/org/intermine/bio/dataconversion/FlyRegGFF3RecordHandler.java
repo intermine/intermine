@@ -10,14 +10,19 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
 
-import org.intermine.bio.io.gff3.GFF3Record;
+import java.net.URI;
+
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
 /**
  * A converter/retriever for flyreg GFF3 files.
@@ -27,8 +32,8 @@ import org.intermine.bio.io.gff3.GFF3Record;
 
 public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 {
-    private final Map pubmedIdMap = new HashMap();
-    private final Map geneIdMap = new HashMap();
+    private final Map<String, Item> pubmedIdMap = new HashMap<String, Item>();
+    private final Map<String, Item> geneIdMap = new HashMap<String, Item>();
 
     /**
      * Create a new FlyRegGFF3RecordHandler for the given target model.
@@ -41,15 +46,65 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(GFF3Record record) {
-        String geneNs = getTargetModel().getNameSpace() + "Gene";
-        String publicationNs = getTargetModel().getNameSpace() + "Publication";
+        final URI nameSpace = getTargetModel().getNameSpace();
+        getFeature().setClassName(nameSpace + "TFBindingSite");
 
-        String pmid = (String) ((List) record.getAttributes().get("PMID")).get(0);
+        Item bindingSite = getFeature();
+
+        String name = record.getId();
+
+        Pattern p = Pattern.compile(".*:REDFLY:(.*)");
+        Matcher m = p.matcher(name);
+
+        String primaryIdentifier = null;
+
+        if (m.matches()) {
+            primaryIdentifier = m.group(1);
+        } else {
+            throw new RuntimeException("can't find primaryIdentifier in " + name
+                                       + " - pattern doesn't match");
+        }
+
+        bindingSite.setAttribute("identifier", primaryIdentifier);
+        addSynonym(bindingSite, "identifier", primaryIdentifier);
+
+        bindingSite.setAttribute("name", name);
+
+        String geneNs = nameSpace + "Gene";
+        String publicationNs = nameSpace + "Publication";
+
+        List<String> dbxrefs = record.getAttributes().get("Dbxref");
+
+        String redflyID = null;
+        String pmid = null;
+
+        for (String dbxref: dbxrefs) {
+            if (dbxref.startsWith("PMID:")) {
+                pmid = dbxref.substring(5);
+            } else {
+                if (dbxref.startsWith("REDfly:")) {
+                    redflyID = dbxref.substring(7);
+                }
+            }
+        }
+
+        if (pmid == null) {
+            throw new RuntimeException("no pubmed id for: " + bindingSite);
+        }
+
+        if (redflyID == null) {
+            throw new RuntimeException("no REDfly: id for: " + bindingSite);
+        }
+
+        bindingSite.setAttribute("organismDbId", redflyID);
+        addSynonym(bindingSite, "internal_id", "REDfly:" + redflyID);
+
         Item pubmedItem;
 
         if (pubmedIdMap.containsKey(pmid)) {
-            pubmedItem = (Item) pubmedIdMap.get(pmid);
+            pubmedItem = pubmedIdMap.get(pmid);
         } else {
             pubmedItem = getItemFactory().makeItemForClass(publicationNs);
             pubmedIdMap.put(pmid, pubmedItem);
@@ -57,18 +112,16 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             addItem(pubmedItem);
         }
 
-        Item bindingSite = getFeature();
-
         addEvidence(pubmedItem);
 
-        String factorGeneName = (String) ((List) record.getAttributes().get("Factor")).get(0);
+        String factorGeneName = record.getAttributes().get("Factor").get(0);
 
         if (!factorGeneName.toLowerCase().equals("unknown")
             && !factorGeneName.toLowerCase().equals("unspecified")) {
             Item gene;
 
             if (geneIdMap.containsKey(factorGeneName)) {
-                gene = (Item) geneIdMap.get(factorGeneName);
+                gene = geneIdMap.get(factorGeneName);
             } else {
                 gene = getItemFactory().makeItemForClass(geneNs);
                 geneIdMap.put(factorGeneName, gene);
@@ -80,14 +133,14 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             bindingSite.setReference("factor", gene.getIdentifier());
         }
 
-        String targetGeneName = (String) ((List) record.getAttributes().get("Target")).get(0);
+        String targetGeneName = record.getAttributes().get("Target").get(0);
 
         if (!targetGeneName.toLowerCase().equals("unknown")
             && !targetGeneName.toLowerCase().equals("unspecified")) {
             Item gene;
 
             if (geneIdMap.containsKey(targetGeneName)) {
-                gene = (Item) geneIdMap.get(targetGeneName);
+                gene = geneIdMap.get(targetGeneName);
             } else {
                 gene = getItemFactory().makeItemForClass(geneNs);
                 geneIdMap.put(targetGeneName, gene);

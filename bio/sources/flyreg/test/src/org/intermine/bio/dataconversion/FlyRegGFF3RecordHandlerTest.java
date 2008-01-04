@@ -65,9 +65,9 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
 
     public void testFlyRegHandler() throws Exception {
         String gff =
-            "2L\tBergman_data\tTF_binding_site\t2452227\t2452269\t.\t.\t.\tFactor=Ubx; Target=dpp; PMID=1673656; ID=000448\n"
-            + "2L\tBergman_data\tTF_binding_site\t2454657\t2454685\t.\t.\t.\tFactor=Adf1; Target=dpp; PMID=7791801; ID=003665\n"
-            + "2L\tBergman_data\tTF_binding_site\t14615472\t14615509\t.\t.\t.\tFactor=Adf1; Target=Adh; PMID=2105454; ID=005046";
+            "2L\tREDfly\tregulatory_region\t2456365\t2456372\t.\t.\t.\tID=Unspecified_dpp:REDFLY:TF000068; Dbxref=Flybase:FBgn0000490, PMID:8543160, REDfly:644, FlyBase:; Evidence=footprint/binding assay; Factor=Unspecified; Target=dpp\n"
+            + "2L\tREDfly\tregulatory_region\t2456352\t2456369\t.\t.\t.\tID=dl_dpp:REDFLY:TF000069; Dbxref=Flybase:FBgn0000490, PMID:8458580, REDfly:645, FlyBase:FBgn0000463; Evidence=footprint/binding assay; Factor=dl; Target=dpp\n"
+            + "2L\tREDfly\tregulatory_region\t2456423\t2456433\t.\t.\t.\tID=Unspecified_dpp:REDFLY:TF000067; Dbxref=Flybase:FBgn0000490, PMID:8543160, REDfly:643, FlyBase:; Evidence=footprint/binding assay; Factor=Unspecified; Target=dpp\n";
         BufferedReader srcReader = new BufferedReader(new StringReader(gff));
 
         HashSet allItems = new LinkedHashSet();
@@ -82,15 +82,15 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
 
             handler.setFeature(feature);
             handler.clearEvidenceReferenceList();
-            handler.process(record);
             feature.setAttribute("identifier", record.getId());
+            handler.process(record);
             // evidence collection is normally set in GFF3Converter, we just want to check Publication
             feature.addCollection(handler.getEvidenceReferenceList());
             allItems.addAll(handler.getItems());
         }
 
         // uncomment to write a new target items files
-        //writeItemsFile(allItems, "flyreg-target-items.xml");
+        // writeItemsFile(allItems, "/tmp/flyreg-target-items.xml");
 
         Set expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
 
