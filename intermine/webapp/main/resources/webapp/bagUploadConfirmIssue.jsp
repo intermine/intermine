@@ -49,13 +49,14 @@
           <td border="1" rowSpan="${fn:length(resultElementRowList)}"
               valign="top" id="td_${issueType}_${identifier}">${identifier}</td>
           <c:if test="${issueType == 'converted' }">
-            <!-- <td border="1" rowSpan="${fn:length(resultElementRowList)}"
-                valign="top" id="td_${issueType}_${identifier}">${initialTypeMap[identifier]}</td> -->
              <td border="1" rowSpan="${fn:length(resultElementRowList)}"
                 valign="top" id="row_${issueType}_${idcounter}">${initialTypeMap[identifier]}</td>
           </c:if>
         </c:if>
         <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">
+        
+      
+        
           <td id="row_${issueType}_${idcounter}">
             <c:choose>
               <c:when test="${rowStatus.index == 0 && issueType != 'converted'}">
@@ -67,13 +68,11 @@
                 <span id="add_${issueType}_${resultElementRow[rowStatus.index]}" onclick="addId2Bag('${resultElementRow[rowStatus.index]}','${idcounter}','${identifier}','${issueType}');" class="fakelink">Add</span>
                 &nbsp;&nbsp;
                 <span id="rem_${issueType}_${resultElementRow[rowStatus.index]}" onclick="removeIdFromBag('${resultElementRow[rowStatus.index]}','${idcounter}','${identifier}','${issueType}');">Remove</span>
-                <!-- <html:multibox property="selectedObjects"
-                               styleId="selectedObject_${rowStatus.index}">
-                  ${resultElementRow[rowStatus.index]}
-                </html:multibox>-->
               </c:when>
               <c:otherwise>
-                ${resultElement.field}
+              		<html:link action="/objectDetails?id=${resultElementRow[fn:length(resultElementRow) - 1]}">
+                		${resultElement.field}
+                	</html:link>
               </c:otherwise>
             </c:choose>
             &nbsp;
