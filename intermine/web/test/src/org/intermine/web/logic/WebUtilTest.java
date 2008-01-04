@@ -55,10 +55,10 @@ public class WebUtilTest extends TestCase
     }
 
     public void testBonferroni() throws Exception {
-        WebUtil.calcErrorCorrection("Bonferroni", maxValue, resultsMap);
+        WebUtil.calcErrorCorrection("Bonferroni", maxValue, total, resultsMap);
     }
 
     public void testBenjaminiHochberg() throws Exception {
-        WebUtil.calcErrorCorrection("BenjaminiHochberg", maxValue, resultsMap);
+        WebUtil.calcErrorCorrection("BenjaminiHochberg", maxValue, total, resultsMap);
     }
 }
