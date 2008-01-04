@@ -340,5 +340,11 @@
       </i>
     </p>
   </c:if>
+  
+  <html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}">
+                    <fmt:message key="template.export"/>
+	</html:link>
+  
+  
 </im:boxarea>
 </div>
