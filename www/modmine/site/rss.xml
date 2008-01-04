@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+  <channel>
+    <title>FlyMine News</title>
+    <link>http://www.flymine.org/</link>
+    <description>An integrated database for Drosophila and Anopheles genomics.</description>
+    <language>en-gb</language>
+    <managingEditor>info@flymine.org</managingEditor>
+    <webMaster>info@flymine.org</webMaster>
+
+    <!-- Add new news at the top here -->
+    <item>
+      <title>FlyMine 8.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 8.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 8.0 includes three new data sets: Tiffin (predicted regulatory motifs), anoEST (A. gambiae EST clusters) and predicted 3-D protein structures for A. gambiae domains. A new type of constraint is used in template queries which now allows you to enter any identifier or symbol.
+      </description>
+      <pubDate>Wed, 27th June 2007</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine workshop</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        We are running a half day workshop on using FlyMine in Cambridge UK on June 20th.  This is part of a joint workshop with FlyBase, half a day will be devoted to each.  The workshop is free of charge, for more information and to sign up see &lt;a href="http://www.biomed.cam.ac.uk/gradschool/current/courses/flymine.html"&gt;here&lt;/a&gt;. 
+      </description>
+      <pubDate>Fri, 15th June 2007</pubDate>
+    </item>
+
+    <item>
+      <title>InterMine and modENCODE</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        InterMine will be used as a major component of the Data Coordination Centre for the $57m modENCODE project; G. Micklem has been awarded two posts for four years to apply the technology developed in the FlyMine project to the dissemination of data produced as part of the $57m US NIH modENCODE project (&lt;a href="http://www.modencode.org"&gt;www.modencode.org&lt;/a&gt;).  This programme will generate an unprecedented amount of data about functional elements in the genomes of the fruit fly &lt;i&gt;Drosophila melanogaster&lt;/i&gt; and the nematode &lt;i&gt;Caenorhabditis elegans&lt;/i&gt;.
+      </description>
+      <pubDate>Fri, 18th May 2007</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine 7.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 7.1&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 7.1 includes a number of new user interface features. Results of queries can be ordered by a selected column and results tables have a new summary button which brings up statistics on the values in that column. Many template queries now have more descriptive column titles in results tables.
+      </description>
+      <pubDate>Thurs, 10th May 2007</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine 7.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 7.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 7.0 updates the
+        &lt;i&gt;D. melanogaster&lt;/i&gt; genome to version 5.1.  All
+        dependent data sources have been remapped.  New viewers have been
+        added to the gene bag details pages.
+      </description>
+      <pubDate>Tue,  3rd Apr 2007 16:00 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine 6.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 6.1&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 6.1 contains a major overhaul of the way FlyMine handles bags.  A sophisticated
+        bag uplaod page has been added and the contents of bags can be analysed on bag details pages.
+      </description>
+      <pubDate>Thu, 15th Feb 2007 20:30 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>Service interruption</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        We apologise for the service interruption today.  Our server suffered
+        a hardware failure at 4pm GMT, which has now been fixed.
+      </description>  
+      <pubDate>Tue, 2nd Jan 2007 17:02 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine 6.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 6.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 6.0 adds data from seven Dropsophila RNAi screens from the DRSC,
+          microarray-based gene expression data from FlyAtlas and Transcriptional cis-regulatory modules 
+          (CRMs) from REDfly.  Template queries have a new, succinct naming scheme and identifiers/names
+          in results tables are now links to object details pages.  Other data sources have been
+          updated/added and there are numerous interface improvements.
+      </description>
+      <pubDate>Fri, 24th Nov 2006 17:00 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine Workshop</title>
+      <link>http://www.flymine.org</link>
+      <description>
+        A joint FlyMine/FlyBase workshop will held on Thursday 23rd November in the Department of Genetics, Cambridge University. For more information and booking please see &lt;a href="http://www.bio.cam.ac.uk/gradschool/current/courses/bioinformatics.html
+
+"&gt;workshop information&lt;/a&gt;.
+      </description>
+      <pubDate>Wed, 1st Nov 2006 11:00 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine is hiring</title>
+      <link>http://www.flymine.org/project/jobs</link>
+      <description>
+       FlyMine is looking for an experineced biologist to join the team on part-time maternity cover. &lt;a href="http://www.flymine.org/project/jobs.shtml"&gt;More Information&lt;/a&gt;.
+      </description>
+      <pubDate>Wed, 1st Nov 2006 11:00 GMT</pubDate>
+    </item>
+
+
+
+    <item>
+      <title>New FlyMine Tutorials</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        The FlyMine &lt;a href="http://www.flymine.org/doc/tutorials/"&gt;tutorials&lt;/a&gt; have now been updated.  Tutorials on using the QueryBuilder, working with bags and building your own templates have been added.
+      </description>
+      <pubDate>Thur, 27 Jun 2006 13:30 GMT</pubDate>
+    </item>
+
+    <item>
+      <title>FlyMine 5.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 5.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.  FlyMine 5.0 adds genome annotation for D. pseudoobscura (release 2.0 from FlyBase) and A. mellifera (release 2.0 from Ensembl) with InParanoid orthologues to the other genomes in FlyMine. Also added are InParanoid orthologues to many other species and GO annotation for some of them. Interface improvements include the ability for users to tag favourite templates and to change their password.
+      </description>
+      <pubDate>Thur, 01 Jun 2006 15:00 GMT</pubDate>
+    </item>
+<!--
+    <item>
+      <title>Possible disruption to FlyMine</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        Due to a server room upgrade, the &lt;a
+        href="http://www.flymine.org"&gt; FlyMine&lt;/a&gt; service will be at
+        risk from 8am Tuesday 9th May 2006 until 5pm Thursday 11th May 2006.
+        We hope to keep any disruption to a minimum.
+      </description>
+      <pubDate>Fri, 5 May 2006 12:04 GMT</pubDate>
+    </item>
+-->
+    <item>
+      <title>FlyBase links to FlyMine</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flybase.net"&gt;
+        FlyBase&lt;/a&gt; gene reports now include a link directly to
+        FlyMine gene details pages.
+      </description>
+      <pubDate>Mon, 13 Mar 2006 10:55 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>FlyMine 4.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt;
+        FlyMine 4.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Mon, 13 Mar 2006 10:50 GMT</pubDate>
+    </item>
+
+    <!--
+    <item>
+      <title>FlyMine is Recruiting</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        Biologist - Database analysis and user support (MATERNITY COVER).
+        CLOSED.
+      </description>
+      <pubDate>Tue, 03 Jan 2006 11:31 GMT</pubDate>
+    </item>
+    -->
+
+    <item>
+      <title>Cambridge University Network Maintenance</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org"&gt; FlyMine&lt;/a&gt; will be
+        unavailable from approximately 9am until 5pm GMT on Thursday 29th
+        December 2005 due to network maintenance.
+      </description>
+      <pubDate>Thu, 22 Dec 2005 15:05 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>FlyMine 3.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org/release-3.1/begin.do"&gt;
+        FlyMine 3.1&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Mon, 7 Nov 2005 13:36 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>FlyMine 3.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org/release-3.0/begin.do"&gt;
+        FlyMine 3.0&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Thu, 1 Sep 2005 13:23 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>FlyMine 2.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org/release-2.1/begin.do"&gt;
+        FlyMine 2.1&lt;/a&gt; is now available.  See 
+        &lt;a href="http://www.flymine.org/release-notes.shtml"&gt;
+        release notes&lt;/a&gt;.
+      </description>
+      <pubDate>Wed, 1 Jun 2005 14:10 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>FlyMine 2.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        &lt;a href="http://www.flymine.org/release-2.0/begin.do"&gt;
+        FlyMine 2.0&lt;/a&gt; is now available.
+      </description>
+      <pubDate>Wed, 30 Mar 2005 16:53 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>FlyMine 1.1 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        FlyMine 1.1 is now available.
+      </description>
+      <pubDate>Fri, 18 Feb 2005 20:16 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>FlyMine 1.0 Released</title>
+      <link>http://www.flymine.org/</link>
+      <description>
+        Initial public release of FlyMine.
+      </description>
+      <pubDate>Mon, 01 Nov 2004 11:39 GMT</pubDate>
+    </item>
+
+  </channel>
+</rss>
