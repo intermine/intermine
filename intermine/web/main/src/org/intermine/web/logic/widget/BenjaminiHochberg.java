@@ -27,10 +27,11 @@ public class BenjaminiHochberg implements ErrorCorrection
 
     /**
      * Constructor.
-     *
+     * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
+     * as these cannot possibly be overrepresented
      * @param originalMap Hashmap of go terms and their pvalue
      */
-    public BenjaminiHochberg(HashMap originalMap) {
+    public BenjaminiHochberg(HashMap originalMap, int numberOfTests) {
         this.numberOfTests = originalMap.size();
         this.originalMap = originalMap;
     }
@@ -45,6 +46,7 @@ public class BenjaminiHochberg implements ErrorCorrection
      * reject hypothesis for i=1..i* : labels 1..i* are overrepresented
      * <p/>
      * adjusted p-value for i-th ranked p-value p_i^adj = min(k=i..m)[min(1,numberOfTests/k p_k)]
+     * @param max maximum value we are interested in.  
      */
 
     public void calculate(Double max) {
