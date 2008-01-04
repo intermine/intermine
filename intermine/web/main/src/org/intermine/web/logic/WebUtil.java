@@ -504,7 +504,12 @@ public abstract class WebUtil
 
             Hypergeometric h = new Hypergeometric(total);
             HashMap<String, Double> resultsMap = new HashMap<String, Double>();
-
+            
+            /* this is the total number of tests excluding the go terms that only annotate one gene
+             * as these cannot be overrepresented
+             */
+            int numberOfTests = 0;
+            
             while (itAll.hasNext()) {
 
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
@@ -515,14 +520,21 @@ public abstract class WebUtil
 
                     Long countBag = countMap.get(id);
                     Long countAll = (java.lang.Long) rrAll.get(1);
-
+                    if (countBag.longValue() > 1) {
+                        numberOfTests++;
+                    }
                     double p = h.calculateP(numberOfObjectsInBag, countBag.intValue(),
                                             countAll.intValue(), total);
                     resultsMap.put(id, new Double(p));
                 }
             }
 
-            HashMap adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
+            HashMap adjustedResultsMap = resultsMap;
+
+            if (!errorCorrection.equals("None")) {
+                adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, 
+                                                         numberOfTests, resultsMap);
+            }
 
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
             sortedMap.sortValues();
@@ -545,18 +557,22 @@ public abstract class WebUtil
      * @param errorCorrection which multiple hypothesis test correction to use - Bonferroni or
      * BenjaminiHochberg
      * @param maxValue maximum value we're interested in
+     * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
+     * as these cannot possibly be overrepresented
      * @param resultsMap map containing un-adjusted pvalues
      * @return map of all the adjusted pvalues
      */
-    protected static HashMap calcErrorCorrection(String errorCorrection, Double maxValue,
-                               HashMap<String, Double> resultsMap) {
+    protected static HashMap calcErrorCorrection(String errorCorrection, 
+                                                 Double maxValue,
+                                                 int numberOfTests,
+                                                 HashMap<String, Double> resultsMap) {
 
         ErrorCorrection e = null;
 
         if (errorCorrection != null && errorCorrection.equals("Bonferroni")) {
-            e = new Bonferroni(resultsMap);
+            e = new Bonferroni(resultsMap, numberOfTests);
         } else {
-            e = new BenjaminiHochberg(resultsMap);
+            e = new BenjaminiHochberg(resultsMap, numberOfTests);
         }
         e.calculate(maxValue);
         return e.getAdjustedMap();
