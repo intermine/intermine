@@ -249,9 +249,7 @@ pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND test-report");
 # testmodel webapp tests
 
 pipe_to_log(["(cd $TRUNK_DIR/testmodel/dbmodel; $ANT_COMMAND build-db)",
-            "cd $TRUNK_DIR/testmodel/webapp/test; ant clean",
-            "cd $TRUNK_DIR/testmodel/webapp/test; date; $ANT_COMMAND",
-            "cd $TRUNK_DIR/testmodel/webapp/test; date; $ANT_COMMAND test-report"]);
+            "cd $TRUNK_DIR/testmodel/webapp/test; ant clean"]);
 
 # bio tests
 
