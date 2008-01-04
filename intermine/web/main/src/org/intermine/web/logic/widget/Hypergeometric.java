@@ -13,84 +13,76 @@ package org.intermine.web.logic.widget;
 
 /**
  * Calculates p-values for go terms using the hypergeometric distribution.
- * @author http://function.princeton.edu/GOLEM/authors.html
+ * See online documentation for detailed information about what this class is and what it does.
  */
 public class Hypergeometric
 {
-    static double[] logFactorials;
+    static double[] factorials;
 
     /**
      * Builds an array of factorials so we don't have to calculate it each time.
-     * @param numGenes the number of genes in the bag.
+     * @param numGenes the number of genes in the list
      **/
-
     public Hypergeometric(int numGenes) {
-
-        logFactorials = new double[numGenes + 1];
-        logFactorials[0] = 0;
+        factorials = new double[numGenes + 1];
+        factorials[0] = 0;
         double current = 0;
         for (int i = 1; i < numGenes + 1; i++) {
             current += Math.log(i);
-            logFactorials[i] = current;
+            factorials[i] = current;
         }
     }
 
 
     /**
-     * Compute the logarithm of nCk (n choose k)
-     * @param n
-     * @param k
-     * @return double the logarithm of nCk
+     * Compute the log of nCr (n Choose r)
+     *           n!
+     * nCr =  ---------
+     *        r! (n-r)!
+     * @param n 
+     * @param r 
+     * @return double the log of nCr
      */
-    private static double logChoose(int n, int k) {
+    private static double logChoose(int n, int r) {
         if (n == 0) {
-            if (k == 0) {
+            if (r == 0) {
                 return 0;
             } else {
                 return Double.NEGATIVE_INFINITY;
             }
         }
-        if (k == 0) {
+        if (r == 0) {
             return 0;
         }
-        if (k == 1) {
+        if (r == 1) {
             return Math.log(n);
         }
-        if (n < k) {
+        if (n < r) {
             return Double.NEGATIVE_INFINITY;
         }
-        return logFactorials[n] - (logFactorials[k] + logFactorials[n - k]);
+        return factorials[n] - (factorials[r] + factorials[n - r]);
     }
 
 
     /**
-     * The p-value is the sum from j=k to n of MCj*(N-M)C(n-j)/(NCn)
+     * The value is calculated as:
      *
-     * @param n Number of genes in bag (n)
-     * @param k Number of genes in the bag annotated with this go term (k)
-     * @param bigM Total number of genes annotated with this term (M)
-     * @param bigN Total number of genes in the database (N)
+     *      (M choose x) (N-M choose n-x)
+     * P =   -----------------------------
+     *               N choose n
+     * 
+     * @param n total number of genes in our list
+     * @param x number of genes in our list annotated with this term     
+     * @param bigN Total number of genes in the database
+     * @param bigM Total number of genes in the database annotated with this term 
      * @return p-value for this go term
      **/
-
-    public static double calculateP(int n, int k, int bigM, int bigN) {
-
+    public static double calculateP(int n, int x, int bigM, int bigN) {
         double sum = 0;
-        for (int j = n; j >= k; j--) {
+        for (int j = n; j >= x; j--) {
             sum +=
                 Math.exp(logChoose(bigM, j) + logChoose(bigN - bigM, n - j) - logChoose(bigN, n));
         }
-
         return sum;
     }
 }
-
-
-
-
-
-
-
-
-
-
