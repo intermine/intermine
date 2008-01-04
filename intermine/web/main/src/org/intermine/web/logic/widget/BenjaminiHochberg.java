@@ -32,7 +32,7 @@ public class BenjaminiHochberg implements ErrorCorrection
      * @param originalMap Hashmap of go terms and their pvalue
      */
     public BenjaminiHochberg(HashMap originalMap, int numberOfTests) {
-        this.numberOfTests = originalMap.size();
+        this.numberOfTests = numberOfTests;
         this.originalMap = originalMap;
     }
 

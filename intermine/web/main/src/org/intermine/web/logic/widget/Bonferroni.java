@@ -17,7 +17,9 @@ import java.math.BigDecimal;
 
 
 /**
- *
+ * See online documentation for an in depth description of error correction and bonferroni.
+ * Briefly, the p-values are adjusted (multiple hypothesis test correction) by multiplying 
+ * the original value by the number of tests performed.
  * @author Julie Sullivan
  */
 public class Bonferroni implements ErrorCorrection
