@@ -82,32 +82,28 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 
 
      /**
-      * @return the query representing the sample population (the bag)
+     * {@inheritDoc} 
       */
      public Query getSample() {
          return sampleQuery;
      }
 
      /**
-      * @return the query representing the entire population (all the items in the database)
+     * {@inheritDoc} 
       */
      public Query getPopulation() {
          return populationQuery;
      }
 
      /**
-      *
-      * @param os
-      * @param bag
-      * @return description of reference population, ie "Accounting dept"
+     * {@inheritDoc} 
       */
      public Collection getReferencePopulation() {
          return organisms;
      }
 
      /**
-      * @param os
-      * @return the query representing the sample population (the bag)
+      * {@inheritDoc} 
       */
      public int getTotal(ObjectStore os) {
          return BioUtil.getTotal(os, organisms, "Gene");
@@ -212,19 +208,19 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      }
 
      /**
-      * @return if the widget should have an external link, where it should go to
+      * {@inheritDoc} 
       */
      public String getExternalLink() {
          return externalLink;
      }
 
      /**
-      *
-      * @return the string to append to the end of external link
+      * {@inheritDoc} 
       */
      public String getAppendage() {
          return append;
      }
+
 }
 
 

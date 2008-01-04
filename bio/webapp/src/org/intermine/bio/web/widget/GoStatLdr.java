@@ -55,221 +55,214 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     Query sampleQuery;
     Query populationQuery;
     Collection organisms;
-    int total;
+    int total, numberOfTests;
     String externalLink, append;
 
     /**
      * @param request The HTTP request we are processing
      */
-     public GoStatLdr (HttpServletRequest request) {
+    public GoStatLdr (HttpServletRequest request) {
 
-             HttpSession session = request.getSession();
-             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-             ServletContext servletContext = session.getServletContext();
-             ObjectStoreInterMineImpl os =
-                 (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ServletContext servletContext = session.getServletContext();
+        ObjectStoreInterMineImpl os =
+            (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
+        String bagName = request.getParameter("bagName");
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        InterMineBag bag = allBags.get(bagName);
+        String bagType = bag.getType();
+        String namespace = (request.getParameter("filter") != null
+                        ? request.getParameter("filter") : "biological_process");
 
-             String bagName = request.getParameter("bagName");
-             Map<String, InterMineBag> allBags =
-                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-             InterMineBag bag = allBags.get(bagName);
-             String bagType = bag.getType();
-             String namespace = (request.getParameter("filter") != null
-                               ? request.getParameter("filter") : "biological_process");
+        // list of ontologies to ignore
+        Collection badOntologies = getOntologies();
 
-             // list of ontologies to ignore
-             Collection badOntologies = getOntologies();
+        // build query constrained by bag
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcGene = new QueryClass(Gene.class);
+        QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
+        QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryClass qcGo = new QueryClass(GOTerm.class);
+        QueryClass qcProtein = new QueryClass(Protein.class);
 
-             // build query constrained by bag
-             Query q = new Query();
-             q.setDistinct(false);
-             QueryClass qcGene = new QueryClass(Gene.class);
-             QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
-             QueryClass qcOrganism = new QueryClass(Organism.class);
-             QueryClass qcGo = new QueryClass(GOTerm.class);
-             QueryClass qcProtein = new QueryClass(Protein.class);
+        QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
+        QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
+        QueryField qfGeneId = new QueryField(qcGene, "id");
+        QueryField qfNamespace = new QueryField(qcGo, "namespace");
+        QueryField qfGoTermId = new QueryField(qcGo, "identifier");
+        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
+        QueryField qfProteinId = new QueryField(qcProtein, "id");
 
-             QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
-             QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
-             QueryField qfGeneId = new QueryField(qcGene, "id");
-             QueryField qfNamespace = new QueryField(qcGo, "namespace");
-             QueryField qfGoTermId = new QueryField(qcGo, "identifier");
-             QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-             QueryField qfProteinId = new QueryField(qcProtein, "id");
+        QueryFunction objectCount = new QueryFunction();
 
-             QueryFunction objectCount = new QueryFunction();
-
-             q.addFrom(qcGene);
-             q.addFrom(qcGoAnnotation);
-             q.addFrom(qcOrganism);
-             q.addFrom(qcGo);
-             if (bagType.toLowerCase().equals("protein")) {
-                 q.addFrom(qcProtein);
-             }
-
-             q.addToSelect(qfGoTermId);
-             q.addToSelect(objectCount);
-             q.addToSelect(qfGoTerm);
-
-             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-             // objects (genes, proteins) must be in bag
-             BagConstraint bc1 = null;
-             if (bagType.toLowerCase().equals("protein")) {
-                 bc1 = new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb());
-             } else {
-                 bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-             }
-             cs.addConstraint(bc1);
-
-             // get organisms
-             organisms = BioUtil.getOrganisms(os, bag);
-
-             // limit to organisms in the bag
-             BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-
-             cs.addConstraint(bc2);
-
-             ContainsConstraint cc = null;
-             if (bagType.toLowerCase().equals("protein")) {
-                 // constrain gene to protein
-                 QueryCollectionReference qr = new QueryCollectionReference(qcProtein, "genes");
-                 cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcGene);
-                 cs.addConstraint(cc);
-             }
-
-             // ignore main 3 ontologies
-             BagConstraint bc3 = new BagConstraint(qfGoTermId, ConstraintOp.NOT_IN, badOntologies);
-             cs.addConstraint(bc3);
-
-             // gene.goAnnotation CONTAINS GOAnnotation
-             QueryCollectionReference qr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
-             ContainsConstraint cc1 =
-                 new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcGoAnnotation);
-             cs.addConstraint(cc1);
-
-             // gene is from organism
-             QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
-             ContainsConstraint cc2
-                                 = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
-             cs.addConstraint(cc2);
-
-             // goannotation contains go term
-             QueryObjectReference qr3 = new QueryObjectReference(qcGoAnnotation, "property");
-             ContainsConstraint cc3 = new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcGo);
-             cs.addConstraint(cc3);
-
-             // can't be a NOT relationship!
-             SimpleConstraint sc1 = new SimpleConstraint(qfQualifier,
-                                                         ConstraintOp.IS_NULL);
-             cs.addConstraint(sc1);
-
-             // go term is of the specified namespace
-             SimpleConstraint sc2 = new SimpleConstraint(qfNamespace,
-                                                         ConstraintOp.EQUALS,
-                                                         new QueryValue(namespace));
-             cs.addConstraint(sc2);
-             q.setConstraint(cs);
-             q.addToGroupBy(qfGoTerm);
-             q.addToGroupBy(qfGoTermId);
-
-             sampleQuery = q;
-
-             // construct population query
-             q = new Query();
-             q.setDistinct(false);
-
-             q.addFrom(qcGene);
-             q.addFrom(qcGoAnnotation);
-             q.addFrom(qcOrganism);
-             q.addFrom(qcGo);
-             if (bagType.toLowerCase().equals("protein")) {
-                 q.addFrom(qcProtein);
-             }
-
-             q.addToSelect(qfGoTermId);
-             q.addToSelect(objectCount);
-
-             cs = new ConstraintSet(ConstraintOp.AND);
-             cs.addConstraint(cc1);
-             cs.addConstraint(cc2);
-             cs.addConstraint(cc3);
-             cs.addConstraint(sc1);
-             cs.addConstraint(sc2);
-             cs.addConstraint(bc2);
-             cs.addConstraint(bc3);
-             if (bagType.toLowerCase().equals("protein")) {
-                 cs.addConstraint(cc);
-             }
-             q.setConstraint(cs);
-
-             q.addToGroupBy(qfGoTermId);
-
-             populationQuery = q;
-
-     }
-
-        // adds 3 main ontologies to array.  these 3 will be excluded from the query
-        // TODO get these from properties file
-        private Collection getOntologies() {
-
-            Collection<String> ids = new ArrayList<String>();
-
-            ids.add("GO:0008150");  // biological_process
-            ids.add("GO:0003674");  // molecular_function
-            ids.add("GO:0005575");  // cellular_component
-
-            return ids;
-
+        q.addFrom(qcGene);
+        q.addFrom(qcGoAnnotation);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcGo);
+        if (bagType.toLowerCase().equals("protein")) {
+            q.addFrom(qcProtein);
         }
 
-        /**
-         * @return the query representing the sample population (the bag)
-         */
-        public Query getSample() {
-            return sampleQuery;
+        q.addToSelect(qfGoTermId);
+        q.addToSelect(objectCount);
+        q.addToSelect(qfGoTerm);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        // objects (genes, proteins) must be in bag
+        BagConstraint bc1 = null;
+        if (bagType.toLowerCase().equals("protein")) {
+            bc1 = new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb());
+        } else {
+            bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+        }
+        cs.addConstraint(bc1);
+
+        // get organisms
+        organisms = BioUtil.getOrganisms(os, bag);
+
+        // limit to organisms in the bag
+        BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
+
+        cs.addConstraint(bc2);
+
+        ContainsConstraint cc = null;
+        if (bagType.toLowerCase().equals("protein")) {
+            // constrain gene to protein
+            QueryCollectionReference qr = new QueryCollectionReference(qcProtein, "genes");
+            cc = new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcGene);
+            cs.addConstraint(cc);
         }
 
-        /**
-         * @return the query representing the entire population (all the items in the database)
-         */
-        public Query getPopulation() {
-            return populationQuery;
+        // ignore main 3 ontologies
+        BagConstraint bc3 = new BagConstraint(qfGoTermId, ConstraintOp.NOT_IN, badOntologies);
+        cs.addConstraint(bc3);
+
+        // gene.goAnnotation CONTAINS GOAnnotation
+        QueryCollectionReference qr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
+        ContainsConstraint cc1 =
+            new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcGoAnnotation);
+        cs.addConstraint(cc1);
+
+        // gene is from organism
+        QueryObjectReference qr2 = new QueryObjectReference(qcGene, "organism");
+        ContainsConstraint cc2
+        = new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOrganism);
+        cs.addConstraint(cc2);
+
+        // goannotation contains go term
+        QueryObjectReference qr3 = new QueryObjectReference(qcGoAnnotation, "property");
+        ContainsConstraint cc3 = new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcGo);
+        cs.addConstraint(cc3);
+
+        // can't be a NOT relationship!
+        SimpleConstraint sc1 = new SimpleConstraint(qfQualifier,
+                                                    ConstraintOp.IS_NULL);
+        cs.addConstraint(sc1);
+
+        // go term is of the specified namespace
+        SimpleConstraint sc2 = new SimpleConstraint(qfNamespace,
+                                                    ConstraintOp.EQUALS,
+                                                    new QueryValue(namespace));
+        cs.addConstraint(sc2);
+        q.setConstraint(cs);
+        q.addToGroupBy(qfGoTerm);
+        q.addToGroupBy(qfGoTermId);
+
+        sampleQuery = q;
+
+        // construct population query
+        q = new Query();
+        q.setDistinct(false);
+
+        q.addFrom(qcGene);
+        q.addFrom(qcGoAnnotation);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcGo);
+        if (bagType.toLowerCase().equals("protein")) {
+            q.addFrom(qcProtein);
         }
 
-        /**
-         *
-         * @param os
-         * @param bag
-         * @return description of reference population, ie "Accounting dept"
-         */
-        public Collection getReferencePopulation() {
-            return organisms;
-        }
+        q.addToSelect(qfGoTermId);
+        q.addToSelect(objectCount);
 
-        /**
-         * @param os
-         * @return the query representing the sample population (the bag)
-         */
-        public int getTotal(ObjectStore os) {
-            return BioUtil.getTotal(os, organisms, "Gene");
+        cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(cc1);
+        cs.addConstraint(cc2);
+        cs.addConstraint(cc3);
+        cs.addConstraint(sc1);
+        cs.addConstraint(sc2);
+        cs.addConstraint(bc2);
+        cs.addConstraint(bc3);
+        if (bagType.toLowerCase().equals("protein")) {
+            cs.addConstraint(cc);
         }
+        q.setConstraint(cs);
 
-        /**
-         * @return if the widget should have an external link, where it should go to
-         */
-        public String getExternalLink() {
-            return externalLink;
-        }
+        q.addToGroupBy(qfGoTermId);
 
-        /**
-         *
-         * @return the string to append to the end of external link
-         */
-        public String getAppendage() {
-            return append;
-        }
+        populationQuery = q;
+
+    }
+
+    // adds 3 main ontologies to array.  these 3 will be excluded from the query
+    private Collection getOntologies() {
+
+        Collection<String> ids = new ArrayList<String>();
+
+        ids.add("GO:0008150");  // biological_process
+        ids.add("GO:0003674");  // molecular_function
+        ids.add("GO:0005575");  // cellular_component
+
+        return ids;
+
+    }
+
+    /**
+     * {@inheritDoc} 
+     */
+    public Query getSample() {
+        return sampleQuery;
+    }
+
+    /**
+     * {@inheritDoc} 
+     */
+    public Query getPopulation() {
+        return populationQuery;
+    }
+
+    /**
+     * {@inheritDoc} 
+     */
+    public Collection getReferencePopulation() {
+        return organisms;
+    }
+
+    /**
+     * {@inheritDoc} 
+     */
+    public int getTotal(ObjectStore os) {
+        return BioUtil.getTotal(os, organisms, "Gene");
+    }
+
+    /**
+     * {@inheritDoc} 
+     */
+    public String getExternalLink() {
+        return externalLink;
+    }
+
+    /**
+     * {@inheritDoc} 
+     */
+    public String getAppendage() {
+        return append;
+    }
 }
 
 

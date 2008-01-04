@@ -53,16 +53,14 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     Query sampleQuery;
     Query populationQuery;
     Collection organisms;
-    int total;
+    int total, numberOfTests;
     String externalLink, append;
     InterMineBag bag;
-
-
+    
     /**
      * @param request The HTTP request we are processing
      */
     public ProteinDomainLdr(HttpServletRequest request) {
-
 
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -177,8 +175,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
 
             populationQuery = q;
 
-        }
-        else if (bag.getType().equalsIgnoreCase("protein")) {
+        } else if (bag.getType().equalsIgnoreCase("protein")) {
 
             // further constraints for proteins
             // proteins must be in bag
@@ -222,63 +219,55 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
             csPopulation.addConstraint(cc3);
             csPopulation.addConstraint(bc2);
             csPopulation.addConstraint(sc);
-            q.setConstraint(csPopulation);
+
             q.addToGroupBy(qfId);
             populationQuery = q;
 
         }
-        else {
-            //error?
-        }
 
     }
 
-         /**
-          * @return the query representing the sample population (the bag)
-          */
-         public Query getSample() {
-             return sampleQuery;
-         }
+    /**
+     * {@inheritDoc} 
+     */
+    public Query getSample() {
+        return sampleQuery;
+    }
 
-         /**
-          * @return the query representing the entire population (all the items in the database)
-          */
-         public Query getPopulation() {
-             return populationQuery;
-         }
+    /**
+     * {@inheritDoc} 
+     */
+    public Query getPopulation() {
+        return populationQuery;
+    }
 
-         /**
-          *
-          * @param os
-          * @param bag
-          * @return description of reference population, ie "Accounting dept"
-          */
-         public Collection getReferencePopulation() {
-             return organisms;
-         }
+    /**
+     * {@inheritDoc} 
+     */
+    public Collection getReferencePopulation() {
+        return organisms;
+    }
 
-         /**
-          * @param os
-          * @return the query representing the sample population (the bag)
-          */
-         public int getTotal(ObjectStore os) {
-             return BioUtil.getTotal(os, organisms, bag.getType());
-         }
+    /**
+     * {@inheritDoc} 
+     */
+    public int getTotal(ObjectStore os) {
+        return BioUtil.getTotal(os, organisms, bag.getType());
+    }
 
-         /**
-          * @return if the widget should have an external link, where it should go to
-          */
-         public String getExternalLink() {
-             return externalLink;
-         }
+    /**
+     * {@inheritDoc} 
+     */
+    public String getExternalLink() {
+        return externalLink;
+    }
 
-         /**
-          *
-          * @return the string to append to the end of external link
-          */
-         public String getAppendage() {
-             return append;
-         }
+    /**
+     * {@inheritDoc}     
+     */
+    public String getAppendage() {
+        return append;
+    }
 }
 
 

@@ -53,161 +53,152 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     Query sampleQuery;
     Query populationQuery;
     Collection organisms;
-    int total;
+    int total, numberOfTests;
     String externalLink, append;
 
     /**
      * @param request The HTTP request we are processing
      */
-     public UniProtKeywordsLdr(HttpServletRequest request) {
+    public UniProtKeywordsLdr(HttpServletRequest request) {
 
-             HttpSession session = request.getSession();
-             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-             ServletContext servletContext = session.getServletContext();
-             ObjectStoreInterMineImpl os =
-                 (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ServletContext servletContext = session.getServletContext();
+        ObjectStoreInterMineImpl os =
+            (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-             String bagName = request.getParameter("bagName");
-             Map<String, InterMineBag> allBags =
-                 WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-             InterMineBag bag = allBags.get(bagName);
+        String bagName = request.getParameter("bagName");
+        Map<String, InterMineBag> allBags =
+            WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+        InterMineBag bag = allBags.get(bagName);
 
-             Query q = new Query();
-             q.setDistinct(false);
-             QueryClass qcProtein = new QueryClass(Protein.class);
-             QueryClass qcOrganism = new QueryClass(Organism.class);
-             QueryClass qcOntology = new QueryClass(Ontology.class);
-             QueryClass qcOntoTerm = new QueryClass(OntologyTerm.class);
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qcProtein = new QueryClass(Protein.class);
+        QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryClass qcOntology = new QueryClass(Ontology.class);
+        QueryClass qcOntoTerm = new QueryClass(OntologyTerm.class);
 
-             QueryField qfProtId = new QueryField(qcProtein, "id");
-             QueryField qfName = new QueryField(qcOntoTerm, "name");
-             QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-             QueryField qfOnto = new QueryField(qcOntology, "title");
+        QueryField qfProtId = new QueryField(qcProtein, "id");
+        QueryField qfName = new QueryField(qcOntoTerm, "name");
+        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
+        QueryField qfOnto = new QueryField(qcOntology, "title");
 
-             QueryFunction protCount = new QueryFunction();
+        QueryFunction protCount = new QueryFunction();
 
-             q.addFrom(qcProtein);
-             q.addFrom(qcOrganism);
-             q.addFrom(qcOntology);
-             q.addFrom(qcOntoTerm);
+        q.addFrom(qcProtein);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcOntology);
+        q.addFrom(qcOntoTerm);
 
-             q.addToSelect(qfName);
-             q.addToSelect(protCount);
-             q.addToSelect(qfName);
+        q.addToSelect(qfName);
+        q.addToSelect(protCount);
+        q.addToSelect(qfName);
 
-             ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs1 = new ConstraintSet(ConstraintOp.AND);
 
-             BagConstraint bc1 = new BagConstraint(qfProtId, ConstraintOp.IN, bag.getOsb());
-             cs1.addConstraint(bc1);
+        BagConstraint bc1 = new BagConstraint(qfProtId, ConstraintOp.IN, bag.getOsb());
+        cs1.addConstraint(bc1);
 
-             organisms = BioUtil.getOrganisms(os, bag);
+        organisms = BioUtil.getOrganisms(os, bag);
 
-             BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
-             cs1.addConstraint(bc2);
+        BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
+        cs1.addConstraint(bc2);
 
-             QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
-             ContainsConstraint cc1
-                                 = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
-             cs1.addConstraint(cc1);
+        QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
+        ContainsConstraint cc1
+        = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
+        cs1.addConstraint(cc1);
 
-             QueryCollectionReference qr2 = new QueryCollectionReference(qcProtein, "keywords");
-             ContainsConstraint cc2 =
-                 new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOntoTerm);
-             cs1.addConstraint(cc2);
+        QueryCollectionReference qr2 = new QueryCollectionReference(qcProtein, "keywords");
+        ContainsConstraint cc2 =
+            new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcOntoTerm);
+        cs1.addConstraint(cc2);
 
-             QueryObjectReference qr3 = new QueryObjectReference(qcOntoTerm, "ontology");
-             ContainsConstraint cc3 =
-                 new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcOntology);
-             cs1.addConstraint(cc3);
+        QueryObjectReference qr3 = new QueryObjectReference(qcOntoTerm, "ontology");
+        ContainsConstraint cc3 =
+            new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcOntology);
+        cs1.addConstraint(cc3);
 
-             SimpleConstraint sc = new
-                 SimpleConstraint(qfOnto, ConstraintOp.MATCHES, new QueryValue("UniProtKeyword"));
-             cs1.addConstraint(sc);
+        SimpleConstraint sc = new
+        SimpleConstraint(qfOnto, ConstraintOp.MATCHES, new QueryValue("UniProtKeyword"));
+        cs1.addConstraint(sc);
 
-             q.setConstraint(cs1);
-             q.addToGroupBy(qfName);
+        q.setConstraint(cs1);
+        q.addToGroupBy(qfName);
 
-//             SELECT DISTINCT a1_, a2_ FROM org.flymine.model.genomic.Protein AS a1_,
-//             org.flymine.model.genomic.OntologyTerm AS a2_,
-//             org.flymine.model.genomic.Ontology AS a3_
-//             WHERE (a1_.keywords CONTAINS a2_
-//                    AND a2_.ontology CONTAINS a3_
-//                    AND LOWER(a3_.title) = 'uniprotkeyword')
-//             ORDER BY a1_.identifier, a1_.primaryAccession, a1_.length, a2_.name
+        sampleQuery = q;
 
+        // construct population query
+        q = new Query();
+        q.setDistinct(false);
 
+        q.addFrom(qcProtein);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcOntology);
+        q.addFrom(qcOntoTerm);
 
-             sampleQuery = q;
+        q.addToSelect(qfName);
+        q.addToSelect(protCount);
 
-             // construct population query
-             q = new Query();
-             q.setDistinct(false);
+        ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
+        cs2.addConstraint(cc1);
+        cs2.addConstraint(cc2);
+        cs2.addConstraint(cc3);
+        cs2.addConstraint(bc2);
+        cs2.addConstraint(sc);
+        q.setConstraint(cs2);
+        q.addToGroupBy(qfName);
+        populationQuery = q;
+    }
 
-             q.addFrom(qcProtein);
-             q.addFrom(qcOrganism);
-             q.addFrom(qcOntology);
-             q.addFrom(qcOntoTerm);
+    /**
+     * {@inheritDoc} 
+     */
+    public Query getSample() {
+        return sampleQuery;
+    }
 
-             q.addToSelect(qfName);
-             q.addToSelect(protCount);
+    /**
+     * {@inheritDoc} 
+     */
+    public Query getPopulation() {
+        return populationQuery;
+    }
 
-             ConstraintSet cs2 = new ConstraintSet(ConstraintOp.AND);
-             cs2.addConstraint(cc1);
-             cs2.addConstraint(cc2);
-             cs2.addConstraint(cc3);
-             cs2.addConstraint(bc2);
-             cs2.addConstraint(sc);
-             q.setConstraint(cs2);
-             q.addToGroupBy(qfName);
-             populationQuery = q;
-     }
+    /**
+     * {@inheritDoc} 
+     */
+    public Collection getReferencePopulation() {
+        return organisms;
+    }
 
-         /**
-          * @return the query representing the sample population (the bag)
-          */
-         public Query getSample() {
-             return sampleQuery;
-         }
+    /**
+     * {@inheritDoc} 
+     */
+    public int getTotal(ObjectStore os) {
+        return BioUtil.getTotal(os, organisms, "Protein");
+    }
 
-         /**
-          * @return the query representing the entire population (all the items in the database)
-          */
-         public Query getPopulation() {
-             return populationQuery;
-         }
+    /**
+     * {@inheritDoc} 
+     */
+    public String getExternalLink() {
+        return externalLink;
+    }
 
-         /**
-          *
-          * @param os
-          * @param bag
-          * @return description of reference population, ie "Accounting dept"
-          */
-         public Collection getReferencePopulation() {
-             return organisms;
-         }
-
-         /**
-          * @param os
-          * @return the query representing the sample population (the bag)
-          */
-         public int getTotal(ObjectStore os) {
-             return BioUtil.getTotal(os, organisms, "Protein");
-         }
-
-         /**
-          * @return if the widget should have an external link, where it should go to
-          */
-         public String getExternalLink() {
-             return externalLink;
-         }
-
-         /**
-          *
-          * @return the string to append to the end of external link
-          */
-         public String getAppendage() {
-             return append;
-         }
+    /**
+     * {@inheritDoc} 
+     */
+    public String getAppendage() {
+        return append;
+    }
+    /**
+     * {@inheritDoc} 
+     */
+    public int getNumberOfTests() {
+        return numberOfTests;
+    }
 }
 
 
