@@ -27,7 +27,7 @@ import org.intermine.objectstore.ObjectStore;
 public interface EnrichmentWidgetLdr
 {
     /**
-     * @return the query representing the sample population (the bag)
+     * @return the query representing the sample population (the list)
      */
     public Query getSample();
 
@@ -37,27 +37,26 @@ public interface EnrichmentWidgetLdr
     public Query getPopulation();
 
     /**
-     *
-     * @param os
-     * @param bag
      * @return description of reference population, ie "Accounting dept"
      */
     public Collection getReferencePopulation();
 
     /**
-     * @param os
-     * @return the query representing the sample population (the bag)
+     * @param os the object store
+     * @return the total number of objects in the database
      */
     public int getTotal(ObjectStore os);
 
     /**
+     *  this was used for tiffin.  obsolete? 
      * @return if the widget should have an external link, where it should go to
      */
     public String getExternalLink();
 
     /**
-     *
+     * this was used for tiffin.  obsolete?
      * @return the string to append to the end of external link
      */
     public String getAppendage();
+    
 }
