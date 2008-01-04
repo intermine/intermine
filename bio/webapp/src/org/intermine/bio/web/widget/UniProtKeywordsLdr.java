@@ -53,7 +53,7 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
     Query sampleQuery;
     Query populationQuery;
     Collection organisms;
-    int total, numberOfTests;
+    int total;
     String externalLink, append;
 
     /**
@@ -192,12 +192,6 @@ public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
      */
     public String getAppendage() {
         return append;
-    }
-    /**
-     * {@inheritDoc} 
-     */
-    public int getNumberOfTests() {
-        return numberOfTests;
     }
 }
 

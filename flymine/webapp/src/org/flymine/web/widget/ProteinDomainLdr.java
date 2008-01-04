@@ -53,7 +53,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     Query sampleQuery;
     Query populationQuery;
     Collection organisms;
-    int total, numberOfTests;
+    int total;
     String externalLink, append;
     InterMineBag bag;
     
