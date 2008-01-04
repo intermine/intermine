@@ -38,7 +38,7 @@ public class Aspect
     /** Path to large image. */
     private String largeImage;
     /** List of AspectSources. */
-    private List aspectSources = new ArrayList();
+    private List<AspectSource> aspectSources = new ArrayList<AspectSource>();
     /** Comma seperated list of starting-point class names. */
     private List startingPoints = new ArrayList();
 
@@ -77,7 +77,6 @@ public class Aspect
     /**
      * Get the AspectSources.
      * @return the AspectSources
-     * {@inheritDoc}
      */
     public List getAspectSources() {
         return aspectSources;
