@@ -29,10 +29,11 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	<html:form action="/enrichmentWidget" method="get">
 	<table>
 	<tr>
-		<td>Error Correction</td>
+		<td>Multiple Hypothesis Test Correction</td>
 		<td><html:select property="errorCorrection">
 				<html:option value="Benjamini and Hochberg">Benjamini and Hochberg</html:option>
 				<html:option value="Bonferroni">Bonferroni</html:option>
+				<html:option value="None">None</html:option>
 			</html:select>
 		</td>
 	</tr>
