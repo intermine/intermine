@@ -225,7 +225,6 @@ public abstract class WebUtil
      * @param oldResults the original Results objects
      * @param newBatchSize the new batch size
      * @return a new Results object with a new batch size
-     * @throws ObjectStoreException if there is a problem while creating the new Results object
      */
     public static Results changeResultBatchSize(Results oldResults, int newBatchSize) {
         Results newResults = oldResults.getObjectStore().execute(oldResults.getQuery());
@@ -386,9 +385,8 @@ public abstract class WebUtil
     }
 
     /**
-     * @param servletContext
-     * @param userBags
-     * @param profile
+     * @param servletContext servlet context
+     * @param userBags list of user's bags
      * @return map containing all bags
      */
     public static Map<String, InterMineBag> getAllBags(Map<String, InterMineBag> userBags,
@@ -441,13 +439,12 @@ public abstract class WebUtil
 
     /**
      * Takes two queries.  Runs both and compares the results.
-     * @param os
+     * @param os the objectstore
      * @param queryPopulation The query to get the entire population, ie all genes in the database
      * @param querySample The query to get the sample, ie all genes in the bag
      * @param bag the bag we are analysing
      * @param total total number of the entire population
      * @param maxValue maximum value to return
-     * @param significanceValue significance value
      * @param errorCorrection which error correction algorithm to use, Bonferroni
      * or Benjamini Hochberg
      * @return array of three results maps
@@ -461,7 +458,7 @@ public abstract class WebUtil
                                       Double maxValue,
                                       String errorCorrection) {
 
-            ArrayList<Map> maps = new ArrayList<Map>();
+            ArrayList<Object> maps = new ArrayList<Object>();
             int numberOfObjectsInBag;
             try {
                 numberOfObjectsInBag = bag.size();
@@ -536,6 +533,21 @@ public abstract class WebUtil
             return maps;
         }
 
+    /**
+     * See online help docs for detailed description of what error correction is and why we need it.
+     * Briefly, in all experiments certain things happen that look interesting but really just 
+     * happened by chance.  We know this, so we need to adjust our results to account for this
+     * phenonomenon to make sure what we are looking at is indeed interesting behaviour and not
+     * just random happenstance.
+     * 
+     * To do this we take all of our p-values and adjust them.  Here we are using on of our two
+     * methods available - which one we use is determined by the user.
+     * @param errorCorrection which multiple hypothesis test correction to use - Bonferroni or
+     * BenjaminiHochberg
+     * @param maxValue maximum value we're interested in
+     * @param resultsMap map containing un-adjusted pvalues
+     * @return map of all the adjusted pvalues
+     */
     protected static HashMap calcErrorCorrection(String errorCorrection, Double maxValue,
                                HashMap<String, Double> resultsMap) {
 
