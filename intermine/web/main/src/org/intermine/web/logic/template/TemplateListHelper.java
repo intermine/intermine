@@ -301,8 +301,8 @@ public class TemplateListHelper
                                     try {
                                         pathNodeType = Class.forName(cl);
                                     } catch (ClassNotFoundException e) {
-                                        String msg = "Can't find class " + cl  + " for tag "
-                                        + tag.getTagName(); 
+                                        String msg = "Can't find class " + cl  + " for template "
+                                        + templateQuery.getTitle();
                                         LOG.error(msg);
                                         continue;
                                     }
@@ -334,8 +334,8 @@ public class TemplateListHelper
                                     try {
                                         identifierClass = Class.forName(className);
                                     } catch (ClassNotFoundException e) {
-                                        String msg = "Can't find class " + className + " for tag "
-                                        + tag.getTagName();   
+                                        String msg = "Can't find class " + className 
+                                        + " for template " +  templateQuery.getTitle();
                                         LOG.error(msg);
                                         continue TAGS;
                                     }
