@@ -25,21 +25,21 @@ public class Bonferroni implements ErrorCorrection
     private HashMap originalMap = new HashMap();
     private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
     private double numberOfTests;
-    private double significanceValue = 0.05;
+    
     /**
-     * @param originalMap Hashmap of go terms and their pvalues.
+     * @param originalMap map of terms and their p-values.
+     * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
+     * as these cannot possibly be overrepresented
      */
-    public Bonferroni(HashMap originalMap) {
+    public Bonferroni(HashMap originalMap, int numberOfTests) {
         this.originalMap = originalMap;
-        this.numberOfTests = originalMap.size();
+        this.numberOfTests = numberOfTests;
     }
 
     /**
      * @param max maximum value to display
      */
     public void calculate(Double max) {
-
-        double bonferroni = significanceValue / numberOfTests;
 
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext();) {
 
@@ -48,7 +48,7 @@ public class Bonferroni implements ErrorCorrection
             BigDecimal p = new BigDecimal("" + originalMap.get(label));
 
             // calc new value
-            BigDecimal adjustedP = p.add(new BigDecimal(bonferroni));
+            BigDecimal adjustedP = p.multiply(new BigDecimal(numberOfTests));
 
             // don't store values >= maxValue
             if (adjustedP.doubleValue() < max.doubleValue()) {
