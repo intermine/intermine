@@ -13,6 +13,7 @@
     <item url="/archive.xml" title="Archive releases"/>
   </item>
 
+
   <item title="News">
     <news id="news" limit="2"/>
     <item url="/news.xml" title="All news"/>
@@ -20,7 +21,7 @@
 
   <item title="Documentation">
     <item url="/link.xml" title="Link to FlyMine"/>
-    <item url="/cite.xml" title="Cite FlyMine"/>
+<!--    <item url="/cite.xml" title="Cite FlyMine"/>-->
     <item url="/software.xml" title="Software"/>
     <item url="/doc/links.xml" title="Resources"/>
   </item>
