@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -186,7 +187,8 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     @Override
     public void processFile(File file) throws BuildException {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            FileReader fileReader = new FileReader(file);
+            BufferedReader reader = new BufferedReader(fileReader);
 
             System.err .println("reading " + sequenceType + " sequence from: " + file);
 
@@ -201,6 +203,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             while (iter.hasNext()) {
                 processSequence(getOrganism(), iter.nextSequence());
             }
+
+            reader.close();
+            fileReader.close();
         } catch (BioException e) {
             throw new BuildException("sequence not in fasta format or wrong alphabet for: "
                     + file, e);
@@ -210,6 +215,8 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new BuildException("problem reading file - file not found: " + file, e);
         } catch (ObjectStoreException e) {
             throw new BuildException("ObjectStore problem while processing: " + file, e);
+        } catch (IOException e) {
+            throw new BuildException("error while closing FileReader for: " + file, e);
         }
     }
 
