@@ -197,7 +197,7 @@
 	 	                 description="Go terms enriched for genes in this list."    
 	 	                 label="GO Term"
 	 	                 filters="biological_process,cellular_component,molecular_function"  
-	 	                 filterLabel="ontology" 
+	 	                 filterLabel="Ontology" 
 	 	                 max="0.10" /> 
 
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment"  
