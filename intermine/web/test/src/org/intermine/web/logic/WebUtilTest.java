@@ -24,7 +24,10 @@ public class WebUtilTest extends TestCase
     }
 
     public void setUp() throws Exception {
-
+        
+        // these numbers are generated via this website:
+        // http://www.quantitativeskills.com/sisa/distributions/hypghlp.htm
+        
         id[0] = "notEnriched";
         taggedSample[0] = 1;
         taggedPopulation[0] = 10;
@@ -54,10 +57,12 @@ public class WebUtilTest extends TestCase
         }
     }
 
+    // TODO implement bonferroni test
     public void testBonferroni() throws Exception {
         WebUtil.calcErrorCorrection("Bonferroni", maxValue, total, resultsMap);
     }
 
+    // TODO implement benjamini hochberg test
     public void testBenjaminiHochberg() throws Exception {
         WebUtil.calcErrorCorrection("BenjaminiHochberg", maxValue, total, resultsMap);
     }

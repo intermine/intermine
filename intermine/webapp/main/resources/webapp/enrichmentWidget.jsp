@@ -13,18 +13,13 @@
 
 <center><h2>${enrichmentWidgetForm.title}</h2></center>
 
-<c:out value='${enrichmentWidgetForm.description}'/>  Smaller p-values show greater enrichment. Method: One-sided Hypergeometric test.
+<c:out value='${enrichmentWidgetForm.description}'/>  Smaller p-values show greater enrichment. 
 <br/><br/>
 Reference population: <c:out value='${referencePopulation}'/>.
-<br/><br/>
-
-
-	
+<br/>
 <table>	
-
-
 <tr>
-	<td valign="top" align="center">
+	<td valign="top" align="left">
 
 	<html:form action="/enrichmentWidget" method="get">
 	<table>
