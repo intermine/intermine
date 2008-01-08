@@ -20,8 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.bio.ontology.DagTerm;
-import org.intermine.bio.ontology.DagTermSynonym;
 import org.intermine.bio.ontology.OboParser;
 import org.intermine.bio.ontology.OboTerm;
 import org.intermine.bio.ontology.OboTermSynonym;
@@ -99,7 +97,7 @@ public class OboConverter extends DataConverter
      */
     protected void process(Collection rootTerms) throws ObjectStoreException {
         for (Iterator i = rootTerms.iterator(); i.hasNext();) {
-            process((DagTerm) i.next());
+            process((OboTerm) i.next());
         }
         store(ontology);
         for (Iterator i = nameToTerm.values().iterator(); i.hasNext();) {
@@ -120,7 +118,7 @@ public class OboConverter extends DataConverter
      * @return an Item representing the term
      * @throws ObjectStoreException if an error occurs while writing to the itemWriter
      */
-    protected Item process(DagTerm term) throws ObjectStoreException {
+    protected Item process(OboTerm term) throws ObjectStoreException {
         String termId = (term.getId() == null ? term.getName() : term.getId());
         Item item = (Item) nameToTerm.get(termId);
         if (item == null) {
@@ -153,28 +151,22 @@ public class OboConverter extends DataConverter
      * @param term the source DagTerm
      * @throws ObjectStoreException if an error occurs while writing to the itemWriter
      */
-    protected void configureItem(String termId, Item item, DagTerm term)
+    protected void configureItem(String termId, Item item, OboTerm term)
         throws ObjectStoreException {
         item.addAttribute(new Attribute("name", term.getName()));
         item.addReference(new Reference("ontology", ontology.getIdentifier()));
         if (term.getId() != null) {
             item.addAttribute(new Attribute("identifier", term.getId()));
         }
-        Iterator iter = term.getChildren().iterator();
-        while (iter.hasNext()) {
-            DagTerm subTerm = (DagTerm) iter.next();
+        for (OboTerm subTerm : term.getChildren()) {
             Item subItem = process(subTerm);
             relate(item, subItem, "is_a");
         }
-        iter = term.getComponents().iterator();
-        while (iter.hasNext()) {
-            DagTerm subTerm = (DagTerm) iter.next();
+        for (OboTerm subTerm : term.getComponents()) {
             Item subItem = process(subTerm);
             relate(item, subItem, "part_of");
         }
-        iter = term.getSynonyms().iterator();
-        while (iter.hasNext()) {
-            DagTermSynonym syn = (DagTermSynonym) iter.next();
+        for (OboTermSynonym syn : term.getSynonyms()) {
             Item synItem = (Item) synToItem.get(syn);
             if (synItem == null) {
                 synItem = createItem("OntologyTermSynonym");
@@ -204,11 +196,10 @@ public class OboConverter extends DataConverter
      * @param term the source DagTerm
      * @throws ObjectStoreException if an error occurs while writing to the itemWriter
      */
-    protected void configureSynonymItem(DagTermSynonym syn, Item item, DagTerm term)
+    protected void configureSynonymItem(OboTermSynonym syn, Item item, OboTerm term)
         throws ObjectStoreException {
-        item.addAttribute(new Attribute("name", syn.getName()));
-        OboTermSynonym osyn = (OboTermSynonym) syn;
-        item.addAttribute(new Attribute("type", osyn.getType()));
+        item.setAttribute("name", syn.getName());
+        item.setAttribute("type", syn.getType());
     }
 
     /**

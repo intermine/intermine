@@ -73,17 +73,17 @@ public class DagValidator
      * @throws IllegalAccessException if reflection problem occurs
      * @throws InvocationTargetException if reflection problem occurs
      */
-    protected void operateOnTree(DagTerm term, Method m)
+    protected void operateOnTree(OboTerm term, Method m)
         throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         Iterator iter = term.getChildren().iterator();
         while (iter.hasNext()) {
-            operateOnTree((DagTerm) iter.next(), m);
+            operateOnTree((OboTerm) iter.next(), m);
         }
 
         iter = term.getComponents().iterator();
         while (iter.hasNext()) {
-            operateOnTree((DagTerm) iter.next(), m);
+            operateOnTree((OboTerm) iter.next(), m);
         }
 
         m.invoke(this, new Object[] {term});
@@ -96,9 +96,9 @@ public class DagValidator
      * @throws Exception if anything goes wrong
      */
     protected boolean duplicateNames(Collection rootTerms) throws Exception {
-        Method m = this.getClass().getDeclaredMethod("collectNames", new Class[] {DagTerm.class});
+        Method m = this.getClass().getDeclaredMethod("collectNames", new Class[] {OboTerm.class});
         for (Iterator iter = rootTerms.iterator(); iter.hasNext(); ) {
-            operateOnTree((DagTerm) iter.next(), m);
+            operateOnTree((OboTerm) iter.next(), m);
         }
 
         boolean valid = true;
@@ -109,7 +109,7 @@ public class DagValidator
             if (((Set) e.getValue()).size() > 1) {
                 String nameStr = "";
                 for (Iterator i = ((Set) e.getValue()).iterator(); i.hasNext(); ) {
-                    nameStr = nameStr + ((DagTerm) i.next()).getName() + " ";
+                    nameStr = nameStr + ((OboTerm) i.next()).getName() + " ";
                 }
 
                 output.append("id: \'" + e.getKey() + "\' has duplicate names: " + nameStr + "\n");
@@ -126,9 +126,9 @@ public class DagValidator
      * @throws Exception if anything goes wrong
      */
     protected boolean duplicateIds(Collection rootTerms) throws Exception {
-        Method m = this.getClass().getDeclaredMethod("collectIds", new Class[] {DagTerm.class});
+        Method m = this.getClass().getDeclaredMethod("collectIds", new Class[] {OboTerm.class});
         for (Iterator iter = rootTerms.iterator(); iter.hasNext(); ) {
-            operateOnTree((DagTerm) iter.next(), m);
+            operateOnTree((OboTerm) iter.next(), m);
         }
 
         boolean valid = true;
@@ -139,7 +139,7 @@ public class DagValidator
             if (((Set) e.getValue()).size() > 1) {
                 String idStr = "";
                 for (Iterator i = ((Set) e.getValue()).iterator(); i.hasNext(); ) {
-                    idStr = idStr + ((DagTerm) i.next()).getId() + " ";
+                    idStr = idStr + ((OboTerm) i.next()).getId() + " ";
                 }
                 output.append("name: \'" + e.getKey() + "\' has duplicate ids: " + idStr + "\n");
                 valid = false;
@@ -156,9 +156,9 @@ public class DagValidator
      */
     protected boolean synonymsAreTerms(Collection rootTerms) throws Exception {
         Method m = this.getClass().getDeclaredMethod("collectSynonyms",
-                                                     new Class[] {DagTerm.class});
+                                                     new Class[] {OboTerm.class});
         for (Iterator iter = rootTerms.iterator(); iter.hasNext(); ) {
-            operateOnTree((DagTerm) iter.next(), m);
+            operateOnTree((OboTerm) iter.next(), m);
         }
 
         boolean valid = true;
@@ -168,10 +168,10 @@ public class DagValidator
             Map.Entry e = (Map.Entry) iter.next();
             Iterator synIter = ((Set) e.getValue()).iterator();
             while (synIter.hasNext()) {
-                DagTermSynonym synonym = (DagTermSynonym) synIter.next();
+                OboTermSynonym synonym = (OboTermSynonym) synIter.next();
                 if (synMap.containsKey(synonym.getName())) {
-                    DagTerm term = (DagTerm) nameMap.get(e.getKey());
-                    DagTerm synTerm = (DagTerm) nameMap.get(synonym.getName());
+                    OboTerm term = (OboTerm) nameMap.get(e.getKey());
+                    OboTerm synTerm = (OboTerm) nameMap.get(synonym.getName());
                     output.append("synonym \'" + synonym + "\' for term: \'" + term.toString()
                                   + "\' is also term: " + synTerm.getId() + "\n");
                     valid = false;
@@ -192,16 +192,16 @@ public class DagValidator
      */
     protected boolean orphanPartOfs(Collection rootTerms) throws Exception {
         Method m = this.getClass().getDeclaredMethod("flattenRelations",
-                                                     new Class[] {DagTerm.class});
+                                                     new Class[] {OboTerm.class});
         for (Iterator iter = rootTerms.iterator(); iter.hasNext(); ) {
-            operateOnTree((DagTerm) iter.next(), m);
+            operateOnTree((OboTerm) iter.next(), m);
         }
 
         boolean valid = true;
 
         Iterator iter = partofs.iterator();
         while (iter.hasNext()) {
-            DagTerm term = (DagTerm) iter.next();
+            OboTerm term = (OboTerm) iter.next();
             if (!isas.contains(term)) {
                 output.append("orphan partof: " + term.getId() + ", " + term.getName() + "\n");
                 valid = false;
@@ -211,12 +211,12 @@ public class DagValidator
     }
 
     // these methods are called by reflection so ignore eclipse warning
-    private void collectSynonyms(DagTerm term) {
+    private void collectSynonyms(OboTerm term) {
         synMap.put(term.getName(), term.getSynonyms());
         nameMap.put(term.getName(), term);
     }
 
-    private void collectNames(DagTerm term) {
+    private void collectNames(OboTerm term) {
         HashSet tmpIds = (HashSet) ids.get(term.getId());
         if (tmpIds == null) {
             tmpIds = new HashSet();
@@ -225,7 +225,7 @@ public class DagValidator
         tmpIds.add(term);
     }
 
-    private void collectIds(DagTerm term) {
+    private void collectIds(OboTerm term) {
         HashSet tmpNames = (HashSet) names.get(term.getName());
         if (tmpNames == null) {
             tmpNames = new HashSet();
@@ -234,7 +234,7 @@ public class DagValidator
         tmpNames.add(term);
     }
 
-    private void flattenRelations(DagTerm term) {
+    private void flattenRelations(OboTerm term) {
         partofs.addAll(term.getComponents());
         isas.addAll(term.getChildren());
     }

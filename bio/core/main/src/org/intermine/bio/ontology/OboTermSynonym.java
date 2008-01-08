@@ -17,9 +17,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  *
  * @author Thomas Riley
  */
-public class OboTermSynonym extends DagTermSynonym
+public class OboTermSynonym
 {
-    private String type;
+    private String name, type;
 
     /**
      * Create a new instance of DagTermSynonym.
@@ -27,8 +27,17 @@ public class OboTermSynonym extends DagTermSynonym
      * @param type synonym type
      */
     public OboTermSynonym(String name, String type) {
-        super(name);
         this.type = type;
+        this.name = name;
+    }
+
+    
+    /**
+     * Get the synonym name.
+     * @return synonym name
+     */
+    public String getName() {
+        return name;
     }
 
     /**
@@ -43,15 +52,16 @@ public class OboTermSynonym extends DagTermSynonym
      * {@inheritDoc}
      */
     public boolean equals(Object o) {
-        return (o instanceof OboTermSynonym && super.equals(o)
-                && ((OboTermSynonym) o).type.equals(type));
+        return (o instanceof OboTermSynonym
+                && ((OboTermSynonym) o).type.equals(type)
+                && ((OboTermSynonym) o).name.equals(name));
     }
 
     /**
      * {@inheritDoc}
      */
     public int hashCode() {
-        return super.hashCode() + 3 * type.hashCode();
+        return name.hashCode() + 3 * type.hashCode();
     }
 
     /**

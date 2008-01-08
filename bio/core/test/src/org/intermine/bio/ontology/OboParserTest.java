@@ -10,6 +10,7 @@ package org.intermine.bio.ontology;
  *
  */
 
+import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,29 +41,32 @@ public class OboParserTest extends TestCase
         Set terms = parser.processForLabellingOntology(new StringReader(test));
         assertEquals(1, terms.size()); // should be one root term
 
-        assertEquals("GO:0000001", ((DagTerm) terms.iterator().next()).getId());
+        assertEquals("GO:0000001", ((OboTerm) terms.iterator().next()).getId());
 
         terms = new HashSet(parser.terms.values());
-        assertEquals(3, terms.size()); // 3 terms total
+        assertEquals(4, terms.size()); // 4 terms total
 
-        DagTerm dt1 = (DagTerm) parser.terms.get("GO:0000001");
-        DagTerm dt2 = (DagTerm) parser.terms.get("GO:0000002");
-        DagTerm dt3 = (DagTerm) parser.terms.get("GO:0000003");
+        OboTerm dt1 = (OboTerm) parser.terms.get("GO:0000001");
+        OboTerm dt2 = (OboTerm) parser.terms.get("GO:0000002");
+        OboTerm dt3 = (OboTerm) parser.terms.get("GO:0000003");
+        OboTerm dt4 = (OboTerm) parser.terms.get("GO:0000004");
 
         assertNotNull(dt1);
         assertNotNull(dt2);
         assertNotNull(dt3);
-
+        assertNotNull(dt4);
+        
         assertTrue(dt1.getChildren().contains(dt2));
+        assertTrue(dt1.getChildren().contains(dt4));
         assertTrue(dt2.getChildren().contains(dt3));
-        assertTrue(dt1.getComponents().contains(dt3));
+        assertTrue(dt1.getComponents().contains(dt3));   
     }
 
     public void testSynonyms() throws Exception {
         String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
         parser.processForLabellingOntology(new StringReader(test));
 
-        DagTerm dt3 = (DagTerm) parser.terms.get("GO:0000003");
+        OboTerm dt3 = (OboTerm) parser.terms.get("GO:0000003");
 
         assertEquals(5, dt3.getSynonyms().size());
 
@@ -126,10 +130,23 @@ public class OboParserTest extends TestCase
         expecting.put("GO:0000001", "mitochondrion inheritance");
         expecting.put("GO:0000002", "mitochondrial genome maintenance");
         expecting.put("GO:0000003", "reproduction");
-
+        expecting.put("GO:0000004", "partoftest");
+        
         assertEquals(expecting, idNames);
     }
 
+    public void testGetTermToParentTermSetMap() throws Exception {
+        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
+        parser.readTerms(new BufferedReader(new StringReader(test)));
+        
+        Map<String, Set> expected = new HashMap<String, Set>();
+        expected.put("GO:0000001", new HashSet());
+        expected.put("GO:0000002", new HashSet(Arrays.asList(new Object[] {"GO:0000001"})));
+        expected.put("GO:0000003", new HashSet(Arrays.asList(new Object[] {"GO:0000001", "GO:0000002"})));
+        expected.put("GO:0000004", new HashSet(Arrays.asList(new Object[] {"GO:0000001", "GO:0000002", "GO:0000003"})));
+        assertEquals(expected, parser.getTermToParentTermSetMap());
+    }
+    
     public void testUnescape() {
         assertEquals("\n", parser.unescape("\\n"));
         assertEquals(" ", parser.unescape("\\W"));
@@ -157,7 +174,7 @@ public class OboParserTest extends TestCase
     }
 
     public void testAddSynonyms() {
-        DagTerm term = new DagTerm("id", "name");
+        OboTerm term = new OboTerm("id", "name");
         parser.addSynonyms(term,
                 Arrays.asList(new String[]{"\"no escapes\" []",
                         " \"one \\\" escape\" [asdf]",
@@ -176,7 +193,7 @@ public class OboParserTest extends TestCase
     }
 
     public void testDodgySynonym() {
-        DagTerm term = new DagTerm("id", "name");
+        OboTerm term = new OboTerm("id", "name");
         parser.addSynonyms(term,
                 Arrays.asList(new String[]{"xxxxxxxx"}), "synonym_type");
         assertEquals(0, term.getSynonyms().size());
