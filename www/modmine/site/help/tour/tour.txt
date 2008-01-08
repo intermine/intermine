@@ -1,16 +1,16 @@
-<h1 id="start">1. What is modMine?</h1>
+<h1 id="start">1. What is modENCODE-mine?</h1>
 
 
-<p>modMine is a data warehouse that integrates many diverse biological data sets.
+<p>modENCODE-mine is a data warehouse that integrates many diverse biological data sets.
 The main focus is <i>Drosophila</i> and <i>C. Elegans</i> genomics and proteomics.
 By integrating such data into one place it is possible to construct queries across
 domains of biological knowledge.</p>
 
-<p> See a list of all the data sources from the toolbar on any modMine page:</p>
+<p> See a list of all the data sources from the toolbar on any modENCODE-mine page:</p>
 <img alt="[Quick Search]" src="toolbar_data.png"/>
 
 
-<p>The modMine user interface is designed to go beyond simply looking
+<p>The modENCODE-mine user interface is designed to go beyond simply looking
 up an identifier and viewing a report page.  This quick tour will
 introduce some of the features:</p>
 
@@ -34,7 +34,7 @@ Protein Interactions.</p>
 
 <p><b>MyMine</b> lets you create an account to save your own queries, bags and templates, as well as marking public templates as favourites.</p>
 
-<p> All these features are accessible from the toolbar on every modMine page:</p>
+<p> All these features are accessible from the toolbar on every modENCODE-mine page:</p>
 
 <img alt="[Quick Search]" src="toolbar.png"/>
 
@@ -47,7 +47,7 @@ Protein Interactions.</p>
 <img alt="[Quick Search]" src="quick_search.png"/>
 
 <p>
-The report page shows information from many data sources in one place.  There are corresponding pages for all objects in modMine, use <img alt="[details...]" valign="bottom" src="details.png"/> links to browse.
+The report page shows information from many data sources in one place.  There are corresponding pages for all objects in modENCODE-mine, use <img alt="[details...]" valign="bottom" src="details.png"/> links to browse.
 </p>
 
 <img alt="[object details summary]"  src="report_top.png"/>
@@ -61,11 +61,11 @@ Template queries are run for this gene when the page is loaded.
 
 <h1>3. Template Queries</h1>
 
-<p>modMine includes a library of <b>template queries</b> - predefined queries designed to perform a particular task.  Each one has a description and a form to fill in.  For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
+<p>modENCODE-mine includes a library of <b>template queries</b> - predefined queries designed to perform a particular task.  Each one has a description and a form to fill in.  For example, there are templates to find GO annotation for a gene, to retrieve protein-protein interactions or protein structures.</p>
 
  
 
-<p>You can find all modMine templates on the templates page, accessible via the toolbar on any page. Here you can search the titles and descriptions of all templates.</p>
+<p>You can find all modENCODE-mine templates on the templates page, accessible via the toolbar on any page. Here you can search the titles and descriptions of all templates.</p>
 
 <p><i>We can add templates to this page at any time - it only takes a few minutes - so if you have a suggestion, let us know!</i></p>
 
@@ -89,7 +89,7 @@ Template queries are run for this gene when the page is loaded.
 
 <p>The template we found in our previous search takes a particular gene as input and searches for orthologues that have GO annotation. Click on the title of the template to show the template form. </p>
 
-<p>Now you can run the template with the default value or restrict it to the gene of your choice. You can enter any identifier and modMine will try to find the right gene.  For example, for the <i>D. melanogaster</i> gene <i>zen</i> you can enter 'zen', 'CG1046', 'FBgn0004053', 'zerknullt' or any synonym.  You can even enter a transcript (CG1046-RA) or protein (ZEN1_DROME) identifier and modMine will convert it for you.</p>
+<p>Now you can run the template with the default value or restrict it to the gene of your choice. You can enter any identifier and modENCODE-mine will try to find the right gene.  For example, for the <i>D. melanogaster</i> gene <i>zen</i> you can enter 'zen', 'CG1046', 'FBgn0004053', 'zerknullt' or any synonym.  You can even enter a transcript (CG1046-RA) or protein (ZEN1_DROME) identifier and modENCODE-mine will convert it for you.</p>
 
 <p><b>Click 'Show Results' to run this template with the default value:</b></p>
 
@@ -100,7 +100,7 @@ Template queries are run for this gene when the page is loaded.
 <h1>5. Results Page</h1>
 
 <p>
-The results table for the template 'Gene --> Orthologues + GO terms of these orthologues' shows the starting gene, orthologous genes and organism names with details of each GO term applied to the orthologous genes.  Orthologue data in modMine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a>, note that 'main' means the best hit in the other organism, 'secondary' denotes paralogues of the best hit.
+The results table for the template 'Gene --> Orthologues + GO terms of these orthologues' shows the starting gene, orthologous genes and organism names with details of each GO term applied to the orthologous genes.  Orthologue data in modENCODE-mine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a>, note that 'main' means the best hit in the other organism, 'secondary' denotes paralogues of the best hit.
 </p>
 
 <img alt="[Results table]"  src="results.png"/>
@@ -126,11 +126,11 @@ All results pages have a number of export options:
 
 <h1>6. Creating a List</h1>
 
-<p>modMine can operate on custom lists of data.  You can save lists from results pages or create them by uploading lists of identifiers.  Lists can be used when running template queries and analysed by a series of <b>widgets</b> on a list analysis page.  You can merge, subtract and find common members if you have more than one list.</p>
+<p>modENCODE-mine can operate on custom lists of data.  You can save lists from results pages or create them by uploading lists of identifiers.  Lists can be used when running template queries and analysed by a series of <b>widgets</b> on a list analysis page.  You can merge, subtract and find common members if you have more than one list.</p>
 
 
 <p>
-modMine includes a set of 'Public' lists (marked with 'PL') that we think might be useful for our users. Some of these originate from external datasources, eg from the <a href="http://www.flyTF.org/">FlyTF</a> database.</p>
+modENCODE-mine includes a set of 'Public' lists (marked with 'PL') that we think might be useful for our users. Some of these originate from external datasources, eg from the <a href="http://www.flyTF.org/">FlyTF</a> database.</p>
 
 <p><i>We can add more lists at any time - it only takes a few minutes - so if you have a suggestion, let us know!</i></p>
 </p>
@@ -140,13 +140,13 @@ modMine includes a set of 'Public' lists (marked with 'PL') that we think might 
 <img alt="[Click lists in the menu bar]"  src="toolbar_view.png"/>
 
 <p>
-<b>To create a new list yourself, click on 'Lists', and then on 'Upload' in the toolbar on any modMine page:</b>
+<b>To create a new list yourself, click on 'Lists', and then on 'Upload' in the toolbar on any modENCODE-mine page:</b>
 </p>
 
 <img alt="[Click lists in the menu bar]"  src="toolbar_upload.png"/>
 
 <p>
-modMine's list creation tool helps you upload a list of identifiers, the list can contain a mix of identifier types.</p>
+modENCODE-mine's list creation tool helps you upload a list of identifiers, the list can contain a mix of identifier types.</p>
 
 <p><b>Now upload the example list:</b></p>
 
@@ -190,7 +190,7 @@ Template queries have been executed on the whole list, just like on the gene rep
 <h1>9. Use Lists in Templates</h1>
 
 <p>
-You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list analysis page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  modMine includes FlyReg - a curated DNase1 binding site data set which we can query with another template. 
+You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list analysis page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  modENCODE-mine includes FlyReg - a curated DNase1 binding site data set which we can query with another template. 
 </p>
 
 <p><b>Search the template queries for 'binding site':</b></p>
@@ -243,7 +243,7 @@ You can use lists in any template query, or in queries you create yourself in th
 <p><img alt="[Click edit query]"  src="click_edit_query.png"/></p>
 
 
-<p>The pane on the left is a view of the data model starting at the TFBindingSite class and showing all attributes (e.g. name, symbol) and related classes (e.g. organism, proteins).  modMine uses an object based data model - biological types are termed 'classes' and individual entries are termed 'objects'.  For example the <i>zen</i> and <i>eve</i> genes are both objects of the class Gene.</p>
+<p>The pane on the left is a view of the data model starting at the TFBindingSite class and showing all attributes (e.g. name, symbol) and related classes (e.g. organism, proteins).  modENCODE-mine uses an object based data model - biological types are termed 'classes' and individual entries are termed 'objects'.  For example the <i>zen</i> and <i>eve</i> genes are both objects of the class Gene.</p>
 
 <p>You can click <img alt="[plus]" src="plus.gif"/> to open related classes and see their attributes.  Use the <img alt="[show]"  src="show.gif"/> button to add fields to the output.  The <img alt="[constrain]" src="constrain.gif"/> button lets you add constraints (filters). </p> 
 
@@ -251,7 +251,7 @@ You can use lists in any template query, or in queries you create yourself in th
 
 <p>The query summary section shows the constraints applied to this query.  Notice that one of them says 'factor Gene' then 'IN demo list'.  This shows us that the search is using just the transcription factors from the list we saved earlier.</p> 
 
-<p>What if we want to search for <b>all</b> binding sites in modMine for <b>any</b> transcription factor?  We can just remove this constraint and run the query again.</p> 
+<p>What if we want to search for <b>all</b> binding sites in modENCODE-mine for <b>any</b> transcription factor?  We can just remove this constraint and run the query again.</p> 
 
 <p><b>Click on the <img alt="[red cross]"  src="cross.gif"/> button next to 'IN demo list' to remove the constraint:</b></p>
 
@@ -261,13 +261,13 @@ You can use lists in any template query, or in queries you create yourself in th
 
 <img alt="[click show results]"  src="click_show_results.png"/>
 
-<p>The results table now shows all the transcription factors in modMine for which there are known binding sites, the location of these binding sites and the data set that provided this infomation.  You can use the summary buttons <img alt="[summary icon]"  src="summary_maths.png" valign="middle"/> on the 'Transcription factor > symbol' and 'Regulated gene > symbol' columns to find more information about the numbers of each.</p>
+<p>The results table now shows all the transcription factors in modENCODE-mine for which there are known binding sites, the location of these binding sites and the data set that provided this infomation.  You can use the summary buttons <img alt="[summary icon]"  src="summary_maths.png" valign="middle"/> on the 'Transcription factor > symbol' and 'Regulated gene > symbol' columns to find more information about the numbers of each.</p>
 
 
 
 <h1>11. MyMine</h1>
 
-<p> All lists and queries you ran will be saved temporarily in modMine for the current session. To save them permanently, you can create a <b>MyMine account</b>. You only need to provide an email address and a password to generate an account, there is no other information required.  Your saved data is always private.</p>
+<p> All lists and queries you ran will be saved temporarily in modENCODE-mine for the current session. To save them permanently, you can create a <b>MyMine account</b>. You only need to provide an email address and a password to generate an account, there is no other information required.  Your saved data is always private.</p>
 
 <img alt="[Click log in]"  src="toolbar_login.png"/>
 
