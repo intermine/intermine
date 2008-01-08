@@ -4618,7 +4618,7 @@
       </query>
     </template>
   </template-queries>
-<<tags>
+<tags>
   <tag name="aspect:Gene Ontology" objectIdentifier="OrganismGoterm_genesPointMutations" type="template">
   </tag>
   <tag name="Aspect:Protein Interactions" objectIdentifier="interactionsForOrganism" type="template">
