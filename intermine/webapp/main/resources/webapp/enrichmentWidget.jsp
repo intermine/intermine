@@ -49,6 +49,19 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	    </td>
 	   </tr>	   
 	   </c:if>	   
+	   
+	   <tr>
+	   	<td>Maximum value to display</td>
+		<td><html:select property="max">
+				<html:option value="0.01">0.01</html:option>
+				<html:option value="0.05">0.05</html:option>
+				<html:option value="0.10">0.10</html:option>
+				<html:option value="0.50">0.50</html:option>
+				<html:option value="1.00">1.00</html:option>
+			</html:select>
+		</td>
+	   	
+	   	</tr>
 	   <tr>
 	   	<td></td>
 	   	<td><html:submit property="filterSubmit" value="Update results" /></td>
@@ -58,8 +71,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
       		    <html:hidden property="filters"/>
       		    <html:hidden property="controller"/>
       		   	<html:hidden property="title" />
-      		    <html:hidden property="link" />
-      		  	<html:hidden property="max" />
+      		    <html:hidden property="link" />      		  
       		  	<html:hidden property="description" />
       		  	<html:hidden property="filterLabel"/>
       		  	<html:hidden property="label"/>

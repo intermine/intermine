@@ -44,8 +44,6 @@ public class BenjaminiHochberg implements ErrorCorrection
     /**
      * Calculates the Benjamini and Hochberg correction of
      * the false discovery rate
-     * adjusted p = (m/i) * p
-     * 
      * @param max maximum value we are interested in.  
      */
     public void calculate(Double max) {
