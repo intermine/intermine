@@ -438,12 +438,13 @@ public abstract class WebUtil
 
     /**
      * Takes two queries.  Runs both and compares the results.
-     * @param os the objectstore
+     * @param os the object store
      * @param queryPopulation The query to get the entire population, ie all genes in the database
      * @param querySample The query to get the sample, ie all genes in the bag
      * @param bag the bag we are analysing
      * @param total total number of the entire population
      * @param maxValue maximum value to return
+     * @param alpha significance level
      * @param errorCorrection which error correction algorithm to use, Bonferroni
      * or Benjamini Hochberg
      * @return array of three results maps
@@ -453,7 +454,7 @@ public abstract class WebUtil
                                       Query queryPopulation,
                                       Query querySample,
                                       InterMineBag bag,
-                                      int total,
+                                      int total,                                      
                                       Double maxValue,
                                       String errorCorrection) {
 
@@ -505,7 +506,7 @@ public abstract class WebUtil
             HashMap<String, Double> resultsMap = new HashMap<String, Double>();
             
             /* this is the total number of tests excluding the go terms that only annotate one gene
-             * as these cannot be overrepresented
+             * as these cannot be over-represented
              */
             int numberOfTests = 0;
             
@@ -555,13 +556,14 @@ public abstract class WebUtil
      * methods available - which one we use is determined by the user.
      * @param errorCorrection which multiple hypothesis test correction to use - Bonferroni or
      * BenjaminiHochberg
+     * @param alpha significance level
      * @param maxValue maximum value we're interested in
      * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
-     * as these cannot possibly be overrepresented
-     * @param resultsMap map containing un-adjusted pvalues
-     * @return map of all the adjusted pvalues
+     * as these cannot possibly be over-represented
+     * @param resultsMap map containing unadjusted p-values
+     * @return map of all the adjusted p-values
      */
-    protected static HashMap calcErrorCorrection(String errorCorrection, 
+    protected static HashMap calcErrorCorrection(String errorCorrection,                                    
                                                  Double maxValue,
                                                  int numberOfTests,
                                                  HashMap<String, Double> resultsMap) {

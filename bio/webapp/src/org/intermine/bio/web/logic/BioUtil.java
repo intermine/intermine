@@ -163,7 +163,7 @@ public abstract class BioUtil
      * @param os
      * @param organisms
      * @param c which class to test for - Gene or Protein
-     * @return total number of objects in the database for selected organims
+     * @return total number of objects in the database for selected organisms
      */
     public static int getTotal(ObjectStore os, Collection organisms, String c) {
 
