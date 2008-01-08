@@ -12,6 +12,7 @@ package org.intermine.bio.ontology;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,8 +22,13 @@ import java.util.Set;
  *
  * @author Thomas Riley
  */
-public class OboTerm extends DagTerm
+public class OboTerm
 {
+    private final String id;
+    private String name;
+    private Set<OboTerm> children = new HashSet<OboTerm>();
+    private Set<OboTermSynonym> synonyms = new LinkedHashSet<OboTermSynonym>();
+    private Set<OboTerm> components = new HashSet<OboTerm>();
     private String namespace = "";
     private String description = "";
     private boolean obsolete = false;
@@ -35,9 +41,85 @@ public class OboTerm extends DagTerm
      * @param name a name for this DAG term
      */
     public OboTerm(String id, String name) {
-        super(id, name);
+        if (id == null || name == null) {
+            throw new IllegalArgumentException("id and name arguments may not be null");
+        }
+        this.id = id;
+        this.name = name;
     }
 
+    /**
+     * Get the id of this term.
+     * @return the id
+     */
+    public String getId() {
+        return this.id;
+    }
+
+    /**
+     * Get the name of this term.
+     * @return the name
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Add a child DagTerm to this term (isa relationship).
+     * @param child the child term
+     */
+    public void addChild(OboTerm child) {
+        this.children.add(child);
+    }
+
+    /**
+     * Get a set of direct child DagTerms of this term.
+     * @return set of direct child DagTerms
+     */
+    public Set<OboTerm> getChildren() {
+        return this.children;
+    }
+
+    /**
+     * Add a component DagTerm to this term (partof relationship).
+     * @param component the component term
+     */
+    public void addComponent(OboTerm component) {
+        this.components.add(component);
+    }
+
+    /**
+     * Get a set of direct component DagTerms of this term.
+     * @return set of direct component DagTerms
+     */
+    public Set<OboTerm> getComponents() {
+        return this.components;
+    }
+
+    /**
+     * Add a synonym for this term.
+     * @param synonym the synonym for this term
+     */
+    public void addSynonym(OboTermSynonym synonym) {
+        this.synonyms.add(synonym);
+    }
+
+    /**
+     * Get a set of synonyms (Strings) for this term.
+     * @return a set of synonyms
+     */
+    public Set<OboTermSynonym> getSynonyms() {
+        return this.synonyms;
+    }
+
+    /**
+     * Create a string representation of the term.
+     * @return a string represenation of the term
+     */
+    public String toString() {
+        return id + ", " + name;
+    }
+    
     /**
      * Get the namespace attribute.
      * @return term namespace

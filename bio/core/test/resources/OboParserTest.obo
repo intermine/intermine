@@ -39,3 +39,9 @@ exact_synonym: "exact_value" [VEH:391840]
 broad_synonym: "broad_value" [VEH:391840]
 related_synonym: "related_value" [VEH:391840]
 narrow_synonym: "narrow_value" [VEH:391840]
+
+[Term]
+id: GO:0000004
+name: partoftest
+is_a: GO:0000001
+relationship: part_of GO:0000003

@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.intermine.bio.ontology.DagTerm;
 import org.intermine.bio.ontology.OboTerm;
 import org.intermine.bio.ontology.OboTermSynonym;
 import org.intermine.dataconversion.ItemsTestCase;
@@ -36,16 +35,16 @@ public class OboConverterTest extends ItemsTestCase {
     public void test1() throws Exception {
         OboConverter converter = new OboConverter(itemWriter, model, "", "SO", "http://www.flymine.org",
                                                   "OntologyTerm");
-        DagTerm a = new OboTerm("SO:42", "parent");
-        DagTerm b = new OboTerm("SO:43", "child");
-        DagTerm c = new OboTerm("SO:44", "partof");
+        OboTerm a = new OboTerm("SO:42", "parent");
+        OboTerm b = new OboTerm("SO:43", "child");
+        OboTerm c = new OboTerm("SO:44", "partof");
         c.addSynonym(new OboTermSynonym("syn2", "exact_synonym"));
         b.addSynonym(new OboTermSynonym("syn1", "narrow_synonym"));
         b.addSynonym(new OboTermSynonym("syn2", "exact_synonym"));
         a.addChild(b);
         a.addComponent(c);
         converter.process(Arrays.asList(new Object[] {a, b, c}));
-        
+        writeItemsFile(itemWriter.getItems(), "tmp");
         assertEquals(readItemSet("OboConverterTest.xml"), itemWriter.getItems());
     }
 

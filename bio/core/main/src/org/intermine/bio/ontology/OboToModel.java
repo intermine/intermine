@@ -112,7 +112,7 @@ public class OboToModel
                 partofs = new HashSet();
                 nameToPartofs.put(className, partofs);
             }
-            for (OboTerm component : ((Collection<OboTerm>) term.getComponents())) {
+            for (OboTerm component : term.getComponents()) {
                 partofs.add(generateClassName(component));
             }
         }
@@ -125,7 +125,7 @@ public class OboToModel
      * @param term the relevant term
      * @return the generated class name
      */
-    public String generateClassName(DagTerm term) {
+    public String generateClassName(OboTerm term) {
         return namespace + TypeUtil.javaiseClassName(term.getName());
     }
 
