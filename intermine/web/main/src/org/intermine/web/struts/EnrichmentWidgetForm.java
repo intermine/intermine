@@ -30,7 +30,7 @@ public class EnrichmentWidgetForm extends ActionForm
     private String filters;
     private InterMineBag bag;
     private String bagName;
-    private Double max;
+    private String max = "0.10";
 
     /**
      * Constructor
@@ -49,12 +49,12 @@ public class EnrichmentWidgetForm extends ActionForm
         description = "";
         filterLabel = "";
         label = "";
-        errorCorrection = "Benjamini and Hochberg";
+        errorCorrection = "BenjaminiHochberg";
         filter = "";
         filters = "";
         bag = null;
         bagName = "";
-        max = new Double(0.10);
+        max = "0.10";
     }
 
     /**
@@ -117,8 +117,8 @@ public class EnrichmentWidgetForm extends ActionForm
        /**
 
 
-       * @param filterLabel the filterLabel to set
-       */
+     * @param filterLabel the filterLabel to set
+     */
     public void setFilterLabel(String filterLabel) {
         this.filterLabel = filterLabel;
     }
@@ -157,7 +157,7 @@ public class EnrichmentWidgetForm extends ActionForm
     /**
      * @return the max
      */
-    public Double getMax() {
+    public String getMax() {
         return max;
     }
 
@@ -165,7 +165,7 @@ public class EnrichmentWidgetForm extends ActionForm
     /**
      * @param max the max to set
      */
-    public void setMax(Double max) {
+    public void setMax(String max) {
         this.max = max;
     }
 
@@ -258,9 +258,7 @@ public class EnrichmentWidgetForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-        public void reset(ActionMapping mapping, HttpServletRequest request) {
-
-        super.reset(mapping, request);
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         initialise();
     }
 }

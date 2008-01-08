@@ -525,6 +525,8 @@ public abstract class WebUtil
                     }
                     double p = h.calculateP(numberOfObjectsInBag, countBag.intValue(),
                                             countAll.intValue(), total);
+                    LOG.error(id + " " + numberOfObjectsInBag + " " + countBag.intValue()
+                              + " " + countAll.intValue() + " " + total);
                     resultsMap.put(id, new Double(p));
                 }
             }
