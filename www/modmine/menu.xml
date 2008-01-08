@@ -4,8 +4,7 @@
     <item url="/about.xml" title="About"/>
     <item url="/contact.xml" title="Contact"/>
     <item url="/project/jobs.xml" title="Jobs"/>
-    <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
-  </item>
+</item>
 
   <item title="Release info">
     <item url="/dataCategories.do" title="Data sources"/>
@@ -20,11 +19,10 @@
   </item>
 
   <item title="Documentation">
-    <item url="/link.xml" title="Link to FlyMine"/>
-<!--    <item url="/cite.xml" title="Cite FlyMine"/>-->
-    <item url="/software.xml" title="Software"/>
-    <item url="/doc/links.xml" title="Resources"/>
-  </item>
+    <item url="/link.xml" title="Link to modENCODE-mine"/>
+		<item url="http://www.modencode.org/index.shtml" title="modENCODE"/>
+		
+	</item>
 
 </menu>
 
