@@ -13,6 +13,8 @@ package org.intermine.web.logic.widget;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.intermine.web.logic.SortableMap;
+
 import java.math.BigDecimal;
 
 /**
@@ -20,49 +22,47 @@ import java.math.BigDecimal;
  */
 public class BenjaminiHochberg implements ErrorCorrection
 {
-    private HashMap originalMap = new HashMap();
+    private HashMap<String, Double> originalMap = new HashMap<String, Double>();
     private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
     private double numberOfTests;
     private static final int RESULT_SCALE = 100;
 
     /**
-     * Constructor.
      * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
-     * as these cannot possibly be overrepresented
-     * @param originalMap Hashmap of go terms and their pvalue
+     * as these cannot possibly be over-represented
+     * @param originalMap HashMap of go terms and their p-value
+     * @param alpha the error rate user is willing to accept
      */
-    public BenjaminiHochberg(HashMap originalMap, int numberOfTests) {
+    public BenjaminiHochberg(HashMap<String, Double> originalMap, int numberOfTests) {
         this.numberOfTests = numberOfTests;
-        this.originalMap = originalMap;
+        SortableMap sortedMap = new SortableMap(originalMap);
+        // sort descending
+        sortedMap.sortValues(false, false);
+        this.originalMap = new HashMap<String, Double>(sortedMap);
     }
 
     /**
-     * method that calculates the Benjamini and Hochberg correction of
+     * Calculates the Benjamini and Hochberg correction of
      * the false discovery rate
-     * NOTE : convert array indexes [0..m-1] to ranks [1..m].
-     * orden raw p-values low .. high
-     * test p<(i/numberOfTests)*alpha from high to low (for i=numberOfTests..1)
-     * i* (istar) first i such that the inequality is correct.
-     * reject hypothesis for i=1..i* : labels 1..i* are overrepresented
-     * <p/>
-     * adjusted p-value for i-th ranked p-value p_i^adj = min(k=i..m)[min(1,numberOfTests/k p_k)]
+     * adjusted p = (m/i) * p
+     * 
      * @param max maximum value we are interested in.  
      */
-
     public void calculate(Double max) {
 
         adjustedMap = new HashMap<String, BigDecimal>();
         BigDecimal adjustedP;
-        int i = 0;
+        int i = 1;
 
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
 
             String label = (String) iter.next();
-            BigDecimal index = new BigDecimal("" + i + 1); // don't divide by zero
-
+            BigDecimal k = new BigDecimal("" + i);
+            BigDecimal m = new BigDecimal("" + numberOfTests);
+            
             BigDecimal p = new BigDecimal("" + originalMap.get(label));
-            adjustedP = p.multiply(new BigDecimal("" + numberOfTests));
-            adjustedP = adjustedP.divide(index, RESULT_SCALE, BigDecimal.ROUND_HALF_UP);
+            adjustedP = k.divide(m, RESULT_SCALE, BigDecimal.ROUND_HALF_UP);
+            adjustedP = p.multiply(adjustedP);
 
             if (adjustedP.doubleValue() < max.doubleValue()) {
                 adjustedMap.put(label, adjustedP);
@@ -73,7 +73,7 @@ public class BenjaminiHochberg implements ErrorCorrection
     /**
      * @return adjusted map
      */
-    public HashMap getAdjustedMap() {
+    public HashMap<String, BigDecimal> getAdjustedMap() {
         return adjustedMap;
     }
 
