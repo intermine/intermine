@@ -574,13 +574,6 @@
    </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Pathway">
-   <fields>
-    <fieldconfig fieldExpr="identifier" />
-    <fieldconfig fieldExpr="name" displayer="/model/pathway.jsp"  />
-   </fields>
-  </class>
-
   <class className="org.flymine.model.genomic.Motif">
     <fields>
       <fieldconfig fieldExpr="identifier" />
