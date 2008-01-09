@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -23,9 +22,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.tagging.TagTypes;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +54,9 @@ public class BagUploadConfirmAction extends InterMineAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-
+        if (request.getParameter("goBack") != null) { 
+            return mapping.findForward("back"); 
+        } 
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
@@ -66,19 +64,6 @@ public class BagUploadConfirmAction extends InterMineAction
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
         String bagName = confirmForm.getBagName();
-//        if (profile.getSavedBags().get(bagName) != null) {
-//            recordError(new ActionMessage("errors.savebag.existing"), request);
-//            return mapping.findForward("error");
-//        }
-//
-//        SearchRepository searchRepository =
-//            SearchRepository.getGlobalSearchRepository(servletContext);
-//        Map<String, ? extends WebSearchable> publicBagMap =
-//            searchRepository.getWebSearchableMap(TagTypes.BAG);
-//        if (publicBagMap.get(bagName) != null) {
-//            recordError(new ActionMessage("errors.savebag.existing.public", bagName), request);
-//            return mapping.findForward("error");
-//        }
 
         String idsString = confirmForm.getMatchIDs().trim();
         String[] ids = StringUtil.split(idsString, " ");
@@ -100,10 +85,10 @@ public class BagUploadConfirmAction extends InterMineAction
             contents.add(new Integer(id));
         }
 
-//        if (contents.size() == 0) {
-//            recordError(new ActionMessage("bagUploadConfirm.emptyBag"), request);
-//            return mapping.findForward("error");
-//        }
+        if (contents.size() == 0) {
+            recordError(new ActionMessage("bagUploadConfirm.emptyBag"), request);
+            return mapping.findForward("error");
+        }
 
         ProfileManager profileManager =
             (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
