@@ -128,23 +128,4 @@ public class BagUploadConfirmForm extends ActionForm
    public void setExtraFieldValue(String extraFieldValue) {
        this.extraFieldValue = extraFieldValue;
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                HttpServletRequest request) {
-       ActionErrors errors = new ActionErrors();
-       if (bagName.equals("") && request.getParameter("goBack") == null) {
-
-           errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.savebag.blank"));
-
-       } else if (!WebUtil.isValidName(bagName)) {
-
-           errors.add(ActionMessages.GLOBAL_MESSAGE,
-                      new ActionMessage("errors.badChars"));
-
-       }
-       return errors;
-   }
 }
