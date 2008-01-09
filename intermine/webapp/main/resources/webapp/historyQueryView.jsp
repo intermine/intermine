@@ -45,11 +45,6 @@
 
   <p>
     <fmt:message key="${messageKey}"/>
-        <c:if test="${empty PROFILE.username}">
-        	<html:link action="/login?returnto=/mymine.do?subtab=history">
-        	<fmt:message key="history.history.login"/>
-        	</html:link>&nbsp;&nbsp;
-    	</c:if>
   </p>
 <br/>
     <%-- Choose the queries to display --%>
