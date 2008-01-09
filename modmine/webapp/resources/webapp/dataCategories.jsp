@@ -6,13 +6,6 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 
-<!-- dataCategories -->
-
-<c:set var="note1" value="Also orthologues from these 5 organisms to <i>C. familiaris</i>, <i>D. discoideum</i>, <i>D. rerio</i>, <i>G. gallus</i>, <i>H. sapiens</i>, <i>M. musculus</i>, <i>P. troglodytes</i>, <i>R. norvegicus</i>, <i>S. cerevisiae</i>, <i>S. pombe</i>" />
-<c:set var="note2" value="These data have been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0"/>
-<c:set var="note3" value="Coordinates for the Exelixis set are still to genomce sequence release 4.0. These will be updated to release 5.0 in the next release of FlyMine"/>
-
-
 <html:xhtml/>
 
 <div class="body">
@@ -39,39 +32,6 @@
     <td> &nbsp;</td>
   </tr>
 
-<%--
-  <tr>
-    <td> <i>D. pseudoobscura</i></td>
-    <td> Genome annotation - Release 2.0</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
-    <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>A. gambiae</i></td>
-    <td> Genome annotation - Release AgamP3</td>
-    <td> <a href="http://www.ensembl.org" target="_new">Ensembl</a> - Release 37.3</td>
-    <td> Hubbard et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17148474 " target="_new">PubMed: 17148474</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>A. gambiae</i></td>
-    <td> EST data set</td>
-    <td> <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php" target="_new">anoEST database version 8</a></td>
-    <td> Kriventseva et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15899967" target="_new">PubMed: 15899967</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>A. mellifera</i></td>
-    <td> Genome annotation - Release 2</td>
-    <td> <a href="http://www.ensembl.org" target="_new">Ensembl</a> - Release 37.2d</td>
-    <td> Hubbard et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17148474 " target="_new">PubMed: 17148474</a></td>
-    <td> &nbsp; </td>
-  </tr>
---%>
 
   <tr><td rowspan="1"  class="leftcol">
         <html:link action="/aspect?name=Comparative%20Genomics">
@@ -89,7 +49,10 @@
     <td> Orthologue and paralogue relationships between these 2 organisms</td>
     <td> <a href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</a> - Version 5.1</td>
     <td> O'Brien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15608241" target="_new">PubMed: 15608241</a></td>
+    <td> &nbsp;</td>
+<!--
     <td><html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>    
+-->
   </tr>
 
 
@@ -104,16 +67,6 @@
     <td> &nbsp;</td>
   </tr>
 
-<%--
-  <tr>
-    <td> <i>A. gambiae</i></td>
-    <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 12.2</td>
-    <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
-    <td> &nbsp;</td>
-  </tr>
---%>
-
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein annotation</td>
@@ -121,23 +74,6 @@
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
-<%--
-  <tr>
-    <td> <i>H. sapiens</i></td>
-    <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 12.2</td>
-    <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230">PubMed: 17142230</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>M. musculus</i></td>
-    <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 12.2</td>
-    <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
-    <td> &nbsp;</td>
-  </tr>
---%>
 
   <tr>
     <td> <i>D. melanogaster</i></td>
@@ -147,16 +83,6 @@
     <td> &nbsp;</td>
   </tr>
 
-<%--
-  <tr>
-    <td> <i>A. gambiae</i></td>
-    <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> - Release 15.1</td>
-    <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17202162" target="_new">PubMed: 17202162</a></td>
-    <td> &nbsp;</td>
-  </tr>
---%>
-
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein family and domain assignments to proteins</td>
@@ -165,54 +91,6 @@
     <td> &nbsp;</td>
   </tr>
 
-<%--
-  <tr><td rowspan="2"  class="leftcol">
-        <html:link action="/aspect?name=Protein%20Structure">
-        <p> <img src="model/images/pstructure.gif" /></p>
-        <p> Protein Structure</p></html:link></td>
-    <td> <i>D. melanogaster</i> </td>
-    <td> 3-D structure predictions for protein domains</td>
-    <td> <a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm" target="_new">Kenji Mizuguchi</a> - 9th April 2006</td>
-    <td> &nbsp;</td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>A. gambiae</i> </td>
-    <td> 3-D structure predictions for protein domains</td>
-    <td> <a href="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/index.htm" target="_new">Kenji Mizuguchi</a> - 27th June 2007</td>
-    <td> &nbsp;</td>
-    <td> &nbsp;</td>
-  </tr>
-
-
-  <tr><td rowspan="3"  class="leftcol">
-        <html:link action="/aspect?name=Protein%20Interactions">
-         <p> <img src="model/images/proteinInteraction.gif" /></p>
-        <p> Protein Interactions</p></html:link></td>
-    <td> <i>D. melanogaster</i> </td>
-    <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 25th May 2007</td>
-    <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>C. elegans</i></td>
-    <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 25th May 2007</td>
-    <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>S. cerevisiae</i></td>
-    <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 25th May 2007</td>
-    <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
-    <td> &nbsp;</td>
-  </tr>
---%>
 
   <tr><td rowspan="2"  class="leftcol">
 
@@ -234,55 +112,6 @@
     <td> &nbsp;</td>
   </tr>
 
-<%--
-  <tr>
-    <td> <i>M. musculus</i></td>
-    <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 13th June 2007</td>
-    <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>P. falciparum</i></td>
-    <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 9th May 2007</td>
-    <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>S. cerevisiae</i></td>
-    <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 13th June 2007</td>
-    <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>S. pombe</i></td>
-    <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 19th May 2007</td>
-    <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>A. gambiae</i> </td>
-    <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 13th June 2007</td>
-    <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14681408" target="_new">PubMed: 14681408</a></td>
-    <td> &nbsp;</td>
-  </tr>
-
-  <tr>
-    <td> <i>A. mellifera</i> </td>
-    <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">Uniprot GOA</a> - 13th June 2007</td>
-    <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=14681408" target="_new">PubMed: 14681408</a></td>
-    <td> &nbsp;</td>
-  </tr>
---%>
 
   <tr><td rowspan="2" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
@@ -460,15 +289,6 @@
     <td> &nbsp;</td>
   </tr>
 
-<%--
-  <tr>
-    <td> <i>S. cerevisiae</i> </td>
-    <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 14th December 2006</td>
-    <td> &nbsp;</td>
-    <td> &nbsp;</td>
-  </tr>
---%>
 </table>
 
 <div class="body">
