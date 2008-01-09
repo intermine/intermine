@@ -76,7 +76,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                 assertEquals(10307410, loc.getEnd().intValue());
                 assertEquals("-1", loc.getStrand());
                 assertEquals("3R", loc.getObject().getIdentifier());
-                assertEquals("FBtr0112632", utr.getmRNA().getIdentifier());
+                assertEquals("FBtr0112632", utr.getmRNA().getOrganismDbId());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
                 if (utr.getIdentifier().equals("FBtr0100521-5-prime-utr")) {
@@ -86,7 +86,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                     assertEquals(18050424, loc.getEnd().intValue());
                     assertEquals("1", loc.getStrand());
                     assertEquals("2R", loc.getObject().getIdentifier());
-                    assertEquals("FBtr0100521", utr.getmRNA().getIdentifier());
+                    assertEquals("FBtr0100521", utr.getmRNA().getOrganismDbId());
                     assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
                 }
             }
@@ -119,7 +119,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                 assertEquals(18060033, loc.getStart().intValue());
                 assertEquals(18060346, loc.getEnd().intValue());
                 assertEquals("2R", loc.getObject().getIdentifier());
-                assertEquals("FBtr0071764", utr.getmRNA().getIdentifier());
+                assertEquals("FBtr0071764", utr.getmRNA().getOrganismDbId());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
                 if (utr.getIdentifier().equals("FBtr0082533-3-prime-utr")) {
@@ -128,7 +128,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
                     assertEquals(7594335, loc.getStart().intValue());
                     assertEquals(7595561, loc.getEnd().intValue());
                     assertEquals("3R", loc.getObject().getIdentifier());
-                    assertEquals("FBtr0082533", utr.getmRNA().getIdentifier());
+                    assertEquals("FBtr0082533", utr.getmRNA().getOrganismDbId());
                     assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
                 }
             }

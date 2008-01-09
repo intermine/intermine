@@ -117,7 +117,7 @@ public class FlyBaseUTRFastaLoaderTask extends FastaLoaderTask
 
     private MRNA getMRNA(String mrnaIdentifier, Organism organism) throws ObjectStoreException {
         MRNA mrna = (MRNA) getDirectDataLoader().createObject(MRNA.class);
-        mrna.setIdentifier(mrnaIdentifier);
+        mrna.setOrganismDbId(mrnaIdentifier);
         mrna.setOrganism(organism);
         getDirectDataLoader().store(mrna);
         return mrna;
