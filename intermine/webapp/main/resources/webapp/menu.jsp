@@ -36,9 +36,18 @@
     </a>
   </li>
   <li id="mymine"  <c:if test="${tab == 'mymine'}">class="activelink"</c:if>>
+    <c:choose>
+    <c:when test="${! empty PROFILE.username}">
     <a href="/${WEB_PROPERTIES['webapp.path']}/mymine.do">
       <fmt:message key="menu.mymine"/>
     </a>
+    </c:when>
+    <c:otherwise>
+    <a href="/${WEB_PROPERTIES['webapp.path']}/login.do">
+      <fmt:message key="menu.mymine"/>
+    </a>
+    </c:otherwise>
+    </c:choose>
   </li>
   </ul>
 

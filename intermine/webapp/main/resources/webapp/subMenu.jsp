@@ -40,7 +40,7 @@
     </c:when>
     <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">
       <li>
-        <span onclick="alert('You need to log in'); return false;"><fmt:message key="${tabArray[1]}"/></span>
+        <fmt:message key="${tabArray[1]}"/>
       </li>
     </c:when>
     <c:otherwise>
