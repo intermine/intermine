@@ -136,3 +136,9 @@ div.filterBar {
 	margin:20px;
 	width:350px;
 }
+
+#topnav {
+    position:absolute; right:0px; top:0px;
+    background-color: #060707; color: #FFF; font: 0.95em Arial,sans-serif;
+    /*background-color: #F18620; #F5F0FF  */
+    padding:5px;}
