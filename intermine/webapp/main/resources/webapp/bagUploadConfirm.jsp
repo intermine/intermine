@@ -177,8 +177,13 @@ function validateBagUpload(){
       </p>
     </div>
     <div class="body">
-      <input type="button" name="goBack" value="Go back" onclick="javascript:history.go(-1);"/>        
+      <input type="button" name="goBack" value="Go back" onclick="javascript:history.go(-1);"/>  
+	  <html:submit property="goBack"> 
+	 	        <fmt:message key="bagUploadConfirm.goBack"/> 
+	 	      </html:submit>   
     </div>
   </c:if>
+  
+  
 </html:form>
 <!-- /bagUploadConfirm.jsp -->
