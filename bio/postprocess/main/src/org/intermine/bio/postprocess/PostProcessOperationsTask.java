@@ -207,6 +207,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 synonymUpdater.update();
             } else if ("create-attribute-indexes".equals(operation)) {
                 CreateIndexesTask cit = new CreateIndexesTask();
+                cit.setAttributeIndexes(true);
                 cit.setObjectStore(getObjectStoreWriter().getObjectStore());
                 cit.execute();
             } else {
