@@ -67,25 +67,23 @@ public class ModifyBagAction extends InterMineAction
                                  ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {
+    throws Exception {
         ModifyBagForm mbf = (ModifyBagForm) form;
-        ActionErrors errors = mbf.validate(mapping, request);
-        if (errors.isEmpty()) {
-            if (request.getParameter("union") != null
-                || (mbf.getListsButton() != null && mbf.getListsButton().equals("union"))) {
-                combine(mapping, form, request, ObjectStoreBagCombination.UNION, "UNION");
-            } else if (request.getParameter("intersect") != null
-                || (mbf.getListsButton() != null && mbf.getListsButton().equals("intersect"))) {
-                combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT, "INTERSECT");
-            } else if (request.getParameter("subtract") != null
-                || (mbf.getListsButton() != null && mbf.getListsButton().equals("substract"))) {
-                combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT,
-                        "SUBTRACT");
-            } else if (request.getParameter("delete") != null) {
-                delete(mapping, form, request);
-            }
+
+        if (request.getParameter("union") != null
+                        || (mbf.getListsButton() != null && mbf.getListsButton().equals("union"))) {
+            combine(mapping, form, request, ObjectStoreBagCombination.UNION, "UNION");
+        } else if (request.getParameter("intersect") != null
+                        || (mbf.getListsButton() != null && mbf.getListsButton().equals("intersect"))) {
+            combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT, "INTERSECT");
+        } else if (request.getParameter("subtract") != null
+                        || (mbf.getListsButton() != null && mbf.getListsButton().equals("substract"))) {
+            combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT,
+            "SUBTRACT");
+        } else if (request.getParameter("delete") != null) {
+            delete(mapping, form, request);
         }
-        saveErrors(request, (ActionMessages) errors);
+
         return getReturn(mbf.getPageName(), mapping);
     }
 

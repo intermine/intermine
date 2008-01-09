@@ -13,9 +13,13 @@ package org.intermine.dwr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
@@ -64,6 +68,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
@@ -610,5 +615,66 @@ public class AjaxServices
         }
 
         return "";        
-    }        
+    }       
+    
+    /**
+     * validation that happens before bag operation
+     * @param bagName name of new bag
+     * @param selectedBags bags involved in operation
+     * @param operation which operation is taking place - delete, union, intersect or subtract
+     */
+    public static String validateBagOperations(String bagName, String[] selectedBags, 
+                                               String operation) {
+
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+        HttpSession session = WebContextFactory.get().getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+
+        if (selectedBags.length == 0) {
+            return "No lists are selected";
+        }
+        if (operation.equals("delete")) {
+            for (int i = 0; i < selectedBags.length; i++) {
+                Set<String> queries = new HashSet<String>();
+                queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
+                                                     selectedBags[i]));
+                queries.addAll(queriesThatMentionBag(profile.getHistory(),
+                                                     selectedBags[i]));
+                if (queries.size() > 0) {
+                    return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
+                    + "by other queries " + queries;
+                }            
+            }
+
+        } else {
+            Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+            String defaultName = properties.getProperty("lists.input.example");
+
+            if (bagName.equals("") || (bagName.trim().equalsIgnoreCase(defaultName))) {
+                return "New list name is required";                
+            } else if (!WebUtil.isValidName(bagName)) {
+                return "Invalid name. Names can only contain letters, numbers, spaces, and underscores.";
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Provide a list of queries that mention a named bag
+     * @param savedQueries a saved queries map (name -> query)
+     * @param bagName the name of a bag
+     * @return the list of queries
+     */
+    public static List<String> queriesThatMentionBag(Map savedQueries, String bagName) {
+        List<String> queries = new ArrayList<String>();
+        for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
+            String queryName = (String) i.next();
+            SavedQuery query = (SavedQuery) savedQueries.get(queryName);
+            if (query.getPathQuery().getBagNames().contains(bagName)) {
+                queries.add(queryName);
+            }
+        }
+        return queries;
+    }
 }
