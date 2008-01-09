@@ -5,10 +5,41 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
+
 <!-- historyBagView.jsp -->
 <html:xhtml/>
 
 <script type="text/javascript" src="js/tablesort.js"></script>
+  <script language="javascript">
+	function validateBagOperations(operation) {
+		
+		var bagName = ''; 
+		
+		if (document.modifyBagForm.newBagName.value) {
+			bagName = document.modifyBagForm.newBagName.value;		
+		}
+	
+		var selectedBags = [];
+		var i = 0;
+		var j = 0;
+		while (document.getElementById("selected_bag_" + i)) {
+			if (document.modifyBagForm.selectedBags[i].checked) {
+				selectedBags[j] = document.modifyBagForm.selectedBags[i].value;
+				j++;
+			}
+			i++;
+		}
+		AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
+			if (errMsg != '') {
+        		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+        	} else {
+        		document.modifyBagForm.listsButton.value = operation;
+        		document.modifyBagForm.submit();
+        	}
+    	});
+    }
+</script>
+
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 <c:set var="type" value="bag"/>
 
@@ -110,20 +141,14 @@
         <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
           New bag name:
           <html:text property="newBagName" size="12"/>
-          <html:submit property="union">
-            <fmt:message key="history.union"/>
-          </html:submit>
-          <html:submit property="intersect">
-            <fmt:message key="history.intersect"/>
-          </html:submit>
-          <html:submit property="subtract">
-            <fmt:message key="history.subtract"/>
-          </html:submit>
+          	<input type="button" onclick="validateBagOperations('union')" value="Union"/>
+          	<input type="button" onclick="validateBagOperations('intersect')" value="Intersect"/>
+         	<input type="button" onclick="validateBagOperations('subtract')" value="Subtract"/>
         </c:if>
-        <html:submit property="delete">
-          <fmt:message key="history.delete"/>
-        </html:submit>
+        <input type="button" onclick="validateBagOperations('delete')" value="Delete"/>
+
         <html:hidden property="pageName" value="MyMine"/>
+        <html:hidden property="listsButton" value="" styleId="listsButton"/>
       </html:form>
       <br/>
 
@@ -132,4 +157,6 @@
 
 </im:body>
   
+  
+
 <!-- /historyBagView.jsp -->

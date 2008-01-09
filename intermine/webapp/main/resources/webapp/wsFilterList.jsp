@@ -96,18 +96,34 @@
              element.style.color = '';
      }
   }
-
+	function validateBagOperations(operation) {
+		var bagName = document.modifyBagForm.newBagName.value;
+    	
+    	var selectedBags = [];
+		var i = 0;
+		var j = 0;
+		while (document.modifyBagForm.selectedBags[i]) {
+			if (document.modifyBagForm.selectedBags[i].checked) {
+				selectedBags[j] = document.modifyBagForm.selectedBags[i].value;
+				j++;			
+			}
+			i++;
+		}
+    	
+		AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
+			if (errMsg != '') {
+        		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+        	} else {
+        		document.modifyBagForm.listsButton.value = operation;
+        		document.modifyBagForm.submit();
+        	}
+    	});
+    }
 </script>
 <html:text property="newBagName" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
-<html:image property="union" value="union" src="theme/union.png" onclick="$(listsButton).value='union'" title="union">
-  <fmt:message key="history.union"/>
-</html:image>
-<html:image property="intersect" value="intersect" src="theme/intersect.png" onclick="$(listsButton).value='intersect'" title="intersect">
-  <fmt:message key="history.intersect"/>
-</html:image>
-<html:image property="subtract" value="subtract" src="theme/substract.png" onclick="$(listsButton).value='substract'" title="subtract">
-  <fmt:message key="history.subtract"/>
-</html:image>
+<img src="theme/union.png" onclick="validateBagOperations('union')" title="union"/>
+<img src="theme/intersect.png" onclick="validateBagOperations('intersect')" title="intersect"/>
+<img src="theme/substract.png" onclick="validateBagOperations('subtract')" title="subtract"/>  
 <html:hidden property="listsButton" value="" styleId="listsButton"/>
 </c:otherwise>
 </c:choose>

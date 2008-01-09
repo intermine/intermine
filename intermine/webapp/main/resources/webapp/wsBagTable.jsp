@@ -42,13 +42,6 @@
   <tiles:put name="showCount" value="true"/>
 </tiles:insert>
 <html:link anchor="liststop" action="bag"><img src="images/go_to_top.png" title="Click here to jump to the top of the page"/>top</html:link>
-<c:if test="${(fn:length(PROFILE.savedBags) > 0) && (scope == 'user')}">
-  <p width="100%" align="right">
-    <html:submit property="delete">
-      <fmt:message key="history.delete"/>
-    </html:submit>
-  </p>
-</c:if>
 </div>
 </im:boxarea>
 <!-- /wsBagTable.jsp -->
