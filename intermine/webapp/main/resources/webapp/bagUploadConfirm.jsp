@@ -24,8 +24,17 @@ function toggleForm(matchCount) {
 	}
 }
 
+function validateBagUpload(){
+	var bagName = document.bagUploadConfirmForm.bagName.value;
+	AjaxServices.validateBagUpload(bagName, function(errMsg) {
+		if (errMsg != '') {
+        	document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+        } else {
+        	document.bagUploadConfirmForm.submit();
+        }
+    });
+}
 // -->
-
 </script>
 <c:set var="totalIdCount" value="${fn:length(duplicates) + fn:length(lowQualityMatches) + fn:length(convertedObjects) + matchCount + fn:length(unresolved)}"/>  <div class="body" align="center">
 
@@ -78,9 +87,7 @@ function toggleForm(matchCount) {
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
       <html:text property="bagName" size="20" value="" />
-      <html:submit property="submit">
-        <fmt:message key="bagUploadConfirm.submitOK"/>
-      </html:submit>
+		<input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagUpload();"/>
     </div>
   </div>
   <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
@@ -170,9 +177,7 @@ function toggleForm(matchCount) {
       </p>
     </div>
     <div class="body">
-      <html:submit property="goBack">
-        <fmt:message key="bagUploadConfirm.goBack"/>
-      </html:submit>
+      <input type="button" name="goBack" value="Go back" onclick="javascript:history.go(-1);"/>        
     </div>
   </c:if>
 </html:form>

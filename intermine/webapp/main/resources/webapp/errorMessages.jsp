@@ -51,5 +51,7 @@
   <c:remove var="MESSAGES" scope="session"/>
 </c:if>
 
+<div id="errorMsgs"></div>
+
 
 <!-- /errorMessages.jsp -->
