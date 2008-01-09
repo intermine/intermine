@@ -176,7 +176,7 @@ public class ChadoDBConverter extends BioDBConverter
             featureListString.append("'" + item + "'");
             if (i.hasNext()) {
                 featureListString.append(", ");
-            };
+            }
         }
         return featureListString.toString();
     }
@@ -350,13 +350,13 @@ public class ChadoDBConverter extends BioDBConverter
         if (name != null) {
             if (nameActionList == null || nameActionList.size() == 0
                 || nameActionList.contains(CREATE_SYNONYM_ACTION)) {
-                name = fixIdentifier(interMineType, name);
-                if (!fdat.existingSynonyms.contains(name)) {
+                String fixedName = fixIdentifier(interMineType, name);
+                if (!fdat.existingSynonyms.contains(fixedName)) {
                     boolean nameSet = false;
-                    if (fieldValuesSet.contains(name)) {
+                    if (fieldValuesSet.contains(fixedName)) {
                         nameSet = true;
                     }
-                    createSynonym(fdat, "name", name, nameSet, dataSet, EMPTY_ITEM_LIST,
+                    createSynonym(fdat, "name", fixedName, nameSet, dataSet, EMPTY_ITEM_LIST,
                                   dataSource); // Stores Synonym
                 }
             }
@@ -412,6 +412,7 @@ public class ChadoDBConverter extends BioDBConverter
      * @param featureDataMap a map from chado feature_id to data for that feature
      * @throws ObjectStoreException if there is a problem while storing
      */
+    @SuppressWarnings("unused")
     protected void extraProcessing(@SuppressWarnings("unused")
                                    Map<Integer, FeatureData> featureDataMap)
         throws ObjectStoreException {
@@ -442,7 +443,7 @@ public class ChadoDBConverter extends BioDBConverter
 
                     final String featureClassName =
                         model.getPackageName() + "." + featureData.interMineType;
-                    Class featureClass;
+                    Class<?> featureClass;
                     try {
                         featureClass = Class.forName(featureClassName);
                     } catch (ClassNotFoundException e) {
@@ -542,7 +543,7 @@ public class ChadoDBConverter extends BioDBConverter
                     featureDataList.add(objectFeatureData);
 
                     // special case: collect data for setting Transcript.exonCount
-                    Class objectClass;
+                    Class<?> objectClass;
                     try {
                         objectClass = Class.forName(model.getPackageName() + "."
                                                     + objectFeatureData.interMineType);
@@ -1016,20 +1017,12 @@ public class ChadoDBConverter extends BioDBConverter
     /**
      * Process the identifier and return a "cleaned" version.  Implement in sub-classes to fix
      * data problem.
-     * @param type the (SO) type of the feature that this identifier came from
+     * @param type the InterMine type of the feature that this identifier came from
      * @param identifier the identifier
      * @return a cleaned identifier
      */
     protected String fixIdentifier(String type, String identifier) {
-        /*
-         * default implementation should be: return identifier
-         */
-        // XXX FIXME TODO - for wormbase - move to WormBaseDBConverter
-        if (identifier.startsWith(type + ":")) {
-            return identifier.substring(type.length() + 1);
-        } else {
-            return identifier;
-        }
+        return identifier;
     }
 
     /**
@@ -1456,6 +1449,7 @@ public class ChadoDBConverter extends BioDBConverter
 
         /**
          * Create a new SetFieldConfigAction that sets the given field.
+         * @param fieldName the name of the InterMine object field to set
          */
         SetFieldConfigAction(String fieldName) {
             this.thefieldName = fieldName;
@@ -1487,6 +1481,7 @@ public class ChadoDBConverter extends BioDBConverter
 
         /**
          * Make a synonym and use given type as the Synonym type
+         * @param synonymType the synonym type
          */
         CreateSynonymAction(String synonymType) {
             this.synonymType = synonymType;
