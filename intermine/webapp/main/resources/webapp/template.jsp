@@ -320,6 +320,11 @@
     </ol>
     <c:if test="${empty previewTemplate}">
       <br/>
+      
+     <table width="100%">
+     <tr>
+     	<td> 
+      
       <html:hidden property="templateName"/>
       <html:hidden property="templateType"/>
       <html:submit property="skipBuilder"><fmt:message key="template.submitToResults"/></html:submit>
@@ -327,6 +332,18 @@
       <c:if test="${IS_SUPERUSER}">
         <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
       </c:if>
+   
+   	</td>
+   	<td align="right">
+	<html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}">
+		<html:image property="exportTemplate" src="theme/xml.png" title="Export this template to XML">
+			<fmt:message key="template.export"/>
+		</html:image> 
+	</html:link>
+	</td>
+	</tr>
+	</table>
+      
     </c:if>
   </html:form>
   <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
@@ -340,11 +357,5 @@
       </i>
     </p>
   </c:if>
-  
-  <html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}">
-                    <fmt:message key="template.export"/>
-	</html:link>
-  
-  
 </im:boxarea>
 </div>
