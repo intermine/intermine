@@ -80,7 +80,8 @@ public class ModifyBagAction extends InterMineAction
                         || (mbf.getListsButton() != null && mbf.getListsButton().equals("substract"))) {
             combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT,
             "SUBTRACT");
-        } else if (request.getParameter("delete") != null) {
+        } else if (request.getParameter("delete") != null
+                        || (mbf.getListsButton() != null && mbf.getListsButton().equals("delete"))) {
             delete(mapping, form, request);
         }
 
