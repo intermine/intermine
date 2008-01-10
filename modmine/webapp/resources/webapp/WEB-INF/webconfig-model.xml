@@ -221,7 +221,6 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/synonymDisplayer.jsp"/>
-      <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
   </class>
 
@@ -290,14 +289,6 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.ProteinInteraction">
-    <fields>
-      <fieldconfig fieldExpr="shortName"/>
-      <fieldconfig fieldExpr="confidenceText"/>
-      <fieldconfig fieldExpr="confidence"/>
-      <fieldconfig fieldExpr="experimentalRole"/>
-    </fields>
-  </class>
 
   <class className="org.flymine.model.genomic.Location">
     <fields>
@@ -485,21 +476,6 @@
   </class>
 
 
-  <class className="org.flymine.model.genomic.ProteinInteractionRegion">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="protein.primaryAccession"/>
-      <fieldconfig fieldExpr="protein.organism.name"/>
-    </fields>
-  </class>
-
-  <class className="org.flymine.model.genomic.ProteinInteractor">
-    <fields>
-      <fieldconfig fieldExpr="role"/>
-      <fieldconfig fieldExpr="protein.primaryAccession"/>
-      <fieldconfig fieldExpr="interaction.shortName"/>
-    </fields>
-  </class>
 
   <class className="org.flymine.model.genomic.ProteinRegion">
     <fields>
@@ -607,6 +583,4 @@
                      className="org.intermine.bio.web.export.SequenceExporter"/>
   <tableExportConfig id="gff3Exporter" actionPath="/exportAction?type=gff3Exporter"
                      className="org.intermine.bio.web.export.GFF3Exporter"/>
-  <tableExportConfig id="proteinInteractionExporter" actionPath="/exportAction?type=proteinInteractionExporter"
-                     className="org.intermine.bio.web.ProteinInteractionExporter"/>
 </webconfig>
