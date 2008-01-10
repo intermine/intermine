@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
   <channel>
-    <title>modMine News</title>
+    <title>modENCODE-mine News</title>
     <link>http://www.modmine.org/</link>
     <description>An integrated database for Drosophila and C. Elegans genomics.</description>
     <language>en-gb</language>
@@ -10,13 +10,13 @@
 
     <!-- Add new news at the top here -->
     <item>
-      <title>modMine preview Released</title>
+      <title>modENCODE-mine 1 Released</title>
       <link>http://intermine.modencode.org/</link>
       <description>
         &lt;a href="http://intermine.modencode.org"&gt;
-        modMine preview&lt;/a&gt; is now available.
+        modENCODE-mine 1&lt;/a&gt; is now available.
       </description>
-      <pubDate>Mon, 7th Jan 2008</pubDate>
+      <pubDate>Fri, 11th Jan 2008</pubDate>
     </item>
 
     <item>
