@@ -239,6 +239,21 @@ public class PortalQueryAction extends InterMineAction
                 for (ResultsRow resRow:result) {
                     converted.add(((InterMineObject) resRow.get(0)).getId());
                 }
+                if (converted.size() <= 0) {
+                    recordMessage(new ActionMessage("portal.nomatches", extId), request);
+
+                    WebPathCollection webPathCollection =
+                        new WebPathCollection(os, new Path(model, className), new ArrayList()
+                                              , model, webConfig,
+                                          classKeys);
+                    PagedTable pc = new PagedTable(webPathCollection);
+                    String identifier = "col" + index++;
+                    SessionMethods.setResultsTable(session, identifier, pc);
+                    return new ForwardParameters(mapping.findForward("results"))
+                    .addParameter("noSelect", "true")
+                    .addParameter("table", identifier)
+                    .addParameter("trail", "").forward();
+                }
                 osw.addAllToBag(imBag.getOsb(), converted);
                 osw.close();
                 profile.saveBag(imBag.getName(), imBag);
