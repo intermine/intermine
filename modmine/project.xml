@@ -21,6 +21,8 @@
       <property name="taxonId" value="6239"/>
       <property name="dataSourceName" value="WormBase"/>
       <property name="dataSetTitle" value="WormBase C.elegans data set"/>
+      <property name="converter.class" 
+                value="org.intermine.bio.dataconversion.WormBaseChadoDBConverter"/>
     </source>
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 6239"/> 
