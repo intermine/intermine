@@ -290,7 +290,7 @@
   </tr>
 
 </table>
-
+<!--
 <div class="body">
 <ol>
 	<li><a name="note1">${note1}</a></li>
@@ -298,6 +298,6 @@
 	<li><a name="note3">${note3}</a></li>
 </ol>
 </div>
-
+-->
 </div>
 <!-- /dataCategories -->
