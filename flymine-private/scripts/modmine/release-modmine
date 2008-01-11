@@ -24,6 +24,8 @@
 use strict;
 use warnings;
 
+use File::Copy;
+
 # use Expect;
 # use Getopt::Std;
 # use Cwd;
@@ -31,9 +33,15 @@ use warnings;
 my $PROJECT_NAME = 'modmine';
 my $PROP_FILE_PREFIX = "$PROJECT_NAME.properties";
 my $BUILD_PROP_FILE_PREFIX = "build.properties.$PROJECT_NAME";
+my $WEBAPP_DIR = "svn/trunk/$PROJECT_NAME/webapp";
+my $APACHE_CONF_FILENAME = '/etc/httpd/conf.d/proxy_ajp.conf';
+my $OLDEST_VERSION = 1;
+my $USERPROFILE_XML_FILENAME = "build/userprofile.xml";
+my $USERPROFILE_XML_BACKUP_FILENAME = "$ENV{HOME}/backups/userprofile.xml";
 
 
-#### find current version
+#################
+warn "reading current properties file\n";
 
 my $current_version = -1;
 
@@ -65,7 +73,9 @@ warn "current build properties file: $current_build_prop_filename\n";
 
 my $new_version = $current_version + 1;
 
-#### make new properties file
+
+#################
+warn "creating new properties files\n";
 
 sub create_properties_file
 {
@@ -75,6 +85,10 @@ sub create_properties_file
 
   warn "creating new properties file: $new_prop_filename\n";
 
+  if (-e $new_prop_filename) {
+    die "trying to overwrite: $new_prop_filename\n";
+  }
+
   open my $new_prop_file, '>', $new_prop_filename or die "can't open $new_prop_filename: $!\n";
 
   open my $current_file, '<', $current_prop_filename
@@ -82,7 +96,7 @@ sub create_properties_file
 
   my %fixed = ();
 
-  while (my $line = <$current_file>) {
+  while (defined (my $line = <$current_file>)) {
     for my $prop_name (@prop_names) {
       if ($line =~ /$prop_name=(.*)(\d+)(.*)/) {
         if ($2 == $current_version) {
@@ -126,3 +140,101 @@ symlink $new_build_prop_filename, $new_build_prop_symlink
   or die "can't create symlink to $new_build_prop_symlink: $!\n";
 
 
+# create new databases
+
+# system ("createdb modmine-r$new_version") == 0 or die "createdb failed: $?\n";
+system ("createdb modmine-r$new_version-userprofile") == 0 or die "createdb failed: $?\n";
+
+
+# load dump file of production database (if needed)
+
+my $dump_file_name = undef;
+
+if (@ARGV == 1) {
+  die "unimplemented";
+}
+
+
+# precompute queries and templates
+
+# XXX TODO
+
+
+
+#################
+
+warn "create-db-userprofile with new properties file\n";
+
+chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
+
+system ("ant -Drelease=r$new_version create-db-userprofile") == 0
+  or die "create-db-userprofile failed: $?\n";
+
+
+#################
+warn "stop tomcat\n";
+
+system ("/webapp/stop.sh") == 0 or die "can't stop tomcat: $!\n";
+
+
+#################
+
+warn "update apache rewrite/redirect configuration\n";
+
+{
+  open my $apache_conf_file, '>', $APACHE_CONF_FILENAME
+    or die "can't open $APACHE_CONF_FILENAME for writing: $!\n";
+
+  print $apache_conf_file <<"APACHE_CONF";
+LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
+
+RewriteEngine On
+RewriteRule ^/query(.*)\$ http://intermine.modencode.org/release-$new_version\$1 [P,QSA]
+RewriteRule ^/\$ http://intermine.modencode.org/release-$new_version/begin.do [P]
+APACHE_CONF
+
+  for (my $i = $OLDEST_VERSION; $i <= $new_version; $i++) {
+    print $apache_conf_file <<"APACHE_CONF";
+ProxyPass /release-$new_version ajp://mod2:8009/release-$new_version
+ProxyPassReverse /release-$new_version http://mod2/release-$new_version
+APACHE_CONF
+  }
+}
+
+
+#################
+warn "restarting apache\n";
+
+#system ("sudo /etc/init.d/httpd restart") == 0 or die "can't restart httpd: $?\n";
+
+
+#################
+
+warn "write-userprofile-xml for current version\n";
+
+system ("ant -Drelease=r$current_version write-userprofile-xml") == 0
+or die "can't write userprofile XML: $?\n";
+
+copy($USERPROFILE_XML_FILENAME, "$USERPROFILE_XML_BACKUP_FILENAME.r$current_version")
+  or die "copy failed: $!";
+
+
+#################
+
+warn "read-userprofile-xml with new properties\n";
+
+#system ("ant -Drelease=r$new_version write-userprofile-xml") == 0
+#  or die "can't write userprofile XML: $?\n";
+
+#  - release webapp
+
+warn "release webapp r$new_version\n";
+
+#system ("ant -Drelease=r$new_version default ") == 0
+#  or die "can't write userprofile XML: $?\n";
+
+
+
+#  - start old webapp
+
+system ("/webapp/start.sh") == 0 or die "can't start tomcat: $!\n";
