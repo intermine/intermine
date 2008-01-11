@@ -396,7 +396,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
      * @param type the type
      * @return true if we handle the type
      */
-    protected boolean validType(Class type) {
+    public boolean validType(Class type) {
         return (LocatedSequenceFeature.class.isAssignableFrom(type)
                         || Protein.class.isAssignableFrom(type)
                         || Translation.class.isAssignableFrom(type)
