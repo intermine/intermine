@@ -157,7 +157,7 @@ symlink $new_build_prop_filename, $new_build_prop_symlink
 # system ("createdb modmine-r$new_version >> $LOG_FILE 2>&1") == 0
 #   or die_with_log "createdb failed: $?\n";
 system ("createdb modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "createdb failed: $?\n";
+  or die_with_log "createdb failed: $?";
 
 
 # load dump file of production database (if needed)
@@ -182,14 +182,14 @@ warn "create-db-userprofile with new properties file\n";
 chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
 
 system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "create-db-userprofile failed: $?\n";
+  or die_with_log "create-db-userprofile failed: $?";
 
 
 #################
 warn "stopping old webapp (r$current_version)\n";
 
 system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "can't stop webapp r$current_version: $!\n";
+  or die_with_log "can't stop webapp r$current_version: $!";
 
 
 #################
@@ -223,14 +223,14 @@ APACHE_CONF
 warn "restarting apache\n";
 
 #system ("sudo /etc/init.d/httpd restart >> $LOG_FILENAME 2>&1") == 0
-#  or die_with_log "can't restart httpd: $?\n";
+#  or die_with_log "can't restart httpd: $?";
 
 
 #################
 warn "write-userprofile-xml for current version\n";
 
 system ("ant -Drelease=r$current_version write-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
- or die_with_log "can't write userprofile XML: $?\n";
+ or die_with_log "can't write userprofile XML: $?";
 
 copy($USERPROFILE_XML_FILENAME, "$USERPROFILE_XML_BACKUP_FILENAME.r$current_version")
   or die_with_log "copy failed: $!";
@@ -240,7 +240,7 @@ copy($USERPROFILE_XML_FILENAME, "$USERPROFILE_XML_BACKUP_FILENAME.r$current_vers
 warn "read-userprofile-xml with new properties\n";
 
 system ("ant -Drelease=r$new_version read-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "can't read userprofile XML into r$new_version: $?\n";
+  or die_with_log "can't read userprofile XML into r$new_version: $?";
 
 
 #################
@@ -248,13 +248,13 @@ warn "release new webapp r$new_version\n";
 
 my @TARGETS = qw(default remove-webapp release-webapp);
 system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "can't write userprofile XML: $?\n";
+  or die_with_log "can't write userprofile XML: $?";
 
 
 #################
 warn "re-starting old webapp (r$current_version)\n";
 system ("ant -Drelease=r$current_version start-webapp >> $LOG_FILENAME 2>&1") == 0
-or die_with_log "can't start webapp r$current_version: $!\n";
+or die_with_log "can't start webapp r$current_version: $!";
 
 
 #################
@@ -262,6 +262,6 @@ warn "re-deploy web site\n";
 
 chdir "../../www/$PROJECT_NAME" or die "can't directory change to www/$PROJECT_NAME\n";
 
-system ("ant -Drelease=r$current_version clean releease-www >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "can't re-release web site with new version (r$current_version): $!\n";
+system ("ant -Drelease=r$new_version clean release-www >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "can't re-release web site with new version (r$current_version): $!";
 
