@@ -58,28 +58,21 @@ public class CreateReferences
      * @throws Exception if anything goes wrong
      */
     public void insertReferences() throws Exception {
-       //  LOG.info("insertReferences stage 1");
 
+        LOG.info("insertReferences stage 1");
         // Transcript.exons / Exon.transcripts
         insertCollectionField(Transcript.class, "subjects", RankedRelation.class, "subject",
                               Exon.class, "transcripts", false);
-        insertCollectionField(Transcript.class, "subjects", SimpleRelation.class, "subject",
-                              Exon.class, "transcripts", false);
-
-        // Intron.MRNAs / MRNA.introns
-        insertCollectionField(Transcript.class, "subjects", SimpleRelation.class, "subject",
-                              Intron.class, "introns", true);
-        insertCollectionField(Transcript.class, "subjects", SimpleRelation.class, "subject",
-                              Exon.class, "exons", true);
-
+        
         LOG.info("insertReferences stage 2");
         // Gene.transcript / Transcript.gene
         insertReferenceField(Gene.class, "subjects", SimpleRelation.class, "subject",
                              Transcript.class, "gene");
 
         LOG.info("insertReferences stage 3");
-        insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
-                             LocatedSequenceFeature.class, "chromosome");
+        // this should now be done by CalculateLocations.createChromosomeLocationsAndLengths
+        //insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
+        //                     LocatedSequenceFeature.class, "chromosome");
 
         LOG.info("insertReferences stage 4");
         // fill in collections on Chromosome
@@ -109,9 +102,6 @@ public class CreateReferences
         insertReferenceField(Chromosome.class, "exons", Exon.class, "transcripts",
                              Transcript.class, "chromosome");
         LOG.info("insertReferences stage 9");
-        // Protein.genes / Gene.proteins
-        insertCollectionField(Gene.class, "transcripts", Transcript.class, "protein",
-                              Protein.class, "genes", false);
 
         // CDS.gene / Gene.CDSs
         insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
