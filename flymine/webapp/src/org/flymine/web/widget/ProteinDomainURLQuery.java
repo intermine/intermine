@@ -34,10 +34,11 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
     InterMineBag bag;
     String key;
     ObjectStore os;
+
     /**
-     * @param key
-     * @param bag
-     *
+     * @param key which protein domain the user clicked on
+     * @param bag bag 
+     * @param os object store
      */
     public ProteinDomainURLQuery(ObjectStore os, InterMineBag bag, String key) {
         this.bag = bag;

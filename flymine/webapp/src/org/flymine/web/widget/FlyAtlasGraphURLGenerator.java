@@ -59,7 +59,13 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         return sb.toString();
     }
 
-
+/**
+ * @param os object store
+ * @param bag bag
+ * @param series up or down
+ * @param category tissue
+ * @return the path query 
+ */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
                                        String series,
