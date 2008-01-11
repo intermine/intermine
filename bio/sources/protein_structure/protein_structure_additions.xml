@@ -9,12 +9,12 @@
   <attribute name="start" type="java.lang.Integer"/>
   <attribute name="end" type="java.lang.Integer" />
   <attribute name="technique" type="java.lang.String"/>
-  <reference name="proteinFeature" referenced-type="org.flymine.model.genomic.ProteinFeature"/>
+  <reference name="proteinDomain" referenced-type="org.flymine.model.genomic.ProteinDomain"/>
   <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="structures"/>
 </class>
 <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
   <collection name="structures" referenced-type="org.flymine.model.genomic.ProteinStructure" ordered="true" reverse-reference="proteins"/>
 </class>
-<class name="org.flymine.model.genomic.ProteinFeature" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+<class name="org.flymine.model.genomic.ProteinDomain" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
 </class>
 </classes>

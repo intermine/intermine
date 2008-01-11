@@ -87,8 +87,13 @@ public class InterProConverter extends FileConverter
         mapMaster.put("proteinDomains", proteinDomains);
     }
 
-
-    class InterProHandler extends DefaultHandler {
+/**
+ * 
+ *
+ * @author Julie Sullivan
+ */
+    class InterProHandler extends DefaultHandler 
+    {
 
         private Item proteinDomain;      
         private Map synonyms;
@@ -122,7 +127,6 @@ public class InterProConverter extends FileConverter
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
          * @param mapMaster the Map of maps
-         * @param createInterpro whether or not to create interpro items
          */
         public InterProHandler(ItemWriter writer, Map mapMaster) {
 

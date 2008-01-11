@@ -193,7 +193,7 @@ public class ProteinStructureDataConverter extends FileConverter
                 } else if (qName.equals("pfam_id")) {
                     pfamId = attValue.toString();
                     proteinFeature = getFeature(pfamId);
-                    proteinStructure.setReference("proteinFeature", proteinFeature);
+                    proteinStructure.setReference("proteinDomain", proteinFeature);
                 } else if (qName.equals("begin")) {
                     proteinStructure.setAttribute("start", attValue.toString());
                 } else if (qName.equals("end")) {
@@ -261,7 +261,7 @@ public class ProteinStructureDataConverter extends FileConverter
         private Item getFeature(String identifier) throws ObjectStoreException {
             Item feature = featureMap.get(identifier);
             if (feature == null) {
-                feature = createItem("ProteinFeature");
+                feature = createItem("ProteinDomain");
                 feature.setAttribute("identifier", attValue.toString());
                 featureMap.put(identifier, feature);
                 store(feature);
