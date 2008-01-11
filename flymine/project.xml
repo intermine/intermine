@@ -75,9 +75,9 @@
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/REDfly/current/tfbs/"/>
-    </source>
-    <source name="interpro" type="interpro" dump="true">
-      <property name="interpro.organism.taxid.list" value="6239,7227,180454"/>
+    </source>   
+    <source name="interpro" type="interpro" dump="true">      
+      <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
     <source name="homophila" type="homophila">
       <property name="src.data.dir" location="/shared/data/homophila/current"/>
