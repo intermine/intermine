@@ -1,0 +1,128 @@
+#!/usr/bin/perl -w
+
+# release a new modmine
+#
+# steps:
+#  - find current version from properties file
+#  - create new properties file
+#   * update version
+#   * update deploy location
+#  - createdb new databases modmine-r<version> and modmine-r<version>-userprofile
+#  - load dump file of production database (if needed)
+#  - precompute queries and templates
+#  - create-db-userprofile with new properties file
+#  - stop old webapp
+#  - write-userprofile-xml for current version
+#  - read-userprofile-xml with new properties
+#  - release webapp
+#  - start new webapp
+#  - start old webapp
+#  - update apache rewrite/redirect configuration
+#  - restart apache
+
+
+use strict;
+use warnings;
+
+# use Expect;
+# use Getopt::Std;
+# use Cwd;
+
+my $PROJECT_NAME = 'modmine';
+my $PROP_FILE_PREFIX = "$PROJECT_NAME.properties";
+my $BUILD_PROP_FILE_PREFIX = "build.properties.$PROJECT_NAME";
+
+
+#### find current version
+
+my $current_version = -1;
+
+chdir $ENV{HOME} or die "can't change directory to $ENV{HOME}\n";
+
+opendir DIR, "." or die "can't open directory $ENV{HOME} for reading\n";
+
+while (defined(my $filename = readdir(DIR))) {
+  if ($filename =~ /^$PROP_FILE_PREFIX.r(\d+)$/) {
+    if ($1 > $current_version) {
+      $current_version = $1;
+    }
+  }
+}
+
+if ($current_version == -1) {
+  die "can't find a properties file for $PROJECT_NAME with prefix $PROP_FILE_PREFIX\n";
+}
+
+warn "most recent version of $PROJECT_NAME: $current_version\n";
+
+my $current_prop_filename = "$PROP_FILE_PREFIX.r$current_version";
+
+warn "current properties file: $current_prop_filename\n";
+
+my $current_build_prop_filename = "$BUILD_PROP_FILE_PREFIX.r$current_version";
+
+warn "current build properties file: $current_build_prop_filename\n";
+
+my $new_version = $current_version + 1;
+
+#### make new properties file
+
+sub create_properties_file
+{
+  my $current_prop_filename = shift;
+  my $new_prop_filename = shift;
+  my @prop_names = @_;
+
+  warn "creating new properties file: $new_prop_filename\n";
+
+  open my $new_prop_file, '>', $new_prop_filename or die "can't open $new_prop_filename: $!\n";
+
+  open my $current_file, '<', $current_prop_filename
+    or die "can't open $current_prop_filename: $!\n";
+
+  my %fixed = ();
+
+  while (my $line = <$current_file>) {
+    for my $prop_name (@prop_names) {
+      if ($line =~ /$prop_name=(.*)(\d+)(.*)/) {
+        if ($2 == $current_version) {
+          $fixed{$prop_name} = 1;
+          $line = "$prop_name=$1$new_version$3\n";
+          last;
+        } else {
+          die "line has wrong version ($1): $line\n";
+        }
+      }
+    }
+    print $new_prop_file $line;
+
+  }
+
+  close $new_prop_file or die "can't close $new_prop_filename: $!\n";
+  close $current_file or die "can't close $current_file: $!\n";
+
+  for my $prop_name (@prop_names) {
+    if (!exists $fixed{$prop_name}) {
+      unlink $new_prop_file;
+      die "can't find property $prop_name in $current_prop_filename\n";
+    }
+  }
+}
+
+my $new_prop_filename = "$PROP_FILE_PREFIX.r$new_version";
+my $new_build_prop_filename = "$BUILD_PROP_FILE_PREFIX.r$new_version";
+
+create_properties_file($current_prop_filename, $new_prop_filename,
+                       'db.production.datasource.databaseName',
+                       'db.userprofile-production.datasource.databaseName');
+create_properties_file($current_build_prop_filename, $new_build_prop_filename,
+                       'webapp.path', 'project.releaseVersion');
+
+my $new_prop_symlink = "$PROJECT_NAME-webapp.properties.r$new_version";
+symlink $new_prop_filename, $new_prop_symlink
+  or die "can't create symlink to $new_prop_symlink: $!\n";
+my $new_build_prop_symlink = "build.properties.$PROJECT_NAME-webapp.r$new_version";
+symlink $new_build_prop_filename, $new_build_prop_symlink
+  or die "can't create symlink to $new_build_prop_symlink: $!\n";
+
+
