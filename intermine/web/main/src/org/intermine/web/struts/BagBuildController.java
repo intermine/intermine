@@ -140,7 +140,7 @@ public class BagBuildController extends TilesAction
         return null;
     }
 
-    private List getFieldValues(ObjectStore os, ObjectStoreSummary oss, String extraClassName,
+    public static List getFieldValues(ObjectStore os, ObjectStoreSummary oss, String extraClassName,
                                 String constrainField) {
         List fieldValues = oss.getFieldValues(extraClassName, constrainField);
         if (fieldValues == null) {

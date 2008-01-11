@@ -222,12 +222,12 @@ public class PortalQueryAction extends InterMineAction
         request.setAttribute("lookupResults", lookupResults);
 
         // Use custom converters
-        Map<String, String> additionalConverters = bagQueryConfig.getAdditionalConverters();
+        Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
         for (String converterClassName : additionalConverters.keySet()) {
             Class clazz = Class.forName(converterClassName);
             Constructor constructor = clazz.getConstructor();
-            String addparameter = request.getParameter(additionalConverters
-                                                                .get(converterClassName));
+            String [] paramArray = additionalConverters.get(converterClassName);
+            String addparameter = request.getParameter(paramArray[0]);
             if (addparameter != null && addparameter.length() != 0) {
                 BagConverter bagConverter = (BagConverter) constructor.newInstance();
                 List<ResultsRow> result = bagConverter.getConvertedObjects(session, addparameter,

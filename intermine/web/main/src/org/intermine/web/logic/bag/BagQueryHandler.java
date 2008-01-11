@@ -35,7 +35,7 @@ public class BagQueryHandler extends DefaultHandler
 
     private Map<String, List<BagQuery>> bagQueries = new HashMap<String, List<BagQuery>>();
 
-    private Map<String, String> additionalConverters = new HashMap<String, String>();
+    private Map<String, String[]> additionalConverters = new HashMap<String, String[]>();
 
     private String type, message, queryString;
 
@@ -110,7 +110,9 @@ public class BagQueryHandler extends DefaultHandler
         if (qName.equals("additional-converter")) {
             String urlField = attrs.getValue("urlfield");
             String className = attrs.getValue("class-name");
-            additionalConverters.put(className, urlField);
+            String classConstraint = attrs.getValue("classConstraint");
+            String [] array = new String[] {urlField, classConstraint};
+            additionalConverters.put(className, array);
         }
     }
 

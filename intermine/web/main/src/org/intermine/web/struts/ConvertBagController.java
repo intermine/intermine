@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -25,10 +26,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.exolab.castor.xml.FieldValidator;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.FieldConfig;
@@ -73,7 +77,23 @@ public class ConvertBagController extends TilesAction
                 fastaMap.put(type, false);
             }
         }
-
+        // Use custom converters
+        ObjectStoreSummary oss =
+            (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
+        BagQueryConfig bagQueryConfig =
+            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
+        
+        Map<String, List> customConverters = new HashMap<String, List>();
+        for (String converterClassName : additionalConverters.keySet()) {
+            String [] paramArray = additionalConverters.get(converterClassName);
+            String clazzName = paramArray[1];
+            // TODO shouldn't use getConstrainField here but have one specified in the config file
+            List fieldValues = BagBuildController.getFieldValues(os, oss, clazzName, 
+                                bagQueryConfig.getConstrainField());
+            customConverters.put(TypeUtil.unqualifiedName(clazzName), fieldValues);
+        }
+        request.setAttribute("customConverters", customConverters);
         request.setAttribute("conversionTypes", conversionTypes);
         request.setAttribute("fastaMap", fastaMap);
         return null;
