@@ -80,10 +80,10 @@ public class FlyRNAiScreenConverter extends FileConverter
             store(dataSet);
         }
 
-        fileName = getCurrentFile().getPath();
-        if (fileName.endsWith("RNAi_all_hits.txt")) {
+        fileName = getCurrentFile().getName();
+        if (fileName.startsWith("RNAi_all_hits")) {
             processHits(reader);
-        } else if (fileName.endsWith("RNAi_screen_details")) {
+        } else if (fileName.startsWith("RNAi_screen_details")) {
             processScreenDetails(reader);
         }
     }
@@ -152,8 +152,9 @@ public class FlyRNAiScreenConverter extends FileConverter
                     screens = new Item[headerLength - 2];
                     for (int i = 2; i < line.length; i++) {
                         // create an array of screen item identifers (first two slots empty)
-                        screens[i - 2] = getScreen(line[i], "hits");
-                        hitScreenNames.add(line[i]);
+                        String screenName = line[i].trim();
+                        screens[i - 2] = getScreen(screenName, "hits");
+                        hitScreenNames.add(screenName);
                     }
                 }
             } else {
@@ -186,7 +187,7 @@ public class FlyRNAiScreenConverter extends FileConverter
 
                 // loop over screens to create results
                 for (int j = 0; j < screens.length; j++) {
-                    String resultValue = resultValues.get(line[j + 2]);
+                    String resultValue = resultValues.get(line[j + 2].trim());
                     if (resultValue == null) {
                         throw new RuntimeException("Unrecogised result symbol '" + line[j + 2]
                             + "' in line: " + Arrays.asList(line));
@@ -227,15 +228,19 @@ public class FlyRNAiScreenConverter extends FileConverter
         while (tsvIter.hasNext()) {
             String [] line = (String[]) tsvIter.next();
 
-            String pubmedId = line[0];
+            if (line.length != 5) {
+                throw new IllegalArgumentException("Did not find five elements in line: "
+                                                   + Arrays.asList(line));
+            }
+            String pubmedId = line[0].trim();
             Item publication = getPublication(pubmedId);
 
-            String screenName = line[2];
-            detailsScreenNames.add(line[2]);
+            String screenName = line[2].trim();
+            detailsScreenNames.add(screenName);
             Item screen = getScreen(screenName, "screen details");
             screen.setAttribute("name", screenName);
-            screen.setAttribute("cellLine", line[3]);
-            screen.setAttribute("analysisDescription", line[4]);
+            screen.setAttribute("cellLine", line[3].trim());
+            screen.setAttribute("analysisDescription", line[4].trim());
             screen.setReference("organism", organism);
             screen.setReference("publication", publication);
             store(screen);

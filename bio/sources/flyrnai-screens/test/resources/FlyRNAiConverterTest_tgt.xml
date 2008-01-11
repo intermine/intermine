@@ -11,12 +11,6 @@
     <reference name="amplicon" ref_id="5_1"/>
     <reference name="analysis" ref_id="4_1"/>
   </item>
-  <item id="6_4" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="identifier"/>
-    <attribute name="value" value="eve"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="8_2"/>
-  </item>
   <item id="4_2" class="http://www.flymine.org/model/genomic#RNAiScreen">
     <attribute name="analysisDescription" value="Drosophila C Virus infection assay"/>
     <attribute name="cellLine" value="S2 cells"/>
@@ -30,12 +24,6 @@
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
-  </item>
-  <item id="6_3" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="type" value="identifier"/>
-    <attribute name="value" value="CG31973"/>
-    <reference name="source" ref_id="1_1"/>
-    <reference name="subject" ref_id="8_1"/>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="14764878"/>
