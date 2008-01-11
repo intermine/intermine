@@ -25,6 +25,8 @@ use strict;
 use warnings;
 
 use File::Copy;
+use Date::Manip;
+
 
 # use Expect;
 # use Getopt::Std;
@@ -38,7 +40,8 @@ my $APACHE_CONF_FILENAME = '/etc/httpd/conf.d/proxy_ajp.conf';
 my $OLDEST_VERSION = 1;
 my $USERPROFILE_XML_FILENAME = "build/userprofile.xml";
 my $USERPROFILE_XML_BACKUP_FILENAME = "$ENV{HOME}/backups/userprofile.xml";
-
+my $START_DATE = UnixDate("now", "%O");
+my $LOG_FILENAME = "$ENV{HOME}/logs/$START_DATE.log";
 
 #################
 warn "reading current properties file\n";
@@ -73,6 +76,15 @@ warn "current build properties file: $current_build_prop_filename\n";
 
 my $new_version = $current_version + 1;
 
+
+sub die_with_log
+{
+  my $message = shift;
+  die "$message\n\nLog messages in: $LOG_FILENAME\n";
+}
+
+
+# start processing
 
 #################
 warn "creating new properties files\n";
@@ -142,8 +154,10 @@ symlink $new_build_prop_filename, $new_build_prop_symlink
 
 # create new databases
 
-# system ("createdb modmine-r$new_version") == 0 or die "createdb failed: $?\n";
-system ("createdb modmine-r$new_version-userprofile") == 0 or die "createdb failed: $?\n";
+# system ("createdb modmine-r$new_version >> $LOG_FILE 2>&1") == 0
+#   or die_with_log "createdb failed: $?\n";
+system ("createdb modmine-r$new_version-userprofile >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "createdb failed: $?\n";
 
 
 # load dump file of production database (if needed)
@@ -167,14 +181,14 @@ warn "create-db-userprofile with new properties file\n";
 
 chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
 
-system ("ant -Drelease=r$new_version create-db-userprofile") == 0
-  or die "create-db-userprofile failed: $?\n";
+system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "create-db-userprofile failed: $?\n";
 
 
 #################
-warn "stop tomcat\n";
+warn "stopping tomcat\n";
 
-system ("/webapp/stop.sh") == 0 or die "can't stop tomcat: $!\n";
+#system ("/webapp/stop.sh >> $LOG_FILENAME 2>&1") == 0 or die_with_log "can't stop tomcat: $!\n";
 
 
 #################
@@ -186,6 +200,8 @@ warn "update apache rewrite/redirect configuration\n";
     or die "can't open $APACHE_CONF_FILENAME for writing: $!\n";
 
   print $apache_conf_file <<"APACHE_CONF";
+# WARNING: DO NOT
+
 LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
 
 RewriteEngine On
@@ -205,36 +221,34 @@ APACHE_CONF
 #################
 warn "restarting apache\n";
 
-#system ("sudo /etc/init.d/httpd restart") == 0 or die "can't restart httpd: $?\n";
+#system ("sudo /etc/init.d/httpd restart >> $LOG_FILENAME 2>&1") == 0
+#  or die_with_log "can't restart httpd: $?\n";
 
 
 #################
-
 warn "write-userprofile-xml for current version\n";
 
-system ("ant -Drelease=r$current_version write-userprofile-xml") == 0
-or die "can't write userprofile XML: $?\n";
+system ("ant -Drelease=r$current_version write-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
+ or die_with_log "can't write userprofile XML: $?\n";
 
 copy($USERPROFILE_XML_FILENAME, "$USERPROFILE_XML_BACKUP_FILENAME.r$current_version")
-  or die "copy failed: $!";
+  or die_with_log "copy failed: $!";
 
 
 #################
-
 warn "read-userprofile-xml with new properties\n";
 
-#system ("ant -Drelease=r$new_version write-userprofile-xml") == 0
-#  or die "can't write userprofile XML: $?\n";
-
-#  - release webapp
-
-warn "release webapp r$new_version\n";
-
-#system ("ant -Drelease=r$new_version default ") == 0
-#  or die "can't write userprofile XML: $?\n";
+system ("ant -Drelease=r$new_version read-userprofile-xml >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "can't read userprofile XML into r$new_version: $?\n";
 
 
+#################
+warn "release new webapp r$new_version\n";
 
-#  - start old webapp
+my @TARGETS = qw(default remove-webapp release-webapp);
+system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "can't write userprofile XML: $?\n";
 
-system ("/webapp/start.sh") == 0 or die "can't start tomcat: $!\n";
+
+#################
+#system ("/webapp/start.sh") == 0 or die "can't start tomcat: $!\n";
