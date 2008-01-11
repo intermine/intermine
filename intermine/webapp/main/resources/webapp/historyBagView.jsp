@@ -11,6 +11,7 @@
 
 <script type="text/javascript" src="js/tablesort.js"></script>
   <script language="javascript">
+  // TODO merge this method with the one on historyBagView.jsp
 	function validateBagOperations(operation) {
 		
 		var bagName = ''; 

@@ -96,6 +96,7 @@
              element.style.color = '';
      }
   }
+  // TODO merge this method with the one on historyBagView.jsp
 	function validateBagOperations(operation) {
 		var bagName = document.modifyBagForm.newBagName.value;
     	
