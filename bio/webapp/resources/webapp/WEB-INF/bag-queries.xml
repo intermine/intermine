@@ -11,5 +11,5 @@ org.flymine.model.genomic.Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2
 org.flymine.model.genomic.Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.isPrimary = false and lower(a2_.value) in ?)
 		</query>
 	</bag-type>
-    <additional-converter class-name="org.intermine.bio.web.logic.OrthologueConverter" urlfield="orthologue"/>
+    <additional-converter class-name="org.intermine.bio.web.logic.OrthologueConverter" urlfield="orthologue" classConstraint="org.flymine.model.genomic.Organism"/>
 </bag-queries>
