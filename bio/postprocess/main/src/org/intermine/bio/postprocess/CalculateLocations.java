@@ -23,6 +23,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
@@ -1266,6 +1267,7 @@ public class CalculateLocations
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
 
+            Integer chrId = (Integer) rr.get(0);
             LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
             Location locOnChr = (Location) rr.get(2);
 
@@ -1278,9 +1280,9 @@ public class CalculateLocations
                 int start = locOnChr.getStart().intValue();
                 int length = Math.abs(end - start) + 1;
                 lsfClone.setLength(new Integer(length));
-
             }
-
+            lsfClone.proxyChromosome(new ProxyReference(os, chrId, Chromosome.class));
+            
             osw.store(lsfClone);
         }
 

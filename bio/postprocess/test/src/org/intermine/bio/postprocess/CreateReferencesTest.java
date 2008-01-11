@@ -38,7 +38,6 @@ import org.flymine.model.genomic.Relation;
 import org.flymine.model.genomic.SimpleRelation;
 import org.flymine.model.genomic.ThreePrimeUTR;
 import org.flymine.model.genomic.Transcript;
-import org.flymine.model.genomic.UTR;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
