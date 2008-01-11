@@ -24,6 +24,7 @@ public class ModifyBagDetailsForm extends ActionForm
 {
     protected String[] selectedElements;
     protected String bagName;
+    protected String extraFieldValue;
 
     /**
      * Constructor
@@ -70,6 +71,20 @@ public class ModifyBagDetailsForm extends ActionForm
      */
     public void setSelectedElements(String[] selectedElements) {
         this.selectedElements = selectedElements;
+    }
+
+    /**
+     * @return the extraFieldValue
+     */
+    public String getExtraFieldValue() {
+        return extraFieldValue;
+    }
+
+    /**
+     * @param extraFieldValue the extraFieldValue to set
+     */
+    public void setExtraFieldValue(String extraFieldValue) {
+        this.extraFieldValue = extraFieldValue;
     }
 
     /**

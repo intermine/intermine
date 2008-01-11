@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,14 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.bag.BagHelper;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.WebConfig;
@@ -55,6 +59,8 @@ import org.intermine.web.logic.tagging.TagTypes;
  */
 public class ModifyBagDetailsAction extends InterMineAction
 {
+    private static int index = 0;
+ 
 
     /**
      * Forward to the correct method based on the button pressed
@@ -83,6 +89,35 @@ public class ModifyBagDetailsAction extends InterMineAction
                     session);
         } else if (request.getParameter("showInResultsTable") != null) {
             return showBagInResultsTable(mbdf.getBagName(), mapping, session);
+        } else if (request.getParameter("convertToThing") != null) {
+            Map savedBags = profile.getSavedBags();
+            InterMineBag imBag = (InterMineBag) savedBags.get(mbdf.bagName);
+            BagQueryConfig bagQueryConfig =
+               (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);            
+            Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
+            for (String converterClassName : additionalConverters.keySet()) {
+                Class clazz = Class.forName(converterClassName);
+                Constructor constructor = clazz.getConstructor();
+                BagConverter bagConverter = (BagConverter) constructor.newInstance();
+                List<ResultsRow> result = bagConverter.getConvertedObjects(session, mbdf
+                                          .getExtraFieldValue(), imBag.getContentsAsIds(), 
+                                          imBag.getType());
+                Model model = os.getModel();
+                WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+                Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+
+                WebPathCollection webPathCollection =
+                    new WebPathCollection(os, new Path(model, imBag.getType()), result
+                                          , model, webConfig,
+                                          classKeys);
+                PagedTable pc = new PagedTable(webPathCollection);
+                String identifier = "col" + index++;
+                SessionMethods.setResultsTable(session, identifier, pc);
+                return new ForwardParameters(mapping.findForward("results"))
+                .addParameter("table", identifier)
+                .addParameter("trail", "").forward();
+                
+            }
         } else if (request.getParameter("useBagInQuery") != null) {
 
                 String bagName = mbdf.getBagName();
