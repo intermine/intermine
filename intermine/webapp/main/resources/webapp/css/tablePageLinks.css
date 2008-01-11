@@ -1,2 +1,6 @@
-.tablePageLinks {
-  font-size: 12px;color: #999;}
+span.tablePageLinks {
+  font-size: 1em;
+  color: #666;
+  float:left;
+  padding:5px 5px 0 5px;
+}

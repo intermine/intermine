@@ -42,15 +42,53 @@
    	<b>${bag.name}</b> (${bag.size} ${bag.type}s)
 </div>
 
+<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 
-<table border=0 cellpadding=0 cellspacing=5>
+<link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8">
+<script type="text/javascript" src="js/toolbar.js"></script>
+<div class="body">
+
+<li id="button_bar" onclick="toggleToolBarMenu(event);">
+<ul id="tool_bar_ul_convert"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Convert" border="0" id="tool_bar_button_convert" class="tool_bar_button"></ul>
+<ul id="tool_bar_ul_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></ul>
+<ul id="tool_bar_ul_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></ul>
+<ul id="tool_bar_ul_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" alt="Use" border="0" id="tool_bar_button_use" class="tool_bar_button"></ul>
+</li>
+
+<div id="tool_bar_item_convert" style="visibility:hidden" class="tool_bar_item">
+  <tiles:insert name="convertBag.tile">
+       <tiles:put name="bag" beanName="bag" />
+  </tiles:insert>
+    <hr>
+  <a href="javascript:hideMenu('tool_bar_item_convert')" >Cancel</a>
+</div>
+<div id="tool_bar_item_display" style="visibility:hidden" class="tool_bar_item">
+  	<html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
+  	<html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
+    <hr>
+  <a href="javascript:hideMenu('tool_bar_item_display')">Cancel</a>
+</div>
+<div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
+  		<a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a><br/>
+		<a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a><br/>
+		<a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a>
+  <hr>
+  <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
+</div>
+<div id="tool_bar_item_use" style="visibility:hidden" class="tool_bar_item">
+  	<a href="javascript:go('query');">in a query</a><br/>
+	<input type="hidden" name="useBagInQuery" />
+	<html:link action="/templates">in a template</html:link>
+  <hr>
+    <a href="javascript:hideMenu('tool_bar_item_use')" >Cancel</a>
+</div>
+</div>
+<table border=0 cellpadding=0 cellspacing=5 style="clear:both;">
 <tr>
-	<td width="50%" valign="top">        
-	
+	<td width="50%" valign="top">        	
 	<table>
 	<tr>
 	<td colspan=2>
-	<html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
     	<html:hidden property="bagName" value="${bag.name}"/>
 	
           <table class="results" cellspacing="0">
@@ -155,35 +193,6 @@
   </tr>
   <tr>
   <td>
-
-<table cellpadding="0" cellspacing="30"><tr>
-<td valign="top">  	
-  <span style="font-size:+2em;">Convert</span><br/>		
-  <tiles:insert name="convertBag.tile">
-       <tiles:put name="bag" beanName="bag" />
-  </tiles:insert>
-</td>
-<td valign="top">  	
-  <span style="font-size:+2em;">Use</span><br/>		
-  	<a href="javascript:go('query');">in a query</a><br/>
-	<input type="hidden" name="useBagInQuery" />
-	<html:link action="/templates">in a template</html:link>
-</td><td valign="top">
-  <span style="font-size:+2em;">Export</span><br/>
-  		<a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a><br/>
-		<a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a><br/>
-		<a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a>
-</td><td valign="top">
-  <span style="font-size:+2em;">View</span><br/>
-  	<html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
-  	<html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
-</td><td valign="top">
-  <span style="font-size:+2em;">Upload</span><br/>
-  <html:link action="/bag?subtab=upload">your data</html:link>
-</td>
-</tr>
-</table>
-
 
 </td>
 </tr>

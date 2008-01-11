@@ -95,35 +95,88 @@
   <c:otherwise>
 
 
-    <div class="body">
-      <table cellpadding="0" cellspacing="0" >
-        <tr>
-          <td><img src="theme/res_bar_left.gif"></td>
-          <td class="resBar"><tiles:insert page="/tablePageLinks.jsp"/></td>
-          <td class="resBar"><img src="images/blank.gif" width="10px">|<img src="images/blank.gif" width="10px"></td>
-          <td class="resBar">
-            <html:form action="/changeTableSize">
-              <%-- Page size controls --%>
-              <fmt:message key="results.changepagesize"/>
-              <html:select property="pageSize" onchange="changePageSize()" value="${resultsTable.pageSize}">
-                <html:option value="10">10</html:option>
-                <html:option value="25">25</html:option>
-                <html:option value="50">50</html:option>
-                <html:option value="100">100</html:option>
-              </html:select>
-              <input type="hidden" name="table" value="${param.table}"/>
-              <input type="hidden" name="trail" value="${param.trail}"/>
-              <noscript>
-                <html:submit>
-                  <fmt:message key="button.change"/>
-                </html:submit>
-              </noscript>
-            </html:form>
-          </td>
-          <td><img src="theme/res_bar_right.gif"></td>
-          <td><img src="images/blank.gif" width="20px"></td>
-          <td style="padding:5px;font-size:10px;background-color:#EEEEEE;">
-            <strong>Legend: </strong>
+<div class="body">
+
+<%-- Toolbar --%>
+<link rel="stylesheet" href="css/toolbar.css" type="text/css" />
+<link rel="stylesheet" href="css/tablePageLinks.css" type="text/css" >
+<script type="text/javascript" src="js/toolbar.js"></script>
+
+<li id="button_bar" onclick="toggleToolBarMenu(event);">
+<ul id="tool_bar_ul_createlist"><img style="cursor: pointer;" src="images/icons/null.gif" width="90" height="25" alt="Create List" border="0" id="tool_bar_button_createlist" class="tool_bar_button"></ul>
+<ul id="tool_bar_ul_addtolist"><img style="cursor: pointer;" src="images/icons/null.gif" width="91" height="25" alt="Add to List" border="0" id="tool_bar_button_addtolist" class="tool_bar_button"></ul>
+<ul id="tool_bar_ul_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></ul>
+<ul class="tool_bar_link">
+<html:form action="/changeTableSize">
+  <%-- Page size controls --%>
+  <span style="float:left;padding:4px 5px 0 10px;"><fmt:message key="results.changepagesize"/></span>
+    <html:select property="pageSize" onchange="changePageSize()" value="${resultsTable.pageSize}">
+    <html:option value="10">10</html:option>
+    <html:option value="25">25</html:option>
+    <html:option value="50">50</html:option>
+    <html:option value="100">100</html:option>
+  </html:select>
+  <input type="hidden" name="table" value="${param.table}"/>
+  <input type="hidden" name="trail" value="${param.trail}"/>
+  <noscript>
+    <html:submit>
+      <fmt:message key="button.change"/>
+    </html:submit>
+  </noscript>
+</html:form>
+</ul>
+<ul class="tool_bar_link">
+    <tiles:insert page="/tablePageLinks.jsp">
+      <tiles:put name="short" value="true" />
+    </tiles:insert>
+</ul>
+</li>
+
+<%-- Create new list --%>
+<html:form action="/saveBag" >
+<div id="tool_bar_item_createlist" style="visibility:hidden" class="tool_bar_item">
+      <em>(with selected items)</em>
+      <fmt:message key="bag.new"/><br/>
+      <html:text property="newBagName"/>
+      <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
+      <input type="hidden" name="table" value="${param.table}"/>
+      <html:submit property="saveNewBag">
+        <fmt:message key="results.saveButton.selected"/>
+      </html:submit>
+    <hr>
+  <a href="javascript:hideMenu('tool_bar_item_createlist')" >Cancel</a>
+</div>
+<%-- Add to existing list --%>
+<div id="tool_bar_item_addtolist" style="visibility:hidden" class="tool_bar_item">
+   <c:choose>
+   <c:when test="${!empty PROFILE.savedBags}">
+          <fmt:message key="bag.existing"/>
+          <html:select property="existingBagName">
+             <c:forEach items="${PROFILE.savedBags}" var="entry">
+              <c:if test="${param.bagName != entry.key}">
+                <html:option value="${entry.key}"/>
+              </c:if>
+             </c:forEach>
+          </html:select>
+          <html:submit property="addToExistingBag">
+             <fmt:message key="results.addButton.selected"/>
+          </html:submit>
+    </c:when>
+    <c:otherwise>
+      <em>no lists saved</em>
+    </c:otherwise>
+    </c:choose>
+    <hr>
+  <a href="javascript:hideMenu('tool_bar_item_addtolist')" >Cancel</a>
+</div>
+<%-- Export --%>
+<div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
+    <tiles:get name="export.tile"/>
+    <hr>
+  <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
+</div>
+
+ <%--           <strong>Legend: </strong>
             <img style="vertical-align:text-bottom;" border="0"
                  width="13" height="13" src="images/left_arrow.png"
                  title="${moveLeftString}"/>
@@ -134,15 +187,11 @@
                                 src="images/close.png" title="${hideColumnTitle}" />
             Close column <c:if test="${isWebResults}">-
             <img src="images/summary_maths.png" style="vertical-align:text-bottom;" title="Click here to view Column Summary statistics">
-              Get summary statistics for column</img></c:if>
-          </td>
-        </tr>
-      </table>
-    </div>
+              Get summary statistics for column</img></c:if> 
+ </div>--%>
 
 
-    <html:form action="/saveBag">
-      <div class="body">
+<div class="resultsPage">
 
         <table class="results" cellspacing="0">
 
@@ -367,7 +416,7 @@
             </tr>
           </table>
         </c:if>
-
+</div>
         <%-- Return to main results link
              <c:if test="${!isWebResults
                          && QUERY_RESULTS != null && !fn:startsWith(param.table, 'bag')}">
@@ -380,47 +429,11 @@
              --%>
 
       </div> <%-- end of main results table body div --%>
-
-      <%-- Save bag controls --%>
-      <c:if test="${resultsTable.size > 0}">
-        <div class="heading">
-          <fmt:message key="results.save"/>
-        </div>
-        <div class="body">
-          <ul>
-            <li>
-              <fmt:message key="bag.new"/>
-              <html:text property="newBagName"/>
-              <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
-              <input type="hidden" name="table" value="${param.table}"/>
-              <html:submit property="saveNewBag">
-                                    <fmt:message key="results.saveButton.selected"/>
-              </html:submit>
-            </li>
-            <c:if test="${!empty PROFILE.savedBags}">
-              <li>
-                <fmt:message key="bag.existing"/>
-                <html:select property="existingBagName">
-                  <c:forEach items="${PROFILE.savedBags}" var="entry">
-                    <c:if test="${param.bagName != entry.key}">
-                      <html:option value="${entry.key}"/>
-                    </c:if>
-                  </c:forEach>
-                </html:select>
-                <html:submit property="addToExistingBag">
-                  <fmt:message key="results.addButton.selected"/>
-                </html:submit>
-              </li>
-            </c:if>
-          </ul>
-        </div>
-      </c:if>
     </html:form>
 
     <c:set var="tableName" value="${param.table}" scope="request"/>
     <c:set var="tableType" value="results" scope="request"/>
     <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
-    <tiles:get name="export.tile"/>
   </c:otherwise>
 </c:choose>
 <!-- /table.jsp -->
