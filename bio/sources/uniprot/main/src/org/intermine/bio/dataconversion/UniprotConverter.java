@@ -489,8 +489,8 @@ public class UniprotConverter extends FileConverter
                         String interproId = attrs.getValue("id").toString();
                         String interproItemId = null;
                         if (interproMaster.get(interproId) == null) {
-                            interpro = createItem("ProteinFeature");
-                            interpro.setAttribute("interproId", interproId);
+                            interpro = createItem("ProteinDomain");
+                            interpro.setAttribute("identifier", interproId);
                             interproItemId = interpro.getIdentifier();
                             interproMaster.put(interproId, interproItemId);
                         } else {
@@ -889,7 +889,7 @@ public class UniprotConverter extends FileConverter
             keywordCollection = new ReferenceList("keywords", new ArrayList());
             commentCollection = new ReferenceList("comments", new ArrayList());
             pubCollection = new ReferenceList("publications", new ArrayList());
-            interproCollection = new ReferenceList("proteinFeatures", new ArrayList());
+            interproCollection = new ReferenceList("proteinDomains", new ArrayList());
             geneCollection = null;
 
             genes = new HashMap();
