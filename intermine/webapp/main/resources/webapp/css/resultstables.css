@@ -35,9 +35,14 @@ span.templateResCount {
 /* =DIV */
 div.templateIcon {
   float: left; padding-top: 2px;}
+  
+div.resultsPage {
+  clear:both; padding-top: 10px;
+}
 	
 /* =TABLE £TABLE,£BAGDETAILS*/
 table.results {
+  clear:left;
   border-left: solid 1px #666; border-top: solid 1px #666;font-size: small;}
 
 /* =TD, =TH £TABLE,£BAGDETAILS*/

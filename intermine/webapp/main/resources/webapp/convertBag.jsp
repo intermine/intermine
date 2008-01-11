@@ -14,6 +14,18 @@
       </script>
       <html:link action="/modifyBagDetailsAction.do?convert=${type}&bagName=${bag.name}">${type}</html:link>&nbsp;&nbsp;<span id="${type}_convertcount">&nbsp;</span><br>
     </c:forEach>
+    <hr/>
+    <c:forEach items="${customConverters}" var="converterInfo">
+    <c:out value="${converterInfo.key}:" /><br>
+    <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
+   	   <c:forEach items="${converterInfo.value}" var="value">
+         <html:option value="${value}">${value}</html:option>
+       </c:forEach>
+        <html:submit property="convertToThing">
+			Convert >>
+       </html:submit>
+    </html:select>
+    </c:forEach>
 </div>
 
 <!-- /convertBag.jsp -->
