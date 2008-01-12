@@ -11,6 +11,8 @@
 #  - load dump file of production database (if needed)
 #  - precompute queries and templates
 #  - create-db-userprofile with new properties file
+#  - webapp clean-all
+#  - summarise objectstore
 #  - stop old webapp
 #  - write-userprofile-xml for current version
 #  - read-userprofile-xml with new properties
@@ -35,7 +37,7 @@ use Date::Manip;
 my $PROJECT_NAME = 'modmine';
 my $PROP_FILE_PREFIX = "$PROJECT_NAME.properties";
 my $BUILD_PROP_FILE_PREFIX = "build.properties.$PROJECT_NAME";
-my $WEBAPP_DIR = "svn/trunk/$PROJECT_NAME/webapp";
+my $WEBAPP_DIR = "$ENV{HOME}/svn/trunk/$PROJECT_NAME/webapp";
 my $APACHE_CONF_FILENAME = '/etc/httpd/conf.d/proxy_ajp.conf';
 my $OLDEST_VERSION = 1;
 my $USERPROFILE_XML_FILENAME = "build/userprofile.xml";
@@ -169,17 +171,32 @@ if (@ARGV == 1) {
 }
 
 
+#################
 # precompute queries and templates
 
 # XXX TODO
 
 
+#################
+warn "webapp clean-all\n";
+
+chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
+
+system ("ant -Drelease=r$new_version clean-all >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "create-db-userprofile failed: $?";
+
+
+#################
+warn "summarising objectstore\n";
+
+chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
+
+system ("ant -Drelease=r$new_version default >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "create-db-userprofile failed: $?";
 
 #################
 
 warn "create-db-userprofile with new properties file\n";
-
-chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
 
 system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "create-db-userprofile failed: $?";
@@ -201,7 +218,7 @@ warn "update apache rewrite/redirect configuration\n";
     or die "can't open $APACHE_CONF_FILENAME for writing: $!\n";
 
   print $apache_conf_file <<"APACHE_CONF";
-# WARNING: DO NOT
+# WARNING: DO NOT EDIT
 
 LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
 
@@ -246,7 +263,7 @@ system ("ant -Drelease=r$new_version read-userprofile-xml >> $LOG_FILENAME 2>&1"
 #################
 warn "release new webapp r$new_version\n";
 
-my @TARGETS = qw(default remove-webapp release-webapp);
+my @TARGETS = qw(remove-webapp release-webapp);
 system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't write userprofile XML: $?";
 
