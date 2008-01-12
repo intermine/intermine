@@ -123,7 +123,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         }
 
         if (geneName.equals("")) {
-            throw new RuntimeException("no gene name while reading record: " + record);
+            geneName = name;
         }
 
         feature.setReference("gene", getGene(geneName));
