@@ -122,7 +122,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
                                        + " found these dbxrefs: " + dbxrefs);
         }
 
-        if (geneOrganismDbId.equals("")) {
+        if (geneName.equals("")) {
             throw new RuntimeException("no gene name while reading record: " + record);
         }
 
