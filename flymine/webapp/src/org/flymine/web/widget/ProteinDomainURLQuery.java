@@ -69,13 +69,13 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
             view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
             view.add(MainHelper.makePath(model, q, "Gene.name"));
             view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
-            view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.interproId"));
-            view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinFeatures.name"));
+            view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.identifier"));
+            view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.name"));
             q.setView(view);
 
             constraintOp = ConstraintOp.EQUALS;
             code = q.getUnusedConstraintCode();
-            PathNode interproNode = q.addNode("Gene.proteins.proteinFeatures.identifier");
+            PathNode interproNode = q.addNode("Gene.proteins.proteinDomains.identifier");
             Constraint interproConstraint
             = new Constraint(constraintOp, key, false, label, code, id, null);
             interproNode.getConstraints().add(interproConstraint);
@@ -85,8 +85,8 @@ public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
             view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
             view.add(MainHelper.makePath(model, q, "Protein.name"));
             view.add(MainHelper.makePath(model, q, "Protein.organism.name"));
-            view.add(MainHelper.makePath(model, q, "Protein.proteinFeatures.interproId"));
-            view.add(MainHelper.makePath(model, q, "Protein.proteinFeatures.name"));
+            view.add(MainHelper.makePath(model, q, "Protein.proteinDomains.identifier"));
+            view.add(MainHelper.makePath(model, q, "Protein.proteinDomains.name"));
             q.setView(view);
 
             constraintOp = ConstraintOp.EQUALS;
