@@ -38,7 +38,7 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.ProteinFeature;
+import org.flymine.model.genomic.ProteinDomain;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -79,15 +79,14 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
-        QueryClass qcProteinFeature = new QueryClass(ProteinFeature.class);
+        QueryClass qcProteinFeature = new QueryClass(ProteinDomain.class);
 
         QueryField qfProteinId = new QueryField(qcProtein, "id");
         QueryField qfGeneId = new QueryField(qcGene, "id");
         QueryField qfName = new QueryField(qcProteinFeature, "name");
-        QueryField qfId = new QueryField(qcProteinFeature, "interproId");
+        QueryField qfId = new QueryField(qcProteinFeature, "identifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-        QueryField qfInterpro = new QueryField(qcProteinFeature, "identifier");
-
+        
         QueryFunction objectCount = new QueryFunction();
 
         // constraints
@@ -105,7 +104,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
             new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcProteinFeature);
 
         SimpleConstraint sc =
-            new SimpleConstraint(qfInterpro, ConstraintOp.MATCHES, new QueryValue("IPR%"));
+            new SimpleConstraint(qfId, ConstraintOp.MATCHES, new QueryValue("IPR%"));
 
         //set the common constraints
         csSample.addConstraint(bc2);
