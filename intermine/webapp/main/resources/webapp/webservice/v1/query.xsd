@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema">	
+	<element name="query">
+		<complexType>
+			<sequence>
+				<!-- Is optional  -->
+				<element name="pathDescription" minOccurs="0"
+					maxOccurs="unbounded">
+					<complexType>
+						<!--fake element is here to allow empty element -->
+						<sequence>
+							<element name="fake" minOccurs="0"></element>
+						</sequence>
+						<attribute name="pathString" type="string" use="required"/>
+						<attribute name="description" type="string" use="required"/>
+					</complexType>
+				</element>
+				<element name="node" minOccurs="0"
+					maxOccurs="unbounded">
+					<complexType>
+						<sequence>
+							<element name="constraint" minOccurs="0"
+								maxOccurs="unbounded">
+								<complexType>
+									<sequence>
+										<!--fake element is here to allow empty element -->
+										<element name="fake"
+											minOccurs="0">
+										</element>
+									</sequence>
+									<attribute name="op" type="string" use="required"></attribute>
+									<attribute name="value" type="string" use="optional"></attribute>
+									<attribute name="description" type="string" use="optional"></attribute>
+									<attribute name="identifier" type="string" use="optional"></attribute>
+									<attribute name="editable" type="string" use="optional"></attribute>
+									<attribute name="code" type="string" use="required"></attribute>
+									<attribute name="extraValue" type="string" use="optional"></attribute>
+								</complexType>
+							</element>
+						</sequence>
+						<attribute name="path" type="string" use="required"></attribute>
+						<attribute name="type" type="string" use="required"></attribute>
+					</complexType>
+				</element>
+			</sequence>
+			<attribute name="name" type="string" use="optional"></attribute>
+			<attribute name="model" type="string" use="required"></attribute>
+			<attribute name="view" type="string" use="required"></attribute>
+			<attribute name="sortOrder" type="string" use="optional"></attribute>
+			<attribute name="constraintLogic" type="string" use="optional"></attribute>
+		</complexType>
+	</element>
+</schema>

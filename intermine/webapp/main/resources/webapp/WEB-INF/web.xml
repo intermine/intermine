@@ -10,6 +10,8 @@
     <listener-class>org.intermine.web.logic.session.SessionListener</listener-class>
   </listener>
 
+<!-- Main webapp mapping -->
+<!-- ================================================================================ -->
   <servlet>
     <servlet-name>action</servlet-name>
     <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -24,7 +26,10 @@
     <servlet-name>action</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
+<!-- ================================================================================= -->  
   
+<!-- DWR mapping -->
+<!-- ================================================================================= -->
   <servlet>
 	<servlet-name>dwr-invoker</servlet-name>
 	<servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
@@ -46,6 +51,24 @@
 	<servlet-name>dwr-invoker</servlet-name>
 	<url-pattern>/dwr/*</url-pattern>
   </servlet-mapping>
+<!-- ================================================================================= -->
+
+<!-- Intermine Web Service mapping --> 
+<!-- ================================================================================= -->
+  <servlet>
+	<servlet-name>service</servlet-name>
+	<servlet-class>org.intermine.webservice.ServiceServlet</servlet-class>
+	<init-param>
+	   <param-name>debug</param-name>
+	   <param-value>true</param-value>
+	</init-param>
+  </servlet>
+
+  <servlet-mapping>
+	<servlet-name>service</servlet-name>
+	<url-pattern>/queryService/v1/*</url-pattern>
+  </servlet-mapping>
+<!-- ================================================================================= -->  
 
   <session-config>
     <session-timeout>1440</session-timeout>      <!-- 1440 = 24 * 60 = 1 day -->
