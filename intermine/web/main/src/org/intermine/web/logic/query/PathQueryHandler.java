@@ -108,7 +108,7 @@ public class PathQueryHandler extends DefaultHandler
             boolean constrainParent = false;
             int opIndex = toStrings(ConstraintOp.getValues()).indexOf(attrs.getValue("op"));
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(new Integer(opIndex));
-            Object constraintValue;
+            Object constraintValue = null;
             // If we know that the query is not valid, don't resolve the type of
             // the node as it may not resolve correctly
             if (node.isReference() || !query.isValid()) {
@@ -143,7 +143,9 @@ public class PathQueryHandler extends DefaultHandler
                 if (c == null) {
                     c = MainHelper.getClass(node.getType());
                 }
-                constraintValue = TypeUtil.stringToObject(c, attrs.getValue("value"));
+                if (constraintOp != constraintOp.IS_NULL && constraintOp != constraintOp.IS_NOT_NULL) {
+                	constraintValue = TypeUtil.stringToObject(c, attrs.getValue("value"));	
+                }
             }
             String editable = attrs.getValue("editable");
             boolean editableFlag = false;
