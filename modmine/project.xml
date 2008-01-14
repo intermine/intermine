@@ -97,6 +97,7 @@
     <post-process name="create-references" dump="true"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="create-overlap-relations-flymine"/>
+    <post-process name="do-sources"/>
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
   </post-processing>
