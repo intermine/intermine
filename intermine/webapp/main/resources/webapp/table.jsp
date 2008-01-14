@@ -37,17 +37,45 @@
   var columnsToDisable = ${columnsToDisable};
   var columnsToHighlight = ${columnsToHighlight};
   var bagType = null;
-  // TODO this needs to be merged with the function on bagUploadConfirm.jsp
-  function validateBagName() {
-	var bagName = document.saveBagForm.newBagName.value;
-	AjaxServices.validateBagName(bagName, function(errMsg) {
-		if (errMsg != '') {
-        	document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
-        } else {
-        	document.saveBagForm.submit();
-        }
-    });
-}
+  
+  function hasSelectedObjects() {
+		var i = 0;
+		while (document.saveBagForm.selectedObjects[i]) {
+			if (document.saveBagForm.selectedObjects[i].checked) {
+				return true;			
+			}
+			i++;
+		}
+  		var errMsg = "You need to select which objects to save";
+  		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+  		return false;
+  }  
+  
+  // TODO merge with the function on bagUploadConfirm.jsp
+  function validateBagName() {  
+  	if (hasSelectedObjects()) {  
+		var bagName = document.saveBagForm.newBagName.value;
+		AjaxServices.validateBagName(bagName, function(errMsg) {
+			if (errMsg != '') {
+        		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+        	} else {
+        		document.saveBagForm.operationButton.value="saveNewBag";
+	       		document.saveBagForm.submit();
+    	    }
+    	});
+   	}
+  }
+  
+  function validateAddToBag() {  
+  	if (hasSelectedObjects()) {		
+		document.saveBagForm.operationButton.value="addToBag";
+	    document.saveBagForm.submit();    	
+   	} else {
+   		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+   	}
+  }
+  
+  
 //]]>-->
 </script>
 <script type="text/javascript" src="js/table.js" ></script>
@@ -119,6 +147,7 @@
 <ul id="tool_bar_ul_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></ul>
 <ul class="tool_bar_link">
 <html:form action="/changeTableSize">
+	
   <%-- Page size controls --%>
   <span style="float:left;padding:4px 5px 0 10px;"><fmt:message key="results.changepagesize"/></span>
     <html:select property="pageSize" onchange="changePageSize()" value="${resultsTable.pageSize}">
@@ -145,6 +174,8 @@
 
 <%-- Create new list --%>
 <html:form action="/saveBag" >
+<input type="hidden" name="operationButton"/>
+
 <div id="tool_bar_item_createlist" style="visibility:hidden" class="tool_bar_item">
       <em>(with selected items)</em>
       <fmt:message key="bag.new"/><br/>
@@ -166,10 +197,8 @@
                 <html:option value="${entry.key}"/>
               </c:if>
              </c:forEach>
-          </html:select>
-          <html:submit property="addToExistingBag">
-             <fmt:message key="results.addButton.selected"/>
-          </html:submit>
+          </html:select>          		
+ 		<input type="button" name="addToBag" value="Add selected" onclick="javascript:validateAddToBag();"/>
     </c:when>
     <c:otherwise>
       <em>no lists saved</em>

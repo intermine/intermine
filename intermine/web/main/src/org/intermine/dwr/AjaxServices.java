@@ -67,7 +67,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
@@ -213,6 +212,7 @@ public class AjaxServices
         if (name.equals(newName) || StringUtils.isEmpty(newName)) {
             return name;
         }
+        // TODO get error text from properties file
         if (!WebUtil.isValidName(newName)) {
             String errorMsg = "<i>Invalid name.  Names may only contain letters, "
                               + "numbers, spaces, and underscores.</i>";
@@ -513,10 +513,6 @@ public class AjaxServices
             }
             returnList.add(row);
         }
-//        if(searching) {
-//            time = System.currentTimeMillis() - time;
-//            LOG.info("processing in filterWebSearchables() took: " + time + " milliseconds:");
-//        }
 
         return returnList;
     }
@@ -593,6 +589,7 @@ public class AjaxServices
         HttpSession session = WebContextFactory.get().getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         
+        // TODO get message text from the properties file
         if (bagName.equals("")) {
             return "You cannot save a list with a blank name";
         }
@@ -603,8 +600,6 @@ public class AjaxServices
         }
 
         if (profile.getSavedBags().get(bagName) != null) {
-            String msg = (new ActionMessage("errors.savebag.existing")).toString();
-            SessionMethods.recordError(msg, session);
             return "The list name you have chosen is already in use";
         }
 
@@ -635,6 +630,7 @@ public class AjaxServices
         HttpSession session = WebContextFactory.get().getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
+        // TODO get error text from the properties file
         if (selectedBags.length == 0) {
             return "No lists are selected";
         }
