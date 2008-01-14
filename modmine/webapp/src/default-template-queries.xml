@@ -399,35 +399,7 @@
 			  </node>
 		  </query>
 	  </template>
-	  <template name="Gene_OrthologueProteinInteraction" title="Gene --&gt; Orthologues with protein-protein interactions + interacting proteins of the orthologues." longDescription="For a specific gene, search for orthologues for which protein-protein interactions have been found, and show these interacting proteins." comment="Do not precompute - rns;   07.02.07: updated to run from gene identifier - Rachel. 11.06.07 updated to use new protein interactions model and gene class - Philip">
-		  <query name="Gene_OrthologueProteinInteraction" model="genomic" view="Gene.identifier Gene.symbol Gene.organism.name Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.organism.name Gene.orthologues.orthologue.proteins.primaryAccession Gene.orthologues.orthologue.proteins.proteinInteractions.interactingProteins.primaryAccession Gene.orthologues.orthologue.proteins.proteinInteractions.shortName" sortOrder="Gene.identifier Gene.symbol Gene.organism.name Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.organism.name Gene.orthologues.orthologue.proteins.primaryAccession Gene.orthologues.orthologue.proteins.proteinInteractions.interactingProteins.primaryAccession Gene.orthologues.orthologue.proteins.proteinInteractions.shortName">
-			  <pathDescription pathString="Gene.organism" description="Organism">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.orthologues.orthologue" description="Orthologue">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.orthologues.orthologue.proteins.proteinInteractions.interactingProteins" description="Orthologue &gt; interacting protein">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.orthologues.orthologue.organism" description="Orthologue &gt; organism">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.orthologues.orthologue.proteins" description="Orthologue &gt; protein">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.orthologues.orthologue.proteins.proteinInteractions" description="Orthologue &gt; protein interaction">
-			  </pathDescription>
-			  <node path="Gene" type="Gene">
-				  <constraint op="LOOKUP" value="CG3936" description="" identifier="Gene.class" editable="true" code="B">
-				  </constraint>
-			  </node>
-			  <node path="Gene.orthologues" type="Orthologue">
-			  </node>
-			  <node path="Gene.orthologues.orthologue" type="Gene">
-			  </node>
-			  <node path="Gene.orthologues.orthologue.proteins" type="Protein">
-			  </node>
-			  <node path="Gene.orthologues.orthologue.proteins.proteinInteractions" type="ProteinInteraction">
-			  </node>
-		  </query>
-	  </template>
-	  <template name="Gene_Orthologue" title="Gene --&gt; Orthologues." longDescription="Show predicted orthologues for a particular gene." comment="07:02:07:Updated to work from gene identifier - Rachel. 13/03/07 added orthologue organismDbId. Philip">
+		<template name="Gene_Orthologue" title="Gene --&gt; Orthologues." longDescription="Show predicted orthologues for a particular gene." comment="07:02:07:Updated to work from gene identifier - Rachel. 13/03/07 added orthologue organismDbId. Philip">
 		  <query name="Gene_Orthologue" model="genomic" view="Gene.identifier Gene.symbol Gene.orthologues.type Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.organismDbId Gene.orthologues.orthologue.organism.name" sortOrder="Gene.identifier Gene.symbol Gene.orthologues.type Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.organismDbId Gene.orthologues.orthologue.organism.name">
 			  <pathDescription pathString="Gene.orthologues" description="Orthologue">
 			  </pathDescription>
@@ -471,44 +443,6 @@
 			  </node>
 			  <node path="Gene.organism.name" type="String">
 				  <constraint op="=" value="Drosophila melanogaster" description="from organism:" identifier="" editable="true" code="B">
-				  </constraint>
-			  </node>
-		  </query>
-	  </template>
-	  <template name="Gene_ProteinInteractingproteinConfidenceOtherDetails" title="Gene --&gt; Protein + Interacting Proteins + confidence value for interaction + publication" longDescription="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction and the publication for the experiment performed." comment="">
-		  <query name="Gene_ProteinInteractingproteinConfidenceOtherDetails" model="genomic" view="Gene.identifier Gene.symbol Gene.proteins.proteinInteractions.protein.identifier Gene.proteins.proteinInteractions.interactingProteins.identifier Gene.proteins.proteinInteractions.experiment.publication.pubMedId Gene.proteins.proteinInteractions.confidence Gene.proteins.proteinInteractions.confidenceText" sortOrder="Gene.identifier Gene.symbol Gene.proteins.proteinInteractions.protein.identifier Gene.proteins.proteinInteractions.interactingProteins.identifier Gene.proteins.proteinInteractions.experiment.publication.pubMedId Gene.proteins.proteinInteractions.confidence Gene.proteins.proteinInteractions.confidenceText" constraintLogic="A and B">
-			  <pathDescription pathString="Gene.proteins.proteinInteractions.interactingProteins" description="Interacting protein">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.proteins.proteinInteractions" description="Protein interaction">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.proteins.proteinInteractions.protein" description="Protein">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.proteins.proteinInteractions.experiment.publication" description="Protein interaction experiment">
-			  </pathDescription>
-			  <node path="Gene" type="Gene">
-				  <constraint op="LOOKUP" value="CG11561" description="Show protein interaction data for:" identifier="" editable="true" code="A">
-				  </constraint>
-			  </node>
-			  <node path="Gene.organism" type="Organism">
-			  </node>
-			  <node path="Gene.organism.name" type="String">
-				  <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
-				  </constraint>
-			  </node>
-		  </query>
-	  </template>
-	  <template name="Gene_ProteinInteractingproteinPfamdomainStructure" title="Gene --&gt; Protein + Interacting Proteins + Pfam domain with predicted 3-D structure." longDescription="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." comment="07:02:07:Updated to work from gene identifier - Rachel. 06:06:07 updated to work from gene class - Philip.">
-		  <query name="Gene_ProteinInteractingproteinPfamdomainStructure" model="genomic" view="Gene.identifier Gene.symbol Gene.proteins.identifier Gene.proteins.proteinInteractions.interactingProteins.identifier Gene.proteins.proteinInteractions.interactingProteins.structures.proteinFeature.identifier Gene.proteins.proteinInteractions.interactingProteins.structures.identifier Gene.proteins.proteinInteractions.interactingProteins.structures.start Gene.proteins.proteinInteractions.interactingProteins.structures.end" sortOrder="Gene.identifier Gene.symbol Gene.proteins.identifier Gene.proteins.proteinInteractions.interactingProteins.identifier Gene.proteins.proteinInteractions.interactingProteins.structures.proteinFeature.identifier Gene.proteins.proteinInteractions.interactingProteins.structures.identifier Gene.proteins.proteinInteractions.interactingProteins.structures.start Gene.proteins.proteinInteractions.interactingProteins.structures.end">
-			  <pathDescription pathString="Gene.proteins" description="Protein">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.proteins.proteinInteractions.interactingProteins.structures.proteinFeature" description="Interacting protein &gt; Pfam domain ">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.proteins.proteinInteractions.interactingProteins.structures" description="Region of protein structure modelled to">
-			  </pathDescription>
-			  <pathDescription pathString="Gene.proteins.proteinInteractions.interactingProteins" description="Interacting protein">
-			  </pathDescription>
-			  <node path="Gene" type="Gene">
-				  <constraint op="LOOKUP" value="CG8340" description="Show protein interactions and Pfam domains with predicted 3-D structures for the protein product of gene:" identifier="Gene.class" editable="true" code="A">
 				  </constraint>
 			  </node>
 		  </query>
@@ -947,22 +881,6 @@
 			  </node>
 		  </query>
 	  </template>
-	  <template name="Organism_ProteinInteraction" title="Organism --&gt; All protein interactions." longDescription="For a particular organism, show all pairs of interacting proteins and the PubMed ID of the paper describing the experiment." comment="">
-		  <query name="Organism_ProteinInteraction" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.proteinInteractions.interactingProteins.identifier Protein.proteinInteractions.interactingProteins.primaryAccession Protein.proteinInteractions.experiment.publication.pubMedId" sortOrder="Protein.identifier Protein.primaryAccession Protein.proteinInteractions.interactingProteins.identifier Protein.proteinInteractions.interactingProteins.primaryAccession Protein.proteinInteractions.experiment.publication.pubMedId">
-			  <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
-			  </pathDescription>
-			  <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment">
-			  </pathDescription>
-			  <node path="Protein" type="Protein">
-			  </node>
-			  <node path="Protein.organism" type="Organism">
-			  </node>
-			  <node path="Protein.organism.name" type="String">
-				  <constraint op="=" value="Drosophila melanogaster" description="Show all protein interactions for organism:" identifier="" editable="true" code="A">
-				  </constraint>
-			  </node>
-		  </query>
-	  </template>
 	  <template name="Organism_ProteinDomain" title="Organism --&gt; All proteins with a specific protein domain." longDescription="Show proteins from a particular organism that have a particular protein domain or family." comment="">
 		  <query name="Organism_ProteinDomain" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.proteinFeatures.identifier" sortOrder="Protein.identifier Protein.primaryAccession Protein.proteinFeatures.identifier" constraintLogic="A and B">
 			  <node path="Protein" type="Protein">
@@ -1017,18 +935,6 @@
 			  </node>
 			  <node path="Transcript.organism.name" type="String">
 				  <constraint op="=" value="Drosophila melanogaster" description="" identifier="Organism.name" editable="true" code="A">
-				  </constraint>
-			  </node>
-		  </query>
-	  </template>
-	  <template name="Organism_GeneProteinStructure" title="Organism --&gt; Genes + Proteins with region with 3-D structure." longDescription="Search for genes whose proteins have regions for which there is a predicted 3-D structure. Give the location of the region on the protein and the structure details." comment="">
-		  <query name="Organism_GeneProteinStructure" model="genomic" view="Gene.identifier Gene.symbol Gene.proteins.primaryAccession Gene.proteins.structures.proteinFeature.identifier Gene.proteins.structures.start Gene.proteins.structures.end Gene.proteins.structures.identifier" sortOrder="Gene.identifier Gene.symbol Gene.proteins.primaryAccession Gene.proteins.structures.proteinFeature.identifier Gene.proteins.structures.start Gene.proteins.structures.end Gene.proteins.structures.identifier">
-			  <node path="Gene" type="Gene">
-			  </node>
-			  <node path="Gene.organism" type="Organism">
-			  </node>
-			  <node path="Gene.organism.name" type="String">
-				  <constraint op="=" value="Drosophila melanogaster" description="Show genes from:" identifier="Oganism name" editable="true" code="A">
 				  </constraint>
 			  </node>
 		  </query>
@@ -1103,22 +1009,6 @@
 			  </node>
 		  </query>
 	  </template>
-	  <template name="PFam_ProteinStructure" title="Pfam Domain --&gt; D. melanogaster proteins + predicted 3-D structure for Pfam domain. " longDescription="Search for Drosophila proteins which contain a particular Pfam domain for which there is also a predicted 3-D structure." comment="">
-		  <query name="PFam_ProteinStructure" model="genomic" view="ProteinFeature.identifier ProteinFeature.proteins.primaryAccession ProteinFeature.proteins.structures.start ProteinFeature.proteins.structures.end ProteinFeature.proteins.structures.identifier" sortOrder="ProteinFeature.identifier ProteinFeature.proteins.primaryAccession ProteinFeature.proteins.structures.start ProteinFeature.proteins.structures.end ProteinFeature.proteins.structures.identifier" constraintLogic="A and B">
-			  <node path="ProteinFeature" type="ProteinFeature">
-				  <constraint op="LOOKUP" value="PF00812" description="Show the Drosophila proteins which contain Pfam domain: (and which also have a predicted 3-D structure for this region.)" identifier="Protein Feature class" editable="true" code="A">
-				  </constraint>
-			  </node>
-			  <node path="ProteinFeature.proteins" type="Protein">
-			  </node>
-			  <node path="ProteinFeature.proteins.organism" type="Organism">
-			  </node>
-			  <node path="ProteinFeature.proteins.organism.name" type="String">
-				  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="B">
-				  </constraint>
-			  </node>
-		  </query>
-	  </template>
 	  <template name="PointMutation_Gene_Chromosome" title="Point mutation [D. melanogaster] --&gt; Genes + chromosomal locations." longDescription="For a particular point mutation, search for overlapping genes. Show chromosome coordinates for the genes." comment="">
 		  <query name="PointMutation_Gene_Chromosome" model="genomic" view="PointMutation.identifier PointMutation.overlappingFeatures.identifier PointMutation.overlappingFeatures.symbol PointMutation.overlappingFeatures.chromosome.identifier PointMutation.overlappingFeatures.chromosomeLocation.start PointMutation.overlappingFeatures.chromosomeLocation.end PointMutation.overlappingFeatures.chromosomeLocation.strand" sortOrder="PointMutation.identifier PointMutation.overlappingFeatures.identifier PointMutation.overlappingFeatures.symbol PointMutation.overlappingFeatures.chromosome.identifier PointMutation.overlappingFeatures.chromosomeLocation.start PointMutation.overlappingFeatures.chromosomeLocation.end PointMutation.overlappingFeatures.chromosomeLocation.strand">
 			  <node path="PointMutation" type="PointMutation">
@@ -1163,58 +1053,6 @@
 		  <query name="Protein_Gene" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.name Protein.genes.identifier Protein.genes.symbol Protein.genes.organismDbId" sortOrder="Protein.identifier Protein.primaryAccession Protein.name Protein.genes.identifier Protein.genes.symbol Protein.genes.organismDbId">
 			  <node path="Protein" type="Protein">
 				  <constraint op="LOOKUP" value="P32234" description="Protein:" identifier="Protein.class" editable="true" code="A">
-				  </constraint>
-			  </node>
-		  </query>
-	  </template>
-	  <template name="Protein_ProteinInteraction" title="Protein --&gt; Interacting proteins." longDescription="Show protein interactions for a particular protein." comment="06.06.07 updated to work from protein class - Philip">
-		  <query name="Protein_ProteinInteraction" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.proteinInteractions.interactingProteins.identifier Protein.proteinInteractions.interactingProteins.primaryAccession Protein.proteinInteractions.experiment.publication.pubMedId" sortOrder="Protein.identifier Protein.primaryAccession Protein.proteinInteractions.interactingProteins.identifier Protein.proteinInteractions.interactingProteins.primaryAccession Protein.proteinInteractions.experiment.publication.pubMedId">
-			  <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
-			  </pathDescription>
-			  <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment &gt; publication">
-			  </pathDescription>
-			  <node path="Protein" type="Protein">
-				  <constraint op="LOOKUP" value="P19107" description="Show interactions for protein primary accession:" identifier="Protein.class" editable="true" code="A">
-				  </constraint>
-			  </node>
-		  </query>
-	  </template>
-	  <template name="Protein_ProteinInteractionOrthologue" title="Protein [D. melanogaster] --&gt; Interacting proteins + orthologues." longDescription="For a particular protein from Drosophila melanogaster, show the proteins it has been shown to interact with and their orthologues." comment="">
-		  <query name="Protein_ProteinInteractionOrthologue" model="genomic" view="Protein.identifier Protein.genes.identifier Protein.proteinInteractions.shortName Protein.proteinInteractions.interactingProteins.identifier Protein.proteinInteractions.interactingProteins.genes.identifier Protein.proteinInteractions.interactingProteins.genes.organism.name Protein.proteinInteractions.experiment.publication.pubMedId Protein.proteinInteractions.interactingProteins.genes.orthologues.orthologue.identifier Protein.proteinInteractions.interactingProteins.genes.orthologues.orthologue.organism.name" sortOrder="Protein.identifier Protein.genes.identifier Protein.proteinInteractions.shortName Protein.proteinInteractions.interactingProteins.identifier Protein.proteinInteractions.interactingProteins.genes.identifier Protein.proteinInteractions.interactingProteins.genes.organism.name Protein.proteinInteractions.experiment.publication.pubMedId Protein.proteinInteractions.interactingProteins.genes.orthologues.orthologue.identifier Protein.proteinInteractions.interactingProteins.genes.orthologues.orthologue.organism.name">
-			  <pathDescription pathString="Protein.proteinInteractions.interactingProteins" description="Interacting protein">
-			  </pathDescription>
-			  <pathDescription pathString="Protein" description="Protein">
-			  </pathDescription>
-			  <pathDescription pathString="Protein.proteinInteractions.interactingProteins.genes.orthologues.orthologue" description="Interacting protein &gt; orthologue">
-			  </pathDescription>
-			  <pathDescription pathString="Protein.proteinInteractions.experiment.publication" description="Protein interaction experiment &gt; publication ">
-			  </pathDescription>
-			  <pathDescription pathString="Protein.genes.orthologues.orthologue" description="Protein &gt; orthologue">
-			  </pathDescription>
-			  <pathDescription pathString="Protein.proteinInteractions.interactingProteins.genes" description="Interacting protein &gt; gene">
-			  </pathDescription>
-			  <pathDescription pathString="Protein.proteinInteractions.interactingProteins.genes.orthologues.orthologue.organism" description="Interacting protein &gt; orthologue &gt; organism">
-			  </pathDescription>
-			  <pathDescription pathString="Protein.proteinInteractions.interactingProteins.genes.organism" description="Organism name">
-			  </pathDescription>
-			  <pathDescription pathString="Protein.proteinInteractions" description="Protein interaction">
-			  </pathDescription>
-			  <node path="Protein" type="Protein">
-				  <constraint op="LOOKUP" value="P07207" description="" identifier="" editable="true" code="A">
-				  </constraint>
-			  </node>
-		  </query>
-	  </template>
-	  <template name="Protein_Structure" title="Protein [D. melanogaster] --&gt; regions with predicted 3-D structure." longDescription="For the following protein, show all regions for which there is a predicted 3D structure." comment="">
-		  <query name="Protein_Structure" model="genomic" view="Protein.primaryAccession Protein.name Protein.structures.proteinFeature.identifier Protein.structures.start Protein.structures.end Protein.structures.identifier" sortOrder="Protein.primaryAccession Protein.name Protein.structures.proteinFeature.identifier Protein.structures.start Protein.structures.end Protein.structures.identifier" constraintLogic="A and B">
-			  <node path="Protein" type="Protein">
-				  <constraint op="LOOKUP" value="Q8IMC2" description="" identifier="" editable="true" code="A">
-				  </constraint>
-			  </node>
-			  <node path="Protein.organism" type="Organism">
-			  </node>
-			  <node path="Protein.organism.name" type="String">
-				  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="B">
 				  </constraint>
 			  </node>
 		  </query>
