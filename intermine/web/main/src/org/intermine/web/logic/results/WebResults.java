@@ -24,6 +24,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
@@ -78,23 +79,23 @@ public class WebResults extends AbstractList implements WebTable
         this.pathToQueryNode = pathToQueryNode;
         this.pathToBagQueryResult = pathToBagQueryResult;
         this.pathQuery = pathQuery;
-        pathToIndex = getPathToIndex(pathToQueryNode);
+        pathToIndex = getPathToIndex(osResults.getQuery(), pathToQueryNode);
 
         setColumns(columnPaths);
     }
 
     // pathToQueryNode is map from string paths to QueryNodes from ObjectStore query
-    private LinkedHashMap getPathToIndex(Map pathToQueryNode) {
+    public static LinkedHashMap getPathToIndex(Query query, Map pathToQueryNode) {
         LinkedHashMap returnMap =  new LinkedHashMap();
         for (Iterator iter = pathToQueryNode.keySet().iterator(); iter.hasNext();) {
             String path = (String) iter.next();
             QueryNode queryNode = (QueryNode) pathToQueryNode.get(path);
             if (queryNode instanceof QueryClass) {
-                returnMap.put(path, new Integer(osResults.getQuery().getSelect()
+                returnMap.put(path, new Integer(query.getSelect()
                                 .indexOf(queryNode)));
             } else if (queryNode instanceof QueryField) {
                 QueryField queryField = (QueryField) queryNode;
-                returnMap.put(path, new Integer(osResults.getQuery().getSelect()
+                returnMap.put(path, new Integer(query.getSelect()
                                 .indexOf(queryField.getFromElement())));
             } else {
                 throw new RuntimeException();
