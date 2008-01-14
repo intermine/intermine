@@ -68,7 +68,6 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
@@ -584,8 +583,10 @@ public class AjaxServices
     
     /**
      * validate bag upload
+     * @param bagName name of new bag to be validated
+     * @return error msg to display, if any
      */
-    public static String validateBagUpload(String bagName) {
+    public static String validateBagName(String bagName) {
         
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
@@ -597,7 +598,8 @@ public class AjaxServices
         }
         
         if (!WebUtil.isValidName(bagName)) {
-            return "Invalid name. Names can only contain letters, numbers, spaces, and underscores.";
+            return "Invalid name. Names can only contain letters, numbers, spaces, "
+            + "and underscores.";
         }
 
         if (profile.getSavedBags().get(bagName) != null) {
@@ -611,17 +613,19 @@ public class AjaxServices
         Map<String, ? extends WebSearchable> publicBagMap =
             searchRepository.getWebSearchableMap(TagTypes.BAG);
         if (publicBagMap.get(bagName) != null) {
-            return "The list name you have chosen is already in use - there is a public bag called " + bagName;
+            return "The list name you have chosen is already in use -" 
+            + " there is a public bag called " + bagName;
         }
 
         return "";        
     }       
     
     /**
-     * validation that happens before bag operation
+     * validation that happens before new bag is saved
      * @param bagName name of new bag
      * @param selectedBags bags involved in operation
      * @param operation which operation is taking place - delete, union, intersect or subtract
+     * @return error msg, if any
      */
     public static String validateBagOperations(String bagName, String[] selectedBags, 
                                                String operation) {
@@ -648,13 +652,15 @@ public class AjaxServices
             }
 
         } else {
-            Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+            Properties properties = (Properties) 
+            servletContext.getAttribute(Constants.WEB_PROPERTIES);
             String defaultName = properties.getProperty("lists.input.example");
 
             if (bagName.equals("") || (bagName.trim().equalsIgnoreCase(defaultName))) {
                 return "New list name is required";                
             } else if (!WebUtil.isValidName(bagName)) {
-                return "Invalid name. Names can only contain letters, numbers, spaces, and underscores.";
+                return "Invalid name. Names can only contain letters, numbers, spaces, " 
+                + "and underscores.";
             }
         }
         return "";
