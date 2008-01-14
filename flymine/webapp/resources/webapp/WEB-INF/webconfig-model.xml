@@ -120,6 +120,7 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
       <graphdisplayer title="Chromosome Distribution" domainLabel="Chromosome" rangeLabel="Count" dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
@@ -137,6 +138,9 @@
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="gene.identifier" showInInlineCollection="false"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Comment">
@@ -155,6 +159,9 @@
       <fieldconfig fieldExpr="gene.identifier" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Gene">
@@ -250,6 +257,7 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -258,6 +266,9 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Protein">
@@ -320,6 +331,9 @@
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.Translation">
@@ -328,6 +342,9 @@
       <fieldconfig fieldExpr="organismDbId"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.MicroarrayOligo">
@@ -339,6 +356,7 @@
     <longdisplayers>
       <!-- disable the LocatedSequenceFeature displayer (GBrowse) because
            MicroarrayOligos aren't located at the moment -->
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -427,6 +445,9 @@
       <fieldconfig fieldExpr="parentTerm.identifier"/>
       <fieldconfig fieldExpr="childTerm.identifier"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.OntologyTermSynonym">
@@ -494,6 +515,9 @@
       <fieldconfig fieldExpr="mRNASignalSEM"/>
       <fieldconfig fieldExpr="presentCall"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.MicroArrayExperiment">
@@ -555,11 +579,18 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
+
   <class className="org.flymine.model.genomic.GOEvidenceCode">
     <fields>
       <fieldconfig fieldExpr="code"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
 
@@ -585,6 +616,9 @@
       <fieldconfig fieldExpr="protein.identifier"/>
       <fieldconfig fieldExpr="protein.organism.name"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.RNAiPhenotype">
@@ -593,6 +627,9 @@
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="code"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
 
@@ -602,6 +639,9 @@
       <fieldconfig fieldExpr="cellLine"/>
       <fieldconfig fieldExpr="publication.title"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.RNAiScreenHit">
@@ -659,6 +699,9 @@
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.UniProtFeature">
@@ -695,6 +738,9 @@
       <fieldconfig fieldExpr="factor.identifier"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.flymine.model.genomic.MRNALocalisationResult">
@@ -719,6 +765,7 @@
     </fields>
     <longdisplayers>
       <displayer src="/model/tiffinBindingSiteDisplayer.jsp"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
   
@@ -727,7 +774,9 @@
     <longdisplayers>
       <displayer src="/model/redflyDisplayer.jsp"/>
     </longdisplayers>
-        
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <tableExportConfig id="sequenceExporter" actionPath="/exportAction?type=sequenceExporter"
