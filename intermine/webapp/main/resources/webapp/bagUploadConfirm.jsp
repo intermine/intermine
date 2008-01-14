@@ -23,7 +23,7 @@ function toggleForm(matchCount) {
 		document.bagUploadConfirmForm.submit.disabled = true;
 	}
 }
-
+// TODO this needs to be merged with the function on table.jsp
 function validateBagName(){
 	var bagName = document.bagUploadConfirmForm.bagName.value;
 	AjaxServices.validateBagName(bagName, function(errMsg) {
@@ -87,7 +87,7 @@ function validateBagName(){
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
       <html:text property="bagName" size="20" value="" />
-		<input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName(); submit();"/>
+		<input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName();"/>
     </div>
   </div>
   <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">

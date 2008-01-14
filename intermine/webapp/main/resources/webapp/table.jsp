@@ -37,6 +37,17 @@
   var columnsToDisable = ${columnsToDisable};
   var columnsToHighlight = ${columnsToHighlight};
   var bagType = null;
+  // TODO this needs to be merged with the function on bagUploadConfirm.jsp
+  function validateBagName() {
+	var bagName = document.saveBagForm.newBagName.value;
+	AjaxServices.validateBagName(bagName, function(errMsg) {
+		if (errMsg != '') {
+        	document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+        } else {
+        	document.saveBagForm.submit();
+        }
+    });
+}
 //]]>-->
 </script>
 <script type="text/javascript" src="js/table.js" ></script>
@@ -140,9 +151,7 @@
       <html:text property="newBagName"/>
       <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
       <input type="hidden" name="table" value="${param.table}"/>
-      <html:submit property="saveNewBag">
-        <fmt:message key="results.saveButton.selected"/>
-      </html:submit>
+      <input type="button" name="saveNewBag" value="Save selected" onclick="javascript:validateBagName();"/>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_createlist')" >Cancel</a>
 </div>
