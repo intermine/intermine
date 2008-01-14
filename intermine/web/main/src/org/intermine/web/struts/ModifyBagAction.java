@@ -16,26 +16,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.intermine.objectstore.query.ObjectStoreBagCombination;
+import org.intermine.objectstore.query.Query;
 
-import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.query.ObjectStoreBagCombination;
-import org.intermine.objectstore.query.Query;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -44,6 +33,17 @@ import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
 /**
  * Implementation of <strong>Action</strong> to modify bags
@@ -74,14 +74,17 @@ public class ModifyBagAction extends InterMineAction
                         || (mbf.getListsButton() != null && mbf.getListsButton().equals("union"))) {
             combine(mapping, form, request, ObjectStoreBagCombination.UNION, "UNION");
         } else if (request.getParameter("intersect") != null
-                        || (mbf.getListsButton() != null && mbf.getListsButton().equals("intersect"))) {
+                        || (mbf.getListsButton() != null 
+                                        && mbf.getListsButton().equals("intersect"))) {
             combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT, "INTERSECT");
         } else if (request.getParameter("subtract") != null
-                        || (mbf.getListsButton() != null && mbf.getListsButton().equals("substract"))) {
+                        || (mbf.getListsButton() != null 
+                                        && mbf.getListsButton().equals("substract"))) {
             combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT,
             "SUBTRACT");
         } else if (request.getParameter("delete") != null
-                        || (mbf.getListsButton() != null && mbf.getListsButton().equals("delete"))) {
+                        || (mbf.getListsButton() != null 
+                                        && mbf.getListsButton().equals("delete"))) {
             delete(mapping, form, request);
         }
 
