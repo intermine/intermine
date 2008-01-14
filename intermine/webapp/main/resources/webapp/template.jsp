@@ -336,9 +336,7 @@
    	</td>
    	<td align="right">
 	<html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}">
-		<html:image property="exportTemplate" src="theme/xml.png" title="Export this template to XML">
-			<fmt:message key="template.export"/>
-		</html:image> 
+		<img src="theme/xml.png" title="Export this template to XML"/>			 
 	</html:link>
 	</td>
 	</tr>
