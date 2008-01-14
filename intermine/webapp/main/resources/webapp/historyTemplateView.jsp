@@ -41,29 +41,37 @@
       <c:otherwise>
         
         <html:form action="/modifyTemplate">
-        <table class="sortable-onload-3 rowstyle-alt no-arrow" cellspacing="0">
-          <tr>
-            <th>
-              <input type="checkbox" id="selected_template"
-                     onclick="selectColumnCheckbox(this.form, 'template')"/>
-            </th>
-            <th align="left" nowrap class="sortable">
-              <fmt:message key="history.namecolumnheader"/>
-            </th>
-            <th align="left" nowrap class="sortable">
-              <fmt:message key="history.titleheader"/>
-            </th>
-            <th align="left" nowrap class="sortable">
-              <fmt:message key="history.descriptionheader"/>
-            </th>
-            <th align="left" nowrap class="sortable">
-              <fmt:message key="history.commentheader"/>
-            </th>
-            <th align="center" nowrap>
-              <fmt:message key="history.actionscolumnheader"/>
-            </th>
-          </tr>    
           <c:forEach items="${PROFILE.savedTemplates}" var="savedTemplate" varStatus="status">
+            <c:if test="${status.index % 20 == 0}">
+              <c:if test="${status.index > 0}">
+                </table>
+              </c:if>
+
+              <table class="sortable-onload-3 rowstyle-alt no-arrow" cellspacing="0">
+                <tr>
+                  <th>
+                    <c:if test="${status.index == 0}">
+                      <input type="checkbox" id="selected_template"
+                             onclick="selectColumnCheckbox(this.form, 'template')"/>
+                    </c:if>
+                  </th>
+                  <th align="left" nowrap class="sortable">
+                    <fmt:message key="history.namecolumnheader"/>
+                  </th>
+                  <th align="left" nowrap class="sortable">
+                    <fmt:message key="history.titleheader"/>
+                  </th>
+                  <th align="left" nowrap class="sortable">
+                    <fmt:message key="history.descriptionheader"/>
+                  </th>
+                  <th align="left" nowrap class="sortable">
+                    <fmt:message key="history.commentheader"/>
+                  </th>
+                  <th align="center" nowrap>
+                    <fmt:message key="history.actionscolumnheader"/>
+                  </th>
+                </tr>    
+            </c:if>
             <tr>
               <td align="center" style="border-right: 1px solid #C1DAD7; border-bottom: 1px solid #C1DAD7;">
                 <html:multibox property="selected" styleId="selected_template_${status.index}"
