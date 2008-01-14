@@ -77,16 +77,7 @@ public class SaveBagAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-
-        if (request.getParameter("saveNewBag") != null) {
-            return saveBag(mapping, form, request, response);
-        } else if (request.getParameter("addToExistingBag") != null) {
-            return saveBag(mapping, form, request, response);
-        } else {
-            // the form was submitted without pressing a submit button, eg. using submit() from
-            // Javascript
-        }
-        return null;
+        return saveBag(mapping, form, request, response);
     }
 
     /**
@@ -111,15 +102,25 @@ public class SaveBagAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
-        SaveBagForm crf = (SaveBagForm) form;
+        SaveBagForm sbf = (SaveBagForm) form;
         ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(Constants
                     .PROFILE_MANAGER)).getUserProfileObjectStore();
 
-        String bagName;
-        if (request.getParameter("saveNewBag") != null) {
-            bagName = crf.getNewBagName();
+        String bagName = null;
+        String operation = ""; 
+        
+        if (request.getParameter("saveNewBag") != null 
+                        || (sbf.getOperationButton() != null 
+                        && sbf.getOperationButton().equals("saveNewBag"))) {
+            bagName = sbf.getNewBagName();
+            operation = "saveNewBag";
         } else {
-            bagName = crf.getExistingBagName();
+            bagName = sbf.getExistingBagName();
+            operation = "addToBag";
+        }
+        
+        if (bagName == null) {
+            return null;
         }
 
         InterMineBag bag = profile.getSavedBags().get(bagName);
@@ -138,8 +139,8 @@ public class SaveBagAction extends InterMineAction
         }
 
         // First pass through, just to check types are compatible.
-        for (int i = 0; i < crf.getSelectedObjects().length; i++) {
-            String selectedObjectString = crf.getSelectedObjects()[i];
+        for (int i = 0; i < sbf.getSelectedObjects().length; i++) {
+            String selectedObjectString = sbf.getSelectedObjects()[i];
             if (!selectedObjectString.matches(".*,.*,.*") && seenAllRows) {
                 // ignore the column type as we're going to iterate over all rows
                 continue;
@@ -175,8 +176,8 @@ public class SaveBagAction extends InterMineAction
 
             osw = new ObjectStoreWriterInterMineImpl(os);
             // Second pass through, to actually copy the data.
-            for (int i = 0; i < crf.getSelectedObjects().length; i++) {
-                String selectedObjectString = crf.getSelectedObjects()[i];
+            for (int i = 0; i < sbf.getSelectedObjects().length; i++) {
+                String selectedObjectString = sbf.getSelectedObjects()[i];
 
                 int indexOfFirstComma = selectedObjectString.indexOf(',');
                 String columnIndexString = selectedObjectString.substring(0, indexOfFirstComma);
@@ -236,7 +237,7 @@ public class SaveBagAction extends InterMineAction
                 // empty
             }
         }
-        if (request.getParameter("saveNewBag") != null) {
+        if (operation.equals("saveNewBag")) {
             return new ForwardParameters(mapping.findForward("bag")).addParameter("bagName",
                 bag.getName()).forward();
         } else {
