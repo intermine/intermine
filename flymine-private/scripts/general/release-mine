@@ -1,13 +1,13 @@
 #!/usr/bin/perl -w
 
-# release a new modmine
+# release a new mine
 #
 # steps:
 #  - find current version from properties file
 #  - create new properties file
 #   * update version
 #   * update deploy location
-#  - createdb new databases modmine-r<version> and modmine-r<version>-userprofile
+#  - createdb new databases <minename>-r<version> and <minename>-r<version>-userprofile
 #  - load dump file of production database (if needed)
 #  - precompute queries and templates
 #  - create-db-userprofile with new properties file
@@ -34,10 +34,15 @@ use Date::Manip;
 # use Getopt::Std;
 # use Cwd;
 
-my $PROJECT_NAME = 'modmine';
-my $PROP_FILE_PREFIX = "$PROJECT_NAME.properties";
-my $BUILD_PROP_FILE_PREFIX = "build.properties.$PROJECT_NAME";
-my $WEBAPP_DIR = "$ENV{HOME}/svn/trunk/$PROJECT_NAME/webapp";
+if (@ARGV != 1) {
+  die "$0: error, this script needs one argument - the mine name\n";
+}
+
+my $project_name = $ARGV[0];
+
+my $PROP_FILE_PREFIX = "$project_name.properties";
+my $BUILD_PROP_FILE_PREFIX = "build.properties.$project_name";
+my $WEBAPP_DIR = "$ENV{HOME}/svn/trunk/$project_name/webapp";
 my $APACHE_CONF_FILENAME = '/etc/httpd/conf.d/proxy_ajp.conf';
 my $OLDEST_VERSION = 1;
 my $USERPROFILE_XML_FILENAME = "build/userprofile.xml";
@@ -63,10 +68,10 @@ while (defined(my $filename = readdir(DIR))) {
 }
 
 if ($current_version == -1) {
-  die "can't find a properties file for $PROJECT_NAME with prefix $PROP_FILE_PREFIX\n";
+  die "can't find a properties file for $project_name with prefix $PROP_FILE_PREFIX\n";
 }
 
-warn "most recent version of $PROJECT_NAME: $current_version\n";
+warn "most recent version of $project_name: $current_version\n";
 
 my $current_prop_filename = "$PROP_FILE_PREFIX.r$current_version";
 
@@ -146,10 +151,10 @@ create_properties_file($current_prop_filename, $new_prop_filename,
 create_properties_file($current_build_prop_filename, $new_build_prop_filename,
                        'webapp.path', 'project.releaseVersion');
 
-my $new_prop_symlink = "$PROJECT_NAME-webapp.properties.r$new_version";
+my $new_prop_symlink = "$project_name-webapp.properties.r$new_version";
 symlink $new_prop_filename, $new_prop_symlink
   or die "can't create symlink to $new_prop_symlink: $!\n";
-my $new_build_prop_symlink = "build.properties.$PROJECT_NAME-webapp.r$new_version";
+my $new_build_prop_symlink = "build.properties.$project_name-webapp.r$new_version";
 symlink $new_build_prop_filename, $new_build_prop_symlink
   or die "can't create symlink to $new_build_prop_symlink: $!\n";
 
@@ -277,7 +282,7 @@ system ("ant -Drelease=r$current_version start-webapp >> $LOG_FILENAME 2>&1") ==
 #################
 warn "re-deploy web site\n";
 
-chdir "../../www/$PROJECT_NAME" or die "can't directory change to www/$PROJECT_NAME\n";
+chdir "../../www/$project_name" or die "can't directory change to www/$project_name\n";
 
 system ("ant -Drelease=r$new_version clean release-www >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't re-release web site with new version (r$current_version): $!";
