@@ -25,6 +25,9 @@
       <forward name="details" path="/objectDetails.do" redirect="true"/>
     </action>
     
+    <action path="/initAttributeLinkDisplayer"
+            type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
+
 
     
     
