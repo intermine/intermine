@@ -123,16 +123,16 @@ public class ItemHelper
      * @param items of XML item
      * @return an equivalent list data model items
      */
-    public static List convertToFullDataItems(List items) {
-        List results;
+    public static List<org.intermine.model.fulldata.Item> convertToFullDataItems(List<Item> items) {
+        List<org.intermine.model.fulldata.Item> results;
         if (items instanceof RandomAccess) {
-            results = new LinkedList();
+            results = new LinkedList<org.intermine.model.fulldata.Item>();
         } else {
-            results = new ArrayList();
+            results = new ArrayList<org.intermine.model.fulldata.Item>();
         }
-        Iterator iter = items.iterator();
+        Iterator<Item> iter = items.iterator();
         while (iter.hasNext()) {
-            Item item = (Item) iter.next();
+            Item item = iter.next();
             results.add(convert(item));
         }
         return results;
@@ -183,12 +183,12 @@ public class ItemHelper
      * @param items in data model format
      * @return an equivalent list of XML items
      */
-    public static List convertFromFullDataItems(List items) {
-        List results;
+    public static List<Item> convertFromFullDataItems(List items) {
+        List<Item> results;
         if (items instanceof RandomAccess) {
-            results = new LinkedList();
+            results = new LinkedList<Item>();
         } else {
-            results = new ArrayList();
+            results = new ArrayList<Item>();
         }
         Iterator iter = items.iterator();
         while (iter.hasNext()) {

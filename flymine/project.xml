@@ -111,6 +111,12 @@
       <property name="gff3.seqDataSourceName" value="Sanger"/>
       <property name="src.data.dir" location="/shared/data/tiffin/tiffin1.2"/>
     </source>
+<!--
+    <source name="tiffin-expression" type="tiffin-expression">
+      <property name="src.data.dir" location="/shared/data/tiffin/"/>
+      <property name="src.data.dir.includes" value="tiffin_ImaGo"/>
+    </source>
+-->
     <source name="anoest" type="anoest">
       <property name="source.db.name" value="anoest"/>
     </source>

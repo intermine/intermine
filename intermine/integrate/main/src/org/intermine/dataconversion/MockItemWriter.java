@@ -103,10 +103,10 @@ public class MockItemWriter implements ItemWriter
      * This method is not part of ItemWriter, and for testing convenience returns XML Items
      * @return the Items stored so far, in "XML" format
      */
-    public Set getItems() {
-        Set result = new HashSet();
-        for (Iterator i = storedItems.values().iterator(); i.hasNext();) {
-            result.add(ItemHelper.convert((Item) i.next()));
+    public Set<org.intermine.xml.full.Item> getItems() {
+        Set<org.intermine.xml.full.Item> result = new HashSet<org.intermine.xml.full.Item>();
+        for (Iterator<Item> i = storedItems.values().iterator(); i.hasNext();) {
+            result.add(ItemHelper.convert(i.next()));
         }
         return result;
     }
@@ -114,6 +114,7 @@ public class MockItemWriter implements ItemWriter
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "" + storedItems;
     }
