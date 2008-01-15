@@ -312,7 +312,7 @@ public class Model
         synchronized (classToFieldDescriptorMap) {
             Map<String, FieldDescriptor> retval = classToFieldDescriptorMap.get(c);
             if (retval == null) {
-                retval = new HashMap<String, FieldDescriptor>();
+                retval = new LinkedHashMap<String, FieldDescriptor>();
                 for (ClassDescriptor cld : getClassDescriptorsForClass(c)) {
                     for (FieldDescriptor fd : cld.getFieldDescriptors()) {
                         retval.put(fd.getName(), fd);
