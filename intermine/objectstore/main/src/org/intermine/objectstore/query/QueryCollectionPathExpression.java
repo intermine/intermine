@@ -13,7 +13,9 @@ package org.intermine.objectstore.query;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.util.TypeUtil;
@@ -39,6 +41,7 @@ public class QueryCollectionPathExpression implements QueryPathExpression
     private List<FromElement> additionalFromList = new ArrayList();
     private Constraint constraint = null;
     private boolean singleton = false;
+    private Map<FromElement, String> aliases = new HashMap();
 
     /**
      * Constructs a QueryCollectionPathExpression representing a collection reference from the given
@@ -176,6 +179,17 @@ public class QueryCollectionPathExpression implements QueryPathExpression
     }
 
     /**
+     * Adds an element to the FROM list, including an alias.
+     *
+     * @param node a FromElement
+     * @param alias the alias
+     */
+    public void addFrom(FromElement node, String alias) {
+        additionalFromList.add(node);
+        aliases.put(node, alias);
+    }
+
+    /**
      * Returns the additional FROM list.
      *
      * @return a List
@@ -215,9 +229,13 @@ public class QueryCollectionPathExpression implements QueryPathExpression
         q.addFrom(qcb, "bag");
         q.addFrom(defaultClass, "default");
         for (FromElement node : additionalFromList) {
-            q.addFrom(node);
+            if (aliases.containsKey(node)) {
+                q.addFrom(node, aliases.get(node));
+            } else {
+                q.addFrom(node);
+            }
         }
-        q.addToSelect(new QueryField(qcb));
+        q.addToSelect(new QueryField(qcb), "bagId");
         if (selectList.isEmpty()) {
             q.addToSelect(defaultClass);
         } else {

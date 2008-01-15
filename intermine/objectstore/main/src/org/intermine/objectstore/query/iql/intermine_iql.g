@@ -46,6 +46,8 @@ tokens {
     OBJECTSTOREBAG;
     ORDER_DESC;
     BAGS_FOR;
+    COLLECTION_SELECT_LIST;
+    COLLECTION_SELECT_VALUE;
 }
 
 
@@ -91,7 +93,8 @@ order_clause:
 select_value:
         ( (unsafe_function)=> unsafe_function "as"! field_alias
             | (typecast)=> typecast "as"! field_alias
-            | (field_path_expression)=> field_path_expression "as"! field_alias
+            | ( IDENTIFIER DOT IDENTIFIER DOT IDENTIFIER ( DOT IDENTIFIER )* OPEN_PAREN "def" )=> field_path_expression "as"! field_alias
+            | ( IDENTIFIER DOT IDENTIFIER ( DOT IDENTIFIER )* OPEN_PAREN )=> collection_path_expression "as"! field_alias
             | thing ( "as"! field_alias )?
             | constant "as"! field_alias
             | safe_function "as"! field_alias
@@ -190,8 +193,30 @@ constant:
     ;
 
 field_path_expression:
-        ( IDENTIFIER DOT! )* IDENTIFIER DOT! IDENTIFIER DOT! IDENTIFIER OPEN_PAREN! "def"! constant CLOSE_PAREN!
+        IDENTIFIER DOT! IDENTIFIER DOT! IDENTIFIER ( DOT! IDENTIFIER )* OPEN_PAREN! "def"! constant CLOSE_PAREN!
         { #field_path_expression = #([FIELD_PATH_EXPRESSION, "FIELD_PATH_EXPRESSION"], #field_path_expression); }
+    ;
+
+collection_path_expression:
+        IDENTIFIER DOT! IDENTIFIER ( DOT! IDENTIFIER )* OPEN_PAREN! ("select"! ("singleton")? collection_select_list )? (from_list)? (where_clause)? CLOSE_PAREN!
+        { #collection_path_expression = #([FIELD, "FIELD"], #collection_path_expression); }
+    ;
+
+collection_select_list:
+        collection_select_value ( COMMA! collection_select_value )*
+        { #collection_select_list = #([COLLECTION_SELECT_LIST, "COLLECTION_SELECT_LIST"], #collection_select_list); }
+    ;
+
+collection_select_value:
+        ( (unsafe_function)=> unsafe_function
+            | (typecast)=> typecast
+            | (field_path_expression)=> field_path_expression
+            | (collection_path_expression)=> collection_path_expression
+            | thing
+            | constant
+            | safe_function
+            | paren_value
+        )
     ;
 
 thing:
