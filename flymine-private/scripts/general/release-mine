@@ -38,7 +38,7 @@ if (@ARGV != 1) {
   die "$0: error, this script needs one argument - the mine name\n";
 }
 
-my $project_name = $ARGV[0];
+my $project_name = shift;
 
 my $PROP_FILE_PREFIX = "$project_name.properties";
 my $BUILD_PROP_FILE_PREFIX = "build.properties.$project_name";
@@ -192,7 +192,7 @@ system ("ant -Drelease=r$new_version clean-all >> $LOG_FILENAME 2>&1") == 0
 
 
 #################
-warn "summarising objectstore\n";
+warn "building new webapp\n";
 
 chdir $WEBAPP_DIR or die "can't directory change to $WEBAPP_DIR\n";
 
