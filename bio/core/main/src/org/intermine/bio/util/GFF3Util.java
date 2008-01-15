@@ -18,7 +18,9 @@ import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Set;
@@ -41,7 +43,7 @@ public abstract class GFF3Util
      * @return the GFF3Record or null if this lsf has no Chromosome or no Chromosome location
      */
     public static GFF3Record makeGFF3Record(LocatedSequenceFeature lsf, Map soClassNameMap,
-                                            Map extraAttributes) {
+                                            Map<String, List<String>> extraAttributes) {
         Set classes = DynamicUtil.decomposeClass(lsf.getClass());
 
         String type = null;
@@ -95,10 +97,13 @@ public abstract class GFF3Util
             strand = chrLocation.getStrand().equals("1") ? "+" : "-";
         }
 
-        Map recordAttribute = new LinkedHashMap(extraAttributes);
+        Map<String, List<String>> recordAttribute =
+            new LinkedHashMap<String, List<String>>(extraAttributes);
 
         if (lsf.getIdentifier() != null) {
-            recordAttribute.put("ID", lsf.getIdentifier());
+            List<String> idList = new ArrayList<String>();
+            idList.add(lsf.getIdentifier());
+            recordAttribute.put("ID", idList);
         }
 
         return new GFF3Record(sequenceID, "FlyMine", type, start, end, null, strand, null,
