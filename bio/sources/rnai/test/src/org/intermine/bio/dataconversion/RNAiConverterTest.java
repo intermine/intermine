@@ -10,6 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Set;
@@ -27,21 +30,23 @@ public class RNAiConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
         String ENDL = System.getProperty("line.separator");
-        String input = "WB Gene ID\t6239\tPubMed ID\tPhenotype\tPhenotype Desc\tRemark" + ENDL
-            + "WBGene00015175\t6239\t11099033\tEmb\tembryonic lethal" + ENDL
-            + "WBGene00016559\t6239\t11231151\tWT\twild type morphology\tclone does not match to the reported genomic sequence" + ENDL;
-
+        String input = "Gene WB ID\tGene Public Name\tPhenotype WB ID\tPhenotype Primary Name\tPhenotype Short Name\tPhenotype Is Observed\tPhenotype Is Not Observed\tPhenotype Penetrance From (%)\tPhenotype Penetrance To (%)\tRNAi WB ID\tRNAi Remark\tPubMed ID" + ENDL
+                + "WBGene00000516\tcki-1\tWBPhenotype0000202\talae_abnormal\t\t1\t\t\tWBRNAi00064855\t\t9716524" + ENDL 
+                + "WBGene00006974\tzen-4\tWBPhenotype0000765\tspindle_elongation_integrity_abnormal_early_emb\tEmb\t\t1\t\t\tWBRNAi00063891\tclone does not match to the reported genomic sequence\t9693365";
+        
+        File file = new File ("wormrnai-final.txt");
+        
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         RNAiConverter converter = new RNAiConverter(itemWriter,
                                                     Model.getInstanceByName("genomic"));
-
+        converter.setCurrentFile(file);
         converter.process(new StringReader(input));
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "worm-rnai-tgt-xml");
+        // writeItemsFile(itemWriter.getItems(), "resources/RNAiConverterTest.xml");
 
-        Set expected = readItemSet("test/RNAiConverterTest.xml");
+        Set expected = readItemSet("resources/RNAiConverterTest.xml");
 
         assertEquals(expected, itemWriter.getItems());
     }

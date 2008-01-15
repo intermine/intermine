@@ -9,6 +9,7 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.io.File;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,37 +69,48 @@ public class RNAiConverter extends FileConverter
     public void process(Reader reader) throws Exception {
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
         boolean readingData = false;
-        while (lineIter.hasNext()) {
-            String[] line = (String[]) lineIter.next();
+        File currentFile = getCurrentFile();
+        if (currentFile.getName().contains("-final")) {
+            while (lineIter.hasNext()) {
+                String[] line = (String[]) lineIter.next();
 
-            // throw out any headers
-            if (!readingData) {
-                if (line[0].startsWith("WBGene")) {
-                    readingData = true;
-                } else {
-                    continue;
+                // throw out any headers
+                if (!readingData) {
+                    if (line[0].startsWith("WBGene")) {
+                        readingData = true;
+                    } else {
+                        continue;
+                    }
                 }
-            }
 
-            if (readingData) {
-                Item gene = createGene(line[0]);
+                if (readingData) {
+                    Item gene = createGene(line[0]);
 
-                // may be sixth column with a comment
-                String comment = null;
-                if (line.length == 6) {
-                    comment = line[5].trim();
+                    // may be tenth column with a comment
+                    String comment = null;
+                    if (line.length == 10) {
+                        comment = line[9].trim();
+                    }
+                    String isObserved = null;
+                    if (line[5] != null && line[5].equals("1")) {
+                        isObserved = "true";
+                    } else
+                        if (line[6] != null && line[6].equals("1")) {
+                            isObserved = "false";
+                        }
+                    Item phenotype = createPhenotype(line[2], line[3], comment, isObserved,
+                        line[7], line[8]);
+                    phenotype.setReference("subject", gene.getIdentifier());
+                    phenotype.setReference("gene", gene.getIdentifier());
+
+                    Item pub = createPub(line[10]);
+                    phenotype.setCollection("evidence",
+                        new ArrayList(Collections.singleton(pub.getIdentifier())));
+                    Item screen = createScreen(pub);
+                    phenotype.setReference("analysis", screen.getIdentifier());
+
+                    store(phenotype);
                 }
-                Item phenotype = createPhenotype(line[3], line[4], comment);
-                phenotype.setReference("subject", gene.getIdentifier());
-                phenotype.setReference("gene", gene.getIdentifier());
-
-                Item pub = createPub(line[2]);
-                phenotype.setCollection("evidence", new ArrayList(
-                    Collections.singleton(pub.getIdentifier())));
-                Item screen = createScreen(pub);
-                phenotype.setReference("analysis", screen.getIdentifier());
-
-                store(phenotype);
             }
         }
     }
@@ -123,11 +135,13 @@ public class RNAiConverter extends FileConverter
         return gene;
     }
 
-    private Item createPhenotype(String code, String desc, String comment)
+    private Item createPhenotype(String code, String desc, String comment, String isObserved, String penetranceFrom, String penetranceTo)
     throws ObjectStoreException {
         Item rnaiPhenotype = createItem("RNAiPhenotype");
         rnaiPhenotype.setAttribute("code", code);
-        rnaiPhenotype.setAttribute("name", desc);
+        rnaiPhenotype.setAttribute("observed", isObserved);
+        rnaiPhenotype.setAttribute("penetranceFrom", penetranceFrom);
+        rnaiPhenotype.setAttribute("penetranceTo", penetranceTo);
         if (comment != null && !comment.equals("")) {
             rnaiPhenotype.setAttribute("comment", comment);
         }
