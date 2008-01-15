@@ -248,6 +248,7 @@
     </post-process>   
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
+    <post-process name="summarise-objectstore"/>
 
     <!-- grant-db-production/
     TODO: Not really post processing but just has to be done sometime...

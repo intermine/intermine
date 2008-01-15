@@ -59,6 +59,11 @@ public class MetadataManager
     public static final String CLASS_KEYS = "class_keys";
 
     /**
+     * The name of the key to use to store the objectstoresummary.properties file.
+     */
+    public static final String OS_SUMMARY = "objectStoreSummary";
+
+    /**
      * Name of the key under which to store the serialized version of the class descriptions
      */
     //public static final String CLASS_DESCRIPTIONS = "classDescs";
@@ -178,6 +183,18 @@ public class MetadataManager
      */
     public static void saveClassKeys(String properties, File destDir) throws IOException {
         write(properties, new File(destDir, getFilename(CLASS_KEYS, null)));
+    }
+
+    /**
+     * Save the objectstore summary, in serialized form, to the specified directory
+     * @param properties the summary
+     * @param destDir the destination directory
+     * @param fileName the name destination file
+     * @throws IOException if an error occurs
+     */
+    public static void saveProperties(String properties, File destDir, String fileName)
+        throws IOException {
+        write(properties, new File(destDir, fileName));
     }
 
     /**

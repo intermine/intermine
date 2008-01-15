@@ -34,6 +34,7 @@ public class RetrieveMetadataTask extends Task
     protected File destDir;
     protected String database;
     protected String osname;
+    private String keyToRetrieve;
 
     /**
      * Sets the destination directory
@@ -50,6 +51,15 @@ public class RetrieveMetadataTask extends Task
     public void setOsName(String osname) {
         this.osname = osname;
         this.database = PropertiesUtil.getProperties().getProperty(osname + ".db");
+    }
+
+    /**
+     * Set a key to retrieve from database.  If not set, retrieve all property files that were
+     * stored when the database was created.
+     * @param keyToRetrieve the key
+     */
+    public void setKeyToRetreive(String keyToRetrieve) {
+        this.keyToRetrieve = keyToRetrieve;
     }
 
     /**
@@ -70,30 +80,40 @@ public class RetrieveMetadataTask extends Task
         try {
             Database db = DatabaseFactory.getDatabase(database);
 
-            String modelXml = MetadataManager.retrieve(db, MetadataManager.MODEL);
-            String keyDefs = MetadataManager.retrieve(db, MetadataManager.KEY_DEFINITIONS);
-            //String classKeys = MetadataManager.retrieve(db, MetadataManager.CLASS_KEYS);
-            //String classDescs = MetadataManager.retrieve(db, MetadataManager.CLASS_DESCRIPTIONS);
+            if (keyToRetrieve == null) {
 
-            Model model = new InterMineModelParser().process(new StringReader(modelXml));
-            File localModel = new File(destDir,
-                    MetadataManager.getFilename(MetadataManager.MODEL, model.getName()));
+                String modelXml = MetadataManager.retrieve(db, MetadataManager.MODEL);
+                String keyDefs = MetadataManager.retrieve(db, MetadataManager.KEY_DEFINITIONS);
+                //String classDescs = MetadataManager.retrieve(db, MetadataManager.CLASS_DESCRIPTIONS);
 
-            if (keyDefs != null) {
-                MetadataManager.saveKeyDefinitions(keyDefs, destDir, model.getName());
+                Model model = new InterMineModelParser().process(new StringReader(modelXml));
+                File localModel = new File(destDir,
+                        MetadataManager.getFilename(MetadataManager.MODEL, model.getName()));
+
+                if (keyDefs != null) {
+                    MetadataManager.saveKeyDefinitions(keyDefs, destDir, model.getName());
+                }
+
+                /*if (classKeys != null) {
+                    MetadataManager.saveClassKeys(classKeys, destDir);
+                }*/
+
+                if (localModel.exists()
+                    && IOUtils.contentEquals(new FileReader(localModel),
+                                             new StringReader(modelXml))) {
+                    System.err .println("Model in database is identical to local model.");
+                    return;
+                }
+
+                MetadataManager.saveModel(model, destDir);
+
+            } else {
+                String objectStoreSummary =
+                    MetadataManager.retrieve(db, MetadataManager.OS_SUMMARY);
+                MetadataManager.saveProperties(objectStoreSummary, destDir,
+                                               "objectstoresummary.properties");
             }
 
-            /*if (classKeys != null) {
-                MetadataManager.saveClassKeys(classKeys, destDir);
-            }*/
-
-            if (localModel.exists()
-                && IOUtils.contentEquals(new FileReader(localModel), new StringReader(modelXml))) {
-                System.err .println("Model in database is identical to local model.");
-                return;
-            }
-
-            MetadataManager.saveModel(model, destDir);
             //MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
         } catch (Exception e) {
             System.err .println("Failed to retrieve metadata from " + database

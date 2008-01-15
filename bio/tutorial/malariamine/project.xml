@@ -49,9 +49,11 @@
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="transfer-sequences" dump="true"/>
 
+    <!-- this runs the postprocessing steps in all sources -->
     <post-process name="do-sources"/>
 
     <post-process name="set-collection-counts"/>
+    <post-process name="summarise-objectstore"/>
   </post-processing>
 
 </project>
