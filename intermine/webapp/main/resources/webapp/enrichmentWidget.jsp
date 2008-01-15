@@ -13,7 +13,7 @@
 
 <center><h2>${enrichmentWidgetForm.title}</h2></center>
 
-<c:out value='${enrichmentWidgetForm.description}'/>  Smaller p-values show greater enrichment. 
+<c:out value='${enrichmentWidgetForm.description}'/>  Smaller p-values show greater enrichment.  Method: Hypergeometric test  
 <br/><br/>
 Reference population: <c:out value='${referencePopulation}'/>.
 <br/>
@@ -82,8 +82,12 @@ Reference population: <c:out value='${referencePopulation}'/>.
 </tr>
 
 
+
 <tr>
 	<td>
+	
+	<html:form action="/enrichmentWidgetExport" method="get">
+	
 		<c:choose>
 		<c:when test="${!empty pvalues}">
 			<table cellpadding="5" border="0" cellspacing="0" class="results">
@@ -93,7 +97,10 @@ Reference population: <c:out value='${referencePopulation}'/>.
   				<th>&nbsp;</th>
 			</tr>
 	  		<c:forEach items="${pvalues}" var="results">
-    			<tr>  	    			
+    			<tr>
+    				<td>
+    					<input type="checkbox" name="selectedObjects" value="${results.value}" />
+    				</td>
   					<td align="left">
   							<c:choose>
 							<c:when test="${!empty externalLink}">
@@ -128,6 +135,8 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	        No results found.
         </c:otherwise>        
         </c:choose>
+
+	</html:form>	
 
 	</td>
 </tr>
