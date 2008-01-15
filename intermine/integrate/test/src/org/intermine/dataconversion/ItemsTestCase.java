@@ -179,12 +179,12 @@ public abstract class ItemsTestCase extends TestCase
         }
     }
 
-    public Set readItemSet(String fileName) throws Exception {
-        return new HashSet(FullParser.parse(getClass().getClassLoader()
-                                .getResourceAsStream(fileName)));
+    public Set<Item> readItemSet(String fileName) throws Exception {
+        return new HashSet<Item>(FullParser.parse(getClass().getClassLoader()
+                                                  .getResourceAsStream(fileName)));
     }
 
-    public void writeItemsFile(Collection items, String fileName) throws IOException {
+    public void writeItemsFile(Collection<Item> items, String fileName) throws IOException {
         FileWriter fw = new FileWriter(new File(fileName));
         fw.write(FullRenderer.render(items));
         fw.close();

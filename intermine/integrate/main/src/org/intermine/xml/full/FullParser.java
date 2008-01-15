@@ -46,7 +46,7 @@ public class FullParser
      * @return a list of Items
      * @throws Exception if there is an error while parsing
      */
-    public static List parse(InputStream is)
+    public static List<Item> parse(InputStream is)
         throws Exception {
 
         if (is == null) {
