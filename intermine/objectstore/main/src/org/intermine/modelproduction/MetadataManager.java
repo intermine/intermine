@@ -105,7 +105,8 @@ public class MetadataManager
             String sql = "SELECT value FROM " + METADATA_TABLE + " WHERE key='" + key + "'";
             ResultSet rs = connection.createStatement().executeQuery(sql);
             if (!rs.next()) {
-                throw new RuntimeException("No value found in database for key " + key);
+                // no value found in database
+                return null;
             }
             value = rs.getString(1);
         } finally {

@@ -47,6 +47,7 @@ Couldn't find ${build.properties.file}
     <!-- Summarise objectstore -->
     <echo message="Retrieving object store summary from ${objectstore.name}..."/>
     <summarise-objectstore alias="${objectstore.name}"
+                           configFileName="objectstoresummary.config.properties"
                            outputFile="${build.dir}/webapp/WEB-INF/objectstoresummary.properties"/>
   </target>
 
