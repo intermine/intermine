@@ -39,6 +39,18 @@ Couldn't find ${build.properties.file}
   </target>
 
 
+  <target name="-init-summarise-objectstore"
+          depends="init, -init-deps, -init-task-xml, -init-properties, -pre-jar"/>
+
+  <target name="retrieve-objectstore-summary" depends="-init-summarise-objectstore"
+          unless="temporary.webapp.project">
+    <!-- Summarise objectstore -->
+    <echo message="Retrieving object store summary from ${objectstore.name}..."/>
+    <summarise-objectstore alias="${objectstore.name}"
+                           outputFile="${build.dir}/webapp/WEB-INF/objectstoresummary.properties"/>
+  </target>
+
+
   <target name="-pre-init" depends="webapp.-pre-init">
     <!-- Files -->
     <property name="default.template.queries" location="${src.dir}/default-template-queries.xml"/>
@@ -64,7 +76,8 @@ Couldn't find ${build.properties.file}
           overwrite="true"/>
   </target>
 
-  <target name="-pre-jar" depends="-final-app-pre-jar, webapp.-pre-jar">
+  <target name="-pre-jar" 
+          depends="-final-app-pre-jar, webapp.-pre-jar">
     <!-- Start with base intermine webapp war -->
     <copy file="${source.intermine.webapp.war}" tofile="${dist.war}"/>
     <read-resource resource="class_keys.properties" property="class.keys"
@@ -72,7 +85,7 @@ Couldn't find ${build.properties.file}
     <echo message="${class.keys}" file="${build.dir}/webapp/WEB-INF/class_keys.properties"/>
   </target>
 
-  <target name="do-jar" depends="-init-presetdef-war">
+  <target name="do-jar" depends="-init-presetdef-war, retrieve-objectstore-summary">
     <appl:war/>
   </target>
 

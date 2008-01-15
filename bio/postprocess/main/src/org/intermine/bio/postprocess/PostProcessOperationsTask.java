@@ -10,24 +10,33 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Transcript;
+import org.intermine.modelproduction.MetadataManager;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.task.CreateIndexesTask;
 import org.intermine.task.DynamicAttributeTask;
+import org.intermine.util.PropertiesUtil;
+
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Transcript;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 
 /**
  * Run operations on genomic model database after DataLoading
@@ -210,6 +219,26 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 cit.setAttributeIndexes(true);
                 cit.setObjectStore(getObjectStoreWriter().getObjectStore());
                 cit.execute();
+            } else if ("summarise-objectstore".equals(operation)) {
+                System.out .println("summarising objectstore ...");
+                ObjectStore os = getObjectStoreWriter().getObjectStore();
+                if (!(os instanceof ObjectStoreInterMineImpl)) {
+                    throw new RuntimeException("cannot summarise ObjectStore - must be an "
+                                               + "instance of ObjectStoreInterMineImpl");
+                }
+                String configFileName = "objectstoresummary.config.properties";
+                ClassLoader classLoader = PostProcessOperationsTask.class.getClassLoader();
+                InputStream configStream =
+                    classLoader.getResourceAsStream(configFileName);
+                if (configStream == null) {
+                    throw new RuntimeException("can't find resource: " + configFileName);
+                }
+                Properties config = new Properties();
+                config.load(configStream);
+                ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
+                Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+                MetadataManager.store(db, MetadataManager.OS_SUMMARY,
+                                      PropertiesUtil.serialize(oss.toProperties()));
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }

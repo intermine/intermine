@@ -117,18 +117,6 @@
           failonerror="false"/>
   </target>
 
-  <target name="-init-summarise-objectstore"
-          depends="init, -init-deps, -init-task-xml, -init-jar, -init-properties"/>
-
-  <target name="summarise-objectstore" depends="-init-summarise-objectstore"
-          unless="doing.build.db">
-    <!-- Summarise objectstore -->
-    <echo message="Summarising object store ${objectstore.name}..."/>
-    <summarise-objectstore alias="${objectstore.name}"
-                           outputFile="${dist.dir}/objectstoresummary.properties"
-                           inputFile="objectstoresummary.config.properties"/>
-  </target>
-
   <!--
     Merge models before generating model java code if merging is needed
   -->

@@ -20,7 +20,7 @@
   
   <!-- WAR INSTEAD OF JAR -->
   
-  <target name="-pre-jar">
+  <target name="-pre-jar" depends="compile">
     <dependencies basedir="${library.xml.basedir}/.." buildDependencies="false"
                   type="deploy" noFollow="true"/>
     <!-- copy all dependencies into build/lib -->

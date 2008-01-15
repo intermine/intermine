@@ -10,16 +10,24 @@ package org.intermine.task;
  *
  */
 
+import java.util.Properties;
+
+import org.intermine.modelproduction.MetadataManager;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.sql.Database;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Properties;
-
-import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.ObjectStoreFactory;
+import java.io.InputStream;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.filters.StringInputStream;
+
 
 /**
  * Summarise an ObjectStore into a particular properties file.  The summary contains:
@@ -62,19 +70,29 @@ public class SummariseObjectStoreTask extends Task
      * {@inheritDoc}
      */
     public void execute() throws BuildException {
-        if (outputFile.exists() && outputFile.lastModified() > inputFile.lastModified()) {
-            System
-                .out.println("Summarisation is newer than config. Skipping summarisation.");
-            return;
-        }
         try {
-            Properties config = new Properties();
-            config.load(new FileInputStream(inputFile));
-            String header = "Automatically generated for " + alias + " using config " + inputFile;
-            new ObjectStoreSummary(ObjectStoreFactory.getObjectStore(alias), config)
-                .toProperties().store(new FileOutputStream(outputFile), header);
+            ObjectStore os = ObjectStoreFactory.getObjectStore(alias);
+            if (os instanceof ObjectStoreInterMineImpl) {
+                Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+                Properties config = new Properties();
+                String objectSummaryString =
+                    MetadataManager.retrieve(db, MetadataManager.OS_SUMMARY);
+
+                Properties objectStoreSummaryProperties = new Properties();
+                InputStream objectStoreSummaryPropertiesStream =
+                    new StringInputStream(objectSummaryString);
+
+                objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
+                String header = "Automatically generated for " + alias + " using config "
+                    + inputFile;
+                new ObjectStoreSummary(objectStoreSummaryProperties)
+                    .toProperties().store(new FileOutputStream(outputFile), header);
+            } else {
+                throw new RuntimeException("can't read summary from " + alias
+                                           + " - not an instance of ObjectStoreInterMineImpl");
+            }
         } catch (Exception e) {
-            throw new BuildException(e);
+            throw new BuildException("failed to get the object store summary", e);
         }
     }
 }
