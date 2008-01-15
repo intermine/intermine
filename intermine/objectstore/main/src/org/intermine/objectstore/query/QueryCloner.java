@@ -181,7 +181,8 @@ public class QueryCloner
                     retval = new QueryCollectionPathExpression((QueryClass) fromElementMap
                             .get(origC.getQueryClass()), origC.getCollectionName());
                 } catch (NullPointerException e) {
-                    throw new NullPointerException("oldQc: " + origC.getQueryClass() + ", fromElementMap: " + fromElementMap);
+                    throw new NullPointerException("oldQc: " + origC.getQueryClass()
+                            + ", fromElementMap: " + fromElementMap);
                 }
             }
             retval.setSingleton(origC.isSingleton());

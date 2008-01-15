@@ -34,12 +34,12 @@ public class Query implements FromElement
 {
     private boolean distinct = true;
     private Constraint constraint = null;
-    private Set queryClasses = new LinkedHashSet(); // @element-type FromElement
+    private Set<FromElement> queryClasses = new LinkedHashSet();
     private List<QuerySelectable> select = new ArrayList();
     private List orderBy = new ArrayList(); // @element-type QueryNode
     private Set groupBy = new LinkedHashSet(); // @element-type QueryNode
-    private Map aliases = new HashMap();
-    private Map reverseAliases = new HashMap();
+    private Map<Object, String> aliases = new HashMap();
+    private Map<String, Object> reverseAliases = new HashMap();
     private int limit = Integer.MAX_VALUE;
 
     private int aliasNo = 1;
@@ -52,7 +52,7 @@ public class Query implements FromElement
     }
 
     /**
-     * Sets the LIMIT parameter for this query - not that this is only honoured in a subquery.
+     * Sets the LIMIT parameter for this query - note that this is only honoured in a subquery.
      *
      * @param limit the new limit parameter - the results will be truncated to this many rows
      */
@@ -114,9 +114,9 @@ public class Query implements FromElement
     /**
      * Returns all FromElements in the FROM clause
      *
-     * @return list of FromElements
+     * @return set of FromElements
      */
-    public Set getFrom() {
+    public Set<FromElement> getFrom() {
         return Collections.unmodifiableSet(queryClasses);
     }
 
@@ -352,20 +352,20 @@ public class Query implements FromElement
     }
 
     /**
-     * Returns the map of SELECTed QueryNodes to String aliases
+     * Returns the map of QuerySelectables and FromElements to String aliases
      *
      * @return the map
      */
-    public Map getAliases() {
+    public Map<Object, String> getAliases() {
         return Collections.unmodifiableMap(aliases);
     }
 
     /**
-     * Returns the map of String aliases to SELECTed QueryNodes
+     * Returns the map of String aliases to QuerySelectables and FromElements
      *
      * @return the map
      */
-    public Map getReverseAliases() {
+    public Map<String, Object> getReverseAliases() {
         return Collections.unmodifiableMap(reverseAliases);
     }
 
@@ -389,7 +389,8 @@ public class Query implements FromElement
 
         if ((alias != null) && reverseAliases.containsKey(alias)
             && (!obj.equals(reverseAliases.get(alias)))) {
-            throw new IllegalArgumentException("Alias " + alias + " is already in use");
+            throw new IllegalArgumentException("Alias " + alias + " is already in use. Adding to "
+                    + toString() + " object " + obj + " with alias " + alias);
         }
 
         if ((alias != null) && aliases.containsKey(obj)
