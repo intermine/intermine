@@ -341,7 +341,7 @@ public class QueryTestCaseTest extends QueryTestCase
             assertEquals(q1, q2);
             failed = true;
         } catch (AssertionFailedError e) {
-            assertEquals(e.getMessage(), "asserting equal: expected <" + q1.toString() + "> but was <" + q2.toString() + ">: SELECT lists are not equal: query nodes are not the same: field members of different subquery aliases expected:<a1_> but was:<a2_>", e.getMessage());
+            assertEquals(e.getMessage(), "asserting equal: expected <" + q1.toString() + "> but was <" + q2.toString() + ">: SELECT lists are not equal: query nodes are not the same: field members of different subquery aliases expected:<...1...> but was:<...2...>", e.getMessage());
         } finally {
             if (failed) {
                 fail("Failure should have happened");
