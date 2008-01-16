@@ -110,8 +110,9 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      }
 
      private Query getQuery(ObjectStore os, InterMineBag bag, boolean useBag) {
-         Query subQ = new Query();
-         subQ.setDistinct(true);
+         
+         Query q = new Query();
+         q.setDistinct(true);
          QueryClass qcGene = new QueryClass(Gene.class);
          QueryClass qcIntergenicRegion = new QueryClass(IntergenicRegion.class);
          QueryClass qcTFBindingSite = new QueryClass(TFBindingSite.class);
@@ -124,29 +125,24 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          QueryField qfId = new QueryField(qcMotif, "identifier");
          QueryField qfDataSet = new QueryField(qcDataSet, "title");
 
-         subQ.addFrom(qcGene);
-         subQ.addFrom(qcIntergenicRegion);
-         subQ.addFrom(qcTFBindingSite);
-         subQ.addFrom(qcDataSet);
-         subQ.addFrom(qcMotif);
-         subQ.addFrom(qcOrganism);
+         QueryFunction geneCount = new QueryFunction();
 
-         subQ.addToSelect(qfId);
-         subQ.addToSelect(qfGeneId);
+         
+         q.addFrom(qcGene);
+         q.addFrom(qcIntergenicRegion);
+         q.addFrom(qcTFBindingSite);
+         q.addFrom(qcDataSet);
+         q.addFrom(qcMotif);
+         q.addFrom(qcOrganism);
 
+         q.addToSelect(qfId);
+         q.addToSelect(geneCount);
+         q.addToSelect(qfId);
+         
          ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
          if (useBag) {
              // genes must be in bag
-             // We convert the bag into a separate bag table because PostgreSQL runs it 200 times
-             // faster that way.
-             List materialisedBag = new ArrayList(bag.getContentsAsIds());
-             BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, materialisedBag);
-             if (os instanceof ObjectStoreInterMineImpl) {
-                 try {
-                     ((ObjectStoreInterMineImpl) os).createTempBagTable(bc1);
-                 } catch (ObjectStoreException e) {
-                 }
-             }
+             BagConstraint bc1 = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
              cs.addConstraint(bc1);
          }
          // get organisms
@@ -186,24 +182,25 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          SimpleConstraint sc =
              new SimpleConstraint(qfDataSet, ConstraintOp.EQUALS, new QueryValue("Tiffin"));
          cs.addConstraint(sc);
+         
+         q.setConstraint(cs);
 
-         subQ.setConstraint(cs);
-
-         Query q = new Query();
-         q.addFrom(subQ);
-
-         QueryFunction geneCount = new QueryFunction();
-
-         QueryField qfMotif = new QueryField(subQ, qfId);
-
-         q.addToSelect(qfMotif);
-         q.addToSelect(geneCount);
-         if (useBag) {
-             q.addToSelect(qfMotif);
-         }
-
-         q.addToGroupBy(qfMotif);
-
+         q.addToGroupBy(qfId);
+         
+//         SELECT DISTINCT a1_, a2_, a5_ 
+//         FROM org.flymine.model.genomic.Gene AS a1_, 
+//         org.flymine.model.genomic.IntergenicRegion AS a2_,
+//         org.flymine.model.genomic.TFBindingSite AS a3_, 
+//         org.flymine.model.genomic.DataSet AS a4_, 
+//         org.flymine.model.genomic.Motif AS a5_ 
+//         WHERE (a1_.upstreamIntergenicRegion CONTAINS a2_ 
+//               AND a2_.overlappingFeatures CONTAINS a3_ 
+//               AND a3_.evidence CONTAINS a4_ 
+//               AND LOWER(a4_.title) = 'tiffin' 
+//               AND a3_.motif CONTAINS a5_
+         
+       
+         
          return q;
      }
 
