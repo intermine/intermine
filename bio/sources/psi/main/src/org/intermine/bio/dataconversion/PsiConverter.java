@@ -367,17 +367,11 @@ public class PsiConverter extends FileConverter
 
                 attName = "participantId";
 
-                // <participantList><participant id="5"><biologicalRole><names><shortLabel>
-            } else if (qName.equals("shortLabel")
-                       && stack.search("biologicalRole") == 2) {
-
-                attName = "biologicalRole";
-
                 // <participantList><participant id="5"><experimentalRole><names><shortLabel>
             } else if (qName.equals("shortLabel")
                        && stack.search("experimentalRole") == 2) {
 
-                attName = "experimentalRole";
+                attName = "proteinRole";
 
                 //<interactionList><interaction><experimentList><experimentRef>
             } else if (qName.equals("experimentRef")
@@ -420,8 +414,7 @@ public class PsiConverter extends FileConverter
                 interactionRegion.setReference("location", location);
 
                 // add location and region to interaction object
-                interactorHolder.setInteractionRegion(interactionRegion);
-                //interactorHolder.interactingRegion = interactingRegion;
+                interactorHolder.interactionRegion = interactionRegion;
                 interactorHolder.location = location;
 
                 holder.addRegion(interactionRegion.getIdentifier());
@@ -634,20 +627,12 @@ public class PsiConverter extends FileConverter
                     }
 
                     // <interactionList><interaction><participantList><participant id="5">
-                    // <biologicalRole><names><shortLabel>
-                } else if (qName.equals("shortLabel")
-                                && stack.search("biologicalRole") == 2
-                                && interactorHolder != null) {
-
-                    interactorHolder.biologicalRole = attValue.toString();
-
-                    // <interactionList><interaction><participantList><participant id="5">
-                    // <biologicalRole><names><shortLabel>
+                    // <experimentalRole><names><shortLabel>
                 } else if (qName.equals("shortLabel")
                                 && stack.search("experimentalRole") == 2
                                 && interactorHolder != null) {
 
-                    interactorHolder.experimentalRole = attValue.toString();
+                    interactorHolder.proteinRole = attValue.toString();
 
                     // <participantList><participant id="6919"><featureList><feature id="6920">
                     //    <featureRangeList><featureRange><startStatus><names><shortLabel>
@@ -657,7 +642,6 @@ public class PsiConverter extends FileConverter
                                 && interactorHolder.isRegionFeature) {
 
                     interactorHolder.startStatus = attValue.toString();
-
                     // <participantList><participant id="6919"><featureList><feature id="6920">
                     //    <featureRangeList><featureRange><endStatus><names><shortLabel>
                 } else if (qName.equals("shortLabel")
@@ -666,7 +650,7 @@ public class PsiConverter extends FileConverter
                                 && interactorHolder.isRegionFeature) {
 
                     interactorHolder.endStatus = attValue.toString();
-
+                   
                 //<interactionList><interaction>
                 } else if (qName.equals("interaction")
                                 && holder != null) {
@@ -699,10 +683,9 @@ public class PsiConverter extends FileConverter
                     Item interaction = createItem("ProteinInteraction");
                     String proteinRefId = interactorHolder.proteinId;
                     interaction.setAttribute("shortName", interactionHolder.shortName);
-                    interaction.setAttribute("biologicalRole",
-                                             interactorHolder.biologicalRole);
-                    interaction.setAttribute("experimentalRole",
-                                             interactorHolder.experimentalRole);
+                    interaction.setAttribute("proteinRole",
+                                             interactorHolder.proteinRole);
+
                     if (interactionHolder.confidence != null) {
                         interaction.setAttribute("confidence",
                                              interactionHolder.confidence.toString());
@@ -715,23 +698,32 @@ public class PsiConverter extends FileConverter
                     interaction.setReference("experiment",
                            interactionHolder.experimentHolder.experiment.getIdentifier());
 
-                    interaction.addCollection(interactionHolder.getInteractingRegions());
-                    // get all proteins for this interaction
+                    // interactingProteins
                     Set<String> proteinIds = interactionHolder.proteinIds;
-
-                    // remove this protein from the list.
                     proteinIds.remove(proteinRefId);
-                    // make new collection
                     ReferenceList proteinList = new ReferenceList("interactingProteins",
                                                                   new ArrayList());
-                    // add all other proteins to collection
                     for (Iterator it = proteinIds.iterator(); it.hasNext();) {
                         proteinList.addRefId((String) it.next());
                     }
-                    // add reference
                     interaction.addCollection(proteinList);
+                    
                     proteinIds.add(proteinRefId);
-
+                    
+                    // interactingRegions
+                    Set<String> regionIds = interactionHolder.regionIds;
+                    ReferenceList regionList = new ReferenceList("interactingRegions",
+                                                                  new ArrayList());             
+                    for (Iterator it = regionIds.iterator(); it.hasNext();) {
+                        String tmp = (String) it.next();
+                        regionList.addRefId(tmp);
+                        LOG.error(tmp);
+                    }
+                    if (!regionList.getRefIds().isEmpty()) {
+                        interaction.addCollection(regionList);
+                    }
+                    
+                    
                     // add dataset
                     ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
                     interaction.addCollection(evidenceColl);
@@ -739,8 +731,19 @@ public class PsiConverter extends FileConverter
 
                     /* store all protein interaction-related items */
                     writer.store(ItemHelper.convert(interaction));
-                    if (interactorHolder.getInteractionRegion() != null) {
-                        writer.store(ItemHelper.convert(interactorHolder.getInteractionRegion()));
+                    if (interactorHolder.interactionRegion != null) {
+                        
+                        Item region = interactorHolder.interactionRegion;
+                        if (interactorHolder.startStatus != null) {
+                            region.setAttribute("startStatus",
+                                                 interactorHolder.startStatus);
+                        }
+                        if (interactorHolder.endStatus != null) {
+                            region.setAttribute("endStatus",
+                                                 interactorHolder.endStatus);
+                        }                        
+                        region.setReference("interaction", interaction);
+                        writer.store(ItemHelper.convert(region));
                         writer.store(ItemHelper.convert(interactorHolder.location));
                     }
 
@@ -949,8 +952,7 @@ public class PsiConverter extends FileConverter
             private Set<InteractorHolder> interactors = new HashSet<InteractorHolder>();
             private boolean isValid = true;
             private Set<String> proteinIds = new HashSet<String>();
-            private ReferenceList interactingRegions =
-                new ReferenceList("interactingRegions", new ArrayList());
+            private Set<String> regionIds = new HashSet<String>();
 
             /**
              * Constructor
@@ -960,10 +962,18 @@ public class PsiConverter extends FileConverter
                 this.shortName = shortName;
             }
 
+            /**
+             * 
+             * @param experimentHolder object holding experiment object
+             */
             protected void setExperiment(ExperimentHolder experimentHolder) {
                 this.experimentHolder = experimentHolder;
             }
 
+            /**
+             * 
+             * @param confidence confidence score for interaction
+             */
             protected void setConfidence(String confidence) {
                 if (Character.isDigit(confidence.charAt(0))) {
                     this.confidence = new Double(confidence);
@@ -974,21 +984,30 @@ public class PsiConverter extends FileConverter
                 }
             }
 
+            /**
+             * 
+             * @param interactorHolder object holding interactor 
+             */
             protected void addInteractor(InteractorHolder interactorHolder) {
                 interactors.add(interactorHolder);
             }
 
+            /**
+             * 
+             * @param proteinId protein involved in interaction
+             */
             protected void addProtein(String proteinId) {
                 proteinIds.add(proteinId);
             }
 
-            protected void addRegion(String id) {
-                interactingRegions.addRefId(id);
+            /** 
+             * 
+             * @param regionId Id of ProteinInteractionRegion object
+             */
+            protected void addRegion(String regionId) {
+                regionIds.add(regionId);
             }
 
-            protected ReferenceList getInteractingRegions() {
-                return interactingRegions;
-            }
         }
 
 
@@ -1001,10 +1020,9 @@ public class PsiConverter extends FileConverter
         public static class InteractorHolder
         {
             private String proteinId;   // protein.getIdentifier()
-            private String experimentalRole;
-            private String biologicalRole;
-            private Item interactionRegion;
-            private Item location;
+            private String proteinRole;
+            private Item interactionRegion; // for storage later
+            private Item location;          // for storage later
             private String startStatus;
             private String endStatus;
 
@@ -1027,13 +1045,6 @@ public class PsiConverter extends FileConverter
                 this.proteinId = proteinId;
             }
 
-            protected void setInteractionRegion(Item interactionRegion) {
-                this.interactionRegion = interactionRegion;
-            }
-
-            protected Item getInteractionRegion() {
-                return interactionRegion;
-            }
         }
 
         /**
@@ -1046,32 +1057,47 @@ public class PsiConverter extends FileConverter
 
             protected String name;
             protected Item experiment;
-            protected HashSet comments = new HashSet(); // items to be stored
-            // whether or not this item has been stored in the db yet
+            protected HashSet comments = new HashSet();
             protected boolean isStored = false;
 
             /**
              * Constructor
-             * @param experiment
+             * @param experiment experiment where this interaction was observed
              */
             public ExperimentHolder(Item experiment) {
                 this.experiment = experiment;
             }
 
+            /**
+             * 
+             * @param name name of experiment
+             */
             protected void setName(String name) {
                 experiment.setAttribute("name", name);
                 this.name = name;
             }
 
+            /**
+             * 
+             * @param publication publication of this experiment
+             */
             protected void setPublication(String publication) {
-                //this.publication = publication;
                 experiment.setReference("publication", publication);
             }
 
+            /**
+             * 
+             * @param whichMethod method
+             * @param termItemId termID
+             */
             protected void setMethod(String whichMethod, String termItemId) {
                 experiment.setReference(whichMethod, termItemId);
             }
 
+            /**
+             * 
+             * @param fullName name of organism
+             */
             protected void setHostOrganism(String fullName) {
                 experiment.setAttribute("hostOrganism", fullName);
             }

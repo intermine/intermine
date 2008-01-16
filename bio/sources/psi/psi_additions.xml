@@ -12,8 +12,7 @@
     <class name="org.flymine.model.genomic.ProteinInteractionTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
 
     <class name="org.flymine.model.genomic.ProteinInteraction" is-interface="true">
-        <attribute name="experimentalRole" type="java.lang.String"/>
-        <attribute name="biologicalRole" type="java.lang.String"/>
+        <attribute name="proteinRole" type="java.lang.String"/>
         <attribute name="shortName" type="java.lang.String"/>        
         <attribute name="confidence" type="java.lang.Double"/>
         <attribute name="confidenceText" type="java.lang.String"/>        
