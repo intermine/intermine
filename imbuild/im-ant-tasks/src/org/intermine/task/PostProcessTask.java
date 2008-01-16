@@ -87,7 +87,7 @@ public class PostProcessTask extends Task
     public void setAction(String action) {
         this.action = action;
     }
-    
+
     public void execute() throws BuildException {
         if (projectXml == null) {
             throw new BuildException("no projectXml specified");
@@ -118,7 +118,7 @@ public class PostProcessTask extends Task
                     doCorePostProcess(name);
                 }
             }
-            
+
         // ok - do a specific task only
         } else {
             if (DO_SOURCES.equals(action)) {
@@ -132,7 +132,7 @@ public class PostProcessTask extends Task
             }
         }
     }
-    
+
     private void doCorePostProcess (String postProcessName) {
         PostProcess p = (PostProcess) project.getPostProcesses().get(postProcessName);
         try {
@@ -165,8 +165,10 @@ public class PostProcessTask extends Task
     }
 
     private void doSourcePostProcess(String source) {
-        Source s = (Source) project.getSources().get(source);
-        File sourceDir = new File(new File(workspaceBaseDir, "/bio/sources"), s.getType());
+        Source s = project.getSources().get(source);
+        File sourceDir = new File(new File(workspaceBaseDir,
+                                           project.getType() + File.separator + Integrate.SOURCES),
+                                           s.getType());
 
         System.out.print("Performing postprocess on source:" + source + ", in dir: " + sourceDir
                          + "\n");
@@ -190,7 +192,7 @@ public class PostProcessTask extends Task
 
         // Add source properties
         initAntProps(ant, s.getUserProperties().iterator());
-        
+
         // source.name
         Property prop = ant.createProperty();
         prop.setName("source.name");
