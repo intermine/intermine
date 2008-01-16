@@ -86,10 +86,9 @@ public class RNAiConverter extends FileConverter
                 if (readingData) {
                     Item gene = createGene(line[0]);
 
-                    // may be tenth column with a comment
                     String comment = null;
-                    if (line.length == 10) {
-                        comment = line[9].trim();
+                    if (line.length == 12) {
+                        comment = line[10].trim();
                     }
                     String isObserved = null;
                     if (line[5] != null && line[5].equals("1")) {
@@ -98,12 +97,12 @@ public class RNAiConverter extends FileConverter
                         if (line[6] != null && line[6].equals("1")) {
                             isObserved = "false";
                         }
-                    Item phenotype = createPhenotype(line[2], line[3], comment, isObserved,
+                    Item phenotype = createPhenotype(line[4], line[3], comment, isObserved,
                         line[7], line[8]);
                     phenotype.setReference("subject", gene.getIdentifier());
                     phenotype.setReference("gene", gene.getIdentifier());
 
-                    Item pub = createPub(line[10]);
+                    Item pub = createPub(line[11]);
                     phenotype.setCollection("evidence",
                         new ArrayList(Collections.singleton(pub.getIdentifier())));
                     Item screen = createScreen(pub);
@@ -139,6 +138,7 @@ public class RNAiConverter extends FileConverter
     throws ObjectStoreException {
         Item rnaiPhenotype = createItem("RNAiPhenotype");
         rnaiPhenotype.setAttribute("code", code);
+        rnaiPhenotype.setAttribute("name", desc);
         rnaiPhenotype.setAttribute("observed", isObserved);
         rnaiPhenotype.setAttribute("penetranceFrom", penetranceFrom);
         rnaiPhenotype.setAttribute("penetranceTo", penetranceTo);
