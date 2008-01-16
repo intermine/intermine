@@ -38,6 +38,11 @@ import org.apache.tools.ant.util.StringUtils;
  */
 public class Integrate extends Task
 {
+    /**
+     * The name of the sources directory.
+     */
+    public static final String SOURCES = "sources";
+
     private String [] possibleActionsArray = {
         "retrieve",
         "translate",
@@ -118,7 +123,7 @@ public class Integrate extends Task
         System.out.print("Found " + intermineProject.getSources().size() + " sources" + "\n");
 
         List<String> sources = new ArrayList<String>();
-        
+
         if (source.equals("") || source.equals("all")) {
             Iterator iter = intermineProject.getSources().entrySet().iterator();
             while (iter.hasNext()) {
@@ -129,12 +134,12 @@ public class Integrate extends Task
             Vector<String> bits = StringUtils.split(source, ',');
             for (String bit: bits) {
                 sources.add(bit);
-            } 
+            }
         }
-         
+
         for (String thisSource: sources) {
             if (intermineProject.getSources().get(thisSource) == null) {
-                throw new BuildException("can't find source in project definition file: " 
+                throw new BuildException("can't find source in project definition file: "
                                          + thisSource);
             }
 
@@ -155,7 +160,7 @@ public class Integrate extends Task
     private void performAction(String actionName, String sourceName) {
         Source s = (Source) intermineProject.getSources().get(sourceName);
         File baseDir = new File(workspaceBaseDir,
-                                intermineProject.getType() + File.separatorChar + "sources"); 
+                                intermineProject.getType() + File.separatorChar + SOURCES);
         File sourceDir = new File(baseDir, s.getType());
 
         System.out.print("Performing integration action \"" + actionName + "\" for source \""
@@ -181,7 +186,7 @@ public class Integrate extends Task
         integrateBasedir.setLocation(getProject().getBaseDir());
         integrateBasedir.setProject(getProject());
         integrateBasedir.execute();
-        
+
         // Add global properties
         Iterator globalPropIter = intermineProject.getProperties().iterator();
         while (globalPropIter.hasNext()) {

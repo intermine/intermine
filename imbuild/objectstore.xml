@@ -57,7 +57,6 @@
                                    -define-macrodef-merge-additions,
                                    -init-merge,
                                    -merge-models,
-                                   -merge-shortcuts,
                                    compile,
                                    -pre-build-db,
                                    -do-build-db,
@@ -127,15 +126,24 @@
           tofile="${build.model.dir}/${model.name}_model.xml"/>
   </target>
 
-  <!-- Override to perform merge. Note: keep the 'if' -->
-  <target name="-merge-models" if="core.model.path"/>
+  <target name="-init-extra-models-start" unless="extra.model.paths.start">
+    <property name="extra.model.paths.start" value=""/>
+  </target>
 
-  <!-- Merge shortcuts of the core model -->
-  <target name="-merge-shortcuts" depends="-load-task-taskdefs" if="core.model.path">
-    <echo>Merging shortcuts...</echo>
-    <model-merger inputModelFile="${build.model.dir}/${model.name}_model.xml"
-                  additionsFile="${objectstore.xml.basedir}/../${core.model.path}/shortcuts.xml"
-                  outputFile="${build.model.dir}/${model.name}_model.xml"/>
+  <target name="-init-extra-models-end" unless="extra.model.paths.end">
+    <property name="extra.model.paths.end" value=""/>
+  </target>
+
+  <target name="-merge-models" 
+          depends="-init-merge, -init-extra-models-start, -init-extra-models-end"
+          if="core.model.path">
+    <merge-source-models
+       projectXml="../project.xml" 
+       basedir="${library.xml.basedir}/.."
+       classpathref="task.class.path"
+       modelFile="${build.model.dir}/${model.name}_model.xml"
+       extraModelPathsStart="${extra.model.paths.start}"
+       extraModelPathsEnd="${extra.model.paths.end}"/>
   </target>
 
   <target name="-define-macrodef-merge-additions" depends="-load-task-taskdefs">
@@ -154,8 +162,7 @@
           depends="-init-build-db,
                    -define-macrodef-merge-additions,
                    -init-merge,
-                   -merge-models,
-                   -merge-shortcuts"/>
+                   -merge-models"/>
 
   <!-- exist so that default can be overridden -->
   <target name="default" depends="model.default"/>

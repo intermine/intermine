@@ -10,17 +10,25 @@ package org.intermine.task;
  *
  */
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.ModelMerger;
 import org.intermine.modelproduction.xml.InterMineModelParser;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.FileSet;
 
 /**
  * Task to merge a single additions file into an intermine XML model.
@@ -31,8 +39,8 @@ import org.intermine.modelproduction.xml.InterMineModelParser;
 
 public class ModelMergerTask extends Task
 {
+    protected List<File> additionsFiles = new ArrayList<File>();
     protected File inputModelFile;
-    protected File additionsFile;
     protected File outputModelFile;
 
     /**
@@ -48,7 +56,15 @@ public class ModelMergerTask extends Task
      * @param file the additions file
      */
     public void setAdditionsFile(File file) {
-        additionsFile = file;
+        additionsFiles.add(file);
+    }
+
+    /**
+     * The files containing model additions.
+     * @param files the additions files
+     */
+    public void setAdditionsFiles(List<File> files) {
+        additionsFiles = files;
     }
 
     /**
@@ -62,20 +78,43 @@ public class ModelMergerTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() throws BuildException {
+        Model mergedModel = null;
         try {
             InterMineModelParser parser = new InterMineModelParser();
             FileReader reader = new FileReader(inputModelFile);
-            Model model = parser.process(reader);
+            mergedModel = parser.process(reader);
             reader.close();
-            Set<ClassDescriptor> additionClds = parser.generateClassDescriptors(
-                    new FileReader(additionsFile));
-            Model merged = ModelMerger.mergeModel(model, additionClds);
-            FileWriter writer = new FileWriter(outputModelFile);
-            writer.write(merged.toString());
-            writer.close();
         } catch (Exception e) {
-            throw new BuildException("Exception while merging " + additionsFile + " into "
+            throw new BuildException("failed to read model file: " + inputModelFile, e);
+        }
+        if (additionsFiles.size() == 0) {
+            throw new BuildException("no addition files set");
+        } else {
+            for (File additionsFile: additionsFiles) {
+                mergedModel = processFile(mergedModel, additionsFile);
+            }
+        }
+        try {
+            FileWriter writer = new FileWriter(outputModelFile);
+            writer.write(mergedModel.toString());
+            writer.close();
+        } catch (IOException e) {
+            throw new BuildException("failed to write model file: " + outputModelFile, e);
+        }
+    }
+
+    private Model processFile(Model mergedModel, File newAdditionsFile) throws BuildException {
+        try {
+            InterMineModelParser parser = new InterMineModelParser();
+            Set<ClassDescriptor> additionClds =
+                parser.generateClassDescriptors(new FileReader(newAdditionsFile));
+            System.err .println("merging model additions from: " + newAdditionsFile);
+            Model newMergedModel = ModelMerger.mergeModel(mergedModel, additionClds);
+            return newMergedModel;
+        } catch (Exception e) {
+            throw new BuildException("Exception while merging " + newAdditionsFile + " into "
                                      + inputModelFile, e);
         }
     }
