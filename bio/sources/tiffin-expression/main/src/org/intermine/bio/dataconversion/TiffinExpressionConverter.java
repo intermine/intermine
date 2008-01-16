@@ -22,15 +22,11 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 
 import java.io.BufferedReader;
 import java.io.Reader;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
-import com.sun.corba.se.spi.ior.MakeImmutable;
 
 /**
  * DataConverter to parse Tiffin expression data file into Items.
@@ -66,7 +62,7 @@ public class TiffinExpressionConverter extends FileConverter
         store(pub);
     }
 
-    private static final Pattern MOTIF_NAME_PATTERN = Pattern.compile("(TIFDMEM\\d)\\.\\d");
+    private static final Pattern MOTIF_NAME_PATTERN = Pattern.compile("(TIFDMEM\\d+)\\.\\d+");
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile("(.*)\\W+\\(P=(.*)\\)");
 
     /**
@@ -78,12 +74,10 @@ public class TiffinExpressionConverter extends FileConverter
     @Override
     public void process(Reader reader) throws Exception {
         BufferedReader br = new BufferedReader(reader);
-
         Item currentMotif = null;
-
         String line = null;
-        while ((line = br.readLine()) != null) {
 
+        while ((line = br.readLine()) != null) {
             Matcher motifNameMatcher = MOTIF_NAME_PATTERN.matcher(line);
             if (motifNameMatcher.matches()) {
                 String currentMotifIdentifier = motifNameMatcher.group(1);
@@ -96,8 +90,9 @@ public class TiffinExpressionConverter extends FileConverter
                     String expressionDescription = expressionMatcher.group(1);
                     Item expressionItem = getExpressionTerm(expressionDescription);
                     expressionItem.setReference("motif", currentMotif);
+                    store(expressionItem);
                 } else {
-                    if (!line.trim().isEmpty()) {
+                    if (line.trim().length() > 0) {
                         throw new RuntimeException("failed to parse this line: " + line);
                     }
                 }
@@ -109,8 +104,8 @@ public class TiffinExpressionConverter extends FileConverter
         if (termItems.containsKey(expressionDescription)) {
             return termItems.get(expressionDescription);
         } else {
-            Item expressionTermItem = createItem("ExpressionTerm");
-            expressionTermItem.setAttribute("description", expressionDescription);
+            Item expressionTermItem = createItem("TiffinExpressionTerm");
+            expressionTermItem.setAttribute("name", expressionDescription);
             termItems.put(expressionDescription, expressionTermItem);
             return expressionTermItem;
         }

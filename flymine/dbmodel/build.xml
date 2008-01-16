@@ -21,6 +21,7 @@
     <merge-additions file="bio/sources/tiling_path/tiling_path_additions.xml"/>
     <merge-additions file="bio/sources/long_oligo/long_oligo_additions.xml"/>
     <merge-additions file="bio/sources/tiffin/tiffin_additions.xml"/>
+    <merge-additions file="bio/sources/tiffin-expression/tiffin-expression_additions.xml"/>
     <merge-additions file="bio/sources/homophila/homophila_additions.xml"/>
     <merge-additions file="bio/sources/interpro/interpro_additions.xml"/>
     <merge-additions file="bio/sources/bdgp-clone/bdgp-clone_additions.xml"/>
