@@ -715,9 +715,7 @@ public class PsiConverter extends FileConverter
                     ReferenceList regionList = new ReferenceList("interactingRegions",
                                                                   new ArrayList());             
                     for (Iterator it = regionIds.iterator(); it.hasNext();) {
-                        String tmp = (String) it.next();
-                        regionList.addRefId(tmp);
-                        LOG.error(tmp);
+                        regionList.addRefId((String) it.next());
                     }
                     if (!regionList.getRefIds().isEmpty()) {
                         interaction.addCollection(regionList);
