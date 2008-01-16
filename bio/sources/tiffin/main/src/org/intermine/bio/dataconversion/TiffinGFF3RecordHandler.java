@@ -56,6 +56,9 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
             motif.setAttribute("curated", "false");
             motifs.put(name, motif);
             addEarlyItem(motif);
+            Item synonym = createItem("Synonym");
+            synonym.setReference("subject", motif);
+            addItem(synonym);
         }
         return motif;
     }
