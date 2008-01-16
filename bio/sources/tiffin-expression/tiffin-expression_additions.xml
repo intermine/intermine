@@ -1,16 +1,15 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.MRNALocalisationTerm" extends="org.intermine.model.InterMineObject" is-interface="true">
-    <attribute name="localisation" type="java.lang.String"/>
+  <class name="org.flymine.model.genomic.Motif" 
+         extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <collection name="expressionTerms"
+                referenced-type="org.flymine.model.genomic.TiffinExpressionTerm"
+                reverse-reference="motif"/>
   </class>
-  <class name="org.flymine.model.genomic.MRNALocalisationResult" extends="org.intermine.model.InterMineObject" is-interface="true">
-    <attribute name="stage" type="java.lang.String"/>
-    <attribute name="expressed" type="java.lang.Boolean"/>
-    <reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="mRNALocalisationResults"/>
-    <collection name="mRNALocalisationTerms" referenced-type="org.flymine.model.genomic.MRNALocalisationTerm"/>
-  </class>
-  <class name="org.flymine.model.genomic.Gene" is-interface="true">
-    <collection name="mRNALocalisationResults" referenced-type="org.flymine.model.genomic.MRNALocalisationResult" reverse-reference="gene"/>
+  <class name="org.flymine.model.genomic.TiffinExpressionTerm" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <reference name="motif"
+               referenced-type="org.flymine.model.genomic.Motif" 
+               reverse-reference="expressionTerms"/>
   </class>
 </classes>

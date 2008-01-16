@@ -10,17 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.model.fulldata.Item;
-import org.intermine.xml.full.ItemHelper;
 
 import java.io.File;
 import java.io.StringReader;
@@ -40,18 +35,19 @@ public class TiffinExpressionConverterTest extends ItemsTestCase
     }
 
     public void testConstruct() throws Exception {
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
+        MockItemWriter itemWriter =
+            new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         TiffinExpressionConverter converter = new TiffinExpressionConverter(itemWriter, model);
         assertNotNull(converter.orgDrosophila);
     }
 
     public void testProcess() throws Exception {
-/*
         ClassLoader loader = getClass().getClassLoader();
         final String testDataFileName = "tiffin_ImaGo.test_data";
         String input = IOUtils.toString(loader.getResourceAsStream(testDataFileName));
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
+        MockItemWriter itemWriter =
+            new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         TiffinExpressionConverter converter = new TiffinExpressionConverter(itemWriter, model);
         converter.setCurrentFile(new File(testDataFileName));
         converter.process(new StringReader(input));
@@ -60,10 +56,7 @@ public class TiffinExpressionConverterTest extends ItemsTestCase
         // uncomment to create a new target items files
         writeItemsFile(itemWriter.getItems(), "/tmp/TiffinExpressionTestItems.xml");
 
-        final List<org.intermine.xml.full.Item> readItemList =
-            new ArrayList<org.intermine.xml.full.Item>(readItemSet("TiffinExpressionTestItems.xml"));
-        Set<Item> expected = new HashSet<Item>(ItemHelper.convertToFullDataItems(readItemList));
+        Set<org.intermine.xml.full.Item> expected = readItemSet("TiffinExpressionTestItems.xml");
         assertEquals(expected, itemWriter.getItems());
-  */
     }
 }

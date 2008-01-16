@@ -1,221 +1,417 @@
 <items>
-  <item id="3_10" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="2_3"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/><reference ref_id="4_7"/><reference ref_id="4_14"/><reference ref_id="4_15"/><reference ref_id="4_10"/><reference ref_id="4_11"/><reference ref_id="4_17"/></collection>
+  <item id="2_3" class="http://www.flymine.org/model/genomic#Motif">
+    <attribute name="identifier" value="TIFDMEM0000009"/>
   </item>
-  <item id="4_18" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Ubiquitous (unlocalized)"/>
+  <item id="3_53" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="prothoracic segment"/>
+    <reference name="motif" ref_id="2_2"/>
   </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="2_1"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_1"/></collection>
+  <item id="3_42" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S14 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_1" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="2_1"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_1"/></collection>
+  <item id="3_20" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S1 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="4_11" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Apical exclusion"/>
+  <item id="3_58" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="adult hindgut primordium"/>
+    <reference name="motif" ref_id="2_2"/>
   </item>
-  <item id="4_12" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Pole cell exclusion"/>
+  <item id="3_78" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="Drosophila"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="4_4" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Localized"/>
+  <item id="3_8" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="ovary"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_11" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="2_3"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_8"/><reference ref_id="4_9"/><reference ref_id="4_10"/><reference ref_id="4_11"/></collection>
+  <item id="3_85" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="larva"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="3_13" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="2_4"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+  <item id="3_36" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="gamete"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_6" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="2_2"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/><reference ref_id="4_7"/><reference ref_id="4_10"/><reference ref_id="4_11"/><reference ref_id="4_12"/></collection>
+  <item id="3_22" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S12A oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_20" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="2_4"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_14"/><reference ref_id="4_16"/><reference ref_id="4_17"/></collection>
+  <item id="3_70" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic/larval digestive system"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="3_18" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="2_4"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_10"/><reference ref_id="4_12"/></collection>
+  <item id="3_30" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S7 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="4_8" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Basal localization"/>
+  <item id="3_9" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S14B oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_9" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="2_3"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+  <item id="3_37" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S6 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="4_6" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk cortex localization"/>
+  <item id="3_56" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="adult hindgut specific anlage"/>
+    <reference name="motif" ref_id="2_2"/>
   </item>
-  <item id="3_15" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="2_4"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_1"/></collection>
+  <item id="3_38" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="fertilized egg"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="4_15" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded partially stage 4"/>
+  <item id="3_74" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic foregut"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="2_3" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG1746"/>
-    <reference name="organism" ref_id="0_1"/>
+  <item id="3_69" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic/larval foregut"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="2_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG4800"/>
-    <reference name="organism" ref_id="0_1"/>
+  <item id="3_23" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S13B oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="4_17" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degradation maternal transcripts"/>
+  <item id="3_47" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="lateral cord neuron"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_16" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="2_4"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_1"/></collection>
+  <item id="2_2" class="http://www.flymine.org/model/genomic#Motif">
+    <attribute name="identifier" value="TIFDMEM0000007"/>
   </item>
-  <item id="4_19" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded completely stage 5"/>
+  <item id="3_67" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="whole organism"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="2_4" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG3057"/>
-    <reference name="organism" ref_id="0_1"/>
-  </item>
-  <item id="3_7" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="2_2"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_8"/><reference ref_id="4_6"/><reference ref_id="4_7"/><reference ref_id="4_9"/><reference ref_id="4_10"/><reference ref_id="4_11"/><reference ref_id="4_12"/></collection>
+  <item id="3_43" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S4 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
-  <item id="4_14" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded"/>
+  <item id="3_84" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="foregut"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="4_9" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Basal enrichment"/>
+  <item id="3_35" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S9 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_19" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="2_4"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_10"/><reference ref_id="4_12"/></collection>
+  <item id="3_2" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="maternal"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_77" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="procephalic ectoderm primordium"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_95" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="dorsal ectoderm anlage in statu nascendi"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_29" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S2 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_93" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic integumentary system"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_46" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="neuron"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_51" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="prothoracic gland plate"/>
+    <reference name="motif" ref_id="2_2"/>
+  </item>
+  <item id="3_39" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S11 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_60" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="P3 primordium"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_16" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S13A oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_57" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="adult hindgut precursor"/>
+    <reference name="motif" ref_id="2_2"/>
+  </item>
+  <item id="3_97" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="dorsal epidermis primordium"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_31" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S13C oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_68" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="proventriculus primordium"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_10" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S12C oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_55" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="thoracic segment"/>
+    <reference name="motif" ref_id="2_2"/>
+  </item>
+  <item id="3_33" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S10B oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_76" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="ectoderm anlage"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_52" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="prothoracic gland primordium"/>
+    <reference name="motif" ref_id="2_2"/>
+  </item>
+  <item id="3_12" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="blastoderm"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_59" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic epidermis"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_44" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="gonad"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_99" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="neurogenic region"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_5" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_79" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="germ layer"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_65" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="proventriculus"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_50" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="prothoracic gland"/>
+    <reference name="motif" ref_id="2_2"/>
+  </item>
+  <item id="3_72" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic proventriculus"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_25" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S12 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_87" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="organ system"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
   <item id="1_1" class="http://www.flymine.org/model/genomic#Publication">
-    <attribute name="pubMedId" value="17923096"/>
+    <attribute name="pubMedId" value="17238282"/>
   </item>
-  <item id="4_7" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Yolk cortex enrichment"/>
+  <item id="3_28" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S10A oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_3" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 6-7"/>
-    <reference name="gene" ref_id="2_1"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_1"/></collection>
+  <item id="3_75" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="epidermis"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="3_4" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="false"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="2_1"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_1"/></collection>
+  <item id="3_80" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="integumentary system"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="4_16" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Degraded completely stage 8"/>
+  <item id="3_18" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="pre-blastoderm"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="2_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG4475"/>
-    <reference name="organism" ref_id="0_1"/>
+  <item id="3_3" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage1-3"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_14" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 4-5"/>
-    <reference name="gene" ref_id="2_4"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_18"/><reference ref_id="4_14"/><reference ref_id="4_15"/><reference ref_id="4_19"/><reference ref_id="4_17"/></collection>
+  <item id="3_94" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="dorsal ectoderm anlage"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="3_17" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="2_4"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+  <item id="3_4" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="female reproductive system"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="4_3" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Ubiquitous (Unlocalized)"/>
+  <item id="3_64" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="procephalic ectoderm anlage in statu nascendi"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="3_8" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="2_2"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_8"/><reference ref_id="4_9"/><reference ref_id="4_13"/></collection>
+  <item id="3_63" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="4_13" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Apical Localization Neuroblasts"/>
+  <item id="3_89" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic/larval proventriculus"/>
+    <reference name="motif" ref_id="2_3"/>
   </item>
-  <item id="4_5" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Embryonic localization patterns"/>
+  <item id="3_19" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S10 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="4_10" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Exclusionary patterns"/>
+  <item id="3_54" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="thorax"/>
+    <reference name="motif" ref_id="2_2"/>
   </item>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Non-expressed"/>
+  <item id="3_7" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="ovariole"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#MRNALocalisationTerm">
-    <attribute name="localisation" value="Maternal"/>
+  <item id="3_34" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S8 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_5" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 1-3"/>
-    <reference name="gene" ref_id="2_2"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+  <item id="3_15" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S5 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
-  <item id="3_12" class="http://www.flymine.org/model/genomic#MRNALocalisationResult">
-    <attribute name="expressed" value="true"/>
-    <attribute name="stage" value="stage 8-9"/>
-    <reference name="gene" ref_id="2_3"/>
-    <reference name="publication" ref_id="1_1"/>
-    <collection name="mRNALocalisationTerms"><reference ref_id="4_14"/><reference ref_id="4_16"/><reference ref_id="4_17"/></collection>
+  <item id="3_88" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="anlage"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_41" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S13 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_49" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="nerve fiber"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_100" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic/larval nervous system"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_83" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage13-16"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_21" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="egg stage"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_32" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="cellular blastoderm"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_82" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="P2 primordium"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_27" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="developmental stage"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_71" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryo"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_90" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="ectoderm anlage in statu nascendi"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_86" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stomodeal invagination"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_98" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="ventral nervous system"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_13" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="unfertilized egg"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_66" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="digestive system"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_96" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="dorsal ectoderm primordium"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_11" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S14A oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="2_1" class="http://www.flymine.org/model/genomic#Motif">
+    <attribute name="identifier" value="TIFDMEM0000005"/>
+  </item>
+  <item id="3_6" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="egg chamber"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_91" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="anterior ectoderm"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_24" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S3 oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_81" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="ectoderm"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_48" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="nerve"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_40" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S13D oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_73" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="germ layer anlage"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_62" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic digestive system"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_92" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stomodeum"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_14" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="embryonic stage"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_61" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="procephalic ectoderm anlage"/>
+    <reference name="motif" ref_id="2_3"/>
+  </item>
+  <item id="3_17" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="stage S12B oocyte"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_26" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="syncytial blastoderm"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_1" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="anatomical descriptive term"/>
+    <reference name="motif" ref_id="2_1"/>
+  </item>
+  <item id="3_45" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
+    <attribute name="name" value="reproductive system"/>
+    <reference name="motif" ref_id="2_1"/>
   </item>
 </items>
