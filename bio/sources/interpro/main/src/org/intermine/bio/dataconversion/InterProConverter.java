@@ -300,7 +300,7 @@ public class InterProConverter extends FileConverter
                 } else if (qName.equals("name") && stack.peek().equals("interpro")) {
                     
                     if (attName != null) {                        
-                        proteinDomain.setAttribute(attName, attValue.toString());
+                        proteinDomain.setAttribute("name", attValue.toString());
                     }
                     
                 // <interpro><abstract>
