@@ -47,6 +47,7 @@ function selectColumnCheckboxes(columnsToDisable, columnsToHighlight, columnInde
             }
         }
     }
+    setToolbarAvailability(!document.getElementById(columnCheckBox).checked);
 }
 
 /**
@@ -111,4 +112,24 @@ function disableColumn(index){
  **/
 function unselectColumnCheckbox(column) {
     document.getElementById('selectedObjects_' + column).checked = false;
+    with(document.saveBagForm) {
+        for(var i=0;i < elements.length;i++) {
+            thiselm = elements[i];
+            var testString = 'selectedObjects_' + column + '_';
+            if(thiselm.id.indexOf(testString) != -1) {
+                if(thiselm.checked) {
+                    setToolbarAvailability(false);
+                    return;
+                }
+            }
+        }
+    }
+}
+
+function setToolbarAvailability(status) {
+    $('newBagName').disabled = status;
+    $('saveNewBag').disabled = status;
+    with($('addToBag')) {
+        $('addToBag').disabled = status;
+    }
 }
