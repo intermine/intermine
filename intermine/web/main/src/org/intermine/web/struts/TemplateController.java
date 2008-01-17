@@ -199,14 +199,16 @@ public class TemplateController extends TilesAction
                     Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
                     Object value;
                     String selectedBagName = null;
-                    if (!modC.getOp().equals(ConstraintOp.IN)) {
-                        value = modC.getValue();
+                    ConstraintOp newOp = modC.getOp();
+                    if (!newOp.equals(ConstraintOp.IN) 
+                                    && !newOp.equals(ConstraintOp.NOT_IN)) {
+                        value = modC.getValue();  
                     } else {
                         // modified constraint set to a bag
                         value = c.getValue();
                         selectedBagName = (String) modC.getValue();
                     }
-                    Constraint newC = new Constraint(c.getOp(), value, true, c.getDescription(),
+                    Constraint newC = new Constraint(newOp, value, true, c.getDescription(),
                             c.getCode(), c.getIdentifier(), modC.getExtraValue());
                     displayNode.getConstraints().set(node.getConstraints().indexOf(c), newC);
                     c = newC;
