@@ -108,6 +108,7 @@ li#button_bar {
     text-align: center;
 }
 .tool_bar_item {
+    _width:350px;
     position: absolute;
     border-top: 1px solid #CCC;
     border-left: 1px solid #CCC;
