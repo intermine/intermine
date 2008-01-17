@@ -104,13 +104,15 @@
 		var i = 0;
 		var j = 0;
 		
-		// TODO there must be a better way to do this
+		
+		if (document.modifyBagForm.selectedBags) {
 		while (document.modifyBagForm.selectedBags[i]) {
 			if (document.modifyBagForm.selectedBags[i].checked) {
 				selectedBags[j] = document.modifyBagForm.selectedBags[i].value;
 				j++;			
 			}
 			i++;
+		}
 		}
     	
 		AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
