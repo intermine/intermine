@@ -38,7 +38,15 @@
   var columnsToHighlight = ${columnsToHighlight};
   var bagType = null;
   
+  // TODO these error messages need to come from the properties file
   function hasSelectedObjects() {
+  
+  	if (!document.saveBagForm.selectedObjects) {
+  	  	var errMsg = "You cannot save these items to a list";
+  		addErrMsg(errMsg);
+  		return false;
+  	}
+  
 		var i = 0;
 		while (document.saveBagForm.selectedObjects[i]) {
 			if (document.saveBagForm.selectedObjects[i].checked) {
@@ -47,7 +55,7 @@
 			i++;
 		}
   		var errMsg = "You need to select which objects to save";
-  		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+  		addErrMsg(errMsg);
   		return false;
   }  
   
@@ -57,7 +65,7 @@
 		var bagName = document.saveBagForm.newBagName.value;
 		AjaxServices.validateBagName(bagName, function(errMsg) {
 			if (errMsg != '') {
-        		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+        		addErrMsg(errMsg);
         	} else {
         		document.saveBagForm.operationButton.value="saveNewBag";
 	       		document.saveBagForm.submit();
@@ -69,12 +77,14 @@
   function validateAddToBag() {  
   	if (hasSelectedObjects()) {		
 		document.saveBagForm.operationButton.value="addToBag";
-	    document.saveBagForm.submit();    	
-   	} else {
-   		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+	    document.saveBagForm.submit();
    	}
   }
   
+  // TODO this function can also be used on wsFilterList.jsp
+  function addErrMsg(errMsg) {  
+  	document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+  }
   
 //]]>-->
 </script>
