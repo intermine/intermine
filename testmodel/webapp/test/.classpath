@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="/testmodel-webapp-main/resources/webapp"/>
 	<classpathentry kind="lib" path="/testmodel-webapp-main/build/webapp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
+	<classpathentry kind="lib" path="lib/httpunit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
