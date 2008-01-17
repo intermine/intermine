@@ -10,9 +10,9 @@ package org.intermine.task;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.intermine.task.project.Project;
 import org.intermine.task.project.ProjectXmlBinding;
@@ -24,7 +24,6 @@ import java.lang.reflect.Method;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.util.ClasspathUtils;
 
@@ -148,7 +147,8 @@ public class MergeSourceModelsTask extends Task
         setProperty(mergeTask, "outputFile", modelFile);
 
         try {
-            Method addFileSetMethod = mergeTask.getClass().getMethod("setAdditionsFiles", List.class);
+            Method addFileSetMethod =
+                mergeTask.getClass().getMethod("setAdditionsFiles", List.class);
             addFileSetMethod.invoke(mergeTask, pathsToMerge);
         } catch (Exception e) {
             throw new BuildException("exception while adding file set", e);
