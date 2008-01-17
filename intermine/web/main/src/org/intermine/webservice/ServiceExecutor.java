@@ -44,6 +44,7 @@ import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
+ * For using of web service see InterMine wiki pages.
  * Executes web service. From xml parses parameters and xml query. 
  * 1) Validates parameters and tries validate xml query as much as possible. Validates xml 
  * query according to XML Schema and and finds out if there were some errors during unmarshalling 

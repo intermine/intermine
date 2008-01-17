@@ -28,7 +28,7 @@ public class RequestProcessor
     private static final String QUERY_PARAMETER = "query";
     private static final String START_PARAMETER = "start";
     private static final String MAX_COUNT_PARAMETER = "maxCount";
-    private static final String COMPUTE_TOTAL_COUNT_PARAMETER = "computeTotalCount";
+    private static final String COMPUTE_TOTAL_COUNT_PARAMETER = "totalCount";
     private static final String RETURN_ONLY_TOTAL_COUNT_PARAMETER = "onlyTotalCount";
     private static final String FORMAT_PARAMETER = "format";
     
@@ -94,6 +94,8 @@ public class RequestProcessor
         if (onlyTotalCount != null && !onlyTotalCount.equalsIgnoreCase("")) {
             if ("yes".equalsIgnoreCase(onlyTotalCount)) {
                 input.setOnlyTotalCount(true);
+                // when only total count is requested, than only tsv format is permitted
+                input.setFormat(WebServiceInput.TSV_FORMAT);
                 if (input.isXmlFormat()) {
                     errors.add("only " + WebServiceInput.TSV_FORMAT + " " + FORMAT_PARAMETER 
                             + " is permitted when returning only total count.");
