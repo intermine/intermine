@@ -97,6 +97,16 @@ li#button_bar {
 .tool_bar_link a:hover {
     color:#5C0075;
 }
+.tool_bar_separator {
+    float: left;
+    background-color: #F5F0FF;
+}
+.tool_bar_separator span{
+    float: left;
+    padding-top:4px;
+    width:30px;
+    text-align: center;
+}
 .tool_bar_item {
     position: absolute;
     border-top: 1px solid #CCC;

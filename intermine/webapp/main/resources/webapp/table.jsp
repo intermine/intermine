@@ -155,6 +155,7 @@
 <ul id="tool_bar_ul_createlist"><img style="cursor: pointer;" src="images/icons/null.gif" width="90" height="25" alt="Create List" border="0" id="tool_bar_button_createlist" class="tool_bar_button"></ul>
 <ul id="tool_bar_ul_addtolist"><img style="cursor: pointer;" src="images/icons/null.gif" width="91" height="25" alt="Add to List" border="0" id="tool_bar_button_addtolist" class="tool_bar_button"></ul>
 <ul id="tool_bar_ul_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></ul>
+<ul class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></ul>
 <ul class="tool_bar_link">
 <html:form action="/changeTableSize">
 	
@@ -189,10 +190,14 @@
 <div id="tool_bar_item_createlist" style="visibility:hidden" class="tool_bar_item">
       <em>(with selected items)</em>
       <fmt:message key="bag.new"/><br/>
-      <html:text property="newBagName"/>
+      <input type="text" name="newBagName" id="newBagName"/>
       <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
       <input type="hidden" name="table" value="${param.table}"/>
-      <input type="button" name="saveNewBag" value="Save selected" onclick="javascript:validateBagName();"/>
+      <input type="button" name="saveNewBag" value="Save selected" id="saveNewBag" onclick="javascript:validateBagName();"/>
+      <script type="text/javascript" charset="utf-8">
+        $('newBagName').disabled = true;
+        $('saveNewBag').disabled = true;
+      </script>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_createlist')" >Cancel</a>
 </div>
@@ -208,7 +213,10 @@
               </c:if>
              </c:forEach>
           </html:select>          		
- 		<input type="button" name="addToBag" value="Add selected" onclick="javascript:validateAddToBag();"/>
+ 		<input type="button" name="addToBag" id="addToBag" value="Add selected" onclick="javascript:validateAddToBag();"/>
+ 		<script type="text/javascript" charset="utf-8">
+          $('addToBag').disabled = true;
+        </script>
     </c:when>
     <c:otherwise>
       <em>no lists saved</em>
