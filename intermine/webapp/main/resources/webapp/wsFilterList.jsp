@@ -96,34 +96,6 @@
              element.style.color = '';
      }
   }
-  // TODO merge this method with the one on historyBagView.jsp
-	function validateBagOperations(operation) {
-		var bagName = document.modifyBagForm.newBagName.value;
-    	
-    	var selectedBags = [];
-		var i = 0;
-		var j = 0;
-		
-		
-		if (document.modifyBagForm.selectedBags) {
-		while (document.modifyBagForm.selectedBags[i]) {
-			if (document.modifyBagForm.selectedBags[i].checked) {
-				selectedBags[j] = document.modifyBagForm.selectedBags[i].value;
-				j++;			
-			}
-			i++;
-		}
-		}
-    	
-		AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
-			if (errMsg != '') {
-        		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
-        	} else {
-        		document.modifyBagForm.listsButton.value = operation;
-        		document.modifyBagForm.submit();
-        	}
-    	});
-    }
 </script>
 <html:text property="newBagName" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
 <img src="theme/union.png" onclick="validateBagOperations('union')" title="union"/>

@@ -36,56 +36,8 @@
 
   var columnsToDisable = ${columnsToDisable};
   var columnsToHighlight = ${columnsToHighlight};
-  var bagType = null;
-  
-  // TODO these error messages need to come from the properties file
-  function hasSelectedObjects() {
-  
-  	if (!document.saveBagForm.selectedObjects) {
-  	  	var errMsg = "You cannot save these items to a list";
-  		addErrMsg(errMsg);
-  		return false;
-  	}
-  
-		var i = 0;
-		while (document.saveBagForm.selectedObjects[i]) {
-			if (document.saveBagForm.selectedObjects[i].checked) {
-				return true;			
-			}
-			i++;
-		}
-  		var errMsg = "You need to select which objects to save";
-  		addErrMsg(errMsg);
-  		return false;
-  }  
-  
-  // TODO merge with the function on bagUploadConfirm.jsp
-  function validateBagName() {  
-  	if (hasSelectedObjects()) {  
-		var bagName = document.saveBagForm.newBagName.value;
-		AjaxServices.validateBagName(bagName, function(errMsg) {
-			if (errMsg != '') {
-        		addErrMsg(errMsg);
-        	} else {
-        		document.saveBagForm.operationButton.value="saveNewBag";
-	       		document.saveBagForm.submit();
-    	    }
-    	});
-   	}
-  }
-  
-  function validateAddToBag() {  
-  	if (hasSelectedObjects()) {		
-		document.saveBagForm.operationButton.value="addToBag";
-	    document.saveBagForm.submit();
-   	}
-  }
-  
-  // TODO this function can also be used on wsFilterList.jsp
-  function addErrMsg(errMsg) {  
-  	document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
-  }
-  
+  var bagType = null;  
+
 //]]>-->
 </script>
 <script type="text/javascript" src="js/table.js" ></script>
@@ -193,7 +145,7 @@
       <input type="text" name="newBagName" id="newBagName"/>
       <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
       <input type="hidden" name="table" value="${param.table}"/>
-      <input type="button" name="saveNewBag" value="Save selected" id="saveNewBag" onclick="javascript:validateBagName();"/>
+      <input type="button" name="saveNewBag" value="Save selected" id="saveNewBag" onclick="javascript:validateBagName(this);"/>
       <script type="text/javascript" charset="utf-8">
         $('newBagName').disabled = true;
         $('saveNewBag').disabled = true;

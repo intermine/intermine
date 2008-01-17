@@ -584,3 +584,83 @@ function saveToggleState(elementId) {
      }
 	AjaxServices.saveToggleState(elementId, opened);
 } 
+
+
+function validateBagOperations(operation) {
+		
+		var bagName = ''; 
+		
+		if (document.modifyBagForm.newBagName) {
+			bagName = document.modifyBagForm.newBagName.value;		
+		}
+	
+		var selectedBags = [];
+		var i = 0;
+		var j = 0;
+		while (document.modifyBagForm.selectedBags[i]) {
+			if (document.modifyBagForm.selectedBags[i].checked) {
+				selectedBags[j] = document.modifyBagForm.selectedBags[i].value;
+				j++;
+			}
+			i++;
+		}
+		AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
+			if (errMsg != '') {
+        		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+        	} else {
+        		document.modifyBagForm.listsButton.value = operation;
+        		document.modifyBagForm.submit();
+        	}
+    	});
+}
+
+function hasSelectedObjects() {
+  
+  	if (!document.saveBagForm.selectedObjects) {
+  	  	var errMsg = "You cannot save these items to a list";
+  		addErrMsg(errMsg);
+  		return false;
+	}
+  
+		var i = 0;
+		while (document.saveBagForm.selectedObjects[i]) {
+			if (document.saveBagForm.selectedObjects[i].checked) {
+				return true;			
+			}
+			i++;
+		}
+  		var errMsg = "You need to select which objects to save";
+  		addErrMsg(errMsg);
+  		return false;
+  }  
+
+  function validateBagName(newBagForm) {  
+  	if (hasSelectedObjects()) {  
+		var bagName = document.newBagForm.newBagName.value;
+		AjaxServices.validateBagName(bagName, function(errMsg) {
+			if (errMsg != '') {
+        		addErrMsg(errMsg);
+        	} else {
+        		if (document.newBagForm.operationButton) {
+        			document.newBagForm.operationButton.value="saveNewBag";
+				}
+	       		document.newBagForm.submit();
+    	    }
+    	});
+   	}
+  }
+ 
+  
+  
+  function validateAddToBag() {  
+  	if (hasSelectedObjects()) {		
+		document.saveBagForm.operationButton.value="addToBag";
+	    document.saveBagForm.submit();
+   	}
+  }
+  
+
+  function addErrMsg(errMsg) {  
+  	document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+  }
+  
