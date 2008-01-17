@@ -10,37 +10,6 @@
 <html:xhtml/>
 
 <script type="text/javascript" src="js/tablesort.js"></script>
-  <script language="javascript">
-  // TODO merge this method with the one on historyBagView.jsp
-	function validateBagOperations(operation) {
-		
-		var bagName = ''; 
-		
-		if (document.modifyBagForm.newBagName.value) {
-			bagName = document.modifyBagForm.newBagName.value;		
-		}
-	
-		var selectedBags = [];
-		var i = 0;
-		var j = 0;
-		while (document.getElementById("selected_bag_" + i)) {
-			if (document.modifyBagForm.selectedBags[i].checked) {
-				selectedBags[j] = document.modifyBagForm.selectedBags[i].value;
-				j++;
-			}
-			i++;
-		}
-		AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
-			if (errMsg != '') {
-        		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
-        	} else {
-        		document.modifyBagForm.listsButton.value = operation;
-        		document.modifyBagForm.submit();
-        	}
-    	});
-    }
-</script>
-
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 <c:set var="type" value="bag"/>
 
