@@ -517,7 +517,7 @@ public class MainHelper
     }
 
     /**
-     * Make a SimpleConstraint for the given Constraint obejct.  The Constraint will be
+     * Make a SimpleConstraint for the given Constraint object.  The Constraint will be
      * case-insensitive.  If the Constraint value contains a wildcard and the operation is "=" or
      * "&lt;&gt;" then the operation will be changed to "LIKE" or "NOT_LIKE" as appropriate.
      */
