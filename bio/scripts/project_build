@@ -120,7 +120,7 @@ if (defined $release) {
 }
 
 my @dump_command = qw[pg_dump -c -F c -i];
-my @load_command = qw[pg_restore -c -i];
+my @load_command = qw[pg_restore -1 -c -i];
 
 sub log_message
 {
