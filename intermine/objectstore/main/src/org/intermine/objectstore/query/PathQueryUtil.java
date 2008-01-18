@@ -14,12 +14,11 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.tools.ant.BuildException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
-
-import org.apache.tools.ant.BuildException;
 
 /**
  * Utility methods for paths.
@@ -218,4 +217,11 @@ public class PathQueryUtil
         return qcEnd;
     }
 
+	public static String getProblemsSummary(Throwable[] problems) {
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i<problems.length; i++) {
+			sb.append(problems[i]);
+		}
+		return sb.toString();
+	}
 }
