@@ -18,11 +18,8 @@ import org.intermine.objectstore.ObjectStore;
 
 
 /**
- * An Interface which defines a frame
- * in which data can be retrieved, organised and created
- * to then be passed to a widget for representation
- * @author julie sullivan
- *
+ * Prepares the data and queries for the enrichment widget controller to process.   
+ * @author Julie Sullivan
  */
 public interface EnrichmentWidgetLdr
 {
@@ -39,7 +36,7 @@ public interface EnrichmentWidgetLdr
     /**
      * @return description of reference population, ie "Accounting dept"
      */
-    public Collection getReferencePopulation();
+    public Collection<String> getReferencePopulation();
 
     /**
      * @param os the object store
