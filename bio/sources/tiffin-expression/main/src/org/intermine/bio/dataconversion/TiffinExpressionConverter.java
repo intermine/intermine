@@ -61,8 +61,8 @@ public class TiffinExpressionConverter extends FileConverter
         store(pub);
     }
 
-    private static final Pattern MOTIF_NAME_PATTERN = Pattern.compile("(TIFDMEM\\d+)\\.\\d+");
-    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("(.*)\\W+\\(P=(.*)\\)");
+    private static final Pattern MOTIF_NAME_PATTERN = Pattern.compile("(TIFDMEM\\d+)\\.\\d+\\s*");
+    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("(.*)\\s+\\(P=(.*)\\)\\s*");
 
     /**
      * Process the Tiffin expression results
