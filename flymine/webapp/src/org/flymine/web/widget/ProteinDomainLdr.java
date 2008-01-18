@@ -99,7 +99,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
 
         // protein.ProteinFeatures CONTAINS proteinFeature
         QueryCollectionReference qr3
-        = new QueryCollectionReference(qcProtein, "proteinFeatures");
+        = new QueryCollectionReference(qcProtein, "proteinDomains");
         ContainsConstraint cc3 =
             new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcProteinFeature);
 
