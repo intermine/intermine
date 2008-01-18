@@ -145,7 +145,7 @@
       <input type="text" name="newBagName" id="newBagName"/>
       <input type="hidden" name="__intermine_forward_params__" value="${pageContext.request.queryString}"/>
       <input type="hidden" name="table" value="${param.table}"/>
-      <input type="button" name="saveNewBag" value="Save selected" id="saveNewBag" onclick="javascript:validateBagName(this);"/>
+      <input type="button" name="saveNewBag" value="Save selected" id="saveNewBag" onclick="javascript:validateBagName('saveBagForm');"/>
       <script type="text/javascript" charset="utf-8">
         $('newBagName').disabled = true;
         $('saveNewBag').disabled = true;
@@ -165,7 +165,7 @@
               </c:if>
              </c:forEach>
           </html:select>          		
- 		<input type="button" name="addToBag" id="addToBag" value="Add selected" onclick="javascript:validateAddToBag();"/>
+ 		<input type="submit" name="addToBag" id="addToBag" value="Add selected" />
  		<script type="text/javascript" charset="utf-8">
           $('addToBag').disabled = true;
         </script>

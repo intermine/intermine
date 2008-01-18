@@ -585,7 +585,7 @@ function saveToggleState(elementId) {
 	AjaxServices.saveToggleState(elementId, opened);
 } 
 
-
+// historyBagView.jsp, wsFilterList.jsp
 function validateBagOperations(operation) {
 		
 		var bagName = ''; 
@@ -614,17 +614,18 @@ function validateBagOperations(operation) {
     	});
 }
 
-function hasSelectedObjects() {
+// this function may be obsolete
+function hasSelectedObjects(selectForm) {
   
-  	if (!document.saveBagForm.selectedObjects) {
+  	if (!selectForm.selectedObjects) {
   	  	var errMsg = "You cannot save these items to a list";
   		addErrMsg(errMsg);
   		return false;
 	}
   
 		var i = 0;
-		while (document.saveBagForm.selectedObjects[i]) {
-			if (document.saveBagForm.selectedObjects[i].checked) {
+		while (selectForm.selectedObjects[i]) {
+			if (selectForm.selectedObjects[i].checked) {
 				return true;			
 			}
 			i++;
@@ -634,31 +635,23 @@ function hasSelectedObjects() {
   		return false;
   }  
 
-  function validateBagName(newBagForm) {  
-  	if (hasSelectedObjects()) {  
-		var bagName = document.newBagForm.newBagName.value;
+// table.jsp, bagUploadConfirm.jsp
+  function validateBagName(formName) {  
+  	  var frm = document.forms[formName];
+  	  
+		var bagName = frm.newBagName.value;
 		AjaxServices.validateBagName(bagName, function(errMsg) {
 			if (errMsg != '') {
         		addErrMsg(errMsg);
         	} else {
-        		if (document.newBagForm.operationButton) {
-        			document.newBagForm.operationButton.value="saveNewBag";
+        		if (frm.operationButton) {
+        			frm.operationButton.value="saveNewBag";
 				}
-	       		document.newBagForm.submit();
+	       		frm.submit();
     	    }
     	});
-   	}
+   	
   }
- 
-  
-  
-  function validateAddToBag() {  
-  	if (hasSelectedObjects()) {		
-		document.saveBagForm.operationButton.value="addToBag";
-	    document.saveBagForm.submit();
-   	}
-  }
-  
 
   function addErrMsg(errMsg) {  
   	document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
