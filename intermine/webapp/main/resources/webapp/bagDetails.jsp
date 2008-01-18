@@ -229,7 +229,7 @@
       
       <%-- graphs --%>
       <c:forEach items="${graphDisplayerArray}" var="htmlContent">      
-			<imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="${widgetCount == 0}" type="consistent">
+			<imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="true" type="consistent">
 				<imutil:disclosureHead>
 					<imutil:disclosureTitle>
 						${htmlContent[1]}
@@ -256,7 +256,7 @@
 	<%-- tables --%>
       <c:forEach items="${tableDisplayerArray}" var="bagTableDisplayerResults">
       	
-      	<imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="false" type="consistent">
+      	<imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="true" type="consistent">
 			<imutil:disclosureHead>
 				<imutil:disclosureTitle>
 					<c:out value="${bagTableDisplayerResults.title}"/>
@@ -330,7 +330,7 @@
 	 <%-- enrichment --%>
 	<c:forEach items="${enrichmentWidgetDisplayerArray}" var="enrichmentWidgetResults">
 	
-		<imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="false" type="consistent">
+		<imutil:disclosure id="${widgetIdPrefix}${widgetCount}" opened="true" type="consistent">
 			<imutil:disclosureHead>
 				<imutil:disclosureTitle>
 					<c:out value="${enrichmentWidgetResults.title}"/>
