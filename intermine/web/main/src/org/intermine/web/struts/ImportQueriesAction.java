@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -53,13 +55,20 @@ public class ImportQueriesAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-        Map queries = qif.getQueryMap(allBags, servletContext);
+        Map queries = null;
+        queries = qif.getQueryMap(allBags, servletContext);    
 
         if (queries.size() == 1
             && ((request.getParameter("query_builder") != null && request
                 .getParameter("query_builder").equals("yes")) || profile.getUsername() == null)) {
             // special case to redirect straight to the query builder
-            SessionMethods.loadQuery((PathQuery) queries.values().iterator().next(), session,
+            PathQuery pathQuery = (PathQuery) queries.values().iterator().next();
+            if (!pathQuery.isValid()) {
+                recordMessage(new ActionError("errors.importFailed", 
+                        PathQueryUtil.getProblemsSummary(pathQuery.getProblems())), request);
+                return mapping.findForward("importQueries");
+            }
+            SessionMethods.loadQuery(pathQuery, session,
                                      response);
             return mapping.findForward("query");
         } else {

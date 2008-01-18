@@ -148,7 +148,7 @@ public class ImportQueriesForm extends ValidatorForm
                 errors = new ActionErrors();
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE,
-                        new ActionMessage("errors.badqueryxml", err.getMessage()));
+                        new ActionMessage("errors.importFailedException", err.getMessage()));
         }
         return errors;
     }
