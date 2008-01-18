@@ -26,19 +26,21 @@ import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
 
 /**
- * Builds a query to get all the genes (in bag) associated with specified go term.
+ * Builds a pathquery.  Used when a user clicks on a results record in an enrichment widget.
  * @author Julie Sullivan
  */
+
 public class PathwayURLQuery implements EnrichmentWidgetURLQuery
 {
 
     InterMineBag bag;
     String key;
     ObjectStore os;
+    
     /**
-     * @param key
-     * @param bag
-     * @param os
+     * @param key value selected by user to display
+     * @param bag bag included in query
+     * @param os object store
      */
     public PathwayURLQuery(ObjectStore os, InterMineBag bag, String key) {
         this.bag = bag;
@@ -47,7 +49,7 @@ public class PathwayURLQuery implements EnrichmentWidgetURLQuery
     }
 
     /**
-     * @return Query a query to generate the results needed
+     * {@inheritDoc} 
      */
     public PathQuery generatePathQuery() {
 

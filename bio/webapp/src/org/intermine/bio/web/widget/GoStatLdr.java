@@ -47,14 +47,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * calculates p-values of goterms
- * @author Julie Sullivan
+ * {@inheritDoc}
  */
 public class GoStatLdr implements EnrichmentWidgetLdr
 {
     Query sampleQuery;
     Query populationQuery;
-    Collection organisms;
+    Collection<String> organisms;
     int total, numberOfTests;
     String externalLink, append;
 
@@ -78,7 +77,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
                         ? request.getParameter("filter") : "biological_process");
 
         // list of ontologies to ignore
-        Collection badOntologies = getOntologies();
+        Collection<String> badOntologies = getOntologies();
 
         // build query constrained by bag
         Query q = new Query();
@@ -210,7 +209,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     }
 
     // adds 3 main ontologies to array.  these 3 will be excluded from the query
-    private Collection getOntologies() {
+    private Collection<String> getOntologies() {
 
         Collection<String> ids = new ArrayList<String>();
 
@@ -239,7 +238,7 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc} 
      */
-    public Collection getReferencePopulation() {
+    public Collection<String> getReferencePopulation() {
         return organisms;
     }
 

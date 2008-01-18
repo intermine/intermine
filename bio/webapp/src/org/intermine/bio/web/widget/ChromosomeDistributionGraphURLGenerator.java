@@ -64,6 +64,9 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         return sb.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag imBag,
                                        @SuppressWarnings("unused") String series,

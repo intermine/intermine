@@ -42,14 +42,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * @author Julie Sullivan
+ * {@inheritDoc}
  */
 public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
 {
 
     Query sampleQuery;
     Query populationQuery;
-    Collection organisms;
+    Collection<String> organisms;
     int total;
     String externalLink, append;
 
@@ -151,7 +151,7 @@ public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc} 
      */
-    public Collection getReferencePopulation() {
+    public Collection<String> getReferencePopulation() {
         return organisms;
     }
 

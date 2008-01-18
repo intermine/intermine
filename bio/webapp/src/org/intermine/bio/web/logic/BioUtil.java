@@ -52,7 +52,7 @@ public abstract class BioUtil
      * @param bag InterMineBag
      * @return collection of organism names
      */
-    public static Collection getOrganisms(ObjectStore os, InterMineBag bag) {
+    public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag) {
 
         Query q = new Query();
         Model model = os.getModel();
@@ -85,11 +85,11 @@ public abstract class BioUtil
         q.addToOrderBy(qfOrganismName);
 
         Results r = os.execute(q);
-        Iterator it = r.iterator();
+        Iterator<ResultsRow> it = r.iterator();
         Collection<String> organismNames = new ArrayList<String>();
 
         while (it.hasNext()) {
-            ResultsRow rr =  (ResultsRow) it.next();
+            ResultsRow rr = it.next();
             organismNames.add((String) rr.get(0));
         }
         return organismNames;
@@ -158,14 +158,15 @@ public abstract class BioUtil
 
 
 
-    /**
-     *
-     * @param os
-     * @param organisms
+    /** 
+     * calculates the total number of proteins or genes in the database for the specified 
+     * organisms
+     * @param os object store 
+     * @param organisms list of organism names to be used in calculating the total
      * @param c which class to test for - Gene or Protein
      * @return total number of objects in the database for selected organisms
      */
-    public static int getTotal(ObjectStore os, Collection organisms, String c) {
+    public static int getTotal(ObjectStore os, Collection<String> organisms, String c) {
 
            Query q = new Query();
            q.setDistinct(false);
