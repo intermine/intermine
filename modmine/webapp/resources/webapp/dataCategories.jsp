@@ -14,12 +14,12 @@
 
 <table cellpadding="0" cellspacing="5" border="0" class="dbsources">
   <tr>
-    <td><b>Data Category</td>
-    <td><b>Organism</td>
-    <td><b>Data</td>
-    <td><b>Source</td>
-    <td><b>PubMed</td>
-    <td><b>Note</td>
+    <th>Data Category</th>
+    <th>Organism</th>
+    <th>Data</th>
+    <th>Source</th>
+    <th>PubMed</th>
+    <th>Note</th>
   </tr>
 
   <tr><td rowspan="1" class="leftcol">
