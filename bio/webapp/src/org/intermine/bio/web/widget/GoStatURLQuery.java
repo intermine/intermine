@@ -11,6 +11,7 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.intermine.objectstore.query.ConstraintOp;
@@ -27,28 +28,28 @@ import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
 
 
 /**
- * Builds a query to get all the genes (in bag) associated with specified go term.
- * @author Julie Sullivan
+ * {@inheritDoc} 
  */
 public class GoStatURLQuery implements EnrichmentWidgetURLQuery
 {
     ObjectStore os;
     InterMineBag bag;
-    String key;
+    Object key;
+    
     /**
-     * @param os
-     * @param key
-     * @param bag
+     * @param os object store
+     * @param key go terms user selected
+     * @param bag bag page they were on
      */
-     public GoStatURLQuery(ObjectStore os, InterMineBag bag, String key) {
+     public GoStatURLQuery(ObjectStore os, InterMineBag bag, Object  key) {
          this.bag = bag;
          this.key = key;
          this.os = os;
      }
 
-    /**
-     * @return Query a query to generate the results needed
-     */
+     /**
+      * {@inheritDoc} 
+      */
      public PathQuery generatePathQuery() {
 
          Model model = os.getModel();
@@ -128,7 +129,7 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
          qualifierNode.getConstraints().add(qualifierConstraint);
 
          // go term
-         constraintOp = ConstraintOp.EQUALS;
+         constraintOp = ConstraintOp.IN;
          code = q.getUnusedConstraintCode();
          PathNode goTermNode = q.addNode("Gene.allGoAnnotation.identifier");
          if (bag.getType().toLowerCase().equals("protein")) {
@@ -136,6 +137,19 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
          } else {
              goTermNode  = q.addNode("Gene.allGoAnnotation.identifier");
          }
+         
+         String keyString = key.toString();
+         if (keyString.contains(",")) {
+             
+             String[] keyList  = keyString.split(",");
+             Collection<String> keyCollection = new ArrayList<String>();
+             for (String s : keyList) {
+                 keyCollection.add(s);
+             }
+             key = keyCollection;
+             
+         }
+         
          Constraint goTermConstraint
                          = new Constraint(constraintOp, key, false, label, code, id, null);
          goTermNode.getConstraints().add(goTermConstraint);

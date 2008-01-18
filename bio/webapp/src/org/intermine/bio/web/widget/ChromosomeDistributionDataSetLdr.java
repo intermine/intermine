@@ -42,7 +42,9 @@ import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Organism;
 
 import org.jfree.data.category.DefaultCategoryDataset;
+
 /**
+ * 
  *
  * @author Julie Sullivan
  */
@@ -61,8 +63,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
      * and structure the data to create a graph
      * @param bag the bag
      * @param os the ObjectStore
-     * @param c the class being compared
-     * @throws Exception
+     * @throws Exception if getting the list of organims fails
      */
 
     public ChromosomeDistributionDataSetLdr(InterMineBag bag, ObjectStore os)
@@ -71,11 +72,11 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         this.os = os;
         model = os.getModel();
         bagType = bag.getType();
-        Collection organisms = null;
+        Collection<String> organisms = null;
         try {
             organisms = BioUtil.getOrganisms(os, bag);
         } catch (Exception e) {
-            throw new Exception("Can't render chromosome view without a bag.");
+            throw new Exception("Can't get organisms list");
         }
 
         for (Iterator it = organisms.iterator(); it.hasNext();) {
@@ -156,7 +157,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     }
 
     /**
-     * @see org.intermine.web.widget.DataSetLdr#getDataSet()
+     * {@inheritDoc}    
      */
     public Map getDataSets() {
         return dataSets;
