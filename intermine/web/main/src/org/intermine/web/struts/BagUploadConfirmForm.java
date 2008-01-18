@@ -18,7 +18,7 @@ import org.apache.struts.action.ActionForm;
  */
 public class BagUploadConfirmForm extends ActionForm
 {
-    private String bagName;
+    private String newBagName;
     private String bagType;
     private String matchIDs;
     private String[] selectedObjects;
@@ -35,7 +35,7 @@ public class BagUploadConfirmForm extends ActionForm
      * Initialise the form.
      */
    public void initialise() {
-        bagName = "";
+        newBagName = "";
         matchIDs = "";
         selectedObjects = new String[] {};
     }
@@ -45,7 +45,7 @@ public class BagUploadConfirmForm extends ActionForm
     * @param name the bag name
     */
    public void setBagName(String name) {
-       bagName = name.trim();
+       newBagName = name.trim();
    }
 
    /**
@@ -53,7 +53,7 @@ public class BagUploadConfirmForm extends ActionForm
     * @return the bag name
     */
    public String getBagName() {
-       return bagName;
+       return newBagName;
    }
 
 
