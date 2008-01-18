@@ -16,10 +16,10 @@ window.onload = function() { toggleForm(${matchCount}); }
 
 function toggleForm(matchCount) {
 	if (matchCount > 0) {
-		document.bagUploadConfirmForm.bagName.disabled = false;
+		document.bagUploadConfirmForm.newBagName.disabled = false;
 		document.bagUploadConfirmForm.submit.disabled = false;
 	} else {
-		document.bagUploadConfirmForm.bagName.disabled = true;
+		document.bagUploadConfirmForm.newBagName.disabled = true;
 		document.bagUploadConfirmForm.submit.disabled = true;
 	}
 }
@@ -76,8 +76,8 @@ function toggleForm(matchCount) {
         </c:otherwise>
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
-      <html:text property="bagName" size="20" value="" />
-		<input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName(this);"/>
+      <html:text property="newBagName" size="20" value="" />
+		<input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
     </div>
   </div>
   <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
