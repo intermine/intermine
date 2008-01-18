@@ -63,7 +63,7 @@ public class BagUploadConfirmAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
-        String bagName = confirmForm.getBagName();
+        String bagName = confirmForm.getNewBagName();
 
         String idsString = confirmForm.getMatchIDs().trim();
         String[] ids = StringUtil.split(idsString, " ");

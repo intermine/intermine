@@ -44,7 +44,7 @@ public class BagUploadConfirmForm extends ActionForm
     * Set the bag name.
     * @param name the bag name
     */
-   public void setBagName(String name) {
+   public void setNewBagName(String name) {
        newBagName = name.trim();
    }
 
@@ -52,7 +52,7 @@ public class BagUploadConfirmForm extends ActionForm
     * Get the bag name.
     * @return the bag name
     */
-   public String getBagName() {
+   public String getNewBagName() {
        return newBagName;
    }
 
