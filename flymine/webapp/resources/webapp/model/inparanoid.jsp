@@ -10,27 +10,48 @@
         Current data
       </div>
       <div class="body">
-        <p>
-          Orthologue and paralogue relationships calculated by <A
-          href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</A> - Version 6.0 - between the following organisms:
-        </p>
+
+        <p>Orthologue and inparalogue relationships calculated by <A href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</A> between the following organisms:</p>
         <ul>
           <li><I>D. melanogaster</I></li>
           <li><I>D. pseudoobscura</I></li>
           <li><I>A. gambiae</I></li>
           <li><I>A. mellifera</I></li>
           <li><I>C. elegans</I></li>
-        </ul>
+        </ul><br/>
+
         <p>
-          In addition, orthologues from these five species to several others:
+          In addition, orthologues/paralogues from these five species to several others:
         </p>
         <p>
-          <i>C. familiaris , D. discoideum, D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, R. norvegicus, S. cerevisiae, S. pombe</I>
-        <p>
-          <im:querylink text="Show all pairs of organisms linked by orthologues" skipBuilder="true">
+          <i>C. familiaris , D. discoideum, D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, R. norvegicus, S. cerevisiae, S. pombe</i>
+        </p>
+
+          <p><im:querylink text="Show all pairs of organisms linked by orthologues" skipBuilder="true">
             <query name="" model="genomic" view="Orthologue.gene.organism.shortName Orthologue.orthologue.organism.shortName"><node path="Orthologue" type="Orthologue"></node></query>
-          </im:querylink>
-      </div>
+          </im:querylink></p>
+
+<br/>
+  
+
+  <h4>
+   <a href="javascript:toggleDiv('hiddenDiv1');">
+    <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
+
+      Glossary according to Sonnhammer and Koonin </a> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12446146" target="_new">PubMed: 12446146</a>) ...
+ 
+  </h4>
+
+<div id="hiddenDiv1" class="dataSetDescription">
+      <ul>
+       <li>Homologous genes: genes with common ancestry.</li>
+       <li>Orthologous genes: genes in two species that have directly evolved from a single gene in the last common ancestor and are likely to be functionally related.</li>
+       <li>Paralogous genes: homologous genes related by a duplication event. Might be in the same or in a different genome.</li>
+       <li>Inparalogous genes: genes that derive from a duplication event after a speciation of interest. Inparalogs are together orthologs to the corresponding orthologous gene/genes in the other species.</li>
+       <li>Outparalogous genes: genes that derive from a duplication event before a speciation event of interest, thus not orthologs according to definition.</li> 
+      </ul>
+     </div>
+    </div>
     </td>
 
     <td width="40%" valign="top">
