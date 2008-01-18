@@ -1,6 +1,3 @@
-  <definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp" 
-  	controllerUrl="/initGeneMicroArrayDisplayer.do"/>
-
   <definition name="flymineQuickStart.tile" path="/model/flymineQuickStart.jsp" />
 
   <definition name="flymineQuickStart.page" extends="layout.template">
