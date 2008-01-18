@@ -19,11 +19,7 @@
     <icon-image>model/images/comparativeGenomics.png</icon-image>
     <large-image>model/images/comparativeGenomics.png</large-image>
     <intro-text>
-      Orthologues and Paralogues.  Orthologues are equivalent genes in
-      different species that evolved from a common ancestor by
-      speciation.  Paralogues are genes from the same homologous
-      superfamily found in another part of the genome of a particular
-      taxon. Paralogues are the result of gene duplication.
+      Orthologues and Paralogues.
     </intro-text>
     <tile-name>model/inparanoid.jsp</tile-name>
     <aspect-source name="Inparanoid" url="http://inparanoid.sbc.su.se/cgi-bin/index.cgi"/>
