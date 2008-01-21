@@ -60,7 +60,6 @@ public class BagUploadConfirmIssueController extends TilesAction
         // Make a Map from identifier to a List of rows for display.  Each row will contain
         // information about one object.  The row List will contain (first) the class name, then
         // a ResultElement object for each field to display.
-
         Map orderedIssuesMap = new LinkedHashMap(issuesMap);
 
         // a map from identifiers to indexes into objectList (and hence into the InlineResultsTable)
