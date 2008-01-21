@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.CDS" is-interface="true">
+  <class name="org.flymine.model.genomic.CDS" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="CDSs"/>
     <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
   </class>
-  <class name="org.flymine.model.genomic.Gene" is-interface="true">
+  <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="gene" ordered="true"/>
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="gene" ordered="true"/>
   </class>
-  <class name="org.flymine.model.genomic.InsertionSite" is-interface="true">
+  <class name="org.flymine.model.genomic.InsertionSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="organismDbId" type="java.lang.String"/>
     <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
   </class>
-  <class name="org.flymine.model.genomic.MRNA" is-interface="true">
+  <class name="org.flymine.model.genomic.MRNA" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="organismDbId" type="java.lang.String"/>
     <reference name="fivePrimeUTR" referenced-type="org.flymine.model.genomic.FivePrimeUTR"/>
@@ -21,45 +21,45 @@
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="MRNA" ordered="true"/>
     <collection name="cDNAClones" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="MRNA" ordered="true"/>
   </class>
-  <class name="org.flymine.model.genomic.Transcript" is-interface="true">
+  <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" reverse-reference="transcripts" ordered="true"/>
     <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" reverse-reference="transcripts" ordered="true"/>
   </class>
-  <class name="org.flymine.model.genomic.NcRNA" is-interface="true">
+  <class name="org.flymine.model.genomic.NcRNA" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
   </class>
-  <class name="org.flymine.model.genomic.Exon" is-interface="true">
+  <class name="org.flymine.model.genomic.Exon" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="organismDbId" type="java.lang.String"/>
     <attribute name="symbol" type="java.lang.String"/>
     <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="exons" ordered="true"/>
   </class>
-  <class name="org.flymine.model.genomic.Intron" is-interface="true">
+  <class name="org.flymine.model.genomic.Intron" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="introns" ordered="true"/>
   </class>
-  <class name="org.flymine.model.genomic.UTR" is-interface="true">
+  <class name="org.flymine.model.genomic.UTR" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="UTRs"/>
     <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="UTRs"/>
   </class>
-  <class name="org.flymine.model.genomic.ThreePrimeUTR" is-interface="true">
+  <class name="org.flymine.model.genomic.ThreePrimeUTR" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
-  <class name="org.flymine.model.genomic.FivePrimeUTR" is-interface="true">
+  <class name="org.flymine.model.genomic.FivePrimeUTR" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
-  <class name="org.flymine.model.genomic.Enhancer" is-interface="true">
+  <class name="org.flymine.model.genomic.Enhancer" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
-  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true">
+  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="organismDbId" type="java.lang.String"/>
   </class>
-  <class name="org.flymine.model.genomic.TransposableElement" is-interface="true">
+  <class name="org.flymine.model.genomic.TransposableElement" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="organismDbId" type="java.lang.String"/>
   </class>
-  <class name="org.flymine.model.genomic.SequenceVariant" is-interface="true">
+  <class name="org.flymine.model.genomic.SequenceVariant" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
   </class>
   <class name="org.flymine.model.genomic.ProteinBindingSite" extends="org.flymine.model.genomic.BindingSite" is-interface="true">
@@ -76,11 +76,11 @@
   <class name="org.flymine.model.genomic.BAC" extends="org.flymine.model.genomic.Vector"
          is-interface="true">
   </class>
-  <class name="org.flymine.model.genomic.CDNAClone" is-interface="true">
+  <class name="org.flymine.model.genomic.CDNAClone" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA"/>
     <reference name="EST" referenced-type="org.flymine.model.genomic.EST"/>
   </class>
-  <class name="org.flymine.model.genomic.EST" is-interface="true">
+  <class name="org.flymine.model.genomic.EST" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <collection name="cDNAClones" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="EST"/>
   </class>
   <class name="org.flymine.model.genomic.ChromosomeArm"
