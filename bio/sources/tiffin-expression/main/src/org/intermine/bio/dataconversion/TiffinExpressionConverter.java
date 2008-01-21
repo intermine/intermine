@@ -88,14 +88,17 @@ public class TiffinExpressionConverter extends FileConverter
                 if (expressionMatcher.matches()) {
                     String expressionDescription = expressionMatcher.group(1);
                     Item expressionItem = getExpressionTerm(expressionDescription);
-                    expressionItem.setReference("motif", currentMotif);
-                    store(expressionItem);
+                    expressionItem.addToCollection("motifs", currentMotif);
                 } else {
                     if (line.trim().length() > 0) {
                         throw new RuntimeException("failed to parse this line: " + line);
                     }
                 }
             }
+        }
+
+        for (Item term: termItems.values()) {
+            store(term);
         }
     }
 

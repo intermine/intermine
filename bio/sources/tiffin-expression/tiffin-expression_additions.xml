@@ -4,11 +4,11 @@
          extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <collection name="expressionTerms"
                 referenced-type="org.flymine.model.genomic.TiffinExpressionTerm"
-                reverse-reference="motif"/>
+                reverse-reference="motifs"/>
   </class>
   <class name="org.flymine.model.genomic.TiffinExpressionTerm" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
-    <reference name="motif"
+    <collection name="motifs"
                referenced-type="org.flymine.model.genomic.Motif" 
                reverse-reference="expressionTerms"/>
   </class>
