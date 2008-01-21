@@ -53,10 +53,7 @@
                 valign="top" id="row_${issueType}_${idcounter}">${initialTypeMap[identifier]}</td>
           </c:if>
         </c:if>
-        <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">
-        
-      
-        
+        <c:forEach var="resultElement" items="${resultElementRow}" varStatus="rowStatus">        
           <td id="row_${issueType}_${idcounter}">
             <c:choose>
               <c:when test="${rowStatus.index == 0 && issueType != 'converted'}">
@@ -70,9 +67,16 @@
                 <span id="rem_${issueType}_${resultElementRow[rowStatus.index]}" onclick="removeIdFromBag('${resultElementRow[rowStatus.index]}','${idcounter}','${identifier}','${issueType}');">Remove</span>
               </c:when>
               <c:otherwise>
-              		<html:link action="/objectDetails?id=${resultElementRow[fn:length(resultElementRow) - 1]}">
+				<c:choose>
+              	<c:when test="${resultElement.keyField}">
+					<html:link action="/objectDetails?id=${resultElementRow[fn:length(resultElementRow) - 1]}">
                 		${resultElement.field}
                 	</html:link>
+              	</c:when>
+              	<c:otherwise>
+              		${resultElement.field}
+            	</c:otherwise>
+            	</c:choose>                	
               </c:otherwise>
             </c:choose>
             &nbsp;
