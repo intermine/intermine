@@ -8,11 +8,14 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 import javax.xml.parsers.SAXParserFactory;
 
 import junit.framework.TestCase;
 
+import org.intermine.web.task.PrecomputeTemplatesTask;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 
@@ -36,13 +39,26 @@ import com.meterware.httpunit.WebRequest;
  **/
 public class ServiceServletTest extends TestCase
 {
+    
+    private String serviceUrl;
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        InputStream webProps = PrecomputeTemplatesTask.class
+            .getClassLoader().getResourceAsStream("WEB-INF/web.properties");
+        ResourceBundle rb = new PropertyResourceBundle(webProps);
+        String context = rb.getString("webapp.path");
+        this.serviceUrl = "http://localhost:8080/" +  context + "/queryService/v1/service?"; 
+        System.out.println("Service url: " + serviceUrl);
+    }
+    
     /**
      * Tests tab separated output that is formed information about employees.
      * @throws Exception if some error occurs
      */
     public void testEmployeeTabOutput() throws Exception {
-        String tabResult = getResult("http://localhost:8080/intermine-test/queryService/v1/service?query=" + getQuery());
+        String tabResult = getResult("query=" + getQuery());
         List<List<String>> results = parseTabResult(tabResult);
         checkEmployees(results);
     }
@@ -53,7 +69,7 @@ public class ServiceServletTest extends TestCase
      * @throws Exception if some error occurs
      */
     public void testEmployeeXMLOutput() throws Exception {
-        String xmlResult = getResult("http://localhost:8080/intermine-test/queryService/v1/service?format=xml&query=" + getQuery());
+        String xmlResult = getResult("format=xml&query=" + getQuery());
         List<List<String>> results = parseXMLResult(xmlResult);
         checkEmployees(results);
     }
@@ -63,7 +79,7 @@ public class ServiceServletTest extends TestCase
      * @throws Exception when an error occurs
      */
     public void testErrorXMLQuery() throws Exception {
-        String result = getResult("http://localhost:8080/intermine-test/queryService/v1/service?query=a" + getQuery()).trim();
+        String result = getResult("query=a" + getQuery()).trim();
         assertTrue(result.startsWith("<error>"));
         assertTrue(result.contains("<message>"));
         assertTrue(result.contains("</message>"));
@@ -75,7 +91,7 @@ public class ServiceServletTest extends TestCase
      * @throws Exception when an error occurs 
      */
     public void testOnlyTotalCount() throws Exception {
-        String result = getResult("http://localhost:8080/intermine-test/queryService/v1/service?onlyTotalCount=yes&query=" + getQuery()).trim();
+        String result = getResult("onlyTotalCount=yes&query=" + getQuery()).trim();
         assertEquals("6", result);
     }
     
@@ -84,7 +100,7 @@ public class ServiceServletTest extends TestCase
      * @throws Exception
      */
     public void testXMLResultAttributes() throws Exception {
-        String xmlResult = getResult("http://localhost:8080/intermine-test/queryService/v1/service?totalCount=yes&format=xml&start=5&query=" + getQuery()).trim();
+        String xmlResult = getResult("totalCount=yes&format=xml&start=5&query=" + getQuery()).trim();
         InputSource is = new  InputSource(new StringReader(xmlResult));
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setValidating(true);
@@ -102,6 +118,10 @@ public class ServiceServletTest extends TestCase
                 assertEquals("6", atts.getValue(i).trim());        
             }
         }
+    }
+
+    public String getServiceUrl() {
+        return serviceUrl;
     }
     
     private void checkEmployees(List<List<String>> results) {
@@ -146,7 +166,8 @@ public class ServiceServletTest extends TestCase
         return handler.getResults();
     }
     
-    private String getResult(String requestString) throws Exception {
+    private String getResult(String parameterString) throws Exception {
+        String requestString = getServiceUrl() + parameterString;
         WebConversation wc = new WebConversation();
         WebRequest     req = new GetMethodWebRequest( requestString);
         return wc.getResponse(req).getText();
