@@ -55,7 +55,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 {
     Query sampleQuery;
     Query populationQuery;
-    Collection organisms;
+    Collection<String> organisms;
     int total;
     String externalLink;
     String append;
@@ -98,7 +98,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      /**
      * {@inheritDoc} 
       */
-     public Collection getReferencePopulation() {
+     public Collection<String> getReferencePopulation() {
          return organisms;
      }
 
@@ -112,7 +112,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
      private Query getQuery(ObjectStore os, InterMineBag bag, boolean useBag) {
          
          Query q = new Query();
-         q.setDistinct(true);
+         q.setDistinct(false);
          QueryClass qcGene = new QueryClass(Gene.class);
          QueryClass qcIntergenicRegion = new QueryClass(IntergenicRegion.class);
          QueryClass qcTFBindingSite = new QueryClass(TFBindingSite.class);
@@ -126,7 +126,6 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          QueryField qfDataSet = new QueryField(qcDataSet, "title");
 
          QueryFunction geneCount = new QueryFunction();
-
          
          q.addFrom(qcGene);
          q.addFrom(qcIntergenicRegion);
@@ -137,7 +136,9 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 
          q.addToSelect(qfId);
          q.addToSelect(geneCount);
-         q.addToSelect(qfId);
+         if (useBag) {
+             q.addToSelect(qfId);
+         }
          
          ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
          if (useBag) {
