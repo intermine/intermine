@@ -48,9 +48,8 @@ public class ServiceServletTest extends TestCase
         InputStream webProps = PrecomputeTemplatesTask.class
             .getClassLoader().getResourceAsStream("WEB-INF/web.properties");
         ResourceBundle rb = new PropertyResourceBundle(webProps);
-        String context = rb.getString("webapp.path");
+        String context = rb.getString("webapp.path").trim();
         this.serviceUrl = "http://localhost:8080/" +  context + "/queryService/v1/service?"; 
-        System.out.println("Service url: " + serviceUrl);
     }
     
     /**
