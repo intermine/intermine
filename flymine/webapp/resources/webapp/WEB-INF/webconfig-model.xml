@@ -243,12 +243,12 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.ProteinFeature">
+  <class className="org.flymine.model.genomic.ProteinDomain">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="interproId"/>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="shortName"/>
+      <fieldconfig fieldExpr="type"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
