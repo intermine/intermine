@@ -48,9 +48,17 @@
       </c:when>
       <c:otherwise>
         <div class="lookupWarn">
+         <c:choose>
+         <c:when test="${!empty ADDITIONAL_CONVERTER_MSG}">
+           <c:out value="${ADDITIONAL_CONVERTER_MSG}" />
+           <c:remove var="ADDITIONAL_CONVERTER_MSG" />
+         </c:when>
+         <c:otherwise>
          <fmt:message key="results.lookup.matches.many">
             <fmt:param value="${bagQueryResultEntry.matches}"/>
          </fmt:message>
+         </c:otherwise>
+         </c:choose>
         </div>
       </c:otherwise>
     </c:choose>
@@ -165,7 +173,6 @@
       </c:choose>         
     </div>
   </c:if>
-
 </c:forEach>
 <c:if test="${lookupReportOpen == 'true'}">
   </div>

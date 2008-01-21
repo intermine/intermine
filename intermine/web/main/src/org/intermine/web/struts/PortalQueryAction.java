@@ -264,6 +264,10 @@ public class PortalQueryAction extends InterMineAction
                 osw.addAllToBag(imBag.getOsb(), converted);
                 osw.close();
                 profile.saveBag(imBag.getName(), imBag);
+                session.setAttribute("ADDITIONAL_CONVERTER_MSG", "Found " 
+                                        + imBag.getSize() + " orthologues in " 
+                                        + addparameter + " for " + result.size() 
+                                        + " " + imBag.getType() + "s");
                 return new ForwardParameters(mapping.findForward("bagDetails"))
                 .addParameter("bagName", imBag.getName()).forward();
             }
