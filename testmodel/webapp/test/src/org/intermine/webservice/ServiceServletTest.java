@@ -49,7 +49,8 @@ public class ServiceServletTest extends TestCase
             .getClassLoader().getResourceAsStream("WEB-INF/web.properties");
         ResourceBundle rb = new PropertyResourceBundle(webProps);
         String context = rb.getString("webapp.path").trim();
-        this.serviceUrl = "http://localhost:8080/" +  context + "/queryService/v1/service?"; 
+        String webAppUrl = rb.getString("webapp.deploy.url").trim();
+        this.serviceUrl = webAppUrl + "/" +  context + "/queryService/v1/service?"; 
     }
     
     /**
