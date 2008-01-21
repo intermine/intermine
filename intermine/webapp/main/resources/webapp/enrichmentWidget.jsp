@@ -86,7 +86,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
 <tr>
 	<td>
 	
-	<html:form action="/enrichmentWidgetExport" method="get">
+
 	
 		<c:choose>
 		<c:when test="${!empty pvalues}">
@@ -136,7 +136,6 @@ Reference population: <c:out value='${referencePopulation}'/>.
         </c:otherwise>        
         </c:choose>
 
-	</html:form>	
 
 	</td>
 </tr>
