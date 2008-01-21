@@ -291,7 +291,7 @@ public class InlineResultsTable
                     retList.add(null);
                     continue;
                 }
-                String endTypeName = TypeUtil.unqualifiedName(endType.getName());
+                String endTypeName = path.getStartClassDescriptor().getName();
                 String lastFieldName = path.getEndFieldDescriptor().getName();
                 boolean isKeyField =
                     ClassKeyHelper.isKeyField(classKeys, endTypeName, lastFieldName);
