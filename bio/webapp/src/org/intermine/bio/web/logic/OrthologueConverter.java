@@ -95,6 +95,10 @@ public class OrthologueConverter implements BagConverter
                                         false, label, code, id, null);
         pathQuery.addNode("Gene.orthologues.orthologue.organism.shortName")
                                 .getConstraints().add(c2);
+        
+        Constraint c3 = new Constraint(ConstraintOp.EQUALS, "main",
+                                        false, label, code, id , null);
+        pathQuery.addNode("Gene.orthologues.type").getConstraints().add(c3);
 
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
