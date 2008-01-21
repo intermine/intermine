@@ -98,9 +98,6 @@ Reference population: <c:out value='${referencePopulation}'/>.
 			</tr>
 	  		<c:forEach items="${pvalues}" var="results">
     			<tr>
-    				<td>
-    					<input type="checkbox" name="selectedObjects" value="${results.value}" />
-    				</td>
   					<td align="left">
   							<c:choose>
 							<c:when test="${!empty externalLink}">
