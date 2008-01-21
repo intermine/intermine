@@ -205,23 +205,29 @@ public class MainHelper
      * @return an InterMine Query
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Query makeQuery(PathQuery query, Map savedBags, Map<String, QueryNode> pathToQueryNode, ServletContext servletContext,
+    public static Query makeQuery(PathQuery query, Map savedBags,
+            Map<String, QueryNode> pathToQueryNode, ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
         return makeQuery(query, savedBags, pathToQueryNode, servletContext, returnBagQueryResults, false,
-                (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
+                (ObjectStore) (servletContext == null ? null
+                    : servletContext.getAttribute(Constants.OBJECTSTORE)),
+                (Map) (servletContext == null ? null
+                    : servletContext.getAttribute(Constants.CLASS_KEYS)),
+                (BagQueryConfig) (servletContext == null ? null
+                    : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
     }
 
     public static Query makeQuery(PathQuery query, Map savedBags, ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
         return makeQuery(query, savedBags, null, servletContext, returnBagQueryResults, false,
-                (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
+                (ObjectStore) (servletContext == null ? null
+                    : servletContext.getAttribute(Constants.OBJECTSTORE)),
+                (Map) (servletContext == null ? null
+                    : servletContext.getAttribute(Constants.CLASS_KEYS)),
+                (BagQueryConfig) (servletContext == null ? null
+                    : servletContext.getAttribute(Constants.BAG_QUERY_CONFIG)));
     }
 
-    
     /**
      * Make an InterMine query from a path query
      * @param pathQueryOrig the PathQuery
