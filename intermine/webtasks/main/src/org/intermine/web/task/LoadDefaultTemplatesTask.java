@@ -29,6 +29,8 @@ import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.RequestPasswordAction;
 
@@ -134,6 +136,11 @@ public class LoadDefaultTemplatesTask extends Task
                     profileDest.deleteTemplate((String) iter.next());
                 }
             }
+            
+            // Settting global search repository to servletContext because unmarshall 
+            // method requires it
+            servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, 
+                    new SearchRepository(pm.getProfile(username), TemplateHelper.ALL_TEMPLATE));
 
             // Unmarshal
             Set tags = new HashSet();
