@@ -586,54 +586,35 @@ function saveToggleState(elementId) {
 } 
 
 // historyBagView.jsp, wsFilterList.jsp
-function validateBagOperations(operation) {
+function validateBagOperations(formName, operation) {
 		
 		var bagName = ''; 
+		var frm = document.forms[formName];
 		
-		if (document.modifyBagForm.newBagName) {
-			bagName = document.modifyBagForm.newBagName.value;		
+		if (frm.newBagName) {
+			bagName = frm.newBagName.value;		
 		}
-	
+		
 		var selectedBags = [];
 		var i = 0;
 		var j = 0;
-		while (document.modifyBagForm.selectedBags[i]) {
-			if (document.modifyBagForm.selectedBags[i].checked) {
-				selectedBags[j] = document.modifyBagForm.selectedBags[i].value;
+		
+		for (i = 0; i < frm.selectedBags.length; i++){
+			if (frm.selectedBags[i].checked) {
+				selectedBags[j] = frm.selectedBags[i].value;
 				j++;
 			}
-			i++;
 		}
-		AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
+		AjaxServices.validateBagOperations(
+		bagName, selectedBags, operation, function(errMsg) {
 			if (errMsg != '') {
         		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
         	} else {
-        		document.modifyBagForm.listsButton.value = operation;
-        		document.modifyBagForm.submit();
+        		frm.listsButton.value = operation;
+        		frm.submit();
         	}
     	});
 }
-
-// this function may be obsolete
-function hasSelectedObjects(selectForm) {
-  
-  	if (!selectForm.selectedObjects) {
-  	  	var errMsg = "You cannot save these items to a list";
-  		addErrMsg(errMsg);
-  		return false;
-	}
-  
-		var i = 0;
-		while (selectForm.selectedObjects[i]) {
-			if (selectForm.selectedObjects[i].checked) {
-				return true;			
-			}
-			i++;
-		}
-  		var errMsg = "You need to select which objects to save";
-  		addErrMsg(errMsg);
-  		return false;
-  }  
 
 // table.jsp, bagUploadConfirm.jsp
   function validateBagName(formName) {  
