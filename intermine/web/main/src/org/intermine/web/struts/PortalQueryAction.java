@@ -227,7 +227,14 @@ public class PortalQueryAction extends InterMineAction
             Class clazz = Class.forName(converterClassName);
             Constructor constructor = clazz.getConstructor();
             String [] paramArray = additionalConverters.get(converterClassName);
-            String addparameter = request.getParameter(paramArray[0]);
+            String [] urlFields = paramArray[0].split(",");
+            String addparameter = null;
+            for (int i = 0; i < urlFields.length; i++) {
+                if (request.getParameter(urlFields[i]) != null) {
+                    addparameter = request.getParameter(urlFields[i]);
+                    break;
+                }
+            }
             if (addparameter != null && addparameter.length() != 0) {
                 BagConverter bagConverter = (BagConverter) constructor.newInstance();
                 List<ResultsRow> result = bagConverter.getConvertedObjects(session, addparameter,
