@@ -108,11 +108,11 @@
         <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
           New bag name:
           <html:text property="newBagName" size="12"/>
-          	<input type="button" onclick="validateBagOperations('union')" value="Union"/>
-          	<input type="button" onclick="validateBagOperations('intersect')" value="Intersect"/>
-         	<input type="button" onclick="validateBagOperations('subtract')" value="Subtract"/>
+          	<input type="button" onclick="validateBagOperations('modifyBagForm', 'union')" value="Union"/>
+          	<input type="button" onclick="validateBagOperations('modifyBagForm', 'intersect')" value="Intersect"/>
+         	<input type="button" onclick="validateBagOperations('modifyBagForm', 'subtract')" value="Subtract"/>
         </c:if>
-        <input type="button" onclick="validateBagOperations('delete')" value="Delete"/>
+        <input type="button" onclick="validateBagOperations('modifyBagForm', 'delete')" value="Delete"/>
 
         <html:hidden property="pageName" value="MyMine"/>
         <html:hidden property="listsButton" value="" styleId="listsButton"/>
