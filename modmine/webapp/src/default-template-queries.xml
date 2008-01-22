@@ -52,7 +52,7 @@
 				</constraint>
 			</node>
 			<node path="Orthologue.orthologue" type="Gene">
-			</node>
+			</node>PF00096
 			<node path="Orthologue.orthologue.organism" type="Organism">
 			</node>
 			<node path="Orthologue.orthologue.organism.name" type="String">
@@ -66,7 +66,7 @@
 			<pathDescription pathString="Chromosome.exons.transcripts" description="Transcript">
 			</pathDescription>
 			<pathDescription pathString="Chromosome.exons" description="Exon">
-			</pathDescription>
+			</pathDescription>PF00096
 			<pathDescription pathString="Chromosome.exons.gene" description="Gene">
 			</pathDescription>
 			<pathDescription pathString="Chromosome.exons.objects" description="Exon &gt; Chromosome location">
@@ -1195,6 +1195,128 @@
 			</node>
 		</query>
 	</template>
+
+	<template name="Organism_GeneDomain" title="Organism --&gt; All genes with a specific protein domain." longDescription="Show all genes from a particular organism that code for proteins with a certain protein domain. (InterPro data are available for D. melanogaster, A. gambiae, C. elegans)" comment="">
+		<query name="Organism_GeneDomain" model="genomic" view="ProteinDomain.name ProteinDomain.identifier ProteinDomain.proteins.genes.identifier ProteinDomain.proteins.genes.symbol" sortOrder="ProteinDomain.name asc" constraintLogic="A and B and C">
+			<node path="ProteinDomain" type="ProteinDomain">
+			</node>
+			<node path="ProteinDomain.proteins" type="Protein">
+			</node>
+			<node path="ProteinDomain.proteins.genes" type="Gene">
+			</node>
+			<node path="ProteinDomain.proteins.genes.organism" type="Organism">
+			</node>
+			<node path="ProteinDomain.proteins.genes.organism.name" type="String">
+				<constraint op="=" value="Drosophila melanogaster" description="Search for genes in the following organism:" identifier="" editable="true" code="C">
+				</constraint>
+			</node>
+			<node path="ProteinDomain.evidence" type="DataSet">
+			</node>
+			<node path="ProteinDomain.evidence.dataSource" type="DataSource">
+			</node>
+			<node path="ProteinDomain.evidence.dataSource.name" type="String">
+				<constraint op="=" value="UniProtKB" description="" identifier="" code="A">
+				</constraint>
+			</node>
+			<node path="ProteinDomain.name" type="String">
+				<constraint op="LIKE" value="%homeo%" description="that code for the following protein domain:" identifier="" editable="true" code="B">
+				</constraint>
+			</node>
+		</query>
+	</template>
+	<template name="InterPro_Domain_Family" title="InterPro Name--&gt; Protein domains and families" longDescription="Search for protein domains and families by name." comment="">
+		<query name="InterPro_Domain_Family" model="genomic" view="ProteinDomain.identifier ProteinDomain.name ProteinDomain.identifier ProteinDomain.shortName" sortOrder="ProteinDomain.identifier asc">
+			<node path="ProteinDomain" type="ProteinDomain">
+			</node>
+			<node path="ProteinDomain.name" type="String">
+				<constraint op="LIKE" value="%leucine%" description="Seach for names that contain a particular string - use '*' as a wildcard:" identifier="" editable="true" code="A">
+				</constraint>
+			</node>
+		</query>
+	</template>
+	<template name="Organism_ProteinDomain" title="Organism --&gt; All proteins with a specific protein domain." longDescription="Show proteins from a particular organism that have a particular protein domain or family." comment="">
+		<query name="Organism_ProteinDomain" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.proteinDomains.identifier" sortOrder="Protein.identifier asc" constraintLogic="A and B">
+			<node path="Protein" type="Protein">
+			</node>
+			<node path="Protein.organism" type="Organism">
+			</node>
+			<node path="Protein.organism.name" type="String">
+				<constraint op="=" value="Drosophila melanogaster" description="Show proteins from:" identifier="" editable="true" code="A">
+				</constraint>
+			</node>
+			<node path="Protein.proteinDomains" type="ProteinDomain">
+			</node>
+			<node path="Protein.proteinDomains.identifier" type="String">
+				<constraint op="=" value="PF01926" description="that have domain/family:  (identifier can be Pfam, Interpro Smart, prosite, Prints, ProDom TIGRFAM, PIRSF, SUPERFAMILY, PANTHER, Gene3D)" identifier="" editable="true" code="B">
+				</constraint>
+			</node>
+		</query>
+	</template>
+	<template name="Organism_Interpro" title="Organism --&gt; all proteins with Interpro domains/families + location" longDescription="Show all proteins with interpro domains/families from a particular organism and the location of the domain/family on the protein." comment="">
+		<query name="Organism_Interpro" model="genomic" view="ProteinDomain.objects.object.identifier ProteinDomain.identifier ProteinDomain.identifier ProteinDomain.objects.start ProteinDomain.objects.end" sortOrder="ProteinDomain.objects.object.identifier asc">
+			<node path="ProteinDomain" type="ProteinDomain">
+			</node>
+			<node path="ProteinDomain.objects" type="Location">
+			</node>
+			<node path="ProteinDomain.objects.object" type="BioEntity">
+			</node>
+			<node path="ProteinDomain.objects.object.organism" type="Organism">
+			</node>
+			<node path="ProteinDomain.objects.object.organism.name" type="String">
+				<constraint op="=" value="Drosophila melanogaster" description="Show all protein domains and families for proteins from:" identifier="" editable="true" code="A">
+				</constraint>
+			</node>
+		</query>
+	</template>
+	<template name="Protein_Interpro" title="Protein --&gt; domains/families + location" longDescription="Show all domains and families for a particular protein and the location of the domain/family on the protein." comment="">
+		<query name="Protein_Interpro" model="genomic" view="ProteinDomain.objects.object.identifier ProteinDomain.identifier ProteinDomain.identifier ProteinDomain.objects.start ProteinDomain.objects.end" sortOrder="ProteinDomain.objects.object.identifier asc">
+			<pathDescription pathString="ProteinDomain" description="Protein domain/family">
+			</pathDescription>
+			<pathDescription pathString="ProteinDomain.objects.object" description="Protein">
+			</pathDescription>
+			<pathDescription pathString="ProteinDomain.objects" description="Protein domain/family">
+			</pathDescription>
+			<node path="ProteinDomain" type="ProteinDomain">
+			</node>
+			<node path="ProteinDomain.objects" type="Location">
+			</node>
+			<node path="ProteinDomain.objects.object" type="Protein">
+			</node>
+			<node path="ProteinDomain.objects.object.identifier" type="String">
+				<constraint op="=" value="128UP\\_DROME" description="Show all domains and families and their locations for protein:" identifier="" editable="true" code="B">
+				</constraint>
+			</node>
+		</query>
+	</template>
+	<template name="InterProDomain_ProteinGene" title="Protein Domain --&gt; Proteins + genes coding for these proteins." longDescription="Show all genes from a particular organism that code for a certain InterPro protein. (InterPro data are available for D. melanogaster, A. gambiae, C. elegans)." comment="">
+		<query name="InterProDomain_ProteinGene" model="genomic" view="Protein.proteinDomains.identifier Protein.proteinDomains.name Protein.identifier Protein.primaryAccession Protein.genes.identifier" sortOrder="Protein.proteinDomains.identifier asc" constraintLogic="B and C and D">
+			<pathDescription pathString="Protein.genes" description="Gene">
+			</pathDescription>
+			<pathDescription pathString="Protein.proteinDomains" description="Protein domain">
+			</pathDescription>
+			<node path="Protein" type="Protein">
+			</node>
+			<node path="Protein.organism" type="Organism">
+			</node>
+			<node path="Protein.organism.shortName" type="String">
+				<constraint op="=" value="D. melanogaster" description="Search for genes in the following organism:" identifier="" editable="true" code="B">
+				</constraint>
+			</node>
+			<node path="Protein.proteinDomains" type="ProteinDomain">
+			</node>
+			<node path="Protein.proteinDomains.evidence" type="Evidence">
+			</node>
+			<node path="Protein.proteinDomains.identifier" type="String">
+				<constraint op="LIKE" value="IPR%" description="" identifier="" code="C">
+				</constraint>
+			</node>
+			<node path="Protein.proteinDomains.name" type="String">
+				<constraint op="LIKE" value="%leucine%" description="that code for the following protein domain:" identifier="" editable="true" code="D">
+				</constraint>
+			</node>
+		</query>
+</template>
+
 	<template name="Protein_To_CDNAclone_Type_Converter" title="Protein to cDNAclone type converter" longDescription="" comment="">
 		<query name="Protein_To_CDNAclone_Type_Converter" model="genomic" view="Protein.id Protein.genes.clones.id" sortOrder="Protein.id asc">
 			<node path="Protein" type="Protein">
