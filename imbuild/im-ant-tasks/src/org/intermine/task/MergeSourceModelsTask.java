@@ -28,10 +28,10 @@ import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.util.ClasspathUtils;
 
 /**
- * Task to merge a single additions file into an intermine XML model.
+ * Task to merge additions files from all sources in the project.xml into an intermine XML model.
  *
  * @see org.intermine.modelproduction.ModelMerger
- * @author Thomas Riley
+ * @author Kim Rutherford
  */
 
 public class MergeSourceModelsTask extends Task
