@@ -19,10 +19,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.ResultsInfo;
+import javax.servlet.ServletContext;
 
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -30,18 +31,16 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
-
-import javax.servlet.ServletContext;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 import servletunit.ServletContextSimulator;
 
@@ -70,7 +69,7 @@ public class PrecomputeTemplatesTask extends Task
     protected String username;
     protected String ignore = "";
     protected Set ignoreNames = new HashSet();
-    protected boolean doSummarise = true;
+    protected boolean doSummarise = false;
 
     /**
      * Set the ObjectStore alias
@@ -118,10 +117,10 @@ public class PrecomputeTemplatesTask extends Task
      * @param summarise if true, summarise while precomputing
      */
     public void setSummarise(String summarise) {
-        if (summarise.equals("false")) {
-            doSummarise = false;
-        } else {
+        if (summarise.equals("true")) {
             doSummarise = true;
+        } else {
+            doSummarise = false;
         }
     }
 
@@ -154,7 +153,6 @@ public class PrecomputeTemplatesTask extends Task
         if (!(objectStore instanceof ObjectStoreInterMineImpl)) {
             throw new BuildException(alias + " isn't an ObjectStoreInterMineImpl");
         }
-
         precomputeTemplates(objectStore, oss);
     }
 
@@ -176,6 +174,17 @@ public class PrecomputeTemplatesTask extends Task
                 continue;
             }
 
+            // if the template isn't valid according to the current model, log it and move on
+            if (!template.isValid()) {
+                LOG.warn("template does not validate against the model: " + template.getName());
+                for (int i = 0; i < template.getProblems().length; i++) {
+                    Exception e = (Exception) template.getProblems()[i];
+                    e.fillInStackTrace();
+                    LOG.warn("problem with " + template.getName() + ": " + e);
+                }
+                continue;
+            }
+            
             List indexes = new ArrayList();
             Query q = TemplateHelper.getPrecomputeQuery(template, indexes, null);
 
@@ -255,6 +264,7 @@ public class PrecomputeTemplatesTask extends Task
     protected Map getPrecomputeTemplateQueries() throws BuildException {
         ObjectStore os;
         ProfileManager pm;
+        ServletContext servletContext = new ServletContextSimulator();
         try {
             os = ObjectStoreFactory.getObjectStore(alias);
             userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
@@ -262,7 +272,6 @@ public class PrecomputeTemplatesTask extends Task
             classKeyProps.load(getClass().getClassLoader()
                                .getResourceAsStream("class_keys.properties"));
             Map classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-            ServletContext servletContext = new ServletContextSimulator();
             servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
             pm = new ProfileManager(os, userProfileOS, servletContext);
         } catch (Exception err) {
@@ -272,6 +281,9 @@ public class PrecomputeTemplatesTask extends Task
             throw new BuildException("user profile doesn't exist for " + username);
         } else {
             LOG.warn("Profile for " + username + ", clearing template queries");
+            // Adding global search repository to servletContext, unmarshal needs it            
+            SearchRepository sr = new SearchRepository(TemplateHelper.ALL_TEMPLATE);
+            servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, sr);
             Profile profile = pm.getProfile(username, pm.getPassword(username));
             return profile.getSavedTemplates();
         }
