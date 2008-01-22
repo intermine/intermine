@@ -236,6 +236,7 @@
                                       controller="org.flymine.web.widget.TiffinLdr"
                                       description="Tiffin Motifs enriched for genes in this list."
                                       max="0.10"
+                                      label="Motif"
                                       externalLink="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc="
                                       append=".2" />
      
