@@ -22,8 +22,6 @@ import org.intermine.xml.full.Item;
 
 import java.net.URI;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
-
 /**
  * A converter/retriever for flyreg GFF3 files.
  *
