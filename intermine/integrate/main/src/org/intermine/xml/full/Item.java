@@ -12,14 +12,14 @@ package org.intermine.xml.full;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Iterator;
 
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
 
@@ -308,10 +308,25 @@ public class Item implements Comparable
     /**
      * Add an attribute to this item
      * @param name the name of the attribute
-     * @param value the value of the attribute
+     * @param value the value of the attribute - cannot be null or empty
      */
     public void setAttribute(String name, String value) {
+        if (value == null) {
+            throw new RuntimeException("value cannot be null for attribute " + name);
+        } else {
+            if (value.equals("")) {
+                throw new RuntimeException("value cannot be an empty string for attribute " + name);
+            }
+        }
         addAttribute(new Attribute(name, value));
+    }
+
+    /**
+     * Add an attribute to this item and set it to the empty string
+     * @param name the name of the attribute
+     */
+    public void setAttributeToEmptyString(String name) {
+        addAttribute(new Attribute(name, ""));
     }
 
     /**
