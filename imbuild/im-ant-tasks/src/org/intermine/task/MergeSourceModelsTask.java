@@ -44,6 +44,8 @@ public class MergeSourceModelsTask extends Task
     private Reference classPathRef;
     private File projectXml;
 
+    private static final String MODEL_MERGER_TASK = "org.intermine.task.ModelMergerTask";
+
     /**
      * Set the classpath to use for post processing.
      * @param ref the classpath reference
@@ -151,14 +153,16 @@ public class MergeSourceModelsTask extends Task
                 mergeTask.getClass().getMethod("setAdditionsFiles", List.class);
             addFileSetMethod.invoke(mergeTask, pathsToMerge);
         } catch (Exception e) {
-            throw new BuildException("exception while adding file set", e);
+            throw new BuildException("exception while adding files to "
+                                     + MODEL_MERGER_TASK, e);
         }
 
         try {
             Method method = mergeTask.getClass().getMethod("execute");
             method.invoke(mergeTask);
         } catch (Exception e) {
-            throw new BuildException("exception while invoking execute on ModelMergerTask", e);
+            throw new BuildException("exception while invoking execute on "
+                                     + MODEL_MERGER_TASK, e);
         }
     }
 
@@ -176,9 +180,9 @@ public class MergeSourceModelsTask extends Task
 
     private Task newModelMergerTask() {
         ClassLoader cl = ClasspathUtils.getClassLoaderForPath(getProject(), classPathRef);
-        String className = "org.intermine.task.ModelMergerTask";
+
         // use reflection to avoid depending on the bio/postprocess project
-        Task mergeTask = (Task) ClasspathUtils.newInstance(className, cl);
+        Task mergeTask = (Task) ClasspathUtils.newInstance(MODEL_MERGER_TASK, cl);
 
         try {
             setProperty(mergeTask, "project", getProject());
