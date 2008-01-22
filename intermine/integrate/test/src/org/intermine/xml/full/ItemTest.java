@@ -158,6 +158,20 @@ public class ItemTest extends TestCase
             // expected
         }
 
+        try {
+            item1.setAttribute("name", null);
+            fail("expected RuntimeException");
+        } catch (RuntimeException _) {
+            // expected
+        }
+
+        try {
+            item1.setAttribute("name", "");
+            fail("expected RuntimeException");
+        } catch (RuntimeException _) {
+            // expected
+        }
+
         item1.setAttribute("vatNumber", "2000");
 
         assertEquals("2000", item1.getAttribute("vatNumber").getValue());
@@ -168,6 +182,17 @@ public class ItemTest extends TestCase
         } catch (RuntimeException _) {
             // expected
         }
+    }
+
+    public void testSetAttributeEmptyString() throws Exception {
+        ItemFactory itemFactory = new ItemFactory(model);
+
+        Item item1 = itemFactory.makeItem();
+        item1.setClassName(model.getNameSpace() + "Company");
+
+        item1.setAttributeToEmptyString("name");
+
+        assertEquals("", item1.getAttribute("name").getValue());
     }
 
     public void testAddReference() throws Exception {
