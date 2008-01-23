@@ -38,6 +38,13 @@ public class KeggPathwayConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
         File resources = new File ("resources");
+        if (!resources.exists()) {
+            // a hack - look in test-all instead because we're running the bio tests
+            resources = new File("../sources/kegg-pathway/test/resources");
+            if (!resources.exists()) {
+                fail("can't find the resources directory");
+            }
+        }
         Collection<File> allfiles = listFiles(resources, null, true);
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
