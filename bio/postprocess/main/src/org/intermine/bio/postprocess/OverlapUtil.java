@@ -91,15 +91,19 @@ public abstract class OverlapUtil
             targetClassName = (targetClassName.indexOf('.') == -1 ? model.getPackageName() + "."
                     + targetClassName : targetClassName);
 
-            Class thisClass = Class.forName(className);
-            Class targetClass = Class.forName(targetClassName);
+            try {
+                Class thisClass = Class.forName(className);
+                Class targetClass = Class.forName(targetClassName);
 
-            Set targetClasses = (Set) classesToIgnore.get(thisClass);
-            if (targetClasses == null) {
-                targetClasses = new HashSet();
-                classesToIgnore.put(thisClass, targetClasses);
+                Set targetClasses = (Set) classesToIgnore.get(thisClass);
+                if (targetClasses == null) {
+                    targetClasses = new HashSet();
+                    classesToIgnore.put(thisClass, targetClasses);
+                }
+                targetClasses.add(targetClass);
+            } catch (java.lang.ClassNotFoundException e) {
+                // ignore
             }
-            targetClasses.add(targetClass);
         }
 
         Query q = new Query();
