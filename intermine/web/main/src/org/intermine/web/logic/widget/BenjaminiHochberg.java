@@ -18,6 +18,17 @@ import org.intermine.web.logic.SortableMap;
 import java.math.BigDecimal;
 
 /**
+ * This correction is the less stringent than the Bonferroni, and therefore tolerates more
+ * false positives. There will be also less false negative genes. Here is how it works:
+ *  1) The p-values of each gene are ranked from the smallest to the largest.
+ *  2) The largest p-value remains as it is.
+ *  3) The second largest p-value is multiplied by the total number of genes in gene
+ *      list divided by its rank. If less than 0.05, it is significant.
+ *      Corrected p-value = p-value*(n/n-1) < 0.05, if so, gene is significant.
+ *  4) The third p-value is multiplied as in step 3:
+ *      Corrected p-value = p-value*(n/n-2) < 0.05, if so, gene is significant.
+ * And so on.
+ * 
  * @author Julie Sullivan
  */
 public class BenjaminiHochberg implements ErrorCorrection
@@ -31,12 +42,11 @@ public class BenjaminiHochberg implements ErrorCorrection
      * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
      * as these cannot possibly be over-represented
      * @param originalMap HashMap of go terms and their p-value
-     * @param alpha the error rate user is willing to accept
      */
     public BenjaminiHochberg(HashMap<String, Double> originalMap, int numberOfTests) {
         this.numberOfTests = numberOfTests;
         SortableMap sortedMap = new SortableMap(originalMap);
-        // sort descending
+        // sort ascending
         sortedMap.sortValues(false, false);
         this.originalMap = new HashMap<String, Double>(sortedMap);
     }
@@ -44,7 +54,7 @@ public class BenjaminiHochberg implements ErrorCorrection
     /**
      * Calculates the Benjamini and Hochberg correction of
      * the false discovery rate
-     * @param max maximum value we are interested in.  
+     * @param max maximum value we are interested in - used for display purposes only  
      */
     public void calculate(Double max) {
 
@@ -55,11 +65,12 @@ public class BenjaminiHochberg implements ErrorCorrection
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
 
             String label = (String) iter.next();
-            BigDecimal k = new BigDecimal("" + i);
-            BigDecimal m = new BigDecimal("" + numberOfTests);
+            BigDecimal index = new BigDecimal("" + i);
+            BigDecimal m = new BigDecimal("" + numberOfTests);            
+            BigDecimal p = new BigDecimal("" + originalMap.get(label)); // unadjusted p-value
             
-            BigDecimal p = new BigDecimal("" + originalMap.get(label));
-            adjustedP = k.divide(m, RESULT_SCALE, BigDecimal.ROUND_HALF_UP);
+            // p-value * (n/index)
+            adjustedP = m.divide(index, RESULT_SCALE, BigDecimal.ROUND_HALF_UP);
             adjustedP = p.multiply(adjustedP);
 
             if (adjustedP.doubleValue() < max.doubleValue()) {
