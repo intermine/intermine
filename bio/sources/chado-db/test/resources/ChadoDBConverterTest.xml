@@ -221,7 +221,7 @@
     <attribute name="identifier" value="FBgn0000001_dbxref1"/>
     <attribute name="name" value="FBgn0000001_fullname_synonym"/>
     <attribute name="organismDbId" value="FBgn0000001"/>
-    <attribute name="symbol" value="FBgn0000001_symbol_SYNONYM"/>
+    <attribute name="symbol" value="FBgn0000001_symbol_synonym"/>
     <reference name="organism" ref_id="3_1"/>
     <reference name="sequence" ref_id="4_1"/>
     <collection name="evidence">

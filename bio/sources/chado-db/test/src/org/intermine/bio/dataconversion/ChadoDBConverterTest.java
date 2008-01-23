@@ -288,7 +288,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
                     23269151, "FBgn0000001_symbol_synonym", "symbol", true
                 },
                 {
-                    23269151, "FBgn0000001_symbol_SYNONYM", "symbol", true
+                    23269151, "FBgn0000001_symbol_SYNONYM", "symbol", false
                 },
                 {
                     3117509, "FBgn0036461_symbol_3", "other", false
