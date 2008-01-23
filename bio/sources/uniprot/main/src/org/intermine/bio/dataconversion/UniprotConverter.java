@@ -38,6 +38,7 @@ import org.intermine.xml.full.ReferenceList;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -466,7 +467,7 @@ public class UniprotConverter extends FileConverter
                             strName = strStatus;
                         }
                     }
-                    if (strName != null) {
+                    if (!StringUtils.isEmpty(strName)) {
                         feature.setAttribute("description", strName);
                     }
                 // <entry><feature><location><start||end>
