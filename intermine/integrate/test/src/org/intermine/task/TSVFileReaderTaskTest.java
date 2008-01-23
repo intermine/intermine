@@ -105,6 +105,16 @@ public class TSVFileReaderTaskTest extends TestCase
 
         Results r = os.execute(q);
 
+        if (r.size() != 3) {
+            for (List<Object> rr: (List<List<Object>>) r) {
+                System.err.print("row: ");
+                for (Object obj: rr) {
+                    System.err.print("{" + obj + "} ");
+                }
+                System.err.println();
+            }
+        }
+
         assertEquals(3, r.size());
 
         List expectedRow0 = Arrays.asList(new Object[] {new Integer(10), "EmployeeA1", Boolean.FALSE});
