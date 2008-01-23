@@ -11,6 +11,9 @@ package org.intermine.bio.dataconversion;
  */
 import java.io.File;
 import java.io.Reader;
+
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -137,7 +140,9 @@ public class RNAiConverter extends FileConverter
     private Item createPhenotype(String code, String desc, String comment, String isObserved, String penetranceFrom, String penetranceTo)
     throws ObjectStoreException {
         Item rnaiPhenotype = createItem("RNAiPhenotype");
-        rnaiPhenotype.setAttribute("code", code);
+        if (!StringUtils.isEmpty(code)) {
+            rnaiPhenotype.setAttribute("code", code);
+        }
         rnaiPhenotype.setAttribute("name", desc);
         rnaiPhenotype.setAttribute("observed", isObserved);
         rnaiPhenotype.setAttribute("penetranceFrom", penetranceFrom);
