@@ -145,8 +145,12 @@ public class RNAiConverter extends FileConverter
         }
         rnaiPhenotype.setAttribute("name", desc);
         rnaiPhenotype.setAttribute("observed", isObserved);
-        rnaiPhenotype.setAttribute("penetranceFrom", penetranceFrom);
-        rnaiPhenotype.setAttribute("penetranceTo", penetranceTo);
+        if (!StringUtils.isEmpty(penetranceFrom)) {
+            rnaiPhenotype.setAttribute("penetranceFrom", penetranceFrom);
+        }
+        if (!StringUtils.isEmpty(penetranceTo)) {
+            rnaiPhenotype.setAttribute("penetranceTo", penetranceTo);
+        }
         if (comment != null && !comment.equals("")) {
             rnaiPhenotype.setAttribute("comment", comment);
         }
