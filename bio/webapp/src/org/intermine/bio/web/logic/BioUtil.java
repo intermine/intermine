@@ -101,7 +101,7 @@ public abstract class BioUtil
      * @param organism Organism name
      * @return collection of chromosome names
      */
-    public static Collection getChromosomes(ObjectStore os, String organism) {
+    public static Collection<String> getChromosomes(ObjectStore os, String organism) {
 
         /* TODO put this in a config file */
         // TODO this may well go away once chromosomes sorted out in #1186
