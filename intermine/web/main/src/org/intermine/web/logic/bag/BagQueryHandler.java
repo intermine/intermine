@@ -111,7 +111,8 @@ public class BagQueryHandler extends DefaultHandler
             String urlField = attrs.getValue("urlfield");
             String className = attrs.getValue("class-name");
             String classConstraint = attrs.getValue("classConstraint");
-            String [] array = new String[] {urlField, classConstraint};
+            String messageDisplayer = attrs.getValue("messageDisplayer");
+            String [] array = new String[] {urlField, classConstraint, messageDisplayer};
             additionalConverters.put(className, array);
         }
     }

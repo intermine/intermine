@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <html:xhtml/>
 
@@ -49,9 +50,8 @@
       <c:otherwise>
         <div class="lookupWarn">
          <c:choose>
-         <c:when test="${!empty ADDITIONAL_CONVERTER_MSG}">
-           <c:out value="${ADDITIONAL_CONVERTER_MSG}" />
-           <c:remove var="ADDITIONAL_CONVERTER_MSG" />
+         <c:when test="${!empty messageDisplayer}">
+           <jsp:include page="${messageDisplayer}" />
          </c:when>
          <c:otherwise>
          <fmt:message key="results.lookup.matches.many">

@@ -28,6 +28,7 @@ import org.intermine.path.Path;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.BagTableDisplayer;
 import org.intermine.web.logic.config.EnrichmentWidgetDisplayer;
@@ -226,6 +227,28 @@ public class BagDetailsController extends TilesAction
             int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
 
             PagedTable pagedColl = new PagedTable(webPathCollection, pageSize);
+            
+            // TODO this needs to be removed when InterMineBag can store the initial ids of when the
+            // bag was made.
+            BagQueryConfig bagQueryConfig =
+                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+            Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
+            for (String converterClassName : additionalConverters.keySet()) {
+                String urlField = null;
+                String [] paramArray = additionalConverters.get(converterClassName);
+                String [] urlFields = paramArray[0].split(",");
+                for (int i = 0; i < urlFields.length; i++) {
+                    if (request.getParameter(urlFields[i]) != null) {
+                        request.setAttribute("extrafield", urlFields[i]);
+                        request.setAttribute(urlFields[i], request.getParameter(urlFields[i]));
+                        request.setAttribute("externalids", request.getParameter("externalids"));
+                        break;
+                    }
+                }
+            }
+
+            request.setAttribute("addparameter", request.getParameter("addparameter"));
+            request.setAttribute("messageDisplayer", request.getParameter("messageDisplayer"));
             request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);
             request.setAttribute("bagSize", new Integer(imBag.size()));
