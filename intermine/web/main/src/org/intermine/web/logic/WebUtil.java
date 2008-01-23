@@ -288,7 +288,7 @@ public abstract class WebUtil
     }
 
 
-    private static HashMap mapChars() {
+    private static HashMap<String, String> mapChars() {
 
         HashMap<String, String> specCharToText = new HashMap<String, String> ();
 
@@ -449,7 +449,7 @@ public abstract class WebUtil
      * @return array of three results maps
      * @throws Exception
      */
-    public static ArrayList statsCalc(ObjectStoreInterMineImpl os,
+    public static ArrayList<Map> statsCalc(ObjectStoreInterMineImpl os,
                                       Query queryPopulation,
                                       Query querySample,
                                       InterMineBag bag,
@@ -457,7 +457,7 @@ public abstract class WebUtil
                                       Double maxValue,
                                       String errorCorrection) {
 
-            ArrayList<Object> maps = new ArrayList<Object>();
+            ArrayList<Map> maps = new ArrayList<Map>();
             int numberOfObjectsInBag;
             try {
                 numberOfObjectsInBag = bag.size();
