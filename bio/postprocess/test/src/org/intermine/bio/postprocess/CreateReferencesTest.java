@@ -1036,11 +1036,11 @@ public class CreateReferencesTest extends TestCase {
         return item;
     }
 
-    private void compareItemsCollectionOrderInsensitive(Item a, Item b) throws Exception {
+    private void compareItemsCollectionOrderInsensitive(Item exp, Item act) throws Exception {
         XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = new Diff(a.toString(), b.toString());
+        Diff diff = new Diff(exp.toString(), act.toString());
         diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-        Assert.assertTrue("Item \"" + a.toString() + "\" not equal to item \"" + b.toString() + "\"",
-                diff.similar());
+        Assert.assertTrue("Expected Item \"" + exp.toString() + "\" not equal to actual item \""
+                          + act.toString() + "\"", diff.similar());
     }
 }
