@@ -22,13 +22,13 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
+import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
  * Builds a query to get all the genes (in bag) associated with specified go term.
  * @author Julie Sullivan
  */
-public class ProteinDomainURLQuery implements EnrichmentWidgetURLQuery
+public class ProteinDomainURLQuery implements WidgetURLQuery
 {
 
     InterMineBag bag;

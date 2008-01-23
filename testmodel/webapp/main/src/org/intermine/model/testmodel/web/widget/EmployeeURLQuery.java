@@ -24,13 +24,13 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
+import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
  * Builds a query to get all the employees (in bag) associated with specified dept.
  * @author Julie Sullivan
  */
-public class EmployeeURLQuery implements EnrichmentWidgetURLQuery
+public class EmployeeURLQuery implements WidgetURLQuery
 {
 
     InterMineBag bag;

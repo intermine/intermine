@@ -13,13 +13,14 @@ package org.intermine.web.logic.widget;
 import org.intermine.web.logic.query.PathQuery;
 
 /**
- * @author julie sullivan
- *
+ * Builds the query needed to generate the results for the user based on what they clicked on 
+ * in the widget.
+ * @author Julie Sullivan
  */
-public interface EnrichmentWidgetURLQuery
+public interface WidgetURLQuery
 {
     /**
-     * @return the query
+     * @return the query generated based on which records the user clicked on in the widget
      */
     public PathQuery generatePathQuery();
 
