@@ -14,8 +14,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Orthologue;
-import org.flymine.model.genomic.Paralogue;
+import org.flymine.model.genomic.Homologue;
 import org.flymine.model.genomic.Translation;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -63,16 +62,10 @@ public class UpdateOrthologues extends PostProcessor
     public void postProcess() throws ObjectStoreException {
         os.flushObjectById();
         LOG.info("Updating Orthologue objects");
-        update(Orthologue.class, "translation");
+        update("translation");
         os.flushObjectById();
         LOG.info("Updating Orthologue subjects");
-        update(Orthologue.class, "orthologueTranslation");
-        os.flushObjectById();
-        LOG.info("Updating Paralogue objects");
-        update(Paralogue.class, "translation");
-        os.flushObjectById();
-        LOG.info("Updating Paralogue subjects");
-        update(Paralogue.class, "paralogueTranslation");
+        update("homologueTranslation");
     }
 
     /**
@@ -83,25 +76,13 @@ public class UpdateOrthologues extends PostProcessor
      * @param relationClass either Orthologue or Paralogue
      * @param refType the relation to set - either "subject" or "object"
      */
-    private void update(Class relationClass, String refType) throws ObjectStoreException {
-        String clsName = TypeUtil.unqualifiedName(relationClass.getName());
-        if (!(clsName.equals("Orthologue") || (clsName.equals("Paralogue")))) {
-            throw new IllegalArgumentException("relationClass was '" + clsName + "'"
-                                               + " but must be 'Orthologue' or 'Paralogue'");
-        }
-        if (!(refType.equals("translation") || refType.equals("orthologueTranslation")
-                        || refType.equals("paralogueTranslation"))) {
-            throw new IllegalArgumentException("refType was '" + refType + "'"
-                                               + " but must be 'translation', "
-                                               + "'orthologueTranslation or "
-                                               + "'paralogueTranslation'");
-        }
+    private void update(String refType) throws ObjectStoreException {
 
         // query for [Ortho|Para]logue, subject/object Translation and Translation.genes
         Query q = new Query();
         q.setDistinct(false);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryClass qcRel = new QueryClass(relationClass);
+        QueryClass qcRel = new QueryClass(Homologue.class);
         q.addFrom(qcRel);
         q.addToSelect(qcRel);
 
@@ -176,7 +157,7 @@ public class UpdateOrthologues extends PostProcessor
             lastGene = gene;
             lastObject = o;
 
-            if ((updated + created) % 100 == 0) {
+            if ((updated + created) % 1000 == 0) {
                 LOG.info("updated: " + updated + " and created: " + created
                          + " [Ortho|Para]logues");
             }

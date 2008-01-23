@@ -1,29 +1,19 @@
 <?xml version="1.0"?>
 <classes>
 <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
-<class name="org.flymine.model.genomic.Orthologue" is-interface="true">
+<class name="org.flymine.model.genomic.Homologue" is-interface="true">
   <attribute name="inParanoidScore" type="java.lang.Double"/>
   <attribute name="bootstrapScore" type="java.lang.Integer"/>
-  <attribute name="orthologueBootstrapScore" type="java.lang.Integer"/>
+  <attribute name="homologueBootstrapScore" type="java.lang.Integer"/>
   <attribute name="type" type="java.lang.String"/>
-  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="orthologues"/>
-  <reference name="orthologue" referenced-type="org.flymine.model.genomic.Gene"/>
+  <attribute name="clusterName" type="java.lang.String"/>
+  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="homologues"/>
+  <reference name="homologue" referenced-type="org.flymine.model.genomic.Gene"/>
   <reference name="translation" referenced-type="org.flymine.model.genomic.Translation"/>
-  <reference name="orthologueTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
-  <collection name="coOrthologues" referenced-type="org.flymine.model.genomic.Orthologue"/>
-  <collection name="paralogues" referenced-type="org.flymine.model.genomic.Paralogue"/>
-  <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence"/>
-</class>
-<class name="org.flymine.model.genomic.Paralogue" is-interface="true">
-  <attribute name="inParanoidScore" type="java.lang.Double"/>
-  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="paralogues"/>
-  <reference name="paralogue" referenced-type="org.flymine.model.genomic.Gene"/>
-  <reference name="translation" referenced-type="org.flymine.model.genomic.Translation"/>
-  <reference name="paralogueTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
+  <reference name="homologueTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
   <collection name="evidence" referenced-type="org.flymine.model.genomic.Evidence"/>
 </class>
 <class name="org.flymine.model.genomic.Gene" is-interface="true">
-  <collection name="orthologues" referenced-type="org.flymine.model.genomic.Orthologue" reverse-reference="gene"/>
-  <collection name="paralogues" referenced-type="org.flymine.model.genomic.Paralogue" reverse-reference="gene"/>
+  <collection name="homologues" referenced-type="org.flymine.model.genomic.Homologue" reverse-reference="gene"/>
 </class>
 </classes>

@@ -31,7 +31,7 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
 /**
- * DataConverter to parse an INPARANOID Orthologue/Paralogue "longsqltable" data file into Items
+ * DataConverter to parse an INPARANOID Orthologue/Paralogue "sqltable" data file into Items
  * @author Mark Woodbridge
  * @author Richard Smith
  */
@@ -40,17 +40,12 @@ public class InparanoidConverter extends FileConverter
     protected static final String PROP_FILE = "inparanoid_config.properties";
     protected Map bioEntities = new HashMap();
     protected Item db, pub;
-    protected Map ids = new HashMap();
     protected Map organisms = new LinkedHashMap();
     protected Map sources = new LinkedHashMap();
     protected Map orgSources = new HashMap();
     protected Map taxonIds = new HashMap();
     protected Map attributes = new HashMap();
     protected Map createObjects = new HashMap(); // which objects to create from which source
-    protected List<String> leftParalogues = new ArrayList<String>();
-    protected List<String> rightParalogues = new ArrayList<String>();
-    protected List<BioAndScores> firstParalogues = new ArrayList<BioAndScores>();
-    protected List<BioAndScores> secondParalogues = new ArrayList<BioAndScores>();
 
     /**
      * Constructor
@@ -61,7 +56,6 @@ public class InparanoidConverter extends FileConverter
     public InparanoidConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
         setupItems();
-
         readConfig();
     }
 
@@ -110,17 +104,21 @@ public class InparanoidConverter extends FileConverter
         }
     }
 
+    
     /**
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+        // 1. create all bios and scores for cluster, in sets for each organism: orgA and orgB
+        // 2. call homolog creation method (orgA, orgB) then (orgB, orgA)
+
         int lineNum = 0;
-        String line, lastCode = null, oldIndex = null;
+        String line, lastCode = null, oldIndex = null, index = null;
 
         Item bio = null;
-        BioAndScores firstBio = null, secondBio = null;
         boolean isGene, onFirstOrganism = true;
-
+        List<BioAndScores> orgA = new ArrayList(), orgB = new ArrayList(); 
+        
         BufferedReader br = new BufferedReader(reader);
         while ((line = br.readLine()) != null) {
             lineNum++;
@@ -132,8 +130,9 @@ public class InparanoidConverter extends FileConverter
                                                    + line);
             }
 
-            String index = array[0];
-            String code = null;
+            index = array[0];
+            
+            // not all rows have a bootsrap score
             String bootstrap = null;
             if (array.length > 5 && array[5] != null && !array[5].equals("")) {
                 try {
@@ -146,186 +145,150 @@ public class InparanoidConverter extends FileConverter
             }
             String score = array[3];
 
+            // code tells us which organism data is from
+            String code = null;
             if (array[2].indexOf('.') > 0) {
                 code = array[2].substring(0, array[2].indexOf('.'));
             } else {
                 code = array[2];
             }
-
+            
             // work out if this is a Gene or Translation and create item
             if (createObjects.get(code) != null) {
                 if (createObjects.get(code).equals("Gene")) {
                     bio = newBioEntity(array[4], (String) attributes.get(code),
-                                       getOrganism(code), "Gene");    // Stores BioEntity & Synonym
+                                       getOrganism(code), "Gene");
                     isGene = true;
                 } else {
                     bio = newBioEntity(array[4], (String) attributes.get(code),
                                        getOrganism(code), "Translation");
-                                                                      // Stores BioEntity & Synonym
                     isGene = false;
                 }
             } else {
                 throw new RuntimeException("No configuration provided for organism code: " + code);
             }
-            BioAndScores bands = new BioAndScores(bio.getIdentifier(), score, bootstrap, isGene);
-
+            String orgName = code.substring(3);
+            BioAndScores bands = new BioAndScores(bio.getIdentifier(), score, bootstrap,
+                                                  isGene, orgName);
 
             // Three situations possible:
             if (!index.equals(oldIndex)) {
-                onFirstOrganism = true;
-
-                if (oldIndex != null) {
-                    // finish up and store the previous group
-                    storeOrthologues(firstBio, secondBio);
-                                             // Stores Orthologues -> Paralogues
+                // we have finished a group, create and store homologues
+                // call twice to create in both directions (special test for first cluster)
+                if (oldIndex != null || !onFirstOrganism) {
+                    createHomologues(orgA, orgB, oldIndex);
+                    createHomologues(orgB, orgA, oldIndex);
                 }
-
-                firstBio = bands;
-                leftParalogues = new ArrayList<String>();
-                rightParalogues = new ArrayList<String>();
-                firstParalogues = new ArrayList<BioAndScores>();
-                secondParalogues = new ArrayList<BioAndScores>();
+                
+                // reset for next group
+                onFirstOrganism = true;
+                orgA = new ArrayList();
+                orgB = new ArrayList();
             } else if (!code.equals(lastCode)) {
                 // we are on the first line of the second organism in group
-                secondBio = bands;
-
                 onFirstOrganism = false;
-                // could create an orthologue but don't know all inParalogues yet
-
             } else {
-                // we are on a paralogue of the first or second bio
-
-                // create the paralogues
-                Item leftPara, rightPara;
-                if (onFirstOrganism) {
-                    leftPara = createRelation("Paralogue", firstBio, bands, false, "");
-                    rightPara = createRelation("Paralogue", firstBio, bands, true, "");
-                    firstParalogues.add(bands);
-                } else {
-                    leftPara = createRelation("Paralogue", secondBio, bands, false, "");
-                    rightPara = createRelation("Paralogue", secondBio, bands, true, "");
-                    secondParalogues.add(bands);
-                }
-
-                // keep the paralogues in left/right paralogues
-                leftParalogues.add(leftPara.getIdentifier());
-                rightParalogues.add(rightPara.getIdentifier());
-
-                store(leftPara);  // Stores Paralogues
-                store(rightPara); // Stores Paralogues
+                // we are on a paralogue of the first or second bio, do nothing now
             }
 
-            // clear old values and try to set new ones
+            // store the bios and scores by organism
+            if (onFirstOrganism) {
+                orgA.add(bands);
+            } else {
+                orgB.add(bands);
+            }
+
             oldIndex = index;
             lastCode = code;
-
         }
 
         if (lineNum > 0) {
             // make sure final group gets stored
-            storeOrthologues(firstBio, secondBio);
+            createHomologues(orgA, orgB, oldIndex);
+            createHomologues(orgB, orgA, oldIndex);
          }
     }
+    
+    
+    // homolog creation method:
+    // foreach orgA
+    //   foreach orgA
+    //   if this.score = 1 or other score = 1
+    //     create an inParalogue
+    //   foreach orgB
+    //     if both scores are 1
+    //       create an orthologue
+    //     else if this.score or other.score = 1
+    //       create an inParalogue
 
-    private void storeOrthologues(BioAndScores firstBio, BioAndScores secondBio)
+    private void createHomologues(List<BioAndScores> orgA, List<BioAndScores> orgB, String index) 
     throws ObjectStoreException {
-        List<Item> lefts = new ArrayList<Item>();
-        List<Item> rights = new ArrayList<Item>();
-        // create the main orthologues
-        Item leftOrth = createRelation("Orthologue", firstBio, secondBio, false, "main");
-        Item rightOrth = createRelation("Orthologue", firstBio, secondBio, true, "main");
-
-        // set the inParalogues collection for main orthologue and store
-        leftOrth.setCollection("paralogues", leftParalogues);
-        rightOrth.setCollection("paralogues", rightParalogues);
-
-        lefts.add(leftOrth);
-        rights.add(rightOrth);
-
-        // create coOrthologues for first organism
-        for (BioAndScores first : firstParalogues) {
-            Item coOrthLeft = createRelation("Orthologue", first, secondBio, false, "secondary");
-            Item coOrthRight = createRelation("Orthologue", first, secondBio, true, "secondary");
-            lefts.add(coOrthLeft);
-            rights.add(coOrthRight);
-        }
-
-        // create coOrthologues for second organism
-        for (BioAndScores second : secondParalogues) {
-            Item coOrthLeft = createRelation("Orthologue", second, firstBio, true, "secondary");
-            Item coOrthRight = createRelation("Orthologue", second, firstBio, false, "secondary");
-            lefts.add(coOrthLeft);
-            rights.add(coOrthRight);
-        }
-
-        // set coOrthologues collection to contain all left/right orthologues from group
-        // except the current one.  Then store.
-        for (Item orth : lefts) {
-            List<String> coOrths = new ArrayList<String>();
-            for (Item coOrth : lefts) {
-                if (!coOrth.getIdentifier().equals(orth.getIdentifier())) {
-                    coOrths.add(coOrth.getIdentifier());
+        // generate a name for the cluster based on organisms (in order) and index
+        String cluster = orgA.get(0).getOrganism() + "-" + orgB.get(0).getOrganism() + ":" + index;
+        for (BioAndScores thisBio : orgA) {
+            // create paralogues with other orgA bios
+            for (BioAndScores otherBio : orgA) {
+                if (thisBio == otherBio) {
+                    continue;
+                }
+                // only create paralogues between 'ortholgoues' in the cluster and other bios
+                if ((Double.parseDouble(thisBio.score) == 1) 
+                                || (Double.parseDouble(otherBio.score) == 1)) {
+                    store(createHomologue(thisBio, otherBio, "inParalogue", cluster));
                 }
             }
-            orth.setCollection("coOrthologues", coOrths);
-            orth.setCollection("paralogues", leftParalogues);
-            store(orth);
-        }
-
-        for (Item orth : rights) {
-            List<String> coOrths = new ArrayList<String>();
-            for (Item coOrth : rights) {
-                if (!coOrth.getIdentifier().equals(orth.getIdentifier())) {
-                    coOrths.add(coOrth.getIdentifier());
+            // create orthologues and paralogues to bios in other organism
+            for (BioAndScores otherBio : orgB) {
+                // create an orthologue where both bios are a main bio in cluster,
+                // create a paralogue if only one of the bios is a 'main' bio in cluster
+                if ((Double.parseDouble(thisBio.score) == 1) 
+                                && (Double.parseDouble(otherBio.score) == 1)) {
+                    store(createHomologue(thisBio, otherBio, "orthologue", cluster));
+                } else if ((Double.parseDouble(thisBio.score) == 1) 
+                                || (Double.parseDouble(otherBio.score) == 1)) {
+                    store(createHomologue(thisBio, otherBio, "inParalogue", cluster));
                 }
             }
-            orth.setCollection("coOrthologues", coOrths);
-            orth.setCollection("paralogues", rightParalogues);
-            store(orth);
         }
     }
+    
+    // create and store a Homologue item
+    private Item createHomologue(BioAndScores first, BioAndScores second,
+                                 String type, String cluster) {
+        Item homologue = createItem("Homologue");
 
-
-    private Item createRelation(String className, BioAndScores first,
-                               BioAndScores second, boolean reverse, String type) {
-        Item relation = createItem(className);
-
-        // the score is only relevant for the main orthologue
-        if (!type.equals("secondary")) {
-            relation.setAttribute("inParanoidScore", second.getScore());
-        }
-
-        // if not reversed then first is gene/translation and second is orthologue/paralogue
-
+        // at least one score will be 1, if an inParalogue then we want the score that isn't 1
+        String score = "" + Math.min(Double.parseDouble(first.getScore()), 
+                                     Double.parseDouble(second.getScore()));
+        homologue.setAttribute("inParanoidScore", score);
         if (first.isGene()) {
-            relation.setReference(reverse ? className.toLowerCase() : "gene", first.getBio());
+            homologue.setReference("gene", first.getBio());
         } else {
-            relation.setReference(reverse ? className.toLowerCase() + "Translation"
-                                          : "translation", first.getBio());
+            homologue.setReference("translation", first.getBio());
         }
+
         if (second.isGene()) {
-            relation.setReference(reverse ? "gene" : className.toLowerCase(), second.getBio());
+            homologue.setReference("homologue", second.getBio());
         } else {
-            relation.setReference(reverse ? "translation" : className.toLowerCase()
-                                          + "Translation", second.getBio());
+            homologue.setReference("homologueTranslation", second.getBio());
         }
 
-        if (className.equals("Orthologue") && first.getBootstrap() != null) {
-            relation.setAttribute(reverse ? className.toLowerCase() + "BootstrapScore"
-                                          : "bootstrapScore", first.getBootstrap());
+        if (type.equals("orthologue") && first.getBootstrap() != null) {
+            homologue.setAttribute("bootstrapScore", first.getBootstrap());
         }
-        if (className.equals("Orthologue") && second.getBootstrap() != null) {
-            relation.setAttribute(reverse ? "bootstrapScore" : className.toLowerCase()
-                                          + "BootstrapScore", second.getBootstrap());
+        if (type.equals("orthologue") && second.getBootstrap() != null) {
+            homologue.setAttribute("homologueBootstrapScore", second.getBootstrap());
         }
-        if (className.equals("Orthologue")) {
-            relation.setAttribute("type", type);
-        }
+        
+        homologue.setAttribute("type", type);
+        homologue.setAttribute("clusterName", cluster);
 
-        relation.addCollection(new ReferenceList("evidence",
+        homologue.addCollection(new ReferenceList("evidence",
             Arrays.asList(new String[] {db.getIdentifier(), pub.getIdentifier()})));
-        return relation;
+        return homologue;
     }
+
+    
 
     /**
      * Convenience method to create and cache Genes/Proteins by identifier
@@ -414,15 +377,16 @@ public class InparanoidConverter extends FileConverter
 
     private class BioAndScores
     {
-        private String bioIdentifier, score, bootstrap;
+        private String bioIdentifier, score, bootstrap, organism;
         private boolean isGene;
 
         public BioAndScores(String bioIdentifier, String score, String bootstrap,
-                            boolean isGene) {
+                            boolean isGene, String organism) {
             this.bioIdentifier = bioIdentifier;
             this.score = score;
             this.bootstrap = bootstrap;
             this.isGene = isGene;
+            this.organism = organism;
         }
 
         public String getBio() {
@@ -439,6 +403,10 @@ public class InparanoidConverter extends FileConverter
 
         public boolean isGene() {
             return isGene;
+        }
+        
+        public String getOrganism() {
+            return organism;
         }
     }
 }
