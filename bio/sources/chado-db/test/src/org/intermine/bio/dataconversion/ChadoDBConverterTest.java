@@ -234,6 +234,9 @@ public class ChadoDBConverterTest extends ItemsTestCase
                     3117509, "CG10006_symbol", "symbol"
                 },
                 {
+                    3117509, "CG10006_SYMBOL", "symbol"
+                },
+                {
                     3117509, "Not in SwissProt real (computational)", "sp_status"
                 },
                 {
@@ -283,6 +286,9 @@ public class ChadoDBConverterTest extends ItemsTestCase
                 },
                 {
                     23269151, "FBgn0000001_symbol_synonym", "symbol", true
+                },
+                {
+                    23269151, "FBgn0000001_symbol_SYNONYM", "symbol", true
                 },
                 {
                     3117509, "FBgn0036461_symbol_3", "other", false

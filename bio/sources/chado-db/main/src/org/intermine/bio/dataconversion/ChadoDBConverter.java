@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.intermine.dataconversion.ItemWriter;
@@ -1392,7 +1393,7 @@ public class ChadoDBConverter extends BioDBConverter
         private String uniqueName;
         private String chadoFeatureName;
         // the synonyms that have already been created
-        private Set<String> existingSynonyms = new HashSet<String>();
+        private Set<String> existingSynonyms = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         private String itemIdentifier;
         private String interMineType;
         private Integer intermineObjectId;
