@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -228,10 +229,13 @@ public class PortalQueryAction extends InterMineAction
             Constructor constructor = clazz.getConstructor();
             String [] paramArray = additionalConverters.get(converterClassName);
             String [] urlFields = paramArray[0].split(",");
+            String messageDisplayer = paramArray[2];
             String addparameter = null;
+            String urlField = null;
             for (int i = 0; i < urlFields.length; i++) {
                 if (request.getParameter(urlFields[i]) != null) {
                     addparameter = request.getParameter(urlFields[i]);
+                    urlField = urlFields[i];
                     break;
                 }
             }
@@ -264,11 +268,10 @@ public class PortalQueryAction extends InterMineAction
                 osw.addAllToBag(imBag.getOsb(), converted);
                 osw.close();
                 profile.saveBag(imBag.getName(), imBag);
-                session.setAttribute("ADDITIONAL_CONVERTER_MSG", "Found " 
-                                        + imBag.getSize() + " orthologues in " 
-                                        + addparameter + " for " + result.size() 
-                                        + " " + imBag.getType() + "s");
                 return new ForwardParameters(mapping.findForward("bagDetails"))
+                .addParameter("addparameter", addparameter)
+                .addParameter("messageDisplayer", messageDisplayer)
+                .addParameter("externalids", extId)
                 .addParameter("bagName", imBag.getName()).forward();
             }
         }

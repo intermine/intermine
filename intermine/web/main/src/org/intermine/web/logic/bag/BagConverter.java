@@ -26,7 +26,7 @@ public interface BagConverter
     /**
      * Get the list of converted intermine objects
      * @param session the session
-     * @param parameter the parameters
+     * @param parameters the parameters
      * @param fromList the list of objects to convert
      * @param type the type of the bag
      * @return
