@@ -9,6 +9,9 @@ import junit.framework.TestCase;
 
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.ProteinInteraction;
+
+import org.apache.tools.ant.BuildException;
+
 import org.intermine.bio.networkview.network.FlyNetwork;
 import org.intermine.bio.networkview.network.FlyNode;
 import org.intermine.metadata.Model;
@@ -34,7 +37,12 @@ public class FlyNetworkCreatorTest extends TestCase
         int count = 0;
         ArrayList l1 = new ArrayList();
         ArrayList l2 = new ArrayList();
-        Collection interactions = getFilteredList();
+        Collection interactions;
+        try {
+            interactions = getFilteredList();
+        } catch (Exception e) {
+            throw new BuildException("can't get interactions", e);
+        }
 
         // creating a Collection of all protein ids (primary accession)
         // from the collection of protein interactions
@@ -89,7 +97,7 @@ public class FlyNetworkCreatorTest extends TestCase
     }
 
     //*** helper methods
-    private Collection getFilteredList() {
+    private Collection getFilteredList() throws ClassNotFoundException, Exception {
         ArrayList pi = new ArrayList();
         Collection list = getExpectedObjects();
         for (Iterator iter = list.iterator(); iter.hasNext();) {
@@ -102,13 +110,8 @@ public class FlyNetworkCreatorTest extends TestCase
         return pi;
     }
 
-    private Collection getExpectedObjects() {
-        Collection c = null;
-        try {
-            c = FullParser.realiseObjects(getExpectedItems(), model, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private Collection getExpectedObjects() throws ClassNotFoundException, Exception {
+        Collection c = FullParser.realiseObjects(getExpectedItems(), model, false);
         return c;
     }
 
