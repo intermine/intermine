@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -650,7 +651,7 @@ public class PsiConverter extends FileConverter
                                 && interactorHolder.isRegionFeature) {
 
                     interactorHolder.endStatus = attValue.toString();
-                   
+
                 //<interactionList><interaction>
                 } else if (qName.equals("interaction")
                                 && holder != null) {
@@ -707,21 +708,21 @@ public class PsiConverter extends FileConverter
                         proteinList.addRefId((String) it.next());
                     }
                     interaction.addCollection(proteinList);
-                    
+
                     proteinIds.add(proteinRefId);
-                    
+
                     // interactingRegions
                     Set<String> regionIds = interactionHolder.regionIds;
                     ReferenceList regionList = new ReferenceList("interactingRegions",
-                                                                  new ArrayList());             
+                                                                  new ArrayList());
                     for (Iterator it = regionIds.iterator(); it.hasNext();) {
                         regionList.addRefId((String) it.next());
                     }
                     if (!regionList.getRefIds().isEmpty()) {
                         interaction.addCollection(regionList);
                     }
-                    
-                    
+
+
                     // add dataset
                     ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
                     interaction.addCollection(evidenceColl);
@@ -730,7 +731,7 @@ public class PsiConverter extends FileConverter
                     /* store all protein interaction-related items */
                     writer.store(ItemHelper.convert(interaction));
                     if (interactorHolder.interactionRegion != null) {
-                        
+
                         Item region = interactorHolder.interactionRegion;
                         if (interactorHolder.startStatus != null) {
                             region.setAttribute("startStatus",
@@ -739,7 +740,7 @@ public class PsiConverter extends FileConverter
                         if (interactorHolder.endStatus != null) {
                             region.setAttribute("endStatus",
                                                  interactorHolder.endStatus);
-                        }                        
+                        }
                         region.setReference("interaction", interaction);
                         writer.store(ItemHelper.convert(region));
                         writer.store(ItemHelper.convert(interactorHolder.location));
@@ -947,7 +948,7 @@ public class PsiConverter extends FileConverter
             private Double confidence;
             private String confidenceText;
             private String confidenceUnit;
-            private Set<InteractorHolder> interactors = new HashSet<InteractorHolder>();
+            private Set<InteractorHolder> interactors = new LinkedHashSet<InteractorHolder>();
             private boolean isValid = true;
             private Set<String> proteinIds = new HashSet<String>();
             private Set<String> regionIds = new HashSet<String>();
@@ -961,7 +962,7 @@ public class PsiConverter extends FileConverter
             }
 
             /**
-             * 
+             *
              * @param experimentHolder object holding experiment object
              */
             protected void setExperiment(ExperimentHolder experimentHolder) {
@@ -969,7 +970,7 @@ public class PsiConverter extends FileConverter
             }
 
             /**
-             * 
+             *
              * @param confidence confidence score for interaction
              */
             protected void setConfidence(String confidence) {
@@ -983,23 +984,23 @@ public class PsiConverter extends FileConverter
             }
 
             /**
-             * 
-             * @param interactorHolder object holding interactor 
+             *
+             * @param interactorHolder object holding interactor
              */
             protected void addInteractor(InteractorHolder interactorHolder) {
                 interactors.add(interactorHolder);
             }
 
             /**
-             * 
+             *
              * @param proteinId protein involved in interaction
              */
             protected void addProtein(String proteinId) {
                 proteinIds.add(proteinId);
             }
 
-            /** 
-             * 
+            /**
+             *
              * @param regionId Id of ProteinInteractionRegion object
              */
             protected void addRegion(String regionId) {
@@ -1067,7 +1068,7 @@ public class PsiConverter extends FileConverter
             }
 
             /**
-             * 
+             *
              * @param name name of experiment
              */
             protected void setName(String name) {
@@ -1076,7 +1077,7 @@ public class PsiConverter extends FileConverter
             }
 
             /**
-             * 
+             *
              * @param publication publication of this experiment
              */
             protected void setPublication(String publication) {
@@ -1084,7 +1085,7 @@ public class PsiConverter extends FileConverter
             }
 
             /**
-             * 
+             *
              * @param whichMethod method
              * @param termItemId termID
              */
@@ -1093,7 +1094,7 @@ public class PsiConverter extends FileConverter
             }
 
             /**
-             * 
+             *
              * @param fullName name of organism
              */
             protected void setHostOrganism(String fullName) {
