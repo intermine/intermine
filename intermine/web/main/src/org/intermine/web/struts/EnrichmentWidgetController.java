@@ -50,6 +50,7 @@ public class EnrichmentWidgetController extends TilesAction
                                   HttpServletRequest request,
                                   @SuppressWarnings("unused") HttpServletResponse response)
      throws Exception {
+         
          EnrichmentWidgetForm ewf = (EnrichmentWidgetForm) form;
          HttpSession session = request.getSession();
          Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -66,8 +67,8 @@ public class EnrichmentWidgetController extends TilesAction
          }
          ewf.setBag(bag);
 
-         Class clazz = TypeUtil.instantiate(ewf.getController());
-         Constructor constr = clazz.getConstructor(new Class[]
+         Class<?> clazz = TypeUtil.instantiate(ewf.getController());
+         Constructor<?> constr = clazz.getConstructor(new Class[]
                                                              {
              HttpServletRequest.class
                                                              });
@@ -77,7 +78,7 @@ public class EnrichmentWidgetController extends TilesAction
              request
                                                                                        });
 
-         ArrayList results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(),
+         ArrayList<Map> results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(),
                                                ewf.getBag(), ldr.getTotal(os), 
                                                new Double(0 + ewf.getMax()),
                                                ewf.getErrorCorrection());

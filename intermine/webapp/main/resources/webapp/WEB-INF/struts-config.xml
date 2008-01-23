@@ -29,6 +29,7 @@
     <form-bean name="changePasswordForm" type="org.intermine.web.struts.ChangePasswordForm"/>
     <form-bean name="modifyBagDetailsForm" type="org.intermine.web.struts.ModifyBagDetailsForm"/>
     <form-bean name="enrichmentWidgetForm" type="org.intermine.web.struts.EnrichmentWidgetForm"/>
+    <form-bean name="widgetForm" type="org.intermine.web.struts.WidgetForm"/>
   </form-beans>
   <!-- ========== Exceptions Configuration ================================ -->
   <global-exceptions>
@@ -261,8 +262,8 @@
     <action path="/contactAction" name="contactForm" type="org.intermine.web.struts.ContactAction" scope="request" input="contact">
       <forward name="contact" path="contact.page"/>
     </action>
-    <action path="/widgetAction" type="org.intermine.web.struts.EnrichmentWidgetAction">
-      <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
+    <action path="/widgetAction" name="widgetForm" type="org.intermine.web.struts.WidgetAction" input="widget">
+      <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>      
     </action>
     <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
