@@ -1330,7 +1330,8 @@ public class ChadoDBConverter extends BioDBConverter
             + "  FROM feature_synonym, synonym, cvterm"
             + "  WHERE feature_synonym.synonym_id = synonym.synonym_id"
             + "     AND synonym.type_id = cvterm.cvterm_id"
-            + "     AND feature_id IN (" + getFeatureIdQuery() + ")";
+            + "     AND feature_id IN (" + getFeatureIdQuery() + ")"
+            + "  ORDER BY is_current DESC";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
