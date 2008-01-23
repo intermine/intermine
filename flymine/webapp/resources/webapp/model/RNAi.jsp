@@ -135,7 +135,7 @@
 	  </dd>
 
 	  <dt>
-	  Xu et al 17785517 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17785517" target="_new">PubMed:17785517</a>).
+	  Xu et al (2007) J Cell Biol 178:981-994 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17785517" target="_new">PubMed:17785517</a>).
 	  </dt>
 	  <dd>
 	  Msk is required for nuclear import of TGF-{beta}/BMP-activated Smads.
