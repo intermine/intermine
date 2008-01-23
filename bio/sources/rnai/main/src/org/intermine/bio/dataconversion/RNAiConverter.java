@@ -158,7 +158,9 @@ public class RNAiConverter extends FileConverter
         Item phenotype = (Item) phenotypeMap.get(code);
         if (phenotype == null) {
             phenotype = createItem("Phenotype");
-            phenotype.setAttribute("identifier", code);
+            if (!StringUtils.isEmpty(code)) {
+                phenotype.setAttribute("identifier", code);
+            }
             phenotype.setAttribute("name", desc);
             phenotype.setReference("ontology", ontology.getIdentifier());
             phenotypeMap.put(code, phenotype);
