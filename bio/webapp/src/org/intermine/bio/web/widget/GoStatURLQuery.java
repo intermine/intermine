@@ -11,7 +11,6 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.intermine.objectstore.query.ConstraintOp;
@@ -24,24 +23,24 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
+import org.intermine.web.logic.widget.WidgetURLQuery;
 
 
 /**
  * {@inheritDoc} 
  */
-public class GoStatURLQuery implements EnrichmentWidgetURLQuery
+public class GoStatURLQuery implements WidgetURLQuery
 {
     ObjectStore os;
     InterMineBag bag;
-    Object key;
+    String key;
     
     /**
      * @param os object store
      * @param key go terms user selected
      * @param bag bag page they were on
      */
-     public GoStatURLQuery(ObjectStore os, InterMineBag bag, Object  key) {
+     public GoStatURLQuery(ObjectStore os, InterMineBag bag, String key) {
          this.bag = bag;
          this.key = key;
          this.os = os;
@@ -124,31 +123,26 @@ public class GoStatURLQuery implements EnrichmentWidgetURLQuery
          } else {
              qualifierNode = q.addNode("Gene.allGoAnnotation.qualifier");
          }
+         qualifierNode.setType("String");
          Constraint qualifierConstraint
          = new Constraint(constraintOp, null, false, label, code, id, null);
          qualifierNode.getConstraints().add(qualifierConstraint);
 
          // go term
-         constraintOp = ConstraintOp.IN;
-         code = q.getUnusedConstraintCode();
-         PathNode goTermNode = q.addNode("Gene.allGoAnnotation.identifier");
-         if (bag.getType().toLowerCase().equals("protein")) {
-             goTermNode = q.addNode("Protein.gene.allGoAnnotation.identifier");
-         } else {
-             goTermNode  = q.addNode("Gene.allGoAnnotation.identifier");
-         }
+         //if (key.contains(",")) {             
+             constraintOp = ConstraintOp.LOOKUP;
+//         } else {
+//             constraintOp = ConstraintOp.IN;
+//         }
          
-         String keyString = key.toString();
-         if (keyString.contains(",")) {
-             
-             String[] keyList  = keyString.split(",");
-             Collection<String> keyCollection = new ArrayList<String>();
-             for (String s : keyList) {
-                 keyCollection.add(s);
-             }
-             key = keyCollection;
-             
+         code = q.getUnusedConstraintCode();
+         PathNode goTermNode = null;
+         if (bag.getType().toLowerCase().equals("protein")) {
+             goTermNode = q.addNode("Protein.gene.allGoAnnotation.property");
+         } else {
+             goTermNode  = q.addNode("Gene.allGoAnnotation.property");
          }
+         goTermNode.setType("GOTerm");
          
          Constraint goTermConstraint
                          = new Constraint(constraintOp, key, false, label, code, id, null);

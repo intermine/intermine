@@ -23,13 +23,13 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
+import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
  * Generates the query to run when a user clicks on a results record in an enrichment widget.
  * @author Julie Sullivan
  */
-public class UniProtKeywordsURLQuery implements EnrichmentWidgetURLQuery
+public class UniProtKeywordsURLQuery implements WidgetURLQuery
 {
 
     InterMineBag bag;

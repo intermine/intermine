@@ -23,14 +23,14 @@ import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.widget.EnrichmentWidgetURLQuery;
+import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
  * Builds a pathquery.  Used when a user clicks on a results record in an enrichment widget.
  * @author Julie Sullivan
  */
 
-public class PathwayURLQuery implements EnrichmentWidgetURLQuery
+public class PathwayURLQuery implements WidgetURLQuery
 {
 
     InterMineBag bag;
