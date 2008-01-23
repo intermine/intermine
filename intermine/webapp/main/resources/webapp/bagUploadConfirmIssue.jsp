@@ -69,7 +69,7 @@
               <c:otherwise>
 				<c:choose>
               	<c:when test="${resultElement.keyField}">
-					<html:link action="/objectDetails?id=${resultElementRow[fn:length(resultElementRow) - 1]}">
+					<html:link action="/objectDetails?id=${resultElementRow[fn:length(resultElementRow) - 1]}" target="_new" styleClass="extlink">
                 		${resultElement.field}
                 	</html:link>
               	</c:when>
