@@ -30,8 +30,9 @@ public class EnrichmentWidgetForm extends ActionForm
     private String filters;
     private InterMineBag bag;
     private String bagName;
-    private String max = "0.10";
-
+    private String max;
+    
+    
     /**
      * Constructor
      */
@@ -66,6 +67,7 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
+     * controller is the class that renders the widget
      * @param controller the controller to set
      */
     public void setController(String controller) {
@@ -74,6 +76,7 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
+     * description is informative text describing the widget
      * @return the description
      */
     public String getDescription() {
@@ -90,6 +93,7 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
+     * which method of errorcorrection the user chose.  Bonferroni, BenjaminiHochberg, or None
      * @return the errorCorrection
      */
     public String getErrorCorrection() {
@@ -106,6 +110,8 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
+     * the label for the filter.  The filter is a dropdown that contrains the results in some way.
+     * Most widgets don't have a filter.
      * @return the filterLabel
      */
     public String getFilterLabel() {
@@ -114,9 +120,6 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
-       /**
-
-
      * @param filterLabel the filterLabel to set
      */
     public void setFilterLabel(String filterLabel) {
@@ -124,6 +127,7 @@ public class EnrichmentWidgetForm extends ActionForm
     }
 
     /**
+     * the bag that this widget is using
      * @return the bag
      */
     public InterMineBag getBag() {
@@ -139,6 +143,7 @@ public class EnrichmentWidgetForm extends ActionForm
     }
 
     /**
+     * the link is the class that generates the url for each result.   
      * @return the link
      */
     public String getLink() {
@@ -155,6 +160,7 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
+     * maximum value to display.  user can update.  this is for display purposes only.
      * @return the max
      */
     public String getMax() {
@@ -171,6 +177,7 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
+     * title of the widget
      * @return the title
      */
     public String getTitle() {
@@ -194,6 +201,8 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
+     * name of bag that this widget is using.  we need both the bag and the bagname because 
+     * sometimes we don't have the bag object.
      * @param bagName the bagName to set
      */
     public void setBagName(String bagName) {
@@ -208,6 +217,7 @@ public class EnrichmentWidgetForm extends ActionForm
     }
 
     /**
+     * label for the results table.  appears as column header in results.
      * @return the label
      */
     public String getLabel() {
@@ -223,6 +233,9 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
+     * filter values get used in the query to constrain the results in some way, and they can be
+     * changed by the user.  
+     * most widgets don't have a filter.
      * @return the filter
      */
     public String getFilter() {
@@ -239,6 +252,9 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
+     * filter values get used in the query to constrain the results in some way, and they can be
+     * changed by the user.  
+     * most widgets don't have a filter.
      * @return the filters
      */
     public String getFilters() {
@@ -252,13 +268,13 @@ public class EnrichmentWidgetForm extends ActionForm
     public void setFilters(String filters) {
         this.filters = filters;
     }
-
-
+   
     /**
      * {@inheritDoc}
      */
     @Override
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+                      @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }
 }
