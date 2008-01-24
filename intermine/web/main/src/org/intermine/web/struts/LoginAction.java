@@ -10,6 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -54,11 +57,19 @@ public class LoginAction extends LoginHandler
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         LoginForm lf = (LoginForm) form;
 
-        doLogin(servletContext, request, response, session, pm, lf.getUsername(), lf.getPassword());
+        Map<String, String> renamedBags = doLogin(servletContext, request, response, session, pm, 
+            lf.getUsername(), lf.getPassword());
 
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
 
-        if (lf.returnToString != null && lf.returnToString.startsWith("/")
+        if (renamedBags.size() > 0) {
+            for (String initName : renamedBags.keySet()) {
+                recordMessage(new ActionMessage("login.renamedbags", initName, 
+                    renamedBags.get(initName)), request);
+            }
+            return mapping.findForward("mymine");
+        }
+        else if (lf.returnToString != null && lf.returnToString.startsWith("/")
             && lf.returnToString.indexOf("error") == -1) {
             return new ActionForward(lf.returnToString);
         } else {

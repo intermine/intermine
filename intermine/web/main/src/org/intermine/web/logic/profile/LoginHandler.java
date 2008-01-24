@@ -55,7 +55,7 @@ public abstract class LoginHandler extends InterMineAction
      * @param password
      *            The password
      */
-    public void doLogin(ServletContext servletContext, HttpServletRequest request,
+    public Map doLogin(ServletContext servletContext, HttpServletRequest request,
             HttpServletResponse response, HttpSession session, ProfileManager pm, String username,
             String password) {
         // Merge current history into loaded profile
@@ -93,6 +93,7 @@ public abstract class LoginHandler extends InterMineAction
             profile.saveHistory(query);
         }
         // Merge anonymous bags
+        Map renamedBags = new HashMap();
         for (Iterator iter = mergeBags.entrySet().iterator(); iter.hasNext();) {
             Map.Entry entry = (Map.Entry) iter.next();
             InterMineBag bag = (InterMineBag) entry.getValue();
@@ -101,12 +102,16 @@ public abstract class LoginHandler extends InterMineAction
                 bag.setProfileId(profile.getUserId(), uosw);
                 String name = makeUniqueQueryName((String) entry.getKey(), profile.getSavedBags()
                         .keySet());
+                if (!((String) entry.getKey()).equals(name)) {
+                    renamedBags.put((String) entry.getKey(), name);
+                }
                 bag.setName(name, uosw);
                 profile.saveBag(name, bag);
             } catch (ObjectStoreException iex) {
                 throw new RuntimeException(iex.getMessage());
             }
         }
+        return renamedBags;
     }
 
     private String makeUniqueQueryName(String name, Set names) {
