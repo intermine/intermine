@@ -6,15 +6,26 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <!-- convertBag.jsp -->
+<tiles:importAttribute />
 
 <div>
+    <c:if test="${orientation == 'h'}">
+      <div style="float:left">
+    </c:if>
     <c:forEach items="${conversionTypes}" var="type">
       <script type="text/javascript" charset="utf-8">
-        getConvertCountForBag('${bag.name}','${type}');
+        getConvertCountForBag('${bag.name}','${type}','${idname}');
       </script>
-      <html:link action="/modifyBagDetailsAction.do?convert=${type}&bagName=${bag.name}">${type}</html:link>&nbsp;&nbsp;<span id="${type}_convertcount">&nbsp;</span><br>
+      <html:link action="/modifyBagDetailsAction.do?convert=${type}&bagName=${bag.name}">${type}</html:link>&nbsp;&nbsp;<span id="${type}_convertcount_${idname}">&nbsp;</span><br>
     </c:forEach>
-    <hr/>
+    <c:choose>
+      <c:when test="${orientation == 'h'}">
+        </div><div style="margin-left:150px">
+      </c:when>
+      <c:otherwise>
+        <hr/>
+      </c:otherwise>
+    </c:choose>
     <c:forEach items="${customConverters}" var="converterInfo">
     <c:out value="${converterInfo.key}:" /><br>
     <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
@@ -26,6 +37,10 @@
        </html:submit>
     </html:select>
     </c:forEach>
+    <c:if test="${orientation == 'h'}">
+      <div style="float:left">
+    </c:if>
 </div>
+<div style="clear:both">&nbsp;</div>
 
 <!-- /convertBag.jsp -->

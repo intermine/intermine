@@ -568,9 +568,9 @@ function setWsNamesMap(wsNames, wsListId, type) {
 
 }
 
-function getConvertCountForBag(bagName, type) {
+function getConvertCountForBag(bagName, type, idname) {
     AjaxServices.getConvertCountForBag(bagName, type, function(count) {
-        dwr.util.setValue(type + '_convertcount', count)
+        dwr.util.setValue(type + '_convertcount_'+idname, count)
     });
 }
 
