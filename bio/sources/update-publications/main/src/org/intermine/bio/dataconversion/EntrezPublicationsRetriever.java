@@ -397,7 +397,16 @@ public class EntrezPublicationsRetriever
                     duplicateEntry = true;
                     return;
                 }
-                pubMap = new HashMap<String, Object>();
+                pubMap = new HashMap<String, Object>() {
+                    @Override
+                    public Object put(String key, Object value) {
+                        if (value instanceof List || value instanceof String) {
+                            return super.put(key, value);
+                        } else {
+                            throw new RuntimeException();
+                        }
+                    }
+                };
                 pubMap.put("id", pubMedId);
                 seenPubMeds.add(pubMedId);
                 cache.put(pubMedId, pubMap);
