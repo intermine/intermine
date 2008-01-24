@@ -353,7 +353,7 @@
         <attribute name="title" value="REDfly Drosophila transcriptional cis-regulatory modules"/>
         <attribute name="description"
                    value="Regulatory element database for Drosophila"/>
-        <attribute name="version" value=""/>
+        <attribute name="version" value="2.0"/>
         <attribute name="url" 
                    value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
         <reference name="dataSource" ref_id="450"/>
