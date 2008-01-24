@@ -36,7 +36,6 @@ public class BenjaminiHochberg implements ErrorCorrection
     private HashMap<String, Double> originalMap = new HashMap<String, Double>();
     private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
     private double numberOfTests;
-    private static final int RESULT_SCALE = 100;
 
     /**
      * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
@@ -46,7 +45,7 @@ public class BenjaminiHochberg implements ErrorCorrection
     public BenjaminiHochberg(HashMap<String, Double> originalMap, int numberOfTests) {
         this.numberOfTests = numberOfTests;
         SortableMap sortedMap = new SortableMap(originalMap);
-        // sort ascending
+        // sort descending
         sortedMap.sortValues(false, false);
         this.originalMap = new HashMap<String, Double>(sortedMap);
     }
@@ -60,8 +59,8 @@ public class BenjaminiHochberg implements ErrorCorrection
 
         adjustedMap = new HashMap<String, BigDecimal>();
         BigDecimal adjustedP;
-        int i = 1;
-
+        int i = 0;
+        
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
 
             String label = (String) iter.next();
@@ -69,10 +68,15 @@ public class BenjaminiHochberg implements ErrorCorrection
             BigDecimal m = new BigDecimal("" + numberOfTests);            
             BigDecimal p = new BigDecimal("" + originalMap.get(label)); // unadjusted p-value
             
-            // p-value * (n/index)
-            adjustedP = m.divide(index, RESULT_SCALE, BigDecimal.ROUND_HALF_UP);
+            // p-value * (n/ n - index)
+            adjustedP = m.divide(m.subtract(index));
             adjustedP = p.multiply(adjustedP);
 
+            // largest value is not adjusted
+            if (i == 0) {
+                adjustedP = p;
+            }
+            
             if (adjustedP.doubleValue() < max.doubleValue()) {
                 adjustedMap.put(label, adjustedP);
             }
