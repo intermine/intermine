@@ -119,8 +119,10 @@ if (defined $release) {
   $properties_file .= ".$release";
 }
 
-my @dump_command = qw[pg_dump -c -F c -i];
-my @load_command = qw[pg_restore -1 -c -i];
+my @dump_command = qw[pg_dump -F c -i];
+my @load_command = qw[pg_restore -1 -i];
+my @dropdb_command = qw[dropdb];
+my @createdb_command = qw[createdb -E SQL_ASCII];
 
 sub log_message
 {
@@ -202,6 +204,34 @@ sub get_prop_val
   return $ret_val;
 }
 
+sub spawn
+{
+  my $pass = shift;
+  my @spawn_args = @_;
+
+  if ($dump_host eq 'localhost') {
+    $ENV{PAGER} = "/bin/cat";
+    @spawn_args = "sh -c '@spawn_args'";
+  } else {
+    unshift @spawn_args, "ssh", $dump_host;
+  }
+
+  if ($dry_run) {
+    log_and_print "command to run: @spawn_args\n";
+  } else {
+    my $exp = new Expect;
+
+    $exp->raw_pty(1);
+    $exp->spawn("@spawn_args; echo __FINISHED__")
+      or die "Cannot spawn @spawn_args: $!\n";
+
+    $exp->expect(10, 'Password: ');
+    $exp->send("$pass\n");
+    $exp->expect(9999999, "__FINISHED__\n");
+    $exp->soft_close();
+  }
+}
+
 sub dump_db
 {
   my $db = shift;
@@ -220,28 +250,9 @@ sub dump_db
   log_and_print `date`, "\n\n";
   log_and_print "\ndumping: @dump_command @params\n";
 
-  my @spawn_args = ("@dump_command @params; echo __DUMP_FINISHED__");
+  my @spawn_args = ($pass, "@dump_command @params");
 
-  if ($dump_host eq 'localhost') {
-    @spawn_args = "sh -c '@spawn_args'";
-  } else {
-    unshift @spawn_args, "ssh", $dump_host;
-  }
-
-  if ($dry_run) {
-    log_and_print "command to run: @spawn_args\n";
-  } else {
-    my $exp = new Expect;
-
-    $exp->raw_pty(1);
-    $exp->spawn(@spawn_args)
-      or die "Cannot spawn @dump_command @params: $!\n";
-
-    $exp->expect(10, 'Password: ');
-    $exp->send("$pass\n");
-    $exp->expect(9999999, '__DUMP_FINISHED__\n');
-    $exp->soft_close();
-  }
+  spawn(@spawn_args);
 
   log_and_print `date`, "\n\n";
   log_and_print "finished dump\n\n";
@@ -256,40 +267,31 @@ sub load_db
   my $port = shift;
   my $in_file = shift;
 
-  my @params = ('-U', $user, '-h', $host, '-d', $db, $in_file);
+  my @params = ('-U', $user, '-h', $host);
 
   if (defined $port) {
     unshift @params, "-p", $port;
   }
 
   log_and_print `date`, "\n\n";
+  log_and_print "\nrunning: @dropdb_command @params $db\n";
+  warn "(ignore password prompt)\n";
+
+  spawn($pass, @dropdb_command, @params, $db);
+
+  log_and_print `date`, "\n\n";
+  log_and_print "\nrunning: @createdb_command @params $db\n";
+  warn "(ignore password prompt)\n";
+
+  spawn($pass, @createdb_command, @params, $db);
+
+  push @params, '-d', $db, $in_file;
+
+  log_and_print `date`, "\n\n";
   log_and_print "\nrunning: @load_command @params\n";
   warn "(ignore password prompt)\n";
 
-  my @spawn_args = ("@load_command @params; echo __LOAD_FINISHED__");
-
-  if ($dump_host eq 'localhost') {
-    $ENV{PAGER} = "/bin/cat";
-    @spawn_args = "sh -c '@spawn_args'";
-  } else {
-    unshift @spawn_args, "ssh", $dump_host;
-  }
-
-  if ($dry_run) {
-    log_and_print "command to run: @spawn_args\n";
-  } else {
-    my $exp = new Expect;
-
-    $exp->raw_pty(1);
-
-    $exp->spawn(@spawn_args)
-      or die "Cannot spawn @load_command @params: $!\n";
-
-    $exp->expect(10, 'Password: ');
-    $exp->send("$pass\n");
-    $exp->expect(9999999, '__LOAD_FINISHED__\n');
-    $exp->soft_close();
-  }
+  spawn($pass, @load_command, @params);
 
   log_and_print `date`, "\n\n";
   log_and_print "finished load - now analysing\n\n";
