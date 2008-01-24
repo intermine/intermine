@@ -227,7 +227,9 @@ sub spawn
 
     $exp->expect(10, 'Password: ');
     $exp->send("$pass\n");
-    $exp->expect(9999999, "__FINISHED__\n");
+    $exp->expect(9999999,
+                 [qr/error/i, sub {die "Error returned by @spawn_args\n"}],
+                 "__FINISHED__\n");
     $exp->soft_close();
   }
 }
