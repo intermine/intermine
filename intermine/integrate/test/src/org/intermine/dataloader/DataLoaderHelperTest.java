@@ -14,14 +14,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Test;
+import org.intermine.objectstore.query.QueryTestCase;
 
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
@@ -29,10 +27,11 @@ import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employable;
-import org.intermine.objectstore.query.QueryTestCase;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntToIntMap;
+
+import junit.framework.Test;
 
 public class DataLoaderHelperTest extends QueryTestCase
 {
@@ -138,17 +137,26 @@ public class DataLoaderHelperTest extends QueryTestCase
 
         ClassDescriptor cld =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
-        Set primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
-        Iterator pkIter = primaryKeys.iterator();
-        PrimaryKey pk1 = (PrimaryKey) pkIter.next();
+        Set<PrimaryKey> primaryKeys =
+            new HashSet<PrimaryKey>(PrimaryKeyUtil.getPrimaryKeys(cld).values());
 
-        // Company.key2=vatNumber
-        assertTrue(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk1, source, new IntToIntMap()));
+        for (PrimaryKey pk: primaryKeys) {
+            boolean isPrimaryKey =
+                DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk, source,
+                                                         new IntToIntMap());
 
-        PrimaryKey pk2 = (PrimaryKey) pkIter.next();
-
-        // Company.key1=name, address
-        assertFalse(DataLoaderHelper.objectPrimaryKeyNotNull(model, c, cld, pk2, source, new IntToIntMap()));
+            if (pk.getName().equals("key1")) {
+                // Company.key1=name, address
+                assertFalse(isPrimaryKey);
+            } else {
+                if (pk.getName().equals("key2")) {
+                    // Company.key2=vatNumber
+                    assertTrue(isPrimaryKey);
+                } else {
+                    fail("unknown primary key: " + pk);
+                }
+            }
+        }
     }
 
     public void testObjectPrimaryKeyIsNullNullField3() throws Exception {
