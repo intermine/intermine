@@ -205,7 +205,11 @@ public class ProteinStructureDataConverter extends FileConverter
                     } catch (InterMineException e) {
                         throw new SAXException(e);
                     }
-                    proteinStructure.setAttribute("atm", atm);
+                    if (atm == null || atm.equals("")) {
+                        LOG.warn("found an empty atm for: " + strId);
+                    } else {
+                        proteinStructure.setAttribute("atm", atm);
+                    }
                 } else if (qName.equals("alignment_file") && alignmentFile) {
                     String html;
                     try {
@@ -221,7 +225,11 @@ public class ProteinStructureDataConverter extends FileConverter
                     } catch (InterMineException e) {
                         throw new SAXException(e);
                     }
-                    proteinStructure.setAttribute("alignment", html.toString());
+                    if (html == null || html.equals("")) {
+                        LOG.warn("found an empty alignment for: " + strId);
+                    } else {
+                        proteinStructure.setAttribute("alignment", html.toString());
+                    }
                     alignmentFile = false;
                 } else if (qName.equals("prosa_z_score")) {
                     proteinStructure.setAttribute("prosa_z_score", attValue.toString());
