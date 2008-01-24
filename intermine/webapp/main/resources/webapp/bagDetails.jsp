@@ -58,6 +58,7 @@
 <div id="tool_bar_item_convert" style="visibility:hidden" class="tool_bar_item">
   <tiles:insert name="convertBag.tile">
        <tiles:put name="bag" beanName="bag" />
+       <tiles:put name="idname" value="bar" />
   </tiles:insert>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_convert')" >Cancel</a>
@@ -189,6 +190,14 @@
 		 <b>Description:</b> ${bag.description}
 	</c:otherwise>
 	</c:choose>
+	<div class="dashedBox" align="left">
+	<h4>Convert List to:</h4><br>
+	<tiles:insert name="convertBag.tile">
+         <tiles:put name="bag" beanName="bag" />
+         <tiles:put name="idname" value="cp" />
+         <tiles:put name="orientation" value="h" />
+    </tiles:insert>
+    </div>
   </td>
   </tr>
   <tr>
