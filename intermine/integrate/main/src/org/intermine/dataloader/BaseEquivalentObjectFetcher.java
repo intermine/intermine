@@ -12,12 +12,23 @@ package org.intermine.dataloader;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.objectstore.query.SubqueryConstraint;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -32,17 +43,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntToIntMap;
 import org.intermine.util.TypeUtil;
@@ -285,7 +285,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
             ClassDescriptor cld) throws MetaDataException {
         Set primaryKeys;
         if (source == null) {
-            primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
+            primaryKeys = new LinkedHashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         } else {
             primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
         }
