@@ -308,7 +308,10 @@ public class EntrezPublicationsRetriever
         publication.setAttribute("pubMedId", (String) map.get("id"));
         publication.setAttribute("journal", (String) map.get("journal"));
         publication.setAttribute("title", (String) map.get("title"));
-        publication.setAttribute("volume", (String) map.get("volume"));
+        final String volume = (String) map.get("volume");
+        if (!StringUtils.isEmpty(volume)) {
+            publication.setAttribute("volume", volume);
+        }
         final String issue = (String) map.get("issue");
         if (!StringUtils.isEmpty(issue)) {
             publication.setAttribute("issue", issue);
