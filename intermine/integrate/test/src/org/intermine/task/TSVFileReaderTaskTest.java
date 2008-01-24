@@ -11,6 +11,7 @@ package org.intermine.task;
  */
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,13 +25,12 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.xml.full.ItemFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -61,6 +61,8 @@ public class TSVFileReaderTaskTest extends TestCase
         tsvTask.setIgnoreDuplicates(true);
         tsvTask.setIntegrationWriterAlias("integration.unittestsingle");
         tsvTask.setSourceName("testsource");
+
+        cleanObjects(tsvTask.getDirectDataLoader().getIntegrationWriter());
 
         File tempFile = File.createTempFile("TSVFileReaderTaskTest", "tmp");
         FileWriter fw = new FileWriter(tempFile);
@@ -125,6 +127,22 @@ public class TSVFileReaderTaskTest extends TestCase
 
         List expectedRow2 = Arrays.asList(new Object[] {new Integer(0), "EmployeeA3", Boolean.FALSE});
         assertEquals(expectedRow2, r.get(2));
+    }
+
+    /**
+     * Delete all InterMineObjects from the objectstore.
+     */
+    private void cleanObjects(ObjectStoreWriter osw) throws ObjectStoreException {
+        Query q = new Query();
+        QueryClass queryClass = new QueryClass(InterMineObject.class);
+        q.addToSelect(queryClass);
+        q.addFrom(queryClass);
+
+        SingletonResults r = osw.getObjectStore().executeSingleton(q);
+
+        for (InterMineObject o: (Collection<InterMineObject>) r) {
+            osw.delete(o);
+        }
     }
 
     public void tearDown() throws Exception {
