@@ -110,7 +110,7 @@ if ($diff < 60 * $MIN_TIME_FROM_LAST_CHECKIN) {
   print now(), ": Need to wait ", (60 * $MIN_TIME_FROM_LAST_CHECKIN - $diff), " more seconds\n";
   exit(0);
 } else {
-  print now(), ": $MIN_TIME_FROM_LAST_CHECKIN minutes have since last checkin - starting tests\n";
+  print now(), ": $MIN_TIME_FROM_LAST_CHECKIN minutes since last checkin - starting tests\n";
 }
 
 {
