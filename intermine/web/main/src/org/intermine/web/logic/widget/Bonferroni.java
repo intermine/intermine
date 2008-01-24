@@ -29,8 +29,8 @@ public class Bonferroni implements ErrorCorrection
     private double numberOfTests;
     
     /**
-     * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
-     * as these cannot possibly be over-represented
+     * @param numberOfTests number of tests we've run (length of our list), excluding terms that 
+     * only annotate one item as these cannot possibly be over-represented
      * @param originalMap HashMap of go terms and their p-value
      */
     public Bonferroni(HashMap<String, Double> originalMap, int numberOfTests) {

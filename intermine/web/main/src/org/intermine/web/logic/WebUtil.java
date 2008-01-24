@@ -547,9 +547,8 @@ public abstract class WebUtil
     /**
      * See online help docs for detailed description of what error correction is and why we need it.
      * Briefly, in all experiments certain things happen that look interesting but really just 
-     * happened by chance.  We know this, so we need to adjust our results to account for this
-     * phenonomenon to make sure what we are looking at is indeed interesting behaviour and not
-     * just random happenstance.
+     * happened by chance.  We need to account for this phenonomenon to ensure our numbers are 
+     * interesting behaviour and not just random happenstance.
      * 
      * To do this we take all of our p-values and adjust them.  Here we are using on of our two
      * methods available - which one we use is determined by the user.
