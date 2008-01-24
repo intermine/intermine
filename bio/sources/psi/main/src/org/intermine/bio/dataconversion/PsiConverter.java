@@ -506,7 +506,9 @@ public class PsiConverter extends FileConverter
                     String s = attValue.toString();
                     if (comment != null && s != null) {
                         //TODO store these only when valid experiment
-                        comment.setAttribute("text", s);
+                        if (s != null && !s.equals("")) {
+                            comment.setAttribute("text", s);
+                        }
                         writer.store(ItemHelper.convert(comment));
                         comment = null;
                     } else {
