@@ -309,10 +309,14 @@ public class EntrezPublicationsRetriever
         publication.setAttribute("journal", (String) map.get("journal"));
         publication.setAttribute("title", (String) map.get("title"));
         publication.setAttribute("volume", (String) map.get("volume"));
-        if (!StringUtils.isEmpty((String) map.get("volume"))) {
-            publication.setAttribute("issue", (String) map.get("issue"));
+        final String issue = (String) map.get("issue");
+        if (!StringUtils.isEmpty(issue)) {
+            publication.setAttribute("issue", issue);
         }
-        publication.setAttribute("pages", (String) map.get("pages"));
+        final String pages = (String) map.get("pages");
+        if (!StringUtils.isEmpty(pages)) {
+            publication.setAttribute("pages", pages);
+        }
         if (map.get("year") != null) {
             publication.setAttribute("year", (String) map.get("year"));
         }
