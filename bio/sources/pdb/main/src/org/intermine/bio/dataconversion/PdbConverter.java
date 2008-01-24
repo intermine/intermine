@@ -33,9 +33,7 @@ import org.intermine.xml.full.Item;
 public class PdbConverter extends FileConverter
 {
 
-    private static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static final Logger LOG = Logger.getLogger(PdbConverter.class);
-    private String dataLocation;
     protected static final String ENDL = System.getProperty("line.separator");
     private Item dataSource, dataSet;
 
@@ -66,8 +64,9 @@ public class PdbConverter extends FileConverter
             Structure structure = pdbfileparser.parsePDBFile(pdbBuffReader);
             String atm = structure.toPDB();
 
-            proteinStructure.setAttribute("identifier",
-                                          (String) structure.getHeader().get("idCode"));
+            String idCode = (String) structure.getHeader().get("idCode");
+            proteinStructure.setAttribute("identifier", idCode);
+                                          
 
             List<String> proteins = new ArrayList<String>();
             List<String> dbrefs = pdbBuffReader.getDbrefs();
@@ -76,9 +75,18 @@ public class PdbConverter extends FileConverter
                 proteins.add(protein.getIdentifier());
             }
 
-            proteinStructure.setAttribute("title", (String) structure.getHeader().get("title"));
-            proteinStructure.setAttribute("technique",
-                                          (String) structure.getHeader().get("technique"));
+            String title = (String) structure.getHeader().get("title");
+            if (title != null && !title.equals("")) {
+                proteinStructure.setAttribute("title", (String) structure.getHeader().get("title"));
+            } else {
+                LOG.warn("No value for title in structure: " + idCode);
+            }
+            String technique = (String) structure.getHeader().get("technique");
+            if (technique != null && !technique.equals("")) {
+                proteinStructure.setAttribute("technique", technique);
+            } else {
+                LOG.warn("No value for technique in structure: " + idCode);
+            }
             proteinStructure.setAttribute("classification",
                                           (String) structure.getHeader().get("classification"));
             Object resolution = structure.getHeader().get("resolution");
@@ -95,14 +103,7 @@ public class PdbConverter extends FileConverter
         }
     }
 
-    /**
-     * Pick up the data location from the ant, the translator needs to open some more files.
-     * @param srcdatadir location of the source data
-     */
-    public void setSrcDataDir(String srcdatadir) {
-        this.dataLocation = srcdatadir;
-    }
-
+    
     /**
      * BioJava doesn't support getting DBREF so
      * we get it as the file is read.
