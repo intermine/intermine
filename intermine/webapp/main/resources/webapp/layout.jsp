@@ -24,6 +24,10 @@
 	<!-- for yahoo -->
 	<META name="y_key" content="05e821942b9c36fb" />
 	 
+	 <!-- for microsoft -->
+	 <meta name="msvalidate.01" content="2D1A5F3E13044E589AC7B268B7A96A62" />
+	 
+	 
     <html:base/>
     
     <fmt:message key="${pageName}.noFollow" var="noFollow" />
