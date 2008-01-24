@@ -52,6 +52,7 @@ import org.apache.tools.ant.BuildException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
+import org.apache.commons.lang.StringUtils;
 
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -308,7 +309,9 @@ public class EntrezPublicationsRetriever
         publication.setAttribute("journal", (String) map.get("journal"));
         publication.setAttribute("title", (String) map.get("title"));
         publication.setAttribute("volume", (String) map.get("volume"));
-        publication.setAttribute("issue", (String) map.get("issue"));
+        if (!StringUtils.isEmpty((String) map.get("volume"))) {
+            publication.setAttribute("issue", (String) map.get("issue"));
+        }
         publication.setAttribute("pages", (String) map.get("pages"));
         if (map.get("year") != null) {
             publication.setAttribute("year", (String) map.get("year"));
