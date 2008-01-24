@@ -539,11 +539,15 @@ if ((!$load_last && !$restart) || !defined $restart_dump_suffix) {
   $seen_start_action = 1;
 }
 
+my %action_times = ();
+
 for my $action (@actions) {
   my $action_type = $action->{type};
   my @action_args = @{$action->{args}};
 
   if ($seen_start_action) {
+    my $start_time = time();
+
     if ($action_type eq 'integrate' || $action_type eq 'postprocess') {
       my $saved_dir = getcwd;
       chdir $action_type
@@ -566,6 +570,17 @@ for my $action (@actions) {
         die qq{unknown action: "$action_type"\n};
       }
     }
+
+    my $end_time = time();
+    my $action_time = $end_time - $start_time;
+
+    my $action_name = $action->{name};
+
+    if ($verbose) {
+      log_and_print qq(action $action_name took $action_time seconds\n);
+    }
+
+    $action_times{$action_name} = $action_time;
   } else {
     if ($action_type eq 'dump' && $action_args[0] eq $restart_dump_suffix) {
       $seen_start_action = 1;
@@ -573,3 +588,28 @@ for my $action (@actions) {
   }
 }
 
+my ($key, $value);
+
+format STDOUT_TOP =
+
+action name                           time in seconds
+-----------------------------------------------------
+.
+
+format STDOUT =
+@<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< @>>>>>>>>>>>>>
+$key, $value
+.
+
+my $total_time = 0;
+
+while (($key, $value) = each %action_times) {
+  $total_time += $value;
+  write;
+}
+
+print "\n";
+
+$key = 'total';
+$value = $total_time;
+write
