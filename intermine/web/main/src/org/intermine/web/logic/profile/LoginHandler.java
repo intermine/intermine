@@ -114,6 +114,7 @@ public abstract class LoginHandler extends InterMineAction
         int i = 1;
         while (names.contains(name)) {
             name = original + "_" + i;
+            i++;
         }
         return name;
     }
