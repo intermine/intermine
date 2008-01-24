@@ -95,7 +95,6 @@ Reference population: <c:out value='${referencePopulation}'/>.
 
 <li id="button_bar" onclick="toggleToolBarMenu(event);">
 	<ul id="tool_bar_ul_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></ul>
-	<ul id="tool_bar_ul_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></ul>
 </li>
 <div id="tool_bar_item_display" style="visibility:hidden" class="tool_bar_item">
 
@@ -105,14 +104,6 @@ Reference population: <c:out value='${referencePopulation}'/>.
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_display')">Cancel</a>
 </div>
-<div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
-  		<a href="exportAction.do?table=${bag.name}&type=tab&tableType=bag">tab-separated</a><br/>
-		<a href="exportAction.do?table=${bag.name}&type=csv&tableType=bag">comma-separated</a><br/>
-		<a href="exportAction.do?table=${bag.name}&type=excel&tableType=bag">excel</a>
-  <hr>
-  <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
-</div>
-
 </td>
 </tr>
 
@@ -172,7 +163,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	        No results found.
         </c:otherwise>        
         </c:choose>
-        
+        <html:hidden property="bagType" value="${bagType}" />
         <html:hidden property="bagName" value="${enrichmentWidgetForm.bagName}" />
         <html:hidden property="link" value="${enrichmentWidgetForm.link}" />
 	</html:form>	
