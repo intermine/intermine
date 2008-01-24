@@ -18,5 +18,6 @@
   <collection name="rnaiResults" referenced-type="org.flymine.model.genomic.RNAiResult" reverse-reference="gene"/>
 </class>
 <class name="org.flymine.model.genomic.Phenotype" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+  <attribute name="code" type="java.lang.String"/>
 </class>
 </classes>

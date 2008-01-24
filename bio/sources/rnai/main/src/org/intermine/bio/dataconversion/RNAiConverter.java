@@ -100,7 +100,7 @@ public class RNAiConverter extends FileConverter
                         if (line[6] != null && line[6].equals("1")) {
                             isObserved = "false";
                         }
-                    Item phenotype = createPhenotype(line[4], line[3], comment, isObserved,
+                    Item phenotype = createPhenotype(line[2], line[4], line[3], comment, isObserved,
                         line[7], line[8]);
                     phenotype.setReference("subject", gene.getIdentifier());
                     phenotype.setReference("gene", gene.getIdentifier());
@@ -137,8 +137,9 @@ public class RNAiConverter extends FileConverter
         return gene;
     }
 
-    private Item createPhenotype(String code, String desc, String comment, String isObserved, String penetranceFrom, String penetranceTo)
-    throws ObjectStoreException {
+    private Item createPhenotype(String identifier, String code, String desc, String comment,
+                                 String isObserved, String penetranceFrom, String penetranceTo)
+        throws ObjectStoreException {
         Item rnaiPhenotype = createItem("RNAiPhenotype");
         if (!StringUtils.isEmpty(code)) {
             rnaiPhenotype.setAttribute("code", code);
@@ -155,11 +156,12 @@ public class RNAiConverter extends FileConverter
             rnaiPhenotype.setAttribute("comment", comment);
         }
 
-        Item phenotype = (Item) phenotypeMap.get(code);
+        Item phenotype = (Item) phenotypeMap.get(identifier);
         if (phenotype == null) {
             phenotype = createItem("Phenotype");
+            phenotype.setAttribute("identifier", identifier);
             if (!StringUtils.isEmpty(code)) {
-                phenotype.setAttribute("identifier", code);
+                phenotype.setAttribute("code", code);
             }
             phenotype.setAttribute("name", desc);
             phenotype.setReference("ontology", ontology.getIdentifier());
