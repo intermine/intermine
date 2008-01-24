@@ -11,7 +11,10 @@ package org.intermine.web.struts;
  */
 
 
-import org.intermine.web.logic.bag.InterMineBag;
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.intermine.util.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,8 +31,31 @@ public class WidgetForm extends ActionForm
     private String link;
     private String bagName;
     private String[] selected;
-    
-    
+    private String bagType;
+
+    /**
+     * returns the value of the checkboxes checked by the user on the form. 
+     * @return the selectedAsString
+     */
+    public String getSelectedAsString() {
+        Collection<String> c = Arrays.asList(selected);
+        return StringUtil.join(c, ",");
+    }
+
+    /**
+     * @return the bagType
+     */
+    public String getBagType() {
+        return bagType;
+    }
+
+    /**
+     * @param bagType the bagType to set
+     */
+    public void setBagType(String bagType) {
+        this.bagType = bagType;
+    }
+
     /**
      * @return the link
      */
@@ -93,6 +119,7 @@ public class WidgetForm extends ActionForm
      */
     public void setSelected(String[] selected) {
         this.selected = selected;
+
     }
 
     
