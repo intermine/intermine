@@ -54,7 +54,6 @@ public class OneTimeTestCase extends TestCase
                 Method OTSetUp = subjectClass.getMethod("oneTimeSetUp", new Class[] {});
                 OTSetUp.invoke(null, new Object[] {});
                 oneTimeTearDownMethod = subjectClass.getMethod("oneTimeTearDown", new Class[] {});
-                System.out.println("Setting one-time teardown method to " + oneTimeTearDownMethod);
             } catch (Exception e) {
                 exception = e;
                 throw e;
