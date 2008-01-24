@@ -10,7 +10,8 @@
 <reference name="subject" ref_id="4_2"/>
 </item>
 <item id="7_2" class="http://www.flymine.org/model/genomic#Phenotype">
-<attribute name="identifier" value="Emb"/>
+<attribute name="identifier" value="WBPhenotype0000765"/>
+<attribute name="code" value="Emb"/>
 <attribute name="name" value="spindle_elongation_integrity_abnormal_early_emb"/>
 <reference name="ontology" ref_id="3_1"/>
 </item>
@@ -55,6 +56,7 @@
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="7_1" class="http://www.flymine.org/model/genomic#Phenotype">
+<attribute name="identifier" value="WBPhenotype0000202"/>
 <attribute name="name" value="alae_abnormal"/>
 <reference name="ontology" ref_id="3_1"/>
 </item>
