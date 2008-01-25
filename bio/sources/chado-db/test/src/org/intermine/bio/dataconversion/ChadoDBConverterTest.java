@@ -52,7 +52,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
         converter.setTaxonId("7227");
         converter.process();
         itemWriter.close();
-        FileWriter fw = new FileWriter("/tmp/item_out.xml");
+        FileWriter fw = new FileWriter("/tmp/chado-db-test-items.xml");
         PrintWriter pw = new PrintWriter(fw);
         pw.println("<items>");
         for (Object item: itemWriter.getItems()) {
@@ -75,9 +75,6 @@ public class ChadoDBConverterTest extends ItemsTestCase
         assertTrue(actualSet.containsAll(minimalSet));
     }
 
-
-
-
     private class TestChadoDBConverter extends FlyBaseChadoDBConverter
     {
         @Override
@@ -99,12 +96,16 @@ public class ChadoDBConverterTest extends ItemsTestCase
             };
             Object[][] resObjects = new Object[][] {
                 {
-                    23269151, "4.5SRNA", "FBgn0000001", "gene", null,
+                    23269151, "4.5SRNA", "FBgn0000001", "gene", 1001,
                     "acgacagatcattccacttttgacagctcactcggcagtaccagaaaatcc"
-                 },
-                 {
-                     3117509, "CG10006", "FBgn0036461", "gene", 5023,
-                     "gtcatgcactactatccagttcaccaggctaaagtcggctcctat"
+                },
+                {
+                    10012345, "CG12345", "FBgn012345", "gene", 200,
+                    "atatagctagctaggaggattattatta"
+                },
+                {
+                    3117509, "CG10006", "FBgn0036461", "gene", 5023,
+                    "gtcatgcactactatccagttcaccaggctaaagtcggctcctat"
                  },
                  {
                      411, "CG10000-RA", "FBtr0085315", "mRNA", 2528,
@@ -256,9 +257,13 @@ public class ChadoDBConverterTest extends ItemsTestCase
                 "fmax", "is_fmax_partial", "strand"
             };
             MockMultiRowResultSet res = new MockMultiRowResultSet();
-            Object[][] resObjects = new Object[][] {
+
+            res.setupRows(new Object[][] {
                 {
                     23774567, 3117509, 11494725, 14985571, false, 14990594, false, 1
+                },
+                {
+                    99123456, 23269151, 11494725, 101000, false, 102000, false, 1
                 },
                 {
                     3201099, 411, 11494726, 24574104, false, 24577313, false, -1
@@ -269,8 +274,7 @@ public class ChadoDBConverterTest extends ItemsTestCase
                 {
                     3201100, 3175412, 11494726, 24577165, false, 24577313, false, -1
                 }
-            };
-            res.setupRows(resObjects);
+            });
             res.setupColumnNames(columnNames);
             return res;
         }
@@ -327,6 +331,29 @@ public class ChadoDBConverterTest extends ItemsTestCase
                     3175412, "7720555"
                 }
             };
+            MockMultiRowResultSet res = new MockMultiRowResultSet();
+            res.setupRows(resObjects);
+            res.setupColumnNames(columnNames);
+            return res;
+        }
+
+        /* (non-Javadoc)
+         * @see org.intermine.bio.dataconversion.FlyBaseChadoDBConverter#getLocatedGenesResultSet(java.sql.Connection)
+         */
+        @Override
+        protected ResultSet getLocatedGenesResultSet(Connection connection) throws SQLException {
+            String[] columnNames = new String[] {
+                "feature_id"
+            };
+            Object[][] resObjects = new Object[][] {
+                {
+                    3117509
+                },
+                {
+                    23269151
+                }
+            };
+
             MockMultiRowResultSet res = new MockMultiRowResultSet();
             res.setupRows(resObjects);
             res.setupColumnNames(columnNames);

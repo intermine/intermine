@@ -18,7 +18,13 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
+import org.intermine.util.IntPresentSet;
 import org.intermine.xml.full.Item;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
@@ -30,6 +36,7 @@ import org.apache.commons.collections.map.MultiKeyMap;
 public class FlyBaseChadoDBConverter extends ChadoDBConverter
 {
     private MultiKeyMap config;
+    private IntPresentSet locatedGeneIds = new IntPresentSet();
 
     /**
      * Create a new FlyBaseChadoDBConverter.
@@ -39,6 +46,50 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
      */
     public FlyBaseChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
         super(database, tgtModel, writer);
+        Connection connection;
+        if (getDatabase() == null) {
+            // no Database when testing and no connection needed
+            connection = null;
+        } else {
+            try {
+                connection = getDatabase().getConnection();
+            } catch (SQLException e) {
+                throw new RuntimeException("can't get connection to the database", e);
+            }
+        }
+
+        ResultSet res;
+        try {
+            res = getLocatedGenesResultSet(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException("can't execute query", e);
+        }
+
+        try {
+            while (res.next()) {
+                int featureId = res.getInt("feature_id");
+                locatedGeneIds.set(featureId, true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("problem while reading located genes", e);
+        }
+    }
+
+    /**
+     * Return from chado the feature_ids of the genes with entries in the featureloc table.
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getLocatedGenesResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT feature.feature_id FROM feature, cvterm, featureloc"
+            + "   WHERE feature.type_id = cvterm.cvterm_id"
+            + "      AND feature.feature_id = featureloc.feature_id AND cvterm.name = 'gene'";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
     }
 
     /**
@@ -204,6 +255,11 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                                String name, String uniqueName,
                                int seqlen) {
         String realInterMineType = interMineType;
+
+        if (chadoFeatureType.equals("gene") && !locatedGeneIds.contains(featureId.intValue())) {
+            // ignore genes with no location
+            return null;
+        }
 
         // avoid allele features that have type 'gene'
         if (uniqueName.startsWith("FBal")) {
