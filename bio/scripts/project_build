@@ -539,7 +539,7 @@ if ((!$load_last && !$restart) || !defined $restart_dump_suffix) {
   $seen_start_action = 1;
 }
 
-my %action_times = ();
+my @action_times = ();
 
 for my $action (@actions) {
   my $action_type = $action->{type};
@@ -580,7 +580,7 @@ for my $action (@actions) {
       log_and_print qq(action $action_name took $action_time seconds\n);
     }
 
-    $action_times{$action_name} = $action_time;
+    push @action_times, [$action_name, $action_time];
   } else {
     if ($action_type eq 'dump' && $action_args[0] eq $restart_dump_suffix) {
       $seen_start_action = 1;
@@ -603,7 +603,8 @@ $key, $value
 
 my $total_time = 0;
 
-while (($key, $value) = each %action_times) {
+for my $name_and_time (@action_times) {
+  ($key, $value) = @$name_and_time;
   $total_time += $value;
   write;
 }
@@ -612,4 +613,4 @@ print "\n";
 
 $key = 'total';
 $value = $total_time;
-write
+write;
