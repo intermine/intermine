@@ -569,9 +569,9 @@ public abstract class WebUtil
         ErrorCorrection e = null;
 
         if (errorCorrection != null && errorCorrection.equals("Bonferroni")) {
-            e = new Bonferroni(resultsMap, numberOfTests);
+            e = new Bonferroni(resultsMap);
         } else {
-            e = new BenjaminiHochberg(resultsMap, numberOfTests);
+            e = new BenjaminiHochberg(resultsMap);
         }
         e.calculate(maxValue);
         return e.getAdjustedMap();
