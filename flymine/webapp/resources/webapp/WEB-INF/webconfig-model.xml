@@ -374,22 +374,14 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Orthologue">
+  <class className="org.flymine.model.genomic.Homologue">
     <fields>
       <fieldconfig fieldExpr="gene.identifier"/>
       <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="orthologue.identifier"/>
-      <fieldconfig fieldExpr="orthologue.organism.shortName"/>
-      <fieldconfig fieldExpr="orthologueTranslation.identifier"/>
-    </fields>
-  </class>
-
-  <class className="org.flymine.model.genomic.Paralogue">
-    <fields>
-      <fieldconfig fieldExpr="gene.identifier"/>
-      <fieldconfig fieldExpr="paralogue.identifier"/>
-      <fieldconfig fieldExpr="paralogue.organism.shortName"/>
-      <fieldconfig fieldExpr="paralogueTranslation.identifier"/>
+      <fieldconfig fieldExpr="inParanoidScore"
+      <fieldconfig fieldExpr="homologue.identifier"/>
+      <fieldconfig fieldExpr="homologue.organism.shortName"/>
+      <fieldconfig fieldExpr="homologueTranslation.identifier"/>
     </fields>
   </class>
 
