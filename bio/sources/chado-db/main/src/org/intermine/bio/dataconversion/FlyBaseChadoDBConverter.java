@@ -333,7 +333,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
 
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
-            "CDS", "intron", "exon",
+            "intron", "exon",
             "regulatory_region", "enhancer",
             // ignore for now:        "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
