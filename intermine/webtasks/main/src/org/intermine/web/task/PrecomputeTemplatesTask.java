@@ -178,9 +178,9 @@ public class PrecomputeTemplatesTask extends Task
             if (!template.isValid()) {
                 LOG.warn("template does not validate against the model: " + template.getName());
                 for (int i = 0; i < template.getProblems().length; i++) {
-                    Exception e = (Exception) template.getProblems()[i];
-                    e.fillInStackTrace();
-                    LOG.warn("problem with " + template.getName() + ": " + e);
+                    Throwable t = (Throwable) template.getProblems()[i];
+                    t.fillInStackTrace();
+                    LOG.warn("problem with " + template.getName() + ": " + t);
                 }
                 continue;
             }
