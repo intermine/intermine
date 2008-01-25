@@ -113,7 +113,7 @@ div.filterBar {
 
 #bagDescriptionDiv{
 	background-color: #D4D4D4;
-	height:150px;
+	height:50px;
 	width:70%;
 	text-align:left;
 	padding:10px;
@@ -124,9 +124,9 @@ div.filterBar {
 
 #textarea {
 	width:70%;
-	height:150px;
+	height:50px;
 	background-color: #D4D4D4;
-	padding:10px;
+    padding:10px;
 }
 
 .blueBg {
