@@ -33,7 +33,7 @@ import java.math.BigDecimal;
  */
 public class BenjaminiHochberg implements ErrorCorrection
 {
-    private HashMap<String, Double> originalMap = new HashMap<String, Double>();
+    private HashMap<String, BigDecimal> originalMap = new HashMap<String, BigDecimal>();
     private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
     private double numberOfTests;
 
@@ -42,12 +42,12 @@ public class BenjaminiHochberg implements ErrorCorrection
      * as these cannot possibly be over-represented
      * @param originalMap HashMap of go terms and their p-value
      */
-    public BenjaminiHochberg(HashMap<String, Double> originalMap, int numberOfTests) {
+    public BenjaminiHochberg(HashMap<String, BigDecimal> originalMap, int numberOfTests) {
         this.numberOfTests = numberOfTests;
         SortableMap sortedMap = new SortableMap(originalMap);
         // sort descending
         sortedMap.sortValues(false, false);
-        this.originalMap = new HashMap<String, Double>(sortedMap);
+        this.originalMap = new HashMap<String, BigDecimal>(sortedMap);
     }
 
     /**
@@ -58,7 +58,7 @@ public class BenjaminiHochberg implements ErrorCorrection
     public void calculate(Double max) {
 
         adjustedMap = new HashMap<String, BigDecimal>();
-        BigDecimal adjustedP;
+        BigDecimal adjustedP = new BigDecimal(0);
         int i = 0;
         
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
@@ -69,6 +69,7 @@ public class BenjaminiHochberg implements ErrorCorrection
             BigDecimal p = new BigDecimal("" + originalMap.get(label)); // unadjusted p-value
             
             // p-value * (n/ n - index)
+            adjustedP.setScale(50, BigDecimal.ROUND_HALF_EVEN);
             adjustedP = m.divide(m.subtract(index));
             adjustedP = p.multiply(adjustedP);
 

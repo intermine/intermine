@@ -129,12 +129,7 @@ public class GoStatURLQuery implements WidgetURLQuery
          qualifierNode.getConstraints().add(qualifierConstraint);
 
          // go term
-         //if (key.contains(",")) {             
-             constraintOp = ConstraintOp.LOOKUP;
-//         } else {
-//             constraintOp = ConstraintOp.IN;
-//         }
-         
+         constraintOp = ConstraintOp.LOOKUP;
          code = q.getUnusedConstraintCode();
          PathNode goTermNode = null;
          if (bag.getType().toLowerCase().equals("protein")) {
