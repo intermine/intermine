@@ -38,12 +38,10 @@ public class BenjaminiHochberg implements ErrorCorrection
     private double numberOfTests;
 
     /**
-     * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
-     * as these cannot possibly be over-represented
-     * @param originalMap HashMap of go terms and their p-value
+    * @param originalMap HashMap of go terms and their p-value
      */
-    public BenjaminiHochberg(HashMap<String, BigDecimal> originalMap, int numberOfTests) {
-        this.numberOfTests = numberOfTests;
+    public BenjaminiHochberg(HashMap<String, BigDecimal> originalMap) {
+        numberOfTests = originalMap.size();
         SortableMap sortedMap = new SortableMap(originalMap);
         // sort descending
         sortedMap.sortValues(false, false);
@@ -64,20 +62,17 @@ public class BenjaminiHochberg implements ErrorCorrection
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
 
             String label = (String) iter.next();
-            BigDecimal index = new BigDecimal("" + i);
-            BigDecimal m = new BigDecimal("" + numberOfTests);            
             BigDecimal p = new BigDecimal("" + originalMap.get(label)); // unadjusted p-value
-            
-            // p-value * (n/ n - index)
-            adjustedP.setScale(50, BigDecimal.ROUND_HALF_EVEN);
-            adjustedP = m.divide(m.subtract(index));
-            adjustedP = p.multiply(adjustedP);
 
             // largest value is not adjusted
             if (i == 0) {
                 adjustedP = p;
+            } else {
+                // p-value * (n/ n - index)
+                double m = numberOfTests / (numberOfTests - i);
+                adjustedP = p.multiply(new BigDecimal(m));
             }
-            
+
             if (adjustedP.doubleValue() < max.doubleValue()) {
                 adjustedMap.put(label, adjustedP);
             }
