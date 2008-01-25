@@ -16,9 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathQuery;
@@ -66,6 +68,13 @@ public class EditTemplateAction extends InterMineAction
         PathQuery queryClone = template.clone();
         SessionMethods.loadQuery(queryClone, session, response);
         session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState(template));
+        
+        PathQuery sessionQuery = (PathQuery) session.getAttribute(Constants.QUERY);
+        if (!sessionQuery.isValid()) {
+            recordError(new ActionError("errors.template.incomplete", 
+                    PathQueryUtil.getProblemsSummary(sessionQuery.getProblems())), request);
+        }
+        
         return mapping.findForward("query");
     }
 }
