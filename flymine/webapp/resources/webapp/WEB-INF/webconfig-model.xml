@@ -378,7 +378,7 @@
     <fields>
       <fieldconfig fieldExpr="gene.identifier"/>
       <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="inParanoidScore"
+      <fieldconfig fieldExpr="inParanoidScore"/>
       <fieldconfig fieldExpr="homologue.identifier"/>
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
       <fieldconfig fieldExpr="homologueTranslation.identifier"/>
