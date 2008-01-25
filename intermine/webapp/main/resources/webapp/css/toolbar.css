@@ -84,22 +84,23 @@ li#button_bar {
 .tool_bar_button {
 }
 .tool_bar_link {
-    background-color: #F5F0FF;
-    color:#9F67AD;
+    background-color: #D0B5D7;
+    color:#FFF;
     margin:50px;
     font-variant: small-caps;
     font-weight: bold;
     font-size:1em;
 }
 .tool_bar_link a {
-    color:#9F67AD;
+    color:#FFF;
+    text-decoration:underline;
 }
 .tool_bar_link a:hover {
     color:#5C0075;
 }
 .tool_bar_separator {
     float: left;
-    background-color: #F5F0FF;
+    background-color: #D0B5D7;
 }
 .tool_bar_separator span{
     float: left;
