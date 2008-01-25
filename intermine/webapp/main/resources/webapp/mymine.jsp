@@ -13,8 +13,8 @@
   <%-- bags --%>
   <c:when test="${userOptionMap[subtabName]  =='lists'||userOptionMap[subtabName]  == null}">
     <tiles:insert name="historyBagView.jsp">
-	  <tiles:put name="type" value="bag"/>
-	</tiles:insert>
+    <tiles:put name="type" value="bag"/>
+  </tiles:insert>
   </c:when>
 
     <%-- query history --%>

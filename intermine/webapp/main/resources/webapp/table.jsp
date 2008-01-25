@@ -55,7 +55,7 @@
               <fmt:message key="results.templateTitle"/>:
               <span class="templateTitleBold"> <c:choose>
               
-              	<c:when test="${!empty param.templateQueryTitle}">
+                <c:when test="${!empty param.templateQueryTitle}">
                  ${param.templateQueryTitle}
                  </c:when>
                  <c:otherwise>
@@ -67,7 +67,7 @@
             <div class="templateDescription">
              <c:choose>
               
-              	<c:when test="${!empty param.templateQueryTitle}">
+                <c:when test="${!empty param.templateQueryTitle}">
                  ${param.templateQueryDescription}
                  </c:when>
                  <c:otherwise>
@@ -110,7 +110,7 @@
 <ul class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></ul>
 <ul class="tool_bar_link">
 <html:form action="/changeTableSize">
-	
+  
   <%-- Page size controls --%>
   <span style="float:left;padding:4px 5px 0 10px;"><fmt:message key="results.changepagesize"/></span>
     <html:select property="pageSize" onchange="changePageSize()" value="${resultsTable.pageSize}">
@@ -164,9 +164,9 @@
                 <html:option value="${entry.key}"/>
               </c:if>
              </c:forEach>
-          </html:select>          		
- 		<input type="submit" name="addToBag" id="addToBag" value="Add selected" />
- 		<script type="text/javascript" charset="utf-8">
+          </html:select>              
+     <input type="submit" name="addToBag" id="addToBag" value="Add selected" />
+     <script type="text/javascript" charset="utf-8">
           $('addToBag').disabled = true;
         </script>
     </c:when>
@@ -237,11 +237,11 @@
                     <%-- put in left, right, hide and show buttons --%>
                     <div align="right" style="margin-right:0px;margin-top:0px;white-space:nowrap;">
                     
-                 	<%-- sort img --%>
+                   <%-- sort img --%>
                      <c:if test="${not empty sortOrderMap[column.name]}">
-                        	<img style="vertical-align:top;" border="0"
-                            	 width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
-                               	 title="Results are sorted by ${column.name}"/>
+                          <img style="vertical-align:top;" border="0"
+                               width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
+                                  title="Results are sorted by ${column.name}"/>
                       </c:if>      
                                
                       <%-- left --%>
@@ -260,7 +260,7 @@
 
                       <%-- summary --%>
                       <c:if test="${isWebResults && !empty pathNames[column.path]}">
-		        <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+            <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
                         <a href="javascript:getColumnSummary('${table}','${pathNames[column.path]}', &quot;${columnDisplayName}&quot;)" 
                            title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
                       </c:if>

@@ -40,7 +40,7 @@
   <c:choose>
     <c:when test="${empty viewStrings}">
       <div class="body">
-	<p><i><fmt:message key="view.empty.description"/></i>&nbsp;</p>
+  <p><i><fmt:message key="view.empty.description"/></i>&nbsp;</p>
       </div>
     </c:when>
     <c:otherwise>
@@ -89,8 +89,8 @@
              }
            });
        }
-	
-	   updateSortImgs("${sortByIndex}");
+  
+     updateSortImgs("${sortByIndex}");
        recordCurrentOrder();
 
        function recordCurrentOrder() {
@@ -111,14 +111,14 @@
          recordCurrentOrder();
        }
 
-	  // change from ascending to descending sort, or vice versa
+    // change from ascending to descending sort, or vice versa
       function reverseSortDirection() {
         var img = document.getElementById('sortImg').src;
-      	var newDirection;
-      	if (img.match('desc.gif')) {
-      		newDirection = 'asc';
+        var newDirection;
+        if (img.match('desc.gif')) {
+          newDirection = 'asc';
         } else {
-        	newDirection = 'desc';
+          newDirection = 'desc';
         }
          new Ajax.Request('<html:rewrite action="/sortOrderChange"/>', {
            parameters:'method=changeDirection&direction='+newDirection,
@@ -127,7 +127,7 @@
          document.getElementById('sortImg').src = 'images/' + newDirection + '.gif';
        }
 
-	  // called from viewElement.jsp
+    // called from viewElement.jsp
       function updateSortOrder(pathString, index) {
          new Ajax.Request('<html:rewrite action="/sortOrderChange"/>', {
            parameters:'method=addToSortOrder&pathString='+pathString,
@@ -137,31 +137,31 @@
          s = new String(pathString);
          s = s.replace(/\./g," > ");
          document.getElementById('querySortOrder').innerHTML = s;
-	     updateSortImgs(index);
-	     // the sort direction has been reset, so reset img too.
-		 document.getElementById('sortImg').src = 'images/asc.gif';
+       updateSortImgs(index);
+       // the sort direction has been reset, so reset img too.
+     document.getElementById('sortImg').src = 'images/asc.gif';
        }
 
        // enable all imgs, disable the one the user just selected
        function updateSortImgs(index) {
-       	for (i=0;true;i++) {
-       		if (!document.getElementById("btn_" + i)) return;
-    		var b = document.getElementById("btn_" + i);
-    		if(i==index) {
-				disable(b);
-			} else {
-				enable(b);
-			}
-		}
+         for (i=0;true;i++) {
+           if (!document.getElementById("btn_" + i)) return;
+        var b = document.getElementById("btn_" + i);
+        if(i==index) {
+        disable(b);
+      } else {
+        enable(b);
+      }
+    }
        }
 
        function disable(b) {
-		b.src = "images/sort-disabled.gif";
-		b.disabled = true;
+    b.src = "images/sort-disabled.gif";
+    b.disabled = true;
        }
-	   function enable(b) {
-		b.src = "images/sort.gif";
-		b.disabled = false;
+     function enable(b) {
+    b.src = "images/sort.gif";
+    b.disabled = false;
        }
      //-->
     </script>

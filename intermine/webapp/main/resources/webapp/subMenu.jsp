@@ -51,12 +51,12 @@
   </c:if>
 </c:forTokens>
 
-  	<c:set var="linky" value="${WEB_PROPERTIES['submenu.extraLink']}"/>
+    <c:set var="linky" value="${WEB_PROPERTIES['submenu.extraLink']}"/>
     <c:if test="${! empty linky}">
-    	<c:if test="${count>0}">
-    		<li>&nbsp;|&nbsp;</li>
-  		</c:if>
-		<li>${linky}</li>
+      <c:if test="${count>0}">
+        <li>&nbsp;|&nbsp;</li>
+      </c:if>
+    <li>${linky}</li>
     </c:if>
 </ul>
 </div>

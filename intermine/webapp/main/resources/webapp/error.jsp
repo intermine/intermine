@@ -54,14 +54,14 @@ div.error_body {
 
         <div class="body">
           <pre class="stacktrace">
-	    <c:out value="${stacktrace}"/>
+      <c:out value="${stacktrace}"/>
           </pre>
         </div>
       </div>
     </c:when>
     <c:otherwise>
 <!--
-	    <c:out value="${stacktrace}"/>
+      <c:out value="${stacktrace}"/>
 -->
     </c:otherwise>
   </c:choose>

@@ -38,9 +38,9 @@
     }
 
     function loadExample(example) {
-    	document.getElementById('pasteInput').focus();
-    	document.getElementById('pasteInput').value = example;
-    	return false;
+      document.getElementById('pasteInput').focus();
+      document.getElementById('pasteInput').value = example;
+      return false;
     }
 
    var typeToEnable = new Array();
@@ -75,13 +75,13 @@
   <li>
       <label><fmt:message key="bagBuild.bagType"/></label>
       <html:select styleId="typeSelector" property="type" onchange="typeChanged()">
-    	<c:forEach items="${preferredTypeList}" var="type">
+      <c:forEach items="${preferredTypeList}" var="type">
           <html:option value="${type}" style="font-weight:bold">${type}</html:option>
-    	</c:forEach>
+      </c:forEach>
         <html:option value="" style="text-align:center">----------------</html:option>
-      	<c:forEach items="${typeList}" var="type">
+        <c:forEach items="${typeList}" var="type">
           <html:option value="${type}">${type}</html:option>
-      	</c:forEach>
+        </c:forEach>
       </html:select>
   </li>
   <li>
@@ -93,9 +93,9 @@
        </label>
          <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
            <html:option value="">Any</html:option>
-      	   <c:forEach items="${extraClassFieldValues}" var="value">
+           <c:forEach items="${extraClassFieldValues}" var="value">
              <html:option value="${value}">${value}</html:option>
-      	   </c:forEach>
+           </c:forEach>
          </html:select>
       </c:if>
    </li>
@@ -119,7 +119,7 @@
       initPasteInput();
     </script>
    </li>
-	 <%-- file header --%>
+   <%-- file header --%>
      <!-- <h4><img src="images/disclosed.gif"/><fmt:message key="bagBuild.bagFromFile"/></h4> -->
 
      <%-- file input --%>

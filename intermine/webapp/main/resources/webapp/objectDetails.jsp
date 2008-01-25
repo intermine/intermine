@@ -18,7 +18,7 @@
 //]]>-->
 </script>
 <script type="text/javascript" src="js/inlinetemplate.js">
-	var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';  
+  var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';  
 </script>
 
 <%-- figure out whether we should show templates or not --%>
@@ -65,7 +65,7 @@
                         <tiles:put name="expr" value="${expr}" />
                       </tiles:insert>
                   </span> </b>
-              	</td>
+                </td>
               </tr>
               </c:when>
               <c:when test="${object.fieldConfigMap[expr].showInSummary}">
@@ -167,32 +167,32 @@
           <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
             
             <imutil:disclosure id="${objectType}objectDetailsRight-${entry.key}" opened="false" type="consistent">
-            	<imutil:disclosureHead>
-            		<imutil:disclosureTitle>
-            			${object.fieldConfigMap[entry.key].sectionTitle}
-            		</imutil:disclosureTitle>
-            	</imutil:disclosureHead>
-            	<imutil:disclosureBody>
-					 <c:set var="maxLength" value="80"/>
-					 <c:choose>
-					   <c:when test="${entry.value.class.name ==
-					                 'java.lang.String' && fn:length(entry.value) > maxLength
-					                 && ! object.fieldConfigMap[entry.key].doNotTruncate}">
-					     <span class="value">
-					       ${fn:substring(entry.value, 0, maxLength/2)}
-					     </span>
-					     <span class="value" style="white-space:nowrap">
-					       ${fn:substring(entry.value, maxLength/2, maxLength)}
-					       <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
-					         <fmt:message key="objectDetails.viewall"/>
-					       </html:link>
-					     </span>
-					   </c:when>
-					   <c:otherwise>
-					     <span class="value">${entry.value}</span>
-					   </c:otherwise>
-					</c:choose>            		
-            	</imutil:disclosureBody>
+              <imutil:disclosureHead>
+                <imutil:disclosureTitle>
+                  ${object.fieldConfigMap[entry.key].sectionTitle}
+                </imutil:disclosureTitle>
+              </imutil:disclosureHead>
+              <imutil:disclosureBody>
+           <c:set var="maxLength" value="80"/>
+           <c:choose>
+             <c:when test="${entry.value.class.name ==
+                           'java.lang.String' && fn:length(entry.value) > maxLength
+                           && ! object.fieldConfigMap[entry.key].doNotTruncate}">
+               <span class="value">
+                 ${fn:substring(entry.value, 0, maxLength/2)}
+               </span>
+               <span class="value" style="white-space:nowrap">
+                 ${fn:substring(entry.value, maxLength/2, maxLength)}
+                 <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
+                   <fmt:message key="objectDetails.viewall"/>
+                 </html:link>
+               </span>
+             </c:when>
+             <c:otherwise>
+               <span class="value">${entry.value}</span>
+             </c:otherwise>
+          </c:choose>                
+              </imutil:disclosureBody>
             </imutil:disclosure>
           </c:if>
         </c:forEach>
@@ -236,27 +236,27 @@
     </c:forEach>
 
     <%-- All other references and collections --%>
-	<imutil:disclosure id="${miscId}" opened="false" type="consistent">
-		<imutil:disclosureHead>
-			<imutil:disclosureTitle>
-				Miscellaneous
-			</imutil:disclosureTitle>
-			<imutil:disclosureDetails styleClass="templateResultsToggle">
-				(Expand this section for more information)
-			</imutil:disclosureDetails>
-		</imutil:disclosureHead>
-		<imutil:disclosureBody styleClass="disclosureBody">
-		    <tiles:insert page="/objectDetailsRefsCols.jsp">
-	        	<tiles:put name="object" beanName="object"/>
-	        	<tiles:put name="placement" value="aspect:Miscellaneous"/>
-      		</tiles:insert>		
-		</imutil:disclosureBody>
-	</imutil:disclosure>
+  <imutil:disclosure id="${miscId}" opened="false" type="consistent">
+    <imutil:disclosureHead>
+      <imutil:disclosureTitle>
+        Miscellaneous
+      </imutil:disclosureTitle>
+      <imutil:disclosureDetails styleClass="templateResultsToggle">
+        (Expand this section for more information)
+      </imutil:disclosureDetails>
+    </imutil:disclosureHead>
+    <imutil:disclosureBody styleClass="disclosureBody">
+        <tiles:insert page="/objectDetailsRefsCols.jsp">
+            <tiles:put name="object" beanName="object"/>
+            <tiles:put name="placement" value="aspect:Miscellaneous"/>
+          </tiles:insert>    
+    </imutil:disclosureBody>
+  </imutil:disclosure>
 </div>
 
        <%-- bags that contain this object --%>
 <div class="heading">
-	Lists
+  Lists
 </div>
          
 
@@ -264,7 +264,7 @@
    
         <div style="width:50%;float:left; border:1px solid #CCC;padding:10px;margin:0px 10px 10px 10px">
         Lists in which this can be found:
- 	  <tiles:insert name="webSearchableList.tile">
+     <tiles:insert name="webSearchableList.tile">
             <tiles:put name="wsListId" value="lists_with_object"/>
             <tiles:put name="list" value="${bagsWithThisObject}"/>
             <tiles:put name="type" value="bag"/>
@@ -273,9 +273,9 @@
             <tiles:put name="showSearchBox" value="false"/>
             <tiles:put name="showCount" value="true"/>
           </tiles:insert>
-  	</div>
+    </div>
  
-	   <%-- Add to bag --%>
+     <%-- Add to bag --%>
              <c:if test="${!empty PROFILE.savedBags}">
                <form action="<html:rewrite page="/addToBagAction.do"/>" method="POST">
                  <fmt:message key="objectDetails.addToBag"/>
@@ -290,7 +290,7 @@
                </form>
              </c:if>
         </im:body>
-     </div> 	  
+     </div>     
 </c:if>
 
 <!-- /objectDetails.jsp -->

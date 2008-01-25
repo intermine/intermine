@@ -26,7 +26,7 @@ options displayConstraint.optionsList
 
 <script type="text/javascript">
 if (${!empty constrainOnBag}) {
-	swapInputs('bag');
+  swapInputs('bag');
 }
 </script>
 
@@ -38,7 +38,7 @@ if (${!empty constrainOnBag}) {
 <html:form action="/mainAction" styleId="mainForm">
 
   <html:hidden property="path" value="${editingNode.pathString}"/>
-	<html:hidden property="editingConstraintEditable" value="${editingConstraintEditable}"/>
+  <html:hidden property="editingConstraintEditable" value="${editingConstraintEditable}"/>
   <c:if test="${editingConstraintIndex != null}">
     <html:hidden property="cindex" value="${editingConstraintIndex}"/>
   </c:if>
@@ -290,8 +290,8 @@ if (${!empty constrainOnBag}) {
 
           <c:if test="${empty displayConstraint.fixedOpIndices && empty keyFields}">
             <script type="text/javascript">
-				swapInputs('subclass');
-			</script>
+        swapInputs('subclass');
+      </script>
           </c:if>
           
           </c:if>

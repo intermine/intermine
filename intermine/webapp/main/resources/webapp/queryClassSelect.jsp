@@ -30,7 +30,7 @@
   }
 
   function handleClassClick(e) {
-	  var i = document.queryClassSelectForm.className.selectedIndex;
+    var i = document.queryClassSelectForm.className.selectedIndex;
       if (e.detail == 2 &&  document.queryClassSelectForm.className[i].value != '') {
           $('queryClassForm').submit();
       }
@@ -53,13 +53,13 @@
       <td>
         <html:form styleId="queryClassForm" action="/queryClassSelect">
           <html:select styleId="queryClassSelector" property="className" size="10" onchange="showClassSelectHelp();">
-        	<c:forEach items="${preferredTypeList}" var="type">
-         	 <html:option value="${type}" style="font-weight:bold">${type}</html:option>
-    		</c:forEach>
-       		<html:option value="" style="text-align:center">----------------</html:option>
-      		<c:forEach items="${typeList}" var="type">
-     	     <html:option value="${type}">${type}</html:option>
-     	 	</c:forEach>
+          <c:forEach items="${preferredTypeList}" var="type">
+            <html:option value="${type}" style="font-weight:bold">${type}</html:option>
+        </c:forEach>
+           <html:option value="" style="text-align:center">----------------</html:option>
+          <c:forEach items="${typeList}" var="type">
+            <html:option value="${type}">${type}</html:option>
+          </c:forEach>
           </html:select>
           <br/>
           <html:submit>

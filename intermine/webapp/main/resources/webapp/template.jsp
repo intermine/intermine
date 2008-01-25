@@ -133,7 +133,7 @@
   <html:form action="/templateAction">
     <h2 class="templateTitle">
     <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
-	${templateTitle}
+  ${templateTitle}
     <tiles:insert name="setFavourite.tile">
         <tiles:put name="name" value="${templateQuery.name}"/>
         <tiles:put name="type" value="template"/>
@@ -323,7 +323,7 @@
       
      <table width="100%">
      <tr>
-     	<td> 
+       <td> 
       
       <html:hidden property="templateName"/>
       <html:hidden property="templateType"/>
@@ -333,14 +333,14 @@
         <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
       </c:if>
    
-   	</td>
-   	<td align="right">
-	<html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}">
-		<img src="theme/xml.png" title="Export this template to XML"/>			 
-	</html:link>
-	</td>
-	</tr>
-	</table>
+     </td>
+     <td align="right">
+  <html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}">
+    <img src="theme/xml.png" title="Export this template to XML"/>       
+  </html:link>
+  </td>
+  </tr>
+  </table>
       
     </c:if>
   </html:form>

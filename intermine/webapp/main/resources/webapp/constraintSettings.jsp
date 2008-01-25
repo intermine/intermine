@@ -15,7 +15,7 @@
 <c:set var="editable" value="${constraint.editable}"/>
 <c:set var="label" value="${constraint.description}"/>
 <c:if test="${label == ''}">
-	<c:set var="label" value="${editingNodePath}"/>
+  <c:set var="label" value="${editingNodePath}"/>
 </c:if>
 
 <div style="body">

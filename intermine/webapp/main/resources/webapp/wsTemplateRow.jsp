@@ -39,7 +39,7 @@
     <c:otherwise>
       <td>
         <fmt:message var="linkTitle" key="templateList.run">
-	  <fmt:param value="${webSearchable.name}"/>
+    <fmt:param value="${webSearchable.name}"/>
         </fmt:message>
         ${webSearchable.name}
         <tiles:insert name="setFavourite.tile">

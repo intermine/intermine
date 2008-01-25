@@ -83,9 +83,9 @@
                 <c:otherwise>
                   <td class="sorting">
                     <fmt:message var="linkTitle" key="templateList.run">
-					  <fmt:param value="${savedTemplate.value.name}"/>
-    			    </fmt:message>
-					  ${savedTemplate.value.name}
+            <fmt:param value="${savedTemplate.value.name}"/>
+              </fmt:message>
+            ${savedTemplate.value.name}
                     <tiles:insert name="setFavourite.tile">
                       <tiles:put name="name" value="${savedTemplate.value.name}"/>
                       <tiles:put name="type" value="template"/>
@@ -129,21 +129,21 @@
               </td>
               <td class="sorting" align="center" nowrap>
                <html:link action="/template?name=${savedTemplate.value.name}&amp;scope=user" 
-               					titleKey="history.action.execute.hover">
+                         titleKey="history.action.execute.hover">
                   <fmt:message key="history.action.execute"/>
                </html:link> |
                 <html:link action="/editTemplate?name=${savedTemplate.value.name}"
-                				titleKey="history.action.edit.hover">
+                        titleKey="history.action.edit.hover">
                   <fmt:message key="history.action.edit"/>
                 </html:link> |
                 <html:link action="/exportTemplates?scope=user&amp;name=${savedTemplate.value.name}"
-                				titleKey="history.action.export.hover">
+                        titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link>
                 <c:if test="${IS_SUPERUSER && savedTemplate.value.valid}">
-	                <tiles:insert name="precomputeTemplate.tile">
-	                	<tiles:put name="templateName" value="${savedTemplate.value.name}"/>
-	                </tiles:insert>
+                  <tiles:insert name="precomputeTemplate.tile">
+                    <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
+                  </tiles:insert>
                     <tiles:insert name="summariseTemplate.tile">
                         <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
                     </tiles:insert>

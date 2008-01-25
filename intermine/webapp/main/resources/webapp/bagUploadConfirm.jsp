@@ -15,13 +15,13 @@
 window.onload = function() { toggleForm(${matchCount}); }
 
 function toggleForm(matchCount) {
-	if (matchCount > 0) {
-		document.bagUploadConfirmForm.newBagName.disabled = false;
-		document.bagUploadConfirmForm.submit.disabled = false;
-	} else {
-		document.bagUploadConfirmForm.newBagName.disabled = true;
-		document.bagUploadConfirmForm.submit.disabled = true;
-	}
+  if (matchCount > 0) {
+    document.bagUploadConfirmForm.newBagName.disabled = false;
+    document.bagUploadConfirmForm.submit.disabled = false;
+  } else {
+    document.bagUploadConfirmForm.newBagName.disabled = true;
+    document.bagUploadConfirmForm.submit.disabled = true;
+  }
 }
 
 // -->
@@ -77,17 +77,17 @@ function toggleForm(matchCount) {
       </c:choose>
       <fmt:message key="bagUploadConfirm.bagName"/>:
       <html:text property="newBagName" size="20" value="" />
-		<input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
+    <input type="button" name="confirmBagUpload" value="Save list" onclick="javascript:validateBagName('bagUploadConfirmForm');"/>
     </div>
   </div>
   <c:if test="${!empty duplicates || ! empty lowQualityMatches || ! empty convertedObjects}">
     <div class="heading">
       <fmt:message key="bagUploadConfirm.issues"/>    
-	</div>
+  </div>
     <div class="body">
     
-	<p><b><span id="addAllLink" onclick="addAll('all','${jsArray}');" class="fakelink">Add all</span> | 
-		<span id="removeAllLink" onclick="removeAll('all','${jsArray}');">Remove all</span></b></p>
+  <p><b><span id="addAllLink" onclick="addAll('all','${jsArray}');" class="fakelink">Add all</span> | 
+    <span id="removeAllLink" onclick="removeAll('all','${jsArray}');">Remove all</span></b></p>
         
         <br/>
         
@@ -100,7 +100,7 @@ function toggleForm(matchCount) {
         <h3>Low quality matches</h3> 
         <span id="lowQaddAllLink" onclick="addAll('lowQ', '${flatLowQualityMatches}');" class="fakelink">Add all</span> | 
         <span id="lowQremoveAllLink" onclick="removeAll('lowQ', '${flatLowQualityMatches}');">Remove all</span>
-	  </p>
+    </p>
       <p><fmt:message key="bagUploadConfirm.lowQ"/>
         <c:set var="issueMap" value="${lowQualityMatches}"/>
         <tiles:insert name="bagUploadConfirmIssue.tile">
@@ -111,7 +111,7 @@ function toggleForm(matchCount) {
     </p>
     </c:if>
     <c:if test="${! empty duplicates}">
-    	<br/>
+      <br/>
       <p> 
         <h3>Duplicates</h3> 
         <span id="duplicateaddAllLink" onclick="addAll('duplicate', '${flatDuplicate}');" class="fakelink">Add all</span> | 
@@ -134,7 +134,7 @@ function toggleForm(matchCount) {
         <h3><fmt:message key="bagUploadConfirm.convertedHeader"/></h3> 
         <span id="convertedaddAllLink" onclick="addAll('converted', '${flatConverted}');" class="fakelink">Add all</span> | 
         <span id="convertedremoveAllLink" onclick="removeAll('converted', '${flatConverted}');">Remove all</span>
-	</p>
+  </p>
       <p><fmt:message key="bagUploadConfirm.converted">
           <fmt:param value="${bagUploadConfirmForm.bagType}"/>
         </fmt:message>
@@ -167,9 +167,9 @@ function toggleForm(matchCount) {
       </p>
     </div>
     <div class="body">
-		<html:submit property="goBack"> 
-			<fmt:message key="bagUploadConfirm.goBack"/> 
-		</html:submit>   
+    <html:submit property="goBack"> 
+      <fmt:message key="bagUploadConfirm.goBack"/> 
+    </html:submit>   
     </div>
   </c:if>
 </html:form>

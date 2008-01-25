@@ -16,12 +16,12 @@
           <html:link action="/results?table=${item.elementId}&amp;trail=${item.trail}"
                      styleClass="objectTrailLinkResults">Results</html:link>
         </c:when>
-      	<c:when test="${item.type == 'query'}">
-      	  <html:link action="/query.do?showTemplate=true&amp;trail=${item.trail}"
+        <c:when test="${item.type == 'query'}">
+          <html:link action="/query.do?showTemplate=true&amp;trail=${item.trail}"
                      styleClass="objectTrailLinkResults">Query</html:link>
         </c:when>
-	<c:when test="${item.type == 'bag'}">
-      	  <html:link action="/bagDetails.do?bagName=${item.elementId}"
+  <c:when test="${item.type == 'bag'}">
+          <html:link action="/bagDetails.do?bagName=${item.elementId}"
                      styleClass="objectTrailLinkResults">List</html:link>
         </c:when>
         <c:otherwise>

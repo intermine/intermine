@@ -17,7 +17,7 @@
       var element = document.getElementById(elementId);
       var display = element.style.display;
       if(display=='none') {
-			element.style.display='block';
+      element.style.display='block';
           document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
       } else {
           element.style.display='none';
@@ -26,16 +26,16 @@
    }
    
    function hideCurrentDataDivs() {
-   	var hasHidden = true;
-   	var index = 1;
-   	while (hasHidden) {
-   		if (document.getElementById('hiddenDiv' + index)) {
-		   	toggleDiv('hiddenDiv' + index);
-   			index ++;
-   		} else {
-   		   	hasHidden = false;
-		}   	
-  	 }
+     var hasHidden = true;
+     var index = 1;
+     while (hasHidden) {
+       if (document.getElementById('hiddenDiv' + index)) {
+         toggleDiv('hiddenDiv' + index);
+         index ++;
+       } else {
+            hasHidden = false;
+    }     
+     }
    }
    window.onload = function() {
      hideCurrentDataDivs();
