@@ -10,37 +10,30 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.intermine.objectstore.ObjectStoreException;
 
 import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.CDS;
 import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Synonym;
-import org.flymine.model.genomic.UTR;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Sequence;
 
 /**
- * A fasta loader that understand the headers of FlyBase fasta UTR fasta files and can make the
+ * A fasta loader that understand the headers of FlyBase fasta CDS fasta files and can make the
  * appropriate extra objects and references.
  * @author Kim Rutherford
  */
-public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
+public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 {
-
-    Map<String, Chromosome> chrMap = new HashMap<String, Chromosome>();
-
-    /**
+   /**
      * {@inheritDoc}
      */
     @Override
@@ -51,31 +44,30 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                                    DataSource dataSource)
         throws ObjectStoreException {
         Annotation annotation = bioJavaSequence.getAnnotation();
-        String mrnaIdentifier = bioJavaSequence.getName();
-        UTR utr;
-        if (interMineObject instanceof UTR) {
-            utr = (UTR) interMineObject;
+        String header = (String) annotation.getProperty("description");
+        String mrnaIdentifier = getMRNAIdentifier(header);
+        CDS cds;
+        if (interMineObject instanceof CDS) {
+            cds = (CDS) interMineObject;
         } else {
             throw new RuntimeException("the InterMineObject passed to "
-                                       + "FlyBaseUTRFastaLoaderTask.extraProcessing() is not a "
-                                       + "UTR");
+                                       + "FlyBaseCDSFastaLoaderTask.extraProcessing() is not a "
+                                       + "CDS");
         }
 
-        String utrIdentifier = utr.getIdentifier();
+        String cdsIdentifier = cds.getIdentifier();
 
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
-        utr.setmRNA(mrna);
+        cds.setmRNA(mrna);
 
         Synonym synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
-        synonym.setValue(utrIdentifier);
+        synonym.setValue(cdsIdentifier);
         synonym.setType("identifier");
         synonym.setSubject(interMineObject);
         synonym.setSource(dataSource);
         getDirectDataLoader().store(synonym);
 
-        String header = (String) annotation.getProperty("description");
-
-        Location loc = getLocationFromHeader(header, utr, organism);
+        Location loc = getLocationFromHeader(header, cds, organism);
         getDirectDataLoader().store(loc);
     }
 
@@ -84,10 +76,29 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      */
     @Override
     protected String getIdentifier(Sequence bioJavaSequence) {
-        if (getClassName().endsWith(".FivePrimeUTR")) {
-            return bioJavaSequence.getName() + "-5-prime-utr";
+        Annotation annotation = bioJavaSequence.getAnnotation();
+        String header = (String) annotation.getProperty("description");
+
+        final String regexp = ".*FlyBase_Annotation_IDs:([^, =;]+).*";
+        Pattern p = Pattern.compile(regexp);
+        Matcher m = p.matcher(header);
+
+        if (m.matches()) {
+            return m.group(1) + "_CDS";
         } else {
-            return bioJavaSequence.getName() + "-3-prime-utr";
+            throw new RuntimeException("can't find FlyBase Annotation ID in header: " + header);
+        }
+    }
+
+    private String getMRNAIdentifier(String header) {
+        final String regexp = ".*parent=FBgn[^,]+,([^, =;]+).*";
+        Pattern p = Pattern.compile(regexp);
+        Matcher m = p.matcher(header);
+
+        if (m.matches()) {
+            return m.group(1);
+        } else {
+            throw new RuntimeException("can't find FBtr identifier in header: " + header);
         }
     }
 

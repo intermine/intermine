@@ -25,7 +25,7 @@
                 value="org.intermine.bio.dataconversion.WormBaseChadoDBConverter"/>
     </source>
     <source name="uniprot" type="uniprot">
-      <property name="uniprot.organisms" value="7227 6239"/>
+      <property name="uniprot.organisms" value="7227 6239"/> 
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="createinterpro" value="true"/>
       <property name="use.split.files" value="true"/>
@@ -37,7 +37,7 @@
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
-    <source name="inparanoid-orthologue" type="orthologue" dump="true">
+    <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/modmine/inparanoid-orthologue/current/"/>
     </source>
     <source name="go" type="go">
@@ -55,6 +55,24 @@
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
+    <source name="flybase-dmel-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="identifier"/>
+      <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_5/fasta"/>
+    </source>
+    <source name="flybase-dpse-cds-fasta" type="fasta">
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+      <property name="fasta.taxonId" value="7237"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
+      <property name="fasta.classAttribute" value="identifier"/>
+      <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/flybase/dpse/dpse_r2.0_FB2007_03/fasta"/>
+    </source>
     <source name="flybase-dmel-5prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
@@ -71,7 +89,7 @@
       <property name="fasta.includes" value="dmel-all-three_prime_UTR-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
-    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
+    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
       <property name="fasta.includes" value="*chromosome*.fasta"/>
@@ -97,7 +115,7 @@
 	</sources>
   <post-processing>
     <post-process name="create-utr-references"/>
-    <post-process name="create-references" dump="true"/>
+    <post-process name="create-references"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="create-overlap-relations-flymine"/>
 
