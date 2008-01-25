@@ -18,10 +18,10 @@
       <html:text property="name" size="40" styleId="fbname"/>
     </td>
   </tr>
-	<tr>
-		<td align="right"><fmt:message key="contact.email"/></td>
-		<td><span id="monkey"></span></td>
-	</tr>
+  <tr>
+    <td align="right"><fmt:message key="contact.email"/></td>
+    <td><span id="monkey"></span></td>
+  </tr>
   <tr>
     <td align="right"><fmt:message key="contact.subject"/></td>
     <td><html:text property="subject" size="40"/></td>
@@ -39,7 +39,7 @@
 
       <script language="JavaScript">
       <!--
-		 $('monkey').innerHTML='<input type=\"text\" name=\"monkey\" size=\"40\"/>';
+     $('monkey').innerHTML='<input type=\"text\" name=\"monkey\" size=\"40\"/>';
       //-->
       </script>
 

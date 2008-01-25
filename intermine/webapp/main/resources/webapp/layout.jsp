@@ -18,26 +18,26 @@
   <tiles:importAttribute name="pageName" scope="request"/>
   
   <head>
-  	<!-- for google webmaster -->
-	<meta name="verify-v1" content="hZtrkqyKEW4WN60PvB9GLrRIWMbEVxvAQ4GqmHGq3Fk=" />
-	
-	<!-- for yahoo -->
-	<META name="y_key" content="05e821942b9c36fb" />
-	 
-	 <!-- for microsoft -->
-	 <meta name="msvalidate.01" content="2D1A5F3E13044E589AC7B268B7A96A62" />
-	 
-	 
+    <!-- for google webmaster -->
+  <meta name="verify-v1" content="hZtrkqyKEW4WN60PvB9GLrRIWMbEVxvAQ4GqmHGq3Fk=" />
+  
+  <!-- for yahoo -->
+  <META name="y_key" content="05e821942b9c36fb" />
+   
+   <!-- for microsoft -->
+   <meta name="msvalidate.01" content="2D1A5F3E13044E589AC7B268B7A96A62" />
+   
+   
     <html:base/>
     
     <fmt:message key="${pageName}.noFollow" var="noFollow" />
     
     <c:if test="${noFollow == 'true'}">
-	    <META NAME="ROBOTS" CONTENT="NOFOLLOW"/>
-	</c:if>
-	
-	<fmt:message key="${pageName}.title" var="pageNameTitle"/>
-	
+      <META NAME="ROBOTS" CONTENT="NOFOLLOW"/>
+  </c:if>
+  
+  <fmt:message key="${pageName}.title" var="pageNameTitle"/>
+  
     <tiles:insert name="htmlHead.tile">
       <tiles:put name="bagName" value="${param.bagName}"/>
       <tiles:put name="objectId" value="${param.id}"/>
@@ -64,7 +64,7 @@
       <tiles:get name="body"/>
       
       <%-- footer (welcome logo, bottom nav, and feedback link) --%>
-	  <c:import url="footer.jsp"/>
+    <c:import url="footer.jsp"/>
       
       <c:if test="${param.debug != null}">
         <im:vspacer height="11"/>

@@ -29,11 +29,11 @@
     <c:forEach items="${customConverters}" var="converterInfo">
     <c:out value="${converterInfo.key}:" /><br>
     <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
-   	   <c:forEach items="${converterInfo.value}" var="value">
+        <c:forEach items="${converterInfo.value}" var="value">
          <html:option value="${value}">${value}</html:option>
        </c:forEach>
         <html:submit property="convertToThing">
-			Convert >>
+      Convert >>
        </html:submit>
     </html:select>
     </c:forEach>

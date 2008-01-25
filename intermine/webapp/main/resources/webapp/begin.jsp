@@ -15,9 +15,9 @@
      <em><p><fmt:message key="begin.data"/></p></em>
      <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
           <table cellpadding="0" cellspacing="0" border="0"><tr>
-	       <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
-	         <c:set var="set" value="${entry.value}"/>
-	         <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
+         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
+           <c:set var="set" value="${entry.value}"/>
+           <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
                    <td style="height:80px;padding:4px">
                      <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
                        <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon"
@@ -33,7 +33,7 @@
              </c:forEach>
           </tr></table>
     </im:boxarea>
-	
+  
 
 <!-- Second column - elastic -->
 <div id="rightColumn">
@@ -50,7 +50,7 @@
       <p id="intro">${WEB_PROPERTIES['begin.intro']}</p>
     </div>
       <div style="clear:right;height:1em"></div>
-  </im:boxarea>	
+  </im:boxarea>  
 
       <im:boxarea title="Templates" titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do" stylename="gradientbox">
         <em><p><fmt:message key="begin.templates"/></p></em>

@@ -17,7 +17,7 @@
 
 <p>
   <html:form action="/importTemplates">
-	<div align="center">
+  <div align="center">
     <table cellspacing="0" cellpadding="0" border="0">
     <tr>
       <td align="center"><html:textarea property="xml" cols="60" rows="20"/></td>
@@ -29,7 +29,7 @@
     </c:if>
     <tr>
       <td align="center">
-	      <br/>
+        <br/>
         <html:submit><fmt:message key="importTemplates.submit"/></html:submit>
       </td>
     </tr>

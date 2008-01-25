@@ -67,16 +67,16 @@
                 <span id="rem_${issueType}_${resultElementRow[rowStatus.index]}" onclick="removeIdFromBag('${resultElementRow[rowStatus.index]}','${idcounter}','${identifier}','${issueType}');">Remove</span>
               </c:when>
               <c:otherwise>
-				<c:choose>
-              	<c:when test="${resultElement.keyField}">
-					<html:link action="/objectDetails?id=${resultElementRow[fn:length(resultElementRow) - 1]}" target="_new" styleClass="extlink">
-                		${resultElement.field}
-                	</html:link>
-              	</c:when>
-              	<c:otherwise>
-              		${resultElement.field}
-            	</c:otherwise>
-            	</c:choose>                	
+        <c:choose>
+                <c:when test="${resultElement.keyField}">
+          <html:link action="/objectDetails?id=${resultElementRow[fn:length(resultElementRow) - 1]}" target="_new" styleClass="extlink">
+                    ${resultElement.field}
+                  </html:link>
+                </c:when>
+                <c:otherwise>
+                  ${resultElement.field}
+              </c:otherwise>
+              </c:choose>                  
               </c:otherwise>
             </c:choose>
             &nbsp;

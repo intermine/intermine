@@ -12,7 +12,7 @@
   <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 
 <tiles:useAttribute id="type" name="type"/>
-	
+  
 <c:choose>
   <c:when test="${type == 'saved'}">
     <c:set var="queryMap" value="${PROFILE.savedQueries}"/>
@@ -31,12 +31,12 @@
       return confirm("Do you really want to delete the selected queries?")
     }
 
-	function trim(s) {
-		return s.replace(/^\s+|\s+$/g,"");
-	}
+  function trim(s) {
+    return s.replace(/^\s+|\s+$/g,"");
+  }
 
     function doQueryAction(name, url){
-    	queryName = document.getElementById('name_'+name).innerHTML.replace(/[\t\n]/g, '')
+      queryName = document.getElementById('name_'+name).innerHTML.replace(/[\t\n]/g, '')
         location.href = url + trim(queryName);
         return false;
     }
@@ -210,7 +210,7 @@
       </c:otherwise>
     </c:choose>
         <html:link action="/importQueries">
-        	<fmt:message key="begin.importQuery" />
+          <fmt:message key="begin.importQuery" />
         </html:link>
     
     

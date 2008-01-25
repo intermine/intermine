@@ -9,11 +9,11 @@
 <!-- templatePreview.jsp -->
 
 <c:if test="${TEMPLATE_BUILD_STATE != null}">
-	<link rel="stylesheet" type="text/css" href="css/templatePreview.css"/>
+  <link rel="stylesheet" type="text/css" href="css/templatePreview.css"/>
   
   <imutil:disclosure id="template-preview" opened="true" styleClass="body">
-  			Template preview
-	<imutil:disclosureBody style="align:center;">
+        Template preview
+  <imutil:disclosureBody style="align:center;">
       <div id="tmplPreview">
         <div class="previewTitle">
           <fmt:message key="templateBuilder.previewtitle"/>
@@ -21,8 +21,8 @@
         <tiles:insert name="template.tile">
           <tiles:put name="builder" value="yes"/>
         </tiles:insert>
-      </div>	
-	</imutil:disclosureBody>
+      </div>  
+  </imutil:disclosureBody>
   </imutil:disclosure>
   
     <div align="center">

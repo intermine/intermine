@@ -20,86 +20,86 @@
 <br/><br/>
 Reference population: <c:out value='${referencePopulation}'/>.
 <br/>
-<table>	
+<table>  
 
 <tr>
-	<td valign="top" align="left">
+  <td valign="top" align="left">
 
-	<html:form action="/enrichmentWidget">
-	<table>
-	<tr>
-		<td>Multiple Hypothesis Test Correction</td>
-		<td><html:select property="errorCorrection">
-				<html:option value="Benjamini and Hochberg">Benjamini and Hochberg</html:option>
-				<html:option value="Bonferroni">Bonferroni</html:option>
-				<html:option value="None">None</html:option>
-			</html:select>
-		</td>
-	</tr>
-	<c:if test="${!empty enrichmentWidgetForm.filters}">
+  <html:form action="/enrichmentWidget">
+  <table>
+  <tr>
+    <td>Multiple Hypothesis Test Correction</td>
+    <td><html:select property="errorCorrection">
+        <html:option value="Benjamini and Hochberg">Benjamini and Hochberg</html:option>
+        <html:option value="Bonferroni">Bonferroni</html:option>
+        <html:option value="None">None</html:option>
+      </html:select>
+    </td>
+  </tr>
+  <c:if test="${!empty enrichmentWidgetForm.filters}">
       <tr>
-      	<td>${enrichmentWidgetForm.filterLabel}</td>
-      	<td>
-      	
-    	<c:set value="${enrichmentWidgetForm.filters}" var="filters" />
-		<c:set var="list" value='${fn:split(filters, ",")}' />
-      	
-      		<html:select property="filter">
-     		 <c:forEach items="${list}" var="name">
-				<html:option value="${name}">${name}</html:option>
-    		 </c:forEach>    		 
-      		</html:select>	
-			&nbsp;
-	    </td>
-	   </tr>	   
-	   </c:if>	   
-	   
-	   <tr>
-	   	<td>Maximum value to display</td>
-		<td><html:select property="max">
-				<html:option value="0.01">0.01</html:option>
-				<html:option value="0.05">0.05</html:option>
-				<html:option value="0.10">0.10</html:option>
-				<html:option value="0.50">0.50</html:option>
-				<html:option value="1.00">1.00</html:option>
-			</html:select>
-		</td>
-	   	
-	   	</tr>
-	   <tr>
-	   	<td></td>
-	   	<td>	   	
-	   	 <html:submit property="reloadWidget">
-			Update results
+        <td>${enrichmentWidgetForm.filterLabel}</td>
+        <td>
+        
+      <c:set value="${enrichmentWidgetForm.filters}" var="filters" />
+    <c:set var="list" value='${fn:split(filters, ",")}' />
+        
+          <html:select property="filter">
+          <c:forEach items="${list}" var="name">
+        <html:option value="${name}">${name}</html:option>
+         </c:forEach>         
+          </html:select>  
+      &nbsp;
+      </td>
+     </tr>     
+     </c:if>     
+     
+     <tr>
+       <td>Maximum value to display</td>
+    <td><html:select property="max">
+        <html:option value="0.01">0.01</html:option>
+        <html:option value="0.05">0.05</html:option>
+        <html:option value="0.10">0.10</html:option>
+        <html:option value="0.50">0.50</html:option>
+        <html:option value="1.00">1.00</html:option>
+      </html:select>
+    </td>
+       
+       </tr>
+     <tr>
+       <td></td>
+       <td>       
+        <html:submit property="reloadWidget">
+      Update results
         </html:submit>
-	   	
-	   	</td>
-	   	</tr>
-	</table>	
-   		<html:hidden property="bagName"/>
-      		    <html:hidden property="filters"/>
-      		    <html:hidden property="controller"/>
-      		   	<html:hidden property="title" />
-      		    <html:hidden property="link" />      		  
-      		  	<html:hidden property="description" />
-      		  	<html:hidden property="filterLabel"/>
-      		  	<html:hidden property="label"/>	
-      		  </html:form>
-	</td>
+       
+       </td>
+       </tr>
+  </table>  
+       <html:hidden property="bagName"/>
+              <html:hidden property="filters"/>
+              <html:hidden property="controller"/>
+               <html:hidden property="title" />
+              <html:hidden property="link" />            
+              <html:hidden property="description" />
+              <html:hidden property="filterLabel"/>
+              <html:hidden property="label"/>  
+            </html:form>
+  </td>
 </tr>
 
 
 <tr>
-	<td valign="top" align="left">
+  <td valign="top" align="left">
 <html:form action="/widgetAction" target="_top">
 
 <li id="button_bar" onclick="toggleToolBarMenu(event);">
-	<ul id="tool_bar_ul_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></ul>
+  <ul id="tool_bar_ul_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></ul>
 </li>
 <div id="tool_bar_item_display" style="visibility:hidden" class="tool_bar_item">
 
-		<html:submit property="viewResults">
-			in results table
+    <html:submit property="viewResults">
+      in results table
         </html:submit>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_display')">Cancel</a>
@@ -108,67 +108,67 @@ Reference population: <c:out value='${referencePopulation}'/>.
 </tr>
 
 <tr>
-	<td>
-		
-		<c:choose>
-		<c:when test="${!empty pvalues}">
-			<table cellpadding="5" border="0" cellspacing="0" class="results">
-		  	<tr>	
-  				<th>&nbsp;</th>
-  				<th>${enrichmentWidgetForm.label}</th>
-	  			<th>p-value</th>
-  				<th>&nbsp;</th>
-			</tr>
-	  		<c:forEach items="${pvalues}" var="results">
-    			<tr>
-    				<td>    					
+  <td>
+    
+    <c:choose>
+    <c:when test="${!empty pvalues}">
+      <table cellpadding="5" border="0" cellspacing="0" class="results">
+        <tr>  
+          <th>&nbsp;</th>
+          <th>${enrichmentWidgetForm.label}</th>
+          <th>p-value</th>
+          <th>&nbsp;</th>
+      </tr>
+        <c:forEach items="${pvalues}" var="results">
+          <tr>
+            <td>              
                           <html:multibox property="selected"
                                          styleId="selected_${results.key}">
                             <c:out value="${results.key}"/>
-                          </html:multibox> 					
-    					
-    					
-    				</td>
-  					<td align="left">
-  							<c:choose>
-							<c:when test="${!empty externalLink}">
-								<a href="${externalLink}${results.key}${append}" class="extlink" target="_new"><c:out value='${labelToId[results.key]}'/></a>
-					 		</c:when>		
-							<c:otherwise>	
-								<c:out value='${labelToId[results.key]}'/>
-					        </c:otherwise>        
-					        </c:choose>
-  						<c:if test="${labelToId[results.key] != results.key}">[<c:out value='${results.key}'/>]</c:if>
- 					</td>  				
-  					<td align="left">
-  						<c:choose>
-  						<c:when test="${results.value < 0.0000001}">
-  							<fmt:formatNumber value="${results.value}" pattern="0.#######E0" minFractionDigits="7" maxFractionDigits="7" />
-						</c:when>		
-						<c:otherwise>
-	  						<fmt:formatNumber value="${results.value}" minFractionDigits="7" maxFractionDigits="7" />
-				        </c:otherwise>        
-    				    </c:choose>
-  					</td>
-  					<td align="left" nowrap>
-  		   				<html:link action="/widgetAction?key=${results.key}&bagName=${enrichmentWidgetForm.bagName}&link=${enrichmentWidgetForm.link}" target="_top">
-  		   					[<c:out value='${totals[results.key]}'/>  ${bagType}s]
-       					</html:link>  	
-	       			</td>
-				</tr>
-			</c:forEach>
-			</table>
-		</c:when>		
-		<c:otherwise>
-	        No results found.
+                          </html:multibox>           
+              
+              
+            </td>
+            <td align="left">
+                <c:choose>
+              <c:when test="${!empty externalLink}">
+                <a href="${externalLink}${results.key}${append}" class="extlink" target="_new"><c:out value='${labelToId[results.key]}'/></a>
+               </c:when>    
+              <c:otherwise>  
+                <c:out value='${labelToId[results.key]}'/>
+                  </c:otherwise>        
+                  </c:choose>
+              <c:if test="${labelToId[results.key] != results.key}">[<c:out value='${results.key}'/>]</c:if>
+           </td>          
+            <td align="left">
+              <c:choose>
+              <c:when test="${results.value < 0.0000001}">
+                <fmt:formatNumber value="${results.value}" pattern="0.#######E0" minFractionDigits="7" maxFractionDigits="7" />
+            </c:when>    
+            <c:otherwise>
+                <fmt:formatNumber value="${results.value}" minFractionDigits="7" maxFractionDigits="7" />
+                </c:otherwise>        
+                </c:choose>
+            </td>
+            <td align="left" nowrap>
+                 <html:link action="/widgetAction?key=${results.key}&bagName=${enrichmentWidgetForm.bagName}&link=${enrichmentWidgetForm.link}" target="_top">
+                   [<c:out value='${totals[results.key]}'/>  ${bagType}s]
+                 </html:link>    
+               </td>
+        </tr>
+      </c:forEach>
+      </table>
+    </c:when>    
+    <c:otherwise>
+          No results found.
         </c:otherwise>        
         </c:choose>
         <html:hidden property="bagType" value="${bagType}" />
         <html:hidden property="bagName" value="${enrichmentWidgetForm.bagName}" />
         <html:hidden property="link" value="${enrichmentWidgetForm.link}" />
-	</html:form>	
+  </html:form>  
 
-	</td>
+  </td>
 </tr>
 </table>
             

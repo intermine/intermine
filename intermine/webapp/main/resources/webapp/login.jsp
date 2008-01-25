@@ -26,12 +26,12 @@
   </html:form>
 
 <script language="javascript">
-	var visibility = 'block';
-	function toggleDiv(){
-		document.getElementById('passwordDiv').style.display=visibility;
-		if(visibility=='block') visibility='none';
-		else visibility='block';
-	}
+  var visibility = 'block';
+  function toggleDiv(){
+    document.getElementById('passwordDiv').style.display=visibility;
+    if(visibility=='block') visibility='none';
+    else visibility='block';
+  }
 </script>
   <br/>
 <a href="javascript:toggleDiv();" >Forgotten password</a>
