@@ -497,10 +497,11 @@ public class MainHelper
         for (Iterator<OrderBy> i = sortOrder.iterator(); i.hasNext();) {
             OrderBy o = i.next();
             PathNode pn = pathQuery.getNodes().get(o.getField().toStringNoConstraints());
-            QueryNode qn = queryBits.get(pn.getPathString());
-
-            if (!q.getOrderBy().contains(qn)) {
-                q.addToOrderBy(qn, o.getDirection());
+            if (pn != null) {
+                QueryNode qn = queryBits.get(pn.getPathString());
+                if (!q.getOrderBy().contains(qn)) {
+                    q.addToOrderBy(qn, o.getDirection());
+                }                                                
             }
         }
 

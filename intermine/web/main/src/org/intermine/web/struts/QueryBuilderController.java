@@ -19,13 +19,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.intermine.objectstore.query.BagConstraint;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.path.Path;
-import org.intermine.path.PathError;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
@@ -38,17 +46,6 @@ import org.intermine.web.logic.query.OrderBy;
 import org.intermine.web.logic.query.PathNode;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * Controller for the main query builder tile. Generally, request attributes that are required by
@@ -91,6 +88,7 @@ public class QueryBuilderController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        assureCorrectSortOrder(query);
 
         // constraint display values
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
@@ -130,16 +128,6 @@ public class QueryBuilderController extends TilesAction
         request.setAttribute("sortOrderMap", sortOrderMap);
         //request.setAttribute("sortOrderStrings", );
         //request.setAttribute("sortOrderDirections", listToMap());
-
-
-        List<String> errorPaths = new ArrayList<String>();
-        Throwable[] messages = query.getProblems();
-        for (Throwable thr: messages) {
-            if (thr instanceof PathError) {
-                errorPaths.add(((PathError) thr).getPathString());
-            }
-        }
-        request.setAttribute("errorPaths", errorPaths);
 
         request.setAttribute("viewPaths", listToMap(viewStrings));
         request.setAttribute("viewPathOrder", createIndexMap(viewStrings));
@@ -209,7 +197,18 @@ public class QueryBuilderController extends TilesAction
             }
         }
         request.setAttribute("navigation", navigation);
-        request.setAttribute("navigationPaths", navigationPaths);
+        request.setAttribute("navigationPaths", navigationPaths);        
+     }
+    
+
+    private static void assureCorrectSortOrder(PathQuery pathQuery) {
+        List<OrderBy> newSortOrder = new ArrayList<OrderBy>();
+        for (OrderBy orderBy : pathQuery.getSortOrder()) {
+            if (pathQuery.getView().contains(orderBy.getField())) {
+                newSortOrder.add(orderBy);
+            }
+        }
+        pathQuery.setSortOrder(newSortOrder);
     }
 
     /**

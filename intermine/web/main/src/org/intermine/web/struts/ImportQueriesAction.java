@@ -13,14 +13,6 @@ package org.intermine.web.struts;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.intermine.objectstore.query.PathQueryUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.PathQuery;
-import org.intermine.web.logic.session.SessionMethods;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +24,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.objectstore.query.PathQueryUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.PathQuery;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Imports query in XML format and forward user to the query builder.
@@ -55,8 +54,9 @@ public class ImportQueriesAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-        Map queries = null;
-        queries = qif.getQueryMap(allBags, servletContext);    
+        Map<String, PathQuery> queries = null;
+        queries = qif.getQueryMap(allBags, servletContext);
+        
 
         if (queries.size() == 1
             && ((request.getParameter("query_builder") != null && request
@@ -64,9 +64,8 @@ public class ImportQueriesAction extends InterMineAction
             // special case to redirect straight to the query builder
             PathQuery pathQuery = (PathQuery) queries.values().iterator().next();
             if (!pathQuery.isValid()) {
-                recordMessage(new ActionError("errors.importFailed", 
+                recordError(new ActionError("errors.importFailed", 
                         PathQueryUtil.getProblemsSummary(pathQuery.getProblems())), request);
-                return mapping.findForward("importQueries");
             }
             SessionMethods.loadQuery(pathQuery, session,
                                      response);
@@ -103,6 +102,7 @@ public class ImportQueriesAction extends InterMineAction
         }
     }
 
+    
     /**
      * Checks that the query name doesn't already exist and returns a numbered
      * name if it does.

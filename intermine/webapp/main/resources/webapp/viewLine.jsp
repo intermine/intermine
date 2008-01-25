@@ -21,15 +21,5 @@
     </tiles:insert>
   </c:forEach>
 </div>
-<div>
-  <c:forEach var="path" items="${errorPaths}" varStatus="status">
-    <c:set var="pathString" value="${path}"/>
-    <tiles:insert page="/viewElement.jsp">
-      <tiles:put name="pathString" value="${pathString}"/>
-      <tiles:put name="errorPath" value="true"/>
-    </tiles:insert>
-  </c:forEach>
-</div>
-
 <!-- /viewLine.jsp -->
 
