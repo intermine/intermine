@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -502,7 +503,7 @@ public abstract class WebUtil
             Iterator itAll = rAll.iterator();
 
             Hypergeometric h = new Hypergeometric(total);
-            HashMap<String, Double> resultsMap = new HashMap<String, Double>();
+            HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
             
             /* this is the total number of tests excluding the go terms that only annotate one gene
              * as these cannot be over-represented
@@ -524,11 +525,11 @@ public abstract class WebUtil
                     }
                     double p = h.calculateP(numberOfObjectsInBag, countBag.intValue(),
                                             countAll.intValue(), total);
-                    resultsMap.put(id, new Double(p));
+                    resultsMap.put(id, new BigDecimal(p));
                 }
             }
 
-            HashMap adjustedResultsMap = resultsMap;
+           Map<String, BigDecimal> adjustedResultsMap = resultsMap;
 
             if (!errorCorrection.equals("None")) {
                 adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, 
@@ -560,10 +561,10 @@ public abstract class WebUtil
      * @param resultsMap map containing unadjusted p-values
      * @return map of all the adjusted p-values
      */
-    protected static HashMap calcErrorCorrection(String errorCorrection, 
+    protected static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection, 
                                                  Double maxValue,
                                                  int numberOfTests,
-                                                 HashMap<String, Double> resultsMap) {
+                                                 HashMap<String, BigDecimal> resultsMap) {
 
         ErrorCorrection e = null;
 

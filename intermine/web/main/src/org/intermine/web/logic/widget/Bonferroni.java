@@ -24,7 +24,7 @@ import java.math.BigDecimal;
  */
 public class Bonferroni implements ErrorCorrection
 {
-    private HashMap<String, Double> originalMap = new HashMap<String, Double>();
+    private HashMap<String, BigDecimal> originalMap = new HashMap<String, BigDecimal>();
     private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
     private double numberOfTests;
     
@@ -33,7 +33,7 @@ public class Bonferroni implements ErrorCorrection
      * only annotate one item as these cannot possibly be over-represented
      * @param originalMap HashMap of go terms and their p-value
      */
-    public Bonferroni(HashMap<String, Double> originalMap, int numberOfTests) {
+    public Bonferroni(HashMap<String, BigDecimal> originalMap, int numberOfTests) {
         this.originalMap = originalMap;
         this.numberOfTests = numberOfTests;
     }
@@ -62,7 +62,7 @@ public class Bonferroni implements ErrorCorrection
     /**
      * @return adjusted map
      */
-    public HashMap getAdjustedMap() {
+    public HashMap<String, BigDecimal> getAdjustedMap() {
         return adjustedMap;
     }
 }
