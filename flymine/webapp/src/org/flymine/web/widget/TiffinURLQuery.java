@@ -150,9 +150,9 @@ public class TiffinURLQuery implements WidgetURLQuery
         orgNode.getConstraints().add(orgConstraint);
 
         // go term
-        constraintOp = ConstraintOp.EQUALS;
+        constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
-        PathNode goTermNode = q.addNode("Gene.allGoAnnotation.identifier");
+        PathNode goTermNode = q.addNode("Gene.allGoAnnotation");
         Constraint goTermConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         goTermNode.getConstraints().add(goTermConstraint);

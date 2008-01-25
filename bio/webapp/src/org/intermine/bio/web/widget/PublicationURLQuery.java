@@ -76,9 +76,9 @@ public class PublicationURLQuery implements WidgetURLQuery
         q.addNode(bagType).getConstraints().add(c);
 
         // pubmedid
-        constraintOp = ConstraintOp.EQUALS;
+        constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
-        PathNode expressedNode = q.addNode("Gene.publications.pubMedId");
+        PathNode expressedNode = q.addNode("Gene.publications");
         Constraint expressedConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         expressedNode.getConstraints().add(expressedConstraint);

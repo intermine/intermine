@@ -10,12 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
@@ -89,8 +86,8 @@ public class WidgetAction extends InterMineAction
 //                .addParameter("trail", "|bag." + wf.getBagName()).forward(); 
 //            
 //        }
-                
-        if (key == null) {
+  
+        if (key == null || key.equals("")) {
             WidgetForm wf = (WidgetForm) form;
             bagName = wf.getBagName();            
             key = wf.getSelectedAsString(); 
