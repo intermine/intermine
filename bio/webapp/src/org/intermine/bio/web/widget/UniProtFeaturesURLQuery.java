@@ -72,9 +72,9 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
         Constraint bc = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(bc);
 
-        constraintOp = ConstraintOp.EQUALS;
+        constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
-        PathNode keywordNode = q.addNode("Protein.features.type");
+        PathNode keywordNode = q.addNode("Protein.features");
         Constraint c = new Constraint(constraintOp, key, false, label, code, id, null);
         keywordNode.getConstraints().add(c);
 

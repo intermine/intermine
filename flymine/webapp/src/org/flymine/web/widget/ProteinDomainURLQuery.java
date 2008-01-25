@@ -73,9 +73,9 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
             view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.name"));
             q.setView(view);
 
-            constraintOp = ConstraintOp.EQUALS;
+            constraintOp = ConstraintOp.LOOKUP;
             code = q.getUnusedConstraintCode();
-            PathNode interproNode = q.addNode("Gene.proteins.proteinDomains.identifier");
+            PathNode interproNode = q.addNode("Gene.proteins.proteinDomains");
             Constraint interproConstraint
             = new Constraint(constraintOp, key, false, label, code, id, null);
             interproNode.getConstraints().add(interproConstraint);
@@ -89,9 +89,9 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
             view.add(MainHelper.makePath(model, q, "Protein.proteinDomains.name"));
             q.setView(view);
 
-            constraintOp = ConstraintOp.EQUALS;
+            constraintOp = ConstraintOp.LOOKUP;
             code = q.getUnusedConstraintCode();
-            PathNode interproNode = q.addNode("Protein.proteinFeatures.identifier");
+            PathNode interproNode = q.addNode("Protein.proteinFeatures");
             Constraint interproConstraint
             = new Constraint(constraintOp, key, false, label, code, id, null);
             interproNode.getConstraints().add(interproConstraint);

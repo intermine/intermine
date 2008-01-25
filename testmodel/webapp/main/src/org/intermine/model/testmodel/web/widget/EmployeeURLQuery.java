@@ -72,9 +72,9 @@ public class EmployeeURLQuery implements WidgetURLQuery
         q.addNode(bagType).getConstraints().add(c);
 
         // dept
-        constraintOp = ConstraintOp.EQUALS;
+        constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
-        PathNode deptNode = q.addNode("Employee.department.name");
+        PathNode deptNode = q.addNode("Employee.department");
         Constraint deptConstraint
                         = new Constraint(constraintOp, key, false, label, code, id, null);
         deptNode.getConstraints().add(deptConstraint);

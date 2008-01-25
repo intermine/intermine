@@ -70,9 +70,9 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
         Constraint bc = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(bc);
 
-        constraintOp = ConstraintOp.EQUALS;
+        constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
-        PathNode keywordNode = q.addNode("Protein.keywords.name");
+        PathNode keywordNode = q.addNode("Protein.keywords");
         Constraint c = new Constraint(constraintOp, key, false, label, code, id, null);
         keywordNode.getConstraints().add(c);
 
