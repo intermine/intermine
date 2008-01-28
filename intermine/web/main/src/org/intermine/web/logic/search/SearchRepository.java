@@ -10,22 +10,13 @@ package org.intermine.web.logic.search;
  *
  */
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.struts.AspectController;
-
-import java.io.IOException;
-import java.io.StringReader;
 
 import javax.servlet.ServletContext;
 
@@ -51,6 +42,14 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.TokenGroup;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.intermine.model.userprofile.Tag;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.struts.AspectController;
 
 /**
  * Respository object for WebSearchable objects.
@@ -238,7 +237,7 @@ public class SearchRepository
 
         while (iter.hasNext()) {
             WebSearchable webSearchable = (WebSearchable) iter.next();
-
+            
             Document doc = new Document();
             doc.add(new Field("name", webSearchable.getName(), Field.Store.YES,
                               Field.Index.TOKENIZED));
@@ -281,6 +280,7 @@ public class SearchRepository
         return ram;
     }
 
+
     /**
      * Return a Map from name to WebSearchable for the given type.
      * @param type a tag type from TagTypes
@@ -308,6 +308,31 @@ public class SearchRepository
         webSearchablesMap.put(type, map);
         reindex(type);
     }
+
+    /**
+     * Filter out invalid templates from map.
+     * @param map map 
+     */
+    public static void filterOutInvalidTemplates(Map<String, ? extends WebSearchable> map) {
+        List<String> removeKeys = new ArrayList<String>();
+        for (String key : map.keySet()) {
+            if (isInvalidTemplate(map.get(key))) {
+                removeKeys.add(key);
+            }            
+        }
+        for (String key : removeKeys) {
+            map.remove(key);
+        }
+    }
+    
+    private static boolean isInvalidTemplate(WebSearchable webSearchable) {
+        if (webSearchable instanceof TemplateQuery) {
+            TemplateQuery template = (TemplateQuery) webSearchable;
+            return !template.isValid();
+        }
+        return false;
+    }
+
 
     private static Formatter formatter = new Formatter() {
         public String highlightTerm(String term, TokenGroup group) {
@@ -431,4 +456,9 @@ public class SearchRepository
         return time;
     }
 
+
+
+
+    
+    
 }

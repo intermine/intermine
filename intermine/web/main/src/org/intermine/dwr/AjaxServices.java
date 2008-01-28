@@ -502,6 +502,7 @@ public class AjaxServices
 
         returnList.add(callId);
 
+        SearchRepository.filterOutInvalidTemplates(filteredWsMap);
         for (WebSearchable ws: filteredWsMap.values()) {
             List row = new ArrayList();
             row.add(ws.getName());
