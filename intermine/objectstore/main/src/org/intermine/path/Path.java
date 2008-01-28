@@ -312,7 +312,7 @@ public class Path
     }
 
     /**
-     * Return the object at the end of the pat, starting from the given object.
+     * Return the object at the end of the path, starting from the given object.
      * @param o the start object
      * @return the attribute, object or collection at the end of the path
      */

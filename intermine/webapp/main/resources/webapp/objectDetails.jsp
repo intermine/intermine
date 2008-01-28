@@ -69,7 +69,6 @@
               </tr>
               </c:when>
               <c:when test="${object.fieldConfigMap[expr].showInSummary}">
-                <im:eval evalExpression="object.object.${expr}" evalVariable="outVal"/>
                 <tr>
                   <td nowrap>
                     <b><span class="attributeField">${expr}</span></b>
@@ -79,11 +78,11 @@
                   </td>
                   <td>
                     <c:choose>
-                      <c:when test="${empty outVal}">
+                      <c:when test="${empty object.fieldNames[expr]}">
                         &nbsp;
                       </c:when>
                       <c:otherwise>
-                        <b><im:value>${outVal}</im:value></b>
+                        <b><im:value>${object.fieldNames[expr]}</im:value></b>
                       </c:otherwise>
                     </c:choose>
                   </td>
