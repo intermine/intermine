@@ -28,7 +28,7 @@ import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.StringUtils;
 
 /**
- *
+ * Find and compile/execute dependent project (via the project.properties files)
  *
  * @author Thomas Riley
  */
@@ -303,7 +303,7 @@ public class Dependencies extends Task
             libFileSet.setIncludes("lib/*.jar");
             libFileSet.setProject(getProject());
             compilePath.addFileset(libFileSet);
-            
+
             compileIncludes += depName + "/lib/*.jar ";
             compileIncludes += depName + "/build/classes/ ";
 
