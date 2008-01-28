@@ -11,22 +11,22 @@
    <c:set var="externalIdList" value="${fn:split(externalids,',')}"/>
    Found ${bag.size} orthologues in ${addparameter} for ${fn:length(externalIdList)} ${bag.type}s
    <im:querylink text="[view orthologue mapping]" skipBuilder="true">
-   <query name="" model="genomic" view="Gene.identifier Gene.orthologues.orthologue.identifier Gene.orthologues.inParanoidScore" sortOrder="Gene.identifier asc" constraintLogic="A and B and C">
+   <query name="" model="genomic" view="Gene.identifier Gene.homologues.homologue.identifier Gene.homologues.inParanoidScore" sortOrder="Gene.identifier asc" constraintLogic="A and B and C">
      <node path="Gene" type="Gene">
        <constraint op="LOOKUP" value="${externalids}" description="" identifier="" code="A">
        </constraint>
      </node>
-     <node path="Gene.orthologues" type="Orthologue">
+     <node path="Gene.homologues" type="Homologue">
      </node>
-     <node path="Gene.orthologues.type" type="String">
-       <constraint op="=" value="main" description="" identifier="" code="B">
+     <node path="Gene.homologues.type" type="String">
+       <constraint op="=" value="orthologue" description="" identifier="" code="B">
        </constraint>
      </node>
-     <node path="Gene.orthologues.orthologue" type="Gene">
+     <node path="Gene.homologues.homologue" type="Gene">
      </node>
-     <node path="Gene.orthologues.orthologue.organism" type="Organism">
+     <node path="Gene.homologues.homologue.organism" type="Organism">
      </node>
-     <node path="Gene.orthologues.orthologue.organism.shortName" type="String">
+     <node path="Gene.homologues.homologue.organism.shortName" type="String">
        <constraint op="=" value="${addparameter}" description="" identifier="" code="C">
        </constraint>
      </node>
