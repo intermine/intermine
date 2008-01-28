@@ -74,19 +74,19 @@ public class WebSearchableListController extends TilesAction
 
         if (session.getAttribute("IS_SUPERUSER") != null
                         && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
-            filteredWebSearchables = filterWebSearchables(request, type,
+            filteredWebSearchables = getFilterWebSearchables(request, type,
                                                           TemplateHelper.USER_TEMPLATE, tags);
 
         } else if (scope.equals(TemplateHelper.ALL_TEMPLATE)) {
             Map globalWebSearchables =
-                filterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags);
+                getFilterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags);
             Map userWebSearchables =
-                filterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
+                getFilterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
             filteredWebSearchables = new HashMap<String, WebSearchable>(userWebSearchables);
             filteredWebSearchables.putAll(globalWebSearchables);
 
         } else {
-            filteredWebSearchables = filterWebSearchables(request, type, scope, tags);
+            filteredWebSearchables = getFilterWebSearchables(request, type, scope, tags);
        }
 
         if (list != null) {
@@ -112,6 +112,7 @@ public class WebSearchableListController extends TilesAction
 
         Map<String, Object> wsMapForJS = new HashMap<String, Object>();
 
+        SearchRepository.filterOutInvalidTemplates(filteredWebSearchables);
         for (String wsName: (Set<String>) filteredWebSearchables.keySet()) {
             wsMapForJS.put(wsName, new Integer(1));
         }
@@ -119,6 +120,7 @@ public class WebSearchableListController extends TilesAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         request.setAttribute("userWebSearchables", profile.getWebSearchablesByType(type));
 
+        
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
 
         JSONWriter jsonWriter = new JSONWriter();
@@ -162,7 +164,7 @@ public class WebSearchableListController extends TilesAction
     /**
      * Get all the WebSearchables in the given scope and of the given type.
      */
-    private Map<String, ? extends WebSearchable> filterWebSearchables(HttpServletRequest request,
+    private Map<String, ? extends WebSearchable> getFilterWebSearchables(HttpServletRequest request,
                                                                       String type, String scope,
                                                                       String tags) {
         Map<String, ? extends WebSearchable> filteredWebSearchables;
