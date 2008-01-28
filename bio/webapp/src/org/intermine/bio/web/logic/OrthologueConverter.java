@@ -77,7 +77,7 @@ public class OrthologueConverter implements BagConverter
         PathQuery pathQuery = new PathQuery(model);
 
         List<Path> view = new ArrayList<Path>();
-        view.add(MainHelper.makePath(model, pathQuery, "Gene.orthologues.orthologue.id"));
+        view.add(MainHelper.makePath(model, pathQuery, "Gene.homologues.homologue.id"));
         pathQuery.setView(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         List objectList = os.getObjectsByIds(fromList);
@@ -93,12 +93,12 @@ public class OrthologueConverter implements BagConverter
         code = pathQuery.getUnusedConstraintCode();
         Constraint c2 = new Constraint(ConstraintOp.MATCHES, organism,
                                         false, label, code, id, null);
-        pathQuery.addNode("Gene.orthologues.orthologue.organism.shortName")
+        pathQuery.addNode("Gene.homologues.homologue.organism.shortName")
                                 .getConstraints().add(c2);
         
-        Constraint c3 = new Constraint(ConstraintOp.EQUALS, "main",
+        Constraint c3 = new Constraint(ConstraintOp.EQUALS, "orthologue",
                                         false, label, code, id , null);
-        pathQuery.addNode("Gene.orthologues.type").getConstraints().add(c3);
+        pathQuery.addNode("Gene.homologues.type").getConstraints().add(c3);
 
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
