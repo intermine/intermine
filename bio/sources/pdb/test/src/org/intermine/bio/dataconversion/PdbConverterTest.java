@@ -14,11 +14,13 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.Item;
 
 /**
  * Test for the PdbConverter
@@ -44,7 +46,6 @@ public class PdbConverterTest extends ItemsTestCase
         PdbConverter converter = new PdbConverter(itemWriter, Model.getInstanceByName("genomic"));
         File f = new File("1AZE.pdb");
         converter.setCurrentFile(f);
-        converter.setSrcDataDir("resouces/");
         converter.process(reader);
         converter.close();
         // uncomment to create a new target items files
