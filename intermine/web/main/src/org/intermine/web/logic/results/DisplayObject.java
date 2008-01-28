@@ -28,6 +28,7 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.path.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
@@ -50,7 +51,7 @@ public class DisplayObject
     private Model model;
 
     private Set clds;
-
+    private Map<String, Object> fieldNames = null;
     private Map attributes = null;
     private Map attributeDescriptors = null;
     private Map references = null;
@@ -85,8 +86,7 @@ public class DisplayObject
 
         //ServletContext servletContext = session.getServletContext();
         /*this.classTemplateExprs =
-            (Map) servletContext.getAttribute(Constants.CLASS_TEMPLATE_EXPRS);*/
-
+            (Map) servletContext.getAttribute(Constants.CLASS_TEMPLATE_EXPRS);*/        
         clds = getLeafClds(object.getClass(), model);
     }
 
@@ -188,125 +188,6 @@ public class DisplayObject
         return refsAndCollections;
     }
 
-    /*
-    public Map getDisplayTemplates() {
-        if (displayTemplateMap == null) {
-            displayTemplateMap = new HashMap();
-        }
-        return displayTemplateMap;
-    }
-    */
-    /**
-     * Return a Map from template name to a count of the number of results will be returned if the\
-     * template is run using this DisplayObject to fill in the editable fields.
-     * @return a Map of template counts
-     */
-    /*public Map getTemplateCounts() {
-        if (templateCounts != null) {
-            return templateCounts;
-        }
-        Map newTemplateCounts = new TreeMap();
-
-        Map templateExprMap = new HashMap();
-
-        for (Iterator i = clds.iterator(); i.hasNext();) {
-            ClassDescriptor cld = (ClassDescriptor) i.next();
-            Map thisCldTemplateExprMap = (Map) classTemplateExprs.get(cld.getName());
-
-            if (thisCldTemplateExprMap != null) {
-                templateExprMap.putAll(thisCldTemplateExprMap);
-            }
-        }
-
-        Iterator templateNameIter = templateExprMap.keySet().iterator();
-
-        while (templateNameIter.hasNext()) {
-            String templateName = (String) templateNameIter.next();
-
-            List exprList = (List) templateExprMap.get(templateName);
-
-            TemplateQuery template =
-                TemplateHelper.findTemplate(session, templateName, "global");
-
-            if (template == null) {
-                throw new IllegalStateException("Could not find template \""
-                                                + templateName + "\"");
-            }
-
-            List templateConstraints = template.getAllConstraints();
-            List editableConstraints = new ArrayList();
-
-            Iterator templateConstraintIter = templateConstraints.iterator();
-
-            while (templateConstraintIter.hasNext()) {
-                Constraint thisConstraint = (Constraint) templateConstraintIter.next();
-
-                if (thisConstraint.isEditableInTemplate()) {
-                    editableConstraints.add(thisConstraint);
-                }
-            }
-
-            if (editableConstraints.size() != exprList.size()) {
-                continue;
-            }
-
-            TemplateForm tf = new TemplateForm();
-
-            for (int i = 0; i < editableConstraints.size(); i++) {
-                Constraint thisConstraint = (Constraint) editableConstraints.get(i);
-
-                String constraintIdentifier = thisConstraint.getIdentifier();
-
-                int dotIndex = constraintIdentifier.indexOf('.');
-
-                if (dotIndex == -1) {
-                    throw new RuntimeException("constraint identifier is not in current "
-                                               + "format");
-                }
-
-                String fieldName = constraintIdentifier.substring(dotIndex + 1);
-
-                Object fieldValue;
-                try {
-                    fieldValue = TypeUtil.getFieldValue(object, fieldName);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("cannot set field " + fieldName + " of object "
-                                               + object.getId(), e);
-                }
-
-                if (exprList.contains(constraintIdentifier)) {
-                    tf.setAttributeOps("" + (1 + i), ConstraintOp.EQUALS.getIndex().toString());
-                    tf.setAttributeValues("" + (1 + i), fieldValue.toString());
-                } else {
-                    // too many editable constraints
-                    continue;
-                }
-            }
-
-            tf.parseAttributeValues(template, session, new ActionErrors(), false);
-
-            PathQuery pathQuery = TemplateHelper.templateFormToQuery(tf, template);
-            Query query;
-            try {
-                query = MainHelper.makeQuery(pathQuery, Collections.EMPTY_MAP);
-            } catch (IllegalArgumentException e) {
-                continue;
-            }
-            ServletContext servletContext = session.getServletContext();
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-            Results results;
-            try {
-                results = os.execute(query);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException("cannot find results of template query "
-                                           + templateName + " for object " + object.getId());
-            }
-
-            newTemplateCounts.put(templateName, new Integer(results.size()));
-        }
-        templateCounts = newTemplateCounts;
-        return templateCounts;
-    }*/
 
     /**
      * Return the path expressions for the fields that should be used when summarising this
@@ -316,7 +197,6 @@ public class DisplayObject
     public List getFieldExprs() {
         if (fieldExprs == null) {
             fieldExprs = new ArrayList();
-
             for (Iterator i = getFieldConfigMap().keySet().iterator(); i.hasNext();) {
                 String fieldExpr = (String) i.next();
                 fieldExprs.add(fieldExpr);
@@ -345,7 +225,6 @@ public class DisplayObject
                 }
             }
         }
-
         return fieldConfigMap;
     }
 
@@ -430,5 +309,30 @@ public class DisplayObject
         // make a combined Map
         refsAndCollections.putAll(references);
         refsAndCollections.putAll(collections);
+    }
+    
+/**
+ * gets the fields to display on the object details page for this display object
+ * @return map of fieldnames to display for this object
+ */
+    public Map getFieldNames() {
+        if (fieldNames == null || fieldNames.isEmpty()) {
+            fieldNames = new HashMap();            
+            for (Iterator i = fieldExprs.iterator(); i.hasNext();) {
+                String expr = (String) i.next();
+                Set<Class> classes = DynamicUtil.decomposeClass(object.getClass());
+                String className = null;
+                for (Class c : classes) {
+                    className = c.getName();
+                }
+                if (className != null && className.indexOf('.') != -1) {
+                    className = TypeUtil.unqualifiedName(className);
+                }
+                String pathString = className + "." + expr;
+                Path path = new Path(model, pathString);
+                fieldNames.put(expr, path.resolve(object));
+            }
+        }
+        return fieldNames;
     }
 }
