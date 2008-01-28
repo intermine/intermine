@@ -507,7 +507,6 @@
 
   <class className="org.flymine.model.genomic.FlyAtlasResult">
     <fields>
-      <fieldconfig fieldExpr="assays.name"/>
       <fieldconfig fieldExpr="affyCall"/>
       <fieldconfig fieldExpr="enrichment"/>
       <fieldconfig fieldExpr="mRNASignal"/>
