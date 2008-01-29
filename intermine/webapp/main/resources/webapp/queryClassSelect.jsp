@@ -24,6 +24,7 @@
           document.getElementById('queryClassSelect').innerHTML =
               selectedClassName + ":  " + helpText;
           document.getElementById('classSelectDiv').style.display = 'block';
+          $('submitClassSelect').disabled = false;
       } else {
           $('classSelectDiv').style.display='none';
       }
@@ -39,6 +40,7 @@
   window.onload = function() {
       var selector = $('queryClassSelector');
       addEvent(selector, 'click', handleClassClick);
+      $('submitClassSelect').disabled = true;
   }
 -->
 </script>
@@ -62,7 +64,7 @@
           </c:forEach>
           </html:select>
           <br/>
-          <html:submit>
+          <html:submit styleId="submitClassSelect">
             <fmt:message key="button.selectClass"/>
           </html:submit>
         </html:form>
