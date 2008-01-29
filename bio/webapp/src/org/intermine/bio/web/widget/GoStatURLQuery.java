@@ -67,16 +67,16 @@ public class GoStatURLQuery implements WidgetURLQuery
 
          if (bag.getType().toLowerCase().equals("protein")) {
 
-             geneIdentifier = MainHelper.makePath(model, q, "Protein.gene.identifier");
-             geneDbId = MainHelper.makePath(model, q, "Protein.gene.organismDbId");
-             geneName = MainHelper.makePath(model, q, "Protein.gene.name");
-             organismName = MainHelper.makePath(model, q, "Protein.gene.organism.name");
-             goId = MainHelper.makePath(model, q, "Protein.gene.allGoAnnotation.identifier");
-             goName = MainHelper.makePath(model, q, "Protein.gene.allGoAnnotation.name");
+             geneIdentifier = MainHelper.makePath(model, q, "Protein.genes.identifier");
+             geneDbId = MainHelper.makePath(model, q, "Protein.genes.organismDbId");
+             geneName = MainHelper.makePath(model, q, "Protein.genes.name");
+             organismName = MainHelper.makePath(model, q, "Protein.genes.organism.name");
+             goId = MainHelper.makePath(model, q, "Protein.genes.allGoAnnotation.identifier");
+             goName = MainHelper.makePath(model, q, "Protein.genes.allGoAnnotation.name");
              actualGoName = MainHelper.makePath(
-                            model, q, "Protein.gene.allGoAnnotation.actualGoTerms.name");
+                            model, q, "Protein.genes.allGoAnnotation.actualGoTerms.name");
              actualGoId = MainHelper.makePath(
-                          model, q, "Protein.gene.allGoAnnotation.actualGoTerms.identifier");
+                          model, q, "Protein.genes.allGoAnnotation.actualGoTerms.identifier");
 
              view.add(MainHelper.makePath(model, q, "Protein.identifier"));
              view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
@@ -119,7 +119,7 @@ public class GoStatURLQuery implements WidgetURLQuery
 
          PathNode qualifierNode = null;
          if (bag.getType().toLowerCase().equals("protein")) {
-             qualifierNode = q.addNode("Protein.gene.allGoAnnotation.qualifier");
+             qualifierNode = q.addNode("Protein.genes.allGoAnnotation.qualifier");
          } else {
              qualifierNode = q.addNode("Gene.allGoAnnotation.qualifier");
          }
@@ -133,7 +133,7 @@ public class GoStatURLQuery implements WidgetURLQuery
          code = q.getUnusedConstraintCode();
          PathNode goTermNode = null;
          if (bag.getType().toLowerCase().equals("protein")) {
-             goTermNode = q.addNode("Protein.gene.allGoAnnotation.property");
+             goTermNode = q.addNode("Protein.genes.allGoAnnotation.property");
          } else {
              goTermNode  = q.addNode("Gene.allGoAnnotation.property");
          }
