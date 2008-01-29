@@ -91,7 +91,7 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
 
             constraintOp = ConstraintOp.LOOKUP;
             code = q.getUnusedConstraintCode();
-            PathNode interproNode = q.addNode("Protein.proteinFeatures");
+            PathNode interproNode = q.addNode("Protein.proteinDomains");
             Constraint interproConstraint
             = new Constraint(constraintOp, key, false, label, code, id, null);
             interproNode.getConstraints().add(interproConstraint);
