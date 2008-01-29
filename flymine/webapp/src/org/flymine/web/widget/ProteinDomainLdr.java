@@ -11,6 +11,7 @@ package org.flymine.web.widget;
  */
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.query.BagConstraint;
@@ -45,6 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
+ * {@inheritDoc}
  * @author Julie Sullivan
  */
 public class ProteinDomainLdr implements EnrichmentWidgetLdr
@@ -52,10 +54,10 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
 
     Query sampleQuery;
     Query populationQuery;
-    Collection organisms;
     int total;
     String externalLink, append;
     InterMineBag bag;
+    Collection<String> organisms;
     
     /**
      * @param request The HTTP request we are processing
@@ -72,8 +74,12 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         Map<String, InterMineBag> allBags =
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         bag = allBags.get(bagName);
+        sampleQuery = getQuery(os, true);
+        populationQuery = getQuery(os, false);
+    }
 
-        // get organisms
+    private Query getQuery(ObjectStore os, boolean useBag) {
+
         organisms = BioUtil.getOrganisms(os, bag);
 
         QueryClass qcGene = new QueryClass(Gene.class);
@@ -86,146 +92,57 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         QueryField qfName = new QueryField(qcProteinFeature, "name");
         QueryField qfId = new QueryField(qcProteinFeature, "identifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-        
+
         QueryFunction objectCount = new QueryFunction();
 
-        // constraints
-        ConstraintSet csSample = new ConstraintSet(ConstraintOp.AND);
-        ConstraintSet csPopulation = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);        
 
-        // common constraints
-        // limit to organisms in the bag
-        BagConstraint bc2 = new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms);
+        cs.addConstraint(new BagConstraint(qfOrganismName, ConstraintOp.IN, organisms));
+        QueryCollectionReference qr = new QueryCollectionReference(qcProtein, "proteinDomains");
+        cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcProteinFeature));
+        cs.addConstraint(new SimpleConstraint(qfId, ConstraintOp.MATCHES, new QueryValue("IPR%")));
 
-        // protein.ProteinFeatures CONTAINS proteinFeature
-        QueryCollectionReference qr3
-        = new QueryCollectionReference(qcProtein, "proteinDomains");
-        ContainsConstraint cc3 =
-            new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcProteinFeature);
-
-        SimpleConstraint sc =
-            new SimpleConstraint(qfId, ConstraintOp.MATCHES, new QueryValue("IPR%"));
-
-        //set the common constraints
-        csSample.addConstraint(bc2);
-        csSample.addConstraint(cc3);
-        csSample.addConstraint(sc);
-
-        // build sample (constrained by list) and population queries
-        Query q = new Query();
-        q.setDistinct(false);
-
-        if (bag.getType().equalsIgnoreCase("gene")) {
-            // further constraints for genes
-            // genes must be in bag
-            BagConstraint bc1 =
-                new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
-            csSample.addConstraint(bc1);
-
-            // gene is from organism
-            QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
-            ContainsConstraint cc1
-            = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
-            csSample.addConstraint(cc1);
-
-            // gene.Proteins CONTAINS protein
-            QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "proteins");
-            ContainsConstraint cc2 =
-                new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcProtein);
-            csSample.addConstraint(cc2);
-
-
-            // sample query
-            q.addFrom(qcGene);
-            q.addFrom(qcProtein);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcProteinFeature);
-
-            q.addToSelect(qfId);
-            q.addToSelect(objectCount);
-            q.addToSelect(qfName);
-
-            q.setConstraint(csSample);
-            q.addToGroupBy(qfId);
-            q.addToGroupBy(qfName);
-
-            sampleQuery = q;
-
-            // population query
-            q = new Query();
-            q.setDistinct(false);
-
-            q.addFrom(qcGene);
-            q.addFrom(qcProtein);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcProteinFeature);
-
-            q.addToSelect(qfId);
-            q.addToSelect(objectCount);
-
-            csPopulation.addConstraint(cc1);
-            csPopulation.addConstraint(cc2);
-            csPopulation.addConstraint(cc3);
-            csPopulation.addConstraint(bc2);
-            csPopulation.addConstraint(sc);
-            q.setConstraint(csPopulation);
-
-            q.addToGroupBy(qfId);
-
-            populationQuery = q;
-
-        } else if (bag.getType().equalsIgnoreCase("protein")) {
-
-            // further constraints for proteins
-            // proteins must be in bag
-            BagConstraint bc1 =
-                new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb());
-            csSample.addConstraint(bc1);
-
-            // protein is from organism
-            QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
-            ContainsConstraint cc1
-            = new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism);
-            csSample.addConstraint(cc1);
-
-            // sample query
-            q.addFrom(qcProtein);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcProteinFeature);
-
-            q.addToSelect(qfId);
-            q.addToSelect(objectCount);
-            q.addToSelect(qfName);
-
-            q.setConstraint(csSample);
-            q.addToGroupBy(qfId);
-            q.addToGroupBy(qfName);
-
-            sampleQuery = q;
-
-            // population query
-            q = new Query();
-            q.setDistinct(false);
-
-            q.addFrom(qcProtein);
-            q.addFrom(qcOrganism);
-            q.addFrom(qcProteinFeature);
-
-            q.addToSelect(qfId);
-            q.addToSelect(objectCount);
-
-            csPopulation.addConstraint(cc1);
-            csPopulation.addConstraint(cc3);
-            csPopulation.addConstraint(bc2);
-            csPopulation.addConstraint(sc);
-
-            q.addToGroupBy(qfId);
-            populationQuery = q;
-
+        if (useBag) {
+            if (bag.getType().equalsIgnoreCase("protein")) {
+                cs.addConstraint(new BagConstraint(qfProteinId, ConstraintOp.IN, bag.getOsb()));
+            } else {
+                cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
+            } 
         }
 
-    }
+        if (bag.getType().equalsIgnoreCase("protein")) {
+            QueryObjectReference qr1 = new QueryObjectReference(qcProtein, "organism");
+            cs.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism));
+        } else {                        
+            QueryObjectReference qr1 = new QueryObjectReference(qcGene, "organism");
+            cs.addConstraint(new ContainsConstraint(qr1, ConstraintOp.CONTAINS, qcOrganism));
+        
+            QueryCollectionReference qr2 = new QueryCollectionReference(qcGene, "proteins");
+            cs.addConstraint(new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcProtein));
+        }
+        Query q = new Query();
+        q.setDistinct(false);        
+        if (bag.getType().equalsIgnoreCase("gene")) {
+            q.addFrom(qcGene);
+        }
+        q.addFrom(qcProtein);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcProteinFeature);
 
+        q.addToSelect(qfId);
+        q.addToSelect(objectCount);
+        
+        q.setConstraint(cs);
+        
+        q.addToGroupBy(qfId);
+        if (useBag) {
+            q.addToSelect(qfName);
+            q.addToGroupBy(qfName);
+        }
+
+        return q;
+    }
+    
     /**
      * {@inheritDoc} 
      */
@@ -243,7 +160,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
     /**
      * {@inheritDoc} 
      */
-    public Collection getReferencePopulation() {
+    public Collection<String> getReferencePopulation() {
         return organisms;
     }
 

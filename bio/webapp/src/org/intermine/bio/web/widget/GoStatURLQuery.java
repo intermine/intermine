@@ -112,18 +112,16 @@ public class GoStatURLQuery implements WidgetURLQuery
          String label = null, id = null, code = q.getUnusedConstraintCode();
          Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
          q.addNode(bagType).getConstraints().add(c);
-
+                  
          // can't be a NOT relationship!
          constraintOp = ConstraintOp.IS_NULL;
          code = q.getUnusedConstraintCode();
-
          PathNode qualifierNode = null;
-         if (bag.getType().toLowerCase().equals("protein")) {
+         if (bag.getType().equalsIgnoreCase("protein")) {
              qualifierNode = q.addNode("Protein.genes.allGoAnnotation.qualifier");
          } else {
              qualifierNode = q.addNode("Gene.allGoAnnotation.qualifier");
          }
-         qualifierNode.setType("String");
          Constraint qualifierConstraint
          = new Constraint(constraintOp, null, false, label, code, id, null);
          qualifierNode.getConstraints().add(qualifierConstraint);
@@ -132,7 +130,7 @@ public class GoStatURLQuery implements WidgetURLQuery
          constraintOp = ConstraintOp.LOOKUP;
          code = q.getUnusedConstraintCode();
          PathNode goTermNode = null;
-         if (bag.getType().toLowerCase().equals("protein")) {
+         if (bag.getType().equalsIgnoreCase("protein")) {
              goTermNode = q.addNode("Protein.genes.allGoAnnotation.property");
          } else {
              goTermNode  = q.addNode("Gene.allGoAnnotation.property");
