@@ -78,11 +78,11 @@
                   </td>
                   <td>
                     <c:choose>
-                      <c:when test="${empty object.fieldNames[expr]}">
+                      <c:when test="${empty object.fieldValues[expr]}">
                         &nbsp;
                       </c:when>
                       <c:otherwise>
-                        <b><im:value>${object.fieldNames[expr]}</im:value></b>
+                        <b><im:value>${object.fieldValues[expr]}</im:value></b>
                       </c:otherwise>
                     </c:choose>
                   </td>

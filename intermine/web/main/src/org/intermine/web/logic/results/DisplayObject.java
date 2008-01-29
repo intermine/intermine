@@ -51,7 +51,7 @@ public class DisplayObject
     private Model model;
 
     private Set clds;
-    private Map<String, Object> fieldNames = null;
+    private Map<String, Object> fieldValues = null;
     private Map attributes = null;
     private Map attributeDescriptors = null;
     private Map references = null;
@@ -315,9 +315,9 @@ public class DisplayObject
  * gets the fields to display on the object details page for this display object
  * @return map of fieldnames to display for this object
  */
-    public Map getFieldNames() {
-        if (fieldNames == null || fieldNames.isEmpty()) {
-            fieldNames = new HashMap();            
+    public Map getFieldValues() {
+        if (fieldValues == null || fieldValues.isEmpty()) {
+            fieldValues = new HashMap();            
             for (Iterator i = fieldExprs.iterator(); i.hasNext();) {
                 String expr = (String) i.next();
                 Set<Class> classes = DynamicUtil.decomposeClass(object.getClass());
@@ -330,9 +330,9 @@ public class DisplayObject
                 }
                 String pathString = className + "." + expr;
                 Path path = new Path(model, pathString);
-                fieldNames.put(expr, path.resolve(object));
+                fieldValues.put(expr, path.resolve(object));
             }
         }
-        return fieldNames;
+        return fieldValues;
     }
 }
