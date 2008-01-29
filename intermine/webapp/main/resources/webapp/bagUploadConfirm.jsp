@@ -98,15 +98,15 @@ function toggleForm(matchCount) {
     <br/>
       <p> 
         <h3>Low quality matches</h3> 
-        <span id="lowQaddAllLink" onclick="addAll('lowQ', '${flatLowQualityMatches}');" class="fakelink">Add all</span> | 
-        <span id="lowQremoveAllLink" onclick="removeAll('lowQ', '${flatLowQualityMatches}');">Remove all</span>
     </p>
-      <p><fmt:message key="bagUploadConfirm.lowQ"/>
+      <p>
         <c:set var="issueMap" value="${lowQualityMatches}"/>
         <tiles:insert name="bagUploadConfirmIssue.tile">
           <tiles:put name="message" value="${message}"/>
           <tiles:put name="issueMap" beanName="issueMap"/>
           <tiles:put name="issueType" value="lowQ"/>
+          <tiles:put name="messageKey" value="bagUploadConfirm.lowQ"/>
+          <tiles:put name="arrayName" value="${flatLowQualityMatches}"/>
         </tiles:insert>
     </p>
     </c:if>
@@ -114,16 +114,15 @@ function toggleForm(matchCount) {
       <br/>
       <p> 
         <h3>Duplicates</h3> 
-        <span id="duplicateaddAllLink" onclick="addAll('duplicate', '${flatDuplicate}');" class="fakelink">Add all</span> | 
-        <span id="duplicateremoveAllLink" onclick="removeAll('duplicate', '${flatDuplicate}');">Remove all</span>
       </p>
-
-    <p><fmt:message key="bagUploadConfirm.duplicatesHeader"  />
+    <p>
         <c:set var="issueMap" value="${duplicates}"/>
         <tiles:insert name="bagUploadConfirmIssue.tile">
           <tiles:put name="message" value="${message}"/>
           <tiles:put name="issueMap" beanName="issueMap"/>
           <tiles:put name="issueType" value="duplicate"/>
+          <tiles:put name="messageKey" value="bagUploadConfirm.duplicatesHeader"/>
+          <tiles:put name="arrayName" value="${flatDuplicate}"/>
         </tiles:insert>
     </p>
     </c:if>
@@ -132,23 +131,21 @@ function toggleForm(matchCount) {
     <br/>
       <p>
         <h3><fmt:message key="bagUploadConfirm.convertedHeader"/></h3> 
-        <span id="convertedaddAllLink" onclick="addAll('converted', '${flatConverted}');" class="fakelink">Add all</span> | 
-        <span id="convertedremoveAllLink" onclick="removeAll('converted', '${flatConverted}');">Remove all</span>
   </p>
-      <p><fmt:message key="bagUploadConfirm.converted">
-          <fmt:param value="${bagUploadConfirmForm.bagType}"/>
-        </fmt:message>
+      <p>
         <c:set var="issueMap" value="${convertedObjects}"/>
         <tiles:insert name="bagUploadConfirmIssue.tile">
           <tiles:put name="message" value="${message}"/>
           <tiles:put name="issueMap" beanName="issueMap"/>
           <tiles:put name="issueType" value="converted"/>
+          <tiles:put name="messageKey" value="bagUploadConfirm.converted"/>
+          <tiles:put name="messageParam" value="${bagUploadConfirmForm.bagType}"/>
+          <tiles:put name="arrayName" value="${flatConverted}"/>
         </tiles:insert>
       </p>
     </c:if>
     </div>
   </c:if>
-
 
   <c:if test="${fn:length(unresolved) > 0}">
     <div class="heading">

@@ -9,28 +9,49 @@
 <tiles:importAttribute name="columnNames" ignore="false"/>
 <tiles:importAttribute name="issueType" ignore="false"/>
 <tiles:importAttribute name="initialTypeMap" ignore="false"/>
+<tiles:importAttribute name="arrayName" ignore="false"/>
+<tiles:importAttribute name="messageKey" ignore="false"/>
+<tiles:importAttribute name="messageParam" ignore="true"/>
 
 <!-- bagUploadConfirmIssue.jsp -->
-<table class="collection" cellspacing="0">
-    <tr>
+<table class="collection" cellspacing="0" width="95%">
+  <caption>
+    <span class="sectionAddRemove">
+      <span id="${issueType}addAllLink" onclick="addAll('${issueType}', '${arrayName}');" class="fakelink">Add all</span> | 
+        <span id="${issueType}removeAllLink" onclick="removeAll('${issueType}', '${arrayName}');">Remove all</span>
+    </span>
+    <span>
+      <c:choose>
+        <c:when test="${messageParam != null}">
+          <fmt:message key="${messageKey}">
+            <fmt:param value="${messageParam}"/>
+          </fmt:message>
+        </c:when>
+        <c:otherwise>
+          <fmt:message key="${messageKey}"/>
+        </c:otherwise>
+      </c:choose>
+    </span>
+  </caption>
+  <tr>
+    <td>
+      Identifier
+    </td>
+    <td width="10"> 
+      <fmt:message key="objectDetails.class"/>
+    </td>
+    <c:forEach items="${columnNames}" var="name"
+               varStatus="status">
       <td>
-        Identifier
+        <span class="attributeField" style="white-space:nowrap">
+          ${name} <im:typehelp type="${columnNames[status.index]}"/>
+        </span>
       </td>
-      <td width="10"> 
-        <fmt:message key="objectDetails.class"/>
-      </td>
-      <c:forEach items="${columnNames}" var="name"
-                 varStatus="status">
-        <td>
-          <span class="attributeField" style="white-space:nowrap">
-            ${name} <im:typehelp type="${columnNames[status.index]}"/>
-          </span>
-        </td>
-      </c:forEach>
-      <td width="10">
-        &nbsp;<%--for IE--%>
-      </td>
-    </tr>
+    </c:forEach>
+    <td width="10">
+      &nbsp;<%--for IE--%>
+    </td>
+  </tr>
   <c:set var="idcounter" value="0"/>
   <c:forEach var="resultElementEntry" items="${resultElementMap}" >
     <c:set var="identifier" value="${resultElementEntry.key}"/>
