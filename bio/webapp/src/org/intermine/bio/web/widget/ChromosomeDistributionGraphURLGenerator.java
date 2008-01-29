@@ -36,15 +36,18 @@ import org.jfree.data.category.CategoryDataset;
 public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURLGenerator
 {
     String bagName;
-
+    String organism = null;
+    
     /**
      * Creates a ChromosomeDistributionGraphURLGenerator for the chart
      * @param model
      * @param bagName name of bag for which to render this widget
+     * @param organism constrain query by organism
      */
-    public ChromosomeDistributionGraphURLGenerator(String bagName) {
+    public ChromosomeDistributionGraphURLGenerator(String bagName, String organism) {
         super();
         this.bagName = bagName;
+        this.organism = organism;
     }
 
     /**
@@ -60,7 +63,8 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         sb.append("&category=" + dataset.getColumnKey(category));
         sb.append("&series=");
         sb.append("&urlGen=org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator");
-
+        sb.append("&extraKey=" + organism);
+        
         return sb.toString();
     }
 
@@ -71,7 +75,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
                                        InterMineBag imBag,
                                        @SuppressWarnings("unused") String series,
                                        @SuppressWarnings("unused") String category) {
-
+        
         Model model = os.getModel();
         InterMineBag bag = imBag;
         PathQuery q = new PathQuery(model);
@@ -112,10 +116,22 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
                         = new Constraint(constraintOp, series, false, label, code, id, null);
         chromosomeNode.getConstraints().add(chromosomeConstraint);
 
-        q.setConstraintLogic("A and B");
+        if (organism != null) {
+            constraintOp = ConstraintOp.LOOKUP;
+            code = q.getUnusedConstraintCode();
+            PathNode orgNode  = q.addNode("Gene.organism");
+            orgNode.setType("Organism");
+            Constraint orgConstraint
+            = new Constraint(constraintOp, organism, false, label, code, id, null);
+            orgNode.getConstraints().add(orgConstraint);
+            q.setConstraintLogic("A and B and C");
+        } else {
+            q.setConstraintLogic("A and B");
+        }
 
+        q.syncLogicExpression("and"); 
+        
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
-
         sortOrder.add(new OrderBy(start, "asc"));
         sortOrder.add(new OrderBy(identifier, "asc"));
         sortOrder.add(new OrderBy(organismDbId, "asc"));
@@ -123,11 +139,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         sortOrder.add(new OrderBy(chromoIdentifier, "asc"));
         sortOrder.add(new OrderBy(end, "asc"));
         sortOrder.add(new OrderBy(strand, "asc"));
-
         q.setSortOrder(sortOrder);
-
-        q.syncLogicExpression("and");
-
         return q;
     }
 }

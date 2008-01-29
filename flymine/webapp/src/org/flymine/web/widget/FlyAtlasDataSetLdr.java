@@ -157,7 +157,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
         }
         GraphDataSet graphDataSet = new GraphDataSet(dataSet, geneCategoryArray);
         if (results.size() > 0) {
-            dataSets.put("anyOrganism", graphDataSet);
+            dataSets.put("flyAtlas", graphDataSet);
         }
     }
 

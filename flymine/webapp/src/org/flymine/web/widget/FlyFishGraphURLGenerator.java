@@ -37,14 +37,25 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
     String bagName;
 
     /**
-     * Creates a FlyAtlasGraphURLGenerator for the chart
+     * Creates a FlyFishGraphURLGenerator for the chart
+     * @param bagName the bag name
+     * @param organism not used
+     */
+    public FlyFishGraphURLGenerator(String bagName, String organism) {
+        super();
+        this.bagName = bagName;
+    }
+
+    /**
+     * Creates a FlyFishGraphURLGenerator for the chart
      * @param bagName the bag name
      */
     public FlyFishGraphURLGenerator(String bagName) {
         super();
         this.bagName = bagName;
     }
-
+    
+    
     /**
      * {@inheritDoc}
      * @see org.jfree.chart.urls.CategoryURLGenerator#generateURL(
