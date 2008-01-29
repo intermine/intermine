@@ -313,9 +313,10 @@ public class BagDetailsController extends TilesAction
         } catch (Exception err) {
             err.printStackTrace();
         }
-        renderer.setItemURLGenerator(null);
+
+        //renderer.setItemURLGenerator(null);
         renderer.setSeriesItemURLGenerator(0, categoryUrlGen);
-        renderer.setSeriesItemURLGenerator(1, null);
+        renderer.setSeriesItemURLGenerator(1, categoryUrlGen);
 
         // integers only
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
