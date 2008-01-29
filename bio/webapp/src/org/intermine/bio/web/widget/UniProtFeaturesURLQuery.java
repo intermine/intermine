@@ -58,8 +58,8 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Protein.identifier"));
         view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
-        view.add(MainHelper.makePath(model, q, "Protein.organism.name"));
-        view.add(MainHelper.makePath(model, q, "Protein.features.type"));
+        view.add(MainHelper.makePath(model, q, "Protein.organism.shortName"));
+        view.add(MainHelper.makePath(model, q, "Protein.features.feature.name"));
         view.add(MainHelper.makePath(model, q, "Protein.features.description"));
         view.add(MainHelper.makePath(model, q, "Protein.features.begin"));
         view.add(MainHelper.makePath(model, q, "Protein.features.end"));
@@ -74,7 +74,7 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
 
         constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();
-        PathNode keywordNode = q.addNode("Protein.features");
+        PathNode keywordNode = q.addNode("Protein.features.feature");
         Constraint c = new Constraint(constraintOp, key, false, label, code, id, null);
         keywordNode.getConstraints().add(c);
 

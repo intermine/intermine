@@ -186,14 +186,14 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
           <c:if test="${showCount}">
            <c:catch>
                      (<c:out value="${entry.value.size}"/>
-              <b><c:choose>
-              <c:when test="${entry.value.size != 1}">
-              <c:out value="${entry.value.type}s" />
-              </c:when>
-              <c:otherwise>
-              <c:out value="${entry.value.type}" />
-              </c:otherwise>
-              </c:choose></b>)
+              <c:choose>
+                <c:when test="${entry.value.size != 1}">
+                  <b><c:out value="${entry.value.type}s" /></b>)
+                </c:when>
+                <c:otherwise>
+                  <b><c:out value="${entry.value.type}" /></b>)
+                </c:otherwise>
+              </c:choose>
             </c:catch>                            
           </c:if>
 

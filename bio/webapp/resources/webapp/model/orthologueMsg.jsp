@@ -11,7 +11,7 @@
    <c:set var="externalIdList" value="${fn:split(externalids,',')}"/>
    Found ${bag.size} orthologues in ${addparameter} for ${fn:length(externalIdList)} ${bag.type}s
    <im:querylink text="[view orthologue mapping]" skipBuilder="true">
-   <query name="" model="genomic" view="Gene.identifier Gene.homologues.homologue.identifier Gene.homologues.inParanoidScore" sortOrder="Gene.identifier asc" constraintLogic="A and B and C">
+   <query name="" model="genomic" view="Gene.identifier Gene.organism.shortName Gene.homologues.homologue.identifier Gene.homologues.homologue.organism.shortName Gene.homologues.type Gene.homologues.inParanoidScore" sortOrder="Gene.identifier asc" constraintLogic="A and B and C">
      <node path="Gene" type="Gene">
        <constraint op="LOOKUP" value="${externalids}" description="" identifier="" code="A">
        </constraint>
