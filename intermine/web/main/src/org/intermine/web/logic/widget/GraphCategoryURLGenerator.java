@@ -24,19 +24,24 @@ import org.jfree.data.category.CategoryDataset;
 public interface GraphCategoryURLGenerator extends CategoryURLGenerator
 {
 
+    /**
+     * 
+     */
     public String generateURL(CategoryDataset dataset, int series, int category);
 
     /**
      *
-     * @param os
-     * @param bag
-     * @param series
-     * @param category
-     * @return PathQuery
+     * @param os object store
+     * @param bag bag that this widget is displaying
+     * @param series key to constrain the query
+     * @param category category to constrain the query
+     * @return PathQuery 
      */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
                                        String series,
                                        String category);
+
+
 
 }
