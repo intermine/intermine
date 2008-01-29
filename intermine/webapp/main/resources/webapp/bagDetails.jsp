@@ -178,6 +178,7 @@
 <script type="text/javascript">
     window.onload=function(){
     Nifty("div#convertList");
+    // Nifty("div#linkouts", "big");
 }
 </script>
 <div id="convertList" class="pageDesc" align="left">
@@ -188,6 +189,9 @@
      <tiles:put name="orientation" value="h" />
 </tiles:insert>
 </div>
+<!-- <div id="linkouts" class="pageDesc" align="left">
+<h3>Link outs</h3>
+</div> -->
 </div>
 </html:form>
 
