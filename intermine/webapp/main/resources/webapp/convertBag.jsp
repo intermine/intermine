@@ -25,7 +25,7 @@
       </c:otherwise>
     </c:choose>
     <c:forEach items="${customConverters}" var="converterInfo">
-    <h3><c:out value="${converterInfo.key}" /></h3>
+    <h3><%--<c:out value="${converterInfo.key}" />--%>Orthologues</h3>
     <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
         <c:forEach items="${converterInfo.value}" var="value">
          <html:option value="${value}">${value}</html:option>
