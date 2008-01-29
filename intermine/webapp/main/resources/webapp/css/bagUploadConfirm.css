@@ -21,3 +21,8 @@ table.collection t td {
 table.collection tr.even TD{
   background-color: #F5F0FF;}
 
+table caption {
+  text-align:left;}
+  
+table .sectionAddRemove {
+  float:right;}
