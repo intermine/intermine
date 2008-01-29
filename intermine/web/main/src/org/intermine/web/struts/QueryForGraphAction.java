@@ -73,7 +73,8 @@ public class QueryForGraphAction extends InterMineAction
         String urlGen = request.getParameter("urlGen");
         String series = request.getParameter("series");
         String category = request.getParameter("category");
-
+        String extraKey = request.getParameter("extraKey"); // organism
+        
         InterMineBag bag;
 
         /* get bag from user profile */
@@ -95,22 +96,30 @@ public class QueryForGraphAction extends InterMineAction
         }
 
         Class clazz = TypeUtil.instantiate(urlGen);
-        Constructor constr = clazz.getConstructor(new Class[]
-                                                            {
-            String.class
-                                                            });
-
-        GraphCategoryURLGenerator urlGenerator = (GraphCategoryURLGenerator)
-                                                    constr.newInstance(new Object[]
-                                                                           {
-                                                        bagName
-                                                                           });
 
 
+        GraphCategoryURLGenerator urlGenerator = null;
+        
+        if (extraKey != null) {
+            Constructor constr = clazz.getConstructor(new Class[]
+                                                                {
+                String.class, String.class
+                                                                });
+            urlGenerator = (GraphCategoryURLGenerator)  constr.newInstance(new Object[] {
+            bagName, extraKey });
+        } else {
+            Constructor constr = clazz.getConstructor(new Class[]
+                                                                {
+                String.class
+                                                                });
+            urlGenerator = (GraphCategoryURLGenerator) constr.newInstance(new Object[] {
+            bagName });
+        }
         QueryMonitorTimeout clientState
         = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PathQuery pathQuery = urlGenerator.generatePathQuery(os, bag, category, series);
+        SessionMethods.loadQuery(pathQuery, session, response);
         String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
 
         Thread.sleep(200); // slight pause in the hope of avoiding holding page

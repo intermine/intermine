@@ -283,14 +283,16 @@ public class BagDetailsController extends TilesAction
                 false                               // URLs?
         );
 
-        TextTitle subtitleText = new TextTitle(subtitle);
-        subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
-        chart.addSubtitle(subtitleText);
-
+ 
+        if (!subtitle.startsWith("any")) {
+            TextTitle subtitleText = new TextTitle(subtitle);
+            subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
+            chart.addSubtitle(subtitleText);
+        }
         plot = chart.getCategoryPlot();
 
         BarRenderer renderer = new BarRenderer();
-        renderer.setItemLabelsVisible(true);
+        
         renderer.setItemMargin(0);
         plot.setRenderer(renderer);
         CategoryURLGenerator categoryUrlGen = null;
@@ -300,12 +302,12 @@ public class BagDetailsController extends TilesAction
             Class clazz2 = TypeUtil.instantiate(graphDisplayer.getUrlGen());
             Constructor urlGenConstructor = clazz2.getConstructor(new Class[]
                                                                             {
-                String.class
+                String.class, String.class
                                                                             });
             categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
             .newInstance(new Object[]
                                     {
-                bag.getName()
+                bag.getName(), subtitle
                                     });
 
         } catch (Exception err) {

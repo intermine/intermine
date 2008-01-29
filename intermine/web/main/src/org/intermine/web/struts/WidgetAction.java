@@ -66,27 +66,6 @@ public class WidgetAction extends InterMineAction
         String key = request.getParameter("key");
         String link = request.getParameter("link");
 
-//        if (request.getParameter("exportCsv") != null 
-//                        || request.getParameter("exportTab") != null
-//                        || request.getParameter("exportExcel") != null) {
-//            
-//            String type = "csv";
-//            if (request.getParameter("exportTab") != null) {
-//                type = "tab";
-//            } else if (request.getParameter("exportExcel") != null) {
-//                type = "excel";
-//            }
-//  
-//            WidgetForm wf = (WidgetForm) form;
-//            return new ForwardParameters(mapping.findForward("exportAction"))
-//                .addParameter("tableType", "bag")
-//                .addParameter("type", type)
-//                .addParameter("bagType", wf.getBagType())                
-//                .addParameter("selected", wf.getSelectedAsString())
-//                .addParameter("trail", "|bag." + wf.getBagName()).forward(); 
-//            
-//        }
-  
         if (key == null || key.equals("")) {
             WidgetForm wf = (WidgetForm) form;
             bagName = wf.getBagName();            
