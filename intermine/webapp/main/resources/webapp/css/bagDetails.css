@@ -6,8 +6,13 @@
   vertical-align: top;}
 
 #bagDescriptionTextarea{
-  display: none;
-  text-align: center;}
+  margin:0 0 0;width:90%;text-align: center;}
+
+#bagDescriptionDiv{
+  margin:0 0 0;padding:10px;
+  overflow: auto;
+  height:50px;width:90%;
+  text-align:left;}
 
 #emptyDesc{
   width:100%;
@@ -16,3 +21,12 @@
 li {
   margin-left: 10px;
   list-style: none;}
+
+#rightColumn{
+  margin-left:50%;}
+
+#leftColumn{
+  width:48%;float:left;}
+    
+#convertList{
+  padding:0 10px 20px 10px;}

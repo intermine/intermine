@@ -42,18 +42,20 @@
      <b>${bag.name}</b> (${bag.size} ${bag.type}s)
 </div>
 
+<div class="body">
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8">
 <script type="text/javascript" src="js/toolbar.js"></script>
-<div class="body">
 
-<li id="button_bar" onclick="toggleToolBarMenu(event);">
-<ul id="tool_bar_ul_convert"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Convert" border="0" id="tool_bar_button_convert" class="tool_bar_button"></ul>
-<ul id="tool_bar_ul_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></ul>
-<ul id="tool_bar_ul_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></ul>
-<ul id="tool_bar_ul_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" alt="Use" border="0" id="tool_bar_button_use" class="tool_bar_button"></ul>
-</li>
+<div id="tool_bar_div">
+    <ul id="button_bar" onclick="toggleToolBarMenu(event);">
+        <li id="tool_bar_li_convert"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Convert" border="0" id="tool_bar_button_convert" class="tool_bar_button"></li>
+        <li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></li>
+        <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></li>
+        <li id="tool_bar_li_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" alt="Use" border="0" id="tool_bar_button_use" class="tool_bar_button"></li>
+    </ul>
+</div>
 
 <div id="tool_bar_item_convert" style="visibility:hidden" class="tool_bar_item">
   <tiles:insert name="convertBag.tile">
@@ -83,90 +85,71 @@
   <hr>
     <a href="javascript:hideMenu('tool_bar_item_use')" >Cancel</a>
 </div>
-</div>
-<table border=0 cellpadding=0 cellspacing=5 style="clear:both;">
+
+<div id="clearLine">&nbsp;</div>
+
+<div id="leftColumn" align="center">
+<%-- Table displaying bag elements --%>
+<table class="results" cellspacing="0" align="left">
 <tr>
-  <td width="50%" valign="top">          
-  <table>
-  <tr>
-  <td colspan=2>
-      <html:hidden property="bagName" value="${bag.name}"/>
-  
-          <table class="results" cellspacing="0">
-            <tr>
-              <c:forEach var="column" items="${pagedColl.columns}" varStatus="status">
-                <th align="center" valign="top">
-                  <div>
-                    <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
-                  </div>
-                </th>
-              </c:forEach>
-            </tr>
-
-            <c:forEach items="${pagedColl.resultElementRows}" var="row" varStatus="status">
-              <c:set var="object" value="${row[0]}" scope="request"/>
-              <c:set var="rowClass">
-                <c:choose>
-                  <c:when test="${status.count % 2 == 1}">odd</c:when>
-                  <c:otherwise>even</c:otherwise>
-                </c:choose>
-              </c:set>
-              <tr class="${rowClass}">
-                <c:forEach var="column" items="${pagedColl.columns}" varStatus="status2">
-                  <td>
-                    <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
-                    <c:choose>
-                      <c:when test="${resultElement.keyField}">
-                        <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=|bag.${bag.name}|${resultElement.id}">
-                          <c:out value="${resultElement.field}" />
-                        </html:link>
-                      </c:when>
-                      <c:otherwise>
-                        <c:out value="${resultElement.field}" />
-                      </c:otherwise>
-                    </c:choose>
-                  </td>
-                </c:forEach>
-              </tr>
-            </c:forEach>
-            <!-- show dotted lines if there are more than 5 items in bag -->            
-            <c:if test="${pagedColl.pageSize < pagedColl.size}">
-              <tr>
-                <c:forEach var="column" items="${pagedColl.columns}" varStatus="status2">
-                  <td style="border-right: dotted 1px #666; border-bottom: dotted 1px #666;">&nbsp;</td>
-                  </c:forEach>
-               </tr>
-            </c:if>
-            
-          </table>
-         </td></tr>
-         <tr><td>
-          
-<c:if test="${!empty bag.dateCreated}">
-    <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
-</c:if>
-
-</td><td align="right">          
-
-         <html:submit property="showInResultsTable">
-      View all ${bag.size} records >>
-        </html:submit>
-</td>
+  <c:forEach var="column" items="${pagedColl.columns}" varStatus="status">
+    <th align="center" valign="top">
+      <div>
+        <c:out value="${fn:replace(column.name, '.', '&nbsp;> ')}" escapeXml="false"/>
+      </div>
+    </th>
+  </c:forEach>
 </tr>
-</table>
-  
-    
-  </td>
-  <td valign="top" width="50%" align="center">
-  
-  <table width="90%" border=0 align="center">
-  <tr>
-  
+<c:forEach items="${pagedColl.resultElementRows}" var="row" varStatus="status">
+  <c:set var="object" value="${row[0]}" scope="request"/>
+  <c:set var="rowClass">
     <c:choose>
+      <c:when test="${status.count % 2 == 1}">odd</c:when>
+      <c:otherwise>even</c:otherwise>
+    </c:choose>
+  </c:set>
+  <tr class="${rowClass}">
+    <c:forEach var="column" items="${pagedColl.columns}" varStatus="status2">
+      <td>
+        <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
+        <c:choose>
+          <c:when test="${resultElement.keyField}">
+            <html:link action="/objectDetails?id=${resultElement.id}&amp;trail=|bag.${bag.name}|${resultElement.id}">
+              <c:out value="${resultElement.field}" />
+            </html:link>
+          </c:when>
+          <c:otherwise>
+            <c:out value="${resultElement.field}" />
+          </c:otherwise>
+        </c:choose>
+      </td>
+    </c:forEach>
+  </tr>
+</c:forEach>
+<!-- show dotted lines if there are more than 5 items in bag -->            
+<c:if test="${pagedColl.pageSize < pagedColl.size}">
+  <tr>
+    <c:forEach var="column" items="${pagedColl.columns}" varStatus="status2">
+      <td style="border-right: dotted 1px #666; border-bottom: dotted 1px #666;">&nbsp;</td>
+      </c:forEach>
+   </tr>
+</c:if>
+</table>
+          
+<span style="float:right">
+    <c:if test="${!empty bag.dateCreated}">
+        <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
+    </c:if>
+    <html:submit property="showInResultsTable">
+        View all ${bag.size} records >>
+    </html:submit>
+</span>
+
+<div style="clear:right;">&nbsp;</div>
+<%-- Bag Description --%>
+<c:choose>
     <c:when test="${myBag == 'true'}">
-    <td>
-    <div id="clear-both"/>
-      <div id="bagDescriptionDiv" onclick="swapDivs('bagDescriptionDiv','bagDescriptionTextarea')">
+      <div id="bagDescriptionDiv" onclick="Element.toggle('bagDescriptionDiv');Element.toggle('bagDescriptionTextarea');">
         <c:choose>
           <c:when test="${! empty bag.description}">
             <c:out value="${bag.description}" escapeXml="false" />
@@ -176,45 +159,40 @@
           </c:otherwise>
         </c:choose>
       </div>
-      <div id="bagDescriptionTextarea">
+      <div id="bagDescriptionTextarea" style="display:none">
         <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
         <div align="right">
-          <button onclick="swapDivs('bagDescriptionTextarea','bagDescriptionDiv'); return false;">Cancel</button>
+          <button onclick="Element.toggle('bagDescriptionTextarea');
+              Element.toggle('bagDescriptionDiv'); return false;">Cancel</button>
           <button onclick="saveBagDescription('${bag.name}'); return false;">Save</button>
         </div>
       </div>
-
-  </c:when>
-  <c:otherwise>  
-  <td>
-     <b>Description:</b> ${bag.description}
-  </c:otherwise>
-  </c:choose>
-  <div class="dashedBox" align="left">
-  <h4>Convert List to:</h4><br>
-  <tiles:insert name="convertBag.tile">
-         <tiles:put name="bag" beanName="bag" />
-         <tiles:put name="idname" value="cp" />
-         <tiles:put name="orientation" value="h" />
-    </tiles:insert>
-    </div>
-  </td>
-  </tr>
-  <tr>
-  <td>
-
-</td>
-</tr>
-</table>
-  
-  </td>  
-  </tr>
-  </table>
-  </html:form>
+      </c:when>
+      <c:otherwise>  
+         <b>Description:</b> ${bag.description}
+      </c:otherwise>
+</c:choose>
+</div> 
+    
+<div id="rightColumn">
+<script type="text/javascript">
+    window.onload=function(){
+    Nifty("div#convertList");
+}
+</script>
+<div id="convertList" class="pageDesc" align="left">
+<h3>Convert</h3>
+<tiles:insert name="convertBag.tile">
+     <tiles:put name="bag" beanName="bag" />
+     <tiles:put name="idname" value="cp" />
+     <tiles:put name="orientation" value="h" />
+</tiles:insert>
+</div>
+</div>
+</html:form>
 
 
-<br/>
-
+<div id="clearLine">&nbsp;</div>
 <!-- widget table -->
 <c:set var="widgetIdPrefix" value="bagDetailsWidget${bag.type}"/>
 <c:set var="widgetTotal" value="${fn:length(graphDisplayerArray) 
@@ -373,7 +351,6 @@
   (<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span></div>
 </div>
 
-<div class="body">
   <fmt:message key="bagDetails.templatesHelp">
     <fmt:param>
               <img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/>  
@@ -390,6 +367,4 @@
       <tiles:put name="opened" value="${status.index == 0}" />
     </tiles:insert>
   </c:forEach>
-</div>
-
 <!-- /bagDetails.jsp -->

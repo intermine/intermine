@@ -113,10 +113,6 @@ div.filterBar {
 
 #bagDescriptionDiv{
 	background-color: #D4D4D4;
-	height:150px;
-	width:70%;
-	text-align:left;
-	padding:10px;
 }
 #bagDescriptionDiv:hover{
 	background-color: #D4D4D4;

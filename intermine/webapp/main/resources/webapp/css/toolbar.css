@@ -1,18 +1,26 @@
-li#button_bar, li#button_bar ul {
-    list-style: none;
+div#tool_bar_div{
     float:left;
-    padding:0;
+    padding:0 12px 0 0;
     margin:0;
     height:25px;
-}
-li#button_bar {
-  margin-left:0px;
+    background: url('../images/icons/toolbar_right.png') no-repeat right;
 }
 
-#tool_bar_ul_convert{
+ul#button_bar, ul#button_bar li {
+    margin:0; padding:0;
+    float:left;
+    list-style: none;
+    height:25px;
+}
+ul#button_bar {
+  padding-left:12px;
+  background: url('../images/icons/toolbar_left.png') no-repeat left;
+}
+
+#tool_bar_li_convert{
     background-image: url('../images/icons/convert_grey.png');
 }
-#tool_bar_ul_convert:hover{
+#tool_bar_li_convert:hover{
     background-image: url('../images/icons/convert_hover.png');
 }
 .tool_bar_button_convert{
@@ -20,30 +28,30 @@ li#button_bar {
     background-color:#CCC;
 }
 
-#tool_bar_ul_display {
+#tool_bar_li_display {
     background-image: url('../images/icons/display_grey.png');
 }
-#tool_bar_ul_display:hover {
+#tool_bar_li_display:hover {
     background-image: url('../images/icons/display_hover.png');
 }
 .tool_bar_button_display {
     background-image: url('../images/icons/display_down.png');
 }
 
-#tool_bar_ul_export {
+#tool_bar_li_export {
     background-image: url('../images/icons/export_grey.png');
 }
-#tool_bar_ul_export:hover {
+#tool_bar_li_export:hover {
     background-image: url('../images/icons/export_hover.png');
 }
 .tool_bar_button_export{
     background-image: url('../images/icons/export_down.png');    
 }
 
-#tool_bar_ul_use {
+#tool_bar_li_use {
     background-image: url('../images/icons/use_grey.png');
 }
-#tool_bar_ul_use:hover {
+#tool_bar_li_use:hover {
     background-image: url('../images/icons/use_hover.png');
 }
 .tool_bar_button_use {
@@ -51,30 +59,30 @@ li#button_bar {
 }
 
 
-#tool_bar_ul_createlist {
+#tool_bar_li_createlist {
     background-image: url('../images/icons/createlist_grey.png');
 }
-#tool_bar_ul_createlist:hover {
+#tool_bar_li_createlist:hover {
     background-image: url('../images/icons/createlist_hover.png');
 }
 .tool_bar_button_createlist {
     background-image: url('../images/icons/createlist_down.png');
 }
 
-#tool_bar_ul_addtolist {
+#tool_bar_li_addtolist {
     background-image: url('../images/icons/addtolist_grey.png');
 }
-#tool_bar_ul_addtolist:hover {
+#tool_bar_li_addtolist:hover {
     background-image: url('../images/icons/addtolist_hover.png');
 }
 .tool_bar_button_addtolist {
     background-image: url('../images/icons/addtolist_down.png');
 }
 
-#tool_bar_ul_summary {
+#tool_bar_li_summary {
     background-image: url('../images/icons/summary_grey.png');
 }
-#tool_bar_ul_summary:hover {
+#tool_bar_li_summary:hover {
     background-image: url('../images/icons/summary_hover.png');
 }
 .tool_bar_button_summary {

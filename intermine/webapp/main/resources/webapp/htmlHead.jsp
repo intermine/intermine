@@ -32,6 +32,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/niftycube.js'/>"></script>
 
 <meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
 <meta content="Integrated queryable database for Drosophila and Anopheles genomics"

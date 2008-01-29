@@ -85,14 +85,9 @@ function saveBagDescription(bagName){
     AjaxServices.saveBagDescription(bagName,textarea, function(str){
                                         document.getElementById('bagDescriptionDiv').innerHTML = str;
                                     });
-    swapDivs('bagDescriptionTextarea','bagDescriptionDiv');
+    Element.toggle('bagDescriptionTextarea');
+    Element.toggle('bagDescriptionDiv');
 }
-
-function swapDivs(div1,div2){
-    document.getElementById(div1).style.display = 'none';
-    document.getElementById(div2).style.display = 'block';
-}
-
 
 function roundToSignificantDecimal(n) {
     var log10n = Math.log(Math.abs(n)) / Math.log(10);
