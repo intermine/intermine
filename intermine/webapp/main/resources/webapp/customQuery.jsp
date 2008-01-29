@@ -7,7 +7,6 @@
 <!-- customQuery.jsp -->
 <html:xhtml/>
 
-<script type="text/javascript" src="js/niftycube.js"></script>
 <script type="text/javascript" src="js/mymine.js"></script>
 
 <div class="body">

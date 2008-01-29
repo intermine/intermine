@@ -103,12 +103,13 @@
 <link rel="stylesheet" href="css/tablePageLinks.css" type="text/css" >
 <script type="text/javascript" src="js/toolbar.js"></script>
 
-<li id="button_bar" onclick="toggleToolBarMenu(event);">
-<ul id="tool_bar_ul_createlist"><img style="cursor: pointer;" src="images/icons/null.gif" width="90" height="25" alt="Create List" border="0" id="tool_bar_button_createlist" class="tool_bar_button"></ul>
-<ul id="tool_bar_ul_addtolist"><img style="cursor: pointer;" src="images/icons/null.gif" width="91" height="25" alt="Add to List" border="0" id="tool_bar_button_addtolist" class="tool_bar_button"></ul>
-<ul id="tool_bar_ul_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></ul>
-<ul class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></ul>
-<ul class="tool_bar_link">
+<div id="tool_bar_div">
+<ul id="button_bar" onclick="toggleToolBarMenu(event);">
+<li id="tool_bar_li_createlist"><img style="cursor: pointer;" src="images/icons/null.gif" width="90" height="25" alt="Create List" border="0" id="tool_bar_button_createlist" class="tool_bar_button"></li>
+<li id="tool_bar_li_addtolist"><img style="cursor: pointer;" src="images/icons/null.gif" width="91" height="25" alt="Add to List" border="0" id="tool_bar_button_addtolist" class="tool_bar_button"></li>
+<li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></li>
+<li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
+<li class="tool_bar_link">
 <html:form action="/changeTableSize">
   
   <%-- Page size controls --%>
@@ -127,13 +128,14 @@
     </html:submit>
   </noscript>
 </html:form>
-</ul>
-<ul class="tool_bar_link">
+</li>
+<li class="tool_bar_link">
     <tiles:insert page="/tablePageLinks.jsp">
       <tiles:put name="short" value="true" />
     </tiles:insert>
-</ul>
 </li>
+</ul>
+</div>
 
 <%-- Create new list --%>
 <html:form action="/saveBag" >

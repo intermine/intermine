@@ -8,9 +8,7 @@
 <!-- convertBag.jsp -->
 <tiles:importAttribute />
 
-<div>
     <c:if test="${orientation == 'h'}">
-      <div style="float:left">
     </c:if>
     <c:forEach items="${conversionTypes}" var="type">
       <script type="text/javascript" charset="utf-8">
@@ -20,14 +18,14 @@
     </c:forEach>
     <c:choose>
       <c:when test="${orientation == 'h'}">
-        </div><div style="margin-left:150px">
+
       </c:when>
       <c:otherwise>
         <hr/>
       </c:otherwise>
     </c:choose>
     <c:forEach items="${customConverters}" var="converterInfo">
-    <c:out value="${converterInfo.key}:" /><br>
+    <h3><c:out value="${converterInfo.key}" /></h3>
     <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
         <c:forEach items="${converterInfo.value}" var="value">
          <html:option value="${value}">${value}</html:option>
@@ -38,9 +36,6 @@
     </html:select>
     </c:forEach>
     <c:if test="${orientation == 'h'}">
-      <div style="float:left">
     </c:if>
-</div>
-<div style="clear:both">&nbsp;</div>
 
 <!-- /convertBag.jsp -->
