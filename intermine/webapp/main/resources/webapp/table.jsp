@@ -181,6 +181,9 @@
 </div>
 <%-- Export --%>
 <div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
+    <c:set var="tableName" value="${param.table}" scope="request"/>
+    <c:set var="tableType" value="results" scope="request"/>
+    <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
     <tiles:get name="export.tile"/>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
@@ -441,9 +444,6 @@
       </div> <%-- end of main results table body div --%>
     </html:form>
 
-    <c:set var="tableName" value="${param.table}" scope="request"/>
-    <c:set var="tableType" value="results" scope="request"/>
-    <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
   </c:otherwise>
 </c:choose>
 <!-- /table.jsp -->
