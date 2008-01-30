@@ -37,6 +37,7 @@ public class Type
     private String className;
     private LinkedHashMap fieldConfigMap = new LinkedHashMap();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
+    private ListOrderedSet bagDisplayers = new ListOrderedSet();
     private ListOrderedSet graphDisplayers = new ListOrderedSet();
     private ListOrderedSet bagTableDisplayers = new ListOrderedSet();
     private ListOrderedSet enrichmentWidgetDisplayers = new ListOrderedSet();
@@ -107,6 +108,13 @@ public class Type
         }
     }
 
+    /**
+      * Add a bag displayer for this Type
+      * @param disp the Displayer to add
+      */
+     public void addBagDisplayer(Displayer disp) {
+         bagDisplayers.add(disp);
+     }
 
     /**
      * Get the GraphDisplayers for this type
@@ -174,6 +182,14 @@ public class Type
      */
     public Set getLongDisplayers() {
         return Collections.unmodifiableSet(this.longDisplayers);
+    }
+
+    /**
+     * Get the List of bag Displayers
+     * @return the List of bag Displayers
+     */
+    public Set getBagDisplayers() {
+        return Collections.unmodifiableSet(this.bagDisplayers);
     }
 
     /**

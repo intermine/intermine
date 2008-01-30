@@ -197,6 +197,11 @@
 </div>
 </html:form>
 
+  <div class="dashedBox" align="left">
+    <tiles:insert page="/bagDisplayers.jsp">
+      <tiles:put name="bag" beanName="bag"/>
+    </tiles:insert>
+  </div>
 
 <div id="clearLine">&nbsp;</div>
 <!-- widget table -->
