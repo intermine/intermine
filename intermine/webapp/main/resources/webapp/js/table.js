@@ -1,4 +1,3 @@
-
 function selectColumnCheckbox(columnsToDisable, columnsToHighlight, columnIndex) {
     selectColumnCheckboxes(columnsToDisable, columnsToHighlight, columnIndex);
     if (isClear()) {
@@ -129,7 +128,9 @@ function unselectColumnCheckbox(column) {
 function setToolbarAvailability(status) {
     $('newBagName').disabled = status;
     $('saveNewBag').disabled = status;
-    with($('addToBag')) {
-        $('addToBag').disabled = status;
+    if($('addToBag')){
+            with($('addToBag')) {
+                $('addToBag').disabled = status;
+            }
     }
 }
