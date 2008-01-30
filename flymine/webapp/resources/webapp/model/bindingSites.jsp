@@ -15,7 +15,7 @@
           <h4>
             <a href="javascript:toggleDiv('hiddenDiv1');">
               <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
-              <i>D. melanogaster</i>  - Regulatory elements ...
+              <i>D. melanogaster</i>  - <i>Cis</i>-regulatory modules (CRMs) ...
             </a>
           </h4>
 
@@ -23,18 +23,11 @@
 
 
             <ul><li><dt>
-              Transcriptional  <i>cis</i>-regulatory modules (CRMs) for <i>D. melanogaster</i>
-              from the <a href="http://redfly.ccr.buffalo.edu" target="_new"> REDfly database </a>.
-            </dt>
-
-
-            <dt>
-              Note: The REDfly data has been re-mapped to
-              genome sequence release 5.0 as of FlyMine release 7.0.
+              CRMs from the <a href="http://redfly.ccr.buffalo.edu" target="_new"> REDfly database</a>.
             </dt></li></ul>
 
             <ul><li><dt>
-              Regulatory elements for <i>D. melanogaster</i> annotated by
+              Enhancers annotated by
               <a href="http://flybase.bio.indiana.edu" target="_new">FlyBase</a>.
             </dt></li></ul>
 
@@ -49,15 +42,13 @@
 
           <div id="hiddenDiv2" class="dataSetDescription">
 
-          <ul><li>
-            <dt>DNase I footprints for <i>D. melanogaster</i> from the
-              <a href="http://www.flyreg.org" target="_new"> DNase I footprint database (V2.0)</a>.</dt>
-             <dt>Note: The FlyReg data has been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0.</dt></li></ul>
-
-          <ul><li>
-            <dt><a href="http://servlet.sanger.ac.uk/tiffin/" target="_new">Tiffin</a> is a database of predicted regulatory motifs and predicted functional sites ("motif instances") on genome sequences.</dt>
-            <dt>Note: The Tiffin-1.2 data has been re-mapped to genome sequence release 5.0 as of FlyMine release 7.0.</dt></li></ul>
-
+          <ul><li><dt>
+             Transcription factor binding sites from the <a href="http://redfly.ccr.buffalo.edu" target="_new"> REDfly database </a>.
+          </dt></li></ul>
+  
+       <ul><li><dt>
+            Predicted regulatory motifs and functional sites ("motif instances") on genome sequences from the <a href="http://servlet.sanger.ac.uk/tiffin/" target="_new">Tiffin database</a>.
+       </dt></li></ul>
 
           </div>
         </dl>
@@ -72,49 +63,64 @@
         <ul>
 
           <li>
-            <im:querylink text="REDfly regulatory regions " skipBuilder="true">
-              <query name="" model="genomic" view="TFmodule.identifier TFmodule.length TFmodule.chromosome.identifier TFmodule.chromosomeLocation.start TFmodule.chromosomeLocation.end TFmodule.gene.identifier TFmodule.elementEvidence">
-                <node path="TFmodule" type="TFmodule">
-                </node>
-                <node path="TFmodule.evidence" type="DataSet">
-                </node>
-                <node path="TFmodule.evidence.title" type="String">
-                  <constraint op="LIKE" value="%REDfly%" description="" identifier="" editable="true" code="A">
-                  </constraint>
-                </node>
-              </query>
+            <im:querylink text="REDfly <i>cis</i>-regulatory modules " skipBuilder="true">
+              <query name="" model="genomic" view="CRM.identifier CRM.length CRM.elementEvidence CRM.gene.organismDbId CRM.gene.identifier" sortOrder="CRM.identifier asc" constraintLogic="A and B">
+  <node path="CRM" type="CRM">
+  </node>
+  <node path="CRM.organism" type="Organism">
+    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+  <node path="CRM.evidence" type="DataSet">
+  </node>
+  <node path="CRM.evidence.title" type="String">
+    <constraint op="=" value="REDfly Drosophila transcriptional cis-regulatory modules" description="" identifier="" code="B" extraValue="">
+            </constraint>
+            </node>
+            </query>
             </im:querylink>
           </li>
 
+
           <li>
-            <im:querylink text="FlyBase regulatory regions " skipBuilder="true">
-              <query name="" model="genomic" view="RegulatoryRegion.identifier RegulatoryRegion.length RegulatoryRegion.chromosome.identifier RegulatoryRegion.chromosomeLocation.start RegulatoryRegion.chromosomeLocation.end">
-                <node path="RegulatoryRegion" type="RegulatoryRegion">
-                </node>
-                <node path="RegulatoryRegion.evidence" type="DataSet">
-                </node>
-                <node path="RegulatoryRegion.evidence.title" type="String">
-                  <constraint op="LIKE" value="FlyBase%" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
+            <im:querylink text="REDfly transcription factor binding sites " skipBuilder="true">
+<query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.gene.identifier TFBindingSite.factor.identifier" sortOrder="TFBindingSite.identifier TFBindingSite.length TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.gene.identifier TFBindingSite.factor.identifier" constraintLogic="A and B">
+  <node path="TFBindingSite" type="TFBindingSite">
+  </node>
+  <node path="TFBindingSite.organism" type="Organism">
+    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="B" extraValue="">
+    </constraint>
+  </node>
+  <node path="TFBindingSite.evidence" type="InfoSource">
+  </node>
+  <node path="TFBindingSite.evidence.title" type="String">
+    <constraint op="CONTAINS" value="REDfly" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+</query>
+ </im:querylink>
           </li>
 
           <li>
-            <im:querylink text="FlyReg transcription factor binding sites " skipBuilder="true">
-              <query name="" model="genomic" view="TFBindingSite.identifier TFBindingSite.length TFBindingSite.gene.identifier TFBindingSite.factor.identifier TFBindingSite.chromosome.identifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end">
-                <node path="TFBindingSite" type="TFBindingSite">
-                </node>
-                <node path="TFBindingSite.evidence" type="DataSet">
-                </node>
-                <node path="TFBindingSite.evidence.title" type="String">
-                  <constraint op="=" value="FlyReg data set">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
+            <im:querylink text="FlyBase enhancers " skipBuilder="true">
+              <query name="" model="genomic" view="Enhancer.identifier Enhancer.length Enhancer.chromosome.identifier Enhancer.chromosomeLocation.start Enhancer.chromosomeLocation.end Enhancer.gene.identifier Enhancer.gene.symbol" sortOrder="Enhancer.identifier asc" constraintLogic="A and B">
+  <node path="Enhancer" type="Enhancer">
+  </node>
+  <node path="Enhancer.organism" type="Organism">
+    <constraint op="LOOKUP" value="Drosophila melanogaster" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+  <node path="Enhancer.evidence" type="DataSet">
+  </node>
+  <node path="Enhancer.evidence.title" type="String">
+    <constraint op="=" value="FlyBase Drosophila melanogaster data set" description="" identifier="" code="B" extraValue="">
+    </constraint>
+  </node>
+</query>
+          </im:querylink>
           </li>
+
+
 
           <li>
             <im:querylink text="Transcription factor binding sites predicted by Tiffin"

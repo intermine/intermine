@@ -132,6 +132,34 @@ Koutsos et al used an EST microarray platform encompassing 19,680 ESTs to determ
              </im:querylink>
             </li>
 
+
+           <li>
+            <im:querylink text="All FlyFish results for <i>D. melanogaster</i> genes " skipBuilder="true">
+             <query name="" model="genomic" view="Gene.organismDbId Gene.identifier Gene.mRNALocalisationResults.stage Gene.mRNALocalisationResults.expressed Gene.mRNALocalisationResults.mRNALocalisationTerms.localisation" sortOrder="Gene.organismDbId asc">
+             <pathDescription pathString="Gene.probeSets" description="Probe">
+              </pathDescription>
+             <pathDescription pathString="Gene.microArrayResults" description="Microarray result">
+              </pathDescription>
+             <pathDescription pathString="Gene.mRNALocalisationResults" description="mRNA localisation">
+              </pathDescription>
+             <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
+              </pathDescription>
+             <pathDescription pathString="Gene.mRNALocalisationResults.mRNALocalisationTerms" description="mRNA localisation term">
+              </pathDescription>
+             <pathDescription pathString="Gene.microArrayResults.source" description="Dataset">
+              </pathDescription>
+             <node path="Gene" type="Gene">
+              </node>
+             <node path="Gene.organism" type="Organism">
+              </node>
+             <node path="Gene.organism.name" type="String">
+             <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
+              </constraint>
+              </node>
+             </query>
+           </im:querylink>
+            </li> 
+
             <li>
              <im:querylink text="All results from Koutsos et al for <i>A. gambiae</i> genes " skipBuilder="true">
             <query name="" model="genomic" view="Gene.identifier Gene.microArrayResults.material.identifier Gene.microArrayResults.value Gene.microArrayResults.standardError Gene.microArrayResults.type Gene.microArrayResults.assays.name" sortOrder="Gene.identifier asc">

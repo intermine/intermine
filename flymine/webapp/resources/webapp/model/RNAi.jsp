@@ -163,7 +163,7 @@
     <h4>   
       <a href="javascript:toggleDiv('hiddenDiv2');">
         <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
-          <i>C. elegans</i>  - RNAi data from <i>in vivo</i> experiments ...
+          <i>C. elegans</i>  - <i>in vivo</i> RNAi data from WormBase ...
       </a>
     </h4>
 
@@ -299,18 +299,20 @@
 
             <li>
               <im:querylink text="All <i>C. elegans</i> RNAi data " skipBuilder="true">
-                <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.rnaiResults.name Gene.rnaiResults.code">
+                 <query name="" model="genomic" view="Gene.rnaiResults.evidence.pubMedId Gene.organismDbId Gene.rnaiResults.name Gene.rnaiResults.code Gene.rnaiResults.observed Gene.rnaiResults.penetranceFrom Gene.rnaiResults.penetranceTo Gene.rnaiResults.comment" sortOrder="Gene.rnaiResults.evidence.pubMedId asc">
                  <node path="Gene" type="Gene">
-                   </node>
+                  </node>
                  <node path="Gene.organism" type="Organism">
-                   </node>
+                  </node>
                  <node path="Gene.organism.name" type="String">
-                   <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
-                   </constraint>
-                 </node>
-                <node path="Gene.rnaiResults" type="RNAiPhenotype">
-                </node>
-               </query>
+                 <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
+                  </constraint>
+                  </node>
+                 <node path="Gene.rnaiResults" type="RNAiPhenotype">
+                  </node>
+                 <node path="Gene.rnaiResults.evidence" type="Publication">
+                  </node>
+                 </query>
               </im:querylink>
             </li>
           </ul>
