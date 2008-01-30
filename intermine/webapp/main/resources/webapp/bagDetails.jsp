@@ -17,10 +17,10 @@
   function go(where) {
     switch (where){
       case "query":
-        document.forms[1].useBagInQuery.value = 'true';
+        document.bagDetailsForm.useBagInQuery.value = 'true';
         break;
     }    
-      document.forms[1].submit();
+      document.bagDetailsForm.submit();
      }
 
 
@@ -44,6 +44,8 @@
 
 <div class="body">
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
+
+<html:hidden property="bagName" value="${bag.name}"/> 
 
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8">
 <script type="text/javascript" src="js/toolbar.js"></script>
