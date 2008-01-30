@@ -583,15 +583,16 @@ function saveToggleState(elementId) {
 // historyBagView.jsp, wsFilterList.jsp
 function validateBagOperations(formName, operation) {
 		
-		if (event && (event.keyCode == 13
-            || event.keyCode == 33
-            || event.keyCode == 34
-            || event.keyCode == 35
-            || event.keyCode == 36
-            || event.keyCode == 37
-            || event.keyCode == 38
-            || event.keyCode == 39
-            || event.keyCode ==  40)) {
+            
+       if (Event && (Event.keyCode == 13
+            || Event.keyCode == 33
+            || Event.keyCode == 34
+            || Event.keyCode == 35
+            || Event.keyCode == 36
+            || Event.keyCode == 37
+            || Event.keyCode == 38
+            || Event.keyCode == 39
+            || Event.keyCode ==  40)) {
             return;
         }
 		
@@ -626,15 +627,15 @@ function validateBagOperations(formName, operation) {
 // table.jsp, bagUploadConfirm.jsp
   function validateBagName(formName) {  
   
-        if (event && (event.keyCode == 13
-            || event.keyCode == 33
-            || event.keyCode == 34
-            || event.keyCode == 35
-            || event.keyCode == 36
-            || event.keyCode == 37
-            || event.keyCode == 38
-            || event.keyCode == 39
-            ||event.keyCode ==  40)) {
+        if (Event && (Event.keyCode == 13
+            || Event.keyCode == 33
+            || Event.keyCode == 34
+            || Event.keyCode == 35
+            || Event.keyCode == 36
+            || Event.keyCode == 37
+            || Event.keyCode == 38
+            || Event.keyCode == 39
+            || Event.keyCode ==  40)) {
             return;
         }
   
