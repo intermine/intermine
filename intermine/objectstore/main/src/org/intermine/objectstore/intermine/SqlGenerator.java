@@ -492,8 +492,20 @@ public class SqlGenerator
         buildFromComponent(state, q, schema, bagTableNames);
         buildWhereClause(state, q, q.getConstraint(), schema);
         buildWhereClause(state, q, offsetCon, schema);
-        String orderBy = ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
-                ? buildOrderBy(state, q, schema) : "");
+        String orderBy = "";
+        if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
+            boolean haveOrderBy = true;
+            if (q.getGroupBy().isEmpty()) {
+                for (QuerySelectable selectable : q.getSelect()) {
+                    if (selectable instanceof QueryFunction) {
+                        haveOrderBy = false;
+                    }
+                }
+            }
+            if (haveOrderBy) {
+                orderBy = buildOrderBy(state, q, schema);
+            }
+        }
         StringBuffer retval = new StringBuffer("SELECT ")
             .append(needsDistinct(q) ? "DISTINCT " : "")
             .append(buildSelectComponent(state, q, schema, kind))

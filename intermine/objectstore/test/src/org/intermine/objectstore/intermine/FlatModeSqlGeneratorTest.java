@@ -249,6 +249,8 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("MergeFalse", Collections.singleton("Employee"));
         results.put("MergeTrue", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.objectclass AS a1_objectclass FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.age > 3 ORDER BY a1_.id");
         results2.put("MergeTrue", Collections.singleton("Employee"));
+        results.put("SelectFunctionNoGroup", "SELECT MIN(a1_.id) AS a2_ FROM Employee AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee'");
+        results2.put("SelectFunctionNoGroup", Collections.singleton("Employee"));
     }
 
     protected DatabaseSchema getSchema() throws Exception {
