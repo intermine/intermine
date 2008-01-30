@@ -529,8 +529,8 @@ public abstract class WebUtil
                                             countAll.intValue(), total);
                     try {
                         resultsMap.put(id, new BigDecimal(p));
-                    } catch (NumberFormatException e) {
-                        throw new NumberFormatException(p + " isn't a double");
+                    } catch (Exception e) {
+                        throw new RuntimeException(p + " isn't a double", e);
                     }
                 }
             }
