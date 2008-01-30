@@ -244,12 +244,15 @@ public class DataTranslator
     public void translate(ItemWriter tgtItemWriter)
     throws ObjectStoreException, InterMineException {
         long inCount = 0;
-        long opCount = 0;
-        long time = System.currentTimeMillis();
-        long start = time;
+        long outCount = 0;
+        long start = System.currentTimeMillis();
         long times[] = new long[20];
+        long inCounts[] = new long[20];
+        long outCounts[] = new long[20];
         for (int i = 0; i < 20; i++) {
             times[i] = -1;
+            inCounts[i] = -1;
+            outCounts[i] = -1;
         }
         for (Iterator i = getItemIterator(); i.hasNext();) {
             Item srcItem = ItemHelper.convert((org.intermine.model.fulldata.Item) i.next());
@@ -259,30 +262,60 @@ public class DataTranslator
                 for (Iterator j = translated.iterator(); j.hasNext();) {
                     Object obj = j.next();
                     tgtItemWriter.store(ItemHelper.convert((Item) obj));
-                    opCount++;
-                    if (opCount % 1000 == 0) {
-                        long now = System.currentTimeMillis();
-                        if (times[(int) ((opCount / 1000) % 20)] == -1) {
-                            LOG.info("Translated " + inCount + " -> " + opCount
-                                    + " objects - running at "
-                                    + (60000000 / (now - time)) + " (avg "
-                                    + ((60000L * opCount) / (now - start))
-                                    + ") objects per minute -- now on "
-                                    + srcItem.getClassName());
-                        } else {
-                            LOG.info("Translated " + inCount + " -> " + opCount
-                                    + " objects - running at "
-                                    + (60000000 / (now - time)) + " (20000 avg "
-                                    + (1200000000 / (now - times[(int) ((opCount / 1000) % 20)]))
-                                    + ") (avg " + ((60000L * opCount) / (now - start))
-                                    + ") objects per minute -- now on "
-                                    + srcItem.getClassName());
-                        }
-                        time = now;
-                        times[(int) ((opCount / 1000) % 20)] = now;
+                    outCount++;
+                    if (outCount % 10000 == 0) {
+                        log(times, inCounts, outCounts, start, inCount, outCount,
+                                srcItem.getClassName());
                     }
                 }
             }
+            if (inCount % 10000 == 0) {
+                log(times, inCounts, outCounts, start, inCount, outCount,
+                        srcItem.getClassName());
+            }
+        }
+    }
+
+    private long lastInCount = 0;
+    private long lastOutCount = 0;
+    private long lastTime = 0;
+    private int timesIndex = 0;
+
+    private void log(long times[], long inCounts[], long outCounts[], long start, long inCount,
+            long outCount, String className) {
+        if ((inCount >= lastInCount + 10000) || (outCount >= lastOutCount + 10000)) {
+            long now = System.currentTimeMillis();
+            timesIndex++;
+            if (timesIndex >= 20) {
+                timesIndex = 0;
+            }
+            if (times[timesIndex] == -1) {
+                LOG.info("Translated " + inCount + " -> " + outCount + " objects - running at "
+                        + ((60000L * (inCount - lastInCount)) / (now - lastTime)) + " -> "
+                        + ((60000L * (outCount - lastOutCount)) / (now - lastTime)) + " (avg "
+                        + ((60000L * inCount) / (now - start)) + " -> "
+                        + ((60000L * outCount) / (now - start)) + ") objects per minute -- now on "
+                        + className);
+            } else {
+                LOG.info("Translated " + inCount + " -> " + outCount + " objects - running at "
+                        + ((60000L * (inCount - lastInCount)) / (now - lastTime)) + " -> "
+                        + ((60000L * (outCount - lastOutCount)) / (now - lastTime))
+                        + " (20 logs avg "
+                        + ((60000L * (inCount - inCounts[timesIndex])) / (now - times[timesIndex]))
+                        + " -> "
+                        + ((60000L * (outCount - outCounts[timesIndex]))
+                            / (now - times[timesIndex]))
+                        + ") (avg " + ((60000L * inCount) / (now - start)) + " -> "
+                        + ((60000L * outCount) / (now - start))
+                        + ") objects per minute -- now on "
+                        + className);
+            }
+            lastTime = now;
+            times[timesIndex] = now;
+            lastInCount = inCount;
+            lastOutCount = outCount;
+            inCounts[timesIndex] = inCount;
+            outCounts[timesIndex] = outCount;
         }
     }
 

@@ -122,24 +122,24 @@ public class ObjectStoreDataLoader extends DataLoader
                 time3 = System.currentTimeMillis();
                 timeSpentWrite += time3 - time2;
                 opCount++;
-                if (opCount % 1000 == 0) {
+                if (opCount % 10000 == 0) {
                     long now = System.currentTimeMillis();
-                    if (times[(int) ((opCount / 1000) % 20)] == -1) {
+                    if (times[(int) ((opCount / 10000) % 20)] == -1) {
                         LOG.info("Dataloaded " + opCount + " objects - running at "
-                                + (60000000 / (now - time)) + " (avg "
+                                + (600000000L / (now - time)) + " (avg "
                                 + ((60000L * opCount) / (now - startTime))
                                 + ") objects per minute -- now on "
                                 + DynamicUtil.getFriendlyName(obj.getClass()));
                     } else {
                         LOG.info("Dataloaded " + opCount + " objects - running at "
-                                + (60000000 / (now - time)) + " (20000 avg "
-                                + (1200000000 / (now - times[(int) ((opCount / 1000) % 20)]))
+                                + (600000000L / (now - time)) + " (200000 avg "
+                                + (12000000000L / (now - times[(int) ((opCount / 10000) % 20)]))
                                 + ") (avg = " + ((60000L * opCount) / (now - startTime))
                                 + ") objects per minute -- now on "
                                 + DynamicUtil.getFriendlyName(obj.getClass()));
                     }
                     time = now;
-                    times[(int) ((opCount / 1000) % 20)] = now;
+                    times[(int) ((opCount / 10000) % 20)] = now;
                     if (opCount % 500000 == 0) {
                         getIntegrationWriter().batchCommitTransaction();
                     }
