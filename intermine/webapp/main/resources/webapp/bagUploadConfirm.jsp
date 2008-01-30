@@ -6,7 +6,7 @@
 
 <!-- bagUploadConfirm.jsp -->
 <html:xhtml/>
-<html:form action="/bagUploadConfirm" focus="bagName" method="post" enctype="multipart/form-data">
+<html:form action="/bagUploadConfirm" focus="newBagName" method="post" enctype="multipart/form-data">
 <html:hidden property="matchIDs" styleId="matchIDs"/>
 <html:hidden property="bagType"/>
 <script type="text/javascript" src="js/baguploadconfirm.js"></script>
@@ -17,10 +17,10 @@ window.onload = function() { toggleForm(${matchCount}); }
 function toggleForm(matchCount) {
   if (matchCount > 0) {
     document.bagUploadConfirmForm.newBagName.disabled = false;
-    document.bagUploadConfirmForm.submit.disabled = false;
+    document.bagUploadConfirmForm.confirmBagUpload.disabled = false;
   } else {
     document.bagUploadConfirmForm.newBagName.disabled = true;
-    document.bagUploadConfirmForm.submit.disabled = true;
+    document.bagUploadConfirmForm.confirmBagUpload.disabled = true;
   }
 }
 
