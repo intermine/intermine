@@ -92,7 +92,19 @@
 
 <div id="leftColumn" align="center">
 <%-- Table displaying bag elements --%>
-<table class="results" cellspacing="0" align="left">
+<table class="results" id="bagdetailsresults" cellspacing="0" align="left" >
+<tfoot>
+    <tr>
+        <td colspan="10" align="right">
+            <c:if test="${!empty bag.dateCreated}">
+                <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
+            </c:if>
+            <html:submit property="showInResultsTable">
+                View all ${bag.size} records >>
+            </html:submit>
+        </td>
+    </tr>
+</tfoot>
 <tr>
   <c:forEach var="column" items="${pagedColl.columns}" varStatus="status">
     <th align="center" valign="top">
@@ -137,17 +149,7 @@
    </tr>
 </c:if>
 </table>
-          
-<span style="float:right">
-    <c:if test="${!empty bag.dateCreated}">
-        <i><b>Created:</b> <im:dateDisplay date="${bag.dateCreated}" /></i>
-    </c:if>
-    <html:submit property="showInResultsTable">
-        View all ${bag.size} records >>
-    </html:submit>
-</span>
 
-<div style="clear:right;">&nbsp;</div>
 <%-- Bag Description --%>
 <c:choose>
     <c:when test="${myBag == 'true'}">
@@ -179,9 +181,8 @@
 <div id="rightColumn">
 <script type="text/javascript">
     window.onload=function(){
-    Nifty("div#convertList");
-    // Nifty("div#linkouts", "big");
-}
+        Nifty("div#convertList","transparent");
+    }
 </script>
 <div id="convertList" class="pageDesc" align="left">
 <h3>Convert</h3>

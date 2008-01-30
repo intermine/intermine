@@ -6,12 +6,14 @@
   vertical-align: top;}
 
 #bagDescriptionTextarea{
-  margin:0 0 0;width:90%;text-align: center;}
+  float:left;
+  margin:20px;width:100%;text-align: center;}
 
 #bagDescriptionDiv{
-  margin:0 0 0;padding:10px;
+  float:left;
+  margin:20px;padding:10px;
   overflow: auto;
-  height:50px;width:90%;
+  height:50px;width:100%;
   text-align:left;}
 
 #emptyDesc{
@@ -30,3 +32,7 @@ li {
     
 #convertList{
   padding:0 10px 20px 10px;}
+  
+#bagdetailsresults{
+  float:left;}
+  
