@@ -92,17 +92,10 @@ Reference population: <c:out value='${referencePopulation}'/>.
 <tr>
 	<td valign="top" align="left">
 <html:form action="/widgetAction" target="_top">
-
-<li id="button_bar" onclick="document.widgetForm.submit();">
-	<ul id="tool_bar_ul_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></ul>
-</li>
-<div id="tool_bar_item_display" style="visibility:hidden" class="tool_bar_item">
-
-		<html:submit property="viewResults">
-			in results table
-        </html:submit>
-    <hr>
-  <a href="javascript:hideMenu('tool_bar_item_display')">Cancel</a>
+<div id="tool_bar_div">
+<ul id="button_bar" onclick="document.widgetForm.submit();">
+	<li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></li>
+</ul>
 </div>
 </td>
 </tr>
