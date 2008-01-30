@@ -583,6 +583,18 @@ function saveToggleState(elementId) {
 // historyBagView.jsp, wsFilterList.jsp
 function validateBagOperations(formName, operation) {
 		
+		if (event && event.keyCode == 13
+            || event.keyCode == 33
+            || event.keyCode == 34
+            || event.keyCode == 35
+            || event.keyCode == 36
+            || event.keyCode == 37
+            || event.keyCode == 38
+            || event.keyCode == 39
+            ||event.keyCode ==  40) {
+            return;
+        }
+		
 		var bagName = ''; 
 		var frm = document.forms[formName];
 		
@@ -613,6 +625,19 @@ function validateBagOperations(formName, operation) {
 
 // table.jsp, bagUploadConfirm.jsp
   function validateBagName(formName) {  
+  
+        if (event && event.keyCode == 13
+            || event.keyCode == 33
+            || event.keyCode == 34
+            || event.keyCode == 35
+            || event.keyCode == 36
+            || event.keyCode == 37
+            || event.keyCode == 38
+            || event.keyCode == 39
+            ||event.keyCode ==  40) {
+            return;
+        }
+  
   	  var frm = document.forms[formName];
   	  
 		var bagName = frm.newBagName.value;
@@ -631,5 +656,6 @@ function validateBagOperations(formName, operation) {
 
   function addErrMsg(errMsg) {  
   	document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
-  }
+  }  
+  
   
