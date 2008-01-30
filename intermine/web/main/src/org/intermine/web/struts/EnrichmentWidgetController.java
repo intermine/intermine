@@ -79,7 +79,7 @@ public class EnrichmentWidgetController extends TilesAction
                                                                                        });
 
          ArrayList<Map> results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(),
-                                               ewf.getBag(), ldr.getTotal(os), 
+                                               bag, ldr.getTotal(os), 
                                                new Double(0 + ewf.getMax()),
                                                ewf.getErrorCorrection());
 
