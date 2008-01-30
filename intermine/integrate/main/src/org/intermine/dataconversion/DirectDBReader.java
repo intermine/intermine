@@ -190,7 +190,7 @@ public class DirectDBReader implements DBReader
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = rMeta.getColumnName(i);
                     if (rMeta.getColumnType(i) != java.sql.Types.BIT) {
-                        sizeQuery += " + char_length(" + columnName + ")";
+                        sizeQuery += " + char_length(" + columnName + "::text)";
                     }
                 }
                 sizeQuery += " AS size";

@@ -570,6 +570,14 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         results.put("MergeFalse", toList(r));
         results.put("MergeTrue", toList(r));
         results.put("EmptyBagConstraint", Collections.EMPTY_LIST);
+        int minId = ((Employee) data.get("EmployeeA1")).getId().intValue();
+        minId = Math.min(minId, ((Employee) data.get("EmployeeA2")).getId().intValue());
+        minId = Math.min(minId, ((Employee) data.get("EmployeeA3")).getId().intValue());
+        minId = Math.min(minId, ((Employee) data.get("EmployeeB1")).getId().intValue());
+        minId = Math.min(minId, ((Employee) data.get("EmployeeB2")).getId().intValue());
+        minId = Math.min(minId, ((Employee) data.get("EmployeeB3")).getId().intValue());
+        r = new Object[][] { { new Integer(minId) } };
+        results.put("SelectFunctionNoGroup", toList(r));
     }
 
     /**

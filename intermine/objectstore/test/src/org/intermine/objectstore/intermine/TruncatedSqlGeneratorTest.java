@@ -302,6 +302,8 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("MergeFalse", Collections.singleton("InterMineObject"));
         results.put("MergeTrue", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' AND a1_.age > 3 ORDER BY a1_.id");
         results2.put("MergeTrue", Collections.singleton("InterMineObject"));
+        results.put("SelectFunctionNoGroup", "SELECT MIN(a1_.id) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee'");
+        results2.put("SelectFunctionNoGroup", Collections.singleton("InterMineObject"));
     }
 
     protected DatabaseSchema getSchema() {

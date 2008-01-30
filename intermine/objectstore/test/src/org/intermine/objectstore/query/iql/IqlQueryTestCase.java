@@ -288,5 +288,6 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.name IN ?", null);
         fq.setParameters(Collections.singletonList(Collections.EMPTY_SET));
         results.put("EmptyBagConstraint", fq);
+        results.put("SelectFunctionNoGroup", new IqlQuery("SELECT MIN(a1_.id) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
     }
 }

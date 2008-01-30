@@ -397,6 +397,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("MergeTrue", new HashSet(Arrays.asList("InterMineObject", "Employee")));
         results.put("EmptyBagConstraint", new Failure(CompletelyFalseException.class, null));
         results2.put("EmptyBagConstraint", Collections.EMPTY_SET);
+        results.put("SelectFunctionNoGroup", "SELECT MIN(a1_.id) AS a2_ FROM Employee AS a1_");
+        results2.put("SelectFunctionNoGroup", Collections.singleton("Employee"));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

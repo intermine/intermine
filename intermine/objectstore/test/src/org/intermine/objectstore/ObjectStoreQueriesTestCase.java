@@ -263,6 +263,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("MergeFalse", mergeFalse());
         queries.put("MergeTrue", mergeTrue());
         queries.put("EmptyBagConstraint", emptyBagConstraint());
+        queries.put("SelectFunctionNoGroup", selectFunctionNoGroup());
     }
 
     /*
@@ -2019,6 +2020,18 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new BagConstraint(new QueryField(qc, "name"), ConstraintOp.IN, Collections.EMPTY_SET));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT MIN(a1_.id) FROM Employee AS a1_
+     */
+    public static Query selectFunctionNoGroup() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Employee.class);
+        q.addFrom(qc);
+        q.addToSelect(new QueryFunction(new QueryField(qc, "id"), QueryFunction.MIN));
         q.setDistinct(false);
         return q;
     }
