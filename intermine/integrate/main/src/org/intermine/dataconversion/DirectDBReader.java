@@ -189,8 +189,10 @@ public class DirectDBReader implements DBReader
                 sizeQuery = "SELECT " + idField + ", 30";
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = rMeta.getColumnName(i);
-                    if (rMeta.getColumnType(i) != java.sql.Types.BIT) {
-                        sizeQuery += " + char_length(" + columnName + "::text)";
+                    if (rMeta.getColumnType(i) != java.sql.Types.VARCHAR) {
+                        sizeQuery += " + 10";
+                    } else {
+                        sizeQuery += " + char_length(" + columnName + ")";
                     }
                 }
                 sizeQuery += " AS size";
