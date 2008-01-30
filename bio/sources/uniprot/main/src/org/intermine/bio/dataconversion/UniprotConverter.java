@@ -507,7 +507,7 @@ public class UniprotConverter extends FileConverter
                                 && attrs.getValue("type").equals("entry name")
                                 && stack.peek().equals("dbReference")) {
                         if (interpro != null) {
-                            interpro.setAttribute("name", attrs.getValue("value").toString());
+                            interpro.setAttribute("shortName", attrs.getValue("value").toString());
                             writer.store(ItemHelper.convert(interpro));
                             interpro = null;
                         }
