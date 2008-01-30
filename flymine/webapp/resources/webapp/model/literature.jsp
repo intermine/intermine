@@ -21,22 +21,7 @@ for <i>D. melanogaster</i> and <i>D. pseudoobscura</i> from FlyBase.
       </div>
     </dl>
 
-</div>
 
-</td>
-
-    <td width="40%" valign="top">
-      <div class="heading2">
-        Bulk download
-      </div>
-      <div class="body">
-        <ul>
-
-          <li>
-          </li>
-
-        </ul>
-      </div>
     </td>
   </tr>
 </table>
