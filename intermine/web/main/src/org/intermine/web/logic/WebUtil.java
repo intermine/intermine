@@ -527,7 +527,11 @@ public abstract class WebUtil
                     }
                     double p = h.calculateP(numberOfObjectsInBag, countBag.intValue(),
                                             countAll.intValue(), total);
-                    resultsMap.put(id, new BigDecimal(p));
+                    try {
+                        resultsMap.put(id, new BigDecimal(p));
+                    } catch (NumberFormatException e) {
+                        throw new NumberFormatException(p + " isn't a double");
+                    }
                 }
             }
 
