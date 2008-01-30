@@ -507,11 +507,6 @@ public abstract class WebUtil
             Hypergeometric h = new Hypergeometric(total);
             HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
             
-            /* this is the total number of tests excluding the go terms that only annotate one gene
-             * as these cannot be over-represented
-             */
-            int numberOfTests = 0;
-            
             while (itAll.hasNext()) {
 
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
@@ -522,14 +517,12 @@ public abstract class WebUtil
 
                     Long countBag = countMap.get(id);
                     Long countAll = (java.lang.Long) rrAll.get(1);
-                    if (countBag.longValue() > 1) {
-                        numberOfTests++;
-                    }
+
                     double p = h.calculateP(numberOfObjectsInBag, countBag.intValue(),
                                             countAll.intValue(), total);
                     try {
                         resultsMap.put(id, new BigDecimal(p));
-                    } catch (Exception e) {
+                    } catch (Exception e) {                        
                         throw new RuntimeException(p + " isn't a double", e);
                     }
                 }
@@ -538,8 +531,7 @@ public abstract class WebUtil
            Map<String, BigDecimal> adjustedResultsMap = resultsMap;
 
             if (!errorCorrection.equals("None")) {
-                adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, 
-                                                         numberOfTests, resultsMap);
+                adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
             }
 
             SortableMap sortedMap = new SortableMap(adjustedResultsMap);
@@ -562,14 +554,12 @@ public abstract class WebUtil
      * @param errorCorrection which multiple hypothesis test correction to use - Bonferroni or
      * BenjaminiHochberg
      * @param maxValue maximum value we're interested in
-     * @param numberOfTests number of tests we've run, excluding terms that only annotate one item
      * as these cannot possibly be over-represented
      * @param resultsMap map containing unadjusted p-values
      * @return map of all the adjusted p-values
      */
     protected static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection, 
                                                  Double maxValue,
-                                                 int numberOfTests,
                                                  HashMap<String, BigDecimal> resultsMap) {
 
         ErrorCorrection e = null;
