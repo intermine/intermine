@@ -583,7 +583,7 @@ function saveToggleState(elementId) {
 // historyBagView.jsp, wsFilterList.jsp
 function validateBagOperations(formName, operation) {
 		
-		if (event && event.keyCode == 13
+		if (event && (event.keyCode == 13
             || event.keyCode == 33
             || event.keyCode == 34
             || event.keyCode == 35
@@ -591,7 +591,7 @@ function validateBagOperations(formName, operation) {
             || event.keyCode == 37
             || event.keyCode == 38
             || event.keyCode == 39
-            ||event.keyCode ==  40) {
+            || event.keyCode ==  40)) {
             return;
         }
 		
@@ -626,7 +626,7 @@ function validateBagOperations(formName, operation) {
 // table.jsp, bagUploadConfirm.jsp
   function validateBagName(formName) {  
   
-        if (event && event.keyCode == 13
+        if (event && (event.keyCode == 13
             || event.keyCode == 33
             || event.keyCode == 34
             || event.keyCode == 35
@@ -634,7 +634,7 @@ function validateBagOperations(formName, operation) {
             || event.keyCode == 37
             || event.keyCode == 38
             || event.keyCode == 39
-            ||event.keyCode ==  40) {
+            ||event.keyCode ==  40)) {
             return;
         }
   
