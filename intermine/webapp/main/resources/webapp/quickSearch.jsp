@@ -51,8 +51,4 @@ function clearElement(e) {
 <html:submit><fmt:message key="header.search.button"/></html:submit>
 
 </html:form>
-<script language="javascript">
-  window.onload = document.getElementById('quickSearchType').selectedIndex = 0;
-  window.onload = updateExample($('quickSearchType').selectedIndex);
-</script>
 <!-- /quickSearch.jsp -->
