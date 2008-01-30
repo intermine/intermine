@@ -149,7 +149,7 @@
 <%-- Bag Description --%>
 <c:choose>
     <c:when test="${myBag == 'true'}">
-      <div id="bagDescriptionDiv" onclick="Element.toggle('bagDescriptionDiv');Element.toggle('bagDescriptionTextarea');">
+      <div id="bagDescriptionDiv" onclick="Element.toggle('bagDescriptionDiv');Element.toggle('bagDescriptionTextarea');$('textarea').focus()">
         <c:choose>
           <c:when test="${! empty bag.description}">
             <c:out value="${bag.description}" escapeXml="false" />
