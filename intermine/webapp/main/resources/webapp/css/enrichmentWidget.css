@@ -4,7 +4,8 @@ html, body
   font-size: 100%; /* NN4 */
   margin: 0px;
   padding: 0px;
-  background-color:#f5f0ff
+  background-color:#f5f0ff;
+  color:#eee
 }
 
 a:link { color:#049; text-decoration:none }

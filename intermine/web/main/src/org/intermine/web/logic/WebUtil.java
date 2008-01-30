@@ -449,7 +449,7 @@ public abstract class WebUtil
      * @param errorCorrection which error correction algorithm to use, Bonferroni
      * or Benjamini Hochberg
      * @return array of three results maps
-     * @throws Exception
+     * @throws ObjectStoreException bag has been lost
      */
     public static ArrayList<Map> statsCalc(ObjectStoreInterMineImpl os,
                                       Query queryPopulation,
@@ -457,14 +457,15 @@ public abstract class WebUtil
                                       InterMineBag bag,
                                       int total,                                      
                                       Double maxValue,
-                                      String errorCorrection) {
+                                      String errorCorrection) 
+                                      throws ObjectStoreException {
 
             ArrayList<Map> maps = new ArrayList<Map>();
             int numberOfObjectsInBag;
             try {
                 numberOfObjectsInBag = bag.size();
             } catch (ObjectStoreException e) {
-                throw new RuntimeException("couldn't calculate bag size", e);
+                throw new ObjectStoreException("couldn't calculate bag size", e);
             }
             // run bag query
             Results r = os.execute(querySample);
