@@ -17,10 +17,10 @@
   function go(where) {
     switch (where){
       case "query":
-        document.bagDetailsForm.useBagInQuery.value = 'true';
+        document.modifyBagDetailsForm.useBagInQuery.value = 'true';
         break;
     }    
-      document.bagDetailsForm.submit();
+      document.modifyBagDetailsForm.submit();
      }
 
 
