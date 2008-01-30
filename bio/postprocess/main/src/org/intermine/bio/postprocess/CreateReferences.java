@@ -579,9 +579,7 @@ public class CreateReferences
             GOAnnotation thisAnnotation = (GOAnnotation) rr.get(1);
 
             GOAnnotation tempAnnotation =
-                (GOAnnotation) PostProcessUtil.cloneInterMineObject(thisAnnotation);
-            // generate a new ID
-            tempAnnotation.setId(null);
+                (GOAnnotation) PostProcessUtil.copyInterMineObject(thisAnnotation);
             tempAnnotation.setSubject(thisGene);
             if (lastGene != null && !(lastGene.equals(thisGene))) {
                 TypeUtil.setFieldValue(lastGene, "allGoAnnotation", allGoCollection);
