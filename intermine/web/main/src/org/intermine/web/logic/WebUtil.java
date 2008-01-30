@@ -27,9 +27,9 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 
-import org.intermine.InterMineException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.SearchRepository;
@@ -463,8 +463,8 @@ public abstract class WebUtil
             int numberOfObjectsInBag;
             try {
                 numberOfObjectsInBag = bag.size();
-            } catch (Exception e) {
-                throw new RuntimeException("unexpected exception", e);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("couldn't calculate bag size", e);
             }
             // run bag query
             Results r = os.execute(querySample);
