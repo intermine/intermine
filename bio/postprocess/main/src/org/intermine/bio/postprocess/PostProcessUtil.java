@@ -11,24 +11,33 @@ package org.intermine.bio.postprocess;
  */
 
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.objectstore.query.*;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-
-import org.intermine.model.InterMineObject;
-import org.intermine.metadata.FieldDescriptor;
-
 import org.flymine.model.genomic.Annotation;
 import org.flymine.model.genomic.Location;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
 /**
  * Common operations for post processing.
@@ -39,29 +48,37 @@ public class PostProcessUtil
 {
 
     /**
-     * Create a clone of given InterMineObject including the id
+     * Create a clone of given InterMineObject including the id.  This is designed for
+     * altering and storing again (to avoid cache problems) so doesn't copy collections.
      * @param obj object to clone
      * @return the cloned object
      * @throws IllegalAccessException if problems with reflection
      */
     public static InterMineObject cloneInterMineObject(InterMineObject obj)
         throws IllegalAccessException {
-        InterMineObject newObj = copyInterMineObject(obj);
-        newObj.setId(obj.getId());
-        return newObj;
+        return PostProcessUtil.cloneInterMineObject(obj, false);
     }
 
 
     /**
-     * Create a copy of given InterMineObject with *no* id set
+     * Create a copy of given InterMineObject with *no* id set and copies of collections
      * @param obj object to copy
      * @return the copied object
      * @throws IllegalAccessException if problems with reflection
      */
     public static InterMineObject copyInterMineObject(InterMineObject obj)
         throws IllegalAccessException {
+        InterMineObject newObj = cloneInterMineObject(obj, true);
+        newObj.setId(null);
+        return newObj;
+    }
+
+    
+    private static InterMineObject cloneInterMineObject(InterMineObject obj,
+                                                        boolean copyCollections)
+    throws IllegalAccessException {
         InterMineObject newObj = (InterMineObject)
-            DynamicUtil.createObject(DynamicUtil.decomposeClass(obj.getClass()));
+        DynamicUtil.createObject(DynamicUtil.decomposeClass(obj.getClass()));
         Map fieldInfos = new HashMap();
         Iterator clsIter = DynamicUtil.decomposeClass(obj.getClass()).iterator();
         while (clsIter.hasNext()) {
@@ -71,14 +88,17 @@ public class PostProcessUtil
         Iterator fieldIter = fieldInfos.keySet().iterator();
         while (fieldIter.hasNext()) {
             String fieldName = (String) fieldIter.next();
-            if (!fieldName.equals("id")) {
+            Object value = TypeUtil.getFieldProxy(obj, fieldName);
+            if (copyCollections && (value instanceof Collection)) {
                 TypeUtil.setFieldValue(newObj, fieldName,
-                                       TypeUtil.getFieldProxy(obj, fieldName));
+                    new HashSet((Collection) value));
+            } else {
+                TypeUtil.setFieldValue(newObj, fieldName, value);
             }
         }
         return newObj;
     }
-
+    
     /**
      * Query ObjectStore for all objects that connect the given object and any subject classes.
      * Return an iterator ordered by objectCls.
