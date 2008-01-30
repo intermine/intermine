@@ -12,8 +12,16 @@ package org.intermine.web.logic.bag;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.SingletonResults;
+
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
@@ -21,13 +29,9 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.web.logic.search.WebSearchable;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -49,6 +53,8 @@ public class InterMineBag implements WebSearchable
     private final Date dateCreated;
     private ObjectStoreBag osb;
     private ObjectStore os;
+
+    private Set<ClassDescriptor> classDescriptors;
 
     /**
      * Constructs a new InterMineIdBag, and saves it in the UserProfile database.
@@ -75,6 +81,16 @@ public class InterMineBag implements WebSearchable
         this.savedBagId = null;
         SavedBag savedBag = store(uosw);
         this.savedBagId = savedBag.getId();
+        setClassDescriptors();
+    }
+
+    private void setClassDescriptors() {
+        try {
+            Class<?> cls = Class.forName(getQualifiedType());
+            classDescriptors = os.getModel().getClassDescriptorsForClass(cls);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("bag type " + getQualifiedType() + " not known", e);
+        }
     }
 
     private SavedBag store(ObjectStoreWriter uosw) throws ObjectStoreException {
@@ -113,6 +129,7 @@ public class InterMineBag implements WebSearchable
         this.dateCreated = savedBag.getDateCreated();
         this.profileId = savedBag.proxGetUserProfile().getId();
         this.osb = new ObjectStoreBag(savedBag.getOsbId());
+        setClassDescriptors();
     }
 
     /**
@@ -269,6 +286,14 @@ public class InterMineBag implements WebSearchable
      */
     public String getQualifiedType() {
         return os.getModel().getPackageName() + "." + type;
+    }
+
+    /**
+     * Return the class descriptors for the type of this bag.
+     * @return the set of class descriptors
+     */
+    public Set<ClassDescriptor> getClassDescriptors() {
+        return classDescriptors;
     }
 
     /**
