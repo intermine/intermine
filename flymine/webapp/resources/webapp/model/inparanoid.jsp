@@ -62,48 +62,48 @@
         <ul>
           <li>
             <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>A. gambiae</i> " skipBuilder="true">
-             <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="A and B">
- 				 <node path="Orthologue" type="Orthologue">
- 				 </node>
- 				 <node path="Orthologue.gene" type="Gene">
- 				 </node>
- 				 <node path="Orthologue.gene.organism" type="Organism">
- 				 </node>
-  				 <node path="Orthologue.gene.organism.name" type="String">
-    				<constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-    				</constraint>
-  				 </node>
- 				 <node path="Orthologue.orthologue" type="Gene">
- 				 </node>
- 				 <node path="Orthologue.orthologue.organism" type="Organism">
- 				 </node>
- 				 <node path="Orthologue.orthologue.organism.name" type="String">
-   					<constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="B">
-    				</constraint>
-  				 </node>
-			 </query>
+<query name="" model="genomic" view="Homologue.gene.identifier Homologue.gene.symbol Homologue.gene.organismDbId Homologue.homologue.identifier Homologue.homologue.symbol Homologue.homologue.organismDbId Homologue.type" sortOrder="Homologue.gene.identifier asc" constraintLogic="A and B">
+  <node path="Homologue" type="Homologue">
+  </node>
+  <node path="Homologue.gene" type="Gene">
+  </node>
+  <node path="Homologue.gene.organism" type="Organism">
+  </node>
+  <node path="Homologue.gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
+    </constraint>
+  </node>
+  <node path="Homologue.homologue" type="Gene">
+  </node>
+  <node path="Homologue.homologue.organism" type="Organism">
+  </node>
+  <node path="Homologue.homologue.organism.name" type="String">
+    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" editable="true" code="B">
+    </constraint>
+  </node>
+</query>
             </im:querylink>
-          </li> 
+          </li>
 
           <li>            
             <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>C. elegans</i> " skipBuilder="true">
-              <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="A and B">
-  <node path="Orthologue" type="Orthologue">
+<query name="" model="genomic" view="Homologue.gene.identifier Homologue.gene.symbol Homologue.gene.organismDbId Homologue.homologue.identifier Homologue.homologue.symbol Homologue.homologue.organismDbId Homologue.type" sortOrder="Homologue.gene.identifier asc" constraintLogic="A and B">
+  <node path="Homologue" type="Homologue">
   </node>
-  <node path="Orthologue.gene" type="Gene">
+  <node path="Homologue.gene" type="Gene">
   </node>
-  <node path="Orthologue.gene.organism" type="Organism">
+  <node path="Homologue.gene.organism" type="Organism">
   </node>
-  <node path="Orthologue.gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+  <node path="Homologue.gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
     </constraint>
   </node>
-  <node path="Orthologue.orthologue" type="Gene">
+  <node path="Homologue.homologue" type="Gene">
   </node>
-  <node path="Orthologue.orthologue.organism" type="Organism">
+  <node path="Homologue.homologue.organism" type="Organism">
   </node>
-  <node path="Orthologue.orthologue.organism.name" type="String">
-    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="B">
+  <node path="Homologue.homologue.organism.name" type="String">
+    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" editable="true" code="B">
     </constraint>
   </node>
 </query>
@@ -112,23 +112,23 @@
 
           <li>
            <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>H. sapiens</i> " skipBuilder="true">
-            <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="A and B">
-  <node path="Orthologue" type="Orthologue">
+<query name="" model="genomic" view="Homologue.gene.identifier Homologue.gene.symbol Homologue.gene.organismDbId Homologue.homologue.identifier Homologue.homologue.symbol Homologue.homologue.organismDbId Homologue.type" sortOrder="Homologue.gene.identifier asc" constraintLogic="A and B">
+  <node path="Homologue" type="Homologue">
   </node>
-  <node path="Orthologue.gene" type="Gene">
+  <node path="Homologue.gene" type="Gene">
   </node>
-  <node path="Orthologue.gene.organism" type="Organism">
+  <node path="Homologue.gene.organism" type="Organism">
   </node>
-  <node path="Orthologue.gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+  <node path="Homologue.gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
     </constraint>
   </node>
-  <node path="Orthologue.orthologue" type="Gene">
+  <node path="Homologue.homologue" type="Gene">
   </node>
-  <node path="Orthologue.orthologue.organism" type="Organism">
+  <node path="Homologue.homologue.organism" type="Organism">
   </node>
-  <node path="Orthologue.orthologue.organism.name" type="String">
-    <constraint op="=" value="Homo sapiens" description="" identifier="" code="B">
+  <node path="Homologue.homologue.organism.name" type="String">
+    <constraint op="=" value="Homo sapiens" description="" identifier="" editable="true" code="B">
     </constraint>
   </node>
 </query>
@@ -137,23 +137,23 @@
 
           <li>            
            <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>M. musculus</i> " skipBuilder="true">
-<query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="A and B">
-  <node path="Orthologue" type="Orthologue">
+<query name="" model="genomic" view="Homologue.gene.identifier Homologue.gene.symbol Homologue.gene.organismDbId Homologue.homologue.identifier Homologue.homologue.symbol Homologue.homologue.organismDbId Homologue.type" sortOrder="Homologue.gene.identifier asc" constraintLogic="A and B">
+  <node path="Homologue" type="Homologue">
   </node>
-  <node path="Orthologue.gene" type="Gene">
+  <node path="Homologue.gene" type="Gene">
   </node>
-  <node path="Orthologue.gene.organism" type="Organism">
+  <node path="Homologue.gene.organism" type="Organism">
   </node>
-  <node path="Orthologue.gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+  <node path="Homologue.gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
     </constraint>
   </node>
-  <node path="Orthologue.orthologue" type="Gene">
+  <node path="Homologue.homologue" type="Gene">
   </node>
-  <node path="Orthologue.orthologue.organism" type="Organism">
+  <node path="Homologue.homologue.organism" type="Organism">
   </node>
-  <node path="Orthologue.orthologue.organism.name" type="String">
-    <constraint op="=" value="Mus musculus" description="" identifier="" code="B">
+  <node path="Homologue.homologue.organism.name" type="String">
+    <constraint op="=" value="Mus musculus" description="" identifier="" editable="true" code="B">
     </constraint>
   </node>
 </query>
@@ -162,23 +162,23 @@
 
           <li>
           <im:querylink text="Orthologues: <i>D. melanogaster</i> vs <i>D. pseudoobscura</i> " skipBuilder="true">
-           <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="A and B">
-  <node path="Orthologue" type="Orthologue">
+<query name="" model="genomic" view="Homologue.gene.identifier Homologue.gene.symbol Homologue.gene.organismDbId Homologue.homologue.identifier Homologue.homologue.symbol Homologue.homologue.organismDbId Homologue.type" sortOrder="Homologue.gene.identifier asc" constraintLogic="A and B">
+  <node path="Homologue" type="Homologue">
   </node>
-  <node path="Orthologue.gene" type="Gene">
+  <node path="Homologue.gene" type="Gene">
   </node>
-  <node path="Orthologue.gene.organism" type="Organism">
+  <node path="Homologue.gene.organism" type="Organism">
   </node>
-  <node path="Orthologue.gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+  <node path="Homologue.gene.organism.name" type="String">
+    <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
     </constraint>
   </node>
-  <node path="Orthologue.orthologue" type="Gene">
+  <node path="Homologue.homologue" type="Gene">
   </node>
-  <node path="Orthologue.orthologue.organism" type="Organism">
+  <node path="Homologue.homologue.organism" type="Organism">
   </node>
-  <node path="Orthologue.orthologue.organism.name" type="String">
-    <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" code="B">
+  <node path="Homologue.homologue.organism.name" type="String">
+    <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" editable="true" code="B">
     </constraint>
   </node>
 </query>
@@ -187,23 +187,23 @@
 
           <li>
             <im:querylink text="Orthologues: <i>A. gambiae</i> vs <i>C. elegans</i> " skipBuilder="true">
-              <query name="" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.organismDbId Orthologue.gene.symbol Orthologue.orthologue.identifier Orthologue.orthologue.organismDbId Orthologue.orthologue.symbol" constraintLogic="A and B">
-  <node path="Orthologue" type="Orthologue">
+<query name="" model="genomic" view="Homologue.gene.identifier Homologue.gene.symbol Homologue.gene.organismDbId Homologue.homologue.identifier Homologue.homologue.symbol Homologue.homologue.organismDbId Homologue.type" sortOrder="Homologue.gene.identifier asc" constraintLogic="A and B">
+  <node path="Homologue" type="Homologue">
   </node>
-  <node path="Orthologue.gene" type="Gene">
+  <node path="Homologue.gene" type="Gene">
   </node>
-  <node path="Orthologue.gene.organism" type="Organism">
+  <node path="Homologue.gene.organism" type="Organism">
   </node>
-  <node path="Orthologue.gene.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+  <node path="Homologue.gene.organism.name" type="String">
+    <constraint op="=" value="Anopheles gambiae str. PEST" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
     </constraint>
   </node>
-  <node path="Orthologue.orthologue" type="Gene">
+  <node path="Homologue.homologue" type="Gene">
   </node>
-  <node path="Orthologue.orthologue.organism" type="Organism">
+  <node path="Homologue.homologue.organism" type="Organism">
   </node>
-  <node path="Orthologue.orthologue.organism.name" type="String">
-    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="B">
+  <node path="Homologue.homologue.organism.name" type="String">
+    <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" editable="true" code="B">
     </constraint>
   </node>
 </query>
