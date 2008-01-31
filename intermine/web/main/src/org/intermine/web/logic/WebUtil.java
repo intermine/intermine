@@ -501,7 +501,9 @@ public abstract class WebUtil
                 rAll = new ArrayList(rAll);
                 statsCalcCache.put(queryPopulation.toString(), rAll);
             }
-
+            LOG.error("statCalcCache: " + statsCalcCache);
+            LOG.error("from: " + querySample.getFrom());
+            
             Iterator itAll = rAll.iterator();
 
             Hypergeometric h = new Hypergeometric(total);
