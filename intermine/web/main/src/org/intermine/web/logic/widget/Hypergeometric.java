@@ -49,7 +49,7 @@ public class Hypergeometric
             if (r == 0) {
                 return 0;
             } else {
-                throw new RuntimeException("Can't calculate log using n = " + n + " and r = " + r);
+                return Double.NEGATIVE_INFINITY;
             }
         }
         if (r == 0) {
@@ -59,7 +59,7 @@ public class Hypergeometric
             return Math.log(n);
         }
         if (n < r) {
-            throw new RuntimeException("Can't calculate log using n = " + n + " and r = " + r);
+            return Double.NEGATIVE_INFINITY;            
         }
         return factorials[n] - (factorials[r] + factorials[n - r]);
     }
@@ -84,6 +84,7 @@ public class Hypergeometric
             p +=
                 Math.exp(logChoose(bigM, i) + logChoose(bigN - bigM, n - i) - logChoose(bigN, n));
         }
+        LOG.error("n = " + n + " k = " + k + " N = " + bigN + " M " + bigM);
         return p;
     }
 }
