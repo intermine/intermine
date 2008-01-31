@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 
-use Test::More tests => 8;
+use Test::More tests => 10;
 
 use XML::Writer;
 use InterMine::Model;
@@ -41,8 +41,8 @@ ok(scalar(@company_depts) == 1);
 ok($company_depts[0]->get("name") eq "big department");
 
 
-my $emp3 = $factory->make_item("Employee");
-$emp3->set("name", "eric");
+my $emp3 = $factory->make_item("CEO");
+$emp3->set("name", "eric (ceo)");
 $emp3->set("age", "12.5");
 
 $dept->add_to_collection("employees", $emp3);
@@ -52,4 +52,18 @@ ok(@{$dept->get("employees")} == 3);
 my @employees = @{$dept->get("employees")};
 ok($employees[0]->get("name") eq "fred");
 ok($employees[1]->get("name") eq "ginger");
-ok($employees[2]->get("name") eq "eric");
+ok($employees[2]->get("name") eq "eric (ceo)");
+
+my $sec1 = $factory->make_item("Secretary");
+$sec1->set("name", "secretary 1");
+
+$emp3->add_to_collection('secretarys', $sec1);
+
+ok(@{$emp3->get('secretarys')} == 1);
+
+my $sec2 = $factory->make_item("Secretary");
+$sec2->set("name", "secretary 2");
+
+$emp3->add_to_collection('secretarys', $sec2);
+
+ok(@{$emp3->get('secretarys')} == 2);

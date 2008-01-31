@@ -162,6 +162,10 @@ sub get
   my $fieldname = shift;
   my $field = $self->get_object_field_by_name($fieldname);
 
+  if (!defined $field) {
+    die qq(object ") . $self->to_string() . qq(" doesn't have a field named: $fieldname\n);
+  }
+
   my $retval = $self->{$fieldname};
   if (defined $retval) {
     return $retval;
@@ -183,14 +187,18 @@ sub add_to_collection
   my $field = $self->get_object_field_by_name($name);
 
   if (ref $field ne 'InterMine::Model::Collection') {
-    die "can't add $value to a field ($name in $self) that isn't a collection\n";
+    die "can't add $value to a field ($name in " . $self->to_string() .
+        ") that isn't a collection\n";
   }
 
   if (ref $value ne 'InterMine::Item') {
-    die qq(can't add value "$value" to a collection $name in $self as it isn't an Item\n);
+    die qq(can't add value "$value" to a collection $name in ) . $self->to_string() .
+        qq(as it isn't an Item\n);
   }
 
-  push @{$self->get($name)}, $value;
+  my @old_val = @{$self->get($name)};
+  push @old_val, $value;
+  $self->set($name, \@old_val);
 }
 
 sub model
