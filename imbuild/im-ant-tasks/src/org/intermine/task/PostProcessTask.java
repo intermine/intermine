@@ -134,7 +134,9 @@ public class PostProcessTask extends Task
     }
 
     private void doCorePostProcess (String postProcessName) {
-        PostProcess p = (PostProcess) project.getPostProcesses().get(postProcessName);
+        System.err.print("Performing postprocess: " + postProcessName + "\n");
+
+        PostProcess p = project.getPostProcesses().get(postProcessName);
         try {
             Task pp = newPostProcessTask();
             setProperty(pp, "operation", postProcessName);
@@ -170,7 +172,7 @@ public class PostProcessTask extends Task
                                            project.getType() + File.separator + Integrate.SOURCES),
                                            s.getType());
 
-        System.out.print("Performing postprocess on source:" + source + ", in dir: " + sourceDir
+        System.err.print("Performing postprocess on source:" + source + ", in dir: " + sourceDir
                          + "\n");
 
         Ant ant = new Ant();
