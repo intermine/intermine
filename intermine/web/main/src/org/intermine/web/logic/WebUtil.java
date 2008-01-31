@@ -522,8 +522,11 @@ public abstract class WebUtil
                                             countAll.intValue(), total);
                     try {
                         resultsMap.put(id, new BigDecimal(p));
-                    } catch (Exception e) {                        
-                        throw new RuntimeException(p + " isn't a double", e);
+                    } catch (Exception e) {
+                        String msg = p + " isn't a double.  calculated using sample size: " 
+                        + countBag + " and population size: " + countAll + ".  population query " 
+                        + "used: " + queryPopulation.toString();
+                        throw new RuntimeException(msg, e);
                     }
                 }
             }
