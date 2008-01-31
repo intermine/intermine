@@ -3,7 +3,7 @@ var tdColorArray = new Array();
 
  
 function addId2Bag(id,row,parentId,issueType){
-    document.getElementById('removeAllLink').className = "fakelink";
+    setLinkState('removeAllLink', 'active');
     if(document.getElementById('add_'+issueType+'_'+id).className=='fakelink'){
         document.getElementById('add_'+issueType+'_'+id).className = '';
         document.getElementById('rem_'+issueType+'_'+id).className = "fakelink";
@@ -34,12 +34,13 @@ function addId2Bag(id,row,parentId,issueType){
             duplicateArray[parentId] = idArray;
         }
         toggleForm(1);
+		setLinkState(issueType+'removeAllLink', 'active');
     }    
 
 }
 
 function removeIdFromBag(id,row, parentId, issueType){
-	document.getElementById('addAllLink').className = "fakelink";
+    setLinkState('addAllLink', 'active');
     if(document.getElementById('rem_'+issueType+'_'+id).className=='fakelink'){
         document.getElementById('rem_'+issueType+'_'+id).className = '';
         document.getElementById('add_'+issueType+'_'+id).className = "fakelink";
@@ -72,7 +73,8 @@ function removeIdFromBag(id,row, parentId, issueType){
             }
             duplicateArray[parentId] = idArrayCopy;
         }      
-        toggleForm(document.getElementById('matchCount').innerHTML);        
+        toggleForm(document.getElementById('matchCount').innerHTML);
+        setLinkState(issueType+'addAllLink', 'active');
     }
 }
 
@@ -106,7 +108,6 @@ function toggleBagLinks(issue, action) {
 
 	toggleBagLink(issue, action);
 	if (issue == 'all') {
-
 		toggleBagLink('lowQ', action);
 		toggleBagLink('duplicate', action);
 		toggleBagLink('converted', action);
@@ -122,15 +123,23 @@ function toggleBagLink(issue, action) {
 		addAllLink = issue + addAllLink;
 		removeAllLink = issue + removeAllLink;
 	}
-	if (document.getElementById(addAllLink)) {
-	if (action == "remove") {
-		document.getElementById(addAllLink).className = "fakelink";
-		document.getElementById(removeAllLink).className = "";
+	if (action == 'remove') {
+		setLinkState(addAllLink, 'active');
+		setLinkState(removeAllLink, 'passive');
 	} else {
-		document.getElementById(addAllLink).className = "";
-		document.getElementById(removeAllLink).className = "fakelink";
+		setLinkState(addAllLink, 'passive');
+		setLinkState(removeAllLink, 'active');
 	}
-	}
+
 }
 
+function setLinkState(link, state) {
+	if (document.getElementById(link)) {
+		if (state == 'active') {
+			document.getElementById(link).className = "fakelink";
+		} else {
+			document.getElementById(link).className = "";
+		}
+	}	
+}
 
