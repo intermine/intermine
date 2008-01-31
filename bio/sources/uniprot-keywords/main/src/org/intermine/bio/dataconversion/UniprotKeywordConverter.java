@@ -212,7 +212,7 @@ public class UniprotKeywordConverter extends FileConverter
                             if (!synCollection.getRefIds().isEmpty()) {
                                 keyword.addCollection(synCollection);
                             }
-                            keyword.addAttribute(new Attribute("description", descr));
+                            keyword.setAttribute("description", descr);
                             keyword.setReference("ontology", ontology.getIdentifier());
                             writer.store(ItemHelper.convert(keyword));
                         }
@@ -233,7 +233,7 @@ public class UniprotKeywordConverter extends FileConverter
             Item item = (Item) map.get(title);
             if (item == null) {
                 item = createItem(itemType);
-                item.addAttribute(new Attribute(titleType, title));
+                item.setAttribute(titleType, title);
                 map.put(title, item);
 
             }

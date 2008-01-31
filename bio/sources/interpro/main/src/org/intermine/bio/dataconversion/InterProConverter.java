@@ -334,8 +334,8 @@ public class InterProConverter extends FileConverter
             if (synonyms.get(key) == null) {
                 Item syn = createItem("Synonym");
                 syn.addReference(new Reference("subject", subjectId));
-                syn.addAttribute(new Attribute("type", type));
-                syn.addAttribute(new Attribute("value", value));
+                syn.setAttribute("type", type);
+                syn.setAttribute("value", value);
                 syn.addReference(new Reference("source", dbId));
                 synonyms.put(key, syn);
                 delayedItems.add(syn);
