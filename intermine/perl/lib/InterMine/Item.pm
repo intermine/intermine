@@ -174,6 +174,25 @@ sub get
   }
 }
 
+sub add_to_collection
+{
+  my $self = shift;
+  my $name = shift;
+  my $value = shift;
+
+  my $field = $self->get_object_field_by_name($name);
+
+  if (ref $field ne 'InterMine::Model::Collection') {
+    die "can't add $value to a field ($name in $self) that isn't a collection\n";
+  }
+
+  if (ref $value ne 'InterMine::Item') {
+    die qq(can't add value "$value" to a collection $name in $self as it isn't an Item\n);
+  }
+
+  push @{$self->get($name)}, $value;
+}
+
 sub model
 {
   my $self = shift;
