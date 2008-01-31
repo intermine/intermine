@@ -63,7 +63,7 @@ public class WebUtilTest extends TestCase
     }
     
     public void testBonferroni() throws Exception {
-        Map<String, BigDecimal> adjustedMap = WebUtil.calcErrorCorrection("Bonferroni", maxValue, bagsize, resultsMap);
+        Map<String, BigDecimal> adjustedMap = WebUtil.calcErrorCorrection("Bonferroni", maxValue, resultsMap);
        
         // rounding issue
         for (String label : bonferroniMap.keySet()) {
@@ -87,7 +87,7 @@ public class WebUtilTest extends TestCase
         p = p * (bagsize / (bagsize -2) );
         benjaminiMap.put(id[2], new BigDecimal(p));
         
-       Map<String, BigDecimal> adjustedMap = WebUtil.calcErrorCorrection("BenjaminiHochberg", maxValue, bagsize, resultsMap);
+       Map<String, BigDecimal> adjustedMap = WebUtil.calcErrorCorrection("BenjaminiHochberg", maxValue, resultsMap);
         
         // rounding issue
         for (String label : benjaminiMap.keySet()) {
