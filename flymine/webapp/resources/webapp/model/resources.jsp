@@ -215,7 +215,7 @@
           </li>
 
         <li>
-            <im:querylink text="All P-element insertions (including Exelixis and DrosDel)" skipBuilder="true">
+            <im:querylink text="All transposon insertions (including Exelixis and DrosDel)" skipBuilder="true">
               <query name="" model="genomic" view="TransposableElementInsertionSite.identifier TransposableElementInsertionSite.type TransposableElementInsertionSite.subType TransposableElementInsertionSite.chromosome.identifier TransposableElementInsertionSite.chromosomeLocation.start TransposableElementInsertionSite.chromosomeLocation.end">
                 <node path="TransposableElementInsertionSite" type="TransposableElementInsertionSite">
                 </node>
