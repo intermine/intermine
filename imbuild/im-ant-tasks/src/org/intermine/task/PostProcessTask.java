@@ -88,6 +88,10 @@ public class PostProcessTask extends Task
         this.action = action;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void execute() throws BuildException {
         if (projectXml == null) {
             throw new BuildException("no projectXml specified");
@@ -106,10 +110,7 @@ public class PostProcessTask extends Task
 
         // Default - do it all
         if ("".equals(action)) {
-            Map postProcessMap = project.getPostProcesses();
-            for (Iterator iter = postProcessMap.keySet().iterator(); iter.hasNext(); ) {
-                String name = iter.next().toString();
-
+            for (String name: project.getPostProcesses().keySet()) {
                 System.out.print(" executing post process: " + name + "\n");
 
                 if (DO_SOURCES.equals(name)) {
@@ -141,9 +142,7 @@ public class PostProcessTask extends Task
             Task pp = newPostProcessTask();
             setProperty(pp, "operation", postProcessName);
 
-            Iterator iter = p.getUserProperties().iterator();
-            while (iter.hasNext()) {
-                UserProperty up = (UserProperty) iter.next();
+            for (UserProperty up: p.getUserProperties()) {
                 if (up.isLocation()) {
                     pp.getProject().setUserProperty(up.getName(), up.getLocation());
                 } else {
@@ -159,9 +158,9 @@ public class PostProcessTask extends Task
     }
 
     private void doAllSourcePostProcessing() {
-        Iterator iter = project.getSources().entrySet().iterator();
+        Iterator<Map.Entry<String, Source>> iter = project.getSources().entrySet().iterator();
         while (iter.hasNext()) {
-            String thisSource = (String) ((Map.Entry) iter.next()).getKey();
+            String thisSource = iter.next().getKey();
             doSourcePostProcess(thisSource);
         }
     }
@@ -203,9 +202,9 @@ public class PostProcessTask extends Task
         ant.execute();
     }
 
-    private void initAntProps(Ant ant, Iterator propertyIter) {
+    private void initAntProps(Ant ant, Iterator<UserProperty> propertyIter) {
         while (propertyIter.hasNext()) {
-            UserProperty sp = (UserProperty) propertyIter.next();
+            UserProperty sp = propertyIter.next();
             Property prop = ant.createProperty();
             prop.setName(sp.getName());
             if (sp.isLocation()) {
