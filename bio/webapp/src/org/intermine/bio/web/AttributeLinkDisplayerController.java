@@ -36,7 +36,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 
 /**
- *
+ * Set up maps for the attributeLinkDisplayer.jsp
  * @author Kim Rutherford
  */
 public class AttributeLinkDisplayerController extends TilesAction
@@ -52,8 +52,7 @@ public class AttributeLinkDisplayerController extends TilesAction
     }
 
     /**
-     * @see TilesAction#execute(ComponentContext, ActionMapping, ActionForm, HttpServletRequest,
-     *                          HttpServletResponse)
+     * {@inheritDoc}
      */
     @Override
     public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
