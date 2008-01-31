@@ -10,7 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import org.apache.log4j.Logger;
+
 
 /**
  * Calculates p-values for go terms using the hypergeometric distribution.
@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 public class Hypergeometric
 {
     static double[] factorials;
-    private static final Logger LOG = Logger.getLogger(Hypergeometric.class);
+    
     /**
      * Builds an array of factorials so we don't have to calculate it each time.
      * @param numGenes the number of genes in the list
@@ -84,7 +84,6 @@ public class Hypergeometric
             p +=
                 Math.exp(logChoose(bigM, i) + logChoose(bigN - bigM, n - i) - logChoose(bigN, n));
         }
-        LOG.error("n = " + n + " k = " + k + " N = " + bigN + " M " + bigM);
         return p;
     }
 }
