@@ -49,8 +49,7 @@ public class Hypergeometric
             if (r == 0) {
                 return 0;
             } else {
-                LOG.error("Can't calculate log using n = " + n + " and r = " + r);
-                return Double.NEGATIVE_INFINITY;
+                throw new RuntimeException("Can't calculate log using n = " + n + " and r = " + r);
             }
         }
         if (r == 0) {
@@ -60,8 +59,7 @@ public class Hypergeometric
             return Math.log(n);
         }
         if (n < r) {
-            LOG.error("Can't calculate log using n = " + n + " and r = " + r);
-            return Double.NEGATIVE_INFINITY;            
+            throw new RuntimeException("Can't calculate log using n = " + n + " and r = " + r);
         }
         return factorials[n] - (factorials[r] + factorials[n - r]);
     }
