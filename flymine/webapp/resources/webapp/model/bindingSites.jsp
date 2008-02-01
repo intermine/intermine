@@ -146,6 +146,13 @@
             </im:querylink>
           </li>
 
+         <li>
+            <im:querylink text="Tiffin motifs associated with expression terms"
+                          skipBuilder="true">
+          <query name="" model="genomic" view="Motif.identifier Motif.expressionTerms.name" sortOrder="Motif.identifier asc">
+         </query>
+           </im:querylink>
+          </li>
         </ul>
       </div>
     </td>
