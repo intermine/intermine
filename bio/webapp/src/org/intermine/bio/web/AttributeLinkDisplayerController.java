@@ -34,10 +34,12 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -225,13 +227,24 @@ public class AttributeLinkDisplayerController extends TilesAction
         q.addToSelect(qf);
 
         QueryField cf = new QueryField(queryClass, "id");
-        BagConstraint bagC = new BagConstraint(cf, ConstraintOp.IN, bag.getOsb());
-        q.setConstraint(bagC);
 
+        
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        //added because sometimes identifier is null, and StringUtil.join complains
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
+        
+        BagConstraint bagC = new BagConstraint(cf, ConstraintOp.IN, bag.getOsb());
+        //q.setConstraint(bagC);
+
+        cs.addConstraint(sc);
+        cs.addConstraint(bagC);
+        q.setConstraint(cs);
+        
         results = os.executeSingleton(q);
         results.setBatchSize(10000);
 
         return StringUtil.join(results, ",");
-    }
+}
 
 }
