@@ -32,8 +32,16 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.InterMineBag;
 
 /**
  * Set up maps for the attributeLinkDisplayer.jsp
@@ -61,11 +69,27 @@ public class AttributeLinkDisplayerController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response) {
         ServletContext servletContext = request.getSession().getServletContext();
-        InterMineObject imo = (InterMineObject) request.getAttribute("object");
+
+        InterMineBag bag = (InterMineBag) request.getAttribute("bag");
+
+        InterMineObject imo = null;
+        
+        if (bag == null) {
+            imo = (InterMineObject) request.getAttribute("object");
+        }
+
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
-        Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
-        StringBuffer sb = new StringBuffer();
+            
+        Set<ClassDescriptor> classDescriptors;
+        
+        if (imo == null) {
+            classDescriptors = bag.getClassDescriptors();
+        } else {  
+            classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
+        }
+               
+        StringBuffer sb = new StringBuffer();        
         for (ClassDescriptor cd : classDescriptors) {
             if (sb.length() <= 0) {
                 // (?: is a non-matching group
@@ -78,19 +102,20 @@ public class AttributeLinkDisplayerController extends TilesAction
         sb.append(")");
         Organism organismReference = null;
 
+        if (imo != null) {
+            try {
+                organismReference = (Organism) TypeUtil.getFieldValue(imo, "organism");
+            } catch (IllegalAccessException e) {
+                // no organism field
+            }
+        } 
 
-        try {
-            organismReference = (Organism) TypeUtil.getFieldValue(imo, "organism");
-        } catch (IllegalAccessException e) {
-            // no organism field
-        }
-
-        String geneOrgKey = sb.toString() + "(\\.(";
+        String geneOrgKey = sb.toString();
         if (organismReference == null || organismReference.getTaxonId() == null) {
-            geneOrgKey += null + "|\\*))?";
+            geneOrgKey += "(\\.(\\*|[\\d]+))?";
         } else {
             // we need to check against * as well in case we want it to work for all taxonIds
-            geneOrgKey += organismReference.getTaxonId() + "|\\*))?";
+            geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
         }
 
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
@@ -99,7 +124,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp =
-            "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)\\.(url|text|imageName)";
+        "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)(\\.list)?\\.(url|text|imageName)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
         for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
@@ -107,12 +132,19 @@ public class AttributeLinkDisplayerController extends TilesAction
             String value = (String) entry.getValue();
             Matcher matcher = p.matcher(key);
             if (matcher.matches()) {
+                
                 String configKey = matcher.group(1);
                 className = matcher.group(2);
                 String attrName = matcher.group(5);
-                String propType = matcher.group(6);
+                String imType = matcher.group(6);                
+                String propType = matcher.group(7);
 
+                // to pick the right type of link (list or object)
+                if (imo != null && imType != null) { continue; };
+                if (bag != null && imType == null) { continue; };
+                                
                 ConfigMap config;
+
                 if (linkConfigs.containsKey(configKey)) {
                     config = linkConfigs.get(configKey);
                 } else {
@@ -120,21 +152,27 @@ public class AttributeLinkDisplayerController extends TilesAction
                     config.put("attributeName", attrName);
                     linkConfigs.put(configKey, config);
                 }
-
+                   
                 Object attrValue = null;
                 if (config.containsKey("attributeValue")) {
                     attrValue = config.get("attributeValue");
                 } else {
                     try {
-                        attrValue = TypeUtil.getFieldValue(imo, attrName);
+                        if (imo != null) {                
+                            attrValue = TypeUtil.getFieldValue(imo, attrName);
+                        } else { //it's a bag!
+                            attrValue = getIdList(bag, os);
+                        }
+                        if (attrValue != null) {
                         config.put("attributeValue", attrValue);
                         config.put("valid", Boolean.TRUE);
+                        }
                     } catch (IllegalAccessException e) {
                         config.put("attributeValue", e);
                         config.put("valid", Boolean.FALSE);
                         LOG.error("configuration problem in AttributeLinkDisplayerController: "
-                                  + "couldn't get a value for field " + attrName
-                                  + " in class " + className);
+                                + "couldn't get a value for field " + attrName
+                                + " in class " + className);
                     }
                 }
 
@@ -148,13 +186,14 @@ public class AttributeLinkDisplayerController extends TilesAction
                         }
                         config.put("url", url);
                     }
-                } else {
-                    if (propType.equals("imageName")) {
-                        config.put("imageName", value);
-                    } else {
-                        String text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
-                        config.put("text", text);
-                    }
+                }
+                else if (propType.equals("imageName")) {
+                    config.put("imageName", value);
+                } 
+                else if (propType.equals("text")) {
+                    String text;
+                    text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
+                    config.put("text", text);
                 }
             }
         }
@@ -162,4 +201,37 @@ public class AttributeLinkDisplayerController extends TilesAction
         request.setAttribute("attributeLinkClassName", className);
         return null;
     }
+
+    /**
+     * @see 
+     * @param bag the bag
+     * @param os  the object store
+     * @return the string of comma separated identifiers
+     *    */
+    
+    public String getIdList(InterMineBag bag, ObjectStore os) {
+        Results results;
+
+        Query q = new Query();
+        QueryClass queryClass;
+        try {
+            queryClass = new QueryClass(Class.forName(bag.getQualifiedType()));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("no type in the bag??! -> ", e);
+        }
+        q.addFrom(queryClass);
+
+        QueryField qf = new QueryField(queryClass, "identifier");
+        q.addToSelect(qf);
+
+        QueryField cf = new QueryField(queryClass, "id");
+        BagConstraint bagC = new BagConstraint(cf, ConstraintOp.IN, bag.getOsb());
+        q.setConstraint(bagC);
+
+        results = os.executeSingleton(q);
+        results.setBatchSize(10000);
+
+        return StringUtil.join(results, ",");
+    }
+
 }
