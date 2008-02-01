@@ -30,7 +30,7 @@ public class FieldConfig
     private String displayer;
 
     /**
-     * Set the JSTL expression for this field which will be evalutated in the request context when
+     * Set the JSTL expression for this field which will be evaluated in the request context when
      * the JSP is viewed.
      * @param fieldExpr the expression
      */

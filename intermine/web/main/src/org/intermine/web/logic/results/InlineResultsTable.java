@@ -13,6 +13,7 @@ package org.intermine.web.logic.results;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,6 @@ import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.path.Path;
 import org.intermine.path.PathError;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
@@ -51,7 +51,10 @@ public class InlineResultsTable
     protected WebConfig webConfig;
     protected Map webProperties;
     private final Map classKeys;
-
+    private List<ResultElement> resultElementRow;
+    private Map<String, Object> fieldValues;
+    private Map<Object, Map<String, Object>> rowFieldValues;
+    
     /**
      * Construct a new InlineResultsTable object
      * @param results the List to display object
@@ -81,6 +84,7 @@ public class InlineResultsTable
 
         this.model = model;
         this.size = size;
+        
     }
 
     /**
@@ -174,7 +178,8 @@ public class InlineResultsTable
         fieldConfigs = new ArrayList();
         columnFullNames = new ArrayList();
         subList = new ArrayList();
-
+        rowFieldValues = new HashMap();
+        
         Iterator resultsIter;
         if (getSize() == -1) {
             resultsIter = resultsAsList.iterator();
@@ -182,6 +187,7 @@ public class InlineResultsTable
             resultsIter = resultsAsList.subList(0, getSize()).iterator();
         }
 
+        // loop through each row object
         while (resultsIter.hasNext()) {
             Object o = resultsIter.next();
 
@@ -193,25 +199,39 @@ public class InlineResultsTable
             subList.add(o);
 
             Set clds = DisplayObject.getLeafClds(o.getClass(), model);
-
+                        
             // TODO this doesn't cope properly with dynamic classes
             ClassDescriptor theClass = (ClassDescriptor) clds.iterator().next();
 
             List objectFieldConfigs = getRowFieldConfigs(o);
             Iterator objectFieldConfigIter = objectFieldConfigs.iterator();
-
+            fieldValues = new HashMap();
+            
+            // loop through each column
             while (objectFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) objectFieldConfigIter.next();
-
+                String className = theClass.getUnqualifiedName();
+                String expr = fc.getFieldExpr();
+                String pathString = className + "." + expr;
+                Path path = new Path(model, pathString);
+                                
+                fieldValues.put(expr, path.resolve(o));
+                
+//                try {
+//                    fieldValues.put(expr, TypeUtil.getFieldValue(o, expr));
+//                } catch (IllegalAccessException e) {
+//                    // do nothing
+//                }
+                
                 if (!fieldConfigs.contains(fc) && fc.getShowInInlineCollection()) {
-                    fieldConfigs.add(fc);
-
-                    String expr = fc.getFieldExpr();
-
+                    fieldConfigs.add(fc);                    
                     // only add full column names for simple fieldConfigs - ie. ones that specify a
                     // field in the current class
-                    columnFullNames.add(theClass.getUnqualifiedName() + "." + expr);
+                    columnFullNames.add(className + "." + expr);
                 }
+            }
+            if (!fieldValues.isEmpty()) {
+                rowFieldValues.put(o, fieldValues);
             }
         }
     }
@@ -305,5 +325,12 @@ public class InlineResultsTable
             }
         }
         return retList;
+    }
+
+    /**
+     * @return the rowFieldValues
+     */
+    public Map<Object, Map<String, Object>> getRowFieldValues() {
+        return rowFieldValues;
     }
 }
