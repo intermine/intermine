@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -101,7 +102,7 @@ public class DataLoaderHelper
      * @return a Set of PrimaryKeys
      */
     public static Set getPrimaryKeys(ClassDescriptor cld, Source source) {
-        Set keySet = new HashSet();
+        Set keySet = new LinkedHashSet();
         Properties keys = getKeyProperties(source);
         if (keys != null) {
             if (!verifiedSources.contains(source)) {
@@ -253,7 +254,7 @@ public class DataLoaderHelper
                     Set primaryKeys;
 
                     if (source == null) {
-                        primaryKeys = new HashSet(PrimaryKeyUtil.getPrimaryKeys(refCld).values());
+                        primaryKeys = new LinkedHashSet(PrimaryKeyUtil.getPrimaryKeys(refCld).values());
                     } else {
                         primaryKeys = DataLoaderHelper.getPrimaryKeys(refCld, source);
                     }
