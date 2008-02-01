@@ -19,6 +19,11 @@ sub new
     die "no model given to class constructor\n";
   }
 
+  $self->{attributes} = [];
+  $self->{fields} = [];
+  $self->{references} = [];
+  $self->{collections} = [];
+
   bless $self, $class;
   return $self;
 }
