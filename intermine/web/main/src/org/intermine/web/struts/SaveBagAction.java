@@ -124,7 +124,7 @@ public class SaveBagAction extends InterMineAction
         }
         
         if (sbf.getSelectedObjects().length == 0) {
-            ActionMessage actionMessage = new ActionMessage("bag.empty");
+            ActionMessage actionMessage = new ActionMessage("errors.bag.empty");
             recordError(actionMessage, request);
             return mapping.findForward("results");
         }
