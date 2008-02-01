@@ -34,7 +34,7 @@
         <p> Genomics </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Genome annotation - Release 5.4</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -42,7 +42,7 @@
   <tr>
     <td> <i>D. pseudoobscura</i></td>
     <td> Genome annotation - Release 2.0</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -58,7 +58,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> EST data set</td>
-    <td> <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php" target="_new">anoEST database version 8</a></td>
+    <td> <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php" target="_new">anoEST database</a> - version 8</td>
     <td> Kriventseva et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15899967" target="_new">PubMed: 15899967</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -299,7 +299,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Affymetrix microarray-based atlas of gene expression in larval and adult tissues</td>
-    <td> <a href="http://www.flyatlas.org" target="_new">FlyAtlas</a> - 6th July 2007 </td>
+    <td> <a href="http://www.flyatlas.org" target="_new">FlyAtlas</a> - 16th November 2007 </td>
     <td> Chintapalli et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17534367" target="_new">PubMed: 17534367</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -307,7 +307,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis</td>
-    <td> <a href="http://www.utoronto.ca/krause/" target="_new">Fly-FISH</a> - 16th October 2007 </td>
+    <td> <a href="http://www.utoronto.ca/krause/" target="_new">FlyFISH</a> - 16th October 2007 </td>
     <td> Lecuyer et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17923096" target="_new">PubMed: 17923096</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -327,23 +327,23 @@
         <p> Transcriptional Regulation</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Transcriptional cis-regulatory modules (CRMs)</td>
-    <td> <a href="http://redfly.ccr.buffalo.edu/" target="_new">REDfly</a> - 19th October 2007</td>
+    <td> <a href="http://redfly.ccr.buffalo.edu/" target="_new">REDfly</a> - Version 2.0</td>
     <td> Gallo et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16303794" target="_new">PubMed: 16303794</a></td>
     <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr>
     <td> <i>D. melanogaster</i> </td>
-    <td> DNase I footprints</td>
-    <td> <a href="http://www.flyreg.org/" target="_new">FlyREG - Drosophila DNase I Footprint Database</a> - Version 2.0</td>
+    <td> Transcription factor binding sites</td>
+    <td> <a href="http://www.flyreg.org/" target="_new">REDfly</a> - Version 2.0</td>
     <td> Bergman et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468" target="_new">PubMed: 15572468</a></td>
 	<td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td> 
   </tr>
 
   <tr>
     <td> <i>D. melanogaster</i> </td>
-    <td> Regulatory elements</td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td> Enhancers</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -362,7 +362,7 @@
         <p> RNAi</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput cell-based RNAi screens</td>
-    <td> <a href="http://flyrnai.org/" target="_new">Drosophila RNAi Screening Center</a></td>
+    <td> <a href="http://flyrnai.org/" target="_new">Drosophila RNAi Screening Center</a> - 3rd January 2008</td>
     <td> Flockhart et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381918" target="_new">PubMed: 16381918</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -370,7 +370,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> RNAi data from in vivo experiments</td>
-    <td> <a href="http://www.wormbase.org" target="_new">WormBase</a> - 12th February 2007</td>
+    <td> <a href="http://www.wormbase.org" target="_new">WormBase</a> - Release 185 </td>
     <td> Bieri et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099234" target="_new">PubMed: 17099234</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -381,7 +381,7 @@
         <p> Pathways</p></html:link></td>
     <td> <i>D. melanogaster</i></td>
     <td> Pathway information and the genes involved in them</td>
-    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 44</td>
+    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 45</td>
     <td> Kanehisa et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381885" target="_new">PubMed: 16381885</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -410,8 +410,8 @@
 
   <tr>
     <td> <i>D. melanogaster</i> </td>
-    <td> Insertions</td>
-    <td> <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis; loaded from FlyBase v.5.3</a></td>
+    <td> Insertions from <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis</a></td>
+    <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - version FB2008_01</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
    </tr>
@@ -419,7 +419,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions</td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td>&nbsp;</td>
   </tr>
@@ -454,21 +454,21 @@
         <p> Literature</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 14th November 2007</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 23rd December 2007</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
 
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
 
     <td> <i>D. pseudoobscura</i> </td>
     <td> Gene versus publications</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a></td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -476,7 +476,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 14th November 2007</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 23rd December 2007</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -484,7 +484,7 @@
   <tr>
     <td> <i>S. cerevisiae</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 14th November 2007</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 23rd December 2007</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
