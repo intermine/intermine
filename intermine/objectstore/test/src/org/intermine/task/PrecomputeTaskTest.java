@@ -10,7 +10,6 @@ package org.intermine.task;
  *
  */
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,21 +17,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import junit.framework.Test;
-
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.SqlGenerator;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryTestCase;
+
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.SqlGenerator;
+
+import java.io.InputStream;
+
+import junit.framework.Test;
 
 /**
  * Tests for PrecomputeTask.
@@ -65,10 +66,11 @@ public class PrecomputeTaskTest extends QueryTestCase
      * Test that PrecomputeTask creates the right pre-computed tables
      */
     public void testExecute() throws Exception {
-        DummyPrecomputeTask task = new DummyPrecomputeTask();
+        PrecomputeTask task = new PrecomputeTask();
 
         task.setAlias("os.unittest");
         task.setMinRows(new Integer(1));
+        PrecomputeTask.setTestMode();
 
         Properties summaryProperties;
 
@@ -113,10 +115,10 @@ public class PrecomputeTaskTest extends QueryTestCase
             "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id"
         };
 
-        assertEquals(expectedQueries.length, task.queries.size());
+        assertEquals(expectedQueries.length, task.testQueries.size());
 
         for (int i = 0; i < expectedQueries.length; i++) {
-            Query generatedQuery = (Query) task.queries.get(i);
+            Query generatedQuery = (Query) task.testQueries.get(i);
             assertEquals(expectedQueries[i], "" + generatedQuery);
             String generatedSql = SqlGenerator.generate(generatedQuery, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).getDatabase(), null, 4, Collections.EMPTY_MAP);
             assertEquals(expectedSql[i], generatedSql);
@@ -125,8 +127,7 @@ public class PrecomputeTaskTest extends QueryTestCase
 
     public void testConstructQueries() throws Exception {
         PrecomputeTask pt = new PrecomputeTask();
-        pt.os = os;
-        List actual = pt.constructQueries("Employee department Department", true);
+        List actual = pt.constructQueries(true, os.getModel(), "Employee department Department");
 
 
         QueryClass qcEmpl = new QueryClass(Employee.class);
@@ -158,50 +159,10 @@ public class PrecomputeTaskTest extends QueryTestCase
         compareQueryLists(expected, actual);
     }
 
-
-    public void testGetOrderedQueries() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
-        pt.os = os;
-
-        Query q1 = new Query();
-        QueryClass qc1 = new QueryClass(Employee.class);
-        QueryClass qc2 = new QueryClass(Company.class);
-
-        q1.addToSelect(qc1);
-        q1.addFrom(qc1);
-        q1.addToSelect(qc2);
-        q1.addFrom(qc2);
-
-        q1.addToOrderBy(qc1);
-        q1.addToOrderBy(qc2);
-
-        Query q2 = new Query();
-        q2.addToSelect(qc1);
-        q2.addFrom(qc1);
-        q2.addToSelect(qc2);
-        q2.addFrom(qc2);
-
-        q2.addToOrderBy(qc2);
-        q2.addToOrderBy(qc1);
-
-        assertEquals(2, pt.getOrderedQueries(q1).size());
-
-        List queries = new ArrayList(Arrays.asList(new Object[] {q2, q1}));
-        compareQueryLists(queries, pt.getOrderedQueries(q1));
-    }
-
-
     protected void compareQueryLists(List a, List b) {
         assertEquals(a.size(), b.size());
         for (int i = 0; i< a.size(); i++) {
             assertEquals((Query) a.get(i), (Query) b.get(i));
-        }
-    }
-
-    class DummyPrecomputeTask extends PrecomputeTask {
-        protected List queries = new ArrayList();
-        protected void precompute(Query query, Collection indexes) {
-            queries.add(query);
         }
     }
 }

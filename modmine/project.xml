@@ -115,6 +115,7 @@
 
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
+    <post-process name="precompute-queries"/>
     <post-process name="summarise-objectstore"/>
   </post-processing>
 </project>
