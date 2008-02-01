@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
@@ -134,9 +135,13 @@ public class PerformanceTester
                     ((ObjectStoreInterMineImpl) productionOs).getDatabase(), (Map) null);
             System .out.println("Thread " + threadNo + ": executing template " + templateName
                     + " with query " + q + ", SQL: " + sqlString);
-            productionOs.execute(q, 0, 1000, false, false, ObjectStore.SEQUENCE_IGNORE);
+            List results = productionOs.execute(q, 0, 1000, false, false,
+                    ObjectStore.SEQUENCE_IGNORE);
             System .out.println("Thread " + threadNo + ": template " + templateName + " took "
                     + (System.currentTimeMillis() - queryStartTime) + " ms");
+            if (results.isEmpty()) {
+                System .out.println("Template " + templateName + " does not return any rows");
+            }
         } catch (Exception e) {
             System .err.println("Thread " + threadNo + ": template " + templateName
                     + " could not be run.");
