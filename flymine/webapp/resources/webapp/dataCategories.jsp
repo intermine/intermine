@@ -34,7 +34,7 @@
         <p> Genomics </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Genome annotation - Release 5.4</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -42,7 +42,7 @@
   <tr>
     <td> <i>D. pseudoobscura</i></td>
     <td> Genome annotation - Release 2.0</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -58,7 +58,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> EST data set</td>
-    <td> <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php" target="_new">anoEST database</a> - version 8</td>
+    <td> <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php" target="_new">anoEST database</a> - Version 8</td>
     <td> Kriventseva et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15899967" target="_new">PubMed: 15899967</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -343,7 +343,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Enhancers</td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -411,7 +411,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions from <a href="http://drosophila.med.harvard.edu" target="_new">Exelixis</a></td>
-    <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - version FB2008_01</td>
+    <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2008_01</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
    </tr>
@@ -419,7 +419,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions</td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td>&nbsp;</td>
   </tr>
@@ -461,14 +461,14 @@
 
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
 
     <td> <i>D. pseudoobscura</i> </td>
     <td> Gene versus publications</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - version FB2008_01</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
