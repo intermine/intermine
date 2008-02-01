@@ -62,6 +62,6 @@ CLOSE_PAREN  : ')' ;
 WS           : ' ' { $setType(Token.SKIP); } ; // Ignore this token
 
 IDENTIFIER
-    :  ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+    :  ('a'..'z'|'_') ('a'..'z'|'_'|'0'..'9')*
     ;
     
