@@ -50,7 +50,7 @@ function selectColumnCheckboxes(columnsToDisable, columnsToHighlight, columnInde
 }
 
 /**
- * Ran when a user selects a keyfield in the results table.  internal is true
+ * Run when a user selects a keyfield in the results table.  internal is true
  * when called from other methods in this file (ie. not from an onclick in table.jsp)
  **/
 function itemChecked(columnsToDisable, columnsToHighlight, checkedRow, checkedColumn, checkbox, internal) {
@@ -123,6 +123,7 @@ function unselectColumnCheckbox(column) {
             }
         }
     }
+	setToolbarAvailability(true);
 }
 
 function setToolbarAvailability(status) {
@@ -133,4 +134,10 @@ function setToolbarAvailability(status) {
                 $('addToBag').disabled = status;
             }
     }
+}
+
+function onSaveBagEnter(formName) {
+	if (Event && (Event.keyCode == 13)) {
+		validateBagName(formName);
+	}
 }
