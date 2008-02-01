@@ -156,11 +156,6 @@
                         minRows="0"/>
   </target>
 
-  <target name="precompute-queries-test" depends="-init-build-db, -init-app-properties">
-    <precompute-queries alias="${objectstore.name}" testMode="true"
-                        minRows="0"/>
-  </target>
-
   <target name="precompute-templates" depends="-init-build-db, -init-app-properties">
     <precompute-templates alias="${objectstore.name}"
                           userProfileAlias="${userprofile.objectstorewriter.name}"

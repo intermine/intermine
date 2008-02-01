@@ -21,10 +21,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.PathQueryUtil;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -32,13 +28,17 @@ import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.iql.IqlQuery;
 
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -56,14 +56,12 @@ public class PrecomputeTask extends Task
     private static final Logger LOG = Logger.getLogger(PrecomputeTask.class);
 
     protected String alias;
-    protected boolean testMode;
     protected int minRows = -1;
     // set by readProperties()
-    protected Properties precomputeProperties = null;
-    protected ObjectStore os = null;
-    private static final String TEST_QUERY_PREFIX = "test.query.";
-    // private boolean selectAllFields = true;   // put all available fields on the select list
-    private boolean createAllOrders = false;  // create same table with all possible orders
+
+    // used only by PrecomputeTaskTest
+    protected static List testQueries = new ArrayList();
+    private static boolean testMode = false;
 
     /**
      * Set the ObjectStore alias
@@ -94,6 +92,8 @@ public class PrecomputeTask extends Task
             throw new BuildException("minRows attribute is not set");
         }
 
+        ObjectStore os;
+
         try {
             os = ObjectStoreFactory.getObjectStore(alias);
         } catch (Exception e) {
@@ -104,31 +104,22 @@ public class PrecomputeTask extends Task
             throw new BuildException(alias + " isn't an ObjectStoreInterMineImpl");
         }
 
-        precomputeModel();
+        precompute(false, os, minRows);
     }
 
 
     /**
      * Create precomputed tables for the given ObjectStore.  This method is also called from
      * PrecomputeTaskTest.
+     * @param createAllOrders if true construct all permutations of order by for the QueryClass
+     *   objects on the from list
+     * @param os The ObjectStore to add precomputed tables to
+     * @param minRows don't create any precomputed tables with less than this many rows
      */
-    protected void precomputeModel() {
-        readProperties();
+    public static void precompute(boolean createAllOrders, ObjectStore os, int minRows) {
+        Properties properties = readProperties(os.getModel().getName());
 
-        if (testMode) {
-            PrintStream outputStream = System.out;
-            outputStream.println("Starting tests");
-            // run and ignore so that the results are cached for the next test
-            runTestQueries();
-
-            long start = System.currentTimeMillis();
-            outputStream.println("Running tests before precomputing");
-            runTestQueries();
-            outputStream.println("tests took: " + (System.currentTimeMillis() - start) / 1000
-                                 + " seconds");
-        }
-
-        Map pq = getPrecomputeQueries();
+        Map pq = getPrecomputeQueries(createAllOrders, os.getModel(), properties);
         LOG.info("pq.size(): " + pq.size());
         Iterator iter = pq.entrySet().iterator();
 
@@ -162,42 +153,26 @@ public class PrecomputeTask extends Task
                             indexes.add(qo);
                         }
                     }
-                    precompute(query, indexes);
-
-                    if (testMode) {
-                        PrintStream outputStream = System.out;
-                        long start = System.currentTimeMillis();
-                        outputStream.println("Running tests after precomputing " + key + ": "
-                                             + query);
-                        runTestQueries();
-                        outputStream.println("tests took: "
-                                             + (System.currentTimeMillis() - start) / 1000
-                                             + " seconds");
-                    }
+                    precomputeQuery(os, query, indexes);
                 }
             }
-        }
-
-        if (testMode) {
-            PrintStream outputStream = System.out;
-            long start = System.currentTimeMillis();
-            outputStream.println("Running tests after all precomputes");
-            runTestQueries();
-            outputStream.println("tests took: "
-                                 + (System.currentTimeMillis() - start) / 1000
-                                 + " seconds");
         }
     }
 
 
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
+     * @param os the ObjectStore to precompute
      * @param query the query to precompute
      * @param indexes the index QueryNodes
      * @throws BuildException if the query cannot be precomputed.
      */
-    protected void precompute(Query query, Collection indexes)
+    private static void precomputeQuery(ObjectStore os, Query query, Collection indexes)
         throws BuildException {
+        if (testMode) {
+            testQueries.add(query);
+        }
+
         long start = System.currentTimeMillis();
 
         try {
@@ -215,11 +190,17 @@ public class PrecomputeTask extends Task
     /**
      * Get a Map of keys (from the precomputeProperties file) to Query objects to precompute.
      * have no objects
+     * @param createAllOrders if true construct all permutations of order by for the QueryClass
+     *   objects on the from list
+     * @param model the Model
+     * @param precomputeProperties the properties specifying which queries to precompute
      * @return a Map of keys to Query objects
      * @throws BuildException if the query cannot be constructed (for example when a class or the
      * collection doesn't exist
      */
-    protected Map getPrecomputeQueries() throws BuildException {
+    private static Map getPrecomputeQueries(boolean createAllOrders, Model model,
+                                            Properties precomputeProperties)
+        throws BuildException {
         Map returnMap = new TreeMap();
 
         // TODO - read selectAllFields and createAllOrders from properties
@@ -235,24 +216,24 @@ public class PrecomputeTask extends Task
 
             if (precomputeKey.startsWith("precompute.query")) {
                 String iqlQueryString = value;
-                Query query = parseQuery(iqlQueryString, precomputeKey);
+                Query query = parseQuery(model, iqlQueryString, precomputeKey);
                 List list = new ArrayList();
                 list.add(query);
                 returnMap.put(precomputeKey, list);
             } else {
                 if (precomputeKey.startsWith("precompute.constructquery")) {
                     try {
-                        List constructedQueries = constructQueries(value, createAllOrders);
+                        List constructedQueries =
+                            constructQueries(createAllOrders, model, value);
                         returnMap.put(precomputeKey, constructedQueries);
                     } catch (Exception e) {
                         throw new BuildException(e);
                     }
                 } else {
-                    if (!precomputeKey.startsWith(TEST_QUERY_PREFIX)) {
-                        throw new BuildException("unknown key: '" + precomputeKey
-                                                 + "' in properties file "
-                                                 + getPropertiesFileName());
-                    }
+                    throw new BuildException("unknown key: '" + precomputeKey
+                                             + "' in properties file "
+                                             + getPropertiesFileName(model.getName()));
+
                 }
             }
         }
@@ -264,25 +245,26 @@ public class PrecomputeTask extends Task
     /**
      * Create queries for given path.  If path has a '+' next to any class then
      * expand to include all subclasses.
+     * @param createAllOrders if true construct all permutations of order by for the QueryClass
+     *   objects on the from list
+     * @param model the Model
      * @param path the path to construct a query for
-     * @param createAllOrdersFlag if true then create a query for all possible orders of QueryClass
-     * objects on the from list of the query
      * @return a list of queries
      * @throws ClassNotFoundException if problem processing path
      * @throws IllegalArgumentException if problem processing path
      */
-    protected List constructQueries(String path, boolean createAllOrdersFlag)
+    protected static List constructQueries(boolean createAllOrders, Model model, String path)
         throws ClassNotFoundException, IllegalArgumentException {
 
         List queries = new ArrayList();
 
         // expand '+' to all subclasses in path
-        Set paths = PathQueryUtil.expandPath(os.getModel(), path);
+        Set paths = PathQueryUtil.expandPath(model, path);
         Iterator pathIter = paths.iterator();
         while (pathIter.hasNext()) {
             String nextPath = (String) pathIter.next();
-            Query q = PathQueryUtil.constructQuery(os.getModel(), nextPath);
-            if (createAllOrdersFlag) {
+            Query q = PathQueryUtil.constructQuery(model, nextPath);
+            if (createAllOrders) {
                 queries.addAll(getOrderedQueries(q));
             } else {
                 queries.add(q);
@@ -298,7 +280,7 @@ public class PrecomputeTask extends Task
      * @param q the Query
      * @return clones of the Query with all permutations of orderBy
      */
-    protected List getOrderedQueries(Query q) {
+    private static List getOrderedQueries(Query q) {
         List queryList = new ArrayList();
 
         Set permutations = permutations(q.getOrderBy().size());
@@ -325,7 +307,7 @@ public class PrecomputeTask extends Task
      * @param qc the QueryClass that the QueryFields should be created for
      * @param fieldNames the field names to create QueryFields for
      */
-    protected void addFieldsToQuery(Query q, QueryClass qc, List fieldNames) {
+    private void addFieldsToQuery(Query q, QueryClass qc, List fieldNames) {
         Iterator fieldNameIter = fieldNames.iterator();
 
         while (fieldNameIter.hasNext()) {
@@ -342,11 +324,13 @@ public class PrecomputeTask extends Task
      * For a given IQL query, return a Query object.
      * @param iqlQueryString the IQL String
      * @param key the key from the properties file
+     * @param model the Model
      * @return a Query object
      * @throws BuildException if the IQL String cannot be parsed.
      */
-    protected Query parseQuery(String iqlQueryString, String key) throws BuildException {
-        IqlQuery iqlQuery = new IqlQuery(iqlQueryString, os.getModel().getPackageName());
+    private static Query parseQuery(Model model, String iqlQueryString, String key)
+        throws BuildException {
+        IqlQuery iqlQuery = new IqlQuery(iqlQueryString, model.getPackageName());
 
         try {
             return iqlQuery.toQuery();
@@ -356,51 +340,16 @@ public class PrecomputeTask extends Task
         }
     }
 
-    /**
-     * Run all the test queries specified in precomputeProperties.
-     * @throws BuildException if there is an error while running the queries.
-     */
-    protected void runTestQueries() throws BuildException {
-        TreeMap sortedPrecomputeProperties = new TreeMap(precomputeProperties);
-        Iterator iter = sortedPrecomputeProperties.entrySet().iterator();
-
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-
-            String testqueryKey = (String) entry.getKey();
-            if (testqueryKey.startsWith(TEST_QUERY_PREFIX)) {
-                String iqlQueryString = (String) entry.getValue();
-                Query query = parseQuery(iqlQueryString, testqueryKey);
-
-                long start = System.currentTimeMillis();
-                PrintStream outputStream = System.out;
-                outputStream.println("  running test " + testqueryKey + ":");
-                Results results;
-                results = os.execute(query);
-                int resultsSize = results.size();
-                outputStream.println("  got size " + resultsSize + " in "
-                                   + (System.currentTimeMillis() - start) / 1000 + " seconds");
-                if (resultsSize > 0) {
-                    start = System.currentTimeMillis();
-                    outputStream.println("  first row in "
-                                         + (System.currentTimeMillis() - start) / 1000
-                                         + " seconds");
-                    start = System.currentTimeMillis();
-                    outputStream.println("  last row in "
-                                         + (System.currentTimeMillis() - start) / 1000
-                                         + " seconds");
-                }
-            }
-        }
-    }
 
 
     /**
      * Set precomputeProperties by reading from propertiesFileName.
+     * @param modelName the model name
+     * @return the Properties
      * @throws BuildException if the file cannot be read.
      */
-    protected void readProperties() throws BuildException {
-        String propertiesFileName = getPropertiesFileName();
+    private static Properties readProperties(String modelName) throws BuildException {
+        String propertiesFileName = getPropertiesFileName(modelName);
 
         try {
             InputStream is =
@@ -411,8 +360,9 @@ public class PrecomputeTask extends Task
                                          + " in the class path");
             }
 
-            precomputeProperties = new Properties();
+            Properties precomputeProperties = new Properties();
             precomputeProperties.load(is);
+            return precomputeProperties;
         } catch (IOException e) {
             throw new BuildException("Exception while reading properties from "
                                      + propertiesFileName , e);
@@ -420,11 +370,12 @@ public class PrecomputeTask extends Task
     }
 
     /**
-     * Return the name of the properties file that passed to the constructor.
-     * @return the name of the properties file that passed to the constructor.
+     * Return the name of the properties file we will read.
+     * @param modelName the model name
+     * @return the properties file name
      */
-    protected String getPropertiesFileName() {
-        return os.getModel().getName() + "_precompute.properties";
+    protected static String getPropertiesFileName(String modelName) {
+        return modelName + "_precompute.properties";
     }
 
 
@@ -433,8 +384,9 @@ public class PrecomputeTask extends Task
      * of numbers 0 to n.
      * @param n number of entities in ordered arrays
      * @return a set of int arrays
+     * Put the class in test mode.  Used by PrecomputeTaskTest.
      */
-    protected Set permutations(int n) {
+    private static Set permutations(int n) {
         Set result = new LinkedHashSet();
         int[] array = new int[n];
 
@@ -445,13 +397,13 @@ public class PrecomputeTask extends Task
         return result;
     }
 
-    private void swap(int[] array, int i, int j) {
+    private static void swap(int[] array, int i, int j) {
         int tmp = array[i];
         array[i] = array[j];
         array[j] = tmp;
     }
 
-    private void enumerate(Set result, int[] array, int n) {
+    private static void enumerate(Set result, int[] array, int n) {
         if (n == 1) {
             int[] copy = new int[array.length];
             System.arraycopy(array, 0, copy, 0, array.length);
@@ -463,5 +415,12 @@ public class PrecomputeTask extends Task
             enumerate(result, array, n - 1);
             swap(array, i, n - 1);
         }
+    }
+
+    /**
+     * Put the class in test mode.  Used by PrecomputeTaskTest.
+     */
+    static void setTestMode() {
+        testMode  = true;
     }
 }

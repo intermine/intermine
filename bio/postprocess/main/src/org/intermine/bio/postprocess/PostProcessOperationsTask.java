@@ -22,8 +22,10 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.sql.precompute.PrecomputedTable;
 import org.intermine.task.CreateIndexesTask;
 import org.intermine.task.DynamicAttributeTask;
+import org.intermine.task.PrecomputeTask;
 import org.intermine.util.PropertiesUtil;
 
 import org.flymine.model.genomic.Exon;
@@ -239,6 +241,8 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
                 MetadataManager.store(db, MetadataManager.OS_SUMMARY,
                                       PropertiesUtil.serialize(oss.toProperties()));
+            } else if ("precompute-queries".equals(operation)) {
+                PrecomputeTask.precompute(false, getObjectStoreWriter().getObjectStore(), 0);
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
