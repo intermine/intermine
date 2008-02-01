@@ -122,6 +122,12 @@ public class SaveBagAction extends InterMineAction
         if (bagName == null) {
             return null;
         }
+        
+        if (sbf.getSelectedObjects().length == 0) {
+            ActionMessage actionMessage = new ActionMessage("bag.empty");
+            recordError(actionMessage, request);
+            return mapping.findForward("results");
+        }
 
         InterMineBag bag = profile.getSavedBags().get(bagName);
 
