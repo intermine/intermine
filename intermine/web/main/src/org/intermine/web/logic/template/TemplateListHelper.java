@@ -136,20 +136,24 @@ public class TemplateListHelper
                         continue;
                     }
                     String cl = model.getPackageName() + "."  + pathNode.getType();
-                    
+
                     if (c.getOp().equals(ConstraintOp.LOOKUP)) {
                         try {
                             if (TypeUtil.isInstanceOf(object, cl)) {
                                 templates.add(template);
                             }
-                        } catch (ClassNotFoundException err) {                    
-                            String msg = "[a] Can't find class " + object.getClass().getName() 
-                            + " for template " + template.getTitle();  
+                        } catch (ClassNotFoundException err) {
+                            String msg = "[a] Can't find class " + object.getClass().getName()
+                            + " for template " + template.getTitle();
                             LOG.error(msg);
                             continue TEMPLATE;
                         }
                     } else {
                         String constraintIdentifier = c.getIdentifier();
+                        if (constraintIdentifier == null) {
+                            throw new RuntimeException("constraint \"" + c + "\" has no identifer "
+                                                       + "in template: " + template.getName());
+                        }
                         String[] bits = constraintIdentifier.split("\\.");
 
                         if (bits.length != 2) {
@@ -177,7 +181,7 @@ public class TemplateListHelper
                             }
                         } catch (ClassNotFoundException err) {
                             String msg = "[b] Can't find class " + className + " for template "
-                            + template.getTitle();  
+                            + template.getTitle();
                             LOG.error(msg);
                             continue TEMPLATE;
                         }
@@ -333,8 +337,8 @@ public class TemplateListHelper
                                     try {
                                         identifierClass = Class.forName(className);
                                     } catch (ClassNotFoundException e) {
-                                        String msg = "[d] Can't find class " + className 
-                                        + " for template " +  templateQuery.getTitle() 
+                                        String msg = "[d] Can't find class " + className
+                                        + " for template " +  templateQuery.getTitle()
                                         + " and tag " + tag.getTagName();;
                                         LOG.error(msg);
                                         continue TAGS;
