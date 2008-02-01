@@ -46,6 +46,7 @@ my $go_dir = "pub/go/ontology";
 my $go_file = "gene_ontology.obo";
 my $username = "anonymous";
 my $password = "-anonymous\@";
+my $current_dir = "$home/go-annotation/current";
 
 # the key is the name of the directory to put the gene association file in, the
 # suffix is used to find the file on the server
@@ -58,6 +59,9 @@ $go_connection->cwd($go_dir)
 	or die "Cannot change working directory ", $go_connection->message;
 
 my $go_download_dir = "$home/go-annotation";
+&checkdir_exists($go_download_dir);
+&checkdir_exists($current_dir);
+
 &ftp_download($go_connection,$go_download_dir,$go_file);
 $go_connection->quit;
 
@@ -126,7 +130,7 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 	
 	#make links for the current data
 	&make_link($uniprot_date_string,$uniprot_link);
-	my $go_uniprot_link = "$home/go-annotation/current/uniprot";
+	my $go_uniprot_link = "$current_dir/uniprot";
 	my $go_link_dir = "../uniprot/$uniprot_date_string";
 	&make_link($go_link_dir,$go_uniprot_link);
 	system "chmod -R a+r,g+w $uniprot_download_dir";
@@ -171,7 +175,7 @@ for my $source_database (keys %gene_association_map) {
 		
 		#make links to current data
 		&make_link($date_string,$source_dir_link);
-		my $current_link = "$home/go-annotation/current/$source_database";
+		my $current_link = "$current_dir/$source_database";
 		my $current_link_dir = "../$source_database/$date_string";
 		&make_link($current_link_dir,$current_link);
 		
