@@ -75,10 +75,10 @@
                     </span>
                   </c:when>
                   <c:when test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
-                    <im:eval evalExpression="thisRowObject.${fieldConfig.fieldExpr}"
-                             evalVariable="outVal"/>
+                    <c:set var="rowValues" value="${collection.table.rowFieldValues[thisRowObject]}"/>
+                    <c:set var="outVal" value="${rowValues[fieldConfig.fieldExpr]}"/>
                     <span class="value">${outVal}</span>
-
+                    
                     <c:if test="${empty outVal}">
                       &nbsp;<%--for IE--%>
                     </c:if>
