@@ -45,7 +45,11 @@ public class ProxyReference implements InterMineObject, Lazy
      */
     public InterMineObject getObject() {
         try {
-            return os.getObjectById(id, clazz);
+            InterMineObject retval = os.getObjectById(id, clazz);
+            if (retval == null) {
+                throw new NullPointerException("Error retrieving object from proxy");
+            }
+            return retval;
         } catch (ObjectStoreException e) {
             throw new RuntimeException("ObjectStoreException while materialising proxy: "
                                        + e.getMessage());
