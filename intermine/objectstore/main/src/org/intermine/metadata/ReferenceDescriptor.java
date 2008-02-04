@@ -118,7 +118,8 @@ public class ReferenceDescriptor extends FieldDescriptor
            if (reverseRefDesc == null) {
                 throw new MetaDataException("Unable to find named reverse reference '"
                                             + reverseRefName + "' in class "
-                                            + referencedClassDesc.getName());
+                                            + referencedClassDesc.getName() + " while processing: "
+                                            + getClassDescriptor().getName() + "." + getName());
             }
         }
         modelSet = true;
