@@ -51,7 +51,7 @@ public class DisplayObject
     private Model model;
 
     private Set clds;
-    private Map<String, Object> fieldValues = null;
+    private Map<String, Object> fieldValues = new HashMap();
     private Map attributes = null;
     private Map attributeDescriptors = null;
     private Map references = null;
@@ -321,11 +321,14 @@ public class DisplayObject
             for (Iterator i = fieldExprs.iterator(); i.hasNext();) {
                 String expr = (String) i.next();
                 Set<Class> classes = DynamicUtil.decomposeClass(object.getClass());
-                String className = null;
+                String className = "";
                 for (Class c : classes) {
-                    className = c.getName();
+                    if (!className.equals("")) {
+                        className += ".";
+                    }
+                    className += c.getName();
                 }
-                if (className != null && className.indexOf('.') != -1) {
+                if (className != null && className.indexOf('.') != -1) { 
                     className = TypeUtil.unqualifiedName(className);
                 }
                 String pathString = className + "." + expr;
