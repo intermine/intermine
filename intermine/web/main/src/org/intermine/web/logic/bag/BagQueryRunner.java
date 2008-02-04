@@ -365,7 +365,7 @@ public class BagQueryRunner
                 }
 
                 // try to convert objects to target type
-                Map convertedObjsMap = TypeConverter.convertObjects(context, fromClass, type, objs);
+                Map convertedObjsMap = TypeConverter.getConvertMap(context, fromClass, type, objs);
                 if (convertedObjsMap == null) {
                     // no conversion found
                     continue;

@@ -82,7 +82,7 @@ public class TypeConverterTest extends MockStrutsTestCase
         expected.put(((List) r.get(0)).get(0), Collections.singletonList(((List) r.get(0)).get(1)));
         expected.put(((List) r.get(1)).get(0), Collections.singletonList(((List) r.get(1)).get(1)));
 
-        Map got = TypeConverter.convertObjects(context, Employee.class, Address.class, imb);
+        Map got = TypeConverter.getConvertMap(context, Employee.class, Address.class, imb);
 
         assertEquals(expected, got);
     }
