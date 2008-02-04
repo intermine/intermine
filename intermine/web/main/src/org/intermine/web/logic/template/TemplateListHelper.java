@@ -151,15 +151,15 @@ public class TemplateListHelper
                     } else {
                         String constraintIdentifier = c.getIdentifier();
                         if (constraintIdentifier == null) {
-                            throw new RuntimeException("constraint \"" + c + "\" has no identifer "
-                                                       + "in template: " + template.getName());
+                            // if this template doesn't have an identifier, then the superuser 
+                            // likely doesn't want it displayed on the object details page
+                            continue TEMPLATE;
                         }
                         String[] bits = constraintIdentifier.split("\\.");
 
                         if (bits.length != 2) {
                             // we can't handle anything like "Department.company.name" yet so ignore
-                            // this
-                            // template
+                            // this template
                             continue TEMPLATE;
                         }
 
