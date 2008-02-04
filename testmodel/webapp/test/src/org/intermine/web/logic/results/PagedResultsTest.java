@@ -55,6 +55,7 @@ public class PagedResultsTest extends TestCase
     private List columnPath;
     private Map pathToQueryNode;
     private Map classKeys;
+    private PathQuery pathQuery;
 
     public void setUp() throws Exception {
         os = new ObjectStoreDummyImpl();
@@ -67,11 +68,12 @@ public class PagedResultsTest extends TestCase
         pathToQueryNode.put("Company.name", new QueryField(new QueryClass(Company.class), "name"));
         pathToQueryNode.put("Department.name", new QueryField(new QueryClass(Department.class) ,"name"));
         classKeys = new HashMap();
-        Set defaultClassKeys = new HashSet();
-        defaultClassKeys.add(new HashSet(toList(new Object[]{new AttributeDescriptor("name","Employee")})));
+        List defaultClassKeys = new ArrayList();
+        defaultClassKeys.add(new AttributeDescriptor("name","java.lang.String"));
         classKeys.put("Employee", defaultClassKeys);
         classKeys.put("Department", defaultClassKeys);
         classKeys.put("Company", defaultClassKeys);
+        pathQuery = new PathQuery(model);
     }
 
     private PagedTable getEmptyResults() throws Exception {
@@ -82,7 +84,7 @@ public class PagedResultsTest extends TestCase
             results.get(0);
         } catch (IndexOutOfBoundsException e) {
         }
-        WebResults webResults = new WebResults(null, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }
 
@@ -91,7 +93,7 @@ public class PagedResultsTest extends TestCase
         // Make sure we definitely know the end
         results.setBatchSize(20);
         results.get(0);
-        WebResults webResults = new WebResults(null, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }
 
@@ -99,7 +101,7 @@ public class PagedResultsTest extends TestCase
         os.setEstimatedResultsSize(25);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        WebResults webResults = new WebResults(null, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }
 
@@ -107,7 +109,7 @@ public class PagedResultsTest extends TestCase
         os.setEstimatedResultsSize(10);
         Results results = os.execute(fq.toQuery());
         results.setBatchSize(1);
-        WebResults webResults = new WebResults(null, results, model, pathToQueryNode, classKeys, null);
+        WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }
 
@@ -208,6 +210,8 @@ public class PagedResultsTest extends TestCase
         public DummyResults(ObjectStore os, Query query, List rows) {
             super(query, os, ObjectStore.SEQUENCE_IGNORE);
             this.rows = rows;
+            minSize = rows.size();
+            maxSize = rows.size();
         }
 
         public Object get(int index) {

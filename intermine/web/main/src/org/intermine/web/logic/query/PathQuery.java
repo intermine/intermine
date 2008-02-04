@@ -192,6 +192,13 @@ public class PathQuery
             throw new RuntimeException("setView() was passed null");
         }
         this.view = view;
+        if (sortOrder.isEmpty()) {
+            Path p = getFirstPathFromView();
+            if (p != null) {
+                OrderBy o = new OrderBy(p, "asc");
+                sortOrder.add(o);
+            }
+        }
     }
 
     /**
@@ -250,6 +257,13 @@ public class PathQuery
     public void addPathStringToView(String viewString) {
         try {
             view.add(MainHelper.makePath(model, this, viewString));
+            if (sortOrder.isEmpty()) {
+                Path p = getFirstPathFromView();
+                if (p != null) {
+                    OrderBy o = new OrderBy(p, "asc");
+                    sortOrder.add(o);
+                }
+            }
         } catch (PathError e) {
             addProblem(e);
         }

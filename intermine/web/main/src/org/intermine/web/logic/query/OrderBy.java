@@ -18,7 +18,6 @@ import org.intermine.path.Path;
  */
 public class OrderBy
 {
-
     Path field;
     String direction;
 
@@ -71,4 +70,19 @@ public class OrderBy
         return field + " " + direction;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object o) {
+        return (o instanceof OrderBy)
+            && field.equals(((OrderBy) o).field)
+            && direction.equals(((OrderBy) o).direction);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return 2 * field.hashCode() + 3 * direction.hashCode();
+    }
 }

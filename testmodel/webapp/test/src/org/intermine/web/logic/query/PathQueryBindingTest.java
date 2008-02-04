@@ -165,7 +165,7 @@ public class PathQueryBindingTest extends MockStrutsTestCase
         Map expectedQuery = new LinkedHashMap();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
-        assertEquals(expectedQuery, readFromXml);
+        assertEquals(xml, expectedQuery, readFromXml);
 
         xml = PathQueryBinding.marshal((PathQuery) expected.get("queryWithConstraint"),
                                        "queryWithConstraint", "testmodel");
@@ -175,6 +175,6 @@ public class PathQueryBindingTest extends MockStrutsTestCase
         expectedQuery = new LinkedHashMap();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
 
-        assertEquals(expectedQuery, readFromXml);
+        assertEquals(xml, expectedQuery, readFromXml);
     }
 }
