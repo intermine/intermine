@@ -81,16 +81,27 @@ public class QueryBuilderAction extends InterMineAction
                 mf.reset(mapping, request);
                 return mapping.findForward("query");
             }
-        }
-
-        if (request.getParameter("attribute") != null && cindex == null) {
-            // New constraint
-            label = mf.getTemplateLabel();
-            id = mf.getTemplateId();
-            editable = mf.isEditable();
+            
+            //String description,
+            //String code, String identifier, Object extraValue
+            
+            // current constraint
+            label = c.getDescription();
+            id = c.getIdentifier();
+            
+            
         }
 
         if (request.getParameter("attribute") != null) {
+            
+            
+            if (cindex == null) {
+                // New constraint
+                label = mf.getTemplateLabel();
+                id = mf.getTemplateId();
+                editable = mf.isEditable();
+            }
+            
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getAttributeOp()));
             Object constraintValue = mf.getParsedAttributeValue();
