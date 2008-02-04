@@ -355,14 +355,17 @@
 
 <!-- /widgets -->
 
+<!-- templates -->
 
 <c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <div class="heading">
    <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>&nbsp;&nbsp;<span style="font-size:0.8em;"> 
-  (<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span></div>
-</div>
+  (<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', null, true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', null, true);">collapse all <img src="images/undisclosed.gif"/></a>)</span>
+  </div>
 
+
+  <div class="body">
   <fmt:message key="bagDetails.templatesHelp">
     <fmt:param>
               <img src="images/disclosed.gif"/> / <img src="images/undisclosed.gif"/>  
@@ -379,4 +382,10 @@
       <tiles:put name="opened" value="${status.index == 0}" />
     </tiles:insert>
   </c:forEach>
+
+</div>  <!-- templates body -->
+
+</div>  <!-- whole page body -->
+
+<!-- /templates -->
 <!-- /bagDetails.jsp -->
