@@ -150,7 +150,7 @@ public class CreateSiteMapLinkIns
 
     private static void writeStartPages(FileWriter writer) throws Exception {
         // TODO get these from config file
-        String[] pages = {"begin.do", "templates.do", "bag.do", "dataCategories.do"};
+        String[] pages = {"begin.do", "templates.do", "bag.do?subtab=view", "dataCategories.do"};
         for (String s : pages) {
             writer.write(getURL(PREFIX + s, STARTWEIGHT));
         }
