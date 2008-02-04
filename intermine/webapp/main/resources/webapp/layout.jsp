@@ -57,11 +57,15 @@
   <div id="pagecontent">
     
       <%-- Render messages --%>
-      <tiles:get name="errorMessages"/>
+      <tiles:get name="errorMessagesContainers"/>
+
       <%-- Context help bar --%>
       <tiles:insert page="/contextHelp.jsp"/>
       
       <tiles:get name="body"/>
+
+      <%-- Render messages --%>
+      <tiles:get name="errorMessages"/>
       
       <%-- footer (welcome logo, bottom nav, and feedback link) --%>
     <c:import url="footer.jsp"/>

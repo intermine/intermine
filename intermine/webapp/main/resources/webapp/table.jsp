@@ -80,13 +80,6 @@
       </c:if>
     </c:if>
 
-<c:if test="${!empty lookupResults}">
-   <tiles:insert name="bagRunnerMsg.tile">
-      <tiles:put name="lookupResults" beanName="lookupResults" />
-    </tiles:insert>
-    <%-- lookupReport --%>
-</c:if>
-
 <c:choose>
   <c:when test="${resultsTable.size == 0}">
     <div class="altmessage">

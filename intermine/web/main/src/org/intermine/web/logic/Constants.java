@@ -130,6 +130,9 @@ public interface Constants
      * after redirect).
      */
     public static final String ERRORS = "ERRORS";
+    
+    public static final String PORTAL_MSG = "PORTAL_MSG";
+   
 
     /**
      * The name of the property that is set to TRUE in the PortalQueryAction Action to indicate
