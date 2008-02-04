@@ -10,7 +10,7 @@
 
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='css/inlineTagEditor.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
 
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
