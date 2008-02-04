@@ -644,8 +644,6 @@
 
   <class className="org.flymine.model.genomic.RNAiScreenHit">
     <fields>
-      <fieldconfig fieldExpr="analysis.name"/>
-      <fieldconfig fieldExpr="analysis.analysisDescription"/>
       <fieldconfig fieldExpr="result"/>
       <fieldconfig fieldExpr="analysis.publication.pubMedId"/>
     </fields>
