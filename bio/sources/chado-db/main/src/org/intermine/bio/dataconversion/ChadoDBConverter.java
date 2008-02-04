@@ -92,6 +92,8 @@ public class ChadoDBConverter extends BioDBConverter
 
     protected static final ConfigAction DO_NOTHING_ACTION = new DoNothingAction();
 
+    private static final String TEMP_FEATURE_TABLE_NAME = "intermine_chado_features_temp";
+
     /**
      * Create a new ChadoDBConverter object.
      * @param database the database to read from
@@ -212,6 +214,7 @@ public class ChadoDBConverter extends BioDBConverter
             throw new IllegalArgumentException("genus not set in ChadoDBConverter");
         }
         chadoOrganismId = getChadoOrganismId(connection);
+        createFeatureTempTable(connection);
         processFeatureTable(connection);
         processPubTable(connection);
         processLocationTable(connection);
@@ -1163,22 +1166,48 @@ public class ChadoDBConverter extends BioDBConverter
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
         String featureTypesString = getFeaturesString();
-        String query =
-            "SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen, is_analysis,"
-            + "     residues"
-            + "   FROM feature, cvterm"
-            + "   WHERE feature.type_id = cvterm.cvterm_id"
-            + "        AND cvterm.name IN (" + featureTypesString  + ")"
-            + "        AND organism_id = " + chadoOrganismId
-            + "        AND NOT feature.is_obsolete"
-            + (getExtraFeatureConstraint() != null
-               ? "     AND (" + getExtraFeatureConstraint() + ")"
-               : "");
+        String query = "SELECT * FROM " + TEMP_FEATURE_TABLE_NAME;
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
+
+
+    /**
+     * Create a temporary table containing only the feature_ids of the feature that interest us.
+     * The table is used in later queries.
+     */
+    private void createFeatureTempTable(Connection connection) throws SQLException {
+        String featureTypesString = getFeaturesString();
+        String query =
+            "CREATE TEMPORARY TABLE " + TEMP_FEATURE_TABLE_NAME + " AS"
+            + " SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen,"
+            + "        is_analysis, residues"
+            + "    FROM feature, cvterm"
+            + "    WHERE cvterm.name IN (" + featureTypesString  + ")"
+            + "        AND organism_id = " + chadoOrganismId
+            + "        AND NOT feature.is_obsolete"
+            + "        AND feature.type_id = cvterm.cvterm_id "
+            + (getExtraFeatureConstraint() != null
+                            ? "AND (" + getExtraFeatureConstraint() + ")"
+                            : "");
+        Statement stmt = connection.createStatement();
+        LOG.info("executing: " + query);
+        stmt.execute(query);
+        String idIndexQuery = "CREATE INDEX " + TEMP_FEATURE_TABLE_NAME + "_feature_index ON "
+            + TEMP_FEATURE_TABLE_NAME + "(feature_id)";
+        LOG.info("executing: " + idIndexQuery);
+        stmt.execute(idIndexQuery);
+        String typeIndexQuery = "CREATE INDEX " + TEMP_FEATURE_TABLE_NAME + "_type_index ON "
+            + TEMP_FEATURE_TABLE_NAME + "(type)";
+        LOG.info("executing: " + typeIndexQuery);
+        stmt.execute(typeIndexQuery);
+        String analyze = "ANALYZE " + TEMP_FEATURE_TABLE_NAME;
+        LOG.info("executing: " + analyze);
+        stmt.execute(analyze);
+    }
+
 
     /**
      * Return the chado organism id for the given genus/species.  This is a protected method so
@@ -1203,22 +1232,6 @@ public class ChadoDBConverter extends BioDBConverter
         }
     }
 
-    /**
-     * Return a SQL query string the gets all non-obsolete interesting features.
-     */
-    private String getFeatureIdQuery() {
-        String featureTypesString = getFeaturesString();
-        return
-          " SELECT feature_id FROM feature, cvterm"
-        + "             WHERE cvterm.name IN (" + featureTypesString  + ")"
-        + "                 AND organism_id = " + chadoOrganismId
-        + "                 AND NOT feature.is_obsolete"
-        + "                 AND feature.type_id = cvterm.cvterm_id"
-        + "                 "
-        + (getExtraFeatureConstraint() != null
-           ? "AND (" + getExtraFeatureConstraint() + ")"
-           : "");
-    }
 
     /**
      * Return an extra constraint to be used when querying the feature table.  Any feature table
@@ -1230,6 +1243,13 @@ public class ChadoDBConverter extends BioDBConverter
     protected String getExtraFeatureConstraint() {
         // no default
         return null;
+    }
+
+    /**
+     * @return
+     */
+    private String getFeatureIdQuery() {
+        return "SELECT feature_id FROM " + TEMP_FEATURE_TABLE_NAME;
     }
 
     /**
