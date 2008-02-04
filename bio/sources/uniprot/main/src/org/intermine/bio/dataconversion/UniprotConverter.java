@@ -1121,10 +1121,8 @@ public class UniprotConverter extends FileConverter
                                  + " with different organismDbId, discarding this one");
                         isDuplicateIdentifier = true;
                     }
-                    if ((geneItemId == null) && !isDuplicateIdentifier) {
-    
-                        if (geneOrganismDbId != null) {
-                            
+                    if ((geneItemId == null) && !isDuplicateIdentifier) {    
+                        if (geneOrganismDbId != null) {                            
                             if (geneOrganismDbId.equals("")) {
                                 LOG.info("geneOrganismDbId was empty string");
                             } else {
@@ -1181,6 +1179,7 @@ public class UniprotConverter extends FileConverter
     
                             // all gene names are synonyms
                             // ORF is already identifer, so skip
+                            // TODO if name is empty something has gone wrong
                             if (!type.equals("ORF") && !name.equals("")) {
                                 Item syn = createSynonym(gene.getIdentifier(), synonymDescr, name,
                                               getDataSource(dbName).getIdentifier());
