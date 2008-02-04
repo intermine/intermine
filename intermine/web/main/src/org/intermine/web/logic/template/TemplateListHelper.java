@@ -151,7 +151,9 @@ public class TemplateListHelper
                     } else {
                         String constraintIdentifier = c.getIdentifier();
                         if (constraintIdentifier == null) {
-                            constraintIdentifier = pathNode.getPathString();
+                            // if this template doesn't have an identifier, then the superuser
+                            // likely doesn't want it displayed on the object details page
+                            continue TEMPLATE;
                         }
                         String[] bits = constraintIdentifier.split("\\.");
 
@@ -313,6 +315,12 @@ public class TemplateListHelper
                                     }
                                 } else {
                                     String constraintIdentifier = c.getIdentifier();
+                                    if (constraintIdentifier == null) {
+                                        // if this template doesn't have an identifier, then the
+                                        // superuser likely doesn't want it displayed on the object
+                                        // details page
+                                        continue TAGS;
+                                    }
                                     String[] bits = constraintIdentifier.split("\\.");
 
                                     if (bits.length != 2) {
