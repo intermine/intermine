@@ -79,14 +79,15 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         Model model = os.getModel();
         InterMineBag bag = imBag;
         PathQuery q = new PathQuery(model);
-
-        Path identifier = MainHelper.makePath(model, q, "Gene.identifier");
-        Path organismDbId = MainHelper.makePath(model, q, "Gene.organismDbId");
-        Path name = MainHelper.makePath(model, q, "Gene.organism.name");
-        Path chromoIdentifier = MainHelper.makePath(model, q, "Gene.chromosome.identifier");
-        Path start = MainHelper.makePath(model, q, "Gene.chromosomeLocation.start");
-        Path end = MainHelper.makePath(model, q, "Gene.chromosomeLocation.end");
-        Path strand = MainHelper.makePath(model, q, "Gene.chromosomeLocation.strand");
+        String bagType = bag.getType();
+        
+        Path identifier = MainHelper.makePath(model, q, bagType + ".identifier");
+        Path organismDbId = MainHelper.makePath(model, q, bagType + ".organismDbId");
+        Path name = MainHelper.makePath(model, q, bagType + ".organism.name");
+        Path chromoIdentifier = MainHelper.makePath(model, q, bagType + ".chromosome.identifier");
+        Path start = MainHelper.makePath(model, q, bagType + ".chromosomeLocation.start");
+        Path end = MainHelper.makePath(model, q, bagType + ".chromosomeLocation.end");
+        Path strand = MainHelper.makePath(model, q, bagType + ".chromosomeLocation.strand");
 
         List<Path> view = new ArrayList<Path>();
 
@@ -99,8 +100,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         view.add(strand);
 
         q.setView(view);
-
-        String bagType = bag.getType();
+        
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
 
@@ -111,7 +111,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         //  constrain to be specific chromosome
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode chromosomeNode = q.addNode("Gene.chromosome.identifier");
+        PathNode chromosomeNode = q.addNode(bagType + ".chromosome.identifier");
         Constraint chromosomeConstraint
                         = new Constraint(constraintOp, series, false, label, code, id, null);
         chromosomeNode.getConstraints().add(chromosomeConstraint);
