@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.path.Path;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
@@ -34,6 +35,7 @@ import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.Constraint;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathNode;
+import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -47,7 +49,8 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class TypeConverter
 {
     /**
-     * Converts a List of objects from one type to another type using a TemplateQuery.
+     * Converts a List of objects from one type to another type using a TemplateQuery,
+     * returns a map from an original object to the converted object(s).
      *
      * @param servletContext the ServletContext
      * @param typeA the type to convert from
@@ -58,26 +61,16 @@ public class TypeConverter
      * @throws InterMineException if an error occurs
      */
     public static Map<InterMineObject, List<InterMineObject>>
-    convertObjects(ServletContext servletContext, Class typeA, Class typeB, Object bag)
+    getConvertMap(ServletContext servletContext, Class typeA, Class typeB, Object bag)
     throws InterMineException {
-        TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
-        if (tq == null) {
+        PathQuery pq = getConversionMapQuery(servletContext, typeA, typeB, bag);
+        if (pq == null) {
             return null;
         }
-        tq = (TemplateQuery) tq.clone();
-        // We can be reckless here because all this is checked by getConversionTemplate
-        PathNode node = tq.getEditableNodes().iterator().next();
-        Constraint c = (Constraint) tq.getEditableConstraints(node).iterator().next();
-        // This is a MAJOR hack - we assume that the constraint is on an ATTRIBUTE of the node we
-        // want to constrain. Just because our query builder has been crippled to only allow that.
-        PathNode parent = tq.getNodes().get(node.getParent().getPathString());
-        tq.getNodes().remove(node.getPathString());
-        Constraint newC = new Constraint(ConstraintOp.IN, bag, false, "", c.getCode(), null, null);
-        parent.getConstraints().add(newC);
-
+        
         Query q;
         try {
-            q = MainHelper.makeQuery(tq, Collections.EMPTY_MAP, null, servletContext, null, false,
+            q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, servletContext, null, false,
                     (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
                     (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
                     (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
@@ -119,7 +112,101 @@ public class TypeConverter
                                                       Class typeB) {
         return getConversionTemplates(servletContext, typeA).get(typeB);
     }
+    
+    /**
+     * Get conversion query for the types provided, edited so that the first
+     * type is constrainted to be in the bag.
+     *
+     * @param servletContext the ServletContext
+     * @param typeA the type to convert from
+     * @param typeB the type to convert to
+     * @param bag an InterMineBag or Collection of objects of type typeA
+     * @return a PathQuery that finds a conversion mapping for the given bag
+     */
+    public static PathQuery getConversionMapQuery(ServletContext servletContext,
+                                                Class typeA, Class typeB, Object bag) {
+        TemplateQuery tq = getConversionTemplate(servletContext, typeA, typeB);
+        if (tq == null) {
+            return null;
+        }
+        tq = (TemplateQuery) tq.clone();
+        // We can be reckless here because all this is checked by getConversionTemplate
+        PathNode node = tq.getEditableNodes().iterator().next();
+        Constraint c = (Constraint) tq.getEditableConstraints(node).iterator().next();
+        // This is a MAJOR hack - we assume that the constraint is on an ATTRIBUTE of the node we
+        // want to constrain.
+        PathNode parent = tq.getNodes().get(node.getParent().getPathString());
+        tq.getNodes().remove(node.getPathString());
+        Constraint newC = new Constraint(ConstraintOp.IN, bag, false, "", c.getCode(), null, null);
+        parent.getConstraints().add(newC);
+        return tq.getPathQuery();
+    }
 
+
+    /**
+     * Converts a List of objects from one type to another type using a TemplateQuery,
+     * returns the converted objects.
+     *
+     * @param servletContext the ServletContext
+     * @param typeA the type to convert from
+     * @param typeB the type to convert to
+     * @param bag an InterMineBag or Collection of objects of type typeA
+     * @return a SingletonResults containting the converted objects
+     * @throws InterMineException if an error occurs
+     */
+    public static SingletonResults getConvertedObjects(ServletContext servletContext,
+                                              Class typeA, Class typeB, Object bag)
+    throws InterMineException {
+        PathQuery pq = getConvertedObjectsQuery(servletContext, typeA, typeB, bag);
+        if (pq == null) {
+            return null;
+        }
+        if (pq.getView().size() > 1) {
+            throw new InterMineException("ConvertedObjects query has more than one element on"
+                    + " the view list: " + pq);
+        }
+        Query q;
+        try {
+            q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, servletContext, null, false,
+                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
+        } catch (ObjectStoreException e) {
+            throw new InterMineException(e);
+        }
+        
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        return os.executeSingleton(q);
+    }
+    
+    
+    /**
+     * Get conversion query from the types provided, edited so that the first
+     * type is constrainted to be in the bag and the first type is removed form the
+     * view list so that the query only returns the converted type.
+     *
+     * @param servletContext the ServletContext
+     * @param typeA the type to convert from
+     * @param typeB the type to convert to
+     * @param bag an InterMineBag or Collection of objects of type typeA
+     * @return a PathQuery that finds converted objects for the given bag
+     */
+    public static PathQuery getConvertedObjectsQuery (ServletContext servletContext,
+                                                Class typeA, Class typeB, Object bag) {
+        PathQuery pq = getConversionMapQuery(servletContext, typeA, typeB, bag);
+        if (pq == null) {
+            return null;
+        }
+        // remove typeA from the output
+        List<Path> view = pq.getView();
+        for (Path viewElement : view) {
+            if (viewElement.getStartClassDescriptor().getType().equals(typeA)) {
+                view.remove(viewElement);
+            }
+        }
+        return pq;
+    }
+    
     /**
      * Return a Map from typeB to a TemplateQuery that will convert from typeA to typeB.
      *

@@ -209,9 +209,8 @@ public class SaveBagAction extends InterMineAction
                     } else {
                         if (allRows instanceof WebPathCollection) {
                             List allRowsList = ((WebPathCollection) allRows).getList();
-                            if (allRowsList instanceof Results) {
-                                osw.addAllToBag(bag.getOsb(), new SingleColumnResults(allRowsList));
-                            }
+                            osw.addAllToBag(bag.getOsb(), new SingleColumnResults(allRowsList));
+
                         } else {
                             throw new ClassCastException("Unhandled table type: "
                                                          + allRows.getClass());

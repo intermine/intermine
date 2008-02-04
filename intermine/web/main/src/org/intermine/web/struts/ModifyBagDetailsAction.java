@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -174,19 +173,12 @@ public class ModifyBagDetailsAction extends InterMineAction
             InterMineBag imBag = BagHelper.getBag(profile, globalRepository,
                 request.getParameter("bagName"));
             Model model = os.getModel();
-            Map<InterMineObject, List<InterMineObject>> convertedMap = TypeConverter
-                                                                .convertObjects(servletContext,
-                           TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
-                           TypeUtil.instantiate(model.getPackageName() + "." + type2),
-                           imBag);
-            List<InterMineObject> newList = new ArrayList<InterMineObject>();
-            for (List<InterMineObject> mapValues:convertedMap.values()) {
-                for (InterMineObject imObject : mapValues) {
-                    newList.add(imObject);
-                }
-            }
+            SingletonResults res = TypeConverter.getConvertedObjects(servletContext,
+                TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
+                TypeUtil.instantiate(model.getPackageName() + "." + type2),
+                imBag);
             WebPathCollection webPathCollection = new WebPathCollection(os, new Path(model,
-                type2), newList, model, webConfig, classKeys);
+                type2), res, model, webConfig, classKeys);
             String identifier = "convert." + type2 + imBag.getName();
             PagedTable pc = new PagedTable(webPathCollection);
             SessionMethods.setResultsTable(session, identifier, pc);
