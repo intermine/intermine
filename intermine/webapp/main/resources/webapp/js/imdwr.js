@@ -616,7 +616,8 @@ function validateBagOperations(formName, operation) {
 		AjaxServices.validateBagOperations(
 		bagName, selectedBags, operation, function(errMsg) {
 			if (errMsg != '') {
-        		document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
+			    new Insertion.Bottom('error_msg',errMsg + '<br/>');
+			    Effect.Appear('error_msg');
         	} else {
         		frm.listsButton.value = operation;
         		frm.submit();
@@ -644,7 +645,8 @@ function validateBagOperations(formName, operation) {
 		var bagName = frm.newBagName.value;
 		AjaxServices.validateBagName(bagName, function(errMsg) {
 			if (errMsg != '') {
-        		addErrMsg(errMsg);
+			    new Insertion.Bottom('error_msg',errMsg + '<br/>');
+			    Effect.Appear('error_msg');
         	} else {
         		if (frm.operationButton) {
         			frm.operationButton.value="saveNewBag";
@@ -653,10 +655,5 @@ function validateBagOperations(formName, operation) {
     	    }
     	});
    	
-  }
-
-  function addErrMsg(errMsg) {  
-  	document.getElementById("errorMsgs").innerHTML = "<div class=\"topBar errors\">" + errMsg + "</div>";
-  }  
-  
+  } 
   
