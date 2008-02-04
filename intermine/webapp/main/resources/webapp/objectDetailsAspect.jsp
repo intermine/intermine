@@ -50,13 +50,16 @@
         <imutil:disclosureTitle>${aspect}</imutil:disclosureTitle>
         <imutil:disclosureDetails styleClass="templateResultsToggle">${templateHeaderMsg}</imutil:disclosureDetails>
       </imutil:disclosureHead>
-      <imutil:disclosureBody><c:if
-          test="${!empty displayObject}">
-          <tiles:insert page="/objectDetailsRefsCols.jsp">
-            <tiles:put name="object" beanName="displayObject" />
-            <tiles:put name="placement" value="${placement}" />
-          </tiles:insert>
-        </c:if> <%-- the controller of this tile should have already called the controller
+      <imutil:disclosureBody>
+      	  <div style="margin-left:-1px;">
+	      	  <c:if test="${!empty displayObject}">
+	          <tiles:insert page="/objectDetailsRefsCols.jsp">
+	            <tiles:put name="object" beanName="displayObject" />
+	            <tiles:put name="placement" value="${placement}" />
+	          </tiles:insert>
+	          </c:if> 
+	       </div>
+          <%-- the controller of this tile should have already called the controller
             for the template list so just insert the jsp page --%> <c:if
           test="${!empty templates && !empty placementRefsAndCollections[placement]}">
           <hr class="seperator" />
