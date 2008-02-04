@@ -78,7 +78,7 @@
                   </td>
                   <td>
                     <c:choose>
-                      <c:when test="${empty object.fieldValues[expr]}">
+                      <c:when test="${empty object.fieldValues || object.fieldValues[expr]}">
                         &nbsp;
                       </c:when>
                       <c:otherwise>

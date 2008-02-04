@@ -45,9 +45,10 @@
       <tbody>
         <c:forEach items="${collection.table.rowObjects}" 
                    var="thisRowObject" varStatus="status">
-          <%-- request scope for im:eval --%>
-          <c:set var="thisRowObject" value="${thisRowObject}" 
-                 scope="request"/>
+          
+          <c:set var="thisRowObject" value="${thisRowObject}" />
+          <c:set var="rowValues" value="${collection.table.rowFieldValues[thisRowObject]}"/>
+                 
           <tr>
             <td width="1%" nowrap>
               <c:forEach items="${collection.table.types[status.index]}" var="cld">
@@ -74,11 +75,9 @@
                       </tiles:insert>
                     </span>
                   </c:when>
-                  <c:when test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
-                    <c:set var="rowValues" value="${collection.table.rowFieldValues[thisRowObject]}"/>
+                  <c:when test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">                    
                     <c:set var="outVal" value="${rowValues[fieldConfig.fieldExpr]}"/>
-                    <span class="value">${outVal}</span>
-                    
+                    <span class="value">${outVal}</span>                    
                     <c:if test="${empty outVal}">
                       &nbsp;<%--for IE--%>
                     </c:if>
