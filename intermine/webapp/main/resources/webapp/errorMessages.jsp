@@ -4,54 +4,68 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!-- errorMessages.jsp -->
-<link rel="stylesheet" type="text/css" href="css/errorMessages.css"/>
+<tiles:importAttributes/>
 
+
+<script type="text/javascript" charset="utf-8">
+
+var haserrors=0;
+var haslookup=0;
+var hasmessages=0;
+    
+<!-- ERRORS -->
 <logic:messagesPresent>
-  <div class="topBar errors">
     <html:messages id="error">
-      <c:out value="${error}"/><br/>
+      new Insertion.Bottom('error_msg','<c:out value="${error}" escapeXml="false"/><br/>');
+      haserrors=1;
     </html:messages>
-  </div>  
-  <br/>
 </logic:messagesPresent>
 
-<noscript>
-  <div class="topBar errors">
-    <fmt:message key="errors.noscript"/>
-  </div>
-  <br/>
-</noscript>
+<!-- LOOKUP & PORTAL -->
+<logic:messagesPresent name="PORTAL_MSG">
+  <html:messages id="message" name="PORTAL_MSG">
+      new Insertion.Bottom('lookup_msg','<c:out value="${message}" escapeXml="false"/><br/>');
+      haslookup=1;
+  </html:messages>
+</logic:messagesPresent>
 
+<!-- ERRORS II -->
 <c:if test="${!empty ERRORS}">
-  <div class="topBar errors">
     <c:forEach items="${ERRORS}" var="error">
-      <c:out value="${error}"/><br/>
+      new Insertion.Bottom('error_msg','<c:out value="${error}" escapeXml="false"/><br/>');
+      haserrors=1;
     </c:forEach>
-  </div>
-  <br/>
   <c:remove var="ERRORS" scope="session"/>
 </c:if>
 
+<!-- MESSAGES -->
 <logic:messagesPresent message="true">
-  <div class="topBar messages">
     <html:messages id="message" message="true">
-      <c:out value="${message}" escapeXml="false"/><br/>
+      new Insertion.Bottom('msg','<c:out value="${message}" escapeXml="false"/><br/>');
+      hasmessages=1;
     </html:messages>
-  </div>
-  <br/>
 </logic:messagesPresent>
 
+<!-- MESSAGES II -->
 <c:if test="${!empty MESSAGES}">
-  <div class="topBar messages">
     <c:forEach items="${MESSAGES}" var="message">
-      <c:out value="${message}" escapeXml="false"/><br/>
+      new Insertion.Bottom('msg','<c:out value="${message}" escapeXml="false"/><br/>');
+      hasmessages=1;
     </c:forEach>
-  </div>
-  <br/>
   <c:remove var="MESSAGES" scope="session"/>
 </c:if>
 
-<div id="errorMsgs"></div>
+if(haserrors) {
+    Effect.Appear('error_msg');
+}
+if(hasmessages) {
+    Effect.Appear('msg');
+}
+if(haslookup) {
+    Effect.Appear('lookup_msg', { duration: 3.0 });
+}
+
+</script>
 
 
 <!-- /errorMessages.jsp -->

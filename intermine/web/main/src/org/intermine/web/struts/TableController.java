@@ -13,11 +13,11 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -69,6 +69,7 @@ public class TableController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
         String trail = request.getParameter("trail");
@@ -97,50 +98,15 @@ public class TableController extends TilesAction
         } else if (pt.getAllRows().getPathToBagQueryResult() != null) {
             Map<String, BagQueryResult> pathToBagQueryResult = pt.getAllRows()
                 .getPathToBagQueryResult();
-            List<DisplayLookup> lookupResults = new ArrayList<DisplayLookup>();
+            List<DisplayLookupMessageHandler> lookupResults = new ArrayList<DisplayLookupMessageHandler>();
             for (Map.Entry<String, BagQueryResult> entry : pathToBagQueryResult.entrySet()) {
                 String path = entry.getKey();
                 String type = query.getNode(path).getType();
                 String extraConstraint = (String) query.getNode(path).getConstraint(0)
                     .getExtraValue();
                 BagQueryResult bqr = entry.getValue();
-                int matches = bqr.getMatchAndIssueIds().size();
-                Set<String> unresolved = bqr.getUnresolved().keySet();
-                Set<String> duplicates = new HashSet<String>();
-                Set<String> lowQuality = new HashSet<String>();
-                Set<String> translated = new HashSet<String>();
-                Map<String, List> wildcards = new HashMap<String, List>();
-                Map<String, Map<String, List>> duplicateMap = bqr.getIssues().get(BagQueryResult
-                        .DUPLICATE);
-                if (duplicateMap != null) {
-                    for (Map.Entry<String, Map<String, List>> queries : duplicateMap.entrySet()) {
-                        duplicates.addAll(queries.getValue().keySet());
-                    }
-                }
-                Map<String, Map<String, List>> translatedMap = bqr.getIssues().get(BagQueryResult
-                        .TYPE_CONVERTED);
-                if (translatedMap != null) {
-                    for (Map.Entry<String, Map<String, List>> queries : translatedMap.entrySet()) {
-                        translated.addAll(queries.getValue().keySet());
-                    }
-                }
-                Map<String, Map<String, List>> lowQualityMap = bqr.getIssues().get(BagQueryResult
-                        .OTHER);
-                if (lowQualityMap != null) {
-                    for (Map.Entry<String, Map<String, List>> queries : lowQualityMap.entrySet()) {
-                        lowQuality.addAll(queries.getValue().keySet());
-                    }
-                }
-                Map<String, Map<String, List>> wildcardMap = bqr.getIssues().get(BagQueryResult
-                                                                  .WILDCARD);
-                if (wildcardMap != null) {
-                    for (Map.Entry<String, Map<String, List>> queries : wildcardMap.entrySet()) {
-                        wildcards.putAll(queries.getValue());
-                    }
-                }
-
-                lookupResults.add(new DisplayLookup(type, matches, unresolved, duplicates,
-                            translated, lowQuality, wildcards, extraConstraint));
+                Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                DisplayLookupMessageHandler.handleMessages(bqr, session, properties, type, extraConstraint);
             }
             request.setAttribute("lookupResults", lookupResults);
         } else {

@@ -31,13 +31,6 @@
 </script>
 
 
-<c:if test="${!empty lookupResults}">
-   <tiles:insert name="bagRunnerMsg.tile">
-      <tiles:put name="lookupResults" beanName="lookupResults" />
-    </tiles:insert>
-    <%-- lookupReport --%>
-</c:if>
-
 <div class="heading">
      <b>${bag.name}</b> (${bag.size} ${bag.type}s)
 </div>

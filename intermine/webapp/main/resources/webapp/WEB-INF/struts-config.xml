@@ -412,6 +412,7 @@
     <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
     <action path="/initConvertBag" type="org.intermine.web.struts.ConvertBagController"/>
+    <action path="/initErrorMessages" type="org.intermine.web.struts.ErrorMessagesController"/>
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>

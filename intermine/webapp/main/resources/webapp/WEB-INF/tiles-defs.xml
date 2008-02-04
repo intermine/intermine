@@ -9,7 +9,8 @@
   <definition name="layout.template" path="/layout.jsp">
     <put name="pageName" value=""/>
     <put name="title" value="/title.jsp" />
-    <put name="errorMessages" value="/errorMessages.jsp"/>
+    <put name="errorMessagesContainers" value="errorMessagesContainers.tile"/>
+    <put name="errorMessages" value="errorMessages.tile"/>
     <put name="footer" value="/footer.jsp"/>
     <put name="body" value=""/>
     <put name="contactForm" value="contactForm.jsp"/>
@@ -225,8 +226,9 @@
   <definition name="bagView.tile" path="bagView.jsp" controllerUrl="/initBagView.do" />
   <definition name="dataCategories.tile" path="/dataCategories.jsp" />
   <definition name="subMenu.tile" path="subMenu.jsp" controllerUrl="/initSubMenu.do" />  
-  <definition name="bagRunnerMsg.tile" path="/bagRunnerMsg.jsp" />
   <definition name="convertBag.tile" path="convertBag.jsp" controllerUrl="/initConvertBag.do" />  
+  <definition name="errorMessages.tile" path="errorMessages.jsp" controllerUrl="/initErrorMessages.do" />  
+  <definition name="errorMessagesContainers.tile" path="errorMessagesContainers.jsp" />  
 
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->

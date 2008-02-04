@@ -114,10 +114,6 @@ li {
   margin: 0 8px 4px 8px; padding:5px 0px 0px 10px; border: 1px solid #888;
   font-size: 14px; font-weight:bold; background: url('../theme/heading-bg.gif') top center repeat; white-space: nowrap;}
 
-.topBar {
-	  padding: 6px;
-	  background: white; font-size: 13px; border: 1px dashed #777;}
-
 div.templateLine {
   margin-bottom: 5px; margin-top: 5px;}
 
@@ -380,18 +376,3 @@ ul#nav{
 ul#nav li{
 	float:left;
 	margin:0px 1px 0px 0px;}
-	
-	
-/* =DIV £TABLE */
-.lookupReport
-{
-  margin: 0 10px 10px 10px; padding: 6px;
-  background-color: white; font-size: 14px; border: 1px dashed #777;}
-
-/* =DIV £TABLE */
-.lookupWarn {
-  color: green;}
-
-/* =DIV £TABLE */
-.lookupError {
-  color: red;}

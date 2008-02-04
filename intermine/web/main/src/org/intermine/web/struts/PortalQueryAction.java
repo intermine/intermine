@@ -26,13 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.ListUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -180,47 +180,8 @@ public class PortalQueryAction extends InterMineAction
         List <Integer> bagList = new ArrayList <Integer> ();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
         int matches = bagQueryResult.getMatchAndIssueIds().size();
-        Set<String> unresolved = bagQueryResult.getUnresolved().keySet();
-        Set<String> duplicates = new HashSet<String>();
-        Set<String> lowQuality = new HashSet<String>();
-        Set<String> translated = new HashSet<String>();
-        Map<String, List> wildcards = new HashMap<String, List>();
-        Map<String, Map<String, List>> duplicateMap = bagQueryResult.getIssues().get(BagQueryResult
-                .DUPLICATE);
-        if (duplicateMap != null) {
-            for (Map.Entry<String, Map<String, List>> queries : duplicateMap.entrySet()) {
-                duplicates.addAll(queries.getValue().keySet());
-            }
-        }
-        Map<String, Map<String, List>> translatedMap = bagQueryResult.getIssues().get(BagQueryResult
-                .TYPE_CONVERTED);
-        if (translatedMap != null) {
-            for (Map.Entry<String, Map<String, List>> queries : translatedMap.entrySet()) {
-                translated.addAll(queries.getValue().keySet());
-            }
-        }
-        Map<String, Map<String, List>> lowQualityMap = bagQueryResult.getIssues().get(BagQueryResult
-                .OTHER);
-        if (lowQualityMap != null) {
-            for (Map.Entry<String, Map<String, List>> queries : lowQualityMap.entrySet()) {
-                lowQuality.addAll(queries.getValue().keySet());
-            }
-        }
-        Map<String, Map<String, List>> wildcardMap = bagQueryResult.getIssues().get(BagQueryResult
-                                                          .WILDCARD);
-        if (wildcardMap != null) {
-            for (Map.Entry<String, Map<String, List>> queries : wildcardMap.entrySet()) {
-                wildcards.putAll(queries.getValue());
-            }
-        }
 
-        DisplayLookup displayLookup = new DisplayLookup(className, matches, unresolved,
-                                                        duplicates, translated,
-                          lowQuality, wildcards, null);
-
-        List<DisplayLookup> lookupResults = new ArrayList<DisplayLookup>();
-        lookupResults.add(displayLookup);
-        request.setAttribute("lookupResults", lookupResults);
+        DisplayLookupMessageHandler.handleMessages(bagQueryResult, session, properties, className, null);
 
         // Use custom converters
         Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
@@ -265,9 +226,14 @@ public class PortalQueryAction extends InterMineAction
                     .addParameter("table", identifier)
                     .addParameter("trail", "").forward();
                 }
+                if (converted.size() == 1) {
+                    return new ForwardParameters(mapping.findForward("objectDetails"))
+                    .addParameter("id", converted.get(0).toString()).forward();
+                }
                 osw.addAllToBag(imBag.getOsb(), converted);
                 osw.close();
                 profile.saveBag(imBag.getName(), imBag);
+
                 return new ForwardParameters(mapping.findForward("bagDetails"))
                 .addParameter("addparameter", addparameter)
                 .addParameter("messageDisplayer", messageDisplayer)
