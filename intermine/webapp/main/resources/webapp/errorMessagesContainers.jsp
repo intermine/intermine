@@ -18,6 +18,5 @@
       <br/>
     </noscript>
 
-    <div id="errorMsgs"></div>
 </div>
 <!-- /errorMessages.jsp -->
