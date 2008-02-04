@@ -3,6 +3,7 @@
 # Run the FlyMine production build and dump the database occasionally
 # Targets are listed at the end of the script
 # The database to dump will be found by reading the properties from $HOME/<mine_name>.properties
+# where <mine_name> is the name of the directory where the script is run
 
 use strict;
 use warnings;
@@ -609,8 +610,10 @@ for my $name_and_time (@action_times) {
   write;
 }
 
-print "\n";
+if ($total_time > 0) {
+  print "\n";
 
-$key = 'total';
-$value = $total_time;
-write;
+  $key = 'total';
+  $value = $total_time;
+  write;
+}
