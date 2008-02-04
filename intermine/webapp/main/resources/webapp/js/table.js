@@ -137,7 +137,6 @@ function setToolbarAvailability(status) {
 }
 
 function onSaveBagEnter(formName) {
-	if (Event && (Event.keyCode == 13)) {
-		validateBagName(formName);
-	}
+	var frm = document.forms[formName];
+	frm.operationButton.value = 'saveNewBag';
 }
