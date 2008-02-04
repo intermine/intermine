@@ -407,7 +407,7 @@
     </action>
     <action path="/initSubMenu" type="org.intermine.web.struts.SubMenuController">
     </action>
-	<action path="/initEnrichmentWidget" name="enrichmentWidgetForm" type="org.intermine.web.struts.EnrichmentWidgetController" validate="false">
+	<action path="/initEnrichmentWidget" name="enrichmentWidgetForm" type="org.intermine.web.struts.EnrichmentWidgetController" validate="false" scope="request">
 	</action>
     <action path="/initSingleResult" type="org.intermine.web.struts.SingleResultController"/>
     <action path="/initTableCountEstimate" type="org.intermine.web.struts.CountTableController"/>
