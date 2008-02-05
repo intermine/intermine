@@ -212,7 +212,8 @@ public class PortalQueryAction extends InterMineAction
                     converted.add(((InterMineObject) resRow.get(0)).getId());
                 }
                 if (converted.size() <= 0) {
-                    recordMessage(new ActionMessage("portal.nomatches", extId), request);
+                    recordMessage(new ActionMessage("portal.nomatches.orthologues", 
+                                                    addparameter, extId), request);
 
                     WebPathCollection webPathCollection =
                         new WebPathCollection(os, new Path(model, className), new ArrayList()
