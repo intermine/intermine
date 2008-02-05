@@ -46,28 +46,50 @@ public class EnrichmentWidgetController extends TilesAction
      */
      public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                   @SuppressWarnings("unused") ActionMapping mapping,
-                                  ActionForm form,
+                                  @SuppressWarnings("unused")  ActionForm form,
                                   HttpServletRequest request,
                                   @SuppressWarnings("unused") HttpServletResponse response)
      throws Exception {
          
-         EnrichmentWidgetForm ewf = (EnrichmentWidgetForm) form;
+         //EnrichmentWidgetForm ewf = (EnrichmentWidgetForm) form;
+         EnrichmentWidgetForm ewf = new EnrichmentWidgetForm();
+         
+         String bagName = request.getParameter("bagName");
+         String dataLoader = request.getParameter("ldr");
+         
+         String filters = request.getParameter("filters");
+         String title = request.getParameter("title");
+         String link = request.getParameter("link");
+         String descr = request.getParameter("descr");
+         String filterLabel = request.getParameter("filterLabel");
+         String label = request.getParameter("label");
+         
+         
+         ewf.setBagName(bagName);
+         ewf.setLdr(dataLoader);
+         ewf.setDescr(descr);
+         ewf.setLabel(label);
+         ewf.setLink(link);
+         ewf.setTitle(title);
+         ewf.setFilters(filters);
+         ewf.setFilterLabel(filterLabel);
+         
          HttpSession session = request.getSession();
          Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
          ServletContext servletContext = session.getServletContext();
          ObjectStoreInterMineImpl os =
              (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-         String bagName = ewf.getBagName();
+         
          Map<String, InterMineBag> allBags =
              WebUtil.getAllBags(profile.getSavedBags(), servletContext);
          InterMineBag bag = allBags.get(bagName);
          if (bag == null) {
              return null;
          }
-         ewf.setBag(bag);
+        ewf.setBag(bag);
 
-         Class<?> clazz = TypeUtil.instantiate(ewf.getController());
+         Class<?> clazz = TypeUtil.instantiate(dataLoader);
          Constructor<?> constr = clazz.getConstructor(new Class[]
                                                              {
              HttpServletRequest.class
@@ -90,7 +112,7 @@ public class EnrichmentWidgetController extends TilesAction
          request.setAttribute("totals", results.get(1));
          request.setAttribute("labelToId", results.get(2));
          request.setAttribute("bagType", bag.getType());
-         request.setAttribute("referencePopulation", "All " + ewf.getBag().getType() + "s from  "
+         request.setAttribute("referencePopulation", "All " + bag.getType() + "s from  "
                               + ldr.getReferencePopulation().toString());
 
          return null;

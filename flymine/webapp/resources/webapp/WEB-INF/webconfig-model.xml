@@ -206,8 +206,8 @@
 
       <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
-                                 controller="org.intermine.bio.web.widget.GoStatLdr"
-                                 description="Go terms enriched for genes in this list."
+                                 ldr="org.intermine.bio.web.widget.GoStatLdr"
+                                 descr="Go terms enriched for genes in this list."
                                  label="GO Term"
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
@@ -215,17 +215,18 @@
 
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
                                  link="org.flymine.web.widget.ProteinDomainURLQuery"
-                                 controller="org.flymine.web.widget.ProteinDomainLdr"
+                                 ldr="org.flymine.web.widget.ProteinDomainLdr"
                                  label="Protein Domain"
-                                 description="Protein Domains enriched for genes in this list."
+                                 descr="Protein Domains enriched for genes in this list."
                                  filters=""
                                  filterLabel=""
                                  max="0.10"  />
+                                 
       <enrichmentwidgetdisplayer title="Publication Enrichment"
                                  link="org.intermine.bio.web.widget.PublicationURLQuery"
-                                 controller="org.intermine.bio.web.widget.PublicationLdr"
+                                 ldr="org.intermine.bio.web.widget.PublicationLdr"
                                  label="Publication"
-                                 description="Publications enriched for genes in this list."
+                                 descr="Publications enriched for genes in this list."
                                  filters=""
                                  filterLabel=""
                                  max="0.10"  />
@@ -233,8 +234,8 @@
 <!-- remove until we can fix the query
            <enrichmentwidgetdisplayer title="Tiffin Motif Enrichment"
                                       link="org.flymine.web.widget.TiffinURLQuery"
-                                      controller="org.flymine.web.widget.TiffinLdr"
-                                      description="Tiffin Motifs enriched for genes in this list."
+                                      ldr="org.flymine.web.widget.TiffinLdr"
+                                      descr="Tiffin Motifs enriched for genes in this list."
                                       max="0.10"
                                       label="Motif"
                                       externalLink="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc="
@@ -293,8 +294,8 @@
 
       <enrichmentwidgetdisplayer title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
-                                 controller="org.intermine.bio.web.widget.GoStatLdr"
-                                 description="Go terms enriched for proteins in this list."
+                                 ldr="org.intermine.bio.web.widget.GoStatLdr"
+                                 descr="Go terms enriched for proteins in this list."
                                  label="GO Term"
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="ontology"
@@ -302,27 +303,27 @@
 
       <enrichmentwidgetdisplayer title="Protein Domain Enrichment"
                                  link="org.flymine.web.widget.ProteinDomainURLQuery"
-                                 controller="org.flymine.web.widget.ProteinDomainLdr"
+                                 ldr="org.flymine.web.widget.ProteinDomainLdr"
                                  label="Protein Domain"
-                                 description="Protein Domains enriched for proteins in this list."
+                                 descr="Protein Domains enriched for proteins in this list."
                                  filters=""
                                  filterLabel=""
                                  max="0.10"  />
 
       <enrichmentwidgetdisplayer title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
-                                 controller="org.intermine.bio.web.widget.UniProtFeaturesLdr"
+                                 ldr="org.intermine.bio.web.widget.UniProtFeaturesLdr"
                                  label="Feature"
-                                 description="UniProt features enriched for proteins in this list."
+                                 descr="UniProt features enriched for proteins in this list."
                                  filters=""
                                  filterLabel=""
                                  max="0.10"  />
 
       <enrichmentwidgetdisplayer title="UniProt Keywords"
                                  link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
-                                 controller="org.intermine.bio.web.widget.UniProtKeywordsLdr"
+                                 ldr="org.intermine.bio.web.widget.UniProtKeywordsLdr"
                                  label="Keyword"
-                                 description="UniProt keywords enriched for proteins in this list."
+                                 descr="UniProt keywords enriched for proteins in this list."
                                  filters=""
                                  filterLabel=""
                                  max="0.10"  />
