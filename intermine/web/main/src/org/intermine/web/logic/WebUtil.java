@@ -524,8 +524,9 @@ public abstract class WebUtil
                         resultsMap.put(id, new BigDecimal(p));
                     } catch (Exception e) {
                         String msg = p + " isn't a double.  calculated using sample size: " 
-                        + countBag + " and population size: " + countAll + ".  population query " 
-                        + "used: " + queryPopulation.toString();
+                        + countBag + ", population size: " + countAll + ", bag size: " 
+                        + numberOfObjectsInBag + ", total: " + total                        
+                        + ".  population query used: " + queryPopulation.toString();
                         throw new RuntimeException(msg, e);
                     }
                 }
