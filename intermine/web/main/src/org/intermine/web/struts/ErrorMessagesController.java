@@ -49,9 +49,14 @@ public class ErrorMessagesController extends TilesAction
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        ActionMessages messages = (ActionMessages) session.getAttribute(Constants.PORTAL_MSG);
+        ActionMessages messages = (ActionMessages) session.getAttribute(Constants.LOOKUP_MSG);
         if (messages != null) {
-            request.setAttribute(Constants.PORTAL_MSG, messages);
+            request.setAttribute(Constants.LOOKUP_MSG, messages);
+            session.removeAttribute(Constants.LOOKUP_MSG);
+        }
+        ActionMessages messages2 = (ActionMessages) session.getAttribute(Constants.PORTAL_MSG);
+        if (messages2 != null) {
+            request.setAttribute(Constants.PORTAL_MSG, messages2);
             session.removeAttribute(Constants.PORTAL_MSG);
         }
         return null;

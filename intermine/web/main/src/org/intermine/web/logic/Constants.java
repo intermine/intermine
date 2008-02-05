@@ -133,6 +133,7 @@ public interface Constants
     
     public static final String PORTAL_MSG = "PORTAL_MSG";
    
+    public static final String LOOKUP_MSG = "LOOKUP_MSG";
 
     /**
      * The name of the property that is set to TRUE in the PortalQueryAction Action to indicate
