@@ -29,6 +29,13 @@ var hasmessages=0;
   </html:messages>
 </logic:messagesPresent>
 
+<logic:messagesPresent name="LOOKUP_MSG">
+  <html:messages id="message" name="LOOKUP_MSG">
+      new Insertion.Bottom('lookup_msg','<c:out value="${message}" escapeXml="false"/><br/>');
+      haslookup=1;
+  </html:messages>
+</logic:messagesPresent>
+
 <!-- ERRORS II -->
 <c:if test="${!empty ERRORS}">
     <c:forEach items="${ERRORS}" var="error">
@@ -56,10 +63,10 @@ var hasmessages=0;
 </c:if>
 
 if(haserrors) {
-    Effect.Appear('error_msg');
+    Effect.Appear('error_msg',  { duration: 3.0 });
 }
 if(hasmessages) {
-    Effect.Appear('msg');
+    Effect.Appear('msg',  { duration: 3.0 });
 }
 if(haslookup) {
     Effect.Appear('lookup_msg', { duration: 3.0 });

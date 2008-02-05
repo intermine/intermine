@@ -56,16 +56,16 @@ public class DisplayLookupMessageHandler
             if (unresolved.size() == 1) {
                 ActionMessage msg = new ActionMessage("results.lookup.unresolved.one", type,
                                                       values.toString());
-                actionMessages.add(Constants.PORTAL_MSG, msg);
+                actionMessages.add(Constants.LOOKUP_MSG, msg);
             } else
                 if (unresolved.size() >= 1) {
                     ActionMessage msg = new ActionMessage("results.lookup.unresolved.many", type,
                                                           values.toString());
-                    actionMessages.add(Constants.PORTAL_MSG, msg);
+                    actionMessages.add(Constants.LOOKUP_MSG, msg);
                 }
             if (extraConstraint != null && extraConstraint.length() != 0) {
                 ActionMessage msg = new ActionMessage("results.lookup.in", extraConstraint);
-                actionMessages.add(Constants.PORTAL_MSG, msg);
+                actionMessages.add(Constants.LOOKUP_MSG, msg);
             }
         }
         if (duplicates.size() > 0) {
@@ -79,11 +79,11 @@ public class DisplayLookupMessageHandler
             if (duplicates.size() == 1) {
                 ActionMessage msg = new ActionMessage("results.lookup.duplicate.one",
                                                       values.toString());
-                actionMessages.add(Constants.PORTAL_MSG, msg);
+                actionMessages.add(Constants.LOOKUP_MSG, msg);
             } else {
                 ActionMessage msg = new ActionMessage("results.lookup.duplicate.many",
                                                       values.toString());
-                actionMessages.add(Constants.PORTAL_MSG, msg);
+                actionMessages.add(Constants.LOOKUP_MSG, msg);
             }
         }
         if (translated.size() > 0) {
@@ -97,11 +97,11 @@ public class DisplayLookupMessageHandler
             if (translated.size() == 1) {
                 ActionMessage msg = new ActionMessage("results.lookup.translated.one", type,
                                                       values.toString());
-                actionMessages.add(Constants.PORTAL_MSG, msg);
+                actionMessages.add(Constants.LOOKUP_MSG, msg);
             } else {
                 ActionMessage msg = new ActionMessage("results.lookup.translated.many", type,
                                                       values.toString());
-                actionMessages.add(Constants.PORTAL_MSG, msg);
+                actionMessages.add(Constants.LOOKUP_MSG, msg);
             }
         }
         if (lowQuality.size() > 0) {
@@ -115,11 +115,11 @@ public class DisplayLookupMessageHandler
             if (lowQuality.size() == 1) {
                 ActionMessage msg = new ActionMessage("results.lookup.lowQuality.one",
                                                       values.toString());
-                actionMessages.add(Constants.PORTAL_MSG, msg);
+                actionMessages.add(Constants.LOOKUP_MSG, msg);
             } else {
                 ActionMessage msg = new ActionMessage("results.lookup.lowQuality.many",
                                                       values.toString());
-                actionMessages.add(Constants.PORTAL_MSG, msg);
+                actionMessages.add(Constants.LOOKUP_MSG, msg);
             }
         }
         if (wildcards.size() > 0) {
@@ -128,13 +128,13 @@ public class DisplayLookupMessageHandler
                 String key = (String) wildcards.keySet().iterator().next();
                 if (list.size() == 1) {
                     ActionMessage msg = new ActionMessage("results.lookup.wildcard.oneone", key);
-                    actionMessages.add(Constants.PORTAL_MSG, msg);
+                    actionMessages.add(Constants.LOOKUP_MSG, msg);
                 } else {
                     ActionMessage msg = new ActionMessage("results.lookup.wildcard.one",
                                                               key + " (" + wildcards.get(key)
                                                               .size() 
                                                               + ")");
-                    actionMessages.add(Constants.PORTAL_MSG, msg);
+                    actionMessages.add(Constants.LOOKUP_MSG, msg);
                 }
             } else {
                 StringBuffer values = new StringBuffer();
@@ -145,10 +145,10 @@ public class DisplayLookupMessageHandler
                     values.append(value);
                 }
                 ActionMessage msg = new ActionMessage("results.lookup.wildcard.many", values);
-                actionMessages.add(Constants.PORTAL_MSG, msg);
+                actionMessages.add(Constants.LOOKUP_MSG, msg);
             }
         }
-        session.setAttribute(Constants.PORTAL_MSG, actionMessages);
+        session.setAttribute(Constants.LOOKUP_MSG, actionMessages);
     }
 
     /**

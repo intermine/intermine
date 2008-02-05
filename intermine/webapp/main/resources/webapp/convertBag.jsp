@@ -17,6 +17,7 @@
     <c:if test="${orientation!='h'}">
       <hr/>
     </c:if>
+    <c:if test="${orientation=='h'}">
     <c:forEach items="${customConverters}" var="converterInfo">
     <h3><%--<c:out value="${converterInfo.key}" />--%>Orthologues</h3>
     <html:select property="extraFieldValue" styleId="extraConstraintSelect" disabled="false" >
@@ -28,5 +29,6 @@
        </html:submit>
     </html:select>
     </c:forEach>
+    </c:if>
 
 <!-- /convertBag.jsp -->

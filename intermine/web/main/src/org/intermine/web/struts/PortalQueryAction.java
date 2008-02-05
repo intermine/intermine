@@ -110,7 +110,7 @@ public class PortalQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.badportalquery"), request);
             return mapping.findForward("failure");
         }
-
+        ActionMessages actionMessages = new ActionMessages();
         session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
 
         // Set collapsed/uncollapsed state of object details UI
@@ -181,7 +181,8 @@ public class PortalQueryAction extends InterMineAction
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
         int matches = bagQueryResult.getMatchAndIssueIds().size();
 
-        DisplayLookupMessageHandler.handleMessages(bagQueryResult, session, properties, className, null);
+        DisplayLookupMessageHandler.handleMessages(bagQueryResult, session, 
+                                                   properties, className, null);
 
         // Use custom converters
         Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
@@ -242,9 +243,27 @@ public class PortalQueryAction extends InterMineAction
             }
         }
 
+        // Attach messages
+        if (bagList.size() == 0 && bagQueryResult.getMatches().size() == 1) {
+            ActionMessage msg = new ActionMessage("results.lookup.noresults.one", 
+                                                  bagQueryResult.getMatches().size(), 
+                                                  className);
+            actionMessages.add(Constants.PORTAL_MSG, msg);
+        } else if (bagList.size() == 0 && bagQueryResult.getMatches().size() > 1) {
+            ActionMessage msg = new ActionMessage("results.lookup.noresults.many", 
+                                                  bagQueryResult.getMatches().size(), 
+                                                  className);
+            actionMessages.add(Constants.PORTAL_MSG, msg);
+        } else if (bagList.size() >= 0) {
+            ActionMessage msg = new ActionMessage("results.lookup.matches.many", bagList.size());
+            actionMessages.add(Constants.PORTAL_MSG, msg);
+        }
+        //TODO add custom converter message
+        session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
+        
         // Go to the object details page
-        if ((bagList.size() == 1) && (idList.length == 1)) {
+        if ((bagList.size() > 0) && (idList.length == 1)) {
             return new ForwardParameters(mapping.findForward("objectDetails"))
             .addParameter("id", bagList.get(0).toString()).forward();
         /// Go to results page
