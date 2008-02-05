@@ -15,7 +15,7 @@ package org.intermine.web.logic.config;
  */
 public class EnrichmentWidgetDisplayer
 {
-    private String title, link, controller, description, max, filters, filterLabel;
+    private String title, link, ldr, descr, max, filters, filterLabel;
     private String label;
 
     /**
@@ -65,35 +65,6 @@ public class EnrichmentWidgetDisplayer
     }
 
     /**
-     * @return the controller
-     */
-    public String getController() {
-        return controller;
-    }
-
-    /**
-     * @param controller the controller to set
-     */
-    public void setController(String controller) {
-        this.controller = controller;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-    /**
      * @return the filters
      */
     public String getFilters() {
@@ -141,7 +112,35 @@ public class EnrichmentWidgetDisplayer
      * @return a String version of this WebConfig object
      */
     public String toString() {
-        return "< title=\"" + title + "\" link=\"" + link + "\" controller=\""
-               + controller + "\"/>";
+        return "< title=\"" + title + "\" link=\"" + link + "\" ldr=\""
+               + ldr + "\"/>";
+    }
+
+    /**
+     * @return the ldr
+     */
+    public String getLdr() {
+        return ldr;
+    }
+
+    /**
+     * @param ldr the ldr to set
+     */
+    public void setLdr(String ldr) {
+        this.ldr = ldr;
+    }
+
+    /**
+     * @return the descr
+     */
+    public String getDescr() {
+        return descr;
+    }
+
+    /**
+     * @param descr the descr to set
+     */
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 }

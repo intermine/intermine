@@ -4,6 +4,7 @@ html, body
   font-size: 100%; /* NN4 */
   margin: 0px;
   padding: 0px;
+  color:#333;
   background-color:#f5f0ff;
 }
 
@@ -27,6 +28,7 @@ a.extlink , a.extlink:link, a.extlink:visited, a.extlink:active, a.extlink:hover
   margin-right: 12px;
   margin-left: 12px;
   margin-bottom: 10px;
+  color:#333;
 }
 table.results {
   border-left: solid 1px #666;
@@ -37,21 +39,27 @@ table.results th, table.results td {
   border-right: solid 1px #666;
   border-bottom: solid 1px #666;
   background: #white;
+  color:#333;
 }
 table.results th {
   background: #eee;
+  color:#333;
 }
 
 table.results th {
   font-size: 12px;
+  color:#333;
 }
 table.results td td {
   border: none;
+  color:#333;
 }
 table.results {
   font-size: small;
+  color:#333;
 }
 
 table td {
   font-size: 12px;
+  color:#333;
 }

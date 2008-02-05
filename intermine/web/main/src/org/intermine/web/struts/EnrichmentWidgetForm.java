@@ -25,7 +25,7 @@ import org.apache.struts.action.ActionMapping;
 public class EnrichmentWidgetForm extends ActionForm
 {
 
-    private String controller, title, link, description, filterLabel, label;
+    private String ldr, title, link, descr, filterLabel, label;
     private String errorCorrection, filter;
     private String filters;
     private InterMineBag bag;
@@ -44,10 +44,10 @@ public class EnrichmentWidgetForm extends ActionForm
      * Initialiser
      */
     public void initialise() {
-        controller = "";
+        ldr = "";
         title  = "";
         link = "";
-        description = "";
+        descr = "";
         filterLabel = "";
         label = "";
         errorCorrection = "BenjaminiHochberg";
@@ -58,39 +58,35 @@ public class EnrichmentWidgetForm extends ActionForm
         max = "0.10";
     }
 
-    /**
-     * @return the controller
-     */
-    public String getController() {
-        return controller;
-    }
 
 
     /**
-     * controller is the class that renders the widget
-     * @param controller the controller to set
+     * @return the ldr
      */
-    public void setController(String controller) {
-        this.controller = controller;
+    public String getLdr() {
+        return ldr;
     }
-
 
     /**
-     * description is informative text describing the widget
-     * @return the description
+     * @param ldr the ldr to set
      */
-    public String getDescription() {
-        return description;
+    public void setLdr(String ldr) {
+        this.ldr = ldr;
     }
-
 
     /**
-     * @param description the description to set
+     * @return the descr
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public String getDescr() {
+        return descr;
     }
 
+    /**
+     * @param descr the descr to set
+     */
+    public void setDescr(String descr) {
+        this.descr = descr;
+    }
 
     /**
      * which method of errorcorrection the user chose.  Bonferroni, BenjaminiHochberg, or None

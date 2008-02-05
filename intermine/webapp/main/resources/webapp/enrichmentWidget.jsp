@@ -16,7 +16,7 @@
 
 <center><h2>${enrichmentWidgetForm.title}</h2></center>
 
-<c:out value='${enrichmentWidgetForm.description}'/>  Smaller p-values show greater enrichment.  Method: Hypergeometric test  
+<c:out value='${enrichmentWidgetForm.descr}'/>  Smaller p-values show greater enrichment.  Method: Hypergeometric test  
 <br/><br/>
 Reference population: <c:out value='${referencePopulation}'/>.
 <br/>
@@ -42,8 +42,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
       	<td>
       	
     	<c:set value="${enrichmentWidgetForm.filters}" var="filters" />
-		<c:set var="list" value='${fn:split(filters, ",")}' />
-      	
+		<c:set var="list" value='${fn:split(filters, ",")}' />      	
       		<html:select property="filter">
      		 <c:forEach items="${list}" var="name">
 				<html:option value="${name}">${name}</html:option>
@@ -76,26 +75,30 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	   	</td>
 	   	</tr>
 	</table>	
-   		<html:hidden property="bagName"/>
-      		    <html:hidden property="filters"/>
-      		    <html:hidden property="controller"/>
-      		   	<html:hidden property="title" />
-      		    <html:hidden property="link" />      		  
-      		  	<html:hidden property="description" />
-      		  	<html:hidden property="filterLabel"/>
-      		  	<html:hidden property="label"/>	
-      		  </html:form>
+   		<html:hidden property="bagName" value="${enrichmentWidgetForm.bagName}"/>
+        <html:hidden property="filters" value="${enrichmentWidgetForm.filters}" />
+        <html:hidden property="ldr" value="${enrichmentWidgetForm.ldr}"/>
+        <html:hidden property="title" value="${enrichmentWidgetForm.title}" />
+        <html:hidden property="link"  value="${enrichmentWidgetForm.link}" />      		  
+        <html:hidden property="descr" value="${enrichmentWidgetForm.descr}" />
+        <html:hidden property="filterLabel" value="${enrichmentWidgetForm.filterLabel}"/>
+        <html:hidden property="label" value="${enrichmentWidgetForm.label}"/>	
+    </html:form>
 	</td>
 </tr>
 
 
 <tr>
 	<td valign="top" align="left">
+	
+	Select values below and click on the 'Display' button to view the records in a results table.
+	
 <html:form action="/widgetAction" target="_top">
 <div id="tool_bar_div">
 <ul id="button_bar" onclick="document.widgetForm.submit();">
 	<li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></li>
 </ul>
+
 </div>
 </td>
 </tr>
@@ -144,7 +147,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
     				    </c:choose>
   					</td>
   					<td align="left" nowrap>
-  		   				<html:link action="/widgetAction?key=${results.key}&bagName=${enrichmentWidgetForm.bagName}&link=${enrichmentWidgetForm.link}" target="_top">
+  		   				<html:link action="/widgetAction?key=${results.key}&bagName=${bagName}&link=${link}" target="_top">
   		   					[<c:out value='${totals[results.key]}'/>  ${bagType}s]
        					</html:link>  	
 	       			</td>
