@@ -20,17 +20,30 @@ public class Hypergeometric
 {
     static double[] factorials;
     
-    /**
-     * Builds an array of factorials so we don't have to calculate it each time.
-     * @param numGenes the number of genes in the list
-     **/
-    public Hypergeometric(int numGenes) {
-        factorials = new double[numGenes + 1];
-        factorials[0] = 0;
-        double current = 0;
-        for (int i = 1; i < numGenes + 1; i++) {
-            current += Math.log(i);
-            factorials[i] = current;
+//    /**
+//     * Builds an array of factorials so we don't have to calculate it each time.
+//     * @param numGenes the number of genes in the list
+//     **/
+//    public Hypergeometric(int numGenes) {
+//        factorials = new double[numGenes + 1];
+//        factorials[0] = 0;
+//        double current = 0;
+//        for (int i = 1; i < numGenes + 1; i++) {
+//            current += Math.log(i);
+//            factorials[i] = current;
+//        }
+//    }
+
+
+    private static void getFactorials(int n) {
+        if (factorials == null || factorials.length < n) {
+            factorials = new double[n + 1];
+            factorials[0] = 0;
+            double current = 0;
+            for (int i = 1; i < n + 1; i++) {
+                current += Math.log(i);
+                factorials[i] = current;
+            }
         }
     }
 
@@ -80,6 +93,8 @@ public class Hypergeometric
      **/
     public static double calculateP(int n, int k, int bigM, int bigN) {
         double p = 0;
+        // TODO maybe we don't have to call this each time?
+        getFactorials(bigN);
         for (int i = n; i >= k; i--) {
             p +=
                 Math.exp(logChoose(bigM, i) + logChoose(bigN - bigM, n - i) - logChoose(bigN, n));
