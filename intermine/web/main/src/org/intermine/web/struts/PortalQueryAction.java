@@ -226,10 +226,6 @@ public class PortalQueryAction extends InterMineAction
                     .addParameter("table", identifier)
                     .addParameter("trail", "").forward();
                 }
-                if (converted.size() == 1) {
-                    return new ForwardParameters(mapping.findForward("objectDetails"))
-                    .addParameter("id", converted.get(0).toString()).forward();
-                }
                 osw.addAllToBag(imBag.getOsb(), converted);
                 osw.close();
                 profile.saveBag(imBag.getName(), imBag);
@@ -238,11 +234,15 @@ public class PortalQueryAction extends InterMineAction
                                     model, extId, addparameter, imBag, idList.length));
                 session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
-
-                return new ForwardParameters(mapping.findForward("bagDetails"))
-                .addParameter("addparameter", addparameter)
-                .addParameter("externalids", extId)
-                .addParameter("bagName", imBag.getName()).forward();
+                if (converted.size() == 1) {
+                    return new ForwardParameters(mapping.findForward("objectDetails"))
+                    .addParameter("id", converted.get(0).toString()).forward();
+                } else {
+                    return new ForwardParameters(mapping.findForward("bagDetails"))
+                    .addParameter("addparameter", addparameter)
+                    .addParameter("externalids", extId)
+                    .addParameter("bagName", imBag.getName()).forward();
+                }
             }
         }
 
