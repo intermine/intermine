@@ -74,6 +74,7 @@ public class ChadoDBConverter extends BioDBConverter
 
     private static final List<Item> EMPTY_ITEM_LIST = Collections.emptyList();
 
+    // feature type to query from the feature table
     private static final List<String> DEFAULT_FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
             "CDS", "intron", "exon",
@@ -215,6 +216,7 @@ public class ChadoDBConverter extends BioDBConverter
         }
         chadoOrganismId = getChadoOrganismId(connection);
         createFeatureTempTable(connection);
+        earlyExtraProcessing(connection);
         processFeatureTable(connection);
         processPubTable(connection);
         processLocationTable(connection);
@@ -394,6 +396,17 @@ public class ChadoDBConverter extends BioDBConverter
     }
 
     /**
+     * Return a list of types where one logical feature is represented as multiple rows in the
+     * feature table.  An example is UTR features in flybase - if a UTR spans multiple exons, each
+     * part is a separate row in the feature table.  In InterMine we represent the UTR as a single
+     * object with a start and end so we need special handling for these types.
+     * @return a list of segmented feature type
+     */
+    protected List<String> getSegmentedFeatures() {
+        return new ArrayList<String>();
+    }
+
+    /**
      * Fix types from the feature table, perhaps by changing non-SO type into their SO equivalent.
      * Types that don't need fixing will be returned unchanged.
      * @param type the input type
@@ -409,6 +422,16 @@ public class ChadoDBConverter extends BioDBConverter
                 return type;
             }
         }
+    }
+
+
+    /**
+     * Do any extra processing that is needed before the converter starts querying features
+     * @param connection the Connection
+     */
+    @SuppressWarnings("unused")
+    protected void earlyExtraProcessing(Connection connection) {
+        // empty
     }
 
     /**
@@ -1176,9 +1199,12 @@ public class ChadoDBConverter extends BioDBConverter
 
     /**
      * Create a temporary table containing only the feature_ids of the feature that interest us.
-     * The table is used in later queries.
+     * The table is used in later queries.  This is a protected method so that it can be overriden
+     * for testing.
+     * @param connection the Connection
+     * @throws SQLException if there is a problem
      */
-    private void createFeatureTempTable(Connection connection) throws SQLException {
+    protected void createFeatureTempTable(Connection connection) throws SQLException {
         String featureTypesString = getFeaturesString();
         String query =
             "CREATE TEMPORARY TABLE " + TEMP_FEATURE_TABLE_NAME + " AS"
@@ -1232,6 +1258,25 @@ public class ChadoDBConverter extends BioDBConverter
         }
     }
 
+    /**
+     * Return the chado cvterm id for the cvterm name.
+     * @param connection the db connection
+     * @return the cvterm id
+     * @throws SQLException if the is a database problem
+     */
+     private int getCvTermIdByName(Connection connection, String name)
+        throws SQLException {
+        String query = "select cvterm_id from cvterm where name in ('" + name + "')";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        if (res.next()) {
+            return res.getInt(1);
+        } else {
+            throw new RuntimeException("no rows returned when querying cvterm table for name \""
+                                       + name + "\"");
+        }
+    }
 
     /**
      * Return an extra constraint to be used when querying the feature table.  Any feature table
