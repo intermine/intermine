@@ -22,7 +22,8 @@
       <p>The QueryBuilder interface enables you to browse through
     classes and fields of the data model, selecting those that you
     wish to constrain and those that you wish to include in your
-    results.</p>
+    results.  We will begin the tutorial with an overview of the
+    QueryBuilder interface:</p>
 
       <p>Building a query invloves three main steps:</p>
 
@@ -36,7 +37,7 @@
        <img alt="[querybuilder_overview.png]" class="inlinegraphic" src="querybuilder_overview.png"/> 
         
 
-      <ul> <li><p><b>The model browser (left)</b> allows you to browse
+      <ul> <li><p><b>The model browser (top left)</b> allows you to browse
         through the FlyMine data model.  This displays an initial
         starting class and its fields with classes containing related
         information listed below.  Each class can be expanded to show
@@ -56,17 +57,18 @@
      
 
 
-        <li><p><b>The constraints list (right)</b> allows you to
+        <li><p><b>The constraint editor (right)</b> allows you to
       specify the constraints you wish to apply to particular classes
       and fields. A constraint is like a filter - you filter out a
       subset of the objects in a class which have certain
       characteristics (defined by the constraint). To apply a
       constraint to a field, navigate to the field in the model
       browser and click on the 'constrain' button next to it. This
-      will add the field to the constraints list and bring up a box in
-      which you specify your constraint.  You can change the
-      relationship (and, or, grouping) between the different
-      constraints using the 'constraint logic'.</p></li>
+      will bring up a box in the constraint editor allowing you to
+      specify your constraint.  You can change the relationship (and,
+      or, grouping) between the different constraints using the
+      'constraint logic'.  A summary of the constraints that have been
+      added is shown in the query summary (top right). </p></li>
 
       <img alt="[querybuilder_constrain.png]" class="inlinegraphic" src="querybuilder_constrain.png"/>
       
@@ -74,8 +76,8 @@
         <li><p><b>The output fields list (bottom)</b> displays the
         fields you have selected to show in your results.  (Each field
         is represented by a box which will become a column in the
-        results table, Initially, the output fields list will say 'No
-        fields selected for output').  To select a field to show in
+        results table. Initially, the output fields list will say 'No
+        fields selected for output'.  To select a field to show in
         the results output you press 'SHOW' next to the
         field. (Alternatively selecting 'SUMMARY' next to the class
         name will add the main fields for that class to your results
@@ -99,11 +101,11 @@
 <h1>3. Altering the results output of a template</h1>
 
 
-      <p>We will first introduce the use of the Query Builder by
+      <p><i>We will first introduce the use of the Query Builder by
       altering a template query. We will start with the template 'For
       the following gene symbol, show its gene identifier' and alter
       it to collect all gene identifiers, symbols and FBgns from genes
-      on the 4th chromosome of D. melanogaster.</p>
+      on the 4th chromosome of Drosophila melanogaster.</i></p>
 
       <p>Find the template 'Gene symbol --> Gene identifier'
         and run the query for the default Drosophila gene.</p>
@@ -135,7 +137,7 @@ dragging the output boxes.</p></li>
 
 
       <p>Change the query again to retrieve all genes on the 4th
-      chromosome of D. melanogaster:</p>
+      chromosome of <i>Drosophila melanogaster</i>:</p>
 
 
    <ul><li><p>Click on 'query' in the trail to return to the Query
@@ -149,13 +151,14 @@ dragging the output boxes.</p></li>
 
 
 
-<p><li>To constrain the current query to D. melanogaster, click on the
-'+' sign next to organism in the column on the left. Click on
-'CONSTRAIN' next to 'name' (under 'organism'). This brings up a
-'Constrain' section to the right (you might have to scroll down to
-view it). Select 'Filter query results on this field having a specific
-value' and choose Drosophila melanogaster from the drop-down menu.
-Click 'Add to query' next to the drop-down menu.  </p> </li>
+<p><li>To constrain the current query to <i>Drosophila
+melanogaster</i>, click on the '+' sign next to organism in the model
+browser. Click on 'CONSTRAIN' next to 'name' (under 'organism'). This
+brings up a 'Constrain' section to the right (you might have to scroll
+down to view it). Select 'Filter query results on this field having a
+specific value' and choose <i>Drosophila melanogaster</i> from the
+drop-down menu.  Click 'Add to query' next to the drop-down menu.
+</p> </li>
 
 
 
@@ -184,19 +187,27 @@ down and click 'Show results' to run the query. </p></li>
      
 <h1>5. Building a query from scratch</h1>
  
-      <p>To build a new query from scratch, access the FlyMine
-    QueryBuilder at the bottom of the FlyMine home page or by choosing
-    a query starting point at the bottom of a data category page.</p>
+      <p><i>To build a new query from scratch, access the FlyMine
+    QueryBuilder at the bottom FlyMine home page, from the
+    QueryBuilder tab in the main menu bar or by choosing a query
+    starting point at the bottom of a data category page.</i></p>
+
+    <p>The query builder page allows you to choose a class from which
+    to start building a query from scratch. Build your query by adding
+    constraints and selecting your results output in the same way as
+    already described for altering a template.</p>.
+
+<img alt="[buildfromscratch.png]" class="inlinegraphic" src="buildfromscratch.png"/>
 
 
 <h1>6. Building a template: start</h1>
 
 
-      <p>Any query that has been built using the FlyMine QueryBuilder
+      <p><i>Any query that has been built using the FlyMine QueryBuilder
     can be saved as a template query, as long as it includes at least
     one editable constraint. In order to build a template you need to
     be logged-in to FlyMine. Templates that you create yourself are
-    saved to your 'MyMine' account.</p>
+    saved to your 'MyMine' account.</i></p>
 
     <p> We will now save the query we made above as a template. First
     make sure you are logged in. Then, scroll down and click on 'Start
@@ -220,7 +231,7 @@ down and click 'Show results' to run the query. </p></li>
         in this field. The label will appear on the template page
         after creating the template (see below).</p>
 
-      <img alt="[buildtemplate_edit.png]" class="inlinegraphic" src="buildtemplate_edit.png"/>
+      <img alt="[buildtemplate_edit_r11.png]" class="inlinegraphic" src="buildtemplate_edit_r11.png"/>
 
       <p>An editable constraint will have an open lock in the
    constraint list, whereas the lock of a constraint that cannot be
@@ -241,16 +252,16 @@ down and click 'Show results' to run the query. </p></li>
 
 <h1>8. Building a template: Name and description</h1>
 
-      <p>Each new template requires a name and a description. The
-    description will appear on the template page and in your list of
-    template queries, after creating the template (see
-    below). Therefore, it should provide as much information as
-    possible about what the template will do. Moreover, it should be
-    distinguishable from other template queries. After filling-in the
-    'Name' and 'Description' boxes, click on 'Update settings' below
-    the boxes.</p>
+      <p>Each new template requires a name and a title and an optional
+    description. The title and description will appear on the template
+    page and in your list of template queries, after creating the
+    template (see below). Therefore, they should provide as much
+    information as possible about what the template will do. Moreover,
+    the title should be distinguishable from other template
+    queries. After filling-in the 'Name', 'Title' and 'Description'
+    boxes, click on 'Update settings' below the boxes.</p>
 
-      <img alt="[buildtemplate_name.png]" class="inlinegraphic" src="buildtemplate_name.png"/>
+      <img alt="[buildtemplate_name_r11.png]" class="inlinegraphic" src="buildtemplate_name_r11.png"/>
 
 
 <h1>9. Building a template: Previewing and viewing</h1>
