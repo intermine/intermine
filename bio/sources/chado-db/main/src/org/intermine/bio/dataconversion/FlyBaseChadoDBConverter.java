@@ -351,6 +351,20 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
         return FEATURES;
     }
 
+    private static final List<String> SEGMENTED_FEATURES = Arrays.asList(
+            "five_prime_untranslated_region",
+            "three_prime_untranslated_region",
+            "CDS"
+    );
+
+    /**
+     * Return a list of feature types that are split over multiple rows.
+     * {@inheritDoc}
+     */
+    @Override
+    protected List<String> getSegmentedFeatures() {
+        return SEGMENTED_FEATURES;
+    }
 
     /**
      * For objects that don't have identifier == null, set the identifier to be the name column from
