@@ -87,8 +87,9 @@ public class EnrichmentWidgetController extends TilesAction
          if (bag == null) {
              return null;
          }
-        ewf.setBag(bag);
-
+         ewf.setBag(bag);
+         ewf.setBagType(bag.getType());
+         
          Class<?> clazz = TypeUtil.instantiate(dataLoader);
          Constructor<?> constr = clazz.getConstructor(new Class[]
                                                              {
@@ -108,10 +109,10 @@ public class EnrichmentWidgetController extends TilesAction
          if (results.isEmpty()) {
              return null;
          }
+         request.setAttribute("ewf", ewf);
          request.setAttribute("pvalues", results.get(0));
          request.setAttribute("totals", results.get(1));
          request.setAttribute("labelToId", results.get(2));
-         request.setAttribute("bagType", bag.getType());
          request.setAttribute("referencePopulation", "All " + bag.getType() + "s from  "
                               + ldr.getReferencePopulation().toString());
 

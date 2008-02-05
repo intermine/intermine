@@ -30,6 +30,7 @@ public class EnrichmentWidgetForm extends ActionForm
     private String filters;
     private InterMineBag bag;
     private String bagName;
+    private String bagType;
     private String max;
     
     
@@ -56,6 +57,7 @@ public class EnrichmentWidgetForm extends ActionForm
         bag = null;
         bagName = "";
         max = "0.10";
+        bagType = "";
     }
 
 
@@ -209,7 +211,7 @@ public class EnrichmentWidgetForm extends ActionForm
      * @return the bagType
      */
     public String getBagType() {
-        return bag.getType();
+        return bagType;
     }
 
     /**
@@ -272,5 +274,12 @@ public class EnrichmentWidgetForm extends ActionForm
     public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
                       @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
+    }
+
+    /**
+     * @param bagType the bagType to set
+     */
+    public void setBagType(String bagType) {
+        this.bagType = bagType;
     }
 }
