@@ -3,7 +3,7 @@
     <p><i>This tutorial will illustrate how to create lists and how to
     make use of lists. As an example, we will search for the
     orthologues of D. melanogaster eye specification genes in
-    D. pseudoobscura. We will then export the gene sequences the
+    D. pseudoobscura. We will then export the gene sequences, the
     D. melanogaster genes and their D. pseudoobscura orthologues all
     at once.</i></p>
 
@@ -123,7 +123,7 @@
         <li><p><b>A summary of the contents of the list</b></p>
 
       <p>
-            <img alt="[listpage_top.png]" class="inlinegraphic" src="listpage_top.png"/></p>
+            <img alt="[listpage_top_r11.png]" class="inlinegraphic" src="listpage_top_r11.png"/></p>
           
       </li>
 
@@ -151,7 +151,7 @@
       <p><i>Now we want to find all the orthologous genes in
     D. pseudoobscura.</i></p>
 
-    <p>We can do this using an existing template for that: <b>'Gene
+    <p>We can do this using an existing template query: <b>'Gene
     --&gt; Orthologues in one specific organism'</b>. The template can
     be found in two different ways:</p>
 
@@ -177,35 +177,37 @@
     two other drop-down menus and run the query.</p>
 
       <p>
-      <img alt="[list-template.png]" class="inlinegraphic" src="templateform.png"/></p>
+      <img alt="[list-template.png]" class="inlinegraphic" src="templateform_r11.png"/></p>
 
 
 <h1>5. Creating a list from a result table</h1>
 
-      <p><i>The results table from the previous template query shows the
-      D. melanogaster genes with their corresponding
-      orthologues in D. pseudoobscura. Only 7 out of the 10
-      D. melanogaster genes have orthologues in
-      D. pseudoobscura.</i></p>
+      <p><i>The results table from the previous template query shows
+      the D. melanogaster genes with their corresponding orthologues
+      in D. pseudoobscura. Only 7 out of the 10 D. melanogaster genes
+      have orthologues in D. pseudoobscura.  (Note: for a different
+      list of genes you may also see orthologues (under Homologue >
+      type) of type 'inparalogue', which are genes which have arisen
+      by duplication of the main 'orthologue').'</i></p>
 
 
       <p>Save the orthologous genes in a new list:</p>
 
     <ul>
-      <li><p>Click on the check-box in the title of column 4
-      which contains the gene symbols for the orthologues. This
+      <li><p>Click on the check-box in the title of column 3
+      which contains the gene identifiers for the orthologues. This
       selects all items in that column (on every result page, if more
-      than one page) plus in three additional columns which refer to
+      than one page) plus column 4 which refers to
       the same object. This is because you are saving the actual item
       (eg the gene) to a list, not just the
       identifier.</p></li>
 
-      <li><p>At the bottom of the page is an option to save
-      the selected results in a new list. Choose a new list name
+      <li><p>Above the results table is an option to save
+      the selected results in a new list ('CREATE LIST'). Choose a new list name
       eg. 'eye_genes_dpse' and click 'Save'.</p></li>
    </ul>
 
-      <img alt="[list-template-results.png]" class="inlinegraphic" src="template_results.png"/>
+      <img alt="[list-template-results.png]" class="inlinegraphic" src="template_results_r11.png"/>
 
 
 
@@ -220,7 +222,7 @@
         <li><p>Go to the Lists-View page. Select the two lists
       (eyes_genes_dmel and eyes_genes_dpse), type in a new name for
       the new combined list and click on 'Union'. A message will
-      appear saying that a new list was created, and the list itself
+      appear saying that a new list has been created, and the list itself
       will be listed on top.</p></li>
 
             <img alt="[list-union.png]" class="inlinegraphic" src="lists_union.png"/>
@@ -245,7 +247,7 @@
     <b>login</b>. If you log in (via button on top menu bar), your lists and
     query history can be stored permanently.</p>
 
-      <p>Find your lists back in 'Lists':</p>
+      <p>Find your lists in the 'Lists' tab of your MyMine page:</p>
 
       <img alt="[list-history.png]" class="inlinegraphic" src="mymine_lists.png"/>
 
