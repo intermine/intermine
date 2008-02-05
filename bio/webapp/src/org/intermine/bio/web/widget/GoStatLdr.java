@@ -54,7 +54,6 @@ public class GoStatLdr implements EnrichmentWidgetLdr
     Query sampleQuery;
     Query populationQuery;
     Collection<String> organisms;
-    int total, numberOfTests;
     String externalLink, append;
 
     /**
