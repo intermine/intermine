@@ -48,6 +48,7 @@
               <li>Publications</li>
               <li>Sequence</li>
               <li>Gene ORF name</li>
+              <li>Protein domain assignments from Interpro - see below</li>
           </ul>     
 
   </div>
@@ -62,13 +63,10 @@
 <div id="hiddenDiv2" class="dataSetDescription">
 
           <p>
-            Protein family and domain assignments to proteins in UniProt have
-            been loaded from <a
-            href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> for the following organisms:</p>
-          <ul> 
-              <li><i>D. melanogaster</i></li>
-              <li><i>A. gambiae</i></li>
-              <li><i>C. elegans</i></li>
+            Protein family and domain assignments to proteins are
+            loaded from Uniprot (see above).  Details for each family or domain
+            are loaded from <a
+            href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a></p>
           </ul> 
 </div>
 
