@@ -100,16 +100,16 @@ Template queries are run for this gene when the page is loaded.
 <h1>5. Results Page</h1>
 
 <p>
-The results table for the template 'Gene --> Orthologues + GO terms of these orthologues' shows the starting gene, orthologous genes and organism names with details of each GO term applied to the orthologous genes.  Orthologue data in FlyMine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a>, note that 'main' means the best hit in the other organism, 'secondary' denotes paralogues of the best hit.
+The results table for the template 'Gene --> Orthologues + GO terms of these orthologues' shows the starting gene, homologous genes and organism names with details of each GO term applied to the homologous genes.  Homologue data in FlyMine comes from <a href="http://inparanoid.sbc.su.se/">InParanoid</a> and can be of type 'orthologue' or 'inparalogue'. 
 </p>
 
-<img alt="[Results table]"  src="results.png"/>
+<img alt="[Results table]"  src="results_r11.png"/>
 
 <p>
 Summary buttons <img alt="[icon]"  src="summary_maths.png" valign="center"/> at the top of each column allow you to view some summary statistics.  For names and identifiers it will tell you about unique values, numerical data gives the min, max, mean and standard deviation.
 </p>
 
-<p><b>Click the summary button for the column 'Orthologue > GO annotation > name'</b></p>
+<p><b>Click the summary button for the column 'Homologue > GO annotation > name'</b></p>
 
 <p>
 The table shows the most commonly occurring GO terms applied to orthologues of the original gene:
@@ -121,7 +121,7 @@ The table shows the most commonly occurring GO terms applied to orthologues of t
 All results pages have a number of export options:
 </p>
 
-<img alt="[Export]"  src="export.png"/>
+<img alt="[Export]"  src="export_r11.png"/>
 
 
 <h1>6. Creating a List</h1>
@@ -174,7 +174,7 @@ If some identifiers don't produce an exact match a confirmation page lets you re
 The list analysis page is a great way to find out more about a list of genes.  A number of 'widgets' display graphs and tables to summarise the contents.  These are interactive - click to see lists of genes in each category.
 </p>
 
-<p><i>Coming soon - we plan to add more widgets and functionality to the list analysis page.</i></p>
+<p><i>We plan to continually add more widgets and functionality to the list analysis page.</i></p>
 
 
 <p>The GO enrichment and KEGG widgets suggest that this list of genes contains a high number of transcription factors.</p>
@@ -190,7 +190,7 @@ Template queries have been executed on the whole list, just like on the gene rep
 <h1>9. Use Lists in Templates</h1>
 
 <p>
-You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list analysis page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase1 binding site data set which we can query with another template. 
+You can use lists in any template query, or in queries you create yourself in the QueryBuilder.  As the list analysis page suggested many of the genes in our list are transcription factors we can run a template to find the genes they regulate.  FlyMine includes FlyReg - a curated DNase1 binding site data set (now incorporated into the <a href="http://http://redfly.ccr.buffalo.edu/">REDfly</a> database) which we can query with another template. 
 </p>
 
 <p><b>Search the template queries for 'binding site':</b></p>
@@ -198,25 +198,25 @@ You can use lists in any template query, or in queries you create yourself in th
 <img alt="[Click Search Templates]"  src="click_search_templates.png"/>
 
 <p><b>and select the template </b></p>
-<p><b>'Transcription factor --> TF binding sites + chromosomal locations + genes regulated':</b></p>
+<p><b>'Transcription factor --> TF binding sites + chromosomal locations':</b></p>
 
-<img alt="[Select template]"  src="click_search_template2.png"/>
+<img alt="[Select template]"  src="select_template2_r11.png"/>
 
 <p>Now that we have created a list the template query gives us the option to use it instead of entering an identifier.</p>
 
 <p><b>Click the checkbox to select the demo list you named earlier, and then run the query.</b></p>
 
-<img alt="[Run template with list]"  src="template_list.png"/>
+<img alt="[Run template with list]"  src="template_list_r11.png"/>
 
-<p>The results table shows the genes that have binding sites for any of the genes from our original list, according to FlyReg.</p>
+<p>The results table shows the genes that have binding sites for any of the genes from our original list, according to REDfly.</p>
 
 <p>You can also create new lists from results tables.  We can save a list of the regulated genes from this query to view in the list analysis page or to use in more templates.</p>
 
 <p><b>Click on the checkbox by 'Regulated gene > identifier' and choose a name for the saved list.</b></p>
 
-<img alt="[Save column in a list]"  src="results_list.png"/>
+<img alt="[Save column in a list]"  src="results_list_r11.png"/>
 <br/>
-<img alt="[Save in a list]"  src="save_in_list.png"/>
+
 
 
 <p>Using lists is an excellent way to retrieve information about a whole list of data. For example we could also retrieve:
