@@ -90,6 +90,14 @@ public class ChadoDBConverterTest extends ItemsTestCase
          * {@inheritDoc}
          */
         @Override
+        protected void createFeatureTempTable(Connection connection) throws SQLException {
+            // empty
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         protected ResultSet getFeatureResultSet(@SuppressWarnings("unused") Connection connection) {
             String[] columnNames = new String[] {
                 "feature_id", "name", "uniquename", "type", "seqlen", "residues"
