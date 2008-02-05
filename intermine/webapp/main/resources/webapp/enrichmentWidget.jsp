@@ -14,9 +14,9 @@
 
 <div class="body">
 
-<center><h2>${enrichmentWidgetForm.title}</h2></center>
+<center><h2>${ewf.title}</h2></center>
 
-<c:out value='${enrichmentWidgetForm.descr}'/>  Smaller p-values show greater enrichment.  Method: Hypergeometric test  
+<c:out value='${ewf.descr}'/>  Smaller p-values show greater enrichment.  Method: Hypergeometric test  
 <br/><br/>
 Reference population: <c:out value='${referencePopulation}'/>.
 <br/>
@@ -36,12 +36,12 @@ Reference population: <c:out value='${referencePopulation}'/>.
 			</html:select>
 		</td>
 	</tr>
-	<c:if test="${!empty enrichmentWidgetForm.filters}">
+	<c:if test="${!empty ewf.filters}">
       <tr>
-      	<td>${enrichmentWidgetForm.filterLabel}</td>
+      	<td>${ewf.filterLabel}</td>
       	<td>
       	
-    	<c:set value="${enrichmentWidgetForm.filters}" var="filters" />
+    	<c:set value="${ewf.filters}" var="filters" />
 		<c:set var="list" value='${fn:split(filters, ",")}' />      	
       		<html:select property="filter">
      		 <c:forEach items="${list}" var="name">
@@ -75,14 +75,15 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	   	</td>
 	   	</tr>
 	</table>	
-   		<html:hidden property="bagName" value="${enrichmentWidgetForm.bagName}"/>
-        <html:hidden property="filters" value="${enrichmentWidgetForm.filters}" />
-        <html:hidden property="ldr" value="${enrichmentWidgetForm.ldr}"/>
-        <html:hidden property="title" value="${enrichmentWidgetForm.title}" />
-        <html:hidden property="link"  value="${enrichmentWidgetForm.link}" />      		  
-        <html:hidden property="descr" value="${enrichmentWidgetForm.descr}" />
-        <html:hidden property="filterLabel" value="${enrichmentWidgetForm.filterLabel}"/>
-        <html:hidden property="label" value="${enrichmentWidgetForm.label}"/>	
+   		<html:hidden property="bagName" value="${ewf.bagName}"/>
+   		<html:hidden property="bagType" value="${ewf.bagType}"/>
+        <html:hidden property="filters" value="${ewf.filters}" />
+        <html:hidden property="ldr" value="${ewf.ldr}"/>
+        <html:hidden property="title" value="${ewf.title}" />
+        <html:hidden property="link"  value="${ewf.link}" />      		  
+        <html:hidden property="descr" value="${ewf.descr}" />
+        <html:hidden property="filterLabel" value="${ewf.filterLabel}"/>
+        <html:hidden property="label" value="${ewf.label}"/>	
     </html:form>
 	</td>
 </tr>
@@ -111,7 +112,7 @@ Reference population: <c:out value='${referencePopulation}'/>.
 			<table cellpadding="5" border="0" cellspacing="0" class="results">
 		  	<tr>	
   				<th>&nbsp;</th>
-  				<th>${enrichmentWidgetForm.label}</th>
+  				<th>${ewf.label}</th>
 	  			<th>p-value</th>
   				<th>&nbsp;</th>
 			</tr>
@@ -147,8 +148,8 @@ Reference population: <c:out value='${referencePopulation}'/>.
     				    </c:choose>
   					</td>
   					<td align="left" nowrap>
-  		   				<html:link action="/widgetAction?key=${results.key}&bagName=${bagName}&link=${link}" target="_top">
-  		   					[<c:out value='${totals[results.key]}'/>  ${bagType}s]
+  		   				<html:link action="/widgetAction?key=${results.key}&bagName=${ewf.bagName}&link=${ewf.link}" target="_top">
+  		   					[<c:out value='${totals[results.key]}'/>  ${ewf.bagType}s]
        					</html:link>  	
 	       			</td>
 				</tr>
@@ -159,9 +160,9 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	        No results found.
         </c:otherwise>        
         </c:choose>
-        <html:hidden property="bagType" value="${bagType}" />
-        <html:hidden property="bagName" value="${enrichmentWidgetForm.bagName}" />
-        <html:hidden property="link" value="${enrichmentWidgetForm.link}" />
+        <html:hidden property="bagType" value="${ewf.bagType}" />
+        <html:hidden property="bagName" value="${ewf.bagName}" />
+        <html:hidden property="link" value="${ewf.link}" />
 	</html:form>	
 
 	</td>
