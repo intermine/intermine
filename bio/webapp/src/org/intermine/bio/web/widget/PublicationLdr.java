@@ -51,7 +51,6 @@ public class PublicationLdr implements EnrichmentWidgetLdr
     Query sampleQuery;
     Query populationQuery;
     Collection<String> organisms;
-    int total;
     String externalLink, append;
 
     /**
