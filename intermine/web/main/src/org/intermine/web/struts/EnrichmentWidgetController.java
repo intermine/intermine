@@ -52,7 +52,7 @@ public class EnrichmentWidgetController extends TilesAction
      throws Exception {
          
          //EnrichmentWidgetForm ewf = (EnrichmentWidgetForm) form;
-         EnrichmentWidgetForm ewf = new EnrichmentWidgetForm();
+         EnrichmentWidgetForm ewf = new EnrichmentWidgetForm(); // we may not need this
          
          String bagName = request.getParameter("bagName");
          String dataLoader = request.getParameter("ldr");
@@ -63,7 +63,16 @@ public class EnrichmentWidgetController extends TilesAction
          String descr = request.getParameter("descr");
          String filterLabel = request.getParameter("filterLabel");
          String label = request.getParameter("label");
+         // TODO these defaults are already in the form
+         String max = "0.10";           
+         String errorCorrection = "BenjaminiHochberg"; 
          
+         if (request.getParameter("max") != null) {
+             max = request.getParameter("max");
+         }
+         if (request.getParameter("errorCorrection") != null) {
+             errorCorrection = request.getParameter("errorCorrection");
+         }
          
          ewf.setBagName(bagName);
          ewf.setLdr(dataLoader);
@@ -73,6 +82,8 @@ public class EnrichmentWidgetController extends TilesAction
          ewf.setTitle(title);
          ewf.setFilters(filters);
          ewf.setFilterLabel(filterLabel);
+         ewf.setMax(max);
+         ewf.setErrorCorrection(errorCorrection);
          
          HttpSession session = request.getSession();
          Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
