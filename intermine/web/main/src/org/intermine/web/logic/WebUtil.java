@@ -504,7 +504,7 @@ public abstract class WebUtil
             
             Iterator itAll = rAll.iterator();
 
-            Hypergeometric h = new Hypergeometric(total);
+            
             HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
             
             while (itAll.hasNext()) {
@@ -518,7 +518,7 @@ public abstract class WebUtil
                     Long countBag = countMap.get(id);
                     Long countAll = (java.lang.Long) rrAll.get(1);
 
-                    double p = h.calculateP(numberOfObjectsInBag, countBag.intValue(),
+                    double p = Hypergeometric.calculateP(numberOfObjectsInBag, countBag.intValue(),
                                             countAll.intValue(), total);
                     try {
                         resultsMap.put(id, new BigDecimal(p));
