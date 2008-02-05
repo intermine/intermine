@@ -248,7 +248,6 @@ public class BagDetailsController extends TilesAction
             }
 
             request.setAttribute("addparameter", request.getParameter("addparameter"));
-            request.setAttribute("messageDisplayer", request.getParameter("messageDisplayer"));
             request.setAttribute("myBag", myBag);
             request.setAttribute("bag", imBag);
             request.setAttribute("bagSize", new Integer(imBag.size()));

@@ -191,7 +191,6 @@ public class PortalQueryAction extends InterMineAction
             Constructor constructor = clazz.getConstructor();
             String [] paramArray = additionalConverters.get(converterClassName);
             String [] urlFields = paramArray[0].split(",");
-            String messageDisplayer = paramArray[2];
             String addparameter = null;
             String urlField = null;
             for (int i = 0; i < urlFields.length; i++) {
@@ -234,10 +233,14 @@ public class PortalQueryAction extends InterMineAction
                 osw.addAllToBag(imBag.getOsb(), converted);
                 osw.close();
                 profile.saveBag(imBag.getName(), imBag);
+                
+                actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(
+                                    model, extId, addparameter, imBag, idList.length));
+                session.setAttribute(Constants.PORTAL_MSG, actionMessages);
+
 
                 return new ForwardParameters(mapping.findForward("bagDetails"))
                 .addParameter("addparameter", addparameter)
-                .addParameter("messageDisplayer", messageDisplayer)
                 .addParameter("externalids", extId)
                 .addParameter("bagName", imBag.getName()).forward();
             }

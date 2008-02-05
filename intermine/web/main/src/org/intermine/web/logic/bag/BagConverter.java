@@ -10,10 +10,13 @@ package org.intermine.web.logic.bag;
  *
  */
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionMessage;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsRow;
 
@@ -23,17 +26,26 @@ import org.intermine.objectstore.query.ResultsRow;
  */
 public interface BagConverter
 {
+
     /**
-     * Get the list of converted intermine objects
+     * Returns a List<ResultRows> of converted objects
      * @param session the session
      * @param parameters the parameters
-     * @param fromList the list of objects to convert
-     * @param type the type of the bag
-     * @return
+     * @param fromList the list to convert
+     * @param type the type to convert to
+     * @return a List of ResultRow elements
      * @throws ClassNotFoundException
      * @throws ObjectStoreException
      */
     public List<ResultsRow> getConvertedObjects(HttpSession session, String parameters,
                                     List<Integer> fromList, String type)
                                     throws ClassNotFoundException, ObjectStoreException;
+    
+    /**
+     * Get the ActionMessage to display in the webapp
+     * @return
+     */
+    public ActionMessage getActionMessage(Model model, String externalids, String organism,
+                                          InterMineBag bag, int initialParametersSize)
+    throws ObjectStoreException, UnsupportedEncodingException;
 }
