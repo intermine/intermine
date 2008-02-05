@@ -10,6 +10,8 @@ package org.intermine.bio.web.logic;
  *
  */
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionMessage;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -111,5 +114,58 @@ public class OrthologueConverter implements BagConverter
                 .BAG_QUERY_CONFIG));
         Results results = TableHelper.makeResults(os, q);
         return results;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.intermine.web.logic.bag.BagConverter#getConvertedObjects(
+     * javax.servlet.http.HttpSession, java.lang.String, java.util.List, java.lang.String)
+     */
+    public ActionMessage getActionMessage(Model model, String externalids, String organism,
+                                          InterMineBag bag, int initialParametersSize)
+                    throws ObjectStoreException, UnsupportedEncodingException {
+        PathQuery pathQuery = new PathQuery(model);
+
+        List<Path> view = new ArrayList<Path>();
+        view.add(MainHelper.makePath(model, pathQuery, "Gene.identifier"));
+        view.add(MainHelper.makePath(model, pathQuery, "Gene.organism.shortName"));
+        view.add(MainHelper.makePath(model, pathQuery, "Gene.homologues.homologue.identifier"));
+        view.add(MainHelper.makePath(model, pathQuery, 
+                                                "Gene.homologues.homologue.organism.shortName"));
+        view.add(MainHelper.makePath(model, pathQuery, "Gene.homologues.type"));
+        view.add(MainHelper.makePath(model, pathQuery, "Gene.homologues.inParanoidScore"));
+        pathQuery.setView(view);
+
+        String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
+
+        Constraint c = new Constraint(ConstraintOp.LOOKUP, externalids, false, 
+                                        label, code, id, null);
+        pathQuery.addNode("Gene").getConstraints().add(c);
+
+        pathQuery.addNode("Gene.homologues").setType("Homologue");
+
+        Constraint c2 = new Constraint(ConstraintOp.EQUALS, "orthologue", false, 
+                                        label, code, id,null);
+        pathQuery.addNode("Gene.homologues.type").getConstraints().add(c2);
+
+        pathQuery.addNode("Gene.homologues.homologue").setType("Gene");
+
+        pathQuery.addNode("Gene.homologues.homologue.organism").setType("Organism");
+
+        Constraint c3 = new Constraint(ConstraintOp.MATCHES, organism, 
+                        false, label, code, id, null);
+        pathQuery.addNode("Gene.homologues.homologue.organism.shortName").getConstraints().add(c3);
+
+        pathQuery.setConstraintLogic("A and B and C");
+        pathQuery.syncLogicExpression("and");
+
+        String query = pathQuery.toXml();
+        String encodedurl = URLEncoder.encode(query,"UTF-8"); 
+        String[] values = new String[]
+            {
+                String.valueOf(bag.getSize()), organism, String.valueOf(initialParametersSize),
+                bag.getType(), encodedurl
+            };
+        ActionMessage am = new ActionMessage("portal.orthologues", values);
+        return am;
     }
 }
