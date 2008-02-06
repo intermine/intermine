@@ -45,21 +45,21 @@
 
 <div id="tool_bar_div">
     <ul id="button_bar" onclick="toggleToolBarMenu(event);">
-        <li id="tool_bar_li_convert"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Convert" border="0" id="tool_bar_button_convert" class="tool_bar_button"></li>
+        <%-- <li id="tool_bar_li_convert"><img style="cursor: pointer;" src="images/icons/null.gif" width="94" height="25" alt="Convert" border="0" id="tool_bar_button_convert" class="tool_bar_button"></li> --%>
         <li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></li>
         <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></li>
         <li id="tool_bar_li_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" alt="Use" border="0" id="tool_bar_button_use" class="tool_bar_button"></li>
     </ul>
 </div>
 
-<div id="tool_bar_item_convert" style="visibility:hidden" class="tool_bar_item">
+<%-- <div id="tool_bar_item_convert" style="visibility:hidden" class="tool_bar_item">
   <tiles:insert name="convertBag.tile">
        <tiles:put name="bag" beanName="bag" />
        <tiles:put name="idname" value="bar" />
   </tiles:insert>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_convert')" >Cancel</a>
-</div>
+</div> --%>
 <div id="tool_bar_item_display" style="visibility:hidden" class="tool_bar_item">
     <html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">related templates</html:link><br/>
     <html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">related widgets</html:link>
@@ -83,7 +83,7 @@
 
 <div id="clearLine">&nbsp;</div>
 
-<table cellpadding="0" cellspacing="0">
+<table cellpadding="0" cellspacing="10">
 <tr valign="top"><td width="50%">
 <%-- Table displaying bag elements --%>
 <table class="results" id="bagdetailsresults" cellspacing="0" align="left" >

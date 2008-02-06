@@ -24,10 +24,8 @@
         <c:forEach items="${converterInfo.value}" var="value">
          <html:option value="${value}">${value}</html:option>
        </c:forEach>
-        <html:submit property="convertToThing">
-      Convert >>
-       </html:submit>
     </html:select>
+    <html:submit property="convertToThing">Convert</html:submit>
     </c:forEach>
     </c:if>
 
