@@ -145,6 +145,20 @@ public class FullParserTest extends TestCase
         }
     }
 
+    // test with an invalid class name for an item
+    public void testRealiseObjectsInvalidClass() throws Exception {
+        departmentItem.setClassName("http://www.intermine.org/model/testmodel#Monkey");
+        // if failOnError try should throw an exception
+        try {
+            FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), true);
+            fail("Expected ClassCastException");
+        } catch (ClassNotFoundException e) {
+            
+        }
+        FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), true, false);
+    }
+    
+    
     class DepartmentComparator implements Comparator
     {
         public int compare(Object a, Object b) {
