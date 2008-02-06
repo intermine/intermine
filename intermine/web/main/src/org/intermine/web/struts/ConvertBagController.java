@@ -26,7 +26,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.exolab.castor.xml.FieldValidator;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -82,16 +81,21 @@ public class ConvertBagController extends TilesAction
             (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-        Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
+        Map<String, String []> additionalConverters = 
+            bagQueryConfig.getAdditionalConverters(imBag.getType());
         
         Map<String, List> customConverters = new HashMap<String, List>();
-        for (String converterClassName : additionalConverters.keySet()) {
-            String [] paramArray = additionalConverters.get(converterClassName);
-            String clazzName = paramArray[1];
-            // TODO shouldn't use getConstrainField here but have one specified in the config file
-            List fieldValues = BagBuildController.getFieldValues(os, oss, clazzName, 
-                                bagQueryConfig.getConstrainField());
-            customConverters.put(TypeUtil.unqualifiedName(clazzName), fieldValues);
+        if (additionalConverters != null) {
+            for (String converterClassName : additionalConverters.keySet()) {
+                String [] paramArray = additionalConverters.get(converterClassName);
+                String clazzName = paramArray[1];
+                // TODO shouldn't use getConstrainField here but have one specified in 
+                // the config file
+                List fieldValues = 
+                    BagBuildController.getFieldValues(os, oss, clazzName, 
+                                                      bagQueryConfig.getConstrainField());
+                customConverters.put(TypeUtil.unqualifiedName(clazzName), fieldValues);
+            }
         }
         request.setAttribute("customConverters", customConverters);
         request.setAttribute("conversionTypes", conversionTypes);
