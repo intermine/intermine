@@ -83,7 +83,8 @@
 
 <div id="clearLine">&nbsp;</div>
 
-<div id="leftColumn" align="center">
+<table cellpadding="0" cellspacing="0">
+<tr valign="top"><td width="50%">
 <%-- Table displaying bag elements --%>
 <table class="results" id="bagdetailsresults" cellspacing="0" align="left" >
 <tfoot>
@@ -143,6 +144,8 @@
 </c:if>
 </table>
 
+<div class="clear-both"></div>
+
 <%-- Bag Description --%>
 <c:choose>
     <c:when test="${myBag == 'true'}">
@@ -165,13 +168,14 @@
         </div>
       </div>
       </c:when>
-      <c:otherwise>  
-         <b>Description:</b> ${bag.description}
-      </c:otherwise>
+      <c:when test="${! empty bag.description}">
+      <div id="bagDescriptionDiv">
+          <b>Description:</b> ${bag.description}
+      </div>
+      </c:when>
 </c:choose>
-</div> 
-    
-<div id="rightColumn">
+</td>
+<td width="50%">
 <script type="text/javascript">
     window.onload=function(){
         Nifty("div#convertList","transparent");
@@ -188,7 +192,9 @@
 <!-- <div id="linkouts" class="pageDesc" align="left">
 <h3>Link outs</h3>
 </div> -->
-</div>
+</td>
+</tr>
+</table>
 </html:form>
 
   <div class="dashedBox" align="left">
