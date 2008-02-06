@@ -15,11 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +34,6 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -188,51 +185,55 @@ public class PortalQueryAction extends InterMineAction
                                                    properties, className, null);
 
         // Use custom converters
-        Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
-        for (String converterClassName : additionalConverters.keySet()) {
-            Class clazz = Class.forName(converterClassName);
-            Constructor constructor = clazz.getConstructor();
-            String [] paramArray = additionalConverters.get(converterClassName);
-            String [] urlFields = paramArray[0].split(",");
-            String addparameter = null;
-            String urlField = null;
-            for (int i = 0; i < urlFields.length; i++) {
-                if (request.getParameter(urlFields[i]) != null) {
-                    addparameter = request.getParameter(urlFields[i]);
-                    urlField = urlFields[i];
-                    break;
+        Map<String, String []> additionalConverters = 
+            bagQueryConfig.getAdditionalConverters(imBag.getType());
+        if (additionalConverters != null) {
+            for (String converterClassName : additionalConverters.keySet()) {
+                Class clazz = Class.forName(converterClassName);
+                Constructor constructor = clazz.getConstructor();
+                String [] paramArray = additionalConverters.get(converterClassName);
+                String [] urlFields = paramArray[0].split(",");
+                String addparameter = null;
+                String urlField = null;
+                for (int i = 0; i < urlFields.length; i++) {
+                    if (request.getParameter(urlFields[i]) != null) {
+                        addparameter = request.getParameter(urlFields[i]);
+                        urlField = urlFields[i];
+                        break;
+                    }
                 }
-            }
-            if (addparameter != null && addparameter.length() != 0) {
-                BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
-                                                  .getAttribute(Constants.OBJECT_STORE_SUMMARY);
+                if (addparameter != null && addparameter.length() != 0) {
+                    BagConverter bagConverter = (BagConverter) constructor.newInstance();
+                    ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
+                    .getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
-                List<ResultsRow> result = bagConverter.getConvertedObjects(session, addparameter,
-                                                bagList, className);
-                imBag = new InterMineBag(bagName, className , null , new Date() ,
-                                         os , profile.getUserId() , uosw);
-                List<Integer> converted = new ArrayList<Integer>();
-                for (ResultsRow resRow:result) {
-                    converted.add(((InterMineObject) resRow.get(0)).getId());
-                }
-                // No matches
-                if (converted.size() <= 0) {
-                    recordMessage(new ActionMessage("portal.nomatches.orthologues", 
-                                                    addparameter, extId), request);
-                    return goToNoResults(mapping, os, model, className, webConfig, 
-                        classKeys, session);
-                }
-                actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(
-                                    model, extId, converted.size(), className, addparameter));
-                session.setAttribute(Constants.PORTAL_MSG, actionMessages);
+                    List<ResultsRow> result = bagConverter.getConvertedObjects(session,
+                                                                               addparameter,
+                                                                               bagList, className);
+                    imBag = new InterMineBag(bagName, className , null , new Date() ,
+                                             os , profile.getUserId() , uosw);
+                    List<Integer> converted = new ArrayList<Integer>();
+                    for (ResultsRow resRow:result) {
+                        converted.add(((InterMineObject) resRow.get(0)).getId());
+                    }
+                    // No matches
+                    if (converted.size() <= 0) {
+                        recordMessage(new ActionMessage("portal.nomatches.orthologues", 
+                                                        addparameter, extId), request);
+                        return goToNoResults(mapping, os, model, className, webConfig, 
+                                             classKeys, session);
+                    }
+                    actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(
+                        model, extId, converted.size(), className, addparameter));
+                    session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
-                // Object details
-                if (converted.size() == 1) {
-                    return goToObjectDetails(mapping, converted.get(0).toString());
-                // Bag Details
-                } else {
-                    return goToBagDetails(mapping, os, imBag, converted, profile);
+                    // Object details
+                    if (converted.size() == 1) {
+                        return goToObjectDetails(mapping, converted.get(0).toString());
+                        // Bag Details
+                    } else {
+                        return goToBagDetails(mapping, os, imBag, converted, profile);
+                    }
                 }
             }
         }
@@ -288,7 +289,7 @@ public class PortalQueryAction extends InterMineAction
     private ActionForward goToResults(ActionMapping mapping, ObjectStore os, Model model, 
                                       String className, WebConfig webConfig, Map classKeys,
                                       HttpSession session, List<Integer> bagList) 
-                                      throws ObjectStoreException{
+                                      throws ObjectStoreException {
         List<InterMineObject> intermineObjectList = os.getObjectsByIds(bagList);
         WebPathCollection webPathCollection =
             new WebPathCollection(os, new Path(model, className), intermineObjectList

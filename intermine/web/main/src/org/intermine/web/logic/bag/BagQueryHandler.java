@@ -11,7 +11,9 @@ package org.intermine.web.logic.bag;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +35,9 @@ public class BagQueryHandler extends DefaultHandler
 {
     private List<BagQuery> queryList;
 
-    private Map<String, List<BagQuery>> bagQueries = new HashMap<String, List<BagQuery>>();
+    private Map<String, List<BagQuery>> bagQueries = new HashMap();
 
-    private Map<String, String[]> additionalConverters = new HashMap<String, String[]>();
+    private Map<String, Map> additionalConverters = new HashMap();
 
     private String type, message, queryString;
 
@@ -111,8 +113,23 @@ public class BagQueryHandler extends DefaultHandler
             String urlField = attrs.getValue("urlfield");
             String className = attrs.getValue("class-name");
             String classConstraint = attrs.getValue("classConstraint");
-            String [] array = new String[] {urlField, classConstraint};
-            additionalConverters.put(className, array);
+            String targetType = attrs.getValue("target-type");
+            String [] array = new String[] {urlField, classConstraint, targetType};
+            
+            Map<String, String[]> converterMap = new HashMap();
+            converterMap.put(className, array);
+            
+            // add additional converter for this class and any subclasses
+            ClassDescriptor typeCld = model.getClassDescriptorByName(targetType);
+            if (typeCld == null) {
+                throw new SAXException("Invalid target type for additional converter: "
+                                       + targetType);
+            }          
+            Set<ClassDescriptor> clds = new HashSet(Collections.singleton(typeCld));
+            clds.addAll(model.getAllSubs(typeCld));
+            for (ClassDescriptor nextCld : clds) {
+                additionalConverters.put(TypeUtil.unqualifiedName(nextCld.getName()), converterMap);
+            }
         }
     }
 

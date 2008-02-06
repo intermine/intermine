@@ -232,17 +232,20 @@ public class BagDetailsController extends TilesAction
             // bag was made.
             BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-            Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
-            for (String converterClassName : additionalConverters.keySet()) {
-                String urlField = null;
-                String [] paramArray = additionalConverters.get(converterClassName);
-                String [] urlFields = paramArray[0].split(",");
-                for (int i = 0; i < urlFields.length; i++) {
-                    if (request.getParameter(urlFields[i]) != null) {
-                        request.setAttribute("extrafield", urlFields[i]);
-                        request.setAttribute(urlFields[i], request.getParameter(urlFields[i]));
-                        request.setAttribute("externalids", request.getParameter("externalids"));
-                        break;
+            Map<String, String []> additionalConverters =
+                bagQueryConfig.getAdditionalConverters(imBag.getType());
+            if (additionalConverters != null) {
+                for (String converterClassName : additionalConverters.keySet()) {
+                    String [] paramArray = additionalConverters.get(converterClassName);
+                    String [] urlFields = paramArray[0].split(",");
+                    for (int i = 0; i < urlFields.length; i++) {
+                        if (request.getParameter(urlFields[i]) != null) {
+                            request.setAttribute("extrafield", urlFields[i]);
+                            request.setAttribute(urlFields[i], request.getParameter(urlFields[i]));
+                            request.setAttribute("externalids", 
+                                                 request.getParameter("externalids"));
+                            break;
+                        }
                     }
                 }
             }
