@@ -48,9 +48,7 @@ import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
 
 /**
  * @author Xavier Watkins
@@ -82,15 +80,18 @@ public class ModifyBagDetailsAction extends InterMineAction
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
-
+        SearchRepository globalRepository =
+            (SearchRepository) servletContext.getAttribute(Constants.
+                                                           GLOBAL_SEARCH_REPOSITORY);
+        
         if (request.getParameter("remove") != null) {
             removeFromBag(mbdf.getBagName(), profile, mbdf, pm.getUserProfileObjectStore(), os,
                     session);
         } else if (request.getParameter("showInResultsTable") != null) {
             return showBagInResultsTable(mbdf.getBagName(), mapping, session);
         } else if (request.getParameter("convertToThing") != null) {
-            Map savedBags = profile.getSavedBags();
-            InterMineBag imBag = (InterMineBag) savedBags.get(mbdf.bagName);
+            InterMineBag imBag = BagHelper.getBag(profile, globalRepository,
+                                                  mbdf.getBagName());
             BagQueryConfig bagQueryConfig =
                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);            
             Map<String, String []> additionalConverters = bagQueryConfig.getAdditionalConverters();
@@ -115,26 +116,10 @@ public class ModifyBagDetailsAction extends InterMineAction
                 return new ForwardParameters(mapping.findForward("results"))
                 .addParameter("table", identifier)
                 .addParameter("trail", "").forward();
-                
             }
         } else if (request.getParameter("useBagInQuery") != null) {
-
-                String bagName = mbdf.getBagName();
-
-                Map savedBags = profile.getSavedBags();
-                InterMineBag imBag = (InterMineBag) savedBags.get(bagName);
-
-
-                if (imBag == null) {
-                    SearchRepository searchRepository =
-                        SearchRepository.getGlobalSearchRepository(servletContext);
-                    Map<String, ? extends WebSearchable> publicBagMap =
-                        searchRepository.getWebSearchableMap(TagTypes.BAG);
-                    if (publicBagMap.get(bagName) != null) {
-                        imBag = (InterMineBag) publicBagMap.get(bagName);
-                    }
-                }
-
+                InterMineBag imBag = BagHelper.getBag(profile, globalRepository,
+                                                      mbdf.getBagName());
                 if (imBag == null) {
                     return mapping.findForward("errors");
                 }
@@ -167,9 +152,6 @@ public class ModifyBagDetailsAction extends InterMineAction
             String type2 = request.getParameter("convert");
             Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-            SearchRepository globalRepository =
-                (SearchRepository) servletContext.getAttribute(Constants.
-                                                               GLOBAL_SEARCH_REPOSITORY);
             InterMineBag imBag = BagHelper.getBag(profile, globalRepository,
                 request.getParameter("bagName"));
             Model model = os.getModel();
