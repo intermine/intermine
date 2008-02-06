@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ResultsRow;
 
 /**
@@ -34,8 +35,8 @@ public interface BagConverter
      * @param fromList the list to convert
      * @param type the type to convert to
      * @return a List of ResultRow elements
-     * @throws ClassNotFoundException
-     * @throws ObjectStoreException
+     * @throws ClassNotFoundException  class not found
+     * @throws ObjectStoreException objectstore
      */
     public List<ResultsRow> getConvertedObjects(HttpSession session, String parameters,
                                     List<Integer> fromList, String type)
@@ -43,9 +44,24 @@ public interface BagConverter
     
     /**
      * Get the ActionMessage to display in the webapp
-     * @return
+     * @param model the model
+     * @param externalids the initial ids as a comma separated list
+     * @param organism the organism to convert to
+     * @param bag the resulting bag
+     * @param initialParametersSize the number of parameters
+     * @return an ActionMessage
+     * @throws ObjectStoreException exception
+     * @throws UnsupportedEncodingException exception
      */
-    public ActionMessage getActionMessage(Model model, String externalids, String organism,
-                                          InterMineBag bag, int initialParametersSize)
-    throws ObjectStoreException, UnsupportedEncodingException;
+    public ActionMessage getActionMessage(Model model, String externalids, int convertedSize, 
+                                          String type, String organism)
+                                          throws ObjectStoreException, UnsupportedEncodingException;
+    
+    /**
+     * @param param the parameter to check
+     * @param oss the object store summary
+     * @return whether the parameter value exists or not
+     */
+    public boolean isValidParameter(String param, ObjectStoreSummary oss);
+    
 }

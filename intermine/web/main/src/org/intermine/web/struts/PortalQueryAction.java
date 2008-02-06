@@ -36,7 +36,10 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -202,47 +205,42 @@ public class PortalQueryAction extends InterMineAction
             }
             if (addparameter != null && addparameter.length() != 0) {
                 BagConverter bagConverter = (BagConverter) constructor.newInstance();
+                ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
+                                                  .getAttribute(Constants.OBJECT_STORE_SUMMARY);
+
+                if (!bagConverter.isValidParameter(addparameter, oss)) {
+                    actionMessages.add(Constants.PORTAL_MSG, 
+                        new ActionMessage("portal.orthologue.wrongparameter",addparameter));
+                    session.setAttribute(Constants.PORTAL_MSG, actionMessages);
+                    return goToNoResults(mapping, os, model, className, webConfig, 
+                        classKeys, session);
+                }
+                
                 List<ResultsRow> result = bagConverter.getConvertedObjects(session, addparameter,
                                                 bagList, className);
                 imBag = new InterMineBag(bagName, className , null , new Date() ,
                                          os , profile.getUserId() , uosw);
-                ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
                 List<Integer> converted = new ArrayList<Integer>();
                 for (ResultsRow resRow:result) {
                     converted.add(((InterMineObject) resRow.get(0)).getId());
                 }
+                // No matches
                 if (converted.size() <= 0) {
                     recordMessage(new ActionMessage("portal.nomatches.orthologues", 
                                                     addparameter, extId), request);
-
-                    WebPathCollection webPathCollection =
-                        new WebPathCollection(os, new Path(model, className), new ArrayList()
-                                              , model, webConfig,
-                                          classKeys);
-                    PagedTable pc = new PagedTable(webPathCollection);
-                    String identifier = "col" + index++;
-                    SessionMethods.setResultsTable(session, identifier, pc);
-                    return new ForwardParameters(mapping.findForward("results"))
-                    .addParameter("noSelect", "true")
-                    .addParameter("table", identifier)
-                    .addParameter("trail", "").forward();
+                    return goToNoResults(mapping, os, model, className, webConfig, 
+                        classKeys, session);
                 }
-                osw.addAllToBag(imBag.getOsb(), converted);
-                osw.close();
-                profile.saveBag(imBag.getName(), imBag);
-                
                 actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(
-                                    model, extId, addparameter, imBag, idList.length));
+                                    model, extId, converted.size(), className, addparameter));
                 session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
+                // Object details
                 if (converted.size() == 1) {
-                    return new ForwardParameters(mapping.findForward("objectDetails"))
-                    .addParameter("id", converted.get(0).toString()).forward();
+                    return goToObjectDetails(mapping, converted.get(0).toString());
+                // Bag Details
                 } else {
-                    return new ForwardParameters(mapping.findForward("bagDetails"))
-                    .addParameter("addparameter", addparameter)
-                    .addParameter("externalids", extId)
-                    .addParameter("bagName", imBag.getName()).forward();
+                    return goToBagDetails(mapping, os, imBag, converted, profile);
                 }
             }
         }
@@ -258,57 +256,84 @@ public class PortalQueryAction extends InterMineAction
                                                   bagQueryResult.getMatches().size(), 
                                                   className);
             actionMessages.add(Constants.PORTAL_MSG, msg);
-        } else if (bagList.size() >= 0) {
+        } else if (bagList.size() > 0) {
             ActionMessage msg = new ActionMessage("results.lookup.matches.many", bagList.size());
             actionMessages.add(Constants.PORTAL_MSG, msg);
+        } else if (bagList.size() == 0) {
+            ActionMessage msg = new ActionMessage("portal.nomatches", extId);
+            actionMessages.add(Constants.PORTAL_MSG, msg);
         }
-        //TODO add custom converter message
         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
         
+        // Go to results page
+        if ((bagList.size() > 1) && (idList.length == 1)) {
+            return goToResults(mapping, os, model, className, webConfig, classKeys, 
+                session, bagList);
         // Go to the object details page
-        if ((bagList.size() > 0) && (idList.length == 1)) {
-            return new ForwardParameters(mapping.findForward("objectDetails"))
-            .addParameter("id", bagList.get(0).toString()).forward();
-        /// Go to results page
-        } else if ((idList.length == 1)) {
-              List intermineObjectList = os.getObjectsByIds(bagList);
-              WebPathCollection webPathCollection =
-                  new WebPathCollection(os, new Path(model, className), intermineObjectList
-                                        , model, webConfig,
-                                        classKeys);
-              PagedTable pc = new PagedTable(webPathCollection);
-              String identifier = "col" + index++;
-              SessionMethods.setResultsTable(session, identifier, pc);
-              return new ForwardParameters(mapping.findForward("results"))
-              .addParameter("table", identifier)
-              .addParameter("trail", "").forward();
+        } else if ((bagList.size() == 1) && (idList.length == 1)) {
+            return goToObjectDetails(mapping, bagList.get(0).toString());
         // Make a bag
-        } else if (bagList.size() > 1) {
-            ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
-            osw.addAllToBag(imBag.getOsb(), bagList);
-            osw.close();
-            profile.saveBag(imBag.getName(), imBag);
-            return new ForwardParameters(mapping.findForward("bagDetails"))
-            .addParameter("bagName", imBag.getName()).forward();
+        } else if (bagList.size() >= 1) {
+            return goToBagDetails(mapping, os, imBag, bagList, profile);
         // No matches
         } else {
-            recordMessage(new ActionMessage("portal.nomatches", extId), request);
-
-            WebPathCollection webPathCollection =
-                new WebPathCollection(os, new Path(model, className), new ArrayList()
-                                      , model, webConfig,
-                                  classKeys);
-            PagedTable pc = new PagedTable(webPathCollection);
-            String identifier = "col" + index++;
-            SessionMethods.setResultsTable(session, identifier, pc);
-            return new ForwardParameters(mapping.findForward("results"))
-            .addParameter("noSelect", "true")
-            .addParameter("table", identifier)
-            .addParameter("trail", "").forward();
+            return goToNoResults(mapping, os, model, className, webConfig, classKeys, session);
         }
     }
+    
+    private ActionForward goToBagDetails(ActionMapping mapping, ObjectStore os, InterMineBag imBag, 
+                                         List bagList, Profile profile) 
+                                         throws ObjectStoreException {
+        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+        osw.addAllToBag(imBag.getOsb(), bagList);
+        osw.close();
+        profile.saveBag(imBag.getName(), imBag);
+        return new ForwardParameters(mapping.findForward("bagDetails"))
+        .addParameter("bagName", imBag.getName()).forward();
+    }
+    
+    private ActionForward goToResults(ActionMapping mapping, ObjectStore os, Model model, 
+                                      String className, WebConfig webConfig, Map classKeys,
+                                      HttpSession session, List<Integer> bagList) 
+                                      throws ObjectStoreException{
+        List<InterMineObject> intermineObjectList = os.getObjectsByIds(bagList);
+        WebPathCollection webPathCollection =
+            new WebPathCollection(os, new Path(model, className), intermineObjectList
+                                  , model, webConfig,
+                                  classKeys);
+        PagedTable pc = new PagedTable(webPathCollection);
+        String identifier = "col" + index++;
+        SessionMethods.setResultsTable(session, identifier, pc);
+        return new ForwardParameters(mapping.findForward("results"))
+        .addParameter("table", identifier)
+        .addParameter("trail", "").forward();
+    }
+    
+    private ActionForward goToObjectDetails(ActionMapping mapping, String id) {
+        return new ForwardParameters(mapping.findForward("objectDetails"))
+        .addParameter("id", id).forward();
+    }
+    
+    private ActionForward goToNoResults(ActionMapping mapping, ObjectStore os, Model model, 
+                                        String className, WebConfig webConfig, Map classKeys,
+                                        HttpSession session) {
+        WebPathCollection webPathCollection =
+            new WebPathCollection(os, new Path(model, className), new ArrayList()
+                                  , model, webConfig,
+                              classKeys);
+        PagedTable pc = new PagedTable(webPathCollection);
+        String identifier = "col" + index++;
+        SessionMethods.setResultsTable(session, identifier, pc);
+        return new ForwardParameters(mapping.findForward("results"))
+        .addParameter("noSelect", "true")
+        .addParameter("table", identifier)
+        .addParameter("trail", "").forward();
+    }
 
+    /**
+     * @deprecated Uses the BagQueryRunner instead
+     */
     private String loadObjectDetails(ServletContext servletContext,
                                                 HttpSession session, HttpServletRequest request,
                                                 HttpServletResponse response, String userName,
