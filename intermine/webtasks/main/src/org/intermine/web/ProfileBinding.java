@@ -308,7 +308,7 @@ public class ProfileBinding
             };
             ProfileHandler profileHandler =
                 new ProfileHandler(profileManager, idUpgrader, username, password, tags,
-                                   servletContext, osw);
+                                   servletContext, osw, false);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

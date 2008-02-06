@@ -93,23 +93,45 @@ public class FullParser
         List result = new ArrayList();
         for (Item item : items) {
             if (item.getIdentifier() != null) {
-                objMap.put(item.getIdentifier(), DynamicUtil.instantiateObject(
+                try {
+                    objMap.put(item.getIdentifier(), DynamicUtil.instantiateObject(
                             OntologyUtil.generateClassNames(item.getClassName(), model),
                             OntologyUtil.generateClassNames(item.getImplementations(), model)));
+                } catch (ClassNotFoundException e) {
+                    if (abortOnError) {
+                        throw e;
+                    } else {
+                        LOG.warn("Not creating object for item: " + item.getIdentifier()
+                                 + " class: " + item.getClassName() + " not found in model.");
+                    }
+                }
             }
         }
 
         for (Item item : items) {
-            Object instance;
+            Object instance = null;
+            // simple objects don't have identifiers so can't be put in the objMap, need to
+            // create again in this loop to get an instance
             if (item.getIdentifier() == null) {
-                instance = DynamicUtil.instantiateObject(
+                try {
+                    instance = DynamicUtil.instantiateObject(
                             OntologyUtil.generateClassNames(item.getClassName(), model),
                             OntologyUtil.generateClassNames(item.getImplementations(), model));
+                } catch (ClassNotFoundException e) {
+                    if (abortOnError) {
+                        throw e;
+                    } else {
+                        LOG.warn("Not creating object for item: " + item.getIdentifier()
+                                 + " class: " + item.getClassName() + " not found in model.");
+                    }
+                }
             } else {
                 instance = objMap.get(item.getIdentifier());
             }
-            result.add(populateObject(item, objMap, useIdentifier, abortOnError,
-                        instance));
+            if (instance != null) {
+                result.add(populateObject(item, objMap, useIdentifier, abortOnError,
+                                          instance));
+            }
         }
 
         return result;

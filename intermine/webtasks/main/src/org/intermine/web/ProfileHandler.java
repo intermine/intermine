@@ -201,7 +201,7 @@ class ProfileHandler extends DefaultHandler
             Model model = profileManager.getObjectStore().getModel();
             List<InterMineObject> objects;
             try {
-                objects = FullParser.realiseObjects(items, model, true, false);
+                objects = FullParser.realiseObjects(items, model, true, abortOnError);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("unexpected exception", e);
             }

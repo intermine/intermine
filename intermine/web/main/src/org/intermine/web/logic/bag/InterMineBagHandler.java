@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -37,6 +38,7 @@ public class InterMineBagHandler extends DefaultHandler
     private ObjectStoreWriter osw;
     private Map bags;
     private Integer userId;
+    private Model model;
 
     private String bagName;
     private String bagType;
@@ -65,6 +67,7 @@ public class InterMineBagHandler extends DefaultHandler
         this.userId = userId;
         this.idUpgrader = idUpgrader;
         this.idToObjectMap = idToObjectMap;
+        this.model = osw.getModel();
     }
 
     /**
@@ -85,11 +88,18 @@ public class InterMineBagHandler extends DefaultHandler
                 } catch (NumberFormatException e) {
                     dateCreated = null;
                 }
-                bag = new InterMineBag(bagName, bagType, bagDescription,
-                                       dateCreated, osw.getObjectStore(), userId, uosw);
+                // only upgrade bags whose type is still in the model
+                String bagClsName = model.getPackageName() + "." + bagType;
+                if (model.hasClassDescriptor(bagClsName)) {
+                    bag = new InterMineBag(bagName, bagType, bagDescription,
+                                           dateCreated, osw.getObjectStore(), userId, uosw);
+                } else {
+                    LOG.warn("Not upgrading bag: " + bagName + " for user: " + userId
+                             + " - " + bagType + " no longer in model.");
+                }
             }
 
-            if (qName.equals("bagElement")) {
+            if (qName.equals("bagElement") && bag != null) {
                 elementsInOldBag++;
                 Integer id = new Integer(attrs.getValue("id"));
 
@@ -122,7 +132,9 @@ public class InterMineBagHandler extends DefaultHandler
         try {
             if (qName.equals("bag")) {
                 //if (bag.size() > 0) {
+                if (bag != null) {
                     bags.put(bagName, bag);
+                }
                 //}
                 LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag
                           + " elements, created bag with " + (bag == null ? "null"

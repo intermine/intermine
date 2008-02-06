@@ -126,10 +126,12 @@ public class FullRenderer
             attrs.addAll(item.getAttributes());
             for (Iterator i = attrs.iterator(); i.hasNext();) {
                 Attribute attr = (Attribute) i.next();
-                writer.writeEmptyElement("attribute");
-                writer.writeAttribute("name", attr.getName());
-                writer.writeAttribute("value", attr.getValue());
-                writer.writeCharacters(ENDL);
+                if (!attr.getValue().equals("")) {
+                    writer.writeEmptyElement("attribute");
+                    writer.writeAttribute("name", attr.getName());
+                    writer.writeAttribute("value", attr.getValue());
+                    writer.writeCharacters(ENDL);
+                }
             }
 
             TreeSet refs = new TreeSet(new RendererComparator());
