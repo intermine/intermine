@@ -46,9 +46,8 @@ public class WebUtilTest extends TestCase
         taggedPopulation[2] = 20;
         expectedResults[2] = new BigDecimal(0.00705009276437833);
         
-        Hypergeometric h = new Hypergeometric(total);
         for (int i = 0; i < 3; i++) {
-            double p = h.calculateP(bagsize, taggedSample[i], taggedPopulation[i], total);
+            double p = Hypergeometric.calculateP(bagsize, taggedSample[i], taggedPopulation[i], total);
             resultsMap.put(id[i], new BigDecimal(p));
             bonferroniMap.put(id[i], new BigDecimal(p * bagsize));
             benjaminiMap.put(id[i], new BigDecimal(p));
@@ -56,7 +55,6 @@ public class WebUtilTest extends TestCase
     }
 
     public void testHypergeometric() throws Exception {
-        Hypergeometric h = new Hypergeometric(total);
         for (int i = 0; i < 3; i++) {            
             assertEquals(expectedResults[i], resultsMap.get(id[i]));
         }        
