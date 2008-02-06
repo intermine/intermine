@@ -208,14 +208,6 @@ public class PortalQueryAction extends InterMineAction
                 ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
                                                   .getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
-                if (!bagConverter.isValidParameter(addparameter, oss)) {
-                    actionMessages.add(Constants.PORTAL_MSG, 
-                        new ActionMessage("portal.orthologue.wrongparameter",addparameter));
-                    session.setAttribute(Constants.PORTAL_MSG, actionMessages);
-                    return goToNoResults(mapping, os, model, className, webConfig, 
-                        classKeys, session);
-                }
-                
                 List<ResultsRow> result = bagConverter.getConvertedObjects(session, addparameter,
                                                 bagList, className);
                 imBag = new InterMineBag(bagName, className , null , new Date() ,

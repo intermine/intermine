@@ -55,13 +55,5 @@ public interface BagConverter
      */
     public ActionMessage getActionMessage(Model model, String externalids, int convertedSize, 
                                           String type, String organism)
-                                          throws ObjectStoreException, UnsupportedEncodingException;
-    
-    /**
-     * @param param the parameter to check
-     * @param oss the object store summary
-     * @return whether the parameter value exists or not
-     */
-    public boolean isValidParameter(String param, ObjectStoreSummary oss);
-    
+                                          throws ObjectStoreException, UnsupportedEncodingException;    
 }
