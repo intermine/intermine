@@ -1,9 +1,14 @@
+var lastOpen;
+
 function toggleToolBarMenu(e) {
 	e = e || window.event;
 	var tgt = e.target || e.srcElement;
 	var id = tgt.id;
 	if(id == null || id == '') {
 	    return;
+	}
+	if (lastOpen) {
+	    hideMenu(lastOpen);
 	}
 	var button = document.getElementById(id);
 	var item = document.getElementById(id.replace(/button/,'item'));
@@ -16,6 +21,7 @@ function toggleToolBarMenu(e) {
 	item.style.left = posArray[0] +"px";
 	item.style.top = posArray[1] + 25 +"px";
 	item.style.visibility = 'visible';
+	lastOpen = item.id;
 }
 function hideMenu(id) {
 	document.getElementById(id).style.visibility = 'hidden';
