@@ -22,7 +22,8 @@ table.collection tr.even TD{
   background-color: #F5F0FF;}
 
 table caption {
-  text-align:left;}
+  text-align:left;
+  font-size: 12px;}
   
 table .sectionAddRemove {
   float:right;}
