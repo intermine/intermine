@@ -25,6 +25,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
@@ -94,9 +95,9 @@ public class OrthologueConverter implements BagConverter
         pathQuery.addNode(type).getConstraints().add(c);
 
         code = pathQuery.getUnusedConstraintCode();
-        Constraint c2 = new Constraint(ConstraintOp.MATCHES, organism,
+        Constraint c2 = new Constraint(ConstraintOp.LOOKUP, organism,
                                         false, label, code, id, null);
-        pathQuery.addNode("Gene.homologues.homologue.organism.shortName")
+        pathQuery.addNode("Gene.homologues.homologue.organism")
                                 .getConstraints().add(c2);
         
         Constraint c3 = new Constraint(ConstraintOp.EQUALS, "orthologue",
@@ -120,8 +121,8 @@ public class OrthologueConverter implements BagConverter
      * @see org.intermine.web.logic.bag.BagConverter#getConvertedObjects(
      * javax.servlet.http.HttpSession, java.lang.String, java.util.List, java.lang.String)
      */
-    public ActionMessage getActionMessage(Model model, String externalids, String organism,
-                                          InterMineBag bag, int initialParametersSize)
+    public ActionMessage getActionMessage(Model model, String externalids, int convertedSize, 
+                                          String type, String organism)
                     throws ObjectStoreException, UnsupportedEncodingException {
         PathQuery pathQuery = new PathQuery(model);
 
@@ -151,9 +152,9 @@ public class OrthologueConverter implements BagConverter
 
         pathQuery.addNode("Gene.homologues.homologue.organism").setType("Organism");
 
-        Constraint c3 = new Constraint(ConstraintOp.MATCHES, organism, 
+        Constraint c3 = new Constraint(ConstraintOp.LOOKUP, organism, 
                         false, label, code, id, null);
-        pathQuery.addNode("Gene.homologues.homologue.organism.shortName").getConstraints().add(c3);
+        pathQuery.addNode("Gene.homologues.homologue.organism").getConstraints().add(c3);
 
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
@@ -162,10 +163,11 @@ public class OrthologueConverter implements BagConverter
         String encodedurl = URLEncoder.encode(query,"UTF-8"); 
         String[] values = new String[]
             {
-                String.valueOf(bag.getSize()), organism, String.valueOf(initialParametersSize),
-                bag.getType(), encodedurl
+                String.valueOf(convertedSize), organism, String.valueOf(externalids.split(",").length),
+                type, encodedurl
             };
         ActionMessage am = new ActionMessage("portal.orthologues", values);
         return am;
     }
+    
 }
