@@ -39,6 +39,7 @@ import org.intermine.web.logic.widget.DataSetLdr;
 import org.intermine.web.logic.widget.GraphDataSet;
 
 import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Organism;
 
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -214,14 +215,20 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         Query q = new Query();
 
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);
-        QueryClass geneQC
-            = new QueryClass(Class.forName(model.getPackageName() + "." + bagType));
+        Class bagCls = Class.forName(model.getPackageName() + "." + bagType);
+        QueryClass featureQC;
+        // query LocatedSequenceFeature if possible for better chance of using precompute
+        if (LocatedSequenceFeature.class.isAssignableFrom(bagCls)) {
+            featureQC = new QueryClass(LocatedSequenceFeature.class);
+        } else {
+            featureQC = new QueryClass(bagCls);
+        }
         QueryClass organismQC = new QueryClass(Organism.class);
 
         QueryField chromoQF = new QueryField(chromosomeQC, "identifier");
         QueryFunction countQF = new QueryFunction();
         QueryField organismNameQF = new QueryField(organismQC, "name");
-        QueryField geneIdentifierQF = new QueryField(geneQC, "identifier");
+        QueryField geneIdentifierQF = new QueryField(featureQC, "identifier");
 
         if (resultsType.equals("actual")) {
             q.addToSelect(chromoQF);
@@ -234,12 +241,12 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         }
 
         q.addFrom(chromosomeQC);
-        q.addFrom(geneQC);
+        q.addFrom(featureQC);
         q.addFrom(organismQC);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        QueryObjectReference r = new QueryObjectReference(geneQC, "chromosome");
+        QueryObjectReference r = new QueryObjectReference(featureQC, "chromosome");
         ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, chromosomeQC);
         cs.addConstraint(cc);
 
@@ -252,7 +259,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
             cs.addConstraint(bagChr);
         }
 
-        QueryObjectReference r2 = new QueryObjectReference(geneQC, "organism");
+        QueryObjectReference r2 = new QueryObjectReference(featureQC, "organism");
         ContainsConstraint cc2 = new ContainsConstraint(r2, ConstraintOp.CONTAINS, organismQC);
         cs.addConstraint(cc2);
 
@@ -262,7 +269,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         cs.addConstraint(sc);
 
         if (resultsType.equals("actual")) {
-            QueryField qf = new QueryField(geneQC, "id");
+            QueryField qf = new QueryField(featureQC, "id");
             BagConstraint bagC = new BagConstraint(qf, ConstraintOp.IN, bag.getOsb());
             cs.addConstraint(bagC);
         }
