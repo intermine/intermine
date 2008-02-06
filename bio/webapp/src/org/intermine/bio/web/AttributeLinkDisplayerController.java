@@ -75,23 +75,23 @@ public class AttributeLinkDisplayerController extends TilesAction
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
 
         InterMineObject imo = null;
-        
+
         if (bag == null) {
             imo = (InterMineObject) request.getAttribute("object");
         }
 
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
-            
+
         Set<ClassDescriptor> classDescriptors;
-        
+
         if (imo == null) {
             classDescriptors = bag.getClassDescriptors();
-        } else {  
+        } else {
             classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
         }
-               
-        StringBuffer sb = new StringBuffer();        
+
+        StringBuffer sb = new StringBuffer();
         for (ClassDescriptor cd : classDescriptors) {
             if (sb.length() <= 0) {
                 // (?: is a non-matching group
@@ -110,11 +110,11 @@ public class AttributeLinkDisplayerController extends TilesAction
             } catch (IllegalAccessException e) {
                 // no organism field
             }
-        } 
+        }
 
         String geneOrgKey = sb.toString();
         if (organismReference == null || organismReference.getTaxonId() == null) {
-            geneOrgKey += "(\\.(\\*|[\\d]+))?";
+            geneOrgKey += "(\\.(\\*))?";
         } else {
             // we need to check against * as well in case we want it to work for all taxonIds
             geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
@@ -134,17 +134,17 @@ public class AttributeLinkDisplayerController extends TilesAction
             String value = (String) entry.getValue();
             Matcher matcher = p.matcher(key);
             if (matcher.matches()) {
-                
+
                 String configKey = matcher.group(1);
                 className = matcher.group(2);
                 String attrName = matcher.group(5);
-                String imType = matcher.group(6);                
+                String imType = matcher.group(6);
                 String propType = matcher.group(7);
 
                 // to pick the right type of link (list or object)
                 if (imo != null && imType != null) { continue; };
                 if (bag != null && imType == null) { continue; };
-                                
+
                 ConfigMap config;
 
                 if (linkConfigs.containsKey(configKey)) {
@@ -154,13 +154,13 @@ public class AttributeLinkDisplayerController extends TilesAction
                     config.put("attributeName", attrName);
                     linkConfigs.put(configKey, config);
                 }
-                   
+
                 Object attrValue = null;
                 if (config.containsKey("attributeValue")) {
                     attrValue = config.get("attributeValue");
                 } else {
                     try {
-                        if (imo != null) {                
+                        if (imo != null) {
                             attrValue = TypeUtil.getFieldValue(imo, attrName);
                         } else { //it's a bag!
                             attrValue = getIdList(bag, os);
@@ -191,7 +191,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                 }
                 else if (propType.equals("imageName")) {
                     config.put("imageName", value);
-                } 
+                }
                 else if (propType.equals("text")) {
                     String text;
                     text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
@@ -205,12 +205,12 @@ public class AttributeLinkDisplayerController extends TilesAction
     }
 
     /**
-     * @see 
+     * @see
      * @param bag the bag
      * @param os  the object store
      * @return the string of comma separated identifiers
      *    */
-    
+
     public String getIdList(InterMineBag bag, ObjectStore os) {
         Results results;
 
@@ -228,19 +228,19 @@ public class AttributeLinkDisplayerController extends TilesAction
 
         QueryField cf = new QueryField(queryClass, "id");
 
-        
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         //added because sometimes identifier is null, and StringUtil.join complains
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
-        
+
         BagConstraint bagC = new BagConstraint(cf, ConstraintOp.IN, bag.getOsb());
         //q.setConstraint(bagC);
 
         cs.addConstraint(sc);
         cs.addConstraint(bagC);
         q.setConstraint(cs);
-        
+
         results = os.executeSingleton(q);
         results.setBatchSize(10000);
 
