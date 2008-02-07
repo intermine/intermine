@@ -13,6 +13,8 @@ package org.intermine.task;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Date;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -217,6 +219,10 @@ public class Dependencies extends Task
 
         String projName = calcThisProjectName();
 
+        if (getProject().getUserProperty("mine.name") == null) {
+            getProject().setUserProperty("mine.name", getProjectNameStart(projName));
+        }
+
         // Gather list of projects, removing redundancy
         List allProjectNames = new ArrayList();
         followProjectDependencies(projName, allProjectNames, extraProjectDepsList);
@@ -261,6 +267,7 @@ public class Dependencies extends Task
             }
 
             if (executeTargets /*&& (mainDep || test)*/) {
+                System .out.println(new java.util.Date());
                 System .out.println("Executing \"" + theTarget + "\" for source \"" + depName
                                     + "\"  in directory: " + projDir);
 
@@ -378,6 +385,19 @@ public class Dependencies extends Task
     }
 
     /**
+     * return the first part of a project name (eg. "flymine" if the porject name is
+     * "flymine/webapp")
+     */
+    private String getProjectNameStart(String projectName) {
+        int index = projectName.indexOf("/");
+        if (index == -1) {
+            return projectName;
+        } else {
+            return projectName.substring(0, index);
+        }
+    }
+
+    /**
      * @param projects
      */
     private void describeDependencies(List projects, String label) {
@@ -414,12 +434,13 @@ public class Dependencies extends Task
         List<String> deps = new ArrayList<String>();
         deps.addAll(extraDeps);
 
-        Vector bits = StringUtils.split(depString, ',');
+        if (depString.trim().length() > 0) {
+            Vector bits = StringUtils.split(depString, ',');
 
-        for (Object bit: bits) {
-            deps.add(((String) bit).trim());
+            for (Object bit: bits) {
+                deps.add(((String) bit).trim());
+            }
         }
-
 
         if (deps.size() > 0) {
             // Visit dependencies
