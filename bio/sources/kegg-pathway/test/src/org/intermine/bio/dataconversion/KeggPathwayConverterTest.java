@@ -41,16 +41,18 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         if (!resources.exists()) {
             // a hack - look in test-all instead because we're running the bio tests
             resources = new File("../sources/kegg-pathway/test/resources");
-            if (!resources.exists()) {
-                fail("can't find the resources directory");
-            }
+        } else if (!resources.exists()) {
+            resources = new File ("test/resources");
+        } else if (!resources.exists()) {
+            fail("can't find the resources directory");
         }
+         
         Collection<File> allfiles = listFiles(resources, null, true);
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         KeggPathwayConverter converter = new KeggPathwayConverter(itemWriter,
                                                         Model.getInstanceByName("genomic"));
-        converter.setSrcDataDir("resources/");
+        converter.setSrcDataDir("test/resources/");
 
         for (File file: allfiles) {
             if(file.getPath().matches(".*\\.svn.*") || file.getName().matches(".*\\.svn.*")) {
@@ -68,7 +70,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-//        writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
 
         assertEquals(readItemSet("kegg-tgt-items.xml"), itemWriter.getItems());
     }
