@@ -848,10 +848,10 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         MockItemWriter tgtIw = new MockItemWriter(new LinkedHashMap());
         translator.translate(tgtIw);
 
-        Map expMap = new HashMap();
-        expMap.put("57_1", new ArrayList(Arrays.asList(new Object[]{"5_3", "5_2", "5_4", "5_5"})));
-        expMap.put("57_2", new ArrayList(Arrays.asList(new Object[]{"5_3", "5_2"})));
+        Map expMap = new LinkedHashMap();
+        expMap.put("57_2", new ArrayList(Arrays.asList(new Object[]{"5_2", "5_3"})));
         expMap.put("57_3", new ArrayList(Arrays.asList(new Object[]{"5_4", "5_5"})));
+        expMap.put("57_1", new ArrayList(Arrays.asList(new Object[]{"5_2", "5_3", "5_4", "5_5"})));
         assertEquals(expMap, translator.bioAssayMap);
 
     }
