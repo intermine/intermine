@@ -74,14 +74,8 @@ public class ProteinInteractionRetrieverTest extends TestCase {
         }
     }
 
-    private Collection getExpectedObjects() {
-        Collection c = null;
-        try {
-            c = FullParser.realiseObjects(getExpectedItems(), model, false);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return c;
+    private Collection getExpectedObjects() throws Exception {
+        return FullParser.realiseObjects(getExpectedItems(), model, false);
     }
 
     private Collection getExpectedItems() throws Exception {

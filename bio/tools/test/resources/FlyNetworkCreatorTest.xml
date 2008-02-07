@@ -51,19 +51,11 @@
 <attribute name="identifier" value="MI:0086"/>
 </item>
 <item id="14_2" class="http://www.flymine.org/model/genomic#ProteinInteraction">
-<attribute name="biologicalRole" value="unspecified role"/>
-<attribute name="experimentalRole" value="prey"/>
 <attribute name="shortName" value="appl-aplip1-2"/>
 <reference name="experiment" ref_id="3_1"/>
 <reference name="protein" ref_id="8_1"/>
 <collection name="interactingProteins"><reference ref_id="8_2"/></collection>
 <collection name="interactingRegions"><reference ref_id="13_1"/></collection>
-</item>
-<item id="12_1" class="http://www.flymine.org/model/genomic#Location">
-<attribute name="end" value="370"/>
-<attribute name="start" value="1"/>
-<reference name="object" ref_id="8_2"/>
-<reference name="subject" ref_id="11_1"/>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="11912189"/>
@@ -75,8 +67,6 @@
 <reference name="subject" ref_id="8_2"/>
 </item>
 <item id="14_1" class="http://www.flymine.org/model/genomic#ProteinInteraction">
-<attribute name="biologicalRole" value="unspecified role"/>
-<attribute name="experimentalRole" value="bait"/>
 <attribute name="shortName" value="appl-aplip1-2"/>
 <reference name="experiment" ref_id="3_1"/>
 <reference name="protein" ref_id="8_2"/>
@@ -96,9 +86,6 @@
 <item id="7_1" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T."/>
 <attribute name="type" value="author-list"/>
-</item>
-<item id="11_1" class="http://www.flymine.org/model/genomic#ProteinRegion">
-<reference name="protein" ref_id="8_2"/>
 </item>
 <item id="13_1" class="http://www.flymine.org/model/genomic#ProteinInteractionRegion">
 <reference name="location" ref_id="12_1"/>
