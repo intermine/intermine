@@ -42,9 +42,11 @@ public class SAXParser
             ParserConfigurationException e2 = new ParserConfigurationException("The underlying "
                     + "parser does not support the requested features");
             e2.initCause(e);
-            throw e;
+            throw e2;
         } catch (SAXException e) {
-            throw new SAXException("Error parsing XML document", e);
+            SAXException e2 = new SAXException("Error parsing XML document");
+            e2.initCause(e);
+            throw e2;
         }
     }
 }
