@@ -88,7 +88,7 @@ project.properties.
   <target name="-init-check-for-build-properties"
           depends="-set-release-suffix, -init-deps">
     <property name="build.properties.file"
-              value="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"/>
+              value="${user.home}/build.properties.${mine.name}${release-suffix}"/>
     <available file="${build.properties.file}" property="have.build.properties.file"/>
   </target>
 
@@ -101,8 +101,8 @@ Couldn't find ${build.properties.file}
   </target>
 
   <target name="-init-app-properties"
-          depends="-init-properties, -check-for-build-properties, -pre-define-task-classpath">
-    <property file="${user.home}/build.properties.${top.ant.project.name}${release-suffix}"/>
+          depends="-check-for-build-properties, -pre-define-task-classpath">
+    <property file="${user.home}/build.properties.${mine.name}${release-suffix}"/>
   </target>
 
   <target name="-load-task-taskdefs" depends="-check-task-availability,
