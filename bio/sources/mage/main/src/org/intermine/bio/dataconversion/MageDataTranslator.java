@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,7 @@ public class MageDataTranslator extends DataTranslator
     protected Map compositeSeqToReporter = new HashMap();
     protected Map reporterToCompositeSeq = new HashMap();
     protected Map reporterToMaterial = new HashMap();
-    protected Map bioAssayMap = new HashMap();
+    protected Map bioAssayMap = new LinkedHashMap();
 
 
     protected Set materialIdTypes = new HashSet();
