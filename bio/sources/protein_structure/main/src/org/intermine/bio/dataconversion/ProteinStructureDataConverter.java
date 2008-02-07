@@ -157,7 +157,7 @@ public class ProteinStructureDataConverter extends FileConverter
 
         /**
          * {@inheritDoc}
-         */  
+         */
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
@@ -178,7 +178,7 @@ public class ProteinStructureDataConverter extends FileConverter
 
         /**
          * {@inheritDoc}
-         */  
+         */
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             super.endElement(uri, localName, qName);
@@ -232,9 +232,9 @@ public class ProteinStructureDataConverter extends FileConverter
                     }
                     alignmentFile = false;
                 } else if (qName.equals("prosa_z_score")) {
-                    proteinStructure.setAttribute("prosa_z_score", attValue.toString());
+                    proteinStructure.setAttribute("prosaZScore", attValue.toString());
                 } else if (qName.equals("prosa_q_score")) {
-                    proteinStructure.setAttribute("prosa_q_score", attValue.toString());
+                    proteinStructure.setAttribute("prosaQScore", attValue.toString());
                 } else if (qName.equals("protein_structure")) {
                     proteinStructure.setAttribute("technique", "Computer prediction");
                     proteinStructure.setAttribute("identifier", protId + "_" + pfamId);
@@ -279,7 +279,7 @@ public class ProteinStructureDataConverter extends FileConverter
 
         /**
          * {@inheritDoc}
-         */  
+         */
         public void characters(char[] ch, int start, int length) throws SAXException
         {
 
