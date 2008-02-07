@@ -638,8 +638,6 @@ public class CreateReferencesTest extends TestCase {
         compareItemsCollectionOrderInsensitive(expGeneItem, resGeneItem);
     }
 
-
-
     private void compareResultsToExpected() throws Exception {
         osw.flushObjectById();
 
@@ -753,14 +751,8 @@ public class CreateReferencesTest extends TestCase {
 
         expectedChromosome.setIdentifier("chr1");
         expectedChromosome.setId(storedChromosome.getId());
-        expectedChromosome.addFeatures(expectedTranscript3);
-        expectedChromosome.addFeatures(expectedTranscript2);
-        expectedChromosome.addFeatures(expectedTranscript1);
         expectedChromosome.addFeatures(expectedTranscript);
-        expectedChromosome.addFeatures(expectedGene2);
-        expectedChromosome.addFeatures(expectedGene1);
         expectedChromosome.addFeatures(expectedGene);
-        expectedChromosome.addFeatures(expectedExon);
 
         Relation expectedChromosomeRelation =
             (Relation) DynamicUtil.createObject(Collections.singleton(Relation.class));
@@ -785,7 +777,6 @@ public class CreateReferencesTest extends TestCase {
             expectedTranscript3, expectedTranscript2, expectedTranscript1, expectedTranscript})));
         expectedGene.setChromosome(expectedChromosome);
         expectedTranscript.setChromosome(expectedChromosome);
-        expectedExon.setChromosome(expectedChromosome);
         expectedExon.setObjects(new HashSet(Arrays.asList(new Object[] {expectedChromosomeRelation,
             expectedExonRelation})));
 
