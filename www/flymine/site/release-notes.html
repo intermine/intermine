@@ -3,6 +3,65 @@
 
   <div style="clear:" class="box">
 
+<div class="heading2">FlyMine version 11.0 - release notes (7th February 2008)</div>
+<div class="body">
+<p style="font-size: +1.1em;">
+Release 11.0 of FlyMine includes an update of data from FlyBase, expression data related to Tiffin motifs has been added and many other data sources are updated.  We have also added new widgets and improved menus on results and list analysis pages.</p>
+
+<h3>Data</h3>
+<p>The <i>D. melanogaster</i> genome has been updated to release 5.5 from FlyBase.  Many other data sources have been updated to recent versions, see <a href="/dataCategories.do">data categories</a> page for more details.</p>
+<ul>
+  <li>FIX - We now follow part-of relationships when computing transitive closure on the the Gene Ontology.  This means that queries that include parents/children of terms now follow part-of relationships as do the GO enrichment widgets.</li>
+  <li>UPDATE - InterPro domains for each protein are now retrieved from UniPort with details of the domains taken from InterPro.  We now include domains for more organisms.</li>
+  <li>UPDATE - FlyReg Transcription factor binding sites are now updated and retrieved from REDfly.</li>
+  <li>UPDATE - <i>C. elegans</i> RNAi phenotype data has been updated.</li>
+  <li>FIX - <i>D. melanogaster</i> UTRs and CDSs are now retrieved correctly from FlyBase</li>
+  <li>FIX - Some minor changes have been made to the ProteinInteraction class - unused attributes have been removed, interacting regions is now filled in.</li>
+</ul>
+<h3>Orthologues</h3>
+<p>
+We have changed the way we present orthologue data from <a href="http://inparanoid.sbc.su.se/">InParanoid</a> to make it simpler and more obvious.  Orthologues and Paralogues now appear in a single Homologue class which has a type of 'orthologue' or 'inParalogue', we no longer use the terms 'main' and 'secondary'.  Please contact us if you have any problems with this.
+</p>
+<p>
+When viewing a list a genes on a list analysis page there is now an orthologue conversion section in the top right.  Select an organism to view a results page of orthologues in that organism to export or create a new list.
+</p>
+
+<h3>Widgets</h3>
+<p>
+New widgets have been added to protein and genome feature list analysis pages.  Enrichment widgets now include the option to choose Benjamini-Hochberg or Bonferroni error correction.  Benjamini-Hochberg is the default and is less stringent.  Enrichment and table widgets can now be opened in a new window and have the option to select multiple categories (e.g. multiple GO terms) and display/export all data from those categories.
+<ul>
+  <li>NEW - A chromosome distribution widget is now shown on list analysis pages for any located genome feature (e.g. genes, exons, binding sites).</li>
+  <li>NEW - Enrichment widgets added to protein list analysis page:
+    <ul>
+      <li>InterPro protein domains.</li>
+      <li>GO terms (queried via corresponding genes).</li>
+      <li>UniProt protein features.</li>
+      <li>UniProt keywords.</li>
+    </ul>
+  </li>
+  <li>NEW - Enrichment widget results can be filtered on maximum p-value.</li>
+  <li>FIX - clicking on bars of chromosome distibution widget now gives correct results with multi-organism lists.</li>
+  <li>FIX - links on GO enrichment now give results for <i>A. gambiae</i> and <i>A. mellifera</i></li>
+</ul>
+</p>
+<h3>List upload</h3>
+<ul>
+  <li>NEW - 'Add all'/'Remove all' links added to each issue section on list upload page - making large lists easier to manage.</li>
+  <li>NEW - Issues on the confirmation page now have links to open report pages in a new window.</li>
+  <li>FIX - Confirmation page no longer resets if an invalid list name is entered.</li>
+  <li>FIX - List name is no longer pre-filled with the last entered list name.</li>
+</ul>
+
+<h3>Other user interface changes</h3>
+<ul>
+  <li>NEW - Template query forms include an 'XML' link to export an XML representation of the query.</li>
+  <li>NEW - Export, Create List and Add To List are now in a menu bar above results tables, combined with previous/next navigation.</li>
+  <li>NEW - Open/closed state of sections on report and list analysis sections is now 'sticky' for your current session.</li>
+  <li>FIX - Improvements to error checking and messages when importing XML queries/templates.</li>
+  <li>FIX - Selections don't reset if an invalid name entered when performing list combination operations.</li>
+  <li>FIX - Improved error handling on results page when selecting objects to save and list name.</li>
+</ul>
+</div>
 <div class="heading2">FlyMine version 10.0 - release notes (4th December 2007)</div>
 <div class="body">
 <p style="font-size: +1.1em;">
