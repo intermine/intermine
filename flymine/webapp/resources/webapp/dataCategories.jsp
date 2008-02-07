@@ -33,7 +33,7 @@
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
-    <td> Genome annotation - Release 5.4</td>
+    <td> Genome annotation - Release 5.5</td>
     <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_01</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
