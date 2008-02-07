@@ -19,11 +19,22 @@
     <fileset dir="${library.xml.basedir}/im-ant-tasks/lib" includes="*.jar"/>
   </path>
 
-  <target name="prepare">
-    <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
-    <property file="${build.properties.local}"/>
+  <target name="-set-release-suffix-exists" if="release">
+    <property name="release-suffix" value=".${release}"/>
+  </target>
 
-   <copy todir="${build.www}">
+  <target name="-set-release-suffix-not-exists" unless="release">
+    <!-- default to no suffix -->
+    <property name="release-suffix" value=""/>
+  </target>
+
+  <target name="-init" depends="-set-release-suffix-exists, -set-release-suffix-not-exists"/>
+
+  <target name="prepare" depends="-init">
+    <property name="build.properties.local" value="${user.home}/build.properties.flymine" />
+    <property file="${build.properties.local}${release-suffix}"/>
+
+    <copy todir="${build.www}">
       <fileset dir="${src.www}">
         <include name="**/*"/>
       </fileset>
