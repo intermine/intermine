@@ -12,7 +12,7 @@
 #  - precompute queries and templates
 #  - create-db-userprofile with new properties file
 #  - webapp clean-all
-#  - summarise objectstore
+#  - update gbrowse properties
 #  - stop old webapp
 #  - write-userprofile-xml for current version
 #  - read-userprofile-xml with new properties
@@ -49,6 +49,7 @@ my $USERPROFILE_XML_FILENAME = "build/userprofile.xml";
 my $USERPROFILE_XML_BACKUP_FILENAME = "$ENV{HOME}/backups/userprofile.xml";
 my $START_DATE = UnixDate("now", "%O");
 my $LOG_FILENAME = "$ENV{HOME}/logs/$START_DATE.log";
+my $GBROWSE_CONF_DIR = '/gbrowse/etc/gbrowse.conf/';
 
 #################
 warn "reading current properties file\n";
@@ -102,7 +103,7 @@ sub create_properties_file
   my $new_prop_filename = shift;
   my @prop_names = @_;
 
-  warn "creating new properties file: $new_prop_filename\n";
+  warn "  creating new properties file: $new_prop_filename\n";
 
   if (-e $new_prop_filename) {
     die "trying to overwrite: $new_prop_filename\n";
@@ -149,7 +150,8 @@ create_properties_file($current_prop_filename, $new_prop_filename,
                        'db.production.datasource.databaseName',
                        'db.userprofile-production.datasource.databaseName');
 create_properties_file($current_build_prop_filename, $new_build_prop_filename,
-                       'webapp.path', 'project.releaseVersion');
+                       'webapp.path', 'project.releaseVersion', 
+                       'gbrowse.database.source');
 
 my $new_prop_symlink = "$project_name-webapp.properties.r$new_version";
 symlink $new_prop_filename, $new_prop_symlink
@@ -158,6 +160,35 @@ my $new_build_prop_symlink = "build.properties.$project_name-webapp.r$new_versio
 symlink $new_build_prop_filename, $new_build_prop_symlink
   or die "can't create symlink to $new_build_prop_symlink: $!\n";
 
+sub create_gbrowse_conf
+{
+  my $gbrowse_dir = shift;
+  my $old_version = shift;
+  my $new_version = shift;
+
+  my $old_file_name = "$GBROWSE_CONF_DIR/modmine-r$old_version.conf";
+  my $new_file_name = "$GBROWSE_CONF_DIR/modmine-r$new_version.conf";
+
+  warn "  creating new gbrowse conf: $new_file_name\n";
+
+  if (-e $new_file_name) {
+    die "trying to overwrite: $new_file_name - exiting\n";
+  }
+
+  open my $new_file, '>', $new_file_name or die "can't open $new_file_name: $!\n";
+
+  open my $old_file, '<', $old_file_name
+    or die "can't open $old_file_name: $!\n";
+
+  while (<$old_file>) {
+    s/(description\s*=.*release) $old_version/$1 $new_version/;
+    s|/release-$old_version|/release-$new_version/|;
+    print $new_file $_;
+  }
+
+  close $new_file or die "can't close $new_file_name: $!\n";
+  close $old_file or die "can't close $old_file_name: $!\n";
+}
 
 # create new databases
 
@@ -206,46 +237,17 @@ warn "create-db-userprofile with new properties file\n";
 system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "create-db-userprofile failed: $?";
 
+#################
+
+warn "copying gbrowse properties\n";
+
+create_gbrowse_conf($GBROWSE_CONF_DIR, $current_version, $new_version);
 
 #################
 warn "stopping old webapp (r$current_version)\n";
 
 system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't stop webapp r$current_version: $!";
-
-
-#################
-
-warn "update apache rewrite/redirect configuration\n";
-
-{
-  open my $apache_conf_file, '>', $APACHE_CONF_FILENAME
-    or die "can't open $APACHE_CONF_FILENAME for writing: $!\n";
-
-  print $apache_conf_file <<"APACHE_CONF";
-# WARNING: DO NOT EDIT
-
-LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
-
-RewriteEngine On
-RewriteRule ^/query(.*)\$ http://intermine.modencode.org/release-$new_version\$1 [P,QSA]
-RewriteRule ^/\$ http://intermine.modencode.org/release-$new_version/begin.do [P]
-APACHE_CONF
-
-  for (my $i = $OLDEST_VERSION; $i <= $new_version; $i++) {
-    print $apache_conf_file <<"APACHE_CONF";
-ProxyPass /release-$i ajp://mod2:8009/release-$i
-ProxyPassReverse /release-$i http://mod2/release-$i
-APACHE_CONF
-  }
-}
-
-
-#################
-warn "restarting apache\n";
-
-system ("sudo /etc/init.d/httpd restart >> $LOG_FILENAME 2>&1") == 0
-  or die_with_log "can't restart httpd: $?";
 
 
 #################
@@ -271,6 +273,39 @@ warn "release new webapp r$new_version\n";
 my @TARGETS = qw(remove-webapp release-webapp);
 system ("ant -Drelease=r$new_version @TARGETS >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't write userprofile XML: $?";
+
+#################
+
+warn "update apache rewrite/redirect configuration\n";
+
+{
+  open my $apache_conf_file, '>', $APACHE_CONF_FILENAME
+  or die "can't open $APACHE_CONF_FILENAME for writing: $!\n";
+
+  print $apache_conf_file <<"APACHE_CONF";
+# WARNING: DO NOT EDIT
+
+LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
+
+RewriteEngine On
+RewriteRule ^/query(.*)\$ http://intermine.modencode.org/release-$new_version\$1 [P,QSA]
+RewriteRule ^/\$ http://intermine.modencode.org/release-$new_version/begin.do [P]
+APACHE_CONF
+
+  for (my $i = $OLDEST_VERSION; $i <= $new_version; $i++) {
+    print $apache_conf_file <<"APACHE_CONF";
+ProxyPass /release-$i ajp://mod2:8009/release-$i
+ProxyPassReverse /release-$i http://mod2/release-$i
+APACHE_CONF
+  }
+}
+
+
+#################
+warn "restarting apache\n";
+
+#system ("sudo /etc/init.d/httpd restart >> $LOG_FILENAME 2>&1") == 0
+#  or die_with_log "can't restart httpd: $?";
 
 
 #################
