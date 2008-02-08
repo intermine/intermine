@@ -34,12 +34,12 @@ import com.meterware.httpunit.WebRequest;
  */
 
 /**
- * 
+ *
  * @author Jakub Kulaviak
  **/
 public class ServiceServletTest extends TestCase
 {
-    
+
     private String serviceUrl;
 
     @Override
@@ -50,9 +50,9 @@ public class ServiceServletTest extends TestCase
         ResourceBundle rb = new PropertyResourceBundle(webProps);
         String context = rb.getString("webapp.path").trim();
         String webAppUrl = rb.getString("webapp.deploy.url").trim();
-        this.serviceUrl = webAppUrl + "/" +  context + "/queryService/v1/service?"; 
+        this.serviceUrl = webAppUrl + "/" +  context + "/queryService/v1/service?";
     }
-    
+
     /**
      * Tests tab separated output that is formed information about employees.
      * @throws Exception if some error occurs
@@ -62,7 +62,7 @@ public class ServiceServletTest extends TestCase
         List<List<String>> results = parseTabResult(tabResult);
         checkEmployees(results);
     }
-    
+
 
     /**
      * Tests xml output that is formed information about employees.
@@ -83,20 +83,20 @@ public class ServiceServletTest extends TestCase
         assertTrue(result.startsWith("<error>"));
         assertTrue(result.contains("<message>"));
         assertTrue(result.contains("</message>"));
-        assertTrue(result.endsWith("</error>"));        
+        assertTrue(result.endsWith("</error>"));
     }
 
     /**
      * Tests that when parameter 'onlyTotalCount' is set, then only total count of results is returned.
-     * @throws Exception when an error occurs 
+     * @throws Exception when an error occurs
      */
     public void testOnlyTotalCount() throws Exception {
         String result = getResult("onlyTotalCount=yes&query=" + getQuery()).trim();
         assertEquals("6", result);
     }
-    
+
     /**
-     * Tests functionality of counting of all results and count of results returned 
+     * Tests functionality of counting of all results and count of results returned
      * @throws Exception
      */
     public void testXMLResultAttributes() throws Exception {
@@ -109,13 +109,13 @@ public class ServiceServletTest extends TestCase
         Attributes atts = handler.getRootAttributes();
         for (int i=0; i<atts.getLength(); i++) {
             if (atts.getLocalName(i).equals("firstResultPosition")) {
-                assertEquals("5", atts.getValue(i).trim());        
+                assertEquals("5", atts.getValue(i).trim());
             }
             if (atts.getLocalName(i).equals("totalResultsReturned")) {
-                assertEquals("2", atts.getValue(i).trim());        
+                assertEquals("2", atts.getValue(i).trim());
             }
             if (atts.getLocalName(i).equals("totalResultsAvailable")) {
-                assertEquals("6", atts.getValue(i).trim());        
+                assertEquals("6", atts.getValue(i).trim());
             }
         }
     }
@@ -123,7 +123,7 @@ public class ServiceServletTest extends TestCase
     public String getServiceUrl() {
         return serviceUrl;
     }
-    
+
     private void checkEmployees(List<List<String>> results) {
         assertEquals(6, results.size());
         checkEmployee(results.get(0), "EmployeeA1", "10", "1", "true");
@@ -165,14 +165,14 @@ public class ServiceServletTest extends TestCase
         factory.newSAXParser().parse(is, handler);
         return handler.getResults();
     }
-    
+
     private String getResult(String parameterString) throws Exception {
         String requestString = getServiceUrl() + parameterString;
         WebConversation wc = new WebConversation();
         WebRequest     req = new GetMethodWebRequest( requestString);
         return wc.getResponse(req).getText();
     }
-    
+
     private String getQuery() throws IOException {
         //BufferedReader br = new BufferedReader(new FileReader("/home/jakub/svn/dev/testmodel/webapp/test/resources/ServiceServletTest1.xml"));
         InputStream is = getClass().getClassLoader().getResourceAsStream("ServiceServletTest.xml");

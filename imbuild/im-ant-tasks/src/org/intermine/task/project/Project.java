@@ -24,7 +24,7 @@ public class Project
     Map<String, Source> sources = new LinkedHashMap<String, Source>();
     List<UserProperty> properties = new ArrayList<UserProperty>();
     Map<String, PostProcess> postProcesses = new LinkedHashMap<String, PostProcess>();
-    
+
     /**
      * Add a Source object
      * @param name the name
@@ -32,8 +32,8 @@ public class Project
      */
     public void addSource(String name, Source source) {
         sources.put(name, source);
-    }        
-    
+    }
+
     /**
      * Add a project property.
      * @param property the property
@@ -41,7 +41,7 @@ public class Project
     public void addProperty(UserProperty property) {
         properties.add(property);
     }
-    
+
     /**
      * Add a post-processing step
      * @param name the name
@@ -58,7 +58,7 @@ public class Project
     public Map<String, Source> getSources() {
         return sources;
     }
-    
+
     /**
      * Return a list of UserProperty objects for the Project.
      * @return the properties

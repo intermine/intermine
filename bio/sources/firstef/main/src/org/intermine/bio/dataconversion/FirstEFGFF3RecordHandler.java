@@ -36,7 +36,7 @@ public class FirstEFGFF3RecordHandler extends GFF3RecordHandler
 
     /**
      * {@inheritDoc}
-     */  
+     */
     public void process(GFF3Record record) {
         // empty
     }

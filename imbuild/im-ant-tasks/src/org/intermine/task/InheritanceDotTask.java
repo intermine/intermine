@@ -33,7 +33,7 @@ public class InheritanceDotTask extends Task
 {
     protected String directory, packageName, file;
     protected Set omit, boring;
-    
+
     /**
      * Set the directory containing java source files, such as one might use in
      * the sourceclasspath.
@@ -89,7 +89,7 @@ public class InheritanceDotTask extends Task
             this.boring.add(boringArray[i]);
         }
     }
-    
+
     /**
      * @see Task#execute
      */

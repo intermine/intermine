@@ -18,7 +18,7 @@ package org.intermine.task.project;
 public class Source extends Action
 {
     String type;
-    
+
     /**
      * Set the type of this Source.
      * @param type the type
@@ -26,7 +26,7 @@ public class Source extends Action
     public void setType(String type) {
         this.type = type;
     }
-    
+
     /**
      * Get the type of this object.
      * @return the type

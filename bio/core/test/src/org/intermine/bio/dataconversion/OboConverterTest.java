@@ -27,7 +27,7 @@ public class OboConverterTest extends ItemsTestCase {
     public OboConverterTest(String arg) {
         super(arg);
     }
-    
+
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap());
     }

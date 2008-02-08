@@ -146,41 +146,41 @@ public class PublicationLdr implements EnrichmentWidgetLdr
 
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public Query getSample() {
         return sampleQuery;
     }
 
     /**
-     * {@inheritDoc}    
+     * {@inheritDoc}
      */
     public Query getPopulation() {
         return populationQuery;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public Collection<String> getReferencePopulation() {
         return organisms;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public int getTotal(ObjectStore os) {
         return BioUtil.getTotal(os, organisms, "Gene");
     }
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public String getExternalLink() {
         return externalLink;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public String getAppendage() {
         return append;

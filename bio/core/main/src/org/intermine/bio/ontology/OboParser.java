@@ -94,7 +94,7 @@ public class OboParser
         return termToParentTermSetMap;
     }
 
-    
+
     private Map<String, Set> getTermToParentTermSetMap(Collection<OboTerm> rootTermSet,
                                           Map<String, OboTerm> termMap) throws Exception {
 
@@ -144,7 +144,7 @@ public class OboParser
         for (OboTerm componentTerm : nextTerm.getComponents()) {
             setParentTermsViaOntologyDepthSearch(currentBranchStack, (OboTerm) componentTerm);
         }
-        
+
         // we have reached a leaf term
         currentBranchStack.pop();
     }

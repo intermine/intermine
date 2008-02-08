@@ -37,7 +37,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
 {
     String bagName;
     String organism = null;
-    
+
     /**
      * Creates a ChromosomeDistributionGraphURLGenerator for the chart
      * @param model
@@ -64,7 +64,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         sb.append("&series=");
         sb.append("&urlGen=org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator");
         sb.append("&extraKey=" + organism);
-        
+
         return sb.toString();
     }
 
@@ -75,12 +75,12 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
                                        InterMineBag imBag,
                                        @SuppressWarnings("unused") String series,
                                        @SuppressWarnings("unused") String category) {
-        
+
         Model model = os.getModel();
         InterMineBag bag = imBag;
         PathQuery q = new PathQuery(model);
         String bagType = bag.getType();
-        
+
         Path identifier = MainHelper.makePath(model, q, bagType + ".identifier");
         Path organismDbId = MainHelper.makePath(model, q, bagType + ".organismDbId");
         Path name = MainHelper.makePath(model, q, bagType + ".organism.name");
@@ -100,7 +100,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         view.add(strand);
 
         q.setView(view);
-        
+
         ConstraintOp constraintOp = ConstraintOp.IN;
         String constraintValue = bag.getName();
 
@@ -129,8 +129,8 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
             q.setConstraintLogic("A and B");
         }
 
-        q.syncLogicExpression("and"); 
-        
+        q.syncLogicExpression("and");
+
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
         sortOrder.add(new OrderBy(start, "asc"));
         sortOrder.add(new OrderBy(identifier, "asc"));

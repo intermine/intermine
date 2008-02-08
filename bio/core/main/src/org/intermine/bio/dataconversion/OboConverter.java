@@ -79,7 +79,7 @@ public class OboConverter extends DataConverter
         synToItem = new HashMap();
         process(findRootTerms(new File(dagFilename)));
     }
-    
+
     /**
      * Get all root terms for an OBO format file.
      * @param oboFile the OBO file
@@ -138,7 +138,7 @@ public class OboConverter extends DataConverter
         }
         return item;
     }
-    
+
     /**
      * Set up attributes and references for the Item created from a DagTerm. Subclasses
      * can override this method to perform extra setup, for example by casting the
@@ -184,7 +184,7 @@ public class OboConverter extends DataConverter
         }
         item.setAttribute("obsolete", "" + oboterm.isObsolete());
     }
-    
+
     /**
      * Set up attributes and references for the Item created from a DagTermSynonym. Subclasses
      * can override this method to perform extra setup, for example by casting the

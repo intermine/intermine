@@ -1282,7 +1282,7 @@ public class CalculateLocations
                 lsfClone.setLength(new Integer(length));
             }
             lsfClone.proxyChromosome(new ProxyReference(os, chrId, Chromosome.class));
-            
+
             osw.store(lsfClone);
         }
 

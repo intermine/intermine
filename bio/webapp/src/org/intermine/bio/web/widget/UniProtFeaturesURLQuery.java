@@ -48,7 +48,7 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public PathQuery generatePathQuery() {
 

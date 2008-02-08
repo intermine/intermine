@@ -73,7 +73,7 @@ public class PostProcessUtil
         return newObj;
     }
 
-    
+
     private static InterMineObject cloneInterMineObject(InterMineObject obj,
                                                         boolean copyCollections)
     throws IllegalAccessException {
@@ -98,7 +98,7 @@ public class PostProcessUtil
         }
         return newObj;
     }
-    
+
     /**
      * Query ObjectStore for all objects that connect the given object and any subject classes.
      * Return an iterator ordered by objectCls.

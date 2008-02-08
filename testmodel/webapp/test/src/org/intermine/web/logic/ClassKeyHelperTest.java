@@ -46,8 +46,8 @@ public class ClassKeyHelperTest extends TestCase {
         ClassDescriptor cldCon = model.getClassDescriptorByName(pkg + "Contractor");
         ClassDescriptor cldEmb = model.getClassDescriptorByName(pkg + "Employable");
         ClassDescriptor cldDep = model.getClassDescriptorByName(pkg + "Department");
-               
-        ClassKeyHelper.addKey(expected, "Employee", cldEmp.getFieldDescriptorByName("name"));        
+
+        ClassKeyHelper.addKey(expected, "Employee", cldEmp.getFieldDescriptorByName("name"));
         ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("title"));
         ClassKeyHelper.addKey(expected, "Contractor", cldCon.getFieldDescriptorByName("name"));
         ClassKeyHelper.addKey(expected, "Employable", cldEmb.getFieldDescriptorByName("name"));

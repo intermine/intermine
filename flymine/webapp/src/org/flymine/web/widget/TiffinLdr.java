@@ -79,35 +79,35 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 
 
      /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
       */
      public Query getSample() {
          return sampleQuery;
      }
 
      /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
       */
      public Query getPopulation() {
          return populationQuery;
      }
 
      /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
       */
      public Collection<String> getReferencePopulation() {
          return organisms;
      }
 
      /**
-      * {@inheritDoc} 
+      * {@inheritDoc}
       */
      public int getTotal(ObjectStore os) {
          return BioUtil.getTotal(os, organisms, "Gene");
      }
 
      private Query getQuery(ObjectStore os, InterMineBag bag, boolean useBag) {
-         
+
          Query q = new Query();
          q.setDistinct(false);
          QueryClass qcGene = new QueryClass(Gene.class);
@@ -123,7 +123,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          QueryField qfDataSet = new QueryField(qcDataSet, "title");
 
          QueryFunction geneCount = new QueryFunction();
-         
+
          q.addFrom(qcGene);
          q.addFrom(qcIntergenicRegion);
          q.addFrom(qcTFBindingSite);
@@ -136,7 +136,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          if (useBag) {
              q.addToSelect(qfId);
          }
-         
+
          ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
          if (useBag) {
              // genes must be in bag
@@ -180,37 +180,37 @@ public class TiffinLdr implements EnrichmentWidgetLdr
          SimpleConstraint sc =
              new SimpleConstraint(qfDataSet, ConstraintOp.EQUALS, new QueryValue("Tiffin"));
          cs.addConstraint(sc);
-         
+
          q.setConstraint(cs);
 
          q.addToGroupBy(qfId);
-         
-//         SELECT DISTINCT a1_, a2_, a5_ 
-//         FROM org.flymine.model.genomic.Gene AS a1_, 
+
+//         SELECT DISTINCT a1_, a2_, a5_
+//         FROM org.flymine.model.genomic.Gene AS a1_,
 //         org.flymine.model.genomic.IntergenicRegion AS a2_,
-//         org.flymine.model.genomic.TFBindingSite AS a3_, 
-//         org.flymine.model.genomic.DataSet AS a4_, 
-//         org.flymine.model.genomic.Motif AS a5_ 
-//         WHERE (a1_.upstreamIntergenicRegion CONTAINS a2_ 
-//               AND a2_.overlappingFeatures CONTAINS a3_ 
-//               AND a3_.evidence CONTAINS a4_ 
-//               AND LOWER(a4_.title) = 'tiffin' 
+//         org.flymine.model.genomic.TFBindingSite AS a3_,
+//         org.flymine.model.genomic.DataSet AS a4_,
+//         org.flymine.model.genomic.Motif AS a5_
+//         WHERE (a1_.upstreamIntergenicRegion CONTAINS a2_
+//               AND a2_.overlappingFeatures CONTAINS a3_
+//               AND a3_.evidence CONTAINS a4_
+//               AND LOWER(a4_.title) = 'tiffin'
 //               AND a3_.motif CONTAINS a5_
-         
-       
-         
+
+
+
          return q;
      }
 
      /**
-      * {@inheritDoc} 
+      * {@inheritDoc}
       */
      public String getExternalLink() {
          return externalLink;
      }
 
      /**
-      * {@inheritDoc} 
+      * {@inheritDoc}
       */
      public String getAppendage() {
          return append;

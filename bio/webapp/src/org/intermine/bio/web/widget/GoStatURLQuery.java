@@ -27,14 +27,14 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
 
 
 /**
- * {@inheritDoc} 
+ * {@inheritDoc}
  */
 public class GoStatURLQuery implements WidgetURLQuery
 {
     ObjectStore os;
     InterMineBag bag;
     String key;
-    
+
     /**
      * @param os object store
      * @param key go terms user selected
@@ -47,7 +47,7 @@ public class GoStatURLQuery implements WidgetURLQuery
      }
 
      /**
-      * {@inheritDoc} 
+      * {@inheritDoc}
       */
      public PathQuery generatePathQuery() {
 
@@ -112,7 +112,7 @@ public class GoStatURLQuery implements WidgetURLQuery
          String label = null, id = null, code = q.getUnusedConstraintCode();
          Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
          q.addNode(bagType).getConstraints().add(c);
-                  
+
          // can't be a NOT relationship!
          constraintOp = ConstraintOp.IS_NULL;
          code = q.getUnusedConstraintCode();
@@ -136,7 +136,7 @@ public class GoStatURLQuery implements WidgetURLQuery
              goTermNode  = q.addNode("Gene.allGoAnnotation.property");
          }
          goTermNode.setType("GOTerm");
-         
+
          Constraint goTermConstraint
                          = new Constraint(constraintOp, key, false, label, code, id, null);
          goTermNode.getConstraints().add(goTermConstraint);
