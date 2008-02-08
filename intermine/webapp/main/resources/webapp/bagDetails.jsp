@@ -38,7 +38,16 @@
 <div class="body">
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 
+
+<TABLE cellspacing=0>
+<TR>
+
+
+
 <html:hidden property="bagName" value="${bag.name}"/> 
+
+<TD colspan=2 align="left">
+
 
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8">
 <script type="text/javascript" src="js/toolbar.js"></script>
@@ -83,8 +92,13 @@
 
 <div id="clearLine">&nbsp;</div>
 
-<table cellpadding="0" cellspacing="10">
-<tr valign="top"><td width="50%">
+</TD>
+</TR>
+<TR>
+
+<TD valign="top">
+<div>
+
 <%-- Table displaying bag elements --%>
 <table class="results" id="bagdetailsresults" cellspacing="0" align="left" >
 <tfoot>
@@ -143,8 +157,11 @@
    </tr>
 </c:if>
 </table>
+</div>
 
-<div class="clear-both"></div>
+<div id="clearLine">&nbsp;</div>
+
+<div style="clear:both">
 
 <%-- Bag Description --%>
 <c:choose>
@@ -161,7 +178,7 @@
       </div>
       <div id="bagDescriptionTextarea" style="display:none">
         <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
-        <div align="right">
+        <div>
           <button onclick="Element.toggle('bagDescriptionTextarea');
               Element.toggle('bagDescriptionDiv'); return false;">Cancel</button>
           <button onclick="saveBagDescription('${bag.name}'); return false;">Save</button>
@@ -174,8 +191,13 @@
       </div>
       </c:when>
 </c:choose>
-</td>
-<td width="50%">
+
+</div>
+
+</TD>
+
+<TD align="left" valign="top">
+
 <script type="text/javascript">
     window.onload=function(){
         Nifty("div#convertList","transparent");
@@ -189,21 +211,18 @@
      <tiles:put name="orientation" value="h" />
 </tiles:insert>
 </div>
-<!-- <div id="linkouts" class="pageDesc" align="left">
-<h3>Link outs</h3>
-</div> -->
-</td>
-</tr>
-</table>
-</html:form>
 
-  <div class="dashedBox" align="left">
     <tiles:insert page="/bagDisplayers.jsp">
       <tiles:put name="bag" beanName="bag"/>
     </tiles:insert>
-  </div>
+
+</TD></TR>
+</TABLE>
+</html:form>
 
 <div id="clearLine">&nbsp;</div>
+
+
 <!-- widget table -->
 <c:set var="widgetIdPrefix" value="bagDetailsWidget${bag.type}"/>
 <c:set var="widgetTotal" value="${fn:length(graphDisplayerArray) 
