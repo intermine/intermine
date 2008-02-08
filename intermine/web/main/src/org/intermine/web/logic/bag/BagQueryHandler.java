@@ -115,16 +115,16 @@ public class BagQueryHandler extends DefaultHandler
             String classConstraint = attrs.getValue("classConstraint");
             String targetType = attrs.getValue("target-type");
             String [] array = new String[] {urlField, classConstraint, targetType};
-            
+
             Map<String, String[]> converterMap = new HashMap();
             converterMap.put(className, array);
-            
+
             // add additional converter for this class and any subclasses
             ClassDescriptor typeCld = model.getClassDescriptorByName(targetType);
             if (typeCld == null) {
                 throw new SAXException("Invalid target type for additional converter: "
                                        + targetType);
-            }          
+            }
             Set<ClassDescriptor> clds = new HashSet(Collections.singleton(typeCld));
             clds.addAll(model.getAllSubs(typeCld));
             for (ClassDescriptor nextCld : clds) {

@@ -569,24 +569,24 @@ public class AjaxServices
         }
         guiObject.getToggledElements().put(elementId, opened);
     }
-    
+
     /**
      * validate bag upload
      * @param bagName name of new bag to be validated
      * @return error msg to display, if any
      */
     public static String validateBagName(String bagName) {
-        
+
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         ProfileManager pm = SessionMethods.getProfileManager(servletContext);
         HttpSession session = WebContextFactory.get().getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+
         // TODO get message text from the properties file
         if (bagName.equals("")) {
             return "You cannot save a list with a blank name";
         }
-        
+
         if (!WebUtil.isValidName(bagName)) {
             return "Invalid name. Names can only contain letters, numbers, spaces, "
             + "and underscores.";
@@ -601,13 +601,13 @@ public class AjaxServices
         Map<String, ? extends WebSearchable> publicBagMap =
             searchRepository.getWebSearchableMap(TagTypes.BAG);
         if (publicBagMap.get(bagName) != null) {
-            return "The list name you have chosen is already in use -" 
+            return "The list name you have chosen is already in use -"
             + " there is a public bag called " + bagName;
         }
 
-        return "";        
-    }       
-    
+        return "";
+    }
+
     /**
      * validation that happens before new bag is saved
      * @param bagName name of new bag
@@ -615,7 +615,7 @@ public class AjaxServices
      * @param operation which operation is taking place - delete, union, intersect or subtract
      * @return error msg, if any
      */
-    public static String validateBagOperations(String bagName, String[] selectedBags, 
+    public static String validateBagOperations(String bagName, String[] selectedBags,
                                                String operation) {
 
         ServletContext servletContext = WebContextFactory.get().getServletContext();
@@ -637,18 +637,18 @@ public class AjaxServices
                 if (queries.size() > 0) {
                     return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
                     + "by other queries " + queries;
-                }            
+                }
             }
 
         } else {
-            Properties properties = (Properties) 
+            Properties properties = (Properties)
             servletContext.getAttribute(Constants.WEB_PROPERTIES);
             String defaultName = properties.getProperty("lists.input.example");
 
             if (bagName.equals("") || (bagName.trim().equalsIgnoreCase(defaultName))) {
-                return "New list name is required";                
+                return "New list name is required";
             } else if (!WebUtil.isValidName(bagName)) {
-                return "Invalid name. Names can only contain letters, numbers, spaces, " 
+                return "Invalid name. Names can only contain letters, numbers, spaces, "
                 + "and underscores.";
             }
         }

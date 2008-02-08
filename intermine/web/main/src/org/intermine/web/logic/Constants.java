@@ -130,9 +130,9 @@ public interface Constants
      * after redirect).
      */
     public static final String ERRORS = "ERRORS";
-    
+
     public static final String PORTAL_MSG = "PORTAL_MSG";
-   
+
     public static final String LOOKUP_MSG = "LOOKUP_MSG";
 
     /**

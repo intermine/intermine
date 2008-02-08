@@ -501,7 +501,7 @@ public class MainHelper
                 QueryNode qn = queryBits.get(pn.getPathString());
                 if (!q.getOrderBy().contains(qn)) {
                     q.addToOrderBy(qn, o.getDirection());
-                }                                                
+                }
             }
         }
 

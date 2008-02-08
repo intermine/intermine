@@ -68,13 +68,13 @@ public class EditTemplateAction extends InterMineAction
         PathQuery queryClone = template.clone();
         SessionMethods.loadQuery(queryClone, session, response);
         session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState(template));
-        
+
         PathQuery sessionQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         if (!sessionQuery.isValid()) {
-            recordError(new ActionError("errors.template.incomplete", 
+            recordError(new ActionError("errors.template.incomplete",
                     PathQueryUtil.getProblemsSummary(sessionQuery.getProblems())), request);
         }
-        
+
         return mapping.findForward("query");
     }
 }

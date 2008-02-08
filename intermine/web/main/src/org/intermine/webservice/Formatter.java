@@ -17,22 +17,22 @@ import java.util.Map;
 
 /**
  * Formatter is abstract class for printing formatted output. Its subclasses prints
- * xml formatted output or tab separated values output. 
+ * xml formatted output or tab separated values output.
  * @author Jakub Kulaviak
  **/
-public abstract class Formatter 
+public abstract class Formatter
 {
 
     protected PrintWriter out;
-    
+
     /**
-     * Prints header. 
+     * Prints header.
      * @param attributes attributes of the header element
      */
     public void printHeader(Map<String, String> attributes) { }
- 
+
     /**
-     * Prints footer. 
+     * Prints footer.
      */
     public void printFooter() { }
 

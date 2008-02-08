@@ -50,13 +50,13 @@ public class EnrichmentWidgetController extends TilesAction
                                   HttpServletRequest request,
                                   @SuppressWarnings("unused") HttpServletResponse response)
      throws Exception {
-         
+
          //EnrichmentWidgetForm ewf = (EnrichmentWidgetForm) form;
          EnrichmentWidgetForm ewf = new EnrichmentWidgetForm(); // we may not need this
-         
+
          String bagName = request.getParameter("bagName");
          String dataLoader = request.getParameter("ldr");
-         
+
          String filters = request.getParameter("filters");
          String title = request.getParameter("title");
          String link = request.getParameter("link");
@@ -64,16 +64,16 @@ public class EnrichmentWidgetController extends TilesAction
          String filterLabel = request.getParameter("filterLabel");
          String label = request.getParameter("label");
          // TODO these defaults are already in the form
-         String max = "0.10";           
-         String errorCorrection = "BenjaminiHochberg"; 
-         
+         String max = "0.10";
+         String errorCorrection = "BenjaminiHochberg";
+
          if (request.getParameter("max") != null) {
              max = request.getParameter("max");
          }
          if (request.getParameter("errorCorrection") != null) {
              errorCorrection = request.getParameter("errorCorrection");
          }
-         
+
          ewf.setBagName(bagName);
          ewf.setLdr(dataLoader);
          ewf.setDescr(descr);
@@ -84,14 +84,14 @@ public class EnrichmentWidgetController extends TilesAction
          ewf.setFilterLabel(filterLabel);
          ewf.setMax(max);
          ewf.setErrorCorrection(errorCorrection);
-         
+
          HttpSession session = request.getSession();
          Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
          ServletContext servletContext = session.getServletContext();
          ObjectStoreInterMineImpl os =
              (ObjectStoreInterMineImpl) servletContext.getAttribute(Constants.OBJECTSTORE);
 
-         
+
          Map<String, InterMineBag> allBags =
              WebUtil.getAllBags(profile.getSavedBags(), servletContext);
          InterMineBag bag = allBags.get(bagName);
@@ -100,7 +100,7 @@ public class EnrichmentWidgetController extends TilesAction
          }
          ewf.setBag(bag);
          ewf.setBagType(bag.getType());
-         
+
          Class<?> clazz = TypeUtil.instantiate(dataLoader);
          Constructor<?> constr = clazz.getConstructor(new Class[]
                                                              {
@@ -113,7 +113,7 @@ public class EnrichmentWidgetController extends TilesAction
                                                                                        });
 
          ArrayList<Map> results = WebUtil.statsCalc(os, ldr.getPopulation(), ldr.getSample(),
-                                               bag, ldr.getTotal(os), 
+                                               bag, ldr.getTotal(os),
                                                new Double(0 + ewf.getMax()),
                                                ewf.getErrorCorrection());
 

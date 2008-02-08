@@ -200,9 +200,9 @@ public class TemplateController extends TilesAction
                     Object value;
                     String selectedBagName = null;
                     ConstraintOp newOp = modC.getOp();
-                    if (!newOp.equals(ConstraintOp.IN) 
+                    if (!newOp.equals(ConstraintOp.IN)
                                     && !newOp.equals(ConstraintOp.NOT_IN)) {
-                        value = modC.getValue();  
+                        value = modC.getValue();
                     } else {
                         // modified constraint set to a bag
                         value = c.getValue();

@@ -237,7 +237,7 @@ public class SearchRepository
 
         while (iter.hasNext()) {
             WebSearchable webSearchable = (WebSearchable) iter.next();
-            
+
             Document doc = new Document();
             doc.add(new Field("name", webSearchable.getName(), Field.Store.YES,
                               Field.Index.TOKENIZED));
@@ -311,20 +311,20 @@ public class SearchRepository
 
     /**
      * Filter out invalid templates from map.
-     * @param map map 
+     * @param map map
      */
     public static void filterOutInvalidTemplates(Map<String, ? extends WebSearchable> map) {
         List<String> removeKeys = new ArrayList<String>();
         for (String key : map.keySet()) {
             if (isInvalidTemplate(map.get(key))) {
                 removeKeys.add(key);
-            }            
+            }
         }
         for (String key : removeKeys) {
             map.remove(key);
         }
     }
-    
+
     private static boolean isInvalidTemplate(WebSearchable webSearchable) {
         if (webSearchable instanceof TemplateQuery) {
             TemplateQuery template = (TemplateQuery) webSearchable;
@@ -459,6 +459,6 @@ public class SearchRepository
 
 
 
-    
-    
+
+
 }

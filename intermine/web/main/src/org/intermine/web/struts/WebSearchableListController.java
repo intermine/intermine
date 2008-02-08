@@ -120,7 +120,7 @@ public class WebSearchableListController extends TilesAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         request.setAttribute("userWebSearchables", profile.getWebSearchablesByType(type));
 
-        
+
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
 
         JSONWriter jsonWriter = new JSONWriter();

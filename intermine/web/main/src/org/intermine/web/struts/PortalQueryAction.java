@@ -181,11 +181,11 @@ public class PortalQueryAction extends InterMineAction
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
         int matches = bagQueryResult.getMatchAndIssueIds().size();
 
-        DisplayLookupMessageHandler.handleMessages(bagQueryResult, session, 
+        DisplayLookupMessageHandler.handleMessages(bagQueryResult, session,
                                                    properties, className, null);
 
         // Use custom converters
-        Map<String, String []> additionalConverters = 
+        Map<String, String []> additionalConverters =
             bagQueryConfig.getAdditionalConverters(imBag.getType());
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {
@@ -218,9 +218,9 @@ public class PortalQueryAction extends InterMineAction
                     }
                     // No matches
                     if (converted.size() <= 0) {
-                        recordMessage(new ActionMessage("portal.nomatches.orthologues", 
+                        recordMessage(new ActionMessage("portal.nomatches.orthologues",
                                                         addparameter, extId), request);
-                        return goToNoResults(mapping, os, model, className, webConfig, 
+                        return goToNoResults(mapping, os, model, className, webConfig,
                                              classKeys, session);
                     }
                     actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(
@@ -240,13 +240,13 @@ public class PortalQueryAction extends InterMineAction
 
         // Attach messages
         if (bagList.size() == 0 && bagQueryResult.getMatches().size() == 1) {
-            ActionMessage msg = new ActionMessage("results.lookup.noresults.one", 
-                                                  bagQueryResult.getMatches().size(), 
+            ActionMessage msg = new ActionMessage("results.lookup.noresults.one",
+                                                  bagQueryResult.getMatches().size(),
                                                   className);
             actionMessages.add(Constants.PORTAL_MSG, msg);
         } else if (bagList.size() == 0 && bagQueryResult.getMatches().size() > 1) {
-            ActionMessage msg = new ActionMessage("results.lookup.noresults.many", 
-                                                  bagQueryResult.getMatches().size(), 
+            ActionMessage msg = new ActionMessage("results.lookup.noresults.many",
+                                                  bagQueryResult.getMatches().size(),
                                                   className);
             actionMessages.add(Constants.PORTAL_MSG, msg);
         } else if (bagList.size() > 0) {
@@ -258,10 +258,10 @@ public class PortalQueryAction extends InterMineAction
         }
         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
-        
+
         // Go to results page
         if ((bagList.size() > 1) && (idList.length == 1)) {
-            return goToResults(mapping, os, model, className, webConfig, classKeys, 
+            return goToResults(mapping, os, model, className, webConfig, classKeys,
                 session, bagList);
         // Go to the object details page
         } else if ((bagList.size() == 1) && (idList.length == 1)) {
@@ -274,9 +274,9 @@ public class PortalQueryAction extends InterMineAction
             return goToNoResults(mapping, os, model, className, webConfig, classKeys, session);
         }
     }
-    
-    private ActionForward goToBagDetails(ActionMapping mapping, ObjectStore os, InterMineBag imBag, 
-                                         List bagList, Profile profile) 
+
+    private ActionForward goToBagDetails(ActionMapping mapping, ObjectStore os, InterMineBag imBag,
+                                         List bagList, Profile profile)
                                          throws ObjectStoreException {
         ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
         osw.addAllToBag(imBag.getOsb(), bagList);
@@ -285,10 +285,10 @@ public class PortalQueryAction extends InterMineAction
         return new ForwardParameters(mapping.findForward("bagDetails"))
         .addParameter("bagName", imBag.getName()).forward();
     }
-    
-    private ActionForward goToResults(ActionMapping mapping, ObjectStore os, Model model, 
+
+    private ActionForward goToResults(ActionMapping mapping, ObjectStore os, Model model,
                                       String className, WebConfig webConfig, Map classKeys,
-                                      HttpSession session, List<Integer> bagList) 
+                                      HttpSession session, List<Integer> bagList)
                                       throws ObjectStoreException {
         List<InterMineObject> intermineObjectList = os.getObjectsByIds(bagList);
         WebPathCollection webPathCollection =
@@ -302,13 +302,13 @@ public class PortalQueryAction extends InterMineAction
         .addParameter("table", identifier)
         .addParameter("trail", "").forward();
     }
-    
+
     private ActionForward goToObjectDetails(ActionMapping mapping, String id) {
         return new ForwardParameters(mapping.findForward("objectDetails"))
         .addParameter("id", id).forward();
     }
-    
-    private ActionForward goToNoResults(ActionMapping mapping, ObjectStore os, Model model, 
+
+    private ActionForward goToNoResults(ActionMapping mapping, ObjectStore os, Model model,
                                         String className, WebConfig webConfig, Map classKeys,
                                         HttpSession session) {
         WebPathCollection webPathCollection =

@@ -136,10 +136,10 @@ public class LoadDefaultTemplatesTask extends Task
                     profileDest.deleteTemplate((String) iter.next());
                 }
             }
-            
-            // Settting global search repository to servletContext because unmarshall 
+
+            // Settting global search repository to servletContext because unmarshall
             // method requires it
-            servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, 
+            servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY,
                     new SearchRepository(pm.getProfile(username), TemplateHelper.ALL_TEMPLATE));
 
             // Unmarshal

@@ -74,7 +74,7 @@ public class QueryForGraphAction extends InterMineAction
         String series = request.getParameter("series");
         String category = request.getParameter("category");
         String extraKey = request.getParameter("extraKey"); // organism
-        
+
         InterMineBag bag;
 
         /* get bag from user profile */
@@ -99,7 +99,7 @@ public class QueryForGraphAction extends InterMineAction
 
 
         GraphCategoryURLGenerator urlGenerator = null;
-        
+
         if (extraKey != null) {
             Constructor constr = clazz.getConstructor(new Class[]
                                                                 {

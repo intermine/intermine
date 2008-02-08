@@ -16,11 +16,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Processes service request. Evaluates parameters and validates them and check if 
- * its combination is valid. 
+ * Processes service request. Evaluates parameters and validates them and check if
+ * its combination is valid.
  * @author Jakub Kulaviak
  **/
-public class RequestProcessor 
+public class RequestProcessor
 {
 
     private List<String> errors = new ArrayList<String>();
@@ -31,11 +31,11 @@ public class RequestProcessor
     private static final String COMPUTE_TOTAL_COUNT_PARAMETER = "totalCount";
     private static final String RETURN_ONLY_TOTAL_COUNT_PARAMETER = "onlyTotalCount";
     private static final String FORMAT_PARAMETER = "format";
-    
+
     private static final int DEFAULT_START = 1;
     private static final int DEFAULT_MAX_COUNT = 1000;
     private static final int MAX_COUNT_LIMIT = 100000;
-    
+
     /**
      * RequestProcessor constructor.
      * @param request request
@@ -44,26 +44,26 @@ public class RequestProcessor
         input = new WebServiceInput();
         input.setMaxCount(DEFAULT_MAX_COUNT);
         input.setStart(DEFAULT_START);
-        
+
         String xmlQuery = request.getParameter(QUERY_PARAMETER);
         if (xmlQuery == null || xmlQuery.equals("")) {
             addError("invalid " + QUERY_PARAMETER + " parameter (empty or missing)");
         } else {
             input.setXml(xmlQuery);
         }
-        
-        Integer start = parseInteger(request.getParameter(START_PARAMETER), START_PARAMETER, 1, 
+
+        Integer start = parseInteger(request.getParameter(START_PARAMETER), START_PARAMETER, 1,
                 Integer.MAX_VALUE);
         if (start != null) {
             input.setStart(start);
         }
 
-        Integer maxCount = parseInteger(request.getParameter(MAX_COUNT_PARAMETER), 
+        Integer maxCount = parseInteger(request.getParameter(MAX_COUNT_PARAMETER),
                 MAX_COUNT_PARAMETER, 1, MAX_COUNT_LIMIT);
         if (maxCount != null) {
             input.setMaxCount(maxCount);
         }
-        
+
         String totalCount = request.getParameter(COMPUTE_TOTAL_COUNT_PARAMETER);
         if (totalCount != null && !totalCount.equals("")) {
             if ("yes".equalsIgnoreCase(totalCount)) {
@@ -73,8 +73,8 @@ public class RequestProcessor
                     addError(invalidParameterMsg(COMPUTE_TOTAL_COUNT_PARAMETER, totalCount));
                 }
             }
-        } 
-        
+        }
+
         String format = request.getParameter(FORMAT_PARAMETER);
         if (format == null || format.equals("")) {
             input.setFormat(WebServiceInput.TSV_FORMAT);
@@ -85,11 +85,11 @@ public class RequestProcessor
                 if ((WebServiceInput.TSV_FORMAT.equalsIgnoreCase(format))) {
                     input.setFormat(WebServiceInput.TSV_FORMAT);
                 } else {
-                    addError(invalidParameterMsg(FORMAT_PARAMETER, format));    
+                    addError(invalidParameterMsg(FORMAT_PARAMETER, format));
                 }
-            }            
+            }
         }
-        
+
         String onlyTotalCount = request.getParameter(RETURN_ONLY_TOTAL_COUNT_PARAMETER);
         if (onlyTotalCount != null && !onlyTotalCount.equalsIgnoreCase("")) {
             if ("yes".equalsIgnoreCase(onlyTotalCount)) {
@@ -97,15 +97,15 @@ public class RequestProcessor
                 // when only total count is requested, than only tsv format is permitted
                 input.setFormat(WebServiceInput.TSV_FORMAT);
                 if (input.isXmlFormat()) {
-                    errors.add("only " + WebServiceInput.TSV_FORMAT + " " + FORMAT_PARAMETER 
+                    errors.add("only " + WebServiceInput.TSV_FORMAT + " " + FORMAT_PARAMETER
                             + " is permitted when returning only total count.");
                 }
             } else {
                 if (!"no".equalsIgnoreCase(onlyTotalCount)) {
-                    errors.add(invalidParameterMsg(RETURN_ONLY_TOTAL_COUNT_PARAMETER, 
+                    errors.add(invalidParameterMsg(RETURN_ONLY_TOTAL_COUNT_PARAMETER,
                             onlyTotalCount));
                 }
-            }            
+            }
         }
     }
 
@@ -119,8 +119,8 @@ public class RequestProcessor
             try {
                 ret = new Integer(stringValue);
                 if (ret < minValue || ret > maxValue) {
-                    addError("Invalid value of " + name + " parameter: " + ret 
-                            + " Parameter should have value from " + minValue + " to " 
+                    addError("Invalid value of " + name + " parameter: " + ret
+                            + " Parameter should have value from " + minValue + " to "
                             + maxValue + ".");
                 }
             } catch (Exception ex) {
@@ -130,13 +130,13 @@ public class RequestProcessor
         }
         return ret;
     }
-    
+
     private void addError(String error) {
         errors.add(error);
     }
 
     /**
-     * Returns parsed parameters in parameter object - so this 
+     * Returns parsed parameters in parameter object - so this
      * values can be easily get from this object.
      * @return web service input
      */

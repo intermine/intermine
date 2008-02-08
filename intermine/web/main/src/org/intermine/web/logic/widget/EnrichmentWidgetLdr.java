@@ -18,7 +18,7 @@ import org.intermine.objectstore.ObjectStore;
 
 
 /**
- * Prepares the data and queries for the enrichment widget controller to process.   
+ * Prepares the data and queries for the enrichment widget controller to process.
  * @author Julie Sullivan
  */
 public interface EnrichmentWidgetLdr
@@ -45,7 +45,7 @@ public interface EnrichmentWidgetLdr
     public int getTotal(ObjectStore os);
 
     /**
-     *  this was used for tiffin.  obsolete? 
+     *  this was used for tiffin.  obsolete?
      * @return if the widget should have an external link, where it should go to
      */
     public String getExternalLink();
@@ -55,5 +55,5 @@ public interface EnrichmentWidgetLdr
      * @return the string to append to the end of external link
      */
     public String getAppendage();
-    
+
 }

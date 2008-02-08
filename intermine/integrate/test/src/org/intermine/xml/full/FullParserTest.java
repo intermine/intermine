@@ -153,12 +153,12 @@ public class FullParserTest extends TestCase
             FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), true);
             fail("Expected ClassCastException");
         } catch (ClassNotFoundException e) {
-            
+
         }
         FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), true, false);
     }
-    
-    
+
+
     class DepartmentComparator implements Comparator
     {
         public int compare(Object a, Object b) {

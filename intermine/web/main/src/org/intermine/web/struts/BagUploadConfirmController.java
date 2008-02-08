@@ -59,7 +59,7 @@ public class BagUploadConfirmController extends TilesAction
         request.setAttribute("unresolved", bagQueryResult.getUnresolved());
         ServletContext servletContext = session.getServletContext();
         StringBuffer flattenedArray = new StringBuffer();
-        
+
         // get all of the "low quality" matches ie. those found by queries other than matching
         // class keys
         Map<String, ArrayList<String>> lowQualityMatches
@@ -94,7 +94,7 @@ public class BagUploadConfirmController extends TilesAction
         String flatDuplicate = setJSArray(duplicates, "duplicate");
         flattenedArray.append(flatDuplicate);
         request.setAttribute("flatDuplicate", flatDuplicate);
-        
+
         // make a List of [input string, ConvertedObjectPair]
         Map<String, ArrayList<String>> convertedObjects
                                                 = new LinkedHashMap<String, ArrayList<String>>();

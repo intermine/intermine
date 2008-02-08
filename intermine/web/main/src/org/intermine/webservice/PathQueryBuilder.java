@@ -23,33 +23,33 @@ import org.intermine.web.logic.query.PathQuery;
 /**
  * @author Jakub Kulaviak
  **/
-public class PathQueryBuilder 
+public class PathQueryBuilder
 {
 
     private List<String> errors = new ArrayList<String>();
     private PathQuery pathQuery;
 
     /**
-     * PathQueryBuilder constructor. 
+     * PathQueryBuilder constructor.
      * @param xml xml string from which will be PathQuery constructed
-     * @param schemaUrl url of XML Schema file, according this file is performed validation 
+     * @param schemaUrl url of XML Schema file, according this file is performed validation
      *  of xml string
      * @param servletContext object from which other objects and parameters are get
-     * @param savedBags previously saved bags  
+     * @param savedBags previously saved bags
      */
-    public PathQueryBuilder(String xml, String schemaUrl, ServletContext servletContext, 
+    public PathQueryBuilder(String xml, String schemaUrl, ServletContext servletContext,
             Map<Object, InterMineBag> savedBags) {
         buildQuery(xml, schemaUrl, servletContext, savedBags);
     }
 
-    private void buildQuery(String xml, String schemaUrl, ServletContext servletContext, 
+    private void buildQuery(String xml, String schemaUrl, ServletContext servletContext,
             Map<Object, InterMineBag> savedBags) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
             try {
                 pathQuery = PathQuery.fromXml(xml, savedBags,
-                        servletContext);                
+                        servletContext);
             } catch (Exception ex) {
                 errors.add("XML is well formatted but contains invalid model data. "
                         + "Check that your constraints are correct "
@@ -73,7 +73,7 @@ public class PathQueryBuilder
     }
 
     /**
-     * Returns parsed PathQuery. 
+     * Returns parsed PathQuery.
      * @return parsed PathQuery
      */
     public PathQuery getQuery() {

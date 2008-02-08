@@ -14,12 +14,12 @@ package org.intermine.webservice;
  * Base runtime exception that can be thrown during web service execution.
  * @author Jakub Kulaviak
  **/
-public class WebServiceException extends RuntimeException 
+public class WebServiceException extends RuntimeException
 {
-    
+
     private static final long serialVersionUID = 1L;
 
-    
+
     /**
      * WebServiceException constructor.
      * @param message message
@@ -27,12 +27,12 @@ public class WebServiceException extends RuntimeException
     public WebServiceException(String message) {
         super(message);
     }
-    
+
     /**
      * WebServiceException constructor.
      * @param message message
      * @param ex cause
-     */    
+     */
     public WebServiceException(String message, Exception ex) {
         super(message, ex);
     }

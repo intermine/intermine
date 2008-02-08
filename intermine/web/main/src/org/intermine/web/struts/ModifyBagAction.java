@@ -74,16 +74,16 @@ public class ModifyBagAction extends InterMineAction
                         || (mbf.getListsButton() != null && mbf.getListsButton().equals("union"))) {
             combine(mapping, form, request, ObjectStoreBagCombination.UNION, "UNION");
         } else if (request.getParameter("intersect") != null
-                        || (mbf.getListsButton() != null 
+                        || (mbf.getListsButton() != null
                                         && mbf.getListsButton().equals("intersect"))) {
             combine(mapping, form, request, ObjectStoreBagCombination.INTERSECT, "INTERSECT");
         } else if (request.getParameter("subtract") != null
-                        || (mbf.getListsButton() != null 
+                        || (mbf.getListsButton() != null
                                         && mbf.getListsButton().equals("subtract"))) {
             combine(mapping, form, request, ObjectStoreBagCombination.ALLBUTINTERSECT,
             "SUBTRACT");
         } else if (request.getParameter("delete") != null
-                        || (mbf.getListsButton() != null 
+                        || (mbf.getListsButton() != null
                                         && mbf.getListsButton().equals("delete"))) {
             delete(mapping, form, request);
         }

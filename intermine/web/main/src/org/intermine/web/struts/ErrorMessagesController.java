@@ -21,7 +21,7 @@ import org.intermine.web.logic.Constants;
 /**
  * Take the messages stored in the session which are not using ActionMessages or ActionErrors and
  * put them in the request
- * 
+ *
  * @author "Xavier Watkins"
  */
 public class ErrorMessagesController extends TilesAction
@@ -43,9 +43,9 @@ public class ErrorMessagesController extends TilesAction
      *                if an error occurs
      */
     @Override
-    public ActionForward execute(ComponentContext context, 
+    public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,
-                                 ActionForm form, 
+                                 ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();

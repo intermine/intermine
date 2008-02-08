@@ -16,10 +16,10 @@ import java.util.Map;
 
 
 /**
- * XMLFormatter is class that prints out xml formatted output.  
+ * XMLFormatter is class that prints out xml formatted output.
  * @author Jakub Kulaviak
  **/
-public class XMLFormatter extends Formatter 
+public class XMLFormatter extends Formatter
 {
 
     private boolean headerPrinted = false;
@@ -31,7 +31,7 @@ public class XMLFormatter extends Formatter
     public XMLFormatter(PrintWriter out) {
         this.out = out;
     }
-        
+
     /**
      * {@inheritDoc}}
      */
@@ -50,10 +50,10 @@ public class XMLFormatter extends Formatter
      */
     public void printFooter() {
         if (headerPrinted) {
-            out.println("</ResultSet>");    
+            out.println("</ResultSet>");
         }
     }
-    
+
     /**
      * {@inheritDoc}}
      */

@@ -28,7 +28,7 @@ import java.math.BigDecimal;
  *  4) The third p-value is multiplied as in step 3:
  *      Corrected p-value = p-value*(n/n-2) < 0.05, if so, gene is significant.
  * And so on.
- * 
+ *
  * @author Julie Sullivan
  */
 public class BenjaminiHochberg implements ErrorCorrection
@@ -51,14 +51,14 @@ public class BenjaminiHochberg implements ErrorCorrection
     /**
      * Calculates the Benjamini and Hochberg correction of
      * the false discovery rate
-     * @param max maximum value we are interested in - used for display purposes only  
+     * @param max maximum value we are interested in - used for display purposes only
      */
     public void calculate(Double max) {
 
         adjustedMap = new HashMap<String, BigDecimal>();
         BigDecimal adjustedP = new BigDecimal(0);
         int i = 0;
-        
+
         for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
 
             String label = (String) iter.next();

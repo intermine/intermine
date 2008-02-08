@@ -34,7 +34,7 @@ public class WidgetForm extends ActionForm
     private String bagType;
 
     /**
-     * returns the value of the checkboxes checked by the user on the form. 
+     * returns the value of the checkboxes checked by the user on the form.
      * @return the selectedAsString
      */
     public String getSelectedAsString() {
@@ -83,7 +83,7 @@ public class WidgetForm extends ActionForm
     public void initialise() {
 
         link = "";
-        bagName = "";    
+        bagName = "";
         selected = new String[0];
     }
 
@@ -97,7 +97,7 @@ public class WidgetForm extends ActionForm
 
 
     /**
-     * name of bag that this widget is using.  we need both the bag and the bagname because 
+     * name of bag that this widget is using.  we need both the bag and the bagname because
      * sometimes we don't have the bag object.
      * @param bagName the bagName to set
      */
@@ -107,7 +107,7 @@ public class WidgetForm extends ActionForm
 
 
     /**
-     * 
+     *
      * @return the selected go terms
      */
     public String[] getSelected() {
@@ -122,12 +122,12 @@ public class WidgetForm extends ActionForm
 
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }

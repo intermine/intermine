@@ -32,8 +32,8 @@ public class EnrichmentWidgetForm extends ActionForm
     private String bagName;
     private String bagType;
     private String max;
-    
-    
+
+
     /**
      * Constructor
      */
@@ -141,7 +141,7 @@ public class EnrichmentWidgetForm extends ActionForm
     }
 
     /**
-     * the link is the class that generates the url for each result.   
+     * the link is the class that generates the url for each result.
      * @return the link
      */
     public String getLink() {
@@ -199,7 +199,7 @@ public class EnrichmentWidgetForm extends ActionForm
 
 
     /**
-     * name of bag that this widget is using.  we need both the bag and the bagname because 
+     * name of bag that this widget is using.  we need both the bag and the bagname because
      * sometimes we don't have the bag object.
      * @param bagName the bagName to set
      */
@@ -232,7 +232,7 @@ public class EnrichmentWidgetForm extends ActionForm
 
     /**
      * filter values get used in the query to constrain the results in some way, and they can be
-     * changed by the user.  
+     * changed by the user.
      * most widgets don't have a filter.
      * @return the filter
      */
@@ -251,7 +251,7 @@ public class EnrichmentWidgetForm extends ActionForm
 
     /**
      * filter values get used in the query to constrain the results in some way, and they can be
-     * changed by the user.  
+     * changed by the user.
      * most widgets don't have a filter.
      * @return the filters
      */
@@ -266,12 +266,12 @@ public class EnrichmentWidgetForm extends ActionForm
     public void setFilters(String filters) {
         this.filters = filters;
     }
-   
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping, 
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         initialise();
     }
