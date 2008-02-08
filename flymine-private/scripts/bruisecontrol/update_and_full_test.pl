@@ -23,7 +23,7 @@ if (@ARGV > 0) {
   }
 }
 
-$ENV{ANT_OPTS} = '-XX:MaxPermSize=200M -Xmx750M -server -XX:+UseParallelGC';
+$ENV{ANT_OPTS} = '-XX:MaxPermSize=200M -Xmx850M -server -XX:+UseParallelGC';
 
 # make sure files and directories are readable by all
 umask 0002;
@@ -249,7 +249,9 @@ pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND test-report");
 # testmodel webapp tests
 
 pipe_to_log(["(cd $TRUNK_DIR/testmodel/dbmodel; $ANT_COMMAND build-db)",
-            "cd $TRUNK_DIR/testmodel/webapp/test; ant clean"]);
+             "cd $TRUNK_DIR/testmodel/webapp/test; ant clean",
+             "cd $TRUNK_DIR/testmodel/webapp/test; date; $ANT_COMMAND fulltest",
+             "cd $TRUNK_DIR/testmodel/webapp/test; date; $ANT_COMMAND test-report"]);
 
 # bio tests
 
