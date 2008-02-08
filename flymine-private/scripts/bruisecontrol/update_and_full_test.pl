@@ -250,7 +250,7 @@ pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND test-report");
 
 pipe_to_log(["(cd $TRUNK_DIR/testmodel/dbmodel; $ANT_COMMAND build-db)",
              "cd $TRUNK_DIR/testmodel/webapp/test; ant clean",
-             "cd $TRUNK_DIR/testmodel/webapp/test; date; $ANT_COMMAND fulltest",
+             "cd $TRUNK_DIR/testmodel/webapp/test; date; $ANT_COMMAND",
              "cd $TRUNK_DIR/testmodel/webapp/test; date; $ANT_COMMAND test-report"]);
 
 # bio tests
