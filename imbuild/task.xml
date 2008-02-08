@@ -101,7 +101,7 @@ Couldn't find ${build.properties.file}
   </target>
 
   <target name="-init-app-properties"
-          depends="-check-for-build-properties, -pre-define-task-classpath">
+          depends="-init-properties, -check-for-build-properties, -pre-define-task-classpath">
     <property file="${user.home}/build.properties.${mine.name}${release-suffix}"/>
   </target>
 
