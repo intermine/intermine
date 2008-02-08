@@ -163,7 +163,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                         if (imo != null) {
                             attrValue = TypeUtil.getFieldValue(imo, attrName);
                         } else { //it's a bag!
-                            attrValue = getIdList(bag, os);
+                            attrValue = getIdList(bag, os, attrName);
                         }
                         if (attrValue != null) {
                         config.put("attributeValue", attrValue);
@@ -211,7 +211,7 @@ public class AttributeLinkDisplayerController extends TilesAction
      * @return the string of comma separated identifiers
      *    */
 
-    public String getIdList(InterMineBag bag, ObjectStore os) {
+    public String getIdList(InterMineBag bag, ObjectStore os, String attrName) {
         Results results;
 
         Query q = new Query();
@@ -223,7 +223,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         }
         q.addFrom(queryClass);
 
-        QueryField qf = new QueryField(queryClass, "identifier");
+        QueryField qf = new QueryField(queryClass, attrName);
         q.addToSelect(qf);
 
         QueryField cf = new QueryField(queryClass, "id");

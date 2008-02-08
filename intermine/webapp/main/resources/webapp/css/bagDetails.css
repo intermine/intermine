@@ -6,17 +6,14 @@
   vertical-align: top;}
 
 #bagDescriptionTextarea{
-  text-align: center;}
+  width:100%;text-align: center;}
 
 #bagDescriptionDiv{
-  overflow-y:auto;
-  overflow:auto;
-  width:100%;
-  margin-top:20px;
   padding:10px;
+  overflow: auto;
   height:50px;
-  text-align:left;
-}
+  width:100%;
+  text-align:left;}
 
 #emptyDesc{
   text-align:center;font-style: italic;}
@@ -26,4 +23,8 @@ li {
   list-style: none;}
 
 #convertList{
-  padding:0 10px 20px 10px;}  
+  padding:0 10px 20px 10px;}
+
+#linkouts{
+  padding:0 10px 10px 10px;}
+  
