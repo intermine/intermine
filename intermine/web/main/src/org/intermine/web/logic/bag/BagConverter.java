@@ -41,7 +41,7 @@ public interface BagConverter
     public List<ResultsRow> getConvertedObjects(HttpSession session, String parameters,
                                     List<Integer> fromList, String type)
                                     throws ClassNotFoundException, ObjectStoreException;
-    
+
     /**
      * Get the ActionMessage to display in the webapp
      * @param model the model
@@ -53,7 +53,7 @@ public interface BagConverter
      * @throws ObjectStoreException exception
      * @throws UnsupportedEncodingException exception
      */
-    public ActionMessage getActionMessage(Model model, String externalids, int convertedSize, 
+    public ActionMessage getActionMessage(Model model, String externalids, int convertedSize,
                                           String type, String organism)
-                                          throws ObjectStoreException, UnsupportedEncodingException;    
+                                          throws ObjectStoreException, UnsupportedEncodingException;
 }

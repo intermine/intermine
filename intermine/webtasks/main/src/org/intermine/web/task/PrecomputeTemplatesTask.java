@@ -184,7 +184,7 @@ public class PrecomputeTemplatesTask extends Task
                 }
                 continue;
             }
-            
+
             List indexes = new ArrayList();
             Query q = TemplateHelper.getPrecomputeQuery(template, indexes, null);
 
@@ -281,7 +281,7 @@ public class PrecomputeTemplatesTask extends Task
             throw new BuildException("user profile doesn't exist for " + username);
         } else {
             LOG.warn("Profile for " + username + ", clearing template queries");
-            // Adding global search repository to servletContext, unmarshal needs it            
+            // Adding global search repository to servletContext, unmarshal needs it
             SearchRepository sr = new SearchRepository(TemplateHelper.ALL_TEMPLATE);
             servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, sr);
             Profile profile = pm.getProfile(username, pm.getPassword(username));

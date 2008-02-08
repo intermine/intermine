@@ -85,18 +85,18 @@ public class QueryBuilderAction extends InterMineAction
             // current constraint
             label = c.getDescription();
             id = c.getIdentifier();
-                        
+
         }
 
         if (request.getParameter("attribute") != null) {
-                        
+
             if (cindex == null) {
                 // New constraint
                 label = mf.getTemplateLabel();
                 id = mf.getTemplateId();
                 editable = mf.isEditable();
             }
-            
+
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getAttributeOp()));
             Object constraintValue = mf.getParsedAttributeValue();

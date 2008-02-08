@@ -104,10 +104,10 @@ public class SaveBagAction extends InterMineAction
                     .PROFILE_MANAGER)).getUserProfileObjectStore();
 
         String bagName = null;
-        String operation = ""; 
-        
-        if (request.getParameter("saveNewBag") != null 
-                        || (sbf.getOperationButton() != null 
+        String operation = "";
+
+        if (request.getParameter("saveNewBag") != null
+                        || (sbf.getOperationButton() != null
                         && sbf.getOperationButton().equals("saveNewBag"))) {
             bagName = sbf.getNewBagName();
             operation = "saveNewBag";
@@ -115,11 +115,11 @@ public class SaveBagAction extends InterMineAction
             bagName = sbf.getExistingBagName();
             operation = "addToBag";
         }
-        
+
         if (bagName == null) {
             return null;
         }
-        
+
         if (sbf.getSelectedObjects().length == 0) {
             ActionMessage actionMessage = new ActionMessage("errors.bag.empty");
             recordError(actionMessage, request);

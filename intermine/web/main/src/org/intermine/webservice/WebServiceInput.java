@@ -11,11 +11,11 @@ package org.intermine.webservice;
  */
 
 /**
- * WebServiceInput is class that encapsulates parameters for running web service 
- * parsed from parameters in request. 
+ * WebServiceInput is class that encapsulates parameters for running web service
+ * parsed from parameters in request.
  * @author Jakub Kulaviak
  **/
-public class WebServiceInput 
+public class WebServiceInput
 {
 
     /**
@@ -26,14 +26,14 @@ public class WebServiceInput
      * TSV_FORMAT constant
      */
     public static final String TSV_FORMAT = "tab";
-    
+
     private String xml;
     private Integer start;
     private Integer maxCount;
     private boolean computeTotalCount = false;
     private boolean onlyTotalCount = false;
     private String format;
-    
+
     /**
      * Returns which format will be used for output.
      * @return format
@@ -67,8 +67,8 @@ public class WebServiceInput
     }
 
     /**
-     * Returns true if should be displayed total count of all available results. 
-     * @return value 
+     * Returns true if should be displayed total count of all available results.
+     * @return value
      */
     public boolean isComputeTotalCount() {
         return computeTotalCount;
@@ -83,7 +83,7 @@ public class WebServiceInput
     }
 
     /**
-     * Gets xml query string.  
+     * Gets xml query string.
      * @return xml
      */
     public String getXml() {
@@ -97,7 +97,7 @@ public class WebServiceInput
     public void setXml(String xml) {
         this.xml = xml;
     }
-    
+
     /**
      * Sets from which index should be results returned 1-based.
      * @param start start

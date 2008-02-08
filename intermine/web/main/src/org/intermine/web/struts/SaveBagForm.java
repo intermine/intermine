@@ -27,7 +27,7 @@ public class SaveBagForm extends ActionForm
     protected String existingBagName, newBagName;
     protected String[] selectedObjects;
     protected String operationButton;
-    
+
     /**
      * Constructor
      */

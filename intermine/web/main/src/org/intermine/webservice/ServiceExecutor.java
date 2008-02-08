@@ -45,20 +45,20 @@ import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * For using of web service see InterMine wiki pages.
- * Executes web service. From xml parses parameters and xml query. 
- * 1) Validates parameters and tries validate xml query as much as possible. Validates xml 
- * query according to XML Schema and and finds out if there were some errors during unmarshalling 
- * PathQuery from xml.  
+ * Executes web service. From xml parses parameters and xml query.
+ * 1) Validates parameters and tries validate xml query as much as possible. Validates xml
+ * query according to XML Schema and and finds out if there were some errors during unmarshalling
+ * PathQuery from xml.
  * 2) Executes created PathQuery.
  * 3) Print results to output.
  *
  * Output: There can be 3 types of output:
  * a) Only Error output
  * b) Complete results - xml formatted or tab separated
- * c) Incomplete results - at the end are error messages 
+ * c) Incomplete results - at the end are error messages
  * @author Jakub Kulaviak
  **/
-public class ServiceExecutor 
+public class ServiceExecutor
 {
 
     private static final long serialVersionUID = 1L;
@@ -72,7 +72,7 @@ public class ServiceExecutor
     private Map<Object, InterMineBag> savedBags;
 
     /**
-     * Runs service.  
+     * Runs service.
      * @param request request
      * @param response response
      * @throws ServletException ServletException
@@ -82,7 +82,7 @@ public class ServiceExecutor
             HttpServletResponse response) throws ServletException, IOException {
 
         PrintWriter out = response.getWriter();
-        this.request = request; 
+        this.request = request;
         outputInfo = new HashMap<String, String>();
         savedBags = new HashMap<Object, InterMineBag>();
 

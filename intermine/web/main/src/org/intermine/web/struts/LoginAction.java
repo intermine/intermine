@@ -57,14 +57,14 @@ public class LoginAction extends LoginHandler
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         LoginForm lf = (LoginForm) form;
 
-        Map<String, String> renamedBags = doLogin(servletContext, request, response, session, pm, 
+        Map<String, String> renamedBags = doLogin(servletContext, request, response, session, pm,
             lf.getUsername(), lf.getPassword());
 
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
 
         if (renamedBags.size() > 0) {
             for (String initName : renamedBags.keySet()) {
-                recordMessage(new ActionMessage("login.renamedbags", initName, 
+                recordMessage(new ActionMessage("login.renamedbags", initName,
                     renamedBags.get(initName)), request);
             }
             return mapping.findForward("mymine");

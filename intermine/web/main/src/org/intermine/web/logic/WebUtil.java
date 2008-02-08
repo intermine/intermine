@@ -455,9 +455,9 @@ public abstract class WebUtil
                                       Query queryPopulation,
                                       Query querySample,
                                       InterMineBag bag,
-                                      int total,                                      
+                                      int total,
                                       Double maxValue,
-                                      String errorCorrection) 
+                                      String errorCorrection)
                                       throws ObjectStoreException {
 
             ArrayList<Map> maps = new ArrayList<Map>();
@@ -501,12 +501,12 @@ public abstract class WebUtil
                 rAll = new ArrayList(rAll);
                 statsCalcCache.put(queryPopulation.toString(), rAll);
             }
-            
+
             Iterator itAll = rAll.iterator();
 
-            
+
             HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
-            
+
             while (itAll.hasNext()) {
 
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
@@ -523,9 +523,9 @@ public abstract class WebUtil
                     try {
                         resultsMap.put(id, new BigDecimal(p));
                     } catch (Exception e) {
-                        String msg = p + " isn't a double.  calculated using sample size: " 
-                        + countBag + ", population size: " + countAll + ", bag size: " 
-                        + numberOfObjectsInBag + ", total: " + total                        
+                        String msg = p + " isn't a double.  calculated using sample size: "
+                        + countBag + ", population size: " + countAll + ", bag size: "
+                        + numberOfObjectsInBag + ", total: " + total
                         + ".  population query used: " + queryPopulation.toString();
                         throw new RuntimeException(msg, e);
                     }
@@ -549,10 +549,10 @@ public abstract class WebUtil
 
     /**
      * See online help docs for detailed description of what error correction is and why we need it.
-     * Briefly, in all experiments certain things happen that look interesting but really just 
-     * happened by chance.  We need to account for this phenonomenon to ensure our numbers are 
+     * Briefly, in all experiments certain things happen that look interesting but really just
+     * happened by chance.  We need to account for this phenonomenon to ensure our numbers are
      * interesting behaviour and not just random happenstance.
-     * 
+     *
      * To do this we take all of our p-values and adjust them.  Here we are using on of our two
      * methods available - which one we use is determined by the user.
      * @param errorCorrection which multiple hypothesis test correction to use - Bonferroni or
@@ -562,7 +562,7 @@ public abstract class WebUtil
      * @param resultsMap map containing unadjusted p-values
      * @return map of all the adjusted p-values
      */
-    protected static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection, 
+    protected static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection,
                                                  Double maxValue,
                                                  HashMap<String, BigDecimal> resultsMap) {
 

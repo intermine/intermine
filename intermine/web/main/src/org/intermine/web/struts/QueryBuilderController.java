@@ -197,9 +197,9 @@ public class QueryBuilderController extends TilesAction
             }
         }
         request.setAttribute("navigation", navigation);
-        request.setAttribute("navigationPaths", navigationPaths);        
+        request.setAttribute("navigationPaths", navigationPaths);
      }
-    
+
 
     private static void assureCorrectSortOrder(PathQuery pathQuery) {
         List<OrderBy> newSortOrder = new ArrayList<OrderBy>();

@@ -25,7 +25,7 @@ public interface GraphCategoryURLGenerator extends CategoryURLGenerator
 {
 
     /**
-     * 
+     *
      */
     public String generateURL(CategoryDataset dataset, int series, int category);
 
@@ -35,7 +35,7 @@ public interface GraphCategoryURLGenerator extends CategoryURLGenerator
      * @param bag bag that this widget is displaying
      * @param series key to constrain the query
      * @param category category to constrain the query
-     * @return PathQuery 
+     * @return PathQuery
      */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,

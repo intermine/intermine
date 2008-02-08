@@ -34,9 +34,9 @@ public class DisplayLookupMessageHandler
 
     /**
      * Generates and saves messages for bag lookup
-     * 
+     *
      * @param bqr the bag query results
-     * @param session the session 
+     * @param session the session
      * @param properties properties
      * @param type the type
      * @param extraConstraint the extra constraint
@@ -132,7 +132,7 @@ public class DisplayLookupMessageHandler
                 } else {
                     ActionMessage msg = new ActionMessage("results.lookup.wildcard.one",
                                                               key + " (" + wildcards.get(key)
-                                                              .size() 
+                                                              .size()
                                                               + ")");
                     actionMessages.add(Constants.LOOKUP_MSG, msg);
                 }
@@ -191,7 +191,7 @@ public class DisplayLookupMessageHandler
 
     /**
      * Check if there are any identifiers that didn't match.
-     * 
+     *
      * @return true if there are any issues
      */
     public boolean isIssues() {

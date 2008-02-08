@@ -54,7 +54,7 @@ public class InlineResultsTable
     private List<ResultElement> resultElementRow;
     private Map<String, Object> fieldValues;
     private Map<Object, Map<String, Object>> rowFieldValues;
-    
+
     /**
      * Construct a new InlineResultsTable object
      * @param results the List to display object
@@ -84,7 +84,7 @@ public class InlineResultsTable
 
         this.model = model;
         this.size = size;
-        
+
     }
 
     /**
@@ -179,7 +179,7 @@ public class InlineResultsTable
         columnFullNames = new ArrayList();
         subList = new ArrayList();
         rowFieldValues = new HashMap();
-        
+
         Iterator resultsIter;
         if (getSize() == -1) {
             resultsIter = resultsAsList.iterator();
@@ -199,14 +199,14 @@ public class InlineResultsTable
             subList.add(o);
 
             Set clds = DisplayObject.getLeafClds(o.getClass(), model);
-                        
+
             // TODO this doesn't cope properly with dynamic classes
             ClassDescriptor theClass = (ClassDescriptor) clds.iterator().next();
 
             List objectFieldConfigs = getRowFieldConfigs(o);
             Iterator objectFieldConfigIter = objectFieldConfigs.iterator();
             fieldValues = new HashMap();
-            
+
             // loop through each column
             while (objectFieldConfigIter.hasNext()) {
                 FieldConfig fc = (FieldConfig) objectFieldConfigIter.next();
@@ -214,17 +214,17 @@ public class InlineResultsTable
                 String expr = fc.getFieldExpr();
                 String pathString = className + "." + expr;
                 Path path = new Path(model, pathString);
-                                
+
                 fieldValues.put(expr, path.resolve(o));
-                
+
 //                try {
 //                    fieldValues.put(expr, TypeUtil.getFieldValue(o, expr));
 //                } catch (IllegalAccessException e) {
 //                    // do nothing
 //                }
-                
+
                 if (!fieldConfigs.contains(fc) && fc.getShowInInlineCollection()) {
-                    fieldConfigs.add(fc);                    
+                    fieldConfigs.add(fc);
                     // only add full column names for simple fieldConfigs - ie. ones that specify a
                     // field in the current class
                     columnFullNames.add(className + "." + expr);

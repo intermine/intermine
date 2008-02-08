@@ -81,18 +81,18 @@ public class ConvertBagController extends TilesAction
             (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-        Map<String, String []> additionalConverters = 
+        Map<String, String []> additionalConverters =
             bagQueryConfig.getAdditionalConverters(imBag.getType());
-        
+
         Map<String, List> customConverters = new HashMap<String, List>();
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {
                 String [] paramArray = additionalConverters.get(converterClassName);
                 String clazzName = paramArray[1];
-                // TODO shouldn't use getConstrainField here but have one specified in 
+                // TODO shouldn't use getConstrainField here but have one specified in
                 // the config file
-                List fieldValues = 
-                    BagBuildController.getFieldValues(os, oss, clazzName, 
+                List fieldValues =
+                    BagBuildController.getFieldValues(os, oss, clazzName,
                                                       bagQueryConfig.getConstrainField());
                 customConverters.put(TypeUtil.unqualifiedName(clazzName), fieldValues);
             }

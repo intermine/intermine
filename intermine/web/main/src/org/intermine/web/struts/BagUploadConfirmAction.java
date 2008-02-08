@@ -54,9 +54,9 @@ public class BagUploadConfirmAction extends InterMineAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        if (request.getParameter("goBack") != null) { 
-            return mapping.findForward("back"); 
-        } 
+        if (request.getParameter("goBack") != null) {
+            return mapping.findForward("back");
+        }
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();

@@ -86,7 +86,7 @@ public class DisplayObject
 
         //ServletContext servletContext = session.getServletContext();
         /*this.classTemplateExprs =
-            (Map) servletContext.getAttribute(Constants.CLASS_TEMPLATE_EXPRS);*/        
+            (Map) servletContext.getAttribute(Constants.CLASS_TEMPLATE_EXPRS);*/
         clds = getLeafClds(object.getClass(), model);
     }
 
@@ -310,14 +310,14 @@ public class DisplayObject
         refsAndCollections.putAll(references);
         refsAndCollections.putAll(collections);
     }
-    
+
 /**
  * gets the fields to display on the object details page for this display object
  * @return map of fieldnames to display for this object
  */
     public Map getFieldValues() {
         if (fieldValues == null || fieldValues.isEmpty()) {
-            fieldValues = new HashMap();            
+            fieldValues = new HashMap();
             for (Iterator i = fieldExprs.iterator(); i.hasNext();) {
                 String expr = (String) i.next();
                 Set<Class> classes = DynamicUtil.decomposeClass(object.getClass());
@@ -328,7 +328,7 @@ public class DisplayObject
                     }
                     className += c.getName();
                 }
-                if (className != null && className.indexOf('.') != -1) { 
+                if (className != null && className.indexOf('.') != -1) {
                     className = TypeUtil.unqualifiedName(className);
                 }
                 String pathString = className + "." + expr;

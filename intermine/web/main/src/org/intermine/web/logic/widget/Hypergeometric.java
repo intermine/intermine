@@ -19,7 +19,7 @@ package org.intermine.web.logic.widget;
 public class Hypergeometric
 {
     static double[] factorials;
-    
+
 //    /**
 //     * Builds an array of factorials so we don't have to calculate it each time.
 //     * @param numGenes the number of genes in the list
@@ -53,8 +53,8 @@ public class Hypergeometric
      *           n!
      * nCr =  ---------
      *        r! (n-r)!
-     * @param n 
-     * @param r 
+     * @param n
+     * @param r
      * @return double the log of nCr
      */
     private static double logChoose(int n, int r) {
@@ -72,7 +72,7 @@ public class Hypergeometric
             return Math.log(n);
         }
         if (n < r) {
-            return Double.NEGATIVE_INFINITY;            
+            return Double.NEGATIVE_INFINITY;
         }
         return factorials[n] - (factorials[r] + factorials[n - r]);
     }
@@ -84,11 +84,11 @@ public class Hypergeometric
      *      (M choose x) (N-M choose n-x)
      * P =   -----------------------------
      *               N choose n
-     * 
+     *
      * @param n total number of genes in our list
-     * @param k number of genes in our list annotated with this term     
+     * @param k number of genes in our list annotated with this term
      * @param bigN Total number of genes in the database
-     * @param bigM Total number of genes in the database annotated with this term 
+     * @param bigM Total number of genes in the database annotated with this term
      * @return p-value for this go term
      **/
     public static double calculateP(int n, int k, int bigM, int bigN) {

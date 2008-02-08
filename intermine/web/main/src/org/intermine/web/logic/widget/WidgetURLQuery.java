@@ -13,7 +13,7 @@ package org.intermine.web.logic.widget;
 import org.intermine.web.logic.query.PathQuery;
 
 /**
- * Builds the query needed to generate the results for the user based on what they clicked on 
+ * Builds the query needed to generate the results for the user based on what they clicked on
  * in the widget.
  * @author Julie Sullivan
  */

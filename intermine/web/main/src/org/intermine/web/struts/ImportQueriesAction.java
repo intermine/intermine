@@ -56,7 +56,7 @@ public class ImportQueriesAction extends InterMineAction
             WebUtil.getAllBags(profile.getSavedBags(), servletContext);
         Map<String, PathQuery> queries = null;
         queries = qif.getQueryMap(allBags, servletContext);
-        
+
 
         if (queries.size() == 1
             && ((request.getParameter("query_builder") != null && request
@@ -64,7 +64,7 @@ public class ImportQueriesAction extends InterMineAction
             // special case to redirect straight to the query builder
             PathQuery pathQuery = (PathQuery) queries.values().iterator().next();
             if (!pathQuery.isValid()) {
-                recordError(new ActionError("errors.importFailed", 
+                recordError(new ActionError("errors.importFailed",
                         PathQueryUtil.getProblemsSummary(pathQuery.getProblems())), request);
             }
             SessionMethods.loadQuery(pathQuery, session,
@@ -102,7 +102,7 @@ public class ImportQueriesAction extends InterMineAction
         }
     }
 
-    
+
     /**
      * Checks that the query name doesn't already exist and returns a numbered
      * name if it does.

@@ -67,7 +67,7 @@ public class TypeConverter
         if (pq == null) {
             return null;
         }
-        
+
         Query q;
         try {
             q = MainHelper.makeQuery(pq, Collections.EMPTY_MAP, null, servletContext, null, false,
@@ -112,7 +112,7 @@ public class TypeConverter
                                                       Class typeB) {
         return getConversionTemplates(servletContext, typeA).get(typeB);
     }
-    
+
     /**
      * Get conversion query for the types provided, edited so that the first
      * type is constrainted to be in the bag.
@@ -174,12 +174,12 @@ public class TypeConverter
         } catch (ObjectStoreException e) {
             throw new InterMineException(e);
         }
-        
+
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         return os.executeSingleton(q);
     }
-    
-    
+
+
     /**
      * Get conversion query from the types provided, edited so that the first
      * type is constrainted to be in the bag and the first type is removed form the
@@ -206,7 +206,7 @@ public class TypeConverter
         }
         return pq;
     }
-    
+
     /**
      * Return a Map from typeB to a TemplateQuery that will convert from typeA to typeB.
      *

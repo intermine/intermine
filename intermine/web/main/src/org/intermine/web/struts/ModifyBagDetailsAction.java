@@ -57,7 +57,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class ModifyBagDetailsAction extends InterMineAction
 {
     private static int index = 0;
- 
+
 
     /**
      * Forward to the correct method based on the button pressed
@@ -83,7 +83,7 @@ public class ModifyBagDetailsAction extends InterMineAction
         SearchRepository globalRepository =
             (SearchRepository) servletContext.getAttribute(Constants.
                                                            GLOBAL_SEARCH_REPOSITORY);
-        
+
         if (request.getParameter("remove") != null) {
             removeFromBag(mbdf.getBagName(), profile, mbdf, pm.getUserProfileObjectStore(), os,
                     session);
@@ -93,20 +93,20 @@ public class ModifyBagDetailsAction extends InterMineAction
             InterMineBag imBag = BagHelper.getBag(profile, globalRepository,
                                                   mbdf.getBagName());
             BagQueryConfig bagQueryConfig =
-               (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);            
-            Map<String, String []> additionalConverters 
+               (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+            Map<String, String []> additionalConverters
                 = bagQueryConfig.getAdditionalConverters(imBag.getType());
             if (additionalConverters != null) {
                 for (String converterClassName : additionalConverters.keySet()) {
                     Class clazz = Class.forName(converterClassName);
                     Constructor constructor = clazz.getConstructor();
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                    List<ResultsRow> result = 
+                    List<ResultsRow> result =
                         bagConverter.getConvertedObjects(session, mbdf.getExtraFieldValue(),
-                                                         imBag.getContentsAsIds(), 
+                                                         imBag.getContentsAsIds(),
                                                          imBag.getType());
                     Model model = os.getModel();
-                    WebConfig webConfig = 
+                    WebConfig webConfig =
                         (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
                     Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 

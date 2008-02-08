@@ -227,7 +227,7 @@ public class BagDetailsController extends TilesAction
             int pageSize = WebUtil.getIntSessionProperty(session, "bag.results.table.size", 10);
 
             PagedTable pagedColl = new PagedTable(webPathCollection, pageSize);
-            
+
             // TODO this needs to be removed when InterMineBag can store the initial ids of when the
             // bag was made.
             BagQueryConfig bagQueryConfig =
@@ -242,7 +242,7 @@ public class BagDetailsController extends TilesAction
                         if (request.getParameter(urlFields[i]) != null) {
                             request.setAttribute("extrafield", urlFields[i]);
                             request.setAttribute(urlFields[i], request.getParameter(urlFields[i]));
-                            request.setAttribute("externalids", 
+                            request.setAttribute("externalids",
                                                  request.getParameter("externalids"));
                             break;
                         }
@@ -285,7 +285,7 @@ public class BagDetailsController extends TilesAction
                 false                               // URLs?
         );
 
- 
+
         if (!subtitle.startsWith("any")) {
             TextTitle subtitleText = new TextTitle(subtitle);
             subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
@@ -294,7 +294,7 @@ public class BagDetailsController extends TilesAction
         plot = chart.getCategoryPlot();
 
         BarRenderer renderer = new BarRenderer();
-        
+
         renderer.setItemMargin(0);
         plot.setRenderer(renderer);
         CategoryURLGenerator categoryUrlGen = null;

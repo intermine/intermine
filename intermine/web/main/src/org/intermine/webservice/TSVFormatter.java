@@ -16,7 +16,7 @@ import java.util.List;
 /** Formatter that prints each result as tab separated values row.
  * @author Jakub Kulaviak
  **/
-public class TSVFormatter extends Formatter 
+public class TSVFormatter extends Formatter
 {
 
     /**

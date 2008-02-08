@@ -57,7 +57,7 @@ import org.intermine.web.logic.tagging.TagTypes;
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an
  * object.
- * 
+ *
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
@@ -200,7 +200,7 @@ public class ObjectDetailsController extends InterMineAction
      * For a given FieldDescriptor, look up its 'aspect:' tags and place it in
      * the correct map within placementRefsAndCollections. If categorised,
      * remove it from the supplied miscRefs map.
-     * 
+     *
      * @param fd the FieldDecriptor (a references or collection)
      * @param taggedType 'reference' or 'collection'
      * @param dispRef the corresponding DisplayReference or DisplayCollection
@@ -228,7 +228,7 @@ public class ObjectDetailsController extends InterMineAction
                 return;
             } else {
                 if (tagName.startsWith(AspectController.ASPECT_PREFIX)) {
-                    Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName); 
+                    Map<String, DisplayField> refs = placementRefsAndCollections.get(tagName);
                     if (refs != null) {
                         refs.put(fd.getName(), dispRef);
                         miscRefs.remove(fd.getName());
@@ -240,7 +240,7 @@ public class ObjectDetailsController extends InterMineAction
 
     /**
      * Removes field from placements.
-     * 
+     *
      * @param name
      * @param placementRefsAndCollections
      */
@@ -294,7 +294,7 @@ public class ObjectDetailsController extends InterMineAction
 
     /**
      * Make a new DisplayObject from the given object.
-     * 
+     *
      * @param session
      *            used to get WEB_PROPERTIES and DISPLAYERS Maps
      * @param object

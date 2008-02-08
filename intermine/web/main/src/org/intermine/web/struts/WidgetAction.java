@@ -38,7 +38,7 @@ import org.apache.struts.util.MessageResources;
 
 /**
  * Runs a query based on which record the user clicked on in the widget.  Used by bag table and
- * enrichment widgets.  
+ * enrichment widgets.
  * @author Julie Sullivan
  */
 public class WidgetAction extends InterMineAction
@@ -68,8 +68,8 @@ public class WidgetAction extends InterMineAction
 
         if (key == null || key.equals("")) {
             WidgetForm wf = (WidgetForm) form;
-            bagName = wf.getBagName();            
-            key = wf.getSelectedAsString(); 
+            bagName = wf.getBagName();
+            key = wf.getSelectedAsString();
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -91,7 +91,7 @@ public class WidgetAction extends InterMineAction
 
         QueryMonitorTimeout clientState
         = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages 
+        MessageResources messages
         = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PathQuery pathQuery = urlQuery.generatePathQuery();
 
@@ -101,10 +101,10 @@ public class WidgetAction extends InterMineAction
 
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
 
-        return new ForwardParameters(mapping.findForward("waiting"))         
+        return new ForwardParameters(mapping.findForward("waiting"))
             .addParameter("trail", "|bag." + bagName)
             .addParameter("qid", qid).forward();
 
     }
-    
+
 }

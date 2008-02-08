@@ -15,16 +15,16 @@ import java.util.List;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
- 
+
 /**
  * @author Jakub Kulaviak
  **/
- public class XMLValidatorErrorHandler implements ErrorHandler 
+ public class XMLValidatorErrorHandler implements ErrorHandler
  {
-        
-     private List<String> errors = new ArrayList<String>(); 
-     private List<String> warnings = new ArrayList<String>(); 
- 
+
+     private List<String> errors = new ArrayList<String>();
+     private List<String> warnings = new ArrayList<String>();
+
      /**
       * Returns errors occurred during parsing xml.
       * @return errors
@@ -54,7 +54,7 @@ import org.xml.sax.SAXParseException;
      public void fatalError(SAXParseException exception) {
          errors.add(exception.getMessage());
      }
-       
+
      /**
       * {@inheritDoc}}
       */
