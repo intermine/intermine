@@ -119,7 +119,7 @@ public class OboTerm
     public String toString() {
         return id + ", " + name;
     }
-    
+
     /**
      * Get the namespace attribute.
      * @return term namespace

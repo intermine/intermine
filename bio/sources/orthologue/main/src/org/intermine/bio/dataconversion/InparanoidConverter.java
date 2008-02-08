@@ -104,7 +104,7 @@ public class InparanoidConverter extends FileConverter
         }
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -117,8 +117,8 @@ public class InparanoidConverter extends FileConverter
 
         Item bio = null;
         boolean isGene, onFirstOrganism = true;
-        List<BioAndScores> orgA = new ArrayList(), orgB = new ArrayList(); 
-        
+        List<BioAndScores> orgA = new ArrayList(), orgB = new ArrayList();
+
         BufferedReader br = new BufferedReader(reader);
         while ((line = br.readLine()) != null) {
             lineNum++;
@@ -131,7 +131,7 @@ public class InparanoidConverter extends FileConverter
             }
 
             index = array[0];
-            
+
             // not all rows have a bootsrap score
             String bootstrap = null;
             if (array.length > 5 && array[5] != null && !array[5].equals("")) {
@@ -152,7 +152,7 @@ public class InparanoidConverter extends FileConverter
             } else {
                 code = array[2];
             }
-            
+
             // work out if this is a Gene or Translation and create item
             if (createObjects.get(code) != null) {
                 if (createObjects.get(code).equals("Gene")) {
@@ -179,7 +179,7 @@ public class InparanoidConverter extends FileConverter
                     createHomologues(orgA, orgB, oldIndex);
                     createHomologues(orgB, orgA, oldIndex);
                 }
-                
+
                 // reset for next group
                 onFirstOrganism = true;
                 orgA = new ArrayList();
@@ -208,8 +208,8 @@ public class InparanoidConverter extends FileConverter
             createHomologues(orgB, orgA, oldIndex);
          }
     }
-    
-    
+
+
     // homolog creation method:
     // foreach orgA
     //   foreach orgA
@@ -221,7 +221,7 @@ public class InparanoidConverter extends FileConverter
     //     else if this.score or other.score = 1
     //       create an inParalogue
 
-    private void createHomologues(List<BioAndScores> orgA, List<BioAndScores> orgB, String index) 
+    private void createHomologues(List<BioAndScores> orgA, List<BioAndScores> orgB, String index)
     throws ObjectStoreException {
         // generate a name for the cluster based on organisms (in order) and index
         String cluster = orgA.get(0).getOrganism() + "-" + orgB.get(0).getOrganism() + ":" + index;
@@ -232,7 +232,7 @@ public class InparanoidConverter extends FileConverter
                     continue;
                 }
                 // only create paralogues between 'ortholgoues' in the cluster and other bios
-                if ((Double.parseDouble(thisBio.score) == 1) 
+                if ((Double.parseDouble(thisBio.score) == 1)
                                 || (Double.parseDouble(otherBio.score) == 1)) {
                     store(createHomologue(thisBio, otherBio, "inParalogue", cluster));
                 }
@@ -241,24 +241,24 @@ public class InparanoidConverter extends FileConverter
             for (BioAndScores otherBio : orgB) {
                 // create an orthologue where both bios are a main bio in cluster,
                 // create a paralogue if only one of the bios is a 'main' bio in cluster
-                if ((Double.parseDouble(thisBio.score) == 1) 
+                if ((Double.parseDouble(thisBio.score) == 1)
                                 && (Double.parseDouble(otherBio.score) == 1)) {
                     store(createHomologue(thisBio, otherBio, "orthologue", cluster));
-                } else if ((Double.parseDouble(thisBio.score) == 1) 
+                } else if ((Double.parseDouble(thisBio.score) == 1)
                                 || (Double.parseDouble(otherBio.score) == 1)) {
                     store(createHomologue(thisBio, otherBio, "inParalogue", cluster));
                 }
             }
         }
     }
-    
+
     // create and store a Homologue item
     private Item createHomologue(BioAndScores first, BioAndScores second,
                                  String type, String cluster) {
         Item homologue = createItem("Homologue");
 
         // at least one score will be 1, if an inParalogue then we want the score that isn't 1
-        String score = "" + Math.min(Double.parseDouble(first.getScore()), 
+        String score = "" + Math.min(Double.parseDouble(first.getScore()),
                                      Double.parseDouble(second.getScore()));
         homologue.setAttribute("inParanoidScore", score);
         if (first.isGene()) {
@@ -279,7 +279,7 @@ public class InparanoidConverter extends FileConverter
         if (type.equals("orthologue") && second.getBootstrap() != null) {
             homologue.setAttribute("homologueBootstrapScore", second.getBootstrap());
         }
-        
+
         homologue.setAttribute("type", type);
         homologue.setAttribute("clusterName", cluster);
 
@@ -288,7 +288,7 @@ public class InparanoidConverter extends FileConverter
         return homologue;
     }
 
-    
+
 
     /**
      * Convenience method to create and cache Genes/Proteins by identifier
@@ -404,7 +404,7 @@ public class InparanoidConverter extends FileConverter
         public boolean isGene() {
             return isGene;
         }
-        
+
         public String getOrganism() {
             return organism;
         }

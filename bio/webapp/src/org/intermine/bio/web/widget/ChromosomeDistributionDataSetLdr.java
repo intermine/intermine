@@ -45,7 +45,7 @@ import org.flymine.model.genomic.Organism;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
- * 
+ *
  *
  * @author Julie Sullivan
  */
@@ -158,7 +158,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     }
 
     /**
-     * {@inheritDoc}    
+     * {@inheritDoc}
      */
     public Map getDataSets() {
         return dataSets;

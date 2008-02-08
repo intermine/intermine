@@ -1,6 +1,6 @@
 package org.intermine.task;
 
-/* 
+/*
  * Copyright (C) 2002-2007 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -108,11 +108,11 @@ public class ReadResourceTask extends Task
         } else {
             is = classLoader.getResourceAsStream(resource);
         }
-        
+
         if (is == null) {
             throw new BuildException("cannot find resource \"" + resource + "\" in the classpath");
         }
-        
+
         InputStreamReader reader = new InputStreamReader(is);
         BufferedReader bufferedReader = new BufferedReader(reader);
         StringWriter stringWriter = new StringWriter();

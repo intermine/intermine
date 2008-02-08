@@ -66,7 +66,7 @@ public class PdbConverter extends FileConverter
 
             String idCode = (String) structure.getHeader().get("idCode");
             proteinStructure.setAttribute("identifier", idCode);
-                                          
+
 
             List<String> proteins = new ArrayList<String>();
             List<String> dbrefs = pdbBuffReader.getDbrefs();
@@ -103,7 +103,7 @@ public class PdbConverter extends FileConverter
         }
     }
 
-    
+
     /**
      * BioJava doesn't support getting DBREF so
      * we get it as the file is read.

@@ -55,11 +55,11 @@ public class OboParserTest extends TestCase
         assertNotNull(dt2);
         assertNotNull(dt3);
         assertNotNull(dt4);
-        
+
         assertTrue(dt1.getChildren().contains(dt2));
         assertTrue(dt1.getChildren().contains(dt4));
         assertTrue(dt2.getChildren().contains(dt3));
-        assertTrue(dt1.getComponents().contains(dt3));   
+        assertTrue(dt1.getComponents().contains(dt3));
     }
 
     public void testSynonyms() throws Exception {
@@ -131,14 +131,14 @@ public class OboParserTest extends TestCase
         expecting.put("GO:0000002", "mitochondrial genome maintenance");
         expecting.put("GO:0000003", "reproduction");
         expecting.put("GO:0000004", "partoftest");
-        
+
         assertEquals(expecting, idNames);
     }
 
     public void testGetTermToParentTermSetMap() throws Exception {
         String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
         parser.readTerms(new BufferedReader(new StringReader(test)));
-        
+
         Map<String, Set> expected = new HashMap<String, Set>();
         expected.put("GO:0000001", new HashSet());
         expected.put("GO:0000002", new HashSet(Arrays.asList(new Object[] {"GO:0000001"})));
@@ -146,7 +146,7 @@ public class OboParserTest extends TestCase
         expected.put("GO:0000004", new HashSet(Arrays.asList(new Object[] {"GO:0000001", "GO:0000002", "GO:0000003"})));
         assertEquals(expected, parser.getTermToParentTermSetMap());
     }
-    
+
     public void testUnescape() {
         assertEquals("\n", parser.unescape("\\n"));
         assertEquals(" ", parser.unescape("\\W"));

@@ -17,7 +17,7 @@ package org.intermine.task.project;
 public class UserProperty
 {
     String name, value, location;
-    
+
     /**
      * Set the name
      * @param name the name
@@ -25,7 +25,7 @@ public class UserProperty
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * Return the name
      * @return the name
@@ -33,7 +33,7 @@ public class UserProperty
     public String getName() {
         return name;
     }
-    
+
     /**
      * Set the property value
      * @return the value
@@ -41,7 +41,7 @@ public class UserProperty
     public String getValue() {
         return value;
     }
-    
+
     /**
      * Get the location
      * @return the location
@@ -49,7 +49,7 @@ public class UserProperty
     public String getLocation() {
         return location;
     }
-    
+
     /**
      * Set the property value
      * @param value the value
@@ -57,7 +57,7 @@ public class UserProperty
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     /**
      * Set the property location
      * @param location the new location
@@ -65,7 +65,7 @@ public class UserProperty
     public void setLocation(String location) {
         this.location = location;
     }
-    
+
     /**
      * Return true if and only if the location is set
      * @return true if this property has a location

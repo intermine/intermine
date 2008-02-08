@@ -46,7 +46,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         } else if (!resources.exists()) {
             fail("can't find the resources directory");
         }
-         
+
         Collection<File> allfiles = listFiles(resources, null, true);
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());

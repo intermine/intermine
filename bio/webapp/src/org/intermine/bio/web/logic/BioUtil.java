@@ -158,10 +158,10 @@ public abstract class BioUtil
 
 
 
-    /** 
-     * calculates the total number of proteins or genes in the database for the specified 
+    /**
+     * calculates the total number of proteins or genes in the database for the specified
      * organisms
-     * @param os object store 
+     * @param os object store
      * @param organisms list of organism names to be used in calculating the total
      * @param c which class to test for - Gene or Protein
      * @return total number of objects in the database for selected organisms

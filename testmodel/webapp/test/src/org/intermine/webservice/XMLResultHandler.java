@@ -26,7 +26,7 @@ public class XMLResultHandler extends DefaultHandler
     private String currentResultItem;
     private List<List<String>> results;
     private Attributes rootAttributes;
-    
+
     public Attributes getRootAttributes() {
         return rootAttributes;
     }
@@ -43,7 +43,7 @@ public class XMLResultHandler extends DefaultHandler
             currentResultItem = "";
         }
     }
-    
+
     @Override
     public void endElement(String uri, String localName, String name)
             throws SAXException {
@@ -53,14 +53,14 @@ public class XMLResultHandler extends DefaultHandler
             currentResult.add(currentResultItem);
         }
     }
-    
+
     @Override
     public void characters(char[] ch, int start, int length)
             throws SAXException {
         currentResultItem = new String(ch, start, length);
         currentResultItem = currentResultItem.trim();
     }
-    
+
     public List<List<String>> getResults() {
         return results;
     }

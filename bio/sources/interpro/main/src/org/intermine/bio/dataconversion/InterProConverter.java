@@ -42,14 +42,14 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class InterProConverter extends FileConverter
 {
-    private Map<String, Object> mapMaster = new HashMap<String, Object>(); 
+    private Map<String, Object> mapMaster = new HashMap<String, Object>();
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static final Logger LOG = Logger.getLogger(InterProConverter.class);
     private Map<String, Item> pubMaster = new HashMap<String, Item>();
     private Map<String, Item> dbMaster = new HashMap<String, Item>();
     private Map<String, Item> dsMaster = new HashMap<String, Item>();
     private Map<String, Item> proteinDomains = new HashMap<String, Item>();
-    
+
     private Map ids = new HashMap();
     private Map aliases = new HashMap();
 
@@ -88,14 +88,14 @@ public class InterProConverter extends FileConverter
     }
 
 /**
- * 
+ *
  *
  * @author Julie Sullivan
  */
-    class InterProHandler extends DefaultHandler 
+    class InterProHandler extends DefaultHandler
     {
 
-        private Item proteinDomain;      
+        private Item proteinDomain;
         private Map synonyms;
         private StringBuffer description;
         private ReferenceList pubCollection;
@@ -146,15 +146,15 @@ public class InterProConverter extends FileConverter
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
-            if (attName != null && !attName.equals("description")) { 
+            if (attName != null && !attName.equals("description")) {
                 attName = null;
             }
 
             // <interpro id="IPR000002" type="Domain" short_name="Fizzy" protein_count="256">
             if (qName.equals("interpro")) {
 
-                String identifier = attrs.getValue("id");                    
-                initProteinDomain(identifier);                   
+                String identifier = attrs.getValue("id");
+                initProteinDomain(identifier);
                 proteinDomain.setAttribute("type", attrs.getValue("type"));
                 proteinDomain.setAttribute("shortName", attrs.getValue("short_name"));
 
@@ -178,12 +178,12 @@ public class InterProConverter extends FileConverter
             } else if (qName.equals("abstract") && stack.peek().equals("interpro")) {
 
                 attName = "description";
-                
+
             } else if (qName.equals("sec_ac")) {
 
                 createSynonym(proteinDomain.getIdentifier(), "identifier",
                               attrs.getValue("acc"), datasource.getIdentifier());
-   
+
                 //<member_list><db_xref db="PFAM" dbkey="PF01167" name="SUPERTUBBY" />
             } else if (qName.equals("db_xref") && stack.peek().equals("member_list")) {
 
@@ -206,7 +206,7 @@ public class InterProConverter extends FileConverter
                 String domainRelationship = stack.peek().toString();
                 String interproId = attrs.getValue("ipr_ref");
                 Item domain = getItem(proteinDomains, interproId, "ProteinDomain", "identifier");
-                                
+
                 ReferenceList relationCollection = null;
 
                 if (domainRelationship.equals("found_in")) {
@@ -298,17 +298,17 @@ public class InterProConverter extends FileConverter
 
                 // <interpro><name>
                 } else if (qName.equals("name") && stack.peek().equals("interpro")) {
-                    
-                    if (attName != null) {                        
+
+                    if (attName != null) {
                         proteinDomain.setAttribute("name", attValue.toString());
                     }
-                    
+
                 // <interpro><abstract>
                 } else if (qName.equals("abstract") && stack.peek().equals("interpro")) {
-                    
+
                     proteinDomain.setAttribute("description", description.toString());
                     attName = null;
-                    
+
                 }
 
             } catch (ObjectStoreException e) {
@@ -321,7 +321,7 @@ public class InterProConverter extends FileConverter
             try {
                 datasource = getAndStoreItem(dbMaster, "InterPro", "DataSource", "name");
                 dataset = getAndStoreItem(dsMaster, "InterPro data set", "DataSet", "title");
-                
+
             } catch (Exception e) {
                 throw new SAXException(e);
             }
@@ -346,23 +346,23 @@ public class InterProConverter extends FileConverter
         private void initProteinDomain(String identifier) {
 
             proteinDomain = getItem(proteinDomains, identifier, "ProteinDomain", "identifier");
-            
+
             domainRelationships = createItem("DomainRelationship");
             proteinDomain.setReference("domainRelationships", domainRelationships);
             delayedItems.add(domainRelationships);
-            
+
             pubCollection = new ReferenceList("publications", new ArrayList());
             parentsCollection = new ReferenceList("parentFeatures", new ArrayList());
             kidsCollection = new ReferenceList("childFeatures", new ArrayList());
             foundInCollection = new ReferenceList("foundIn", new ArrayList());
-            containsCollection = new ReferenceList("contains", new ArrayList());            
+            containsCollection = new ReferenceList("contains", new ArrayList());
 
             synonyms = new HashMap();
 
             ReferenceList evidenceColl = new ReferenceList("evidence", new ArrayList());
             proteinDomain.addCollection(evidenceColl);
             evidenceColl.addRefId(dataset.getIdentifier());
-            
+
             description = new StringBuffer();
 
         }
@@ -388,7 +388,7 @@ public class InterProConverter extends FileConverter
                     if (itemType.equals("DataSet")) {
                         item.setReference("dataSource", datasource);
                     }
-                    
+
                     writer.store(ItemHelper.convert(item));
                 }
             } catch (ObjectStoreException e) {

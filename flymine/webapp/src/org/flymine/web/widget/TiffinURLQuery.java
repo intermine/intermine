@@ -37,7 +37,7 @@ public class TiffinURLQuery implements WidgetURLQuery
     ObjectStore os;
     /**
      * @param key which bar the user clicked on
-     * @param bag bag 
+     * @param bag bag
      * @param os object store
      */
     public TiffinURLQuery(ObjectStore os, InterMineBag bag, String key) {

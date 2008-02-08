@@ -35,7 +35,7 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
     InterMineBag bag;
     String key;
     ObjectStore os;
-    
+
     /**
      * @param key value selected by user to display
      * @param bag bag included in query
@@ -48,7 +48,7 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public PathQuery generatePathQuery() {
 

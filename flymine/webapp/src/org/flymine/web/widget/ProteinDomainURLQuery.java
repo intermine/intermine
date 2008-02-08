@@ -37,7 +37,7 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
 
     /**
      * @param key which protein domain the user clicked on
-     * @param bag bag 
+     * @param bag bag
      * @param os object store
      */
     public ProteinDomainURLQuery(ObjectStore os, InterMineBag bag, String key) {

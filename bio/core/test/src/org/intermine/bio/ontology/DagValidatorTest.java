@@ -22,7 +22,7 @@ public class DagValidatorTest extends TestCase
     private OboParser parser;
     private DagValidator validator;
     private String ENDL = System.getProperty("line.separator");
-    
+
     public DagValidatorTest(String arg) {
         super(arg);
     }
@@ -58,7 +58,7 @@ public class DagValidatorTest extends TestCase
             + "id: id2" + ENDL
             + "name: term2" + ENDL
             + "relationship: part_of id1";
- 
+
         parser.readTerms(new BufferedReader(new StringReader(test)));
         Collection root1 = parser.rootTerms.values();
         assertFalse(validator.orphanPartOfs(root1));

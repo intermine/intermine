@@ -34,7 +34,7 @@ public class MalariaGFF3RecordHandler extends GFF3RecordHandler
 
     /**
      * {@inheritDoc}
-     */  
+     */
     public void process(GFF3Record record) {
         Item feature = getFeature();
 

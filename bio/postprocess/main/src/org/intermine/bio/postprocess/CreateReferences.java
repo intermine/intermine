@@ -63,7 +63,7 @@ public class CreateReferences
         // Transcript.exons / Exon.transcripts
         insertCollectionField(Transcript.class, "subjects", RankedRelation.class, "subject",
                               Exon.class, "transcripts", false);
-        
+
         LOG.info("insertReferences stage 2");
         // Gene.transcript / Transcript.gene
         insertReferenceField(Gene.class, "subjects", SimpleRelation.class, "subject",

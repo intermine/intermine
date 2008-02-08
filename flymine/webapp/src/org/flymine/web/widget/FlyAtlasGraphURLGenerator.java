@@ -64,7 +64,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
  * @param bag bag
  * @param series up or down
  * @param category tissue
- * @return the path query 
+ * @return the path query
  */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,

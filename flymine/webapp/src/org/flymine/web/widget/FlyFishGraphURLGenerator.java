@@ -54,8 +54,8 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         super();
         this.bagName = bagName;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      * @see org.jfree.chart.urls.CategoryURLGenerator#generateURL(

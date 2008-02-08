@@ -66,7 +66,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
 
         actionPerform();
         verifyNoActionErrors();
-        
+
         //assertEquals("/pollQuery.do?qid=0", getActualForward());
         assertNotNull(getSession().getAttribute(Constants.QUERY));
     }

@@ -63,16 +63,16 @@ public class GoConverter extends FileConverter
     private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
     private Map<String, String> synonymTypes = new HashMap<String, String>();
     protected Map<String, ItemWrapper> productWrapperMap = new LinkedHashMap<String, ItemWrapper>();
-    private Map<GoTermToGene, PlaceHolder> holderMap = 
+    private Map<GoTermToGene, PlaceHolder> holderMap =
         new LinkedHashMap<GoTermToGene, PlaceHolder>();
     protected Set<String> productIds = new HashSet<String>();
-    // map between 
+    // map between
     private Map<String, Set> goTermId2ParentTermIdSetsMap = null;
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
     // TODO: datasources Map to contains ids not items?
     // TODO: store product after each one finished?  'with' field may be a problem
-    
+
     /**
      * Constructor
      *
@@ -180,7 +180,7 @@ public class GoConverter extends FileConverter
                 throw new IOException("" + e);
             }
         }
-        
+
         BufferedReader br = new BufferedReader(reader);
         String line, lastProductId = null;
 
@@ -295,13 +295,13 @@ public class GoConverter extends FileConverter
     private void storeGoAnnotation() throws ObjectStoreException {
 
         // TODO: does this need to be done in separate loops?
-        
+
         // loop through once to create GO annotation items
         for (PlaceHolder nextPlaceHolder : holderMap.values()) {
             // create assignment for this term
             newGoAnnotation(nextPlaceHolder);
         }
-        
+
         // loop through again to create GO annotaion items to assign parents
         for (PlaceHolder nextPlaceHolder : holderMap.values()) {
             // if the qualifier for this assignment is NOT then isn't valid to assign parents
@@ -638,7 +638,7 @@ public class GoConverter extends FileConverter
 
         //Record some evidence that says we got/matched the gene from GO data.
         product.addToCollection("evidence", newDatasource("Gene Ontology"));
-        
+
         Item synonym = newSynonym(
                 product.getIdentifier(),
                 synonymTypes.get(type),

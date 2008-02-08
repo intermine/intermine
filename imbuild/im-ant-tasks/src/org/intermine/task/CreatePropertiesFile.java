@@ -25,8 +25,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 /**
- * 
- * 
+ *
+ *
  * @author Thmoas Riley
  */
 public class CreatePropertiesFile extends Task
@@ -34,15 +34,15 @@ public class CreatePropertiesFile extends Task
     private String propName;
     private File templateFile;
     private File toFile;
-    
+
     public void setTemplateFile(File file) {
         this.templateFile = file;
     }
-    
+
     public void setToFile(File file) {
         this.toFile = file;
     }
-    
+
     public void execute() throws BuildException {
         if (toFile == null) {
             throw new BuildException("toFile attribute required");
@@ -50,7 +50,7 @@ public class CreatePropertiesFile extends Task
         if (templateFile == null) {
             throw new BuildException("templateFile attribute required");
         }
-        
+
         try {
             if (!toFile.exists()) {
                 buildFile();
@@ -59,7 +59,7 @@ public class CreatePropertiesFile extends Task
             throw new BuildException(err);
         }
     }
-    
+
     protected void buildFile() throws IOException {
         BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
         BufferedReader fin = new BufferedReader(new FileReader(templateFile));
@@ -69,14 +69,14 @@ public class CreatePropertiesFile extends Task
         String others = "";
         String prompt = null;
         Map properties = new HashMap();
-        
+
         properties.put("ant.project.name", getProject().getName());
-        
+
         System.out.println("#### " + toFile.getName() + " does not exist");
         System.out.println("#### Creating " + toFile.getAbsolutePath());
         System.out.println("#### (Hit Return to accept the default value)");
-        
-        
+
+
         while ((fline = fin.readLine()) != null) {
             fline = fline.trim();
             if (fline.startsWith("#")) {
@@ -111,18 +111,18 @@ public class CreatePropertiesFile extends Task
                 comments = "";
             }
         }
-        
+
         FileWriter fw = new FileWriter(toFile);
         fw.write(results.toString());
         fw.close();
-        
+
         System.out .println(""
                 + "### Done\n"
                 + "### I've also written these default property values:\n"
                 + others);
-        
+
     }
-    
+
     protected String expandVars(String value, Map properties) {
         Pattern p = Pattern.compile("\\$\\{([^\\}]+)\\}");
         Matcher m = p.matcher(value);
