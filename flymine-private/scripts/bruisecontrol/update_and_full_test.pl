@@ -246,13 +246,6 @@ pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND fulltest");
 log_and_print ("intermine test-report ...");
 pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND test-report");
 
-# testmodel webapp tests
-
-pipe_to_log(["(cd $TRUNK_DIR/testmodel/dbmodel; $ANT_COMMAND build-db)",
-             "cd $TRUNK_DIR/testmodel/webapp/test; ant clean",
-             "cd $TRUNK_DIR/testmodel/webapp/test; date; $ANT_COMMAND",
-             "cd $TRUNK_DIR/testmodel/webapp/test; date; $ANT_COMMAND test-report"]);
-
 # bio tests
 
 pipe_to_log(["cd $TRUNK_DIR/bio/test-all/dbmodel; $ANT_COMMAND build-db",
@@ -335,15 +328,6 @@ if (-f "$BUILD_PROJ/build/test/results/index.html") {
   print "There don't seem to be any intermine results\n";
 }
 
-my $testmodel_results_dir = "$BUILD_PROJ/../../testmodel/webapp/test/build/test/results";
-if (-f "$testmodel_results_dir/index.html") {
-  mkpath "$ARCHIVE_TO/junit_testmodel_webapp", 1, 0775 
-    or die "can't mkpath $ARCHIVE_TO/junit_testmodel_webapp: $!\n";
-  system "cp -r $testmodel_results_dir/* $ARCHIVE_TO/junit_testmodel_webapp";
-} else {
-  print "There don't seem to be any testmodel results\n";
-}
-
 my $bio_results_dir = "$BUILD_PROJ/../../bio/test-all/build/test/results";
 if (-f "$bio_results_dir/index.html") {
   mkpath "$ARCHIVE_TO/junit_bio", 1, 0775 or die "can't mkpath $ARCHIVE_TO/junit_bio: $!\n";
@@ -389,7 +373,6 @@ Subject: $subject
 JUnit results:
 
  intermine core:   $URL_PREFIX/$TIME_STAMP/junit/
- intermine webapp: $URL_PREFIX/$TIME_STAMP/junit_testmodel_webapp/
  intermine bio:    $URL_PREFIX/$TIME_STAMP/junit_bio/
 
  Checkstyle:       $URL_PREFIX/$TIME_STAMP/checkstyle/
