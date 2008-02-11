@@ -52,7 +52,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         KeggPathwayConverter converter = new KeggPathwayConverter(itemWriter,
                                                         Model.getInstanceByName("genomic"));
-        converter.setSrcDataDir("test/resources/");
+        converter.setSrcDataDir(resources.toString());
 
         for (File file: allfiles) {
             if(file.getPath().matches(".*\\.svn.*") || file.getName().matches(".*\\.svn.*")) {
@@ -70,7 +70,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        // writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "/tmp/kegg-tgt-items.xml");
 
         assertEquals(readItemSet("kegg-tgt-items.xml"), itemWriter.getItems());
     }
