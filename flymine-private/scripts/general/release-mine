@@ -3,6 +3,7 @@
 # release a new mine
 #
 # steps:
+#  - update from subversion
 #  - find current version from properties file
 #  - create new properties file
 #   * update version
@@ -93,6 +94,12 @@ sub die_with_log
 
 
 # start processing
+
+#################
+
+system ("svn update >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "subversion update failed: $?";
+
 
 #################
 warn "creating new properties files\n";
