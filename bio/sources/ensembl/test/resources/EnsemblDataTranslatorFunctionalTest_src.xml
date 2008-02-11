@@ -44,7 +44,6 @@
   <item id="32_1" class="http://www.intermine.org/model/ensembl#attrib_type">
     <attribute name="code" value="name"/>
     <attribute name="name" value="Name"/>
-    <attribute name="description" value=""/>
   </item>
 
   <item id="30_1" class="http://www.intermine.org/model/ensembl#coord_system">
@@ -191,7 +190,6 @@
   <item id="37_1" class="http://www.intermine.org/model/ensembl#misc_set">
     <attribute name="name" value="NT contigs"/>
     <attribute name="code" value="ntctgs"/>
-    <attribute name="description" value=""/>
     <attribute name="max_length" value="100600000"/>
   </item>
 
