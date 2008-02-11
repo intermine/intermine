@@ -182,7 +182,7 @@ sub create_gbrowse_conf
 
   while (<$old_file>) {
     s/(description\s*=.*release) $old_version/$1 $new_version/;
-    s|/release-$old_version|/release-$new_version/|;
+    s|/release-$old_version|/release-$new_version|;
     print $new_file $_;
   }
 
