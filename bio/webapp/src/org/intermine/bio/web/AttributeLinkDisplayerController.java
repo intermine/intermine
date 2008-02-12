@@ -103,6 +103,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         }
         sb.append(")");
         Organism organismReference = null;
+        String geneOrgKey = sb.toString();
 
         if (imo != null) {
             try {
@@ -110,18 +111,15 @@ public class AttributeLinkDisplayerController extends TilesAction
             } catch (IllegalAccessException e) {
                 // no organism field
             }
-        }
 
-        String geneOrgKey = sb.toString();
-        if (organismReference == null || organismReference.getTaxonId() == null) {
-            if (imo == null) {
+            if (organismReference == null || organismReference.getTaxonId() == null) {
                 geneOrgKey += "(\\.(\\*))?";
             } else {
-                geneOrgKey += "(\\.(\\*|[\\d]+))?";
+                // we need to check against * as well in case we want it to work for all taxonIds
+                geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
             }
         } else {
-            // we need to check against * as well in case we want it to work for all taxonIds
-            geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
+            geneOrgKey += "(\\.(\\*|[\\d]+))?";                        
         }
 
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
