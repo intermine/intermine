@@ -114,7 +114,11 @@ public class AttributeLinkDisplayerController extends TilesAction
 
         String geneOrgKey = sb.toString();
         if (organismReference == null || organismReference.getTaxonId() == null) {
-            geneOrgKey += "(\\.(\\*))?";
+            if (imo == null) {
+                geneOrgKey += "(\\.(\\*))?";
+            } else {
+                geneOrgKey += "(\\.(\\*|[\\d]+))?";
+            }
         } else {
             // we need to check against * as well in case we want it to work for all taxonIds
             geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
@@ -126,7 +130,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp =
-        "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)(\\.list)?\\.(url|text|imageName)";
+          "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)(\\.list)?\\.(url|text|imageName)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
         for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
@@ -142,8 +146,12 @@ public class AttributeLinkDisplayerController extends TilesAction
                 String propType = matcher.group(7);
 
                 // to pick the right type of link (list or object)
-                if (imo != null && imType != null) { continue; };
-                if (bag != null && imType == null) { continue; };
+                if (imo != null && imType != null) {
+                    continue;
+                };
+                if (bag != null && imType == null) {
+                    continue;
+                };
 
                 ConfigMap config;
 
