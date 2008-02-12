@@ -313,8 +313,8 @@ APACHE_CONF
 #################
 warn "restarting apache\n";
 
-#system ("sudo /etc/init.d/httpd restart >> $LOG_FILENAME 2>&1") == 0
-#  or die_with_log "can't restart httpd: $?";
+system ("sudo /etc/init.d/httpd restart >> $LOG_FILENAME 2>&1") == 0
+  or die_with_log "can't restart httpd: $?";
 
 
 #################
