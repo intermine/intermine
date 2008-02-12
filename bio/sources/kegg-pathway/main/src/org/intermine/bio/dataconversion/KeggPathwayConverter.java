@@ -127,7 +127,7 @@ public class KeggPathwayConverter extends FileConverter
                                                                    mapArray[i]).getIdentifier());
                     }
                     Item gene = createItem("Gene");
-                    gene.setAttribute("secondaryIdentifier", geneName);
+                    gene.setAttribute("identifier", geneName);
                     gene.setReference("organism", organism);
 
                     gene.addCollection(referenceList);
