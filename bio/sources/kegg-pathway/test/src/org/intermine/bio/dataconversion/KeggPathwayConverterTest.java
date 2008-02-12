@@ -17,6 +17,8 @@ import java.io.FilenameFilter;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -91,7 +93,17 @@ public class KeggPathwayConverterTest extends ItemsTestCase
                 files.addAll(listFiles(entry, filter, recurse));
             }
         }
+
+        class FileComparator implements Comparator<File> {
+            public int compare(File file1, File file2) {
+                return file1.getName().compareTo(file2.getName());
+            }
+
+        }
+
         // Return collection of files
+        Collections.sort(files, new FileComparator());
+
         return files;
     }
 }
