@@ -11,6 +11,7 @@ package org.intermine.bio.web;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -35,9 +36,11 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.StringUtil;
@@ -94,7 +97,6 @@ public class AttributeLinkDisplayerController extends TilesAction
         StringBuffer sb = new StringBuffer();
         for (ClassDescriptor cd : classDescriptors) {
             if (sb.length() <= 0) {
-                // (?: is a non-matching group
                 sb.append("(");
             } else {
                 sb.append("|");
@@ -118,8 +120,8 @@ public class AttributeLinkDisplayerController extends TilesAction
                 // we need to check against * as well in case we want it to work for all taxonIds
                 geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
             }
-        } else {
-            geneOrgKey += "(\\.(\\*|[\\d]+))?";                        
+        } else { // bag
+            geneOrgKey += "(\\.(\\*|[\\d]+))?";    
         }
 
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
@@ -128,9 +130,10 @@ public class AttributeLinkDisplayerController extends TilesAction
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp =
-          "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)(\\.list)?\\.(url|text|imageName)";
+          "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)\\.(list)?\\.(url|text|imageName)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
+        String taxId = null;
         for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
@@ -139,6 +142,7 @@ public class AttributeLinkDisplayerController extends TilesAction
 
                 String configKey = matcher.group(1);
                 className = matcher.group(2);
+                taxId = matcher.group(4);
                 String attrName = matcher.group(5);
                 String imType = matcher.group(6);
                 String propType = matcher.group(7);
@@ -162,6 +166,8 @@ public class AttributeLinkDisplayerController extends TilesAction
                 }
 
                 Object attrValue = null;
+                Set taxIds = null;
+                
                 if (config.containsKey("attributeValue")) {
                     attrValue = config.get("attributeValue");
                 } else {
@@ -170,6 +176,20 @@ public class AttributeLinkDisplayerController extends TilesAction
                             attrValue = TypeUtil.getFieldValue(imo, attrName);
                         } else { //it's a bag!
                             attrValue = getIdList(bag, os, attrName);
+                            if (!taxId.equalsIgnoreCase("*")) {
+                            taxIds = getTaxIds (bag, os);
+
+                            //don't display link if 
+                            // a) not a bioentity (no reference to organism)
+                            if (taxIds == null) {
+                                continue;
+                            }
+                            // b) organism not present
+                            Integer taxIdInt = Integer.valueOf(taxId);
+                            if (!taxIds.contains(taxIdInt)) {
+                                continue; 
+                                }
+                            }
                         }
                         if (attrValue != null) {
                         config.put("attributeValue", attrValue);
@@ -214,6 +234,7 @@ public class AttributeLinkDisplayerController extends TilesAction
      * @see
      * @param bag the bag
      * @param os  the object store
+     * @param attrName the attribute name
      * @return the string of comma separated identifiers
      *    */
 
@@ -232,16 +253,14 @@ public class AttributeLinkDisplayerController extends TilesAction
         QueryField qf = new QueryField(queryClass, attrName);
         q.addToSelect(qf);
 
-        QueryField cf = new QueryField(queryClass, "id");
-
+        QueryField id = new QueryField(queryClass, "id");
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         //added because sometimes identifier is null, and StringUtil.join complains
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
 
-        BagConstraint bagC = new BagConstraint(cf, ConstraintOp.IN, bag.getOsb());
-        //q.setConstraint(bagC);
+        BagConstraint bagC = new BagConstraint(id, ConstraintOp.IN, bag.getOsb());
 
         cs.addConstraint(sc);
         cs.addConstraint(bagC);
@@ -253,4 +272,66 @@ public class AttributeLinkDisplayerController extends TilesAction
         return StringUtil.join(results, ",");
 }
 
+    /**
+     * @see
+     * @param bag the bag
+     * @param os  the object store
+     * @return a set of tax ids
+     * 
+     * Note: works with gene and protein QueryClass.
+     **/
+
+    public Set getTaxIds(InterMineBag bag, ObjectStore os) {
+        Results results;
+
+        Query q = new Query();
+        QueryClass queryClass;
+        try {
+            queryClass = new QueryClass(Class.forName(bag.getQualifiedType()));              
+
+            //check if you can query for organism
+            final Class qc = Class.forName(bag.getQualifiedType());
+            Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(qc);
+            ClassDescriptor cd = cds.iterator().next();
+
+            if (cd.getFieldDescriptorByName("organism") == null) {
+                return null;
+            }        
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("no type in the bag??! -> ", e);
+        }
+                
+        QueryClass organism = new QueryClass(Organism.class);
+
+        q.addFrom(queryClass);
+        q.addFrom(organism);
+        
+        QueryField qf = new QueryField(organism, "taxonId");
+        q.addToSelect(qf);
+
+        QueryField id = new QueryField(queryClass, "id");
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        //added because sometimes identifier is null
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
+
+        BagConstraint bagC = new BagConstraint(id, ConstraintOp.IN, bag.getOsb());
+      
+        QueryObjectReference r = new QueryObjectReference(queryClass, "organism");
+        ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, organism);
+
+        cs.addConstraint(sc);
+        cs.addConstraint(bagC);
+        cs.addConstraint(cc);
+
+        q.setConstraint(cs);
+
+        results = os.executeSingleton(q);
+        results.setBatchSize(10000);
+
+        return new HashSet(results);
+}
+
+    
 }
