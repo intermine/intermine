@@ -280,7 +280,10 @@ sub load_db
   log_and_print "\nrunning: @dropdb_command @params $db\n";
   warn "(ignore password prompt)\n";
 
-  spawn($pass, @dropdb_command, @params, $db);
+  eval {
+    # ignore failures
+    spawn($pass, @dropdb_command, @params, $db);
+  };
 
   log_and_print `date`, "\n\n";
   log_and_print "\nrunning: @createdb_command @params $db\n";
