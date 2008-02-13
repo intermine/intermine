@@ -39,7 +39,7 @@
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 
 
-<TABLE cellspacing=0>
+<TABLE cellspacing=20>
 <TR>
 
 
@@ -198,11 +198,7 @@
 
 <TD align="left" valign="top">
 
-<script type="text/javascript">
-    window.onload=function(){
-        Nifty("div#convertList","transparent");
-    }
-</script>
+
 <div id="convertList" class="pageDesc" align="left">
 <h3>Convert</h3>
 <tiles:insert name="convertBag.tile">
@@ -211,6 +207,9 @@
      <tiles:put name="orientation" value="h" />
 </tiles:insert>
 </div>
+<script type="text/javascript">
+        Nifty("div#convertList","transparent");
+</script>
 
     <tiles:insert page="/bagDisplayers.jsp">
       <tiles:put name="bag" beanName="bag"/>

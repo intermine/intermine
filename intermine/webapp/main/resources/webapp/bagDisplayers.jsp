@@ -14,13 +14,7 @@
 <c:forEach items="${bag.classDescriptors}" var="cld">
   <c:if test="${fn:length(WEBCONFIG.types[cld.name].bagDisplayers) > 0}">
 
-<script type="text/javascript">
-    window.onload=function(){
-        Nifty("div#pageDesc","transparent");
-    }
-</script>
-
-<div id="linkouts" class="pageDesc" align="left">
+<div id="linkOuts" class="pageDesc" align="left">
 <h3>Link outs</h3>
   
     <c:forEach items="${WEBCONFIG.types[cld.name].bagDisplayers}" var="displayer">
@@ -28,6 +22,11 @@
       <tiles:insert beanName="displayer" beanProperty="src"/><br/>
     </c:forEach>
 </div>
+<script type="text/javascript">
+        Nifty("div#linkOuts","transparent");
+</script>
+
+
   </c:if>
 </c:forEach>
 
