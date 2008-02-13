@@ -216,7 +216,7 @@
   </tr>
 
 
-  <tr><td rowspan="8"  class="leftcol">
+  <tr><td rowspan="7"  class="leftcol">
 
         <html:link action="/aspect?name=Gene%20Ontology">
          <p> <img src="model/images/geneOntology.png" /></p>
@@ -280,7 +280,8 @@
   <tr><td rowspan="4" class="leftcol">
         <html:link action="/aspect?name=Gene%20Expression">
         <p> <img src="model/images/marray.gif" /></p>
-        <p> Gene Expression</p></html:link></td>
+        <p> Gene Expression</p>
+         </html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Microarray-based gene expression data for the life cycle of <i>D. melanogaster</i></td>
     <td> <a href="http://www.ebi.ac.uk/arrayexpress/" target="_new"> ArrayExpress </a> - Experiment E-FLYC-6</td>
@@ -311,7 +312,6 @@
     <td> Koutsos et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 17563388" target="_new">PubMed: 17563388</a></td>
     <td> &nbsp;</td>
   </tr>
-
 
   <tr><td rowspan="4" class="leftcol">
        <html:link action="/aspect?name=Transcriptional%20Regulation">
