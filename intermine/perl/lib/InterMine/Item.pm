@@ -96,7 +96,7 @@ sub set
   if (!defined $field) {
     my @class_descs = $self->all_class_descriptors();
     my $classes = join ' ', map { $_->name() } @class_descs;
-    die "object ", $self->get('id'), " ($classes) cannot have a $name field\n";
+    die "object ", $self->to_string(), " doesn not have a field called: $name\n";
   }
 
   $self->{$name} = $value;

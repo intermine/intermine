@@ -3,8 +3,7 @@
 use strict;
 use warnings;
 
-
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 use XML::Writer;
 use InterMine::Model;
@@ -67,3 +66,10 @@ $sec2->set("name", "secretary 2");
 $emp3->add_to_collection('secretarys', $sec2);
 
 ok(@{$emp3->get('secretarys')} == 2);
+
+eval {
+  $emp3->set('no_such_field', 'some_value');
+  fail("shouldn't allow unknown fields to be set");
+};
+
+ok($@ =~ /CEO.* field called: no_such_field/)
