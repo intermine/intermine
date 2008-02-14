@@ -128,7 +128,7 @@
      <mkdir dir="${dist.www}/help/tutorial2"/>
 
      <exec executable="${common.scripts}/process_help.pl">
-       <arg value="${src.www}/help/tutorials/tutorial1/tutorial1-lists.txt"/>
+       <arg value="${src.www}/help/tutorials/tutorial1/tutorial1.txt"/>
        <arg value="FlyMine Tutorial 1: Creating and using lists"/>
        <arg value="${dist.www}/help/tutorial1/"/>
      </exec>
