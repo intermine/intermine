@@ -14,7 +14,7 @@ Release 11.0 of FlyMine includes an update of data from FlyBase, expression data
   <li>FIX - We now follow part-of relationships when computing transitive closure on the the Gene Ontology.  This means that queries that include parents/children of terms now follow part-of relationships as do the GO enrichment widgets.</li>
   <li>FIX - <i>D. melanogaster</i> UTRs and CDSs are now retrieved correctly from FlyBase</li>
   <li>FIX - Some minor changes have been made to the ProteinInteraction class - unused attributes have been removed, interacting regions is now filled in.</li>
-  <li>UPDATE - InterPro domains for each protein are now retrieved from UniPort with details of the domains taken from InterPro.  We now include domains for more organisms.</li>
+  <li>UPDATE - InterPro domains for each protein are now retrieved from UniProt with details of the domains taken from InterPro.  We now include domains for more organisms.</li>
   <li>UPDATE - As of October 2007, the <i>Drosophila</i> DNAse I footprint (FlyReg) database has fully merged with the REDfly database. The FlyReg website will no longer be updated. Therefore, FlyMine now loads the FlyReg transcription factor binding sites directly from the REDfly database.</li>
   <li>UPDATE - All REDfly identifiers have been updated.</li>
   <li>UPDATE - <i>C. elegans</i> RNAi phenotype data from WormBase have been remodeled. Every phenotype now has a flag for 'Observed': true/false. Some phenotypes show a penetrance range.</li>
@@ -27,7 +27,7 @@ Release 11.0 of FlyMine includes an update of data from FlyBase, expression data
 We have changed the way we present orthologue data from <a href="http://inparanoid.sbc.su.se/">InParanoid</a> to make it simpler and more obvious.  Orthologues and Paralogues now appear in a single Homologue class which has a type of 'orthologue' or 'inParalogue', we no longer use the terms 'main' and 'secondary'.  Please contact us if you have any problems with this.
 </p>
 <p>
-When viewing a list a genes on a list analysis page there is now an orthologue conversion section in the top right.  Select an organism to view a results page of orthologues in that organism to export or create a new list.
+When viewing a list of genes on a list analysis page there is now an orthologue conversion section in the top right.  Select an organism to view a results page of orthologues in that organism to export or create a new list.
 </p>
 
 <h3>Widgets</h3>
@@ -44,7 +44,7 @@ New widgets have been added to protein and genome feature list analysis pages.  
     </ul>
   </li>
   <li>NEW - Enrichment widget results can be filtered on maximum p-value.</li>
-  <li>FIX - clicking on bars of chromosome distibution widget now gives correct results with multi-organism lists.</li>
+  <li>FIX - clicking on bars of chromosome distribution widget now gives correct results with multi-organism lists.</li>
   <li>FIX - links on GO enrichment now give results for <i>A. gambiae</i> and <i>A. mellifera</i></li>
 </ul>
 </p>
@@ -86,7 +86,7 @@ Other data changes:
 </ul> 
 </p>
 <h3>List Conversion</h3>
-<p>The List analysis page has a new 'Convert' section for instant conversion between common types (genes, proteins, transcripts amd exons).  Counts of each type are displayed for a list - e.g. the numbers of proteins, transcripts and exons found for a list of genes.  Clicking on the type will bring up a results table from which you can export identifiers, sequence or create a new list.
+<p>The List analysis page has a new 'Convert' section for instant conversion between common types (genes, proteins, transcripts and exons).  Counts of each type are displayed for a list - e.g. the numbers of proteins, transcripts and exons found for a list of genes.  Clicking on the type will bring up a results table from which you can export identifiers, sequence or create a new list.
 </p>
 
 <h3>External links</h3>
@@ -137,7 +137,7 @@ Many data sources have been updated to the latest available versions.  See the <
   <li>FIX - first authors of publications are now set correctly.</li>
   <li>FIX - <i>D. melanogaster</i> Affymetrix probes no longer have genome locations - the locations were previously for an old genome assembly.</li>
   <li>FIX - <i>A. mellifera</i> genes and proteins are now linked together where possible, GO annotation is now attached to genes.</li>
-  <li>FIX - evidence for proteins from UniProt is correctly set to Swiss-Prot ot TrEmbl.</li>
+  <li>FIX - evidence for proteins from UniProt is correctly set to Swiss-Prot or TrEmbl.</li>
 </ul>
 </p>
 
@@ -171,7 +171,7 @@ In response to requests from other sites you can now link directly to FlyMine li
 
 <h3>Publication Enrichment</h3>
 <p>
-The publication widget on the gene list analysis page now shows statistical enrichment of related publications.  This is a great way to find the most relevent publications for a given gene list and may help you interpret the list.  Gene/publication relationships are loaded from <a href="http://www.ncbi.nlm.nih.gov/sites/entrez" target="_new">PubMed</a>.
+The publication widget on the gene list analysis page now shows statistical enrichment of related publications.  This is a great way to find the most relevant publications for a given gene list and may help you interpret the list.  Gene/publication relationships are loaded from <a href="http://www.ncbi.nlm.nih.gov/sites/entrez" target="_new">PubMed</a>.
 </p>
 
 <h3>Optional organism constraints</h3>
@@ -304,9 +304,9 @@ A new context sensitive help system has replaced the FlyMine manual.  On every p
       <li>
         User Interface<br />
         <ul>
-    <li>NEW - Column summaries in results tables.  Each column of a results table now has a summary icon, clicking this will bring up a box with more information about data in the column.  For numerical data it will show the minimum value, maximum value, mean and standard deviation.  For text it will display the number of unique values and the most commonly occuring values with their frequency.<br />
+    <li>NEW - Column summaries in results tables.  Each column of a results table now has a summary icon, clicking this will bring up a box with more information about data in the column.  For numerical data it will show the minimum value, maximum value, mean and standard deviation.  For text it will display the number of unique values and the most commonly occurring values with their frequency.<br />
 </li>
-    <li>NEW - Sorting query results.  The QueryBuilder allows you to select an element from the output to sort results by.  A sort button lets you choose ascending or descending order, for example to display results with the highest confience score or most recent publication first.<br />
+    <li>NEW - Sorting query results.  The QueryBuilder allows you to select an element from the output to sort results by.  A sort button lets you choose ascending or descending order, for example to display results with the highest confidence score or most recent publication first.<br />
 </li>
     <li>NEW - Results column titles.  Many template queries are now configured to have more descriptive column headings in results tables.  The full path can be seen by hovering the mouse pointer over the description.<br />
 </li>
@@ -316,7 +316,7 @@ A new context sensitive help system has replaced the FlyMine manual.  On every p
 </li>
     <li>UPDATE - The trail (e.g. Query -&gt; Results -&gt; Gene -&gt; Protein) is now more complete to allow easy navigation back to recently viewed queries, results, object details or bag pages.<br />
 </li>
-    <li>FIX - Performace has been improved when saving and viewing large bags of objects.<br />
+    <li>FIX - Performance has been improved when saving and viewing large bags of objects.<br />
 </li>
     <li>FIX - Renaming bags now works correctly. <br />
 </li>
@@ -546,11 +546,11 @@ NOTE - from release 6.0 FlyMine does not support saved bags of objects.  User's 
         <ul>
           <li>NEW: Genome annotation for <i>D. pseudoobscura</i> version 2.0 from FlyBase.<br />
 </li>
-          <li>NEW: Genome annotation for <i>A. Meillifera</i> release 2.0 from Ensembl version 37.<br />
+          <li>NEW: Genome annotation for <i>A. Mellifera</i> release 2.0 from Ensembl version 37.<br />
 </li>
           <li>NEW: InParanoid orthologues from <i>D. melanogaster, D. pseudoobscura, A. gambiae, C. elegans</i> and <i>A. mellifera</i> to many other organisms.<br />
 </li>
-          <li>NEW: GO annotation (accessible via orthologues) for <i>M. Musculus, R. Ratticus, S. cerevisiae</i> and <i>A. mellifera</i>.<br />
+          <li>NEW: GO annotation (accessible via orthologues) for <i>M. musculus, R. ratticus, S. cerevisiae</i> and <i>A. mellifera</i>.<br />
 </li>
           <li>NEW: Protein interaction and UniProt data for S. cerevisiae.<br />
 </li>
