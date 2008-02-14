@@ -1,5 +1,5 @@
 
-<h1 id="start">Tutorial 2: Using the query builder and building a template query.</h1>
+<h1 id="start">Tutorial 2: Using the QueryBuilder and building a template query.</h1>
 
       <p><i>This tutorial introduces the use of the QueryBuilder by
       altering a template query. It will then show you how to save
@@ -25,7 +25,7 @@
     results.  We will begin the tutorial with an overview of the
     QueryBuilder interface:</p>
 
-      <p>Building a query invloves three main steps:</p>
+      <p>Building a query involves three main steps:</p>
 
        <ul>
         <li><p>Browsing the model browser to find the classes of data you wish to query.</p></li>
@@ -108,7 +108,7 @@
       on the 4th chromosome of Drosophila melanogaster.</i></p>
 
       <p>Find the template 'Gene symbol --> Gene identifier'
-        and run the query for the default Drosophila gene.</p>
+        and run the query for the default <i>Drosophila</i> gene.</p>
 
        <p>Change the query so that it also gives you the FBgn
 number:</p>
