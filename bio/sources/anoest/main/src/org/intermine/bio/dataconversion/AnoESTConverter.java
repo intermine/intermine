@@ -102,9 +102,11 @@ public class AnoESTConverter extends BioDBConverter
     }
 
     /**
+     * Return the clusters from the AnoEST database.
      * This is a protected method so that it can be overriden for testing.
      * @param connection the AnoEST database connection
      * @throws SQLException if there is a problem while querying
+     * @return the clusters
      */
     protected ResultSet getClusterResultSet(Connection connection) throws SQLException {
         Statement stmt = connection.createStatement();
@@ -156,9 +158,11 @@ public class AnoESTConverter extends BioDBConverter
     }
 
     /**
+     * Return the ESTs from the AnoEST database.
      * This is a protected method so that it can be overriden for testing
      * @param connection the AnoEST database connection
      * @throws SQLException if there is a problem while querying
+     * @return the ESTs
      */
     protected ResultSet getEstResultSet(Connection connection) throws SQLException {
         Statement stmt = connection.createStatement();
