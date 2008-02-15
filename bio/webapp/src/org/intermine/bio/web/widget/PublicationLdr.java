@@ -42,9 +42,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
-
 /**
  * {@inheritDoc}
+ * @author Julie Sullivan
  */
 public class PublicationLdr implements EnrichmentWidgetLdr
 {

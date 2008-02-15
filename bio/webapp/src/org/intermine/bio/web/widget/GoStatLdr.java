@@ -48,6 +48,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * {@inheritDoc}
+ * @author Julie Sullivan
  */
 public class GoStatLdr implements EnrichmentWidgetLdr
 {

@@ -256,23 +256,17 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                         header.append(feature.getName());
                     }
                     if (feature.getChromosomeLocation() != null) {
-                        header.append(' ');
-                        header.append(feature.getChromosome().getIdentifier());
-                        header.append(':');
-                        header.append(feature.getChromosomeLocation().getStart());
-                        header.append('-');
-                        header.append(feature.getChromosomeLocation().getEnd());
-                        header.append(' ');
-                        header.append(feature.getLength());
+                        header.append(' ').append(feature.getChromosome().getIdentifier());
+                        header.append(':').append(feature.getChromosomeLocation().getStart());
+                        header.append('-').append(feature.getChromosomeLocation().getEnd());
+                        header.append(' ').append(feature.getLength());
                     }
                     try {
                         Gene gene = (Gene) TypeUtil.getFieldValue(feature, "gene");
                         if (gene != null) {
                             String geneIdentifier = gene.getIdentifier();
                             if (geneIdentifier != null) {
-                                header.append(' ');
-                                header.append("gene:");
-                                header.append(geneIdentifier);
+                                header.append(' ').append("gene:").append(geneIdentifier);
                             }
                         }
                     } catch (IllegalAccessException e) {

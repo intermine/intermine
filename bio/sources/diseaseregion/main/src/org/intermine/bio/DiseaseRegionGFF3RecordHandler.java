@@ -26,8 +26,6 @@ import org.intermine.util.XmlUtil;
 
 public class DiseaseRegionGFF3RecordHandler extends GFF3RecordHandler
 {
-
-
     /**
      * Create a new DiseaseRegionGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
@@ -37,10 +35,8 @@ public class DiseaseRegionGFF3RecordHandler extends GFF3RecordHandler
 
     }
 
-
-
     /**
-     * @see GFF3RecordHandler#process()
+     * {@inheritDoc}
      */
     public void process(GFF3Record record) {
         Item feature = getFeature();

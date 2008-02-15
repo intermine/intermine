@@ -91,7 +91,7 @@ public class UniprotConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#process(Reader)
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         boolean doProcess = true;

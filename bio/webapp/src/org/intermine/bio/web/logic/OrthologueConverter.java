@@ -25,7 +25,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
@@ -59,9 +58,8 @@ public class OrthologueConverter implements BagConverter
         super();
     }
 
-    /* (non-Javadoc)
-     * @see org.intermine.web.logic.bag.BagConverter#getConvertedObjects(
-     * javax.servlet.http.HttpSession, java.lang.String, java.util.List, java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public List<ResultsRow> getConvertedObjects (HttpSession session, String organism,
                                       List<Integer> fromList, String type)
@@ -117,9 +115,8 @@ public class OrthologueConverter implements BagConverter
         return results;
     }
 
-    /* (non-Javadoc)
-     * @see org.intermine.web.logic.bag.BagConverter#getConvertedObjects(
-     * javax.servlet.http.HttpSession, java.lang.String, java.util.List, java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public ActionMessage getActionMessage(Model model, String externalids, int convertedSize,
                                           String type, String organism)
@@ -145,7 +142,7 @@ public class OrthologueConverter implements BagConverter
         pathQuery.addNode("Gene.homologues").setType("Homologue");
 
         Constraint c2 = new Constraint(ConstraintOp.EQUALS, "orthologue", false,
-                                        label, code, id,null);
+                                        label, code, id, null);
         pathQuery.addNode("Gene.homologues.type").getConstraints().add(c2);
 
         pathQuery.addNode("Gene.homologues.homologue").setType("Gene");
@@ -160,11 +157,14 @@ public class OrthologueConverter implements BagConverter
         pathQuery.syncLogicExpression("and");
 
         String query = pathQuery.toXml();
-        String encodedurl = URLEncoder.encode(query,"UTF-8");
+        String encodedurl = URLEncoder.encode(query, "UTF-8");
         String[] values = new String[]
             {
-                String.valueOf(convertedSize), organism, String.valueOf(externalids.split(",").length),
-                type, encodedurl
+                String.valueOf(convertedSize),
+                organism,
+                String.valueOf(externalids.split(",").length),
+                type,
+                encodedurl
             };
         ActionMessage am = new ActionMessage("portal.orthologues", values);
         return am;

@@ -46,6 +46,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * {@inheritDoc}
+ * @author Julie Sullivan
  */
 public class UniProtKeywordsLdr implements EnrichmentWidgetLdr
 {

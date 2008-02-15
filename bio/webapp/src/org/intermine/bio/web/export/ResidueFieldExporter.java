@@ -201,7 +201,7 @@ public class ResidueFieldExporter implements FieldExporter
     /**
      * Find the IntermineObject that references the given Sequence.
      * @param os the ObjectStore
-     * @param className the InterMineObject class name
+     * @param clazz the class of the InterMineObject
      * @param sequence the Sequence
      * @return the IntermineObject
      */

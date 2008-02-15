@@ -22,7 +22,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
-import org.intermine.sql.precompute.PrecomputedTable;
 import org.intermine.task.CreateIndexesTask;
 import org.intermine.task.DynamicAttributeTask;
 import org.intermine.task.PrecomputeTask;

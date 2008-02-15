@@ -43,6 +43,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * {@inheritDoc}
+ * @author Julie Sullivan
  */
 public class UniProtFeaturesLdr implements EnrichmentWidgetLdr
 {

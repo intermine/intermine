@@ -12,15 +12,12 @@ package org.intermine.bio.dataconversion;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.intermine.objectstore.ObjectStoreException;
 
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.Organism;

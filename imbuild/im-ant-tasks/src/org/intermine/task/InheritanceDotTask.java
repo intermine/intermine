@@ -91,7 +91,7 @@ public class InheritanceDotTask extends Task
     }
 
     /**
-     * @see Task#execute
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         try {
