@@ -28,6 +28,7 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
  * {@inheritDoc}
+ * @author Julie Sullivan
  */
 public class GoStatURLQuery implements WidgetURLQuery
 {
