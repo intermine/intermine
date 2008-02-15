@@ -70,9 +70,15 @@ public class Profile
         this.username = username;
         this.userId = userId;
         this.password = password;
-        this.savedQueries.putAll(savedQueries);
-        this.savedBags.putAll(savedBags);
-        this.savedTemplates.putAll(savedTemplates);
+        if (savedQueries != null) {
+            this.savedQueries.putAll(savedQueries);
+        }
+        if (savedBags != null) {
+            this.savedBags.putAll(savedBags);
+        }
+        if (savedTemplates != null) {
+            this.savedTemplates.putAll(savedTemplates);
+        }
         reindex(TagTypes.TEMPLATE);
         reindex(TagTypes.BAG);
     }
