@@ -69,24 +69,24 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         for (Object rr: r) {
             FivePrimeUTR utr = (FivePrimeUTR) ((ResultsRow) rr).get(0);
             assertNotNull(utr.getChromosomeLocation());
-            if (utr.getIdentifier().equals("FBtr0112632-5-prime-utr")) {
+            if (utr.getPrimaryIdentifier().equals("FBtr0112632-5-prime-utr")) {
                 seenFBtr0112632 = true;
                 Location loc = utr.getChromosomeLocation();
                 assertEquals(10258903, loc.getStart().intValue());
                 assertEquals(10307410, loc.getEnd().intValue());
                 assertEquals("-1", loc.getStrand());
-                assertEquals("3R", loc.getObject().getIdentifier());
-                assertEquals("FBtr0112632", utr.getmRNA().getOrganismDbId());
+                assertEquals("3R", loc.getObject().getPrimaryIdentifier());
+                assertEquals("FBtr0112632", utr.getmRNA().getPrimaryIdentifier());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
-                if (utr.getIdentifier().equals("FBtr0100521-5-prime-utr")) {
+                if (utr.getPrimaryIdentifier().equals("FBtr0100521-5-prime-utr")) {
                     seenFBtr0100521 = true;
                     Location loc = utr.getChromosomeLocation();
                     assertEquals(18024494, loc.getStart().intValue());
                     assertEquals(18050424, loc.getEnd().intValue());
                     assertEquals("1", loc.getStrand());
-                    assertEquals("2R", loc.getObject().getIdentifier());
-                    assertEquals("FBtr0100521", utr.getmRNA().getOrganismDbId());
+                    assertEquals("2R", loc.getObject().getPrimaryIdentifier());
+                    assertEquals("FBtr0100521", utr.getmRNA().getPrimaryIdentifier());
                     assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
                 }
             }
@@ -113,22 +113,22 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         for (Object rr: r) {
             ThreePrimeUTR utr = (ThreePrimeUTR) ((ResultsRow) rr).get(0);
             assertNotNull(utr.getChromosomeLocation());
-            if (utr.getIdentifier().equals("FBtr0071764-3-prime-utr")) {
+            if (utr.getPrimaryIdentifier().equals("FBtr0071764-3-prime-utr")) {
                 seenFBtr0071764 = true;
                 Location loc = utr.getChromosomeLocation();
                 assertEquals(18060033, loc.getStart().intValue());
                 assertEquals(18060346, loc.getEnd().intValue());
-                assertEquals("2R", loc.getObject().getIdentifier());
-                assertEquals("FBtr0071764", utr.getmRNA().getOrganismDbId());
+                assertEquals("2R", loc.getObject().getPrimaryIdentifier());
+                assertEquals("FBtr0071764", utr.getmRNA().getPrimaryIdentifier());
                 assertEquals(36329, utr.getOrganism().getTaxonId().intValue());
             } else {
-                if (utr.getIdentifier().equals("FBtr0082533-3-prime-utr")) {
+                if (utr.getPrimaryIdentifier().equals("FBtr0082533-3-prime-utr")) {
                     seenFBtr0082533 = true;
                     Location loc = utr.getChromosomeLocation();
                     assertEquals(7594335, loc.getStart().intValue());
                     assertEquals(7595561, loc.getEnd().intValue());
-                    assertEquals("3R", loc.getObject().getIdentifier());
-                    assertEquals("FBtr0082533", utr.getmRNA().getOrganismDbId());
+                    assertEquals("3R", loc.getObject().getPrimaryIdentifier());
+                    assertEquals("FBtr0082533", utr.getmRNA().getPrimaryIdentifier());
                     assertEquals(36329, utr.getmRNA().getOrganism().getTaxonId().intValue());
                 }
             }
@@ -151,7 +151,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
         flt.setFastaTaxonId(new Integer(36329));
         flt.setIgnoreDuplicates(true);
         flt.setClassName(className);
-        flt.setClassAttribute("identifier");
+        flt.setClassAttribute("primaryIdentifier");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
 

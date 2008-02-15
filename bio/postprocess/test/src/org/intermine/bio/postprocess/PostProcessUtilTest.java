@@ -57,7 +57,7 @@ public class PostProcessUtilTest extends TestCase {
         Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setId(new Integer(104));
 
-        gene.setIdentifier("gene1");
+        gene.setPrimaryIdentifier("gene1");
         gene.setChromosome(chr);
         Set transcripts = new HashSet(Arrays.asList(new Object[] {tran1, tran2}));
         gene.setTranscripts(transcripts);
@@ -65,7 +65,7 @@ public class PostProcessUtilTest extends TestCase {
     }
 
     private void compareGenes(Gene gene, Gene copiedGene) {
-        Assert.assertEquals(gene.getIdentifier(), copiedGene.getIdentifier());
+        Assert.assertEquals(gene.getSecondaryIdentifier(), copiedGene.getSecondaryIdentifier());
         Assert.assertEquals(gene.getChromosome(), copiedGene.getChromosome());
         Assert.assertEquals(gene.getTranscripts(), copiedGene.getTranscripts());
     }

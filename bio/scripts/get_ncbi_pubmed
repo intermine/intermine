@@ -137,7 +137,7 @@ if(-e $outfile){
 	}
 	close(F) or die "$!";
 
-	##add the gene identifier or organismDbId used by flymine to the ncbi number gene object
+	##add the gene identifier or primaryIdentifier used by flymine to the ncbi number gene object
 	my (%IDdata,%DBdata);
 
 	print "Creating references between objects\n";
@@ -177,11 +177,11 @@ if(-e $outfile){
 					#print"$identifier\t$ncbigeneID\tInvalid ID\n";
 					delete $genes{$ncbigeneID};	
 				}
-			#use organismDbId where available, but ignore missing data	
+			#use primaryIdentifier where available, but ignore missing data	
 			}elsif($f[5] ne "-"){
 				chomp $f[5];
 				$dbID = $f[5];
-		    	#remove excess characters from the organismDbId
+		    	#remove excess characters from the primaryIdentifier
 				if($dbID=~ /^SGD:/){
 					$dbID=substr $dbID,4;
 	      		}elsif($dbID=~/^WormBase:/){
@@ -199,7 +199,7 @@ if(-e $outfile){
 					$genes{$ncbigeneID}{$dbID}=$dbID;
 					my $gene_item = $genes{$ncbigeneID}->{'object'};
 					my $org_item = $organism{$current_ID}->{'object'};
-					$gene_item->set('organismDbId', $dbID);
+					$gene_item->set('primaryIdentifier', $dbID);
 					$gene_item->set('organism', $org_item);
 				#some identifiers in gene_info are not in gene2pubmed and shouldn't be
 				#processed if found again

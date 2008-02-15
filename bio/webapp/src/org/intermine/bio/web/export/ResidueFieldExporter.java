@@ -114,7 +114,8 @@ public class ResidueFieldExporter implements FieldExporter
 
             Annotation annotation = bioSequence.getAnnotation();
 
-            annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE, bioEntity.getIdentifier());
+            annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
+                                   bioEntity.getPrimaryIdentifier());
 
             SeqIOTools.writeFasta(outputStream, bioSequence);
 

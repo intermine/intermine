@@ -6,7 +6,7 @@
   </queries>
   <template-queries>
     <template name="Probe_Gene" title="Affymetrix probe --&gt; Gene." longDescription="For a particular affymetrix probe (Drosophila genome 2.0 array) show the gene." comment="">
-      <query name="Probe_Gene" model="genomic" view="Gene.probeSets.identifier Gene.probeSets.isControl Gene.probeSets.evidence.title Gene.organismDbId Gene.symbol Gene.name Gene.length" sortOrder="Gene.probeSets.identifier asc" constraintLogic="A and B">
+      <query name="Probe_Gene" model="genomic" view="Gene.probeSets.identifier Gene.probeSets.isControl Gene.probeSets.evidence.title Gene.primaryIdentifier Gene.symbol Gene.name Gene.length" sortOrder="Gene.probeSets.identifier asc" constraintLogic="A and B">
         <pathDescription pathString="Gene.probeSets.evidence" description="Dataset">
         </pathDescription>
         <pathDescription pathString="Gene.probeSets.chromosomeLocation" description="Probe &gt; chromosome location">
@@ -34,7 +34,7 @@
       </query>
     </template>
     <template name="AllGene_Chromosome" title="All genes in organism --&gt; All chromosomal locations." longDescription="Show the chromosomal location and sequence for all genes from a particular organism." comment="">
-      <query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.identifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.organismDbId Gene.identifier Gene.symbol Gene.evidence.title" sortOrder="Gene.chromosome.identifier asc">
+      <query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.identifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.primaryIdentifier Gene.identifier Gene.symbol Gene.evidence.title" sortOrder="Gene.chromosome.identifier asc">
         <pathDescription pathString="Gene.chromosome" description="Chromosome">
         </pathDescription>
         <pathDescription pathString="Gene.chromosomeLocation" description="Chromosome location">
@@ -99,8 +99,8 @@
         </node>
       </query>
     </template>
-    <template name="GeneOrganism1_OrthologueOrganism2" title="All genes organism1 --&gt; Orthologues organism2." longDescription="Show the predicted orthologues between two organisms." comment="13/03/07 added organismDbId to each organism. Philip">
-      <query name="GeneOrganism1_OrthologueOrganism2" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.symbol Orthologue.gene.organismDbId Orthologue.type Orthologue.orthologue.identifier Orthologue.orthologue.symbol Orthologue.orthologue.organismDbId" sortOrder="Orthologue.gene.identifier asc" constraintLogic="A and B">
+    <template name="GeneOrganism1_OrthologueOrganism2" title="All genes organism1 --&gt; Orthologues organism2." longDescription="Show the predicted orthologues between two organisms." comment="13/03/07 added primaryIdentifier to each organism. Philip">
+      <query name="GeneOrganism1_OrthologueOrganism2" model="genomic" view="Orthologue.gene.identifier Orthologue.gene.symbol Orthologue.gene.primaryIdentifier Orthologue.type Orthologue.orthologue.identifier Orthologue.orthologue.symbol Orthologue.orthologue.primaryIdentifier" sortOrder="Orthologue.gene.identifier asc" constraintLogic="A and B">
         <pathDescription pathString="Orthologue.gene" description="Organism1 &gt; gene">
         </pathDescription>
         <pathDescription pathString="Orthologue.orthologue" description="Organism2 &gt; orthologue">
@@ -290,7 +290,7 @@
       </query>
     </template>
     <template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes, transcripts, exons." longDescription="Show the genes, transcripts and exons located between two points on a chromosome.  Give the location of the exons." comment="">
-      <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.organismDbId Chromosome.exons.gene.symbol Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand Chromosome.exons.evidence.title" sortOrder="Chromosome.identifier asc" constraintLogic="D and A and C and B">
+      <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand Chromosome.exons.evidence.title" sortOrder="Chromosome.identifier asc" constraintLogic="D and A and C and B">
         <pathDescription pathString="Chromosome.exons.evidence" description="Dataset">
         </pathDescription>
         <pathDescription pathString="Chromosome.exons.objects" description="Exon &gt; Chromosome location">
@@ -368,7 +368,7 @@
       </query>
     </template>
     <template name="ChromLocation_GeneTranscriptINDAC" title="Chromosomal location --&gt; Genes, transcripts, INDAC long oligos." longDescription="Show the genes, transcripts and INDAC oligos located in a particular chromosome location." comment="">
-      <query name="ChromLocation_GeneTranscriptINDAC" model="genomic" view="Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.organismDbId Gene.identifier Gene.symbol Gene.transcripts.identifier Gene.transcripts.microarrayOligos.identifier Gene.transcripts.microarrayOligos.sequence.residues" sortOrder="Gene.chromosome.identifier asc" constraintLogic="A and C and B">
+      <query name="ChromLocation_GeneTranscriptINDAC" model="genomic" view="Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.primaryIdentifier Gene.identifier Gene.symbol Gene.transcripts.identifier Gene.transcripts.microarrayOligos.identifier Gene.transcripts.microarrayOligos.sequence.residues" sortOrder="Gene.chromosome.identifier asc" constraintLogic="A and C and B">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.chromosome" type="Chromosome">
@@ -748,7 +748,7 @@
       </query>
     </template>
     <template name="Chromosome_Gene" title="Chromosome --&gt; All genes." longDescription="Show genes located on a particular chromosome." comment="">
-      <query name="Chromosome_Gene" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand Gene.evidence.title" sortOrder="Gene.identifier asc" constraintLogic="A and B">
+      <query name="Chromosome_Gene" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand Gene.evidence.title" sortOrder="Gene.identifier asc" constraintLogic="A and B">
         <pathDescription pathString="Gene.chromosome" description="Chromosome">
         </pathDescription>
         <node path="Gene" type="Gene">
@@ -1038,7 +1038,7 @@
       </query>
     </template>
     <template name="DrosDel_GeneLocation" title="DrosDel deletion [D. melanogaster] --&gt; Genes +  chromosomal location of DrosDel deletion and genes." longDescription="For a specific DrosDel deletion, report chromosome, deletion identifier and coordinates together with identifiers and coordinates of overlapping genes." comment="">
-      <query name="DrosDel_GeneLocation" model="genomic" view="Deletion.chromosome.identifier Deletion.identifier Deletion.chromosomeLocation.start Deletion.chromosomeLocation.end Deletion.overlappingFeatures.organismDbId Deletion.overlappingFeatures.symbol Deletion.overlappingFeatures.chromosomeLocation.strand Deletion.overlappingFeatures.chromosomeLocation.start Deletion.overlappingFeatures.chromosomeLocation.end" sortOrder="Deletion.chromosome.identifier asc">
+      <query name="DrosDel_GeneLocation" model="genomic" view="Deletion.chromosome.identifier Deletion.identifier Deletion.chromosomeLocation.start Deletion.chromosomeLocation.end Deletion.overlappingFeatures.primaryIdentifier Deletion.overlappingFeatures.symbol Deletion.overlappingFeatures.chromosomeLocation.strand Deletion.overlappingFeatures.chromosomeLocation.start Deletion.overlappingFeatures.chromosomeLocation.end" sortOrder="Deletion.chromosome.identifier asc">
         <node path="Deletion" type="Deletion">
         </node>
         <node path="Deletion.identifier" type="String">
@@ -1506,7 +1506,7 @@
       </query>
     </template>
     <template name="Gene_chromosomeLocation" title="Gene --&gt; Chromosome location" longDescription="For a particular gene show its chromsomal location." comment="">
-      <query name="Gene_chromosomeLocation" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand" sortOrder="Gene.identifier asc">
+      <query name="Gene_chromosomeLocation" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand" sortOrder="Gene.identifier asc">
         <node path="Gene" type="Gene">
           <constraint op="LOOKUP" value="zen" description="" identifier="" editable="true" code="A" extraValue="D. melanogaster">
           </constraint>
@@ -1597,8 +1597,8 @@
         </node>
       </query>
     </template>
-    <template name="Gene_OrthologueGO" title="Gene --&gt; Orthologues + GO terms of these orthologues." longDescription="Show GO terms applied to orthologues of a specific gene." comment="13/03/07 added orthologue organismDbId. Philip 070607 updated to work with gene class Philip">
-      <query name="Gene_OrthologueGO" model="genomic" view="Gene.identifier Gene.symbol Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.organismDbId Gene.orthologues.type Gene.orthologues.orthologue.organism.shortName Gene.orthologues.evidence.title Gene.orthologues.orthologue.goAnnotation.name Gene.orthologues.orthologue.goAnnotation.identifier Gene.orthologues.orthologue.goAnnotation.qualifier" sortOrder="Gene.identifier asc">
+    <template name="Gene_OrthologueGO" title="Gene --&gt; Orthologues + GO terms of these orthologues." longDescription="Show GO terms applied to orthologues of a specific gene." comment="13/03/07 added orthologue primaryIdentifier. Philip 070607 updated to work with gene class Philip">
+      <query name="Gene_OrthologueGO" model="genomic" view="Gene.identifier Gene.symbol Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.primaryIdentifier Gene.orthologues.type Gene.orthologues.orthologue.organism.shortName Gene.orthologues.evidence.title Gene.orthologues.orthologue.goAnnotation.name Gene.orthologues.orthologue.goAnnotation.identifier Gene.orthologues.orthologue.goAnnotation.qualifier" sortOrder="Gene.identifier asc">
         <pathDescription pathString="Gene.orthologues.orthologue.goAnnotation.evidence" description="GO Dataset">
         </pathDescription>
         <pathDescription pathString="Gene.orthologues" description="Orthologue">
@@ -1629,8 +1629,8 @@
         </node>
       </query>
     </template>
-    <template name="Gene_OrthologueOrganism" title="Gene --&gt; Orthologues in one specific organism." longDescription="For a particular gene, show predicted orthologues in one particular organism.  Note: both the main orthologue and  secondary orthologues may be shown." comment="Orthologues-&gt;subject-&gt;identifier removed for workshop (as dpse identifiers missing so made it confusing) (Rachel);  07.02.07: updated to run from gene identifier - Rachel. 13/03/07 added orthologue organismDbId. Philip 070607 updated to work from gene class - Philip">
-      <query name="Gene_OrthologueOrganism" model="genomic" view="Gene.identifier Gene.symbol Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.organismDbId Gene.orthologues.orthologue.name Gene.orthologues.type" sortOrder="Gene.identifier asc" constraintLogic="D and A">
+    <template name="Gene_OrthologueOrganism" title="Gene --&gt; Orthologues in one specific organism." longDescription="For a particular gene, show predicted orthologues in one particular organism.  Note: both the main orthologue and  secondary orthologues may be shown." comment="Orthologues-&gt;subject-&gt;identifier removed for workshop (as dpse identifiers missing so made it confusing) (Rachel);  07.02.07: updated to run from gene identifier - Rachel. 13/03/07 added orthologue primaryIdentifier. Philip 070607 updated to work from gene class - Philip">
+      <query name="Gene_OrthologueOrganism" model="genomic" view="Gene.identifier Gene.symbol Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.primaryIdentifier Gene.orthologues.orthologue.name Gene.orthologues.type" sortOrder="Gene.identifier asc" constraintLogic="D and A">
         <pathDescription pathString="Gene.organism" description="Organism">
         </pathDescription>
         <pathDescription pathString="Gene.orthologues.orthologue" description="Orthologue">
@@ -1691,8 +1691,8 @@
         </node>
       </query>
     </template>
-    <template name="Gene_Orthologue" title="Gene --&gt; Orthologues." longDescription="Show predicted orthologues for a particular gene." comment="07:02:07:Updated to work from gene identifier - Rachel. 13/03/07 added orthologue organismDbId. Philip">
-      <query name="Gene_Orthologue" model="genomic" view="Gene.identifier Gene.symbol Gene.orthologues.type Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.organismDbId Gene.orthologues.orthologue.organism.name Gene.orthologues.evidence.title" sortOrder="Gene.identifier asc">
+    <template name="Gene_Orthologue" title="Gene --&gt; Orthologues." longDescription="Show predicted orthologues for a particular gene." comment="07:02:07:Updated to work from gene identifier - Rachel. 13/03/07 added orthologue primaryIdentifier. Philip">
+      <query name="Gene_Orthologue" model="genomic" view="Gene.identifier Gene.symbol Gene.orthologues.type Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.primaryIdentifier Gene.orthologues.orthologue.organism.name Gene.orthologues.evidence.title" sortOrder="Gene.identifier asc">
         <pathDescription pathString="Gene.orthologues" description="Orthologue">
         </pathDescription>
         <pathDescription pathString="Gene.orthologues.orthologue" description="Orthologue">
@@ -3128,7 +3128,7 @@
       </query>
     </template>
     <template name="GO_name_Gene" title="GO term name/id --&gt; Genes in one specific organism." longDescription="Search for genes in one specific organism that have been asociated with a particular GO annotation. Only genes that are associated with this actual GO term will be returned. Genes which have this term as a parent of their actual GO term will not be returned. " comment="">
-      <query name="GO_name_Gene" model="genomic" view="Gene.identifier Gene.organismDbId Gene.goAnnotation.name Gene.goAnnotation.qualifier" sortOrder="Gene.identifier asc" constraintLogic="A and B">
+      <query name="GO_name_Gene" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.goAnnotation.name Gene.goAnnotation.qualifier" sortOrder="Gene.identifier asc" constraintLogic="A and B">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.organism" type="Organism">
@@ -3146,7 +3146,7 @@
       </query>
     </template>
     <template name="allGO_GeneOrganism" title="GO term name/id [and children of this term] --&gt; Genes in one specific organism." longDescription="Find all genes that are associated with a particular GO term in a specific organism. This template will return genes that have been assigned the given GO term as well as genes that have a more specific GO term." comment="">
-      <query name="allGO_GeneOrganism" model="genomic" view="Gene.identifier Gene.organismDbId Gene.allGoAnnotation.identifier Gene.allGoAnnotation.name Gene.allGoAnnotation.actualGoTerms.identifier Gene.allGoAnnotation.actualGoTerms.name" sortOrder="Gene.identifier asc" constraintLogic="A and B">
+      <query name="allGO_GeneOrganism" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.allGoAnnotation.identifier Gene.allGoAnnotation.name Gene.allGoAnnotation.actualGoTerms.identifier Gene.allGoAnnotation.actualGoTerms.name" sortOrder="Gene.identifier asc" constraintLogic="A and B">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.organism" type="Organism">
@@ -3570,7 +3570,7 @@
       </query>
     </template>
     <template name="OrganismGoterm_genesDrosDelDeletion" title="Organism + GO term name --&gt; Genes + DrosDel deletion" longDescription="Show all genes from a particular organism that have been annotated with a particular Go term(s) and the DrosDel deletions which would delete these genes.  Show whether the deletion is available." comment="">
-      <query name="OrganismGoterm_genesDrosDelDeletion" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.identifier Gene.overlappingFeatures.available Gene.overlappingFeatures.evidence.title" sortOrder="Gene.identifier asc" constraintLogic="A and B">
+      <query name="OrganismGoterm_genesDrosDelDeletion" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.identifier Gene.overlappingFeatures.available Gene.overlappingFeatures.evidence.title" sortOrder="Gene.identifier asc" constraintLogic="A and B">
         <pathDescription pathString="Gene.goAnnotation" description="Go annotation">
         </pathDescription>
         <pathDescription pathString="Gene.overlappingFeatures" description="DrosDel deletion">
@@ -3598,7 +3598,7 @@
       </query>
     </template>
     <template name="OrganismGoterm_genesPointMutations" title="Organism + GO term name --&gt; Genes + point mutations" longDescription="Show all genes from a particular organism that have been annotated with a particular Go term(s) and the point mutations which overlap these genes." comment="">
-      <query name="OrganismGoterm_genesPointMutations" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.identifier Gene.overlappingFeatures.evidence.title" sortOrder="Gene.identifier asc" constraintLogic="A and B">
+      <query name="OrganismGoterm_genesPointMutations" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.identifier Gene.overlappingFeatures.evidence.title" sortOrder="Gene.identifier asc" constraintLogic="A and B">
         <pathDescription pathString="Gene.goAnnotation" description="Go annotation">
         </pathDescription>
         <pathDescription pathString="Gene.overlappingFeatures" description="Point mutation">
@@ -3626,7 +3626,7 @@
       </query>
     </template>
     <template name="OrganismGOterm_GenesTEinsertionsite" title="Organism + GO term name --&gt; genes + transposable element insertion site" longDescription="Show all genes from a particular organism that have been annotated with a particular Go term(s) and the transposable element insertion sites which overlap these genes." comment="">
-      <query name="OrganismGOterm_GenesTEinsertionsite" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.symbol Gene.overlappingFeatures.evidence.title" sortOrder="Gene.identifier asc" constraintLogic="A and B">
+      <query name="OrganismGOterm_GenesTEinsertionsite" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.symbol Gene.overlappingFeatures.evidence.title" sortOrder="Gene.identifier asc" constraintLogic="A and B">
         <pathDescription pathString="Gene.goAnnotation" description="Go annotation">
         </pathDescription>
         <pathDescription pathString="Gene.overlappingFeatures" description="Transposable element insertion site">
@@ -3702,7 +3702,7 @@
       </query>
     </template>
     <template name="Organism_GeneLocation" title="Organism --&gt; All genes that have a chromosomal location." longDescription="For a particular organism show all genes that have a chromosomal location." comment="">
-      <query name="Organism_GeneLocation" model="genomic" view="Gene.identifier Gene.symbol Gene.organismDbId Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand" sortOrder="Gene.identifier asc">
+      <query name="Organism_GeneLocation" model="genomic" view="Gene.identifier Gene.symbol Gene.primaryIdentifier Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand" sortOrder="Gene.identifier asc">
         <pathDescription pathString="Gene.chromosome" description="Chromosome">
         </pathDescription>
         <pathDescription pathString="Gene.chromosomeLocation" description="Chromosome location">
@@ -3748,7 +3748,7 @@
       </query>
     </template>
     <template name="Organism_Gene" title="Organism --&gt; All genes." longDescription="Show all the genes for a particular organism." comment="">
-      <query name="Organism_Gene" model="genomic" view="Gene.identifier Gene.symbol Gene.organismDbId" sortOrder="Gene.identifier asc">
+      <query name="Organism_Gene" model="genomic" view="Gene.identifier Gene.symbol Gene.primaryIdentifier" sortOrder="Gene.identifier asc">
         <pathDescription pathString="Gene.evidence" description="Dataset">
         </pathDescription>
         <node path="Gene" type="Gene">
@@ -4072,7 +4072,7 @@
       </query>
     </template>
     <template name="Protein_Gene" title="Protein --&gt; Gene." longDescription="For a particular protein show the identifiers and symbol of the corresponding gene." comment="07:02:07:Updated to work from protein primary accession- Rachel. 06.06.07 updated to work using the protein class - Philip">
-      <query name="Protein_Gene" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.name Protein.genes.identifier Protein.genes.symbol Protein.genes.organismDbId" sortOrder="Protein.identifier asc">
+      <query name="Protein_Gene" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.name Protein.genes.identifier Protein.genes.symbol Protein.genes.primaryIdentifier" sortOrder="Protein.identifier asc">
         <node path="Protein" type="Protein">
           <constraint op="LOOKUP" value="P32234" description="Protein:" identifier="Protein.class" editable="true" code="A">
           </constraint>
@@ -4338,7 +4338,7 @@
       </query>
     </template>
     <template name="DRSCScreen_ScreenHit" title="Published RNAi Screen [D. melanogaster] --&gt; RNAi screen results." longDescription="Show all results from a specific published DRSC screen." comment="">
-      <query name="DRSCScreen_ScreenHit" model="genomic" view="RNAiScreenHit.analysis.publication.pubMedId RNAiScreenHit.analysis.name RNAiScreenHit.gene.organismDbId RNAiScreenHit.amplicon.identifier RNAiScreenHit.result" sortOrder="RNAiScreenHit.analysis.publication.pubMedId asc">
+      <query name="DRSCScreen_ScreenHit" model="genomic" view="RNAiScreenHit.analysis.publication.pubMedId RNAiScreenHit.analysis.name RNAiScreenHit.gene.primaryIdentifier RNAiScreenHit.amplicon.identifier RNAiScreenHit.result" sortOrder="RNAiScreenHit.analysis.publication.pubMedId asc">
         <node path="RNAiScreenHit" type="RNAiScreenHit">
         </node>
         <node path="RNAiScreenHit.analysis" type="RNAiScreen">
@@ -4382,7 +4382,7 @@
       </query>
     </template>
     <template name="Stage_FlyFish" title="Stage [D. melanogaster] -&gt; FlyFish data." longDescription="Show all genes that are expressed or not-expressed at a specific embryonic stage according to the FlyFish data." comment="">
-      <query name="Stage_FlyFish" model="genomic" view="MRNALocalisationResult.stage MRNALocalisationResult.gene.identifier MRNALocalisationResult.gene.organismDbId MRNALocalisationResult.expressed" sortOrder="MRNALocalisationResult.stage asc" constraintLogic="A and B">
+      <query name="Stage_FlyFish" model="genomic" view="MRNALocalisationResult.stage MRNALocalisationResult.gene.identifier MRNALocalisationResult.gene.primaryIdentifier MRNALocalisationResult.expressed" sortOrder="MRNALocalisationResult.stage asc" constraintLogic="A and B">
         <node path="MRNALocalisationResult" type="MRNALocalisationResult">
         </node>
         <node path="MRNALocalisationResult.expressed" type="Boolean">

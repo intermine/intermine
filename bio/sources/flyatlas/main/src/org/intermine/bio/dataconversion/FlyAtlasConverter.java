@@ -102,7 +102,7 @@ public class FlyAtlasConverter extends FileConverter
 
     private Item createProbe(String probeId) {
         Item probe = createItem("ProbeSet");
-        probe.setAttribute("identifier", probeId);
+        probe.setAttribute("primaryIdentifier", probeId);
         probe.setReference("organism", org.getIdentifier());
         return probe;
     }

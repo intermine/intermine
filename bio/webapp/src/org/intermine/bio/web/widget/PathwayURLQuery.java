@@ -58,7 +58,7 @@ public class PathwayURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Gene.identifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
+        view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
         view.add(MainHelper.makePath(model, q, "Gene.name"));
         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
         view.add(MainHelper.makePath(model, q, "Gene.pathways.identifier"));

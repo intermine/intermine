@@ -10,8 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.intermine.dataconversion.ItemWriter;
@@ -20,11 +24,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * DataConverter to read from AnoEST's MySQL database into items
@@ -35,9 +34,9 @@ public class AnoESTConverter extends BioDBConverter
     private static final int ANOPHELES_TAXON_ID = 180454;
     private static final String DATASET_TITLE = "AnoEST clusters";
     private static final String DATA_SOURCE_NAME = "VectorBase";
-    private Map<String, Item> clusters = new HashMap<String, Item>();
-    private Map<String, Item> ests = new HashMap<String, Item>();
-    private Map<String, String> cloneIds = new HashMap<String, String>();
+    private Map<String, Item> clusters = new LinkedHashMap<String, Item>();
+    private Map<String, Item> ests = new LinkedHashMap<String, Item>();
+    private Map<String, String> cloneIds = new LinkedHashMap<String, String>();
 
     /**
      * Create a new AnoESTConverter object.
@@ -79,7 +78,7 @@ public class AnoESTConverter extends BioDBConverter
             int strand = res.getInt(5);
 
             Item cluster = createItem("ESTCluster");
-            cluster.setAttribute("identifier", identifier);
+            cluster.setAttribute("primaryIdentifier", identifier);
             Item dataSet = getDataSetItem(DATASET_TITLE);
             cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
@@ -131,7 +130,9 @@ public class AnoESTConverter extends BioDBConverter
             if (est == null) {
                 est = createItem("EST");
                 ests.put(accession, est);
-                est.setAttribute("identifier", accession);
+                est.setAttribute("primaryIdentifier", accession);
+
+                System.err.println("accession: " + accession);
 
                 est.setAttribute("curated", "false");
                 est.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));

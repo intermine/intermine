@@ -16,7 +16,7 @@
     <attribute name="title" value="Homophila data set"/>
   </item>
   <item id="4_1" class="http://www.flymine.org/model/genomic#Protein">
-    <attribute name="identifier" value="NP_000005"/>
+    <attribute name="primaryIdentifier" value="NP_000005"/>
     <reference name="organism" ref_id="0_1"/>
     <collection name="genes">
       <reference ref_id="5_1"/>
@@ -26,7 +26,7 @@
     <attribute name="taxonId" value="7227"/>
   </item>
   <item id="8_1" class="http://www.flymine.org/model/genomic#Translation">
-    <attribute name="identifier" value="CG7052-PA"/>
+    <attribute name="primaryIdentifier" value="CG7052-PA"/>
     <reference name="organism" ref_id="0_2"/>
     <collection name="evidence">
       <reference ref_id="1_1"/>

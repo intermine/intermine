@@ -71,16 +71,16 @@ public class SynonymUpdaterTest extends TestCase {
         osw.beginTransaction();
         Protein storedProtein1 =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
-        storedProtein1.setIdentifier("Protein1");
+        storedProtein1.setPrimaryIdentifier("Protein1");
         storedProtein1.setName("Protein name");
         osw.store(storedProtein1);
         Protein storedProtein2 =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
-        storedProtein2.setIdentifier("Protein2");
+        storedProtein2.setPrimaryIdentifier("Protein2");
         osw.store(storedProtein2);
         Protein storedProtein3 =
             (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
-        storedProtein3.setIdentifier("Protein3");
+        storedProtein3.setPrimaryIdentifier("Protein3");
         storedProtein3.setName("Protein name 3");
         osw.store(storedProtein3);
 
@@ -126,7 +126,7 @@ public class SynonymUpdaterTest extends TestCase {
 
         SynonymUpdater synonymUpdater = new SynonymUpdater() {
             protected InputStream getClassKeysInputStream() {
-                return new StringInputStream("Protein = name, identifier\n");
+                return new StringInputStream("Protein = name, primaryIdentifier\n");
             }
 
         };
@@ -148,7 +148,7 @@ public class SynonymUpdaterTest extends TestCase {
             Synonym synonym = (Synonym) row.get(0);
             if (synonym.getValue().equals("Protein1")) {
                 assertTrue(synonym.getIsPrimary().booleanValue());
-                assertEquals(synonym.getSubject().getIdentifier(), "Protein1");
+                assertEquals(synonym.getSubject().getPrimaryIdentifier(), "Protein1");
             } else {
                 if (synonym.getValue().equals("Protein name")) {
                     assertTrue(synonym.getIsPrimary().booleanValue());

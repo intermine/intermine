@@ -44,7 +44,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
             return chrMap.get(chromosomeId);
         } else {
             Chromosome chr = (Chromosome) getDirectDataLoader().createObject(Chromosome.class);
-            chr.setIdentifier(chromosomeId);
+            chr.setPrimaryIdentifier(chromosomeId);
             chr.setOrganism(organism);
             getDirectDataLoader().store(chr);
             chrMap.put(chromosomeId, chr);

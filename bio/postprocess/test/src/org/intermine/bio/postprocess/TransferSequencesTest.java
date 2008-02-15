@@ -317,7 +317,7 @@ public class TransferSequencesTest extends TestCase
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         storedChromosome.setLength(new Integer(4000));
         storedChromosome.setId(new Integer(101));
-        storedChromosome.setIdentifier("store_chromosome");
+        storedChromosome.setPrimaryIdentifier("store_chromosome");
 
         storedSupercontig =
             (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
@@ -336,7 +336,7 @@ public class TransferSequencesTest extends TestCase
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         storedContigs[0] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        storedContigs[0].setIdentifier("contig0");
+        storedContigs[0].setPrimaryIdentifier("contig0");
         storedContigs[0].setId(new Integer(300));
         storedContigs[0].setLength(new Integer(1000));
         String contigResidues0 =
@@ -366,7 +366,7 @@ public class TransferSequencesTest extends TestCase
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         storedContigs[1] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        storedContigs[1].setIdentifier("contig1");
+        storedContigs[1].setPrimaryIdentifier("contig1");
         storedContigs[1].setId(new Integer(301));
         storedContigs[1].setLength(new Integer(1500));
         String contigResidues1 =
@@ -404,7 +404,7 @@ public class TransferSequencesTest extends TestCase
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         storedContigs[2] =
             (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        storedContigs[2].setIdentifier("contig2");
+        storedContigs[2].setPrimaryIdentifier("contig2");
         storedContigs[2].setId(new Integer(302));
         storedContigs[2].setLength(new Integer(1000));
         String contigResidues2 =
@@ -434,7 +434,7 @@ public class TransferSequencesTest extends TestCase
         for (int i = 0 ; i < storedTranscripts.length ; i++) {
             storedTranscripts[i] =
                 (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-            storedTranscripts[i].setIdentifier("transcript_" + i);
+            storedTranscripts[i].setPrimaryIdentifier("transcript_" + i);
         }
 
         Sequence transcriptSequence =
@@ -446,7 +446,7 @@ public class TransferSequencesTest extends TestCase
         storedExons = new Exon [8];
         for (int i = 0 ; i < storedExons.length ; i++) {
             storedExons[i] = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-            storedExons[i].setIdentifier("exon_" + i);
+            storedExons[i].setPrimaryIdentifier("exon_" + i);
         }
 
 
@@ -485,7 +485,7 @@ public class TransferSequencesTest extends TestCase
         for (int i = 0 ; i < storedRepeatRegions.length ; i++) {
             storedRepeatRegions[i] =
                 (RepeatRegion) DynamicUtil.createObject(Collections.singleton(RepeatRegion.class));
-            storedRepeatRegions[i].setIdentifier("repeat_region_" + i);
+            storedRepeatRegions[i].setPrimaryIdentifier("repeat_region_" + i);
         }
 
         toStore.add(createLocation(storedContigs[0], storedExons[0], "1",   173,  259));

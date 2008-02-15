@@ -213,7 +213,7 @@ public abstract class OverlapUtil
             }
             LOG.info("Stored " + count + " overlaps for " + results.size()
                     + " features on feature id " + subject.getId() + ", identifier: "
-                     + subject.getIdentifier());
+                     + subject.getSecondaryIdentifier());
             Integer summaryCount = (Integer) summary.get("total");
             if (summaryCount == null) {
                 summaryCount = new Integer(0);

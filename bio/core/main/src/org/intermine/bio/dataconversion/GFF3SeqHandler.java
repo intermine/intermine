@@ -28,7 +28,7 @@ public class GFF3SeqHandler
      */
     public Item makeSequenceItem(GFF3Converter converter, String identifier) {
         Item seq = createItem(converter);
-        seq.setAttribute("identifier", identifier);
+        seq.setAttribute("primaryIdentifier", identifier);
         return seq;
     }
 

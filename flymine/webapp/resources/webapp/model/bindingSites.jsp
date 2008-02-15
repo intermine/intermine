@@ -64,7 +64,7 @@
 
           <li>
             <im:querylink text="REDfly <i>cis</i>-regulatory modules " skipBuilder="true">
-              <query name="" model="genomic" view="CRM.identifier CRM.length CRM.elementEvidence CRM.gene.organismDbId CRM.gene.identifier" sortOrder="CRM.identifier asc" constraintLogic="A and B">
+              <query name="" model="genomic" view="CRM.identifier CRM.length CRM.elementEvidence CRM.gene.primaryIdentifier CRM.gene.identifier" sortOrder="CRM.identifier asc" constraintLogic="A and B">
   <node path="CRM" type="CRM">
   </node>
   <node path="CRM.organism" type="Organism">

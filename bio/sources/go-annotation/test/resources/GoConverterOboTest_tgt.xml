@@ -22,7 +22,7 @@
     <reference name="subject" ref_id="5_2"/>
   </item>
   <item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="organismDbId" value="FBgn0020002"/>
+    <attribute name="primaryIdentifier" value="FBgn0020002"/>
     <reference name="organism" ref_id="4_1"/>
     <collection name="allGoAnnotation">
       <reference ref_id="7_5"/>
@@ -35,7 +35,7 @@
     </collection>
   </item>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="organismDbId" value="FBgn0015567"/>
+    <attribute name="primaryIdentifier" value="FBgn0015567"/>
     <reference name="organism" ref_id="4_1"/>
     <collection name="allGoAnnotation">
       <reference ref_id="7_1"/>

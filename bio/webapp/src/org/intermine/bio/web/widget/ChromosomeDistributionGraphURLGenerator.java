@@ -82,9 +82,10 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         String bagType = bag.getType();
 
         Path identifier = MainHelper.makePath(model, q, bagType + ".identifier");
-        Path organismDbId = MainHelper.makePath(model, q, bagType + ".organismDbId");
+        Path primaryIdentifier = MainHelper.makePath(model, q, bagType + ".primaryIdentifier");
         Path name = MainHelper.makePath(model, q, bagType + ".organism.name");
-        Path chromoIdentifier = MainHelper.makePath(model, q, bagType + ".chromosome.identifier");
+        Path chromoIdentifier = MainHelper.makePath(model, q, bagType
+                                                    + ".chromosome.primaryIdentifier");
         Path start = MainHelper.makePath(model, q, bagType + ".chromosomeLocation.start");
         Path end = MainHelper.makePath(model, q, bagType + ".chromosomeLocation.end");
         Path strand = MainHelper.makePath(model, q, bagType + ".chromosomeLocation.strand");
@@ -92,7 +93,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         List<Path> view = new ArrayList<Path>();
 
         view.add(identifier);
-        view.add(organismDbId);
+        view.add(primaryIdentifier);
         view.add(name);
         view.add(chromoIdentifier);
         view.add(start);
@@ -111,7 +112,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         //  constrain to be specific chromosome
         constraintOp = ConstraintOp.EQUALS;
         code = q.getUnusedConstraintCode();
-        PathNode chromosomeNode = q.addNode(bagType + ".chromosome.identifier");
+        PathNode chromosomeNode = q.addNode(bagType + ".chromosome.primaryIdentifier");
         Constraint chromosomeConstraint
                         = new Constraint(constraintOp, series, false, label, code, id, null);
         chromosomeNode.getConstraints().add(chromosomeConstraint);
@@ -134,7 +135,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         List<OrderBy>  sortOrder = new ArrayList<OrderBy>();
         sortOrder.add(new OrderBy(start, "asc"));
         sortOrder.add(new OrderBy(identifier, "asc"));
-        sortOrder.add(new OrderBy(organismDbId, "asc"));
+        sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
         sortOrder.add(new OrderBy(name, "asc"));
         sortOrder.add(new OrderBy(chromoIdentifier, "asc"));
         sortOrder.add(new OrderBy(end, "asc"));

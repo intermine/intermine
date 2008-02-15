@@ -94,7 +94,7 @@ public class CalculateLocationsTest extends TestCase {
     private void createOverlapTestData() throws Exception {
         Chromosome chr =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        chr.setIdentifier("X");
+        chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(1000));
         chr.setId(new Integer(101));
 
@@ -3067,7 +3067,7 @@ Iterator chrBandExonIter = results.iterator();
     private Chromosome getChromosome() {
         if (chromosome == null) {
             chromosome = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-            chromosome.setIdentifier("X");
+            chromosome.setPrimaryIdentifier("X");
             chromosome.setLength(new Integer(10000));
             chromosome.setId(new Integer(101));
         }

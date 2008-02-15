@@ -66,8 +66,8 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
 
         for (Object rr: r) {
             Protein protein = (Protein) ((ResultsRow) rr).get(0);
-            assertNotNull(protein.getIdentifier());
-            actMap.put(protein.getIdentifier(), protein.getSequence().getResidues());
+            assertNotNull(protein.getPrimaryIdentifier());
+            actMap.put(protein.getPrimaryIdentifier(), protein.getSequence().getResidues());
         }
 
         Map<String, String> expMap = new HashMap<String, String>();
@@ -111,7 +111,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         flt.setFastaTaxonId(new Integer(36329));
         flt.setIgnoreDuplicates(true);
         flt.setClassName(className);
-        flt.setClassAttribute("identifier");
+        flt.setClassAttribute("primaryIdentifier");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
         flt.setSequenceType("protein");

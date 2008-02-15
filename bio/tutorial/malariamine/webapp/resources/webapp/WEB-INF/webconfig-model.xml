@@ -91,7 +91,7 @@
   <class className="org.flymine.model.genomic.Gene">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="organismDbId"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="wildTypeFunction" showInSummary="true"
                    showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
@@ -182,7 +182,7 @@
   <class className="org.flymine.model.genomic.Translation">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="organismDbId"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
     </fields>
   </class>

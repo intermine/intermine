@@ -68,24 +68,24 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         for (Object rr: r) {
             CDS cds = (CDS) ((ResultsRow) rr).get(0);
             assertNotNull(cds.getChromosomeLocation());
-            if (cds.getIdentifier().equals("CG4027-PB_CDS")) {
+            if (cds.getPrimaryIdentifier().equals("CG4027-PB_CDS")) {
                 seenCG4027PB = true;
                 Location loc = cds.getChromosomeLocation();
                 assertEquals(5796731, loc.getStart().intValue());
                 assertEquals(5797861, loc.getEnd().intValue());
                 assertEquals("1", loc.getStrand());
-                assertEquals("X", loc.getObject().getIdentifier());
-                assertEquals("FBtr0070823", cds.getmRNA().getOrganismDbId());
+                assertEquals("X", loc.getObject().getPrimaryIdentifier());
+                assertEquals("FBtr0070823", cds.getmRNA().getPrimaryIdentifier());
                 assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
             } else {
-                if (cds.getIdentifier().equals("CG6844-PB_CDS")) {
+                if (cds.getPrimaryIdentifier().equals("CG6844-PB_CDS")) {
                     seenCG6844PB = true;
                     Location loc = cds.getChromosomeLocation();
                     assertEquals(20311671, loc.getStart().intValue());
                     assertEquals(20316734, loc.getEnd().intValue());
                     assertEquals("1", loc.getStrand());
-                    assertEquals("3R", loc.getObject().getIdentifier());
-                    assertEquals("FBtr0084640", cds.getmRNA().getOrganismDbId());
+                    assertEquals("3R", loc.getObject().getPrimaryIdentifier());
+                    assertEquals("FBtr0084640", cds.getmRNA().getPrimaryIdentifier());
                     assertEquals(36329, cds.getOrganism().getTaxonId().intValue());
                 }
             }
@@ -108,7 +108,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         flt.setFastaTaxonId(new Integer(36329));
         flt.setIgnoreDuplicates(true);
         flt.setClassName(className);
-        flt.setClassAttribute("identifier");
+        flt.setClassAttribute("primaryIdentifier");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
 

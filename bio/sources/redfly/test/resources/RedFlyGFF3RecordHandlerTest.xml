@@ -2,8 +2,8 @@
   <item id="1_1" class="http://www.flymine.org/model/genomic#CRM">
     <attribute name="curated" value="true"/>
     <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
-    <attribute name="identifier" value="prd_A8_repressor"/>
-    <attribute name="organismDbId" value="391"/>
+    <attribute name="secondaryIdentifier" value="prd_A8_repressor"/>
+    <attribute name="primaryIdentifier" value="391"/>
     <reference name="gene" ref_id="1_5"/>
     <collection name="anatomyOntology">
       <reference ref_id="1_2"/><reference ref_id="1_3"/><reference ref_id="1_4"/>
@@ -19,7 +19,7 @@
     <attribute name="identifier" value="FBbt:00005414"/>
   </item>
   <item id="1_5" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="organismDbId" value="FBgn0003145"/>
+    <attribute name="primaryIdentifier" value="FBgn0003145"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="1_6" class="http://www.flymine.org/model/genomic#Publication">
@@ -28,8 +28,8 @@
   <item id="1_7" class="http://www.flymine.org/model/genomic#CRM">
     <attribute name="curated" value="true"/>
     <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
-    <attribute name="identifier" value="prd_P1_enhancer"/>
-    <attribute name="organismDbId" value="392"/>
+    <attribute name="secondaryIdentifier" value="prd_P1_enhancer"/>
+    <attribute name="primaryIdentifier" value="392"/>
     <reference name="gene" ref_id="1_5"/>
     <collection name="anatomyOntology">
       <reference ref_id="1_2"/><reference ref_id="1_8"/>
@@ -41,8 +41,8 @@
   <item id="1_9" class="http://www.flymine.org/model/genomic#CRM">
     <attribute name="curated" value="true"/>
     <attribute name="elementEvidence" value="reporter construct (in vivo)"/>
-    <attribute name="identifier" value="Scr_BSR"/>
-    <attribute name="organismDbId" value="576"/>
+    <attribute name="secondaryIdentifier" value="Scr_BSR"/>
+    <attribute name="primaryIdentifier" value="576"/>
     <reference name="gene" ref_id="1_11"/>
     <collection name="anatomyOntology"><reference ref_id="1_10"/></collection>
   </item>
@@ -50,7 +50,7 @@
     <attribute name="identifier" value="FBbt:00000090"/>
   </item>
   <item id="1_11" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="organismDbId" value="FBgn0003339"/>
+    <attribute name="primaryIdentifier" value="FBgn0003339"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="1_12" class="http://www.flymine.org/model/genomic#Publication">

@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -163,11 +164,11 @@ public class FlyRNAiScreenConverter extends FileConverter
                                                + line + " (should be " + headerLength);
                 }
 
-                Set<Item> genes = new HashSet<Item>();
+                Set<Item> genes = new LinkedHashSet<Item>();
 
                 String ampliconIdentifier = line[0].trim();
                 Item amplicon = createItem("Amplicon");
-                amplicon.setAttribute("identifier", ampliconIdentifier);
+                amplicon.setAttribute("primaryIdentifier", ampliconIdentifier);
                 amplicon.setReference("organism", organism);
                 amplicon.addToCollection("evidence", dataSet);
                 store(amplicon);

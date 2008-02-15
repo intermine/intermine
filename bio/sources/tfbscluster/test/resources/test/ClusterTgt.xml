@@ -98,7 +98,7 @@
 <attribute name="abbreviation" value="CF"/>
 </item>
 <item id="1_4" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="organismDbId" value="ENSG00000171735"/>
+<attribute name="primaryIdentifier" value="ENSG00000171735"/>
 </item>
 <item id="1_5" class="http://www.flymine.org/model/genomic#DistanceRelation">
 <attribute name="distance" value="1460"/>
@@ -108,7 +108,7 @@
 </item>
 
 <item id="1_6" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="organismDbId" value="ENSG00000049245"/>
+<attribute name="primaryIdentifier" value="ENSG00000049245"/>
 </item>
 
 <item id="1_7" class="http://www.flymine.org/model/genomic#DistanceRelation">
@@ -122,7 +122,7 @@
 <attribute name="residues" value="GATATGGGAACGGAA"/>
 </item>
 <item id="1_9" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="organismDbId" value="ENSG00000171621"/>
+<attribute name="primaryIdentifier" value="ENSG00000171621"/>
 </item>
 <item id="1_10" class="http://www.flymine.org/model/genomic#DistanceRelation">
 <attribute name="distance" value="0"/>

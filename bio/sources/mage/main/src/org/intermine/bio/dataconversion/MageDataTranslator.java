@@ -749,7 +749,7 @@ public class MageDataTranslator extends DataTranslator
                             material = (Item) cloneMap.get(cloneId);
                             if (material == null) {
                                 material = createItem(tgtNs + "CDNAClone", "");
-                                material.setAttribute("identifier", cloneId);
+                                material.setAttribute("primaryIdentifier", cloneId);
                                 cloneMap.put(cloneId, material);
                                 clones.put(material.getIdentifier(), material);
                             }
@@ -1442,7 +1442,7 @@ public class MageDataTranslator extends DataTranslator
                             if (typeMap.containsKey(materialIdType)) {
                                 Item clone = (Item) clones.get(materialId);
                                 if (clone != null) {
-                                    clone.setAttribute("identifier",
+                                    clone.setAttribute("primaryIdentifier",
                                           (String) typeMap.get(materialIdType));
                                 }
                             }

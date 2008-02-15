@@ -51,7 +51,7 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setFastaTaxonId(new Integer(36329));
         flt.setIgnoreDuplicates(true);
         flt.setClassName("org.flymine.model.genomic.Gene");
-        flt.setClassAttribute("organismDbId");
+        flt.setClassAttribute("primaryIdentifier");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
 

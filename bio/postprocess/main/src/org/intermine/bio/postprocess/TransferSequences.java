@@ -121,7 +121,7 @@ public class TransferSequences
                 if (currentChr != null) {
                     currentChrBases.close();
                     LOG.info("finished writing temp file for Chromosome: "
-                             + currentChr.getIdentifier());
+                             + currentChr.getSecondaryIdentifier());
                 }
 
                 File tempFile = getTempFile(chr);
@@ -140,7 +140,7 @@ public class TransferSequences
         } else {
             currentChrBases.close();
             storeTempSequences(chromosomeTempFiles);
-            LOG.info("finished writing temp file for Chromosome: " + currentChr.getIdentifier());
+            LOG.info("finished writing temp file for Chromosome: " + currentChr.getSecondaryIdentifier());
         }
 
         LOG.info("Finished transferring sequences to chromosomes - took "
@@ -148,7 +148,7 @@ public class TransferSequences
     }
 
     private File getTempFile(Chromosome chr) throws IOException {
-        String prefix = "transfer_sequences_temp_" + chr.getId() + "_" + chr.getIdentifier();
+        String prefix = "transfer_sequences_temp_" + chr.getId() + "_" + chr.getSecondaryIdentifier();
         return File.createTempFile(prefix, null, new File ("/tmp/"));
     }
 
@@ -193,7 +193,7 @@ public class TransferSequences
             BufferedReader bufferedReader = new BufferedReader(reader);
             String sequenceString = bufferedReader.readLine();
             osw.beginTransaction();
-            LOG.info("Storing sequence for chromosome: " + chr.getIdentifier());
+            LOG.info("Storing sequence for chromosome: " + chr.getSecondaryIdentifier());
             storeNewSequence(chr, sequenceString);
             osw.commitTransaction();
         }
@@ -318,7 +318,7 @@ public class TransferSequences
             Sequence chromosomeSequence = chr.getSequence();
 
             if (chromosomeSequence == null) {
-                LOG.warn("no sequence found for: " + chr.getIdentifier() + "  id: " + chr.getId());
+                LOG.warn("no sequence found for: " + chr.getSecondaryIdentifier() + "  id: " + chr.getId());
                 continue;
             }
 

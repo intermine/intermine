@@ -20,8 +20,8 @@
     <reference name="subject" ref_id="3_1"/>
   </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="AGAP000035"/>
-    <attribute name="organismDbId" value="ENSANGG00000027829"/>
+    <attribute name="secondaryIdentifier" value="ENSANGG00000027829"/>
+    <attribute name="primaryIdentifier" value="AGAP000035"/>
     <reference name="organism" ref_id="2_1"/>
     <collection name="evidence">
       <reference ref_id="1_1"/>
@@ -31,8 +31,8 @@
     <attribute name="name" value="VectorBase"/>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="AGAP000034"/>
-    <attribute name="organismDbId" value="ENSANGG00000014848"/>
+    <attribute name="secondaryIdentifier" value="ENSANGG00000014848"/>
+    <attribute name="primaryIdentifier" value="AGAP000034"/>
     <reference name="organism" ref_id="2_1"/>
     <collection name="evidence">
       <reference ref_id="1_1"/>

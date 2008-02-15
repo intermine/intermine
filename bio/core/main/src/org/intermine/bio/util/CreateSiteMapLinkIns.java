@@ -101,21 +101,21 @@ public class CreateSiteMapLinkIns
     private static Iterator getResults(ObjectStore os, String whichQuery, String taxonId) {
         String query = null;
         if (whichQuery.equals("gene")) {
-            query = "SELECT DISTINCT a1_.identifier as a3_ "
+            query = "SELECT DISTINCT a1_.primaryIdentifier as a3_ "
                 + "FROM org.flymine.model.genomic.Gene AS a1_, "
                 + "org.flymine.model.genomic.Organism AS a2_ WHERE "
                 + "a2_.taxonId = " + taxonId + " "
                 + "AND a1_.organism CONTAINS a2_ "
-                + "AND a1_.identifier != \'\') "
-                + "ORDER BY a1_.identifier\n";
+                + "AND a1_.primaryIdentifier != \'\') "
+                + "ORDER BY a1_.primaryIdentifier\n";
        } else {
-            query  = "SELECT DISTINCT a1_.identifier as a3_ "
+            query  = "SELECT DISTINCT a1_.primaryIdentifier as a3_ "
                 + "FROM org.flymine.model.genomic.Protein AS a1_, "
                 + "org.flymine.model.genomic.Organism AS a2_ WHERE "
                 + "a2_.taxonId = " + taxonId + " "
                 + "AND a1_.organism CONTAINS a2_ "
-                + "AND a1_.identifier != \'\') "
-                + "ORDER BY a1_.identifier\n";
+                + "AND a1_.primaryIdentifier != \'\') "
+                + "ORDER BY a1_.primaryIdentifier\n";
         }
         IqlQuery q = new IqlQuery(query, os.getModel().getPackageName());
         Results r = os.execute(q.toQuery());

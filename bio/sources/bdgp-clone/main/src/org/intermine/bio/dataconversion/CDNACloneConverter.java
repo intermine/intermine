@@ -61,7 +61,7 @@ public abstract class CDNACloneConverter extends FileConverter
      */
     protected Item createBioEntity(String clsName, String id, String orgId) {
         Item bioEntity = createItem(clsName);
-        bioEntity.setAttribute("identifier", id);
+        bioEntity.setAttribute("primaryIdentifier", id);
         bioEntity.setReference("organism", orgId);
         return bioEntity;
     }

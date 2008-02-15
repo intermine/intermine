@@ -75,7 +75,7 @@ public class AnophelesIdentifiersConverter extends FileConverter
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
 
         // data is in format:
-        // organismDbId | identifier | symbol
+        // primaryIdentifier | identifier | symbol
         String clsName;
         String fileName = getCurrentFile().getPath();
         if (fileName.contains("Genes")) {
@@ -101,24 +101,24 @@ public class AnophelesIdentifiersConverter extends FileConverter
                 throw new RuntimeException("Line does not have enough elements: "
                                            + Arrays.asList(line));
             }
-            String identifier = line[0];
+            String primaryIdentifier = line[0];
 
             List<String> ensIds = new ArrayList<String>(Arrays.asList(line[1].split(" ")));
-            String organismDbId = ensIds.get(0);
+            String secondaryIdentifier = ensIds.get(0);
             ensIds.remove(0);
 
             Item feature = createItem(clsName);
             List synonyms = new ArrayList();
 
-            if (organismDbId != null && !organismDbId.equals("")
-                && !seenEnsIds.contains(organismDbId)) {
-                feature.setAttribute("organismDbId", organismDbId);
-                synonyms.add(createSynonym(feature, "identifier", organismDbId));
-                seenEnsIds.add(organismDbId);
+            if (secondaryIdentifier != null && !secondaryIdentifier.equals("")
+                && !seenEnsIds.contains(secondaryIdentifier)) {
+                feature.setAttribute("secondaryIdentifier", secondaryIdentifier);
+                synonyms.add(createSynonym(feature, "identifier", secondaryIdentifier));
+                seenEnsIds.add(secondaryIdentifier);
             }
-            if (identifier != null && !identifier.equals("")) {
-                feature.setAttribute("identifier", identifier);
-                synonyms.add(createSynonym(feature, "identifier", identifier));
+            if (primaryIdentifier != null && !primaryIdentifier.equals("")) {
+                feature.setAttribute("primaryIdentifier", primaryIdentifier);
+                synonyms.add(createSynonym(feature, "identifier", primaryIdentifier));
             }
 
             // create addidtional synonyms for other ensembl ids

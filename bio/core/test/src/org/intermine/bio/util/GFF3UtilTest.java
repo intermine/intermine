@@ -37,7 +37,7 @@ public class GFF3UtilTest extends TestCase
 
         gene.setChromosome(chromosome);
         gene.setChromosomeLocation(geneLocation);
-        gene.setIdentifier("gene1");
+        gene.setPrimaryIdentifier("gene1");
 
         geneLocation.setStart(new Integer(100));
         geneLocation.setEnd(new Integer(800));
@@ -45,13 +45,13 @@ public class GFF3UtilTest extends TestCase
 
         exon.setChromosome(chromosome);
         exon.setChromosomeLocation(exonLocation);
-        exon.setIdentifier("exon1");
+        exon.setPrimaryIdentifier("exon1");
 
         exonLocation.setStart(new Integer(200));
         exonLocation.setEnd(new Integer(300));
         exonLocation.setStrand("-1");
 
-        chromosome.setIdentifier("4");
+        chromosome.setPrimaryIdentifier("4");
         chromosome.setLength(new Integer(1000));
 
         Map<String, List<String>> extraAttributes = new LinkedHashMap<String, List<String>>();

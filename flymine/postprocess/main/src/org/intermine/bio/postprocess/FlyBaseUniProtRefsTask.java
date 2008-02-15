@@ -154,7 +154,7 @@ public class FlyBaseUniProtRefsTask extends Task
             cdsQuery.addFrom(cdsQc);
             cdsQuery.addToSelect(cdsQc);
 
-            BagConstraint cdsBc = new BagConstraint(new QueryField(cdsQc, "identifier"),
+            BagConstraint cdsBc = new BagConstraint(new QueryField(cdsQc, "primaryIdentifier"),
                                                     ConstraintOp.IN,
                                                     linkMap.keySet());
 
@@ -166,7 +166,7 @@ public class FlyBaseUniProtRefsTask extends Task
             while (cdsIter.hasNext()) {
                 ResultsRow row = (ResultsRow) cdsIter.next();
                 CDS cds = (CDS) row.get(0);
-                String cdsId = cds.getIdentifier();
+                String cdsId = cds.getPrimaryIdentifier();
 
                 if (linkMap.get(cdsId) == null) {
                     throw new RuntimeException("internal error: identifier missing from map");

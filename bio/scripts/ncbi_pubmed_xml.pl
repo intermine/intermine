@@ -73,7 +73,7 @@ while(<F>){
 }	
 close(F) or die "$!";
 
-##add the gene identifier or organismDbId used by flymine to the ncbi number gene object
+##add the gene identifier or primaryIdentifier used by flymine to the ncbi number gene object
 my (%IDdata,%DBdata);
 
 #open /shared/data/pubmed/gene_info
@@ -109,7 +109,7 @@ while(<F>){
 				print"$identifier\t$ncbigeneID\tInvalid ID\n";
 				delete $genes{$ncbigeneID};	
 			}
-		#use organismDbId where available	
+		#use primaryIdentifier where available	
 		}elsif($f[5] ne "-"){
 			chomp $f[5];
 			$dbID = $f[5];
@@ -129,7 +129,7 @@ while(<F>){
 				print "$dbID\t$ncbigeneID\tValid id\n";
 				$genes{$ncbigeneID}{$dbID}=$dbID;
 				my $gene_item = $genes{$ncbigeneID}->{'object'};
-				$gene_item->set('organismDbId', $dbID);
+				$gene_item->set('primaryIdentifier', $dbID);
 			}else{
 				print"$dbID\t$ncbigeneID\tInvalid ID\n";
 				delete $genes{$ncbigeneID};

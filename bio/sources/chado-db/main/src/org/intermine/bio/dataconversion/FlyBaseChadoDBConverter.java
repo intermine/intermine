@@ -117,11 +117,13 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                config.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
 
+
                // dbxref table configuration example: for features of class "Gene", where the
-               // db.name is "FlyBase Annotation IDs" and "is_current" is true, set the "identifier"
-               // attribute of the new Gene to be this dbxref and then make a Synonym object
+               // db.name is "FlyBase Annotation IDs" and "is_current" is true, set the
+               // "secondaryIdentifier" attribute of the new Gene to be this dbxref and then make a
+               // Synonym object
                config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.TRUE),
-                          Arrays.asList(new SetFieldConfigAction("identifier"),
+                          Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                         CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("dbxref", "Gene", "FlyBase Annotation IDs", Boolean.FALSE),
                           Arrays.asList(CREATE_SYNONYM_ACTION));
@@ -130,7 +132,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                           Arrays.asList(CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("dbxref", "MRNA", "FlyBase Annotation IDs", Boolean.TRUE),
-                          Arrays.asList(new SetFieldConfigAction("identifier"),
+                          Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                         CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("synonym", "ChromosomalDeletion", "fullname", Boolean.TRUE),
@@ -175,15 +177,15 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
 
                config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
                                        "name"),
-                                       Arrays.asList(new SetFieldConfigAction("symbol"),
-                                                     new SetFieldConfigAction("identifier"),
-                                                     CREATE_SYNONYM_ACTION));
+                          Arrays.asList(new SetFieldConfigAction("symbol"),
+                                        new SetFieldConfigAction("secondaryIdentifier"),
+                                        CREATE_SYNONYM_ACTION));
                config.put(new MultiKey("feature", "TransposableElementInsertionSite", "FlyBase",
                                        "uniquename"),
-               Arrays.asList(new SetFieldConfigAction("organismDbId")));
+                          Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
 
                config.put(new MultiKey("feature", "Gene", "FlyBase", "uniquename"),
-                          Arrays.asList(new SetFieldConfigAction("organismDbId")));
+                          Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
                config.put(new MultiKey("feature", "Gene", "FlyBase", "name"),
                           Arrays.asList(DO_NOTHING_ACTION));
 
@@ -193,11 +195,11 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                                         CREATE_SYNONYM_ACTION));
 
                config.put(new MultiKey("feature", "MRNA", "FlyBase", "uniquename"),
-                          Arrays.asList(new SetFieldConfigAction("organismDbId")));
+                          Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
 
                config.put(new MultiKey("feature", "PointMutation", "FlyBase", "uniquename"),
                           Arrays.asList(new SetFieldConfigAction("name"),
-                                        new SetFieldConfigAction("identifier"),
+                                        new SetFieldConfigAction("primaryIdentifier"),
                                         CREATE_SYNONYM_ACTION));
                // name isn't set in flybase:
                config.put(new MultiKey("feature", "PointMutation", "FlyBase", "name"),
@@ -206,21 +208,21 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                if (getTaxonIdInt() == 7227) {
                    config.put(new MultiKey("dbxref", "Translation", "FlyBase Annotation IDs",
                                            Boolean.TRUE),
-                              Arrays.asList(new SetFieldConfigAction("identifier"),
+                              Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                             CREATE_SYNONYM_ACTION));
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
                               Arrays.asList(new SetFieldConfigAction("symbol"),
                                             CREATE_SYNONYM_ACTION));
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "uniquename"),
-                              Arrays.asList(new SetFieldConfigAction("organismDbId")));
+                              Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
                } else {
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "uniquename"),
-                              Arrays.asList(new SetFieldConfigAction("organismDbId")));
+                              Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
                    config.put(new MultiKey("feature", "Translation", "FlyBase", "name"),
                               Arrays.asList(new SetFieldConfigAction("symbol"),
                                             CREATE_SYNONYM_ACTION));
                    config.put(new MultiKey("dbxref", "Translation", "GB_protein", null),
-                              Arrays.asList(new SetFieldConfigAction("identifier"),
+                              Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                             CREATE_SYNONYM_ACTION));
                }
            }
@@ -367,8 +369,8 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
     }
 
     /**
-     * For objects that don't have identifier == null, set the identifier to be the name column from
-     * chado.
+     * For objects that don't have identifier == null, set the identifier to be the uniquename
+     * column from chado.
      * {@inheritDoc}
      */
     @Override
@@ -376,7 +378,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
         throws ObjectStoreException {
         for (FeatureData featureData: features.values()) {
             if ((featureData.flags & FeatureData.IDENTIFIER_SET) == 0) {
-                setAttribute(featureData.getIntermineObjectId(), "identifier",
+                setAttribute(featureData.getIntermineObjectId(), "primaryIdentifier",
                              featureData.getChadoFeatureUniqueName());
             }
         }

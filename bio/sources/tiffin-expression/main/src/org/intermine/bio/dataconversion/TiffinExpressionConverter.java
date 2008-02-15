@@ -81,7 +81,7 @@ public class TiffinExpressionConverter extends FileConverter
             if (motifNameMatcher.matches()) {
                 String currentMotifIdentifier = motifNameMatcher.group(1);
                 currentMotif = createItem("Motif");
-                currentMotif.setAttribute("identifier", currentMotifIdentifier);
+                currentMotif.setAttribute("primaryIdentifier", currentMotifIdentifier);
                 store(currentMotif);
             } else {
                 Matcher expressionMatcher = EXPRESSION_PATTERN.matcher(line);

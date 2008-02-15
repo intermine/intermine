@@ -48,8 +48,8 @@ public class WormBaseChadoDBConverter extends ChadoDBConverter
        if (config == null) {
            config = new MultiKeyMap();
            config.put(new MultiKey("feature", "Gene", "WormBase", "uniquename"),
-                      Arrays.asList(new SetFieldConfigAction("organismDbId"),
-                                    new SetFieldConfigAction("identifier"),
+                      Arrays.asList(new SetFieldConfigAction("primaryIdentifier"),
+                                    new SetFieldConfigAction("secondaryIdentifier"),
                                     CREATE_SYNONYM_ACTION));
        }
 

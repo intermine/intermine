@@ -127,13 +127,13 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 return null;
             }
             Annotation annotation = bioSequence.getAnnotation();
-            String identifier = bioEntity.getIdentifier();
+            String identifier = bioEntity.getPrimaryIdentifier();
             if (identifier == null) {
                 identifier = bioEntity.getName();
                 if (identifier == null) {
                     if (bioEntity instanceof Gene) {
                         Gene gene = ((Gene) bioEntity);
-                        identifier = gene.getOrganismDbId();
+                        identifier = gene.getPrimaryIdentifier();
                         if (identifier == null) {
                             try {
                                 identifier = (String) TypeUtil.getFieldValue(gene, "accession");
@@ -240,14 +240,14 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 if (object instanceof LocatedSequenceFeature) {
                     LocatedSequenceFeature feature = (LocatedSequenceFeature) object;
                     bioSequence = BioSequenceFactory.make(feature);
-                    if (feature.getIdentifier() == null) {
+                    if (feature.getPrimaryIdentifier() == null) {
                         if (feature instanceof Gene) {
-                            header.append(((Gene) feature).getOrganismDbId());
+                            header.append(((Gene) feature).getPrimaryIdentifier());
                         } else {
                             header.append("[unknown_identifier]");
                         }
                     } else {
-                        header.append(feature.getIdentifier());
+                        header.append(feature.getPrimaryIdentifier());
                     }
                     header.append(' ');
                     if (feature.getName() == null) {
@@ -256,7 +256,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                         header.append(feature.getName());
                     }
                     if (feature.getChromosomeLocation() != null) {
-                        header.append(' ').append(feature.getChromosome().getIdentifier());
+                        header.append(' ').append(feature.getChromosome().getPrimaryIdentifier());
                         header.append(':').append(feature.getChromosomeLocation().getStart());
                         header.append('-').append(feature.getChromosomeLocation().getEnd());
                         header.append(' ').append(feature.getLength());
@@ -264,7 +264,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     try {
                         Gene gene = (Gene) TypeUtil.getFieldValue(feature, "gene");
                         if (gene != null) {
-                            String geneIdentifier = gene.getIdentifier();
+                            String geneIdentifier = gene.getPrimaryIdentifier();
                             if (geneIdentifier != null) {
                                 header.append(' ').append("gene:").append(geneIdentifier);
                             }
@@ -275,7 +275,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 } else if (object instanceof Protein) {
                     Protein protein = (Protein) object;
                     bioSequence = BioSequenceFactory.make(protein);
-                    header.append(protein.getIdentifier());
+                    header.append(protein.getPrimaryIdentifier());
                     header.append(' ');
                     if (protein.getName() == null) {
                         header.append("[unknown_name]");
@@ -285,7 +285,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     Iterator iter = protein.getGenes().iterator();
                     while (iter.hasNext()) {
                         Gene gene = (Gene) iter.next();
-                        String geneIdentifier = gene.getIdentifier();
+                        String geneIdentifier = gene.getPrimaryIdentifier();
                         if (geneIdentifier != null) {
                             header.append(' ');
                             header.append("gene:");
@@ -300,7 +300,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                     if (cld.getReferenceDescriptorByName("sequence", true) != null) {
                         Translation translation = (Translation) object;
                         bioSequence = BioSequenceFactory.make(translation);
-                        header.append(translation.getIdentifier());
+                        header.append(translation.getPrimaryIdentifier());
                         header.append(' ');
                         if (translation.getName() == null) {
                             header.append("[unknown_name]");
@@ -309,7 +309,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                         }
                         if (translation.getGene() != null) {
                             Gene gene = translation.getGene();
-                            String geneIdentifier = gene.getIdentifier();
+                            String geneIdentifier = gene.getPrimaryIdentifier();
                             if (geneIdentifier != null) {
                                 header.append(' ');
                                 header.append("gene:");
@@ -337,7 +337,7 @@ public class SequenceExporter extends InterMineAction implements TableExporter
                 } else {
                     if (object instanceof BioEntity) {
                         annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,
-                                               ((BioEntity) object).getIdentifier());
+                                               ((BioEntity) object).getPrimaryIdentifier());
                     } else {
                         // last resort
                         annotation.setProperty(FastaFormat.PROPERTY_DESCRIPTIONLINE,

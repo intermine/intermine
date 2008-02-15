@@ -63,7 +63,7 @@ for my $file (@files) {
   $TIGRparser->capture_genes_from_assembly_xml($file);
 
   my $chr_item = make_item("Chromosome");
-  $chr_item->set("identifier", $TIGRparser->{chromosome});
+  $chr_item->set("primaryIdentifier", $TIGRparser->{chromosome});
 
   my @tigr_genes = $TIGRparser->get_genes();
   for my $tigr_gene (@tigr_genes) {
@@ -78,7 +78,7 @@ for my $file (@files) {
     }
 
     my $gene_item = make_item("Gene");
-    $gene_item->set("organismDbId", $tigr_gene->{pub_locus});
+    $gene_item->set("primaryIdentifier", $tigr_gene->{pub_locus});
 
     make_synonym($gene_item, 'identifier', $tigr_gene->{pub_locus}, $data_source_item);
 

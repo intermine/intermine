@@ -1104,7 +1104,7 @@ public class QueryTest extends TestCase
     // the new Query() takes too long - ~12 seconds
     // in the sql_shell this SQL results in "expecting CLOSE_PAREN, found '='" Exception
     public void testLongParseTimeRegression() throws Exception {
-        String sql = "SELECT DISTINCT a1_.identifier AS a10_, a1_.organismDbId AS a11_, "
+        String sql = "SELECT DISTINCT a1_.identifier AS a10_, a1_.primaryIdentifier AS a11_, "
             + "a1_.symbol AS a12_, a3_.primaryAccession AS "
             + "a14_, a8_.interproId AS a15_, a8_.identifier AS a16_, a8_.name AS a17_, "
             + "a8_.shortName AS a18_ FROM Gene AS a1_, Synonym AS a2_, Protein AS "
@@ -1115,7 +1115,7 @@ public class QueryTest extends TestCase
             + "(a1_.id = indirect0.Proteins AND indirect0.Genes = a3_.id) AND a3_.id = "
             + "a4_.proteinId AND a4_.id = a5_.regionId AND a5_.regionId = a6_.id AND a6_.id = "
             + "a7_.subjectId AND a6_.proteinDomainId = a8_.id AND a1_.organismId = a9_.id) "
-            + "ORDER BY a1_.identifier, a1_.organismDbId, a1_.symbol, "
+            + "ORDER BY a1_.identifier, a1_.primaryIdentifier, a1_.symbol, "
             + "a3_.primaryAccession, a8_.interproId, a8_.identifier, a8_.name, a8_.shortName";
 
         long start = new Date().getTime();
@@ -1143,7 +1143,7 @@ public class QueryTest extends TestCase
     }
 
     public void testToString() throws Exception {
-        String sql = "SELECT DISTINCT a1_.identifier AS a10_, a1_.organismDbId AS a11_, " +
+        String sql = "SELECT DISTINCT a1_.identifier AS a10_, a1_.primaryIdentifier AS a11_, " +
                 "a1_.symbol AS a12_, a3_.primaryAccession AS " +
                 "a14_, a8_.interproId AS a15_, a8_.identifier AS a16_, a8_.name AS a17_, " +
                 "a8_.shortName AS a18_ FROM Gene AS a1_, Synonym AS a2_, Protein AS" +
@@ -1154,7 +1154,7 @@ public class QueryTest extends TestCase
                 "indirect0.Proteins AND indirect0.Genes = a3_.id AND a3_.id = a4_.proteinId " +
                 "AND a4_.id = a5_.regionId AND a5_.regionId = a6_.id AND a6_.id = a7_.subjectId " +
                 "AND a6_.proteinFeatureId = a8_.id AND a1_.organismId = a9_.id ORDER BY " +
-                "a1_.identifier, a1_.organismDbId, a1_.symbol, " +
+                "a1_.identifier, a1_.primaryIdentifier, a1_.symbol, " +
                 "a3_.primaryAccession, a8_.interproId, a8_.identifier, a8_.name, a8_.shortName";
 
         Query q1 = new Query(sql);

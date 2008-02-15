@@ -194,7 +194,7 @@ public class MageTimeCourseMasFileConverter extends FileConverter
                               String datasourceId, String datasetId, ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);
-        probe.setAttribute("identifier", probePre + id);
+        probe.setAttribute("primaryIdentifier", probePre + id);
         probe.setAttribute("name", id);
         probe.setAttribute("url", PROBEURL + id);
         probe.setReference("organism", orgId);

@@ -67,7 +67,6 @@ public class PdbConverter extends FileConverter
             String idCode = (String) structure.getHeader().get("idCode");
             proteinStructure.setAttribute("identifier", idCode);
 
-
             List<String> proteins = new ArrayList<String>();
             List<String> dbrefs = pdbBuffReader.getDbrefs();
             for (String accnum: dbrefs) {

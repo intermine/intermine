@@ -194,7 +194,7 @@
           <ul>
             <li>
              <im:querylink text="All <i>D. melanogaster</i> RNAi data " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.rnaiResults.analysis.publication.pubMedId Gene.rnaiResults.analysis.name Gene.rnaiResults.analysis.cellLine Gene.rnaiResults.analysis.analysisDescription Gene.organismDbId Gene.rnaiResults.amplicon.identifier Gene.rnaiResults.result Gene.rnaiResults.strength Gene.rnaiResults.numOffTargets ">
+              <query name="" model="genomic" view="Gene.rnaiResults.analysis.publication.pubMedId Gene.rnaiResults.analysis.name Gene.rnaiResults.analysis.cellLine Gene.rnaiResults.analysis.analysisDescription Gene.primaryIdentifier Gene.rnaiResults.amplicon.identifier Gene.rnaiResults.result Gene.rnaiResults.strength Gene.rnaiResults.numOffTargets ">
                <node path="Gene" type="Gene">
                 </node>
                <node path="Gene.rnaiResults" type="RNAiScreenHit">
@@ -213,7 +213,7 @@
 
             <li>
               <im:querylink text="All <i>C. elegans</i> RNAi data " skipBuilder="true">
-                <query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.rnaiResults.name Gene.rnaiResults.code">
+                <query name="" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.rnaiResults.name Gene.rnaiResults.code">
                  <node path="Gene" type="Gene">
                    </node>
                  <node path="Gene.organism" type="Organism">

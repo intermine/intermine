@@ -117,7 +117,7 @@
 
           <li>
             <im:querylink text="All <i>Drosophila melanogaster</i> gene identifiers and chromosomal positions " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
@@ -132,7 +132,7 @@
 <%--
           <li>
             <im:querylink text="All <i> Drosophila pseudoobscura</i> gene identifiers and chromosomal positions " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
@@ -147,7 +147,7 @@
 
           <li>
             <im:querylink text="All <i>Anopheles gambiae </i> str. PEST gene identifiers and chromosomal positions " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
@@ -162,7 +162,7 @@
 
           <li>
             <im:querylink text="All <i>Apis mellifera</i> gene identifiers and chromosomal positions " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">

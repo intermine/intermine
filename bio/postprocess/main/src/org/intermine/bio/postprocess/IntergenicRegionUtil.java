@@ -254,9 +254,9 @@ public class IntergenicRegionUtil
                 int length = location.getEnd().intValue() - location.getStart().intValue() + 1;
                 intergenicRegion.setLength(new Integer(length));
 
-                String identifier = "intergenic_region_chr" + chr.getIdentifier()
+                String primaryIdentifier = "intergenic_region_chr" + chr.getPrimaryIdentifier()
                     + "_" + location.getStart() + ".." + location.getEnd();
-                intergenicRegion.setIdentifier(identifier);
+                intergenicRegion.setPrimaryIdentifier(primaryIdentifier);
 
                 Set adjacentGenes = new HashSet();
 
@@ -296,7 +296,7 @@ public class IntergenicRegionUtil
                     }
                 }
 
-                synonym.setValue(intergenicRegion.getIdentifier());
+                synonym.setValue(intergenicRegion.getPrimaryIdentifier());
 
                 intergenicRegion.setAdjacentGenes(adjacentGenes);
 

@@ -48,7 +48,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     private Integer fastaTaxonId;
     private String sequenceType = "dna";
-    private String classAttribute = "identifier";
+    private String classAttribute = "primaryIdentifier";
     private Organism org;
     private String className;
     private int storeCount = 0;
@@ -56,7 +56,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private DataSource dataSource = null;
 
     /**
-     * Append this suffix to the identifier of the LocatedSequenceFeatures that are stored.
+     * Append this suffix to the identifier of the BioEnitys that are stored.
      */
     private String idSuffix = "";
 
@@ -86,7 +86,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     /**
      * Set the suffix to add to identifiers from the FASTA file when creating
-     * LocatedSequenceFeatures.
+     * BioEnitys.
      * @param idSuffix the suffix
      */
     public void setIdSuffix(String idSuffix) {
@@ -112,7 +112,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     /**
      * The attribute of the class created to set with the identifying field.  If not set will
-     * be 'identifier'.
+     * be 'primaryIdentifier'.
      * @param classAttribute the class name
      */
     public void setClassAttribute(String classAttribute) {

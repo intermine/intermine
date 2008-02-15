@@ -82,7 +82,6 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
 
             handler.setFeature(feature);
             handler.clearEvidenceReferenceList();
-            feature.setAttribute("identifier", record.getId());
             handler.process(record);
             // evidence collection is normally set in GFF3Converter, we just want to check Publication
             feature.addCollection(handler.getEvidenceReferenceList());

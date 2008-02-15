@@ -87,12 +87,7 @@ public class InterProConverter extends FileConverter
         mapMaster.put("proteinDomains", proteinDomains);
     }
 
-/**
- *
- *
- * @author Julie Sullivan
- */
-    class InterProHandler extends DefaultHandler
+    private class InterProHandler extends DefaultHandler
     {
 
         private Item proteinDomain;
@@ -205,7 +200,8 @@ public class InterProConverter extends FileConverter
 
                 String domainRelationship = stack.peek().toString();
                 String interproId = attrs.getValue("ipr_ref");
-                Item domain = getItem(proteinDomains, interproId, "ProteinDomain", "identifier");
+                Item domain =
+                    getItem(proteinDomains, interproId, "ProteinDomain", "primaryIdentifier");
 
                 ReferenceList relationCollection = null;
 
@@ -345,7 +341,8 @@ public class InterProConverter extends FileConverter
 
         private void initProteinDomain(String identifier) {
 
-            proteinDomain = getItem(proteinDomains, identifier, "ProteinDomain", "identifier");
+            proteinDomain =
+                getItem(proteinDomains, identifier, "ProteinDomain", "primaryIdentifier");
 
             domainRelationships = createItem("DomainRelationship");
             proteinDomain.setReference("domainRelationships", domainRelationships);

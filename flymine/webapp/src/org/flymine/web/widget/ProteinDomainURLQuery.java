@@ -65,8 +65,8 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
 
         if (bagType.equalsIgnoreCase("gene")) {
 
-            view.add(MainHelper.makePath(model, q, "Gene.identifier"));
-            view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
+            view.add(MainHelper.makePath(model, q, "Gene.secondaryIdentifier"));
+            view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
             view.add(MainHelper.makePath(model, q, "Gene.name"));
             view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
             view.add(MainHelper.makePath(model, q, "Gene.proteins.proteinDomains.identifier"));
@@ -81,7 +81,7 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
             interproNode.getConstraints().add(interproConstraint);
         }
         else if (bagType.equalsIgnoreCase("protein")) {
-            view.add(MainHelper.makePath(model, q, "Protein.identifier"));
+            view.add(MainHelper.makePath(model, q, "Protein.primaryIdentifier"));
             view.add(MainHelper.makePath(model, q, "Protein.primaryAccession"));
             view.add(MainHelper.makePath(model, q, "Protein.name"));
             view.add(MainHelper.makePath(model, q, "Protein.organism.name"));

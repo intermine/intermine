@@ -57,7 +57,7 @@ public class PublicationURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Gene.identifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
+        view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
         view.add(MainHelper.makePath(model, q, "Gene.name"));
         view.add(MainHelper.makePath(model, q, "Gene.organism.name"));
         view.add(MainHelper.makePath(model, q, "Gene.publications.title"));
@@ -74,7 +74,6 @@ public class PublicationURLQuery implements WidgetURLQuery
         String label = null, id = null, code = q.getUnusedConstraintCode();
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
-
         // pubmedid
         constraintOp = ConstraintOp.LOOKUP;
         code = q.getUnusedConstraintCode();

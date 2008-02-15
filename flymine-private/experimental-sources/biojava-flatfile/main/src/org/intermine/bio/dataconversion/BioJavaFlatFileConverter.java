@@ -160,13 +160,13 @@ public class BioJavaFlatFileConverter extends FileConverter
 
         Item mRNA = makeItem("MRNA");
         String mrnaName = getUniqueName(mrnaFeatures, geneIdentifier + "_MRNA");
-        mRNA.setAttribute("identifier", mrnaName);
+        mRNA.setAttribute("primaryIdentifier", mrnaName);
         mrnaFeatures.put(mrnaName, mRNA);
 
         Item translation = makeItem("Translation");
         String translationName =
             getUniqueName(translationFeatures, geneIdentifier + "_translation");
-        translation.setAttribute("identifier", translationName);
+        translation.setAttribute("primaryIdentifier", translationName);
         translationFeatures.put(translationName, translation);
         translation.setReference("MRNA", mRNA);
         mRNA.setReference("translation", translation);
@@ -203,7 +203,7 @@ public class BioJavaFlatFileConverter extends FileConverter
         cdsName = getUniqueName(cdsFeatures, cdsName);
         cdsFeatures.put(cdsName, cds);
 
-        cds.setAttribute("identifier", cdsName);
+        cds.setAttribute("primaryIdentifier", cdsName);
 
         return cds;
     }
@@ -252,8 +252,8 @@ public class BioJavaFlatFileConverter extends FileConverter
             return (Item) genes.get(name);
         }
         Item gene = makeItem("Gene");
-        gene.setAttribute("organismDbId", name);
-        gene.setAttribute("identifier", name);
+        gene.setAttribute("primaryIdentifier", name);
+        gene.setAttribute("secondaryIdentifier", name);
         genes.put(name, gene);
         return gene;
     }
@@ -326,7 +326,7 @@ public class BioJavaFlatFileConverter extends FileConverter
         }
 
         chromosomeName = getUniqueName(chromosomes, chromosomeName);
-        chr.setAttribute("identifier", chromosomeName);
+        chr.setAttribute("primaryIdentifier", chromosomeName);
         chromosomes.put(chromosomeName, chr);
 
         String taxonId = getDbxref(feature, TAXON_PREFIX);

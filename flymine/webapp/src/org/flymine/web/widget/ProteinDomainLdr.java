@@ -88,7 +88,7 @@ public class ProteinDomainLdr implements EnrichmentWidgetLdr
         QueryField qfProteinId = new QueryField(qcProtein, "id");
         QueryField qfGeneId = new QueryField(qcGene, "id");
         QueryField qfName = new QueryField(qcProteinFeature, "name");
-        QueryField qfId = new QueryField(qcProteinFeature, "identifier");
+        QueryField qfId = new QueryField(qcProteinFeature, "primaryIdentifier");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
 
         QueryFunction objectCount = new QueryFunction();

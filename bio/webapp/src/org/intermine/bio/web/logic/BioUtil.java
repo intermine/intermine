@@ -123,7 +123,7 @@ public abstract class BioUtil
 
         QueryClass qcChromosome = new QueryClass(Chromosome.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
-        QueryField qfChromosome = new QueryField(qcChromosome, "identifier");
+        QueryField qfChromosome = new QueryField(qcChromosome, "primaryIdentifier");
         QueryField organismNameQF = new QueryField(qcOrganism, "name");
         q.addFrom(qcChromosome);
         q.addFrom(qcOrganism);

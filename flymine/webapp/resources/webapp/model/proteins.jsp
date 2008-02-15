@@ -86,7 +86,7 @@
         <ul>
           <li>            
               <im:querylink text="<i>D. melanogaster</i> proteins and corresponding genes " skipBuilder="true">
-<query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.organismDbId" sortOrder="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.organismDbId">
+<query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.primaryIdentifier" sortOrder="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.primaryIdentifier">
   <node path="Protein" type="Protein">
   </node>
   <node path="Protein.organism" type="Organism">

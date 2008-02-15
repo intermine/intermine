@@ -88,14 +88,14 @@ public class FlyBaseIdentifiersConverter extends FileConverter
 
             Item gene = createItem("Gene");
             if (cg != null && !cg.equals("")) {
-                gene.setAttribute("identifier", cg);
+                gene.setAttribute("secondaryIdentifier", cg);
                 if (!geneIds.contains(cg)) {
                     createSynonym(gene, "identifier", cg);
                     geneIds.add(cg);
                 }
             }
             if (fbgn != null && !fbgn.equals("")) {
-                gene.setAttribute("organismDbId", fbgn);
+                gene.setAttribute("primaryIdentifier", fbgn);
                 if (!geneIds.contains(fbgn)) {
                     createSynonym(gene, "identifier", fbgn);
                     geneIds.add(fbgn);

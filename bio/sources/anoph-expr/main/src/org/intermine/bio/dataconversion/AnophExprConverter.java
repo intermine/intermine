@@ -206,7 +206,7 @@ public class AnophExprConverter extends FileConverter
 
                 Item material = createItem("ProbeSet");
                 material.setAttribute("name", probe);
-                material.setAttribute("identifier", probe);
+                material.setAttribute("primaryIdentifier", probe);
                 material.setReference("organism", org.getIdentifier());
                 material.setReference("gene", gene.getIdentifier());
                 ReferenceList evidence = new ReferenceList("evidence",
@@ -259,7 +259,7 @@ public class AnophExprConverter extends FileConverter
             return genes.get(geneCG);
         } else {
             Item gene = createItem("Gene");
-            gene.setAttribute("identifier", geneCG);
+            gene.setAttribute("primaryIdentifier", geneCG);
             gene.setReference("organism", org.getIdentifier());
             genes.put(geneCG, gene);
             return gene;

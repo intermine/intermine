@@ -220,11 +220,11 @@ public class IntergenicRegionsTest extends TestCase
 
                 assertEquals(1, ir.getSynonyms().size());
                 Synonym synonym = (Synonym) ir.getSynonyms().iterator().next();
-                assertEquals(ir.getIdentifier(), synonym.getValue());
+                assertEquals(ir.getPrimaryIdentifier(), synonym.getValue());
                 assertEquals("identifier", synonym.getType());
                 assertEquals("FlyMine", synonym.getSource().getName());
 
-                actualIdentifiers.add(ir.getIdentifier());
+                actualIdentifiers.add(ir.getPrimaryIdentifier());
             }
 
             Set expectedIdentifiers =
@@ -261,7 +261,7 @@ public class IntergenicRegionsTest extends TestCase
     private Integer createChrX(List geneLocList, Map chrXlocMap, int idStart) throws ObjectStoreException {
         Chromosome chr =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        chr.setIdentifier("X");
+        chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(1000));
         chr.setId(new Integer(101));
         chr.setOrganism(organism);
@@ -312,7 +312,7 @@ public class IntergenicRegionsTest extends TestCase
     private Integer createChr1(List geneLocList, Map chr1locMap, int idStart) throws ObjectStoreException {
         Chromosome chr =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        chr.setIdentifier("I");
+        chr.setPrimaryIdentifier("I");
         chr.setLength(new Integer(2000));
         chr.setId(new Integer(102));
         chr.setOrganism(organism);

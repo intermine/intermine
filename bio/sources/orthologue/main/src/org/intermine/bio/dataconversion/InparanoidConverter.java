@@ -86,7 +86,7 @@ public class InparanoidConverter extends FileConverter
             }
             String attribute = codeProps.getProperty("attribute");
             if (attribute == null) {
-                attribute = "identifier";
+                attribute = "primaryIdentifier";
             }
             String object = codeProps.getProperty("object");
             if (object == null) {
@@ -295,7 +295,7 @@ public class InparanoidConverter extends FileConverter
      * @param value identifier for the new Gene/Translation
      * @param organism the Organism for this Gene/Translation
      * @param type create either a Gene or Translation
-     * @param attribute the attribute of the BioEntity set, e.g. identifier or organismDbId
+     * @param attribute the attribute of the BioEntity set, e.g. identifier or primaryIdentifier
      * @return a new Gene/Translation Item
      * @throws ObjectStoreException if an error occurs in storing
      */

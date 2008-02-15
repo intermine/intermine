@@ -1,7 +1,21 @@
 <items>
-<item id="9_2" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR012287"/>
-<attribute name="shortName" value="Homeodomain-rel"/>
+<item id="2_2" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="description" value="GTP-binding protein 128up"/>
+<attribute name="isFragment" value="false"/>
+<attribute name="length" value="368"/>
+<attribute name="molecularWeight" value="41132"/>
+<attribute name="name" value="GTP-binding protein 128up"/>
+<attribute name="primaryAccession" value="P32234"/>
+<attribute name="primaryIdentifier" value="128UP_DROME"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequence" ref_id="12_2"/>
+<collection name="comments"><reference ref_id="8_5"/><reference ref_id="8_9"/><reference ref_id="8_10"/><reference ref_id="8_11"/></collection>
+<collection name="evidence"><reference ref_id="3_2"/></collection>
+<collection name="features"><reference ref_id="11_2"/></collection>
+<collection name="genes"><reference ref_id="5_2"/></collection>
+<collection name="keywords"><reference ref_id="10_2"/><reference ref_id="10_11"/><reference ref_id="10_12"/></collection>
+<collection name="proteinDomains"><reference ref_id="9_6"/><reference ref_id="9_7"/><reference ref_id="9_8"/><reference ref_id="9_9"/><reference ref_id="9_5"/></collection>
+<collection name="publications"><reference ref_id="7_2"/></collection>
 </item>
 <item id="11_1" class="http://www.flymine.org/model/genomic#UniProtFeature">
 <attribute name="begin" value="1"/>
@@ -28,13 +42,13 @@
 <attribute name="type" value="subcellular location"/>
 <reference name="source" ref_id="3_1"/>
 </item>
+<item id="9_6" class="http://www.flymine.org/model/genomic#ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR006074"/>
+<attribute name="shortName" value="GTP1-OBG_dom"/>
+</item>
 <item id="10_7" class="http://www.flymine.org/model/genomic#OntologyTerm">
 <attribute name="name" value="Pair-rule protein"/>
 <reference name="ontology" ref_id="1_1"/>
-</item>
-<item id="9_4" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR000047"/>
-<attribute name="shortName" value="HTH_lambrepressr"/>
 </item>
 <item id="4_14" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="symbol"/>
@@ -42,12 +56,16 @@
 <reference name="source" ref_id="0_2"/>
 <reference name="subject" ref_id="5_2"/>
 </item>
+<item id="9_1" class="http://www.flymine.org/model/genomic#ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR001356"/>
+<attribute name="shortName" value="Homeobox"/>
+</item>
+<item id="9_2" class="http://www.flymine.org/model/genomic#ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR012287"/>
+<attribute name="shortName" value="Homeodomain-rel"/>
+</item>
 <item id="0_2" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="FlyBase"/>
-</item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG8340"/>
-<reference name="organism" ref_id="6_1"/>
 </item>
 <item id="3_2" class="http://www.flymine.org/model/genomic#DataSet">
 <attribute name="title" value="TREmbl data set"/>
@@ -83,24 +101,6 @@
 <reference name="source" ref_id="0_2"/>
 <reference name="subject" ref_id="5_1"/>
 </item>
-<item id="2_2" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="description" value="GTP-binding protein 128up"/>
-<attribute name="identifier" value="128UP_DROME"/>
-<attribute name="isFragment" value="false"/>
-<attribute name="length" value="368"/>
-<attribute name="molecularWeight" value="41132"/>
-<attribute name="name" value="GTP-binding protein 128up"/>
-<attribute name="primaryAccession" value="P32234"/>
-<reference name="organism" ref_id="6_1"/>
-<reference name="sequence" ref_id="12_2"/>
-<collection name="comments"><reference ref_id="8_5"/><reference ref_id="8_9"/><reference ref_id="8_10"/><reference ref_id="8_11"/></collection>
-<collection name="evidence"><reference ref_id="3_2"/></collection>
-<collection name="features"><reference ref_id="11_2"/></collection>
-<collection name="genes"><reference ref_id="5_2"/></collection>
-<collection name="keywords"><reference ref_id="10_2"/><reference ref_id="10_11"/><reference ref_id="10_12"/></collection>
-<collection name="proteinDomains"><reference ref_id="9_6"/><reference ref_id="9_7"/><reference ref_id="9_8"/><reference ref_id="9_9"/><reference ref_id="9_5"/></collection>
-<collection name="publications"><reference ref_id="7_2"/></collection>
-</item>
 <item id="10_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
 <attribute name="name" value="Developmental protein"/>
 <reference name="ontology" ref_id="1_1"/>
@@ -113,9 +113,28 @@
 <item id="7_1" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="2877745"/>
 </item>
-<item id="9_6" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR006074"/>
-<attribute name="shortName" value="GTP1-OBG_dom"/>
+<item id="9_7" class="http://www.flymine.org/model/genomic#ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR006073"/>
+<attribute name="shortName" value="GTP1_OBG"/>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#Protein">
+<attribute name="description" value="Segmentation protein even-skipped (Dummy Second Name)"/>
+<attribute name="ecNumber" value="xxx EC 1.1.1.31 xxx"/>
+<attribute name="isFragment" value="true"/>
+<attribute name="length" value="376"/>
+<attribute name="molecularWeight" value="39970"/>
+<attribute name="name" value="Segmentation protein even-skipped"/>
+<attribute name="primaryAccession" value="P06602"/>
+<attribute name="primaryIdentifier" value="EVE_DROME"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequence" ref_id="12_1"/>
+<collection name="comments"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/></collection>
+<collection name="evidence"><reference ref_id="3_1"/></collection>
+<collection name="features"><reference ref_id="11_1"/></collection>
+<collection name="genes"><reference ref_id="5_1"/></collection>
+<collection name="keywords"><reference ref_id="10_1"/><reference ref_id="10_2"/><reference ref_id="10_3"/><reference ref_id="10_4"/><reference ref_id="10_5"/><reference ref_id="10_6"/><reference ref_id="10_7"/><reference ref_id="10_8"/><reference ref_id="10_9"/></collection>
+<collection name="proteinDomains"><reference ref_id="9_1"/><reference ref_id="9_2"/><reference ref_id="9_3"/><reference ref_id="9_4"/><reference ref_id="9_5"/></collection>
+<collection name="publications"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
 </item>
 <item id="4_11" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="name"/>
@@ -124,12 +143,20 @@
 <reference name="subject" ref_id="2_2"/>
 </item>
 <item id="9_9" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR005225"/>
+<attribute name="primaryIdentifier" value="IPR005225"/>
 <attribute name="shortName" value="Small_GTP_bd"/>
+</item>
+<item id="5_2" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="secondaryIdentifier" value="CG8340"/>
+<reference name="organism" ref_id="6_1"/>
 </item>
 <item id="10_8" class="http://www.flymine.org/model/genomic#OntologyTerm">
 <attribute name="name" value="Transcription"/>
 <reference name="ontology" ref_id="1_1"/>
+</item>
+<item id="9_8" class="http://www.flymine.org/model/genomic#ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR002917"/>
+<attribute name="shortName" value="MMR_HSR1_GTP_bd"/>
 </item>
 <item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="accession"/>
@@ -143,6 +170,10 @@
 <reference name="source" ref_id="0_2"/>
 <reference name="subject" ref_id="5_2"/>
 </item>
+<item id="9_5" class="http://www.flymine.org/model/genomic#ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR004095"/>
+<attribute name="shortName" value="TGS"/>
+</item>
 <item id="4_4" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="name"/>
 <attribute name="value" value="Segmentation protein even-skipped"/>
@@ -154,14 +185,6 @@
 <attribute name="value" value="P06602"/>
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="2_1"/>
-</item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG2328"/>
-<reference name="organism" ref_id="6_1"/>
-</item>
-<item id="9_7" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR006073"/>
-<attribute name="shortName" value="GTP1_OBG"/>
 </item>
 <item id="4_3" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="accession"/>
@@ -193,29 +216,6 @@
 <attribute name="length" value="376"/>
 <attribute name="residues" value="MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSLSPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTVIAEPKPKLFKPYKTEA"/>
 </item>
-<item id="9_8" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR002917"/>
-<attribute name="shortName" value="MMR_HSR1_GTP_bd"/>
-</item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#Protein">
-<attribute name="description" value="Segmentation protein even-skipped (Dummy Second Name)"/>
-<attribute name="ecNumber" value="xxx EC 1.1.1.31 xxx"/>
-<attribute name="identifier" value="EVE_DROME"/>
-<attribute name="isFragment" value="true"/>
-<attribute name="length" value="376"/>
-<attribute name="molecularWeight" value="39970"/>
-<attribute name="name" value="Segmentation protein even-skipped"/>
-<attribute name="primaryAccession" value="P06602"/>
-<reference name="organism" ref_id="6_1"/>
-<reference name="sequence" ref_id="12_1"/>
-<collection name="comments"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/></collection>
-<collection name="evidence"><reference ref_id="3_1"/></collection>
-<collection name="features"><reference ref_id="11_1"/></collection>
-<collection name="genes"><reference ref_id="5_1"/></collection>
-<collection name="keywords"><reference ref_id="10_1"/><reference ref_id="10_2"/><reference ref_id="10_3"/><reference ref_id="10_4"/><reference ref_id="10_5"/><reference ref_id="10_6"/><reference ref_id="10_7"/><reference ref_id="10_8"/><reference ref_id="10_9"/></collection>
-<collection name="proteinDomains"><reference ref_id="9_1"/><reference ref_id="9_2"/><reference ref_id="9_3"/><reference ref_id="9_4"/><reference ref_id="9_5"/></collection>
-<collection name="publications"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
-</item>
 <item id="8_1" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="May play a role in determining neuronal identity. May be directly involved in specifying identity of individual neurons. Pair-rule protein required for segmentation; involved in transforming the broad, spatial, aperiodic expression patterns of the gap genes into a system of precise periodic expression patterns of the pair-rule and segmentary polarity genes"/>
 <attribute name="type" value="function"/>
@@ -224,9 +224,9 @@
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="UniProt"/>
 </item>
-<item id="9_3" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR009057"/>
-<attribute name="shortName" value="Homeodomain_like"/>
+<item id="5_1" class="http://www.flymine.org/model/genomic#Gene">
+<attribute name="secondaryIdentifier" value="CG2328"/>
+<reference name="organism" ref_id="6_1"/>
 </item>
 <item id="10_11" class="http://www.flymine.org/model/genomic#OntologyTerm">
 <attribute name="name" value="GTP-binding"/>
@@ -258,6 +258,10 @@
 <reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="2_1"/>
 </item>
+<item id="9_3" class="http://www.flymine.org/model/genomic#ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR009057"/>
+<attribute name="shortName" value="Homeodomain_like"/>
+</item>
 <item id="10_5" class="http://www.flymine.org/model/genomic#OntologyTerm">
 <attribute name="name" value="Homeobox"/>
 <reference name="ontology" ref_id="1_1"/>
@@ -279,17 +283,13 @@
 <item id="6_1" class="http://www.flymine.org/model/genomic#Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="9_1" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR001356"/>
-<attribute name="shortName" value="Homeobox"/>
+<item id="9_4" class="http://www.flymine.org/model/genomic#ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR000047"/>
+<attribute name="shortName" value="HTH_lambrepressr"/>
 </item>
 <item id="10_4" class="http://www.flymine.org/model/genomic#OntologyTerm">
 <attribute name="name" value="DNA-binding"/>
 <reference name="ontology" ref_id="1_1"/>
-</item>
-<item id="9_5" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR004095"/>
-<attribute name="shortName" value="TGS"/>
 </item>
 <item id="8_11" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="Belongs to the GTP1/OBG family"/>

@@ -51,7 +51,6 @@
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Gene"/>
-      <property name="fasta.classAttribute" value="organismDbId"/>
       <property name="fasta.includes" value="dmel-all-gene-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_4/fasta"/>
     </source>
@@ -103,7 +102,7 @@
            items DB, then into the final objectstore -->
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
-	</sources>
+  </sources>
   <post-processing>
     <post-process name="create-utr-references"/>
     <post-process name="transfer-sequences"/>

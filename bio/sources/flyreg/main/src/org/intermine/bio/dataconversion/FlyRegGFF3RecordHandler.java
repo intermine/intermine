@@ -61,11 +61,11 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         if (m.matches()) {
             primaryIdentifier = m.group(1);
         } else {
-            throw new RuntimeException("can't find primaryIdentifier in " + name
+            throw new RuntimeException("can't find identifier in " + name
                                        + " - pattern doesn't match");
         }
 
-        bindingSite.setAttribute("identifier", primaryIdentifier);
+        bindingSite.setAttribute("secondaryIdentifier", primaryIdentifier);
         addSynonym(bindingSite, "identifier", primaryIdentifier);
 
         bindingSite.setAttribute("name", name);
@@ -96,7 +96,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             throw new RuntimeException("no REDfly: id for: " + bindingSite);
         }
 
-        bindingSite.setAttribute("organismDbId", redflyID);
+        bindingSite.setAttribute("primaryIdentifier", redflyID);
         addSynonym(bindingSite, "internal_id", "REDfly:" + redflyID);
 
         Item pubmedItem;

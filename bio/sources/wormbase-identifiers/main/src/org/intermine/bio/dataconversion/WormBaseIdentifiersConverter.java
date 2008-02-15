@@ -75,7 +75,7 @@ public class WormBaseIdentifiersConverter extends FileConverter
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
 
         // data is in format:
-        // organismDbId | identifier | symbol
+        // primaryIdentifier | identifier | symbol
 
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
@@ -88,18 +88,18 @@ public class WormBaseIdentifiersConverter extends FileConverter
                 throw new RuntimeException("Line does not have enough elements: "
                                            + Arrays.asList(line));
             }
-            String organismdbid = line[0];
+            String primaryidentifier = line[0];
             String identifier = line[1];
             String symbol = line[2];
             List synonyms = new ArrayList();
 
             Item gene = createItem("Gene");
-            if (organismdbid != null && !organismdbid.equals("")) {
-                gene.setAttribute("organismDbId", organismdbid);
-                synonyms.add(createSynonym(gene, "identifier", organismdbid));
+            if (primaryidentifier != null && !primaryidentifier.equals("")) {
+                gene.setAttribute("primaryIdentifier", primaryidentifier);
+                synonyms.add(createSynonym(gene, "identifier", primaryidentifier));
             }
             if (identifier != null && !identifier.equals("")) {
-                gene.setAttribute("identifier", identifier);
+                gene.setAttribute("secondaryIdentifier", identifier);
                 synonyms.add(createSynonym(gene, "identifier", identifier));
             }
             if (symbol != null && !symbol.equals("")) {

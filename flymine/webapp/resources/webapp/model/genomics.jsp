@@ -104,52 +104,52 @@
 
           <li>
             <im:querylink text="All <i>Drosophila melanogaster</i> gene identifiers and chromosomal positions " skipBuilder="true">
-<query name="" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.organismDbId asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query> 
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All <i> Drosophila pseudoobscura</i> gene identifiers and chromosomal positions " skipBuilder="true">
-<query name="" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.organismDbId asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query>        
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
             </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All <i>Anopheles gambiae </i> str. PEST gene identifiers and chromosomal positions " skipBuilder="true">
-<query name="" model="genomic" view="Gene.organismDbId Gene.identifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.organismDbId asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query> 
-   </im:querylink>
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+                <node path="Gene" type="Gene">
+                </node>
+                <node path="Gene.organism" type="Organism">
+                </node>
+                <node path="Gene.organism.name" type="String">
+                  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+                  </constraint>
+                </node>
+              </query>
+            </im:querylink>
           </li>
 
           <li>
             <im:querylink text="All <i>Apis mellifera</i> gene identifiers and chromosomal positions " skipBuilder="true">
-              <query name="" model="genomic" view="Gene.identifier Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+              <query name="" model="genomic" view="Gene.identifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">

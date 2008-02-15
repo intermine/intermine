@@ -73,7 +73,7 @@ public class StoreSequencesTest extends TestCase {
         QueryClass qc = new QueryClass(Contig.class);
         q1.addToSelect(qc);
         q1.addFrom(qc);
-        QueryField qf = new QueryField(qc, "identifier");
+        QueryField qf = new QueryField(qc, "primaryIdentifier");
         SimpleConstraint sc1 = new SimpleConstraint(qf, ConstraintOp.EQUALS,
                                new QueryValue("CR381709.1.2001.2054"));
         q1.setConstraint(sc1);
@@ -101,8 +101,8 @@ public class StoreSequencesTest extends TestCase {
         Contig contig1 = (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
         Contig contig2 = (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
 
-        contig1.setIdentifier("AADD01209098.1.15791.15883");
-        contig2.setIdentifier("CR381709.1.2001.2054");
+        contig1.setPrimaryIdentifier("AADD01209098.1.15791.15883");
+        contig2.setPrimaryIdentifier("CR381709.1.2001.2054");
         osw.beginTransaction();
         osw.store(contig1);
         osw.store(contig2);

@@ -96,7 +96,7 @@ public class CreateFlyBaseLinkIns
     private static Iterator getFlyBaseIds(ObjectStore os) {
         // Documented as an example of how to use the query API
 
-        // This query selects Gene.organismDbId where it has a non-null value
+        // This query selects Gene.primaryIdentifier where it has a non-null value
         // for all Genes from D. melanogaster (taxon id 7227).
 
         // Create a new query
@@ -109,11 +109,11 @@ public class CreateFlyBaseLinkIns
         QueryClass qcGene = new QueryClass(Gene.class);
         q.addFrom(qcGene);
 
-        // Select the Gene.organismDbId field
-        QueryField qf = new QueryField(qcGene, "organismDbId");
+        // Select the Gene.primaryIdentifier field
+        QueryField qf = new QueryField(qcGene, "primaryIdentifier");
         q.addToSelect(qf);
 
-        // Filter out any null Gene.organismDbId values
+        // Filter out any null Gene.primaryIdentifier values
         SimpleConstraint sc2 = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
         cs.addConstraint(sc2);
 
@@ -136,7 +136,7 @@ public class CreateFlyBaseLinkIns
         // Set the constraint of the query
         q.setConstraint(cs);
 
-        // Order the results by Gene.organismDbId
+        // Order the results by Gene.primaryIdentifier
         q.addToOrderBy(qf);
 
         // Make the output distinct, just like SQL DISTINCT syntax

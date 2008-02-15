@@ -108,7 +108,7 @@ public class InlineResultsTable
 
     /**
      * Return the full name of the field shown in this column in ClassName.fieldName format.
-     * eg. Gene.organismDbId
+     * eg. Gene.primaryIdentifier
      * Currently returns null if the FieldConfig for the column contains a complex expression,
      * that is one the follows a reference eg. organism.shortName
      * @return the List of column full names

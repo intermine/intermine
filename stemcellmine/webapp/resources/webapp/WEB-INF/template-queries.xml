@@ -51,7 +51,7 @@
     </query>
   </template>
   <template name="AAD_Genes2chromosome1" description="Show the genes located on a particular chromsome." important="false" keywords="Genomics">
-    <query name="AAD_Genes2chromosome1" model="genomic" view="Gene.name Gene.organismDbId Gene.chromosome.identifier">
+    <query name="AAD_Genes2chromosome1" model="genomic" view="Gene.name Gene.primaryIdentifier Gene.chromosome.identifier">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.chromosome" type="Chromosome">
@@ -69,7 +69,7 @@
     </query>
   </template>
   <template name="AAD_chromosomeLocation2genes3" description="Give the location of genes on a particular chromsome." important="false" keywords="Genomics">
-    <query name="AAD_chromosomeLocation2genes3" model="genomic" view="Chromosome.identifier Chromosome.genes.objects.strand Chromosome.genes.objects.start Chromosome.genes.objects.end Chromosome.genes.organismDbId">
+    <query name="AAD_chromosomeLocation2genes3" model="genomic" view="Chromosome.identifier Chromosome.genes.objects.strand Chromosome.genes.objects.start Chromosome.genes.objects.end Chromosome.genes.primaryIdentifier">
       <node path="Chromosome" type="Chromosome">
       </node>
       <node path="Chromosome.identifier" type="String">
@@ -85,7 +85,7 @@
     </query>
   </template>
   <template name="AAE_chromosomeLocation2genes2" description="Show the genes, transcripts and exons located between two points on a chromosome. Give the location of the exons." important="false" keywords="Genomics">
-    <query name="AAE_chromosomeLocation2genes2" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.name Chromosome.exons.gene.organismDbId Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand">
+    <query name="AAE_chromosomeLocation2genes2" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.name Chromosome.exons.gene.primaryIdentifier Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand">
       <node path="Chromosome" type="Chromosome">
       </node>
       <node path="Chromosome.identifier" type="String">
@@ -129,7 +129,7 @@
   </template>
   
   <template name="AAF_gene2Transcripts2" description="Show the predicted transcripts and their chromosomal location for a particular gene." important="false" keywords="Genomics">
-    <query name="AAF_gene2Transcripts2" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.transcripts.identifier Gene.transcripts.objects.object.identifier Gene.transcripts.objects.start Gene.transcripts.objects.end Gene.transcripts.objects.strand">
+    <query name="AAF_gene2Transcripts2" model="genomic" view="Gene Gene.primaryIdentifier Gene.identifier Gene.transcripts.identifier Gene.transcripts.objects.object.identifier Gene.transcripts.objects.start Gene.transcripts.objects.end Gene.transcripts.objects.strand">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
@@ -147,7 +147,7 @@
     </query>
   </template>
   <template name="AAG_synonymGene2exonChromosomeLocations2" description="Show the chromosome location of the exons for a particular gene" important="false" keywords="Genomics">
-    <query name="AAG_synonymGene2exonChromosomeLocations2" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.chromosome.identifier Synonym.subject.exons.identifier Synonym.subject.exons.objects.start Synonym.subject.exons.objects.end">
+    <query name="AAG_synonymGene2exonChromosomeLocations2" model="genomic" view="Synonym.subject.name Synonym.subject.primaryIdentifier Synonym.subject.chromosome.identifier Synonym.subject.exons.identifier Synonym.subject.exons.objects.start Synonym.subject.exons.objects.end">
       <node path="Synonym" type="Synonym">
       </node>
       <node path="Synonym.value" type="String">
@@ -419,7 +419,7 @@
     </query>
   </template>
  <template name="AAP_gene2orthologues" description="Search for predicted orthologues for a particular gene:" important="false" keywords="Genomics, Comparative Genomics">
-    <query name="AAP_gene2orthologues" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name">
+    <query name="AAP_gene2orthologues" model="genomic" view="Gene Gene.primaryIdentifier Gene.identifier Gene.name Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
@@ -461,7 +461,7 @@
   </template>
 
   <template name="AAR_orthologues2transcripts" description="Show the transcript identifiers for a particular gene and its predicted orthologues transcript identifiers." important="false" keywords="Genomics, Comparative Genomics">
-    <query name="AAR_orthologues2transcripts" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name Gene.orthologues.subject.transcripts.identifier Gene.orthologues.evidence.analysis.algorithm Gene.orthologues.evidence.analysis.description">
+    <query name="AAR_orthologues2transcripts" model="genomic" view="Gene Gene.primaryIdentifier Gene.identifier Gene.name Gene.transcripts.identifier Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name Gene.orthologues.subject.transcripts.identifier Gene.orthologues.evidence.analysis.algorithm Gene.orthologues.evidence.analysis.description">
       <node path="Gene" type="Gene">
       </node>
       <node path="Gene.synonyms" type="Synonym">
@@ -510,7 +510,7 @@
     </template>
 
 <template name="AAD_GOidentifier2proteinInteractions" description="Show protein interactions for proteins annotated with a particular GO identifier in a particular organism." important="false" keywords="Proteins, Protein Interaction">
-      <query name="AAD_GOidentifier2proteinInteractions" model="genomic" view="Gene.allGoAnnotation.actualGoTerm.identifier Gene.allGoAnnotation.actualGoTerm.name Gene.name Gene.organismDbId Gene.proteins.primaryAccession Gene.proteins.interactionRoles.interaction.interactors.protein.primaryAccession Gene.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name Gene.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId Gene.organism.name" constraintLogic="A and B and C">
+      <query name="AAD_GOidentifier2proteinInteractions" model="genomic" view="Gene.allGoAnnotation.actualGoTerm.identifier Gene.allGoAnnotation.actualGoTerm.name Gene.name Gene.primaryIdentifier Gene.proteins.primaryAccession Gene.proteins.interactionRoles.interaction.interactors.protein.primaryAccession Gene.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name Gene.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId Gene.organism.name" constraintLogic="A and B and C">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.allGoAnnotation" type="GOAnnotation">
@@ -556,7 +556,7 @@
       </query>
     </template>
 <template name="AAD_genes2fasta" description="Output human genes in a format suitable for creating a fasta database." important="false" keywords="Genomics">
-      <query name="AAD_genes2fasta" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.symbol">
+      <query name="AAD_genes2fasta" model="genomic" view="Gene Gene.primaryIdentifier Gene.identifier Gene.symbol">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.organism" type="Organism">
@@ -569,7 +569,7 @@
     </template>
 
    <template name="AAE_synonym2proteinInteractions1" description="For the protein product of a particular gene, show the proteins it has been shown to interact with, the confidence value assigned to this interaction, the interaction detection method and the publication for the experiment performed." important="false" keywords="Proteins, Protein Interactions">
-      <query name="AAE_synonym2proteinInteractions1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.interactors.protein.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.evidence.confidence Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId" constraintLogic="A and B and C">
+      <query name="AAE_synonym2proteinInteractions1" model="genomic" view="Synonym.subject.name Synonym.subject.primaryIdentifier Synonym.subject.proteins.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.interactors.protein.primaryAccession Synonym.subject.proteins.interactionRoles.interaction.evidence.confidence Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.interactionDetection.name Synonym.subject.proteins.interactionRoles.interaction.evidence.analysis.publication.pubMedId" constraintLogic="A and B and C">
         <node path="Synonym" type="Synonym">
         </node>
         <node path="Synonym.value" type="String">
@@ -603,7 +603,7 @@
       </query>
     </template>
 <template name="AAF_gene2exonTranscript1" description="Show the predicted transcripts and exons for a particular gene." important="false" keywords="Genomics">
-      <query name="AAF_gene2exonTranscript1" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.transcripts.exonCount Gene.exons.identifier">
+      <query name="AAF_gene2exonTranscript1" model="genomic" view="Gene.primaryIdentifier Gene.identifier Gene.name Gene.transcripts.identifier Gene.transcripts.exonCount Gene.exons.identifier">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.synonyms" type="Synonym">
@@ -621,7 +621,7 @@
       </query>
     </template>
 <template name="AAG_gene2protein" description="Show the proteins for a particular gene." important="false" keywords="Genomics">
-      <query name="AAG_gene2protein" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.proteins Gene.proteins.primaryAccession">
+      <query name="AAG_gene2protein" model="genomic" view="Gene Gene.primaryIdentifier Gene.identifier Gene.name Gene.proteins Gene.proteins.primaryAccession">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.synonyms" type="Synonym">
@@ -639,7 +639,7 @@
       </query>
     </template>
 <template name="AAH_Genes2chromosome1" description="Show genes located on a particular chromsome." important="false" keywords="Genomics">
-      <query name="AAH_Genes2chromosome1" model="genomic" view="Gene.name Gene.organismDbId Gene.chromosome.identifier">
+      <query name="AAH_Genes2chromosome1" model="genomic" view="Gene.name Gene.primaryIdentifier Gene.chromosome.identifier">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.chromosome" type="Chromosome">
@@ -657,7 +657,7 @@
       </query>
     </template>
     <template name="AAI_gene2ChromosomeLocation1" description="Show the chromosome and the chromosome location of a particluar gene." important="false" keywords="Genomics">
-      <query name="AAI_gene2ChromosomeLocation1" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand">
+      <query name="AAI_gene2ChromosomeLocation1" model="genomic" view="Gene Gene.primaryIdentifier Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.synonyms" type="Synonym">
@@ -679,7 +679,7 @@
       </query>
     </template>
 <template name="AAJ_synonymGene2exonChromosomeLocations1" description="Show the chromosome location of the exons for a particular gene." important="false" keywords="Genomics">
-      <query name="AAJ_synonymGene2exonChromosomeLocations1" model="genomic" view="Synonym.subject.name Synonym.subject.organismDbId Synonym.subject.chromosome.identifier Synonym.subject.exons.identifier Synonym.subject.exons.objects.start Synonym.subject.exons.objects.end Synonym.subject.exons.objects.strand">
+      <query name="AAJ_synonymGene2exonChromosomeLocations1" model="genomic" view="Synonym.subject.name Synonym.subject.primaryIdentifier Synonym.subject.chromosome.identifier Synonym.subject.exons.identifier Synonym.subject.exons.objects.start Synonym.subject.exons.objects.end Synonym.subject.exons.objects.strand">
         <node path="Synonym" type="Synonym">
         </node>
         <node path="Synonym.value" type="String">
@@ -703,7 +703,7 @@
       </query>
     </template>
  <template name="AAK_chromosomeLocation2geneSequence1" description="Show the chromosome location and sequence for all genes from a particular organism." important="false" keywords="Genomics">
-      <query name="AAK_chromosomeLocation2geneSequence1" model="genomic" view="Gene.objects.object.identifier Gene.objects.strand Gene.objects.start Gene.objects.end Gene.organismDbId Gene.identifier Gene.symbol Gene.sequence.residues">
+      <query name="AAK_chromosomeLocation2geneSequence1" model="genomic" view="Gene.objects.object.identifier Gene.objects.strand Gene.objects.start Gene.objects.end Gene.primaryIdentifier Gene.identifier Gene.symbol Gene.sequence.residues">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.objects" type="Location">
@@ -731,7 +731,7 @@
   </template>
 
  <template name="AAL_chromosomeLocation2genes2" description="Show the genes, transcripts and exons located between two points on a chromosome.  Give the location of the exons." important="false" keywords="Genomics">
-      <query name="AAL_chromosomeLocation2genes2" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.organismDbId Chromosome.exons.gene.symbol Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand">
+      <query name="AAL_chromosomeLocation2genes2" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand">
         <node path="Chromosome" type="Chromosome">
         </node>
         <node path="Chromosome.identifier" type="String">
@@ -761,7 +761,7 @@
       </query>
     </template>
 <template name="AAM_Gene2GO2NEW" description="Search for GO annotations for a particular gene." important="false" keywords="Genomics, Gene Ontology">
-      <query name="AAM_Gene2GO2NEW" model="genomic" view="Gene.organismDbId Gene.identifier Gene.symbol Gene.goAnnotation.name Gene.goAnnotation.identifier">
+      <query name="AAM_Gene2GO2NEW" model="genomic" view="Gene.primaryIdentifier Gene.identifier Gene.symbol Gene.goAnnotation.name Gene.goAnnotation.identifier">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.synonyms" type="Synonym">
@@ -851,7 +851,7 @@
       </query>
     </template>
 <template name="AAR_orthologues2transcripts" description="Show the transcript identifiers for a particular gene and its predicted orthologues transcript identifiers." important="false" keywords="Genomics, Comparative Genomics">
-      <query name="AAR_orthologues2transcripts" model="genomic" view="Gene Gene.organismDbId Gene.identifier Gene.name Gene.transcripts.identifier Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name Gene.orthologues.subject.transcripts.identifier Gene.orthologues.evidence.analysis.algorithm Gene.orthologues.evidence.analysis.description">
+      <query name="AAR_orthologues2transcripts" model="genomic" view="Gene Gene.primaryIdentifier Gene.identifier Gene.name Gene.transcripts.identifier Gene.orthologues.subject.identifier Gene.orthologues.subject.organism.name Gene.orthologues.subject.transcripts.identifier Gene.orthologues.evidence.analysis.algorithm Gene.orthologues.evidence.analysis.description">
         <node path="Gene" type="Gene">
         </node>
         <node path="Gene.synonyms" type="Synonym">

@@ -103,7 +103,7 @@ public class FlyBaseGeneNamesConverter extends FileConverter
                                      || (symbol != null && !symbol.equals("")))) {
                 // set and create synonym for all fields, some genes only come from this source
                 Item gene = createItem("Gene");
-                gene.setAttribute("organismDbId", fbgn);
+                gene.setAttribute("primaryIdentifier", fbgn);
                 createSynonym(gene, "identifier", fbgn);
                 geneSynonyms.add(fbgn);
 

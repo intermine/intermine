@@ -147,7 +147,7 @@ public abstract class BioDBConverter extends DBConverter
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
             chromosome = createItem("Chromosome");
-            chromosome.setAttribute("identifier", identifier);
+            chromosome.setAttribute("primaryIdentifier", identifier);
             chromosome.setReference("organism", getOrganismItem(taxonId));
             chromosomes.put(identifier, chromosome);
             store(chromosome);

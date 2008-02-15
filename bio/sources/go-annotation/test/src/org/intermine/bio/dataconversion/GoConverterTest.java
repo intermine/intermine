@@ -81,12 +81,12 @@ public class GoConverterTest extends ItemsTestCase
         Set expected = new HashSet();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         Item gene1 = tgtItemFactory.makeItem("2_1", GENOMIC_NS + "Gene", "");
-        gene1.setAttribute("organismDbId", "FBgn0026430");
+        gene1.setAttribute("primaryIdentifier", "FBgn0026430");
         gene1.setReference("organism", "1_1");
         gene1.addToCollection("evidence", "0_2");
         expected.add(gene1);
         Item gene2 = tgtItemFactory.makeItem("2_2", GENOMIC_NS + "Gene", "");
-        gene2.setAttribute("organismDbId", "FBgn0001612");
+        gene2.setAttribute("primaryIdentifier", "FBgn0001612");
         gene2.setReference("organism", "1_1");
         gene2.addToCollection("evidence", "0_2");
         expected.add(gene2);

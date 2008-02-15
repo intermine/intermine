@@ -71,7 +71,7 @@ public class StoreSequences
             osw.beginTransaction();
             Contig contig = (Contig) PostProcessUtil.cloneInterMineObject((Contig) resIter.next());
 
-            String sequence = getSequence(contig.getIdentifier());
+            String sequence = getSequence(contig.getPrimaryIdentifier());
             Sequence seq = (Sequence) DynamicUtil.createObject(
                              Collections.singleton(Sequence.class));
             seq.setResidues(sequence);

@@ -29,7 +29,7 @@
           <li>
             <im:querylink text="All KEGG pathways with associated genes " skipBuilder="true">
 
-            <query name="" model="genomic" view="Pathway.identifier Pathway.name Pathway.genes.organismDbId Pathway.genes.identifier"></query>
+            <query name="" model="genomic" view="Pathway.identifier Pathway.name Pathway.genes.primaryIdentifier Pathway.genes.identifier"></query>
             </im:querylink>
 
           </li>

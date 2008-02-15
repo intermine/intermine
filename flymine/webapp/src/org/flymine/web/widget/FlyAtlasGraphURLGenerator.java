@@ -59,13 +59,13 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         return sb.toString();
     }
 
-/**
- * @param os object store
- * @param bag bag
- * @param series up or down
- * @param category tissue
- * @return the path query
- */
+    /**
+     * @param os object store
+     * @param bag bag
+     * @param series up or down
+     * @param category tissue
+     * @return the path query
+     */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
                                        String series,
@@ -75,7 +75,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         PathQuery q = new PathQuery(model);
 
         Path identifier = MainHelper.makePath(model, q, "FlyAtlasResult.genes.identifier");
-        Path organismDbId = MainHelper.makePath(model, q, "FlyAtlasResult.genes.organismDbId");
+        Path primaryIdentifier = MainHelper.makePath(model, q, "FlyAtlasResult.genes.primaryIdentifier");
         Path name = MainHelper.makePath(model, q, "FlyAtlasResult.genes.name");
         Path org = MainHelper.makePath(model, q, "FlyAtlasResult.genes.organism.name");
         Path assays = MainHelper.makePath(model, q, "FlyAtlasResult.assays.name");
@@ -88,7 +88,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         List<Path> view = new ArrayList<Path>();
 
         view.add(identifier);
-        view.add(organismDbId);
+        view.add(primaryIdentifier);
         view.add(name);
         view.add(org);
         view.add(assays);
@@ -133,7 +133,7 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
 
         sortOrder.add(new OrderBy(enrichment, direction));
         sortOrder.add(new OrderBy(identifier, "asc"));
-        sortOrder.add(new OrderBy(organismDbId, "asc"));
+        sortOrder.add(new OrderBy(primaryIdentifier, "asc"));
         sortOrder.add(new OrderBy(name, "asc"));
         sortOrder.add(new OrderBy(assays, "asc"));
         sortOrder.add(new OrderBy(affyCall, "asc"));

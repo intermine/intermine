@@ -1,5 +1,5 @@
 ChromosomeBand = karyotype
-ChromosomeBand.identifier = karyotype.band
+ChromosomeBand.primaryIdentifier = karyotype.band
 ChromosomeBand.stain = karyotype.stain
 ComputationalAnalysis = analysis
 ComputationalAnalysis.algorithm = analysis.logic_name

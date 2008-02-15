@@ -15,7 +15,7 @@
   </query>
 </template>
 <template name="AllGene_Chromosome" title="All genes organism X --&gt; All chromosomal locations." longDescription="Show the chromosome location and sequence for all genes from a particular organism" comment="">
-  <query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.identifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.organismDbId Gene.identifier Gene.symbol">
+  <query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.identifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.primaryIdentifier Gene.identifier Gene.symbol">
     <pathDescription pathString="Gene.chromosomeLocation" description="Chromosome location">
     </pathDescription>
     <pathDescription pathString="Gene.chromosome" description="Chromosome">
@@ -67,7 +67,7 @@
   </query>
 </template>
 <template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes, transcripts, exons." longDescription="Show the genes, transcripts and exons located between two points on a chromosome.  Give the location of the exons." comment="">
-  <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.organismDbId Chromosome.exons.gene.symbol Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand" constraintLogic="D and A and C and B">
+  <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.identifier Chromosome.exons.gene.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.gene.identifier Chromosome.exons.transcripts.identifier Chromosome.exons.identifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand" constraintLogic="D and A and C and B">
     <pathDescription pathString="Chromosome.exons.transcripts" description="Transcript">
     </pathDescription>
     <pathDescription pathString="Chromosome.exons" description="Exon">
@@ -105,7 +105,7 @@
   </query>
 </template>
 <template name="Chromosome_Gene" title="Chromosome --&gt; All genes." longDescription="Show genes located on a particular chromosome." comment="">
-  <query name="Chromosome_Gene" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand" constraintLogic="A and B">
+  <query name="Chromosome_Gene" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand" constraintLogic="A and B">
     <pathDescription pathString="Gene.chromosome" description="Chromosome">
     </pathDescription>
     <node path="Gene" type="Gene">
@@ -157,7 +157,7 @@
   </query>
 </template>
 <template name="GO_name_Gene" title="GO term name --&gt; Genes in one specific organism." longDescription="Search for genes in a one specific organism that have been asociated with the following GO annotation." comment="">
-  <query name="GO_name_Gene" model="genomic" view="Gene.identifier Gene.organismDbId Gene.goAnnotation.name" constraintLogic="B and C">
+  <query name="GO_name_Gene" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.goAnnotation.name" constraintLogic="B and C">
     <node path="Gene" type="Gene">
     </node>
     <node path="Gene.organism" type="Organism">
@@ -185,7 +185,7 @@
   </query>
 </template>
 <template name="Gene_Location" title="Gene --&gt; Chromosomal location." longDescription="Show the chromosome and the chromosome location of a particular gene." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_Location" model="genomic" view="Gene.organismDbId Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand" constraintLogic="A and B">
+  <query name="Gene_Location" model="genomic" view="Gene.primaryIdentifier Gene.identifier Gene.name Gene.chromosome.identifier Gene.objects.start Gene.objects.end Gene.objects.strand" constraintLogic="A and B">
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="mal1_18s" description="Show the chromosome and the chromosome location for gene:" identifier="Gene.class" editable="true" code="A">
       </constraint>
@@ -202,8 +202,8 @@
     </node>
   </query>
 </template>
-<template name="Gene_OrthologueOrganism" title="Gene --&gt; Orthologues in one specific organism." longDescription="For a particular gene, show predicted orthologues in one particular organism." comment="Orthologues-&gt;subject-&gt;identifier removed for workshop (as dpse identifiers missing so made it confusing) (Rachel);  07.02.07: updated to run from gene identifier - Rachel. 13/03/07 added orthologue organismDbId. Philip 070607 updated to work from gene class - Philip">
-  <query name="Gene_OrthologueOrganism" model="genomic" view="Gene.identifier Gene.symbol Gene.organismDbId Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.organismDbId Gene.orthologues.orthologue.name" constraintLogic="B and D and A">
+<template name="Gene_OrthologueOrganism" title="Gene --&gt; Orthologues in one specific organism." longDescription="For a particular gene, show predicted orthologues in one particular organism." comment="Orthologues-&gt;subject-&gt;identifier removed for workshop (as dpse identifiers missing so made it confusing) (Rachel);  07.02.07: updated to run from gene identifier - Rachel. 13/03/07 added orthologue primaryIdentifier. Philip 070607 updated to work from gene class - Philip">
+  <query name="Gene_OrthologueOrganism" model="genomic" view="Gene.identifier Gene.symbol Gene.primaryIdentifier Gene.orthologues.orthologue.identifier Gene.orthologues.orthologue.symbol Gene.orthologues.orthologue.primaryIdentifier Gene.orthologues.orthologue.name" constraintLogic="B and D and A">
     <pathDescription pathString="Gene.orthologues.orthologue" description="Orthologue">
     </pathDescription>
     <pathDescription pathString="Gene.organism" description="Organism">
@@ -303,7 +303,7 @@
   </query>
 </template>
 <template name="Organism_Gene" title="Organism --&gt; All genes." longDescription="Show all the genes for a particular organism." comment="">
-  <query name="Organism_Gene" model="genomic" view="Gene.identifier Gene.symbol Gene.organismDbId">
+  <query name="Organism_Gene" model="genomic" view="Gene.identifier Gene.symbol Gene.primaryIdentifier">
     <node path="Gene" type="Gene">
     </node>
     <node path="Gene.organism" type="Organism">
@@ -343,7 +343,7 @@
   </query>
 </template>
 <template name="Protein_Gene" title="Protein --&gt; Gene." longDescription="For a particular protein show the identifiers and symbol of the corresponding gene." comment="07:02:07:Updated to work from protein primary accession- Rachel. 06.06.07 updated to work using the protein class - Philip">
-  <query name="Protein_Gene" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.name Protein.genes.identifier Protein.genes.symbol Protein.genes.organismDbId">
+  <query name="Protein_Gene" model="genomic" view="Protein.identifier Protein.primaryAccession Protein.name Protein.genes.identifier Protein.genes.symbol Protein.genes.primaryIdentifier">
     <node path="Protein" type="Protein">
       <constraint op="LOOKUP" value="P46468" description="Protein:" identifier="Protein.class" editable="true" code="A">
       </constraint>

@@ -45,7 +45,7 @@
 </query>
             </im:querylink>
             <im:querylink text="(export)" skipBuilder="true">
-<query name="" model="genomic" view="Gene.identifier Gene.organismDbId Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.qualifier">
+<query name="" model="genomic" view="Gene.identifier Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.qualifier">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">

@@ -14,7 +14,7 @@
     </collection>
   </item>
   <item id="0_4" class="http://www.flymine.org/model/genomic#Chromosome">
-    <attribute name="identifier" value="4"/>
+    <attribute name="primaryIdentifier" value="4"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="0_3" class="http://www.flymine.org/model/genomic#DataSource">
@@ -46,7 +46,7 @@
   </item>
   <item id="0_6" class="http://www.flymine.org/model/genomic#DefinedRegion">
     <attribute name="curated" value="false"/>
-    <attribute name="identifier" value="HMO_Idd3"/>
+    <attribute name="primaryIdentifier" value="HMO_Idd3"/>
     <attribute name="type" value="diseaseRegion"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="evidence">
