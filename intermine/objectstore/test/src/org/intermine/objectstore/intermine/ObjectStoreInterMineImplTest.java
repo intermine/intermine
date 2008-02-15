@@ -456,6 +456,8 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
                 fail("Should have thrown exception");
             } catch (ObjectStoreException e) {
                 assertEquals("Request id flibble4 is cancelled", e.getMessage());
+                // test passed so stop immediately
+                return;
             } finally {
                 ((ObjectStoreInterMineImpl) os).deregisterRequestId(id);
                 ((ObjectStoreInterMineImpl) os).releaseConnection(c);
