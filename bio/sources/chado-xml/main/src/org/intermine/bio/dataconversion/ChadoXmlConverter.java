@@ -178,12 +178,12 @@ public class ChadoXmlConverter extends FileConverter
                 } else if (stack.matches("dbxref>dbxref_id>cvterm>type_id>feature")) {
                     // this is the SO term identifier of the feature type
                 } else if (stack.matches("dbxref>dbxref_id>cvterm_dbxref>cvterm>type_id>feature")) {
-
+                    // TODO FIXME XXX
                 } else if (stack.matches("dbxref>dbxref_id>cvterm>cvterm_id>"
                                          + "feature_cvterm>feature")) {
-
+                    // TODO FIXME XXX
                 } else if (stack.matches("dbxref>dbxref_id>feature_dbxref>feature")) {
-
+                    // TODO FIXME XXX
                 } else {
                     throw new SAXException("LOST: " + stack);
                 }
@@ -191,6 +191,7 @@ public class ChadoXmlConverter extends FileConverter
                 if (stack.matches("feature")) {
                     ((FeatureHolder) objects.peek()).uniquename = charBuffer.toString();
                 } else if (stack.matches("pub")) {
+                    // TODO FIXME XXX
                 } else {
                     throw new SAXException("LOST: " + stack);
                 }

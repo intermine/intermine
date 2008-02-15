@@ -17,6 +17,7 @@ import java.util.Map;
 
 /**
  * A class representing the contents of a project.xml file.
+ * @author Tom Riley
  */
 public class Project
 {

@@ -13,7 +13,6 @@ package org.intermine.task;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Date;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,8 +138,7 @@ public class Dependencies extends Task
 
     /**
      * Execute the task.
-     *
-     * @throws BuildException if something goes wrong
+     * {@inheritDoc}
      */
     public void execute() throws BuildException {
         if (workspaceBaseDir == null) {
@@ -415,8 +413,12 @@ public class Dependencies extends Task
     /**
      * Load dependencies for a project and iterate over them.  Also add the contents of
      * extra.project.dependencies to the start of the projects List.
-     * @param projName the name of the current project to example
+     * @param projName the name of the current project
      * @param projects accumulation of project names found
+     * @param extraDeps extra dependencies specified by the extra.project.dependencies properties -
+     * the "sources" projects sometimes need a model to compile (mostly the postprocessing code),
+     * but there is a different model in each Mine so we need to tell the dependency system to add
+     * this model project to the dependency list of all projects that we depend on.
      */
     protected void followProjectDependencies(String projName, List projects,
                                              List<String> extraDeps) {
@@ -451,7 +453,7 @@ public class Dependencies extends Task
     /**
      * Step over each dependency mentioned in depsString and record it. Also follow
      * each project once.
-     *
+     * @param projName the name of the current project
      * @param deps list of project dependencies
      * @param projects accumulation of project names found
      */
