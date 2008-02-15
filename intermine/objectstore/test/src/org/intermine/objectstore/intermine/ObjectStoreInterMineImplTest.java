@@ -443,6 +443,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
     public void testCancelMethods4() throws Exception {
         Object id = "flibble4";
+        UndeclaredThrowableException failure = null;
 
         // this test sometimes fails even when all is OK, so run it multiple times and exit if it
         // passes
@@ -458,11 +459,16 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
                 assertEquals("Request id flibble4 is cancelled", e.getMessage());
                 // test passed so stop immediately
                 return;
+            } catch (UndeclaredThrowableException t) {
+                // test failed but might pass next time - try again
+                failure = t;
             } finally {
                 ((ObjectStoreInterMineImpl) os).deregisterRequestId(id);
                 ((ObjectStoreInterMineImpl) os).releaseConnection(c);
             }
         }
+
+        throw failure;
     }
 
     public void testCancelMethods5() throws Exception {
