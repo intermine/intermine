@@ -63,7 +63,7 @@
         <listitem>
           <para>Constrain the Gene class to the Gene of interest by
           adding a constraint to either the Gene identifier, symbol or
-          organismdbid.
+          primaryIdentifier.
           </para>
 
        <mediaobject>

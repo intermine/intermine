@@ -117,16 +117,16 @@ public class RNAiConverter extends FileConverter
         }
     }
 
-    private Item createGene(String organismDbId) throws ObjectStoreException {
-        Item gene = (Item) geneMap.get(organismDbId);
+    private Item createGene(String primaryIdentifier) throws ObjectStoreException {
+        Item gene = (Item) geneMap.get(primaryIdentifier);
         if (gene == null) {
             gene = createItem("Gene");
             gene.setReference("organism", org.getIdentifier());
-            gene.setAttribute("organismDbId", organismDbId);
-            geneMap.put(organismDbId, gene);
+            gene.setAttribute("primaryIdentifier", primaryIdentifier);
+            geneMap.put(primaryIdentifier, gene);
 
             Item synonym = createItem("Synonym");
-            synonym.setAttribute("value", organismDbId);
+            synonym.setAttribute("value", primaryIdentifier);
             synonym.setAttribute("type", "identifier");
             synonym.setReference("subject", gene.getIdentifier());
             synonym.setReference("source", dataSource.getIdentifier());

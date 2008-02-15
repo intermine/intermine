@@ -126,8 +126,10 @@ public class GFF3Exporter implements TableExporter
 
                 // add some fields as extra attributes if the object has them
 
-                List<String> extraFields = Arrays.asList(new String[] {"symbol", "organismDbId",
-                    "name"});
+                List<String> extraFields =
+                    Arrays.asList(new String[] {
+                                      "symbol", "primaryIdentifier", "name"
+                                  });
                 for (String fieldName : extraFields) {
                     FieldInfo field = TypeUtil.getFieldInfo(lsf.getClass(), fieldName);
                     if (field != null && (TypeUtil.getFieldValue(lsf, fieldName) != null)) {

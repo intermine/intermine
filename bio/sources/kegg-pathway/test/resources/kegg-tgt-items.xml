@@ -3,27 +3,27 @@
 <attribute name="taxonId" value="7227"/>
 </item>
 <item id="4_4" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG1007"/>
+<attribute name="secondaryIdentifier" value="CG1007"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="pathways"><reference ref_id="3_3"/></collection>
 </item>
 <item id="4_8" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG10078"/>
+<attribute name="secondaryIdentifier" value="CG10078"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="pathways"><reference ref_id="3_2"/><reference ref_id="3_3"/></collection>
 </item>
 <item id="4_3" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG10067"/>
+<attribute name="secondaryIdentifier" value="CG10067"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="pathways"><reference ref_id="3_2"/></collection>
 </item>
 <item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG10045"/>
+<attribute name="secondaryIdentifier" value="CG10045"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG1004"/>
+<attribute name="secondaryIdentifier" value="CG1004"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="pathways"><reference ref_id="3_1"/></collection>
 </item>
@@ -37,17 +37,17 @@
 <attribute name="url" value="http://www.genome.jp/kegg/pathway.html"/>
 </item>
 <item id="4_5" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG10071"/>
+<attribute name="secondaryIdentifier" value="CG10071"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="pathways"><reference ref_id="3_1"/></collection>
 </item>
 <item id="4_7" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG10076"/>
+<attribute name="secondaryIdentifier" value="CG10076"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="pathways"><reference ref_id="3_1"/></collection>
 </item>
 <item id="4_6" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG10072"/>
+<attribute name="secondaryIdentifier" value="CG10072"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="pathways"><reference ref_id="3_2"/><reference ref_id="3_1"/><reference ref_id="3_3"/></collection>
 </item>
@@ -65,7 +65,7 @@
 <collection name="evidence"><reference ref_id="1_1"/></collection>
 </item>
 <item id="4_9" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="identifier" value="CG10079"/>
+<attribute name="secondaryIdentifier" value="CG10079"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>

@@ -249,7 +249,7 @@ public class HomophilaConverter extends FileConverter
         Item translation = (Item) translations.get(array[TRANSLATION_ID]);
         if (translation == null) {
             translation = createItem("Translation");
-            translation.addAttribute(new Attribute("identifier", array[TRANSLATION_ID]));
+            translation.addAttribute(new Attribute("primaryIdentifier", array[TRANSLATION_ID]));
             translation.addReference(new Reference("organism", orgDrosophila.getIdentifier()));
             translation.addToCollection("evidence", homophilaDb);
             translations.put(array[TRANSLATION_ID], translation);
@@ -269,7 +269,7 @@ public class HomophilaConverter extends FileConverter
         Item protein = (Item) proteins.get(array[PROTEIN_ID]);
         if (protein == null) {
             protein = createItem("Protein");
-            protein.addAttribute(new Attribute("identifier", array[PROTEIN_ID]));
+            protein.addAttribute(new Attribute("primaryIdentifier", array[PROTEIN_ID]));
             protein.addReference(new Reference("organism", orgHuman.getIdentifier()));
             Item gene = findGene(array);
             if (gene != null) {

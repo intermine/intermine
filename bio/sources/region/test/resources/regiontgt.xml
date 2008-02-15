@@ -47,7 +47,7 @@
     <reference name="subject" ref_id="0_3"/>
   </item>
   <item id="0_3" class="http://www.flymine.org/model/genomic#Chromosome">
-    <attribute name="identifier" value="1"/>
+    <attribute name="primaryIdentifier" value="1"/>
     <reference name="organism" ref_id="0_0"/>
   </item>
   <item id="0_11" class="http://www.flymine.org/model/genomic#Location">
@@ -62,7 +62,7 @@
   </item>
   <item id="0_5" class="http://www.flymine.org/model/genomic#DefinedRegion">
     <attribute name="curated" value="false"/>
-    <attribute name="identifier" value="ENr231"/>
+    <attribute name="primaryIdentifier" value="ENr231"/>
     <attribute name="type" value="encodeRegion"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="evidence">
@@ -72,7 +72,7 @@
   </item>
   <item id="0_10" class="http://www.flymine.org/model/genomic#DefinedRegion">
     <attribute name="curated" value="false"/>
-    <attribute name="identifier" value="ENr112"/>
+    <attribute name="primaryIdentifier" value="ENr112"/>
     <attribute name="type" value="encodeRegion"/>
     <reference name="organism" ref_id="0_0"/>
     <collection name="evidence">

@@ -112,7 +112,7 @@ public class AffyConverter extends CDNACloneConverter
     /**
      * @param clsName = target class name
      * @param ordId = ref id for organism
-     * @param geneEnsembl = ensembl identifier used for gene organismDbId
+     * @param geneEnsembl = ensembl identifier used for gene primaryIdentifier
      * @param writer = itemWriter write item to objectstore
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
@@ -123,7 +123,7 @@ public class AffyConverter extends CDNACloneConverter
         if (gene == null) {
             gene = createItem(clsName);
             gene.setReference("organism", orgId);
-            gene.setAttribute("organismDbId", geneEnsembl);
+            gene.setAttribute("primaryIdentifier", geneEnsembl);
             geneMap.put(geneEnsembl, gene);
             store(gene);
         }
@@ -144,7 +144,7 @@ public class AffyConverter extends CDNACloneConverter
                               String datasourceId, String datasetId, ItemWriter writer)
         throws Exception {
         Item probe = createItem(clsName);
-        probe.setAttribute("identifier", PROBEPREFIX + id);
+        probe.setAttribute("primaryIdentifier", PROBEPREFIX + id);
         probe.setAttribute("name", id);
         probe.setAttribute("url", PROBEURL + id);
         probe.setReference("organism", orgId);

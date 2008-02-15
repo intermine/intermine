@@ -1581,15 +1581,15 @@
     <para> Gene - for some organisms there are two commonly used
     identification schemes, for example Drosophila has FlyBase FBgn***
     and Computed CG***. Gene has an additional identifier field,
-    'organismDbId', which contains the id used in the main annotation
-    database for each organism. So for Drosophila 'organismDbId' is a
+    'primaryIdentifier', which contains the id used in the main annotation
+    database for each organism. So for Drosophila 'primaryIdentifier' is a
     FlyBase id and 'identifier' is CG*** id.  In addition Gene has a
     'name' and 'symbol' field. All additional names and identifiers
     should be available as Synonyms. </para>
 
     <para> Protein - Where possible the 'identifier' field is the
     UniProt identifier (e.g. 18C_DROME). Protein has an additional
-    'primaryAccession' field which will be the UniProt primary
+    'primaryAccesion' field which will be the UniProt primary
     accession where available (e.g. P16909). All accession numbers
     available in UniProt are stored as synonyms with type 'accession'
     (e.g. P16909, Q9VPA8). </para>
@@ -1645,7 +1645,7 @@
     properties of genes. The actual properties are known as
     fields. The class is a holder for a set of fields that provide
     information about the 'thing'. For example the Gene class has the
-    fields: name, identifier, organismDbId, etc. An object is an
+    fields: name, identifier, primaryIdentifier, etc. An object is an
     actual member of a class (known as an 'instance' of that
     class). For example, the Notch gene is a member of the Gene
     class. Every object of a class has the set of properties (fields)
@@ -1705,7 +1705,7 @@
      to other classes. </para>
 
      <para> The following are examples of fields of the Gene class:
-     identifier, name and organismDbId. This type of field holds just
+     identifier, name and primaryIdentifier. This type of field holds just
      one piece of information which can be either text or a
      number. The fields of a class are always displayed directly below
      the class name and can be distinguished from other types of

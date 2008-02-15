@@ -218,7 +218,7 @@ public class SimpleLoadTask extends Task
         q.addToSelect(qc);
 
         QueryValue qv = new QueryValue(proteinIdentifier);
-        QueryField qf = new QueryField(qc, "identifier");
+        QueryField qf = new QueryField(qc, "primaryIdentifier");
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
         q.setConstraint(sc);
 

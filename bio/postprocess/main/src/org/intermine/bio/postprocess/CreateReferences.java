@@ -584,7 +584,7 @@ public class CreateReferences
             if (lastGene != null && !(lastGene.equals(thisGene))) {
                 TypeUtil.setFieldValue(lastGene, "allGoAnnotation", allGoCollection);
                 TypeUtil.setFieldValue(lastGene, "goAnnotation", goCollection);
-                LOG.debug("store gene " + lastGene.getIdentifier() + " with "
+                LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
                           + lastGene.getAllGoAnnotation().size() + " allGO and "
                           + lastGene.getGoAnnotation().size() + " GO.");
                 osw.store(lastGene);
@@ -606,7 +606,7 @@ public class CreateReferences
         if (lastGene != null) {
             TypeUtil.setFieldValue(lastGene, "allGoAnnotation", allGoCollection);
             TypeUtil.setFieldValue(lastGene, "goAnnotation", goCollection);
-            LOG.debug("store gene " + lastGene.getIdentifier() + " with "
+            LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
                       + lastGene.getAllGoAnnotation().size() + " allGO and "
                       + lastGene.getGoAnnotation().size() + " GO.");
             osw.store(lastGene);

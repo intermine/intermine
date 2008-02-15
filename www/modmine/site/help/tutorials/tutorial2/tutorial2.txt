@@ -119,7 +119,7 @@ display this query in the Query Builder. - Note that 'identifier' and
 they are selected for output.</p></li>
 
   <li><p>To make the FBgn number appear on the result page as well,
-click on 'SHOW' next to 'organismDbId' under 'Gene'. 'organismDbId'
+click on 'SHOW' next to 'primaryIdentifier' under 'Gene'. 'primaryIdentifier'
 will now appear in blue and can be found in the output section
 below. The order of the columns can be changed by clicking and
 dragging the output boxes.</p></li>
@@ -176,7 +176,7 @@ down and click 'Show results' to run the query. </p></li>
 </ul>
 
 
-<p>Re-run the query with the results sorted Z-A on the organismDbId (FBgn)</p>
+<p>Re-run the query with the results sorted Z-A on the primaryIdentifier (FBgn)</p>
 
 
 <img alt="[buildtemplate_sort.png  ]" class="inlinegraphic" src="buildtemplate_sort.png "/> 

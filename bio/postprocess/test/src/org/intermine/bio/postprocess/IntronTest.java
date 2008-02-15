@@ -151,11 +151,11 @@ public class IntronTest extends TestCase{
 
             assertEquals(1, ir.getSynonyms().size());
             Synonym synonym = (Synonym) ir.getSynonyms().iterator().next();
-            assertEquals(ir.getIdentifier(), synonym.getValue());
+            assertEquals(ir.getPrimaryIdentifier(), synonym.getValue());
             assertEquals("identifier", synonym.getType());
             assertEquals("FlyMine", synonym.getSource().getName());
 
-            actualIdentifiers.add(ir.getIdentifier());
+            actualIdentifiers.add(ir.getPrimaryIdentifier());
         }
 
         Set expectedIdentifiers =
@@ -175,7 +175,7 @@ public class IntronTest extends TestCase{
         locationSet1 = new HashSet();
 
         Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        chr.setIdentifier("X");
+        chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(10000));
         chr.setId(new Integer(101));
         chr.setOrganism(organism);
@@ -184,7 +184,7 @@ public class IntronTest extends TestCase{
         Transcript t1 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         t1.setLength(new Integer(1000));
         t1.setId(new Integer(10));
-        t1.setIdentifier("ENST00000306601");
+        t1.setPrimaryIdentifier("ENST00000306601");
         t1.setOrganism(organism);
         t1.setExonCount(new Integer(3));
         t1.setChromosome(chr);
@@ -236,7 +236,7 @@ public class IntronTest extends TestCase{
         locationSet2 = new HashSet();
 
         Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        chr.setIdentifier("X");
+        chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(10000));
         chr.setId(new Integer(101));
         chr.setOrganism(organism);
@@ -245,7 +245,7 @@ public class IntronTest extends TestCase{
         Transcript t2 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         t2.setLength(new Integer(1050));
         t2.setId(new Integer(11));
-        t2.setIdentifier("ENST00000306610");
+        t2.setPrimaryIdentifier("ENST00000306610");
         t2.setOrganism(organism);
         t2.setExonCount(new Integer(3));
         t2.setChromosome(chr);
@@ -298,7 +298,7 @@ public class IntronTest extends TestCase{
         locationSet3 = new HashSet();
 
         Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        chr.setIdentifier("X");
+        chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(10000));
         chr.setId(new Integer(101));
         chr.setOrganism(organism);
@@ -307,7 +307,7 @@ public class IntronTest extends TestCase{
         Transcript t3 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         t3.setLength(new Integer(1000));
         t3.setId(new Integer(10));
-        t3.setIdentifier("ENST00000306001");
+        t3.setPrimaryIdentifier("ENST00000306001");
         t3.setOrganism(organism);
         t3.setExonCount(new Integer(1));
         t3.setChromosome(chr);

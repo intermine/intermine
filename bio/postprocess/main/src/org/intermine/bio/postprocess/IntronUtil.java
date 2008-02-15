@@ -303,7 +303,7 @@ public class IntronUtil
             int newLocStart = nextIntronStart + tranStart;
             int newLocEnd = intronEnd + tranStart;
 
-            String identifier = "intron_chr" + chr.getIdentifier()
+            String identifier = "intron_chr" + chr.getPrimaryIdentifier()
                 + "_" + Integer.toString(newLocStart) + ".." + Integer.toString(newLocEnd);
 
             if (intronMap.get(identifier) == null) {
@@ -317,7 +317,7 @@ public class IntronUtil
                 intron.setChromosome(chr);
                 intron.setOrganism(chr.getOrganism());
                 intron.addEvidence(dataSet);
-                intron.setIdentifier(identifier);
+                intron.setPrimaryIdentifier(identifier);
 
 
                 location.setStart(new Integer(newLocStart));
@@ -334,7 +334,7 @@ public class IntronUtil
                 synonym.setSource(dataSource);
                 synonym.setSubject(intron);
                 synonym.setType("identifier");
-                synonym.setValue(intron.getIdentifier());
+                synonym.setValue(intron.getPrimaryIdentifier());
                 osw.store(synonym);
 
                 intron.setChromosomeLocation(location);

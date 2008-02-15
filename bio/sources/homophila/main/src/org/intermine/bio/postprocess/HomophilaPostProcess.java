@@ -108,7 +108,7 @@ public class HomophilaPostProcess extends PostProcessor
             ResultsRow rr = (ResultsRow) iter.next();
             Gene gene = (Gene) rr.get(0);
             Disease disease = (Disease) rr.get(1);
-            LOG.debug("gene = " + gene.getIdentifier() + "  disease = " + disease.getOmimId());
+            LOG.debug("gene = " + gene.getSecondaryIdentifier() + "  disease = " + disease.getOmimId());
 
             Set<Disease> newCollection = new HashSet<Disease>();
             newCollection.add(disease);

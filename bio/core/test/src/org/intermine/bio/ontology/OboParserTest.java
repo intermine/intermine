@@ -40,7 +40,6 @@ public class OboParserTest extends TestCase
 
         Set terms = parser.processForLabellingOntology(new StringReader(test));
         assertEquals(1, terms.size()); // should be one root term
-
         assertEquals("GO:0000001", ((OboTerm) terms.iterator().next()).getId());
 
         terms = new HashSet(parser.terms.values());
@@ -83,7 +82,6 @@ public class OboParserTest extends TestCase
     public void testDescriptions() throws Exception {
         String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
         parser.processForLabellingOntology(new StringReader(test));
-
         OboTerm dt1 = (OboTerm) parser.terms.get("GO:0000001");
         OboTerm dt2 = (OboTerm) parser.terms.get("GO:0000002");
         OboTerm dt3 = (OboTerm) parser.terms.get("GO:0000003");

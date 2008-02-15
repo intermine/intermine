@@ -306,7 +306,7 @@ public class ChadoDBConverter extends BioDBConverter
                             (SetFieldConfigAction) action;
                         feature.setAttribute(attrAction.getFieldName(), name);
                         fieldValuesSet.add(name);
-                        if (attrAction.getFieldName().equals("identifier")) {
+                        if (attrAction.getFieldName().equals("primaryIdentifier")) {
                             fdat.flags |= FeatureData.IDENTIFIER_SET;
                         }
                     }
@@ -318,16 +318,15 @@ public class ChadoDBConverter extends BioDBConverter
             new MultiKey("feature", fdat.interMineType, dataSourceName, "uniquename");
         List<ConfigAction> uniqueNameActionList = getConfig().get(uniqueNameKey);
         if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
-            feature.setAttribute("identifier", uniqueName);
+            feature.setAttribute("primaryIdentifier", uniqueName);
             fieldValuesSet.add(uniqueName);
-            fdat.flags |= FeatureData.IDENTIFIER_SET;
         } else {
             for (ConfigAction action: uniqueNameActionList) {
                 if (action instanceof SetFieldConfigAction) {
                     SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
                     feature.setAttribute(attrAction.getFieldName(), uniqueName);
                     fieldValuesSet.add(uniqueName);
-                    if (attrAction.getFieldName().equals("identifier")) {
+                    if (attrAction.getFieldName().equals("primaryIdentifier")) {
                         fdat.flags |= FeatureData.IDENTIFIER_SET;
                     }
                 }
@@ -867,7 +866,7 @@ public class ChadoDBConverter extends BioDBConverter
                                          accession);
                             existingAttributes.add(setAction.getFieldName());
                             fieldsSet.add(accession);
-                            if (setAction.getFieldName().equals("identifier")) {
+                            if (setAction.getFieldName().equals("primaryIdentifier")) {
                                 fdat.flags |= FeatureData.IDENTIFIER_SET;
                             }
                         }
@@ -932,7 +931,7 @@ public class ChadoDBConverter extends BioDBConverter
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         setAttribute(fdat.intermineObjectId, setAction.getFieldName(), identifier);
                         fieldsSet.add(identifier);
-                        if (setAction.getFieldName().equals("identifier")) {
+                        if (setAction.getFieldName().equals("primaryIdentifier")) {
                             fdat.flags |= FeatureData.IDENTIFIER_SET;
                         }
                     }
@@ -1014,7 +1013,7 @@ public class ChadoDBConverter extends BioDBConverter
                                          identifier);
                             existingAttributes.add(setAction.getFieldName());
                             setField = true;
-                            if (setAction.getFieldName().equals("identifier")) {
+                            if (setAction.getFieldName().equals("primaryIdentifier")) {
                                 fdat.flags |= FeatureData.IDENTIFIER_SET;
                             }
                         }

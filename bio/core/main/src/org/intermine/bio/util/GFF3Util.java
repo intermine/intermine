@@ -53,7 +53,7 @@ public abstract class GFF3Util
         String strand = null;
 
         if (lsf instanceof Chromosome) {
-            sequenceID = lsf.getIdentifier();
+            sequenceID = lsf.getPrimaryIdentifier();
             type = "chromosome";
             start = 1;
             end = lsf.getLength().intValue();
@@ -69,7 +69,7 @@ public abstract class GFF3Util
                 return null;
             }
 
-            sequenceID = chr.getIdentifier();
+            sequenceID = chr.getPrimaryIdentifier();
 
             Iterator iter = classes.iterator();
             while (iter.hasNext()) {
@@ -100,9 +100,9 @@ public abstract class GFF3Util
         Map<String, List<String>> recordAttribute =
             new LinkedHashMap<String, List<String>>(extraAttributes);
 
-        if (lsf.getIdentifier() != null) {
+        if (lsf.getPrimaryIdentifier() != null) {
             List<String> idList = new ArrayList<String>();
-            idList.add(lsf.getIdentifier());
+            idList.add(lsf.getPrimaryIdentifier());
             recordAttribute.put("ID", idList);
         }
 

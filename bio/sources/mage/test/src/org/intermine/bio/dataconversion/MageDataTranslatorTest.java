@@ -446,7 +446,7 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         expItem1.setReference("material", "-1_1");
 
         Item expItem2 = createTgtItem("CDNAClone", "-1_1", "");
-        expItem2.setAttribute("identifier", "GH1234");
+        expItem2.setAttribute("primaryIdentifier", "GH1234");
 
         Set expected = new HashSet(Arrays.asList(new Object[] {expItem1, expItem2}));
 
@@ -660,14 +660,14 @@ public class MageDataTranslatorTest extends DataTranslatorTestCase {
         translator.expIdNames.put("6_1", "E-FLYC-1");
 
         Item clone = createTgtItem("Clone", "7_1", "");
-        clone.setAttribute("identifier", "1234");
+        clone.setAttribute("primaryIdentifier", "1234");
         translator.clones.put("7_1", clone);
         Map typeMap = new HashMap();
         typeMap.put("image", "5678");
         translator.cloneIds.put("7_1", typeMap);
 
         Item expClone = createTgtItem("Clone", "7_1", "");
-        expClone.setAttribute("identifier", "5678");
+        expClone.setAttribute("primaryIdentifier", "5678");
         Map expClones = new HashMap();
         expClones.put("7_1", expClone);
 

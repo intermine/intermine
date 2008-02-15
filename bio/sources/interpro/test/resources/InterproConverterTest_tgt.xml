@@ -3,7 +3,7 @@
 <attribute name="name" value="Datasource 3"/>
 </item>
 <item id="2_3" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR200001"/>
+<attribute name="primaryIdentifier" value="IPR200001"/>
 </item>
 <item id="4_2" class="http://www.flymine.org/model/genomic#Publication">
 <attribute name="pubMedId" value="2222222"/>
@@ -18,10 +18,10 @@
 <attribute name="pubMedId" value="9999999"/>
 </item>
 <item id="2_2" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR100000"/>
+<attribute name="primaryIdentifier" value="IPR100000"/>
 </item>
 <item id="2_5" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR200003"/>
+<attribute name="primaryIdentifier" value="IPR200003"/>
 </item>
 <item id="3_2" class="http://www.flymine.org/model/genomic#DomainRelationship">
 </item>
@@ -50,7 +50,7 @@
 <attribute name="name" value="Datasource 1"/>
 </item>
 <item id="2_6" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR300000"/>
+<attribute name="primaryIdentifier" value="IPR300000"/>
 </item>
 <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
@@ -75,7 +75,7 @@
 </item>
 <item id="2_1" class="http://www.flymine.org/model/genomic#ProteinDomain">
 <attribute name="description" value="Kringles are autonomous structural domains, found throughout the blood clotting and fibrinolytic proteins.Kringle domains are believed to play a role in binding mediators (e.g., membranes,other proteins or phospholipids), and in the regulation of proteolytic activity, , . Kringle domains , , are characterised by a triple loop, 3-disulphide bridge structure, whose  conformation is defined by a number of hydrogen bonds and small pieces of  anti-parallel beta-sheet. They are found in a varying number  of  copies  in some plasma proteins including prothrombin and urokinase-type plasminogen activator, which are serine proteases belonging to MEROPS peptidase family S1A."/>
-<attribute name="identifier" value="IPR000001"/>
+<attribute name="primaryIdentifier" value="IPR000001"/>
 <attribute name="name" value="supertubby"/>
 <attribute name="shortName" value="tubby"/>
 <attribute name="type" value="Domain"/>
@@ -110,7 +110,7 @@
 </item>
 <item id="2_8" class="http://www.flymine.org/model/genomic#ProteinDomain">
 <attribute name="description" value="&lt;p&gt;PAS domains are involved in many signalling proteins where theyare used as a signal sensor domain. PAS domains appear in archaea,bacteria and eukaryotes. Several PAS-domain proteins are known todetect their signal by way of an associated cofactor. Haeme,flavin, and a 4-hydroxycinnamyl chromophore are used in differentproteins. The PAS domain was named after three proteins that itoccurs in: &lt;/p&gt;&lt;li&gt;Per- period circadian protein&lt;/li&gt;&lt;li&gt;Arnt- Ah receptor nuclear translocator protein&lt;/li&gt;&lt;li&gt;Sim-  single-minded protein.&lt;/li&gt;&lt;p&gt;PAS domains are often associated withPAC domains .  It appears that these domains are directly linked, and that together they form the conserved 3D PAS fold.  The division between the PAS and PAC domains is caused by major differences in sequences in the region connecting these two motifs .  In human PAS kinase, this region has been shown to be very flexible, and adopts different conformations depending on the bound ligand .Probably the most surprising identification of a PAS domain was that inEAG-like K&lt;sup&gt;+&lt;/sup&gt;-channels .&lt;/p&gt;"/>
-<attribute name="identifier" value="IPR00002"/>
+<attribute name="primaryIdentifier" value="IPR00002"/>
 <attribute name="name" value="monkey pants"/>
 <attribute name="shortName" value="monkey"/>
 <attribute name="type" value="Domain"/>
@@ -119,9 +119,9 @@
 <collection name="publications"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_5"/></collection>
 </item>
 <item id="2_7" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR400000"/>
+<attribute name="primaryIdentifier" value="IPR400000"/>
 </item>
 <item id="2_4" class="http://www.flymine.org/model/genomic#ProteinDomain">
-<attribute name="identifier" value="IPR200002"/>
+<attribute name="primaryIdentifier" value="IPR200002"/>
 </item>
 </items>

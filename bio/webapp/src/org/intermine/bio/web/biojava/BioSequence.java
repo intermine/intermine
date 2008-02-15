@@ -33,7 +33,7 @@ public class BioSequence extends SimpleSequence
      * @param bioEntity the BioEntity
      */
     BioSequence (SymbolList symbols, BioEntity bioEntity) {
-        super(symbols, null, bioEntity.getIdentifier(), null);
+        super(symbols, null, bioEntity.getPrimaryIdentifier(), null);
         this.bioEntity = bioEntity;
     }
 }

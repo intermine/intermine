@@ -90,7 +90,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
 
             handler.setFeature(feature);
             handler.process(record);
-            feature.setAttribute("identifier", record.getId());
+            feature.setAttribute("secondaryIdentifier", record.getId());
 
             featureIdentifiers.add(feature.getIdentifier());
 

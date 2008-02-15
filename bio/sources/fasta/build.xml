@@ -19,7 +19,7 @@
 
   <target name="-init-attribute" unless="fasta.classAttribute">
     <!-- set the default -->
-    <property name="fasta.classAttribute" value="identifier"/>
+    <property name="fasta.classAttribute" value="primaryIdentifier"/>
   </target>
 
   <target name="-init-synonym" unless="fasta.synonymSource">

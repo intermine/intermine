@@ -5,5 +5,5 @@ className: org.flymine.model.genomic.Gene
 keyColumn: 2
 
 # the name of the fields that correspond to each column
-column.2: organismDbId
+column.2: primaryIdentifier
 column.0: identifier

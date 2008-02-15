@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -180,7 +181,7 @@ public abstract class ItemsTestCase extends TestCase
     }
 
     public Set<Item> readItemSet(String fileName) throws Exception {
-        return new HashSet<Item>(FullParser.parse(getClass().getClassLoader()
+        return new LinkedHashSet<Item>(FullParser.parse(getClass().getClassLoader()
                                                   .getResourceAsStream(fileName)));
     }
 

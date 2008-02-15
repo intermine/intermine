@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <items>
   <item id="5_1" class="http://www.flymine.org/model/genomic#Transcript">
-    <attribute name="identifier" value="CG9042-RB"/>
+    <attribute name="primaryIdentifier" value="CG9042-RB"/>
     <reference name="organism" ref_id="2_1"/>
   </item>
   <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
   <item id="6_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="CG9042"/>
+    <attribute name="primaryIdentifier" value="CG9042"/>
     <reference name="organism" ref_id="2_1"/>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
@@ -16,7 +16,7 @@
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#ProbeSet">
     <attribute name="description" value="E. coli  GEN=bioB  DB_XREF=gb:J04423.1  NOTE=SIF corresponding to nucleotides 2755-3052 of gb:J04423.1  DEF=E.coli 7,8-diamino-pelargonic acid (bioA), biotin synthetase (bioB), 7-keto-8-amino-pelargonic acid synthetase (bioF), bioC protein, and dethiobiotin synthetase (bioD), complete cds."/>
-    <attribute name="identifier" value="AFFX-BioB-3_at"/>
+    <attribute name="primaryIdentifier" value="AFFX-BioB-3_at"/>
     <attribute name="isControl" value="true"/>
     <attribute name="name" value="AFFX-BioB-3_at"/>
     <reference name="organism" ref_id="2_1"/>
@@ -41,7 +41,7 @@
     <reference name="subject" ref_id="3_1"/>
   </item>
   <item id="3_2" class="http://www.flymine.org/model/genomic#ProbeSet">
-    <attribute name="identifier" value="1616608_a_at"/>
+    <attribute name="primaryIdentifier" value="1616608_a_at"/>
     <attribute name="isControl" value="false"/>
     <attribute name="name" value="1616608_a_at"/>
     <reference name="gene" ref_id="6_1"/>

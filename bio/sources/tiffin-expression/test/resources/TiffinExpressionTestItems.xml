@@ -4,7 +4,7 @@
 <collection name="motifs"><reference ref_id="2_3"/></collection>
 </item>
 <item id="2_3" class="http://www.flymine.org/model/genomic#Motif">
-<attribute name="identifier" value="TIFDMEM0000009"/>
+<attribute name="primaryIdentifier" value="TIFDMEM0000009"/>
 </item>
 <item id="3_97" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
 <attribute name="name" value="dorsal epidermis primordium"/>
@@ -83,7 +83,7 @@
 <collection name="motifs"><reference ref_id="2_1"/></collection>
 </item>
 <item id="2_2" class="http://www.flymine.org/model/genomic#Motif">
-<attribute name="identifier" value="TIFDMEM0000007"/>
+<attribute name="primaryIdentifier" value="TIFDMEM0000007"/>
 </item>
 <item id="3_35" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
 <attribute name="name" value="stage S9 oocyte"/>
@@ -364,7 +364,7 @@
 <collection name="motifs"><reference ref_id="2_1"/></collection>
 </item>
 <item id="2_1" class="http://www.flymine.org/model/genomic#Motif">
-<attribute name="identifier" value="TIFDMEM0000005"/>
+<attribute name="primaryIdentifier" value="TIFDMEM0000005"/>
 </item>
 <item id="3_36" class="http://www.flymine.org/model/genomic#TiffinExpressionTerm">
 <attribute name="name" value="gamete"/>

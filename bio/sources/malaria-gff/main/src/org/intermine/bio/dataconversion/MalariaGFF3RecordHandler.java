@@ -50,10 +50,10 @@ public class MalariaGFF3RecordHandler extends GFF3RecordHandler
                 symbol = feature.getAttribute("identifier").getValue();
             }
             if (identifier != null) {
-                feature.setAttribute("identifier", identifier);
+                feature.setAttribute("primaryIdentifier", identifier);
             }
             if (symbol != null) {
-                feature.setAttribute("organismDbId", symbol);
+                feature.setAttribute("primaryIdentifier", symbol);
                 feature.removeAttribute("symbol");
             }
         }

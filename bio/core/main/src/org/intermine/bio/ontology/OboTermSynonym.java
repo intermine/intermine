@@ -31,7 +31,6 @@ public class OboTermSynonym
         this.name = name;
     }
 
-
     /**
      * Get the synonym name.
      * @return synonym name

@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ItemsTestCase;
@@ -37,7 +38,7 @@ public class AnoESTConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new LinkedHashMap());
         AnoESTConverter converter =
             new TestAnoESTConverter(null, Model.getInstanceByName("genomic"), itemWriter);
         converter.process();

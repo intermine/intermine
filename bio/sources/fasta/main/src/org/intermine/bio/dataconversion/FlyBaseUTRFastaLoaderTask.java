@@ -58,7 +58,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                                        + "UTR");
         }
 
-        String utrIdentifier = utr.getIdentifier();
+        String utrIdentifier = utr.getPrimaryIdentifier();
 
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
         utr.setmRNA(mrna);
@@ -90,7 +90,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 
     private MRNA getMRNA(String mrnaIdentifier, Organism organism) throws ObjectStoreException {
         MRNA mrna = (MRNA) getDirectDataLoader().createObject(MRNA.class);
-        mrna.setOrganismDbId(mrnaIdentifier);
+        mrna.setPrimaryIdentifier(mrnaIdentifier);
         mrna.setOrganism(organism);
         getDirectDataLoader().store(mrna);
         return mrna;

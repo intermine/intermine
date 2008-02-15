@@ -82,8 +82,8 @@ public class GoConverter extends FileConverter
      */
     public GoConverter(ItemWriter writer, Model model) throws Exception {
         super(writer, model);
-        addWithType("FB", "Gene", "organismDbId");
-        addWithType("UniProt", "Protein", "primaryAccession");
+        addWithType("FB", "Gene", "primaryIdentifier");
+        addWithType("UniProt", "Protein", "accession");
         synonymTypes.put("protein", "accession");
         synonymTypes.put("Protein", "accession");
         synonymTypes.put("gene", "identifier");
@@ -136,7 +136,7 @@ public class GoConverter extends FileConverter
                                                    + "taxon: " + taxonId + " in file: "
                                                    + PROP_FILE);
             }
-            if (!(geneAttribute.equals("identifier") || geneAttribute.equals("organismDbId"))) {
+            if (!(geneAttribute.equals("identifier") || geneAttribute.equals("primaryIdentifier"))) {
                 throw new IllegalArgumentException("Invalid geneAttribute value for taxon: "
                                                    + taxonId + " was: " + geneAttribute);
             }
@@ -264,6 +264,7 @@ public class GoConverter extends FileConverter
                         newProductWrapper, newGoTerm, array[7], newOrganism);
 
                 holderMap.put(key, newPlaceHolder);
+
 
             } else {
                 // we have already seen this product/go term pair so add extra pubs/evidence
@@ -558,7 +559,7 @@ public class GoConverter extends FileConverter
                                                         organism, dataSourceId, false, null);
                         } else if (prefix.equals("FB")) {
                             productWrapper = newProduct(value, wt.clsName, organism,
-                                                        dataSourceId, true, "organismDbId");
+                                                        dataSourceId, true, "primaryIdentifier");
                         } else {
                             productWrapper = newProduct(value, wt.clsName,
                                                         organism, dataSourceId, true, null);
@@ -617,7 +618,7 @@ public class GoConverter extends FileConverter
         }
 
         boolean includeOrganism;
-        if (idField.equals("organismDbId") || type.equals("protein")) {
+        if (idField.equals("primaryIdentifier") || type.equals("protein")) {
             includeOrganism = false;
         } else {
             includeOrganism = createOrganism;

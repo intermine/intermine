@@ -132,14 +132,14 @@ public class TfbsClusterGFF3RecordHandler extends GFF3RecordHandler
             throw new BuildException
                 ("gene attributes not in right format. please check the gff3 file");
         } else {
-            String organismDbId = (String) genes.get(0);
+            String primaryIdentifier = (String) genes.get(0);
             Item geneItem;
-            if (geneMap.containsKey(organismDbId)) {
-                geneItem = (Item) geneMap.get(organismDbId);
+            if (geneMap.containsKey(primaryIdentifier)) {
+                geneItem = (Item) geneMap.get(primaryIdentifier);
             } else {
                 geneItem = makeItem("Gene");
-                geneItem.setAttribute("organismDbId", organismDbId);
-                geneMap.put(organismDbId, geneItem);
+                geneItem.setAttribute("primaryIdentifier", primaryIdentifier);
+                geneMap.put(primaryIdentifier, geneItem);
                 addItem(geneItem);
             }
             Item distanceRelation = makeItem("DistanceRelation");

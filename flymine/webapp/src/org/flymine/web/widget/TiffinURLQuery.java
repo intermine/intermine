@@ -62,7 +62,7 @@ public class TiffinURLQuery implements WidgetURLQuery
 //        QueryField qfGeneId = new QueryField(qcGene, "id");
 //        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
 //        QueryField qfDataSet = new QueryField(qcDataSet, "title");
-//        QueryField qfMotif = new QueryField(qcMotif, "identifier");
+//        QueryField qfMotif = new QueryField(qcMotif, "primaryIdentifier");
 //
 //        q.addFrom(qcGene);
 //        q.addFrom(qcIntergenicRegion);
@@ -129,7 +129,7 @@ public class TiffinURLQuery implements WidgetURLQuery
 
         List<Path> view = new ArrayList<Path>();
         view.add(MainHelper.makePath(model, q, "Gene.identifier"));
-        view.add(MainHelper.makePath(model, q, "Gene.organismDbId"));
+        view.add(MainHelper.makePath(model, q, "Gene.primaryIdentifier"));
         view.add(MainHelper.makePath(model, q, "Gene.allGoAnnotation.identifier"));
 
         q.setView(view);

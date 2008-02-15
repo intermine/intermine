@@ -57,8 +57,8 @@ public class GoStatURLQuery implements WidgetURLQuery
 
          List<Path> view = new ArrayList<Path>();
 
-         Path geneIdentifier = null;
-         Path geneDbId =  null;
+         Path geneSecondaryIdentifier = null;
+         Path genePrimaryIdentifier =  null;
          Path geneName =  null;
          Path organismName =  null;
          Path goId = null;
@@ -68,8 +68,8 @@ public class GoStatURLQuery implements WidgetURLQuery
 
          if (bag.getType().toLowerCase().equals("protein")) {
 
-             geneIdentifier = MainHelper.makePath(model, q, "Protein.genes.identifier");
-             geneDbId = MainHelper.makePath(model, q, "Protein.genes.organismDbId");
+             geneSecondaryIdentifier = MainHelper.makePath(model, q, "Protein.genes.secondaryIdentifier");
+             genePrimaryIdentifier = MainHelper.makePath(model, q, "Protein.genes.primaryIdentifier");
              geneName = MainHelper.makePath(model, q, "Protein.genes.name");
              organismName = MainHelper.makePath(model, q, "Protein.genes.organism.name");
              goId = MainHelper.makePath(model, q, "Protein.genes.allGoAnnotation.identifier");
@@ -84,8 +84,8 @@ public class GoStatURLQuery implements WidgetURLQuery
 
          } else {
 
-             geneIdentifier = MainHelper.makePath(model, q, "Gene.identifier");
-             geneDbId = MainHelper.makePath(model, q, "Gene.organismDbId");
+             geneSecondaryIdentifier = MainHelper.makePath(model, q, "Gene.secondaryIdentifier");
+             genePrimaryIdentifier = MainHelper.makePath(model, q, "Gene.primaryAccession");
              geneName = MainHelper.makePath(model, q, "Gene.name");
              organismName = MainHelper.makePath(model, q, "Gene.organism.name");
              goId = MainHelper.makePath(model, q, "Gene.allGoAnnotation.identifier");
@@ -96,8 +96,8 @@ public class GoStatURLQuery implements WidgetURLQuery
                                               q, "Gene.allGoAnnotation.actualGoTerms.identifier");
          }
 
-         view.add(geneIdentifier);
-         view.add(geneDbId);
+         view.add(geneSecondaryIdentifier);
+         view.add(genePrimaryIdentifier);
          view.add(geneName);
          view.add(organismName);
          view.add(goId);

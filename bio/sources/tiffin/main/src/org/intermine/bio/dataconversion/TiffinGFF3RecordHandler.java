@@ -52,7 +52,7 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
         Item motif = motifs.get(name);
         if (motif == null) {
             motif = createItem("Motif");
-            motif.setAttribute("identifier", name);
+            motif.setAttribute("primaryIdentifier", name);
             motif.setAttribute("curated", "false");
             motifs.put(name, motif);
             addEarlyItem(motif);

@@ -270,7 +270,7 @@ public class ProteinStructureDataConverter extends FileConverter
             Item feature = featureMap.get(identifier);
             if (feature == null) {
                 feature = createItem("ProteinDomain");
-                feature.setAttribute("identifier", attValue.toString());
+                feature.setAttribute("primaryIdentifier", attValue.toString());
                 featureMap.put(identifier, feature);
                 store(feature);
             }

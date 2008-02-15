@@ -187,34 +187,34 @@ public class WriteGFFTaskTest extends TestCase
 
         storedChromosome =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        storedChromosome.setIdentifier("1");
+        storedChromosome.setPrimaryIdentifier("1");
         storedChromosome.setLength(new Integer(residues.length()));
         storedChromosome.setOrganism(storedOrganism);
         storedChromosome.setSequence(storedSequence);
 
         storedGene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        storedGene.setIdentifier("gene1");
+        storedGene.setPrimaryIdentifier("gene1");
         storedGene.setLength(new Integer(420));
 
         storedTranscript1 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        storedTranscript1.setIdentifier("trans1");
+        storedTranscript1.setPrimaryIdentifier("trans1");
         storedTranscript1.setGene(storedGene);
 
         storedTranscript2 =
             (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
-        storedTranscript2.setIdentifier("trans2");
+        storedTranscript2.setPrimaryIdentifier("trans2");
         storedTranscript2.setGene(storedGene);
 
         storedExon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        storedExon1.setIdentifier("exon1");
+        storedExon1.setPrimaryIdentifier("exon1");
         storedExon1.setTranscripts(new HashSet(Arrays.asList(new Object[] {storedTranscript1})));
         storedExon2 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        storedExon2.setIdentifier("exon2");
+        storedExon2.setPrimaryIdentifier("exon2");
         storedExon2.setTranscripts(new HashSet(Arrays.asList(new Object[] {storedTranscript1,
             storedTranscript2})));
         storedExon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        storedExon3.setIdentifier("exon3");
+        storedExon3.setPrimaryIdentifier("exon3");
         storedExon3.setTranscripts(new HashSet(Arrays.asList(new Object[] {storedTranscript2})));
 
         storedTranscript1Location =

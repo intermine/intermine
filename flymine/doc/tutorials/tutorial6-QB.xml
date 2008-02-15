@@ -117,7 +117,7 @@
          <listitem><para>Finally, we will change the current query so
          that it also returns the FBgn number. To make the FBgn number
          appear on the result page, click on 'SHOW' next to
-         'organismDbId' under 'Gene'. 'organismDbId' will now appear
+         'primaryIdentifier' under 'Gene'. 'primaryIdentifier' will now appear
          in blue and can be find in the output section below. The
          order of the columns can be changed by clicking and dragging
          the output boxes. Scroll down and click 'Show results' to run

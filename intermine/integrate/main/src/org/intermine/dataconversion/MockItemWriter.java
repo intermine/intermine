@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ import org.intermine.xml.full.ItemHelper;
 public class MockItemWriter implements ItemWriter
 {
     Map<String, Item> storedItems;
-    Map<Integer, Item> storedItemIds = new HashMap<Integer, Item>();
+    Map<Integer, Item> storedItemIds = new LinkedHashMap<Integer, Item>();
     private static int idCounter = 0;
 
     /**

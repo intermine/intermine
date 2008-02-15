@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <items>
   <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="B0393.3"/>
-    <attribute name="organismDbId" value="WBGene00007168"/>
+    <attribute name="secondaryIdentifier" value="B0393.3"/>
+    <attribute name="primaryIdentifier" value="WBGene00007168"/>
     <reference name="organism" ref_id="2_1"/>
     <collection name="evidence">
       <reference ref_id="1_1"/>
@@ -43,8 +43,8 @@
     <reference name="dataSource" ref_id="0_1"/>
   </item>
   <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
-    <attribute name="identifier" value="B0393.2"/>
-    <attribute name="organismDbId" value="WBGene00007167"/>
+    <attribute name="secondaryIdentifier" value="B0393.2"/>
+    <attribute name="primaryIdentifier" value="WBGene00007167"/>
     <attribute name="symbol" value="rbg-3"/>
     <reference name="organism" ref_id="2_1"/>
     <collection name="evidence">

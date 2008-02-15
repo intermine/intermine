@@ -55,7 +55,7 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                                        + "CDS");
         }
 
-        String cdsIdentifier = cds.getIdentifier();
+        String cdsIdentifier = cds.getPrimaryIdentifier();
 
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
         cds.setmRNA(mrna);
@@ -104,7 +104,7 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 
     private MRNA getMRNA(String mrnaIdentifier, Organism organism) throws ObjectStoreException {
         MRNA mrna = (MRNA) getDirectDataLoader().createObject(MRNA.class);
-        mrna.setOrganismDbId(mrnaIdentifier);
+        mrna.setPrimaryIdentifier(mrnaIdentifier);
         mrna.setOrganism(organism);
         getDirectDataLoader().store(mrna);
         return mrna;

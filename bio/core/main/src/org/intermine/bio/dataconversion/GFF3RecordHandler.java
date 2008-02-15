@@ -387,10 +387,11 @@ public class GFF3RecordHandler
                 Item relation = (Item) parentIter.next();
                 feature.setReference(refName, relation.getReference("object").getRefId());
                 if (parentIter.hasNext()) {
-                    throw new RuntimeException("Feature has multiple relations for reference: "
+                    String primaryIdentifier = feature.getAttribute("primaryIdentifier").getValue();
+					throw new RuntimeException("Feature has multiple relations for reference: "
                                                + refName + " for feature: " + feature.getClassName()
                                                + ", " + feature.getIdentifier() + ", "
-                                               + feature.getAttribute("identifier").getValue());
+                                               + primaryIdentifier);
                 }
             } else if (cld.getCollectionDescriptorByName(refName, true) != null
                        && parentIter.hasNext()) {
@@ -474,10 +475,10 @@ public class GFF3RecordHandler
         if (tseq == null) {
             if (identifier.startsWith("scaffold_")) {
                 tseq = createItem("Scaffold", createIdentifier());
-                tseq.setAttribute("identifier", identifier.substring("scaffold_".length()));
+                tseq.setAttribute("primaryIdentifier", identifier.substring("scaffold_".length()));
             } else {
                 tseq = createItem(seqClsName, createIdentifier());
-                tseq.setAttribute("identifier", identifier);
+                tseq.setAttribute("primaryIdentifier", identifier);
             }
             tseq.addReference(getTargetOrgRef(orgAbb));
             tgtSeqs.put(identifier, tseq);

@@ -112,7 +112,7 @@ public class ImageCloneConverter extends CDNACloneConverter
         Item gene = (Item) geneMap.get(id);
         if (gene == null) {
             gene = createItem(clsName);
-            gene.setAttribute("organismDbId", id);
+            gene.setAttribute("primaryIdentifier", id);
             gene.setReference("organism", orgId);
             geneMap.put(id, gene);
             store(gene);
@@ -136,7 +136,7 @@ public class ImageCloneConverter extends CDNACloneConverter
         Item clone = (Item) cloneMap.get(id);
         if (clone == null) {
             clone = createItem(clsName);
-            clone.setAttribute("identifier", id);
+            clone.setAttribute("primaryIdentifier", id);
             clone.setReference("organism", orgId);
             clone.setReference("gene", geneId);
             clone.addCollection(new ReferenceList("evidence",

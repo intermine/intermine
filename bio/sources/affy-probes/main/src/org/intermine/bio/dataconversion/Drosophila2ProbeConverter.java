@@ -154,7 +154,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     /**
      * @param clsName = target class name
      * @param ordId = ref id for organism
-     * @param geneEnsembl = ensembl identifier used for gene organismDbId
+     * @param geneEnsembl = ensembl identifier used for gene primaryIdentifier
      * @param writer = itemWriter write item to objectstore
      * @return item
      * @throws exception if anything goes wrong when writing items to objectstore
@@ -165,7 +165,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         if (bio == null) {
             bio = createItem(clsName);
             bio.setReference("organism", org.getIdentifier());
-            bio.setAttribute("identifier", identifier);
+            bio.setAttribute("primaryIdentifier", identifier);
             bioMap.put(identifier, bio);
             store(bio);
         }
@@ -185,7 +185,7 @@ public class Drosophila2ProbeConverter extends FileConverter
     private Item createProbeSet(String probeSetId, List<Item> delayedItems)
         throws ObjectStoreException {
         Item probeSet = createItem("ProbeSet");
-        probeSet.setAttribute("identifier", probeSetId);
+        probeSet.setAttribute("primaryIdentifier", probeSetId);
         probeSet.setAttribute("name", probeSetId);
         probeSet.setReference("organism", org.getIdentifier());
         probeSet.setCollection("evidence",
@@ -206,7 +206,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         if (chr == null) {
             chr = createItem("Chromosome");
             // convert 'chr2L' -> '2L'
-            chr.setAttribute("identifier", chrId.substring(3, chrId.length()));
+            chr.setAttribute("primaryIdentifier", chrId.substring(3, chrId.length()));
             chr.setReference("organism", org.getIdentifier());
             chrMap.put(chrId, chr);
             store(chr);

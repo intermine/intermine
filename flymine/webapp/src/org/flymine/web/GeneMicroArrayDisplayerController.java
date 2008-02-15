@@ -53,7 +53,7 @@ public class GeneMicroArrayDisplayerController extends TilesAction
                 (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
             Gene gene = (Gene) request.getAttribute("object");
             Results results =
-                MicroArrayHelper.queryExperimentsInvolvingGene(gene.getIdentifier(), os);
+                MicroArrayHelper.queryExperimentsInvolvingGene(gene.getPrimaryIdentifier(), os);
             if (results != null) {
                 ArrayList<Object> experiments = new ArrayList<Object>();
                 for (Iterator iter = results.iterator(); iter.hasNext(); ) {

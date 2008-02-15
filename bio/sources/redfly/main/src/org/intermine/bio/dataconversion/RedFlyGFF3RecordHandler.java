@@ -130,20 +130,20 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         addEvidence(getPublication(pubmedId));
 
-        feature.setAttribute("organismDbId",  redflyID);
-        feature.setAttribute("identifier", name);
+        feature.setAttribute("primaryIdentifier",  redflyID);
+        feature.setAttribute("secondaryIdentifier", name);
     }
 
-    private Item getGene(String geneOrganismDbId) {
-        if (geneMap.containsKey(geneOrganismDbId)) {
-            return (Item) geneMap.get(geneOrganismDbId);
+    private Item getGene(String genePrimaryIdentifier) {
+        if (geneMap.containsKey(genePrimaryIdentifier)) {
+            return (Item) geneMap.get(genePrimaryIdentifier);
         }
 
         Item geneItem = getItemFactory().makeItem(null, tgtNs + "Gene", "");
-        geneItem.addAttribute(new Attribute("organismDbId", geneOrganismDbId));
+        geneItem.addAttribute(new Attribute("primaryIdentifier", genePrimaryIdentifier));
         geneItem.setReference("organism", getOrganism());
         addItem(geneItem);
-        geneMap.put(geneOrganismDbId, geneItem);
+        geneMap.put(genePrimaryIdentifier, geneItem);
         return geneItem;
     }
 

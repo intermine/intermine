@@ -475,7 +475,7 @@ public class CalculateLocations
     private void createSubjectOverlapRelations(Chromosome subject, List classNamesToIgnore,
             boolean ignoreSelfMatches, Map summary) throws Exception {
         LOG.info("Creating overlaps for id " + subject.getId() + ", identifier: "
-                 + subject.getIdentifier());
+                 + subject.getPrimaryIdentifier());
 
         OverlapUtil.createOverlaps(os, subject, classNamesToIgnore, ignoreSelfMatches, osw,
                 summary);

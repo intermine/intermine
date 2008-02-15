@@ -54,7 +54,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 
     private Object[] objectCategoryArray;
     private LinkedHashMap<String, GraphDataSet> dataSets
-                                                        = new LinkedHashMap<String, GraphDataSet>();
+                                         = new LinkedHashMap<String, GraphDataSet>();
     private ObjectStore os;
     private Model model;
     private String bagType;
@@ -225,10 +225,10 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         }
         QueryClass organismQC = new QueryClass(Organism.class);
 
-        QueryField chromoQF = new QueryField(chromosomeQC, "identifier");
+        QueryField chromoQF = new QueryField(chromosomeQC, "primaryIdentifier");
         QueryFunction countQF = new QueryFunction();
         QueryField organismNameQF = new QueryField(organismQC, "name");
-        QueryField geneIdentifierQF = new QueryField(featureQC, "identifier");
+        QueryField geneIdentifierQF = new QueryField(featureQC, "primaryIdentifier");
 
         if (resultsType.equals("actual")) {
             q.addToSelect(chromoQF);
@@ -253,7 +253,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         // constrain to be in chosen list of chomosomes, this may not be all chromosomes
         Collection chrs = BioUtil.getChromosomes(os, organismName);
         if (chrs != null && !chrs.isEmpty()) {
-            QueryField qfChrId = new QueryField(chromosomeQC, "identifier");
+            QueryField qfChrId = new QueryField(chromosomeQC, "primaryIdentifier");
             BagConstraint bagChr = new BagConstraint(qfChrId, ConstraintOp.IN,
                                                      BioUtil.getChromosomes(os, organismName));
             cs.addConstraint(bagChr);

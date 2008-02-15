@@ -16,7 +16,7 @@
 <reference name="ontology" ref_id="3_1"/>
 </item>
 <item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="organismDbId" value="WBGene00000516"/>
+<attribute name="primaryIdentifier" value="WBGene00000516"/>
 <reference name="organism" ref_id="2_1"/>
 </item>
 <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
@@ -73,7 +73,7 @@
 <collection name="evidence"><reference ref_id="8_2"/></collection>
 </item>
 <item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
-<attribute name="organismDbId" value="WBGene00006974"/>
+<attribute name="primaryIdentifier" value="WBGene00006974"/>
 <reference name="organism" ref_id="2_1"/>
 </item>
 <item id="8_1" class="http://www.flymine.org/model/genomic#Publication">

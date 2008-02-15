@@ -119,7 +119,7 @@ public class TiffinLdr implements EnrichmentWidgetLdr
 
          QueryField qfGeneId = new QueryField(qcGene, "id");
          QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-         QueryField qfId = new QueryField(qcMotif, "identifier");
+         QueryField qfId = new QueryField(qcMotif, "primaryIdentifier");
          QueryField qfDataSet = new QueryField(qcDataSet, "title");
 
          QueryFunction geneCount = new QueryFunction();

@@ -185,7 +185,7 @@ public class GFF3Converter
         // need to look up item id for this feature as may have already been a parent reference
         if (record.getId() != null) {
             feature = createItem(className, getIdentifier(record.getId()));
-            feature.addAttribute(new Attribute("identifier", record.getId()));
+            feature.addAttribute(new Attribute("primaryIdentifier", record.getId()));
         } else {
             feature = createItem(className);
         }
@@ -329,20 +329,20 @@ public class GFF3Converter
             handler.setCrossGenomeMatch(feature, orgAbb, tgtSeqIdentifier, seq, tgtLocation);
         }
 
-        if (feature.hasAttribute("identifier")) {
+        if (feature.hasAttribute("secondaryIdentifier")) {
             Item synonym = createItem("Synonym");
             synonym.addReference(new Reference("subject", feature.getIdentifier()));
-            String value = feature.getAttribute("identifier").getValue();
+            String value = feature.getAttribute("secondaryIdentifier").getValue();
             synonym.addAttribute(new Attribute("value", value));
             synonym.addAttribute(new Attribute("type", "identifier"));
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));
             synonymsToAdd.add(synonym);
         }
 
-        if (feature.hasAttribute("organismDbId")) {
+        if (feature.hasAttribute("primaryIdentifier")) {
             Item synonym = createItem("Synonym");
             synonym.addReference(new Reference("subject", feature.getIdentifier()));
-            String value = feature.getAttribute("organismDbId").getValue();
+            String value = feature.getAttribute("primaryIdentifier").getValue();
             synonym.addAttribute(new Attribute("value", value));
             synonym.addAttribute(new Attribute("type", "identifier"));
             synonym.addReference(new Reference("source", dataSource.getIdentifier()));

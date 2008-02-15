@@ -120,8 +120,8 @@ public class HtmlHeadController extends TilesAction
 
             // TODO use the class keys instead
             String idForPageTitle = "";
-            if (dobj.getAttributes().get("organismDbId") != null) {
-                idForPageTitle = dobj.getAttributes().get("organismDbId").toString();
+            if (dobj.getAttributes().get("primaryIdentifier") != null) {
+                idForPageTitle = dobj.getAttributes().get("primaryIdentifier").toString();
             }
             if (idForPageTitle == null && dobj.getAttributes().get("identifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("identifier").toString();

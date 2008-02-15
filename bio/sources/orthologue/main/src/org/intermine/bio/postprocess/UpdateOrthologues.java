@@ -149,9 +149,9 @@ public class UpdateOrthologues extends PostProcessor
                     throw new RuntimeException(e);
                 }
             } else {
-                LOG.info("Found duplicate Genes (" + lastGene.getIdentifier() + ", "
-                         + gene.getIdentifier() + ") in genes collection of translation: "
-                         + translation.getIdentifier());
+                LOG.info("Found duplicate Genes (" + lastGene.getSecondaryIdentifier() + ", "
+                         + gene.getSecondaryIdentifier() + ") in genes collection of translation: "
+                         + translation.getSecondaryIdentifier());
             }
             lastTranslation = translation;
             lastGene = gene;

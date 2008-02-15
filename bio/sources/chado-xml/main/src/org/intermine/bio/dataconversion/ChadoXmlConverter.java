@@ -174,7 +174,7 @@ public class ChadoXmlConverter extends FileConverter
 
             if (qName.equals("accession")) {
                 if (stack.matches("dbxref>dbxref_id>feature")) {
-                    // TODO - for FlyBase genes this is the same as uniquename, ignore it?
+                    // TODO - for FlyBase genes this is the same as primaryidentifier, ignore it?
                 } else if (stack.matches("dbxref>dbxref_id>cvterm>type_id>feature")) {
                     // this is the SO term identifier of the feature type
                 } else if (stack.matches("dbxref>dbxref_id>cvterm_dbxref>cvterm>type_id>feature")) {
@@ -187,9 +187,9 @@ public class ChadoXmlConverter extends FileConverter
                 } else {
                     throw new SAXException("LOST: " + stack);
                 }
-            } else if (qName.equals("uniquename")) {
+            } else if (qName.equals("primaryidentifier")) {
                 if (stack.matches("feature")) {
-                    ((FeatureHolder) objects.peek()).uniquename = charBuffer.toString();
+                    ((FeatureHolder) objects.peek()).primaryidentifier = charBuffer.toString();
                 } else if (stack.matches("pub")) {
                     // TODO FIXME XXX
                 } else {
@@ -263,14 +263,14 @@ public class ChadoXmlConverter extends FileConverter
                 if (model.hasClassDescriptor(model.getPackageName() + "." + holder.type)) {
                     Item f = createItem(holder.type);
 
-                    f.setAttribute("identifier", holder.uniquename);
+                    f.setAttribute("primaryIdentifier", holder.primaryidentifier);
                     if (holder.name != null) {
                         f.setAttribute("name", holder.name);
                     }
                     if (holder.seqlen != null) {
                         f.setAttribute("length", holder.seqlen);
                     }
-                    LOG.error("creating feature: " + holder.uniquename);
+                    LOG.error("creating feature: " + holder.primaryidentifier);
                     // TODO this should be an error!
                     if (holder.genus != null && holder.species != null) {
                         f.setReference("organism", getOrganism(holder.genus + " "
@@ -402,7 +402,7 @@ public class ChadoXmlConverter extends FileConverter
             public List<FeatureLocHolder> relations = new ArrayList<FeatureLocHolder>();
             public String species;
             public String genus;
-            public String uniquename;
+            public String primaryidentifier;
             public String seqlen;
             public String name;
             public String type;

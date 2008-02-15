@@ -55,7 +55,7 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
                                                + "be first in the GFF file - can't find: "
                                                + elem1Identifier);
                 }
-                elem1.setAttribute("identifier", elem1Identifier);
+                elem1.setAttribute("primaryIdentifier", elem1Identifier);
                 feature.setReference("element1", elem1);
             }
             List element2List = (List) record.getAttributes().get("Element2");
@@ -67,7 +67,7 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
                                                + "be first in the GFF file - can't find: "
                                                + elem2Identifier);
                 }
-                elem2.setAttribute("identifier", elem2Identifier);
+                elem2.setAttribute("primaryIdentifier", elem2Identifier);
                 feature.setReference("element2", elem2);
             }
         } else {
@@ -80,7 +80,7 @@ public class DrosDelGFF3RecordHandler extends GFF3RecordHandler
                 feature.setAttribute("subType", type);
             }
             // save and don't store so we can fix up element references
-            String identifier = feature.getAttribute("identifier").getValue();
+            String identifier = feature.getAttribute("primaryIdentifier").getValue();
             elementsMap.put(identifier, feature);
             feature.setAttribute("symbol", identifier);
             removeFeature();

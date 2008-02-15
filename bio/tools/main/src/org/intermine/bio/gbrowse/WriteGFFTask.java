@@ -195,7 +195,7 @@ public class WriteGFFTask extends Task
                 continue;
             }
 
-            if (feature.getChromosome().getIdentifier() == null) {
+            if (feature.getChromosome().getPrimaryIdentifier() == null) {
                 continue;
             }
 
@@ -216,7 +216,7 @@ public class WriteGFFTask extends Task
                     throw new RuntimeException("get null from getObjectById()");
                 }
 
-                if (currentChr.getIdentifier() == null) {
+                if (currentChr.getPrimaryIdentifier() == null) {
                     LOG.error("chromosome has no identifier: " + currentChr);
                     continue;
                 }
@@ -227,8 +227,8 @@ public class WriteGFFTask extends Task
                 }
 
                 if (currentChr.getOrganism().getAbbreviation() == null
-                    || !currentChr.getIdentifier().endsWith("_random")
-                    && !currentChr.getIdentifier().equals("M")
+                    || !currentChr.getPrimaryIdentifier().endsWith("_random")
+                    && !currentChr.getPrimaryIdentifier().equals("M")
                     && !currentChr.getOrganism().getAbbreviation().equals("MM")
                     && !currentChr.getOrganism().getAbbreviation().equals("MD")
                     && !currentChr.getOrganism().getAbbreviation().equals("CF")
@@ -268,14 +268,14 @@ public class WriteGFFTask extends Task
             }
 
             if (currentChr.getOrganism().getAbbreviation() == null
-                || !currentChr.getIdentifier().endsWith("_random")
-                && !currentChr.getIdentifier().equals("M")
+                || !currentChr.getPrimaryIdentifier().endsWith("_random")
+                && !currentChr.getPrimaryIdentifier().equals("M")
                 && !currentChr.getOrganism().getAbbreviation().equals("MM")
                 && !currentChr.getOrganism().getAbbreviation().equals("CF")
                 && !currentChr.getOrganism().getAbbreviation().equals("MD")
                 && !currentChr.getOrganism().getAbbreviation().equals("RN")) {
 
-                String identifier = feature.getIdentifier();
+                String identifier = feature.getPrimaryIdentifier();
 
                 String featureType = getFeatureName(feature);
 
@@ -304,8 +304,8 @@ public class WriteGFFTask extends Task
         }
 
         // special case for t1dmine/stemcellmine
-        if (!currentChr.getIdentifier().endsWith("_random")
-            && !currentChr.getIdentifier().equals("M")
+        if (!currentChr.getPrimaryIdentifier().endsWith("_random")
+            && !currentChr.getPrimaryIdentifier().equals("M")
             && currentChr.getOrganism().getAbbreviation() != null
             && !currentChr.getOrganism().getAbbreviation().equals("MM")
             && !currentChr.getOrganism().getAbbreviation().equals("MD")
@@ -356,7 +356,7 @@ public class WriteGFFTask extends Task
             Map geneNameAttributeMap = new HashMap();
 
             ArrayList geneNameList = new ArrayList();
-            geneNameList.add(gene.getIdentifier());
+            geneNameList.add(gene.getSecondaryIdentifier());
             geneNameAttributeMap.put("Gene", geneNameList);
 
             List synonymList = (List) synonymMap.get(transcript.getId());
@@ -376,7 +376,8 @@ public class WriteGFFTask extends Task
             }
             List evidenceList = (List) evidenceMap.get(transcript.getId());
 
-            writeFeature(gffWriter, chr, transcript, transcriptLocation, transcript.getIdentifier(),
+            writeFeature(gffWriter, chr, transcript, transcriptLocation,
+                         transcript.getPrimaryIdentifier(),
                          transcriptFeatureType, "mRNA", geneNameAttributeMap, synonymList,
                          evidenceList, transcript.getId());
 
@@ -396,7 +397,7 @@ public class WriteGFFTask extends Task
                 List exonSynonymValues = (List) synonymMap.get(exon.getId());
                 List exonEvidence = (List) evidenceMap.get(exon.getId());
 
-                writeFeature(gffWriter, chr, exon, exonLocation, transcript.getIdentifier(),
+                writeFeature(gffWriter, chr, exon, exonLocation, transcript.getPrimaryIdentifier(),
                              "CDS", "mRNA", null, exonSynonymValues, exonEvidence,
                              transcript.getId());
             }
@@ -781,13 +782,13 @@ public class WriteGFFTask extends Task
         Sequence chromosomeSequence = chr.getSequence();
 
         if (chromosomeSequence == null) {
-            LOG.warn("cannot find any sequence for chromosome " + chr.getIdentifier());
+            LOG.warn("cannot find any sequence for chromosome " + chr.getPrimaryIdentifier());
         } else {
             String residues = chromosomeSequence.getResidues();
 
             if (residues == null) {
                 LOG.warn("cannot find any sequence residues for chromosome "
-                         + chr.getIdentifier());
+                         + chr.getPrimaryIdentifier());
             } else {
                 FileOutputStream fileStream =
                     new FileOutputStream(chromosomeFastaFile(chr));
@@ -824,6 +825,6 @@ public class WriteGFFTask extends Task
             orgPrefix = chr.getOrganism().getGenus() + "_"
             + chr.getOrganism().getSpecies().replaceAll(" ", "_");
         }
-        return orgPrefix + "_chr_" + chr.getIdentifier();
+        return orgPrefix + "_chr_" + chr.getPrimaryIdentifier();
     }
 }

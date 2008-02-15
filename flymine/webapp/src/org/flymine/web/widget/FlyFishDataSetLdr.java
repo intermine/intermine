@@ -93,7 +93,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
 
         q.addToSelect(new QueryField(mrnaResult, "expressed"));
         q.addToSelect(stageName);
-        q.addToSelect(new QueryField(gene, "identifier"));
+        q.addToSelect(new QueryField(gene, "primaryAccession"));
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (bag != null) {
@@ -101,7 +101,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
             cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, bag.getOsb()));
         }
         if (geneIdentifier != null) {
-            cs.addConstraint(new SimpleConstraint(new QueryField(gene, "identifier"),
+            cs.addConstraint(new SimpleConstraint(new QueryField(gene, "primaryIdentifier"),
                                                   ConstraintOp.EQUALS,
                                                   new QueryValue(geneIdentifier)));
         }

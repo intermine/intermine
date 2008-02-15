@@ -10,6 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -21,6 +23,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -28,18 +32,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.IOException;
-import java.io.Reader;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -219,20 +216,20 @@ public class UniprotConverter extends FileConverter
                 geneSources.add(source);
             }
 
-            /* which variable to use as the geneOrganismDbId */
-            String organismDbIdSrcType = codeProps.getProperty("organismDbIdSrcType");
-            if (organismDbIdSrcType != null) {
-                organismDbIdSrcType = organismDbIdSrcType.trim();
-                String organismDbIdSrc = codeProps.getProperty("organismDbIdSrc");
-                if (organismDbIdSrc == null) {
-                    throw new IllegalArgumentException("Unable to find 'organismDbIdSrc' property "
-                                                     + "for code: " + code + " in file: "
-                                                     + PROP_FILE);
+            /* which variable to use as the genePrimaryIdentifier */
+            String primaryIdentifierSrcType = codeProps.getProperty("primaryIdentifierSrcType");
+            if (primaryIdentifierSrcType != null) {
+                primaryIdentifierSrcType = primaryIdentifierSrcType.trim();
+                String primaryIdentifierSrc = codeProps.getProperty("primaryIdentifierSrc");
+                if (primaryIdentifierSrc == null) {
+                    throw new IllegalArgumentException("Unable to find 'primaryIdentifierSrc' "
+                                                       + "property for code: " + code + " in file: "
+                                                       + PROP_FILE);
                 }
-                organismDbIdSrc = organismDbIdSrc.trim();
-                geneDataMap.setOrganismDbId(organismDbIdSrcType, organismDbIdSrc);
-                if (organismDbIdSrcType.equals("datasource")) {
-                    geneSources.add(organismDbIdSrc);
+                primaryIdentifierSrc = primaryIdentifierSrc.trim();
+                geneDataMap.setPrimaryIdentifier(primaryIdentifierSrcType, primaryIdentifierSrc);
+                if (primaryIdentifierSrcType.equals("datasource")) {
+                    geneSources.add(primaryIdentifierSrc);
                 }
             }
 
@@ -292,7 +289,7 @@ public class UniprotConverter extends FileConverter
         }
     }
 
-    class UniprotHandler extends DefaultHandler
+    private class UniprotHandler extends DefaultHandler
     {
         private int nextClsId = 0;
         private ItemFactory itemFactory;
@@ -426,7 +423,7 @@ public class UniprotConverter extends FileConverter
                     evidence = attrs.getValue("evidence");
                 // <entry><name>
                 } else if (qName.equals("name") && stack.peek().equals("entry")) {
-                    attName = "identifier";
+                    attName = "primaryIdentifier";
                 // <entry><accession>
                 } else if (qName.equals("accession")) {
                     attName = "value";
@@ -491,7 +488,7 @@ public class UniprotConverter extends FileConverter
                         String interproItemId = null;
                         if (interproMaster.get(interproId) == null) {
                             interpro = createItem("ProteinDomain");
-                            interpro.setAttribute("identifier", interproId);
+                            interpro.setAttribute("primaryIdentifier", interproId);
                             interproItemId = interpro.getIdentifier();
                             interproMaster.put(interproId, interproItemId);
                         } else {
@@ -712,8 +709,10 @@ public class UniprotConverter extends FileConverter
                         }
 
                         // <entry><name> is a synonym
+                        String proteinPrimaryIdentifier =
+                            protein.getAttribute("primaryIdentifier").getValue();
                         Item syn = createSynonym(protein.getIdentifier(), "identifier",
-                                                 protein.getAttribute("identifier").getValue(),
+                                                 proteinPrimaryIdentifier,
                                                  datasource.getIdentifier());
                         writer.store(ItemHelper.convert(protein));
                         if (syn != null) {
@@ -734,7 +733,7 @@ public class UniprotConverter extends FileConverter
                 } else if (hasPrimary && qName.equals("sequence")) {
 
                     if (attName != null) {
-                        sequence.setAttribute(attName, attValue.toString());
+                        sequence.setAttribute(attName, attValue.toString().replaceAll("\n", ""));
                         protein.addReference(new Reference("sequence", sequence.getIdentifier()));
                         writer.store(ItemHelper.convert(sequence));
                     } else {
@@ -1004,7 +1003,7 @@ public class UniprotConverter extends FileConverter
             try {
 
                 // Gene.identifier = <entry><gene><name type="ORF">
-                String geneIdentifier = null;
+                String geneSecondaryIdentifier = null;
                 // Gene.name = <entry><gene><name type="primary">
                 String primaryGeneName = null;
 
@@ -1028,7 +1027,7 @@ public class UniprotConverter extends FileConverter
                         if (taxonId.equals("7227") && !name.startsWith("CG")) {
                             notCG = name;
                         } else {
-                            geneIdentifier = name;
+                            geneSecondaryIdentifier = name;
                         }
                     }
                 }
@@ -1036,9 +1035,9 @@ public class UniprotConverter extends FileConverter
                 // Some UniProt entries have CGxxx as Dmel_CGxxx - need to strip prefix
                 // so that they match identifiers from other sources.  Some genes have
                 // embl identifiers and no FlyBase id, ignore these.
-                if (geneIdentifier == null && notCG != null) {
+                if (geneSecondaryIdentifier == null && notCG != null) {
                     if (notCG.startsWith("Dmel_")) {
-                        geneIdentifier = notCG.substring(5);
+                        geneSecondaryIdentifier = notCG.substring(5);
                     } else {
                         LOG.info("Found a Drosophila gene without a CG identifer: " + notCG);
                     }
@@ -1048,9 +1047,9 @@ public class UniprotConverter extends FileConverter
                 // define a gene identifier we always expect to find that is unique to this gene
                 // is different for each organism
                 String uniqueGeneIdentifier = null;
-                // geneOrganismDbId = <entry><dbReference><type="FlyBase/WormBase/..">
+                // genePrimaryIdentifier = <entry><dbReference><type="FlyBase/WormBase/..">
                 //            where designation = primary gene name
-                String geneOrganismDbId = null;
+                String genePrimaryIdentifier = null;
 
                 // use map to find out where to get ids
                 UniProtGeneDataMap geneDataMap = (UniProtGeneDataMap) geneDataMaps.get(taxonId);
@@ -1058,46 +1057,47 @@ public class UniprotConverter extends FileConverter
                 if (geneDataMap != null) {
 
                     /* set vars if they come from datasource or name */
-                    geneOrganismDbId = setGeneVars(designations, nameTypeToName, null,
-                                                 geneDataMap.getOrganismDbIdSrcType(),
-                                                 geneDataMap.getOrganismDbIdSrc(),
-                                                 geneOrganismDbId);
+                    genePrimaryIdentifier = setGeneVars(designations, nameTypeToName, null,
+                                                 geneDataMap.getPrimaryIdentifierSrcType(),
+                                                 geneDataMap.getPrimaryIdentifierSrc(),
+                                                 genePrimaryIdentifier);
 
-                    geneIdentifier = setGeneVars(designations, nameTypeToName, null,
+                    geneSecondaryIdentifier = setGeneVars(designations, nameTypeToName, null,
                                                    geneDataMap.getIdentifierSrcType(),
                                                    geneDataMap.getIdentifierSrc(),
-                                                   geneIdentifier);
+                                                   geneSecondaryIdentifier);
 
                     /* set vars if they come from another variable */
                     Map variableLookup = new HashMap();
-                    variableLookup.put("geneIdentifier", geneIdentifier);
-                    variableLookup.put("geneOrganismDbId", geneOrganismDbId);
+                    variableLookup.put("geneIdentifier", geneSecondaryIdentifier);
+                    variableLookup.put("genePrimaryIdentifier", genePrimaryIdentifier);
                     variableLookup.put("primaryGeneName", primaryGeneName);
 
-                    geneOrganismDbId = setGeneVars(null, null, variableLookup,
-                                                   geneDataMap.getOrganismDbIdSrcType(),
-                                                   geneDataMap.getOrganismDbIdSrc(),
-                                                   geneOrganismDbId);
+                    genePrimaryIdentifier = setGeneVars(null, null, variableLookup,
+                                                   geneDataMap.getPrimaryIdentifierSrcType(),
+                                                   geneDataMap.getPrimaryIdentifierSrc(),
+                                                   genePrimaryIdentifier);
 
-                    geneIdentifier = setGeneVars(null, null, variableLookup,
+                    geneSecondaryIdentifier = setGeneVars(null, null, variableLookup,
                                                  geneDataMap.getIdentifierSrcType(),
                                                  geneDataMap.getIdentifierSrc(),
-                                                 geneIdentifier);
+                                                 geneSecondaryIdentifier);
 
                     /* organism specific */
                     if (taxonId.equals("10116")) { // Rattus norvegicus
-                        if (geneOrganismDbId != null && !geneOrganismDbId.startsWith("RGD:")) {
-                            geneOrganismDbId = "RGD:" + geneOrganismDbId;
+                        if (genePrimaryIdentifier != null
+                            && !genePrimaryIdentifier.startsWith("RGD:")) {
+                            genePrimaryIdentifier = "RGD:" + genePrimaryIdentifier;
                         }
                     } else if (taxonId.equals("3702")) { // Arabidopsis thaliana
-                        if (geneOrganismDbId != null) {
-                            geneOrganismDbId = geneOrganismDbId.toUpperCase();
+                        if (genePrimaryIdentifier != null) {
+                            genePrimaryIdentifier = genePrimaryIdentifier.toUpperCase();
                         }
                     }
 
                     variableLookup = new HashMap();
-                    variableLookup.put("geneIdentifier", geneIdentifier);
-                    variableLookup.put("geneOrganismDbId", geneOrganismDbId);
+                    variableLookup.put("geneIdentifier", geneSecondaryIdentifier);
+                    variableLookup.put("genePrimaryIdentifier", genePrimaryIdentifier);
                     variableLookup.put("primaryGeneName", primaryGeneName);
 
                     /* set unique identifier */
@@ -1105,31 +1105,31 @@ public class UniprotConverter extends FileConverter
                     variableLookup = null;
                 }
 
-                // uniprot data source has primary key of Gene.organismDbId
+                // uniprot data source has primary key of Gene.primaryIdentifier
                 // only create gene if a value was found
                 if (uniqueGeneIdentifier != null) {
                     String geneItemId = (String) geneMaster.get(uniqueGeneIdentifier);
 
-                    // UniProt sometimes has same identifier paired with two organismDbIds
+                    // UniProt sometimes has same identifier paired with two primaryIdentifiers
                     // causes problems merging other data sources.  Simple check to prevent
                     // creating a gene with a duplicate identifier.
 
                     // log problem genes
                     boolean isDuplicateIdentifier = false;
-                    if ((geneItemId == null) && geneIdentifiers.contains(geneIdentifier)) {
-                        LOG.warn("already created a gene for identifier: " + geneIdentifier
-                                 + " with different organismDbId, discarding this one");
+                    if ((geneItemId == null) && geneIdentifiers.contains(geneSecondaryIdentifier)) {
+                        LOG.warn("already created a gene for identifier: " + geneSecondaryIdentifier
+                                 + " with different primaryIdentifier, discarding this one");
                         isDuplicateIdentifier = true;
                     }
                     if ((geneItemId == null) && !isDuplicateIdentifier) {
-                        if (geneOrganismDbId != null) {
-                            if (geneOrganismDbId.equals("")) {
-                                LOG.info("geneOrganismDbId was empty string");
+                        if (genePrimaryIdentifier != null) {
+                            if (genePrimaryIdentifier.equals("")) {
+                                LOG.info("genePrimaryIdentifier was empty string");
                             } else {
-                                gene.setAttribute("organismDbId", geneOrganismDbId);
+                                gene.setAttribute("primaryIdentifier", genePrimaryIdentifier);
 
                                 Item syn = createSynonym(gene.getIdentifier(), "identifier",
-                                          geneOrganismDbId,
+                                          genePrimaryIdentifier,
                                           getDataSource(dbName).getIdentifier());
                                 if (syn != null) {
                                     delayedItems.add(syn);
@@ -1137,19 +1137,21 @@ public class UniprotConverter extends FileConverter
                             }
                         }
 
-                        if (geneIdentifier != null) {
-                            gene.setAttribute("identifier", geneIdentifier);
-                            if (!geneIdentifier.equals(geneOrganismDbId)
-                                            && !geneIdentifier.equals("")) {
+                        if (geneSecondaryIdentifier != null) {
+                            gene.setAttribute("secondaryIdentifier", geneSecondaryIdentifier);
+                            // don't create duplicate synonym
+                            if (!geneSecondaryIdentifier.equals(genePrimaryIdentifier)
+                                && !geneSecondaryIdentifier.equals("")) {
+
                                 Item syn = createSynonym(gene.getIdentifier(), "identifier",
-                                           geneIdentifier,
+                                           geneSecondaryIdentifier,
                                            getDataSource(dbName).getIdentifier());
                                 if (syn != null) {
                                     delayedItems.add(syn);
                                 }
                             }
                             // keep a track of non-null gene identifiers
-                            geneIdentifiers.add(geneIdentifier);
+                            geneIdentifiers.add(geneSecondaryIdentifier);
                         }
                         // Problem with gene names for drosophila - ignore
                         if (primaryGeneName != null &&  !primaryGeneName.equals("")
@@ -1256,8 +1258,8 @@ public class UniprotConverter extends FileConverter
         {
             private String attribute;
             private String source;
-            private String organismDbIdSrc;
-            private String organismDbIdSrcType;
+            private String primaryIdentifierSrc;
+            private String primaryIdentifierSrcType;
             private String identifierSrcType;
             private String identifierSrc;
 
@@ -1271,7 +1273,7 @@ public class UniprotConverter extends FileConverter
 
             /**
              * What to use as the uniqueGeneIdentifier
-             * e.g. geneOrganismDbId or geneIdentifier
+             * e.g. genePrimaryIdentifier or geneIdentifier
              * @return What to use as the uniqueGeneIdentifier
              */
             public String getAttribute () {
@@ -1295,33 +1297,34 @@ public class UniprotConverter extends FileConverter
             }
 
             /**
-             * @param organismDbIdSrcType What kind of source to use, e.g. variable, datasource, or
-             * name
-             * @param organismDbIdSrc What source to use, e.g. WormBase or ORF
+             * @param primaryIdentifierSrcType What kind of source to use, e.g. variable,
+             * datasource, or name
+             * @param primaryIdentifierSrc What source to use, e.g. WormBase or ORF
              */
-            public void  setOrganismDbId(String organismDbIdSrcType, String organismDbIdSrc) {
-                this.organismDbIdSrcType = organismDbIdSrcType;
-                this.organismDbIdSrc = organismDbIdSrc;
+            public void  setPrimaryIdentifier(String primaryIdentifierSrcType,
+                                              String primaryIdentifierSrc) {
+                this.primaryIdentifierSrcType = primaryIdentifierSrcType;
+                this.primaryIdentifierSrc = primaryIdentifierSrc;
             }
 
             /**
-             * @return What type of source to use to set geneOrganismDbId,
+             * @return What type of source to use to set genePrimaryIdentifier,
              * e.g. variable, datasource, or name
              */
-            public String getOrganismDbIdSrcType() {
-                return organismDbIdSrcType;
+            public String getPrimaryIdentifierSrcType() {
+                return primaryIdentifierSrcType;
             }
 
             /**
-             * @return What source to use to set geneOrganismDbId, e.g. WormBase, ORF, etc
+             * @return What source to use to set genePrimaryIdentifier, e.g. WormBase, ORF, etc
              */
-            public String getOrganismDbIdSrc() {
-                return organismDbIdSrc;
+            public String getPrimaryIdentifierSrc() {
+                return primaryIdentifierSrc;
             }
 
             /**
              * @param identifierSrcType What kind of source to use, e.g. variable or datasource
-             * @param identifierSrc Which source to use, e.g. geneOrganismDbId, Ensembl
+             * @param identifierSrc Which source to use, e.g. genePrimaryIdentifier, Ensembl
              */
             public void  setIdentifier(String identifierSrcType, String identifierSrc) {
                 this.identifierSrcType = identifierSrcType;
@@ -1336,7 +1339,8 @@ public class UniprotConverter extends FileConverter
             }
 
             /**
-             * @return Which source to use to set geneIdentifier, e.g. geneOrganismDbId, Ensembl
+             * @return Which source to use to set geneIdentifier, e.g. genePrimaryIdentifier,
+             * Ensembl
              */
             public String getIdentifierSrc() {
                 return identifierSrc;
@@ -1348,8 +1352,8 @@ public class UniprotConverter extends FileConverter
             public String toString() {
                 return "attribute: " + attribute
                 + ", source: " + source
-                + ", organismDbIdSrcType: " + organismDbIdSrcType
-                + ", organismDbIdSrc: " + organismDbIdSrc
+                + ", primaryIdentifierSrcType: " + primaryIdentifierSrcType
+                + ", primaryIdentifierSrc: " + primaryIdentifierSrc
                 + ", identifierSrcType: " + identifierSrcType
                 + ", identifierSrc: " + identifierSrc;
 

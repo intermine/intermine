@@ -33,12 +33,6 @@ import java.io.FileNotFoundException;
  */
 public class EnsemblDataTranslator extends DataTranslator
 {
-
-    /**
-     * USEFULL CONSTANT
-     * */
-    public static final String IDENTIFIER = "identifier";
-
     protected static final String PATH_NAME_SPACE = "http://www.intermine.org/model/ensembl#";
 
     protected static final ItemPath TRANSCRIPT_VIA_TRANSLATION =
@@ -176,7 +170,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     Item stableId = getStableId("exon", srcItem.getIdentifier(), srcNs);
                     // <- exon_stable_id.exon
                     if (stableId != null) {
-                        moveField(stableId, tgtItem, "stable_id", IDENTIFIER);
+                        moveField(stableId, tgtItem, "stable_id", "primaryIdentifier");
                     }
                     addReferencedItem(tgtItem, config.getEnsemblDataSet(),
                             "evidence", true, "", false);
@@ -202,7 +196,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
                     // the default gene identifier should be its stable id (or identifier if none)
                     //i.e. for anoph they are the same, but for human they are differant
-                    //note: the organismDbId is effecivly what we choose as a primary accession
+                    //note: the primaryIdentifier is effecivly what we choose as a primary accession
                     // and thus may differ from what we want to assign as the identifier...
                     result.addAll(setGeneSynonyms(srcItem, tgtItem, srcNs));
 
@@ -214,14 +208,14 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addReference(config.getOrganismRef());
 
                     // if no identifier set the identifier as name (primary key)
-                    if (!tgtItem.hasAttribute(IDENTIFIER)) {
+                    if (!tgtItem.hasAttribute("primaryIdentifier")) {
                         Item stableId = getStableId("translation", srcItem.getIdentifier(), srcNs);
                         // <- transcript_stable_id.transcript
                         if (stableId != null) {
-                            moveField(stableId, tgtItem, "stable_id", IDENTIFIER);
+                            moveField(stableId, tgtItem, "stable_id", "primaryIdentifier");
                         } else {
                             tgtItem.addAttribute(
-                                    new Attribute(IDENTIFIER, srcItem.getIdentifier()));
+                                    new Attribute("primaryIdentifier", srcItem.getIdentifier()));
                         }
                     }
 
@@ -238,7 +232,7 @@ public class EnsemblDataTranslator extends DataTranslator
 
                     tgtItem.addToCollection("evidence", config.getEnsemblDataSet());
                     tgtItem.addReference(config.getEnsemblDataSrcRef());
-                    tgtItem.addAttribute(new Attribute("type", IDENTIFIER));
+                    tgtItem.addAttribute(new Attribute("type", "identifier"));
                 } else if ("repeat_feature".equals(srcItemClassName)) {
 
                     translateRepeatFeature(srcItem, tgtItem, result);
@@ -248,7 +242,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     tgtItem.addReference(config.getOrganismRef());
 
                     //is there an identifier set?
-                    if (!srcItem.hasAttribute("identifier")) {
+                    if (!srcItem.hasAttribute("primaryIdentifier")) {
 
                         //ok try and look up any related marker_synonym items...
 
@@ -316,8 +310,8 @@ public class EnsemblDataTranslator extends DataTranslator
             tgtItem.addReference(new Reference("chromosome", seq.getIdentifier()));
         }
 
-        result.add(createSynonym(tgtItem.getIdentifier(), IDENTIFIER,
-                tgtItem.getAttribute(IDENTIFIER).getValue(), config.getEnsemblDataSrcRef())
+        result.add(createSynonym(tgtItem.getIdentifier(), "identifier",
+                tgtItem.getAttribute("primaryIdentifier").getValue(), config.getEnsemblDataSrcRef())
         );
     }
 
@@ -333,12 +327,12 @@ public class EnsemblDataTranslator extends DataTranslator
                 tgtItem.getIdentifier()));
 
         // set transcript identifier to be ensembl stable id
-        if (!tgtItem.hasAttribute(IDENTIFIER)) {
+        if (!tgtItem.hasAttribute("primaryIdentifier")) {
             Item stableId = getStableId("transcript", srcItem.getIdentifier(), srcNs);
             if (stableId != null) {
-                moveField(stableId, tgtItem, "stable_id", IDENTIFIER);
+                moveField(stableId, tgtItem, "stable_id", "primaryIdentifier");
             } else {
-                tgtItem.addAttribute(new Attribute(IDENTIFIER,
+                tgtItem.addAttribute(new Attribute("primaryIdentifier",
                         srcItem.getIdentifier()));
             }
         }
@@ -352,14 +346,14 @@ public class EnsemblDataTranslator extends DataTranslator
             Item cds = createItem(tgtNs + "CDS", "");
             Item stableId = getStableId("translation",
                                         translation.getIdentifier(), srcNs);
-            cds.setAttribute(IDENTIFIER,
+            cds.setAttribute("primaryIdentifier",
                     stableId.getAttribute("stable_id").getValue() + "_CDS");
             cds.addToCollection("polypeptides", translation.getIdentifier());
 
             Item cdsSyn = createSynonym(
                     cds.getIdentifier(),
-                    IDENTIFIER,
-                    cds.getAttribute(IDENTIFIER).getValue(),
+                    "identifier",
+                    cds.getAttribute("primaryIdentifier").getValue(),
                     config.getEnsemblDataSrcRef());
 
             cds.addReference(config.getOrganismRef());
@@ -392,11 +386,11 @@ public class EnsemblDataTranslator extends DataTranslator
         // repeat_consensus
         promoteField(tgtItem, srcItem, "type", "repeat_consensus", "repeat_class");
         // repeat_consensus
-        promoteField(tgtItem, srcItem, IDENTIFIER, "repeat_consensus", "repeat_name");
+        promoteField(tgtItem, srcItem, "primaryIdentifier", "repeat_consensus", "repeat_name");
 
         //Create a more usable identifier field.
         StringBuffer newIdBuff = new StringBuffer();
-        newIdBuff.append(tgtItem.getAttribute(IDENTIFIER).getValue());
+        newIdBuff.append(tgtItem.getAttribute("primaryIdentifier").getValue());
         newIdBuff.append("_");
 
         Item seqRegItem = ItemHelper.convert(srcItemReader.getItemById(
@@ -408,11 +402,11 @@ public class EnsemblDataTranslator extends DataTranslator
         newIdBuff.append(srcItem.getAttribute("seq_region_start").getValue());
         newIdBuff.append("..");
         newIdBuff.append(srcItem.getAttribute("seq_region_end").getValue());
-        tgtItem.removeAttribute(IDENTIFIER);
-        tgtItem.setAttribute(IDENTIFIER, newIdBuff.toString());
+        tgtItem.removeAttribute("primaryIdentifier");
+        tgtItem.setAttribute("primaryIdentifier", newIdBuff.toString());
 
-        Item rfSyn = createSynonym(tgtItem.getIdentifier(), IDENTIFIER,
-                tgtItem.getAttribute(IDENTIFIER).getValue(), config.getEnsemblDataSrcRef());
+        Item rfSyn = createSynonym(tgtItem.getIdentifier(), "identifier",
+                tgtItem.getAttribute("primaryIdentifier").getValue(), config.getEnsemblDataSrcRef());
 
         result.add(rfSyn);
     }
@@ -463,17 +457,17 @@ public class EnsemblDataTranslator extends DataTranslator
 
         //Check to see if any of the exons are pointing to invalid transcripts...
         if (validETCount == 0 && invalidETCount == 0) {
-            LOG.debug("Exon with no transcript found!" + (srcItem.hasAttribute(IDENTIFIER)
-                    ? srcItem.getAttribute(IDENTIFIER).getValue() : srcItem.getIdentifier()));
+            LOG.debug("Exon with no transcript found!" + (srcItem.hasAttribute("primaryIdentifier")
+                    ? srcItem.getAttribute("primaryIdentifier").getValue() : srcItem.getIdentifier()));
         } else if (validETCount >= 1 && invalidETCount == 0) {
             return true;
         } else if (validETCount == 0 && invalidETCount >= 1) {
-            LOG.debug("Exon with an invalid transcript found!" + (srcItem.hasAttribute(IDENTIFIER)
-                    ? srcItem.getAttribute(IDENTIFIER).getValue() : srcItem.getIdentifier()));
+            LOG.debug("Exon with an invalid transcript found!" + (srcItem.hasAttribute("primaryIdentifier")
+                    ? srcItem.getAttribute("primaryIdentifier").getValue() : srcItem.getIdentifier()));
         } else if (validETCount >= 1 && invalidETCount >= 1) {
             LOG.debug("Exon with valid and invalid transcripts found!"
-                    + (srcItem.hasAttribute(IDENTIFIER)
-                    ? srcItem.getAttribute(IDENTIFIER).getValue() : srcItem.getIdentifier()));
+                    + (srcItem.hasAttribute("primaryIdentifier")
+                    ? srcItem.getAttribute("primaryIdentifier").getValue() : srcItem.getIdentifier()));
             return true; //keep this - but log it
         }
 
@@ -498,7 +492,7 @@ public class EnsemblDataTranslator extends DataTranslator
         // <- gene_stable_id.gene
         String stableId = stableIdItem.getAttribute("stable_id").getValue();
 
-        tgtItem.addAttribute(new Attribute("identifier", stableId));
+        tgtItem.addAttribute(new Attribute("primaryIdentifier", stableId));
 
         //Set up all the optional xref synonyms - if the gene is KNOWN it should
         // have an ensembl xref to another db's accesssion for the same gene.
@@ -535,9 +529,9 @@ public class EnsemblDataTranslator extends DataTranslator
                 // external database accession.
                 //NOTE: if the xref is being used as an alternative identifier it will already have
                 // a synonym with type 'identifier'.
-                if (config.useXrefDbsForGeneOrganismDbId()
+                if (config.useXrefDbsForGenePrimaryIdentifier()
                     && config.geneXrefDbName.equalsIgnoreCase(dbname)) {
-                    tgtItem.addAttribute(new Attribute("organismDbId", xrefIdentifier));
+                    tgtItem.addAttribute(new Attribute("primaryIdentifier", xrefIdentifier));
                     extDbRef = config.getDataSrcRefByDataSrcName(dbname);
                     Item synonym = createProductSynonym(tgtItem, "accession",
                                    xrefIdentifier, extDbRef);
@@ -545,7 +539,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     synonyms.add(synonym);
 
                 } else {
-                    tgtItem.setAttribute("identifier", stableId);
+                    tgtItem.setAttribute("primaryIdentifier", stableId);
                 }
 
                 if (config.containsXrefDataSourceNamed(dbname)) {
@@ -563,7 +557,7 @@ public class EnsemblDataTranslator extends DataTranslator
                     }
                 }
             } else {
-                tgtItem.addAttribute(new Attribute("identifier", stableId));
+                tgtItem.addAttribute(new Attribute("primaryIdentifier", stableId));
             }
 
 
@@ -582,7 +576,7 @@ public class EnsemblDataTranslator extends DataTranslator
             }
 
         } else {
-            tgtItem.addAttribute(new Attribute("identifier", stableId));
+            tgtItem.addAttribute(new Attribute("primaryIdentifier", stableId));
         }
 
         return synonyms;
@@ -813,7 +807,7 @@ public class EnsemblDataTranslator extends DataTranslator
                 String s = (property.substring(0, 1)).toUpperCase().concat(property.substring(1));
                 seq = createItem(tgtNs + s, "");
                 if (seqRegion.hasAttribute("name")) {
-                    seq.addAttribute(new Attribute(IDENTIFIER,
+                    seq.addAttribute(new Attribute("primaryIdentifier",
                             seqRegion.getAttribute("name").getValue()));
                 }
                 if (seqRegion.hasAttribute("length")) {
@@ -839,12 +833,12 @@ public class EnsemblDataTranslator extends DataTranslator
         if (!itemId2SynMap.containsKey(
                 seq != null ? seq.getIdentifier() : "NO_ID_HERE!")) {
 
-            if (seq != null && seq.hasAttribute(IDENTIFIER)) {
+            if (seq != null && seq.hasAttribute("primaryIdentifier")) {
 
                 Item seqSyn = createSynonym(
                         seq.getIdentifier(),
-                        IDENTIFIER,
-                        seq.getAttribute(IDENTIFIER).getValue(),
+                        "identifier",
+                        seq.getAttribute("primaryIdentifier").getValue(),
                         config.getEnsemblDataSrcRef());
 
                 itemId2SynMap.put(seq.getIdentifier(), seqSyn);
@@ -952,13 +946,13 @@ public class EnsemblDataTranslator extends DataTranslator
                 newIdBuff.append(srcItem.getAttribute("seq_region_end").getValue());
 
                 simpleFeature.addReference(config.getOrganismRef());
-                simpleFeature.addAttribute(new Attribute(IDENTIFIER, newIdBuff.toString()));
+                simpleFeature.addAttribute(new Attribute("primaryIdentifier", newIdBuff.toString()));
                 addReferencedItem(simpleFeature,
                         config.getEnsemblDataSet(), "evidence", true, "", false);
 
                 Item sfSyn = createSynonym(
                             simpleFeature.getIdentifier(),
-                            IDENTIFIER,
+                            "identifier",
                             newIdBuff.toString(),
                             config.getEnsemblDataSrcRef());
 
@@ -1078,7 +1072,7 @@ public class EnsemblDataTranslator extends DataTranslator
         int createItem = 1;
         int flag;
         if (synonymSet == null) {
-            synonym = createSynonym(subjectId, IDENTIFIER, value, ref);
+            synonym = createSynonym(subjectId, "identifier", value, ref);
             synonymSet = new HashSet(Arrays.asList(new Object[]{synonym}));
             markerSynonymMap.put(subjectId, synonymSet);
         } else {
@@ -1095,7 +1089,7 @@ public class EnsemblDataTranslator extends DataTranslator
             }
 
             if (createItem == 1) {
-                synonym = createSynonym(subjectId, IDENTIFIER, value, ref);
+                synonym = createSynonym(subjectId, "identifier", value, ref);
                 synonymSet.add(synonym);
                 markerSynonymMap.put(subjectId, synonymSet);
             } else {
@@ -1362,7 +1356,7 @@ public class EnsemblDataTranslator extends DataTranslator
         private Item organism = null;
         private Reference organismRef = null;
 
-        private boolean useXrefDbsForGeneOrganismDbId;
+        private boolean useXrefDbsForGenePrimaryIdentifier;
         private boolean useXrefDbsForGeneSymbol;
         private boolean storeDna;
         private boolean createAnalysisResult;
@@ -1415,8 +1409,8 @@ public class EnsemblDataTranslator extends DataTranslator
             organismRef = new Reference("organism", organism.getIdentifier());
 
             //This boolean indicates that we want to use configurable identifier fields...
-            useXrefDbsForGeneOrganismDbId = Boolean.valueOf(
-                    organismProps.getProperty("flag.useXrefDbsForGeneOrganismDbId")).booleanValue();
+            useXrefDbsForGenePrimaryIdentifier = Boolean.valueOf(
+                    organismProps.getProperty("flag.useXrefDbsForGenePrimaryIdentifier")).booleanValue();
             useXrefDbsForGeneSymbol = Boolean.valueOf(
                     organismProps.getProperty("flag.useXrefDbsForGeneSymbol")).booleanValue();
             createAnalysisResult = Boolean.valueOf(
@@ -1436,7 +1430,7 @@ public class EnsemblDataTranslator extends DataTranslator
             initEnsemblDataSet();
 
             //try and load the props if we need to use custom gene identifiers - i.e. Hugo for Human
-            if (useXrefDbsForGeneOrganismDbId) {
+            if (useXrefDbsForGenePrimaryIdentifier) {
 
                 geneXrefDbName = organismProps.getProperty("gene.identifier.xref.dataSourceName");
 
@@ -1557,8 +1551,8 @@ public class EnsemblDataTranslator extends DataTranslator
         /**
          * @return Do we want to use any external db ids - i.e. SwissProt/Uniprot etc for Genes?
          * */
-        boolean useXrefDbsForGeneOrganismDbId() {
-            return useXrefDbsForGeneOrganismDbId;
+        boolean useXrefDbsForGenePrimaryIdentifier() {
+            return useXrefDbsForGenePrimaryIdentifier;
         }
 
         /**
