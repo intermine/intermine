@@ -245,7 +245,8 @@ public class SourcePriorityComparator implements Comparator
                     + source2.getName() + " (value "
                     + (value2.toString().length() <= 1000 ? value2
                        : value2.toString().subSequence(0, 999))
-                    + "). This field needs configuring in "
+                    + ") while comparing: " + o1 + " and " + o2
+                    + ". This field needs configuring in "
                     + cld.getModel().getName() + "_priorities.properties");
         }
         throw new ClassCastException("Trying to compare priorities for objects that are not"
