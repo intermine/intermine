@@ -59,7 +59,7 @@
                 value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.CDS"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.classAttribute" value="secondaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-CDS-*.fasta"/>
       <property name="src.data.dir" location="/shared/data/flybase/dmel/release_5_5/fasta"/>
     </source>
