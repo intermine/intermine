@@ -38,8 +38,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 public class GeneMicroArrayDisplayerController extends TilesAction
 {
     /**
-     * @see TilesAction#execute(ComponentContext, ActionMapping, ActionForm, HttpServletRequest,
-     *                          HttpServletResponse)
+     * {@inheritDoc}
      */
     public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,

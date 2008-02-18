@@ -98,11 +98,11 @@ public class MicroArrayHelper
         return results;
     }
 
-/**
- * @param gene
- * @param os
- * @return results
- */
+    /**
+     * @param gene identifier for gene of interest
+     * @param os object store
+     * @return results - the microarray experiments involving this gene
+     */
     public static Results queryExperimentsInvolvingGene(String gene, ObjectStore os) {
 
         if (gene == null) {
