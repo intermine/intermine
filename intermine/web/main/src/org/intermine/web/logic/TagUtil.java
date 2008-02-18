@@ -28,7 +28,7 @@ public abstract class TagUtil
     /**
      * Look at the current webapp page and subtab and return the help page and tab.
      * @param request the request object
-     * @return
+     * @return the help page and tab
      */
     public static String[] getHelpPage(HttpServletRequest request) {
         HttpSession session = request.getSession();

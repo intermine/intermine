@@ -82,7 +82,7 @@ public class BagHelper
      * @param searchRepository the SearchRepository
      * @param bagName the bag name
      * @return the InterMineBag
-     * @throws InterMineException
+     * @throws InterMineException if the bag is not found
      */
     public static InterMineBag getBag(Profile profile, SearchRepository searchRepository,
                                       String bagName) throws InterMineException {
