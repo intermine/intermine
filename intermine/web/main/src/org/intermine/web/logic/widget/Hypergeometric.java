@@ -15,25 +15,11 @@ package org.intermine.web.logic.widget;
 /**
  * Calculates p-values for go terms using the hypergeometric distribution.
  * See online documentation for detailed information about what this class is and what it does.
+ * @author Julie Sullivan
  */
 public class Hypergeometric
 {
     static double[] factorials;
-
-//    /**
-//     * Builds an array of factorials so we don't have to calculate it each time.
-//     * @param numGenes the number of genes in the list
-//     **/
-//    public Hypergeometric(int numGenes) {
-//        factorials = new double[numGenes + 1];
-//        factorials[0] = 0;
-//        double current = 0;
-//        for (int i = 1; i < numGenes + 1; i++) {
-//            current += Math.log(i);
-//            factorials[i] = current;
-//        }
-//    }
-
 
     private static void getFactorials(int n) {
         if (factorials == null || factorials.length < n) {
@@ -46,7 +32,6 @@ public class Hypergeometric
             }
         }
     }
-
 
     /**
      * Compute the log of nCr (n Choose r)
@@ -76,7 +61,6 @@ public class Hypergeometric
         }
         return factorials[n] - (factorials[r] + factorials[n - r]);
     }
-
 
     /**
      * The value is calculated as:
