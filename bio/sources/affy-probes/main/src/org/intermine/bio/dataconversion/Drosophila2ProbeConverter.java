@@ -201,16 +201,17 @@ public class Drosophila2ProbeConverter extends FileConverter
         return probeSet;
     }
 
-    private Item createChromosome(String chrId) throws ObjectStoreException {
-        Item chr = (Item) chrMap.get(chrId);
-        if (chr == null) {
-            chr = createItem("Chromosome");
-            // convert 'chr2L' -> '2L'
-            chr.setAttribute("primaryIdentifier", chrId.substring(3, chrId.length()));
-            chr.setReference("organism", org.getIdentifier());
-            chrMap.put(chrId, chr);
-            store(chr);
-        }
-        return chr;
-    }
+//  commented out for now.  see #1250
+//    private Item createChromosome(String chrId) throws ObjectStoreException {
+//        Item chr = (Item) chrMap.get(chrId);
+//        if (chr == null) {
+//            chr = createItem("Chromosome");
+//            // convert 'chr2L' -> '2L'
+//            chr.setAttribute("primaryIdentifier", chrId.substring(3, chrId.length()));
+//            chr.setReference("organism", org.getIdentifier());
+//            chrMap.put(chrId, chr);
+//            store(chr);
+//        }
+//        return chr;
+//    }
 }

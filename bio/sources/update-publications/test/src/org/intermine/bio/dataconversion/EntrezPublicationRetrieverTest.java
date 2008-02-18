@@ -19,8 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;

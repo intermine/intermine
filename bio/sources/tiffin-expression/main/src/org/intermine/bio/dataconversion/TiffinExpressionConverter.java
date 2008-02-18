@@ -35,11 +35,9 @@ public class TiffinExpressionConverter extends FileConverter
 {
     protected static final Logger LOG = Logger.getLogger(TiffinExpressionConverter.class);
 
-    private Map<String, Item> geneItems = new HashMap<String, Item>();
     private Map<String, Item> termItems = new HashMap<String, Item>();
 
     Item orgDrosophila;
-    private Item dataSet;
     private Item pub;
 
     /**

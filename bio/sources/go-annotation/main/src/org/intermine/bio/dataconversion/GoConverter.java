@@ -136,7 +136,8 @@ public class GoConverter extends FileConverter
                                                    + "taxon: " + taxonId + " in file: "
                                                    + PROP_FILE);
             }
-            if (!(geneAttribute.equals("identifier") || geneAttribute.equals("primaryIdentifier"))) {
+            if (!(geneAttribute.equals("identifier") 
+                            || geneAttribute.equals("primaryIdentifier"))) {
                 throw new IllegalArgumentException("Invalid geneAttribute value for taxon: "
                                                    + taxonId + " was: " + geneAttribute);
             }
@@ -1007,7 +1008,7 @@ public class GoConverter extends FileConverter
         }
 
         /**
-         * @see Object#equals(Object)
+         * {@inheritDoc}
          */
         public boolean equals(Object o) {
             if (o instanceof GoTermToGene) {
@@ -1020,7 +1021,7 @@ public class GoConverter extends FileConverter
         }
 
         /**
-         * @see Object#hashCode()
+         * {@inheritDoc}
          */
         public int hashCode() {
             return ((3 * productId.hashCode())
@@ -1029,7 +1030,7 @@ public class GoConverter extends FileConverter
         }
 
         /**
-         * @see Object#toString()
+         * {@inheritDoc}
          */
         public String toString() {
             StringBuffer toStringBuff = new StringBuffer();

@@ -394,29 +394,27 @@ public class ChadoXmlConverter extends FileConverter
         }
 
 
-        private abstract class ObjectHolder {};
+        private abstract class ObjectHolder
+        {
+            
+        };
 
         private class FeatureHolder extends ObjectHolder
         {
             List<FeatureLocHolder> locations = new ArrayList<FeatureLocHolder>();
-            public List<FeatureLocHolder> relations = new ArrayList<FeatureLocHolder>();
-            public String species;
-            public String genus;
-            public String primaryidentifier;
-            public String seqlen;
-            public String name;
-            public String type;
-        }
-
-        private class RelationshipHolder extends ObjectHolder
-        {
+            List<FeatureLocHolder> relations = new ArrayList<FeatureLocHolder>();
+            String species;
+            String genus;
+            String primaryidentifier;
+            String seqlen;
+            String name;
             String type;
         }
 
         private class FeatureLocHolder extends ObjectHolder
         {
-            public String strand;
-            public String subjectId;
+            String strand;
+            String subjectId;
             String fmin;
             String fmax;
         }

@@ -11,13 +11,11 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -35,10 +33,7 @@ import org.intermine.xml.full.Item;
  */
 public class WormBaseIdentifiersConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected Item dataSource, worm, dataSet;
-    protected Map ids = new HashMap();
 
     /**
      * Constructor
