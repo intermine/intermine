@@ -89,7 +89,7 @@ public class SearchRepository
 
     /**
      * Set the Profile to use for getting aspect tags
-     * @param profile
+     * @param profile the Profile
      */
     public void setProfile(Profile profile) {
         this.profile = profile;

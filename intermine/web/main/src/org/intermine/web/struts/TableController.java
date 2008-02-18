@@ -98,15 +98,18 @@ public class TableController extends TilesAction
         } else if (pt.getAllRows().getPathToBagQueryResult() != null) {
             Map<String, BagQueryResult> pathToBagQueryResult = pt.getAllRows()
                 .getPathToBagQueryResult();
-            List<DisplayLookupMessageHandler> lookupResults = new ArrayList<DisplayLookupMessageHandler>();
+            List<DisplayLookupMessageHandler> lookupResults =
+                new ArrayList<DisplayLookupMessageHandler>();
             for (Map.Entry<String, BagQueryResult> entry : pathToBagQueryResult.entrySet()) {
                 String path = entry.getKey();
                 String type = query.getNode(path).getType();
                 String extraConstraint = (String) query.getNode(path).getConstraint(0)
                     .getExtraValue();
                 BagQueryResult bqr = entry.getValue();
-                Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-                DisplayLookupMessageHandler.handleMessages(bqr, session, properties, type, extraConstraint);
+                Properties properties =
+                    (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                DisplayLookupMessageHandler.handleMessages(bqr, session, properties, type,
+                                                           extraConstraint);
             }
             request.setAttribute("lookupResults", lookupResults);
         } else {
