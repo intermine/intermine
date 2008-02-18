@@ -129,8 +129,11 @@ public class BuildBagForm extends ActionForm
 //        }
 //        return errors;
 //    }
-
-    @Override
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override    
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
         formFile = null;
