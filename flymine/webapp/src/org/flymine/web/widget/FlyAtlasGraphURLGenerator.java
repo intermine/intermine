@@ -59,12 +59,9 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         return sb.toString();
     }
 
+
     /**
-     * @param os object store
-     * @param bag bag
-     * @param series up or down
-     * @param category tissue
-     * @return the path query
+     * {@inheritDoc}
      */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
@@ -75,7 +72,8 @@ public class FlyAtlasGraphURLGenerator implements GraphCategoryURLGenerator
         PathQuery q = new PathQuery(model);
 
         Path identifier = MainHelper.makePath(model, q, "FlyAtlasResult.genes.identifier");
-        Path primaryIdentifier = MainHelper.makePath(model, q, "FlyAtlasResult.genes.primaryIdentifier");
+        Path primaryIdentifier = MainHelper.makePath(model, q, 
+                                                     "FlyAtlasResult.genes.primaryIdentifier");
         Path name = MainHelper.makePath(model, q, "FlyAtlasResult.genes.name");
         Path org = MainHelper.makePath(model, q, "FlyAtlasResult.genes.organism.name");
         Path assays = MainHelper.makePath(model, q, "FlyAtlasResult.assays.name");

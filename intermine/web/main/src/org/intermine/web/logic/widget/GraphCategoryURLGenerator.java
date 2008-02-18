@@ -18,19 +18,25 @@ import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 
 /**
- *
+ * Methods used to construct the links used on the graph widgets
  * @author Julie Sullivan
  */
 public interface GraphCategoryURLGenerator extends CategoryURLGenerator
 {
 
     /**
-     *
+     * builds the url used by the graph widgets.  Simply concatenates the variables to create
+     * a URL.
+     * @param dataset dataset represented by the entire graph 
+     * @param category specific category (eg employee type: manager, etc)
+     * @param series specific series (eg part-time, full-time)
+     * @return url that sends the user to the results page containing data represented by 
+     * the bar on the graph they clicked on
      */
     public String generateURL(CategoryDataset dataset, int series, int category);
 
     /**
-     *
+     * generates the path query 
      * @param os object store
      * @param bag bag that this widget is displaying
      * @param series key to constrain the query

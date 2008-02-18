@@ -54,6 +54,7 @@ public abstract class LoginHandler extends InterMineAction
      *            The username
      * @param password
      *            The password
+     * @return the map containing the renamed bags the user created before they were logged in
      */
     public Map doLogin(ServletContext servletContext, HttpServletRequest request,
             HttpServletResponse response, HttpSession session, ProfileManager pm, String username,
