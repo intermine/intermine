@@ -72,7 +72,7 @@ public class EnrichmentWidgetDisplayer
     }
 
     /**
-     * @param filters
+     * @param filters list of filters to display on the widget
      */
     public void setFilters(String filters) {
         this.filters = filters;

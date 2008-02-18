@@ -80,7 +80,9 @@ public class FlyFishGraphURLGenerator implements GraphCategoryURLGenerator
         return sb.toString();
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public PathQuery generatePathQuery(ObjectStore os,
                                        InterMineBag bag,
                                        String series,
