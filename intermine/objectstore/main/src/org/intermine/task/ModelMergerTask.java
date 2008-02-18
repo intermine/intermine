@@ -10,9 +10,9 @@ package org.intermine.task;
  *
  */
 
-import java.util.Set;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -20,15 +20,12 @@ import org.intermine.modelproduction.ModelMerger;
 import org.intermine.modelproduction.xml.InterMineModelParser;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.FileSet;
 
 /**
  * Task to merge a single additions file into an intermine XML model.
