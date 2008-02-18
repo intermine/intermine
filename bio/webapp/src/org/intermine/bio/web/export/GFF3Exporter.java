@@ -10,6 +10,7 @@ package org.intermine.bio.web.export;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -121,7 +122,7 @@ public class GFF3Exporter implements TableExporter
                 LocatedSequenceFeature lsf = (LocatedSequenceFeature) row.get(realFeatureIndex)
                     .getInterMineObject();
 
-                Map extraAttributes = new HashMap();
+                Map<String, List<String>> extraAttributes = new HashMap<String, List<String>>();
 
 
                 // add some fields as extra attributes if the object has them
@@ -133,7 +134,9 @@ public class GFF3Exporter implements TableExporter
                 for (String fieldName : extraFields) {
                     FieldInfo field = TypeUtil.getFieldInfo(lsf.getClass(), fieldName);
                     if (field != null && (TypeUtil.getFieldValue(lsf, fieldName) != null)) {
-                        extraAttributes.put(fieldName, TypeUtil.getFieldValue(lsf, fieldName));
+                        List<String> values = new ArrayList<String>();
+                        values.add((String) TypeUtil.getFieldValue(lsf, fieldName));
+                        extraAttributes.put(fieldName, values);
                     }
                 }
 
@@ -184,6 +187,7 @@ public class GFF3Exporter implements TableExporter
             messages.add(ActionMessages.GLOBAL_MESSAGE, error);
             request.setAttribute(Globals.ERROR_KEY, messages);
             LOG.error(e);
+            return mapping.findForward("results");
         }
         return null;
     }
