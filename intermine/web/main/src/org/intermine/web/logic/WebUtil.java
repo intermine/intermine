@@ -338,6 +338,7 @@ public abstract class WebUtil
      * also shortens the list to be map.size() = max
      * @param map The map to be randomised - the Map will be unchanged after the call
      * @param max the number of items to be in the final list
+     * @param <V> the value type
      * @return the newly randomised, shortened map
      */
     public static <V> Map<String, V> shuffle(Map<String, V> map, int max) {

@@ -254,7 +254,8 @@ public class DataLoaderHelper
                     Set primaryKeys;
 
                     if (source == null) {
-                        primaryKeys = new LinkedHashSet(PrimaryKeyUtil.getPrimaryKeys(refCld).values());
+                        primaryKeys =
+                            new LinkedHashSet(PrimaryKeyUtil.getPrimaryKeys(refCld).values());
                     } else {
                         primaryKeys = DataLoaderHelper.getPrimaryKeys(refCld, source);
                     }

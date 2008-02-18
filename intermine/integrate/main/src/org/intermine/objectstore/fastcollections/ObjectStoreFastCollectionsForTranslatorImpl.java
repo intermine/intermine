@@ -299,8 +299,10 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                                     (ObjectStoreTranslatingImpl) os;
                                                 ItemToObjectTranslator itot =
                                                     (ItemToObjectTranslator) osti.getTranslator();
-                                                String itemIdentifer = (objToPopulate instanceof
-                                                        InterMineObject ? itot.idToIdentifier(
+                                                String itemIdentifer =
+                                                    (objToPopulate
+                                                     instanceof
+                                                     InterMineObject ? itot.idToIdentifier(
                                                             ((InterMineObject) objToPopulate)
                                                             .getId()) : null);
                                                 String idToAddIdentifer =

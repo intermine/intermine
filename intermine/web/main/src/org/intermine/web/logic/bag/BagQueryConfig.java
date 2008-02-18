@@ -66,7 +66,7 @@ public class BagQueryConfig
     /**
      * Set the connecting field for adding an extra constraint to bag queries.
      *
-     * @param connectField
+     * @param connectField the field name
      */
     public void setConnectField(String connectField) {
         this.connectField = connectField;
@@ -84,7 +84,7 @@ public class BagQueryConfig
     /**
      * Set the field to constrain when making an extra constraint.
      *
-     * @param constrainField
+     * @param constrainField the constraint field
      */
     public void setConstrainField(String constrainField) {
         this.constrainField = constrainField;

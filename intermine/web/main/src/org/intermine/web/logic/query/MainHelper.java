@@ -208,7 +208,8 @@ public class MainHelper
     public static Query makeQuery(PathQuery query, Map savedBags,
             Map<String, QueryNode> pathToQueryNode, ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
-        return makeQuery(query, savedBags, pathToQueryNode, servletContext, returnBagQueryResults, false,
+        return makeQuery(query, savedBags, pathToQueryNode, servletContext, returnBagQueryResults,
+                         false,
                 (ObjectStore) (servletContext == null ? null
                     : servletContext.getAttribute(Constants.OBJECTSTORE)),
                 (Map) (servletContext == null ? null

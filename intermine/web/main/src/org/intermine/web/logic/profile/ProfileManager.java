@@ -561,7 +561,7 @@ public class ProfileManager
      * @param tagNames the tag names to use for filtering
      * @param tagType the tag type (from TagTypes)
      * @param userName the user name to pass to getTags()
-     * @param W the type of WebSearchable
+     * @param <W> the type of WebSearchable
      * @return the filtered Map
      */
     public <W extends WebSearchable> Map<String, W>
