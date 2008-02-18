@@ -26,7 +26,7 @@ import org.intermine.util.TextFileUtil;
 import org.intermine.xml.full.Item;
 
 /**
- * DataConverter to parse an FlyAtlas expression data into items
+ * DataConverter to parse FlyAtlas expression data into items
  * @author Richard Smith
  */
 public class FlyAtlasConverter extends FileConverter
@@ -37,6 +37,7 @@ public class FlyAtlasConverter extends FileConverter
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
+     * @param model the target data model
      * @throws ObjectStoreException if an error occurs in storing
      */
     public FlyAtlasConverter(ItemWriter writer, Model model) throws ObjectStoreException {
@@ -45,7 +46,7 @@ public class FlyAtlasConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#process(Reader)
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         Iterator lineIter = TextFileUtil.parseTabDelimitedReader(reader);
@@ -91,7 +92,7 @@ public class FlyAtlasConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#close()
+     * {@inheritDoc}
      */
     public void close() throws ObjectStoreException {
         store(org);

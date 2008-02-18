@@ -10,7 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.HashMap;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.LinkedHashMap;
 
 import org.intermine.dataconversion.ItemWriter;
@@ -19,11 +20,6 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
-
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.ResultSet;
 
 import com.mockobjects.sql.MockMultiRowResultSet;
 

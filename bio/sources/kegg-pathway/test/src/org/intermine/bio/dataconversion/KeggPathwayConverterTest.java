@@ -11,10 +11,8 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,8 +26,6 @@ import org.intermine.metadata.Model;
 
 public class KeggPathwayConverterTest extends ItemsTestCase
 {
-    private String ENDL = System.getProperty("line.separator");
-
     public KeggPathwayConverterTest(String arg) {
         super(arg);
     }

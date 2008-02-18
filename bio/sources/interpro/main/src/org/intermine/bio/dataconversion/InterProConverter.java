@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,16 +21,10 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
-import java.io.Reader;
-
-import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -44,14 +39,10 @@ public class InterProConverter extends FileConverter
 {
     private Map<String, Object> mapMaster = new HashMap<String, Object>();
     protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    private static final Logger LOG = Logger.getLogger(InterProConverter.class);
     private Map<String, Item> pubMaster = new HashMap<String, Item>();
     private Map<String, Item> dbMaster = new HashMap<String, Item>();
     private Map<String, Item> dsMaster = new HashMap<String, Item>();
     private Map<String, Item> proteinDomains = new HashMap<String, Item>();
-
-    private Map ids = new HashMap();
-    private Map aliases = new HashMap();
 
     /**
      * Constructor
@@ -63,7 +54,7 @@ public class InterProConverter extends FileConverter
     }
 
     /**
-     * @see FileConverter#process(Reader)
+     * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         mapMaps();
@@ -82,8 +73,6 @@ public class InterProConverter extends FileConverter
         mapMaster.put("pubMaster", pubMaster);
         mapMaster.put("dbMaster", dbMaster);
         mapMaster.put("dsMaster", dsMaster);
-        mapMaster.put("ids", ids);
-        mapMaster.put("aliases", aliases);
         mapMaster.put("proteinDomains", proteinDomains);
     }
 
@@ -107,10 +96,6 @@ public class InterProConverter extends FileConverter
         private Item datasource;
         private Item dataset;
 
-        private int nextClsId = 0;
-        private ItemFactory itemFactory;
-        private Map<String, Integer> ids;
-        private Map<String, String> aliases;
         private ItemWriter writer;
         private Stack stack = new Stack();
         private String attName = null;
@@ -125,14 +110,11 @@ public class InterProConverter extends FileConverter
          */
         public InterProHandler(ItemWriter writer, Map mapMaster) {
 
-            itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
             this.writer = writer;
             this.proteinDomains = (Map) mapMaster.get("proteinDomains");
             this.pubMaster = (Map) mapMaster.get("pubMaster");
             this.dbMaster = (Map) mapMaster.get("dbMaster");
             this.dsMaster = (Map) mapMaster.get("dsMaster");
-            this.ids = (Map) mapMaster.get("ids");
-            this.aliases = (Map) mapMaster.get("aliases");
         }
 
 
@@ -401,32 +383,6 @@ public class InterProConverter extends FileConverter
          */
         protected Item createItem(String className) {
             return InterProConverter.this.createItem(className);
-        }
-
-        private String newId(String className) {
-            Integer id = (Integer) ids.get(className);
-            if (id == null) {
-                id = new Integer(0);
-                ids.put(className, id);
-            }
-            id = new Integer(id.intValue() + 1);
-            ids.put(className, id);
-            return id.toString();
-        }
-
-        /**
-         * Uniquely alias a className
-         * @param className the class name
-         * @return the alias
-         */
-        protected String alias(String className) {
-            String alias = (String) aliases.get(className);
-            if (alias != null) {
-                return alias;
-            }
-            String nextIndex = "" + (nextClsId++);
-            aliases.put(className, nextIndex);
-            return nextIndex;
         }
     }
 }

@@ -33,7 +33,6 @@ import org.intermine.util.PropertiesUtil;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
@@ -51,7 +50,6 @@ public class UniprotConverter extends FileConverter
 {
     private Map<String, Object> mapMaster = new HashMap<String, Object>();  // map of maps
     //TODO: This should come from props files!!!!
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     protected static final String PROP_FILE = "uniprot_config.properties";
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map<String, Item> pubMaster = new HashMap<String, Item>();
@@ -291,9 +289,6 @@ public class UniprotConverter extends FileConverter
 
     private class UniprotHandler extends DefaultHandler
     {
-        private int nextClsId = 0;
-        private ItemFactory itemFactory;
-
         // the below are reset for each protein
         private Item protein;
         private Item sequence;
@@ -341,8 +336,6 @@ public class UniprotConverter extends FileConverter
         private Set<String> geneIdentifiers;  // all gene identifiers
         private Map<String, Map> geneDataMaps;
         private Set<String> geneSources;
-        private Map<String, Integer> ids;
-        private Map<String, String> aliases;
         private Map<String, Item> keyMaster;
 
         private ItemWriter writer;
@@ -361,8 +354,6 @@ public class UniprotConverter extends FileConverter
          * @param createInterpro whether or not to create interpro items
          */
         public UniprotHandler(ItemWriter writer, Map mapMaster, boolean createInterpro) {
-
-            itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
             this.writer = writer;
 
             this.pubMaster = (Map) mapMaster.get("pubMaster");
@@ -376,8 +367,6 @@ public class UniprotConverter extends FileConverter
             this.geneIdentifiers = (Set) mapMaster.get("geneIdentifiers");
             this.geneDataMaps = (Map) mapMaster.get("geneDataMaps");
             this.geneSources = (Set) mapMaster.get("geneSources");
-            this.ids = (Map) mapMaster.get("ids");
-            this.aliases = (Map) mapMaster.get("aliases");
             this.keyMaster = (Map) mapMaster.get("keyMaster");
             this.createInterpro = createInterpro;
         }
@@ -1223,33 +1212,9 @@ public class UniprotConverter extends FileConverter
         protected Item createItem(String className) {
             return UniprotConverter.this.createItem(className);
         }
-
-        private String newId(String className) {
-            Integer id = (Integer) ids.get(className);
-            if (id == null) {
-                id = new Integer(0);
-                ids.put(className, id);
-            }
-            id = new Integer(id.intValue() + 1);
-            ids.put(className, id);
-            return id.toString();
-        }
-
-        /**
-         * Uniquely alias a className
-         * @param className the class name
-         * @return the alias
-         */
-        protected String alias(String className) {
-            String alias = (String) aliases.get(className);
-            if (alias != null) {
-                return alias;
-            }
-            String nextIndex = "" + (nextClsId++);
-            aliases.put(className, nextIndex);
-            return nextIndex;
-        }
     }
+    
+    
         /**
          * Which datasource to use with which organism
          * @author Julie Sullivan

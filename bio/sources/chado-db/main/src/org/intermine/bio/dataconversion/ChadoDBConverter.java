@@ -1187,7 +1187,6 @@ public class ChadoDBConverter extends BioDBConverter
      */
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
-        String featureTypesString = getFeaturesString();
         String query = "SELECT * FROM " + TEMP_FEATURE_TABLE_NAME;
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -1254,26 +1253,6 @@ public class ChadoDBConverter extends BioDBConverter
         } else {
             throw new RuntimeException("no rows returned when querying organism table for genus \""
                                        + genus + "\" and species \"" + species + "\"");
-        }
-    }
-
-    /**
-     * Return the chado cvterm id for the cvterm name.
-     * @param connection the db connection
-     * @return the cvterm id
-     * @throws SQLException if the is a database problem
-     */
-     private int getCvTermIdByName(Connection connection, String name)
-        throws SQLException {
-        String query = "select cvterm_id from cvterm where name in ('" + name + "')";
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        if (res.next()) {
-            return res.getInt(1);
-        } else {
-            throw new RuntimeException("no rows returned when querying cvterm table for name \""
-                                       + name + "\"");
         }
     }
 

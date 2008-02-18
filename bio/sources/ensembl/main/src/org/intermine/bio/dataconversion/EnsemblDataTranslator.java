@@ -411,69 +411,6 @@ public class EnsemblDataTranslator extends DataTranslator
         result.add(rfSyn);
     }
 
-    /**
-     * @param sourceItem - can be an exon or an exon_stable_id source db item.
-     * @param srcIsExonNotExonStableId - flag to distinguish between the 2 possible src items.
-     *
-     * @return a boolean indicating that the exon will be kept
-     * - hence we can store it and make a synonym for it
-     *
-     * @throws ObjectStoreException if there is a problem finding one of the related items.
-     * */
-    private boolean isExonToBeKept(Item sourceItem, boolean srcIsExonNotExonStableId)
-            throws ObjectStoreException {
-
-        int invalidETCount = 0;
-        int validETCount = 0;
-
-        Item srcItem;
-
-        if (srcIsExonNotExonStableId) {
-            srcItem = sourceItem;
-        } else {
-            srcItem = ItemHelper.convert(
-                    srcItemReader.getItemById(sourceItem.getReference("exon").getRefId()));
-        }
-
-        List etList = getItemsViaItemPath(srcItem, EXON_VIA_EXON_TRANSCRIPT, srcItemReader);
-
-        //Loop over the transcripts for each exon to see if they are valid or not...
-        for (Iterator etIt = etList.iterator(); etIt.hasNext();) {
-
-            Item etNext = (Item) etIt.next();
-            Item tscrpt = ItemHelper.convert(srcItemReader.getItemById(
-                          etNext.getReference("transcript").getRefId()));
-
-            //We only allow protein_coding types in...
-            String bioType = tscrpt.getAttribute("biotype").getValue();
-
-            if (!bioType.equalsIgnoreCase("bacterial_contaminant")) {
-                validETCount++;
-            } else {
-                invalidETCount++;
-                LOG.debug("Found an invalid biotype:" + bioType);
-            }
-        }
-
-        //Check to see if any of the exons are pointing to invalid transcripts...
-        if (validETCount == 0 && invalidETCount == 0) {
-            LOG.debug("Exon with no transcript found!" + (srcItem.hasAttribute("primaryIdentifier")
-                    ? srcItem.getAttribute("primaryIdentifier").getValue() : srcItem.getIdentifier()));
-        } else if (validETCount >= 1 && invalidETCount == 0) {
-            return true;
-        } else if (validETCount == 0 && invalidETCount >= 1) {
-            LOG.debug("Exon with an invalid transcript found!" + (srcItem.hasAttribute("primaryIdentifier")
-                    ? srcItem.getAttribute("primaryIdentifier").getValue() : srcItem.getIdentifier()));
-        } else if (validETCount >= 1 && invalidETCount >= 1) {
-            LOG.debug("Exon with valid and invalid transcripts found!"
-                    + (srcItem.hasAttribute("primaryIdentifier")
-                    ? srcItem.getAttribute("primaryIdentifier").getValue() : srcItem.getIdentifier()));
-            return true; //keep this - but log it
-        }
-
-        return false;
-    }
-
 
     /**
      * @param srcItem = ensembl:gene

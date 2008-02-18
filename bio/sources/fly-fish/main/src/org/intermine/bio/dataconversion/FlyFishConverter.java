@@ -40,7 +40,7 @@ public class FlyFishConverter extends FileConverter
     private Map<String, Item> termItems = new HashMap<String, Item>();
 
     Item orgDrosophila;
-    private Item dataSet;
+    //private Item dataSet;
     private Item pub;
 
     /**

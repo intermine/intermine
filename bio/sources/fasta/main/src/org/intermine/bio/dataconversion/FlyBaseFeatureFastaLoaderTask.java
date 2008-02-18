@@ -15,13 +15,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intermine.objectstore.ObjectStoreException;
-
-import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Organism;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * Code for loading fasta for flybase, setting feature attribute from the FASTA header.
@@ -36,7 +34,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      * @param chromosomeId the id
      * @param organism the Organism to reference from the Chromosome
      * @return the Chromosome
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException if problem fetching Chromosome
      */
     protected Chromosome getChromosome(String chromosomeId, Organism organism)
     throws ObjectStoreException {
