@@ -63,7 +63,7 @@ public class TempImageLoader extends InterMineAction
             int numRead = 0;
             while (offset < bytes.length && numRead >= 0) {
                 numRead = is.read(bytes, offset, bytes.length - offset);
-                offset += numRead;                
+                offset += numRead;
             }
             response.setContentType("image/png");
             out.write(bytes);
