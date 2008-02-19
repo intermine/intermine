@@ -185,7 +185,7 @@ public class FlyFishConverter extends FileConverter
             return geneItems.get(geneCG);
         } else {
             Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", geneCG);
+            gene.setAttribute("secondaryIdentifier", geneCG);
             gene.setReference("organism", orgDrosophila);
             geneItems.put(geneCG, gene);
             store(gene);

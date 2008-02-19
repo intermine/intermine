@@ -77,13 +77,13 @@ public class BDGPCloneConverter extends CDNACloneConverter
                 continue;
             }
 
-            Item gene = createBioEntity("Gene", array[0], organism.getIdentifier());
+            Item gene = createBioEntity("Gene", array[0], "secondaryIdentifier", organism.getIdentifier());
             store(gene);
 
             String[] cloneIds = array[3].split(";");
 
             for (int i = 0; i < cloneIds.length; i++) {
-                Item clone = createBioEntity("CDNAClone", cloneIds[i], organism.getIdentifier());
+                Item clone = createBioEntity("CDNAClone", cloneIds[i], "primaryIdentifier", organism.getIdentifier());
                 clone.setReference("gene", gene.getIdentifier());
 
                 Item synonym = createItem("Synonym");
