@@ -130,7 +130,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp =
-          "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)\\.(list)?\\.(url|text|imageName)";
+          "attributelink\\.([^.]+)\\." + geneOrgKey + "\\.([^.]+)(\\.list)?\\.(url|text|imageName)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
         String taxId = null;
