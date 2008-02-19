@@ -54,6 +54,7 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.PathQuery;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebCollection;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -149,7 +150,7 @@ public class PortalQueryAction extends InterMineAction
             Class.forName(model.getPackageName() + "." + className);
         } catch (ClassNotFoundException clse) {
             recordError(new ActionMessage("errors.badportalclass"), request);
-            return mapping.findForward("results");
+            return goToNoResults(mapping, session);
         }
         ObjectStoreWriter uosw = profile.getProfileManager().getUserProfileObjectStore();
         String bagName = null;
@@ -205,26 +206,25 @@ public class PortalQueryAction extends InterMineAction
                 if (addparameter != null && addparameter.length() != 0) {
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
                     ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
-                    .getAttribute(Constants.OBJECT_STORE_SUMMARY);
+                                              .getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
                     List<ResultsRow> result = bagConverter.getConvertedObjects(session,
-                                                                               addparameter,
-                                                                               bagList, className);
-                    imBag = new InterMineBag(bagName, className , null , new Date() ,
-                                             os , profile.getUserId() , uosw);
+                        addparameter, bagList, className);
+                    imBag = new InterMineBag(bagName, className, null, new Date(), os,
+                                             profile.getUserId(), uosw);
                     List<Integer> converted = new ArrayList<Integer>();
-                    for (ResultsRow resRow:result) {
+                    for (ResultsRow resRow : result) {
                         converted.add(((InterMineObject) resRow.get(0)).getId());
                     }
                     // No matches
                     if (converted.size() <= 0) {
-                        recordMessage(new ActionMessage("portal.nomatches.orthologues",
-                                                        addparameter, extId), request);
-                        return goToNoResults(mapping, os, model, className, webConfig,
-                                             classKeys, session);
+                        actionMessages.add(Constants.PORTAL_MSG,
+                            new ActionMessage("portal.nomatches.orthologues", addparameter, extId));
+                        session.setAttribute(Constants.PORTAL_MSG, actionMessages);
+                        return goToNoResults(mapping, session);
                     }
-                    actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(
-                        model, extId, converted.size(), className, addparameter));
+                    actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(model,
+                        extId, converted.size(), className, addparameter));
                     session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
                     // Object details
@@ -271,7 +271,7 @@ public class PortalQueryAction extends InterMineAction
             return goToBagDetails(mapping, os, imBag, bagList, profile);
         // No matches
         } else {
-            return goToNoResults(mapping, os, model, className, webConfig, classKeys, session);
+            return goToNoResults(mapping, session);
         }
     }
 
@@ -307,15 +307,10 @@ public class PortalQueryAction extends InterMineAction
         return new ForwardParameters(mapping.findForward("objectDetails"))
         .addParameter("id", id).forward();
     }
-
-    private ActionForward goToNoResults(ActionMapping mapping, ObjectStore os, Model model,
-                                        String className, WebConfig webConfig, Map classKeys,
-                                        HttpSession session) {
-        WebPathCollection webPathCollection =
-            new WebPathCollection(os, new Path(model, className), new ArrayList()
-                                  , model, webConfig,
-                              classKeys);
-        PagedTable pc = new PagedTable(webPathCollection);
+    
+    private ActionForward goToNoResults(ActionMapping mapping, HttpSession session) {
+        WebCollection webCollection = new WebCollection("",new ArrayList());
+        PagedTable pc = new PagedTable(webCollection);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
         return new ForwardParameters(mapping.findForward("results"))
