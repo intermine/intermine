@@ -14,10 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.metadata.Model;
-import org.intermine.sql.Database;
-
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 
@@ -25,18 +21,16 @@ import org.apache.commons.collections.map.MultiKeyMap;
  * A converter for chado that handles WormBase specific configuration.
  * @author Kim Rutherford
  */
-public class WormBaseChadoDBConverter extends ChadoDBConverter
+public class WormBaseModuleProcessor extends ChadoSequenceModuleProcessor
 {
     private MultiKeyMap config;
 
     /**
      * Create a new WormBaseChadoDBConverter.
-     * @param database the Database object representing the chado db
-     * @param tgtModel the target Model
-     * @param writer the ItemWriter
+     * @param chadoDBConverter the converter that created this object
      */
-    public WormBaseChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
-        super(database, tgtModel, writer);
+    public WormBaseModuleProcessor(ChadoDBConverter chadoDBConverter) {
+        super(chadoDBConverter);
     }
 
     /**
