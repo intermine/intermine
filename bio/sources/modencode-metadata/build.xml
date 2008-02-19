@@ -1,0 +1,6 @@
+<project name="modencode-matadata" default="default" basedir=".">
+	<description>build, test, package modencode-metadata</description>
+	
+	<import file="../../../imbuild/source.xml"/>
+	
+</project>
