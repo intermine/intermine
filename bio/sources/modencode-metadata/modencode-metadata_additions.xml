@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<classes>
+	
+	<class name="org.flymine.model.genomic.Provider" is-interface="true">
+		<attribute name="lab" type="java.lang.String"/>
+		<attribute name="surnamePI" type="java.lang.String"/>
+		<attribute name="namePI" type="java.lang.String"/>
+		<attribute name="studyTitle" type="java.lang.String"/>
+		<reference name="experimentSubmission" referenced-type="org.flymine.model.genomic.Experiment-submission" reverse-reference="provider"/>
+	</class>
+	
+	<class name="org.flymine.model.genomic.ExperimentSubmission" is-interface="true">
+		<attribute name="identifier" type="java.lang.String"/>
+		<attribute name="description" type="java.lang.String"/>
+		<attribute name="factorValue" type="java.lang.String"/>
+		<reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/>
+		<reference name="provider" referenced-type="org.flymine.model.genomic.Provider" reverse-reference="experimentSubmission"/>
+		<collection name="submissionData" referenced-type="org.flymine.model.genomic.SubmissionData" reverse-reference="experimentSubmission"/>
+		<collection name="protocol" referenced-type="org.flymine.model.genomic.Protocol" reverse-reference="experimentSubmission"/>
+	</class>
+
+	
+	<class name="org.flymine.model.genomic.Protocol" is-interface="true">
+		<attribute name="identifier" type="java.lang.String"/>
+		<attribute name="description" type="java.lang.String"/>
+		<attribute name="type" type="java.lang.String"/>
+		<attribute name="characteristic" type="java.lang.String"/>
+		<attribute name="hybridization" type="java.lang.String"/>
+		<attribute name="arrayDataFile" type="java.lang.String"/>
+		<attribute name="derivedArrayDataFile" type="java.lang.String"/>
+		<collection name="experimentSubmission" referenced-type="org.flymine.model.genomic.ExperimentSubmission" reverse-reference="protocol"/>
+	</class>
+	
+
+	<class name="org.flymine.model.genomic.SubmissionData" is-interface="true">
+		<attribute name="identifier" type="java.lang.String"/>
+		<attribute name="heading" type="java.lang.String"/>
+		<attribute name="value" type="java.lang.String"/>
+		<reference name="experimentSubmission" referenced-type="org.flymine.model.genomic.ExperimentSubmission" reverse-reference="dataSubmission"/>
+	</class>
+
+</classes>
