@@ -151,21 +151,13 @@ public class Drosophila2ProbeConverter extends FileConverter
         }
     }
 
-    /**
-     * @param clsName = target class name
-     * @param ordId = ref id for organism
-     * @param geneEnsembl = ensembl identifier used for gene primaryIdentifier
-     * @param writer = itemWriter write item to objectstore
-     * @return item
-     * @throws exception if anything goes wrong when writing items to objectstore
-     */
     private Item createBioEntity(String clsName, String identifier)
         throws ObjectStoreException {
         Item bio = (Item) bioMap.get(identifier);
         if (bio == null) {
             bio = createItem(clsName);
             bio.setReference("organism", org.getIdentifier());
-            bio.setAttribute("primaryIdentifier", identifier);
+            bio.setAttribute("secondaryIdentifier", identifier);
             bioMap.put(identifier, bio);
             store(bio);
         }

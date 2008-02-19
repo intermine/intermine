@@ -59,9 +59,9 @@ public abstract class CDNACloneConverter extends FileConverter
      * @param orgId = ref id for organism
      * @return item
      */
-    protected Item createBioEntity(String clsName, String id, String orgId) {
+    protected Item createBioEntity(String clsName, String id, String attrName, String orgId) {
         Item bioEntity = createItem(clsName);
-        bioEntity.setAttribute("primaryIdentifier", id);
+        bioEntity.setAttribute(attrName, id);
         bioEntity.setReference("organism", orgId);
         return bioEntity;
     }
