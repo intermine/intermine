@@ -51,6 +51,14 @@ public abstract class DataConverter
     }
 
     /**
+     * Return the data Model that was passed to the constructor.
+     * @return the Model
+     */
+    public Model getModel() {
+        return model;
+    }
+
+    /**
      * Return the ItemWriter that was passed to the constructor.
      * @return the ItemWriter
      */
