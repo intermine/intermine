@@ -14,10 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.sql.Database;
 import org.intermine.util.IntPresentSet;
 import org.intermine.xml.full.Item;
 
@@ -33,19 +30,17 @@ import org.apache.commons.collections.map.MultiKeyMap;
  * A converter for chado that handles FlyBase specific configuration.
  * @author Kim Rutherford
  */
-public class FlyBaseChadoDBConverter extends ChadoDBConverter
+public class FlyBaseModuleProcessor extends ChadoSequenceModuleProcessor
 {
     private MultiKeyMap config;
     private IntPresentSet locatedGeneIds = new IntPresentSet();
 
     /**
      * Create a new FlyBaseChadoDBConverter.
-     * @param database the Database object representing the chado db
-     * @param tgtModel the target Model
-     * @param writer the ItemWriter
+     * @param chadoDBConverter the converter that created this object
      */
-    public FlyBaseChadoDBConverter(Database database, Model tgtModel, ItemWriter writer) {
-        super(database, tgtModel, writer);
+    public FlyBaseModuleProcessor(ChadoDBConverter chadoDBConverter) {
+        super(chadoDBConverter);
         Connection connection;
         if (getDatabase() == null) {
             // no Database when testing and no connection needed
@@ -100,7 +95,8 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
     protected Map<MultiKey, List<ConfigAction>> getConfig() {
        if (config == null) {
            config = new MultiKeyMap();
-           if (getTaxonIdInt() == 7227 || getTaxonIdInt() == 7237) {
+           if (getChadoDBConverter().getTaxonIdInt() == 7227
+               || getChadoDBConverter().getTaxonIdInt() == 7237) {
 
                // synomym configuration example: for features of class "Gene", if the type name of
                // the synonym is "fullname" and "is_current" is true, set the "name" attribute of
@@ -205,7 +201,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
                config.put(new MultiKey("feature", "PointMutation", "FlyBase", "name"),
                           Arrays.asList(DO_NOTHING_ACTION));
 
-               if (getTaxonIdInt() == 7227) {
+               if (getChadoDBConverter().getTaxonIdInt() == 7227) {
                    config.put(new MultiKey("dbxref", "Translation", "FlyBase Annotation IDs",
                                            Boolean.TRUE),
                               Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
@@ -273,7 +269,8 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
             return null;
         }
 
-        if (getTaxonIdInt() == 7237 && chadoFeatureType.equals("chromosome_arm")) {
+        if (getChadoDBConverter().getTaxonIdInt() == 7237
+            && chadoFeatureType.equals("chromosome_arm")) {
             // nothing is located on a chromosome_arm
             return null;
         }
@@ -328,7 +325,7 @@ public class FlyBaseChadoDBConverter extends ChadoDBConverter
             return null;
         }
 
-        Item feature = createItem(realInterMineType);
+        Item feature = getChadoDBConverter().createItem(realInterMineType);
 
         return feature;
     }

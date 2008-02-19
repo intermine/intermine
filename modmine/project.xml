@@ -11,8 +11,8 @@
       <property name="taxonId" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
-      <property name="converter.class"
-                value="org.intermine.bio.dataconversion.FlyBaseChadoDBConverter"/>
+      <property name="processors"
+                value="org.intermine.bio.dataconversion.FlyBaseModuleProcessor"/>
     </source>
     <source name="chado-db-wormbase-c_elegans" type="chado-db">
       <property name="source.db.name" value="wormbase"/>
@@ -21,8 +21,8 @@
       <property name="taxonId" value="6239"/>
       <property name="dataSourceName" value="WormBase"/>
       <property name="dataSetTitle" value="WormBase C.elegans data set"/>
-      <property name="converter.class"
-                value="org.intermine.bio.dataconversion.WormBaseChadoDBConverter"/>
+      <property name="processors"
+                value="org.intermine.bio.dataconversion.WormBaseModuleProcessor"/>
     </source>
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="7227 6239"/> 
