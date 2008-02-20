@@ -56,7 +56,10 @@ public class StreamedOutput extends Output
     }
     
     private void printHeader(Map<String, String> attributes) {
-        writer.println(formatter.formatHeader(attributes));
+        String header = formatter.formatHeader(attributes);
+        if (header != null && header.length() > 0) {
+            writer.println(header);    
+        }
         headerPrinted = true;
     }
     
@@ -94,7 +97,7 @@ public class StreamedOutput extends Output
     @Override
     public void flush() {
         if (headerPrinted) {
-            writer.println(formatter.formatFooter());    
+            writer.print(formatter.formatFooter());    
         }
     }
 }
