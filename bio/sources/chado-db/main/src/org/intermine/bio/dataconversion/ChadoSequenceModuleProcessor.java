@@ -109,7 +109,6 @@ public class ChadoSequenceModuleProcessor extends ChadoModuleProcessor
      */
     @Override
     public void process(Connection connection) throws Exception {
-        // TODO Auto-generated method stub
         createFeatureTempTable(connection);
         earlyExtraProcessing(connection);
         processFeatureTable(connection);

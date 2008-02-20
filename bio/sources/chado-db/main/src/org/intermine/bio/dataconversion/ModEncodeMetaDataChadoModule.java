@@ -10,6 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.xml.full.Item;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,8 +40,32 @@ public class ModEncodeMetaDataChadoModule extends ChadoModuleProcessor
      * {@inheritDoc}
      */
     @Override
-    public void process(Connection connection) throws SQLException {
+    public void process(Connection connection) throws Exception {
+        processProtocolTable(connection);
+    }
 
+    /**
+     * @param connection
+     */
+    private void processProtocolTable(Connection connection)
+        throws SQLException, ObjectStoreException{
+        ResultSet res = getProtocolResultSet(connection);
+        int count = 0;
+        while (res.next()) {
+            // Integer protocolId = new Integer(res.getInt("protocol_id"));
+            String name = res.getString("name");
+            String description = res.getString("description");
+            Item feature = getChadoDBConverter().createItem("Protocol");
+            if (feature != null) {
+                Item publication = getChadoDBConverter().createItem("Publication");
+                publication.setAttribute("name", name);
+                publication.setAttribute("description", description);
+                getChadoDBConverter().store(publication);
+                count++;
+            }
+        }
+        LOG.info("created " + count + " protocols");
+        res.close();
     }
 
     /**
@@ -50,7 +77,7 @@ public class ModEncodeMetaDataChadoModule extends ChadoModuleProcessor
      */
     protected ResultSet getProtocolResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT protocol_id, name"
+            "SELECT protocol_id, name, description"
             + "  FROM protocol";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
