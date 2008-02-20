@@ -236,7 +236,7 @@ pipe_to_log("dropdb testmodel-webapp-userprofile; createdb testmodel-webapp-user
 
 
 log_and_print ("testmodel build-db ...");
-my $build_result = pipe_to_log("cd testmodel/dbmodel; ant build-db");
+my $build_result = pipe_to_log("cd testmodel/dbmodel; ant -v build-db");
 
 # intermine tests
 
@@ -248,7 +248,7 @@ pipe_to_log("cd $BUILD_PROJ; date; $ANT_COMMAND test-report");
 
 # bio tests
 
-pipe_to_log(["cd $TRUNK_DIR/bio/test-all/dbmodel; $ANT_COMMAND build-db",
+pipe_to_log(["cd $TRUNK_DIR/bio/test-all/dbmodel; $ANT_COMMAND -v build-db",
              "cd $TRUNK_DIR/bio/test-all; $ANT_COMMAND clean",
              "cd $TRUNK_DIR/bio/test-all; date; $ANT_COMMAND fulltest",
              "cd $TRUNK_DIR/bio/test-all; date; $ANT_COMMAND test-report"]);
