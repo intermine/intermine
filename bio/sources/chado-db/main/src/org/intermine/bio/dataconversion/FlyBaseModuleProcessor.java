@@ -30,7 +30,7 @@ import org.apache.commons.collections.map.MultiKeyMap;
  * A converter for chado that handles FlyBase specific configuration.
  * @author Kim Rutherford
  */
-public class FlyBaseModuleProcessor extends ChadoSequenceModuleProcessor
+public class FlyBaseModuleProcessor extends ChadoSequenceProcessor
 {
     private MultiKeyMap config;
     private IntPresentSet locatedGeneIds = new IntPresentSet();

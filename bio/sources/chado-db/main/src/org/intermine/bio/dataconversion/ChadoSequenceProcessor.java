@@ -52,9 +52,9 @@ import org.apache.log4j.Logger;
  *
  * @author Kim Rutherford
  */
-public class ChadoSequenceModuleProcessor extends ChadoModuleProcessor
+public class ChadoSequenceProcessor extends ChadoProcessor
 {
-    protected static final Logger LOG = Logger.getLogger(ChadoSequenceModuleProcessor.class);
+    protected static final Logger LOG = Logger.getLogger(ChadoSequenceProcessor.class);
 
     private Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
     private MultiKeyMap config = null;
@@ -88,7 +88,7 @@ public class ChadoSequenceModuleProcessor extends ChadoModuleProcessor
      * Create a new ChadoSequenceModuleProcessor
      * @param chadoDBConverter the ChadoDBConverter that is controlling this processor
      */
-    public ChadoSequenceModuleProcessor(ChadoDBConverter chadoDBConverter) {
+    public ChadoSequenceProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
     }
 

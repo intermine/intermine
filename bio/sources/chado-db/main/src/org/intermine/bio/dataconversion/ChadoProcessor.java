@@ -21,7 +21,7 @@ import java.sql.Connection;
  * documentation about the possible modules.
  * @author Kim Rutherford
  */
-public abstract class ChadoModuleProcessor
+public abstract class ChadoProcessor
 {
     private final ChadoDBConverter chadoDBConverter;
 
@@ -29,7 +29,7 @@ public abstract class ChadoModuleProcessor
      * Create a new ChadoModuleProcessor object.
      * @param chadoDBConverter the converter that created this Processor
      */
-    public ChadoModuleProcessor(ChadoDBConverter chadoDBConverter) {
+    public ChadoProcessor(ChadoDBConverter chadoDBConverter) {
         this.chadoDBConverter = chadoDBConverter;
     }
 
