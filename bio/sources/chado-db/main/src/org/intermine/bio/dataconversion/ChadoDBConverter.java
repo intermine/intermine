@@ -161,8 +161,8 @@ public class ChadoDBConverter extends BioDBConverter
             if (!StringUtils.isEmpty(className)) {
                 Class<?> cls = Class.forName(className);
                 Constructor constructor = cls.getDeclaredConstructor(ChadoDBConverter.class);
-                ChadoModuleProcessor processor =
-                    (ChadoModuleProcessor) constructor.newInstance(this);
+                ChadoProcessor processor =
+                    (ChadoProcessor) constructor.newInstance(this);
                 processor.process(connection);
             }
         }
