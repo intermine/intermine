@@ -51,7 +51,7 @@ public class QueryResultService extends WebService
 {
 
     private static final Logger LOG = Logger.getLogger(SessionMethods.class);
-    private static final String XML_SCHEMA_LOCATION = "webservice/v1/query.xsd";
+    private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
     private static final int BATCH_SIZE = 5000;
     
     private Map<Object, InterMineBag> savedBags;
