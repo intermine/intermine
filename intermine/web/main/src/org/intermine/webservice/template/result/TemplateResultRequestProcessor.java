@@ -1,0 +1,138 @@
+package org.intermine.webservice.template.result;
+
+/*
+ * Copyright (C) 2002-2007 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.webservice.query.result.WebServiceRequestProcessor;
+
+/**
+ * Processes service request. Evaluates parameters and validates them and check if 
+ * its combination is valid. 
+ * @author Jakub Kulaviak
+ **/
+public class TemplateResultRequestProcessor extends WebServiceRequestProcessor  
+{
+    private static final String NAME_PARAMETER = "name";
+    private List<String> errors = new ArrayList<String>();
+    private HttpServletRequest request;
+    
+    /**
+     * TemplateResultRequestProcessor constructor.
+     * @param request request
+     */
+    public TemplateResultRequestProcessor(HttpServletRequest request) {
+        this.request = request;
+    }
+    
+    /**
+     * Returns parsed parameters in parameter object - so this 
+     * values can be easily obtained from this object.
+     * @return web service input
+     */
+    public TemplateResultInput getInput() {
+        TemplateResultInput input = new TemplateResultInput();       
+        parseRequest(input);
+        return input;
+    }
+
+    private void parseRequest(TemplateResultInput input) {
+        super.parseRequest(request, input);
+        input.setName(getRequiredStringParameter(NAME_PARAMETER));
+        input.setConstraints(parseConstraints(request));
+        input.setErrors(getErrors());
+    }
+
+    private List<ConstraintLoad> parseConstraints(HttpServletRequest request) {
+        // Maximum of constraints is 50, it should be enough  
+        List<ConstraintLoad> ret = new ArrayList<ConstraintLoad>();
+        for (int i = 0; i < 50; i++) {
+            
+            String opParameter = "op" + i;
+            String opString = request.getParameter(opParameter);
+            ConstraintOp op = ConstraintOp.getConstraintOp(opString);
+            
+            String valueParameter = "value" + i;
+            String value = request.getParameter(valueParameter);            
+            
+            String extraParameter = "extraValue" + i;
+            String extraValue = request.getParameter(extraParameter);
+            
+            if (opString != null && opString.length() > 0 && op == null) {
+                addError("invalid parameter: " + opParameter + " with value " 
+                        + opString + " It must be valid operation code. Special characters "
+                        + "must be encoded in request. See help for 'url encoding'.");
+            }
+
+            if (isPresent(op) && !isPresent(value)) {
+                addError("invalid parameter: " + valueParameter 
+                        + " Operation was specified, but not value.");
+            }
+            
+            if (isPresent(value) && !isPresent(op)) {
+                addError("invalid parameter: " + opParameter 
+                    + " Value was specified, but not operation.");
+            }
+            
+            if (isPresent(extraValue) && (!isPresent(op) || !isPresent(value))) {
+                addError("invalid parameter: " + extraParameter 
+                        + " Extra value was specified, but not operation or value.");
+            }
+            
+            if (op != null && value != null && value.length() != 0) {
+                ret.add(new ConstraintLoad(op, value, extraValue));
+            }
+        }
+        return ret;
+    }
+
+    private boolean isPresent(String value) {
+        return (value != null && value.length() > 0);
+    }
+
+    private boolean isPresent(ConstraintOp op) {
+        return (op != null);
+    }
+    
+    private String getRequiredStringParameter(String name) {
+        String param = request.getParameter(name);
+        if (param == null != param.equals("")) {
+            addError("invalid required parameter: " + name);
+            return null;
+        } else {
+            return param;
+        }
+    }
+    
+    private void addError(String error) {
+        errors.add(error);
+    }
+
+    /**
+     * Returns errors occurred  during request parsing.  
+     * @return errors
+     */
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    /**
+     * Sets errors occurred during request parsing.
+     * @param errors errors
+     */
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
+    }
+}
