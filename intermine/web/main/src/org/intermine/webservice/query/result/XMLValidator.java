@@ -1,4 +1,4 @@
-package org.intermine.webservice;
+package org.intermine.webservice.query.result;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -18,21 +18,22 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
+import org.intermine.webservice.WebServiceException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
 /**
- * XMLValidator is class that validates xml string according an XML Schema at specified url.
+ * XMLValidator is class that validates xml string according an XML Schema at specified url. 
  * @author Jakub Kulaviak
  **/
-public class XMLValidator
+public class XMLValidator 
 {
 
     private static final Logger LOG = Logger.getLogger(XMLValidator.class);
     private XMLValidatorErrorHandler errorHandler = new XMLValidatorErrorHandler();
 
     /**
-     * Validates xml string according to an XML Schema at specified url.
+     * Validates xml string according to an XML Schema at specified url. 
      * @param xml xml string
      * @param xmlSchemaUrl XML Schema url
      */
@@ -41,26 +42,26 @@ public class XMLValidator
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             LOG.debug("DocumentBuilderFactory: " + factory.getClass().getName());
-
+            
             factory.setNamespaceAware(false);
             factory.setValidating(true);
-            factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                    "http://www.w3.org/2001/XMLSchema");
+            factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage", 
+                    "http://www.w3.org/2001/XMLSchema");            
             // Specify our own schema - this overrides the schemaLocation in the xml file
-            factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaSource",
+            factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaSource", 
                     xmlSchemaUrl);
-
+            
             DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setErrorHandler(errorHandler);
             try {
-                builder.parse(new InputSource(new StringReader(xml)));
+                builder.parse(new InputSource(new StringReader(xml)));    
             } catch (SAXParseException ex) {
-                // Ignore this exception - error appears in errorHandler and
+                // Ignore this exception - error appears in errorHandler and 
                 // it is displayed to  user
             }
         } catch (Exception ex) {
             throw new WebServiceException("XML validation failed.", ex);
-        }
+        } 
     }
 
     /**
@@ -68,17 +69,17 @@ public class XMLValidator
      * @return errors
      */
     public List<String> getErrors() {
-        return errorHandler.getErrors();
+        return errorHandler.getErrors(); 
     }
-
+    
     /**
      * Returns warnings occurred during parsing xml.
      * @return warning
-     */
+     */    
     public List<String> getWarnings() {
         return errorHandler.getWarnings();
     }
-
+    
     /**
      * Returns errors and warning occurred during parsing xml.
      * @return errors and warning

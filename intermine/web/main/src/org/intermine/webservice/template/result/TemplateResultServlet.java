@@ -1,4 +1,4 @@
-package org.intermine.webservice;
+package org.intermine.webservice.template.result;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -17,14 +17,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * ServiceServlet executes InterMine web service. @see org.intermine.webservice.ServiceExecutor
- * for more information.
- * @author Jakub Kulaviak
- **/
-public class ServiceServlet extends HttpServlet
-{
 
+
+/**
+ * Runs TemplateResultService web service. 
+ * 
+ * @see org.intermine.webservice.query.result.TemplateResultService 
+ * @author Jakub Kulaviak
+ */
+public class TemplateResultServlet extends HttpServlet
+{
+    
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}}
@@ -34,19 +38,9 @@ public class ServiceServlet extends HttpServlet
         runService(request, response);
     }
 
-    /**
-     * {@inheritDoc}}
-     */
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        runService(req, resp);
+    private void runService(HttpServletRequest request,
+            HttpServletResponse response) {
+        new TemplateResultService().doGet(request, response);
     }
 
-    private void runService(HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException  {
-        // To avoid servlet caching always new executor is created -->
-        // Executor has always new data and fields in executor are initialized according new data
-        // and not remember fields initialized according previous request data
-        new ServiceExecutor().runService(request, response);
-    }
 }

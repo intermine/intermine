@@ -56,8 +56,8 @@
 <!-- Intermine Web Service mapping --> 
 <!-- ================================================================================= -->
   <servlet>
-	<servlet-name>service</servlet-name>
-	<servlet-class>org.intermine.webservice.ServiceServlet</servlet-class>
+	<servlet-name>ws-query-results</servlet-name>
+	<servlet-class>org.intermine.webservice.query.result.QueryResultServlet</servlet-class>
 	<init-param>
 	   <param-name>debug</param-name>
 	   <param-value>true</param-value>
@@ -65,9 +65,38 @@
   </servlet>
 
   <servlet-mapping>
-	<servlet-name>service</servlet-name>
-	<url-pattern>/queryService/v1/*</url-pattern>
+	<servlet-name>ws-query-results</servlet-name>
+	<url-pattern>/data/query/results</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+	<servlet-name>ws-lists</servlet-name>
+	<servlet-class>org.intermine.webservice.lists.ListsServlet</servlet-class>
+	<init-param>
+	   <param-name>debug</param-name>
+	   <param-value>true</param-value>
+	</init-param>
+  </servlet>
+
+  <servlet-mapping>
+	<servlet-name>ws-lists</servlet-name>
+	<url-pattern>/data/lists</url-pattern>
+  </servlet-mapping>
+  
+    <servlet>
+	<servlet-name>ws-template-results</servlet-name>
+	<servlet-class>org.intermine.webservice.template.result.TemplateResultServlet</servlet-class>
+	<init-param>
+	   <param-name>debug</param-name>
+	   <param-value>true</param-value>
+	</init-param>
+  </servlet>
+
+  <servlet-mapping>
+	<servlet-name>ws-template-results</servlet-name>
+	<url-pattern>/data/template/results</url-pattern>
+  </servlet-mapping>
+  
 <!-- ================================================================================= -->  
 
   <session-config>
