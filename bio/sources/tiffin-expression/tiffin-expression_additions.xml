@@ -3,10 +3,10 @@
   <class name="org.flymine.model.genomic.Motif" 
          extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <collection name="expressionTerms"
-                referenced-type="org.flymine.model.genomic.mRNAExpressionTerm"
+                referenced-type="org.flymine.model.genomic.MRNAExpressionTerm"
                 reverse-reference="motifs"/>
   </class>
-  <class name="org.flymine.model.genomic.mRNAExpressionTerm" is-interface="true">
+  <class name="org.flymine.model.genomic.MRNAExpressionTerm" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <collection name="motifs"
                referenced-type="org.flymine.model.genomic.Motif" 
