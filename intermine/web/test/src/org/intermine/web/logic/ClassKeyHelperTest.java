@@ -1,6 +1,5 @@
 package org.intermine.web.logic;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +17,6 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Thing;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.ClassKeyHelper;
 
 public class ClassKeyHelperTest extends TestCase {
     private Model model;
@@ -35,7 +33,7 @@ public class ClassKeyHelperTest extends TestCase {
 
     public void testReadKeys() throws Exception {
         Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
+        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
 
         Map<String, List<FieldDescriptor>> expected = new HashMap();
         ClassDescriptor cldEmp = model.getClassDescriptorByName(pkg + "Employee");
@@ -63,7 +61,7 @@ public class ClassKeyHelperTest extends TestCase {
 
     public void testIsKeyField() throws Exception {
         Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
+        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
         Map classKeys = ClassKeyHelper.readKeys(model, props);
         assertTrue(ClassKeyHelper.isKeyField(classKeys, "Employee", "name"));
         assertFalse(ClassKeyHelper.isKeyField(classKeys, "Employee", "age"));
@@ -80,7 +78,7 @@ public class ClassKeyHelperTest extends TestCase {
         classNames.add(Company.class);
         InterMineObject o = (InterMineObject) DynamicUtil.createObject(classNames);
         Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
+        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
         Map classKeys = ClassKeyHelper.readKeys(model, props);
         assertTrue(ClassKeyHelper.isKeyField(classKeys, o, "name"));
         assertFalse(ClassKeyHelper.isKeyField(classKeys, o, "age"));
@@ -96,10 +94,19 @@ public class ClassKeyHelperTest extends TestCase {
         classNames.add(Company.class);
         InterMineObject o = (InterMineObject) DynamicUtil.createObject(classNames);
         Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("WEB-INF/class_keys.properties"));
+        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
         Map classKeys = ClassKeyHelper.readKeys(model, props);
         assertEquals(Employee.class, ClassKeyHelper.getKeyFieldClass(classKeys, o, "name"));
         assertNull(ClassKeyHelper.getKeyFieldClass(classKeys, o, "age"));
 
+    }
+    
+    public void testHasKeyFields() throws Exception {
+        Properties props = new Properties();
+        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
+        Map classKeys = ClassKeyHelper.readKeys(model, props);
+        assertTrue(ClassKeyHelper.hasKeyFields(classKeys, "Company"));
+        assertTrue(ClassKeyHelper.hasKeyFields(classKeys, "Employee"));
+        assertFalse(ClassKeyHelper.hasKeyFields(classKeys, "Bank"));
     }
 }

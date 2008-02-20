@@ -150,11 +150,11 @@ public class ProfileTest extends MockStrutsTestCase
         } catch (UnsupportedOperationException e) {
         }
 
-        try {
-            profile.deleteBag("bag1");
-            fail("Expected UnsupportedOperationException");
-        } catch (UnsupportedOperationException e) {
-        }
+//        try {
+//            profile.deleteBag("bag1");
+//            fail("Expected UnsupportedOperationException");
+//        } catch (UnsupportedOperationException e) {
+//        }
 
         try {
             profile.deleteTemplate("tmpl1");
